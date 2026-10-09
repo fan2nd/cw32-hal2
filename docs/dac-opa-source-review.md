@@ -31,9 +31,10 @@ SDK V1.0.5: https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeriphe
 - Libraries/src/cw32l012_opa.c: e96839a43436f4f3e093449a829bc2b563a83326dba567980755506f380b4aba
 
 Corroborating EN manual V1.0: https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_EN_V1.0.pdf
-- PDF SHA-256: 5e4937c3c93855d13befb1a88bf6f7572f460c46552db26393bf760a88761459
-- Extracted text SHA-256: a4d540ab2d7000652866b0570de8d826286b5f5a482cf87583c1d2ce0d8c3cb4
-- OPA CR printed p715 = one-based PDF p741.
+- Current PDF SHA-256: f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088
+- Current extracted text SHA-256: 4b4413bdc5c57d7c0f23b5c949a66e10997b0adf6b087cea8d08b125b5320737
+- Current June 2026 cover: OPA CR printed p709 = one-based PDF p735.
+- The previously reviewed January-cover snapshot is unavailable at the same URL. Its exact identities and the limited source migration are retained in `docs/l012-english-source-update.json`; the earlier review is historical evidence, not a claim that the old bytes were recovered.
 
 All identities above match `sources/evidence-sources.json` in the reviewed snapshot, except DAC headers/driver and OPA header are new member-level evidence to add there. Their containing SDK archive is already locked. Additional reviewed examples and full member identities are in `source-hashes.json`.
 
@@ -71,7 +72,7 @@ All identities above match `sources/evidence-sources.json` in the reviewed snaps
 
 ## Explicit conflicts and deferred claims
 
-- OPA CR reset: current CN section29.6.1 p649 says0x0000E000 (BIAS=7), and SDK opa.h defines OPA_CR0_RESET_VALUE=0x0000E000. Older EN section29.6.1 p715 says0x00000E00 despite identical field positions. Use explicit BIAS=7 configuration; do not copy the old reset value. Vendor SVD does not state an OPA CR register-specific reset value, so it does not resolve the conflict by itself.
+- OPA CR reset: current CN section29.6.1 p649 says0x0000E000 (BIAS=7), and SDK opa.h defines OPA_CR0_RESET_VALUE=0x0000E000. The previously reviewed EN snapshot section29.6.1 p715 said0x00000E00 despite identical field positions. The current June-cover EN snapshot section29.6.1 p709 now says0x0000E000, agreeing with CN and SDK. Use explicit BIAS=7 configuration; do not copy the old reset value. Vendor SVD does not state an OPA CR register-specific reset value, so it does not resolve the conflict by itself.
 - LPMODE: datasheet section4.15 p20 mentions normal/low-power modes; Table7-34 p65 footnotes condition some electrical figures on OPA_CR.LPMODE=0. Neither selected CN/EN OPA register description, CMSIS header, nor SVD defines LPMODE. Treat as unresolved source discrepancy; do not assign reserved bit3 or expose low-power control.
 - OPA startup: visually verified Table7-34 p65 places2.5us TSTART in the MINIMUM column, not typical or maximum. `l012-datasheet-opa-p65.png` is the visual verification. No safe maximum-ready interval can be derived from this row.
 - Calibration duration: CN section29.6.2 pp651-652 gives CALPERIOD=8*2^n OPACLK cycles and AZRUN high for twice the period. SDK opa.h enum names advertise16*2^n clocks. This may distinguish one phase from total operation, but the sources do not justify conflating them; defer a calibrated API pending precise contract/hardware validation.

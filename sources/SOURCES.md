@@ -212,7 +212,7 @@ L012 使用 `CW32L012_UserManual_CN_V1.4.pdf` Rev 1.4：§5.4 IRQ 表 PDF 96–9
 | [a030-official-manuals.html](https://www.whxy.com/tongyonggaoxingnengMCU/CW32A030C8T7.html?act=doc&cid=21) | 官网 A030 文档/SDK 分类页的固定捕获；不是产品手册。 |
 | [a030-official-sdk.html](https://www.whxy.com/tongyonggaoxingnengMCU/CW32A030C8T7.html?act=doc&cid=22) | 官网 A030 文档/SDK 分类页的固定捕获；不是产品手册。 |
 | [NXP_UM10204_Rev7.pdf](https://cache.nxp.com/docs/en/user-guide/UM10204.pdf) | Rev 7.0，封面 2021-10-01，修订表 2021-10-01。I²C 总线协议外部标准，不是 CW32 寄存器手册。 |
-| [CW32L012_UserManual_EN_V1.0.pdf](https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_EN_V1.0.pdf) | Rev 1.0，封面 2026-01，修订表 2026-01-16。补充语言版本，不能替代同族当前选定中文手册的行为修订。 |
+| [CW32L012_UserManual_EN_V1.0.pdf](https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_EN_V1.0.pdf) | Rev 1.0，当前封面 2026-06，修订表仍为 2026-01-16。同一官方 URL 已替换原 January 封面版本；旧身份与有限迁移见 docs/l012-english-source-update.json。补充语言版本，不能替代同族当前选定中文手册的行为修订。 |
 | [CW32L052_UserManual_EN_V1.0.pdf](https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_EN_V1.0.pdf) | Rev 1.0，发布/修订 2023-06-20。补充语言版本，不能替代同族当前选定中文手册的行为修订。 |
 | [CW32L083_UserManual_EN_V1.0.pdf](https://www.whxy.com/uploads/files/20240923/CW32L083_UserManual_EN_V1.0.pdf) | Rev 1.0，发布/修订 2022-10-10。补充语言版本，不能替代同族当前选定中文手册的行为修订。 |
 

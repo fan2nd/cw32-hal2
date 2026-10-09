@@ -1,0 +1,535 @@
+{
+  "scope": "Independent current English source facts and subsequent preservation of old identity distribution exclusions. No hardware/PAC/HAL change and no legal clearance.",
+  "source_review": {
+    "schema_version": 1,
+    "status": "accepted for bounded source-document refresh; integration not performed by reviewer",
+    "reviewed_at_utc": "2026-10-09T15:37:07.347980+00:00",
+    "reviewer_task": "/root/build_cw32_embassy/review_l012_source_refresh",
+    "project": "/workspace/shared/embassy-cw32",
+    "candidate_packet": "/workspace/shared/cw32-l012-en-source-migration-20261009",
+    "accepted_manifest_sha256": "f1e713f76aea9946bf53ff8d762fc2690021e830aaeebe7fe144e37717fe6e1e",
+    "accepted_patch_sha256": "137a94ecff5021e41a313250d932884438de08938c902a709e9a45e0b225c45a",
+    "accepted_files": [
+      {
+        "path": "sources/evidence-sources.json",
+        "before_sha256": "75016c9421a3b412bc0641c5619735ca36ee94f00ec101240307055082779484",
+        "after_sha256": "6452dc03a4e7b27078e1e418804adea04a5b36ca8261737b5bdf48af06d5d3ff"
+      },
+      {
+        "path": "docs/lvd-ir-evidence.json",
+        "before_sha256": "1481a4d31c23924a77763debe00d55f0afd9674a6d0e5475778687195c325e4c",
+        "after_sha256": "2c51a54a849db3b742ab9dd523b3ebe6bbb8f6cf955a60836c24622b03cbb2ad"
+      },
+      {
+        "path": "docs/dac-opa-evidence.json",
+        "before_sha256": "59cc0cdcba0693b54e1c9fe5c3920fb535af129bb5d424194250d5ec4d6d0463",
+        "after_sha256": "4cc9d817a70d2e107cc73b15d098b9ac500efa6d475c90a98a95d5a0347e2ecf"
+      },
+      {
+        "path": "docs/dac-opa-source-review.md",
+        "before_sha256": "386e61227b525e9205c9d48e79d30c7e1b3c852261ea424337d492724108c7f0",
+        "after_sha256": "02aef12c6dc7f0b8829709bd89af9e5f46511c9c708b71680673bf1b8bcb2029"
+      },
+      {
+        "path": "sources/SOURCES.md",
+        "before_sha256": "12c634b9bdb055bb18cbaaa35b3bb0b8343fd7437ae8eccf38051b49f4ee85cd",
+        "after_sha256": "3f7842f1924dd2c47b8b38a1c051b39e7a7607017477e2925a35cf1d906c3904"
+      },
+      {
+        "path": "docs/l012-english-source-update.json",
+        "before_sha256": null,
+        "after_sha256": "9366a6565cda622bfecdae98924c181bf308c422b753e1f320bae9ef548a2dc6"
+      }
+    ],
+    "verification": {
+      "all_before_and_after_hashes_match_manifest": true,
+      "all_main_files_match_before_or_are_absent_for_new_file": true,
+      "after_tree_contains_exactly_six_manifest_files": true,
+      "git_apply_check_against_isolated_before_copy": "passed",
+      "git_apply_to_isolated_before_copy": "passed; all six output hashes exactly match accepted after hashes",
+      "main_or_candidate_modified_by_reviewer": false,
+      "hardware_yaml_pac_hal_changes_in_candidate": false,
+      "cargo_build_hal_tests": "not run; outside source-only review scope"
+    },
+    "resolved_findings": [
+      {
+        "finding": "Initial source.patch was malformed at the old no-newline EOF of docs/dac-opa-evidence.json.",
+        "rejected_initial_patch_sha256": "d4b3c97f290a9698213cabe7954bdfd195cb3f916280b316155c50aadd1d4b32",
+        "initial_git_apply_check": "failed, corrupt patch at line 115",
+        "resolution": "Coordinator regenerated standard unified diff with correct EOF marker; candidate file bytes and manifest did not change.",
+        "intermediate_corrected_patch_sha256": "137a94ecff5021e41a313250d932884438de08938c902a709e9a45e0b225c45a"
+      }
+    ],
+    "current_source": {
+      "official_url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_path": "/workspace/shared/recovery-source-candidates/CW32L012_UserManual_EN_V1.0.candidate-20261009-f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088.pdf",
+      "pdf_sha256": "f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088",
+      "pdf_bytes": 19538580,
+      "pdf_pages": 759,
+      "text_path": "/workspace/shared/recovery-source-candidates/CW32L012_UserManual_EN_V1.0.candidate-20261009-f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088.txt",
+      "text_sha256": "4b4413bdc5c57d7c0f23b5c949a66e10997b0adf6b087cea8d08b125b5320737",
+      "text_bytes": 1851856,
+      "text_reproduction": "pdftotext -layout PDF - exactly reproduces the candidate text bytes and SHA-256.",
+      "acquisition_receipt": {
+        "path": "/workspace/shared/recovery-source-candidates/CW32L012_UserManual_EN_V1.0.candidate-receipt.json",
+        "sha256": "6c1887f23abdbf6a93a4a9809a296af880f90243de53d12c900b8069be33c47c",
+        "reviewed_not_independently_redownloaded": true
+      }
+    },
+    "bounded_fact_review": [
+      {
+        "topic": "Identity, revision and licensing",
+        "pdf_pages_1_based": [
+          1,
+          2,
+          759
+        ],
+        "method": "Read actual PDF text and inspected independently rendered page pixels.",
+        "findings": [
+          "Cover identifies CW32L012 Reference Manual, Rev 1.0, June 2026.",
+          "Final revision table is printed page 733 / PDF page 759 and still records January 16, 2026, Rev 1.0, initial release.",
+          "Copyright notice reserves copyright to the vendor; no redistribution permission was established. Existing redistribution_not_verified, bundle_raw=false and bundle_derived_text=false are preserved."
+        ]
+      },
+      {
+        "topic": "IRMOD_CR, section 24.4",
+        "pdf_pages_1_based": [
+          651
+        ],
+        "printed_pages": [
+          625
+        ],
+        "method": "Visual and extracted-text review; normalized all 16 expressions and compared exactly to candidate manual_ir_modes. Read byte-verified SDK header from the locked archive.",
+        "register": "IRMOD_CR",
+        "address": "0x40004000 + 0x80",
+        "reset": "0x00000000",
+        "fields": {
+          "INV": 5,
+          "IRSW": 4,
+          "MOD": "3:0"
+        },
+        "manual_modes": [
+          {
+            "value": 0,
+            "expression": "GTIM1_CH1 & GTIM2_CH1 & IRSW"
+          },
+          {
+            "value": 1,
+            "expression": "GTIM1_CH1 & GTIM2_CH2 & IRSW"
+          },
+          {
+            "value": 2,
+            "expression": "GTIM1_CH2 & GTIM2_CH1 & IRSW"
+          },
+          {
+            "value": 3,
+            "expression": "GTIM1_CH2 & GTIM2_CH2 & IRSW"
+          },
+          {
+            "value": 4,
+            "expression": "GTIM1_CH1 | GTIM2_CH1 | IRSW"
+          },
+          {
+            "value": 5,
+            "expression": "GTIM1_CH1 | GTIM2_CH2 | IRSW"
+          },
+          {
+            "value": 6,
+            "expression": "GTIM1_CH2 | GTIM2_CH1 | IRSW"
+          },
+          {
+            "value": 7,
+            "expression": "GTIM1_CH2 | GTIM2_CH2 | IRSW"
+          },
+          {
+            "value": 8,
+            "expression": "UART1_TXD & GTIM1_CH1 & IRSW"
+          },
+          {
+            "value": 9,
+            "expression": "UART1_TXD | GTIM1_CH1 | IRSW"
+          },
+          {
+            "value": 10,
+            "expression": "UART1_TXD & GTIM1_CH2 & IRSW"
+          },
+          {
+            "value": 11,
+            "expression": "UART1_TXD | GTIM1_CH2 | IRSW"
+          },
+          {
+            "value": 12,
+            "expression": "UART2_TXD & GTIM2_CH1 & IRSW"
+          },
+          {
+            "value": 13,
+            "expression": "UART2_TXD | GTIM2_CH1 | IRSW"
+          },
+          {
+            "value": 14,
+            "expression": "UART2_TXD & GTIM2_CH2 & IRSW"
+          },
+          {
+            "value": 15,
+            "expression": "UART2_TXD | GTIM2_CH2 | IRSW"
+          }
+        ],
+        "sdk_modes": [
+          {
+            "value": 0,
+            "name": "IRMOD_IRSW_AND_GTIM1_CH1",
+            "expression": "IRSW & GTIM1_CH1"
+          },
+          {
+            "value": 1,
+            "name": "IRMOD_IRSW_OR_GTIM2_CH1",
+            "expression": "IRSW | GTIM2_CH1"
+          },
+          {
+            "value": 2,
+            "name": "IRMOD_GTIM1_CH1_AND_GTIM3_CH1",
+            "expression": "GTIM1_CH1 & GTIM3_CH1"
+          },
+          {
+            "value": 3,
+            "name": "IRMOD_GTIM2_CH1_OR_GTIM4_CH1",
+            "expression": "GTIM2_CH1 | GTIM4_CH1"
+          },
+          {
+            "value": 4,
+            "name": "IRMOD_UART1_TXD_AND_GTIM1_CH2",
+            "expression": "UART1_TXD & GTIM1_CH2"
+          },
+          {
+            "value": 5,
+            "name": "IRMOD_UART1_TXD_OR_GTIM2_CH2",
+            "expression": "UART1_TXD | GTIM2_CH2"
+          },
+          {
+            "value": 6,
+            "name": "IRMOD_UART1_TXD_AND_GTIM3_CH2",
+            "expression": "UART1_TXD & GTIM3_CH2"
+          },
+          {
+            "value": 7,
+            "name": "IRMOD_UART1_TXD_OR_GTIM4_CH2",
+            "expression": "UART1_TXD | GTIM4_CH2"
+          },
+          {
+            "value": 8,
+            "name": "IRMOD_UART2_TXD_AND_GTIM1_CH3",
+            "expression": "UART2_TXD & GTIM1_CH3"
+          },
+          {
+            "value": 9,
+            "name": "IRMOD_UART2_TXD_OR_GTIM2_CH3",
+            "expression": "UART2_TXD | GTIM2_CH3"
+          },
+          {
+            "value": 10,
+            "name": "IRMOD_UART2_TXD_AND_GTIM3_CH3",
+            "expression": "UART2_TXD & GTIM3_CH3"
+          },
+          {
+            "value": 11,
+            "name": "IRMOD_UART2_TXD_OR_GTIM4_CH3",
+            "expression": "UART2_TXD | GTIM4_CH3"
+          },
+          {
+            "value": 12,
+            "name": "IRMOD_UART3_TXD_AND_GTIM1_CH4",
+            "expression": "UART3_TXD & GTIM1_CH4"
+          },
+          {
+            "value": 13,
+            "name": "IRMOD_UART3_TXD_OR_GTIM2_CH4",
+            "expression": "UART3_TXD | GTIM2_CH4"
+          },
+          {
+            "value": 14,
+            "name": "IRMOD_UART3_TXD_AND_GTIM3_CH4",
+            "expression": "UART3_TXD & GTIM3_CH4"
+          },
+          {
+            "value": 15,
+            "name": "IRMOD_UART3_TXD_OR_GTIM4_CH4",
+            "expression": "UART3_TXD | GTIM4_CH4"
+          }
+        ],
+        "findings": [
+          "All 16 current English expressions exactly match the existing manual-derived expressions.",
+          "All 16 SDK enum expressions differ from the manual for their respective encodings.",
+          "mode_configurable remains false. Existing MOD preservation, SDK conflict and withheld safe source-mode qualification remain unchanged."
+        ]
+      },
+      {
+        "topic": "OPAx_CR, section 29.6.1",
+        "pdf_pages_1_based": [
+          735,
+          736
+        ],
+        "printed_pages": [
+          709,
+          710
+        ],
+        "method": "Read actual PDF text and independently rendered page pixels; compared current CN PDF page 675 / printed 649 and SDK opa.h reset constant.",
+        "reset": "0x0000E000",
+        "fields": {
+          "BIAS": "15:13",
+          "AMP": "12:10",
+          "INN2EN": 9,
+          "INN1EN": 8,
+          "INP4EN": 7,
+          "INP3EN": 6,
+          "INP2EN": 5,
+          "INP1EN": 4,
+          "reserved": 3,
+          "MODE": "2:1",
+          "EN": 0
+        },
+        "findings": [
+          "Current English reset agrees with current CN and SDK OPA_CR0_RESET_VALUE.",
+          "CR field positions and mode/gain/bias descriptions agree with the retained narrow OPA claims.",
+          "Historical 0x00000E00 is retained as a statement from the previous review, not independently re-observed in unavailable old PDF bytes."
+        ]
+      },
+      {
+        "topic": "OPA register-description exclusions",
+        "pdf_pages_1_based": [
+          735,
+          736,
+          737,
+          738
+        ],
+        "printed_pages": [
+          709,
+          710,
+          711,
+          712
+        ],
+        "method": "Read actual CR and CAL register descriptions and inspected rendered pages.",
+        "findings": [
+          "No LPMODE field is defined in these current CR/CAL tables; CR bit 3 remains reserved.",
+          "No separate analog output-disconnect field is defined in these CR/CAL tables.",
+          "This limited supporting check does not expand the migration into a DAC chapter review, calibration qualification or whole-manual review."
+        ]
+      }
+    ],
+    "cross_reference_artifacts": [
+      {
+        "path": "/workspace/shared/cw32-sources/CW32L012_UserManual_CN_V1.4.pdf",
+        "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340"
+      },
+      {
+        "path": "/workspace/shared/cw32-sources/CW32L012_UserManual_CN_V1.4.txt",
+        "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505"
+      },
+      {
+        "path": "/workspace/shared/cw32-sources/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f"
+      },
+      {
+        "path": "/workspace/shared/cw32-sources/cw32l012/Libraries/inc/cw32l012_opa.h",
+        "sha256": "88177b95a1a8d60ff273e17d688a2be002e73b6466724598cd5316fbe7361406"
+      },
+      {
+        "path": "/workspace/shared/cw32-sources/cw32l012/Libraries/inc/cw32l012_irmod.h",
+        "sha256": "30214f206c3926eb9619cb2c2b018f7b81a1c68f86a8ea83795590bee95f8bef"
+      }
+    ],
+    "sdk_member_check": "Both inspected OPA and IRMOD headers are byte-identical to the corresponding members of the locked SDK ZIP.",
+    "historical_scope_review": {
+      "old_artifact_record_preserved_as_exact_json_object": true,
+      "previous_pdf_sha256": "5e4937c3c93855d13befb1a88bf6f7572f460c46552db26393bf760a88761459",
+      "previous_text_sha256": "a4d540ab2d7000652866b0570de8d826286b5f5a482cf87583c1d2ce0d8c3cb4",
+      "previous_pdf_bytes": 19634820,
+      "previous_pdf_pages": 765,
+      "previous_text_bytes": 1865125,
+      "availability": "Old PDF and extracted text were not recovered. Historical contents cannot be independently reconstructed or fully compared.",
+      "dac_opa_claim_scope": "The 2026-10-08 review remains historical, with the explicit new source-update link and unavailable-snapshot statement. The current file identity does not renew all historical DAC/OPA claims or certify every page. Narrow current OPA corroboration is stated separately above.",
+      "lvd_ir_claim_scope": "Only the L012 English identity and citation move; all manual modes, limitations, safe API metadata and other families are unchanged.",
+      "chinese_authority_preserved": true,
+      "raw_pdf_and_derived_text_excluded_from_bundle": true
+    },
+    "not_established": [
+      "Recovery of the old English PDF/text bytes.",
+      "An old/new full-PDF byte or semantic comparison.",
+      "Semantic verification of all 759 current pages, or a new complete DAC/OPA source review.",
+      "New licensing or redistribution permission.",
+      "New IR source-mode, RCC/LSE, PAC, HAL, electrical or hardware qualification.",
+      "Integration into main; coordinator owns final receipt association and any status-only integration update."
+    ],
+    "remaining_required_adjustments": [],
+    "review_pages": [
+      {
+        "path": "/workspace/shared/cw32-l012-en-source-migration-20261009/independent-review-pages/cn-page-675.png",
+        "sha256": "05b8dfbf104800da5b8977d0cc7af4a26de765541ac42508762038af584e6bf8"
+      },
+      {
+        "path": "/workspace/shared/cw32-l012-en-source-migration-20261009/independent-review-pages/page-1.png",
+        "sha256": "0757e0bd9b1152a02c4c07ab02f3d8d10a446b59d49ca206c18808e980962491"
+      },
+      {
+        "path": "/workspace/shared/cw32-l012-en-source-migration-20261009/independent-review-pages/page-2.png",
+        "sha256": "0ff2aebbda9712214ec12bf709e0b9611c52a25031903f841ba5a4eb68d30b0d"
+      },
+      {
+        "path": "/workspace/shared/cw32-l012-en-source-migration-20261009/independent-review-pages/page-651.png",
+        "sha256": "13cc6e70ba61172d559c25f13917b11e1a1dc086d9246460d8e3fe93e75f8ad0"
+      },
+      {
+        "path": "/workspace/shared/cw32-l012-en-source-migration-20261009/independent-review-pages/page-735.png",
+        "sha256": "6137caed21cc310730c072ec26ee8e8ba214927d4f1c30ff3c357aef3a098067"
+      },
+      {
+        "path": "/workspace/shared/cw32-l012-en-source-migration-20261009/independent-review-pages/page-736.png",
+        "sha256": "634aea594fda55bcc86785a080bc7bd91a353fa8da5f904d5197983504300032"
+      },
+      {
+        "path": "/workspace/shared/cw32-l012-en-source-migration-20261009/independent-review-pages/page-737.png",
+        "sha256": "acbeb4afd8655627471b9b4e7a9b8b28e7ce5e7b1c603f0f9cdc34faeb0c4c7e"
+      },
+      {
+        "path": "/workspace/shared/cw32-l012-en-source-migration-20261009/independent-review-pages/page-738.png",
+        "sha256": "14316a8ef56b5051f1cbfe4a2f18633386d87ff504d51114ff1ce7e0b6aeb9b6"
+      },
+      {
+        "path": "/workspace/shared/cw32-l012-en-source-migration-20261009/independent-review-pages/page-759.png",
+        "sha256": "a6b222b54a364769961c8a35e4ec45b8f2c87c3862fc9f81f09eef3c73b180d7"
+      }
+    ],
+    "final_status_only_delta": {
+      "before": "proposed source update; independent review required before integration",
+      "after": "accepted bounded source update; historical snapshot remains unavailable",
+      "only_changed_candidate_file": "docs/l012-english-source-update.json",
+      "previous_doc_sha256": "9366a6565cda622bfecdae98924c181bf308c422b753e1f320bae9ef548a2dc6",
+      "accepted_doc_sha256": "9366a6565cda622bfecdae98924c181bf308c422b753e1f320bae9ef548a2dc6",
+      "previous_manifest_sha256": "f1e713f76aea9946bf53ff8d762fc2690021e830aaeebe7fe144e37717fe6e1e",
+      "previous_patch_sha256": "137a94ecff5021e41a313250d932884438de08938c902a709e9a45e0b225c45a",
+      "verification": "Replacing only the new status string with the old status reproduces the exact previously accepted file SHA-256. Other five after hashes and all before hashes are unchanged. Final patch applies cleanly to an isolated before copy and reproduces all six final hashes. Main still matches before."
+    }
+  },
+  "pin_history_supplement": {
+    "schema_version": 1,
+    "status": "accepted narrow supplement to prior independent L012 review",
+    "reviewed_at_utc": "2026-10-09T15:44:12.921941+00:00",
+    "reviewer_task": "/root/build_cw32_embassy/review_a030_listing_refresh",
+    "project": "/workspace/shared/embassy-cw32",
+    "candidate_packet": "/workspace/shared/cw32-l012-en-source-migration-20261009",
+    "prior_fact_review_path": "/workspace/shared/cw32-l012-en-source-migration-20261009/independent-review.json",
+    "prior_fact_review_sha256": "20b48b906ce14ca92ee455688232e22087dcb6e0ef7815aa9e3dd6cbd6d349c9",
+    "accepted_packet": {
+      "manifest_sha256": "8387e21fe47a337818323728ac0715b7626c0cf60fd6d6d13bb9ad0dc9d2d725",
+      "patch_sha256": "5fcd61ba39ca860f6ebd96745a9076b79a3aabd9fef8cbd95394f272ff4cb4fb",
+      "files": [
+        {
+          "path": "sources/evidence-sources.json",
+          "before_sha256": "75016c9421a3b412bc0641c5619735ca36ee94f00ec101240307055082779484",
+          "after_sha256": "8e7ac018cb3fe552e15f8626fbb24f6e24c2e83ebda8c7bd14d660faf3f4a873"
+        },
+        {
+          "path": "docs/lvd-ir-evidence.json",
+          "before_sha256": "1481a4d31c23924a77763debe00d55f0afd9674a6d0e5475778687195c325e4c",
+          "after_sha256": "2c51a54a849db3b742ab9dd523b3ebe6bbb8f6cf955a60836c24622b03cbb2ad"
+        },
+        {
+          "path": "docs/dac-opa-evidence.json",
+          "before_sha256": "59cc0cdcba0693b54e1c9fe5c3920fb535af129bb5d424194250d5ec4d6d0463",
+          "after_sha256": "4cc9d817a70d2e107cc73b15d098b9ac500efa6d475c90a98a95d5a0347e2ecf"
+        },
+        {
+          "path": "docs/dac-opa-source-review.md",
+          "before_sha256": "386e61227b525e9205c9d48e79d30c7e1b3c852261ea424337d492724108c7f0",
+          "after_sha256": "02aef12c6dc7f0b8829709bd89af9e5f46511c9c708b71680673bf1b8bcb2029"
+        },
+        {
+          "path": "sources/SOURCES.md",
+          "before_sha256": "12c634b9bdb055bb18cbaaa35b3bb0b8343fd7437ae8eccf38051b49f4ee85cd",
+          "after_sha256": "3f7842f1924dd2c47b8b38a1c051b39e7a7607017477e2925a35cf1d906c3904"
+        },
+        {
+          "path": "docs/l012-english-source-update.json",
+          "before_sha256": null,
+          "after_sha256": "9366a6565cda622bfecdae98924c181bf308c422b753e1f320bae9ef548a2dc6"
+        }
+      ],
+      "git_apply_check": "passed",
+      "isolated_apply": "all output bytes exactly match manifest after files",
+      "isolated_apply_path": "/workspace/shared/final-source-review-03pvz_y2",
+      "main_matches_before": true
+    },
+    "reviewed_delta": {
+      "removed_delta_reproduces_prior_accepted_lock_sha256": "6452dc03a4e7b27078e1e418804adea04a5b36ca8261737b5bdf48af06d5d3ff",
+      "only_changes_from_prior_accepted_lock": [
+        "Add old PDF and text path/hash/size to pin_history for existing distribution guard.",
+        "Append docs/l012-english-source-refresh-review.json to artifact evidence so the final receipt remains source-bound."
+      ],
+      "other_five_files_byte_identical_to_prior_acceptance": true,
+      "old_pdf_and_text_hashes_present_in_actual_runtime_distribution_deny_set": true,
+      "current_pdf_and_text_rejected_when_renamed": true,
+      "old_pdf_and_text_bytes": "Unavailable; actual rejection against unavailable old bytes was not run. Deny-set membership was checked directly from the actual validator invocation.",
+      "license_flags_unchanged": true
+    },
+    "integration_requirement": "Coordinator must populate docs/l012-english-source-refresh-review.json with prior fact review plus this narrow supplement, compose disjoint A030 lock changes, and regenerate/check derived provenance views.",
+    "not_run": [
+      "New full PDF or hardware fact review",
+      "Cargo, HAL or hardware tests",
+      "Remote download revalidation",
+      "Main integration"
+    ]
+  },
+  "previous_locked_artifact": {
+    "kind": "pdf",
+    "path": "CW32L012_UserManual_EN_V1.0.pdf",
+    "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_EN_V1.0.pdf",
+    "sha256": "5e4937c3c93855d13befb1a88bf6f7572f460c46552db26393bf760a88761459",
+    "bytes": 19634820,
+    "evidence": [
+      "docs/lvd-ir-evidence.json"
+    ],
+    "text": {
+      "path": "CW32L012_UserManual_EN_V1.0.txt",
+      "sha256": "a4d540ab2d7000652866b0570de8d826286b5f5a482cf87583c1d2ce0d8c3cb4",
+      "bytes": 1865125
+    },
+    "id": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+    "license": {
+      "status": "redistribution_not_verified",
+      "bundle_raw": false,
+      "bundle_derived_text": false,
+      "inspected": "cover and copyright/legal notice of exact PDF",
+      "notice": "Vendor retains copyright; no redistribution grant established.",
+      "evidence_pdf_pages_1_based": [
+        1,
+        2
+      ]
+    },
+    "provenance": {
+      "filename": "CW32L012_UserManual_EN_V1.0.pdf",
+      "filename_version": "1.0",
+      "printed_revision": "1.0",
+      "publication_date": "2026-01",
+      "publication_date_basis": "cover month; history dated 2026-01-16",
+      "cover_date": "2026-01",
+      "revision_history_date": "2026-01-16",
+      "acquired_date": null,
+      "acquisition_evidence": null,
+      "chip_scope": [
+        "CW32L012"
+      ],
+      "status": "corroborating-language-edition",
+      "reviewed_on": "2026-10-08",
+      "revision_evidence": {
+        "pdf_page_1_based": 1,
+        "location": "cover and repeated footers"
+      },
+      "revision_history_evidence": {
+        "pdf_page_1_based": 765,
+        "printed_page": 739,
+        "location": "final revision-history table"
+      },
+      "pdf_page_count": 765
+    }
+  },
+  "historical_identity_scope": "Exact old canonical artifact object retained for provenance only; unavailable historical bytes are not asserted to be current acquired evidence."
+}

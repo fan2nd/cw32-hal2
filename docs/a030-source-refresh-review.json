@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "status": "accepted for bounded official A030 listing refresh; coordinator owns integration",
+  "reviewed_at_utc": "2026-10-09T15:44:12.921941+00:00",
+  "reviewer_task": "/root/build_cw32_embassy/review_a030_listing_refresh",
+  "project": "/workspace/shared/embassy-cw32",
+  "candidate_packet": "/workspace/shared/cw32-a030-source-refresh-20261009",
+  "accepted_packet": {
+    "manifest_sha256": "ec054b4083698c84547c061d3fb24f8a0543b087185f510d70f0b8016c671b59",
+    "patch_sha256": "bd328e1e3c208048caef99c8258a43467094c5ce9f091498e5cb3692d43a93a7",
+    "files": [
+      {
+        "path": "sources/evidence-sources.json",
+        "before_sha256": "75016c9421a3b412bc0641c5619735ca36ee94f00ec101240307055082779484",
+        "after_sha256": "87b9aa41f1ef4ce643cf768995b86089f1769a1878bfd1e4826ca8936e93a9e3"
+      },
+      {
+        "path": "docs/crc-evidence.json",
+        "before_sha256": "494d1f364f118c436c3e2ade945c91016a558bd4b3dab991bd8ff6780d3ee7a2",
+        "after_sha256": "188df5e16e48747eb65522c35ec400c0ed7b57473886cdece99592460c173e05"
+      },
+      {
+        "path": "docs/a030-source-refresh-20261009.json",
+        "before_sha256": null,
+        "after_sha256": "c589307e969618a9231db30f651be9f46ffa42680f24b0035226681655f9959b"
+      }
+    ],
+    "git_apply_check": "passed",
+    "isolated_apply": "all output bytes exactly match manifest after files",
+    "isolated_apply_path": "/workspace/shared/final-source-review-d7qmwgzi",
+    "main_matches_before": true
+  },
+  "scope": "Only canonical identities/history/provenance of two A030 HTML listings, current CRC source hashes plus refresh evidence, and one source-refresh note. No hardware facts, PAC, HAL, runtime, source schema or license grants change.",
+  "source_verification": [
+    {
+      "path": "a030-official-manuals.html",
+      "current_sha256": "21f8f56c460a5a5e2b1d7f39c9e89974f79255173a0a8bb0d25c864aaf2d9275",
+      "current_bytes": 36645,
+      "inverse_sha256": "477b4984debdfbff0d71fae073c7498a95b5ece63dfece726e8c2f584b8b5d4d",
+      "inverse_bytes": 36655,
+      "inverse_exactly_equals_explicitly_reconstructed_file": true,
+      "difference": "Exactly one breadcrumb anchor removes /index.php (10 bytes); the rest of the entire response is byte-identical.",
+      "title": "CW32A030C8T7-武汉芯源半导体官网|专注32位MCU芯片设计",
+      "table_rows": [
+        [
+          [
+            "名称",
+            "分类",
+            "描述",
+            "日期",
+            "版本",
+            "中文文档",
+            "英文文档"
+          ],
+          [
+            "CW32x030",
+            "用户手册",
+            "CW32F030/CW32A030 用户手册",
+            "2024/09/20",
+            "2.5",
+            "中",
+            "EN"
+          ]
+        ]
+      ],
+      "download_links": [
+        "/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+        "/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf"
+      ],
+      "current_and_old_renamed_raw_bytes_rejected": true,
+      "current_download_receipt_sha256": "8bb961932cbffb5786ff1238f0a9a3476d52ed2453e1ed100d02348614164d37"
+    },
+    {
+      "path": "a030-official-sdk.html",
+      "current_sha256": "a15e9618506b52a0ef2cd9062ee98557602e6a0573522a31ad4674d005a194dc",
+      "current_bytes": 35464,
+      "inverse_sha256": "7d44d47cae0241b310bf7e341d57642a020807276696026fc67280c7889a3773",
+      "inverse_bytes": 35474,
+      "inverse_exactly_equals_explicitly_reconstructed_file": true,
+      "difference": "Exactly one breadcrumb anchor removes /index.php (10 bytes); the rest of the entire response is byte-identical.",
+      "title": "CW32A030C8T7-武汉芯源半导体官网|专注32位MCU芯片设计",
+      "table_rows": [
+        [
+          [
+            "名称",
+            "分类",
+            "描述",
+            "日期",
+            "版本",
+            "中文文档",
+            "英文文档"
+          ]
+        ]
+      ],
+      "download_links": [],
+      "current_and_old_renamed_raw_bytes_rejected": true,
+      "current_download_receipt_sha256": "d228ad06491da96fc089ced3d999733abbbec04cc840604373dd2e6e17c3b177"
+    }
+  ],
+  "checks": {
+    "all_other_artifact_records_and_top_level_lock_records_unchanged": true,
+    "source_ids_urls_and_licenses_unchanged": true,
+    "full_previous_artifact_records_exact": true,
+    "original_pin_history_entries_preserved": true,
+    "superseded_selected_hashes_added_to_existing_pin_history": true,
+    "all_existing_CRC_history_facts_algorithms_and_limits_unchanged": true,
+    "unrelated_CRC_unicode_escaping_churn_removed": true,
+    "main_and_candidate_content_modified_by_reviewer": false
+  },
+  "resolved_findings": [
+    {
+      "finding": "Intermediate candidate omitted the newly superseded HTML hashes from the existing distribution guard, because it does not follow previous_snapshot_ref.",
+      "demonstration": "Both actual reconstructed old HTML files were rejected under original lock but accepted when renamed under intermediate refresh.",
+      "resolution": "Final pin_history retains both old selected identities. Both actual old and current HTML files are now rejected when renamed."
+    },
+    {
+      "finding": "Initial CRC file had unrelated escaped-Unicode formatting churn.",
+      "resolution": "Final candidate preserves original ASCII escaping."
+    },
+    {
+      "finding": "Initial note said independent review pending.",
+      "resolution": "Final neutral status accurately records full-byte inverse and unchanged listing verification."
+    }
+  ],
+  "historical_disclosure": "Old HTML responses were reconstructed by the exact inverse, not downloaded as historical snapshots. Full inverse SHA-256 matches the old canonical locks. Current responses and acquisition receipts were inspected locally; reviewer did not independently re-download them.",
+  "integration_requirement": "Populate docs/a030-source-refresh-review.json with this receipt; compose A030 artifact changes with the separately accepted L012 artifact changes without replacing either source lock wholesale, then regenerate/check derived provenance views and current acquisition.",
+  "related_L012_supplement": {
+    "path": "/workspace/shared/cw32-l012-en-source-migration-20261009/pin-history-independent-review.json",
+    "sha256": "4c5d3a4382fa02bfc476f7dfc7b811b47f1df367e100dfe1957c24c8b544b75c",
+    "accepted_patch_sha256": "5fcd61ba39ca860f6ebd96745a9076b79a3aabd9fef8cbd95394f272ff4cb4fb"
+  },
+  "not_run": [
+    "Cargo, cleanup, build, HAL or hardware tests",
+    "Current network download revalidation",
+    "Full combined provenance generation or GitHub CI",
+    "Main integration"
+  ]
+}
