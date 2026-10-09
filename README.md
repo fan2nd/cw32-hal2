@@ -47,7 +47,7 @@ Leaf Rust modules use `<module>.rs`; directories with `mod.rs` are retained only
 when they group real sibling files or submodules. The PAC generator emits the
 same layout.
 Custom cfg predicates name concrete chips, peripheral versions or capabilities;
-there are no generic HAL-prefixed cfg labels. Structural validators run in CI.
+there are no generic HAL-prefixed cfg labels. Run structural validators locally with `./d lint`.
 
 ## Build
 

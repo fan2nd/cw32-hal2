@@ -30,7 +30,7 @@ reader in addition to SPI1 bus operations.
 HAL host/unit/integration tests, register models, synthetic compile-contract and
 link-fixture engines were deleted at the user's request. They have not been
 moved or replaced. Data, PAC, generator, package-route and source-provenance
-checks remain under `./d test`, `./d audit-current` and `./d check`; they are separate from HAL CI. See [validation scope](../docs/validation-scope.md).
+checks remain under `./d test`, `./d audit-current` and `./d check`; they are separate from local HAL build checks. See [validation scope](../docs/validation-scope.md).
 
 For input-frozen records, use:
 
@@ -41,7 +41,7 @@ python3 ci/run-verified.py --scope hal-matrix \
 
 The runner records command, log, exit status and before/after source hashes. The
 `hal-matrix` scope covers HAL/PAC source, metadata, reviewed pinout inputs consumed by the HAL build
-script, Cargo files, CI scripts, structural validator and real examples. All older verification reports describe their dated historical
+script, Cargo files, local build scripts, structural validator and real examples. All older verification reports describe their dated historical
 source snapshots, including tests since deleted. See
 `docs/hal-production-layout.md` for the migration and its verification scope.
 
