@@ -1,0 +1,1297 @@
+{
+  "schema_version": 1,
+  "date_utc": "2026-10-08",
+  "status": "Own-manual image-verified corrections; no MMIO/hardware execution",
+  "scope": "Only six-family COMPEN.FREQ removal, F020 TAMPDATE/TAMPTIME RO, and L010/L011 DATE.DAY/MONTH width corrections. Alarm semantics and all HAL runtime unchanged.",
+  "corrections": [
+    {
+      "family": "CW32F020",
+      "canonical": "rtc_cw32f020_v1.yaml",
+      "manual": {
+        "file": "CW32F020_UserManual_CN_V1.4.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+        "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+        "section": "12.5.5",
+        "pdf_page": 187,
+        "printed_page": 186
+      },
+      "source_svd": {
+        "path": "sources/vendor/CW32F020.svd",
+        "sha256": "e2e0bd198e6c39aa0807ad10080a26b9bccc4a4718eea5dd0d54a13630101f98",
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip"
+      },
+      "removed_field": {
+        "name": "FREQ",
+        "bit_offset": 16,
+        "bit_size": 4
+      },
+      "access_changes": [
+        {
+          "register": "TAMPDATE",
+          "section": "12.5.10",
+          "pdf_page": 189,
+          "printed_page": 188,
+          "byte_offset": 36
+        },
+        {
+          "register": "TAMPTIME",
+          "section": "12.5.11",
+          "pdf_page": 190,
+          "printed_page": 189,
+          "byte_offset": 40
+        }
+      ],
+      "unaffected_input_before_sha256": "402374ba97d13e7572be7f8657c2abbe1c82898ba7415e02cfc7c6aa63dde8c7",
+      "unaffected_input_after_sha256": "402374ba97d13e7572be7f8657c2abbe1c82898ba7415e02cfc7c6aa63dde8c7"
+    },
+    {
+      "family": "CW32L031",
+      "canonical": "rtc_cw32l031_v1.yaml",
+      "manual": {
+        "file": "CW32L031_UserManual_CN_V1.6.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+        "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+        "section": "12.5.5",
+        "pdf_page": 182,
+        "printed_page": 181
+      },
+      "source_svd": {
+        "path": "sources/vendor/CW32L031.svd",
+        "sha256": "f8044dc562825ce49a32f7cfa19df1b09e0f60daebe61e4c91c7e973670be815",
+        "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip"
+      },
+      "removed_field": {
+        "name": "FREQ",
+        "bit_offset": 16,
+        "bit_size": 4
+      },
+      "access_changes": [],
+      "unaffected_input_before_sha256": "3a279e2ad60b8f2e05b3fb30d29153afbb20843303184838fb60d8568729556d",
+      "unaffected_input_after_sha256": "3a279e2ad60b8f2e05b3fb30d29153afbb20843303184838fb60d8568729556d"
+    },
+    {
+      "family": "CW32L052",
+      "canonical": "rtc_cw32l052_v1.yaml",
+      "manual": {
+        "file": "CW32L052_UserManual_CN_V1.5.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+        "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+        "section": "12.5.5",
+        "pdf_page": 195,
+        "printed_page": 194
+      },
+      "source_svd": {
+        "path": "sources/vendor/CW32L052.svd",
+        "sha256": "78920e75111aa9845d9f66a2f305f96ec5577cde8c52543f0fa1d708e53867c7",
+        "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip"
+      },
+      "removed_field": {
+        "name": "FREQ",
+        "bit_offset": 16,
+        "bit_size": 4
+      },
+      "access_changes": [],
+      "unaffected_input_before_sha256": "ce6bb067ce9cccf1d3e51e0ef008f72c8d870cac73282842e33001f151258d5a",
+      "unaffected_input_after_sha256": "ce6bb067ce9cccf1d3e51e0ef008f72c8d870cac73282842e33001f151258d5a"
+    },
+    {
+      "family": "CW32L083",
+      "canonical": "rtc_cw32l031_v1.yaml",
+      "manual": {
+        "file": "CW32L083_UserManual_CN_V2.0.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+        "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+        "section": "12.5.5",
+        "pdf_page": 207,
+        "printed_page": 206
+      },
+      "source_svd": {
+        "path": "sources/vendor/CW32L083.svd",
+        "sha256": "ddc840e2c52840ca3687fb78edeffff8ef7a41d6acd33cba32f44ec1b606a334",
+        "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip"
+      },
+      "removed_field": {
+        "name": "FREQ",
+        "bit_offset": 16,
+        "bit_size": 4
+      },
+      "access_changes": [],
+      "unaffected_input_before_sha256": "02a3d2ad5d496df4c293672adde52b5e92312ef421fb5e5fcbe1a5cff647968d",
+      "unaffected_input_after_sha256": "02a3d2ad5d496df4c293672adde52b5e92312ef421fb5e5fcbe1a5cff647968d"
+    },
+    {
+      "family": "CW32R031",
+      "canonical": "rtc_cw32l031_v1.yaml",
+      "manual": {
+        "file": "CW32R031_UserManual_CN_V1.3.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+        "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+        "section": "12.5.5",
+        "pdf_page": 184,
+        "printed_page": 183
+      },
+      "source_svd": {
+        "path": "sources/vendor/CW32R031.svd",
+        "sha256": "0d9273507521d7f63e7614e9ddd445a315ea3206689c86fad9f45b60a44e656a",
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip"
+      },
+      "removed_field": {
+        "name": "FREQ",
+        "bit_offset": 16,
+        "bit_size": 4
+      },
+      "access_changes": [],
+      "unaffected_input_before_sha256": "8470dd5aedd2445a42d90848322de30f52b5c3e87f2dacb26342ea04370b7b2d",
+      "unaffected_input_after_sha256": "8470dd5aedd2445a42d90848322de30f52b5c3e87f2dacb26342ea04370b7b2d"
+    },
+    {
+      "family": "CW32W031",
+      "canonical": "rtc_cw32l031_v1.yaml",
+      "manual": {
+        "file": "CW32W031_UserManual_CN_V1.4.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+        "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+        "section": "12.5.5",
+        "pdf_page": 183,
+        "printed_page": 182
+      },
+      "source_svd": {
+        "path": "sources/vendor/CW32W031.svd",
+        "sha256": "7b3f7cd1e1e9b311f8bf6da711b9af0a144040883a231dfcc93b9cd2bafe84d0",
+        "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip"
+      },
+      "removed_field": {
+        "name": "FREQ",
+        "bit_offset": 16,
+        "bit_size": 4
+      },
+      "access_changes": [],
+      "unaffected_input_before_sha256": "ba5af30ff74147220cf2a1f785e198a2ae1adeeed8f348b2e13a88b84bd06666",
+      "unaffected_input_after_sha256": "ba5af30ff74147220cf2a1f785e198a2ae1adeeed8f348b2e13a88b84bd06666"
+    },
+    {
+      "family": "CW32L010",
+      "canonical": "rtc_cw32l010_v1.yaml",
+      "manual": {
+        "file": "CW32L010_UserManual_CN_V1.2.pdf",
+        "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+        "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+        "section": "10.5.6",
+        "pdf_page": 154,
+        "printed_page": 153
+      },
+      "source_svd": {
+        "path": "sources/vendor/CW32L010.svd",
+        "sha256": "733cc8ff3e186a128342134aee71db1d155e5e2b95ab1c8c8a77054391cb8c66",
+        "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+      },
+      "removed_field": null,
+      "access_changes": [],
+      "width_changes": [
+        {
+          "field": "DAY",
+          "expected_bit_offset": 0,
+          "expected_bit_size": 8,
+          "bit_size": 6
+        },
+        {
+          "field": "MONTH",
+          "expected_bit_offset": 8,
+          "expected_bit_size": 8,
+          "bit_size": 5
+        }
+      ],
+      "unaffected_input_before_sha256": "b31895fff3b89cd82d50099261f8fcbe908736421f5bf2965477fbafb8d3bcdd",
+      "unaffected_input_after_sha256": "b31895fff3b89cd82d50099261f8fcbe908736421f5bf2965477fbafb8d3bcdd"
+    },
+    {
+      "family": "CW32L011",
+      "canonical": "rtc_cw32l011_v1.yaml",
+      "manual": {
+        "file": "CW32L011_UserManual_CN_V1.1.pdf",
+        "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+        "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+        "section": "10.5.6",
+        "pdf_page": 154,
+        "printed_page": 153
+      },
+      "source_svd": {
+        "path": "sources/vendor/CW32L011.svd",
+        "sha256": "b814843fcea7ed61b11f49ba3a8c00289b98c4dfb36b051ec87671446013ca47",
+        "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+      },
+      "removed_field": null,
+      "access_changes": [],
+      "width_changes": [
+        {
+          "field": "DAY",
+          "expected_bit_offset": 0,
+          "expected_bit_size": 8,
+          "bit_size": 6
+        },
+        {
+          "field": "MONTH",
+          "expected_bit_offset": 8,
+          "expected_bit_size": 8,
+          "bit_size": 5
+        }
+      ],
+      "unaffected_input_before_sha256": "c6d5a4cce44c28a17cb2d34b4f0a90685e0cd39fbb104b2eb07c7a210d9215f1",
+      "unaffected_input_after_sha256": "c6d5a4cce44c28a17cb2d34b4f0a90685e0cd39fbb104b2eb07c7a210d9215f1"
+    }
+  ],
+  "canonical_changes": [
+    {
+      "canonical": "rtc_cw32f020_v1.yaml",
+      "before_sha256": "0dec8ea1f3322f69b2c4e9d6ee3ca704fbda49f5c64c4e5302faab04749cd3cd",
+      "after_sha256": "f97b700d55bec60f222be7356b8abbacecd041871d595f1950fe2b545d250c89",
+      "before_ir_sha256": "8ef88e6f1a009fb99ea37619395f7f76da7cc3e823ee6c243185d6a63a012f33",
+      "after_ir_sha256": "7c5cde846b071fa9fc5159214f9e91e6afc7705e1fc3f4da09f878a4fea9259c",
+      "removed_field": {
+        "name": "FREQ",
+        "description": "desc FREQ.",
+        "bit_offset": 16,
+        "bit_size": 4
+      },
+      "access_changes": [
+        "TAMPDATE",
+        "TAMPTIME"
+      ]
+    },
+    {
+      "canonical": "rtc_cw32l031_v1.yaml",
+      "before_sha256": "eb4f37893513a755ce2a9a358a001c274eae71de9fc197eedc89e0b1bc1e6ca9",
+      "after_sha256": "2b430848c246473c4d6b1b91a7e6c2b0dc3703fc12f18893fc3141505a321a10",
+      "before_ir_sha256": "4cd57781b4bf981d5234a2a3acc5a20892de9d694c632457c3d6fb2c3b8a6fc3",
+      "after_ir_sha256": "1902a8de4806957a17a00b317cb903678f49c9718cb736477f4c3834056af4ae",
+      "removed_field": {
+        "name": "FREQ",
+        "description": "desc FREQ.",
+        "bit_offset": 16,
+        "bit_size": 4
+      },
+      "access_changes": []
+    },
+    {
+      "canonical": "rtc_cw32l052_v1.yaml",
+      "before_sha256": "7df69f32d064a8dee0a1a0cc32c0536ce3d726bf67ceb716c4925f0451dd146b",
+      "after_sha256": "77b8b564174514c5edff151467e50f0465902190a46109a0afdc9aa4c36abd07",
+      "before_ir_sha256": "cf6b28fa13ada6908eb41a0c820e58b9262d562ca5d9fb1928344126ca735780",
+      "after_ir_sha256": "81224aca2b0d5c73292f7f2f504d0811e47ae318861d9716ee621bd64c1a7e5f",
+      "removed_field": {
+        "name": "FREQ",
+        "description": "desc FREQ.",
+        "bit_offset": 16,
+        "bit_size": 4
+      },
+      "access_changes": []
+    },
+    {
+      "canonical": "rtc_cw32l010_v1.yaml",
+      "before_sha256": "1400203c57cc837686646c751abb6b76649c5a9d85eca1b28f3e390ec1be066e",
+      "after_sha256": "9f8f92426feae9305d395710f337c34e3f24c954359f3a4a0a72f1d353f425f0",
+      "before_ir_sha256": "daa1cfd46b52062cda50140442cb438a9b61d45ed56edced475999a01de6051d",
+      "after_ir_sha256": "ab739e7448b7235b58d89f1708e170ebf7b95e2098843a720c153265cc13e215",
+      "removed_field": null,
+      "access_changes": [],
+      "width_changes": [
+        {
+          "field": "DAY",
+          "expected_bit_offset": 0,
+          "expected_bit_size": 8,
+          "bit_size": 6
+        },
+        {
+          "field": "MONTH",
+          "expected_bit_offset": 8,
+          "expected_bit_size": 8,
+          "bit_size": 5
+        }
+      ]
+    },
+    {
+      "canonical": "rtc_cw32l011_v1.yaml",
+      "before_sha256": "0959f6010823232f72d9866c3a2718680e43131f1768fa592c89f0f87af188e9",
+      "after_sha256": "acc74ad209c8147e6062fd65db60dfdd71dac63fc196c7216d8b103fe714c17d",
+      "before_ir_sha256": "76c6c1066fe2c3e27365004f71b9f227471587bb03c19bc23c3ffbecc4f75202",
+      "after_ir_sha256": "de77c4251b3616949a20853f4cf469ed98f27c4be7ec9a76be63b5a70ce80921",
+      "removed_field": null,
+      "access_changes": [],
+      "width_changes": [
+        {
+          "field": "DAY",
+          "expected_bit_offset": 0,
+          "expected_bit_size": 8,
+          "bit_size": 6
+        },
+        {
+          "field": "MONTH",
+          "expected_bit_offset": 8,
+          "expected_bit_size": 8,
+          "bit_size": 5
+        }
+      ]
+    }
+  ],
+  "non_rtc_baseline": {
+    "adc_cw32f002_v1.yaml": "dc0e05cf58bf22c4a487c1d2d762399b513bc4e2f61f803c58fd23481aafa255",
+    "adc_cw32f003_v1.yaml": "92e6465ff7b556cea5a397886f25345560e3a4a37fae74bf20f5be1278c87c3d",
+    "adc_cw32f020_v1.yaml": "3efb2aba661d699c2214b49826d7efe03007b9aeeeae8a4fae25c030a6671aa1",
+    "adc_cw32l010_v1.yaml": "4a8d3a26f156190d6232132b4000dd7f778e3ede3297bee802336f1c1db8eb91",
+    "adc_cw32l011_v1.yaml": "2ce3ef03275283f7a7026a67d4c43d0c9284363cec6d4def6302e4dec1964d13",
+    "adc_cw32l012_v1.yaml": "bc7daece74a02985e2309da3c1c10cf354bf1105fbe9651de386ad1b47ff19fc",
+    "adc_cw32l031_v1.yaml": "13b58531d620facf12ac61b0ac49e4d85032bdac65ee4f61fb2e8893a20d3625",
+    "adc_cw32l052_v1.yaml": "22d1b54829fca781f1dfab43a42e9b6832a58f85e40e014ad490bd4ed777b208",
+    "adc_cw32l083_v1.yaml": "60918e7227febd741dc4e38cb31e792516744a144329c0068b9f6c3c7aae437d",
+    "adc_v1.yaml": "5702c9a9318f377c8e6d3568dc64e70b673bd4dbd4229d7cb41114864a10b949",
+    "aes_cw32l083_v1.yaml": "04645b9026be0bf910311ab2c73159279b7b6cd921215c2f1d6e05fa99b2ab80",
+    "atim_cw32f003_v1.yaml": "40a99633afc5fb2d3a9d46b3a80a7e90c2e18df46f2f3a6f18c549bfdce4dab1",
+    "atim_cw32l010_v1.yaml": "c426e7eeaba6cc98f60123f6833896e30bfe1c60c23444fe38f8379b02c7bada",
+    "atim_cw32l012_v1.yaml": "d763a052b45fb532b776f740d42154031c82b66eb7aa5288a65d809926eb6e9d",
+    "atim_cw32l052_v1.yaml": "1932ea2a039d945338bd57c295702c87a382762a1d1a701b605e9afddcbed400",
+    "atim_v1.yaml": "c68086ae7e34085b8589e2d0ec1af67becead7b7955c8160a010749de2d32b57",
+    "autotrim_cw32l052_v1.yaml": "f01345fa29c3b293a5670d568b45051162844b8c48d9f8fe03bfa24919550963",
+    "autotrim_cw32l083_v1.yaml": "6cb17289b145f54672a2eed6e9401ef44dc9bfd85eb60254704eafc02f18554a",
+    "awt_cw32l031_v1.yaml": "cd3929ae97d0d493919a262b9aa3f57474f94aefb781ee9233cc26558f74d5b7",
+    "awt_v1.yaml": "75c2222b746a4ec6079c54053c5a25254822ab13e59157d8387e5e6c3d98ee4c",
+    "bgr_cw32l012_v1.yaml": "77d597725eac504e41a0f65beb33dd53411791cc2830cbc3bccd8353936a8379",
+    "btim_cw32f002_v1.yaml": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+    "btim_cw32l010_v1.yaml": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+    "btim_cw32l012_v1.yaml": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+    "btim_cw32l031_v1.yaml": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+    "btim_cw32l052_v1.yaml": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+    "btim_v1.yaml": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+    "cordic_cw32l012_v1.yaml": "9d14785f1b741f9f2469013c64ad2ef5147a60eebb8965d3434adb22a007dc6c",
+    "crc_cw32f002_v1.yaml": "c93b198c1e6ea99a4ed7db2b1154928c456c37327a6b100ba8029fe9f50e2c4c",
+    "crc_cw32f020_v1.yaml": "db1285c2884c7f6ef80da26dba628b01c08a0ae8a8ec7f0af84255a0ae1b0d8e",
+    "crc_cw32l010_v1.yaml": "c94327ec48be8b1a0aec4d954302c7b05e28e2de6d517b02543782a8c4d56c52",
+    "crc_cw32l031_v1.yaml": "6f27399f0e1c16bdb46a600be441a5758f35f99a2eb660c96af5de1d18a4016c",
+    "crc_cw32l052_v1.yaml": "84359af36b2d39977087c9d73cfb2bb22abf4e6a61681243595b2943d9ecb15f",
+    "crc_v1.yaml": "9e8462c17eb31e745a1b1a36912ed34f35d544d900b81d50ed70168bb37bc80c",
+    "dac_cw32l012_v1.yaml": "049c4ab805ad8838d7c5d2f3d3c1e8390cc7a7b3993262c1be5a1ac070a216b4",
+    "dma_cw32f020_v1.yaml": "255308c89ee56fcd893821a289d81bd73a95d082230902f772c32a1c9bace204",
+    "dma_cw32l012_v1.yaml": "e4039fc4a523c25a070848611e2ad1518d680d75add5d69ff6615415e0b20193",
+    "dma_cw32l031_v1.yaml": "9e06241626d430459a4f9a43cb9971dd1bca6041952d8f2b4e63b120c0e5653e",
+    "dma_v1.yaml": "b3e9cac375f108175d1357d46d76de0069a1061aa1c4923f77044d085c5331de",
+    "dmachannel_cw32l012_v1.yaml": "f867f1b3f66921075be362a2390099b273dcb0145ec4232ca98e317a167061cd",
+    "dmachannel_v1.yaml": "2a777a2f863509ebd1084573e47c10af587321d9305805d190f373bc4e5ea230",
+    "eau_cw32l012_v1.yaml": "ed91c61e64d5ebb6fba2963ed25b5e69f5f938aed9e8b2ca583b45f017263c9e",
+    "flash_cw32f002_v1.yaml": "bdf3e0cba598bb6fb7e8e135eedf3a3e49d3ae84512399f695600bc96c800cfc",
+    "flash_cw32f003_v1.yaml": "cb02b82ffc138c5b9f1e491892dbe8cd3199c98ed528d0109f33b9e878339ca2",
+    "flash_cw32f020_v1.yaml": "89978a07c5789ba3acc57804e6ab20b116fadea57fdee2cdc397d6510d6c670c",
+    "flash_cw32l010_v1.yaml": "f0a0f4e5645fbf0a8ffca576629083e5fd79669ef20c64ac5762e5a691df1ecb",
+    "flash_cw32l011_v1.yaml": "5568d2022c4e20165ba6b9d6b7150a64778e7cb5ebfb0f19970107f59b4af14d",
+    "flash_cw32l012_v1.yaml": "31d5fae14b5374f7ad341bd4127cd507892a6ea9a811fd3f853f4b26634925cd",
+    "flash_cw32l031_v1.yaml": "135dfc71a598d84588e515b05d5fc99009474f1e2d001d0d0b2f9a24ef755216",
+    "flash_cw32l083_v1.yaml": "d742e8541307a982089a043499a35efda0c5f1226d3404cf140962c519008c90",
+    "flash_v1.yaml": "b334aecf5c8baf5b67bacbc87fbe3121f1aec439209e8e5b898aad4913807620",
+    "gpio_cw32f002_v1.yaml": "47876c36fbd0ba08b610c8fdf38d493677845ee6e78cf432e7fedb3141f5b717",
+    "gpio_cw32l010_v1.yaml": "cbdf635ff33347883738ec55edd9b7670c0d8a5e226a955c8bee516c1f13ed07",
+    "gpio_cw32l011_v1.yaml": "fec99d6a65569a47a512fbf923d2c506ddd782185779a8ae5cd2a2e22a45cbdc",
+    "gpio_cw32l012_v1.yaml": "03448a565a65ad403674498355593bbc01a93edc00b33a6d48af925bf5e342fc",
+    "gpio_cw32l031_v1.yaml": "6559b0573421edda0727cd9acb1c9cbc477b4cb1aaef84a8a68f23bdf74975fe",
+    "gpio_cw32l052_v1.yaml": "5bdbf8e68a951a1c546affff68ecb45e9631929a828bee5900a1b1c286f081b6",
+    "gpio_cw32l083_v1.yaml": "97c9fe96431ce22b44fab9ff0919b4d28faee24eba7c5cf92146ce87510656ba",
+    "gpio_v1.yaml": "4c361c7cda51301e0422a40c9b29d87cc04bcb0442e7c3590eb9af0ed4dca5e2",
+    "gpiob_cw32l010_v1.yaml": "bf2baffd2391269b3cb9d090d53f9595c7705f4035d5186d29646e8a231edebb",
+    "gpioc_cw32f002_v1.yaml": "4887e834f87467dd2a3e7960b472b4e0bdc218da70d635110742ae90e6c10c49",
+    "gpioc_v1.yaml": "330a3dba5b02d3c4e634ec0ecfdd593e07ce3e606a1b6d100a9ab13ef10b83b2",
+    "gpiof_v1.yaml": "f4ccbb5dbb49319652d6bcb3acf5e47410d6c7ce9057f4ded03262ca404a87a7",
+    "gtim_cw32f002_v1.yaml": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+    "gtim_cw32l010_v1.yaml": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+    "gtim_cw32l012_v1.yaml": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+    "gtim_cw32l031_v1.yaml": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+    "gtim_cw32l052_v1.yaml": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+    "gtim_v1.yaml": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+    "halltim_cw32l012_v1.yaml": "9c27d32c3f2dbb75241e2ae11daecf0c97c0bf385e50feef7bb2dfc14ae440c2",
+    "i2c_cw32f002_v1.yaml": "5ace990370da7e11e6a465cb5a9a70f86582eb65d2bd2ee8473c732bb36c0ea3",
+    "i2c_cw32l010_v1.yaml": "946946cf0d126130bb98bc06dbbc7e094e9b156446f98fc89cbcfd8078314876",
+    "i2c_cw32l011_v1.yaml": "8844924226a2e7eac2ee39982cc457d66b3b6cc935ec6f4a8b4d742bb637a36a",
+    "i2c_cw32l012_v1.yaml": "951245ddf91094f76a365e01037b57022d0f10675d55c2acba972e692cda96a3",
+    "i2c_cw32l031_v1.yaml": "b610b36503df01db1c7c0685282e974e1295691769b31113e9f4117f8ced3e5a",
+    "i2c_v1.yaml": "33c4062e1a09aa74b5c68f5e5c4efb0046941a4b950650a74e925fb6451c551f",
+    "ir_cw32f003_v1.yaml": "f6e4c589fe31c5e59c0bcc2cf93d50117e023502cac3cd9f570318f9d7b6df94",
+    "irmod_cw32l010_v1.yaml": "16bc64190f34e08a03cfb8b9a703868b5e0113ed5e42fe30f627a039af1ed6ae",
+    "iwdt_cw32l031_v1.yaml": "e5bca6484f81d4525debef9b18e875237ad182fe2bdf0c4153f0b193b3f4f018",
+    "iwdt_v1.yaml": "8d0e47128146ab119c48077d9ffdfc8d59c3676db7d16aca38a0c82107a414b8",
+    "lcd_cw32l052_v1.yaml": "2423efe9e77b44288189bbf3bd45c2d2534869fa2f625fb1c00534d3978a19b7",
+    "lcd_cw32l083_v1.yaml": "06cefaf6e1209f90f900ae0e96d43de22fc14965fbd8e8e1c9bd6fbe9ed4786e",
+    "lptim_cw32l010_v1.yaml": "37225b20d2a17bdad35eff7c5c2fb9bf0d7b918a6fd230c69f0fdb19fa4f9fca",
+    "lptim_cw32l012_v1.yaml": "7f39bc3296600552afa1e1932532950c78619a646893a7e8070962e7c77a68cb",
+    "lptim_cw32l083_v1.yaml": "2fb799543eea3942337b4a4a55382b50e132b30bac2d8111b262970805bac2c0",
+    "lvd_cw32l010_v1.yaml": "3ace69edc40982adf7c440189f77db83492852eb0271b222f2b12ec99760f04d",
+    "lvd_cw32l031_v1.yaml": "97cb4bb5387ba8ea92243fa4e2632cf8e8c64a0d047761f0b423dd210808293b",
+    "lvd_v1.yaml": "344c6dc2151a61d0180a4120cc29fcf2d80308332210ffbdaa987525499aa46e",
+    "opa_cw32l012_v1.yaml": "cec98b0368b510c06f7711fb7184dc4ddffd3b79a10687ee9e7ece1e2ea592bd",
+    "ram_cw32l010_v1.yaml": "7b09f6816cfbcda52750915337eba129a92eb30fcf467c7f6b54aa0383948956",
+    "ram_cw32l011_v1.yaml": "56a2de91c7e9ae936fe74b26ca2cab8c3ab85b88ebf35d706622ae7c6a58c5f4",
+    "ram_cw32l031_v1.yaml": "e471ca6178f86379924e19bec0436dffecd8e6c129b776e5d61013085bd92783",
+    "ram_cw32l083_v1.yaml": "1bafcd92af4743021f37005eb3cab88d6a947440e24767567d2acd032b9e691a",
+    "ram_v1.yaml": "74e086356a90240ee35b9f0ebd9d1cc69d64b53cf56f381249f55fd948854ac3",
+    "spi_cw32f002_v1.yaml": "4c6dfe095f7729b08f35ab2a3bc32737e6fb35925ea3e32c4c975649c3ebfebf",
+    "spi_cw32l010_v1.yaml": "029b47c34ec37df01e2a825035904b96431bb8bca6b2aa1cd0cfd7c8697059c5",
+    "spi_cw32l012_v1.yaml": "8fe6f0eb586c68a1e75f2876d9fdda2c8831f3e139b54bfb97e62a979fd94869",
+    "spi_cw32l031_v1.yaml": "a621dc41f0042d58890eaa4cffb363256a85667267e89ac09ed9a57109798ba2",
+    "spi_v1.yaml": "ccf79c97777c3fa89c71726fcd7cd598b1936f62e00d1b416348f2b8d6f630f2",
+    "sysctrl_cw32f002_v1.yaml": "601031de753c46f5b9fe850771030e558a2b6c1294ea2196ea1d4bcf46b639b2",
+    "sysctrl_cw32f003_v1.yaml": "346de17500c1e16bca275d5b8b6535f78b2d3c3c110307c0a8980c2a84b1c7ad",
+    "sysctrl_cw32f020_v1.yaml": "81788c085160be86e5ef46f28e5d4898c3d13367136947084250790e6e674fb3",
+    "sysctrl_cw32l010_v1.yaml": "a362263b3c6abbc7c47ec231dd3c3bdfbfe8c432fcbfcba93a9de9c297863ee9",
+    "sysctrl_cw32l011_v1.yaml": "8911717d51c3290b099ea715a66f0fe913d4c6673fb3dad92af2ff8a307f3702",
+    "sysctrl_cw32l012_v1.yaml": "51583e3bfb2a5c47d616e81b7822af931ac268033c00364c565454a9f20befb5",
+    "sysctrl_cw32l031_v1.yaml": "4dceccdeae28446c485fd6907c393ddc51fc6310562c04f758881aa2293740d5",
+    "sysctrl_cw32l052_v1.yaml": "9e7e6042bc1ae96eaffa9dc57102d09b27ff4fae4e3bdaecae3922373751728f",
+    "sysctrl_cw32l083_v1.yaml": "339963b93078b3a466c084169cf6b863604350d4b399be98485eae96127d1f33",
+    "sysctrl_v1.yaml": "645d3511b0002cc29950a38c71385ab3ad2a67271bbbb2728cd11f3c957ce5de",
+    "trng_cw32l083_v1.yaml": "b79009698a550a4f54a953e01fee0186a908f04b023142ba9e3570d571e50889",
+    "uart_cw32f002_v1.yaml": "aae7a02bd27a74fbd5f9d31d04647eee3ef968c4eaf8ec41e40242f8f66b18d5",
+    "uart_cw32l010_v1.yaml": "c35e628ee0e0e7e634a833c79741b4700ee241650e9a73abbde0334eff255c37",
+    "uart_cw32l012_v1.yaml": "5d92c5384f8cc042846ef5aef6460ffed0a392238edfeb58b1c036a08172da9f",
+    "uart_cw32l031_v1.yaml": "2d8c4da52d2d6c18ddca55bd49382bc31ba6b6f42408a62189b08d98283d9d58",
+    "uart_cw32l052_v1.yaml": "b0d4156ee202e5af824fcd6ea8deb495af1f0504e2c5e10c65037083e85c3b96",
+    "uart_cw32l083_v1.yaml": "19d7b4345c59650f4c991a402dd1f7bb15d003a6c9156abf52495047eae4e83e",
+    "uart_v1.yaml": "9621d85eec53e68741d64de1ad3ee422ceea6fd35ba40ba152c45dcf03a47c6b",
+    "vc2ref_cw32l012_v1.yaml": "022c0465efec5daf8ec4d7742c7cb37873da4396f18db14b6e168f9c92225ad2",
+    "vc_cw32f002_v1.yaml": "305c1709593645bbe860703f4b2314963c50308dd1a87b3a18218ea797554e01",
+    "vc_cw32l010_v1.yaml": "2cbe2c4628cb9072a49bb8a5f573176751041f1b081b259801e7843105103d12",
+    "vc_cw32l011_v1.yaml": "8f29fc451153e9dafe1e390461e3a5c096031408256e5dbbec64af22a321155e",
+    "vc_cw32l012_v1.yaml": "3ac11fe68e87db57d7f84574ee3384b08205fa236c774e875f682c1d69cd966f",
+    "vc_cw32l031_v1.yaml": "8658140f3cfaa2917447348bc638b790e905cd4f1342f7de134bb11d271cb8b4",
+    "vc_v1.yaml": "37e16b8d3c3b78b9d50910ddfb25bb6f9751e97c9f6d8baa8e0fc819f5d5e6da",
+    "vcdiv_cw32l010_v1.yaml": "d55cc5775fa8dd3b9218eb237a17dece60220591267ae1c2c2df815e761faf64",
+    "wwdt_cw32l012_v1.yaml": "1b308f8cc1ac0feda2fd76c540a54ff6cc44110b102cd3350ace132fd76c188b",
+    "wwdt_cw32l031_v1.yaml": "1bc6a2cb6dff05476b6bca75f9666c7762cf32f79d079a5c00fd8205d468c83e",
+    "wwdt_v1.yaml": "e38f88c984dd5d84c0a7d311eda24baffe7b71fb7dede24517cb1d4a5b081ede"
+  },
+  "generated_non_rtc_baseline": {
+    "adc_cw32f002_v1.json": "dc0e05cf58bf22c4a487c1d2d762399b513bc4e2f61f803c58fd23481aafa255",
+    "adc_cw32f003_v1.json": "92e6465ff7b556cea5a397886f25345560e3a4a37fae74bf20f5be1278c87c3d",
+    "adc_cw32f020_v1.json": "3efb2aba661d699c2214b49826d7efe03007b9aeeeae8a4fae25c030a6671aa1",
+    "adc_cw32l010_v1.json": "4a8d3a26f156190d6232132b4000dd7f778e3ede3297bee802336f1c1db8eb91",
+    "adc_cw32l011_v1.json": "2ce3ef03275283f7a7026a67d4c43d0c9284363cec6d4def6302e4dec1964d13",
+    "adc_cw32l012_v1.json": "bc7daece74a02985e2309da3c1c10cf354bf1105fbe9651de386ad1b47ff19fc",
+    "adc_cw32l031_v1.json": "13b58531d620facf12ac61b0ac49e4d85032bdac65ee4f61fb2e8893a20d3625",
+    "adc_cw32l052_v1.json": "22d1b54829fca781f1dfab43a42e9b6832a58f85e40e014ad490bd4ed777b208",
+    "adc_cw32l083_v1.json": "60918e7227febd741dc4e38cb31e792516744a144329c0068b9f6c3c7aae437d",
+    "adc_v1.json": "5702c9a9318f377c8e6d3568dc64e70b673bd4dbd4229d7cb41114864a10b949",
+    "aes_cw32l083_v1.json": "04645b9026be0bf910311ab2c73159279b7b6cd921215c2f1d6e05fa99b2ab80",
+    "atim_cw32f003_v1.json": "40a99633afc5fb2d3a9d46b3a80a7e90c2e18df46f2f3a6f18c549bfdce4dab1",
+    "atim_cw32l010_v1.json": "c426e7eeaba6cc98f60123f6833896e30bfe1c60c23444fe38f8379b02c7bada",
+    "atim_cw32l012_v1.json": "d763a052b45fb532b776f740d42154031c82b66eb7aa5288a65d809926eb6e9d",
+    "atim_cw32l052_v1.json": "1932ea2a039d945338bd57c295702c87a382762a1d1a701b605e9afddcbed400",
+    "atim_v1.json": "c68086ae7e34085b8589e2d0ec1af67becead7b7955c8160a010749de2d32b57",
+    "autotrim_cw32l052_v1.json": "f01345fa29c3b293a5670d568b45051162844b8c48d9f8fe03bfa24919550963",
+    "autotrim_cw32l083_v1.json": "6cb17289b145f54672a2eed6e9401ef44dc9bfd85eb60254704eafc02f18554a",
+    "awt_cw32l031_v1.json": "cd3929ae97d0d493919a262b9aa3f57474f94aefb781ee9233cc26558f74d5b7",
+    "awt_v1.json": "75c2222b746a4ec6079c54053c5a25254822ab13e59157d8387e5e6c3d98ee4c",
+    "bgr_cw32l012_v1.json": "77d597725eac504e41a0f65beb33dd53411791cc2830cbc3bccd8353936a8379",
+    "btim_cw32f002_v1.json": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+    "btim_cw32l010_v1.json": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+    "btim_cw32l012_v1.json": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+    "btim_cw32l031_v1.json": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+    "btim_cw32l052_v1.json": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+    "btim_v1.json": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+    "cordic_cw32l012_v1.json": "9d14785f1b741f9f2469013c64ad2ef5147a60eebb8965d3434adb22a007dc6c",
+    "crc_cw32f002_v1.json": "c93b198c1e6ea99a4ed7db2b1154928c456c37327a6b100ba8029fe9f50e2c4c",
+    "crc_cw32f020_v1.json": "db1285c2884c7f6ef80da26dba628b01c08a0ae8a8ec7f0af84255a0ae1b0d8e",
+    "crc_cw32l010_v1.json": "c94327ec48be8b1a0aec4d954302c7b05e28e2de6d517b02543782a8c4d56c52",
+    "crc_cw32l031_v1.json": "6f27399f0e1c16bdb46a600be441a5758f35f99a2eb660c96af5de1d18a4016c",
+    "crc_cw32l052_v1.json": "84359af36b2d39977087c9d73cfb2bb22abf4e6a61681243595b2943d9ecb15f",
+    "crc_v1.json": "9e8462c17eb31e745a1b1a36912ed34f35d544d900b81d50ed70168bb37bc80c",
+    "dac_cw32l012_v1.json": "049c4ab805ad8838d7c5d2f3d3c1e8390cc7a7b3993262c1be5a1ac070a216b4",
+    "dma_cw32f020_v1.json": "255308c89ee56fcd893821a289d81bd73a95d082230902f772c32a1c9bace204",
+    "dma_cw32l012_v1.json": "e4039fc4a523c25a070848611e2ad1518d680d75add5d69ff6615415e0b20193",
+    "dma_cw32l031_v1.json": "9e06241626d430459a4f9a43cb9971dd1bca6041952d8f2b4e63b120c0e5653e",
+    "dma_v1.json": "b3e9cac375f108175d1357d46d76de0069a1061aa1c4923f77044d085c5331de",
+    "dmachannel_cw32l012_v1.json": "f867f1b3f66921075be362a2390099b273dcb0145ec4232ca98e317a167061cd",
+    "dmachannel_v1.json": "2a777a2f863509ebd1084573e47c10af587321d9305805d190f373bc4e5ea230",
+    "eau_cw32l012_v1.json": "ed91c61e64d5ebb6fba2963ed25b5e69f5f938aed9e8b2ca583b45f017263c9e",
+    "flash_cw32f002_v1.json": "bdf3e0cba598bb6fb7e8e135eedf3a3e49d3ae84512399f695600bc96c800cfc",
+    "flash_cw32f003_v1.json": "cb02b82ffc138c5b9f1e491892dbe8cd3199c98ed528d0109f33b9e878339ca2",
+    "flash_cw32f020_v1.json": "89978a07c5789ba3acc57804e6ab20b116fadea57fdee2cdc397d6510d6c670c",
+    "flash_cw32l010_v1.json": "f0a0f4e5645fbf0a8ffca576629083e5fd79669ef20c64ac5762e5a691df1ecb",
+    "flash_cw32l011_v1.json": "5568d2022c4e20165ba6b9d6b7150a64778e7cb5ebfb0f19970107f59b4af14d",
+    "flash_cw32l012_v1.json": "31d5fae14b5374f7ad341bd4127cd507892a6ea9a811fd3f853f4b26634925cd",
+    "flash_cw32l031_v1.json": "135dfc71a598d84588e515b05d5fc99009474f1e2d001d0d0b2f9a24ef755216",
+    "flash_cw32l083_v1.json": "d742e8541307a982089a043499a35efda0c5f1226d3404cf140962c519008c90",
+    "flash_v1.json": "b334aecf5c8baf5b67bacbc87fbe3121f1aec439209e8e5b898aad4913807620",
+    "gpio_cw32f002_v1.json": "47876c36fbd0ba08b610c8fdf38d493677845ee6e78cf432e7fedb3141f5b717",
+    "gpio_cw32l010_v1.json": "cbdf635ff33347883738ec55edd9b7670c0d8a5e226a955c8bee516c1f13ed07",
+    "gpio_cw32l011_v1.json": "fec99d6a65569a47a512fbf923d2c506ddd782185779a8ae5cd2a2e22a45cbdc",
+    "gpio_cw32l012_v1.json": "03448a565a65ad403674498355593bbc01a93edc00b33a6d48af925bf5e342fc",
+    "gpio_cw32l031_v1.json": "6559b0573421edda0727cd9acb1c9cbc477b4cb1aaef84a8a68f23bdf74975fe",
+    "gpio_cw32l052_v1.json": "5bdbf8e68a951a1c546affff68ecb45e9631929a828bee5900a1b1c286f081b6",
+    "gpio_cw32l083_v1.json": "97c9fe96431ce22b44fab9ff0919b4d28faee24eba7c5cf92146ce87510656ba",
+    "gpio_v1.json": "4c361c7cda51301e0422a40c9b29d87cc04bcb0442e7c3590eb9af0ed4dca5e2",
+    "gpiob_cw32l010_v1.json": "bf2baffd2391269b3cb9d090d53f9595c7705f4035d5186d29646e8a231edebb",
+    "gpioc_cw32f002_v1.json": "4887e834f87467dd2a3e7960b472b4e0bdc218da70d635110742ae90e6c10c49",
+    "gpioc_v1.json": "330a3dba5b02d3c4e634ec0ecfdd593e07ce3e606a1b6d100a9ab13ef10b83b2",
+    "gpiof_v1.json": "f4ccbb5dbb49319652d6bcb3acf5e47410d6c7ce9057f4ded03262ca404a87a7",
+    "gtim_cw32f002_v1.json": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+    "gtim_cw32l010_v1.json": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+    "gtim_cw32l012_v1.json": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+    "gtim_cw32l031_v1.json": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+    "gtim_cw32l052_v1.json": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+    "gtim_v1.json": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+    "halltim_cw32l012_v1.json": "9c27d32c3f2dbb75241e2ae11daecf0c97c0bf385e50feef7bb2dfc14ae440c2",
+    "i2c_cw32f002_v1.json": "5ace990370da7e11e6a465cb5a9a70f86582eb65d2bd2ee8473c732bb36c0ea3",
+    "i2c_cw32l010_v1.json": "946946cf0d126130bb98bc06dbbc7e094e9b156446f98fc89cbcfd8078314876",
+    "i2c_cw32l011_v1.json": "8844924226a2e7eac2ee39982cc457d66b3b6cc935ec6f4a8b4d742bb637a36a",
+    "i2c_cw32l012_v1.json": "951245ddf91094f76a365e01037b57022d0f10675d55c2acba972e692cda96a3",
+    "i2c_cw32l031_v1.json": "b610b36503df01db1c7c0685282e974e1295691769b31113e9f4117f8ced3e5a",
+    "i2c_v1.json": "33c4062e1a09aa74b5c68f5e5c4efb0046941a4b950650a74e925fb6451c551f",
+    "ir_cw32f003_v1.json": "f6e4c589fe31c5e59c0bcc2cf93d50117e023502cac3cd9f570318f9d7b6df94",
+    "irmod_cw32l010_v1.json": "16bc64190f34e08a03cfb8b9a703868b5e0113ed5e42fe30f627a039af1ed6ae",
+    "iwdt_cw32l031_v1.json": "e5bca6484f81d4525debef9b18e875237ad182fe2bdf0c4153f0b193b3f4f018",
+    "iwdt_v1.json": "8d0e47128146ab119c48077d9ffdfc8d59c3676db7d16aca38a0c82107a414b8",
+    "lcd_cw32l052_v1.json": "2423efe9e77b44288189bbf3bd45c2d2534869fa2f625fb1c00534d3978a19b7",
+    "lcd_cw32l083_v1.json": "06cefaf6e1209f90f900ae0e96d43de22fc14965fbd8e8e1c9bd6fbe9ed4786e",
+    "lptim_cw32l010_v1.json": "37225b20d2a17bdad35eff7c5c2fb9bf0d7b918a6fd230c69f0fdb19fa4f9fca",
+    "lptim_cw32l012_v1.json": "7f39bc3296600552afa1e1932532950c78619a646893a7e8070962e7c77a68cb",
+    "lptim_cw32l083_v1.json": "2fb799543eea3942337b4a4a55382b50e132b30bac2d8111b262970805bac2c0",
+    "lvd_cw32l010_v1.json": "3ace69edc40982adf7c440189f77db83492852eb0271b222f2b12ec99760f04d",
+    "lvd_cw32l031_v1.json": "97cb4bb5387ba8ea92243fa4e2632cf8e8c64a0d047761f0b423dd210808293b",
+    "lvd_v1.json": "344c6dc2151a61d0180a4120cc29fcf2d80308332210ffbdaa987525499aa46e",
+    "opa_cw32l012_v1.json": "cec98b0368b510c06f7711fb7184dc4ddffd3b79a10687ee9e7ece1e2ea592bd",
+    "ram_cw32l010_v1.json": "7b09f6816cfbcda52750915337eba129a92eb30fcf467c7f6b54aa0383948956",
+    "ram_cw32l011_v1.json": "56a2de91c7e9ae936fe74b26ca2cab8c3ab85b88ebf35d706622ae7c6a58c5f4",
+    "ram_cw32l031_v1.json": "e471ca6178f86379924e19bec0436dffecd8e6c129b776e5d61013085bd92783",
+    "ram_cw32l083_v1.json": "1bafcd92af4743021f37005eb3cab88d6a947440e24767567d2acd032b9e691a",
+    "ram_v1.json": "74e086356a90240ee35b9f0ebd9d1cc69d64b53cf56f381249f55fd948854ac3",
+    "spi_cw32f002_v1.json": "4c6dfe095f7729b08f35ab2a3bc32737e6fb35925ea3e32c4c975649c3ebfebf",
+    "spi_cw32l010_v1.json": "029b47c34ec37df01e2a825035904b96431bb8bca6b2aa1cd0cfd7c8697059c5",
+    "spi_cw32l012_v1.json": "8fe6f0eb586c68a1e75f2876d9fdda2c8831f3e139b54bfb97e62a979fd94869",
+    "spi_cw32l031_v1.json": "a621dc41f0042d58890eaa4cffb363256a85667267e89ac09ed9a57109798ba2",
+    "spi_v1.json": "ccf79c97777c3fa89c71726fcd7cd598b1936f62e00d1b416348f2b8d6f630f2",
+    "sysctrl_cw32f002_v1.json": "601031de753c46f5b9fe850771030e558a2b6c1294ea2196ea1d4bcf46b639b2",
+    "sysctrl_cw32f003_v1.json": "346de17500c1e16bca275d5b8b6535f78b2d3c3c110307c0a8980c2a84b1c7ad",
+    "sysctrl_cw32f020_v1.json": "81788c085160be86e5ef46f28e5d4898c3d13367136947084250790e6e674fb3",
+    "sysctrl_cw32l010_v1.json": "a362263b3c6abbc7c47ec231dd3c3bdfbfe8c432fcbfcba93a9de9c297863ee9",
+    "sysctrl_cw32l011_v1.json": "8911717d51c3290b099ea715a66f0fe913d4c6673fb3dad92af2ff8a307f3702",
+    "sysctrl_cw32l012_v1.json": "51583e3bfb2a5c47d616e81b7822af931ac268033c00364c565454a9f20befb5",
+    "sysctrl_cw32l031_v1.json": "4dceccdeae28446c485fd6907c393ddc51fc6310562c04f758881aa2293740d5",
+    "sysctrl_cw32l052_v1.json": "9e7e6042bc1ae96eaffa9dc57102d09b27ff4fae4e3bdaecae3922373751728f",
+    "sysctrl_cw32l083_v1.json": "339963b93078b3a466c084169cf6b863604350d4b399be98485eae96127d1f33",
+    "sysctrl_v1.json": "645d3511b0002cc29950a38c71385ab3ad2a67271bbbb2728cd11f3c957ce5de",
+    "trng_cw32l083_v1.json": "b79009698a550a4f54a953e01fee0186a908f04b023142ba9e3570d571e50889",
+    "uart_cw32f002_v1.json": "aae7a02bd27a74fbd5f9d31d04647eee3ef968c4eaf8ec41e40242f8f66b18d5",
+    "uart_cw32l010_v1.json": "c35e628ee0e0e7e634a833c79741b4700ee241650e9a73abbde0334eff255c37",
+    "uart_cw32l012_v1.json": "5d92c5384f8cc042846ef5aef6460ffed0a392238edfeb58b1c036a08172da9f",
+    "uart_cw32l031_v1.json": "2d8c4da52d2d6c18ddca55bd49382bc31ba6b6f42408a62189b08d98283d9d58",
+    "uart_cw32l052_v1.json": "b0d4156ee202e5af824fcd6ea8deb495af1f0504e2c5e10c65037083e85c3b96",
+    "uart_cw32l083_v1.json": "19d7b4345c59650f4c991a402dd1f7bb15d003a6c9156abf52495047eae4e83e",
+    "uart_v1.json": "9621d85eec53e68741d64de1ad3ee422ceea6fd35ba40ba152c45dcf03a47c6b",
+    "vc2ref_cw32l012_v1.json": "022c0465efec5daf8ec4d7742c7cb37873da4396f18db14b6e168f9c92225ad2",
+    "vc_cw32f002_v1.json": "305c1709593645bbe860703f4b2314963c50308dd1a87b3a18218ea797554e01",
+    "vc_cw32l010_v1.json": "2cbe2c4628cb9072a49bb8a5f573176751041f1b081b259801e7843105103d12",
+    "vc_cw32l011_v1.json": "8f29fc451153e9dafe1e390461e3a5c096031408256e5dbbec64af22a321155e",
+    "vc_cw32l012_v1.json": "3ac11fe68e87db57d7f84574ee3384b08205fa236c774e875f682c1d69cd966f",
+    "vc_cw32l031_v1.json": "8658140f3cfaa2917447348bc638b790e905cd4f1342f7de134bb11d271cb8b4",
+    "vc_v1.json": "37e16b8d3c3b78b9d50910ddfb25bb6f9751e97c9f6d8baa8e0fc819f5d5e6da",
+    "vcdiv_cw32l010_v1.json": "d55cc5775fa8dd3b9218eb237a17dece60220591267ae1c2c2df815e761faf64",
+    "wwdt_cw32l012_v1.json": "1b308f8cc1ac0feda2fd76c540a54ff6cc44110b102cd3350ace132fd76c188b",
+    "wwdt_cw32l031_v1.json": "1bc6a2cb6dff05476b6bca75f9666c7762cf32f79d079a5c00fd8205d468c83e",
+    "wwdt_v1.json": "e38f88c984dd5d84c0a7d311eda24baffe7b71fb7dede24517cb1d4a5b081ede"
+  },
+  "subsequent_input_additions": [
+    {
+      "family": "CW32L031",
+      "key": "pwm_metadata",
+      "value": "cw32-data/af/cw32l031-pwm.yaml",
+      "sidecar_sha256": "01aea6f7c643ea46e232da4b17f27db4e386a23b5c5e62a86d125c0ad54ca52d",
+      "evidence": "docs/classic-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified PWM routing addition; unrelated to the retained historical RTC correction boundary."
+    },
+    {
+      "family": "CW32L052",
+      "key": "pwm_metadata",
+      "value": "cw32-data/af/cw32l052-pwm.yaml",
+      "sidecar_sha256": "0e0e9f45fa418d2e55c6c27e6d7baae1e96f34cb1900c9df14662a73b7c608f7",
+      "evidence": "docs/classic-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified PWM routing addition; unrelated to the retained historical RTC correction boundary."
+    },
+    {
+      "family": "CW32L083",
+      "key": "pwm_metadata",
+      "value": "cw32-data/af/cw32l083-pwm.yaml",
+      "sidecar_sha256": "9c0484d1dbec6eec073e9414c2f0bdbbe0822c6a6c2cc49e50e0ecdcd20c5b64",
+      "evidence": "docs/classic-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified PWM routing addition; unrelated to the retained historical RTC correction boundary."
+    },
+    {
+      "family": "CW32R031",
+      "key": "pwm_metadata",
+      "value": "cw32-data/af/cw32r031-pwm.yaml",
+      "sidecar_sha256": "3faec1b0ffff697e7a98c90abf44cf0bd2e14838d34dccec0b904807fb2c43b6",
+      "evidence": "docs/classic-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified PWM routing addition; unrelated to the retained historical RTC correction boundary."
+    },
+    {
+      "family": "CW32W031",
+      "key": "pwm_metadata",
+      "value": "cw32-data/af/cw32w031-pwm.yaml",
+      "sidecar_sha256": "ed2e0da0cb280f287d33c24a35d2759749e5a7d1dcb2d9a070040b152d74bd42",
+      "evidence": "docs/classic-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified PWM routing addition; unrelated to the retained historical RTC correction boundary."
+    },
+    {
+      "family": "CW32L010",
+      "key": "pwm_metadata",
+      "value": "cw32-data/af/cw32l010-pwm.yaml",
+      "sidecar_sha256": "187521a5ae688d1f7161a912756023064df8b3474f31f21d50a166ee45af1946",
+      "evidence": "docs/buffered-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified buffered PWM routes; unrelated to original RTC correction boundary."
+    },
+    {
+      "family": "CW32L011",
+      "key": "pwm_metadata",
+      "value": "cw32-data/af/cw32l011-pwm.yaml",
+      "sidecar_sha256": "47f08d0bfff424f0708b410222987cf82c8e0a9376d64320d30677f8e9155818",
+      "evidence": "docs/buffered-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified buffered PWM routes; unrelated to original RTC correction boundary."
+    },
+    {
+      "family": "CW32L031",
+      "key": "atim_pwm_metadata",
+      "value": "cw32-data/af/cw32l031-atim-pwm.yaml",
+      "sidecar_sha256": "9816a9eb8242d4ef1e9f6e276fe29625140392f366f5c2fb08562c097bd720f8",
+      "evidence": "docs/atim-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified ATIM main-output routing addition; exact sidecar is pinned so the historical RTC-only input digest remains reproducible."
+    },
+    {
+      "family": "CW32L052",
+      "key": "atim_pwm_metadata",
+      "value": "cw32-data/af/cw32l052-atim-pwm.yaml",
+      "sidecar_sha256": "2be044befb9bbb91616eadaee57eda262a63b5e4278125a25ec6cd05da73b8f6",
+      "evidence": "docs/atim-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified ATIM main-output routing addition; exact sidecar is pinned so the historical RTC-only input digest remains reproducible."
+    },
+    {
+      "family": "CW32L083",
+      "key": "atim_pwm_metadata",
+      "value": "cw32-data/af/cw32l083-atim-pwm.yaml",
+      "sidecar_sha256": "3408fe420ede96504d718d4b9303b46dc994702777e02a2a0c92ad55d2e48962",
+      "evidence": "docs/atim-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified ATIM main-output routing addition; exact sidecar is pinned so the historical RTC-only input digest remains reproducible."
+    },
+    {
+      "family": "CW32R031",
+      "key": "atim_pwm_metadata",
+      "value": "cw32-data/af/cw32r031-atim-pwm.yaml",
+      "sidecar_sha256": "e3eff12324ea9ad86529e1ae28e5ad8dce3259c2270940a404a88d14c2b7e7d0",
+      "evidence": "docs/atim-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified ATIM main-output routing addition; exact sidecar is pinned so the historical RTC-only input digest remains reproducible."
+    },
+    {
+      "family": "CW32W031",
+      "key": "atim_pwm_metadata",
+      "value": "cw32-data/af/cw32w031-atim-pwm.yaml",
+      "sidecar_sha256": "d29421a04daffc62da45b09fbb7dfebe2d2d403ab95480601095d269699135ab",
+      "evidence": "docs/atim-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified ATIM main-output routing addition; exact sidecar is pinned so the historical RTC-only input digest remains reproducible."
+    },
+    {
+      "family": "CW32L010",
+      "key": "atim_pwm_metadata",
+      "value": "cw32-data/af/cw32l010-atim-pwm.yaml",
+      "sidecar_sha256": "b9d3a0622dc4a278cba8495b3f696817cc8ad50ef512298432b8ded329ff39e4",
+      "evidence": "docs/atim-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified ATIM main-output routing addition; exact sidecar is pinned so the historical RTC-only input digest remains reproducible."
+    },
+    {
+      "family": "CW32L011",
+      "key": "atim_pwm_metadata",
+      "value": "cw32-data/af/cw32l011-atim-pwm.yaml",
+      "sidecar_sha256": "9248a1284f2a42bdbe61d4f4ad4c5002f0ca2ac3bf13a16945151d9af6428e77",
+      "evidence": "docs/atim-pwm-route-evidence.json",
+      "reason": "Subsequent independently qualified ATIM main-output routing addition; exact sidecar is pinned so the historical RTC-only input digest remains reproducible."
+    },
+    {
+      "family": "CW32F020",
+      "key": "spi_metadata",
+      "value": "cw32-data/spi.yaml",
+      "sidecar_sha256": "fa31030f2e8b49060561e1166e66e0983a4caae32f850f99efb9cdb53c92539d",
+      "evidence": "docs/spi-metadata-refactor.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32F020",
+      "key": "gpio_interrupt_metadata",
+      "value": "cw32-data/gpio-interrupt.yaml",
+      "sidecar_sha256": "53a735f156d45a36ac0c69f85cc3553f4a19c1ea33ff60506935ce9d80f848ff",
+      "evidence": "docs/gpio-exti-metadata.md",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32F020",
+      "key": "electrical_metadata",
+      "value": "cw32-data/electrical.yaml",
+      "sidecar_sha256": "c10aeeea6ae3a0c162241de48f55303588adb273af83a59ea69f88f54271f5a3",
+      "evidence": "docs/electrical-metadata-equivalence.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes.",
+      "subsequent_sidecar_revisions": [
+        {
+          "previous_sha256": "cfda634bae125815dc07335fa1e7a88c33ef3f99a5b6e7c575f518cf2ea74b5d",
+          "new_sha256": "cebdc79a344036f464ec08bb7277eefc16845f8801a4dca21d1788c44276f53c",
+          "evidence": "docs/flash-remaining-evidence.json",
+          "reason": "Independently reviewed remaining FLASH electrical/geometry facts; existing RTC correction boundary and all non-FLASH electrical sections preserved."
+        }
+      ]
+    },
+    {
+      "family": "CW32L031",
+      "key": "spi_metadata",
+      "value": "cw32-data/spi.yaml",
+      "sidecar_sha256": "fa31030f2e8b49060561e1166e66e0983a4caae32f850f99efb9cdb53c92539d",
+      "evidence": "docs/spi-metadata-refactor.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32L031",
+      "key": "gpio_interrupt_metadata",
+      "value": "cw32-data/gpio-interrupt.yaml",
+      "sidecar_sha256": "53a735f156d45a36ac0c69f85cc3553f4a19c1ea33ff60506935ce9d80f848ff",
+      "evidence": "docs/gpio-exti-metadata.md",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32L031",
+      "key": "electrical_metadata",
+      "value": "cw32-data/electrical.yaml",
+      "sidecar_sha256": "c10aeeea6ae3a0c162241de48f55303588adb273af83a59ea69f88f54271f5a3",
+      "evidence": "docs/electrical-metadata-equivalence.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes.",
+      "subsequent_sidecar_revisions": [
+        {
+          "previous_sha256": "cfda634bae125815dc07335fa1e7a88c33ef3f99a5b6e7c575f518cf2ea74b5d",
+          "new_sha256": "cebdc79a344036f464ec08bb7277eefc16845f8801a4dca21d1788c44276f53c",
+          "evidence": "docs/flash-remaining-evidence.json",
+          "reason": "Independently reviewed remaining FLASH electrical/geometry facts; existing RTC correction boundary and all non-FLASH electrical sections preserved."
+        }
+      ]
+    },
+    {
+      "family": "CW32L052",
+      "key": "spi_metadata",
+      "value": "cw32-data/spi.yaml",
+      "sidecar_sha256": "fa31030f2e8b49060561e1166e66e0983a4caae32f850f99efb9cdb53c92539d",
+      "evidence": "docs/spi-metadata-refactor.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32L052",
+      "key": "gpio_interrupt_metadata",
+      "value": "cw32-data/gpio-interrupt.yaml",
+      "sidecar_sha256": "53a735f156d45a36ac0c69f85cc3553f4a19c1ea33ff60506935ce9d80f848ff",
+      "evidence": "docs/gpio-exti-metadata.md",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32L052",
+      "key": "electrical_metadata",
+      "value": "cw32-data/electrical.yaml",
+      "sidecar_sha256": "c10aeeea6ae3a0c162241de48f55303588adb273af83a59ea69f88f54271f5a3",
+      "evidence": "docs/electrical-metadata-equivalence.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes.",
+      "subsequent_sidecar_revisions": [
+        {
+          "previous_sha256": "cfda634bae125815dc07335fa1e7a88c33ef3f99a5b6e7c575f518cf2ea74b5d",
+          "new_sha256": "cebdc79a344036f464ec08bb7277eefc16845f8801a4dca21d1788c44276f53c",
+          "evidence": "docs/flash-remaining-evidence.json",
+          "reason": "Independently reviewed remaining FLASH electrical/geometry facts; existing RTC correction boundary and all non-FLASH electrical sections preserved."
+        }
+      ]
+    },
+    {
+      "family": "CW32L083",
+      "key": "spi_metadata",
+      "value": "cw32-data/spi.yaml",
+      "sidecar_sha256": "fa31030f2e8b49060561e1166e66e0983a4caae32f850f99efb9cdb53c92539d",
+      "evidence": "docs/spi-metadata-refactor.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32L083",
+      "key": "gpio_interrupt_metadata",
+      "value": "cw32-data/gpio-interrupt.yaml",
+      "sidecar_sha256": "53a735f156d45a36ac0c69f85cc3553f4a19c1ea33ff60506935ce9d80f848ff",
+      "evidence": "docs/gpio-exti-metadata.md",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32L083",
+      "key": "electrical_metadata",
+      "value": "cw32-data/electrical.yaml",
+      "sidecar_sha256": "c10aeeea6ae3a0c162241de48f55303588adb273af83a59ea69f88f54271f5a3",
+      "evidence": "docs/electrical-metadata-equivalence.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes.",
+      "subsequent_sidecar_revisions": [
+        {
+          "previous_sha256": "cfda634bae125815dc07335fa1e7a88c33ef3f99a5b6e7c575f518cf2ea74b5d",
+          "new_sha256": "cebdc79a344036f464ec08bb7277eefc16845f8801a4dca21d1788c44276f53c",
+          "evidence": "docs/flash-remaining-evidence.json",
+          "reason": "Independently reviewed remaining FLASH electrical/geometry facts; existing RTC correction boundary and all non-FLASH electrical sections preserved."
+        }
+      ]
+    },
+    {
+      "family": "CW32R031",
+      "key": "spi_metadata",
+      "value": "cw32-data/spi.yaml",
+      "sidecar_sha256": "fa31030f2e8b49060561e1166e66e0983a4caae32f850f99efb9cdb53c92539d",
+      "evidence": "docs/spi-metadata-refactor.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32R031",
+      "key": "gpio_interrupt_metadata",
+      "value": "cw32-data/gpio-interrupt.yaml",
+      "sidecar_sha256": "53a735f156d45a36ac0c69f85cc3553f4a19c1ea33ff60506935ce9d80f848ff",
+      "evidence": "docs/gpio-exti-metadata.md",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32R031",
+      "key": "electrical_metadata",
+      "value": "cw32-data/electrical.yaml",
+      "sidecar_sha256": "c10aeeea6ae3a0c162241de48f55303588adb273af83a59ea69f88f54271f5a3",
+      "evidence": "docs/electrical-metadata-equivalence.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes.",
+      "subsequent_sidecar_revisions": [
+        {
+          "previous_sha256": "cfda634bae125815dc07335fa1e7a88c33ef3f99a5b6e7c575f518cf2ea74b5d",
+          "new_sha256": "cebdc79a344036f464ec08bb7277eefc16845f8801a4dca21d1788c44276f53c",
+          "evidence": "docs/flash-remaining-evidence.json",
+          "reason": "Independently reviewed remaining FLASH electrical/geometry facts; existing RTC correction boundary and all non-FLASH electrical sections preserved."
+        }
+      ]
+    },
+    {
+      "family": "CW32W031",
+      "key": "spi_metadata",
+      "value": "cw32-data/spi.yaml",
+      "sidecar_sha256": "fa31030f2e8b49060561e1166e66e0983a4caae32f850f99efb9cdb53c92539d",
+      "evidence": "docs/spi-metadata-refactor.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32W031",
+      "key": "gpio_interrupt_metadata",
+      "value": "cw32-data/gpio-interrupt.yaml",
+      "sidecar_sha256": "53a735f156d45a36ac0c69f85cc3553f4a19c1ea33ff60506935ce9d80f848ff",
+      "evidence": "docs/gpio-exti-metadata.md",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32W031",
+      "key": "electrical_metadata",
+      "value": "cw32-data/electrical.yaml",
+      "sidecar_sha256": "c10aeeea6ae3a0c162241de48f55303588adb273af83a59ea69f88f54271f5a3",
+      "evidence": "docs/electrical-metadata-equivalence.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes.",
+      "subsequent_sidecar_revisions": [
+        {
+          "previous_sha256": "cfda634bae125815dc07335fa1e7a88c33ef3f99a5b6e7c575f518cf2ea74b5d",
+          "new_sha256": "cebdc79a344036f464ec08bb7277eefc16845f8801a4dca21d1788c44276f53c",
+          "evidence": "docs/flash-remaining-evidence.json",
+          "reason": "Independently reviewed remaining FLASH electrical/geometry facts; existing RTC correction boundary and all non-FLASH electrical sections preserved."
+        }
+      ]
+    },
+    {
+      "family": "CW32L010",
+      "key": "spi_metadata",
+      "value": "cw32-data/spi.yaml",
+      "sidecar_sha256": "fa31030f2e8b49060561e1166e66e0983a4caae32f850f99efb9cdb53c92539d",
+      "evidence": "docs/spi-metadata-refactor.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32L010",
+      "key": "gpio_interrupt_metadata",
+      "value": "cw32-data/gpio-interrupt.yaml",
+      "sidecar_sha256": "53a735f156d45a36ac0c69f85cc3553f4a19c1ea33ff60506935ce9d80f848ff",
+      "evidence": "docs/gpio-exti-metadata.md",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32L010",
+      "key": "electrical_metadata",
+      "value": "cw32-data/electrical.yaml",
+      "sidecar_sha256": "c10aeeea6ae3a0c162241de48f55303588adb273af83a59ea69f88f54271f5a3",
+      "evidence": "docs/electrical-metadata-equivalence.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes.",
+      "subsequent_sidecar_revisions": [
+        {
+          "previous_sha256": "cfda634bae125815dc07335fa1e7a88c33ef3f99a5b6e7c575f518cf2ea74b5d",
+          "new_sha256": "cebdc79a344036f464ec08bb7277eefc16845f8801a4dca21d1788c44276f53c",
+          "evidence": "docs/flash-remaining-evidence.json",
+          "reason": "Independently reviewed remaining FLASH electrical/geometry facts; existing RTC correction boundary and all non-FLASH electrical sections preserved."
+        }
+      ]
+    },
+    {
+      "family": "CW32L011",
+      "key": "spi_metadata",
+      "value": "cw32-data/spi.yaml",
+      "sidecar_sha256": "fa31030f2e8b49060561e1166e66e0983a4caae32f850f99efb9cdb53c92539d",
+      "evidence": "docs/spi-metadata-refactor.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32L011",
+      "key": "gpio_interrupt_metadata",
+      "value": "cw32-data/gpio-interrupt.yaml",
+      "sidecar_sha256": "53a735f156d45a36ac0c69f85cc3553f4a19c1ea33ff60506935ce9d80f848ff",
+      "evidence": "docs/gpio-exti-metadata.md",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes."
+    },
+    {
+      "family": "CW32L011",
+      "key": "electrical_metadata",
+      "value": "cw32-data/electrical.yaml",
+      "sidecar_sha256": "c10aeeea6ae3a0c162241de48f55303588adb273af83a59ea69f88f54271f5a3",
+      "evidence": "docs/electrical-metadata-equivalence.json",
+      "reason": "Subsequent independently reviewed HAL metadata projection. Exact sidecar pin preserves the historical RTC-only input correction boundary without ignoring unrelated changes.",
+      "subsequent_sidecar_revisions": [
+        {
+          "previous_sha256": "cfda634bae125815dc07335fa1e7a88c33ef3f99a5b6e7c575f518cf2ea74b5d",
+          "new_sha256": "cebdc79a344036f464ec08bb7277eefc16845f8801a4dca21d1788c44276f53c",
+          "evidence": "docs/flash-remaining-evidence.json",
+          "reason": "Independently reviewed remaining FLASH electrical/geometry facts; existing RTC correction boundary and all non-FLASH electrical sections preserved."
+        }
+      ]
+    },
+    {
+      "family": "CW32F020",
+      "key": "comparator_metadata",
+      "value": "cw32-data/af/cw32f020-comparator.yaml",
+      "sidecar_sha256": "17368af764b12282cb56fb4580723a4f3e963a71db7c7c262b8600c5116fe0c9",
+      "evidence": "docs/comparator-classic-evidence.json",
+      "reason": "Independently accepted comparator route/limits addition; no RTC field or source alteration."
+    },
+    {
+      "family": "CW32L031",
+      "key": "comparator_metadata",
+      "value": "cw32-data/af/cw32l031-comparator.yaml",
+      "sidecar_sha256": "578c228e1571fe99f34413adf913ef4907f73ad3dc1f9e7ba9203e9a13f81f40",
+      "evidence": "docs/comparator-classic-evidence.json",
+      "reason": "Independently accepted comparator route/limits addition; no RTC field or source alteration."
+    },
+    {
+      "family": "CW32L052",
+      "key": "comparator_metadata",
+      "value": "cw32-data/af/cw32l052-comparator.yaml",
+      "sidecar_sha256": "c9b4cc5fd1f71dfe64d3ea667006563e6410058afaea771139d840afc31dfc84",
+      "evidence": "docs/comparator-classic-evidence.json",
+      "reason": "Independently accepted comparator route/limits addition; no RTC field or source alteration."
+    },
+    {
+      "family": "CW32L083",
+      "key": "comparator_metadata",
+      "value": "cw32-data/af/cw32l083-comparator.yaml",
+      "sidecar_sha256": "56e821c2460f2a3419a2333a21a86d16042176244b4fb7dbf27fa1ed81aed248",
+      "evidence": "docs/comparator-classic-evidence.json",
+      "reason": "Independently accepted comparator route/limits addition; no RTC field or source alteration."
+    },
+    {
+      "family": "CW32R031",
+      "key": "comparator_metadata",
+      "value": "cw32-data/af/cw32r031-comparator.yaml",
+      "sidecar_sha256": "ffc97643ffca80ae66b166a3517b92f323040a7467ea0ecaf42c775f83673c8e",
+      "evidence": "docs/comparator-classic-evidence.json",
+      "reason": "Independently accepted comparator route/limits addition; no RTC field or source alteration."
+    },
+    {
+      "family": "CW32W031",
+      "key": "comparator_metadata",
+      "value": "cw32-data/af/cw32w031-comparator.yaml",
+      "sidecar_sha256": "1b3acd9117c74e84d6e0a39746c3102d8a2f234d8dabce0c87ca773b19337198",
+      "evidence": "docs/comparator-classic-evidence.json",
+      "reason": "Independently accepted comparator route/limits addition; no RTC field or source alteration."
+    },
+    {
+      "family": "CW32L010",
+      "key": "comparator_metadata",
+      "value": "cw32-data/af/cw32l010-comparator.yaml",
+      "sidecar_sha256": "63d548b6b98eec1192c892f32496998e9731a5d2c796f01debcaaf1d8c52ab34",
+      "evidence": "docs/comparator-low-evidence.json",
+      "reason": "Independently accepted comparator route/limits addition; no RTC field or source alteration."
+    },
+    {
+      "family": "CW32L011",
+      "key": "comparator_metadata",
+      "value": "cw32-data/af/cw32l011-comparator.yaml",
+      "sidecar_sha256": "2ac5e90a653cf9c574c55154e446116757228b122ff22d6084f0fc1cd92a5eb1",
+      "evidence": "docs/comparator-low-evidence.json",
+      "reason": "Independently accepted comparator route/limits addition; no RTC field or source alteration."
+    },
+    {
+      "family": "CW32L010",
+      "key": "trigger_metadata",
+      "value": "cw32-data/triggers/cw32l010.yaml",
+      "sidecar_sha256": "3c4cca3860897cbf1ca1a38e26e885887657011aeafa69ac2cb1af72bfa058ea",
+      "evidence": "docs/trigger-routing-l010.md",
+      "reason": "Independently reviewed destination-local BTIM1 to BTIM2/ADC routing addition; original RTC registers/correction boundary unchanged."
+    },
+    {
+      "family": "CW32L011",
+      "key": "trigger_metadata",
+      "value": "cw32-data/triggers/cw32l011.yaml",
+      "sidecar_sha256": "0418698396e4582dd6d521f550d34db752c3b7e934f641b1f2dd2286b6c3a503",
+      "evidence": "docs/trigger-routing-l011-evidence.json",
+      "reason": "Independently reviewed destination-local BTIM1 to BTIM2/ADC routing addition; original RTC registers/correction boundary unchanged."
+    },
+    {
+      "family": "CW32L010",
+      "key": "atim_complementary_metadata",
+      "value": "cw32-data/af/cw32l010-atim-complementary.yaml",
+      "sidecar_sha256": "5550c07e2bb8920a8bbf799d68b645ddfd84757957dac8bb2a8c2f583796d957",
+      "evidence": "docs/atim-complementary-route-evidence.json",
+      "reason": "Separately reviewed complementary pin/limit metadata; original RTC correction boundary unchanged."
+    },
+    {
+      "family": "CW32L011",
+      "key": "atim_complementary_metadata",
+      "value": "cw32-data/af/cw32l011-atim-complementary.yaml",
+      "sidecar_sha256": "954aab54e300f1281dd0807f5643766615d2edb22bc5d02a293418391ddf0189",
+      "evidence": "docs/atim-complementary-route-evidence.json",
+      "reason": "Separately reviewed complementary pin/limit metadata; original RTC correction boundary unchanged."
+    },
+    {
+      "family": "CW32L010",
+      "key": "adc_sequence_metadata",
+      "value": "cw32-data/adc-sequences.yaml",
+      "sidecar_sha256": "9dd0313eb937cd256907a8c7ce7308f19b5518672e480b7f960174be82c82bd5",
+      "evidence": "docs/adc-scan-source-evidence.json",
+      "reason": "Independently reviewed ordered ADC sequence metadata; RTC correction boundary unchanged.",
+      "subsequent_sidecar_revisions": [
+        {
+          "previous_sha256": "ce1dc5cd1a85d99c0f2ad4c1a5159d46102937d31b8ccbea0466ebb74577afeb",
+          "new_sha256": "510e3153c96587fbd0cd69ed09010cbe98415daee97ce4bf2976c03479ae5b37",
+          "evidence": "docs/adc-scan-source-evidence.json",
+          "reason": "Accepted L012 scan profile added; L010/L011 records unchanged."
+        }
+      ]
+    },
+    {
+      "family": "CW32L011",
+      "key": "adc_sequence_metadata",
+      "value": "cw32-data/adc-sequences.yaml",
+      "sidecar_sha256": "9dd0313eb937cd256907a8c7ce7308f19b5518672e480b7f960174be82c82bd5",
+      "evidence": "docs/adc-scan-source-evidence.json",
+      "reason": "Independently reviewed ordered ADC sequence metadata; RTC correction boundary unchanged.",
+      "subsequent_sidecar_revisions": [
+        {
+          "previous_sha256": "ce1dc5cd1a85d99c0f2ad4c1a5159d46102937d31b8ccbea0466ebb74577afeb",
+          "new_sha256": "510e3153c96587fbd0cd69ed09010cbe98415daee97ce4bf2976c03479ae5b37",
+          "evidence": "docs/adc-scan-source-evidence.json",
+          "reason": "Accepted L012 scan profile added; L010/L011 records unchanged."
+        }
+      ]
+    },
+    {
+      "family": "CW32F020",
+      "key": "classic_adc_scan_metadata",
+      "value": "cw32-data/classic-adc-scans.yaml",
+      "sidecar_sha256": "7f4f746854ad0a477f478e4b43f2e88fd949c9c0788d10574bcdcae2cec82759",
+      "evidence": "docs/classic-adc-scan-source-evidence.json",
+      "reason": "Accepted classic ADC scan source-policy addition; original RTC correction boundary unchanged."
+    },
+    {
+      "family": "CW32L031",
+      "key": "classic_adc_scan_metadata",
+      "value": "cw32-data/classic-adc-scans.yaml",
+      "sidecar_sha256": "7f4f746854ad0a477f478e4b43f2e88fd949c9c0788d10574bcdcae2cec82759",
+      "evidence": "docs/classic-adc-scan-source-evidence.json",
+      "reason": "Accepted classic ADC scan source-policy addition; original RTC correction boundary unchanged."
+    },
+    {
+      "family": "CW32L052",
+      "key": "classic_adc_scan_metadata",
+      "value": "cw32-data/classic-adc-scans.yaml",
+      "sidecar_sha256": "7f4f746854ad0a477f478e4b43f2e88fd949c9c0788d10574bcdcae2cec82759",
+      "evidence": "docs/classic-adc-scan-source-evidence.json",
+      "reason": "Accepted classic ADC scan source-policy addition; original RTC correction boundary unchanged."
+    },
+    {
+      "family": "CW32L083",
+      "key": "classic_adc_scan_metadata",
+      "value": "cw32-data/classic-adc-scans.yaml",
+      "sidecar_sha256": "7f4f746854ad0a477f478e4b43f2e88fd949c9c0788d10574bcdcae2cec82759",
+      "evidence": "docs/classic-adc-scan-source-evidence.json",
+      "reason": "Accepted classic ADC scan source-policy addition; original RTC correction boundary unchanged."
+    },
+    {
+      "family": "CW32R031",
+      "key": "classic_adc_scan_metadata",
+      "value": "cw32-data/classic-adc-scans.yaml",
+      "sidecar_sha256": "7f4f746854ad0a477f478e4b43f2e88fd949c9c0788d10574bcdcae2cec82759",
+      "evidence": "docs/classic-adc-scan-source-evidence.json",
+      "reason": "Accepted classic ADC scan source-policy addition; original RTC correction boundary unchanged."
+    },
+    {
+      "family": "CW32W031",
+      "key": "classic_adc_scan_metadata",
+      "value": "cw32-data/classic-adc-scans.yaml",
+      "sidecar_sha256": "7f4f746854ad0a477f478e4b43f2e88fd949c9c0788d10574bcdcae2cec82759",
+      "evidence": "docs/classic-adc-scan-source-evidence.json",
+      "reason": "Accepted classic ADC scan source-policy addition; original RTC correction boundary unchanged."
+    },
+    {
+      "family": "CW32L012",
+      "key": "adc_sequence_metadata",
+      "value": "cw32-data/adc-sequences.yaml",
+      "sidecar_sha256": "9dd0313eb937cd256907a8c7ce7308f19b5518672e480b7f960174be82c82bd5",
+      "evidence": "docs/adc-scan-source-evidence.json",
+      "reason": "Accepted L012 scan metadata; RTC registers/corrections unchanged."
+    }
+  ],
+  "subsequent_register_version_changes": [
+    {
+      "family": "CW32L011",
+      "kind": "irmod",
+      "before": "cw32l010_v1",
+      "after": "cw32l011_v1",
+      "canonical": "cw32-data/registers/irmod_cw32l011_v1.yaml",
+      "canonical_sha256": "f4493972da06e1ba7071f3d6eea5abd80fbf419b299f6e818742c2a908ef8b6c",
+      "evidence": "docs/lvd-ir-evidence.json",
+      "reason": "Own-family IR selector semantics split accepted independently; unrelated to RTC correction boundary."
+    },
+    {
+      "family": "CW32F020",
+      "kind": "awt",
+      "before": "v1",
+      "after": "cw32f030_v1",
+      "canonical": "cw32-data/registers/awt_cw32f030_v1.yaml",
+      "canonical_sha256": "d57a1d3127adf34d600232e0fa6a7e4dcf6f0fd198cad9cc0a61dbb2350ec6ce",
+      "evidence": "cw32-data/hse-qualified.yaml"
+    }
+  ],
+  "subsequent_canonical_enum_additions": [
+    {
+      "canonical": "rtc_cw32f020_v1.yaml",
+      "before_sha256": "f97b700d55bec60f222be7356b8abbacecd041871d595f1950fe2b545d250c89",
+      "before_ir_sha256": "7c5cde846b071fa9fc5159214f9e91e6afc7705e1fc3f4da09f878a4fea9259c",
+      "after_sha256": "e74b3f0005dab3d168b8df5c483189dcde8657b3b5c4bba74ef0ef67756c378d",
+      "after_ir_sha256": "1d09f9da4b95ff54cfd1d2e03a71e303a1489886e0d3548c4e7f332f631cc094",
+      "enum_name": "Source",
+      "enum_ir_sha256": "3c6b10a01a1f0d9798afe22d74de709df02b953bb57bfff056455d2e2902f73d",
+      "fieldset": "CR1",
+      "field": "SOURCE",
+      "evidence": "cw32-data/hse-qualified.yaml",
+      "scope": "Own F020 CR1.SOURCE enum association only; original RTC correction boundary retained. Independent HSE review required before merge."
+    },
+    {
+      "canonical": "sysctrl_cw32l010_v1.yaml",
+      "before_sha256": "67f4805bc76a58a17d80b3ada9bbcb807b5394ffe38ac73834ba385ba057fffa",
+      "before_ir_sha256": "610fad9de095c2644478d8d8fe79827e6d2a0a3a8a630202599b405db81d99a0",
+      "after_sha256": "2aedc60336b23fb36c4c6713f9c88b51a42e2c60a6d34c30fe9ad5bab6788cb1",
+      "after_ir_sha256": "a362263b3c6abbc7c47ec231dd3c3bdfbfe8c432fcbfcba93a9de9c297863ee9",
+      "enum_names": [
+        "Sysclk",
+        "HseDrive",
+        "HseWait"
+      ],
+      "associations": [
+        {
+          "fieldset": "CR0",
+          "field": "SYSCLK",
+          "enum": "Sysclk",
+          "bit_offset": 0,
+          "bit_size": 3
+        },
+        {
+          "fieldset": "HSE",
+          "field": "DRIVER",
+          "enum": "HseDrive",
+          "bit_offset": 0,
+          "bit_size": 4
+        },
+        {
+          "fieldset": "HSE",
+          "field": "WAITCYCLE",
+          "enum": "HseWait",
+          "bit_offset": 4,
+          "bit_size": 2
+        },
+        {
+          "fieldset": "HSE",
+          "field": "PDRIVER",
+          "enum": "HseDrive",
+          "bit_offset": 20,
+          "bit_size": 4
+        }
+      ],
+      "evidence": "docs/qualified-l010-l011-hse-source-receipt.json",
+      "scope": "Only own-source enum definitions and four associations; every pre-existing register, bit offset, width, access and description equals the frozen baseline. STABLE RO is a separate field-access sidecar correction."
+    },
+    {
+      "canonical": "sysctrl_cw32l011_v1.yaml",
+      "before_sha256": "608236645dd868c40be0b9fe5cbd6dc386a8e29aad5c48186afe66ecce05287c",
+      "before_ir_sha256": "1dda5667f911961a0881fc49c22cbf51ceb73af9936a4f1a3408a8e7102da25a",
+      "after_sha256": "727439dd5f060f0a80b8d091131fe1fa25055617c1b2b9377f277bcaaf324287",
+      "after_ir_sha256": "8911717d51c3290b099ea715a66f0fe913d4c6673fb3dad92af2ff8a307f3702",
+      "enum_names": [
+        "Sysclk",
+        "HseDrive",
+        "HseWait"
+      ],
+      "associations": [
+        {
+          "fieldset": "CR0",
+          "field": "SYSCLK",
+          "enum": "Sysclk",
+          "bit_offset": 0,
+          "bit_size": 3
+        },
+        {
+          "fieldset": "HSE",
+          "field": "DRIVER",
+          "enum": "HseDrive",
+          "bit_offset": 0,
+          "bit_size": 4
+        },
+        {
+          "fieldset": "HSE",
+          "field": "WAITCYCLE",
+          "enum": "HseWait",
+          "bit_offset": 4,
+          "bit_size": 2
+        },
+        {
+          "fieldset": "HSE",
+          "field": "PDRIVER",
+          "enum": "HseDrive",
+          "bit_offset": 20,
+          "bit_size": 4
+        }
+      ],
+      "evidence": "docs/qualified-l010-l011-hse-source-receipt.json",
+      "scope": "Only own-source enum definitions and four associations; every pre-existing register, bit offset, width, access and description equals the frozen baseline. STABLE RO is a separate field-access sidecar correction."
+    }
+  ],
+  "subsequent_sidecar_updates": [
+    {
+      "path": "cw32-data/electrical.yaml",
+      "before_sha256": "c10aeeea6ae3a0c162241de48f55303588adb273af83a59ea69f88f54271f5a3",
+      "after_sha256": "b0af32c544d6947e6ae02690c935b81f0411713e608fc97c5321a595ea239f26",
+      "evidence": "cw32-data/hse-qualified.yaml",
+      "scope": "Adds only qualified direct-HSE records and own-source review policy; previous RTC input-addition hashes remain unchanged."
+    },
+    {
+      "path": "cw32-data/electrical.yaml",
+      "before_sha256": "bf00909d8af4b99635114e85a3de6e6ce7cf52c9a76b86c6746dc00fe016e326",
+      "after_sha256": "5ac4341299c5526204e1402d1c4c69c03546db7d89b407353129823e84e38422",
+      "evidence": "docs/qualified-l010-l011-hse-source-receipt.json",
+      "scope": "Adds only own L010/L011 direct-HSE limits/source references and the updated HSE policy hash. Prior electrical profiles and RTC correction boundary are preserved."
+    },
+    {
+      "path": "cw32-data/field-access.yaml",
+      "before_sha256": "74043aef3ef361cde0501e93523c41e2d53e50defc11b9ad9b5c581f9c1f40ef",
+      "after_sha256": "0f1293f8f26046ae3885a8da027a68875331ff0c3bff13ae73486c2966a936ba",
+      "evidence": "docs/qualified-l010-l011-hse-source-receipt.json",
+      "scope": "Adds HSE.STABLE read-only restrictions only for the two own L010/L011 SYSCTRL versions. Register-level RW access, all offsets and widths remain unchanged."
+    }
+  ]
+}

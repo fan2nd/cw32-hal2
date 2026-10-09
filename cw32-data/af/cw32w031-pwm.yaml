@@ -1,0 +1,670 @@
+schema_version: 1
+profile: CW32W031
+kind: pwm
+status: verified-sdk-and-datasheet
+register_version: cw32l031_v1
+sources:
+  datasheet:
+    file: CW32W031_DataSheet_CN_V1.3.pdf
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    url: https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  reference_manual:
+    file: CW32W031_UserManual_CN_V1.4.pdf
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    url: https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  sdk_archive:
+    file: CW32W031_StandardPeripheralLib_V1.3.zip
+    sha256: 1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337
+    url: https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip
+    source_ref: vendor:CW32W031_StandardPeripheralLib_V1.3.zip
+  pinouts:
+    file: cw32-data/pinouts/cw32w031.yaml
+    sha256: 59959e2318af35d3415191686c9aacfd81036bdfe33b9907602bed103de74530
+  gpio_header:
+    file: cw32w031/Libraries/inc/cw32w031_gpio.h
+    sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+    url: https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip
+    source_ref: member:cw32w031/Libraries/inc/cw32w031_gpio.h
+  sdk_candidates:
+    file: cw32-data/af/cw32w031.yaml
+    sha256: da60583cd880d4dd34bd6a3e32e84e4e51d52536f147d4cc3e37df0f4d2429ed
+datasheet:
+  file: CW32W031_DataSheet_CN_V1.3.pdf
+  sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+  url: https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf
+  af_evidence: 'Own-family numbered AF columns in Tables 5-3, 5-4; independently parsed original PDF and
+    SDK. Per-cell proof and conservative exclusions: docs/classic-pwm-route-evidence.json.'
+  source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+alias_pin_policy: common-package-intersection
+selector_capability:
+  min: 1
+  max: 7
+  pdf_printed_page_offset: 1
+  evidence: Actual own-family numbered function columns; no register-width inference.
+scope: GTIM CH1–4 outputs only; original general AF candidates remain unpromoted.
+limitations:
+- Source-level route qualification only; no silicon or electrical validation.
+- Exact package pin bonding is required; family aliases use the common-package intersection.
+- Debug, reset, input-only, radio-reserved and oscillator-alias pads are excluded.
+- No ATIM, ETR, TOG, capture, DMA or remapping authorization is implied.
+routes:
+- pin: PA0
+  af: 6
+  function: GTIM2CH1
+  source_macro: PA00_AFx_GTIM2CH1
+  source_line: 899
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: GTIM2
+  signal: CH1
+  source_signal: CH1
+  channel: 1
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA0
+    af: 6
+    function: GTIM2_CH1
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PA0
+    source_name: PA00
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '4'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '4'
+  oscillator_aliases: []
+- pin: PA1
+  af: 6
+  function: GTIM2CH2
+  source_macro: PA01_AFx_GTIM2CH2
+  source_line: 905
+  gpio_register: AFRL
+  gpio_field: AFR1
+  peripheral: GTIM2
+  signal: CH2
+  source_signal: CH2
+  channel: 2
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA1
+    af: 6
+    function: GTIM2_CH2
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PA1
+    source_name: PA01
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '5'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '5'
+  oscillator_aliases: []
+- pin: PA2
+  af: 6
+  function: GTIM2CH3
+  source_macro: PA02_AFx_GTIM2CH3
+  source_line: 911
+  gpio_register: AFRL
+  gpio_field: AFR2
+  peripheral: GTIM2
+  signal: CH3
+  source_signal: CH3
+  channel: 3
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA2
+    af: 6
+    function: GTIM2_CH3
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PA2
+    source_name: PA02
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '6'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '6'
+  oscillator_aliases: []
+- pin: PA3
+  af: 3
+  function: GTIM2CH2
+  source_macro: PA03_AFx_GTIM2CH2
+  source_line: 916
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: GTIM2
+  signal: CH2
+  source_signal: CH2
+  channel: 2
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA3
+    af: 3
+    function: GTIM2_CH2
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PA3
+    source_name: PA03
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '7'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '7'
+  oscillator_aliases: []
+- pin: PA3
+  af: 6
+  function: GTIM2CH4
+  source_macro: PA03_AFx_GTIM2CH4
+  source_line: 919
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: GTIM2
+  signal: CH4
+  source_signal: CH4
+  channel: 4
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA3
+    af: 6
+    function: GTIM2_CH4
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PA3
+    source_name: PA03
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '7'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '7'
+  oscillator_aliases: []
+- pin: PA5
+  af: 6
+  function: GTIM2CH1
+  source_macro: PA05_AFx_GTIM2CH1
+  source_line: 933
+  gpio_register: AFRL
+  gpio_field: AFR5
+  peripheral: GTIM2
+  signal: CH1
+  source_signal: CH1
+  channel: 1
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA5
+    af: 6
+    function: GTIM2_CH1
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PA5
+    source_name: PA05
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '9'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '9'
+  oscillator_aliases: []
+- pin: PA6
+  af: 6
+  function: GTIM1CH1
+  source_macro: PA06_AFx_GTIM1CH1
+  source_line: 941
+  gpio_register: AFRL
+  gpio_field: AFR6
+  peripheral: GTIM1
+  signal: CH1
+  source_signal: CH1
+  channel: 1
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA6
+    af: 6
+    function: GTIM1_CH1
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PA6
+    source_name: PA06
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '10'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '10'
+  oscillator_aliases: []
+- pin: PA7
+  af: 6
+  function: GTIM1CH2
+  source_macro: PA07_AFx_GTIM1CH2
+  source_line: 949
+  gpio_register: AFRL
+  gpio_field: AFR7
+  peripheral: GTIM1
+  signal: CH2
+  source_signal: CH2
+  channel: 2
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA7
+    af: 6
+    function: GTIM1_CH2
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PA7
+    source_name: PA07
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '11'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '11'
+  oscillator_aliases: []
+- pin: PB0
+  af: 6
+  function: GTIM1CH3
+  source_macro: PB00_AFx_GTIM1CH3
+  source_line: 1010
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: GTIM1
+  signal: CH3
+  source_signal: CH3
+  channel: 3
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB0
+    af: 6
+    function: GTIM1_CH3
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PB0
+    source_name: PB00
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '12'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '12'
+  oscillator_aliases: []
+- pin: PB1
+  af: 6
+  function: GTIM1CH4
+  source_macro: PB01_AFx_GTIM1CH4
+  source_line: 1017
+  gpio_register: AFRL
+  gpio_field: AFR1
+  peripheral: GTIM1
+  signal: CH4
+  source_signal: CH4
+  channel: 4
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB1
+    af: 6
+    function: GTIM1_CH4
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PB1
+    source_name: PB01
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '13'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '13'
+  oscillator_aliases: []
+- pin: PB10
+  af: 6
+  function: GTIM2CH3
+  source_macro: PB10_AFx_GTIM2CH3
+  source_line: 1078
+  gpio_register: AFRH
+  gpio_field: AFR10
+  peripheral: GTIM2
+  signal: CH3
+  source_signal: CH3
+  channel: 3
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB10
+    af: 6
+    function: GTIM2_CH3
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PB10
+    source_name: PB10
+    table: 5-2
+    pdf_page: 27
+    printed_page: 26
+    positions:
+      QFN64: '15'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '15'
+  oscillator_aliases: []
+- pin: PB11
+  af: 6
+  function: GTIM2CH4
+  source_macro: PB11_AFx_GTIM2CH4
+  source_line: 1084
+  gpio_register: AFRH
+  gpio_field: AFR11
+  peripheral: GTIM2
+  signal: CH4
+  source_signal: CH4
+  channel: 4
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB11
+    af: 6
+    function: GTIM2_CH4
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PB11
+    source_name: PB11
+    table: 5-2
+    pdf_page: 28
+    printed_page: 27
+    positions:
+      QFN64: '16'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '16'
+  oscillator_aliases: []
+- pin: PB14
+  af: 1
+  function: GTIM2CH1
+  source_macro: PB14_AFx_GTIM2CH1
+  source_line: 1098
+  gpio_register: AFRH
+  gpio_field: AFR14
+  peripheral: GTIM2
+  signal: CH1
+  source_signal: CH1
+  channel: 1
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB14
+    af: 1
+    function: GTIM2_CH1
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PB14
+    source_name: PB14
+    table: 5-2
+    pdf_page: 28
+    printed_page: 27
+    positions:
+      QFN64: '20'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '20'
+  oscillator_aliases: []
+- pin: PB15
+  af: 1
+  function: GTIM2CH2
+  source_macro: PB15_AFx_GTIM2CH2
+  source_line: 1103
+  gpio_register: AFRH
+  gpio_field: AFR15
+  peripheral: GTIM2
+  signal: CH2
+  source_signal: CH2
+  channel: 2
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB15
+    af: 1
+    function: GTIM2_CH2
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PB15
+    source_name: PB15
+    table: 5-2
+    pdf_page: 28
+    printed_page: 27
+    positions:
+      QFN64: '21'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '21'
+  oscillator_aliases: []
+- pin: PB8
+  af: 6
+  function: GTIM1CH3
+  source_macro: PB08_AFx_GTIM1CH3
+  source_line: 1064
+  gpio_register: AFRH
+  gpio_field: AFR8
+  peripheral: GTIM1
+  signal: CH3
+  source_signal: CH3
+  channel: 3
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB8
+    af: 6
+    function: GTIM1_CH3
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PB8
+    source_name: PB08
+    table: 5-2
+    pdf_page: 29
+    printed_page: 28
+    positions:
+      QFN64: '55'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '55'
+  oscillator_aliases: []
+- pin: PB9
+  af: 6
+  function: GTIM1CH4
+  source_macro: PB09_AFx_GTIM1CH4
+  source_line: 1071
+  gpio_register: AFRH
+  gpio_field: AFR9
+  peripheral: GTIM1
+  signal: CH4
+  source_signal: CH4
+  channel: 4
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB9
+    af: 6
+    function: GTIM1_CH4
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  pin_cell:
+    pin: PB9
+    source_name: PB09
+    table: 5-2
+    pdf_page: 29
+    printed_page: 28
+    positions:
+      QFN64: '56'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '56'
+  oscillator_aliases: []
+excluded_sdk_routes:
+- pin: PA15
+  af: 2
+  function: GTIM2CH1
+  source_macro: PA15_AFx_GTIM2CH1
+  source_line: 997
+  gpio_register: AFRH
+  gpio_field: AFR15
+  peripheral: GTIM2
+  signal: CH1
+  reason: absent-from-own-datasheet-PWM-AF-tables
+- pin: PB3
+  af: 2
+  function: GTIM2CH2
+  source_macro: PB03_AFx_GTIM2CH2
+  source_line: 1029
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: GTIM2
+  signal: CH2
+  reason: absent-from-own-datasheet-PWM-AF-tables
+- pin: PB4
+  af: 6
+  function: GTIM1CH1
+  source_macro: PB04_AFx_GTIM1CH1
+  source_line: 1040
+  gpio_register: AFRL
+  gpio_field: AFR4
+  peripheral: GTIM1
+  signal: CH1
+  reason: absent-from-own-datasheet-PWM-AF-tables
+- pin: PB5
+  af: 6
+  function: GTIM1CH2
+  source_macro: PB05_AFx_GTIM1CH2
+  source_line: 1046
+  gpio_register: AFRL
+  gpio_field: AFR5
+  peripheral: GTIM1
+  signal: CH2
+  reason: absent-from-own-datasheet-PWM-AF-tables
+excluded_safety_routes: []

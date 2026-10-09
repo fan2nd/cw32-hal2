@@ -1,0 +1,9 @@
+# Oscillator status field access
+
+The typed PAC restricts all 41 reviewed SYSCTRL `STABLE` fields across the normalized oscillator register maps. Each `stable()` getter and the writable configuration fields remain available. The containing registers remain read/write. The [latest bounded promotion](reviewed-status-access.md) adds exactly 23 source-correct fields from generic capture results and independent own-manual review, preserving the 18 previously accepted restrictions.
+
+The original locked SVDs already describe these exact fields as read-only, matching their own reference manuals. This is an import/lowering omission, not a vendor SVD error: `chiptool::ir::Field` has no access member. The existing authored `cw32-data/field-access.yaml` sidecar restores the reviewed field restrictions during PAC generation, using exact fieldset/name/bit checks and AST setter removal. No raw SVD, register shape, normalized IR, or register-reuse mapping/hash is changed.
+
+[Exact source evidence](oscillator-status-access-evidence.json) records each family’s manual URL, SHA-256, section and printed/PDF page, original SVD member/archive identity and field access. F030/A030 retain their explicit shared source alias; R031/W031 retain independent own-manual and SVD evidence despite normalized-map reuse. L012 references CN V1.4 sections 4.7.4–4.7.7, printed pages 48–51/PDF pages 74–77. LSE uses bit 18 on L010/L011/L012 and bit 15 on the other listed families.
+
+This change does not initialize or stop an oscillator, modify HAL policy, release reserved oscillator pins, remove the inherited L012 HSE rejection, or qualify PLL behavior. The existing PAC access checks verify getters and writable neighboring fields compile, and each prohibited setter fails with E0599. These checks do not execute firmware or MMIO.

@@ -1,0 +1,1464 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-09",
+  "scope": "Direct L012 4..32 MHz HSE candidate; source/data validation and real builds only, no HAL tests or hardware execution.",
+  "baseline": {
+    "archive": "embassy-cw32-stage42-source-2026-10-09.zip",
+    "sha256": "5330dd2f25f18510992542ae711a38271dcb0f6c1c7f201a1496f2178c2dc0b3"
+  },
+  "source_identities": [
+    {
+      "kind": "pdf",
+      "path": "CW32L012_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "bytes": 18034510,
+      "evidence": [
+        "cw32-data/af/cw32l012-analog.yaml",
+        "cw32-data/clock/cw32l012.yaml",
+        "cw32-data/dma/cw32l012.yaml",
+        "sources/evidence-sources.json",
+        "cw32-data/lvd-ir.yaml",
+        "docs/adc-clock-source-bounds.json",
+        "docs/adc-l012-dual-ownership.md",
+        "docs/adc-timer-next-batch-evidence.json",
+        "docs/btim-counter-evidence.json",
+        "docs/comparator-low-evidence.json",
+        "docs/crc-evidence.json",
+        "docs/gpio-async-evidence.json",
+        "docs/known-source-conflicts.json",
+        "docs/l012-adc-route-qualification.md",
+        "docs/l012-math-evidence.json",
+        "docs/lvd-ir-evidence.json",
+        "docs/ram-parity-evidence.json",
+        "docs/read-only-crc-wwdt-audit.json",
+        "docs/read-only-low-power-serial-af-audit.json",
+        "docs/remaining-uart-evidence.json",
+        "docs/timer-adc-isr-access-corrections.json",
+        "docs/watchdog-evidence.json",
+        "docs/window-watchdog-evidence.json",
+        "tests/audit_l012_adc_sources.py",
+        "tests/verify_l012_adc_routes.py",
+        "docs/timer-command-evidence.json",
+        "cw32-data/reference-dividers.yaml#/profiles/2",
+        "docs/adc-remaining-async-evidence.json"
+      ],
+      "text": {
+        "path": "CW32L012_UserManual_CN_V1.4.txt",
+        "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505",
+        "bytes": 1558649,
+        "evidence": [
+          "docs/comparator-low-evidence.json"
+        ]
+      },
+      "id": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+      "license": {
+        "status": "redistribution_not_verified",
+        "bundle_raw": false,
+        "bundle_derived_text": false,
+        "inspected": "cover and copyright/legal notice pages of exact locked PDF",
+        "notice": "Vendor copyright/all rights reserved; no explicit redistribution grant established.",
+        "evidence_pdf_pages_1_based": [
+          1,
+          2
+        ]
+      },
+      "provenance": {
+        "filename": "CW32L012_UserManual_CN_V1.4.pdf",
+        "filename_version": "1.4",
+        "printed_revision": "1.4",
+        "publication_date": "2026-06",
+        "publication_date_basis": "cover month (revision-history date separately retained)",
+        "cover_date": "2026-06",
+        "revision_history_date": "2026-06-03",
+        "acquired_date": null,
+        "acquisition_evidence": null,
+        "chip_scope": [
+          "CW32L012"
+        ],
+        "status": "selected",
+        "reviewed_on": "2026-10-08",
+        "revision_evidence": {
+          "pdf_page_1_based": 1,
+          "location": "cover; repeated page footers"
+        },
+        "revision_history_evidence": {
+          "pdf_page_1_based": 698,
+          "printed_page": 4,
+          "location": "final revision-history table"
+        },
+        "pdf_page_count": 698
+      }
+    },
+    {
+      "kind": "pdf",
+      "path": "CW32L012_DataSheet_CN_V1.0.pdf",
+      "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+      "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+      "bytes": 3003846,
+      "evidence": [
+        "cw32-data/af/cw32l012-analog.yaml",
+        "cw32-data/clock/cw32l012.yaml",
+        "sources/evidence-sources.json",
+        "cw32-data/lvd-ir.yaml",
+        "docs/adc-clock-source-bounds.json",
+        "docs/adc-l012-dual-ownership.md",
+        "docs/adc-timer-next-batch-evidence.json",
+        "docs/comparator-low-evidence.json",
+        "docs/l012-adc-route-qualification.md",
+        "docs/l012-math-evidence.json",
+        "docs/lvd-ir-evidence.json",
+        "docs/ram-parity-evidence.json",
+        "docs/watchdog-evidence.json",
+        "tests/audit_l012_adc_sources.py",
+        "tests/verify_l012_adc_routes.py",
+        "cw32-data/reference-dividers.yaml#/profiles/2"
+      ],
+      "text": {
+        "path": "CW32L012_DataSheet_CN_V1.0.txt",
+        "sha256": "00ba7e2c9d26a8ce5a4eaa4cc2e7790773c427b13a4d491838622041abfa8b0a",
+        "bytes": 190981,
+        "evidence": [
+          "docs/comparator-low-evidence.json"
+        ]
+      },
+      "id": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+      "license": {
+        "status": "redistribution_not_verified",
+        "bundle_raw": false,
+        "bundle_derived_text": false,
+        "inspected": "cover and copyright/legal notice pages of exact locked PDF",
+        "notice": "Vendor copyright/all rights reserved; no explicit redistribution grant established.",
+        "evidence_pdf_pages_1_based": [
+          1
+        ]
+      },
+      "provenance": {
+        "filename": "CW32L012_DataSheet_CN_V1.0.pdf",
+        "filename_version": "1.0",
+        "printed_revision": "1.0",
+        "publication_date": "2025-07",
+        "publication_date_basis": "cover month (revision-history date separately retained)",
+        "cover_date": "2025-07",
+        "revision_history_date": "2025-07-16",
+        "acquired_date": null,
+        "acquisition_evidence": null,
+        "chip_scope": [
+          "CW32L012"
+        ],
+        "status": "selected",
+        "reviewed_on": "2026-10-08",
+        "revision_evidence": {
+          "pdf_page_1_based": 1,
+          "location": "cover; repeated page footers"
+        },
+        "revision_history_evidence": {
+          "pdf_page_1_based": 82,
+          "printed_page": 0,
+          "location": "final revision-history table"
+        },
+        "pdf_page_count": 82
+      }
+    },
+    {
+      "kind": "sdk",
+      "family": "CW32L012",
+      "path": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+      "bytes": 2494783,
+      "evidence": [
+        "cw32-data/af/cw32l012-analog.yaml",
+        "sources/evidence-sources.json",
+        "docs/comparator-low-evidence.json",
+        "docs/l012-adc-route-qualification.md",
+        "docs/l012-math-evidence.json",
+        "docs/ram-parity-evidence.json",
+        "tests/cmsis-layout-sources.json",
+        "tests/verify_l012_adc_routes.py",
+        "cw32-data/reference-dividers.yaml#/profiles/2"
+      ],
+      "members": [
+        {
+          "path": "cw32l012/Examples/CORDIC/cordic_atan2/USER/src/main.c",
+          "members": [
+            "Examples/CORDIC/cordic_atan2/USER/src/main.c"
+          ],
+          "sha256": "b66af6045062c6ef4e69a0482f8584e46e42b947b6e687d1c8929cd31ba8ea93",
+          "bytes": 4879,
+          "evidence": [
+            "docs/l012-math-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/CORDIC/cordic_cos/USER/src/main.c",
+          "members": [
+            "Examples/CORDIC/cordic_cos/USER/src/main.c"
+          ],
+          "sha256": "e2b4824e2a50a3290c7ee87822a654d34a174c43f565b00d1c22bba421b52061",
+          "bytes": 5239,
+          "evidence": [
+            "docs/l012-math-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/CORDIC/cordic_ln/USER/src/main.c",
+          "members": [
+            "Examples/CORDIC/cordic_ln/USER/src/main.c"
+          ],
+          "sha256": "ed756a631f62dbbb3fc9ed79c77e49804ff3fcc2c3452528e3b8b2a401ecf855",
+          "bytes": 4847,
+          "evidence": [
+            "docs/l012-math-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/CORDIC/cordic_sinh/USER/src/main.c",
+          "members": [
+            "Examples/CORDIC/cordic_sinh/USER/src/main.c"
+          ],
+          "sha256": "4c1fb2081832a1a7a7b35c745186e0a698ee7686ec96c6af857670f8868a7254",
+          "bytes": 4860,
+          "evidence": [
+            "docs/l012-math-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/CORDIC/cordic_sqrt/USER/src/main.c",
+          "members": [
+            "Examples/CORDIC/cordic_sqrt/USER/src/main.c"
+          ],
+          "sha256": "8ae51ccd8c2dea24f309a024ff647fe29990329607f199dc7f86b7a5772d794f",
+          "bytes": 4865,
+          "evidence": [
+            "docs/l012-math-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/DAC/DAC_SingleCh_DMA/USER/src/main.c",
+          "members": [
+            "Examples/DAC/DAC_SingleCh_DMA/USER/src/main.c"
+          ],
+          "sha256": "55ab60779c7bc373766d426c103e04609fdf07c9a5a299bd896ec053a1e84c65",
+          "bytes": 9334,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/DAC/DAC_WaveNoise_SingleCh_SwTrig/USER/src/main.c",
+          "members": [
+            "Examples/DAC/DAC_WaveNoise_SingleCh_SwTrig/USER/src/main.c"
+          ],
+          "sha256": "9d3183d12a91aa890b7b67b491ca66eb214b810e6c0a62973d6177047460a171",
+          "bytes": 6623,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/DAC/DAC_WaveSine_HwTrig/USER/src/main.c",
+          "members": [
+            "Examples/DAC/DAC_WaveSine_HwTrig/USER/src/main.c"
+          ],
+          "sha256": "647bb57930f6d0d7b58c9fce552aec1d9fbd440af0058631e6af2d948638107c",
+          "bytes": 9321,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/DAC/DAC_WaveTriangle_SingleCh_SwTrig/USER/src/main.c",
+          "members": [
+            "Examples/DAC/DAC_WaveTriangle_SingleCh_SwTrig/USER/src/main.c"
+          ],
+          "sha256": "7b50a9e889a934e087c16e3bfd05f664b70ffe0d1b6438ddd41e52cd3a2123b6",
+          "bytes": 6630,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/DAC/DAC_Wave_DualCh_HwTrig/USER/src/main.c",
+          "members": [
+            "Examples/DAC/DAC_Wave_DualCh_HwTrig/USER/src/main.c"
+          ],
+          "sha256": "8dd7d7a76905059beb220db1a1047467c5c5dfe8165a7279856fc0d21ee9bc70",
+          "bytes": 9368,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/DAC/DAC_Wave_DualCh_SwTrig/USER/src/main.c",
+          "members": [
+            "Examples/DAC/DAC_Wave_DualCh_SwTrig/USER/src/main.c"
+          ],
+          "sha256": "142168922a51684a44bc093de6f38b35f759b189d2db1178ff6c42a4c13faa51",
+          "bytes": 6784,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/OPA/OPA_AutoZero_Soft/USER/src/main.c",
+          "members": [
+            "Examples/OPA/OPA_AutoZero_Soft/USER/src/main.c"
+          ],
+          "sha256": "00af781c8ff40f1e15df293f4aac6d615adb8e5126d17f2dc0f41d8203532b8c",
+          "bytes": 10581,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/OPA/OPA_AutoZero_Trig_ByADC/USER/src/main.c",
+          "members": [
+            "Examples/OPA/OPA_AutoZero_Trig_ByADC/USER/src/main.c"
+          ],
+          "sha256": "f9959d5f6f921fb90260b034042c69c825f72c44c5a85a7a76946ae9d8974890",
+          "bytes": 9271,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/OPA/OPA_DAC Output Buffer/USER/src/main.c",
+          "members": [
+            "Examples/OPA/OPA_DAC Output Buffer/USER/src/main.c"
+          ],
+          "sha256": "5891466b593e5ce33a3adb19ea7c401ab6477139b9ac1695140d6c6d20c65f80",
+          "bytes": 9416,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/OPA/OPA_Non-Inverting Amplifier(StandAlone)/USER/src/main.c",
+          "members": [
+            "Examples/OPA/OPA_Non-Inverting Amplifier(StandAlone)/USER/src/main.c"
+          ],
+          "sha256": "f0234b7d49f67662a791a44459e7274436c94e422d21cc1a78e8697daa202d9d",
+          "bytes": 8795,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/OPA/OPA_Programmable Gain Amplifier (PGA)/USER/src/main.c",
+          "members": [
+            "Examples/OPA/OPA_Programmable Gain Amplifier (PGA)/USER/src/main.c"
+          ],
+          "sha256": "1a379843ddb4c2900492590a4b05f33b0e64187f35b0335d931780c45ebb0a5a",
+          "bytes": 8638,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/OPA/OPA_Voltage Follower (Buffer)/USER/src/main.c",
+          "members": [
+            "Examples/OPA/OPA_Voltage Follower (Buffer)/USER/src/main.c"
+          ],
+          "sha256": "fda72b7931c0870118d0d389f683f6aef020cf9386d141b18ca9387582f556bf",
+          "bytes": 8972,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+          "members": [
+            "IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2.pack",
+            "SVD/CW32L012.svd"
+          ],
+          "sha256": "fda08355c30ed60204cd53b2c1ca33e6ee2233530e6cb2448522158dfc302942",
+          "bytes": 505809,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/read-only-crc-wwdt-audit.json"
+          ]
+        },
+        {
+          "path": "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/WHXY.CW32L012_DFP.pdsc",
+          "members": [
+            "IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2.pack",
+            "WHXY.CW32L012_DFP.pdsc"
+          ],
+          "sha256": "0c88e4226659eadac050161d2b5ca3b1c4695c2793a3f609e0eb58646003657c",
+          "bytes": 3199,
+          "evidence": [
+            "cw32-data/parts.yaml"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012.h",
+          "members": [
+            "Libraries/inc/cw32l012.h"
+          ],
+          "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+          "bytes": 834392,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "cw32-data/dma/cw32l012.yaml",
+            "sources/evidence-sources.json",
+            "docs/comparator-low-evidence.json",
+            "docs/crc-evidence.json",
+            "docs/ram-parity-evidence.json",
+            "docs/read-only-crc-wwdt-audit.json",
+            "docs/remaining-uart-evidence.json",
+            "docs/watchdog-evidence.json",
+            "docs/window-watchdog-evidence.json",
+            "cw32-data/reference-dividers.yaml#/profiles/2",
+            "docs/adc-remaining-async-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_adc.h",
+          "members": [
+            "Libraries/inc/cw32l012_adc.h"
+          ],
+          "sha256": "13a189fef19ca32b64c6fa289c2e144069e8961ed4cf72bdbe62cd190266b045",
+          "bytes": 21340,
+          "evidence": [
+            "cw32-data/af/cw32l012-analog.yaml",
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json",
+            "docs/adc-l012-dual-ownership.md",
+            "docs/adc-timer-next-batch-evidence.json",
+            "docs/l012-adc-route-qualification.md",
+            "tests/audit_l012_adc_sources.py",
+            "tests/verify_l012_adc_routes.py"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_btim.h",
+          "members": [
+            "Libraries/inc/cw32l012_btim.h"
+          ],
+          "sha256": "b3bf357bf668bccfca8881b8880135c5d1b81b030a668d17fcc6734d48dda7f9",
+          "bytes": 24411,
+          "evidence": [
+            "docs/btim-counter-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_cordic.h",
+          "members": [
+            "Libraries/inc/cw32l012_cordic.h"
+          ],
+          "sha256": "a547093a17402735353c277e6e73c9cd34d7e09731a93d2a6b54e070a74236f6",
+          "bytes": 4393,
+          "evidence": [
+            "docs/l012-math-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_crc.h",
+          "members": [
+            "Libraries/inc/cw32l012_crc.h"
+          ],
+          "sha256": "f0036c67237ca851bc85d291b346bd7ac14f7a3ea18c676b252108007f8923eb",
+          "bytes": 3267,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/crc-evidence.json",
+            "docs/read-only-crc-wwdt-audit.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_dac.h",
+          "members": [
+            "Libraries/inc/cw32l012_dac.h"
+          ],
+          "sha256": "272c2a90583f3f98bc1aa0e0fbd06a9b0b3951aacf2bd14525eb321d4ca2f709",
+          "bytes": 7575,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_dma.h",
+          "members": [
+            "Libraries/inc/cw32l012_dma.h"
+          ],
+          "sha256": "9e2a583ca75e8528b69d3063c6e06b14e36a00604e7486fcd9628c2284bf0e00",
+          "bytes": 10233,
+          "evidence": [
+            "cw32-data/dma/cw32l012.yaml",
+            "sources/evidence-sources.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_eau.h",
+          "members": [
+            "Libraries/inc/cw32l012_eau.h"
+          ],
+          "sha256": "a106425838c3de348799038d2a9e40ec25a7a385638ae9e862d536719f547a1b",
+          "bytes": 2432,
+          "evidence": [
+            "docs/l012-math-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_flash.h",
+          "members": [
+            "Libraries/inc/cw32l012_flash.h"
+          ],
+          "sha256": "11014ce8ab671738975bb4f879bb55cee584ff5ecdb696d126160a6da5535bf7",
+          "bytes": 7884,
+          "evidence": [
+            "docs/flash-next-batch-audit.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_gpio.h",
+          "members": [
+            "Libraries/inc/cw32l012_gpio.h"
+          ],
+          "sha256": "45f356e8028475c2e25d135c5fdd0b75babb6b1c83f1d5534038e9355822d717",
+          "bytes": 69670,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/adc-timer-next-batch-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_gtim.h",
+          "members": [
+            "Libraries/inc/cw32l012_gtim.h"
+          ],
+          "sha256": "d6477ab2af1e17bbb710177adaa658afef4c19a1f165f8c3c194e021a10eb34a",
+          "bytes": 18238,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/adc-timer-next-batch-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_irmod.h",
+          "members": [
+            "Libraries/inc/cw32l012_irmod.h"
+          ],
+          "sha256": "30214f206c3926eb9619cb2c2b018f7b81a1c68f86a8ea83795590bee95f8bef",
+          "bytes": 5843,
+          "evidence": [
+            "docs/lvd-ir-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_iwdt.h",
+          "members": [
+            "Libraries/inc/cw32l012_iwdt.h"
+          ],
+          "sha256": "23b0b694bcde3bfc128e728faa82118d1296faa3f5ec13dfff79726d15021a67",
+          "bytes": 7435,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/watchdog-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_lpi2c.h",
+          "members": [
+            "Libraries/inc/cw32l012_lpi2c.h"
+          ],
+          "sha256": "47ef67bfdab9d7b6a61307c83305b4c9c55700f05072ce9c302941d619a580c4",
+          "bytes": 63276,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_lptim.h",
+          "members": [
+            "Libraries/inc/cw32l012_lptim.h"
+          ],
+          "sha256": "3967044d9082b056733cd9b23de9b710ef9cd8327b9ebb270f1e03d799635e82",
+          "bytes": 8886,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_lvd.h",
+          "members": [
+            "Libraries/inc/cw32l012_lvd.h"
+          ],
+          "sha256": "4678781353bbe5c585424e72d07bc0c92c4b4c74927dcf92d6eccd44b615d25c",
+          "bytes": 9406,
+          "evidence": [
+            "docs/lvd-ir-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_opa.h",
+          "members": [
+            "Libraries/inc/cw32l012_opa.h"
+          ],
+          "sha256": "88177b95a1a8d60ff273e17d688a2be002e73b6466724598cd5316fbe7361406",
+          "bytes": 17346,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_rtc.h",
+          "members": [
+            "Libraries/inc/cw32l012_rtc.h"
+          ],
+          "sha256": "faf8a50f1ff9b19cda2995ff05d0cfb010fb8203ae45407e7541352f85b9ffeb",
+          "bytes": 22718,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_spi.h",
+          "members": [
+            "Libraries/inc/cw32l012_spi.h"
+          ],
+          "sha256": "ffb034d68a720d99930ed6ba8b62041f753eb5b8d99ba4757811d5be33197c27",
+          "bytes": 13912,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_sysctrl.h",
+          "members": [
+            "Libraries/inc/cw32l012_sysctrl.h"
+          ],
+          "sha256": "3746c16b7a3fa72d1b43d42c080111e64faa36e8beb4b1f19c13daf3c71b993c",
+          "bytes": 53947,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json",
+            "docs/adc-l012-dual-ownership.md",
+            "docs/adc-timer-next-batch-evidence.json",
+            "docs/crc-evidence.json",
+            "docs/l012-adc-route-qualification.md",
+            "docs/read-only-crc-wwdt-audit.json",
+            "tests/audit_l012_adc_sources.py"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_uart.h",
+          "members": [
+            "Libraries/inc/cw32l012_uart.h"
+          ],
+          "sha256": "689975d2980e5748dde9ddf419b57fa27621617126bd7652f65e186a69d8e5c2",
+          "bytes": 20037,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json",
+            "docs/remaining-uart-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_vc.h",
+          "members": [
+            "Libraries/inc/cw32l012_vc.h"
+          ],
+          "sha256": "f36845838fa199430eae571f8ec4fe03717c486dfb854e6f0ead5a87e0562e96",
+          "bytes": 10981,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json",
+            "docs/comparator-low-evidence.json",
+            "cw32-data/reference-dividers.yaml#/profiles/2"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_wwdt.h",
+          "members": [
+            "Libraries/inc/cw32l012_wwdt.h"
+          ],
+          "sha256": "87c566a4e8e1f0001a1963ddcb68f32ef799d21e6b7aeddb8e44b46001ccfa77",
+          "bytes": 1475,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/read-only-crc-wwdt-audit.json",
+            "docs/window-watchdog-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_adc.c",
+          "members": [
+            "Libraries/src/cw32l012_adc.c"
+          ],
+          "sha256": "8b26760851f1ed6e83ce1d8e53b30fb436b51a924e0c69b2610a5e9db84bdd50",
+          "bytes": 14864,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json",
+            "docs/adc-l012-dual-ownership.md",
+            "docs/adc-timer-next-batch-evidence.json",
+            "tests/audit_l012_adc_sources.py"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_btim.c",
+          "members": [
+            "Libraries/src/cw32l012_btim.c"
+          ],
+          "sha256": "23c131602cac01d1faa0d86d44472eea15e75b3d9952ead3887d93d4d9ec6edf",
+          "bytes": 17911,
+          "evidence": [
+            "docs/btim-counter-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_cordic.c",
+          "members": [
+            "Libraries/src/cw32l012_cordic.c"
+          ],
+          "sha256": "dfb48db021ec664c3692ac2c01460224d5c1231d030eccc4541aa593c44984e4",
+          "bytes": 6739,
+          "evidence": [
+            "docs/l012-math-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_crc.c",
+          "members": [
+            "Libraries/src/cw32l012_crc.c"
+          ],
+          "sha256": "e023cb39d4b7ee42aae370ebf85d9353af3666f6052c4a0682699633a0145d6e",
+          "bytes": 2821,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/crc-evidence.json",
+            "docs/read-only-crc-wwdt-audit.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_dac.c",
+          "members": [
+            "Libraries/src/cw32l012_dac.c"
+          ],
+          "sha256": "ceabb6c1c8b0a6264c40383d9525b3d01f0bd8f528b6b0f3c93f60646cda7ed9",
+          "bytes": 12161,
+          "evidence": [
+            "cw32-data/dac-opa.yaml",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_dma.c",
+          "members": [
+            "Libraries/src/cw32l012_dma.c"
+          ],
+          "sha256": "43381185ea6c8051e44c10591a3e05229a32b94f82eeca82adb5606236028fc4",
+          "bytes": 6251,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_eau.c",
+          "members": [
+            "Libraries/src/cw32l012_eau.c"
+          ],
+          "sha256": "636e4b5639325203a30ecdca7ba3adbd744567c68be58b108431f8db0a5aeb76",
+          "bytes": 3495,
+          "evidence": [
+            "docs/l012-math-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_flash.c",
+          "members": [
+            "Libraries/src/cw32l012_flash.c"
+          ],
+          "sha256": "d4045c0ab56c27490439a7ccaee89f6257dd0433d97f399d4f85598dbc855d0c",
+          "bytes": 20106,
+          "evidence": [
+            "docs/flash-next-batch-audit.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_gpio.c",
+          "members": [
+            "Libraries/src/cw32l012_gpio.c"
+          ],
+          "sha256": "ff7fa4d5aea661047f7c8ec39b63486dffd02c80abb70a07da23d3ad20f07a58",
+          "bytes": 9056,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/adc-timer-next-batch-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_gtim.c",
+          "members": [
+            "Libraries/src/cw32l012_gtim.c"
+          ],
+          "sha256": "b5de6b909a38fb205ce5c7e115e2a8580747618cca7bc6f41f9dcdbbcd1eecee",
+          "bytes": 21820,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/adc-timer-next-batch-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_irmod.c",
+          "members": [
+            "Libraries/src/cw32l012_irmod.c"
+          ],
+          "sha256": "b47b164044efc287025fde23ca00c3b89415ad734a003e1765707380398f574d",
+          "bytes": 3748,
+          "evidence": [
+            "docs/lvd-ir-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_iwdt.c",
+          "members": [
+            "Libraries/src/cw32l012_iwdt.c"
+          ],
+          "sha256": "755d184242d1136830bc99b9a5118add82f4cfa613052b5b96072db1983aec29",
+          "bytes": 6651,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/watchdog-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_lpi2c.c",
+          "members": [
+            "Libraries/src/cw32l012_lpi2c.c"
+          ],
+          "sha256": "026cf80a54f13bb08de55aff304c7d4fc629bb7477242ab337cabef61dc46d69",
+          "bytes": 112572,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_lptim.c",
+          "members": [
+            "Libraries/src/cw32l012_lptim.c"
+          ],
+          "sha256": "08afb8c806bf29f583531d058f1e81ee2048a56dd1e214f3bfa0fb5d1208b66a",
+          "bytes": 6828,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_lvd.c",
+          "members": [
+            "Libraries/src/cw32l012_lvd.c"
+          ],
+          "sha256": "0e9cf90c6be3c4509a9790d53f620fec9ce4cbd742ee5992bf43cdf6fe2be6f3",
+          "bytes": 8001,
+          "evidence": [
+            "docs/lvd-ir-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_opa.c",
+          "members": [
+            "Libraries/src/cw32l012_opa.c"
+          ],
+          "sha256": "e96839a43436f4f3e093449a829bc2b563a83326dba567980755506f380b4aba",
+          "bytes": 8025,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "cw32-data/dac-opa.yaml",
+            "sources/evidence-sources.json",
+            "docs/dac-opa-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_rtc.c",
+          "members": [
+            "Libraries/src/cw32l012_rtc.c"
+          ],
+          "sha256": "930e1258dc01c5e961040488820090d425b9a670487035ebf5f57422dc02fa3b",
+          "bytes": 17348,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_sysctrl.c",
+          "members": [
+            "Libraries/src/cw32l012_sysctrl.c"
+          ],
+          "sha256": "6c1764be4a47f37f052fe6abed87b6bf54df87385e0c4072b7db819bcb8926cf",
+          "bytes": 28330,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/adc-timer-next-batch-evidence.json",
+            "docs/crc-evidence.json",
+            "docs/read-only-crc-wwdt-audit.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_uart.c",
+          "members": [
+            "Libraries/src/cw32l012_uart.c"
+          ],
+          "sha256": "49199142bb1e564d0edc297a08bf5e2b138b96111b9fc42b81539419c051c065",
+          "bytes": 40247,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json",
+            "docs/remaining-uart-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_vc.c",
+          "members": [
+            "Libraries/src/cw32l012_vc.c"
+          ],
+          "sha256": "148231c50feedb413cd7da256258f242a8c4f86d7b06bc23f0de9b0ad9220ae7",
+          "bytes": 7819,
+          "evidence": [
+            "cw32-data/clock/cw32l012.yaml",
+            "sources/evidence-sources.json",
+            "docs/comparator-low-evidence.json",
+            "cw32-data/reference-dividers.yaml#/profiles/2"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_wwdt.c",
+          "members": [
+            "Libraries/src/cw32l012_wwdt.c"
+          ],
+          "sha256": "cfc5ac7afbafbda0270597cd335e824780aaadfee47465f883b193c276fd333a",
+          "bytes": 3090,
+          "evidence": [
+            "sources/evidence-sources.json",
+            "docs/read-only-crc-wwdt-audit.json",
+            "docs/window-watchdog-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_halltim.c",
+          "members": [
+            "Libraries/src/cw32l012_halltim.c"
+          ],
+          "sha256": "fcce976ee1e5cfb3780dd8da61bc6e7355caae73a3713755bbc6b4302e36b12e",
+          "bytes": 4624,
+          "evidence": [
+            "docs/halltim-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_halltim.h",
+          "members": [
+            "Libraries/inc/cw32l012_halltim.h"
+          ],
+          "sha256": "388d07a7a6941c8c18d250819e302a4ef8df69620b12a8ca5fc8ae273c350d33",
+          "bytes": 6147,
+          "evidence": [
+            "docs/halltim-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_ram.c",
+          "members": [
+            "Libraries/src/cw32l012_ram.c"
+          ],
+          "sha256": "21d4eaad3a06f74890041c9e950fbb2bb5507212324209c8fa027e384c9c7dc2",
+          "bytes": 3066,
+          "evidence": [
+            "docs/ram-parity-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_ram.h",
+          "members": [
+            "Libraries/inc/cw32l012_ram.h"
+          ],
+          "sha256": "47ec16c744f08ec8d60e16fa8ade652bebdfd14933fea374898f767b052622c0",
+          "bytes": 2902,
+          "evidence": [
+            "docs/ram-parity-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/inc/cw32l012_atim.h",
+          "members": [
+            "Libraries/inc/cw32l012_atim.h"
+          ],
+          "sha256": "1b41e255fe6dbd73d4d4b39be80e6f1cdc0403d4a14efe81917bea6e403970d1",
+          "bytes": 30756,
+          "evidence": [
+            "docs/timer-input-source-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Libraries/src/cw32l012_atim.c",
+          "members": [
+            "Libraries/src/cw32l012_atim.c"
+          ],
+          "sha256": "50daf74840479c86351659209541521520fd8d91265ffef1605f48d15816b981",
+          "bytes": 20102,
+          "evidence": [
+            "docs/timer-input-source-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/ADC/adc_multi-channel_sequence_conversion/USER/src/main.c",
+          "members": [
+            "Examples/ADC/adc_multi-channel_sequence_conversion/USER/src/main.c"
+          ],
+          "sha256": "831369247f0759b5b099792cbedf1e76fb92bd2fcba0bd40aa48d180a0417904",
+          "bytes": 7330,
+          "evidence": [
+            "docs/adc-scan-source-evidence.json"
+          ]
+        },
+        {
+          "path": "cw32l012/Examples/ADC/adc_get_AVcc_temp_refBgr1v2/USER/src/main.c",
+          "members": [
+            "Examples/ADC/adc_get_AVcc_temp_refBgr1v2/USER/src/main.c"
+          ],
+          "sha256": "79788d42edffeb81b3e1c99866d23e386878fe45087d032230a0cf57d1d71fac",
+          "bytes": 7018,
+          "evidence": [
+            "docs/adc-scan-source-evidence.json"
+          ]
+        }
+      ],
+      "id": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "license": {
+        "status": "whole_archive_redistribution_not_verified",
+        "bundle_raw": false,
+        "bundle_derived_text": false,
+        "inspected": [
+          "archive file inventory for LICENSE/COPYING",
+          "top-level README/release notes where present",
+          "cw32l012/Libraries/inc/cw32l012.h",
+          "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+          "cw32l012/Libraries/src/cw32l012_adc.c"
+        ],
+        "license_filenames_in_outer_archive": [],
+        "header_notice": "SPDX Apache-2.0 in selected CMSIS header; scope is that component only",
+        "vendor_driver_notice": "Vendor programming-example use/customization grant with warranty disclaimer; it is not treated as verified permission to redistribute the complete SDK.",
+        "svd_notice": "No explicit redistribution grant established for the selected SVD.",
+        "note": "Retain component notices when legally permitted reuse is separately reviewed. Do not relabel vendor material under this project license."
+      },
+      "provenance": {
+        "filename": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "filename_version": "1.0.5",
+        "printed_revision": null,
+        "publication_date": null,
+        "publication_date_basis": null,
+        "cover_date": null,
+        "revision_history_date": null,
+        "acquired_date": null,
+        "acquisition_evidence": null,
+        "chip_scope": [
+          "CW32L012"
+        ],
+        "status": "selected",
+        "reviewed_on": "2026-10-08",
+        "generator_svd_path": "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+        "generator_header_path": "cw32l012/Libraries/inc/cw32l012.h",
+        "sdk_version_note": "Archive filename is a release label; a selected header/SVD component version is not the SDK release version.",
+        "revision_evidence": {
+          "status": "unknown; no release-wide printed version/date established by inspected top-level readme/header/SVD notices"
+        }
+      }
+    }
+  ],
+  "facts": {
+    "schema_version": 1,
+    "audit_date": "2026-10-09",
+    "scope": "CW32L012 only; source-only strategy; Stage41 rejection unchanged",
+    "sources_sha256": {
+      "CW32L012_UserManual_CN_V1.4.pdf": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "CW32L012_DataSheet_CN_V1.0.pdf": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+      "CW32L012_StandardPeripheralLib_V1.0.5.zip": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+      "cw32l012/Libraries/inc/cw32l012_sysctrl.h": "3746c16b7a3fa72d1b43d42c080111e64faa36e8beb4b1f19c13daf3c71b993c",
+      "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd": "fda08355c30ed60204cd53b2c1ca33e6ee2233530e6cb2448522158dfc302942"
+    },
+    "primary_urls": {
+      "rm": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "ds": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+      "sdk": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+    },
+    "visually_reviewed_pdf_pages": {
+      "CW32L012_DataSheet_CN_V1.0.pdf": [
+        35,
+        47,
+        54,
+        56,
+        58
+      ],
+      "CW32L012_UserManual_CN_V1.4.pdf": [
+        55,
+        60,
+        76,
+        127,
+        655,
+        677
+      ]
+    },
+    "electrical": {
+      "crystal_hz": [
+        4000000,
+        32000000
+      ],
+      "bypass_ds_hz": [
+        1000000,
+        32000000
+      ],
+      "bypass_rm_hz": [
+        4000000,
+        32000000
+      ],
+      "proposed_bypass_hz": [
+        4000000,
+        32000000
+      ],
+      "supply_mv": [
+        1700,
+        5500
+      ],
+      "combined_temperature_c": [
+        -40,
+        85
+      ],
+      "vdda_equals_vdd": true,
+      "low_voltage_threshold_mv": 1800,
+      "low_voltage_bus_max_hz": 24000000,
+      "high_voltage_bus_max_hz": 96000000,
+      "factory_hsiosc_hz": [
+        94080000,
+        96000000,
+        97920000
+      ],
+      "legal_untrimmed_hsiosc_hz": [
+        90000000,
+        100000000
+      ],
+      "legal_lsi_hz": [
+        29520,
+        32800,
+        36080
+      ],
+      "fixed_ccs_fallback_hz": [
+        3920000,
+        4000000,
+        4080000
+      ],
+      "fixed_ccs_fallback_hsi_divisor": 24,
+      "current_hal_default_hsi_divisor": 12,
+      "flash_wait_step_hz": 24000000,
+      "flash_maximum_wait": 3,
+      "waveform": {
+        "duty_percent": [
+          40,
+          60
+        ],
+        "minimum_high_low_ns": 15,
+        "maximum_rise_fall_ns": 20,
+        "vih_vdd_fraction": [
+          0.7,
+          1.0
+        ],
+        "vil_vdd_fraction": [
+          0,
+          0.3
+        ]
+      }
+    },
+    "hse_register": {
+      "offset": 28,
+      "reset": 2621218,
+      "frequency_selector": null,
+      "fields": {
+        "DRIVER": [
+          0,
+          4,
+          "RW"
+        ],
+        "WAITCYCLE": [
+          4,
+          2,
+          "RW"
+        ],
+        "MODE": [
+          6,
+          1,
+          "RW"
+        ],
+        "HEXENPOL": [
+          7,
+          1,
+          "RW"
+        ],
+        "DETCNT": [
+          8,
+          11,
+          "RW"
+        ],
+        "STABLE": [
+          19,
+          1,
+          "RO"
+        ],
+        "PDRIVER": [
+          20,
+          4,
+          "RW"
+        ],
+        "DIGFLT": [
+          24,
+          1,
+          "RW"
+        ]
+      },
+      "reserved_bits": [
+        25,
+        31
+      ],
+      "qualified_drive_codes": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "wait_cycles": [
+        8192,
+        32768,
+        131072,
+        262144
+      ],
+      "startup_detect_ms": [
+        65,
+        65,
+        65,
+        130
+      ],
+      "digital_filter_maximum_actual_hz": 8000000,
+      "detector_cycle_count": 131072,
+      "detector_policy_numerator_hz": 8000000000,
+      "detector_range": [
+        1,
+        2047
+      ],
+      "first_batch_filter": false,
+      "first_batch_wait_encoding": 3
+    },
+    "pins": {
+      "CW32L012C8T6": {
+        "package": "LQFP48",
+        "HSE_IN": [
+          "PF0",
+          5
+        ],
+        "HSE_OUT": [
+          "PF1",
+          6
+        ],
+        "LSE_IN": [
+          "PC14",
+          3
+        ],
+        "LSE_OUT": [
+          "PC15",
+          4
+        ]
+      },
+      "CW32L012C8U6": {
+        "package": "QFN48",
+        "HSE_IN": [
+          "PF0",
+          5
+        ],
+        "HSE_OUT": [
+          "PF1",
+          6
+        ],
+        "LSE_IN": [
+          "PC14",
+          3
+        ],
+        "LSE_OUT": [
+          "PC15",
+          4
+        ]
+      },
+      "hse_io_structure": "TC",
+      "hse_analog_overlaps": [],
+      "bypass_reserves": [
+        "PF0"
+      ],
+      "crystal_reserves": [
+        "PF0",
+        "PF1"
+      ],
+      "rm_setup_example_conflict": [
+        "PB7",
+        "PC13"
+      ],
+      "hse_pad_pull_down": false,
+      "gpiof_gate": [
+        "AHBEN",
+        "GPIOF",
+        7
+      ]
+    },
+    "rtc_source": {
+      "LSE": 0,
+      "HSE": 1,
+      "LSI": 2,
+      "HSIOSC": 3,
+      "reserved": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "calendar_start_zero_releases_source": false,
+      "rtcclkd_maximum_hz": 1000000
+    },
+    "access_gap": {
+      "raw_svd_fields_already_ro": {
+        "HSE.STABLE": 19,
+        "HSI.STABLE": 15,
+        "LSI.STABLE": 15,
+        "LSE.STABLE": 18
+      },
+      "raw_svd_whole_registers_rw": true,
+      "missing_sidecar": "cw32-data/field-access.yaml:sysctrl_cw32l012_v1",
+      "current_generated_status_setters_present": true,
+      "whole_register_read_override_correct": false,
+      "canonical_ir_hash_before": "51583e3bfb2a5c47d616e81b7822af931ac268033c00364c565454a9f20befb5"
+    },
+    "retained_owner_checks": {
+      "adc_instances": [
+        "ADC1",
+        "ADC2"
+      ],
+      "vc_instances": [
+        "VC1",
+        "VC2",
+        "VC3",
+        "VC4"
+      ],
+      "vc_blank_trigger_register": "CR2",
+      "vc_blank_trigger_bits": [
+        0,
+        31
+      ],
+      "opa_instances": [
+        "OPA1",
+        "OPA2"
+      ],
+      "opa_calibration_clock": "PCLK / 2^CLKDIV",
+      "lvd_filter_clock": [
+        "LSI",
+        "SYSCLK"
+      ],
+      "lvd_has_dedicated_rcc_gate": false,
+      "lse_lock_policy": "LSE.PINLOCK && CR1.LSELOCK",
+      "source_or_pad_write_on_retained_conflict": false,
+      "temporary_gate_writes_for_inspection_possible": true
+    },
+    "proposed_initial_states": [
+      "fresh disabled HSE with declared source",
+      "exact declared enabled HSE reuse without source/pad writes",
+      "HSI final with declared enabled HSE reserved"
+    ],
+    "deferred_states": [
+      "undeclared enabled HSE",
+      "mismatched enabled HSE reconfiguration",
+      "bypass below 4 MHz",
+      "drive codes 8..15",
+      "DIGFLT=true or live changes",
+      "automatic HEXEN control ownership",
+      "retained ADC/VC/LVD/OPA/DAC timing-dependent activity",
+      "runtime fault recovery or clock refreeze",
+      "DeepSleep/resume",
+      "LSE initialization"
+    ],
+    "validation": {
+      "cargo_run": false,
+      "hal_tests_run": false,
+      "hardware_run": false,
+      "main_mutated": false
+    }
+  },
+  "enum_canonical_before_sha256": "51583e3bfb2a5c47d616e81b7822af931ac268033c00364c565454a9f20befb5",
+  "enum_canonical_after_sha256": "0b88d2a17cf459965103f1bdf366d9ae20e529ebd555622bc4e6acff538298be",
+  "status_access_dependency": {
+    "patch_sha256": "f8890778ed77223977dead8adfa75c1c55f38dcea56da93e1bb50508c395344c",
+    "evidence": "docs/oscillator-status-access-evidence.json",
+    "meaning": "Original SVD fields already RO; independent mixed-register projection correction, not a source error."
+  },
+  "qualification": {
+    "conditions": "Own DS Table7-4 PDF47: VDD 1.7..5.5 V, VDDA=VDD, ambient -40..85 C with retained factory HSI. Actual HCLK/PCLK <=24 MHz below 1.8 V and <=96 MHz otherwise.",
+    "bypass_conflict": "Own RM PDF55 qualifies 4..32 MHz; DS PDF54 gives 1..32 MHz. Admit only the actual 4..32 MHz intersection for both crystal and bypass.",
+    "parameters": "Own HSE register PDF76 has no range selector. DRIVER and PDRIVER are four bits, but only 0..7 documented; use the same board-selected drive for both. WAITCYCLE=3, DIGFLT=false; no parameter changes after enable. Preserve HEXENPOL and RFU. DIGFLT=true and automatic HEXEN control are deferred.",
+    "security": "Own RM PDF62/PDF71 forces nominal HSI4 MHz after CLKCCS fallback, independent of requested HSI DIV. This is /24 of factory 96 MHz, not the HAL default /12=8 MHz. Preserve CLKCCS/HSECCS/LSECCS/LSELOCK and unchanged legal LSI, including automatic requests. Relevant sticky HSE/LSE FAIL/FAULT are rejected without clearing.",
+    "pins": "Own DS PDF35 establishes PF0 OSC_IN physical5 and PF1 OSC_OUT physical6 for both LQFP48 and QFN48; wrong RM PDF67 example PB7/PC13 is not used. No ADC/VC/OPA overlap on these pads. GPIO lacks LOCK/SPEED/HIGHIE/LOWIE; only PF3 has PDR, so never write PF0/PF1 PDR. Preserve ODR/shared filter/interrupt flags.",
+    "entry": "Undeclared enabled HSE is refused before MMIO writes. Any declared enabled HSE requires exact mode/drive/wait/filter/detector/pad reuse and is never stopped or rewritten, including RTC/AWT owners. Fresh HSE requires HSEEN=0 and STABLE=0. RTC source3 requires enabled stable factory HSI and blocks retrim; PSC1-derived RTCCLKD also feeds AWT and must stay <=1 MHz even with calendar START=0.",
+    "analog": "Inspect both ADC1/ADC2 EN; all VC1..4 PCLK filtering and all32 CR2 blanking enables; OPA1/2 CALEN/AZRUN/START; both DAC channels trigger/DMA/wave state. Reject timing-dependent retained activity before clock mutation. Inspect LVD directly: no own RCC gate. Preserve static analog owners, BGR/TS/references and configuration gates without resets.",
+    "ownership": "Capture common inherited LSE reservation before backend writes. HSE reservations union inherited and requested mode for the boot; exact reuse cannot release any pad. Source loss never releases GPIO ownership.",
+    "contract": "One-time direct HSI/HSE initialization; no PLL, LSE setup, runtime retune, sleep/resume or recovery. Actual incoming source/buses/Flash and unchanged LSI must already be legal. Finite polls require CPU progress; STABLE is startup-only. Frozen external timings cease to apply after source loss/fallback; failed init requires reset.",
+    "transition": "Raise and acknowledge Flash WAIT3 first; enable and poll unchanged HSI; write guarded prescalers plus explicit HSI selector together in keyed CR0, then verify selector/dividers/HSIEN/STABLE and faults. Incoming HSI TRIM must already yield legal90..100MHz whenever enabled, including when initially disabled. This avoids stale external-selector replay; it is not source-loss recovery."
+  },
+  "schema": {
+    "fixed_ccs_hsi_divisor": {
+      "type": "optional u8",
+      "none": "No fixed-divider fact is declared; never an implicit configured/default divider",
+      "explicit_families": {
+        "CW32L010": 12,
+        "CW32L011": 24,
+        "CW32L052": 6,
+        "CW32L012": 24
+      }
+    },
+    "hsi_operating_range_hz": {
+      "type": "optional (u32,u32)",
+      "none": "No legal incoming oscillator range is declared",
+      "CW32L012": [
+        90000000,
+        100000000
+      ],
+      "basis": "Own RM section4.4.2 printed33/PDF59; incoming frequency must already obey it; not a guarantee for arbitrary TRIM"
+    }
+  },
+  "reviewed_transition_correction": {
+    "own_rm_sections": [
+      "4.5.1",
+      "4.7.1"
+    ],
+    "change": "Enable/poll unchanged HSI after acknowledged Flash WAIT3, then one keyed CR0 write explicitly selects HSI and guarded dividers; poll selector/dividers/enabled/stable/faults and barrier.",
+    "preconditions": "Legal stable incoming clocks/buses/Flash and legal unchanged HSIOSC whenever enabled, including initially disabled HSI. No arbitrary TRIM or source-loss recovery guarantee."
+  }
+}

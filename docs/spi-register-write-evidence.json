@@ -1,0 +1,920 @@
+{
+  "schema_version": 1,
+  "scope": "Source-backed SPI ICR command semantics; no silicon execution. All other policies are unchanged.",
+  "registers": {
+    "spi_v1": {
+      "families": [
+        "CW32F030",
+        "CW32A030",
+        "CW32F020"
+      ],
+      "reset_value": 255,
+      "write_noop": 255,
+      "zero_to_clear_fields": [
+        "FLUSH",
+        "RXNE",
+        "SSF",
+        "SSR",
+        "UD",
+        "OV",
+        "SSERR",
+        "MODF"
+      ]
+    },
+    "spi_cw32f002_v1": {
+      "families": [
+        "CW32F002",
+        "CW32F003"
+      ],
+      "reset_value": 255,
+      "write_noop": 255,
+      "zero_to_clear_fields": [
+        "FLUSH",
+        "RXNE",
+        "SSF",
+        "SSR",
+        "UD",
+        "OV",
+        "SSERR",
+        "MODF"
+      ]
+    },
+    "spi_cw32l031_v1": {
+      "families": [
+        "CW32L031",
+        "CW32R031",
+        "CW32W031",
+        "CW32L052",
+        "CW32L083"
+      ],
+      "reset_value": 255,
+      "write_noop": 255,
+      "zero_to_clear_fields": [
+        "FLUSH",
+        "RXNE",
+        "SSF",
+        "SSR",
+        "UD",
+        "OV",
+        "SSERR",
+        "MODF"
+      ]
+    },
+    "spi_cw32l010_v1": {
+      "families": [
+        "CW32L010",
+        "CW32L011"
+      ],
+      "reset_value": 255,
+      "write_noop": 255,
+      "zero_to_clear_fields": [
+        "FLUSH",
+        "RXNE",
+        "SSF",
+        "SSR",
+        "UD",
+        "OV",
+        "SSERR",
+        "MODF"
+      ]
+    },
+    "spi_cw32l012_v1": {
+      "families": [
+        "CW32L012"
+      ],
+      "reset_value": 255,
+      "write_noop": 255,
+      "zero_to_clear_fields": [
+        "FLUSH",
+        "RXNE",
+        "SSF",
+        "SSR",
+        "UD",
+        "OV",
+        "SSERR",
+        "MODF"
+      ]
+    }
+  },
+  "families": {
+    "CW32F030": {
+      "version": "spi_v1",
+      "filename": "CW32x030_UserManual_CN_V2.5.pdf",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "section": "19.8.6",
+      "printed_page": 393,
+      "pdf_page_1_based": 394,
+      "extract_sha256": "1d377c00bc2cb48a499e1b2a06cc12d0d2e6a476d15175dd6a89fc9f8edc2262",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32A030": {
+      "version": "spi_v1",
+      "filename": "CW32x030_UserManual_CN_V2.5.pdf",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "section": "19.8.6",
+      "printed_page": 393,
+      "pdf_page_1_based": 394,
+      "extract_sha256": "1d377c00bc2cb48a499e1b2a06cc12d0d2e6a476d15175dd6a89fc9f8edc2262",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32F020": {
+      "version": "spi_v1",
+      "filename": "CW32F020_UserManual_CN_V1.4.pdf",
+      "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+      "section": "18.8.6",
+      "printed_page": 331,
+      "pdf_page_1_based": 332,
+      "extract_sha256": "9967146ca98e84f094c3349db5513feb1e6569178e952ac85b85b37837c337b0",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32F002": {
+      "version": "spi_cw32f002_v1",
+      "filename": "CW32F002_UserManual_CN_V1.4.pdf",
+      "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+      "section": "16.7.6",
+      "printed_page": 260,
+      "pdf_page_1_based": 261,
+      "extract_sha256": "4a8984fb727f9f00a033b6a9fa3d9090a162819eed024e62d4f5be1721abd73b",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32F003": {
+      "version": "spi_cw32f002_v1",
+      "filename": "CW32F003_UserManual_CN_V2.3.pdf",
+      "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+      "section": "17.7.6",
+      "printed_page": 319,
+      "pdf_page_1_based": 320,
+      "extract_sha256": "fbfa7ef79271d824d24bf1af69c5a922f42a308ec3b85d85187164cdf0bc3cb8",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32L031": {
+      "version": "spi_cw32l031_v1",
+      "filename": "CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+      "section": "19.8.6",
+      "printed_page": 390,
+      "pdf_page_1_based": 391,
+      "extract_sha256": "6a7661342a6de23790006e98fe8558b3463b30b1b84efbe18957cc7a1457213e",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32R031": {
+      "version": "spi_cw32l031_v1",
+      "filename": "CW32R031_UserManual_CN_V1.3.pdf",
+      "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+      "section": "19.8.6",
+      "printed_page": 393,
+      "pdf_page_1_based": 394,
+      "extract_sha256": "70562ab7570c784f21dd9de4bf2881efaea6895f3ae418db3471d17207d9301b",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32W031": {
+      "version": "spi_cw32l031_v1",
+      "filename": "CW32W031_UserManual_CN_V1.4.pdf",
+      "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+      "section": "19.8.6",
+      "printed_page": 393,
+      "pdf_page_1_based": 394,
+      "extract_sha256": "5b1d4c766f27b84333a6b1053d06ac25baeaa2064615ffebbbfb0cb801f3ae07",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32L052": {
+      "version": "spi_cw32l031_v1",
+      "filename": "CW32L052_UserManual_CN_V1.5.pdf",
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+      "section": "20.8.6",
+      "printed_page": 427,
+      "pdf_page_1_based": 428,
+      "extract_sha256": "1b3ed4dc7eede706592e5020ee2bc5cc70e632f8d0978273eb43ef2c822fe345",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32L083": {
+      "version": "spi_cw32l031_v1",
+      "filename": "CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+      "section": "20.8.6",
+      "printed_page": 432,
+      "pdf_page_1_based": 433,
+      "extract_sha256": "cf3053c4fd087aa9214befa173d35ff30d7edde24ad325c77eb3ab61ff4f3eaa",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32L010": {
+      "version": "spi_cw32l010_v1",
+      "filename": "CW32L010_UserManual_CN_V1.2.pdf",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+      "section": "17.7.7",
+      "printed_page": 459,
+      "pdf_page_1_based": 460,
+      "extract_sha256": "03ab20298b26cfc59ed7125207bc05d72f6528a42b890eb07f0458833dbb2003",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32L011": {
+      "version": "spi_cw32l010_v1",
+      "filename": "CW32L011_UserManual_CN_V1.1.pdf",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+      "section": "17.7.7",
+      "printed_page": 461,
+      "pdf_page_1_based": 462,
+      "extract_sha256": "04e44c0902d0a05a45f56c490f6bee13383ade0b5508e181fa9ed9ef5b9dadc6",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    },
+    "CW32L012": {
+      "version": "spi_cw32l012_v1",
+      "filename": "CW32L012_UserManual_CN_V1.4.pdf",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "section": "22.7.7",
+      "printed_page": 522,
+      "pdf_page_1_based": 548,
+      "extract_sha256": "3b4d2fb75d7a353b770b8bd2cd74ee174c2ebd6c3ab7bf2b9db2ebef4fb747c0",
+      "reset_value": 255,
+      "write_noop": 255,
+      "reserved_bits": "31:8 retain reset zero",
+      "field_semantics": {
+        "FLUSH": {
+          "bit_offset": 0,
+          "bit_size": 1,
+          "zero": "clear transmit buffer and shift register; ISR.TXE becomes one",
+          "one": "no operation"
+        },
+        "RXNE": {
+          "bit_offset": 1,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSF": {
+          "bit_offset": 2,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSR": {
+          "bit_offset": 3,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "UD": {
+          "bit_offset": 4,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "OV": {
+          "bit_offset": 5,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "SSERR": {
+          "bit_offset": 6,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        },
+        "MODF": {
+          "bit_offset": 7,
+          "bit_size": 1,
+          "zero": "clear flag",
+          "one": "no operation"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,204 @@
+schema_version: 1
+source_authority: sources/evidence-sources.json
+scope: Own-source F002/F003 direct HEX input qualification only. Both PB0/PB1 routes; no crystal, PLL,
+  detector, clock-loss recovery or runtime switching capability is inferred.
+families:
+  CW32F002:
+    hex:
+      input:
+        minimum_hz: 4000000
+        maximum_hz: 32000000
+        supply_mv:
+        - 1650
+        - 5500
+        temperature_c:
+        - -40
+        - 105
+      duty_percent:
+      - 40
+      - 60
+      minimum_high_low_ns: 15
+      maximum_rise_fall_ns: 20
+      high_level_vddio_percent:
+      - 70
+      - 100
+      low_level_vddio_percent:
+      - 0
+      - 30
+    sources:
+    - source_ref: vendor:CW32F002_UserManual_CN_V1.4.pdf
+      sha256: e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add
+      pdf_pages_1_based:
+      - 42
+      - 47
+      - 54
+      - 55
+      - 57
+      - 129
+      printed_pages:
+      - 41
+      - 46
+      - 53
+      - 54
+      - 56
+      - 128
+    - source_ref: vendor:CW32F002_DataSheet_CN_V1.2.pdf
+      sha256: 6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506
+      pdf_pages_1_based:
+      - 22
+      - 30
+      - 31
+      - 36
+      - 37
+      - 40
+      printed_pages:
+      - 21
+      - 29
+      - 30
+      - 35
+      - 36
+      - 39
+    routes:
+    - pin: PB0
+      signal: HEX_PB00
+    - pin: PB1
+      signal: HEX_PB01
+  CW32F003:
+    hex:
+      input:
+        minimum_hz: 4000000
+        maximum_hz: 32000000
+        supply_mv:
+        - 1650
+        - 5500
+        temperature_c:
+        - -40
+        - 105
+      duty_percent:
+      - 40
+      - 60
+      minimum_high_low_ns: 15
+      maximum_rise_fall_ns: 20
+      high_level_vddio_percent:
+      - 70
+      - 100
+      low_level_vddio_percent:
+      - 0
+      - 30
+    sources:
+    - source_ref: vendor:CW32F003_UserManual_CN_V2.3.pdf
+      sha256: 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738
+      pdf_pages_1_based:
+      - 44
+      - 49
+      - 56
+      - 57
+      - 59
+      - 131
+      printed_pages:
+      - 43
+      - 48
+      - 55
+      - 56
+      - 58
+      - 130
+    - source_ref: vendor:CW32F003_DataSheet_CN_V1.9.pdf
+      sha256: 5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd
+      pdf_pages_1_based:
+      - 23
+      - 31
+      - 32
+      - 37
+      - 38
+      - 41
+      printed_pages:
+      - 22
+      - 30
+      - 31
+      - 36
+      - 37
+      - 40
+    routes:
+    - pin: PB0
+      signal: HEX_PB00
+    - pin: PB1
+      signal: HEX_PB01
+qualification:
+  frequency_conflict: Own RMs require actual 4..32 MHz; own DS external-input tables state 1..32 MHz.
+    Admit their intersection 4..32 MHz including complete board-guaranteed minimum and maximum, never
+    nominal frequency alone.
+  conditions: Use own general supply 1.65..5.5 V and conservative ambient -40..105 C. The conditional
+    low-power 125 C extension is not adopted; retained factory HSI is qualified only through 105 C.
+  waveform: All waveform limits apply together at the pad. Duty is 40..60 percent; each high/low pulse
+    is at least 15 ns; each rise/fall is at most 20 ns. At 32 MHz, 40 percent gives 12.5 ns and is therefore
+    insufficient. DS waveform characteristics are guaranteed by design, not production-tested.
+  levels: high_level_vddio_percent is 70..100; low_level_vddio_percent is 0..30, where 0 denotes VSS and
+    percentages are relative to VSS. Own I/O and absolute-maximum limits also apply.
+  accuracy: No default ppm or inherited HSI accuracy. Board guarantees include temperature, supply, aging,
+    load and short-term cycle variation across declared operating conditions.
+  pins: Own datasheet Table 5-2 labels HEX_PB00 and HEX_PB01 in PB00/PB01 rows. These reviewed routes
+    are peripheral-controlled inputs without numbered AFs. Existing independently reviewed physical pinouts
+    determine exact-package availability; aliases retain the common GPIO intersection. Physical pinout
+    catalogs are unchanged.
+  clock_loss: STABLE is a startup latch, not continuous clock-loss detection. No usable CCS, automatic
+    fallback or PLL mechanism is documented for this pair; copied SDK CCS/LSELOCK helpers do not authorize
+    writes to reserved CR1 bits.
+  retained_awt: AWT SRC=2/3 independently selects PB00/PB01. HEXEN=0 or a different system PINMUX does
+    not prove the other AWT input pad is unused.
+register_facts:
+  sysctrl:
+    base_address: 1073807360
+    CR0:
+      offset: 0
+      SYSCLK:
+        bit_offset: 0
+        bit_size: 3
+        variants:
+          HSI: 0
+          HEX: 1
+          LSI: 3
+      KEY:
+        bit_offset: 16
+        bit_size: 16
+        value: 23130
+    CR1:
+      offset: 4
+      HSIEN: 0
+      HEXEN: 1
+      LSIEN: 3
+      reserved_bits: bit 2 and bits 15:4
+    HEX:
+      offset: 28
+      PINEN: 6
+      PINMUX:
+        bit_offset: 7
+        bit_size: 1
+        variants:
+          PB0: 0
+          PB1: 1
+      STABLE:
+        bit_offset: 19
+        access: Read
+  awt_source:
+    register: CR
+    bit_offset: 8
+    bit_size: 3
+    variants:
+      HSIOSC: 0
+      LSI: 1
+      HEX_PB0: 2
+      HEX_PB1: 3
+      ETR: 4
+    source_names:
+      HEX_PB0: HEX_PB00
+      HEX_PB1: HEX_PB01
+awt_source_curation:
+  canonical: awt_v1
+  families:
+  - CW32F002
+  - CW32F003
+  scope: Complete documented Source enum with LSI=1, HEX_PB00=2, HEX_PB01=3 and ETR=4. Preserve the existing
+    HSIOSC=0 encoding and all register layout/access/other enums.
+  prior_review_context: The Stage27 HSE review kept awt_v1 unchanged while splitting F020/x030 semantics.
+    This own-source HEX review supersedes that historical unchanged statement only for the newly reviewed
+    F002/F003 Source names. hse-qualified.yaml and the separate HSE-family AWT definition remain unchanged.

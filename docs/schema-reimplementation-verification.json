@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-08",
+  "result": "passed",
+  "scope": "Independent schema/macro replacement against pre-trigger frozen curated baseline",
+  "toolchain": {
+    "rustc": "1.99.0 (b940084d7 2026-09-28)",
+    "cargo": "1.99.0 (5f94df478 2026-08-27)",
+    "rustfmt": "1.10.0-stable",
+    "target": "thumbv6m-none-eabi",
+    "python": "3.12.14"
+  },
+  "environment": {
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "dependency_resolution": "offline --locked"
+  },
+  "inputs": {
+    "inventory_sha256": "be9129183df2073dabb66091685a5aec23d4ab924ed2e5df6ff0541dd0912e81",
+    "file_count": 195,
+    "replacement_files": [
+      {
+        "path": "cw32-data-serde/src/lib.rs",
+        "sha256": "234455fedd3606505df6eeb5cc0ccddb3fec01d4e1d68bf10ee0ad6a8a06e812"
+      },
+      {
+        "path": "cw32-data-serde/Cargo.toml",
+        "sha256": "09466cbde9ae925db9a1972454d32dea837c707eb0c6443dcf182e77ec8ef224"
+      },
+      {
+        "path": "cw32-data-macros/src/lib.rs",
+        "sha256": "98997c04b49040e96913e91f5d33a01e37789daf29d6ed687977b0e2f535194f"
+      },
+      {
+        "path": "cw32-data-macros/Cargo.toml",
+        "sha256": "064e576371afbd7a524b4c7f95e1f17c469fb9ac2f711f20a586150278f4cda8"
+      },
+      {
+        "path": "cw32-data-macros/tests/test_macros.rs",
+        "sha256": "03ca97e0a26238b6e43a380f6013d07f4337cb80dd5444376b41d4a2158954c4"
+      },
+      {
+        "path": "Cargo.lock",
+        "sha256": "e17b0af0bc84a264ec54e6e5f6a31a308eb52c2b08a302ec152d88b45799356d"
+      },
+      {
+        "path": "cw32-data-serde/tests/schema_contracts.rs",
+        "sha256": "535c74821700eeea959b17786171589f6fae41c1430b43b91744dc03eaaceddc"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "command": "cargo test --offline --locked -p cw32-data-gen -p cw32-metapac-gen -p cw32-data-macros -p cw32-data-serde",
+      "passed_tests": 93,
+      "new_schema_macro_tests": 17,
+      "new_compile_fail_docs": 4,
+      "result": "passed"
+    },
+    {
+      "command": "cargo run --offline --locked -p cw32-data-gen -- --out-dir <fresh>/data; cargo run --offline --locked -p cw32-metapac-gen -- --data-dir <fresh>/data --out-dir <fresh>/pac; rustfmt --edition 2024 on all PAC Rust files; diff -ru against curated data and PAC",
+      "result": "passed",
+      "outputs": {
+        "data": {
+          "files": 337,
+          "file_inventory_sha256": "581ada15ad1105c85b565340602347e03d4331d1919aa12ba5945bb3d16eadf0",
+          "tree_digest_sha256": "afb6cb4fed6bddc184ed833db4c656a04fffe648178f6dfb6482055fd55e3262",
+          "byte_parity": true
+        },
+        "pac": {
+          "files": 471,
+          "file_inventory_sha256": "4b82c9b8f25dff518f6ddd8950cd632e43a27149630293631b535c8cfaaca517",
+          "tree_digest_sha256": "068dc36a2a5c42894f4a2f8f2fd06f022cec9f5affebad3dd5008ab4766d5d58",
+          "byte_parity": true
+        }
+      }
+    },
+    {
+      "command": "For every cw32-metapac chip feature: cargo test --offline --locked -p cw32-metapac --no-default-features --features <chip>,metadata --test metadata; cargo check --offline --locked -p cw32-metapac --no-default-features --features <chip>,pac,metadata,rt --target thumbv6m-none-eabi",
+      "chip_features": 54,
+      "host_metadata_tests": 162,
+      "arm_pac_checks": 54,
+      "result": "passed"
+    },
+    {
+      "command": "cargo check --offline --locked -p embassy-cw32 --no-default-features --features <chip>,rt,defmt --target thumbv6m-none-eabi",
+      "chips": [
+        "cw32f030c8t7",
+        "cw32l012c8u6",
+        "cw32l083rcs6"
+      ],
+      "result": "passed"
+    },
+    {
+      "command": "python3 cw32-data/tools/validate.py; python3 tests/test_module_layout.py; python3 tests/test_cfg_names.py; python3 tests/validate_pac_inventory.py; python3 tests/test_metadata_contracts.py; python3 tests/test_physical_pinouts.py; python3 tests/test_dma_metadata.py; python3 tests/test_clock_contracts.py; python3 tests/audit_generated_parity.py",
+      "metadata_tests": 46,
+      "result": "passed"
+    }
+  ],
+  "logs": [
+    {
+      "path": "docs/verification-logs/schema-reimplementation/all-generator-tests.log",
+      "sha256": "b6683831e2822fca9960d631dcc549e6fbc49be8706eb05c988b58125ddfa674"
+    },
+    {
+      "path": "docs/verification-logs/schema-reimplementation/consumer-matrix.log",
+      "sha256": "a0936f5737482eeddcb4e4f7221e130b04fa8b1f8c62c55905b5f1a2b3784917"
+    },
+    {
+      "path": "docs/verification-logs/schema-reimplementation/generate-data.log",
+      "sha256": "2ea3ccf2b05e0b00e04c2cce983b1b9cabf481510e4048f3c4b6363b180e7cb1"
+    },
+    {
+      "path": "docs/verification-logs/schema-reimplementation/generate-pac.log",
+      "sha256": "ff68d4abb5745af8c26d14111bfee77391281cb9d5d479f9e773c95970080367"
+    },
+    {
+      "path": "docs/verification-logs/schema-reimplementation/metadata-audits.log",
+      "sha256": "4c93dc01437950dfbad2c1b96a635b99969e33eb0bdc251480a54bc050391769"
+    },
+    {
+      "path": "docs/verification-logs/schema-reimplementation/generation-parity.log",
+      "sha256": "74e210a8e83aa1437f2530ed007c989a09ca10fefdbee7561057edf305ab9d30"
+    }
+  ],
+  "limits": [
+    "No hardware execution",
+    "Not a legal conclusion about upstream rights",
+    "Release gate requires separate independent review",
+    "Trigger route extension not merged in this baseline"
+  ]
+}

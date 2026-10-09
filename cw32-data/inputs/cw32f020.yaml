@@ -1,0 +1,236 @@
+schema_version: 1
+spi_metadata: cw32-data/spi.yaml
+source:
+  path: sources/vendor/CW32F020.svd
+  sha256: e2e0bd198e6c39aa0807ad10080a26b9bccc4a4718eea5dd0d54a13630101f98
+  url: https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip
+  source_ref: member:cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/SVD/CW32F020.svd
+expected_svd_name: CW32F020
+core: cm0p
+die: CW32F020
+chip_prefix: CW32F020
+gpio_dir_pin_fields: false
+register_aliases:
+- block: CRC
+  register: DR32
+  alias: DR16
+- block: CRC
+  register: DR32
+  alias: DR8
+- block: CRC
+  register: DR16
+  alias: DR8
+- block: CRC
+  register: RESULT32
+  alias: RESULT16
+- block: GPIO
+  register: ODR
+  alias: ODRLOWBYTE
+- block: GPIO
+  register: ODR
+  alias: ODRHIGHBYTE
+- block: GPIOC
+  register: ODR
+  alias: ODRLOWBYTE
+- block: GPIOC
+  register: ODR
+  alias: ODRHIGHBYTE
+- block: GPIOF
+  register: ODR
+  alias: ODRLOWBYTE
+supplemental_interrupts: []
+family: CW32F0
+line: CW32F020
+register_version: cw32f020_v1
+nvic_priority_bits: 2
+nvic_priority_bits_evidence: Official CW32F020 SDK Libraries/inc header __NVIC_PRIO_BITS=2; SHA256 6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f
+chips:
+- name: CW32F020
+  memory: []
+source_notes:
+- SVD correctly exposes two DMA channels. Vendor header erroneously defines channels3-5. CW32F020 User
+  Manual CN V1.4 section8.2 p122 and section8.7 p134 confirm only two.
+- F020 CRC has eight CRC16 modes only (0-7), unlike copied SDK/SVD CRC32 declarations. The CRC32-named
+  result register is retained solely as a 32-bit bus view with a corrected 16-bit valid field; see docs/f020-serial-compatibility.md.
+  CR.MODE retains its documented 4-bit layout; values8-15 remain unsupported. DR8/DR16/DR32 input widths
+  are all documented.
+parts_catalog: cw32-data/parts.yaml
+register_versions:
+  adc: cw32f020_v1
+  awt: cw32f030_v1
+  btim: v1
+  crc: cw32f020_v1
+  dma: cw32f020_v1
+  dmachannel: v1
+  flash: cw32f020_v1
+  gpio: v1
+  gpioc: v1
+  gpiof: v1
+  gtim: v1
+  i2c: v1
+  iwdt: v1
+  lvd: v1
+  ram: v1
+  rtc: cw32f020_v1
+  spi: v1
+  sysctrl: cw32f020_v1
+  uart: v1
+  vc: cw32f002_v1
+  wwdt: v1
+pinout_metadata: cw32-data/pinouts/cw32f020.yaml
+alias_pin_policy: common-package-intersection
+dma_metadata: cw32-data/dma/cw32f020.yaml
+clock_metadata: cw32-data/clock/cw32f020.yaml
+register_overrides:
+- block: GPIO
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F020 User Manual CN V1.4 section9.6.14 page153: GPIOx_ISR is read-only for x=A/B/C/F.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- block: GPIO
+  register: IDR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F020 User Manual CN V1.4 section9.6.18 page154: GPIOx_IDR is read-only for x=A/B/C/F.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- block: GPIOC
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F020 User Manual CN V1.4 section9.6.14 page153: GPIOx_ISR is read-only for x=A/B/C/F.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- block: GPIOC
+  register: IDR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F020 User Manual CN V1.4 section9.6.18 page154: GPIOx_IDR is read-only for x=A/B/C/F.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- block: GPIOF
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F020 User Manual CN V1.4 section9.6.14 page153: GPIOx_ISR is read-only for x=A/B/C/F.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- block: GPIOF
+  register: IDR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F020 User Manual CN V1.4 section9.6.18 page154: GPIOx_IDR is read-only for x=A/B/C/F.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- block: GTIM
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F020 User Manual CN V1.4 section 14.8.12, printed page 246/PDF page 247: GTIM ISR at
+    offset 0x318 marks every defined status field RO; flags clear through the separate ICR. Access-only
+    correction; widths, offsets and fields unchanged. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- block: RTC
+  register: TAMPDATE
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 12.5.10, printed page 188/PDF page 189: every defined
+    RTC_TAMPDATE field is RO. Access-only correction; offsets and fields unchanged. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- block: RTC
+  register: TAMPTIME
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 12.5.11, printed page 189/PDF page 190: every defined
+    RTC_TAMPTIME field is RO. Access-only correction; offsets and fields unchanged. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+af_metadata: cw32-data/af/cw32f020-serial.yaml
+field_width_overrides:
+- block: CRC
+  fieldset: RESULT32
+  field: RESULT32
+  expected_bit_offset: 0
+  expected_bit_size: 32
+  bit_size: 16
+  evidence: CW32F020 User Manual CN V1.4 section10.6.3 p161 reserves CRC_RESULT[31:16] and exposes only
+    RESULT16[15:0]; sections10.2/10.6.1 pp156/161 and current CW32F020 DataSheet CN V1.3 section4.4 p9
+    document only eight CRC16 modes. Preserve the 32-bit bus-access alias but correct its valid data field.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf SHA256279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed;
+    https://www.whxy.com/uploads/files/20251230/CW32F020_DataSheet_CN_V1.3.pdf SHA2561e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0
+interrupt_association_overrides:
+- interrupt: FAULT
+  number: 31
+  expected_owners:
+  - CRC
+  owners:
+  - SYSCTRL
+  evidence: CW32F020 User Manual CN V1.4 section4.7.9 SYSCTRL_IER printed p75 and section5.4 IRQ table/footnote4
+    p94 assign FAULT31 to HSE/LSE run failures, not CRC; CRC chapter10 has no interrupt controls. PDF
+    SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed
+analog_metadata: cw32-data/af/cw32f020-analog.yaml
+pwm_metadata: cw32-data/af/cw32f020-pwm.yaml
+field_removals:
+- fieldset: PAGELOCK
+  field: LOCK8
+  expected_bit_offset: 8
+  expected_bit_size: 1
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 7.9.3, printed page 119/PDF page 120: FLASH_PAGELOCK
+    bits15:8 are reserved; only LOCK0..7 are writable, KEY remains31:16. Vendor CMSIS/SVD exposes extra
+    lock fields. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed. https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- fieldset: PAGELOCK
+  field: LOCK9
+  expected_bit_offset: 9
+  expected_bit_size: 1
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 7.9.3, printed page 119/PDF page 120: FLASH_PAGELOCK
+    bits15:8 are reserved; only LOCK0..7 are writable, KEY remains31:16. Vendor CMSIS/SVD exposes extra
+    lock fields. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed. https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- fieldset: PAGELOCK
+  field: LOCK10
+  expected_bit_offset: 10
+  expected_bit_size: 1
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 7.9.3, printed page 119/PDF page 120: FLASH_PAGELOCK
+    bits15:8 are reserved; only LOCK0..7 are writable, KEY remains31:16. Vendor CMSIS/SVD exposes extra
+    lock fields. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed. https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- fieldset: PAGELOCK
+  field: LOCK11
+  expected_bit_offset: 11
+  expected_bit_size: 1
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 7.9.3, printed page 119/PDF page 120: FLASH_PAGELOCK
+    bits15:8 are reserved; only LOCK0..7 are writable, KEY remains31:16. Vendor CMSIS/SVD exposes extra
+    lock fields. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed. https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- fieldset: PAGELOCK
+  field: LOCK12
+  expected_bit_offset: 12
+  expected_bit_size: 1
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 7.9.3, printed page 119/PDF page 120: FLASH_PAGELOCK
+    bits15:8 are reserved; only LOCK0..7 are writable, KEY remains31:16. Vendor CMSIS/SVD exposes extra
+    lock fields. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed. https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- fieldset: PAGELOCK
+  field: LOCK13
+  expected_bit_offset: 13
+  expected_bit_size: 1
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 7.9.3, printed page 119/PDF page 120: FLASH_PAGELOCK
+    bits15:8 are reserved; only LOCK0..7 are writable, KEY remains31:16. Vendor CMSIS/SVD exposes extra
+    lock fields. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed. https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- fieldset: PAGELOCK
+  field: LOCK14
+  expected_bit_offset: 14
+  expected_bit_size: 1
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 7.9.3, printed page 119/PDF page 120: FLASH_PAGELOCK
+    bits15:8 are reserved; only LOCK0..7 are writable, KEY remains31:16. Vendor CMSIS/SVD exposes extra
+    lock fields. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed. https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- fieldset: PAGELOCK
+  field: LOCK15
+  expected_bit_offset: 15
+  expected_bit_size: 1
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 7.9.3, printed page 119/PDF page 120: FLASH_PAGELOCK
+    bits15:8 are reserved; only LOCK0..7 are writable, KEY remains31:16. Vendor CMSIS/SVD exposes extra
+    lock fields. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed. https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+- fieldset: COMPEN
+  field: FREQ
+  expected_bit_offset: 16
+  expected_bit_size: 4
+  evidence: 'Own CW32F020 User Manual CN V1.4 section 12.5.5, printed page 186/PDF page 187: RTC_COMPEN
+    bits31:16 are reserved. Remove obsolete SVD FREQ bits19:16 only; lower sixteen bits and SOURCE HSE
+    dividers remain valid. PDF SHA256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed.
+    https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf'
+gpio_interrupt_metadata: cw32-data/gpio-interrupt.yaml
+electrical_metadata: cw32-data/electrical.yaml
+comparator_metadata: cw32-data/af/cw32f020-comparator.yaml
+classic_adc_scan_metadata: cw32-data/classic-adc-scans.yaml

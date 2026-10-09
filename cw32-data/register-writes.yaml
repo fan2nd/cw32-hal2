@@ -1,0 +1,1052 @@
+schema_version: 1
+registers:
+  uart_cw32l052_v1:
+  - block: UART
+    register: ICR
+    fieldset: ICR
+    reset_value: 4095
+    write_noop: 4095
+    zero_to_clear_fields:
+    - TC
+    - RC
+    - FE
+    - PE
+    - CTS
+    - TIMOV
+    - BAUD
+    - RXBRK
+    evidence:
+    - 'docs/uart-typed-register-evidence.json: uart_cw32l052_v1'
+    - 'docs/uart-typed-registers.md: R1W0 command seeds and reserved-bit policy'
+  uart_cw32l010_v1:
+  - block: UART
+    register: ICR
+    fieldset: ICR
+    reset_value: 8191
+    write_noop: 8191
+    zero_to_clear_fields:
+    - TC
+    - RC
+    - RXIDLE
+    - RXBRK
+    - BAUD
+    - TIMOV
+    - CTS
+    - FE
+    - PE
+    - NE
+    - ORE
+    - RXMATCH
+    evidence:
+    - 'docs/uart-typed-register-evidence.json: uart_cw32l010_v1'
+    - 'docs/uart-typed-registers.md: R1W0 command seeds and reserved-bit policy'
+  uart_cw32l012_v1:
+  - block: UART
+    register: ICR
+    fieldset: ICR
+    reset_value: 8191
+    write_noop: 8191
+    zero_to_clear_fields:
+    - TC
+    - RC
+    - RXIDLE
+    - RXBRK
+    - BAUD
+    - TIMOV
+    - CTS
+    - FE
+    - PE
+    - NE
+    - ORE
+    - RXMATCH
+    evidence:
+    - 'docs/uart-typed-register-evidence.json: uart_cw32l012_v1'
+    - 'docs/uart-typed-registers.md: R1W0 command seeds and reserved-bit policy'
+  uart_cw32l083_v1:
+  - block: UART
+    register: ICR
+    fieldset: ICR
+    reset_value: 255
+    write_noop: 255
+    zero_to_clear_fields:
+    - TC
+    - RC
+    - FE
+    - PE
+    - CTS
+    evidence:
+    - 'docs/uart-typed-register-evidence.json: uart_cw32l083_v1'
+    - 'docs/uart-typed-registers.md: R1W0 command seeds and reserved-bit policy'
+  uart_v1:
+  - block: UART
+    register: ICR
+    fieldset: ICR
+    reset_value: 255
+    write_noop: 255
+    zero_to_clear_fields:
+    - TC
+    - RC
+    - FE
+    - PE
+    - CTS
+    evidence:
+    - 'docs/uart-typed-register-evidence.json: uart_v1'
+    - 'docs/uart-typed-registers.md: R1W0 command seeds and reserved-bit policy'
+  uart_cw32l031_v1:
+  - block: UART
+    register: ICR
+    fieldset: ICR
+    reset_value: 4095
+    write_noop: 4095
+    zero_to_clear_fields:
+    - TC
+    - RC
+    - FE
+    - PE
+    - CTS
+    - TIMOV
+    - BAUD
+    - RXBRK
+    evidence:
+    - 'docs/uart-typed-register-evidence.json: uart_cw32l031_v1'
+    - 'docs/uart-typed-registers.md: R1W0 command seeds and reserved-bit policy'
+  uart_cw32f002_v1:
+  - block: UART
+    register: ICR
+    fieldset: ICR
+    reset_value: 255
+    write_noop: 255
+    zero_to_clear_fields:
+    - TC
+    - RC
+    - FE
+    - PE
+    - CTS
+    evidence:
+    - 'docs/uart-typed-register-evidence.json: uart_cw32f002_v1'
+    - 'docs/uart-typed-registers.md: R1W0 command seeds and reserved-bit policy'
+  spi_v1:
+  - block: SPI
+    register: ICR
+    fieldset: ICR
+    reset_value: 255
+    write_noop: 255
+    zero_to_clear_fields:
+    - FLUSH
+    - RXNE
+    - SSF
+    - SSR
+    - UD
+    - OV
+    - SSERR
+    - MODF
+    evidence:
+    - CW32x030_UserManual_CN_V2.5.pdf section 19.8.6, printed p393 (PDF p394); SHA-256 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2;
+      docs/spi-register-write-evidence.json families.CW32F030
+    - CW32x030_UserManual_CN_V2.5.pdf section 19.8.6, printed p393 (PDF p394); SHA-256 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2;
+      docs/spi-register-write-evidence.json families.CW32A030
+    - CW32F020_UserManual_CN_V1.4.pdf section 18.8.6, printed p331 (PDF p332); SHA-256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed;
+      docs/spi-register-write-evidence.json families.CW32F020
+  spi_cw32f002_v1:
+  - block: SPI
+    register: ICR
+    fieldset: ICR
+    reset_value: 255
+    write_noop: 255
+    zero_to_clear_fields:
+    - FLUSH
+    - RXNE
+    - SSF
+    - SSR
+    - UD
+    - OV
+    - SSERR
+    - MODF
+    evidence:
+    - CW32F002_UserManual_CN_V1.4.pdf section 16.7.6, printed p260 (PDF p261); SHA-256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add;
+      docs/spi-register-write-evidence.json families.CW32F002
+    - CW32F003_UserManual_CN_V2.3.pdf section 17.7.6, printed p319 (PDF p320); SHA-256 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738;
+      docs/spi-register-write-evidence.json families.CW32F003
+  spi_cw32l031_v1:
+  - block: SPI
+    register: ICR
+    fieldset: ICR
+    reset_value: 255
+    write_noop: 255
+    zero_to_clear_fields:
+    - FLUSH
+    - RXNE
+    - SSF
+    - SSR
+    - UD
+    - OV
+    - SSERR
+    - MODF
+    evidence:
+    - CW32L031_UserManual_CN_V1.6.pdf section 19.8.6, printed p390 (PDF p391); SHA-256 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760;
+      docs/spi-register-write-evidence.json families.CW32L031
+    - CW32R031_UserManual_CN_V1.3.pdf section 19.8.6, printed p393 (PDF p394); SHA-256 fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb;
+      docs/spi-register-write-evidence.json families.CW32R031
+    - CW32W031_UserManual_CN_V1.4.pdf section 19.8.6, printed p393 (PDF p394); SHA-256 b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9;
+      docs/spi-register-write-evidence.json families.CW32W031
+    - CW32L052_UserManual_CN_V1.5.pdf section 20.8.6, printed p427 (PDF p428); SHA-256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41;
+      docs/spi-register-write-evidence.json families.CW32L052
+    - CW32L083_UserManual_CN_V2.0.pdf section 20.8.6, printed p432 (PDF p433); SHA-256 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3;
+      docs/spi-register-write-evidence.json families.CW32L083
+  spi_cw32l010_v1:
+  - block: SPI
+    register: ICR
+    fieldset: ICR
+    reset_value: 255
+    write_noop: 255
+    zero_to_clear_fields:
+    - FLUSH
+    - RXNE
+    - SSF
+    - SSR
+    - UD
+    - OV
+    - SSERR
+    - MODF
+    evidence:
+    - CW32L010_UserManual_CN_V1.2.pdf section 17.7.7, printed p459 (PDF p460); SHA-256 b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa;
+      docs/spi-register-write-evidence.json families.CW32L010
+    - CW32L011_UserManual_CN_V1.1.pdf section 17.7.7, printed p461 (PDF p462); SHA-256 b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f;
+      docs/spi-register-write-evidence.json families.CW32L011
+  spi_cw32l012_v1:
+  - block: SPI
+    register: ICR
+    fieldset: ICR
+    reset_value: 255
+    write_noop: 255
+    zero_to_clear_fields:
+    - FLUSH
+    - RXNE
+    - SSF
+    - SSR
+    - UD
+    - OV
+    - SSERR
+    - MODF
+    evidence:
+    - CW32L012_UserManual_CN_V1.4.pdf section 22.7.7, printed p522 (PDF p548); SHA-256 a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340;
+      docs/spi-register-write-evidence.json families.CW32L012
+  i2c_cw32l012_v1:
+  - block: I2C
+    register: MICR
+    fieldset: MICR
+    reset_value: 32516
+    write_noop: 32516
+    zero_to_clear_fields:
+    - PACKET
+    - STOP
+    - NACK
+    - ARBI
+    - FIFO
+    - PINLOW
+    - MATCH
+    evidence:
+    - CW32L012_UserManual_CN_V1.4.pdf section 23.8.16, printed p556 (PDF p582); SHA-256 a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340;
+      docs/i2c-typed-register-evidence.json families.CW32L012
+    - 'docs/i2c-typed-registers.md: exact MICR write words and reset-before-clear ordering'
+  awt_v1:
+  - block: AWT
+    register: ICR
+    fieldset: ICR
+    reset_value: 63
+    write_noop: 63
+    zero_to_clear_fields:
+    - UD
+    evidence:
+    - 'docs/low-power-timers-evidence.json: awt_v1'
+    - 'docs/low-power-timers.md: commands and reserved-bit policy'
+  awt_cw32l031_v1:
+  - block: AWT
+    register: ICR
+    fieldset: ICR
+    reset_value: 63
+    write_noop: 63
+    zero_to_clear_fields:
+    - UD
+    evidence:
+    - 'docs/low-power-timers-evidence.json: awt_cw32l031_v1'
+    - 'docs/low-power-timers.md: commands and reserved-bit policy'
+  lptim_cw32l010_v1:
+  - block: LPTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 127
+    write_noop: 127
+    zero_to_clear_fields:
+    - CMPM
+    - ARRM
+    - EXTTRIG
+    - CMPOK
+    - ARROK
+    - UP
+    - DOWN
+    evidence:
+    - 'docs/low-power-timers-evidence.json: lptim_cw32l010_v1'
+    - 'docs/low-power-timers.md: commands and reserved-bit policy'
+  - block: LPTIM
+    register: CR
+    fieldset: CR
+    reset_value: 24
+    write_noop: 24
+    zero_to_clear_fields:
+    - SRST
+    - ARST
+    evidence:
+    - 'docs/low-power-timers-evidence.json: lptim_cw32l010_v1'
+    - 'docs/low-power-timers.md: commands and reserved-bit policy'
+  lptim_cw32l012_v1:
+  - block: LPTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 127
+    write_noop: 127
+    zero_to_clear_fields:
+    - CMPM
+    - ARRM
+    - EXTTRIG
+    - CMPOK
+    - ARROK
+    - UP
+    - DOWN
+    evidence:
+    - 'docs/low-power-timers-evidence.json: lptim_cw32l012_v1'
+    - 'docs/low-power-timers.md: commands and reserved-bit policy'
+  - block: LPTIM
+    register: CR0
+    fieldset: CR0
+    reset_value: 24
+    write_noop: 24
+    zero_to_clear_fields:
+    - SRST
+    - ARST
+    evidence:
+    - 'docs/low-power-timers-evidence.json: lptim_cw32l012_v1'
+    - 'docs/low-power-timers.md: commands and reserved-bit policy'
+  lptim_cw32l083_v1:
+  - block: LPTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 127
+    write_noop: 127
+    zero_to_clear_fields:
+    - CMPM
+    - ARRM
+    - EXTTRIG
+    - CMPOK
+    - ARROK
+    - UP
+    - DOWN
+    evidence:
+    - 'docs/low-power-timers-evidence.json: lptim_cw32l083_v1'
+    - 'docs/low-power-timers.md: commands and reserved-bit policy'
+  - block: LPTIM
+    register: CR
+    fieldset: CR
+    reset_value: 24
+    write_noop: 24
+    zero_to_clear_fields:
+    - SRST
+    - ARST
+    evidence:
+    - 'docs/low-power-timers-evidence.json: lptim_cw32l083_v1'
+    - 'docs/low-power-timers.md: commands and reserved-bit policy'
+  vc_cw32f002_v1:
+  - block: VC
+    register: SR
+    fieldset: SR
+    reset_value: 0
+    write_noop: 1
+    zero_to_clear_fields:
+    - INTF
+    evidence:
+    - 'docs/comparator.md: status reads and R1W0 command semantics'
+    - 'docs/comparator-classic-evidence.json and docs/comparator-low-evidence.json: own-manual SR tables'
+  vc_cw32l010_v1:
+  - block: VC
+    register: SR
+    fieldset: SR
+    reset_value: 0
+    write_noop: 1
+    zero_to_clear_fields:
+    - INTF
+    evidence:
+    - 'docs/comparator.md: status reads and R1W0 command semantics'
+    - 'docs/comparator-classic-evidence.json and docs/comparator-low-evidence.json: own-manual SR tables'
+  vc_cw32l011_v1:
+  - block: VC
+    register: SR
+    fieldset: SR
+    reset_value: 0
+    write_noop: 1
+    zero_to_clear_fields:
+    - INTF
+    evidence:
+    - 'docs/comparator.md: status reads and R1W0 command semantics'
+    - 'docs/comparator-classic-evidence.json and docs/comparator-low-evidence.json: own-manual SR tables'
+  vc_cw32l012_v1:
+  - block: VC
+    register: SR
+    fieldset: SR
+    reset_value: 0
+    write_noop: 1
+    zero_to_clear_fields:
+    - INTF
+    evidence:
+    - 'docs/comparator.md: status reads and R1W0 command semantics'
+    - 'docs/comparator-classic-evidence.json and docs/comparator-low-evidence.json: own-manual SR tables'
+  vc_cw32l031_v1:
+  - block: VC
+    register: SR
+    fieldset: SR
+    reset_value: 0
+    write_noop: 1
+    zero_to_clear_fields:
+    - INTF
+    evidence:
+    - 'docs/comparator.md: status reads and R1W0 command semantics'
+    - 'docs/comparator-classic-evidence.json and docs/comparator-low-evidence.json: own-manual SR tables'
+  vc_v1:
+  - block: VC
+    register: SR
+    fieldset: SR
+    reset_value: 0
+    write_noop: 1
+    zero_to_clear_fields:
+    - INTF
+    evidence:
+    - 'docs/comparator.md: status reads and R1W0 command semantics'
+    - 'docs/comparator-classic-evidence.json and docs/comparator-low-evidence.json: own-manual SR tables'
+  dac_cw32l012_v1:
+  - block: DAC
+    register: DOR1
+    fieldset: DOR1
+    reset_value: 0
+    write_noop: 32768
+    zero_to_clear_fields:
+    - DMAUDR
+    evidence:
+    - CW32L012_UserManual_CN_V1.4 §26.8 p607; §26.10.12–13 pp615–616
+    - docs/dac-opa.md
+  - block: DAC
+    register: DOR2
+    fieldset: DOR2
+    reset_value: 0
+    write_noop: 32768
+    zero_to_clear_fields:
+    - DMAUDR
+    evidence:
+    - CW32L012_UserManual_CN_V1.4 §26.8 p607; §26.10.12–13 pp615–616
+    - docs/dac-opa.md
+  halltim_cw32l012_v1:
+  - block: HALLTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 65535
+    write_noop: 65535
+    zero_to_clear_fields:
+    - CAPF
+    - OVF
+    - MATCHF
+    evidence:
+    - 'docs/halltim-evidence.json: CW32L012 CN V1.4 section18.8.8 printed424/PDF450; R1W0, reset0x0000FFFF,
+      reserved bits keep default.'
+  ram_cw32l011_v1:
+  - block: RAM
+    register: ICR
+    fieldset: ICR
+    reset_value: 1
+    write_noop: 1
+    zero_to_clear_fields:
+    - PARITY
+    evidence:
+    - 'docs/ram-parity-evidence.json: own-family section 6.6 RAM_ICR, R1W0 and reserved zero bits'
+  ram_cw32l031_v1:
+  - block: RAM
+    register: ICR
+    fieldset: ICR
+    reset_value: 1
+    write_noop: 1
+    zero_to_clear_fields:
+    - PARITY
+    evidence:
+    - 'docs/ram-parity-evidence.json: own-family section 6.6 RAM_ICR, R1W0 and reserved zero bits'
+  ram_v1:
+  - block: RAM
+    register: ICR
+    fieldset: ICR
+    reset_value: 1
+    write_noop: 1
+    zero_to_clear_fields:
+    - PARITY
+    evidence:
+    - 'docs/ram-parity-evidence.json: own-family section 6.6 RAM_ICR, R1W0 and reserved zero bits'
+  ram_cw32l010_v1:
+  - block: RAM
+    register: ICR
+    fieldset: ICR
+    reset_value: 1
+    write_noop: 1
+    zero_to_clear_fields:
+    - PARITY
+    evidence:
+    - 'docs/ram-parity-evidence.json: own-family section 6.6 RAM_ICR, R1W0 and reserved zero bits'
+  lcd_cw32l052_v1:
+  - block: LCD
+    register: ICR
+    fieldset: ICR
+    reset_value: 4096
+    write_noop: 4096
+    zero_to_clear_fields:
+    - INTF
+    evidence:
+    - 'https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf §26.7.3: INTF bit12
+      writes zero to clear, one has no effect; reset 0x1000.'
+  lcd_cw32l083_v1:
+  - block: LCD
+    register: INTCLR
+    fieldset: INTCLR
+    reset_value: 4096
+    write_noop: 4096
+    zero_to_clear_fields:
+    - INTF
+    evidence:
+    - 'https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf §27.7.3: INTF bit12
+      writes zero to clear, one has no effect; reset 0x1000.'
+  dma_v1:
+  - block: DMA
+    register: ICR
+    fieldset: ICR
+    reset_value: 4294967295
+    write_noop: 4294967295
+    zero_to_clear_fields:
+    - TC1
+    - TE1
+    - TC2
+    - TE2
+    - TC3
+    - TE3
+    - TC4
+    - TE4
+    - TC5
+    - TE5
+    evidence:
+    - CW32x030 UM EN V1.0 section8.8.2 p145; CN V2.5 section8.8.2 p138
+    - 'docs/dma-owned-copy-evidence.md: R1W0 seed and shared-vector isolation'
+    - CW32L083 own UM CN V2.0 section8.8.2 p146; docs/dma-owned-copy-evidence.json sources.l083
+  autotrim_cw32l083_v1:
+  - block: AUTOTRIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 63
+    write_noop: 63
+    zero_to_clear_fields:
+    - END
+    - OK
+    - UD
+    - OV
+    - MISS
+    evidence:
+    - 'docs/autotrim-counter-evidence.json: own-family UM section 11.8.6'
+    - 'docs/autotrim-counter-evidence.md: R1W0 command seed retains reserved bit 2'
+  autotrim_cw32l052_v1:
+  - block: AUTOTRIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 63
+    write_noop: 63
+    zero_to_clear_fields:
+    - END
+    - OK
+    - UD
+    - OV
+    - MISS
+    evidence:
+    - 'docs/autotrim-counter-evidence.json: own-family UM section 11.8.6'
+    - 'docs/autotrim-counter-evidence.md: R1W0 command seed retains reserved bit 2'
+  btim_cw32f002_v1:
+  - block: BTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 7
+    write_noop: 7
+    zero_to_clear_fields:
+    - OV
+    - TI
+    - TOP
+    evidence:
+    - CW32F002_UserManual_CN_V1.4.pdf CN V1.4 section 11.7.7, printed page 149/PDF page 150; https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf;
+      SHA-256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add; docs/timer-command-evidence.json
+      families.CW32F002
+    - CW32F003_UserManual_CN_V2.3.pdf CN V2.3 section 11.7.7, printed page 151/PDF page 152; https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf;
+      SHA-256 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738; docs/timer-command-evidence.json
+      families.CW32F003
+  btim_cw32l010_v1:
+  - block: BTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 65
+    write_noop: 65
+    zero_to_clear_fields:
+    - UIF
+    - TIF
+    evidence:
+    - CW32L010_UserManual_CN_V1.2.pdf CN V1.2 section 11.9.6, printed page 183/PDF page 184; https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf;
+      SHA-256 b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa; docs/timer-command-evidence.json
+      families.CW32L010
+    - CW32L011_UserManual_CN_V1.1.pdf CN V1.1 section 11.9.6, printed page 183/PDF page 184; https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf;
+      SHA-256 b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f; docs/timer-command-evidence.json
+      families.CW32L011
+  btim_cw32l012_v1:
+  - block: BTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 65
+    write_noop: 65
+    zero_to_clear_fields:
+    - UIF
+    - TIF
+    evidence:
+    - CW32L012_UserManual_CN_V1.4.pdf CN V1.4 section 14.10.6, printed page 208/PDF page 234; https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf;
+      SHA-256 a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340; docs/timer-command-evidence.json
+      families.CW32L012
+  btim_cw32l031_v1:
+  - block: BTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 7
+    write_noop: 7
+    zero_to_clear_fields:
+    - OV
+    - TI
+    - TOP
+    evidence:
+    - CW32L031_UserManual_CN_V1.6.pdf CN V1.6 section 13.7.8, printed page 207/PDF page 208; https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf;
+      SHA-256 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760; docs/timer-command-evidence.json
+      families.CW32L031
+    - CW32L083_UserManual_CN_V2.0.pdf CN V2.0 section 13.7.8, printed page 232/PDF page 233; https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf;
+      SHA-256 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3; docs/timer-command-evidence.json
+      families.CW32L083
+    - CW32R031_UserManual_CN_V1.3.pdf CN V1.3 section 13.7.8, printed page 209/PDF page 210; https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf;
+      SHA-256 fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb; docs/timer-command-evidence.json
+      families.CW32R031
+    - CW32W031_UserManual_CN_V1.4.pdf CN V1.4 section 13.7.8, printed page 209/PDF page 210; https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf;
+      SHA-256 b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9; docs/timer-command-evidence.json
+      families.CW32W031
+  btim_cw32l052_v1:
+  - block: BTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 7
+    write_noop: 7
+    zero_to_clear_fields:
+    - OV
+    - TI
+    - TOP
+    evidence:
+    - CW32L052_UserManual_CN_V1.5.pdf CN V1.5 section 13.7.8, printed page 220/PDF page 221; https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf;
+      SHA-256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41; docs/timer-command-evidence.json
+      families.CW32L052
+  btim_v1:
+  - block: BTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 7
+    write_noop: 7
+    zero_to_clear_fields:
+    - OV
+    - TI
+    - TOP
+    evidence:
+    - CW32x030_UserManual_CN_V2.5.pdf CN V2.5 section 13.7.7, printed page 215/PDF page 216; https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf;
+      SHA-256 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2; docs/timer-command-evidence.json
+      families.CW32A030
+    - CW32F020_UserManual_CN_V1.4.pdf CN V1.4 section 13.7.7, printed page 212/PDF page 213; https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf;
+      SHA-256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed; docs/timer-command-evidence.json
+      families.CW32F020
+    - CW32x030_UserManual_CN_V2.5.pdf CN V2.5 section 13.7.7, printed page 215/PDF page 216; https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf;
+      SHA-256 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2; docs/timer-command-evidence.json
+      families.CW32F030
+  gtim_cw32f002_v1:
+  - block: GTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 1023
+    write_noop: 1023
+    zero_to_clear_fields:
+    - OV
+    - TI
+    - UD
+    - CC1
+    - CC2
+    - CC3
+    - CC4
+    - DIRCHANGE
+    evidence:
+    - CW32F002_UserManual_CN_V1.4.pdf CN V1.4 section 12.7.13, printed page 183/PDF page 184; https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf;
+      SHA-256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add; docs/timer-command-evidence.json
+      families.CW32F002
+    - CW32F003_UserManual_CN_V2.3.pdf CN V2.3 section 12.7.13, printed page 185/PDF page 186; https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf;
+      SHA-256 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738; docs/timer-command-evidence.json
+      families.CW32F003
+  gtim_cw32l010_v1:
+  - block: GTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 15736415
+    write_noop: 15736415
+    zero_to_clear_fields:
+    - UIF
+    - CC1IF
+    - CC2IF
+    - CC3IF
+    - CC4IF
+    - TIF
+    - CC1OF
+    - CC2OF
+    - CC3OF
+    - CC4OF
+    - IDXF
+    - DIRF
+    - IERRF
+    - TERRF
+    evidence:
+    - CW32L010_UserManual_CN_V1.2.pdf CN V1.2 section 13.9.6, printed page 267/PDF page 268; https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf;
+      SHA-256 b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa; docs/timer-command-evidence.json
+      families.CW32L010
+    - CW32L011_UserManual_CN_V1.1.pdf CN V1.1 section 13.9.6, printed page 267/PDF page 268; https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf;
+      SHA-256 b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f; docs/timer-command-evidence.json
+      families.CW32L011
+  gtim_cw32l012_v1:
+  - block: GTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 15736415
+    write_noop: 15736415
+    zero_to_clear_fields:
+    - UIF
+    - CC1IF
+    - CC2IF
+    - CC3IF
+    - CC4IF
+    - TIF
+    - CC1OF
+    - CC2OF
+    - CC3OF
+    - CC4OF
+    - IDXF
+    - DIRF
+    - IERRF
+    - TERRF
+    evidence:
+    - CW32L012_UserManual_CN_V1.4.pdf CN V1.4 section 16.10.6, printed page 294/PDF page 320; https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf;
+      SHA-256 a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340; docs/timer-command-evidence.json
+      families.CW32L012
+  gtim_cw32l031_v1:
+  - block: GTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 1023
+    write_noop: 1023
+    zero_to_clear_fields:
+    - OV
+    - TI
+    - UD
+    - CC1
+    - CC2
+    - CC3
+    - CC4
+    - DIRCHANGE
+    evidence:
+    - CW32L031_UserManual_CN_V1.6.pdf CN V1.6 section 14.7.14, printed page 241/PDF page 242; https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf;
+      SHA-256 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760; docs/timer-command-evidence.json
+      families.CW32L031
+    - CW32L083_UserManual_CN_V2.0.pdf CN V2.0 section 15.8.14, printed page 290/PDF page 291; https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf;
+      SHA-256 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3; docs/timer-command-evidence.json
+      families.CW32L083
+    - CW32R031_UserManual_CN_V1.3.pdf CN V1.3 section 14.7.14, printed page 243/PDF page 244; https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf;
+      SHA-256 fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb; docs/timer-command-evidence.json
+      families.CW32R031
+    - CW32W031_UserManual_CN_V1.4.pdf CN V1.4 section 14.7.14, printed page 243/PDF page 244; https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf;
+      SHA-256 b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9; docs/timer-command-evidence.json
+      families.CW32W031
+  gtim_cw32l052_v1:
+  - block: GTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 1023
+    write_noop: 1023
+    zero_to_clear_fields:
+    - OV
+    - TI
+    - UD
+    - CC1
+    - CC2
+    - CC3
+    - CC4
+    - DIRCHANGE
+    evidence:
+    - CW32L052_UserManual_CN_V1.5.pdf CN V1.5 section 15.8.14, printed page 278/PDF page 279; https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf;
+      SHA-256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41; docs/timer-command-evidence.json
+      families.CW32L052
+  gtim_v1:
+  - block: GTIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 1023
+    write_noop: 1023
+    zero_to_clear_fields:
+    - OV
+    - TI
+    - UD
+    - CC1
+    - CC2
+    - CC3
+    - CC4
+    - DIRCHANGE
+    evidence:
+    - CW32x030_UserManual_CN_V2.5.pdf CN V2.5 section 14.8.13, printed page 250/PDF page 251; https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf;
+      SHA-256 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2; docs/timer-command-evidence.json
+      families.CW32A030
+    - CW32F020_UserManual_CN_V1.4.pdf CN V1.4 section 14.8.13, printed page 247/PDF page 248; https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf;
+      SHA-256 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed; docs/timer-command-evidence.json
+      families.CW32F020
+    - CW32x030_UserManual_CN_V2.5.pdf CN V2.5 section 14.8.13, printed page 250/PDF page 251; https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf;
+      SHA-256 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2; docs/timer-command-evidence.json
+      families.CW32F030
+  rtc_v1:
+  - block: RTC
+    register: ICR
+    fieldset: ICR
+    reset_value: 127
+    write_noop: 127
+    zero_to_clear_fields:
+    - ALARMA
+    - ALARMB
+    - AWTIMER
+    - TAMP
+    - TAMPOV
+    - INTERVAL
+    evidence:
+    - 'docs/rtc-alarms-evidence.json: own-family ICR pages for rtc_v1'
+    - 'docs/rtc-alarms.md: documented R1W0 seed and reserved-bit policy'
+  rtc_cw32f020_v1:
+  - block: RTC
+    register: ICR
+    fieldset: ICR
+    reset_value: 127
+    write_noop: 127
+    zero_to_clear_fields:
+    - ALARMA
+    - ALARMB
+    - AWTIMER
+    - TAMP
+    - TAMPOV
+    - INTERVAL
+    evidence:
+    - 'docs/rtc-alarms-evidence.json: own-family ICR pages for rtc_cw32f020_v1'
+    - 'docs/rtc-alarms.md: documented R1W0 seed and reserved-bit policy'
+  rtc_cw32l010_v1:
+  - block: RTC
+    register: ICR
+    fieldset: ICR
+    reset_value: 127
+    write_noop: 127
+    zero_to_clear_fields:
+    - ALARMA
+    - ALARMB
+    - AWTIMER
+    - TAMP
+    - TAMPOV
+    - INTERVAL
+    evidence:
+    - 'docs/rtc-alarms-evidence.json: own-family ICR pages for rtc_cw32l010_v1'
+    - 'docs/rtc-alarms.md: documented R1W0 seed and reserved-bit policy'
+  rtc_cw32l011_v1:
+  - block: RTC
+    register: ICR
+    fieldset: ICR
+    reset_value: 127
+    write_noop: 127
+    zero_to_clear_fields:
+    - ALARMA
+    - ALARMB
+    - AWTIMER
+    - TAMP
+    - TAMPOV
+    - INTERVAL
+    evidence:
+    - 'docs/rtc-alarms-evidence.json: own-family ICR pages for rtc_cw32l011_v1'
+    - 'docs/rtc-alarms.md: documented R1W0 seed and reserved-bit policy'
+  rtc_cw32l012_v1:
+  - block: RTC
+    register: ICR
+    fieldset: ICR
+    reset_value: 127
+    write_noop: 127
+    zero_to_clear_fields:
+    - ALARMA
+    - ALARMB
+    - AWTIMER
+    - TAMP
+    - TAMPOV
+    - INTERVAL
+    evidence:
+    - 'docs/rtc-alarms-evidence.json: own-family ICR pages for rtc_cw32l012_v1'
+    - 'docs/rtc-alarms.md: documented R1W0 seed and reserved-bit policy'
+  rtc_cw32l031_v1:
+  - block: RTC
+    register: ICR
+    fieldset: ICR
+    reset_value: 127
+    write_noop: 127
+    zero_to_clear_fields:
+    - ALARMA
+    - ALARMB
+    - AWTIMER
+    - TAMP
+    - TAMPOV
+    - INTERVAL
+    evidence:
+    - 'docs/rtc-alarms-evidence.json: own-family ICR pages for rtc_cw32l031_v1'
+    - 'docs/rtc-alarms.md: documented R1W0 seed and reserved-bit policy'
+  rtc_cw32l052_v1:
+  - block: RTC
+    register: ICR
+    fieldset: ICR
+    reset_value: 127
+    write_noop: 127
+    zero_to_clear_fields:
+    - ALARMA
+    - ALARMB
+    - AWTIMER
+    - TAMP
+    - TAMPOV
+    - INTERVAL
+    evidence:
+    - 'docs/rtc-alarms-evidence.json: own-family ICR pages for rtc_cw32l052_v1'
+    - 'docs/rtc-alarms.md: documented R1W0 seed and reserved-bit policy'
+  adc_cw32l012_v1:
+  - block: ADC
+    register: ICR
+    fieldset: ICR
+    reset_value: 15
+    write_noop: 31
+    zero_to_clear_fields:
+    - EOC
+    - EOS
+    - AWDL
+    - AWDH
+    evidence:
+    - CW32L012_UserManual_CN_V1.4.pdf section25.12.10 printed p597/PDF p623; reset0xF, R1W0 EOC0 EOS1
+      AWDL3 AWDH4; reserved bit2 stays at reset1. All defined flags must write1 for no-op, yielding0x1F.
+    - docs/adc-l012-scans.md; docs/adc-scan-source-evidence.json families.CW32L012
+  awt_cw32f030_v1:
+  - block: AWT
+    register: ICR
+    fieldset: ICR
+    reset_value: 63
+    write_noop: 63
+    zero_to_clear_fields:
+    - UD
+    evidence:
+    - 'docs/low-power-timers-evidence.json: awt_v1'
+    - 'docs/low-power-timers.md: commands and reserved-bit policy'
+    - 'cw32-data/hse-qualified.yaml: own F020/x030 AWT semantic split preserves existing independently
+      reviewed ICR layout and command policy.'
+  atim_cw32f003_v1:
+  - block: ATIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 524287
+    write_noop: 524287
+    zero_to_clear_fields:
+    - UIF
+    - C1AF
+    - C2AF
+    - C3AF
+    - C1BF
+    - C2BF
+    - C3BF
+    - C1AE
+    - C2AE
+    - C3AE
+    - C1BE
+    - C2BE
+    - C3BE
+    - BIF
+    - TIF
+    - OVF
+    - UNDF
+    - C4AF
+    evidence:
+    - vendor:CW32F003_UserManual_CN_V2.3.pdf, printed p233/PDF page234; SHA-256 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738;
+      docs/classic-atim-complementary-evidence.json
+  atim_cw32l052_v1:
+  - block: ATIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 524287
+    write_noop: 524287
+    zero_to_clear_fields:
+    - UIF
+    - C1AF
+    - C2AF
+    - C3AF
+    - C1BF
+    - C2BF
+    - C3BF
+    - C1AE
+    - C2AE
+    - C3AE
+    - C1BE
+    - C2BE
+    - C3BE
+    - BIF
+    - TIF
+    - OVF
+    - UNDF
+    - C4AF
+    evidence:
+    - vendor:CW32L052_UserManual_CN_V1.5.pdf, printed p328/PDF page329; SHA-256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41;
+      docs/classic-atim-complementary-evidence.json
+  atim_v1:
+  - block: ATIM
+    register: ICR
+    fieldset: ICR
+    reset_value: 524287
+    write_noop: 524287
+    zero_to_clear_fields:
+    - UIF
+    - C1AF
+    - C2AF
+    - C3AF
+    - C1BF
+    - C2BF
+    - C3BF
+    - C1AE
+    - C2AE
+    - C3AE
+    - C1BE
+    - C2BE
+    - C3BE
+    - BIF
+    - TIF
+    - OVF
+    - UNDF
+    - C4AF
+    evidence:
+    - vendor:CW32x030_UserManual_CN_V2.5.pdf, printed p300/PDF page301; SHA-256 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2;
+      docs/classic-atim-complementary-evidence.json
+    - vendor:CW32L031_UserManual_CN_V1.6.pdf, printed p291/PDF page292; SHA-256 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760;
+      docs/classic-atim-complementary-evidence.json
+    - vendor:CW32R031_UserManual_CN_V1.3.pdf, printed p294/PDF page295; SHA-256 fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb;
+      docs/classic-atim-complementary-evidence.json
+    - vendor:CW32W031_UserManual_CN_V1.4.pdf, printed p294/PDF page295; SHA-256 b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9;
+      docs/classic-atim-complementary-evidence.json
+    - vendor:CW32L083_UserManual_CN_V2.0.pdf, printed p340/PDF page341; SHA-256 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3;
+      docs/classic-atim-complementary-evidence.json

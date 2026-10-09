@@ -1,0 +1,410 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-08",
+  "scope": "Owned PCLK internal-clock up-counting polling counters and simple buffered GTIM PWM. No trigger/cascade/IRQ/DMA API or hardware execution.",
+  "families": {
+    "CW32L010": {
+      "manual": "CW32L010_UserManual_CN_V1.2.pdf",
+      "chapter": "13",
+      "register_section": "13.9",
+      "register_file": "cw32-data/registers/gtim_cw32l010_v1.yaml",
+      "register_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+      "register_version": "cw32l010_v1",
+      "sdk_sources": {
+        "datasheet": {
+          "file": "CW32L010_DataSheet_CN_V1.3.pdf",
+          "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+          "url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf"
+        },
+        "reference_manual": {
+          "file": "CW32L010_UserManual_CN_V1.2.pdf",
+          "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+          "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf"
+        },
+        "sdk_archive": {
+          "file": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+        },
+        "cmsis_header": {
+          "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+          "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+        },
+        "gtim_header": {
+          "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gtim.h",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "sha256": "5a3dbd61a5cd21e3550c98982953b06860e0f7dc384caf9d17b500214768058b"
+        },
+        "gtim_source": {
+          "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_gtim.c",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "sha256": "f3355c4a19e1da6d88cfd4704d8128cea738f847a7e7f46d00d2d92656416844"
+        },
+        "rcc_header": {
+          "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "sha256": "81d6c37b3920465595b702bdf102e5710c22490efa422207e5148852d719e91f"
+        },
+        "rcc_source": {
+          "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_sysctrl.c",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "sha256": "5b90bab195a6308aab9194451c862553cb14d11b23ef3d128d05e443ffc6ad92"
+        }
+      },
+      "instances": {
+        "GTIM1": 1073747968
+      },
+      "clock_bits": {
+        "GTIM1": 6
+      },
+      "enable_register": "APBEN1",
+      "enable_offset": 56,
+      "enable_key": 23130,
+      "reset_register": "APBRST1",
+      "reset_offset": 72,
+      "reset_asserted_value": 0,
+      "kernel_clock": "PCLK",
+      "public_prescaler_subset": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        2048,
+        4096,
+        8192,
+        16384,
+        32768
+      ],
+      "minimum_period_ticks": 2,
+      "maximum_period_ticks": 65536,
+      "clearable_flags": 15736415,
+      "request_register_manual": "IER",
+      "request_register_pac": "IER",
+      "dma_enable_fields": false,
+      "update_policy": "ARPE/OCxPE enabled; PSC+1; stopped ARR writes take effect immediately; UG commits PSC/CCR and resets CNT/divider phase; URS suppresses UG-induced UIF. Interior duty-only changes latch at next overflow; changed mode/polarity synchronously restarts the whole timer, commits every pending CCR and uses Freeze-to-PWM transition."
+    },
+    "CW32L011": {
+      "manual": "CW32L011_UserManual_CN_V1.1.pdf",
+      "chapter": "13",
+      "register_section": "13.9",
+      "register_file": "cw32-data/registers/gtim_cw32l010_v1.yaml",
+      "register_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+      "register_version": "cw32l010_v1",
+      "sdk_sources": {
+        "datasheet": {
+          "file": "CW32L011_DataSheet_CN_V1.1.pdf",
+          "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+          "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf"
+        },
+        "reference_manual": {
+          "file": "CW32L011_UserManual_CN_V1.1.pdf",
+          "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+          "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf"
+        },
+        "sdk_archive": {
+          "file": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+        },
+        "cmsis_header": {
+          "file": "cw32l011/Libraries/inc/cw32l011.h",
+          "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+        },
+        "gtim_header": {
+          "file": "cw32l011/Libraries/inc/cw32l011_gtim.h",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "sha256": "d42933df9db61dffbabac18824126a7fd3d3b8a22f7ff65cdbb38c7dd1f76506"
+        },
+        "gtim_source": {
+          "file": "cw32l011/Libraries/src/cw32l011_gtim.c",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "sha256": "027912752f52f339dd57032863bf88f45db5e1acc7d229d03abb49ba3ffaffef"
+        },
+        "rcc_header": {
+          "file": "cw32l011/Libraries/inc/cw32l011_sysctrl.h",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "sha256": "3c9927ef4eb1126500c4528e0892ebd90bb217c2bdd64935d6e52d252c54507e"
+        },
+        "rcc_source": {
+          "file": "cw32l011/Libraries/src/cw32l011_sysctrl.c",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "sha256": "7bdc0138bd94c7d0986d79b6f601954c86d04ab1d794af7484b218ba8d2cca89"
+        }
+      },
+      "instances": {
+        "GTIM1": 1073747968,
+        "GTIM2": 1073748992
+      },
+      "clock_bits": {
+        "GTIM1": 6,
+        "GTIM2": 7
+      },
+      "enable_register": "APBEN1",
+      "enable_offset": 56,
+      "enable_key": 23130,
+      "reset_register": "APBRST1",
+      "reset_offset": 72,
+      "reset_asserted_value": 0,
+      "kernel_clock": "PCLK",
+      "public_prescaler_subset": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        2048,
+        4096,
+        8192,
+        16384,
+        32768
+      ],
+      "minimum_period_ticks": 2,
+      "maximum_period_ticks": 65536,
+      "clearable_flags": 15736415,
+      "request_register_manual": "IER",
+      "request_register_pac": "IER",
+      "dma_enable_fields": false,
+      "update_policy": "ARPE/OCxPE enabled; PSC+1; stopped ARR writes take effect immediately; UG commits PSC/CCR and resets CNT/divider phase; URS suppresses UG-induced UIF. Interior duty-only changes latch at next overflow; changed mode/polarity synchronously restarts the whole timer, commits every pending CCR and uses Freeze-to-PWM transition."
+    },
+    "CW32L012": {
+      "manual": "CW32L012_UserManual_CN_V1.4.pdf",
+      "chapter": "16",
+      "register_section": "16.10",
+      "register_file": "cw32-data/registers/gtim_cw32l012_v1.yaml",
+      "register_sha256": "0d3f18470945cdb11378313b8fec18426b06af213e0b18dbfc62a5bdcb911069",
+      "register_version": "cw32l012_v1",
+      "sdk_sources": {
+        "datasheet": {
+          "file": "CW32L012_DataSheet_CN_V1.0.pdf",
+          "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+          "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76"
+        },
+        "reference_manual": {
+          "file": "CW32L012_UserManual_CN_V1.4.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+          "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340"
+        },
+        "sdk_archive": {
+          "file": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f"
+        },
+        "cmsis_header": {
+          "file": "cw32l012/Libraries/inc/cw32l012.h",
+          "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+        },
+        "gtim_header": {
+          "file": "cw32l012/Libraries/inc/cw32l012_gtim.h",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "sha256": "d6477ab2af1e17bbb710177adaa658afef4c19a1f165f8c3c194e021a10eb34a"
+        },
+        "gtim_source": {
+          "file": "cw32l012/Libraries/src/cw32l012_gtim.c",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "sha256": "b5de6b909a38fb205ce5c7e115e2a8580747618cca7bc6f41f9dcdbbcd1eecee"
+        },
+        "rcc_header": {
+          "file": "cw32l012/Libraries/inc/cw32l012_sysctrl.h",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "sha256": "3746c16b7a3fa72d1b43d42c080111e64faa36e8beb4b1f19c13daf3c71b993c"
+        },
+        "rcc_source": {
+          "file": "cw32l012/Libraries/src/cw32l012_sysctrl.c",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "sha256": "6c1764be4a47f37f052fe6abed87b6bf54df87385e0c4072b7db819bcb8926cf"
+        }
+      },
+      "instances": {
+        "GTIM1": 1073747968,
+        "GTIM2": 1073748992,
+        "GTIM3": 1073751040,
+        "GTIM4": 1073752064
+      },
+      "clock_bits": {
+        "GTIM1": 6,
+        "GTIM2": 7,
+        "GTIM3": 11,
+        "GTIM4": 12
+      },
+      "enable_register": "APBEN1",
+      "enable_offset": 56,
+      "enable_key": 23130,
+      "reset_register": "APBRST1",
+      "reset_offset": 72,
+      "reset_asserted_value": 0,
+      "kernel_clock": "PCLK",
+      "public_prescaler_subset": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024,
+        2048,
+        4096,
+        8192,
+        16384,
+        32768
+      ],
+      "minimum_period_ticks": 2,
+      "maximum_period_ticks": 65536,
+      "clearable_flags": 15736415,
+      "request_register_manual": "DIER",
+      "request_register_pac": "IER",
+      "dma_enable_fields": true,
+      "update_policy": "ARPE/OCxPE enabled; PSC+1; stopped ARR writes take effect immediately; UG commits PSC/CCR and resets CNT/divider phase; URS suppresses UG-induced UIF. Interior duty-only changes latch at next overflow; changed mode/polarity synchronously restarts the whole timer, commits every pending CCR and uses Freeze-to-PWM transition."
+    }
+  },
+  "sources": {
+    "CW32L010_DataSheet_CN_V1.3.pdf": {
+      "file": "CW32L010_DataSheet_CN_V1.3.pdf",
+      "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+      "url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf"
+    },
+    "CW32L010_UserManual_CN_V1.2.pdf": {
+      "file": "CW32L010_UserManual_CN_V1.2.pdf",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf"
+    },
+    "CW32L010_StandardPeripheralLib_V1.0.9.zip": {
+      "file": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+    },
+    "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h": {
+      "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+    },
+    "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gtim.h": {
+      "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gtim.h",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sha256": "5a3dbd61a5cd21e3550c98982953b06860e0f7dc384caf9d17b500214768058b"
+    },
+    "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_gtim.c": {
+      "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_gtim.c",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sha256": "f3355c4a19e1da6d88cfd4704d8128cea738f847a7e7f46d00d2d92656416844"
+    },
+    "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h": {
+      "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sha256": "81d6c37b3920465595b702bdf102e5710c22490efa422207e5148852d719e91f"
+    },
+    "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_sysctrl.c": {
+      "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_sysctrl.c",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sha256": "5b90bab195a6308aab9194451c862553cb14d11b23ef3d128d05e443ffc6ad92"
+    },
+    "CW32L011_DataSheet_CN_V1.1.pdf": {
+      "file": "CW32L011_DataSheet_CN_V1.1.pdf",
+      "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+      "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf"
+    },
+    "CW32L011_UserManual_CN_V1.1.pdf": {
+      "file": "CW32L011_UserManual_CN_V1.1.pdf",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf"
+    },
+    "CW32L011_StandardPeripheralLib_V1.0.3.zip": {
+      "file": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+    },
+    "cw32l011/Libraries/inc/cw32l011.h": {
+      "file": "cw32l011/Libraries/inc/cw32l011.h",
+      "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+    },
+    "cw32l011/Libraries/inc/cw32l011_gtim.h": {
+      "file": "cw32l011/Libraries/inc/cw32l011_gtim.h",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sha256": "d42933df9db61dffbabac18824126a7fd3d3b8a22f7ff65cdbb38c7dd1f76506"
+    },
+    "cw32l011/Libraries/src/cw32l011_gtim.c": {
+      "file": "cw32l011/Libraries/src/cw32l011_gtim.c",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sha256": "027912752f52f339dd57032863bf88f45db5e1acc7d229d03abb49ba3ffaffef"
+    },
+    "cw32l011/Libraries/inc/cw32l011_sysctrl.h": {
+      "file": "cw32l011/Libraries/inc/cw32l011_sysctrl.h",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sha256": "3c9927ef4eb1126500c4528e0892ebd90bb217c2bdd64935d6e52d252c54507e"
+    },
+    "cw32l011/Libraries/src/cw32l011_sysctrl.c": {
+      "file": "cw32l011/Libraries/src/cw32l011_sysctrl.c",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sha256": "7bdc0138bd94c7d0986d79b6f601954c86d04ab1d794af7484b218ba8d2cca89"
+    },
+    "CW32L012_DataSheet_CN_V1.0.pdf": {
+      "file": "CW32L012_DataSheet_CN_V1.0.pdf",
+      "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+      "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76"
+    },
+    "CW32L012_UserManual_CN_V1.4.pdf": {
+      "file": "CW32L012_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340"
+    },
+    "CW32L012_StandardPeripheralLib_V1.0.5.zip": {
+      "file": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f"
+    },
+    "cw32l012/Libraries/inc/cw32l012.h": {
+      "file": "cw32l012/Libraries/inc/cw32l012.h",
+      "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+    },
+    "cw32l012/Libraries/inc/cw32l012_gtim.h": {
+      "file": "cw32l012/Libraries/inc/cw32l012_gtim.h",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sha256": "d6477ab2af1e17bbb710177adaa658afef4c19a1f165f8c3c194e021a10eb34a"
+    },
+    "cw32l012/Libraries/src/cw32l012_gtim.c": {
+      "file": "cw32l012/Libraries/src/cw32l012_gtim.c",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sha256": "b5de6b909a38fb205ce5c7e115e2a8580747618cca7bc6f41f9dcdbbcd1eecee"
+    },
+    "cw32l012/Libraries/inc/cw32l012_sysctrl.h": {
+      "file": "cw32l012/Libraries/inc/cw32l012_sysctrl.h",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sha256": "3746c16b7a3fa72d1b43d42c080111e64faa36e8beb4b1f19c13daf3c71b993c"
+    },
+    "cw32l012/Libraries/src/cw32l012_sysctrl.c": {
+      "file": "cw32l012/Libraries/src/cw32l012_sysctrl.c",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sha256": "6c1764be4a47f37f052fe6abed87b6bf54df87385e0c4072b7db819bcb8926cf"
+    }
+  },
+  "upstream": {
+    "revision": "f16efeffe37581092ec184718e6fdb1620393214",
+    "files": {
+      "embassy-stm32/src/timer/simple_pwm.rs": "c84b6cb6e59b9ffa1b9d51bd53819a5ee4381f1539e29a733ef353735e19480b",
+      "embassy-stm32/src/timer/low_level.rs": "df476c26e2ad303228f735cc65a73dbfb64f15840f60dba82b85981f2bd6ed86",
+      "embassy-stm32/src/timer/mod.rs": "8e0cf0ecdaaae4a9b7ec1e825f79839a94bb60cc15a6684ab0b503bb70c07706"
+    },
+    "shape": "Peri ownership, sealed BasicInstance/GeneralInstance4Channel, typed PwmPin, SimplePwm/channel methods, embedded-hal PWM; split intentionally borrows owner, common bounded prescaler subset, CW32 actual mode/reset semantics."
+  }
+}

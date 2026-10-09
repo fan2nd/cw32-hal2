@@ -1,0 +1,918 @@
+schema_version: 1
+profile: CW32F002
+status: verified-sdk-and-datasheet
+generated_metadata_merged: true
+source:
+  sdk_url: https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip
+  sdk_sha256: 108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc
+  header: Libraries/inc/cw32f002_gpio.h
+  header_sha256: 12ab69693119a4fe4c731bb1545f5a9e6954f1e83ba6ed0c7da3d759a2d05b63
+datasheet:
+  url: https://www.whxy.com/uploads/files/20251230/CW32F002_DataSheet_CN_V1.2.pdf
+  sha256: 6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506
+  document_filename: CW32F002_DataSheet_CN_V1.2.pdf
+  memory_map_pdf_page_indices:
+  - 25
+  memory_size_table_pdf_page_indices:
+  - 7
+  memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+    Family-product table establishes package/size variant.
+  af_evidence: 'Own-family Tables 5-3, 5-4, 5-5; 42 serial cells checked by positioned-PDF extraction
+    against original SDK macros and prior rendered audit. PDF pages [24]. Per-cell proof: docs/final-serial-af-evidence.json.'
+  source_ref: vendor:CW32F002_DataSheet_CN_V1.2.pdf
+scope: UART/SPI/I2C serial routes only; all unrelated AF candidates remain unpromoted.
+selector_capability:
+  min: 1
+  max: 7
+  pdf_printed_page_offset: 1
+  evidence: Numbered function columns in the cited own-family datasheet AF tables; register width alone
+    never authorizes selectors.
+normalization:
+  signals:
+    TXD: TX
+    RXD: RX
+    CS: NSS
+  instances:
+    SPI:
+      sdk: SPI
+      pac: SPI
+    I2C:
+      sdk: I2C
+      pac: I2C
+  basis: Exact family datasheet and PAC names; original SDK function, macro and line retained.
+limitations:
+- Physical package bonding filters generated metadata, including family-alias common-package intersections.
+- HAL additionally withholds debug/reset-restricted pads; no constructor remaps debug, reset or oscillator
+  functions.
+- CTS/RTS/NSS remain metadata unless explicitly exposed by a separately reviewed driver.
+- No silicon, electrical-performance, DMA or backend-compatibility validation is implied.
+routes:
+- pin: PA0
+  af: 1
+  function: UART1RXD
+  source_macro: PA00_AFx_UART1RXD
+  source_line: 414
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: UART1
+  signal: RX
+  source_signal: RXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA0
+    af: 1
+    function: UART1_RXD
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA0
+  af: 2
+  function: UART2RTS
+  source_macro: PA00_AFx_UART2RTS
+  source_line: 415
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: UART2
+  signal: RTS
+  source_signal: RTS
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA0
+    af: 2
+    function: UART2_RTS
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA0
+  af: 3
+  function: SPISCK
+  source_macro: PA00_AFx_SPISCK
+  source_line: 416
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: SPI
+  signal: SCK
+  source_signal: SCK
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA0
+    af: 3
+    function: SPI_SCK
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA1
+  af: 1
+  function: UART2TXD
+  source_macro: PA01_AFx_UART2TXD
+  source_line: 421
+  gpio_register: AFRL
+  gpio_field: AFR1
+  peripheral: UART2
+  signal: TX
+  source_signal: TXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA1
+    af: 1
+    function: UART2_TXD
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA1
+  af: 3
+  function: SPIMOSI
+  source_macro: PA01_AFx_SPIMOSI
+  source_line: 423
+  gpio_register: AFRL
+  gpio_field: AFR1
+  peripheral: SPI
+  signal: MOSI
+  source_signal: MOSI
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA1
+    af: 3
+    function: SPI_MOSI
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA2
+  af: 1
+  function: UART1RXD
+  source_macro: PA02_AFx_UART1RXD
+  source_line: 428
+  gpio_register: AFRL
+  gpio_field: AFR2
+  peripheral: UART1
+  signal: RX
+  source_signal: RXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA2
+    af: 1
+    function: UART1_RXD
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA2
+  af: 2
+  function: UART2TXD
+  source_macro: PA02_AFx_UART2TXD
+  source_line: 429
+  gpio_register: AFRL
+  gpio_field: AFR2
+  peripheral: UART2
+  signal: TX
+  source_signal: TXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA2
+    af: 2
+    function: UART2_TXD
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA2
+  af: 3
+  function: I2CSDA
+  source_macro: PA02_AFx_I2CSDA
+  source_line: 430
+  gpio_register: AFRL
+  gpio_field: AFR2
+  peripheral: I2C
+  signal: SDA
+  source_signal: SDA
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA2
+    af: 3
+    function: I2C_SDA
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA4
+  af: 1
+  function: UART1RXD
+  source_macro: PA04_AFx_UART1RXD
+  source_line: 443
+  gpio_register: AFRL
+  gpio_field: AFR4
+  peripheral: UART1
+  signal: RX
+  source_signal: RXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA4
+    af: 1
+    function: UART1_RXD
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA4
+  af: 3
+  function: SPIMISO
+  source_macro: PA04_AFx_SPIMISO
+  source_line: 445
+  gpio_register: AFRL
+  gpio_field: AFR4
+  peripheral: SPI
+  signal: MISO
+  source_signal: MISO
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA4
+    af: 3
+    function: SPI_MISO
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA5
+  af: 1
+  function: UART1TXD
+  source_macro: PA05_AFx_UART1TXD
+  source_line: 450
+  gpio_register: AFRL
+  gpio_field: AFR5
+  peripheral: UART1
+  signal: TX
+  source_signal: TXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA5
+    af: 1
+    function: UART1_TXD
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA5
+  af: 2
+  function: UART2RXD
+  source_macro: PA05_AFx_UART2RXD
+  source_line: 451
+  gpio_register: AFRL
+  gpio_field: AFR5
+  peripheral: UART2
+  signal: RX
+  source_signal: RXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA5
+    af: 2
+    function: UART2_RXD
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA5
+  af: 3
+  function: I2CSCL
+  source_macro: PA05_AFx_I2CSCL
+  source_line: 452
+  gpio_register: AFRL
+  gpio_field: AFR5
+  peripheral: I2C
+  signal: SCL
+  source_signal: SCL
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA5
+    af: 3
+    function: I2C_SCL
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA6
+  af: 1
+  function: UART1CTS
+  source_macro: PA06_AFx_UART1CTS
+  source_line: 457
+  gpio_register: AFRL
+  gpio_field: AFR6
+  peripheral: UART1
+  signal: CTS
+  source_signal: CTS
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA6
+    af: 1
+    function: UART1_CTS
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA6
+  af: 2
+  function: UART2TXD
+  source_macro: PA06_AFx_UART2TXD
+  source_line: 458
+  gpio_register: AFRL
+  gpio_field: AFR6
+  peripheral: UART2
+  signal: TX
+  source_signal: TXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA6
+    af: 2
+    function: UART2_TXD
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA6
+  af: 3
+  function: I2CSDA
+  source_macro: PA06_AFx_I2CSDA
+  source_line: 459
+  gpio_register: AFRL
+  gpio_field: AFR6
+  peripheral: I2C
+  signal: SDA
+  source_signal: SDA
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA6
+    af: 3
+    function: I2C_SDA
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA7
+  af: 1
+  function: UART1RTS
+  source_macro: PA07_AFx_UART1RTS
+  source_line: 464
+  gpio_register: AFRL
+  gpio_field: AFR7
+  peripheral: UART1
+  signal: RTS
+  source_signal: RTS
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA7
+    af: 1
+    function: UART1_RTS
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PA7
+  af: 2
+  function: UART2RXD
+  source_macro: PA07_AFx_UART2RXD
+  source_line: 465
+  gpio_register: AFRL
+  gpio_field: AFR7
+  peripheral: UART2
+  signal: RX
+  source_signal: RXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA7
+    af: 2
+    function: UART2_RXD
+    table: 5-3
+    pdf_page: 24
+    printed_page: 23
+- pin: PB0
+  af: 1
+  function: UART1RXD
+  source_macro: PB00_AFx_UART1RXD
+  source_line: 470
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: UART1
+  signal: RX
+  source_signal: RXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB0
+    af: 1
+    function: UART1_RXD
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB0
+  af: 2
+  function: I2CSDA
+  source_macro: PB00_AFx_I2CSDA
+  source_line: 471
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: I2C
+  signal: SDA
+  source_signal: SDA
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB0
+    af: 2
+    function: I2C_SDA
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB0
+  af: 3
+  function: SPICS
+  source_macro: PB00_AFx_SPICS
+  source_line: 472
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: SPI
+  signal: NSS
+  source_signal: CS
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB0
+    af: 3
+    function: SPI_CS
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB1
+  af: 1
+  function: UART1TXD
+  source_macro: PB01_AFx_UART1TXD
+  source_line: 477
+  gpio_register: AFRL
+  gpio_field: AFR1
+  peripheral: UART1
+  signal: TX
+  source_signal: TXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB1
+    af: 1
+    function: UART1_TXD
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB1
+  af: 3
+  function: I2CSCL
+  source_macro: PB01_AFx_I2CSCL
+  source_line: 479
+  gpio_register: AFRL
+  gpio_field: AFR1
+  peripheral: I2C
+  signal: SCL
+  source_signal: SCL
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB1
+    af: 3
+    function: I2C_SCL
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB2
+  af: 1
+  function: UART1TXD
+  source_macro: PB02_AFx_UART1TXD
+  source_line: 484
+  gpio_register: AFRL
+  gpio_field: AFR2
+  peripheral: UART1
+  signal: TX
+  source_signal: TXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB2
+    af: 1
+    function: UART1_TXD
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB2
+  af: 2
+  function: UART2CTS
+  source_macro: PB02_AFx_UART2CTS
+  source_line: 485
+  gpio_register: AFRL
+  gpio_field: AFR2
+  peripheral: UART2
+  signal: CTS
+  source_signal: CTS
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB2
+    af: 2
+    function: UART2_CTS
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB2
+  af: 3
+  function: SPICS
+  source_macro: PB02_AFx_SPICS
+  source_line: 486
+  gpio_register: AFRL
+  gpio_field: AFR2
+  peripheral: SPI
+  signal: NSS
+  source_signal: CS
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB2
+    af: 3
+    function: SPI_CS
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB3
+  af: 1
+  function: UART2RXD
+  source_macro: PB03_AFx_UART2RXD
+  source_line: 491
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: UART2
+  signal: RX
+  source_signal: RXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB3
+    af: 1
+    function: UART2_RXD
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB3
+  af: 2
+  function: I2CSDA
+  source_macro: PB03_AFx_I2CSDA
+  source_line: 492
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: I2C
+  signal: SDA
+  source_signal: SDA
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB3
+    af: 2
+    function: I2C_SDA
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB4
+  af: 1
+  function: UART2TXD
+  source_macro: PB04_AFx_UART2TXD
+  source_line: 498
+  gpio_register: AFRL
+  gpio_field: AFR4
+  peripheral: UART2
+  signal: TX
+  source_signal: TXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB4
+    af: 1
+    function: UART2_TXD
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB4
+  af: 2
+  function: I2CSCL
+  source_macro: PB04_AFx_I2CSCL
+  source_line: 499
+  gpio_register: AFRL
+  gpio_field: AFR4
+  peripheral: I2C
+  signal: SCL
+  source_signal: SCL
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB4
+    af: 2
+    function: I2C_SCL
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB5
+  af: 1
+  function: UART1RXD
+  source_macro: PB05_AFx_UART1RXD
+  source_line: 504
+  gpio_register: AFRL
+  gpio_field: AFR5
+  peripheral: UART1
+  signal: RX
+  source_signal: RXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB5
+    af: 1
+    function: UART1_RXD
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB5
+  af: 2
+  function: I2CSDA
+  source_macro: PB05_AFx_I2CSDA
+  source_line: 505
+  gpio_register: AFRL
+  gpio_field: AFR5
+  peripheral: I2C
+  signal: SDA
+  source_signal: SDA
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB5
+    af: 2
+    function: I2C_SDA
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB6
+  af: 1
+  function: UART1TXD
+  source_macro: PB06_AFx_UART1TXD
+  source_line: 510
+  gpio_register: AFRL
+  gpio_field: AFR6
+  peripheral: UART1
+  signal: TX
+  source_signal: TXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB6
+    af: 1
+    function: UART1_TXD
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB6
+  af: 2
+  function: I2CSCL
+  source_macro: PB06_AFx_I2CSCL
+  source_line: 511
+  gpio_register: AFRL
+  gpio_field: AFR6
+  peripheral: I2C
+  signal: SCL
+  source_signal: SCL
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB6
+    af: 2
+    function: I2C_SCL
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PB6
+  af: 3
+  function: SPICS
+  source_macro: PB06_AFx_SPICS
+  source_line: 512
+  gpio_register: AFRL
+  gpio_field: AFR6
+  peripheral: SPI
+  signal: NSS
+  source_signal: CS
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB6
+    af: 3
+    function: SPI_CS
+    table: 5-4
+    pdf_page: 24
+    printed_page: 23
+- pin: PC0
+  af: 1
+  function: UART2RXD
+  source_macro: PC00_AFx_UART2RXD
+  source_line: 524
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: UART2
+  signal: RX
+  source_signal: RXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PC0
+    af: 1
+    function: UART2_RXD
+    table: 5-5
+    pdf_page: 24
+    printed_page: 23
+- pin: PC0
+  af: 2
+  function: UART1TXD
+  source_macro: PC00_AFx_UART1TXD
+  source_line: 525
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: UART1
+  signal: TX
+  source_signal: TXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PC0
+    af: 2
+    function: UART1_TXD
+    table: 5-5
+    pdf_page: 24
+    printed_page: 23
+- pin: PC0
+  af: 3
+  function: SPISCK
+  source_macro: PC00_AFx_SPISCK
+  source_line: 526
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: SPI
+  signal: SCK
+  source_signal: SCK
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PC0
+    af: 3
+    function: SPI_SCK
+    table: 5-5
+    pdf_page: 24
+    printed_page: 23
+- pin: PC1
+  af: 1
+  function: UART2TXD
+  source_macro: PC01_AFx_UART2TXD
+  source_line: 531
+  gpio_register: AFRL
+  gpio_field: AFR1
+  peripheral: UART2
+  signal: TX
+  source_signal: TXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PC1
+    af: 1
+    function: UART2_TXD
+    table: 5-5
+    pdf_page: 24
+    printed_page: 23
+- pin: PC1
+  af: 3
+  function: SPIMISO
+  source_macro: PC01_AFx_SPIMISO
+  source_line: 533
+  gpio_register: AFRL
+  gpio_field: AFR1
+  peripheral: SPI
+  signal: MISO
+  source_signal: MISO
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PC1
+    af: 3
+    function: SPI_MISO
+    table: 5-5
+    pdf_page: 24
+    printed_page: 23
+- pin: PC2
+  af: 1
+  function: UART2RXD
+  source_macro: PC02_AFx_UART2RXD
+  source_line: 538
+  gpio_register: AFRL
+  gpio_field: AFR2
+  peripheral: UART2
+  signal: RX
+  source_signal: RXD
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PC2
+    af: 1
+    function: UART2_RXD
+    table: 5-5
+    pdf_page: 24
+    printed_page: 23
+- pin: PC2
+  af: 3
+  function: SPIMOSI
+  source_macro: PC02_AFx_SPIMOSI
+  source_line: 540
+  gpio_register: AFRL
+  gpio_field: AFR2
+  peripheral: SPI
+  signal: MOSI
+  source_signal: MOSI
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PC2
+    af: 3
+    function: SPI_MOSI
+    table: 5-5
+    pdf_page: 24
+    printed_page: 23
+unresolved: []
+excluded_routes:
+- pin: PA3
+  af: 1
+  function: UART2TXD
+  source_macro: PA03_AFx_UART2TXD
+  source_line: 436
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: UART2
+  signal: TXD
+  reason: Absent from own-family datasheet AF tables and physical packages; own current reference-manual
+    Table 8-2 also omits this pad.
+- pin: PA3
+  af: 2
+  function: UART1RXD
+  source_macro: PA03_AFx_UART1RXD
+  source_line: 437
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: UART1
+  signal: RXD
+  reason: Absent from own-family datasheet AF tables and physical packages; own current reference-manual
+    Table 8-2 also omits this pad.
+- pin: PB7
+  af: 1
+  function: UART2RXD
+  source_macro: PB07_AFx_UART2RXD
+  source_line: 517
+  gpio_register: AFRL
+  gpio_field: AFR7
+  peripheral: UART2
+  signal: RXD
+  reason: Absent from own-family datasheet AF tables and physical packages; own current reference-manual
+    Table 8-2 also omits this pad.
+- pin: PB7
+  af: 2
+  function: UART1TXD
+  source_macro: PB07_AFx_UART1TXD
+  source_line: 518
+  gpio_register: AFRL
+  gpio_field: AFR7
+  peripheral: UART1
+  signal: TXD
+  reason: Absent from own-family datasheet AF tables and physical packages; own current reference-manual
+    Table 8-2 also omits this pad.
+- pin: PB7
+  af: 3
+  function: SPISCK
+  source_macro: PB07_AFx_SPISCK
+  source_line: 519
+  gpio_register: AFRL
+  gpio_field: AFR7
+  peripheral: SPI
+  signal: SCK
+  reason: Absent from own-family datasheet AF tables and physical packages; own current reference-manual
+    Table 8-2 also omits this pad.
+- pin: PC3
+  af: 1
+  function: UART1TXD
+  source_macro: PC03_AFx_UART1TXD
+  source_line: 545
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: UART1
+  signal: TXD
+  reason: Absent from own-family datasheet AF tables and physical packages; own current reference-manual
+    Table 8-2 also omits this pad.
+- pin: PC3
+  af: 2
+  function: SPICS
+  source_macro: PC03_AFx_SPICS
+  source_line: 546
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: SPI
+  signal: CS
+  reason: Absent from own-family datasheet AF tables and physical packages; own current reference-manual
+    Table 8-2 also omits this pad.
+- pin: PC3
+  af: 3
+  function: SPIMISO
+  source_macro: PC03_AFx_SPIMISO
+  source_line: 547
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: SPI
+  signal: MISO
+  reason: Absent from own-family datasheet AF tables and physical packages; own current reference-manual
+    Table 8-2 also omits this pad.
+- pin: PC4
+  af: 1
+  function: UART1RXD
+  source_macro: PC04_AFx_UART1RXD
+  source_line: 551
+  gpio_register: AFRL
+  gpio_field: AFR4
+  peripheral: UART1
+  signal: RXD
+  reason: Absent from own-family datasheet AF tables and physical packages; own current reference-manual
+    Table 8-2 also omits this pad.
+- pin: PC4
+  af: 3
+  function: SPIMOSI
+  source_macro: PC04_AFx_SPIMOSI
+  source_line: 553
+  gpio_register: AFRL
+  gpio_field: AFR4
+  peripheral: SPI
+  signal: MOSI
+  reason: Absent from own-family datasheet AF tables and physical packages; own current reference-manual
+    Table 8-2 also omits this pad.
+corrections: []

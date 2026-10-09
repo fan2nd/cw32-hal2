@@ -1,0 +1,56 @@
+{
+  "status": "Read-only production-driver review; evidence/test updates only; no hardware execution",
+  "date_utc": "2026-10-08",
+  "manual": {
+    "file": "CW32L011_UserManual_CN_V1.1.pdf",
+    "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+    "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf"
+  },
+  "manual_text": {
+    "file": "CW32L011_UserManual_CN_V1.1.txt",
+    "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3"
+  },
+  "reviewed_sections": {
+    "rcc": [
+      "4.3.4 p48",
+      "4.7.1\u20135 pp64\u201369",
+      "4.7.11\u201316 pp76\u201381"
+    ],
+    "flash": [
+      "7.4 p101"
+    ],
+    "gpio": [
+      "8.3.2\u20134 pp119\u2013120",
+      "8.6.1\u20136 pp126\u2013127",
+      "8.6.12\u201316 pp129\u2013130"
+    ],
+    "iwdt": [
+      "15.3 pp383\u2013385",
+      "15.4 p386",
+      "15.6 pp388\u2013390"
+    ],
+    "uart": [
+      "16.8.1 pp421\u2013422",
+      "16.8.11 pp428\u2013429",
+      "16.8.12 p430"
+    ],
+    "spi": [
+      "17.7.1 pp455\u2013456",
+      "17.7.2\u20138 pp457\u2013461"
+    ],
+    "i2c": [
+      "18.4.2\u20133 pp468\u2013469",
+      "18.4.12 pp484\u2013486",
+      "18.7 pp493\u2013496"
+    ]
+  },
+  "findings": [
+    "No production-driver behavioral mismatch found in the reviewed RCC/FLASH/basic GPIO/IWDT/UART/SPI/classic-I2C contracts.",
+    "L011 own manual confirms stopped-HSI calibration is required, not merely conservative borrowing from L010.",
+    "L011 own manual confirms hardware LSI requests need not set software LSIEN.",
+    "SPI SMP is approximately 20 ns; the HalfPeriod API remains unsupported on this IP.",
+    "GPIO AF tables allocate full nibbles but define only AF0\u2013AF7; SDK/PAC model three bits and HAL preserves the fourth. Do not describe the manual as explicitly marking that fourth bit reserved.",
+    "GPIO reset-table/interrupt-mask questions, EXTI and ISR access changes are handled by the separate GPIO/EXTI review.",
+    "Electrical bounds and package bonding remain based on the own datasheet; manual review does not establish measured timing."
+  ]
+}

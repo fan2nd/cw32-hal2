@@ -1,0 +1,1424 @@
+{
+  "schema_version": 1,
+  "scope": "Own-manual qualification of classic GTIM CR0.MODE and CMMR.CC1M..CC4M. Includes all nine selected CN manuals covering ten families; excludes low-end L010/L011/L012 variants.",
+  "source_authority": "sources/evidence-sources.json",
+  "redistribution": "Only authored facts, canonical source references, page locations and extraction hashes. No vendor PDFs or derived text are included.",
+  "verification_method": {
+    "tool": "pdftotext version 25.03.0",
+    "full_text_arguments": [
+      "-layout",
+      "-enc",
+      "UTF-8"
+    ],
+    "page_text_arguments": [
+      "-f",
+      "<pdf_page_1_based>",
+      "-l",
+      "<same>",
+      "-layout",
+      "-enc",
+      "UTF-8"
+    ],
+    "page_hash_bytes": "Exact stdout bytes, including trailing form feed, of the single-page pdftotext command. Each extraction is also byte-equal to the corresponding form-feed-delimited page in the pinned full derived text.",
+    "pdf_and_text_check": "Every PDF and cached full text is checked against its canonical authority SHA-256 and byte count. Full text is freshly re-extracted and checked against the same pinned text hash.",
+    "template_mapping_reference": "cw32-data/register-reuse.yaml"
+  },
+  "enums": {
+    "CcMode": {
+      "width": 4,
+      "fields": {
+        "CC1M": [
+          3,
+          0
+        ],
+        "CC2M": [
+          7,
+          4
+        ],
+        "CC3M": [
+          11,
+          8
+        ],
+        "CC4M": [
+          15,
+          12
+        ]
+      },
+      "values": [
+        {
+          "value": 0,
+          "name": "DISABLED",
+          "meaning": "No capture/compare channel function."
+        },
+        {
+          "value": 1,
+          "name": "CAPTURE_RISING",
+          "meaning": "Capture on a rising edge."
+        },
+        {
+          "value": 2,
+          "name": "CAPTURE_FALLING",
+          "meaning": "Capture on a falling edge."
+        },
+        {
+          "value": 3,
+          "name": "CAPTURE_BOTH",
+          "meaning": "Capture on both rising and falling edges."
+        },
+        {
+          "value": 8,
+          "name": "FORCE_LOW",
+          "meaning": "Force the channel output low."
+        },
+        {
+          "value": 9,
+          "name": "FORCE_HIGH",
+          "meaning": "Force the channel output high."
+        },
+        {
+          "value": 10,
+          "name": "COMPARE_LOW",
+          "meaning": "Set the channel output low on a compare match."
+        },
+        {
+          "value": 11,
+          "name": "COMPARE_HIGH",
+          "meaning": "Set the channel output high on a compare match."
+        },
+        {
+          "value": 14,
+          "name": "PWM_HIGH_AT_OR_ABOVE",
+          "meaning": "PWM output is high when CNT >= CCR."
+        },
+        {
+          "value": 15,
+          "name": "PWM_HIGH_BELOW",
+          "meaning": "PWM output is high when CNT < CCR."
+        }
+      ],
+      "unqualified_values": [
+        4,
+        5,
+        6,
+        7,
+        12,
+        13
+      ],
+      "unqualified_policy": "The selected own-manual CMMR tables do not define these encodings. Leave unnamed; do not infer a toggle mode from SDK constants."
+    },
+    "Mode": {
+      "width": 2,
+      "field_bits": [
+        2,
+        1
+      ],
+      "values": [
+        {
+          "value": 0,
+          "name": "TIMER",
+          "meaning": "Timer mode: PCLK is the input clock source; the prescaler supplies the counter clock."
+        },
+        {
+          "value": 1,
+          "name": "COUNTER",
+          "meaning": "Counter mode: the TRS-selected ETR or ITR signal is the input clock source; the prescaler supplies the counter clock."
+        },
+        {
+          "value": 2,
+          "name": "TRIGGER_START",
+          "meaning": "Trigger-start mode: PCLK supplies the prescaler. Software EN=1 or a valid TRS trigger starts counting; a valid trigger sets EN and TI."
+        },
+        {
+          "value": 3,
+          "name": "GATED",
+          "meaning": "Gated mode: PCLK supplies the prescaler; counting requires EN=1 and an active ETR gate level."
+        }
+      ]
+    }
+  },
+  "common_qualifications": [
+    "CR0.MODE governs normal operation when CR0.ENCMODE=0; nonzero ENCMODE selects encoder counting instead.",
+    "CR0.TRS=0 selects ETR; CR0.TRS=1 selects the internal ITR signal.",
+    "For ETR, CR0.POL=0 selects the rising edge in trigger/counter modes and the high level in gated mode; POL=1 selects falling edge/low level.",
+    "Trigger-start does not mean trigger-only: software can set EN=1. A valid trigger sets EN and the TI interrupt flag.",
+    "Gated mode uses ETR as its gate; TRS selecting ITR does not change the documented ETR gate source.",
+    "CC2M, CC3M and CC4M explicitly refer to the same manual CC1M definition; no channel semantics are inferred across families."
+  ],
+  "manuals": [
+    {
+      "families": [
+        "CW32F030",
+        "CW32A030"
+      ],
+      "canonical_register_variant": "gtim_v1",
+      "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+      "pdf_pinned_sha256_verified": true,
+      "full_text_pinned_sha256_verified": true,
+      "fresh_full_extraction_matches_pin": true,
+      "cr0_section": "14.8.1",
+      "cmmr_section": "14.8.4",
+      "mode_narrative_sections": [
+        "14.3.2.1",
+        "14.3.2.2",
+        "14.3.2.3",
+        "14.3.2.4"
+      ],
+      "qualified_ccmode_values": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15
+      ],
+      "qualified_mode_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "psc_must_be_greater_than_zero_in_counter_mode": false,
+      "counter_constraint_note": "This manual uses CR0.PRS; its MODE table does not state the separate-PSC counter-mode constraint.",
+      "pages": [
+        {
+          "pdf_page_1_based": 223,
+          "printed_page": 222,
+          "page_text_sha256": "cf51e7f4127de339b53b7fbf3277dddd7a241f82b4f43d791db8e02a1dfa06a1",
+          "page_text_bytes": 2760,
+          "supports": [
+            "14.3.2.1: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 225,
+          "printed_page": 224,
+          "page_text_sha256": "12389d0d1892f22ac1854d4663061c61e43f36bd462ce70f7d452b849d113032",
+          "page_text_bytes": 3183,
+          "supports": [
+            "14.3.2.2: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 226,
+          "printed_page": 225,
+          "page_text_sha256": "a576543ce64708bb942818d3288dbf2714722a3eea4e3b7073d94f4da891308d",
+          "page_text_bytes": 4575,
+          "supports": [
+            "14.3.2.3: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 227,
+          "printed_page": 226,
+          "page_text_sha256": "66488c86d22cd490f2110f907e2f2e85b31a4efdbe3267b25c69f0da1a7dcfa3",
+          "page_text_bytes": 3537,
+          "supports": [
+            "14.3.2.4: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 244,
+          "printed_page": 243,
+          "page_text_sha256": "7ea00bea090e3237facaeed17e17b1f7c67e0e67f99637fd6ca057a9c7a70714",
+          "page_text_bytes": 4519,
+          "supports": [
+            "CR0 field table: ENCMODE, POL, prescaler type and/or TRS"
+          ]
+        },
+        {
+          "pdf_page_1_based": 245,
+          "printed_page": 244,
+          "page_text_sha256": "a6a420b6a7444a8915dcb147e8d5d2322a5098dd4777100a1d96688bb77e1de0",
+          "page_text_bytes": 1132,
+          "supports": [
+            "CR0.MODE values and any counter PSC constraint"
+          ]
+        },
+        {
+          "pdf_page_1_based": 247,
+          "printed_page": 246,
+          "page_text_sha256": "9204b9361c626dfa63071d2cf9a89570498953b1d87551e5343feb4dcfb3670e",
+          "page_text_bytes": 3914,
+          "supports": [
+            "CMMR.CC1M..CC4M values and bit ranges"
+          ]
+        }
+      ],
+      "source_authority_pointer": "sources/evidence-sources.json#/artifacts/36"
+    },
+    {
+      "families": [
+        "CW32F020"
+      ],
+      "canonical_register_variant": "gtim_v1",
+      "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+      "pdf_pinned_sha256_verified": true,
+      "full_text_pinned_sha256_verified": true,
+      "fresh_full_extraction_matches_pin": true,
+      "cr0_section": "14.8.1",
+      "cmmr_section": "14.8.4",
+      "mode_narrative_sections": [
+        "14.3.2.1",
+        "14.3.2.2",
+        "14.3.2.3",
+        "14.3.2.4"
+      ],
+      "qualified_ccmode_values": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15
+      ],
+      "qualified_mode_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "psc_must_be_greater_than_zero_in_counter_mode": false,
+      "counter_constraint_note": "This manual uses CR0.PRS; its MODE table does not state the separate-PSC counter-mode constraint.",
+      "pages": [
+        {
+          "pdf_page_1_based": 220,
+          "printed_page": 219,
+          "page_text_sha256": "3d26e50e6dce25dc6b3f1f18e9fb2edc80a7273290e41259ad5edb8218512224",
+          "page_text_bytes": 2643,
+          "supports": [
+            "14.3.2.1: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 222,
+          "printed_page": 221,
+          "page_text_sha256": "c8414af4f8e8f296c3204f4d18da5663696036aebab93ffc505a33f780c9f9bb",
+          "page_text_bytes": 3065,
+          "supports": [
+            "14.3.2.2: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 223,
+          "printed_page": 222,
+          "page_text_sha256": "16b944fd365ed7072bfca9f0fbd93f6a32e34a91327b1961d830d17b36ef6ac5",
+          "page_text_bytes": 4445,
+          "supports": [
+            "14.3.2.3: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 224,
+          "printed_page": 223,
+          "page_text_sha256": "365caaca4bb50779cf8009c4cf1859d54bd812e504e929a7014cc51270bc4a76",
+          "page_text_bytes": 3419,
+          "supports": [
+            "14.3.2.4: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 241,
+          "printed_page": 240,
+          "page_text_sha256": "b79e278d3b1a60ddf5f3a47a4dc16d44504d44682ac13958ad04a8ba48705e78",
+          "page_text_bytes": 4408,
+          "supports": [
+            "CR0 field table: ENCMODE, POL, prescaler type and/or TRS"
+          ]
+        },
+        {
+          "pdf_page_1_based": 242,
+          "printed_page": 241,
+          "page_text_sha256": "6bbd0390982f4f22e98cc6fa0dc3b5f9d0e99c0abe99a1538f03f9c154d971b9",
+          "page_text_bytes": 1048,
+          "supports": [
+            "CR0.MODE values and any counter PSC constraint"
+          ]
+        },
+        {
+          "pdf_page_1_based": 244,
+          "printed_page": 243,
+          "page_text_sha256": "74f6744f22169aea97bb548de672b3b989ad4a6c91041da82bd9909087b371a3",
+          "page_text_bytes": 3804,
+          "supports": [
+            "CMMR.CC1M..CC4M values and bit ranges"
+          ]
+        }
+      ],
+      "source_authority_pointer": "sources/evidence-sources.json#/artifacts/18"
+    },
+    {
+      "families": [
+        "CW32F002"
+      ],
+      "canonical_register_variant": "gtim_cw32f002_v1",
+      "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+      "pdf_pinned_sha256_verified": true,
+      "full_text_pinned_sha256_verified": true,
+      "fresh_full_extraction_matches_pin": true,
+      "cr0_section": "12.7.1",
+      "cmmr_section": "12.7.4",
+      "mode_narrative_sections": [
+        "12.3.2.1",
+        "12.3.2.2",
+        "12.3.2.3",
+        "12.3.2.4"
+      ],
+      "qualified_ccmode_values": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15
+      ],
+      "qualified_mode_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "psc_must_be_greater_than_zero_in_counter_mode": false,
+      "counter_constraint_note": "This manual uses CR0.PRS; its MODE table does not state the separate-PSC counter-mode constraint.",
+      "pages": [
+        {
+          "pdf_page_1_based": 157,
+          "printed_page": 156,
+          "page_text_sha256": "68e9f20b676f5368166479d78011e9802774176ae0a0336badbefe629e12c5b7",
+          "page_text_bytes": 2590,
+          "supports": [
+            "12.3.2.1: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 159,
+          "printed_page": 158,
+          "page_text_sha256": "3f67e7850e67c202487015df9106390e261ce72569d90fc137e52cdb23768349",
+          "page_text_bytes": 3087,
+          "supports": [
+            "12.3.2.2: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 160,
+          "printed_page": 159,
+          "page_text_sha256": "ae3a2f4fe66e30bca8965209aa9602ef47c10d04e09b04a27fa44671b66b82f3",
+          "page_text_bytes": 4431,
+          "supports": [
+            "12.3.2.3: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 161,
+          "printed_page": 160,
+          "page_text_sha256": "89382e3bcdcfdeaa53752f173515909cda2bb4a620740c41c66f158ee36f671b",
+          "page_text_bytes": 3487,
+          "supports": [
+            "12.3.2.4: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 177,
+          "printed_page": 176,
+          "page_text_sha256": "e5fff68ed7c6fbacf8eff22a0833f9be142c360c9716907a621e3602eb10190f",
+          "page_text_bytes": 4358,
+          "supports": [
+            "CR0 field table: ENCMODE, POL, prescaler type and/or TRS"
+          ]
+        },
+        {
+          "pdf_page_1_based": 178,
+          "printed_page": 177,
+          "page_text_sha256": "b3a2d8e1585c2eaf44de8ff86c8b58060ef57b6a4a4158cf065703bac8feeaf9",
+          "page_text_bytes": 1048,
+          "supports": [
+            "CR0.MODE values and any counter PSC constraint"
+          ]
+        },
+        {
+          "pdf_page_1_based": 180,
+          "printed_page": 179,
+          "page_text_sha256": "e4f3b66cf68eab0b57874e7c772d5e7a9c70da7f74609954ad7f325e5a608d35",
+          "page_text_bytes": 3802,
+          "supports": [
+            "CMMR.CC1M..CC4M values and bit ranges"
+          ]
+        }
+      ],
+      "source_authority_pointer": "sources/evidence-sources.json#/artifacts/14"
+    },
+    {
+      "families": [
+        "CW32F003"
+      ],
+      "canonical_register_variant": "gtim_cw32f002_v1",
+      "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+      "pdf_pinned_sha256_verified": true,
+      "full_text_pinned_sha256_verified": true,
+      "fresh_full_extraction_matches_pin": true,
+      "cr0_section": "12.7.1",
+      "cmmr_section": "12.7.4",
+      "mode_narrative_sections": [
+        "12.3.2.1",
+        "12.3.2.2",
+        "12.3.2.3",
+        "12.3.2.4"
+      ],
+      "qualified_ccmode_values": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15
+      ],
+      "qualified_mode_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "psc_must_be_greater_than_zero_in_counter_mode": false,
+      "counter_constraint_note": "This manual uses CR0.PRS; its MODE table does not state the separate-PSC counter-mode constraint.",
+      "pages": [
+        {
+          "pdf_page_1_based": 159,
+          "printed_page": 158,
+          "page_text_sha256": "13558b767bb3090b1f745e4e9e9533b70cf4ad25ac0f1c0559561d1753d41282",
+          "page_text_bytes": 2590,
+          "supports": [
+            "12.3.2.1: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 161,
+          "printed_page": 160,
+          "page_text_sha256": "cc7354a6b2a5ef7508741d3b24e29625a4b10cd0f8403df42804d2bbba31f3ba",
+          "page_text_bytes": 3087,
+          "supports": [
+            "12.3.2.2: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 162,
+          "printed_page": 161,
+          "page_text_sha256": "e2d9873c293adcf644dfd7bda2384550ecb309ae5b736ded4434880a001ffa15",
+          "page_text_bytes": 4431,
+          "supports": [
+            "12.3.2.3: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 163,
+          "printed_page": 162,
+          "page_text_sha256": "d41a62923dafe4c6cdabfa88c9bd46a907c98b59599edad137376a0989c9794f",
+          "page_text_bytes": 3487,
+          "supports": [
+            "12.3.2.4: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 179,
+          "printed_page": 178,
+          "page_text_sha256": "6cf18a4b1b4560ae7957d2e44d4d155fce59c7981697534a9c1ea1906331fa87",
+          "page_text_bytes": 4359,
+          "supports": [
+            "CR0 field table: ENCMODE, POL, prescaler type and/or TRS"
+          ]
+        },
+        {
+          "pdf_page_1_based": 180,
+          "printed_page": 179,
+          "page_text_sha256": "847d08ff35368271f9af75ac4546695cff7bbeafed113d05cb05d9ceeb29c739",
+          "page_text_bytes": 1048,
+          "supports": [
+            "CR0.MODE values and any counter PSC constraint"
+          ]
+        },
+        {
+          "pdf_page_1_based": 182,
+          "printed_page": 181,
+          "page_text_sha256": "a2696fa3dbf88cc44c987a690f34ca8f6c4185cdfc0dfe9a781c245073346513",
+          "page_text_bytes": 3802,
+          "supports": [
+            "CMMR.CC1M..CC4M values and bit ranges"
+          ]
+        }
+      ],
+      "source_authority_pointer": "sources/evidence-sources.json#/artifacts/16"
+    },
+    {
+      "families": [
+        "CW32L031"
+      ],
+      "canonical_register_variant": "gtim_cw32l031_v1",
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "pdf_pinned_sha256_verified": true,
+      "full_text_pinned_sha256_verified": true,
+      "fresh_full_extraction_matches_pin": true,
+      "cr0_section": "14.7.1",
+      "cmmr_section": "14.7.5",
+      "mode_narrative_sections": [
+        "14.3.2.1",
+        "14.3.2.2",
+        "14.3.2.3",
+        "14.3.2.4"
+      ],
+      "qualified_ccmode_values": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15
+      ],
+      "qualified_mode_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "psc_must_be_greater_than_zero_in_counter_mode": true,
+      "counter_constraint_note": "GTIMx_PSC must be greater than zero in COUNTER mode.",
+      "pages": [
+        {
+          "pdf_page_1_based": 215,
+          "printed_page": 214,
+          "page_text_sha256": "18ddabc05777310ccbf6d200568e9b2d67b29c2584a28381b0660f5d4cca6baa",
+          "page_text_bytes": 2629,
+          "supports": [
+            "14.3.2.1: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 217,
+          "printed_page": 216,
+          "page_text_sha256": "ee4e678d8f3bb4e5c91011aa10c3303f31117ff0b5bbbac6ccc16b758f69df9e",
+          "page_text_bytes": 3130,
+          "supports": [
+            "14.3.2.2: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 218,
+          "printed_page": 217,
+          "page_text_sha256": "285c7d5ac799341c72ba964ffd6ba710382d1d9bc6f84a64931377b195017bc0",
+          "page_text_bytes": 4459,
+          "supports": [
+            "14.3.2.3: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 219,
+          "printed_page": 218,
+          "page_text_sha256": "780ab1d83a6a0265ddfb7a450767f4a7b96aa5f8c95311d11fef4de95ccea4b5",
+          "page_text_bytes": 3816,
+          "supports": [
+            "14.3.2.4: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 234,
+          "printed_page": 233,
+          "page_text_sha256": "366565475e79013852a4ecc1310203ac98cc1475d46595230210a5ce2199f6c2",
+          "page_text_bytes": 3840,
+          "supports": [
+            "CR0 field table: ENCMODE, POL, prescaler type and/or TRS"
+          ]
+        },
+        {
+          "pdf_page_1_based": 235,
+          "printed_page": 234,
+          "page_text_sha256": "88097811a40857fdd166433e054896e7750dd2c0df8da7b4022987ffc4ce619e",
+          "page_text_bytes": 949,
+          "supports": [
+            "CR0.MODE values and any counter PSC constraint"
+          ]
+        },
+        {
+          "pdf_page_1_based": 238,
+          "printed_page": 237,
+          "page_text_sha256": "80560facd1b3c8155ba32bccf26b823279979cd395721c8fb0d9cbff31c42f54",
+          "page_text_bytes": 3230,
+          "supports": [
+            "CMMR.CC1M..CC4M values and bit ranges"
+          ]
+        }
+      ],
+      "source_authority_pointer": "sources/evidence-sources.json#/artifacts/27"
+    },
+    {
+      "families": [
+        "CW32R031"
+      ],
+      "canonical_register_variant": "gtim_cw32l031_v1",
+      "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+      "pdf_pinned_sha256_verified": true,
+      "full_text_pinned_sha256_verified": true,
+      "fresh_full_extraction_matches_pin": true,
+      "cr0_section": "14.7.1",
+      "cmmr_section": "14.7.5",
+      "mode_narrative_sections": [
+        "14.3.2.1",
+        "14.3.2.2",
+        "14.3.2.3",
+        "14.3.2.4"
+      ],
+      "qualified_ccmode_values": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15
+      ],
+      "qualified_mode_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "psc_must_be_greater_than_zero_in_counter_mode": true,
+      "counter_constraint_note": "GTIMx_PSC must be greater than zero in COUNTER mode.",
+      "pages": [
+        {
+          "pdf_page_1_based": 217,
+          "printed_page": 216,
+          "page_text_sha256": "df0d41301679791c32eb0a97355c63c5e71c3135bd5959e0450113738e4ae3d0",
+          "page_text_bytes": 2629,
+          "supports": [
+            "14.3.2.1: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 219,
+          "printed_page": 218,
+          "page_text_sha256": "29af10ca41e91aad9358db8f3c1136784dc544ed8dd11a2034e36fe69c3e5110",
+          "page_text_bytes": 3130,
+          "supports": [
+            "14.3.2.2: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 220,
+          "printed_page": 219,
+          "page_text_sha256": "119221414f985b30a3f612cc4587e91a890998eac7a7bed56831f603b30d61ad",
+          "page_text_bytes": 4459,
+          "supports": [
+            "14.3.2.3: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 221,
+          "printed_page": 220,
+          "page_text_sha256": "0b01ef3b1f472d82eaa97766f1e969a09364b5b94fa34d5da8c121d7ddc7b6a4",
+          "page_text_bytes": 3816,
+          "supports": [
+            "14.3.2.4: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 236,
+          "printed_page": 235,
+          "page_text_sha256": "ec2fe25436fd9efe467892ed70228b0d44ec3613f161bf05184c72a23a7fa3c3",
+          "page_text_bytes": 3840,
+          "supports": [
+            "CR0 field table: ENCMODE, POL, prescaler type and/or TRS"
+          ]
+        },
+        {
+          "pdf_page_1_based": 237,
+          "printed_page": 236,
+          "page_text_sha256": "0ddeb67df4f1f86e255c21568a1b89174b58fb20a04ea740c19a43ec1e0f9d2b",
+          "page_text_bytes": 949,
+          "supports": [
+            "CR0.MODE values and any counter PSC constraint"
+          ]
+        },
+        {
+          "pdf_page_1_based": 240,
+          "printed_page": 239,
+          "page_text_sha256": "2181ed197a030c4f189b2bdb00c1084d22a6ed9d17bd59febf626b6da2834039",
+          "page_text_bytes": 3230,
+          "supports": [
+            "CMMR.CC1M..CC4M values and bit ranges"
+          ]
+        }
+      ],
+      "source_authority_pointer": "sources/evidence-sources.json#/artifacts/33"
+    },
+    {
+      "families": [
+        "CW32W031"
+      ],
+      "canonical_register_variant": "gtim_cw32l031_v1",
+      "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+      "pdf_pinned_sha256_verified": true,
+      "full_text_pinned_sha256_verified": true,
+      "fresh_full_extraction_matches_pin": true,
+      "cr0_section": "14.7.1",
+      "cmmr_section": "14.7.5",
+      "mode_narrative_sections": [
+        "14.3.2.1",
+        "14.3.2.2",
+        "14.3.2.3",
+        "14.3.2.4"
+      ],
+      "qualified_ccmode_values": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15
+      ],
+      "qualified_mode_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "psc_must_be_greater_than_zero_in_counter_mode": true,
+      "counter_constraint_note": "GTIMx_PSC must be greater than zero in COUNTER mode.",
+      "pages": [
+        {
+          "pdf_page_1_based": 217,
+          "printed_page": 216,
+          "page_text_sha256": "fb7d8e95044313379755c65c554b87aec06dfde8197eb4f4fbc26dbb2134b53f",
+          "page_text_bytes": 2631,
+          "supports": [
+            "14.3.2.1: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 219,
+          "printed_page": 218,
+          "page_text_sha256": "6e8b6df66e2e45fc6fa05cddca64f2895b1134f35fed1e9ca02c73f5d1675306",
+          "page_text_bytes": 3130,
+          "supports": [
+            "14.3.2.2: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 220,
+          "printed_page": 219,
+          "page_text_sha256": "6cfce1f7bbe91eff0198151217b925f046b03c2ba6b101ca6b74d40b2d264983",
+          "page_text_bytes": 4459,
+          "supports": [
+            "14.3.2.3: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 221,
+          "printed_page": 220,
+          "page_text_sha256": "d0c611021c85719544554104a525cd4f00963af375e9e4a029b1f533cedacecb",
+          "page_text_bytes": 3815,
+          "supports": [
+            "14.3.2.4: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 236,
+          "printed_page": 235,
+          "page_text_sha256": "c9e9394d1b9c7351cc7817970d610b6443e219202f92d88709353a9d43c3d2ef",
+          "page_text_bytes": 3840,
+          "supports": [
+            "CR0 field table: ENCMODE, POL, prescaler type and/or TRS"
+          ]
+        },
+        {
+          "pdf_page_1_based": 237,
+          "printed_page": 236,
+          "page_text_sha256": "06275b42ab96c0915b6c8d85623c630fc64f69e35ab0f5c1b68d99c149774da1",
+          "page_text_bytes": 949,
+          "supports": [
+            "CR0.MODE values and any counter PSC constraint"
+          ]
+        },
+        {
+          "pdf_page_1_based": 240,
+          "printed_page": 239,
+          "page_text_sha256": "d795faf021c241bfeea57fe209c85373f346db0aa2c37a2f30b5caac7f2fa63b",
+          "page_text_bytes": 3230,
+          "supports": [
+            "CMMR.CC1M..CC4M values and bit ranges"
+          ]
+        }
+      ],
+      "source_authority_pointer": "sources/evidence-sources.json#/artifacts/35"
+    },
+    {
+      "families": [
+        "CW32L052"
+      ],
+      "canonical_register_variant": "gtim_cw32l052_v1",
+      "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+      "pdf_pinned_sha256_verified": true,
+      "full_text_pinned_sha256_verified": true,
+      "fresh_full_extraction_matches_pin": true,
+      "cr0_section": "15.8.1",
+      "cmmr_section": "15.8.5",
+      "mode_narrative_sections": [
+        "15.3.2.1",
+        "15.3.2.2",
+        "15.3.2.3",
+        "15.3.2.4"
+      ],
+      "qualified_ccmode_values": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15
+      ],
+      "qualified_mode_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "psc_must_be_greater_than_zero_in_counter_mode": true,
+      "counter_constraint_note": "GTIMx_PSC must be greater than zero in COUNTER mode.",
+      "pages": [
+        {
+          "pdf_page_1_based": 249,
+          "printed_page": 248,
+          "page_text_sha256": "94685c58d973f8380666d4a8f62ef2ddabe66d7ffb119876ecffe601fd68b5d7",
+          "page_text_bytes": 2634,
+          "supports": [
+            "15.3.2.1: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 251,
+          "printed_page": 250,
+          "page_text_sha256": "07a1a3448d331cdb928630530594d42bd3f38184f22ba35b20322b87193f1da7",
+          "page_text_bytes": 3494,
+          "supports": [
+            "15.3.2.2: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 252,
+          "printed_page": 251,
+          "page_text_sha256": "6c993345d022b71ea8deaf1b92ae02cfd13f0286ffca24ebf90d5c7c4de7a1c2",
+          "page_text_bytes": 4954,
+          "supports": [
+            "15.3.2.3: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 253,
+          "printed_page": 252,
+          "page_text_sha256": "c0c2745cf8ae636904f1fd09646e1f13349fd6cc2caf46c28b954f76822b8911",
+          "page_text_bytes": 3751,
+          "supports": [
+            "15.3.2.4: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 271,
+          "printed_page": 270,
+          "page_text_sha256": "a003d5c0982a70849da74e7025125446d72c298b6042441bd433df2ed8fb1564",
+          "page_text_bytes": 4045,
+          "supports": [
+            "CR0 field table: ENCMODE, POL, prescaler type and/or TRS"
+          ]
+        },
+        {
+          "pdf_page_1_based": 272,
+          "printed_page": 271,
+          "page_text_sha256": "097458f276654106a1347b21767744ca777708a952879c4938bb9e920dc6bcdc",
+          "page_text_bytes": 1582,
+          "supports": [
+            "CR0.MODE values and any counter PSC constraint"
+          ]
+        },
+        {
+          "pdf_page_1_based": 275,
+          "printed_page": 274,
+          "page_text_sha256": "625a61c4294ef1519a85a5e4d31070b71251ba6ec1b2fd9348938712597aedbe",
+          "page_text_bytes": 3298,
+          "supports": [
+            "CMMR.CC1M..CC4M values and bit ranges"
+          ]
+        }
+      ],
+      "source_authority_pointer": "sources/evidence-sources.json#/artifacts/29"
+    },
+    {
+      "families": [
+        "CW32L083"
+      ],
+      "canonical_register_variant": "gtim_cw32l031_v1",
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "pdf_pinned_sha256_verified": true,
+      "full_text_pinned_sha256_verified": true,
+      "fresh_full_extraction_matches_pin": true,
+      "cr0_section": "15.8.1",
+      "cmmr_section": "15.8.5",
+      "mode_narrative_sections": [
+        "15.3.2.1",
+        "15.3.2.2",
+        "15.3.2.3",
+        "15.3.2.4"
+      ],
+      "qualified_ccmode_values": [
+        0,
+        1,
+        2,
+        3,
+        8,
+        9,
+        10,
+        11,
+        14,
+        15
+      ],
+      "qualified_mode_values": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "psc_must_be_greater_than_zero_in_counter_mode": true,
+      "counter_constraint_note": "GTIMx_PSC must be greater than zero in COUNTER mode.",
+      "pages": [
+        {
+          "pdf_page_1_based": 261,
+          "printed_page": 260,
+          "page_text_sha256": "0818483753da0acee2c4aad9566afa6ecba28c265e7c92e392d78fcd911ae419",
+          "page_text_bytes": 2744,
+          "supports": [
+            "15.3.2.1: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 263,
+          "printed_page": 262,
+          "page_text_sha256": "df9b93285670ec6d73a54517e4f05d97638b1b22fbe0ecb861c658da62cbfd38",
+          "page_text_bytes": 3188,
+          "supports": [
+            "15.3.2.2: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 264,
+          "printed_page": 263,
+          "page_text_sha256": "302f5fbeee68836be39cb07e85393ebd02dc59c57736df44fae762137331b9af",
+          "page_text_bytes": 4551,
+          "supports": [
+            "15.3.2.3: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 265,
+          "printed_page": 264,
+          "page_text_sha256": "2d4b5a51b03a12e11bb38b9c12cab3bc693abff74314459994dcb2703eb3f79c",
+          "page_text_bytes": 3938,
+          "supports": [
+            "15.3.2.4: mode narrative"
+          ]
+        },
+        {
+          "pdf_page_1_based": 283,
+          "printed_page": 282,
+          "page_text_sha256": "e961a40488096ad2b01bf0b3dafb3701b364cf3179fa52d80feedaff71137b50",
+          "page_text_bytes": 3912,
+          "supports": [
+            "CR0 field table: ENCMODE, POL, prescaler type and/or TRS"
+          ]
+        },
+        {
+          "pdf_page_1_based": 284,
+          "printed_page": 283,
+          "page_text_sha256": "3232efe9b5e1ae45aa57fff960a67041e8ad40382a5c99103af6ae2734b55748",
+          "page_text_bytes": 949,
+          "supports": [
+            "CR0.MODE values and any counter PSC constraint"
+          ]
+        },
+        {
+          "pdf_page_1_based": 287,
+          "printed_page": 286,
+          "page_text_sha256": "ce11a80abd05d47ceb46e0601c0fbb1820d0798647f152d15cd6bba06b7a2c6f",
+          "page_text_bytes": 3298,
+          "supports": [
+            "CMMR.CC1M..CC4M values and bit ranges"
+          ]
+        }
+      ],
+      "source_authority_pointer": "sources/evidence-sources.json#/artifacts/31"
+    }
+  ],
+  "register_additions": {
+    "gtim_cw32f002_v1": {
+      "enum/CcMode": {
+        "description": "Classic capture/compare modes; own-manual evidence in docs/classic-gtim-modes-evidence.json.",
+        "bit_size": 4,
+        "variants": [
+          {
+            "name": "DISABLED",
+            "description": "No capture or compare function.",
+            "value": 0
+          },
+          {
+            "name": "CAPTURE_RISING",
+            "description": "Capture on rising edges.",
+            "value": 1
+          },
+          {
+            "name": "CAPTURE_FALLING",
+            "description": "Capture on falling edges.",
+            "value": 2
+          },
+          {
+            "name": "CAPTURE_BOTH",
+            "description": "Capture on both rising and falling edges.",
+            "value": 3
+          },
+          {
+            "name": "FORCE_LOW",
+            "description": "Force the output low.",
+            "value": 8
+          },
+          {
+            "name": "FORCE_HIGH",
+            "description": "Force the output high.",
+            "value": 9
+          },
+          {
+            "name": "COMPARE_LOW",
+            "description": "Drive the output low on a compare match.",
+            "value": 10
+          },
+          {
+            "name": "COMPARE_HIGH",
+            "description": "Drive the output high on a compare match.",
+            "value": 11
+          },
+          {
+            "name": "PWM_HIGH_AT_OR_ABOVE",
+            "description": "PWM output high when CNT is greater than or equal to CCR.",
+            "value": 14
+          },
+          {
+            "name": "PWM_HIGH_BELOW",
+            "description": "PWM output high when CNT is less than CCR.",
+            "value": 15
+          }
+        ]
+      },
+      "enum/Mode": {
+        "description": "Basic timer mode when ENCMODE is zero; own-manual evidence in docs/classic-gtim-modes-evidence.json.",
+        "bit_size": 2,
+        "variants": [
+          {
+            "name": "TIMER",
+            "description": "Count PCLK ticks.",
+            "value": 0
+          },
+          {
+            "name": "COUNTER",
+            "description": "Count TRS input events.",
+            "value": 1
+          },
+          {
+            "name": "TRIGGER_START",
+            "description": "Count PCLK ticks; a valid TRS event can start the timer.",
+            "value": 2
+          },
+          {
+            "name": "GATED",
+            "description": "Count PCLK ticks while enabled and ETR is at the active level selected by POL.",
+            "value": 3
+          }
+        ]
+      }
+    },
+    "gtim_cw32l031_v1": {
+      "enum/CcMode": {
+        "description": "Classic capture/compare modes; own-manual evidence in docs/classic-gtim-modes-evidence.json.",
+        "bit_size": 4,
+        "variants": [
+          {
+            "name": "DISABLED",
+            "description": "No capture or compare function.",
+            "value": 0
+          },
+          {
+            "name": "CAPTURE_RISING",
+            "description": "Capture on rising edges.",
+            "value": 1
+          },
+          {
+            "name": "CAPTURE_FALLING",
+            "description": "Capture on falling edges.",
+            "value": 2
+          },
+          {
+            "name": "CAPTURE_BOTH",
+            "description": "Capture on both rising and falling edges.",
+            "value": 3
+          },
+          {
+            "name": "FORCE_LOW",
+            "description": "Force the output low.",
+            "value": 8
+          },
+          {
+            "name": "FORCE_HIGH",
+            "description": "Force the output high.",
+            "value": 9
+          },
+          {
+            "name": "COMPARE_LOW",
+            "description": "Drive the output low on a compare match.",
+            "value": 10
+          },
+          {
+            "name": "COMPARE_HIGH",
+            "description": "Drive the output high on a compare match.",
+            "value": 11
+          },
+          {
+            "name": "PWM_HIGH_AT_OR_ABOVE",
+            "description": "PWM output high when CNT is greater than or equal to CCR.",
+            "value": 14
+          },
+          {
+            "name": "PWM_HIGH_BELOW",
+            "description": "PWM output high when CNT is less than CCR.",
+            "value": 15
+          }
+        ]
+      },
+      "enum/Mode": {
+        "description": "Basic timer mode when ENCMODE is zero; own-manual evidence in docs/classic-gtim-modes-evidence.json.",
+        "bit_size": 2,
+        "variants": [
+          {
+            "name": "TIMER",
+            "description": "Count PCLK ticks.",
+            "value": 0
+          },
+          {
+            "name": "COUNTER",
+            "description": "Count TRS input events. PSC must be greater than zero in counter mode.",
+            "value": 1
+          },
+          {
+            "name": "TRIGGER_START",
+            "description": "Count PCLK ticks; a valid TRS event can start the timer.",
+            "value": 2
+          },
+          {
+            "name": "GATED",
+            "description": "Count PCLK ticks while enabled and ETR is at the active level selected by POL.",
+            "value": 3
+          }
+        ]
+      }
+    },
+    "gtim_cw32l052_v1": {
+      "enum/CcMode": {
+        "description": "Classic capture/compare modes; own-manual evidence in docs/classic-gtim-modes-evidence.json.",
+        "bit_size": 4,
+        "variants": [
+          {
+            "name": "DISABLED",
+            "description": "No capture or compare function.",
+            "value": 0
+          },
+          {
+            "name": "CAPTURE_RISING",
+            "description": "Capture on rising edges.",
+            "value": 1
+          },
+          {
+            "name": "CAPTURE_FALLING",
+            "description": "Capture on falling edges.",
+            "value": 2
+          },
+          {
+            "name": "CAPTURE_BOTH",
+            "description": "Capture on both rising and falling edges.",
+            "value": 3
+          },
+          {
+            "name": "FORCE_LOW",
+            "description": "Force the output low.",
+            "value": 8
+          },
+          {
+            "name": "FORCE_HIGH",
+            "description": "Force the output high.",
+            "value": 9
+          },
+          {
+            "name": "COMPARE_LOW",
+            "description": "Drive the output low on a compare match.",
+            "value": 10
+          },
+          {
+            "name": "COMPARE_HIGH",
+            "description": "Drive the output high on a compare match.",
+            "value": 11
+          },
+          {
+            "name": "PWM_HIGH_AT_OR_ABOVE",
+            "description": "PWM output high when CNT is greater than or equal to CCR.",
+            "value": 14
+          },
+          {
+            "name": "PWM_HIGH_BELOW",
+            "description": "PWM output high when CNT is less than CCR.",
+            "value": 15
+          }
+        ]
+      },
+      "enum/Mode": {
+        "description": "Basic timer mode when ENCMODE is zero; own-manual evidence in docs/classic-gtim-modes-evidence.json.",
+        "bit_size": 2,
+        "variants": [
+          {
+            "name": "TIMER",
+            "description": "Count PCLK ticks.",
+            "value": 0
+          },
+          {
+            "name": "COUNTER",
+            "description": "Count TRS input events. PSC must be greater than zero in counter mode.",
+            "value": 1
+          },
+          {
+            "name": "TRIGGER_START",
+            "description": "Count PCLK ticks; a valid TRS event can start the timer.",
+            "value": 2
+          },
+          {
+            "name": "GATED",
+            "description": "Count PCLK ticks while enabled and ETR is at the active level selected by POL.",
+            "value": 3
+          }
+        ]
+      }
+    },
+    "gtim_v1": {
+      "enum/CcMode": {
+        "description": "Classic capture/compare modes; own-manual evidence in docs/classic-gtim-modes-evidence.json.",
+        "bit_size": 4,
+        "variants": [
+          {
+            "name": "DISABLED",
+            "description": "No capture or compare function.",
+            "value": 0
+          },
+          {
+            "name": "CAPTURE_RISING",
+            "description": "Capture on rising edges.",
+            "value": 1
+          },
+          {
+            "name": "CAPTURE_FALLING",
+            "description": "Capture on falling edges.",
+            "value": 2
+          },
+          {
+            "name": "CAPTURE_BOTH",
+            "description": "Capture on both rising and falling edges.",
+            "value": 3
+          },
+          {
+            "name": "FORCE_LOW",
+            "description": "Force the output low.",
+            "value": 8
+          },
+          {
+            "name": "FORCE_HIGH",
+            "description": "Force the output high.",
+            "value": 9
+          },
+          {
+            "name": "COMPARE_LOW",
+            "description": "Drive the output low on a compare match.",
+            "value": 10
+          },
+          {
+            "name": "COMPARE_HIGH",
+            "description": "Drive the output high on a compare match.",
+            "value": 11
+          },
+          {
+            "name": "PWM_HIGH_AT_OR_ABOVE",
+            "description": "PWM output high when CNT is greater than or equal to CCR.",
+            "value": 14
+          },
+          {
+            "name": "PWM_HIGH_BELOW",
+            "description": "PWM output high when CNT is less than CCR.",
+            "value": 15
+          }
+        ]
+      },
+      "enum/Mode": {
+        "description": "Basic timer mode when ENCMODE is zero; own-manual evidence in docs/classic-gtim-modes-evidence.json.",
+        "bit_size": 2,
+        "variants": [
+          {
+            "name": "TIMER",
+            "description": "Count PCLK ticks.",
+            "value": 0
+          },
+          {
+            "name": "COUNTER",
+            "description": "Count TRS input events.",
+            "value": 1
+          },
+          {
+            "name": "TRIGGER_START",
+            "description": "Count PCLK ticks; a valid TRS event can start the timer.",
+            "value": 2
+          },
+          {
+            "name": "GATED",
+            "description": "Count PCLK ticks while enabled and ETR is at the active level selected by POL.",
+            "value": 3
+          }
+        ]
+      }
+    }
+  }
+}

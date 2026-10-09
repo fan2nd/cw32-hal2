@@ -1,0 +1,1497 @@
+# Authored capability scope. Review this with HAL changes; never generate it from build counts.
+schema_version: 1
+scope: Maintained source-level HAL capability declarations. Hardware YAML is canonical; this file declares
+  implementation policy, not new hardware facts or build/runtime evidence.
+families:
+- CW32A030
+- CW32F002
+- CW32F003
+- CW32F020
+- CW32F030
+- CW32L010
+- CW32L011
+- CW32L012
+- CW32L031
+- CW32L052
+- CW32L083
+- CW32R031
+- CW32W031
+functions:
+  gpio:
+    register_kinds:
+    - gpio
+    - gpiob
+    - gpioc
+    - gpiof
+    evidence:
+    - path: embassy-cw32/src/gpio.rs
+      anchor: pub struct Flex
+    - path: embassy-cw32/src/exti/mod.rs
+      anchor: pub struct ExtiInput
+    modes:
+    - id: digital_io
+      status: partial
+      scope: Owned digital input/output with selected-pad electrical restrictions.
+      limitations:
+      - Package, oscillator, debug, reset and RF pad exclusions apply; output-only and pull capabilities are
+        per pad.
+    - id: run_mode_interrupt_wait
+      status: partial
+      scope: Typed run-mode GPIO interrupt waits.
+      limitations:
+      - Events coalesce; no deep-sleep wake or lossless edge history guarantee.
+  uart:
+    register_kinds:
+    - uart
+    evidence:
+    - path: embassy-cw32/src/usart.rs
+      anchor: pub struct Uart
+    modes:
+    - id: blocking
+      status: partial
+      scope: Eight-bit blocking serial, parity/stop configuration and owned pins.
+      limitations:
+      - Serial clock and package route limits apply.
+    - id: async
+      status: partial
+      scope: IRQ-driven async TX/RX, including shared L083 vectors.
+      limitations:
+      - The IRQ-only path wakes per byte; no receive buffer; prompt executor service required; non-L010/L011/L012 UARTs
+        can overwrite without an overrun flag.
+    - id: rts_cts
+      status: partial
+      scope: Full owned RTS+CTS flow control.
+      limitations:
+      - Only package selections with the required qualified signals can construct this mode; throughput is
+        not validated.
+      pins_all:
+      - TX
+      - RX
+      - RTS
+      - CTS
+      evidence:
+      - path: embassy-cw32/src/usart.rs
+        anchor: pub fn new_with_rtscts
+    - id: tx_cts
+      status: partial
+      scope: Owned TX+CTS flow control.
+      limitations:
+      - Only package selections with the required qualified signals can construct this mode; throughput is
+        not validated.
+      pins_all:
+      - TX
+      - CTS
+      evidence:
+      - path: embassy-cw32/src/usart.rs
+        anchor: pub fn new_with_cts
+    - id: rx_rts
+      status: partial
+      scope: Owned RX+RTS flow control.
+      limitations:
+      - Only package selections with the required qualified signals can construct this mode; throughput is
+        not validated.
+      pins_all:
+      - RX
+      - RTS
+      evidence:
+      - path: embassy-cw32/src/usart.rs
+        anchor: pub fn new_with_rts
+    - id: buffered_ring_idle
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Software ring buffering and idle-line receive are absent.
+    - id: advanced_serial
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Nine-bit, half-duplex, LIN, auto-baud, RS485 direction, synchronous and low-power modes require separate
+        qualification; per-instance hardware presence is not universally asserted.
+    - id: safe_peripheral_dma
+      status: experimental_partial
+      scope: Safe F030/A030/L083 staged TX, finite-chunk RX and combined split TX/RX DMA with ordinary caller slices.
+      limitations:
+      - F030/A030/L083 with qualified SRAM metadata and clean startup admission; static UART/channel/staging owners are consumed.
+      - CPU copy per byte and possible chunk gaps; write completes memory-to-TDR transfer and flush separately waits for the wire.
+      - Cancellation retains each direction's current chunk; clean RX tails remain available, and TE or ambiguous completion permanently quarantines resources.
+      - RX gaps may lose frames with no overrun indication; FE/PE reports promptly but recovery waits for the old DMA count.
+      - TX requires TX, RX requires RX, combined construction requires both signals and independent static staging/channels.
+      - No DMA RTS/CTS, continuous RX, borrowed zero-copy, early abort, throughput or finite-liveness guarantee.
+      implemented_families:
+      - CW32A030
+      - CW32F030
+      - CW32L083
+      pins_any:
+      - TX
+      - RX
+      evidence:
+      - path: embassy-cw32/src/usart.rs
+        anchor: pub fn new_with_dma
+      - path: docs/uart-dma-tx.md
+      - path: docs/uart-dma-rx.md
+      facts:
+      - dma_channels
+  spi:
+    register_kinds:
+    - spi
+    evidence:
+    - path: embassy-cw32/src/spi.rs
+      anchor: pub struct Spi
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Blocking master with owned, package-qualified routes; F030/A030/L083 additionally support staged byte async DMA.
+      limitations:
+      - Clock/electrical bounds apply; slave and advanced protocol modes are absent.
+    - id: slave_async
+      status: unimplemented
+      scope: No slave API; F030/A030/L083 master async byte bus is declared separately under safe_peripheral_dma.
+      limitations:
+      - Exact slave/advanced hardware mode audit remains per instance; async master is limited to F030/A030/L083 staged DMA.
+    - id: safe_peripheral_dma
+      status: experimental_partial
+      scope: Safe F030/A030/L083 paired full-duplex master byte DMA and async SpiBus with private static TX/RX SRAM staging.
+      limitations:
+      - F030/A030/L083 with clean startup admission; whole static SPI/pins, two channels and two staging slices are consumed.
+      - Both clean DMA terminals and wire idle precede success; DMA/SPI errors permanently quarantine the whole pair.
+      - Cancellation retains the current chunk; preserve the original CS selection and successfully flush before changing devices.
+      - No generic cancellation-safe SpiDevice, zero-copy, safe early abort, uninterrupted clocks, throughput or hardware-validation guarantee.
+      implemented_families:
+      - CW32A030
+      - CW32F030
+      - CW32L083
+      pins_all:
+      - SCK
+      - MOSI
+      - MISO
+      evidence:
+      - path: embassy-cw32/src/spi.rs
+        anchor: pub fn new_with_dma
+      - path: docs/spi-dma.md
+      - path: examples/spi-dma/src/main.rs
+      facts:
+      - dma_channels
+  i2c:
+    register_kinds:
+    - i2c
+    evidence:
+    - path: embassy-cw32/src/i2c/mod.rs
+      anchor: mod classic;
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Blocking seven-bit master with owned pins.
+      limitations:
+      - Bounded timing/electrical contracts; ten-bit, slave and async APIs absent.
+    - id: ten_bit_slave_async
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No ten-bit, slave or async API; advanced mode hardware must be checked per IP.
+    - id: safe_peripheral_dma
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No safe peripheral DMA integration; presence of dma_channels metadata is a routing fact, not a driver.
+      facts:
+      - dma_channels
+  adc:
+    register_kinds:
+    - adc
+    evidence:
+    - path: embassy-cw32/src/adc/classic.rs
+      anchor: pub fn blocking_read_sequence
+    - path: embassy-cw32/src/adc/sequence/mod.rs
+      anchor: pub fn blocking_read_sequence
+    - path: embassy-cw32/src/adc/l012.rs
+      anchor: pub fn blocking_read_sequence
+    - path: cw32-data/classic-adc-scans.yaml
+    - path: cw32-data/adc-sequences.yaml
+    modes:
+    - id: single_conversion
+      status: partial
+      scope: Owned blocking software-triggered single conversion.
+      limitations:
+      - Family electrical/reference/startup constraints apply; raw internal channels are not calibrated engineering
+        units.
+    - id: ordered_scan
+      status: partial
+      scope: Ordered blocking software-triggered scan using the family sequence facts.
+      limitations:
+      - Classic multi-slot scans exclude buffered/internal inputs and share one sample time; L010/L011/L012
+        permit per-slot sample times. This blocking mode excludes continuous, IRQ and externally triggered scans.
+      facts:
+      - adc_limits.sequence
+      - adc_limits.classic_scan
+    - id: async_single_conversion
+      status: partial
+      scope: Owned finite software single conversion with typed dedicated ADC IRQ binding; classic EOC/OVW or sequence EOS wake.
+      facts:
+      - adc_limits.sequence
+      limitations:
+      - Running clocks, enabled interrupts and eventual executor service are required. Config.timeout bounds
+        synchronous polls only; caller timeout/select provides a deadline with a working wake source.
+      - Successful logical stop permits fresh initialization. L010/L011/L012 explicitly document sequence-cursor
+        reset; classic reuse follows fresh MODE0/MODE4 configuration and is an inference, not an analog drain guarantee.
+      - Required cleanup readback failure is terminal per instance across replacement owners and blocking/async
+        modes until chip reset. Inherited external triggers, watchdog/request state and unsupported coupling are rejected.
+      - Shared analog resources and unowned flags are preserved within each backend's ownership contract;
+        raw interference, continuous, periodic, DMA, trigger-route, deep-sleep and silicon validation are excluded.
+      overrides:
+      - families: [CW32L012]
+        peripherals: [ADC1]
+        scope: Independent L012 ADC1 software single conversion with EOS completion and a borrowed Common owner.
+      - families: [CW32L012]
+        peripherals: [ADC2]
+        status: unimplemented
+        scope: L012 ADC2 retains its blocking API; shared ADC2_DAC IRQ ownership is not implemented.
+        limitations:
+        - Finite conversion evidence is qualified, but DAC quiet-peer/shared-handler lifetime and terminal-fault
+          containment need a separate owner. ADC1's dedicated-vector policy cannot be applied to IRQ30.
+      evidence:
+      - path: embassy-cw32/src/adc/sequence/mod.rs
+        anchor: pub fn try_new_async
+      - path: embassy-cw32/src/adc/classic.rs
+        anchor: pub fn try_new_async
+      - path: embassy-cw32/src/adc/l012.rs
+        anchor: pub fn try_new_async
+      - path: docs/adc-low-async.md
+      - path: docs/adc-remaining-async.md
+      - path: docs/adc-remaining-async-evidence.json
+    - id: async_ordered_scan
+      status: partial
+      scope: Finite software ordered scan with typed IRQ completion, repeated channel handles and full-output commit.
+      facts:
+      - adc_limits.sequence
+      - adc_limits.classic_scan
+      limitations:
+      - Classic has four/eight slots, one common acquisition time, unbuffered external multi-slot inputs and EOS/OVW
+        wake. L010/L011/L012 ADC1 have eight per-slot sample times, qualified mixed sources and EOS-only wake.
+      - The future requires terminal completion and stopped START, stages results, verifies owned masking/acknowledgment,
+        then commits the entire slice without an await. Cancellation or error leaves all output unchanged.
+      - The same source-qualified electrical, deadline and terminal-fault contract as async_single_conversion applies.
+        No continuous, periodic, hardware-triggered, DMA, RF, deep-sleep, lossless streaming or silicon timing claim.
+      overrides:
+      - families: [CW32L012]
+        peripherals: [ADC1]
+        scope: Independent L012 ADC1 software one-shot 1–8-slot ordered scan, retaining shared BGR/TS and blocking ADC2.
+      - families: [CW32L012]
+        peripherals: [ADC2]
+        status: unimplemented
+        scope: L012 ADC2 retains blocking ordered scans; shared ADC2_DAC async lifetime is not implemented.
+        limitations:
+        - ADC2 async requires a checked DAC quiet-peer lease or shared IRQ owner with terminal-fault containment.
+          This is an ownership boundary, not missing finite ADC conversion evidence.
+      evidence:
+      - path: embassy-cw32/src/adc/sequence/mod.rs
+        anchor: pub async fn read_sequence
+      - path: embassy-cw32/src/adc/classic.rs
+        anchor: pub async fn read_sequence
+      - path: embassy-cw32/src/adc/l012.rs
+        anchor: pub async fn read_sequence
+      - path: docs/adc-low-async.md
+      - path: docs/adc-remaining-async.md
+      - path: docs/adc-remaining-async-evidence.json
+    - id: continuous_irq_triggered_scan
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No continuous or hardware-triggered scan API. Software one-shot async single/scans are declared separately
+        for all classic lines, L010/L011 and L012 ADC1; the L010/L011 BTIM1-triggered single owner remains separate.
+    - id: external_reference
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No complete owned external-reference API. VDDA/internal references differ by family; L012 exposes VDDA
+        only, F002 VDD only.
+    - id: coupled_dual_adc
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - L012 converters are independently owned through Common; synchronized/slave/coupled modes are not exposed.
+      families:
+      - CW32L012
+      evidence:
+      - path: embassy-cw32/src/adc/l012.rs
+        anchor: pub struct Common
+    - id: safe_peripheral_dma
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No safe peripheral DMA integration; presence of dma_channels metadata is a routing fact, not a driver.
+      facts:
+      - dma_channels
+    - id: other_trigger_interconnect
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Other destination-local internal/external triggers, cascading, fanout and TRGO consumer routes are
+        not qualified. See separately enumerated routes; this is not a claim that all modes exist on every
+        instance.
+  btim:
+    register_kinds:
+    - btim
+    evidence:
+    - path: embassy-cw32/src/timer/low_level.rs
+      anchor: pub struct Timer
+    - path: embassy-cw32/src/timer/mod.rs
+      anchor: pub trait BasicInstance
+    modes:
+    - id: polling_counter
+      status: partial
+      scope: Owned internal-PCLK continuous up-counter with polling overflow.
+      limitations:
+      - No APB timer multiplier; qualified prescalers and actual clock bounds apply. BTIM shared gate/reset
+        is retained.
+    - id: irq_dma_other_counting
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - General counter/capture IRQ, DMA and other counting modes are absent; optional Embassy time and L010/L011
+        routes are listed separately.
+    - id: safe_peripheral_dma
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No safe peripheral DMA integration; presence of dma_channels metadata is a routing fact, not a driver.
+      facts:
+      - dma_channels
+    - id: other_trigger_interconnect
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Other destination-local internal/external triggers, cascading, fanout and TRGO consumer routes are
+        not qualified. See separately enumerated routes; this is not a claim that all modes exist on every
+        instance.
+  gtim:
+    register_kinds:
+    - gtim
+    evidence:
+    - path: embassy-cw32/src/timer/low_level.rs
+      anchor: pub struct Timer
+    - path: embassy-cw32/src/timer/mod.rs
+      anchor: pub trait BasicInstance
+    modes:
+    - id: polling_counter
+      status: partial
+      scope: Owned internal-PCLK continuous up-counter with polling overflow.
+      limitations:
+      - No APB timer multiplier; qualified prescalers and actual clock bounds apply. BTIM shared gate/reset
+        is retained.
+    - id: irq_dma_other_counting
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - General counter/capture IRQ, DMA and other counting modes are absent; optional Embassy time and L010/L011
+        routes are listed separately.
+    - id: main_pwm
+      status: partial
+      scope: Owned main-output PWM on qualified external channels.
+      limitations:
+      - "Classic ATIM exposes three main A outputs and internal CH4 is excluded; buffered ATIM main outputs\
+        \ are CH1\u20134. Whole-timer phase/update constraints remain."
+      evidence:
+      - path: embassy-cw32/src/timer/simple_pwm.rs
+        anchor: pub struct SimplePwm
+      - path: embassy-cw32/src/timer/advanced/mod.rs
+      pins_any:
+      - CH1
+      - CH2
+      - CH3
+      - CH4
+      - CH1A
+      - CH2A
+      - CH3A
+    - id: capture
+      status: partial
+      scope: Owned polling direct external input capture.
+      limitations:
+      - Each capture is one latch; no lossless history, async or DMA. Classic encoder reload is fixed at 65535;
+        count/direction/wrap samples are non-atomic.
+      evidence:
+      - path: embassy-cw32/src/timer/input_capture.rs
+      - path: cw32-data/classic-timer-input.yaml
+      pin_signal_sets:
+      - - CAP1
+      - - CAP2
+      - - CAP3
+      - - CAP4
+      - - CH1
+      - - CH2
+      - - CH3
+      - - CH4
+    - id: encoder
+      status: partial
+      scope: Owned polling quadrature encoder.
+      limitations:
+      - Each capture is one latch; no lossless history, async or DMA. Classic encoder reload is fixed at 65535;
+        count/direction/wrap samples are non-atomic.
+      evidence:
+      - path: embassy-cw32/src/timer/qei.rs
+      - path: cw32-data/classic-timer-input.yaml
+      pin_signal_sets:
+      - - CAP1
+        - CAP2
+      - - CH1
+        - CH2
+    - id: safe_peripheral_dma
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No safe peripheral DMA integration; presence of dma_channels metadata is a routing fact, not a driver.
+      facts:
+      - dma_channels
+    - id: other_trigger_interconnect
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Other destination-local internal/external triggers, cascading, fanout and TRGO consumer routes are
+        not qualified. See separately enumerated routes; this is not a claim that all modes exist on every
+        instance.
+  atim:
+    register_kinds:
+    - atim
+    evidence:
+    - path: embassy-cw32/src/timer/low_level.rs
+      anchor: pub struct Timer
+    - path: embassy-cw32/src/timer/mod.rs
+      anchor: pub trait BasicInstance
+    modes:
+    - id: polling_counter
+      status: partial
+      scope: Owned internal-PCLK continuous up-counter with polling overflow.
+      limitations:
+      - No APB timer multiplier; qualified prescalers and actual clock bounds apply. BTIM shared gate/reset
+        is retained.
+    - id: irq_dma_other_counting
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - General counter/capture IRQ, DMA and other counting modes are absent; optional Embassy time and L010/L011
+        routes are listed separately.
+    - id: main_pwm
+      status: partial
+      scope: Owned main-output PWM on qualified external channels.
+      limitations:
+      - "Classic ATIM exposes three main A outputs and internal CH4 is excluded; buffered ATIM main outputs\
+        \ are CH1\u20134. Whole-timer phase/update constraints remain."
+      evidence:
+      - path: embassy-cw32/src/timer/simple_pwm.rs
+        anchor: pub struct SimplePwm
+      - path: embassy-cw32/src/timer/advanced/mod.rs
+      pins_any:
+      - CH1
+      - CH2
+      - CH3
+      - CH4
+      - CH1A
+      - CH2A
+      - CH3A
+    - id: capture
+      status: partial
+      scope: Owned polling direct external input capture.
+      limitations:
+      - Each capture is one latch; no lossless history, async or DMA. Classic encoder reload is fixed at 65535;
+        count/direction/wrap samples are non-atomic.
+      evidence:
+      - path: embassy-cw32/src/timer/input_capture.rs
+      - path: cw32-data/classic-timer-input.yaml
+      implemented_families: &id001
+      - CW32L010
+      - CW32L011
+      - CW32L012
+      pin_signal_sets:
+      - - CAP1
+      - - CAP2
+      - - CAP3
+      - - CAP4
+      - - CH1
+      - - CH2
+      - - CH3
+      - - CH4
+    - id: encoder
+      status: partial
+      scope: Owned polling quadrature encoder.
+      limitations:
+      - Each capture is one latch; no lossless history, async or DMA. Classic encoder reload is fixed at 65535;
+        count/direction/wrap samples are non-atomic.
+      evidence:
+      - path: embassy-cw32/src/timer/qei.rs
+      - path: cw32-data/classic-timer-input.yaml
+      implemented_families: *id001
+      pin_signal_sets:
+      - - CAP1
+        - CAP2
+      - - CH1
+        - CH2
+    - id: classic_complementary_dead_time_global_enable
+      status: partial
+      scope: Optional complete classic A+B pairs, interior comparison duty, fixed symmetric dead time and explicit global MOE.
+      limitations:
+      - F030/A030 only. No endpoints, per-pair gating, brake/rearm, inversion, runtime timing changes or pad-level/shutdown guarantee.
+      implemented_families:
+      - CW32F030
+      - CW32A030
+      pin_signal_sets:
+      - - CH1A
+        - CH1B
+      - - CH2A
+        - CH2B
+      - - CH3A
+        - CH3B
+      facts:
+      - atim_complementary
+      evidence:
+      - path: embassy-cw32/src/timer/complementary_pwm/classic.rs
+        anchor: pub struct ComplementaryPwm
+      - path: docs/classic-atim-complementary-evidence.json
+    - id: complementary_dead_time_software_break
+      status: partial
+      scope: Qualified complementary pairs, constructor-only symmetric dead time and software BK1.
+      limitations:
+      - Buffered L010/L011/L012 only. No BK2, filter, lock policy, automatic restart, runtime/asymmetric dead
+        time or hardware shutdown/glitch guarantee.
+      implemented_families: *id001
+      pin_signal_sets:
+      - - CH1
+        - CH1N
+      - - CH2
+        - CH2N
+      - - CH3
+        - CH3N
+      - - CH4
+        - CH4N
+      facts:
+      - atim_complementary
+      evidence:
+      - path: embassy-cw32/src/timer/complementary_pwm/buffered.rs
+        anchor: pub struct ComplementaryPwm
+    - id: external_break
+      status: partial
+      scope: Owned external unfiltered BK1.
+      limitations:
+      - Qualified L011/L012 pins only; L010 external route withheld. Board pull/output-level safety remains
+        the caller obligation.
+      implemented_families:
+      - CW32L011
+      - CW32L012
+      pins_any:
+      - BK
+      evidence:
+      - path: embassy-cw32/src/timer/complementary_pwm/buffered.rs
+        anchor: pub struct BreakInput
+    - id: safe_peripheral_dma
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No safe peripheral DMA integration; presence of dma_channels metadata is a routing fact, not a driver.
+      facts:
+      - dma_channels
+    - id: other_trigger_interconnect
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Other destination-local internal/external triggers, cascading, fanout and TRGO consumer routes are
+        not qualified. See separately enumerated routes; this is not a claim that all modes exist on every
+        instance.
+  crc:
+    register_kinds:
+    - crc
+    evidence:
+    - path: embassy-cw32/src/crc.rs
+      anchor: pub struct Crc
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Family-qualified hardware CRC presets.
+      limitations:
+      - 'F002/F003: four CRC16 presets; other non-x030: eight CRC16 presets; x030: CRC16/CRC32 preset set.
+        No arbitrary-polynomial guarantee.'
+  iwdt:
+    register_kinds:
+    - iwdt
+    evidence:
+    - path: embassy-cw32/src/wdg/mod.rs
+      anchor: pub struct IndependentWatchdog
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Explicit bounded independent-watchdog start/feed.
+      limitations:
+      - Irreversible start; own oscillator tolerance applies; no stop API.
+  wwdt:
+    register_kinds:
+    - wwdt
+    evidence:
+    - path: embassy-cw32/src/wdg/windowed.rs
+      anchor: pub struct WindowWatchdog
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Polling window-watchdog start/feed with frozen PCLK timing.
+      limitations:
+      - Irreversible start; IRQ and stop API absent.
+  rtc:
+    register_kinds:
+    - rtc
+    evidence:
+    - path: embassy-cw32/src/rtc/mod.rs
+      anchor: pub struct Rtc
+    - path: cw32-data/rtc-calendar.yaml
+    - path: cw32-data/rtc-alarms.yaml
+    modes:
+    - id: calendar
+      status: partial
+      scope: Blocking calendar with preserved-state attach and explicit cold initialization.
+      limitations:
+      - L010/L011/L012 use qualified HSIOSC; other RTC families require pretrimmed LSI. No UTC precision, compensation,
+        subseconds or retention guarantee.
+    - id: alarm_a
+      status: partial
+      scope: Typed recurring weekly Alarm A configuration and enable.
+      limitations:
+      - Not an absolute deadline; disabled-owner preconditions and bounded register-access windows apply.
+      evidence:
+      - path: embassy-cw32/src/rtc/alarm.rs
+        anchor: pub fn set_alarm_a(
+    - id: alarm_event_status
+      status: partial
+      scope: A/B sticky event observation and acknowledgment; Alarm A enable control.
+      limitations:
+      - Repeated matches coalesce; acknowledgment can race a new match; no Alarm B programming/enable API.
+      evidence:
+      - path: embassy-cw32/src/rtc/alarm.rs
+        anchor: pub fn alarm_status
+    - id: alarm_b_programming
+      status: source_disputed
+      scope: Alarm B configuration is deliberately withheld.
+      limitations:
+      - Own manuals and SDK disagree on mask polarity. A/B event observation does not resolve that conflict.
+      evidence:
+      - path: embassy-cw32/src/rtc/alarm.rs
+        anchor: ALARMB is contradictory
+      facts:
+      - rtc_alarms
+    - id: alarm_async_wait
+      status: partial
+      scope: Scoped run-mode async A/B alarm waits.
+      limitations:
+      - Requires an already enabled alarm; classic WINDOW/ACCESS families have no async wait API; no low-power
+        wake guarantee.
+      implemented_families: *id001
+      evidence:
+      - path: embassy-cw32/src/rtc/alarm_interrupt.rs
+        anchor: pub async fn wait_for_alarm
+    - id: retention_wake_compensation
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Low-power retention/wake, other calendar clock sources and compensation are not qualified.
+  flash:
+    register_kinds:
+    - flash
+    evidence:
+    - path: embassy-cw32/src/flash.rs
+      anchor: pub struct ReservedRegion
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: ReadNorFlash plus inherent blocking program/erase in an exclusively reserved region on qualified
+        exact parts.
+      limitations:
+      - Unsafe reserved-region construction is required; package-neutral aliases rejected. No NorFlash/Multiwrite
+        promise, power-loss atomicity, options/security, async, abort or bounded stall time.
+  comparator:
+    register_kinds:
+    - vc
+    evidence:
+    - path: embassy-cw32/src/comparator.rs
+      anchor: pub struct Comparator
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Owned external-input polling with polarity, speed/hysteresis and READY where present.
+      limitations:
+      - Shared analog resources retained; internal-divider input is separately declared for L010/L011/L012.
+        No fixed BGR/DAC input, window, filter, blanking, output-route, IRQ/async or trigger integration.
+    - id: internal_divider_input
+      status: partial
+      scope: Owned external-positive/internal-divider-negative polling with a bank-qualified immutable Vref borrow.
+      families:
+      - CW32L010
+      - CW32L011
+      - CW32L012
+      pins_any:
+      - INP0
+      - INP1
+      - INP2
+      - INP3
+      facts:
+      - comparator_limits
+      limitations:
+      - Generated Reference traits admit only the bank's consumer pair; the comparator and bank must declare
+        the same analog supply. Both consumers may borrow the unchanged reference.
+      - Comparator Drop disables only its own EN; the reference and shared gate remain enabled. No reference
+        reconfiguration, disable, fixed BGR/DAC input, output route, IRQ/async or trigger integration.
+      - Readiness remains Unknown; divider settling, threshold precision and electrical behavior are unqualified.
+        Board input, supply and common-mode limits still apply.
+      evidence:
+      - path: embassy-cw32/src/comparator.rs
+        anchor: pub fn new_with_vref
+      - path: embassy-cw32/src/vref.rs
+        anchor: pub trait Reference
+      - path: cw32-data/reference-dividers.yaml
+    - id: advanced_routes
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Fixed BGR/DAC input, other internal-reference modes, window/filter/blanking, output and trigger routes
+        need per-family/per-instance qualification. The bounded L010/L011/L012 divider input is declared separately.
+  lvd:
+    register_kinds:
+    - lvd
+    evidence:
+    - path: embassy-cw32/src/lvd.rs
+      anchor: pub struct LowVoltageMonitor
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Unfiltered supply/external-input polling.
+      limitations:
+      - No filter, IRQ/async, reset policy or wakeup management.
+  ir:
+    register_kinds:
+    - ir
+    - irmod
+    evidence:
+    - path: embassy-cw32/src/ir.rs
+      anchor: pub struct IrModulator
+    - path: cw32-data/lvd-ir.yaml
+    modes:
+    - id: controller_attach
+      status: partial
+      scope: Owned controller attachment; supported software/inversion controls preserve unrelated state.
+      limitations:
+      - No carrier/source peripheral auto-configuration, encoding or receiver.
+      facts:
+      - ir
+    - id: mode_selector
+      status: partial
+      scope: Destination-specific documented timer/UART boolean source combinations.
+      limitations:
+      - No universal trigger numbering or glitch-free switching guarantee.
+      overrides:
+      - families:
+        - CW32L012
+        status: source_disputed
+        scope: Preserve existing MOD selector; no selector API.
+        limitations:
+        - L012 own manual and SDK disagree on MOD encodings.
+      evidence:
+      - path: embassy-cw32/src/ir.rs
+        anchor: pub fn set_mode
+    - id: output_pin
+      status: partial
+      scope: Owned package-qualified IR output pin.
+      limitations:
+      - Debug/reset pad remapping is not performed; R031 only documented PA13 debug output is withheld.
+      pins_any:
+      - IR_OUT
+      overrides:
+      - families:
+        - CW32R031
+        status: route_unqualified
+        scope: Controller only; no qualified output pin.
+        limitations:
+        - Only documented route is debug PA13, withheld by the current pad policy.
+    virtual: ir
+  awt:
+    register_kinds:
+    - awt
+    evidence:
+    - path: embassy-cw32/src/awt.rs
+      anchor: pub struct Awt
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: HSIOSC polling and IRQ-backed async coalesced events in run mode.
+      limitations:
+      - No low-speed source, deep-sleep wake or Embassy time driver.
+  lptim:
+    register_kinds:
+    - lptim
+    evidence:
+    - path: embassy-cw32/src/lptim.rs
+      anchor: pub struct Lptim
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: PCLK polling and IRQ-backed async coalesced events in run mode.
+      limitations:
+      - No low-speed clock, external trigger/output, deep-sleep wake or Embassy time driver.
+  dac:
+    register_kinds:
+    - dac
+    evidence:
+    - path: embassy-cw32/src/dac.rs
+      anchor: pub struct Dac
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Direct unbuffered eight/twelve-bit external output.
+      limitations:
+      - No trigger, DMA, waveform, independent channel split, calibration or analog settling/accuracy guarantee.
+    - id: safe_peripheral_dma
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No safe peripheral DMA integration; presence of dma_channels metadata is a routing fact, not a driver.
+      facts:
+      - dma_channels
+  opamp:
+    register_kinds:
+    - opa
+    evidence:
+    - path: embassy-cw32/src/opamp.rs
+      anchor: pub struct OpAmp
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Externally pinned follower, PGA and external feedback.
+      limitations:
+      - No calibration, internal sharing, low-power policy or guaranteed settling/accuracy.
+  aes:
+    register_kinds:
+    - aes
+    evidence:
+    - path: embassy-cw32/src/aes.rs
+      anchor: pub struct Aes
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Blocking hardware-word ECB128/192/256 encrypt/decrypt.
+      limitations:
+      - Byte-oriented interoperability and silicon known-answer execution unqualified; other modes and IRQ
+        absent.
+  trng:
+    register_kinds:
+    - trng
+    evidence:
+    - path: embassy-cw32/src/trng.rs
+      anchor: pub struct Trng
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Blocking raw unassessed samples.
+      limitations:
+      - No entropy-strength, CryptoRng or health-test guarantee; IRQ absent.
+  lcd:
+    register_kinds:
+    - lcd
+    evidence:
+    - path: embassy-cw32/src/lcd.rs
+      anchor: pub struct Lcd
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Internal bias, owned COM/SEG pins, live display updates and bound frame observations.
+      limitations:
+      - Typical-only LSI timing; updates not frame-atomic; external bias/pump, LSE, blink, DMA and async absent.
+  halltim:
+    register_kinds:
+    - halltim
+    evidence:
+    - path: embassy-cw32/src/halltim.rs
+      anchor: pub struct HallTim
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Latest capture, live input levels and sampled transitions.
+      limitations:
+      - No lossless/atomic event history, async, DMA or TRGO-consumer routing.
+    - id: safe_peripheral_dma
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No safe peripheral DMA integration; presence of dma_channels metadata is a routing fact, not a driver.
+      facts:
+      - dma_channels
+    - id: other_trigger_interconnect
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Other destination-local internal/external triggers, cascading, fanout and TRGO consumer routes are
+        not qualified. See separately enumerated routes; this is not a claim that all modes exist on every
+        instance.
+  ram:
+    register_kinds:
+    - ram
+    evidence:
+    - path: embassy-cw32/src/ram.rs
+      anchor: pub struct Ram
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Parity status, full reported address, acknowledgment and source masking.
+      limitations:
+      - No SRAM initialization/injection or parity configuration API is justified by reviewed hardware.
+  autotrim:
+    register_kinds:
+    - autotrim
+    evidence:
+    - path: embassy-cw32/src/autotrim.rs
+      anchor: pub struct AutotrimTimer
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: MD3/AUTO0 HSIOSC polling counter with qualified cycle bounds.
+      limitations:
+      - No calibration, FCAP measurement, external reference, IRQ or low-power API.
+  eau:
+    register_kinds:
+    - eau
+    evidence:
+    - path: embassy-cw32/src/eau.rs
+      anchor: pub struct Eau
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Blocking signed/unsigned 32-bit division and unsigned integer square root.
+      limitations:
+      - No IRQ/DMA or silicon numeric validation.
+  cordic:
+    register_kinds:
+    - cordic
+    evidence:
+    - path: embassy-cw32/src/cordic.rs
+      anchor: pub struct Cordic
+    modes:
+    - id: bounded_api
+      status: partial
+      scope: Eight bounded Q1.31 operations with explicitly scaled outputs.
+      limitations:
+      - No Q1.15, full-quadrant phase, configurable iterations, IRQ/DMA or silicon accuracy claim.
+  dma:
+    register_kinds:
+    - dma
+    - dmachannel
+    evidence:
+    - path: embassy-cw32/src/dma.rs
+      anchor: pub struct Transfer
+    - path: embassy-cw32/src/dma.rs
+      anchor: pub struct OwnedCopy
+    modes:
+    - id: unsafe_one_shot
+      status: experimental_partial
+      scope: Unsafe borrowed-buffer software copy, blocking or IRQ-driven future; x030 also supports hardware requests.
+      limitations:
+      - F030/A030/L083; L083 software copy only. Caller must retain forgotten borrows and enforce hardware exclusivity. Drop drains
+        to completion/error and can block forever; no safe early abort.
+      implemented_families: &id002
+      - CW32A030
+      - CW32F030
+      - CW32L083
+    - id: unsafe_owned_copy
+      status: experimental_partial
+      scope: Owned static-buffer software copy with unsafe entry.
+      limitations:
+      - F030/A030/L083; verified SRAM metadata required. Clean completion returns buffers; errors reserve resources; forget leaks. Ownership
+        does not make the constructor safe or permit abort.
+      implemented_families: *id002
+    - id: safe_owned_copy
+      status: experimental_partial
+      scope: Safe init-admitted CopyChannel capability and owned static-SRAM software copy.
+      limitations:
+      - F030/A030/L083 with qualified SRAM metadata and normal reset/clean-runtime entry. Dirty state is rejected; arbitrary active bootloader handovers are unsupported.
+      - TC without TE plus complete STATUS and SOFTSRC readback returns the same owners; errors/forget quarantine them. Drop may block indefinitely; no early abort or borrowed DMA.
+      - Raw PAC access remains a technically unsafe ownership escape. Raw channel acquisition/downgrade permanently revokes safe admission.
+      implemented_families: *id002
+    - id: hardware_request_transfer
+      status: unimplemented
+      scope: Unsafe hardware-request transfer API; no peripheral lifecycle wrapper.
+      limitations:
+      - Only x030 exposes unsafe borrowed hardware constructors. L083 exposes UART/SPI RX/TX routes solely for its separately declared safe staged integration.
+      overrides:
+      - families: [CW32A030, CW32F030]
+        status: experimental_partial
+        scope: Existing unsafe hardware-request one-shot transfer.
+        limitations:
+        - Caller owns peripheral lifecycle, outstanding accesses and forgotten borrows; no safe cancellation.
+    - id: safe_peripheral_dma
+      status: experimental_partial
+      scope: Safe admitted F030/A030/L083 UART TX/RX and paired SPI master byte requests with constructor-owned static SRAM staging.
+      limitations:
+      - Limited to F030/A030/L083 UART TX/RX and SPI master with qualified SRAM and normal reset/clean-runtime entry; L083 ADC/LCD/timer requests remain outside this HAL scope.
+      - Ordinary caller slices use private chunks; each split half retains its own lease, and clean completion permits reuse or RX tail delivery.
+      - TE or inconsistent completion permanently retains affected resources; RX gaps may lose frames, with no safe early abort, continuous RX, zero-copy or finite-liveness guarantee.
+      - SPI additionally requires both channel terminals and wire idle; cancellation requires preserving CS through a successful flush.
+      implemented_families:
+      - CW32A030
+      - CW32F030
+      - CW32L083
+      evidence:
+      - path: embassy-cw32/src/usart.rs
+        anchor: pub fn new_with_dma
+      - path: docs/uart-dma-tx.md
+      - path: docs/uart-dma-rx.md
+      - path: docs/spi-dma.md
+    - id: circular_scatter
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No circular/scatter API; exact hardware modes vary by family.
+  bgr_controller:
+    register_kinds:
+    - bgr
+    evidence:
+    - path: embassy-cw32/src/adc/l012.rs
+      anchor: pub struct Common
+    modes:
+    - id: adc_shared_owner
+      status: partial
+      scope: L012 ADC Common retains the BGR token and shared power.
+      limitations:
+      - Standalone reference/comparator management is absent. No standalone BGR block elsewhere does not mean
+        no internal bandgap.
+  comparator_reference:
+    register_kinds:
+    - vc2ref
+    evidence:
+    - path: embassy-cw32/src/vref.rs
+      anchor: pub struct Vref
+    - path: cw32-data/reference-dividers.yaml
+    modes:
+    - id: standalone_control
+      status: partial
+      scope: Immutable owned L012 VC12REF for VC1/VC2 or VC34REF for VC3/VC4; supply or nominal 1.6 V Vcore
+        source with eight taps from 1/8 through 8/8.
+      families:
+      - CW32L012
+      facts:
+      - reference_divider
+      limitations:
+      - Configuration uses the generated VC1 or VC3 clock owner; no separate divider kernel clock or reset
+        domain is asserted. Held VC reset is refused without releasing it.
+      - InUse refuses any enabled paired comparator selecting the bank, including a forgotten consumer.
+        Drop retains the reference and shared gate; no reconfiguration or disable API is exposed.
+      - Inherited L012 DIV codes 8..15 return UnsupportedDividerState before a reference write, preserving
+        the unqualified high bit. Only the eight documented codes 0..7 are programmed.
+      - Supply means VDDA, required equal to VDD; declared supply must be 1700..5500 mV and match each consumer.
+        Vcore is nominal, not calibrated. No divider-ready flag, guaranteed settling or threshold precision.
+      - This internal comparator reference is not the ADC external-reference API; ADC and BGR state are unchanged.
+      evidence:
+      - path: embassy-cw32/src/vref.rs
+        anchor: return Err(Error::UnsupportedDividerState);
+      - path: embassy-cw32/src/vref.rs
+        anchor: return Err(Error::InUse);
+  comparator_divider:
+    register_kinds:
+    - vcdiv
+    evidence:
+    - path: embassy-cw32/src/vref.rs
+      anchor: pub struct Vref
+    - path: cw32-data/reference-dividers.yaml
+    modes:
+    - id: standalone_control
+      status: partial
+      scope: Immutable owned L010/L011 VCDIV shared by VC1/VC2; supply or nominal 1.6 V Vcore source with eight
+        taps from 1/8 through 8/8.
+      families:
+      - CW32L010
+      - CW32L011
+      facts:
+      - reference_divider
+      limitations:
+      - Configuration uses the generated VC1 clock owner; no separate divider kernel clock or reset domain
+        is asserted. Held VC reset is refused without releasing it.
+      - InUse refuses any enabled paired comparator selecting the bank, including a forgotten consumer.
+        Drop retains the reference and shared gate; no reconfiguration or disable API is exposed.
+      - Supply means VDD on L010 (1620..5500 mV) and VDDA on L011 (1700..5500 mV, VDDA equal to VDD).
+        Board supply declarations must match each consumer; Vcore is nominal, not calibrated.
+      - No divider-ready flag, guaranteed settling or threshold precision; board input and common-mode limits
+        still apply. Only codes 0..7 are programmed; reserved bits are preserved.
+      - This internal comparator reference is not the ADC external-reference API; ADC and BGR state are unchanged.
+      evidence:
+      - path: embassy-cw32/src/vref.rs
+        anchor: return Err(Error::InUse);
+  sysctrl:
+    register_kinds:
+    - sysctrl
+    evidence:
+    - path: embassy-cw32/src/rcc/mod.rs
+    - path: embassy-cw32/src/rcc/peripheral.rs
+    - path: cw32-data/electrical.yaml
+    modes:
+    - id: hsi_system_bus_clocks
+      status: partial
+      scope: Factory-HSI system/bus clocks, qualified operating envelope and central peripheral gate/reset
+        policies.
+      limitations:
+      - Frozen clocks; legal stable entry conditions, declared supply/ambient and actual bounds required. No
+        measurement or complete oscillator calibration.
+    - id: external_high_speed
+      status: partial
+      scope: Direct HSE oscillator/crystal or bypass on F020/F030/A030/L010/L011/L012/L031/R031/W031/L052/L083 and digital HEX on F002/F003.
+      limitations:
+      - Board declares independent minimum/nominal/maximum frequency and electrical conditions. Actual HSE
+        interval 4..32 MHz; oscillator pads reserved; no runtime switching or clock-fault recovery guarantee.
+      implemented_families:
+      - CW32A030
+      - CW32F020
+      - CW32F030
+      - CW32F002
+      - CW32F003
+      - CW32L010
+      - CW32L011
+      - CW32L012
+      - CW32L031
+      - CW32R031
+      - CW32W031
+      - CW32L052
+      - CW32L083
+      pins_any: [HSE_IN, HEX_PB00, HEX_PB01]
+      overrides:
+      - families: [CW32F002, CW32F003]
+        status: partial
+        scope: Direct digital HEX input on a qualified PB0 or PB1; one-time initialization only.
+        limitations:
+        - Board guarantees the complete actual 4..32 MHz interval, supply 1.65..5.5 V and ambient
+          -40..105 C; retained HSI and bus limits still apply. No default frequency accuracy.
+        - All pad waveform limits apply together, including 40..60 percent duty, at least 15 ns high/low,
+          at most 20 ns rise/fall, high 70..100 percent VDDIO and low 0..30 percent VDDIO.
+          These board obligations and own I/O ratings are not measured by initialization.
+        - Stable electrically legal entry and continuous sources are required; interrupts, DMA and
+          clock-dependent users must be quiescent. Failure after acquisition requires reset before retry.
+        - Exact-package routes and frozen whole-boot pad reservations apply. Retained AWT reserves
+          PB0/PB1 independently of the system mux; active external AWT allows only exact ready reuse,
+          and active AWT ETR rejects new HEX requests.
+        - Digital input only; no crystal drive, PLL, runtime switching, sleep/resume or clock-loss recovery.
+          STABLE is a startup latch; loss can stop the CPU. No automatic fallback or wall-clock timeout guarantee.
+      - families: [CW32L031, CW32R031, CW32W031]
+        status: partial
+        scope: Direct HSE crystal or bypass on exact bonded packages; one-time initialization only.
+        limitations:
+        - Explicit actual 4..32 MHz endpoints and board waveform/startup qualification. Retained factory HSI
+          restricts ambient to -40..85 C. Supply limits are L031 1.65..5.5 V, R031 2.2..3.6 V and W031 2.0..3.6 V.
+        - L031 QFN20 has no oscillator pads; broad aliases spanning it have no universal HSE route. Crystal
+          reserves both pads and bypass only the input; inherited enabled HSE is reserved for the whole boot.
+        - Preserve configurable CCS; unchanged legal LSI is retained for enabled HSE/LSE detectors. Frozen
+          rates are invalid after source loss or HSI fallback. HSI-only W031 qualification is unchanged.
+        - Retained RTC/AWT HSE requires exact ready parameter/pad reuse. Active AWT ETR rejects HSE;
+          raw-HSI AWT/LVD owners reject required retrim. Relevant sticky fault flags are rejected, not cleared.
+        - No PLL, RF configuration, runtime switching, sleep/resume, failed-entry recovery or clock-loss service.
+      - families: [CW32L010, CW32L011]
+        status: partial
+        scope: Direct HSE crystal/bypass on all five modeled exact packages; one-time initialization only.
+        limitations:
+        - Explicit actual 4..32 MHz endpoints. L010 bypass below 4 MHz is deferred software coverage;
+          L011 uses the RM/DS intersection. Factory HSI retention limits ambient to -40..85 C.
+        - Own VDD floors are 1.62 V and 1.7 V; actual buses are <=24 MHz below 1.8 V,
+          otherwise <=48 MHz and <=96 MHz respectively. Waveform, drive and startup are board obligations.
+        - Eight documented pre-start/run drive codes, no frequency-range selector and no GPIO PDR.
+          Crystal reserves both own pads; bypass reserves the input; inherited pads remain reserved.
+        - Preserve configurable CCS and unchanged legal LSI; qualify requested HSI and forced nominal
+          4 MHz fallback through final bus and Flash dividers. The L011 LSI source discrepancy remains open.
+        - RTC/AWT HSE requires exact ready parameter/pad reuse; raw-HSI ownership blocks retrim.
+          ADC EN, SYSCLK-filtered LVD and PCLK-filtered or timer-blanked VC are rejected before clock changes.
+          Enabled VC inputs overlapping oscillator pads block HSE restart or pad writes; exact no-write reuse may remain.
+          Preserve BGR, TSEN, analog references and flags without group reset.
+        - No PLL, runtime switching, sleep/resume or source-loss recovery. Sticky faults are not cleared;
+          startup STABLE is not continuous validity. Finite polls need CPU progress; RCC failure needs reset.
+      - families: [CW32L012]
+        status: partial
+        scope: Direct HSE crystal/bypass on both exact packages and their common alias; one-time initialization.
+        limitations:
+        - Actual 4..32 MHz endpoints, VDD 1.7..5.5 V and ambient -40..85 C. Below 1.8 V actual buses
+          are <=24 MHz; otherwise <=96 MHz. Source waveform/drive/load/startup remain board obligations.
+        - HSI defaults to nominal8 MHz, while CCS independently forces nominal4 MHz; both sources and
+          selected HSE are qualified through final buses and Flash waits. Legal incoming HSIOSC90..100MHz
+          is an entry requirement, not a measurement or a guarantee for arbitrary trim.
+        - Undeclared enabled HSE fails before MMIO writes. All declared enabled HSE requires exact ready
+          source and pad reuse without oscillator/pad writes, regardless of retained RTC/AWT selection.
+        - RTC raw-HSI ownership blocks retrim; PSC1-derived actual RTCCLKD must already be <=1 MHz.
+          ADC1/ADC2 EN, four-comparator PCLK filters or any CR2 blanking, OPA calibration and enabled DAC
+          trigger/DMA/wave operation are rejected. LVD is inspected directly, without an invented gate.
+        - Preserve static analog owners and BGR/TS/references, configurable CCS, unchanged legal LSI,
+          retained RTC/AWT and common LSE reservations. No PLL, DIGFLT, automatic HEXEN, live retuning,
+          sleep/resume or source-loss recovery. Finite polls require continuing CPU progress.
+      - families: [CW32L052]
+        status: partial
+        scope: Direct HSE crystal/bypass on all three modeled exact packages; one-time initialization only.
+        limitations:
+        - Explicit actual 4..32 MHz endpoints, VDD 1.65..5.5 V, VDDA=VDD and ambient -40..85 C.
+          Actual HCLK/PCLK <=24 MHz below 1.8 V and <=48 MHz otherwise. Board waveform/startup remains unmeasured.
+        - Configure/read both pre-start PDRIVER/PFREQRANGE and run DRIVER/FREQRANGE before HSE enable.
+          Whole-boot reservations retain the union of inherited enabled and requested source pads.
+        - Preserve configurable CCS; qualify requested HSI and hardware fixed HSI/6 fallback independently
+          for final buses and Flash. Retain unchanged legal LSI when enabled external detectors require it.
+        - Retained RTC/AUTOTRIM HSE requires exact ready parameter/pad reuse. Active calibration, automatic
+          mode and ETR with an HSE request are excluded; raw-HSI AUTOTRIM/LVD blocks required retrim.
+        - No PLL exists. No runtime switching, LSE setup, sleep/resume or source-loss recovery. Finite polls
+          require CPU progress; STABLE is a startup latch; failure requires reset and frozen rates are invalid after loss.
+      - families: [CW32L083]
+        status: partial
+        scope: Direct HSE crystal or bypass on all five modeled exact packages; one-time initialization only.
+        limitations:
+        - Board declares the complete actual 4..32 MHz interval, VDD 1.65..5.5 V with VDDA equal to VDD,
+          and ambient -40..85 C. Actual HCLK/PCLK are limited to 24 MHz below 1.8 V and 64 MHz otherwise.
+        - Crystal reserves PF0/PF1 and bypass reserves PF0. Own GPIO LCKR is keyed; inherited enabled
+          HSE reserves its pads for the boot. Board waveform, load, drive and startup remain unmeasured.
+        - Preserve configurable CCS and unchanged legal LSI for enabled HSE/LSE detectors. Retained
+          HSI fallback is independently qualified against final bus and Flash limits.
+        - Retained RTC or enabled AUTOTRIM TIMER HSE requires exact ready source/pad reuse. Active
+          AUTOTRIM calibration, automatic mode, reserved sources and ETR with HSE are excluded.
+          Raw-HSI AUTOTRIM/LVD consumers block required retrim; divider-only changes preserve HSIOSC.
+        - Inherited PLL entry first escapes through unchanged HSI; stop and observe PLL not stable before
+          source oscillator/divider changes. Relevant HSE/LSE sticky faults are rejected, never cleared.
+        - No HSE-fed PLL, LSE setup, runtime switching, sleep/resume or source-loss recovery.
+          STABLE is a startup latch and frozen HSE rates become invalid after loss or HSI fallback.
+      registers_any:
+      - HSE
+      - HEX
+      evidence:
+      - path: embassy-cw32/src/rcc/hsi_48mhz.rs
+        anchor: pub enum HseMode
+      - path: embassy-cw32/src/rcc/l031_r031_w031.rs
+        anchor: pub enum HseMode
+      - path: embassy-cw32/src/rcc/l010_l011.rs
+        anchor: pub enum HseMode
+      - path: docs/qualified-l010-l011-hse.md
+      - path: embassy-cw32/src/rcc/l012.rs
+        anchor: pub enum HseMode
+      - path: docs/qualified-l012-hse.md
+      - path: docs/qualified-l031-hse.md
+      - path: embassy-cw32/src/rcc/l052_l083.rs
+        anchor: pub enum HseMode
+      - path: docs/qualified-l052-hse.md
+      - path: docs/qualified-l083-hse.md
+      - path: cw32-data/hse-qualified.yaml
+      - path: embassy-cw32/src/rcc/f002_f003.rs
+        anchor: pub struct Hex
+      - path: cw32-data/hex-qualified.yaml
+      - path: docs/qualified-hex.md
+    - id: pll
+      status: partial
+      scope: CW32L083 factory-HSI-fed PLL as the one-time system source, with exact qualified rate bounds.
+      implemented_families: [CW32L083]
+      limitations:
+      - Entire actual input/output envelopes must each fit one source-qualified analog bin and independent
+        electrical limits. Twelve nominal HSI-divider/multiplier pairs are admitted; other documented
+        hardware settings are not asserted absent or invalid. L052 has no system PLL.
+      - Default is disabled. No HSE-fed PLL, independent output, runtime retuning, sleep/resume or fault-recovery
+        guarantee. Stable legal entry, quiescent clock consumers and reset-before-retry apply.
+      - Typed configuration preserves reserved-debug default0x5 and uses real PLL.STABLE startup/stop acknowledgment.
+        Retained RTC/AUTOTRIM/LVD/CCS owners, guarded Flash/buses and final readback remain mandatory.
+      - ClockBounds preserves a rate-only qualification through multiplication and division. Strict duration
+        getters require has_cycle_timing_bounds; ADC constructors reject this PLL source before MMIO.
+        Existing direct HSI/HSE timing qualification is unchanged. Cycle-to-cycle300ps is not an absolute-period bound.
+      registers_any:
+      - PLL
+      evidence:
+      - path: cw32-data/pll-qualified.yaml
+      - path: docs/l083-hsi-pll.md
+      - path: embassy-cw32/src/rcc/l052_l083.rs
+        anchor: pub struct Pll
+      - path: embassy-cw32/src/rcc/bounds.rs
+        anchor: pub const fn has_cycle_timing_bounds
+    - id: inherited_lse_pad_ownership
+      status: partial
+      scope: Read-only capture of inherited LSE enable, mode and applicable pad locks before pin tokens return.
+      registers_any:
+      - LSE
+      limitations:
+      - Crystal reserves both bonded OSC32 pads; bypass reserves input. Applicable L010 PINLOCK or L011/L012
+        PINLOCK with LSELOCK reserves both even when LSEEN is clear. Faults and STABLE never release pads.
+      - Boot-retained ownership rejects Flex construction before GPIO gate, unlock or pad writes. Package
+        aliases use only common bonded pads; direct PAC, stolen pins and concurrent clock writes are outside the contract.
+      - Does not configure, stop, reset or qualify LSE/RTC and does not add runtime switching or low-power resume.
+      evidence:
+      - path: embassy-cw32/src/rcc/mod.rs
+        anchor: static LSE_PADS
+      - path: docs/inherited-lse-pads.md
+      - path: cw32-data/lse-ownership.yaml
+    - id: external_low_speed
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - LSE initialization/system-clock use is absent; RTC/LCD retained LSI paths are separate.
+      registers_any:
+      - LSE
+    - id: power_sleep_wakeup
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - No owned whole-chip power, sleep/deep-sleep or wake-source policy; run-mode IRQ APIs do not establish
+        wake capability.
+    - id: runtime_clock_switch_calibration
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Runtime clock switching, complete calibration and clock-fault recovery remain outside the maintained
+        API.
+  embassy_time_driver:
+    register_kinds: []
+    evidence:
+    - path: embassy-cw32/src/time_driver.rs
+      anchor: pub fn tick_bounds
+    modes:
+    - id: continuous_run
+      status: partial
+      scope: Optional global nominal-1-MHz time driver reserves the whole GTIM (F002/F003) or GTIM1 (others)
+        and its IRQ.
+      limitations:
+      - "Each half-boundary must be serviced in strictly fewer than 32768 actual ticks, including flash stalls,\
+        \ critical sections, higher-priority handlers and wakers. HSI conservative budgets are <31.207619 ms\
+        \ at \xB15% and <32.125490 ms at \xB12%; configured HSE uses its own actual bounds. No silicon latency\
+        \ measurement."
+      - PLL rate-only envelopes retain the fewer-than-32768-actual-ticks requirement; numeric strict wall-time
+        conversion needs separate cycle-timing qualification and is not inferred from cycle-to-cycle jitter.
+      - No deep-sleep, clock gating, debugger-halt or unbounded blackout recovery. Monotonic clamp cannot reconstruct
+        elapsed time; time source remains nominal, not UTC.
+    - id: sleep_blackout_recovery
+      status: unimplemented
+      scope: No maintained HAL API declaration for this mode.
+      limitations:
+      - Deep-sleep timing and recovery after lost wraps are absent.
+    virtual: time_driver
+  radio_ble_lite:
+    register_kinds: []
+    evidence:
+    - path: sources/evidence-sources.json
+      anchor: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+    modes:
+    - id: radio_stack
+      status: deferred_by_user
+      scope: RF implementation explicitly deferred by the user.
+      limitations:
+      - Radio subsystem exists outside the top-level SVD inventory; no HAL radio implementation or runtime
+        qualification is claimed.
+    virtual_instances:
+      CW32R031:
+      - RADIO_BLE_LITE
+  radio_chirpiot:
+    register_kinds: []
+    evidence:
+    - path: sources/evidence-sources.json
+      anchor: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+    modes:
+    - id: radio_stack
+      status: deferred_by_user
+      scope: RF implementation explicitly deferred by the user.
+      limitations:
+      - Radio subsystem exists outside the top-level SVD inventory; no HAL radio implementation or runtime
+        qualification is claimed.
+    virtual_instances:
+      CW32W031:
+      - RADIO_CHIRPIOT
+pin_policy:
+  evidence:
+  - path: embassy-cw32/build.rs
+    anchor: "fn safe_pin(name: &str) -> bool {\n    match cw32_metapac::metadata::METADATA.line {\n       \
+      \ \"CW32F002\" | \"CW32F003\" => !matches!(name, \"PA2\" | \"PA5\" | \"PC5\"),\n        \"CW32L010\"\
+      \ => !matches!(name, \"PA7\" | \"PA8\" | \"PB7\"),\n        \"CW32L011\" | \"CW32L012\" => !matches!(name,\
+      \ \"PA13\" | \"PA14\"),\n        _ => !matches!(name, \"PA13\" | \"PA14\" | \"PF3\"),\n    }\n}"
+  excluded_by_family:
+    CW32A030:
+    - PA13
+    - PA14
+    - PF3
+    CW32F002:
+    - PA2
+    - PA5
+    - PC5
+    CW32F003:
+    - PA2
+    - PA5
+    - PC5
+    CW32F020:
+    - PA13
+    - PA14
+    - PF3
+    CW32F030:
+    - PA13
+    - PA14
+    - PF3
+    CW32L010:
+    - PA7
+    - PA8
+    - PB7
+    CW32L011:
+    - PA13
+    - PA14
+    CW32L012:
+    - PA13
+    - PA14
+    CW32L031:
+    - PA13
+    - PA14
+    - PF3
+    CW32L052:
+    - PA13
+    - PA14
+    - PF3
+    CW32L083:
+    - PA13
+    - PA14
+    - PF3
+    CW32R031:
+    - PA13
+    - PA14
+    - PF3
+    CW32W031:
+    - PA13
+    - PA14
+    - PF3
+trigger_routes:
+- family: CW32L010
+  source: BTIM1_TRGO
+  source_event: UPDATE
+  destination: ADC
+  signal: START_CONVERSION
+  status: partial
+  scope: Owned BTIM1-triggered one-shot ADC with terminal cancellation/timeout.
+  limitations:
+  - No periodic lossless scan, immediate pipeline drain, fanout, DMA or silicon throughput guarantee.
+  evidence:
+  - path: embassy-cw32/src/adc/sequence/triggered.rs
+    anchor: pub struct Btim1Adc
+  - path: cw32-data/triggers/cw32l010.yaml
+- family: CW32L010
+  source: BTIM1_TRGO
+  source_event: UPDATE
+  destination: BTIM2
+  signal: TRGI
+  status: partial
+  scope: Owned BTIM1 UPDATE to BTIM2 cascade.
+  limitations:
+  - No atomic cutoff, maximum lossless trigger-rate, fanout, DMA or silicon timing guarantee.
+  evidence:
+  - path: embassy-cw32/src/timer/trigger.rs
+    anchor: pub struct Btim2Cascade
+  - path: cw32-data/triggers/cw32l010.yaml
+- family: CW32L011
+  source: BTIM1_TRGO
+  source_event: UPDATE
+  destination: ADC
+  signal: START_CONVERSION
+  status: partial
+  scope: Owned BTIM1-triggered one-shot ADC with terminal cancellation/timeout.
+  limitations:
+  - No periodic lossless scan, immediate pipeline drain, fanout, DMA or silicon throughput guarantee.
+  evidence:
+  - path: embassy-cw32/src/adc/sequence/triggered.rs
+    anchor: pub struct Btim1Adc
+  - path: cw32-data/triggers/cw32l011.yaml
+- family: CW32L011
+  source: BTIM1_TRGO
+  source_event: UPDATE
+  destination: BTIM2
+  signal: TRGI
+  status: partial
+  scope: Owned BTIM1 UPDATE to BTIM2 cascade.
+  limitations:
+  - No atomic cutoff, maximum lossless trigger-rate, fanout, DMA or silicon timing guarantee.
+  evidence:
+  - path: embassy-cw32/src/timer/trigger.rs
+    anchor: pub struct Btim2Cascade
+  - path: cw32-data/triggers/cw32l011.yaml

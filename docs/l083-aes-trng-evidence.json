@@ -1,0 +1,287 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-08",
+  "status": "Own-source review and normal ARM builds only; no silicon execution, known-answer AES byte validation or entropy qualification.",
+  "sources": {
+    "manual": {
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "path": "CW32L083_UserManual_CN_V2.0.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "bytes": 11981462,
+      "printed_revision": "2.0",
+      "publication_date": "2024-09"
+    },
+    "datasheet": {
+      "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "path": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+      "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+      "bytes": 2900110,
+      "printed_revision": "1.9",
+      "publication_date": "2025-12-29"
+    },
+    "sdk": {
+      "source_ref": "vendor:CW32L083_StandardPeripheralLib_V2.2.zip",
+      "path": "CW32L083_StandardPeripheralLib_V2.2.zip",
+      "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+      "sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+      "bytes": 2307769,
+      "printed_revision": "2.2",
+      "publication_date": "2024-08-21"
+    }
+  },
+  "sdk_members": [
+    {
+      "source_ref": "member:cw32l083/Libraries/src/cw32l083_aes.c",
+      "path": "cw32l083/Libraries/src/cw32l083_aes.c",
+      "members": [
+        "Libraries/src/cw32l083_aes.c"
+      ],
+      "sha256": "a197d4a76ff82901fc4c2fd04b43e4d295cad89675810426b129cd204d9c8424",
+      "bytes": 6554,
+      "evidence": [
+        "docs/l083-aes-trng-evidence.json"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l083/Libraries/src/cw32l083_trng.c",
+      "path": "cw32l083/Libraries/src/cw32l083_trng.c",
+      "members": [
+        "Libraries/src/cw32l083_trng.c"
+      ],
+      "sha256": "734be8bd7263cab23697d5da143b712e40ff42767ef0eb167cfdddcec42f7a96",
+      "bytes": 4266,
+      "evidence": [
+        "docs/l083-aes-trng-evidence.json"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l083/Libraries/inc/cw32l083_aes.h",
+      "path": "cw32l083/Libraries/inc/cw32l083_aes.h",
+      "members": [
+        "Libraries/inc/cw32l083_aes.h"
+      ],
+      "sha256": "695006691a0af4cf63e9af5ec25324f6aff67198aeaee83e1ef90d7d7439446d",
+      "bytes": 3561,
+      "evidence": [
+        "docs/l083-aes-trng-evidence.json"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l083/Libraries/inc/cw32l083_trng.h",
+      "path": "cw32l083/Libraries/inc/cw32l083_trng.h",
+      "members": [
+        "Libraries/inc/cw32l083_trng.h"
+      ],
+      "sha256": "cf7850d6c4eae89134e823fa4ec9cca40d5dd9ac2ec5aec1429ad87dad00b56f",
+      "bytes": 5667,
+      "evidence": [
+        "docs/l083-aes-trng-evidence.json"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l083/Examples/AES/AES_256bit/USER/src/main.c",
+      "path": "cw32l083/Examples/AES/AES_256bit/USER/src/main.c",
+      "members": [
+        "Examples/AES/AES_256bit/USER/src/main.c"
+      ],
+      "sha256": "bc3aa5b769733089d67e5f0b5c9ff037ac4e57833406745065ce2b7d6d6dfaa2",
+      "bytes": 6943,
+      "evidence": [
+        "docs/l083-aes-trng-evidence.json"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l083/Examples/TRNG/TRNG_64bit/USER/src/main.c",
+      "path": "cw32l083/Examples/TRNG/TRNG_64bit/USER/src/main.c",
+      "members": [
+        "Examples/TRNG/TRNG_64bit/USER/src/main.c"
+      ],
+      "sha256": "61c279ff0597cab11a09dafae71cb0b299863cb55be066615227d2ddba84335b",
+      "bytes": 9348,
+      "evidence": [
+        "docs/l083-aes-trng-evidence.json"
+      ]
+    }
+  ],
+  "manual_pdf_page_offset": 1,
+  "manual_sections": {
+    "reset_effect": {
+      "section": "4.2",
+      "printed_pages": [
+        48
+      ]
+    },
+    "gates": {
+      "section": "4.7.12",
+      "printed_pages": [
+        85
+      ]
+    },
+    "reset_bits": {
+      "section": "4.7.15",
+      "printed_pages": [
+        89
+      ]
+    },
+    "interrupt_table": {
+      "section": "5.4",
+      "printed_pages": [
+        104,
+        105
+      ]
+    },
+    "dma_exclusion": {
+      "sections": [
+        "8.8.6",
+        "8.8.7"
+      ],
+      "printed_pages": [
+        149,
+        150
+      ]
+    },
+    "trng": {
+      "sections": [
+        "26.1",
+        "26.2",
+        "26.3",
+        "26.4",
+        "26.5",
+        "26.6"
+      ],
+      "printed_pages": [
+        536,
+        537,
+        538,
+        539,
+        540,
+        541
+      ]
+    },
+    "aes": {
+      "sections": [
+        "28.1",
+        "28.2",
+        "28.3",
+        "28.4",
+        "28.5"
+      ],
+      "printed_pages": [
+        565,
+        566,
+        567,
+        568,
+        569,
+        570
+      ]
+    }
+  },
+  "datasheet_sections": {
+    "trng": {
+      "section": "4.20",
+      "printed_pages": [
+        21
+      ]
+    },
+    "aes": {
+      "section": "4.21",
+      "printed_pages": [
+        22
+      ]
+    }
+  },
+  "facts": {
+    "schema_version": 1,
+    "family": "CW32L083",
+    "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+    "evidence": "docs/l083-aes-trng-evidence.json",
+    "aes": {
+      "register_version": "cw32l083_v1",
+      "block_words": 4,
+      "key_words_128": 4,
+      "key_words_192": 6,
+      "key_words_256": 8,
+      "word_bits": 32,
+      "word_order": "least-significant-register-first",
+      "mode": "ECB",
+      "irq": false,
+      "dma": false,
+      "start_abort_documented": false
+    },
+    "trng": {
+      "register_version": "cw32l083_v1",
+      "output_words": 2,
+      "word_bits": 32,
+      "word_order": "least-significant-register-first",
+      "irq": false,
+      "dma": false,
+      "health_status_documented": false,
+      "analog_ready_documented": false,
+      "start_abort_documented": false
+    }
+  },
+  "commands": {
+    "AES.CR.START": {
+      "write_one": "start",
+      "read_zero": "complete",
+      "read_one": "busy",
+      "write_zero": "unspecified; never used to abort"
+    },
+    "TRNG.CR1.START": {
+      "write_one": "start",
+      "read_zero": "complete",
+      "read_one": "busy",
+      "write_zero": "unspecified; never used to abort"
+    }
+  },
+  "enums": {
+    "aes.Mode": {
+      "ENCRYPT": 0,
+      "DECRYPT": 1
+    },
+    "aes.KeySize": {
+      "BITS128": 0,
+      "BITS192": 1,
+      "BITS256": 2,
+      "BITS128_ALTERNATE": 3
+    },
+    "trng.Source": {
+      "FEEDBACK": 0,
+      "ANALOG": 1,
+      "ANALOG_XOR_FEEDBACK": 2
+    },
+    "trng.Shift": {
+      "CYCLES8": 1,
+      "CYCLES16": 2,
+      "CYCLES32": 3,
+      "CYCLES64": 4,
+      "CYCLES128": 5,
+      "CYCLES256": 6
+    }
+  },
+  "qualification_limits": [
+    "The vendor AES example has no known ciphertext, only an encrypt/decrypt round-trip. No standard byte-array API is offered.",
+    "Both vendor uint16 timeout loops post-decrement through zero and can wrap; HAL uses bounded Rust ranges instead.",
+    "TRNG chapter contains no analog-ready, startup timing, entropy-strength or health/error status contract.",
+    "Pure linear-feedback input is deterministic and not accepted by HAL.",
+    "Register clearing on idle Drop covers volatile writes to documented key/data registers, not internal copies, caller RAM or certified erasure.",
+    "Busy timeout/drop retains gates; no reset/abort is attempted."
+  ],
+  "upstream": {
+    "revision": "f16efeffe37581092ec184718e6fdb1620393214",
+    "files": [
+      "embassy-stm32/src/cryp/mod.rs",
+      "embassy-stm32/src/rng.rs",
+      "embassy-stm32/src/rcc/mod.rs"
+    ],
+    "concepts": [
+      "Peri ownership",
+      "borrowed key lifetime",
+      "sealed Instance",
+      "central RccPeripheral/RCC_INFO"
+    ],
+    "adaptation": "Original chip-specific implementation; no STM32 register or health behavior transplanted."
+  }
+}

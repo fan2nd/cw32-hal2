@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-09",
+  "status": "own-family-manual-qualified-access-only",
+  "scope": "Only F002/F003 GPIO and GPIOC IDR register access changes from ReadWrite to Read. Offsets, 32-bit bus width, fieldsets, masks, pins, instances, other registers, HAL implementation and generic SVD field-access handling remain unchanged.",
+  "source_interpretation": "Both manuals independently specify GPIOx_IDR PINy[7:0] RO for x=A,B,C. All selected source register containers are RW. Only F003 GPIOA/B fields already say RO; F003 GPIOC and every F002 bank say RW. This whole-register correction addresses the manual-qualified access contract without activating generic field-access preservation. Existing GPIOC PIN0..5 inventory is preserved.",
+  "corrections": [
+    {
+      "family": "CW32F002",
+      "manual": {
+        "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+        "filename": "CW32F002_UserManual_CN_V1.4.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+        "revision": "CN V1.4",
+        "section": "8.6.14",
+        "printed_page": 113,
+        "pdf_page": 114,
+        "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add"
+      },
+      "source_svd": {
+        "path": "sources/vendor/CW32F002.svd",
+        "sha256": "d103e33a01e45d8359b7e13c0644f3aec0ea74e440db9fd37bd7755097bf6b71",
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+        "source_ref": "member:cw32f002/IdeSupport/MDK/WHXY.CW32F002_DFP.1.0.2/SVD/CW32F002.svd"
+      },
+      "blocks": [
+        {
+          "block": "GPIO",
+          "canonical": "gpio_cw32f002_v1",
+          "instances": [
+            "GPIOA",
+            "GPIOB"
+          ],
+          "existing_pin_fields": 8,
+          "svd_register_access": "read-write",
+          "svd_field_access": "read-write",
+          "discrepancy": "Original SVD register and field RW disagree with the own-family manual RO."
+        },
+        {
+          "block": "GPIOC",
+          "canonical": "gpioc_cw32f002_v1",
+          "instances": [
+            "GPIOC"
+          ],
+          "existing_pin_fields": 6,
+          "svd_register_access": "read-write",
+          "svd_field_access": "read-write",
+          "discrepancy": "Original SVD register and field RW disagree with the own-family manual RO."
+        }
+      ],
+      "register": "IDR",
+      "byte_offset": 80,
+      "bus_width_bits": 32,
+      "expected_access": "ReadWrite",
+      "access": "Read"
+    },
+    {
+      "family": "CW32F003",
+      "manual": {
+        "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+        "filename": "CW32F003_UserManual_CN_V2.3.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+        "revision": "CN V2.3",
+        "section": "8.6.14",
+        "printed_page": 115,
+        "pdf_page": 116,
+        "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738"
+      },
+      "source_svd": {
+        "path": "sources/vendor/CW32F003.svd",
+        "sha256": "9535665c3cd517e4619121ccac8f47b91a6528d295e3c9aed99367691a094293",
+        "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+        "source_ref": "member:cw32f003/IdeSupport/MDK/WHXY.CW32F003_DFP.1.0.2/SVD/CW32F003.svd"
+      },
+      "blocks": [
+        {
+          "block": "GPIO",
+          "canonical": "gpio_cw32f002_v1",
+          "instances": [
+            "GPIOA",
+            "GPIOB"
+          ],
+          "existing_pin_fields": 8,
+          "svd_register_access": "read-write",
+          "svd_field_access": "read-only",
+          "discrepancy": "Register-level SVD/manual disagreement and loss of explicit field RO in the current coarse projection."
+        },
+        {
+          "block": "GPIOC",
+          "canonical": "gpioc_cw32f002_v1",
+          "instances": [
+            "GPIOC"
+          ],
+          "existing_pin_fields": 6,
+          "svd_register_access": "read-write",
+          "svd_field_access": "read-write",
+          "discrepancy": "Original SVD register and field RW disagree with the own-family manual RO."
+        }
+      ],
+      "register": "IDR",
+      "byte_offset": 80,
+      "bus_width_bits": 32,
+      "expected_access": "ReadWrite",
+      "access": "Read"
+    }
+  ],
+  "canonical_changes": [
+    {
+      "path": "cw32-data/registers/gpio_cw32f002_v1.yaml",
+      "block": "GPIO",
+      "before_sha256": "a8a080f87b53885a7c82aab3f90be55db44a16729d65fc9c37ec528d5845ac6e",
+      "after_sha256": "13599a3c9b3a1feaed512a7bbf8bdb5aefdfb67a1640735229d73f29fb502151",
+      "before_ir_sha256": "47876c36fbd0ba08b610c8fdf38d493677845ee6e78cf432e7fedb3141f5b717",
+      "after_ir_sha256": "5de064dce1ab3a88e6d3d09981ce79179e8003645ab336ae1092fa4078d35d08"
+    },
+    {
+      "path": "cw32-data/registers/gpioc_cw32f002_v1.yaml",
+      "block": "GPIOC",
+      "before_sha256": "f9cec3135191f89a4f71376ce9d0240d3dff57c6fd7fd46bd31596f9379c6a75",
+      "after_sha256": "ab266a2766e95cac525926c1bf19bbdbe1df0a1c5d15d985accd6dfcfc4dc990",
+      "before_ir_sha256": "4887e834f87467dd2a3e7960b472b4e0bdc218da70d635110742ae90e6c10c49",
+      "after_ir_sha256": "0f9d7d02c992d25ad450d1f749df228268e7eff35c407578479f55f0359966c9"
+    }
+  ],
+  "generated_contract": {
+    "register": "IDR",
+    "offset": 80,
+    "before": "Reg<regs::Idr, crate::common::RW>",
+    "after": "Reg<regs::Idr, crate::common::R>",
+    "available": "read and existing value getters",
+    "removed_register_methods": [
+      "write",
+      "modify",
+      "write_value"
+    ],
+    "value_field_setters": "unchanged; the RO register cannot write a constructed value"
+  },
+  "hal_idr_uses": {
+    "embassy-cw32/src/gpio.rs": "Input sampling uses idr().read().",
+    "embassy-cw32/src/exti/engine.rs": "High/low trigger sampling uses idr().read()."
+  },
+  "hardware_validation": false
+}

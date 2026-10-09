@@ -1,0 +1,779 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-08",
+  "scope": "Owned internal-PCLK continuous up-counters only. No silicon execution or full hardware mode coverage. Existing ISR/EGR corrections are retained; this batch changes no register descriptions.",
+  "sources": {
+    "CW32x030_UserManual_CN_V2.5.pdf": {
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf"
+    },
+    "CW32x030_UserManual_CN_V2.5.txt": {
+      "sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf"
+    },
+    "cw32f030/Libraries/src/cw32f030_btim.c": {
+      "sha256": "850e7ac645a2b3bb822c21774054bf2abff3fe2694cafd526635fa52e1de5cf3"
+    },
+    "cw32f030/Libraries/inc/cw32f030_btim.h": {
+      "sha256": "92783f02a097d9675b5488bc397f751396e4348d1d277448bf4994761cfd72e0"
+    },
+    "CW32F020_UserManual_CN_V1.4.pdf": {
+      "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf"
+    },
+    "CW32F020_UserManual_CN_V1.4.txt": {
+      "sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf"
+    },
+    "cw32f020/Libraries/src/cw32f020_btim.c": {
+      "sha256": "0ff4bff394d4695b110c5cdf936b534d17bc9c2885d4d65d727c406ad53d707f"
+    },
+    "cw32f020/Libraries/inc/cw32f020_btim.h": {
+      "sha256": "9aca1786bd52e97d632820c67afa05d4228d621ddeb3e859476a9c0eb862fdb9"
+    },
+    "CW32F002_UserManual_CN_V1.4.pdf": {
+      "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf"
+    },
+    "CW32F002_UserManual_CN_V1.4.txt": {
+      "sha256": "cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf"
+    },
+    "cw32f002/Libraries/src/cw32f002_btim.c": {
+      "sha256": "56d5b81ca01e7b103c56a7607a0953869bda66be266d67597119bfa1a5f9b4ac"
+    },
+    "cw32f002/Libraries/inc/cw32f002_btim.h": {
+      "sha256": "fd91beb0d65f30eed1fff9fc223aec7e460ff59984761a7371b2cc47a300cca8"
+    },
+    "CW32F003_UserManual_CN_V2.3.pdf": {
+      "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf"
+    },
+    "CW32F003_UserManual_CN_V2.3.txt": {
+      "sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf"
+    },
+    "cw32f003/Libraries/src/cw32f003_btim.c": {
+      "sha256": "9c91a4faa1e4718366dc82b89e357bd0d6f0012550b18f7eafee77c48ada74c3"
+    },
+    "cw32f003/Libraries/inc/cw32f003_btim.h": {
+      "sha256": "08148366f31274a42b0670c7a3c2d2717c69115f30020363e49bd7132a9ecc80"
+    },
+    "CW32L031_UserManual_CN_V1.6.pdf": {
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf"
+    },
+    "CW32L031_UserManual_CN_V1.6.txt": {
+      "sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf"
+    },
+    "cw32l031/Libraries/src/cw32l031_btim.c": {
+      "sha256": "a5ba84288cd0082445b26d131492c89a929342a4fdbf49dc03b38a81f1ad3a19"
+    },
+    "cw32l031/Libraries/inc/cw32l031_btim.h": {
+      "sha256": "6124b6bc2e043eb2a679e0ca6a03c063cb0ad94fc7a3a199cb18ac471a820603"
+    },
+    "CW32R031_UserManual_CN_V1.3.pdf": {
+      "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf"
+    },
+    "CW32R031_UserManual_CN_V1.3.txt": {
+      "sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf"
+    },
+    "cw32r031/Libraries/src/cw32r031_btim.c": {
+      "sha256": "5e60d2526f0d91f28621ac2547a1e5afd3286972d25a0f5614c3c6cbb2ae7464"
+    },
+    "cw32r031/Libraries/inc/cw32r031_btim.h": {
+      "sha256": "b380a557e457ba394ffa87f7836d73f2c6ff7bc5e99dc0bbdd71c9323dd2ac0a"
+    },
+    "CW32W031_UserManual_CN_V1.4.pdf": {
+      "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf"
+    },
+    "CW32W031_UserManual_CN_V1.4.txt": {
+      "sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf"
+    },
+    "cw32w031/Libraries/src/cw32w031_btim.c": {
+      "sha256": "e6136ba3f1b0bc98ff41a68ab8298d2e2383eb8f6bf9b6c3cf2fb7b969e1ba4a"
+    },
+    "cw32w031/Libraries/inc/cw32w031_btim.h": {
+      "sha256": "ed7830c2fa3db3d4e06b1b08efb77b2ef4d7b4bb2041f14611b1ba839093761a"
+    },
+    "CW32L083_UserManual_CN_V2.0.pdf": {
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf"
+    },
+    "CW32L083_UserManual_CN_V2.0.txt": {
+      "sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf"
+    },
+    "cw32l083/Libraries/src/cw32l083_btim.c": {
+      "sha256": "e732b8a3f33dbe17a2c134bba97f564b0e03e5c4f44d31acf2bc0d5ced5e031d"
+    },
+    "cw32l083/Libraries/inc/cw32l083_btim.h": {
+      "sha256": "6f9a046b29c45c719e6fef6a1dbe4b1fb5011cf200a1edd9a27c27903b1c9bef"
+    },
+    "CW32L052_UserManual_CN_V1.5.pdf": {
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf"
+    },
+    "CW32L052_UserManual_CN_V1.5.txt": {
+      "sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf"
+    },
+    "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_btim.c": {
+      "sha256": "4875c3420c12848dd3417fc98b341e6b91cbb80aa9a9da9468df814ac02b9e11"
+    },
+    "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_btim.h": {
+      "sha256": "0fc07478153cbdb40ce456546ab1d18f5878336ef03afa1d772b81c8f5a3a66f"
+    },
+    "CW32L010_UserManual_CN_V1.2.pdf": {
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf"
+    },
+    "CW32L010_UserManual_CN_V1.2.txt": {
+      "sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938",
+      "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf"
+    },
+    "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_btim.c": {
+      "sha256": "5f1fc9883ec47eb4c9805e02aaf2db62354a6b62b81adddb1d3cbf9804c79b5d"
+    },
+    "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_btim.h": {
+      "sha256": "e156ee79c987073517f0fd6df7deb0fe8886a2aeae7dbeb7e172f2661aaf8b50"
+    },
+    "CW32L011_UserManual_CN_V1.1.pdf": {
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf"
+    },
+    "CW32L011_UserManual_CN_V1.1.txt": {
+      "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3",
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf"
+    },
+    "cw32l011/Libraries/src/cw32l011_btim.c": {
+      "sha256": "64e12480c63fc1e1e7745534a8b1cbcd5e17dfd77ee95cdde63609ae4f0e5c2f"
+    },
+    "cw32l011/Libraries/inc/cw32l011_btim.h": {
+      "sha256": "028bb59c2cee0752aa456a9eded30d72328ef45e2b0ac0479d3d20339abbad01"
+    },
+    "CW32L012_UserManual_CN_V1.4.pdf": {
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf"
+    },
+    "CW32L012_UserManual_CN_V1.4.txt": {
+      "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf"
+    },
+    "cw32l012/Libraries/src/cw32l012_btim.c": {
+      "sha256": "23c131602cac01d1faa0d86d44472eea15e75b3d9952ead3887d93d4d9ec6edf"
+    },
+    "cw32l012/Libraries/inc/cw32l012_btim.h": {
+      "sha256": "b3bf357bf668bccfca8881b8880135c5d1b81b030a668d17fcc6734d48dda7f9"
+    }
+  },
+  "families": {
+    "CW32F030": {
+      "manual": "CW32x030_UserManual_CN_V2.5.pdf",
+      "manual_chapter": "13 BTIM",
+      "manual_sections": [
+        "13.3.1.4–5",
+        "13.7.1–8"
+      ],
+      "sdk": [
+        "cw32f030/Libraries/src/cw32f030_btim.c",
+        "cw32f030/Libraries/inc/cw32f030_btim.h"
+      ],
+      "ip_version": "v1",
+      "cfg": "btim_v1",
+      "register_ir": "cw32-data/data/registers/btim_v1.json",
+      "register_sha256": "4975741c5bf8b389ab7acad7d466f1dbb4c94e2aedc7bea6cd94d70910679734",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_v1.json",
+      "instances": {
+        "BTIM1": 1073825792,
+        "BTIM2": 1073826048,
+        "BTIM3": 1073826304
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "BCR.PRS=log2(divisor)",
+      "configuration_update": "PRS latches on overflow or EN rising edge; reconfigure stops then restarts if previously running.",
+      "status_access": "Read",
+      "command_mask_class": "classic",
+      "declared_features": [
+        "cw32f030",
+        "cw32f030c8",
+        "cw32f030k8",
+        "cw32f030f8",
+        "cw32f030f6",
+        "cw32f030c8t7",
+        "cw32f030k8t7",
+        "cw32f030k8u7",
+        "cw32f030f8v7",
+        "cw32f030f6p7"
+      ],
+      "pins_required": false
+    },
+    "CW32A030": {
+      "manual": "CW32x030_UserManual_CN_V2.5.pdf",
+      "manual_chapter": "13 BTIM",
+      "manual_sections": [
+        "13.3.1.4–5",
+        "13.7.1–8"
+      ],
+      "sdk": [
+        "cw32f030/Libraries/src/cw32f030_btim.c",
+        "cw32f030/Libraries/inc/cw32f030_btim.h"
+      ],
+      "ip_version": "v1",
+      "cfg": "btim_v1",
+      "register_ir": "cw32-data/data/registers/btim_v1.json",
+      "register_sha256": "4975741c5bf8b389ab7acad7d466f1dbb4c94e2aedc7bea6cd94d70910679734",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_v1.json",
+      "instances": {
+        "BTIM1": 1073825792,
+        "BTIM2": 1073826048,
+        "BTIM3": 1073826304
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "BCR.PRS=log2(divisor)",
+      "configuration_update": "PRS latches on overflow or EN rising edge; reconfigure stops then restarts if previously running.",
+      "status_access": "Read",
+      "command_mask_class": "classic",
+      "declared_features": [
+        "cw32a030",
+        "cw32a030c8t7"
+      ],
+      "pins_required": false,
+      "compatibility_basis": "Shared x030 reference manual and previously acquired CW32A030-register-compatibility-evidence.json (vendor source cache); no invented separate A030 register map."
+    },
+    "CW32F020": {
+      "manual": "CW32F020_UserManual_CN_V1.4.pdf",
+      "manual_chapter": "13 BTIM",
+      "manual_sections": [
+        "13.3.1.4–5",
+        "13.7.1–8"
+      ],
+      "sdk": [
+        "cw32f020/Libraries/src/cw32f020_btim.c",
+        "cw32f020/Libraries/inc/cw32f020_btim.h"
+      ],
+      "ip_version": "v1",
+      "cfg": "btim_v1",
+      "register_ir": "cw32-data/data/registers/btim_v1.json",
+      "register_sha256": "4975741c5bf8b389ab7acad7d466f1dbb4c94e2aedc7bea6cd94d70910679734",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32f020_v1.json",
+      "instances": {
+        "BTIM1": 1073825792,
+        "BTIM2": 1073826048,
+        "BTIM3": 1073826304
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "BCR.PRS=log2(divisor)",
+      "configuration_update": "PRS latches on overflow or EN rising edge; reconfigure stops then restarts if previously running.",
+      "status_access": "Read",
+      "command_mask_class": "classic",
+      "declared_features": [
+        "cw32f020",
+        "cw32f020f6u7",
+        "cw32f020k6u7",
+        "cw32f020c6u7"
+      ],
+      "pins_required": false
+    },
+    "CW32F002": {
+      "manual": "CW32F002_UserManual_CN_V1.4.pdf",
+      "manual_chapter": "11 BTIM",
+      "manual_sections": [
+        "11.3.1.4–5",
+        "11.7.1–7"
+      ],
+      "sdk": [
+        "cw32f002/Libraries/src/cw32f002_btim.c",
+        "cw32f002/Libraries/inc/cw32f002_btim.h"
+      ],
+      "ip_version": "cw32f002_v1",
+      "cfg": "btim_cw32f002_v1",
+      "register_ir": "cw32-data/data/registers/btim_cw32f002_v1.json",
+      "register_sha256": "f3f78ccc5dd3851e71228ff8973ad2d239769698072f870044df1205211f8c5d",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32f002_v1.json",
+      "instances": {
+        "BTIM1": 1073825792,
+        "BTIM2": 1073826048,
+        "BTIM3": 1073826304
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "BCR.PRS=log2(divisor)",
+      "configuration_update": "PRS latches on overflow or EN rising edge; reconfigure stops then restarts if previously running.",
+      "status_access": "Read",
+      "command_mask_class": "classic",
+      "declared_features": [
+        "cw32f002",
+        "cw32f002f3p7",
+        "cw32f002f3u7"
+      ],
+      "pins_required": false
+    },
+    "CW32F003": {
+      "manual": "CW32F003_UserManual_CN_V2.3.pdf",
+      "manual_chapter": "11 BTIM",
+      "manual_sections": [
+        "11.3.1.4–5",
+        "11.7.1–7"
+      ],
+      "sdk": [
+        "cw32f003/Libraries/src/cw32f003_btim.c",
+        "cw32f003/Libraries/inc/cw32f003_btim.h"
+      ],
+      "ip_version": "cw32f002_v1",
+      "cfg": "btim_cw32f002_v1",
+      "register_ir": "cw32-data/data/registers/btim_cw32f002_v1.json",
+      "register_sha256": "f3f78ccc5dd3851e71228ff8973ad2d239769698072f870044df1205211f8c5d",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32f003_v1.json",
+      "instances": {
+        "BTIM1": 1073825792,
+        "BTIM2": 1073826048,
+        "BTIM3": 1073826304
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "BCR.PRS=log2(divisor)",
+      "configuration_update": "PRS latches on overflow or EN rising edge; reconfigure stops then restarts if previously running.",
+      "status_access": "Read",
+      "command_mask_class": "classic",
+      "declared_features": [
+        "cw32f003",
+        "cw32f003e4p7",
+        "cw32f003f4p7",
+        "cw32f003f4u7"
+      ],
+      "pins_required": false
+    },
+    "CW32L031": {
+      "manual": "CW32L031_UserManual_CN_V1.6.pdf",
+      "manual_chapter": "13 BTIM",
+      "manual_sections": [
+        "13.3.1.4–5",
+        "13.7.1–9"
+      ],
+      "sdk": [
+        "cw32l031/Libraries/src/cw32l031_btim.c",
+        "cw32l031/Libraries/inc/cw32l031_btim.h"
+      ],
+      "ip_version": "cw32l031_v1",
+      "cfg": "btim_cw32l031_v1",
+      "register_ir": "cw32-data/data/registers/btim_cw32l031_v1.json",
+      "register_sha256": "5a650694847c9f15fdb273b1bce280225b13a97420b79441bde6db941ce4648d",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32l031_v1.json",
+      "instances": {
+        "BTIM1": 1073825792,
+        "BTIM2": 1073826048,
+        "BTIM3": 1073826304
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "PSC=divisor−1",
+      "configuration_update": "PSC latches on overflow or EN rising edge; reconfigure stops then restarts if previously running.",
+      "status_access": "Read",
+      "command_mask_class": "classic",
+      "declared_features": [
+        "cw32l031",
+        "cw32l031c8t6",
+        "cw32l031c8u6",
+        "cw32l031f8p6",
+        "cw32l031f8u6",
+        "cw32l031k8u6",
+        "cw32l031k8v6"
+      ],
+      "pins_required": false
+    },
+    "CW32R031": {
+      "manual": "CW32R031_UserManual_CN_V1.3.pdf",
+      "manual_chapter": "13 BTIM",
+      "manual_sections": [
+        "13.3.1.4–5",
+        "13.7.1–9"
+      ],
+      "sdk": [
+        "cw32r031/Libraries/src/cw32r031_btim.c",
+        "cw32r031/Libraries/inc/cw32r031_btim.h"
+      ],
+      "ip_version": "cw32l031_v1",
+      "cfg": "btim_cw32l031_v1",
+      "register_ir": "cw32-data/data/registers/btim_cw32l031_v1.json",
+      "register_sha256": "5a650694847c9f15fdb273b1bce280225b13a97420b79441bde6db941ce4648d",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32l031_v1.json",
+      "instances": {
+        "BTIM1": 1073825792,
+        "BTIM2": 1073826048,
+        "BTIM3": 1073826304
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "PSC=divisor−1",
+      "configuration_update": "PSC latches on overflow or EN rising edge; reconfigure stops then restarts if previously running.",
+      "status_access": "Read",
+      "command_mask_class": "classic",
+      "declared_features": [
+        "cw32r031",
+        "cw32r031c8u6"
+      ],
+      "pins_required": false
+    },
+    "CW32W031": {
+      "manual": "CW32W031_UserManual_CN_V1.4.pdf",
+      "manual_chapter": "13 BTIM",
+      "manual_sections": [
+        "13.3.1.4–5",
+        "13.7.1–9"
+      ],
+      "sdk": [
+        "cw32w031/Libraries/src/cw32w031_btim.c",
+        "cw32w031/Libraries/inc/cw32w031_btim.h"
+      ],
+      "ip_version": "cw32l031_v1",
+      "cfg": "btim_cw32l031_v1",
+      "register_ir": "cw32-data/data/registers/btim_cw32l031_v1.json",
+      "register_sha256": "5a650694847c9f15fdb273b1bce280225b13a97420b79441bde6db941ce4648d",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32l031_v1.json",
+      "instances": {
+        "BTIM1": 1073825792,
+        "BTIM2": 1073826048,
+        "BTIM3": 1073826304
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "PSC=divisor−1",
+      "configuration_update": "PSC latches on overflow or EN rising edge; reconfigure stops then restarts if previously running.",
+      "status_access": "Read",
+      "command_mask_class": "classic",
+      "declared_features": [
+        "cw32w031",
+        "cw32w031r8u6"
+      ],
+      "pins_required": false
+    },
+    "CW32L083": {
+      "manual": "CW32L083_UserManual_CN_V2.0.pdf",
+      "manual_chapter": "13 BTIM",
+      "manual_sections": [
+        "13.3.1.4–5",
+        "13.7.1–9"
+      ],
+      "sdk": [
+        "cw32l083/Libraries/src/cw32l083_btim.c",
+        "cw32l083/Libraries/inc/cw32l083_btim.h"
+      ],
+      "ip_version": "cw32l031_v1",
+      "cfg": "btim_cw32l031_v1",
+      "register_ir": "cw32-data/data/registers/btim_cw32l031_v1.json",
+      "register_sha256": "5a650694847c9f15fdb273b1bce280225b13a97420b79441bde6db941ce4648d",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32l083_v1.json",
+      "instances": {
+        "BTIM1": 1073825792,
+        "BTIM2": 1073826048,
+        "BTIM3": 1073826304
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "PSC=divisor−1",
+      "configuration_update": "PSC latches on overflow or EN rising edge; reconfigure stops then restarts if previously running.",
+      "status_access": "Read",
+      "command_mask_class": "classic",
+      "declared_features": [
+        "cw32l083",
+        "cw32l083mct6",
+        "cw32l083rbt6",
+        "cw32l083rcs6",
+        "cw32l083rct6",
+        "cw32l083vct6"
+      ],
+      "pins_required": false
+    },
+    "CW32L052": {
+      "manual": "CW32L052_UserManual_CN_V1.5.pdf",
+      "manual_chapter": "13 BTIM",
+      "manual_sections": [
+        "13.3.1.4–5",
+        "13.7.1–9"
+      ],
+      "sdk": [
+        "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_btim.c",
+        "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_btim.h"
+      ],
+      "ip_version": "cw32l052_v1",
+      "cfg": "btim_cw32l052_v1",
+      "register_ir": "cw32-data/data/registers/btim_cw32l052_v1.json",
+      "register_sha256": "c7a7a1953a644b9872eac168134d72e39c3ccc965a5107e86913689189090a39",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32l052_v1.json",
+      "instances": {
+        "BTIM1": 1073825792,
+        "BTIM2": 1073826048,
+        "BTIM3": 1073826304
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "PSC=divisor−1",
+      "configuration_update": "PSC latches on overflow or EN rising edge; reconfigure stops then restarts if previously running.",
+      "status_access": "Read",
+      "command_mask_class": "classic",
+      "declared_features": [
+        "cw32l052",
+        "cw32l052c8t6",
+        "cw32l052r8s6",
+        "cw32l052r8t6"
+      ],
+      "pins_required": false
+    },
+    "CW32L010": {
+      "manual": "CW32L010_UserManual_CN_V1.2.pdf",
+      "manual_chapter": "11 BTIM",
+      "manual_sections": [
+        "11.3.1.1–2",
+        "11.9.1,5–10"
+      ],
+      "sdk": [
+        "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_btim.c",
+        "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_btim.h"
+      ],
+      "ip_version": "cw32l010_v1",
+      "cfg": "btim_cw32l010_v1",
+      "register_ir": "cw32-data/data/registers/btim_cw32l010_v1.json",
+      "register_sha256": "5db58eb4d3ba4e30c56b73f63e22d858d0bbf26a388f8d71ed8ae6db77c60fe4",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32l010_v1.json",
+      "instances": {
+        "BTIM1": 1073760256,
+        "BTIM2": 1073760320,
+        "BTIM3": 1073760384
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 2,
+        "key": "0x5a5a0000",
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "PSC=divisor−1",
+      "configuration_update": "Stopped PSC write followed by WO EGR.UG=1 to reset counter/divider phase; URS=1/UDIS=0 selects overflow updates. No claim that BTIM has GTIM preload semantics.",
+      "status_access": "Read",
+      "command_mask_class": "modern",
+      "declared_features": [
+        "cw32l010",
+        "cw32l010f8p6",
+        "cw32l010f8u6",
+        "cw32l010y8m6"
+      ],
+      "pins_required": false
+    },
+    "CW32L011": {
+      "manual": "CW32L011_UserManual_CN_V1.1.pdf",
+      "manual_chapter": "11 BTIM",
+      "manual_sections": [
+        "11.3.1.1–2",
+        "11.9.1,5–10"
+      ],
+      "sdk": [
+        "cw32l011/Libraries/src/cw32l011_btim.c",
+        "cw32l011/Libraries/inc/cw32l011_btim.h"
+      ],
+      "ip_version": "cw32l010_v1",
+      "cfg": "btim_cw32l010_v1",
+      "register_ir": "cw32-data/data/registers/btim_cw32l010_v1.json",
+      "register_sha256": "5db58eb4d3ba4e30c56b73f63e22d858d0bbf26a388f8d71ed8ae6db77c60fe4",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32l011_v1.json",
+      "instances": {
+        "BTIM1": 1073760256,
+        "BTIM2": 1073760320,
+        "BTIM3": 1073760384
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 2,
+        "key": "0x5a5a0000",
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "PSC=divisor−1",
+      "configuration_update": "Stopped PSC write followed by WO EGR.UG=1 to reset counter/divider phase; URS=1/UDIS=0 selects overflow updates. No claim that BTIM has GTIM preload semantics.",
+      "status_access": "Read",
+      "command_mask_class": "modern",
+      "declared_features": [
+        "cw32l011",
+        "cw32l011k8t6",
+        "cw32l011k8u6"
+      ],
+      "pins_required": false
+    },
+    "CW32L012": {
+      "manual": "CW32L012_UserManual_CN_V1.4.pdf",
+      "manual_chapter": "14 BTIM",
+      "manual_sections": [
+        "14.3.1.1–2",
+        "14.10.1,5–10"
+      ],
+      "sdk": [
+        "cw32l012/Libraries/src/cw32l012_btim.c",
+        "cw32l012/Libraries/inc/cw32l012_btim.h"
+      ],
+      "ip_version": "cw32l012_v1",
+      "cfg": "btim_cw32l012_v1",
+      "register_ir": "cw32-data/data/registers/btim_cw32l012_v1.json",
+      "register_sha256": "67785cd38196f63ea906cfaf0f00911a96f9d8c98d90f3bd7c9d6bd29bdaa5c8",
+      "sysctrl_ir": "cw32-data/data/registers/sysctrl_cw32l012_v1.json",
+      "instances": {
+        "BTIM1": 1073760256,
+        "BTIM2": 1073760320,
+        "BTIM3": 1073760384
+      },
+      "shared_clock": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 2,
+        "key": "0x5a5a0000",
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "kernel_clock": "PCLK without APB multiplier",
+      "prescaler_encoding": "PSC=divisor−1",
+      "configuration_update": "Stopped PSC write followed by WO EGR.UG=1 to reset counter/divider phase; URS=1/UDIS=0 selects overflow updates. No claim that BTIM has GTIM preload semantics.",
+      "status_access": "Read",
+      "command_mask_class": "modern",
+      "declared_features": [
+        "cw32l012",
+        "cw32l012c8t6",
+        "cw32l012c8u6"
+      ],
+      "pins_required": false
+    }
+  },
+  "command_masks": {
+    "classic": {
+      "defined_r1w0_flags": [
+        "OV bit0",
+        "TI bit1",
+        "TOP bit2"
+      ],
+      "defined_flag_mask": "0x7",
+      "clear_overflow_write": "0x6",
+      "clear_all_write": "0x0",
+      "reserved_bits_written": "0",
+      "basis": "Own BTIM ICR access/field tables, independently of reset-value tables."
+    },
+    "modern": {
+      "defined_r1w0_flags": [
+        "UIF bit0",
+        "TIF bit6"
+      ],
+      "defined_flag_mask": "0x41",
+      "clear_overflow_write": "0x40",
+      "clear_all_write": "0x0",
+      "reserved_bits_written": "0",
+      "egr_update_write": "0x1",
+      "basis": "Own BTIM ICR and WO EGR access/field tables, independently of reset-value tables."
+    }
+  },
+  "ownership": {
+    "retained": "Peri<BTIMx> for complete Timer lifetime",
+    "shared_reset": "Never asserted by a per-instance constructor",
+    "shared_clock": "Enable only; remain enabled on drop, preserving unowned or independently used sibling banks",
+    "drop": "Stop only owned counter and disable only its IRQ/DMA requests",
+    "cfg": "Actual btim_<canonical version> selects real PAC layout; no register casts or generalized STM32 alias"
+  },
+  "limits": [
+    "All families expose prescalers 1,2,4,...,32768; linear PSC hardware supports more divisors, intentionally not exposed in this batch.",
+    "Period 1 through 65536 ticks; exact rate PCLK / (prescaler * ticks); integer-Hertz getter can round sub-Hertz periods to zero.",
+    "OV/UIF flags coalesce; no lossless timebase guarantee.",
+    "No async/shared-IRQ integration, DMA API, external-counter/trigger/gate modes, one-shot, pin output, PWM, capture or encoder.",
+    "No board was flashed; host models and ARM checks do not prove silicon timing."
+  ]
+}

@@ -1,0 +1,1413 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-08",
+  "scope": "Own-family manual, datasheet, CMSIS and SDK source review for RAM parity diagnostics; no firmware executed or fault injected.",
+  "families": {
+    "CW32A030": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "path": "CW32x030_UserManual_CN_V2.5.pdf",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+          "bytes": 9989317,
+          "printed_revision": "2.5",
+          "publication_date": "2024-09"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+          "path": "CW32A030_DataSheet_CN_V1.1.pdf",
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf",
+          "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+          "bytes": 2692267,
+          "printed_revision": "1.1",
+          "publication_date": "2025-12-30"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32F030_StandardPeripheralLib_V2.2.zip",
+          "path": "CW32F030_StandardPeripheralLib_V2.2.zip",
+          "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+          "sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+          "bytes": 8457933,
+          "printed_revision": "2.2",
+          "publication_date": "2024-11-11"
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32f030/Libraries/inc/cw32f030.h",
+          "path": "cw32f030/Libraries/inc/cw32f030.h",
+          "members": [
+            "Libraries/inc/cw32f030.h"
+          ],
+          "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862",
+          "bytes": 695293
+        },
+        {
+          "source_ref": "member:cw32f030/Libraries/inc/cw32f030_ram.h",
+          "path": "cw32f030/Libraries/inc/cw32f030_ram.h",
+          "members": [
+            "Libraries/inc/cw32f030_ram.h"
+          ],
+          "sha256": "9b5493479c1b87b0ff3a891a3640284aae5859ac83223c1d2d2418b1133e35f2",
+          "bytes": 2974
+        },
+        {
+          "source_ref": "member:cw32f030/Libraries/src/cw32f030_ram.c",
+          "path": "cw32f030/Libraries/src/cw32f030_ram.c",
+          "members": [
+            "Libraries/src/cw32f030_ram.c"
+          ],
+          "sha256": "f92c78cbefaaf16722e8c23f5463a1fcf274e9cc9543d707def4047ce13fd9f8",
+          "bytes": 3060
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        106,
+        107,
+        108,
+        109,
+        110,
+        111
+      ],
+      "manual_chapter_printed_pages": [
+        105,
+        106,
+        107,
+        108,
+        109,
+        110
+      ],
+      "datasheet_parity_pdf_pages": [
+        4,
+        9
+      ],
+      "sdk_alias_basis": "Common CW32F030/CW32A030 manual explicitly covers both; A030 own datasheet retained.",
+      "profile": {
+        "register_version": "v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 1,
+        "enable_status": true,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "SDK RAM_IT_PARITY is bit1 for IER but reused for bit0 ISR/ICR; HAL follows each register field, not the SDK driver mask.",
+        "Pinned chiptool IR omits field-level access; legacy PAC emitted a writable EN setter. Own manual makes EN read-only; the field-access projection suppresses only set_en and keeps PARITY writable."
+      ],
+      "datasheet_parity_printed_pages": [
+        3,
+        8
+      ]
+    },
+    "CW32F002": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+          "path": "CW32F002_UserManual_CN_V1.4.pdf",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+          "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+          "bytes": 7846423,
+          "printed_revision": "1.4",
+          "publication_date": "2024-09"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32F002_DataSheet_CN_V1.2.pdf",
+          "path": "CW32F002_DataSheet_CN_V1.2.pdf",
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32F002_DataSheet_CN_V1.2.pdf",
+          "sha256": "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506",
+          "bytes": 2250121,
+          "printed_revision": "1.2",
+          "publication_date": "2025-12-30"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32F002_StandardPeripheralLib_V1.2.zip",
+          "path": "CW32F002_StandardPeripheralLib_V1.2.zip",
+          "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+          "sha256": "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc",
+          "bytes": 1736578,
+          "printed_revision": "1.2",
+          "publication_date": "2024-01-15"
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32f002/Libraries/inc/cw32f002.h",
+          "path": "cw32f002/Libraries/inc/cw32f002.h",
+          "members": [
+            "Libraries/inc/cw32f002.h"
+          ],
+          "sha256": "399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54",
+          "bytes": 365735
+        },
+        {
+          "source_ref": "member:cw32f002/Libraries/inc/cw32f002_ram.h",
+          "path": "cw32f002/Libraries/inc/cw32f002_ram.h",
+          "members": [
+            "Libraries/inc/cw32f002_ram.h"
+          ],
+          "sha256": "1cad14bdfc7218308d22858148ea259f868fadcc0e0cd7aba9d540fbe60844df",
+          "bytes": 2914
+        },
+        {
+          "source_ref": "member:cw32f002/Libraries/src/cw32f002_ram.c",
+          "path": "cw32f002/Libraries/src/cw32f002_ram.c",
+          "members": [
+            "Libraries/src/cw32f002_ram.c"
+          ],
+          "sha256": "2d59cd8f35e4e371d329e272db71947e47dd971bb41b5508d729953ee5ac8012",
+          "bytes": 3118
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        82,
+        83,
+        84,
+        85,
+        86,
+        87
+      ],
+      "manual_chapter_printed_pages": [
+        81,
+        82,
+        83,
+        84,
+        85,
+        86
+      ],
+      "datasheet_parity_pdf_pages": [
+        4,
+        9
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 1,
+        "enable_status": true,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "Pinned chiptool IR omits field-level access; legacy PAC emitted a writable EN setter. Own manual makes EN read-only; the field-access projection suppresses only set_en and keeps PARITY writable."
+      ],
+      "datasheet_parity_printed_pages": [
+        3,
+        8
+      ]
+    },
+    "CW32F003": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+          "path": "CW32F003_UserManual_CN_V2.3.pdf",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+          "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+          "bytes": 8723015,
+          "printed_revision": "2.3",
+          "publication_date": "2024-09"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32F003_DataSheet_CN_V1.9.pdf",
+          "path": "CW32F003_DataSheet_CN_V1.9.pdf",
+          "url": "https://www.whxy.com/uploads/files/20251226/CW32F003_DataSheet_CN_V1.9.pdf",
+          "sha256": "5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd",
+          "bytes": 2302996,
+          "printed_revision": "1.9",
+          "publication_date": "2025-12-25"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32F003_StandardPeripheralLib_V1.7.zip",
+          "path": "CW32F003_StandardPeripheralLib_V1.7.zip",
+          "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+          "sha256": "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+          "bytes": 1966998,
+          "printed_revision": null,
+          "publication_date": null
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32f003/Libraries/inc/cw32f003.h",
+          "path": "cw32f003/Libraries/inc/cw32f003.h",
+          "members": [
+            "Libraries/inc/cw32f003.h"
+          ],
+          "sha256": "1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f",
+          "bytes": 369370
+        },
+        {
+          "source_ref": "member:cw32f003/Libraries/inc/cw32f003_ram.h",
+          "path": "cw32f003/Libraries/inc/cw32f003_ram.h",
+          "members": [
+            "Libraries/inc/cw32f003_ram.h"
+          ],
+          "sha256": "10c29d3f581c4e7174d9670de741c2a1f9f90080866b424dd5040d640029393f",
+          "bytes": 2917
+        },
+        {
+          "source_ref": "member:cw32f003/Libraries/src/cw32f003_ram.c",
+          "path": "cw32f003/Libraries/src/cw32f003_ram.c",
+          "members": [
+            "Libraries/src/cw32f003_ram.c"
+          ],
+          "sha256": "ac44d8e7fb20874eff89a2ab3321176093bdf3b15570a2f069d217acb96137a5",
+          "bytes": 3096
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        84,
+        85,
+        86,
+        87,
+        88,
+        89
+      ],
+      "manual_chapter_printed_pages": [
+        83,
+        84,
+        85,
+        86,
+        87,
+        88
+      ],
+      "datasheet_parity_pdf_pages": [
+        4,
+        9
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 1,
+        "enable_status": true,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "Pinned chiptool IR omits field-level access; legacy PAC emitted a writable EN setter. Own manual makes EN read-only; the field-access projection suppresses only set_en and keeps PARITY writable."
+      ],
+      "datasheet_parity_printed_pages": [
+        3,
+        8
+      ]
+    },
+    "CW32F020": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+          "path": "CW32F020_UserManual_CN_V1.4.pdf",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+          "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+          "bytes": 9120176,
+          "printed_revision": "1.4",
+          "publication_date": "2024-09"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32F020_DataSheet_CN_V1.3.pdf",
+          "path": "CW32F020_DataSheet_CN_V1.3.pdf",
+          "url": "https://www.whxy.com/uploads/files/20250821/CW32F020_DataSheet_CN_V1.3.pdf",
+          "sha256": "9fe3f5cf054612faf3b94de3e0f4166886e7b7ab2a43ebced009a48270aaca91",
+          "bytes": 2449783,
+          "printed_revision": "1.2",
+          "publication_date": "2023-02-14"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32F020_StandardPeripheralLib_V1.2.zip",
+          "path": "CW32F020_StandardPeripheralLib_V1.2.zip",
+          "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+          "sha256": "1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d",
+          "bytes": 2214134,
+          "printed_revision": "1.2",
+          "publication_date": "2024-01-15"
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32f020/Libraries/inc/cw32f020.h",
+          "path": "cw32f020/Libraries/inc/cw32f020.h",
+          "members": [
+            "Libraries/inc/cw32f020.h"
+          ],
+          "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f",
+          "bytes": 632223
+        },
+        {
+          "source_ref": "member:cw32f020/Libraries/inc/cw32f020_ram.h",
+          "path": "cw32f020/Libraries/inc/cw32f020_ram.h",
+          "members": [
+            "Libraries/inc/cw32f020_ram.h"
+          ],
+          "sha256": "b7e31a49918e6d4db0a88fb702b6c31c88fa9035e61e8179a3361868e9edafe9",
+          "bytes": 2948
+        },
+        {
+          "source_ref": "member:cw32f020/Libraries/src/cw32f020_ram.c",
+          "path": "cw32f020/Libraries/src/cw32f020_ram.c",
+          "members": [
+            "Libraries/src/cw32f020_ram.c"
+          ],
+          "sha256": "9f1e676cc774fb8a4436f4a668aca74257c6805a708a89b683a06720dacb93f6",
+          "bytes": 3066
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        104,
+        105,
+        106,
+        107,
+        108,
+        109
+      ],
+      "manual_chapter_printed_pages": [
+        103,
+        104,
+        105,
+        106,
+        107,
+        108
+      ],
+      "datasheet_parity_pdf_pages": [
+        4,
+        9
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 1,
+        "enable_status": true,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "SDK RAM_IT_PARITY is bit1 for IER but reused for bit0 ISR/ICR; HAL follows each register field, not the SDK driver mask.",
+        "Pinned chiptool IR omits field-level access; legacy PAC emitted a writable EN setter. Own manual makes EN read-only; the field-access projection suppresses only set_en and keeps PARITY writable.",
+        "Datasheet filename says V1.3 while the checked pages print Rev1.2; the ledger preserves the artifact URL and printed identity separately."
+      ],
+      "datasheet_parity_printed_pages": [
+        3,
+        8
+      ]
+    },
+    "CW32F030": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "path": "CW32x030_UserManual_CN_V2.5.pdf",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+          "bytes": 9989317,
+          "printed_revision": "2.5",
+          "publication_date": "2024-09"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+          "path": "CW32F030_DataSheet_CN_V1.9.pdf",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf",
+          "sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2",
+          "bytes": 3467588,
+          "printed_revision": "1.9",
+          "publication_date": "2025-12-29"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32F030_StandardPeripheralLib_V2.2.zip",
+          "path": "CW32F030_StandardPeripheralLib_V2.2.zip",
+          "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+          "sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+          "bytes": 8457933,
+          "printed_revision": "2.2",
+          "publication_date": "2024-11-11"
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32f030/Libraries/inc/cw32f030.h",
+          "path": "cw32f030/Libraries/inc/cw32f030.h",
+          "members": [
+            "Libraries/inc/cw32f030.h"
+          ],
+          "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862",
+          "bytes": 695293
+        },
+        {
+          "source_ref": "member:cw32f030/Libraries/inc/cw32f030_ram.h",
+          "path": "cw32f030/Libraries/inc/cw32f030_ram.h",
+          "members": [
+            "Libraries/inc/cw32f030_ram.h"
+          ],
+          "sha256": "9b5493479c1b87b0ff3a891a3640284aae5859ac83223c1d2d2418b1133e35f2",
+          "bytes": 2974
+        },
+        {
+          "source_ref": "member:cw32f030/Libraries/src/cw32f030_ram.c",
+          "path": "cw32f030/Libraries/src/cw32f030_ram.c",
+          "members": [
+            "Libraries/src/cw32f030_ram.c"
+          ],
+          "sha256": "f92c78cbefaaf16722e8c23f5463a1fcf274e9cc9543d707def4047ce13fd9f8",
+          "bytes": 3060
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        106,
+        107,
+        108,
+        109,
+        110,
+        111
+      ],
+      "manual_chapter_printed_pages": [
+        105,
+        106,
+        107,
+        108,
+        109,
+        110
+      ],
+      "datasheet_parity_pdf_pages": [
+        4,
+        9
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 1,
+        "enable_status": true,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "SDK RAM_IT_PARITY is bit1 for IER but reused for bit0 ISR/ICR; HAL follows each register field, not the SDK driver mask.",
+        "Pinned chiptool IR omits field-level access; legacy PAC emitted a writable EN setter. Own manual makes EN read-only; the field-access projection suppresses only set_en and keeps PARITY writable."
+      ],
+      "datasheet_parity_printed_pages": [
+        3,
+        8
+      ]
+    },
+    "CW32L010": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+          "path": "CW32L010_UserManual_CN_V1.2.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+          "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+          "bytes": 15074519,
+          "printed_revision": "1.2",
+          "publication_date": "2026-05"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+          "path": "CW32L010_DataSheet_CN_V1.3.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf",
+          "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+          "bytes": 3467805,
+          "printed_revision": "1.3",
+          "publication_date": "2026-04-16"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "path": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+          "bytes": 2442266,
+          "printed_revision": "1.0.9",
+          "publication_date": null
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+          "members": [
+            "CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h"
+          ],
+          "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+          "bytes": 540100
+        },
+        {
+          "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_ram.h",
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_ram.h",
+          "members": [
+            "CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_ram.h"
+          ],
+          "sha256": "3b4b1bde6289e7f23c0b204eedb696d50df2ae1a63e4dfb0a3cba5af626f730f",
+          "bytes": 2831
+        },
+        {
+          "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_ram.c",
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_ram.c",
+          "members": [
+            "CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_ram.c"
+          ],
+          "sha256": "e6e9c351d93efd8ef6bd596b44c962fe2646d4a2f8cf2753a41882b2ae21833c",
+          "bytes": 2967
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        99,
+        100,
+        101,
+        102,
+        103
+      ],
+      "manual_chapter_printed_pages": [
+        98,
+        99,
+        100,
+        101,
+        102
+      ],
+      "datasheet_parity_pdf_pages": [
+        4,
+        9
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "cw32l010_v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 0,
+        "enable_status": false,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "CMSIS misspells ADDR field macros and advertises 0xffff; SVD and manual describe full 32-bit address."
+      ],
+      "datasheet_parity_printed_pages": [
+        3,
+        8
+      ]
+    },
+    "CW32L011": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+          "path": "CW32L011_UserManual_CN_V1.1.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+          "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+          "bytes": 15199549,
+          "printed_revision": "1.1",
+          "publication_date": "2026-06"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+          "path": "CW32L011_DataSheet_CN_V1.1.pdf",
+          "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf",
+          "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+          "bytes": 2687011,
+          "printed_revision": "1.1",
+          "publication_date": "2025-07"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "path": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+          "bytes": 1808978,
+          "printed_revision": null,
+          "publication_date": null
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32l011/Libraries/inc/cw32l011.h",
+          "path": "cw32l011/Libraries/inc/cw32l011.h",
+          "members": [
+            "Libraries/inc/cw32l011.h"
+          ],
+          "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8",
+          "bytes": 594153
+        },
+        {
+          "source_ref": "member:cw32l011/Libraries/inc/cw32l011_ram.h",
+          "path": "cw32l011/Libraries/inc/cw32l011_ram.h",
+          "members": [
+            "Libraries/inc/cw32l011_ram.h"
+          ],
+          "sha256": "ab43025e2add1262723d476f9b85f1d4a1343071afdb70504d4d0a0ee146b256",
+          "bytes": 2894
+        },
+        {
+          "source_ref": "member:cw32l011/Libraries/src/cw32l011_ram.c",
+          "path": "cw32l011/Libraries/src/cw32l011_ram.c",
+          "members": [
+            "Libraries/src/cw32l011_ram.c"
+          ],
+          "sha256": "2d89086c9b79b2e7a5f30c0b6a6072af4adcf57943f287368091486977812505",
+          "bytes": 3065
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        97,
+        98,
+        99,
+        100,
+        101
+      ],
+      "manual_chapter_printed_pages": [
+        96,
+        97,
+        98,
+        99,
+        100
+      ],
+      "datasheet_parity_pdf_pages": [
+        4,
+        10
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "cw32l011_v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 0,
+        "enable_status": false,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [],
+      "datasheet_parity_printed_pages": [
+        1,
+        7
+      ]
+    },
+    "CW32L012": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+          "path": "CW32L012_UserManual_CN_V1.4.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+          "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+          "bytes": 18034510,
+          "printed_revision": "1.4",
+          "publication_date": "2026-06"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+          "path": "CW32L012_DataSheet_CN_V1.0.pdf",
+          "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+          "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+          "bytes": 3003846,
+          "printed_revision": "1.0",
+          "publication_date": "2025-07"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "path": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+          "bytes": 2494783,
+          "printed_revision": null,
+          "publication_date": null
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+          "path": "cw32l012/Libraries/inc/cw32l012.h",
+          "members": [
+            "Libraries/inc/cw32l012.h"
+          ],
+          "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+          "bytes": 834392
+        },
+        {
+          "source_ref": "member:cw32l012/Libraries/inc/cw32l012_ram.h",
+          "path": "cw32l012/Libraries/inc/cw32l012_ram.h",
+          "members": [
+            "Libraries/inc/cw32l012_ram.h"
+          ],
+          "sha256": "47ec16c744f08ec8d60e16fa8ade652bebdfd14933fea374898f767b052622c0",
+          "bytes": 2902
+        },
+        {
+          "source_ref": "member:cw32l012/Libraries/src/cw32l012_ram.c",
+          "path": "cw32l012/Libraries/src/cw32l012_ram.c",
+          "members": [
+            "Libraries/src/cw32l012_ram.c"
+          ],
+          "sha256": "21d4eaad3a06f74890041c9e950fbb2bb5507212324209c8fa027e384c9c7dc2",
+          "bytes": 3066
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        106,
+        107,
+        108,
+        109,
+        110,
+        111
+      ],
+      "manual_chapter_printed_pages": [
+        80,
+        81,
+        82,
+        83,
+        84,
+        85
+      ],
+      "datasheet_parity_pdf_pages": [
+        4,
+        10
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "cw32l011_v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 0,
+        "enable_status": false,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [],
+      "datasheet_parity_printed_pages": [
+        1,
+        7
+      ]
+    },
+    "CW32L031": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+          "path": "CW32L031_UserManual_CN_V1.6.pdf",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+          "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+          "bytes": 9976689,
+          "printed_revision": "1.6",
+          "publication_date": "2024-09"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+          "path": "CW32L031_DataSheet_CN_V1.9.pdf",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L031_DataSheet_CN_V1.9.pdf",
+          "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+          "bytes": 3461718,
+          "printed_revision": "1.9",
+          "publication_date": "2025-12-29"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32L031_StandardPeripheralLib_V1.4.zip",
+          "path": "CW32L031_StandardPeripheralLib_V1.4.zip",
+          "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+          "sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d",
+          "bytes": 1822564,
+          "printed_revision": "1.4",
+          "publication_date": "2025-07-21"
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32l031/Libraries/inc/cw32l031.h",
+          "path": "cw32l031/Libraries/inc/cw32l031.h",
+          "members": [
+            "Libraries/inc/cw32l031.h"
+          ],
+          "sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27",
+          "bytes": 573927
+        },
+        {
+          "source_ref": "member:cw32l031/Libraries/inc/cw32l031_ram.h",
+          "path": "cw32l031/Libraries/inc/cw32l031_ram.h",
+          "members": [
+            "Libraries/inc/cw32l031_ram.h"
+          ],
+          "sha256": "1625041295f37ae75ff10ea163cb281c27a98b1d149cfabe542c87dbcbe1dfa8",
+          "bytes": 2949
+        },
+        {
+          "source_ref": "member:cw32l031/Libraries/src/cw32l031_ram.c",
+          "path": "cw32l031/Libraries/src/cw32l031_ram.c",
+          "members": [
+            "Libraries/src/cw32l031_ram.c"
+          ],
+          "sha256": "f088ebdfd0857e5e59cdafe0c1f4b950b11a3ae748717728cdbddf7e488a0ac5",
+          "bytes": 3065
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106
+      ],
+      "manual_chapter_printed_pages": [
+        100,
+        101,
+        102,
+        103,
+        104,
+        105
+      ],
+      "datasheet_parity_pdf_pages": [
+        5,
+        11
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "cw32l031_v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 1,
+        "enable_status": true,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "SDK RAM_IT_PARITY is bit1 for IER but reused for bit0 ISR/ICR; HAL follows each register field, not the SDK driver mask.",
+        "SVD truncates RAM_ADDR to 14 bits; own manual specifies full 32-bit absolute address and 0x20000000 reset.",
+        "Pinned chiptool IR omits field-level access; legacy PAC emitted a writable EN setter. Own manual makes EN read-only; the field-access projection suppresses only set_en and keeps PARITY writable."
+      ],
+      "datasheet_parity_printed_pages": [
+        4,
+        10
+      ]
+    },
+    "CW32L052": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+          "path": "CW32L052_UserManual_CN_V1.5.pdf",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+          "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+          "bytes": 12894348,
+          "printed_revision": "1.5",
+          "publication_date": "2024-09"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+          "path": "CW32L052_DataSheet_CN_V1.3.pdf",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L052_DataSheet_CN_V1.3.pdf",
+          "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+          "bytes": 2962980,
+          "printed_revision": "1.3",
+          "publication_date": "2025-12-29"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32L052_StandardPeripheralLib_V1.4.zip",
+          "path": "CW32L052_StandardPeripheralLib_V1.4.zip",
+          "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+          "sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+          "bytes": 2248859,
+          "printed_revision": "1.4",
+          "publication_date": "2026-03-09"
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+          "members": [
+            "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h"
+          ],
+          "sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1",
+          "bytes": 826882
+        },
+        {
+          "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_ram.h",
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_ram.h",
+          "members": [
+            "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_ram.h"
+          ],
+          "sha256": "0db1518feeb399d70f87e7d683539f0575a2685102b9ac25bbfecf64e8351890",
+          "bytes": 2950
+        },
+        {
+          "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_ram.c",
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_ram.c",
+          "members": [
+            "CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_ram.c"
+          ],
+          "sha256": "efd4cb67c0338aa5e08060c464a3857c2a58fc2a651baf3ac513608b0ba1cbe7",
+          "bytes": 3066
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        106,
+        107,
+        108,
+        109,
+        110,
+        111
+      ],
+      "manual_chapter_printed_pages": [
+        105,
+        106,
+        107,
+        108,
+        109,
+        110
+      ],
+      "datasheet_parity_pdf_pages": [
+        5,
+        11
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "cw32l031_v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 1,
+        "enable_status": true,
+        "address_bits": 32,
+        "interrupt": "FLASH_RAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "SDK RAM_IT_PARITY is bit1 for IER but reused for bit0 ISR/ICR; HAL follows each register field, not the SDK driver mask.",
+        "SVD truncates RAM_ADDR to 14 bits; own manual specifies full 32-bit absolute address and 0x20000000 reset.",
+        "CMSIS also uses 0x3fff address mask; own manual is authoritative for full address.",
+        "Pinned chiptool IR omits field-level access; legacy PAC emitted a writable EN setter. Own manual makes EN read-only; the field-access projection suppresses only set_en and keeps PARITY writable."
+      ],
+      "datasheet_parity_printed_pages": [
+        4,
+        10
+      ]
+    },
+    "CW32L083": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+          "path": "CW32L083_UserManual_CN_V2.0.pdf",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+          "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+          "bytes": 11981462,
+          "printed_revision": "2.0",
+          "publication_date": "2024-09"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+          "path": "CW32L083_DataSheet_CN_V1.9.pdf",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+          "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+          "bytes": 2900110,
+          "printed_revision": "1.9",
+          "publication_date": "2025-12-29"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32L083_StandardPeripheralLib_V2.2.zip",
+          "path": "CW32L083_StandardPeripheralLib_V2.2.zip",
+          "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+          "sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+          "bytes": 2307769,
+          "printed_revision": "2.2",
+          "publication_date": "2024-08-21"
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32l083/Libraries/inc/cw32l083.h",
+          "path": "cw32l083/Libraries/inc/cw32l083.h",
+          "members": [
+            "Libraries/inc/cw32l083.h"
+          ],
+          "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5",
+          "bytes": 884832
+        },
+        {
+          "source_ref": "member:cw32l083/Libraries/inc/cw32l083_ram.h",
+          "path": "cw32l083/Libraries/inc/cw32l083_ram.h",
+          "members": [
+            "Libraries/inc/cw32l083_ram.h"
+          ],
+          "sha256": "09cf0d713b908b4b1a10382f6e08c501a40ec8cb269d22d35fae9e8fe3ad7f26",
+          "bytes": 2950
+        },
+        {
+          "source_ref": "member:cw32l083/Libraries/src/cw32l083_ram.c",
+          "path": "cw32l083/Libraries/src/cw32l083_ram.c",
+          "members": [
+            "Libraries/src/cw32l083_ram.c"
+          ],
+          "sha256": "ad840b95e286a30c13168cb817905456ba5ecb073b25347d9f33e15e80554bff",
+          "bytes": 3060
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        115,
+        116,
+        117,
+        118,
+        119,
+        120
+      ],
+      "manual_chapter_printed_pages": [
+        114,
+        115,
+        116,
+        117,
+        118,
+        119
+      ],
+      "datasheet_parity_pdf_pages": [
+        5,
+        11
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "cw32l031_v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 1,
+        "enable_status": true,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "SDK RAM_IT_PARITY is bit1 for IER but reused for bit0 ISR/ICR; HAL follows each register field, not the SDK driver mask.",
+        "Pinned chiptool IR omits field-level access; legacy PAC emitted a writable EN setter. Own manual makes EN read-only; the field-access projection suppresses only set_en and keeps PARITY writable."
+      ],
+      "datasheet_parity_printed_pages": [
+        4,
+        10
+      ]
+    },
+    "CW32R031": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+          "path": "CW32R031_UserManual_CN_V1.3.pdf",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+          "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+          "bytes": 11821621,
+          "printed_revision": "1.3",
+          "publication_date": "2024-09"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+          "path": "CW32R031_DataSheet_CN_V1.2.pdf",
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32R031_DataSheet_CN_V1.2.pdf",
+          "sha256": "88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805",
+          "bytes": 3113158,
+          "printed_revision": "1.2",
+          "publication_date": "2025-12-30"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32R031_StandardPeripheralLib_V1.1.zip",
+          "path": "CW32R031_StandardPeripheralLib_V1.1.zip",
+          "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+          "sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082",
+          "bytes": 1868935,
+          "printed_revision": "1.1",
+          "publication_date": "2023-11-06"
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32r031/Libraries/inc/cw32r031.h",
+          "path": "cw32r031/Libraries/inc/cw32r031.h",
+          "members": [
+            "Libraries/inc/cw32r031.h"
+          ],
+          "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385",
+          "bytes": 573927
+        },
+        {
+          "source_ref": "member:cw32r031/Libraries/inc/cw32r031_ram.h",
+          "path": "cw32r031/Libraries/inc/cw32r031_ram.h",
+          "members": [
+            "Libraries/inc/cw32r031_ram.h"
+          ],
+          "sha256": "fc45e8fddd77019ab818f6eb6d8c2361dbd1aff1f4a15c4bf05344b1689b476b",
+          "bytes": 2947
+        },
+        {
+          "source_ref": "member:cw32r031/Libraries/src/cw32r031_ram.c",
+          "path": "cw32r031/Libraries/src/cw32r031_ram.c",
+          "members": [
+            "Libraries/src/cw32r031_ram.c"
+          ],
+          "sha256": "e9ff53d0001c1acce79cb175d6f309242e675d3fe06bd0a19768ff6fa665140b",
+          "bytes": 3065
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        103,
+        104,
+        105,
+        106,
+        107,
+        108
+      ],
+      "manual_chapter_printed_pages": [
+        102,
+        103,
+        104,
+        105,
+        106,
+        107
+      ],
+      "datasheet_parity_pdf_pages": [
+        5,
+        12
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "cw32l031_v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 1,
+        "enable_status": true,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "SDK RAM_IT_PARITY is bit1 for IER but reused for bit0 ISR/ICR; HAL follows each register field, not the SDK driver mask.",
+        "SVD truncates RAM_ADDR to 14 bits; own manual specifies full 32-bit absolute address and 0x20000000 reset.",
+        "Pinned chiptool IR omits field-level access; legacy PAC emitted a writable EN setter. Own manual makes EN read-only; the field-access projection suppresses only set_en and keeps PARITY writable."
+      ],
+      "datasheet_parity_printed_pages": [
+        4,
+        11
+      ]
+    },
+    "CW32W031": {
+      "sources": {
+        "manual": {
+          "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+          "path": "CW32W031_UserManual_CN_V1.4.pdf",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+          "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+          "bytes": 11750733,
+          "printed_revision": "1.4",
+          "publication_date": "2024-09"
+        },
+        "datasheet": {
+          "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+          "path": "CW32W031_DataSheet_CN_V1.3.pdf",
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf",
+          "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c",
+          "bytes": 3301754,
+          "printed_revision": "1.3",
+          "publication_date": "2025-12-30"
+        },
+        "sdk": {
+          "source_ref": "vendor:CW32W031_StandardPeripheralLib_V1.3.zip",
+          "path": "CW32W031_StandardPeripheralLib_V1.3.zip",
+          "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+          "sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+          "bytes": 2091903,
+          "printed_revision": "1.3",
+          "publication_date": "2024-01-15"
+        }
+      },
+      "sdk_members": [
+        {
+          "source_ref": "member:cw32w031/Libraries/inc/cw32w031.h",
+          "path": "cw32w031/Libraries/inc/cw32w031.h",
+          "members": [
+            "Libraries/inc/cw32w031.h"
+          ],
+          "sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69",
+          "bytes": 485814
+        },
+        {
+          "source_ref": "member:cw32w031/Libraries/inc/cw32w031_ram.h",
+          "path": "cw32w031/Libraries/inc/cw32w031_ram.h",
+          "members": [
+            "Libraries/inc/cw32w031_ram.h"
+          ],
+          "sha256": "cfb58ba324d249a089bc7ec957f2dac649e7fd2bbed1a5b72c4a27cb172ce2f4",
+          "bytes": 2930
+        },
+        {
+          "source_ref": "member:cw32w031/Libraries/src/cw32w031_ram.c",
+          "path": "cw32w031/Libraries/src/cw32w031_ram.c",
+          "members": [
+            "Libraries/src/cw32w031_ram.c"
+          ],
+          "sha256": "efdc9fe8dfb786f687b11bd00d8be9c079a629ffdfdb2a41624e89eeb0d6add9",
+          "bytes": 3078
+        }
+      ],
+      "manual_chapter_pdf_pages": [
+        102,
+        103,
+        104,
+        105,
+        106,
+        107
+      ],
+      "manual_chapter_printed_pages": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106
+      ],
+      "datasheet_parity_pdf_pages": [
+        4,
+        10
+      ],
+      "sdk_alias_basis": null,
+      "profile": {
+        "register_version": "cw32l031_v1",
+        "base_address": 1073882112,
+        "ier_parity_bit": 1,
+        "enable_status": true,
+        "address_bits": 32,
+        "interrupt": "FLASHRAM",
+        "interrupt_number": 3
+      },
+      "conflicts": [
+        "SDK RAM_IT_PARITY is bit1 for IER but reused for bit0 ISR/ICR; HAL follows each register field, not the SDK driver mask.",
+        "SVD truncates RAM_ADDR to 14 bits; own manual specifies full 32-bit absolute address and 0x20000000 reset.",
+        "Pinned chiptool IR omits field-level access; legacy PAC emitted a writable EN setter. Own manual makes EN read-only; the field-access projection suppresses only set_en and keeps PARITY writable."
+      ],
+      "datasheet_parity_printed_pages": [
+        3,
+        9
+      ]
+    }
+  },
+  "common": {
+    "always_enabled": true,
+    "software_parity_enable": false,
+    "software_parity_disable": false,
+    "initialization_command": false,
+    "injection_command": false,
+    "reset_command": false,
+    "independent_clock_gate": false,
+    "register_offsets": {
+      "IER": 0,
+      "ADDR": 4,
+      "ISR": 8,
+      "ICR": 12
+    },
+    "status_bit": 0,
+    "clear_bit": 0,
+    "clear_value": 0,
+    "clear_noop": 1,
+    "address_reset": 536870912,
+    "status_reset": 0,
+    "parity_bits_per_data_byte": 1
+  },
+  "input_changes": [
+    {
+      "family": "CW32L010",
+      "kind": "interrupt_association_override",
+      "value": {
+        "interrupt": "FLASHRAM",
+        "number": 3,
+        "expected_owners": [
+          "FLASH"
+        ],
+        "owners": [
+          "FLASH",
+          "RAM"
+        ],
+        "evidence": "CW32L010 own manual section 5.4 interrupt table PDF page 89 and RAM section 6.4: FLASHRAM IRQ3 is shared by FLASH and RAM parity. Official CMSIS FLASHRAM_IRQn=3. https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf PDF SHA256 b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa. See docs/ram-parity-evidence.json."
+      }
+    },
+    {
+      "family": "CW32L011",
+      "kind": "interrupt_association_override",
+      "value": {
+        "interrupt": "FLASHRAM",
+        "number": 3,
+        "expected_owners": [
+          "FLASH"
+        ],
+        "owners": [
+          "FLASH",
+          "RAM"
+        ],
+        "evidence": "CW32L011 own manual section 5.4 interrupt table PDF page 87 and RAM section 6.4: FLASHRAM IRQ3 is shared by FLASH and RAM parity. Official CMSIS FLASHRAM_IRQn=3. https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf PDF SHA256 b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f. See docs/ram-parity-evidence.json."
+      }
+    },
+    {
+      "family": "CW32L031",
+      "kind": "field_width_override",
+      "value": {
+        "block": "RAM",
+        "fieldset": "ADDR",
+        "field": "ADDR",
+        "expected_bit_offset": 0,
+        "expected_bit_size": 14,
+        "bit_size": 32,
+        "evidence": "CW32L031 own 1.6 manual section 6.6.1, printed page 104/PDF page 105: RAM_ADDR is full absolute bits31:0, reset 0x20000000. Correct the source SVD 14-bit truncation only. https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf PDF SHA256 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760. See docs/ram-parity-evidence.json."
+      }
+    },
+    {
+      "family": "CW32L052",
+      "kind": "field_width_override",
+      "value": {
+        "block": "RAM",
+        "fieldset": "ADDR",
+        "field": "ADDR",
+        "expected_bit_offset": 0,
+        "expected_bit_size": 14,
+        "bit_size": 32,
+        "evidence": "CW32L052 own 1.5 manual section 6.6.1, printed page 109/PDF page 110: RAM_ADDR is full absolute bits31:0, reset 0x20000000. Correct the source SVD 14-bit truncation only. https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf PDF SHA256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41. See docs/ram-parity-evidence.json."
+      }
+    },
+    {
+      "family": "CW32L083",
+      "kind": "register_version",
+      "before": "cw32l083_v1",
+      "after": "cw32l031_v1"
+    },
+    {
+      "family": "CW32R031",
+      "kind": "field_width_override",
+      "value": {
+        "block": "RAM",
+        "fieldset": "ADDR",
+        "field": "ADDR",
+        "expected_bit_offset": 0,
+        "expected_bit_size": 14,
+        "bit_size": 32,
+        "evidence": "CW32R031 own 1.3 manual section 6.6.1, printed page 106/PDF page 107: RAM_ADDR is full absolute bits31:0, reset 0x20000000. Correct the source SVD 14-bit truncation only. https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf PDF SHA256 fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb. See docs/ram-parity-evidence.json."
+      }
+    },
+    {
+      "family": "CW32W031",
+      "kind": "field_width_override",
+      "value": {
+        "block": "RAM",
+        "fieldset": "ADDR",
+        "field": "ADDR",
+        "expected_bit_offset": 0,
+        "expected_bit_size": 14,
+        "bit_size": 32,
+        "evidence": "CW32W031 own 1.4 manual section 6.6.1, printed page 105/PDF page 106: RAM_ADDR is full absolute bits31:0, reset 0x20000000. Correct the source SVD 14-bit truncation only. https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf PDF SHA256 b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9. See docs/ram-parity-evidence.json."
+      }
+    }
+  ],
+  "semantics": {
+    "address": "Full absolute address, without a documented first-error/last-error, latch-stability or multi-error ordering guarantee. Never dereferenced by this HAL.",
+    "checking": "Always enabled at power-up, not user-configurable; EN where present is a read-only status bit, not a writable parity control.",
+    "writes": "CPU writes generate one parity bit per byte; a mismatch on reading latches ISR.PARITY and requests the shared IRQ if IER.PARITY is enabled.",
+    "acknowledgment": "ICR.PARITY is R1W0, zero clears and one does nothing. Reserved bits keep zero reset values. Acknowledgment repairs no RAM.",
+    "irq": "FLASHRAM or FLASH_RAM IRQ3 is shared with FLASH. Masking or clearing RAM does not mask or clear FLASH or NVIC pending state.",
+    "initialization": "No RAM initialization/scrub/reset/injection command is documented. HAL never reads or writes SRAM contents, including stack, heap, vector table, or executable RAM. Boot-time Rust data initialization remains the startup runtime responsibility.",
+    "faults": "Misaligned RAM accesses are documented as HardFault; parity is documented as a flag plus optional IRQ. No automatic ECC correction, parity HardFault, reset, lossless event queue or recoverability guarantee is claimed."
+  },
+  "upstream": {
+    "revision": "f16efeffe37581092ec184718e6fdb1620393214",
+    "concepts": [
+      "Peri ownership",
+      "concrete singleton when only one instance exists",
+      "typed direct PAC fields",
+      "no RCC_INFO for hardware without a gate"
+    ],
+    "adaptation": "Original implementation. No STM32 parity initialization policy transplanted."
+  },
+  "field_access_projection": {
+    "authored": "cw32-data/field-access.yaml",
+    "normalized": "cw32-data/data/field-access/",
+    "generator": "cw32-metapac-gen/src/field_access.rs",
+    "basis": "Narrow read-only field restrictions for mixed RW registers; syntax-tree removal of exactly one setter with its getter retained; generic raw PAC register escape hatches retain their usual low-level responsibilities."
+  }
+}

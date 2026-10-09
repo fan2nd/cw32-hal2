@@ -1,0 +1,158 @@
+schema_version: 1
+profile: CW32L012
+sources:
+  datasheet:
+    file: CW32L012_DataSheet_CN_V1.0.pdf
+    url: https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf
+    sha256: 08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76
+    source_ref: vendor:CW32L012_DataSheet_CN_V1.0.pdf
+  reference_manual:
+    file: CW32L012_UserManual_CN_V1.4.pdf
+    url: https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf
+    sha256: a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340
+    source_ref: vendor:CW32L012_UserManual_CN_V1.4.pdf
+  sdk_archive:
+    file: CW32L012_StandardPeripheralLib_V1.0.5.zip
+    url: https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip
+    sha256: 8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f
+    source_ref: vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip
+  pinouts:
+    file: cw32-data/pinouts/cw32l012.yaml
+    sha256: 70ad225317acd9b1bd51a19fff15f6834f3efb4f58563b33344ab5d69eab07fb
+  dac_h:
+    file: cw32l012/Libraries/inc/cw32l012_dac.h
+    sha256: 272c2a90583f3f98bc1aa0e0fbd06a9b0b3951aacf2bd14525eb321d4ca2f709
+    archive: sdk_archive
+    source_ref: member:cw32l012/Libraries/inc/cw32l012_dac.h
+  dac_c:
+    file: cw32l012/Libraries/src/cw32l012_dac.c
+    sha256: ceabb6c1c8b0a6264c40383d9525b3d01f0bd8f528b6b0f3c93f60646cda7ed9
+    archive: sdk_archive
+    source_ref: member:cw32l012/Libraries/src/cw32l012_dac.c
+  opa_h:
+    file: cw32l012/Libraries/inc/cw32l012_opa.h
+    sha256: 88177b95a1a8d60ff273e17d688a2be002e73b6466724598cd5316fbe7361406
+    archive: sdk_archive
+    source_ref: member:cw32l012/Libraries/inc/cw32l012_opa.h
+  opa_c:
+    file: cw32l012/Libraries/src/cw32l012_opa.c
+    sha256: e96839a43436f4f3e093449a829bc2b563a83326dba567980755506f380b4aba
+    archive: sdk_archive
+    source_ref: member:cw32l012/Libraries/src/cw32l012_opa.c
+limits:
+  dac:
+    supply_mv:
+    - 1700
+    - 5500
+    resolution_bits: 12
+  opa:
+    supply_mv:
+    - 1700
+    - 5500
+    output_headroom_mv: 100
+limits_evidence:
+  dac: Datasheet §7.3.14 Table 7-30 p62; VDDA reference selected by manual §26.2 p601
+  opa: Datasheet §7.3.1 Table 7-3 and §7.3.18 Table 7-34 p65; VIN=0..VDDA, VOUT=0.1..VDDA−0.1 V
+routes:
+- peripheral: DAC
+  pin: PB0
+  signal: OUT1
+  af: null
+  source_signal: DAC_OUT1
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: DAC
+  pin: PB1
+  signal: OUT2
+  af: null
+  source_signal: DAC_OUT2
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA1
+  pin: PA3
+  signal: INP1
+  af: null
+  source_signal: OPA1_INP1
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA1
+  pin: PA6
+  signal: INP2
+  af: null
+  source_signal: OPA1_INP2
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA1
+  pin: PB1
+  signal: INP3
+  af: null
+  source_signal: OPA1_INP3
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA1
+  pin: PA4
+  signal: INN1
+  af: null
+  source_signal: OPA1_INN1
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA1
+  pin: PA7
+  signal: INN2
+  af: null
+  source_signal: OPA1_INN2
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA1
+  pin: PB0
+  signal: OUT
+  af: null
+  source_signal: OPA1_OUT
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA2
+  pin: PA4
+  signal: INP1
+  af: null
+  source_signal: OPA2_INP1
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA2
+  pin: PA6
+  signal: INP2
+  af: null
+  source_signal: OPA2_INP2
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA2
+  pin: PB0
+  signal: INP3
+  af: null
+  source_signal: OPA2_INP3
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA2
+  pin: PA5
+  signal: INN1
+  af: null
+  source_signal: OPA2_INN1
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA2
+  pin: PA7
+  signal: INN2
+  af: null
+  source_signal: OPA2_INN2
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+- peripheral: OPA2
+  pin: PB1
+  signal: OUT
+  af: null
+  source_signal: OPA2_OUT
+  reference_manual: §26.10.14 p616; §29.3.2 Table 29-1 p646
+  datasheet: §5.3 Table 5-2 pp32–33; both LQFP48 and QFN48
+startup_qualification:
+  dac: 3 us typical only, Table 7-30; never a guaranteed bound
+  opa: 2.5 us minimum only, Table 7-34; never a guaranteed bound
+  bgr: ~30 us approximate, manual §25.12.19 p599; no ready flag

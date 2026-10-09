@@ -1,0 +1,95 @@
+[package]
+workspace = "../firmware"
+name = "embassy-cw32"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Experimental Embassy HAL for verified CW32 devices"
+
+[features]
+# Reserves the whole timer and its IRQ for the global nominal 1 MHz timebase.
+time-driver-gtim1 = ["_time-driver"]
+time-driver-gtim = ["_time-driver"]
+_time-driver = ["rt", "dep:embassy-time-driver", "dep:embassy-time-queue-utils", "embassy-time-driver/tick-hz-1_000_000"]
+default = ["rt"]
+defmt = ["dep:defmt", "embassy-hal-internal/defmt", "cw32-metapac/defmt"]
+rt = ["cw32-metapac/rt", "dep:cortex-m-rt"]
+cw32f030 = ["cw32-metapac/cw32f030"]
+cw32f030c8 = ["cw32-metapac/cw32f030c8"]
+cw32f030k8 = ["cw32-metapac/cw32f030k8"]
+cw32f030f8 = ["cw32-metapac/cw32f030f8"]
+cw32f030f6 = ["cw32-metapac/cw32f030f6"]
+cw32a030 = ["cw32-metapac/cw32a030"]
+cw32a030c8t7 = ["cw32-metapac/cw32a030c8t7"]
+cw32f030c8t7 = ["cw32-metapac/cw32f030c8t7"]
+cw32f030k8t7 = ["cw32-metapac/cw32f030k8t7"]
+cw32f030k8u7 = ["cw32-metapac/cw32f030k8u7"]
+cw32f030f8v7 = ["cw32-metapac/cw32f030f8v7"]
+cw32f030f6p7 = ["cw32-metapac/cw32f030f6p7"]
+
+cw32f002 = ["cw32-metapac/cw32f002"]
+cw32f002f3p7 = ["cw32-metapac/cw32f002f3p7"]
+cw32f002f3u7 = ["cw32-metapac/cw32f002f3u7"]
+cw32f003 = ["cw32-metapac/cw32f003"]
+cw32f003e4p7 = ["cw32-metapac/cw32f003e4p7"]
+cw32f003f4p7 = ["cw32-metapac/cw32f003f4p7"]
+cw32f003f4u7 = ["cw32-metapac/cw32f003f4u7"]
+
+cw32f020 = ["cw32-metapac/cw32f020"]
+cw32f020f6u7 = ["cw32-metapac/cw32f020f6u7"]
+cw32f020k6u7 = ["cw32-metapac/cw32f020k6u7"]
+cw32f020c6u7 = ["cw32-metapac/cw32f020c6u7"]
+cw32l010 = ["cw32-metapac/cw32l010"]
+cw32l010f8p6 = ["cw32-metapac/cw32l010f8p6"]
+cw32l010f8u6 = ["cw32-metapac/cw32l010f8u6"]
+cw32l010y8m6 = ["cw32-metapac/cw32l010y8m6"]
+cw32l011 = ["cw32-metapac/cw32l011"]
+cw32l011k8t6 = ["cw32-metapac/cw32l011k8t6"]
+cw32l011k8u6 = ["cw32-metapac/cw32l011k8u6"]
+cw32l012 = ["cw32-metapac/cw32l012"]
+cw32l012c8t6 = ["cw32-metapac/cw32l012c8t6"]
+cw32l012c8u6 = ["cw32-metapac/cw32l012c8u6"]
+cw32l031 = ["cw32-metapac/cw32l031"]
+cw32l031c8t6 = ["cw32-metapac/cw32l031c8t6"]
+cw32l031c8u6 = ["cw32-metapac/cw32l031c8u6"]
+cw32l031f8p6 = ["cw32-metapac/cw32l031f8p6"]
+cw32l031f8u6 = ["cw32-metapac/cw32l031f8u6"]
+cw32l031k8u6 = ["cw32-metapac/cw32l031k8u6"]
+cw32l031k8v6 = ["cw32-metapac/cw32l031k8v6"]
+cw32r031 = ["cw32-metapac/cw32r031"]
+cw32r031c8u6 = ["cw32-metapac/cw32r031c8u6"]
+cw32w031 = ["cw32-metapac/cw32w031"]
+cw32w031r8u6 = ["cw32-metapac/cw32w031r8u6"]
+
+cw32l052 = ["cw32-metapac/cw32l052"]
+cw32l052c8t6 = ["cw32-metapac/cw32l052c8t6"]
+cw32l052r8s6 = ["cw32-metapac/cw32l052r8s6"]
+cw32l052r8t6 = ["cw32-metapac/cw32l052r8t6"]
+cw32l083 = ["cw32-metapac/cw32l083"]
+cw32l083mct6 = ["cw32-metapac/cw32l083mct6"]
+cw32l083rbt6 = ["cw32-metapac/cw32l083rbt6"]
+cw32l083rcs6 = ["cw32-metapac/cw32l083rcs6"]
+cw32l083rct6 = ["cw32-metapac/cw32l083rct6"]
+cw32l083vct6 = ["cw32-metapac/cw32l083vct6"]
+
+[dependencies]
+defmt = { version = "1", optional = true }
+cw32-metapac = { path = "../cw32-metapac", default-features = false, features = ["pac"] }
+embassy-hal-internal = { git = "https://github.com/embassy-rs/embassy", rev = "f16efeffe37581092ec184718e6fdb1620393214", features = ["cortex-m", "prio-bits-2"] }
+cortex-m = "0.7.7"
+cortex-m-rt = { version = "0.7.5", optional = true }
+critical-section = "1.2"
+embedded-hal = "1.0"
+embedded-storage = "0.3.1"
+embedded-io = "0.7.1"
+embedded-io-async = "0.7.0"
+embedded-hal-async = "1.0"
+embassy-sync = { git = "https://github.com/embassy-rs/embassy", rev = "f16efeffe37581092ec184718e6fdb1620393214" }
+
+embassy-time-driver = { git = "https://github.com/embassy-rs/embassy", rev = "f16efeffe37581092ec184718e6fdb1620393214", optional = true }
+embassy-time-queue-utils = { git = "https://github.com/embassy-rs/embassy", rev = "f16efeffe37581092ec184718e6fdb1620393214", optional = true }
+
+[build-dependencies]
+cw32-metapac = { path = "../cw32-metapac", default-features = false, features = ["metadata"] }
+
+serde_json.workspace = true

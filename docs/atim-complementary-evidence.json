@@ -1,0 +1,431 @@
+{
+  "schema_version": 1,
+  "upstream": {
+    "url": "https://github.com/embassy-rs/embassy",
+    "revision": "f16efeffe37581092ec184718e6fdb1620393214",
+    "file": "embassy-stm32/src/timer/complementary_pwm.rs",
+    "sha256": "17708b7ec7934858c826a488d5db57eb73869f1d1a964f5e7fe4c8bda3c687a1"
+  },
+  "families": {
+    "CW32L010": {
+      "sources": {
+        "datasheet": {
+          "file": "CW32L010_DataSheet_CN_V1.3.pdf",
+          "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+          "source_id": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf"
+        },
+        "reference_manual": {
+          "file": "CW32L010_UserManual_CN_V1.2.pdf",
+          "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+          "source_id": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf"
+        },
+        "gpio_header": {
+          "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+          "sha256": "1ec5958352e78cfdb050b4e648373ed25f2befc01d6724602b0e69c4d098969e",
+          "source_id": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+        },
+        "sdk_archive": {
+          "file": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+          "source_id": "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+        },
+        "pinouts": {
+          "file": "cw32-data/pinouts/cw32l010.yaml",
+          "sha256": "f7906510f8cc9f6e33cac628645c228b7ef76a6e0b8266e93a0431917efdaa13"
+        },
+        "sdk_candidates": {
+          "file": "cw32-data/af/cw32l010.yaml",
+          "sha256": "c6f30057752de6c8a3a6dffee70f84ec5dedc8ae1393f930da4fcc10feef014e"
+        }
+      },
+      "register_variant": "cw32l010_v1",
+      "behavior_pdf_page_indices": [
+        320,
+        321,
+        322,
+        323,
+        324,
+        325
+      ],
+      "register_sections": {
+        "CR1": {
+          "section": "14.9.1",
+          "pdf_page_index": 341,
+          "printed_page": 341
+        },
+        "CR2": {
+          "section": "14.9.2",
+          "pdf_page_index": 343,
+          "printed_page": 343
+        },
+        "ICR": {
+          "section": "14.9.6",
+          "pdf_page_index": 353,
+          "printed_page": 353
+        },
+        "EGR": {
+          "section": "14.9.7",
+          "pdf_page_index": 355,
+          "printed_page": 355
+        },
+        "CCER": {
+          "section": "14.9.14",
+          "pdf_page_index": 365,
+          "printed_page": 365
+        },
+        "BDTR": {
+          "section": "14.9.25",
+          "pdf_page_index": 370,
+          "printed_page": 370
+        },
+        "DTR2": {
+          "section": "14.9.26",
+          "pdf_page_index": 374,
+          "printed_page": 374
+        },
+        "AF1": {
+          "section": "14.9.30",
+          "pdf_page_index": 377,
+          "printed_page": 377
+        },
+        "AF2": {
+          "section": "14.9.31",
+          "pdf_page_index": 378,
+          "printed_page": 378
+        }
+      },
+      "qualified_subset": {
+        "hardware_complementary_channels": 6,
+        "api_channels": 4,
+        "dead_time_clock": "PCLK before PSC with CKD=0",
+        "dead_time_ticks_encoding": {
+          "0..127": "dtg",
+          "128..191": "2 * (64 + (dtg & 63))",
+          "192..223": "8 * (32 + (dtg & 31))",
+          "224..255": "16 * (32 + (dtg & 31))"
+        },
+        "dead_time_max_ticks": 1008,
+        "DTAE": 0,
+        "DTPE": 0,
+        "LOCK": 0,
+        "AOE": 0,
+        "BKF": 0,
+        "BKP": 1,
+        "BKINP": "0 active-high external pad; 1 active-low external pad",
+        "OSSI": 1,
+        "OSSR": 1,
+        "OISy": 0,
+        "OISyN": 0,
+        "CCyP": 0,
+        "CCyNP": 0,
+        "break_flag": "BIF is coalescing, R1W0, cannot clear while source active",
+        "master_output": "MOE cleared asynchronously by break; AOE=0 requires explicit software enable; active break prevents enable",
+        "lock_semantics": "LOCK written once after reset; ordinary Timer initialization writes LOCK=0 and freezes it at no write protection",
+        "external_bk_routes": 0
+      },
+      "sdk_register_sources": [
+        {
+          "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_atim.h",
+          "sha256": "23c59af8c06bf7de7db8f03c9d7f0faf1ed19e542ede69dec2db19e80651a318",
+          "archive": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "archive_member": "CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_atim.h",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "source_id": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_atim.h"
+        },
+        {
+          "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_atim.c",
+          "sha256": "103dcaa3e5c479092fac463b78fdb7dbdd3d57dbeedd884c5a3662968d030849",
+          "archive": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "archive_member": "CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_atim.c",
+          "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "source_id": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_atim.c"
+        }
+      ],
+      "sdk_review": "ATIM_SetPWMDeadtime writes raw DTG, DTAE and DTPE; its counter-slot wording is not a timing guarantee. Own manual CKD/DTG definitions govern the HAL. ATIM_CtrlPWMOutputs and ATIM_Brake1Config corroborate MOE, BKP, BKF and BKE fields."
+    },
+    "CW32L011": {
+      "sources": {
+        "datasheet": {
+          "file": "CW32L011_DataSheet_CN_V1.1.pdf",
+          "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+          "source_id": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+          "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf"
+        },
+        "reference_manual": {
+          "file": "CW32L011_UserManual_CN_V1.1.pdf",
+          "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+          "source_id": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf"
+        },
+        "gpio_header": {
+          "file": "cw32l011/Libraries/inc/cw32l011_gpio.h",
+          "sha256": "d78a3f5f0c4c04e7f948189b70a4e7ffe18025c98cc48418676ab1fa6ec8b78b",
+          "source_id": "member:cw32l011/Libraries/inc/cw32l011_gpio.h",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+        },
+        "sdk_archive": {
+          "file": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+          "source_id": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+        },
+        "pinouts": {
+          "file": "cw32-data/pinouts/cw32l011.yaml",
+          "sha256": "57906eb125837bc3e2e1ac1e8383142e0c51d2c5006624304ef755edea6e02cb"
+        },
+        "sdk_candidates": {
+          "file": "cw32-data/af/cw32l011.yaml",
+          "sha256": "05c84c7a1f521c6867004cf9cb8d545a7dcba188d16f7eed51512a657d33ec6e"
+        }
+      },
+      "register_variant": "cw32l010_v1",
+      "behavior_pdf_page_indices": [
+        321,
+        322,
+        323,
+        324,
+        325,
+        326
+      ],
+      "register_sections": {
+        "CR1": {
+          "section": "14.9.1",
+          "pdf_page_index": 342,
+          "printed_page": 342
+        },
+        "CR2": {
+          "section": "14.9.2",
+          "pdf_page_index": 344,
+          "printed_page": 344
+        },
+        "ICR": {
+          "section": "14.9.6",
+          "pdf_page_index": 354,
+          "printed_page": 354
+        },
+        "EGR": {
+          "section": "14.9.7",
+          "pdf_page_index": 356,
+          "printed_page": 356
+        },
+        "CCER": {
+          "section": "14.9.14",
+          "pdf_page_index": 366,
+          "printed_page": 366
+        },
+        "BDTR": {
+          "section": "14.9.25",
+          "pdf_page_index": 372,
+          "printed_page": 372
+        },
+        "DTR2": {
+          "section": "14.9.26",
+          "pdf_page_index": 376,
+          "printed_page": 376
+        },
+        "AF1": {
+          "section": "14.9.30",
+          "pdf_page_index": 379,
+          "printed_page": 379
+        },
+        "AF2": {
+          "section": "14.9.31",
+          "pdf_page_index": 380,
+          "printed_page": 380
+        }
+      },
+      "qualified_subset": {
+        "hardware_complementary_channels": 6,
+        "api_channels": 4,
+        "dead_time_clock": "PCLK before PSC with CKD=0",
+        "dead_time_ticks_encoding": {
+          "0..127": "dtg",
+          "128..191": "2 * (64 + (dtg & 63))",
+          "192..223": "8 * (32 + (dtg & 31))",
+          "224..255": "16 * (32 + (dtg & 31))"
+        },
+        "dead_time_max_ticks": 1008,
+        "DTAE": 0,
+        "DTPE": 0,
+        "LOCK": 0,
+        "AOE": 0,
+        "BKF": 0,
+        "BKP": 1,
+        "BKINP": "0 active-high external pad; 1 active-low external pad",
+        "OSSI": 1,
+        "OSSR": 1,
+        "OISy": 0,
+        "OISyN": 0,
+        "CCyP": 0,
+        "CCyNP": 0,
+        "break_flag": "BIF is coalescing, R1W0, cannot clear while source active",
+        "master_output": "MOE cleared asynchronously by break; AOE=0 requires explicit software enable; active break prevents enable",
+        "lock_semantics": "LOCK written once after reset; ordinary Timer initialization writes LOCK=0 and freezes it at no write protection",
+        "external_bk_routes": 4
+      },
+      "sdk_register_sources": [
+        {
+          "file": "cw32l011/Libraries/inc/cw32l011_atim.h",
+          "sha256": "14068420df29484a8e5078cb1305ad73672b18c325909b7d3cd15389aa89169a",
+          "archive": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "archive_member": "Libraries/inc/cw32l011_atim.h",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "source_id": "member:cw32l011/Libraries/inc/cw32l011_atim.h"
+        },
+        {
+          "file": "cw32l011/Libraries/src/cw32l011_atim.c",
+          "sha256": "945696b70cf5343ab8e75559b794ec2a1277b377c4446189bb36f00167b78415",
+          "archive": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "archive_member": "Libraries/src/cw32l011_atim.c",
+          "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "source_id": "member:cw32l011/Libraries/src/cw32l011_atim.c"
+        }
+      ],
+      "sdk_review": "ATIM_SetPWMDeadtime writes raw DTG, DTAE and DTPE; its counter-slot wording is not a timing guarantee. Own manual CKD/DTG definitions govern the HAL. ATIM_CtrlPWMOutputs and ATIM_Brake1Config corroborate MOE, BKP, BKF and BKE fields."
+    },
+    "CW32L012": {
+      "sources": {
+        "datasheet": {
+          "file": "CW32L012_DataSheet_CN_V1.0.pdf",
+          "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+          "source_id": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+          "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf"
+        },
+        "reference_manual": {
+          "file": "CW32L012_UserManual_CN_V1.4.pdf",
+          "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+          "source_id": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf"
+        },
+        "gpio_header": {
+          "file": "cw32l012/Libraries/inc/cw32l012_gpio.h",
+          "sha256": "45f356e8028475c2e25d135c5fdd0b75babb6b1c83f1d5534038e9355822d717",
+          "source_id": "member:cw32l012/Libraries/inc/cw32l012_gpio.h",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+        },
+        "sdk_archive": {
+          "file": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+          "source_id": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+        },
+        "pinouts": {
+          "file": "cw32-data/pinouts/cw32l012.yaml",
+          "sha256": "70ad225317acd9b1bd51a19fff15f6834f3efb4f58563b33344ab5d69eab07fb"
+        },
+        "sdk_candidates": {
+          "file": "cw32-data/af/cw32l012.yaml",
+          "sha256": "130aab7ba3ee34a8fa83a4cbafa052d415dca2b4f1a5d0853d8ead9ac9421afb"
+        }
+      },
+      "register_variant": "cw32l012_v1",
+      "behavior_pdf_page_indices": [
+        374,
+        375,
+        376,
+        377,
+        378,
+        379
+      ],
+      "register_sections": {
+        "CR1": {
+          "section": "17.10.1",
+          "pdf_page_index": 395,
+          "printed_page": 370
+        },
+        "CR2": {
+          "section": "17.10.2",
+          "pdf_page_index": 397,
+          "printed_page": 372
+        },
+        "ICR": {
+          "section": "17.10.6",
+          "pdf_page_index": 408,
+          "printed_page": 383
+        },
+        "EGR": {
+          "section": "17.10.7",
+          "pdf_page_index": 409,
+          "printed_page": 384
+        },
+        "CCER": {
+          "section": "17.10.14",
+          "pdf_page_index": 419,
+          "printed_page": 394
+        },
+        "BDTR": {
+          "section": "17.10.25",
+          "pdf_page_index": 426,
+          "printed_page": 401
+        },
+        "DTR2": {
+          "section": "17.10.26",
+          "pdf_page_index": 429,
+          "printed_page": 404
+        },
+        "AF1": {
+          "section": "17.10.30",
+          "pdf_page_index": 433,
+          "printed_page": 408
+        },
+        "AF2": {
+          "section": "17.10.31",
+          "pdf_page_index": 435,
+          "printed_page": 410
+        }
+      },
+      "qualified_subset": {
+        "hardware_complementary_channels": 6,
+        "api_channels": 4,
+        "dead_time_clock": "PCLK before PSC with CKD=0",
+        "dead_time_ticks_encoding": {
+          "0..127": "dtg",
+          "128..191": "2 * (64 + (dtg & 63))",
+          "192..223": "8 * (32 + (dtg & 31))",
+          "224..255": "16 * (32 + (dtg & 31))"
+        },
+        "dead_time_max_ticks": 1008,
+        "DTAE": 0,
+        "DTPE": 0,
+        "LOCK": 0,
+        "AOE": 0,
+        "BKF": 0,
+        "BKP": 1,
+        "BKINP": "0 active-high external pad; 1 active-low external pad",
+        "OSSI": 1,
+        "OSSR": 1,
+        "OISy": 0,
+        "OISyN": 0,
+        "CCyP": 0,
+        "CCyNP": 0,
+        "break_flag": "BIF is coalescing, R1W0, cannot clear while source active",
+        "master_output": "MOE cleared asynchronously by break; AOE=0 requires explicit software enable; active break prevents enable",
+        "lock_semantics": "LOCK written once after reset; ordinary Timer initialization writes LOCK=0 and freezes it at no write protection",
+        "external_bk_routes": 7
+      },
+      "sdk_register_sources": [
+        {
+          "file": "cw32l012/Libraries/inc/cw32l012_atim.h",
+          "sha256": "1b41e255fe6dbd73d4d4b39be80e6f1cdc0403d4a14efe81917bea6e403970d1",
+          "archive": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "archive_member": "Libraries/inc/cw32l012_atim.h",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "source_id": "member:cw32l012/Libraries/inc/cw32l012_atim.h"
+        },
+        {
+          "file": "cw32l012/Libraries/src/cw32l012_atim.c",
+          "sha256": "50daf74840479c86351659209541521520fd8d91265ffef1605f48d15816b981",
+          "archive": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "archive_member": "Libraries/src/cw32l012_atim.c",
+          "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "source_id": "member:cw32l012/Libraries/src/cw32l012_atim.c"
+        }
+      ],
+      "sdk_review": "ATIM_SetPWMDeadtime writes raw DTG, DTAE and DTPE; its counter-slot wording is not a timing guarantee. Own manual CKD/DTG definitions govern the HAL. ATIM_CtrlPWMOutputs and ATIM_Brake1Config corroborate MOE, BKP, BKF and BKE fields."
+    }
+  }
+}

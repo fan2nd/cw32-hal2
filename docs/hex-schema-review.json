@@ -1,0 +1,115 @@
+{
+  "status": "passed_conditional_on_lineage_update",
+  "review_date": "2026-10-09",
+  "scope": "Independent narrow technical review of the additive HEX metadata model delta against delivered Stage27. Only cw32-data-serde/src/lib.rs, cw32-metapac-gen/src/data.rs, and cw32-metapac-gen/res/src/metadata.rs are accepted by this review. Hardware/source qualification, HAL behavior, firmware, and legal clearance are excluded.",
+  "baseline_archive_sha256": "b5795126c3cf57cebd1d9122783397baf1229a0c14ee89c6a528c4beb669c4fd",
+  "initial_implementation_freeze_sha256": "a9c9e5276044605976c566f48fa28f2b4f2533850bc38693dbd4f535ea674a2f",
+  "initial_source_manifest_sha256": "672a18839a33acd3d05e60067a8520470ccaf6201d457881b7c36f45d4f4bfad",
+  "reviewed_implementation_freeze_sha256": "03761defbd69445937cffd72df5afdc30313d810c06d5155030110fad30e2dec",
+  "reviewed_source_manifest_sha256": "eb448a48580b57d2fdce2434a708b0abf8942d7caeb8ba3652636086784251eb",
+  "freeze_note": "The coordinator corrected only two example GPIO Speed values during this review. The three reviewed model hashes were unchanged. All 962 entries in the corrected source manifest matched the source tree when checked.",
+  "manifest_entries_verified": 962,
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+      "after_sha256": "6e226f5fcd3be01948c92cef653774119d34a1b7ff490cd08cadb0252d132477",
+      "deleted_lines": 0,
+      "byte_exact_reverse": true,
+      "added_lines": 14
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "790df91fb9a852b4955893bd4ffabece577bb6a979b2d8fe2fa403e2c5e56304",
+      "after_sha256": "0abcfdcac076ed2ab26a3a1496b5e0733ed9e27048e12394539d4f74334c2fbe",
+      "deleted_lines": 0,
+      "byte_exact_reverse": true,
+      "added_lines": 14
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "35689bbff0951a5f6e95f908fe2d2b95ebf25cbd82dbe07d9b490fee9379bc94",
+      "after_sha256": "d4a93db712f212ee08b0e2259613860ef289d852de8e0b4397770397613a51bc",
+      "deleted_lines": 0,
+      "byte_exact_reverse": true,
+      "added_lines": 13
+    }
+  ],
+  "checks": [
+    "All three model diffs contain insertions only (14, 14, and 13 lines); deleting the inserted lines reconstructs the delivered baseline bytes exactly.",
+    "Each baseline model hash equals the corresponding after hash accepted by docs/hse-schema-review.json.",
+    "16 existing schema contract tests passed unchanged, including exact JSON round trips for all 54 curated chip files.",
+    "9 isolated independent schema tests passed: omission/null behavior; complete HEX roundtrip and field order; all required nested fields; numeric widths and signedness; exact two-element tuple shape; existing HSE compatibility and coexistence; pin omission compatibility; structural-versus-physical validation boundary; actual static generation shape.",
+    "The exact four generator clock-model definitions and the existing Debug/stringify function were extracted without semantic edits. Generated legacy, HSE-only, HEX-only, and combined records compiled against the exact four static metadata definitions and their value assertions ran successfully.",
+    "docs/hse-schema-review.json and docs/upstream-file-provenance.json were byte-identical to the delivered baseline during this review; prior lineage was preserved."
+  ],
+  "compatibility": {
+    "wire_backward_compatibility": "ClockLimits.hex uses serde(default, skip_serializing_if = Option::is_none): absent and explicit null become None and serialize without hex. Generator PeripheralClockLimits.hex defaults to None for absence/null. Static PAC model stores Option<PeripheralHexLimits>.",
+    "nested_required_fields": "When hex is present, all six HEX fields are required and non-null. Its input requires minimum_hz, maximum_hz, supply_mv, and temperature_c. No nested default synthesizes electrical facts.",
+    "numeric_types": "HEX input frequency is u32, supply range is (u16,u16), temperature range is signed (i16,i16), duty and high/low VDDIO percentage ranges are (u8,u8), and timing limits are u16. All three models agree; no narrowing conversion or new numeric enum was introduced.",
+    "tuple_shape": "All five nested or direct HEX ranges are exact two-element tuples. JSON arrays with zero, one, or three elements fail in both deserializing models.",
+    "existing_hse": "ExternalClockLimits and HseLimits definitions are byte-preserved. HSE-only records roundtrip unchanged, HEX may coexist with HSE structurally, u64 CCS values remain intact, and the exact four-element HSE arrays retain their existing length constraints.",
+    "static_generation": "Existing derived Debug plus stringify produces nested PeripheralHexLimits and PeripheralExternalClockLimits struct expressions with ordinary tuples and Some/None. HSE static arrays still receive the existing borrow transformation. Emitted expressions compiled and ran against the static metadata model.",
+    "pins": "No pin record changed. Existing peripheral::Pin accepts the HEX signal with af/adc_mux/comparator_mux absent and omits those absent options when serializing.",
+    "rust_source_break": "Adding the public hex field requires downstream direct ClockLimits/PeripheralClockLimits struct literals to supply hex. Backward-compatible JSON does not imply Rust source compatibility.",
+    "validation_boundary": "These schemas enforce field presence, widths, signedness, and tuple length. They intentionally do not enforce interval ordering, percentages <=100, mutual exclusion of HSE/HEX, source provenance, or physical admissibility; those are separate generator/hardware-review responsibilities."
+  },
+  "lineage": {
+    "previous_review_reference": "docs/hse-schema-review.json",
+    "previous_review_sha256": "628e3ca5174dcb51e64e74d839acd9fd504cbc65dfdf1d298f391f96f2129b52",
+    "upstream_inventory_reference": "docs/upstream-file-provenance.json",
+    "upstream_inventory_before_sha256": "57869858236e0df5de9228c6d73882173a7d8e2efdff6030e03a78233838e75f",
+    "finding": "The current replacement_review tip remains the accepted HSE schema hash 19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b. This is an expected pending acceptance update, not evidence that the HEX bytes have already been incorporated into the lineage inventory.",
+    "metapac_ancestry": "The two metapac models retain their explicit adapted ancestry and package-declaration evidence. They are not reclassified as independently replaced schema code."
+  },
+  "lineage_preconditions": [
+    "Append this independent HEX review with all three exact before/after hashes, narrow technical scope, validation evidence, and legal_clearance=false.",
+    "Update cw32-data-serde/src/lib.rs replacement_review.replacement_sha256 to 6e226f5fcd3be01948c92cef653774119d34a1b7ff490cd08cadb0252d132477 and point the current review_reference and verification_reference to the accepted HEX review record.",
+    "Nest the complete prior HSE replacement_review under previous_review and retain its accepted_extensions/history. Append the Qualified HEX extension using the HSE before hash. Preserve original predecessor hashes, project-authored replacement status, historical exclusions, and unresolved upstream permission finding.",
+    "Record both metapac before/after identities without replacing their historical observed hashes or relabeling their licensed adapted ancestry.",
+    "Re-run source provenance/distribution verification after recording the new tip; regenerate and relock derived provenance inventories affected by the review records. This review does not claim that post-acceptance verification has already passed.",
+    "Keep historical unresolved source bodies, saved predecessor copies, and deletion hunks out of the distributed source release. This insertion-only model patch contains no predecessor deletion hunks."
+  ],
+  "evidence": {
+    "existing_and_independent_test_log": {
+      "path": "schema-contracts.log",
+      "sha256": "34d7f8ce052c3796459214ef058a3b47bfca4403984353e35b296e2c8b7731a7"
+    },
+    "independent_probe_source": {
+      "path": "harness/tests/hex_independent.rs",
+      "sha256": "7971744713d710223caf70b817cb417c5593a3f8055bf8c15e651987f626849b"
+    },
+    "model_delta": {
+      "path": "model-delta.patch",
+      "sha256": "7a1ac71c23c42e6a443baae4dbcd6e65542462a4fd876fb848938b4fce8cfab0"
+    },
+    "emitted_static_rust": {
+      "path": "emitted-static.rs",
+      "sha256": "b1bfc33dc0b3f0049f023349e8a935d71ad6e8f2952234d0d03731810165b864"
+    },
+    "fragment_identities": {
+      "generator_models.rs": {
+        "source": "cw32-metapac-gen/src/data.rs",
+        "start_line": 640,
+        "sha256": "46bd54a4223cdab36522e17522face8f4b86e1c5756e6abb79efeb3b88674f0d"
+      },
+      "static_models.rs": {
+        "source": "cw32-metapac-gen/res/src/metadata.rs",
+        "start_line": 367,
+        "sha256": "4e6836a070909e1c0d397695ed146b9e3f3f36edb800e1fde814f034cb6490ba"
+      },
+      "stringify.rs": {
+        "source": "cw32-metapac-gen/src/lib.rs",
+        "sha256": "5f806253ea60ef579312e05bbb8eefc6579d0f775d71ee8b49cced46fae1e5a0"
+      }
+    }
+  },
+  "limits": [
+    "No HAL tests, mocks, firmware compilation, target-hardware execution, or external hardware-source qualification was performed by this reviewer.",
+    "Static generation validation is an isolated compile of exact clock-model fragments and the existing stringify implementation, not a full metapac generator build.",
+    "Existing schema contracts ran unchanged through an isolated harness with exact direct dependency versions matching the project Cargo.lock. Full workspace checks were outside scope.",
+    "This is technical compatibility acceptance of an additive project-authored delta; it is not legal clearance or a new assessment of underlying upstream permission."
+  ],
+  "legal_clearance": false,
+  "main_tree_edited": false
+}

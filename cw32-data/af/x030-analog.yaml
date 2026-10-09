@@ -1,0 +1,137 @@
+schema_version: 1
+profiles:
+- CW32F030
+- CW32A030
+status: verified-sdk-and-datasheets-and-reference-manuals
+sources:
+- file: CW32F030_DataSheet_CN_V1.9.pdf
+  sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+  section: Pin definitions, table 5-1, printed pages 23–25
+  source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+- file: CW32A030_DataSheet_CN_V1.1.pdf
+  sha256: 690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9
+  section: Pin definitions, table 5-1, printed pages 21–22
+  source_ref: vendor:CW32A030_DataSheet_CN_V1.1.pdf
+- file: CW32x030_UserManual_CN_V2.5.pdf
+  sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+  section: §22.5.1 table 22-5
+  source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+- file: CW32x030_UserManual_EN_V1.0.pdf
+  sha256: 22eda878089565b7609f42215253227bb8e7b8072ea0378eae8a5ad489e3e3ec
+  section: §22.5.1 table 22-5, printed page 472
+  source_ref: vendor:CW32x030_UserManual_EN_V1.0.pdf
+sdk:
+  file: Libraries/inc/cw32f030_adc.h
+  version: V2.2
+  sha256: d2f210c244de9342c490f411efda7e379ba80ba2b9570b76e25963305cd0b488
+  section: ADC_ChSel
+  source_ref: member:cw32f030/Libraries/inc/cw32f030_adc.h
+limitations:
+- Die-level analog routes must be filtered by selected-package bonding.
+- Analog routes require GPIO ANALOG, not a digital AF selection.
+- PB0 is also ExRef; the HAL does not expose external-reference selection.
+- No hardware validation.
+routes:
+- peripheral: ADC
+  pin: PA0
+  signal: IN0
+  channel: 0
+  af: null
+  mux: 0
+  source_signal: ADC_IN0
+- peripheral: ADC
+  pin: PA1
+  signal: IN1
+  channel: 1
+  af: null
+  mux: 1
+  source_signal: ADC_IN1
+- peripheral: ADC
+  pin: PA2
+  signal: IN2
+  channel: 2
+  af: null
+  mux: 2
+  source_signal: ADC_IN2
+- peripheral: ADC
+  pin: PA3
+  signal: IN3
+  channel: 3
+  af: null
+  mux: 3
+  source_signal: ADC_IN3
+- peripheral: ADC
+  pin: PA4
+  signal: IN4
+  channel: 4
+  af: null
+  mux: 4
+  source_signal: ADC_IN4
+- peripheral: ADC
+  pin: PA5
+  signal: IN5
+  channel: 5
+  af: null
+  mux: 5
+  source_signal: ADC_IN5
+- peripheral: ADC
+  pin: PA6
+  signal: IN6
+  channel: 6
+  af: null
+  mux: 6
+  source_signal: ADC_IN6
+- peripheral: ADC
+  pin: PA7
+  signal: IN7
+  channel: 7
+  af: null
+  mux: 7
+  source_signal: ADC_IN7
+- peripheral: ADC
+  pin: PB0
+  signal: IN8
+  channel: 8
+  af: null
+  mux: 8
+  source_signal: ADC_IN8
+- peripheral: ADC
+  pin: PB1
+  signal: IN9
+  channel: 9
+  af: null
+  mux: 9
+  source_signal: ADC_IN9
+- peripheral: ADC
+  pin: PB2
+  signal: IN10
+  channel: 10
+  af: null
+  mux: 10
+  source_signal: ADC_IN10
+- peripheral: ADC
+  pin: PB10
+  signal: IN11
+  channel: 11
+  af: null
+  mux: 11
+  source_signal: ADC_IN11
+- peripheral: ADC
+  pin: PB11
+  signal: IN12
+  channel: 12
+  af: null
+  mux: 12
+  source_signal: ADC_IN12
+internal_channels:
+- channel: 13
+  signal: VDDA_DIV3
+  input_buffer_required: true
+- channel: 14
+  signal: TEMPERATURE
+  input_buffer_required: true
+  minimum_acquisition_us: 5
+  maximum_startup_us: 45
+- channel: 15
+  signal: VREFINT
+  input_buffer_required: true

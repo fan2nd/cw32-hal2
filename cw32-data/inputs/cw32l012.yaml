@@ -1,0 +1,109 @@
+schema_version: 1
+spi_metadata: cw32-data/spi.yaml
+source:
+  path: sources/vendor/CW32L012.svd
+  sha256: fda08355c30ed60204cd53b2c1ca33e6ee2233530e6cb2448522158dfc302942
+  url: https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip
+  source_ref: member:cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd
+expected_svd_name: CW32L012
+core: cm0p
+die: CW32L012
+chip_prefix: CW32L012
+gpio_dir_pin_fields: false
+register_aliases:
+- block: ATIM
+  register: CCMR1CAP
+  alias: CCMR1CMP
+- block: ATIM
+  register: CCMR2CAP
+  alias: CCMR2CMP
+- block: ATIM
+  register: CCMR3CAP
+  alias: CCMR3CMP
+- block: GTIM
+  register: CCMR1CAP
+  alias: CCMR1CMP
+- block: GTIM
+  register: CCMR2CAP
+  alias: CCMR2CMP
+- block: I2C
+  register: MCR2
+  alias: SCR2
+supplemental_interrupts:
+- name: CLKFAULT
+  number: 31
+  evidence: Official CW32L012 SDK Libraries/inc header CLKFAULT_IRQn=31; SHA256 3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000
+family: CW32L0
+line: CW32L012
+register_version: cw32l012_v1
+nvic_priority_bits: 2
+nvic_priority_bits_evidence: Official CW32L012 SDK Libraries/inc header __NVIC_PRIO_BITS=2; SHA256 3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000
+chips:
+- name: CW32L012
+  memory: []
+parts_catalog: cw32-data/parts.yaml
+register_versions:
+  adc: cw32l012_v1
+  atim: cw32l012_v1
+  bgr: cw32l012_v1
+  btim: cw32l012_v1
+  cordic: cw32l012_v1
+  crc: cw32l010_v1
+  dac: cw32l012_v1
+  dma: cw32l012_v1
+  dmachannel: cw32l012_v1
+  eau: cw32l012_v1
+  flash: cw32l012_v1
+  gpio: cw32l012_v1
+  gtim: cw32l012_v1
+  halltim: cw32l012_v1
+  i2c: cw32l012_v1
+  irmod: cw32l012_v1
+  iwdt: v1
+  lptim: cw32l012_v1
+  lvd: cw32l010_v1
+  opa: cw32l012_v1
+  ram: cw32l011_v1
+  rtc: cw32l012_v1
+  spi: cw32l012_v1
+  sysctrl: cw32l012_v1
+  uart: cw32l012_v1
+  vc: cw32l012_v1
+  vc2ref: cw32l012_v1
+  wwdt: cw32l012_v1
+pinout_metadata: cw32-data/pinouts/cw32l012.yaml
+alias_pin_policy: common-package-intersection
+dma_metadata: cw32-data/dma/cw32l012.yaml
+clock_metadata: cw32-data/clock/cw32l012.yaml
+af_metadata: cw32-data/af/cw32l012-serial.yaml
+register_overrides:
+- block: ADC
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32L012 User Manual CN V1.4 section 25.12.9, printed page 597/PDF page 623: ADC ISR at offset
+    0x78 marks every defined status field RO; flags clear through the separate ICR. Access-only correction;
+    widths, offsets and fields unchanged. PDF SHA256 a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340.
+    https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf'
+analog_metadata: cw32-data/af/cw32l012-analog.yaml
+field_width_overrides:
+- block: VC2REF
+  fieldset: REF
+  field: DIV
+  expected_bit_offset: 0
+  expected_bit_size: 3
+  bit_size: 4
+  evidence: 'CW32L012 User Manual CN V1.4 sections 27.7.1 and 27.7.2, printed page 627/PDF page 653:
+    both VCREF divider fields are DIV[3:0]. Section 27.3.1, printed page 620/PDF page 646, only
+    qualifies codes 0..7; SDK V1.0.5 and SVD use three bits. PAC follows the four-bit manual field;
+    HAL rejects inherited codes 8..15 and writes only 0..7. See cw32-data/reference-dividers.yaml
+    and docs/comparator-reference.md. PDF SHA256 a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340.
+    https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf'
+pwm_metadata: cw32-data/af/cw32l012-pwm.yaml
+atim_pwm_metadata: cw32-data/af/cw32l012-atim-pwm.yaml
+gpio_interrupt_metadata: cw32-data/gpio-interrupt.yaml
+electrical_metadata: cw32-data/electrical.yaml
+comparator_metadata: cw32-data/af/cw32l012-comparator.yaml
+halltim_metadata: cw32-data/af/cw32l012-halltim.yaml
+atim_complementary_metadata: cw32-data/af/cw32l012-atim-complementary.yaml
+adc_sequence_metadata: cw32-data/adc-sequences.yaml

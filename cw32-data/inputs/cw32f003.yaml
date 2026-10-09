@@ -1,0 +1,94 @@
+schema_version: 1
+spi_metadata: cw32-data/spi.yaml
+source:
+  path: sources/vendor/CW32F003.svd
+  sha256: 9535665c3cd517e4619121ccac8f47b91a6528d295e3c9aed99367691a094293
+  url: https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip
+  source_ref: member:cw32f003/IdeSupport/MDK/WHXY.CW32F003_DFP.1.0.2/SVD/CW32F003.svd
+expected_svd_name: CW32F003
+core: cm0p
+die: CW32F003
+chip_prefix: CW32F003
+gpio_dir_pin_fields: false
+register_aliases: []
+supplemental_interrupts: []
+family: CW32F0
+line: CW32F003
+register_version: cw32f003_v1
+nvic_priority_bits: 2
+nvic_priority_bits_evidence: Official CW32F003 SDK Libraries/inc header __NVIC_PRIO_BITS=2; SHA256 1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f
+chips:
+- name: CW32F003
+  memory: []
+parts_catalog: cw32-data/parts.yaml
+register_versions:
+  adc: cw32f003_v1
+  atim: cw32f003_v1
+  awt: v1
+  btim: cw32f002_v1
+  crc: cw32f002_v1
+  flash: cw32f003_v1
+  gpio: cw32f002_v1
+  gpioc: cw32f002_v1
+  gtim: cw32f002_v1
+  i2c: cw32f002_v1
+  ir: cw32f003_v1
+  iwdt: v1
+  lvd: v1
+  ram: v1
+  spi: cw32f002_v1
+  sysctrl: cw32f003_v1
+  uart: cw32f002_v1
+  vc: v1
+  wwdt: v1
+pinout_metadata: cw32-data/pinouts/cw32f003.yaml
+alias_pin_policy: common-package-intersection
+dma_metadata: cw32-data/dma/cw32f003.yaml
+clock_metadata: cw32-data/clock/cw32f003.yaml
+af_metadata: cw32-data/af/cw32f003-serial.yaml
+register_overrides:
+- block: GPIO
+  register: IDR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F003 User Manual CN V2.3 section 8.6.14, printed page 115/PDF page 116: GPIOx_IDR at
+    offset 0x50 marks PINy[7:0] RO for x=A,B,C. Access-only correction; existing register width, fields
+    and pin inventory unchanged. Original SVD register access is read-write. PDF SHA256 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738.
+    https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf'
+- block: GPIOC
+  register: IDR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F003 User Manual CN V2.3 section 8.6.14, printed page 115/PDF page 116: GPIOx_IDR at
+    offset 0x50 marks PINy[7:0] RO for x=A,B,C. Access-only correction; existing register width, fields
+    and pin inventory unchanged. Original SVD register access is read-write. PDF SHA256 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738.
+    https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf'
+- block: GPIO
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F003 User Manual CN V2.3 section 8.6.11, printed page 114/PDF page 115: GPIOx_ISR at
+    offset 0x34 is RO for x=A,B,C. Access-only correction; existing register width and fieldsets unchanged.
+    PDF SHA256 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738. https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf'
+- block: GPIOC
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F003 User Manual CN V2.3 section 8.6.11, printed page 114/PDF page 115: GPIOx_ISR at
+    offset 0x34 is RO for x=A,B,C. Access-only correction; existing register width and fieldsets unchanged.
+    PDF SHA256 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738. https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf'
+- block: GTIM
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F003 User Manual CN V2.3 section 12.7.12, printed page 184/PDF page 185: GTIM ISR at
+    offset 0x318 marks every defined status field RO; flags clear through the separate ICR. Access-only
+    correction; widths, offsets and fields unchanged. PDF SHA256 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738.
+    https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf'
+analog_metadata: cw32-data/af/cw32f003-analog.yaml
+pwm_metadata: cw32-data/af/cw32f003-pwm.yaml
+atim_pwm_metadata: cw32-data/af/cw32f003-atim-pwm.yaml
+gpio_interrupt_metadata: cw32-data/gpio-interrupt.yaml
+electrical_metadata: cw32-data/electrical.yaml
+comparator_metadata: cw32-data/af/cw32f003-comparator.yaml
+classic_adc_scan_metadata: cw32-data/classic-adc-scans.yaml

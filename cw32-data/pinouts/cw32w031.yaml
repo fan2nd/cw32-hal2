@@ -1,0 +1,904 @@
+schema_version: 1
+family: CW32W031
+status: verified-from-official-datasheet
+source:
+  source_id: CW32W031_datasheet
+  url: https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf
+  sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+  document_filename: CW32W031_DataSheet_CN_V1.3.pdf
+  pinout_evidence: 'Table 5-2: complete physical-position, pin-name and pin-type columns; oscillator aliases
+    only when explicitly stated in the same row.'
+  table_pdf_page_indices:
+  - 26
+  - 27
+  - 28
+  - 29
+  visually_reviewed_pdf_page_indices:
+  - 28
+  validation: Independent PDF-grid and pdftotext position extraction; rendered-page review of per-family
+    tables and ambiguous cases; not silicon-tested.
+  source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+notes:
+- Package pins retain physical position strings, including vendor-numbered exposed pads. A dash in the
+  source is unbonded and becomes null only in table_rows; it is never emitted as a package pin.
+- GPIO names are normalized by removing leading zeroes (PA00 to PA0). Other pin labels preserve source
+  spelling. Direct pin-name aliases and OSC/OSC32 analog aliases are included; numbered alternate-function
+  routing is outside this dataset.
+- gpio_pins lists output-capable MCU GPIO pins according to this family's pin-type table, including debug/reset
+  pads that require explicit reconfiguration. input_only_pins contains MCU GPIO names only. Neither list
+  claims safe electrical configuration or silicon verification.
+- Unnumbered thermal pads are not assigned invented positions or signals. Numbered pad 0 is included only
+  where explicitly documented.
+- GPIO10 and GPIO11 belong to the RF subsystem. Their type cells contain separate I and O functional entries,
+  retained as source_type 'I; O'; these are not MCU GPIO port/pin names. Power, RF, antenna and regulator
+  pins retain the vendor's names.
+table_columns:
+- QFN64
+table_rows:
+- positions:
+    QFN64: '1'
+  source_name: NRST
+  signals:
+  - NRST
+  source_type: I
+  pin_type: I
+  io_structure: RST
+  pdf_page_index: 26
+- positions:
+    QFN64: '2'
+  source_name: VSSA
+  signals:
+  - VSSA
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 26
+- positions:
+    QFN64: '3'
+  source_name: VDDA
+  signals:
+  - VDDA
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 26
+- positions:
+    QFN64: '4'
+  source_name: PA00
+  signals:
+  - PA0
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '5'
+  source_name: PA01
+  signals:
+  - PA1
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '6'
+  source_name: PA02
+  signals:
+  - PA2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '7'
+  source_name: PA03
+  signals:
+  - PA3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '8'
+  source_name: PA04
+  signals:
+  - PA4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '9'
+  source_name: PA05
+  signals:
+  - PA5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '10'
+  source_name: PA06
+  signals:
+  - PA6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '11'
+  source_name: PA07
+  signals:
+  - PA7
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '12'
+  source_name: PB00
+  signals:
+  - PB0
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '13'
+  source_name: PB01
+  signals:
+  - PB1
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '14'
+  source_name: PB02
+  signals:
+  - PB2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '15'
+  source_name: PB10
+  signals:
+  - PB10
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    QFN64: '16'
+  source_name: PB11
+  signals:
+  - PB11
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 27
+- positions:
+    QFN64: '17'
+  source_name: VSS
+  signals:
+  - VSS
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 27
+- positions:
+    QFN64: '18'
+  source_name: VDD
+  signals:
+  - VDD
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 27
+- positions:
+    QFN64: '19'
+  source_name: PB12
+  signals:
+  - PB12
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '20'
+  source_name: PB14
+  signals:
+  - PB14
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '21'
+  source_name: PB15
+  signals:
+  - PB15
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '22'
+  source_name: PA08
+  signals:
+  - PA8
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '23'
+  source_name: PA09
+  signals:
+  - PA9
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '24'
+  source_name: PA10
+  signals:
+  - PA10
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '25'
+  source_name: PA11
+  signals:
+  - PA11
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '26'
+  source_name: PA12
+  signals:
+  - PA12
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '27'
+  source_name: PA13/SWDIO
+  signals:
+  - PA13
+  - SWDIO
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '28'
+  source_name: PF06
+  signals:
+  - PF6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '29'
+  source_name: PF07
+  signals:
+  - PF7
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '30'
+  source_name: PA14/SWCLK
+  signals:
+  - PA14
+  - SWCLK
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    QFN64: '31'
+  source_name: VDDRF
+  signals:
+  - VDDRF
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 27
+- positions:
+    QFN64: '32'
+  source_name: DVDD
+  signals:
+  - DVDD
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 27
+- positions:
+    QFN64: '33'
+  source_name: VDD1
+  signals:
+  - VDD1
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 27
+- positions:
+    QFN64: '34'
+  source_name: VSSRF
+  signals:
+  - VSSRF
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '35'
+  source_name: VLX
+  signals:
+  - VLX
+  source_type: '-'
+  pin_type: '-'
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '36'
+  source_name: VDDRF
+  signals:
+  - VDDRF
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '37'
+  source_name: VFB
+  signals:
+  - VFB
+  source_type: '-'
+  pin_type: '-'
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '38'
+  source_name: RFXC1
+  signals:
+  - RFXC1
+  source_type: I
+  pin_type: I
+  io_structure: RF
+  pdf_page_index: 28
+- positions:
+    QFN64: '39'
+  source_name: RFXC2
+  signals:
+  - RFXC2
+  source_type: O
+  pin_type: O
+  io_structure: RF
+  pdf_page_index: 28
+- positions:
+    QFN64: '40'
+  source_name: VDD2
+  signals:
+  - VDD2
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '41'
+  source_name: ANTN
+  signals:
+  - ANTN
+  source_type: I
+  pin_type: I
+  io_structure: RF
+  pdf_page_index: 28
+- positions:
+    QFN64: '42'
+  source_name: ANTP
+  signals:
+  - ANTP
+  source_type: I
+  pin_type: I
+  io_structure: RF
+  pdf_page_index: 28
+- positions:
+    QFN64: '43'
+  source_name: VDD1P8V
+  signals:
+  - VDD1P8V
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '44'
+  source_name: VDDPA_LDO
+  signals:
+  - VDDPA_LDO
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '45'
+  source_name: TX_ANT_LP
+  signals:
+  - TX_ANT_LP
+  source_type: O
+  pin_type: O
+  io_structure: RF
+  pdf_page_index: 28
+- positions:
+    QFN64: '46'
+  source_name: TX_ANT_HP
+  signals:
+  - TX_ANT_HP
+  source_type: O
+  pin_type: O
+  io_structure: RF
+  pdf_page_index: 28
+- positions:
+    QFN64: '47'
+  source_name: VDDRF
+  signals:
+  - VDDRF
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '48'
+  source_name: VDD3
+  signals:
+  - VDD3
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '49'
+  source_name: GPIO10
+  signals:
+  - GPIO10
+  source_type: I; O
+  pin_type: I/O
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '50'
+  source_name: GPIO11
+  signals:
+  - GPIO11
+  source_type: I; O
+  pin_type: I/O
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '51'
+  source_name: GPIO1
+  signals:
+  - GPIO1
+  source_type: I/O
+  pin_type: I/O
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '52'
+  source_name: GPIO3
+  signals:
+  - GPIO3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    QFN64: '53'
+  source_name: PB07
+  signals:
+  - PB7
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 28
+- positions:
+    QFN64: '54'
+  source_name: PF03/BOOT
+  signals:
+  - PF3
+  - BOOT
+  source_type: I
+  pin_type: I
+  io_structure: B
+  pdf_page_index: 28
+- positions:
+    QFN64: '55'
+  source_name: PB08
+  signals:
+  - PB8
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 28
+- positions:
+    QFN64: '56'
+  source_name: PB09
+  signals:
+  - PB9
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 28
+- positions:
+    QFN64: '57'
+  source_name: VSS
+  signals:
+  - VSS
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 29
+- positions:
+    QFN64: '58'
+  source_name: VDD
+  signals:
+  - VDD
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 29
+- positions:
+    QFN64: '59'
+  source_name: Vcore
+  signals:
+  - Vcore
+  source_type: '-'
+  pin_type: '-'
+  io_structure: '-'
+  pdf_page_index: 29
+- positions:
+    QFN64: '60'
+  source_name: PC13
+  signals:
+  - PC13
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+- positions:
+    QFN64: '61'
+  source_name: PC14
+  signals:
+  - PC14
+  - OSC32_IN
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+- positions:
+    QFN64: '62'
+  source_name: PC15
+  signals:
+  - PC15
+  - OSC32_OUT
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+- positions:
+    QFN64: '63'
+  source_name: PF00
+  signals:
+  - PF0
+  - OSC_IN
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+- positions:
+    QFN64: '64'
+  source_name: PF01
+  signals:
+  - PF1
+  - OSC_OUT
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+packages:
+- name: CW32W031R8U6
+  key: cw32w031r8u
+  family_part: CW32W031R8
+  package: QFN64
+  table_column: QFN64
+  documented_orderable_parts:
+  - CW32W031R8U6
+  flash_bytes: 65536
+  ram_bytes: 8192
+  lead_count: 64
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - NRST
+  - position: '2'
+    signals:
+    - VSSA
+  - position: '3'
+    signals:
+    - VDDA
+  - position: '4'
+    signals:
+    - PA0
+  - position: '5'
+    signals:
+    - PA1
+  - position: '6'
+    signals:
+    - PA2
+  - position: '7'
+    signals:
+    - PA3
+  - position: '8'
+    signals:
+    - PA4
+  - position: '9'
+    signals:
+    - PA5
+  - position: '10'
+    signals:
+    - PA6
+  - position: '11'
+    signals:
+    - PA7
+  - position: '12'
+    signals:
+    - PB0
+  - position: '13'
+    signals:
+    - PB1
+  - position: '14'
+    signals:
+    - PB2
+  - position: '15'
+    signals:
+    - PB10
+  - position: '16'
+    signals:
+    - PB11
+  - position: '17'
+    signals:
+    - VSS
+  - position: '18'
+    signals:
+    - VDD
+  - position: '19'
+    signals:
+    - PB12
+  - position: '20'
+    signals:
+    - PB14
+  - position: '21'
+    signals:
+    - PB15
+  - position: '22'
+    signals:
+    - PA8
+  - position: '23'
+    signals:
+    - PA9
+  - position: '24'
+    signals:
+    - PA10
+  - position: '25'
+    signals:
+    - PA11
+  - position: '26'
+    signals:
+    - PA12
+  - position: '27'
+    signals:
+    - PA13
+    - SWDIO
+  - position: '28'
+    signals:
+    - PF6
+  - position: '29'
+    signals:
+    - PF7
+  - position: '30'
+    signals:
+    - PA14
+    - SWCLK
+  - position: '31'
+    signals:
+    - VDDRF
+  - position: '32'
+    signals:
+    - DVDD
+  - position: '33'
+    signals:
+    - VDD1
+  - position: '34'
+    signals:
+    - VSSRF
+  - position: '35'
+    signals:
+    - VLX
+  - position: '36'
+    signals:
+    - VDDRF
+  - position: '37'
+    signals:
+    - VFB
+  - position: '38'
+    signals:
+    - RFXC1
+  - position: '39'
+    signals:
+    - RFXC2
+  - position: '40'
+    signals:
+    - VDD2
+  - position: '41'
+    signals:
+    - ANTN
+  - position: '42'
+    signals:
+    - ANTP
+  - position: '43'
+    signals:
+    - VDD1P8V
+  - position: '44'
+    signals:
+    - VDDPA_LDO
+  - position: '45'
+    signals:
+    - TX_ANT_LP
+  - position: '46'
+    signals:
+    - TX_ANT_HP
+  - position: '47'
+    signals:
+    - VDDRF
+  - position: '48'
+    signals:
+    - VDD3
+  - position: '49'
+    signals:
+    - GPIO10
+  - position: '50'
+    signals:
+    - GPIO11
+  - position: '51'
+    signals:
+    - GPIO1
+  - position: '52'
+    signals:
+    - GPIO3
+  - position: '53'
+    signals:
+    - PB7
+  - position: '54'
+    signals:
+    - PF3
+    - BOOT
+  - position: '55'
+    signals:
+    - PB8
+  - position: '56'
+    signals:
+    - PB9
+  - position: '57'
+    signals:
+    - VSS
+  - position: '58'
+    signals:
+    - VDD
+  - position: '59'
+    signals:
+    - Vcore
+  - position: '60'
+    signals:
+    - PC13
+  - position: '61'
+    signals:
+    - PC14
+    - OSC32_IN
+  - position: '62'
+    signals:
+    - PC15
+    - OSC32_OUT
+  - position: '63'
+    signals:
+    - PF0
+    - OSC_IN
+  - position: '64'
+    signals:
+    - PF1
+    - OSC_OUT
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA13
+  - PA14
+  - PB0
+  - PB1
+  - PB2
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB14
+  - PB15
+  - PC13
+  - PC14
+  - PC15
+  - PF0
+  - PF1
+  - PF6
+  - PF7
+  gpio_count: 33
+  input_only_pins:
+  - PF3
+  debug_pins:
+  - PA13
+  - PA14
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PB0
+  - PB1
+  - PB2
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB14
+  - PB15
+  - PC13
+  - PC14
+  - PC15
+  - PF0
+  - PF1
+  - PF6
+  - PF7

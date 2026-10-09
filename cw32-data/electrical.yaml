@@ -1,0 +1,2804 @@
+schema_version: 1
+source_authority: sources/evidence-sources.json
+scope: Selected source-qualified electrical and timing facts. Supply/ambient qualifications, conservative
+  choices and all band-boundary interpretations are retained from the reviewed policies. No measured clocks
+  or silicon validation. Register encodings and sequencing remain in the driver.
+policies:
+  docs/adc-clock-source-bounds.json: 5f4f4ad29e7f00ae2513ea7ca71f32e6757072e68a61497b4c6e7393e9ba9e0a
+  docs/rcc-operating-envelope.json: 10f8294e88c827e3e5beafc7e5b07e56730d49ee15bd35548ba58438b96c972b
+  docs/watchdog-evidence.json: e713d070dec0a51ab49e0bded9527104e089898bc2fd158d52bb9dd0101bca22
+  docs/i2c-clock-bounds-sources.json: a5bae8466fea3bb8a71d2371f594cde636a9f517b388b0a14d916d5ca5a9c5b8
+  docs/flash-next-batch-audit.json: 4b1b53537ca8b1002c69c188e4a190503482615e3df952c6ace1fa22f8d5cf6a
+  docs/flash-lock-access-corrections.json: b95077d192a91159f4b7fadc30c58ffa11a806a433be1e07224421a3e1245155
+  docs/adc-low-sequence-audit.md: 890b7a30297733cf0eec09f3d21230ffac647fef091f68705e989f233a598934
+  docs/adc-l012-dual-ownership.md: 59c69c5a29b989b585fca01efc35c46c952a9769ed786b4cc5e18ccbb80284d8
+  docs/flash-storage.md: 4d66fa26d3c9ec07cb372013cc4ebaa2f25c4c881c435b047e9f4736803e2738
+  docs/flash-breadth-source-review.json: ba1bd996418f11a5d2420c651bf7df5c1e019b16e7e70969dfe64158f8949345
+  docs/flash-remaining-evidence.json: 500eaef78a0ae2273854b0d1e994e738ddb689899c05a0dd147e93b8b6fa84b7
+  cw32-data/hse-qualified.yaml: 01eaae77773c37777d7e64ae54ee597cd72d7dacb3b9cb23a899e5c4806336d5
+  cw32-data/hex-qualified.yaml: cc7b6f5da58f76ad76a32ba71ce894bc4fb62158ebf1a19bc3330421c9c04126
+  cw32-data/lse-ownership.yaml: 1108d430581567e0dc6cffafc7155791be1ab0be33b630bf595d0eaadd8ecdd4
+  cw32-data/pll-qualified.yaml: ea3f14a0d01357e1a90f116616c0f18b79d7aa2b02f289fe83979b5501958494
+profiles:
+  CW32A030:
+    policy_family: CW32A030
+    clock_limits:
+      lse:
+        pin_lock: false
+        pin_lock_requires_enable_lock: false
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 1650
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 105
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 64000000
+      factory_hsi_trim_address: 75264
+      default_hsi_divisor: 6
+      initial_flash_wait: 2
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 105
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 105
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        frequency_ranges_hz:
+        - - 4000000
+          - 8000000
+        - - 8000000
+          - 16000000
+        - - 16000000
+          - 24000000
+        - - 24000000
+          - 32000000
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 36080
+        ccs_lsi_supply_mv:
+        - 1650
+        - 5500
+        ccs_lsi_temperature_c:
+        - -40
+        - 105
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+    adc_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 5
+      - 6
+      - 8
+      - 10
+      comparison_cycles: 19
+      supply_bands:
+      - supply_min_mv: 1650
+        maximum_clock_hz: 500000
+        maximum_sample_rate_hz: 25000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2400
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2700
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 0
+      internal_1v5_bands:
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      internal_2v5_bands:
+      - supply_min_mv: 2800
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      input_follower_maximum_rate_hz: 200000
+      temperature_acquisition_maximum_rate_hz: 200000
+      internal_acquisition_ps: 0
+    iwdt_clock:
+      typical_hz: 8000
+      minimum_hz: 4000
+      maximum_hz: 12000
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      lock_group_bytes: 4096
+      lock_mask: 65535
+      has_cache_control: true
+      maximum_hclk_hz: 64000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 2
+    factory_trim_source:
+      artifact: cw32f030/Libraries/inc/cw32f030_rcc.h
+      sha256: de32996b8f852c456ada827bc5c13fe64a29fc12115489d98e2d3ddf6133d184
+      line_1_based: 122
+      value: 75264
+      qualification: Shared x030 SDK definition independently qualified by the own A030 datasheet/common
+        x030 manual.
+      source_ref: member:cw32f030/Libraries/inc/cw32f030_rcc.h
+    hse_sources:
+    - source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+      sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+      pdf_pages_1_based:
+      - 48
+      - 49
+      - 57
+      - 60
+      - 71
+      - 75
+      - 173
+      - 188
+      printed_pages:
+      - 47
+      - 48
+      - 56
+      - 59
+      - 70
+      - 74
+      - 172
+      - 187
+    - source_ref: vendor:CW32A030_DataSheet_CN_V1.1.pdf
+      sha256: 690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9
+      pdf_pages_1_based:
+      - 22
+      - 35
+      - 40
+      - 42
+      - 43
+      printed_pages:
+      - 21
+      - 34
+      - 39
+      - 41
+      - 42
+  CW32F002:
+    policy_family: CW32F002
+    clock_limits:
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 5
+      hsi_supply_mv:
+      - 1650
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 105
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 48000000
+      factory_hsi_trim_address: 1050552
+      default_hsi_divisor: 6
+      initial_flash_wait: 2
+      flash_wait_step_hz: 24000000
+      hex:
+        input:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 105
+        duty_percent:
+        - 40
+        - 60
+        minimum_high_low_ns: 15
+        maximum_rise_fall_ns: 20
+        high_level_vddio_percent:
+        - 70
+        - 100
+        low_level_vddio_percent:
+        - 0
+        - 30
+    adc_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 5
+      - 6
+      - 8
+      - 10
+      comparison_cycles: 19
+      supply_bands:
+      - supply_min_mv: 1650
+        maximum_clock_hz: 500000
+        maximum_sample_rate_hz: 25000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2400
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2700
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 0
+      internal_1v5_bands: []
+      internal_2v5_bands: []
+      input_follower_maximum_rate_hz: 200000
+      temperature_acquisition_maximum_rate_hz: 200000
+      internal_acquisition_ps: 0
+    iwdt_clock:
+      typical_hz: 8000
+      minimum_hz: 4000
+      maximum_hz: 12000
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      lock_group_bytes: 2048
+      lock_mask: 255
+      has_cache_control: false
+      maximum_hclk_hz: 48000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 2
+    factory_trim_source:
+      artifact: cw32f002/Libraries/inc/cw32f002_rcc.h
+      sha256: 665aa9a23c6d3ae535b3a06980af4356bc62ea46ff31cc9b0c7890e2465fd9f7
+      line_1_based: 110
+      value: 1050552
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32f002/Libraries/inc/cw32f002_rcc.h
+    hex_sources:
+    - source_ref: vendor:CW32F002_UserManual_CN_V1.4.pdf
+      sha256: e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add
+      pdf_pages_1_based:
+      - 42
+      - 47
+      - 54
+      - 55
+      - 57
+      - 129
+      printed_pages:
+      - 41
+      - 46
+      - 53
+      - 54
+      - 56
+      - 128
+    - source_ref: vendor:CW32F002_DataSheet_CN_V1.2.pdf
+      sha256: 6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506
+      pdf_pages_1_based:
+      - 22
+      - 30
+      - 31
+      - 36
+      - 37
+      - 40
+      printed_pages:
+      - 21
+      - 29
+      - 30
+      - 35
+      - 36
+      - 39
+  CW32F003:
+    policy_family: CW32F003
+    clock_limits:
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 1650
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 105
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 48000000
+      factory_hsi_trim_address: 1050552
+      default_hsi_divisor: 6
+      initial_flash_wait: 2
+      flash_wait_step_hz: 24000000
+      hex:
+        input:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 105
+        duty_percent:
+        - 40
+        - 60
+        minimum_high_low_ns: 15
+        maximum_rise_fall_ns: 20
+        high_level_vddio_percent:
+        - 70
+        - 100
+        low_level_vddio_percent:
+        - 0
+        - 30
+    adc_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 5
+      - 6
+      - 8
+      - 10
+      comparison_cycles: 19
+      supply_bands:
+      - supply_min_mv: 1650
+        maximum_clock_hz: 500000
+        maximum_sample_rate_hz: 25000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2400
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2700
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 0
+      internal_1v5_bands:
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      internal_2v5_bands:
+      - supply_min_mv: 2800
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      input_follower_maximum_rate_hz: 200000
+      temperature_acquisition_maximum_rate_hz: 200000
+      internal_acquisition_ps: 0
+    iwdt_clock:
+      typical_hz: 8000
+      minimum_hz: 4000
+      maximum_hz: 12000
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      lock_group_bytes: 2048
+      lock_mask: 1023
+      has_cache_control: false
+      maximum_hclk_hz: 48000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 2
+    factory_trim_source:
+      artifact: cw32f003/Libraries/inc/cw32f003_rcc.h
+      sha256: 12af56866d53c0822576fcc599efb625d68e04132f2d32b8c5b20f46a93f53ae
+      line_1_based: 110
+      value: 1050552
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32f003/Libraries/inc/cw32f003_rcc.h
+    hex_sources:
+    - source_ref: vendor:CW32F003_UserManual_CN_V2.3.pdf
+      sha256: 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738
+      pdf_pages_1_based:
+      - 44
+      - 49
+      - 56
+      - 57
+      - 59
+      - 131
+      printed_pages:
+      - 43
+      - 48
+      - 55
+      - 56
+      - 58
+      - 130
+    - source_ref: vendor:CW32F003_DataSheet_CN_V1.9.pdf
+      sha256: 5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd
+      pdf_pages_1_based:
+      - 23
+      - 31
+      - 32
+      - 37
+      - 38
+      - 41
+      printed_pages:
+      - 22
+      - 30
+      - 31
+      - 36
+      - 37
+      - 40
+  CW32F020:
+    policy_family: CW32F020
+    clock_limits:
+      lse:
+        pin_lock: false
+        pin_lock_requires_enable_lock: false
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 5
+      hsi_supply_mv:
+      - 1650
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 105
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 48000000
+      factory_hsi_trim_address: 75264
+      default_hsi_divisor: 6
+      initial_flash_wait: 2
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 105
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 105
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        frequency_ranges_hz:
+        - - 4000000
+          - 8000000
+        - - 8000000
+          - 16000000
+        - - 16000000
+          - 24000000
+        - - 24000000
+          - 32000000
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 36080
+        ccs_lsi_supply_mv:
+        - 1650
+        - 5500
+        ccs_lsi_temperature_c:
+        - -40
+        - 105
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+    adc_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 5
+      - 6
+      - 8
+      - 10
+      comparison_cycles: 19
+      supply_bands:
+      - supply_min_mv: 1650
+        maximum_clock_hz: 500000
+        maximum_sample_rate_hz: 25000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2400
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2700
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 0
+      internal_1v5_bands:
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      internal_2v5_bands:
+      - supply_min_mv: 2800
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      input_follower_maximum_rate_hz: 200000
+      temperature_acquisition_maximum_rate_hz: 200000
+      internal_acquisition_ps: 0
+    iwdt_clock:
+      typical_hz: 8000
+      minimum_hz: 4000
+      maximum_hz: 12000
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      lock_group_bytes: 4096
+      lock_mask: 255
+      has_cache_control: true
+      maximum_hclk_hz: 48000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 2
+    factory_trim_source:
+      artifact: cw32f020/Libraries/inc/cw32f020_rcc.h
+      sha256: b9e5f085b7789a9f29322a3371f8ae666076388bc0cfecf4eacd1999ea590749
+      line_1_based: 137
+      value: 75264
+      qualification: Production CHIP2 branch; __PRIVATE_DEBUG CHIP1 is excluded.
+      source_ref: member:cw32f020/Libraries/inc/cw32f020_rcc.h
+    hse_sources:
+    - source_ref: vendor:CW32F020_UserManual_CN_V1.4.pdf
+      sha256: 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed
+      pdf_pages_1_based:
+      - 46
+      - 47
+      - 55
+      - 58
+      - 69
+      - 73
+      - 170
+      - 185
+      printed_pages:
+      - 45
+      - 46
+      - 54
+      - 57
+      - 68
+      - 72
+      - 169
+      - 184
+    - source_ref: vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf
+      sha256: 1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0
+      pdf_pages_1_based:
+      - 23
+      - 36
+      - 41
+      - 43
+      - 44
+      printed_pages:
+      - 22
+      - 35
+      - 40
+      - 42
+      - 43
+  CW32F030:
+    policy_family: CW32F030
+    clock_limits:
+      lse:
+        pin_lock: false
+        pin_lock_requires_enable_lock: false
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 1650
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 105
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 64000000
+      factory_hsi_trim_address: 75264
+      default_hsi_divisor: 6
+      initial_flash_wait: 2
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 105
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 105
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        frequency_ranges_hz:
+        - - 4000000
+          - 8000000
+        - - 8000000
+          - 16000000
+        - - 16000000
+          - 24000000
+        - - 24000000
+          - 32000000
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 36080
+        ccs_lsi_supply_mv:
+        - 1650
+        - 5500
+        ccs_lsi_temperature_c:
+        - -40
+        - 105
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+    adc_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 5
+      - 6
+      - 8
+      - 10
+      comparison_cycles: 19
+      supply_bands:
+      - supply_min_mv: 1650
+        maximum_clock_hz: 500000
+        maximum_sample_rate_hz: 25000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2400
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2700
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 0
+      internal_1v5_bands:
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      internal_2v5_bands:
+      - supply_min_mv: 2800
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      input_follower_maximum_rate_hz: 200000
+      temperature_acquisition_maximum_rate_hz: 200000
+      internal_acquisition_ps: 0
+    iwdt_clock:
+      typical_hz: 8000
+      minimum_hz: 4000
+      maximum_hz: 12000
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      lock_group_bytes: 4096
+      lock_mask: 65535
+      has_cache_control: true
+      maximum_hclk_hz: 64000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 2
+    factory_trim_source:
+      artifact: cw32f030/Libraries/inc/cw32f030_rcc.h
+      sha256: de32996b8f852c456ada827bc5c13fe64a29fc12115489d98e2d3ddf6133d184
+      line_1_based: 122
+      value: 75264
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32f030/Libraries/inc/cw32f030_rcc.h
+    hse_sources:
+    - source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+      sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+      pdf_pages_1_based:
+      - 48
+      - 49
+      - 57
+      - 60
+      - 71
+      - 75
+      - 173
+      - 188
+      printed_pages:
+      - 47
+      - 48
+      - 56
+      - 59
+      - 70
+      - 74
+      - 172
+      - 187
+    - source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+      sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+      pdf_pages_1_based:
+      - 24
+      - 38
+      - 43
+      - 45
+      - 46
+      printed_pages:
+      - 23
+      - 37
+      - 42
+      - 44
+      - 45
+  CW32L010:
+    policy_family: CW32L010
+    clock_limits:
+      lse:
+        pin_lock: true
+        pin_lock_requires_enable_lock: false
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 1620
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 85
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 48000000
+      factory_hsi_trim_address: 1050560
+      default_hsi_divisor: 12
+      initial_flash_wait: 1
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1620
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1620
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        # frequency_ranges_hz omitted: own HSE register has no frequency-range selector.
+        fixed_ccs_hsi_divisor: 12
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 36080
+        ccs_lsi_supply_mv:
+        - 1620
+        - 5500
+        ccs_lsi_temperature_c:
+        - -40
+        - 85
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+    adc_limits:
+      supply_mv:
+      - 1620
+      - 5500
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 6
+      - 7
+      - 9
+      - 12
+      - 18
+      - 24
+      - 30
+      - 42
+      - 54
+      - 70
+      - 102
+      - 134
+      - 166
+      - 198
+      - 262
+      - 390
+      comparison_cycles: 15
+      supply_bands:
+      - supply_min_mv: 1620
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 1250000
+      - supply_min_mv: 1800
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 750000
+      - supply_min_mv: 2800
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 375000
+      - supply_min_mv: 3300
+        maximum_clock_hz: 48000000
+        maximum_sample_rate_hz: 2000000
+        minimum_acquisition_ps: 187500
+      internal_1v5_bands: []
+      internal_2v5_bands: []
+      input_follower_maximum_rate_hz: 0
+      temperature_acquisition_maximum_rate_hz: 0
+      internal_acquisition_ps: 40000000
+    iwdt_clock:
+      typical_hz: 32800
+      minimum_hz: 31816
+      maximum_hz: 33784
+      uses_lsi: true
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 1620
+      - 5500
+      lock_group_bytes: 4096
+      lock_mask: 65535
+      has_cache_control: false
+      maximum_hclk_hz: 48000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 1
+    factory_trim_source:
+      artifact: cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h
+      sha256: 81d6c37b3920465595b702bdf102e5710c22490efa422207e5148852d719e91f
+      line_1_based: 135
+      value: 1050560
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h
+    hse_sources:
+    - source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+      pdf_pages_1_based:
+      - 28
+      - 29
+      - 46
+      - 47
+      - 49
+      - 50
+      - 51
+      - 56
+      - 57
+      - 58
+      - 59
+      - 62
+      - 63
+      - 64
+      - 65
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 73
+      - 76
+      - 77
+      - 78
+      - 114
+      - 126
+      - 127
+      - 128
+      - 129
+      - 130
+      - 148
+      - 152
+      - 153
+      - 504
+      - 513
+      - 517
+      - 529
+      - 537
+      - 538
+      - 543
+      - 547
+      - 548
+      printed_pages:
+      - 27
+      - 28
+      - 45
+      - 46
+      - 48
+      - 49
+      - 50
+      - 55
+      - 56
+      - 57
+      - 58
+      - 61
+      - 62
+      - 63
+      - 64
+      - 66
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 75
+      - 76
+      - 77
+      - 113
+      - 125
+      - 126
+      - 127
+      - 128
+      - 129
+      - 147
+      - 151
+      - 152
+      - 503
+      - 512
+      - 516
+      - 528
+      - 536
+      - 537
+      - 542
+      - 546
+      - 547
+    - source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+      sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+      pdf_pages_1_based:
+      - 23
+      - 24
+      - 31
+      - 32
+      - 39
+      - 40
+      - 41
+      - 43
+      - 45
+      - 46
+      - 66
+      printed_pages:
+      - 22
+      - 23
+      - 30
+      - 31
+      - 38
+      - 39
+      - 40
+      - 42
+      - 44
+      - 45
+      - 65
+
+  CW32L011:
+    policy_family: CW32L011
+    clock_limits:
+      lse:
+        pin_lock: true
+        pin_lock_requires_enable_lock: true
+      hsi_frequency_hz: 96000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 1700
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 85
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 96000000
+      factory_hsi_trim_address: 1050560
+      default_hsi_divisor: 24
+      initial_flash_wait: 3
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1700
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1700
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        # frequency_ranges_hz omitted: own HSE register has no frequency-range selector.
+        fixed_ccs_hsi_divisor: 24
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 41000
+        ccs_lsi_supply_mv:
+        - 1700
+        - 5500
+        ccs_lsi_temperature_c:
+        - -40
+        - 85
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+    adc_limits:
+      supply_mv:
+      - 1700
+      - 5500
+      minimum_clock_hz: 4000000
+      sample_cycles:
+      - 6
+      - 7
+      - 9
+      - 12
+      - 18
+      - 24
+      - 30
+      - 42
+      - 54
+      - 70
+      - 102
+      - 134
+      - 166
+      - 198
+      - 262
+      - 390
+      comparison_cycles: 15
+      supply_bands:
+      - supply_min_mv: 1700
+        maximum_clock_hz: 6000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 1000000
+      - supply_min_mv: 1800
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 500000
+      - supply_min_mv: 2800
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 250000
+      - supply_min_mv: 3300
+        maximum_clock_hz: 48000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 125000
+      internal_1v5_bands: []
+      internal_2v5_bands: []
+      input_follower_maximum_rate_hz: 0
+      temperature_acquisition_maximum_rate_hz: 0
+      internal_acquisition_ps: 40000000
+    iwdt_clock:
+      typical_hz: 32800
+      minimum_hz: 29520
+      maximum_hz: 41000
+      uses_lsi: true
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 1700
+      - 5500
+      lock_group_bytes: 4096
+      lock_mask: 65535
+      has_cache_control: false
+      maximum_hclk_hz: 96000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 3
+    factory_trim_source:
+      artifact: cw32l011/Libraries/inc/cw32l011_sysctrl.h
+      sha256: 3c9927ef4eb1126500c4528e0892ebd90bb217c2bdd64935d6e52d252c54507e
+      line_1_based: 193
+      value: 1050560
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32l011/Libraries/inc/cw32l011_sysctrl.h
+    hse_sources:
+    - source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+      pdf_pages_1_based:
+      - 27
+      - 28
+      - 45
+      - 46
+      - 47
+      - 48
+      - 49
+      - 54
+      - 55
+      - 56
+      - 57
+      - 60
+      - 61
+      - 62
+      - 63
+      - 65
+      - 66
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 74
+      - 75
+      - 76
+      - 113
+      - 126
+      - 127
+      - 128
+      - 129
+      - 130
+      - 148
+      - 152
+      - 153
+      - 506
+      - 518
+      - 531
+      - 540
+      - 545
+      - 549
+      - 550
+      printed_pages:
+      - 26
+      - 27
+      - 44
+      - 45
+      - 46
+      - 47
+      - 48
+      - 53
+      - 54
+      - 55
+      - 56
+      - 59
+      - 60
+      - 61
+      - 62
+      - 64
+      - 65
+      - 66
+      - 67
+      - 68
+      - 69
+      - 70
+      - 73
+      - 74
+      - 75
+      - 112
+      - 125
+      - 126
+      - 127
+      - 128
+      - 129
+      - 147
+      - 151
+      - 152
+      - 505
+      - 517
+      - 530
+      - 539
+      - 544
+      - 548
+      - 549
+    - source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+      sha256: 0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5
+      pdf_pages_1_based:
+      - 25
+      - 26
+      - 31
+      - 38
+      - 39
+      - 47
+      - 49
+      - 51
+      - 53
+      - 54
+      - 71
+      printed_pages:
+      - 22
+      - 23
+      - 28
+      - 35
+      - 36
+      - 44
+      - 46
+      - 48
+      - 50
+      - 51
+      - 68
+
+  CW32L012:
+    policy_family: CW32L012
+    clock_limits:
+      lse:
+        pin_lock: true
+        pin_lock_requires_enable_lock: true
+      hsi_frequency_hz: 96000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 1700
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 85
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 96000000
+      factory_hsi_trim_address: 1050560
+      hsi_operating_range_hz: [90000000, 100000000]
+      default_hsi_divisor: 12
+      initial_flash_wait: 3
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1700
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1700
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        fixed_ccs_hsi_divisor: 24
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 36080
+        ccs_lsi_supply_mv:
+        - 1700
+        - 5500
+        ccs_lsi_temperature_c:
+        - -40
+        - 85
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+    adc_limits:
+      supply_mv:
+      - 1700
+      - 5500
+      minimum_clock_hz: 4000000
+      sample_cycles:
+      - 6
+      - 7
+      - 9
+      - 12
+      - 18
+      - 24
+      - 30
+      - 42
+      - 54
+      - 70
+      - 102
+      - 134
+      - 166
+      - 198
+      - 262
+      - 518
+      comparison_cycles: 15
+      supply_bands:
+      - supply_min_mv: 1700
+        maximum_clock_hz: 6000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 1000000
+      - supply_min_mv: 1800
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 500000
+      - supply_min_mv: 2800
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 250000
+      - supply_min_mv: 3300
+        maximum_clock_hz: 48000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 125000
+      internal_1v5_bands: []
+      internal_2v5_bands: []
+      input_follower_maximum_rate_hz: 0
+      temperature_acquisition_maximum_rate_hz: 0
+      internal_acquisition_ps: 40000000
+    iwdt_clock:
+      typical_hz: 10500
+      minimum_hz: 7875
+      maximum_hz: 13125
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform:
+        low:
+        - 4700
+        - 1300
+        - 500
+        high:
+        - 4000
+        - 600
+        - 260
+        hold:
+        - 4000
+        - 625
+        - 260
+        setup:
+        - 4700
+        - 600
+        - 260
+        data_setup:
+        - 250
+        - 100
+        - 50
+        data_valid:
+        - 3450
+        - 900
+        - 450
+        rise:
+        - 1000
+        - 300
+        - 120
+        maximum_frequency_hz:
+        - 100000
+        - 400000
+        - 1000000
+    flash_limits:
+      supply_mv:
+      - 1700
+      - 5500
+      lock_group_bytes: 4096
+      lock_mask: 65535
+      has_cache_control: true
+      maximum_hclk_hz: 96000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 3
+    factory_trim_source:
+      artifact: cw32l012/Libraries/inc/cw32l012_sysctrl.h
+      sha256: 3746c16b7a3fa72d1b43d42c080111e64faa36e8beb4b1f19c13daf3c71b993c
+      line_1_based: 163
+      value: 1050560
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32l012/Libraries/inc/cw32l012_sysctrl.h
+    hse_sources:
+    - source_ref: vendor:CW32L012_UserManual_CN_V1.4.pdf
+      sha256: a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340
+      pdf_pages_1_based:
+      - 54
+      - 55
+      - 58
+      - 59
+      - 60
+      - 61
+      - 62
+      - 70
+      - 71
+      - 72
+      - 74
+      - 75
+      - 76
+      - 77
+      - 79
+      - 80
+      - 81
+      - 115
+      - 127
+      - 191
+      - 202
+      - 615
+      - 625
+      - 629
+      - 630
+      - 631
+      - 632
+      - 655
+      - 656
+      - 657
+      - 658
+      - 667
+      - 668
+      - 675
+      - 676
+      - 677
+      - 678
+      printed_pages:
+      - 28
+      - 29
+      - 32
+      - 33
+      - 34
+      - 35
+      - 36
+      - 44
+      - 45
+      - 46
+      - 48
+      - 49
+      - 50
+      - 51
+      - 53
+      - 54
+      - 55
+      - 89
+      - 101
+      - 165
+      - 176
+      - 589
+      - 599
+      - 603
+      - 604
+      - 605
+      - 606
+      - 629
+      - 630
+      - 631
+      - 632
+      - 641
+      - 642
+      - 649
+      - 650
+      - 651
+      - 652
+    - source_ref: vendor:CW32L012_DataSheet_CN_V1.0.pdf
+      sha256: 08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76
+      pdf_pages_1_based:
+      - 35
+      - 47
+      - 54
+      - 56
+      - 58
+      printed_pages:
+      - 32
+      - 44
+      - 51
+      - 53
+      - 55
+  CW32L031:
+    policy_family: CW32L031
+    clock_limits:
+      lse:
+        pin_lock: false
+        pin_lock_requires_enable_lock: false
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 1650
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 85
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 48000000
+      factory_hsi_trim_address: 1051136
+      default_hsi_divisor: 6
+      initial_flash_wait: 2
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        frequency_ranges_hz:
+        - - 4000000
+          - 8000000
+        - - 8000000
+          - 16000000
+        - - 16000000
+          - 24000000
+        - - 24000000
+          - 32000000
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 36080
+        ccs_lsi_supply_mv:
+        - 1650
+        - 5500
+        ccs_lsi_temperature_c:
+        - -40
+        - 85
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+    adc_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 5
+      - 6
+      - 8
+      - 10
+      comparison_cycles: 19
+      supply_bands:
+      - supply_min_mv: 1650
+        maximum_clock_hz: 500000
+        maximum_sample_rate_hz: 25000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2400
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2700
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 0
+      internal_1v5_bands:
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      internal_2v5_bands:
+      - supply_min_mv: 2800
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      input_follower_maximum_rate_hz: 200000
+      temperature_acquisition_maximum_rate_hz: 200000
+      internal_acquisition_ps: 0
+    iwdt_clock:
+      typical_hz: 8000
+      minimum_hz: 4000
+      maximum_hz: 12000
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      lock_group_bytes: 4096
+      lock_mask: 65535
+      has_cache_control: false
+      maximum_hclk_hz: 48000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 2
+    factory_trim_source:
+      artifact: cw32l031/Libraries/inc/cw32l031_rcc.h
+      sha256: d2b8f867badd629666ac43baabfcbc3b9ef8b76589985675660491a820eb2ead
+      line_1_based: 118
+      value: 1051136
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32l031/Libraries/inc/cw32l031_rcc.h
+    hse_sources:
+    - source_ref: vendor:CW32L031_UserManual_CN_V1.6.pdf
+      sha256: 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760
+      pdf_pages_1_based:
+      - 49
+      - 50
+      - 56
+      - 57
+      - 58
+      - 59
+      - 67
+      - 68
+      - 71
+      - 72
+      - 165
+      printed_pages:
+      - 48
+      - 49
+      - 55
+      - 56
+      - 57
+      - 58
+      - 66
+      - 67
+      - 70
+      - 71
+      - 164
+    - source_ref: vendor:CW32L031_DataSheet_CN_V1.9.pdf
+      sha256: 90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855
+      pdf_pages_1_based:
+      - 26
+      - 36
+      - 38
+      - 44
+      - 46
+      - 47
+      - 50
+      printed_pages:
+      - 25
+      - 35
+      - 37
+      - 43
+      - 45
+      - 46
+      - 49
+
+  CW32L052:
+    policy_family: CW32L052
+    clock_limits:
+      lse:
+        pin_lock: false
+        pin_lock_requires_enable_lock: false
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 1650
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 85
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 48000000
+      factory_hsi_trim_address: 1051136
+      default_hsi_divisor: 6
+      initial_flash_wait: 2
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        frequency_ranges_hz:
+        - - 4000000
+          - 8000000
+        - - 8000000
+          - 16000000
+        - - 16000000
+          - 24000000
+        - - 24000000
+          - 32000000
+        fixed_ccs_hsi_divisor: 6
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 36080
+        ccs_lsi_supply_mv:
+        - 1650
+        - 5500
+        ccs_lsi_temperature_c:
+        - -40
+        - 85
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+    adc_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 5
+      - 6
+      - 8
+      - 10
+      comparison_cycles: 19
+      supply_bands:
+      - supply_min_mv: 1650
+        maximum_clock_hz: 500000
+        maximum_sample_rate_hz: 25000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2400
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2700
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 0
+      internal_1v5_bands:
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      internal_2v5_bands:
+      - supply_min_mv: 2800
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      input_follower_maximum_rate_hz: 200000
+      temperature_acquisition_maximum_rate_hz: 200000
+      internal_acquisition_ps: 0
+    iwdt_clock:
+      typical_hz: 8500
+      minimum_hz: 4250
+      maximum_hz: 12750
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      lock_group_bytes: 4096
+      lock_mask: 65535
+      has_cache_control: false
+      maximum_hclk_hz: 48000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 2
+    factory_trim_source:
+      artifact: cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_rcc.h
+      sha256: 8caac8b9e700fdf94aeaaaa7b0ce2140530a584d2e3d52b01b9205889d073ce1
+      line_1_based: 118
+      value: 1051136
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_rcc.h
+    hse_sources:
+    - source_ref: vendor:CW32L052_UserManual_CN_V1.5.pdf
+      sha256: 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41
+      pdf_pages_1_based:
+      - 49
+      - 50
+      - 51
+      - 52
+      - 53
+      - 54
+      - 57
+      - 58
+      - 59
+      - 60
+      - 61
+      - 62
+      - 65
+      - 66
+      - 67
+      - 68
+      - 70
+      - 71
+      - 72
+      - 75
+      - 76
+      - 79
+      - 80
+      - 112
+      - 156
+      - 175
+      - 193
+      - 532
+      - 533
+      printed_pages:
+      - 48
+      - 49
+      - 50
+      - 51
+      - 52
+      - 53
+      - 56
+      - 57
+      - 58
+      - 59
+      - 60
+      - 61
+      - 64
+      - 65
+      - 66
+      - 67
+      - 69
+      - 70
+      - 71
+      - 74
+      - 75
+      - 78
+      - 79
+      - 111
+      - 155
+      - 174
+      - 192
+      - 531
+      - 532
+    - source_ref: vendor:CW32L052_DataSheet_CN_V1.3.pdf
+      sha256: f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f
+      pdf_pages_1_based:
+      - 10
+      - 26
+      - 43
+      - 48
+      - 50
+      - 51
+      - 54
+      - 79
+      printed_pages:
+      - 9
+      - 25
+      - 42
+      - 47
+      - 49
+      - 50
+      - 53
+      - 78
+  CW32L083:
+    policy_family: CW32L083
+    clock_limits:
+      lse:
+        pin_lock: false
+        pin_lock_requires_enable_lock: false
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 1650
+      - 5500
+      hsi_temperature_c:
+      - -40
+      - 85
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 64000000
+      factory_hsi_trim_address: 1051136
+      default_hsi_divisor: 6
+      initial_flash_wait: 2
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 1650
+          - 5500
+          temperature_c:
+          - -40
+          - 85
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        frequency_ranges_hz:
+        - - 4000000
+          - 8000000
+        - - 8000000
+          - 16000000
+        - - 16000000
+          - 24000000
+        - - 24000000
+          - 32000000
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 36080
+        ccs_lsi_supply_mv:
+        - 1650
+        - 5500
+        ccs_lsi_temperature_c:
+        - -40
+        - 85
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+      pll:
+        input_range_hz:
+        - 4000000
+        - 24000000
+        output_range_hz:
+        - 12000000
+        - 64000000
+        input_ranges_hz:
+        - - 4000000
+          - 6000000
+        - - 6000000
+          - 12000000
+        - - 12000000
+          - 20000000
+        - - 20000000
+          - 24000000
+        output_ranges_hz:
+        - - 12000000
+          - 18000000
+        - - 18000000
+          - 24000000
+        - - 24000000
+          - 36000000
+        - - 36000000
+          - 48000000
+        - - 48000000
+          - 72000000
+        multiplier_range:
+        - 2
+        - 12
+        supply_mv:
+        - 1650
+        - 5500
+        temperature_c:
+        - -40
+        - 85
+        hsi_supported: true
+        startup_cycles: 16384
+        startup_encoding: 7
+        reserved_debug_default: 5
+        cycle_to_cycle_jitter_ps: 300
+    adc_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 5
+      - 6
+      - 8
+      - 10
+      comparison_cycles: 19
+      supply_bands:
+      - supply_min_mv: 1650
+        maximum_clock_hz: 500000
+        maximum_sample_rate_hz: 25000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2400
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2700
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 0
+      internal_1v5_bands:
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      internal_2v5_bands:
+      - supply_min_mv: 2800
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      input_follower_maximum_rate_hz: 200000
+      temperature_acquisition_maximum_rate_hz: 200000
+      internal_acquisition_ps: 0
+    iwdt_clock:
+      typical_hz: 8500
+      minimum_hz: 4250
+      maximum_hz: 12750
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 1650
+      - 5500
+      lock_group_bytes: 4096
+      lock_mask: 18446744073709551615
+      has_cache_control: false
+      maximum_hclk_hz: 64000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 2
+    factory_trim_source:
+      artifact: cw32l083/Libraries/inc/cw32l083_rcc.h
+      sha256: f2229ea4528f2c3d8d5d59db036cfa2aa248a312c6cf94d5fbe58e4798f04ebf
+      line_1_based: 122
+      value: 1051136
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32l083/Libraries/inc/cw32l083_rcc.h
+    hse_sources:
+    - source_ref: vendor:CW32L083_UserManual_CN_V2.0.pdf
+      sha256: 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3
+      pdf_pages_1_based:
+      - 53
+      - 54
+      - 55
+      - 62
+      - 63
+      - 64
+      - 65
+      - 67
+      - 68
+      - 69
+      - 70
+      - 75
+      - 76
+      - 77
+      - 79
+      - 80
+      - 81
+      - 82
+      - 84
+      - 85
+      - 86
+      - 87
+      - 89
+      - 121
+      - 131
+      - 162
+      - 163
+      - 164
+      - 165
+      - 166
+      - 167
+      - 168
+      - 169
+      - 178
+      - 180
+      - 181
+      - 187
+      - 205
+      - 206
+      - 530
+      - 534
+      - 535
+      printed_pages:
+      - 52
+      - 53
+      - 54
+      - 61
+      - 62
+      - 63
+      - 64
+      - 66
+      - 67
+      - 68
+      - 69
+      - 74
+      - 75
+      - 76
+      - 78
+      - 79
+      - 80
+      - 81
+      - 83
+      - 84
+      - 85
+      - 86
+      - 88
+      - 120
+      - 130
+      - 161
+      - 162
+      - 163
+      - 164
+      - 165
+      - 166
+      - 167
+      - 168
+      - 177
+      - 179
+      - 180
+      - 186
+      - 204
+      - 205
+      - 529
+      - 533
+      - 534
+    - source_ref: vendor:CW32L083_DataSheet_CN_V1.9.pdf
+      sha256: 852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e
+      pdf_pages_1_based:
+      - 27
+      - 47
+      - 52
+      - 53
+      - 54
+      - 55
+      - 56
+      - 58
+      printed_pages:
+      - 26
+      - 46
+      - 51
+      - 52
+      - 53
+      - 54
+      - 55
+      - 57
+    pll_sources:
+    - source_ref: vendor:CW32L083_UserManual_CN_V2.0.pdf
+      sha256: 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3
+      pdf_pages_1_based:
+      - 50
+      - 51
+      - 52
+      - 53
+      - 54
+      - 55
+      - 59
+      - 60
+      - 63
+      - 64
+      - 65
+      - 67
+      - 69
+      - 71
+      - 72
+      - 73
+      - 75
+      - 76
+      - 77
+      - 78
+      - 82
+      - 83
+      - 84
+      - 85
+      - 87
+      - 89
+      - 103
+      - 121
+      - 131
+      - 157
+      - 159
+      - 187
+      - 205
+      - 206
+      - 530
+      - 534
+      - 535
+      printed_pages:
+      - 49
+      - 50
+      - 51
+      - 52
+      - 53
+      - 54
+      - 58
+      - 59
+      - 62
+      - 63
+      - 64
+      - 66
+      - 68
+      - 70
+      - 71
+      - 72
+      - 74
+      - 75
+      - 76
+      - 77
+      - 81
+      - 82
+      - 83
+      - 84
+      - 86
+      - 88
+      - 102
+      - 120
+      - 130
+      - 156
+      - 158
+      - 186
+      - 204
+      - 205
+      - 529
+      - 533
+      - 534
+    - source_ref: vendor:CW32L083_DataSheet_CN_V1.9.pdf
+      sha256: 852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e
+      pdf_pages_1_based:
+      - 5
+      - 6
+      - 27
+      - 28
+      - 47
+      - 52
+      - 54
+      - 55
+      - 56
+      - 58
+      printed_pages:
+      - 4
+      - 5
+      - 26
+      - 27
+      - 46
+      - 51
+      - 53
+      - 54
+      - 55
+      - 57
+
+  CW32R031:
+    policy_family: CW32R031
+    clock_limits:
+      lse:
+        pin_lock: false
+        pin_lock_requires_enable_lock: false
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 2200
+      - 3600
+      hsi_temperature_c:
+      - -40
+      - 85
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 48000000
+      factory_hsi_trim_address: 1051136
+      default_hsi_divisor: 6
+      initial_flash_wait: 2
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 2200
+          - 3600
+          temperature_c:
+          - -40
+          - 85
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 2200
+          - 3600
+          temperature_c:
+          - -40
+          - 85
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        frequency_ranges_hz:
+        - - 4000000
+          - 8000000
+        - - 8000000
+          - 16000000
+        - - 16000000
+          - 24000000
+        - - 24000000
+          - 32000000
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 36080
+        ccs_lsi_supply_mv:
+        - 2200
+        - 3600
+        ccs_lsi_temperature_c:
+        - -40
+        - 85
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+    adc_limits:
+      supply_mv:
+      - 2200
+      - 3600
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 5
+      - 6
+      - 8
+      - 10
+      comparison_cycles: 19
+      supply_bands:
+      - supply_min_mv: 2200
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2400
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2700
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 0
+      internal_1v5_bands:
+      - supply_min_mv: 2200
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      internal_2v5_bands:
+      - supply_min_mv: 2800
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      input_follower_maximum_rate_hz: 200000
+      temperature_acquisition_maximum_rate_hz: 200000
+      internal_acquisition_ps: 0
+    iwdt_clock:
+      typical_hz: 8000
+      minimum_hz: 4000
+      maximum_hz: 12000
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 2200
+      - 3600
+      lock_group_bytes: 4096
+      lock_mask: 65535
+      has_cache_control: false
+      maximum_hclk_hz: 48000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 2
+    factory_trim_source:
+      artifact: cw32r031/Libraries/inc/cw32r031_rcc.h
+      sha256: 117d7e1c37dd6670dff3ec04f3bb619e6e6e9d252491b942316a815f8bd94137
+      line_1_based: 118
+      value: 1051136
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32r031/Libraries/inc/cw32r031_rcc.h
+    hse_sources:
+    - source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+      sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+      pdf_pages_1_based:
+      - 51
+      - 52
+      - 58
+      - 59
+      - 60
+      - 61
+      - 69
+      - 70
+      - 73
+      - 74
+      - 167
+      printed_pages:
+      - 50
+      - 51
+      - 57
+      - 58
+      - 59
+      - 60
+      - 68
+      - 69
+      - 72
+      - 73
+      - 166
+    - source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+      sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+      pdf_pages_1_based:
+      - 29
+      - 42
+      - 51
+      - 53
+      - 54
+      printed_pages:
+      - 28
+      - 41
+      - 50
+      - 52
+      - 53
+
+  CW32W031:
+    policy_family: CW32W031
+    clock_limits:
+      lse:
+        pin_lock: false
+        pin_lock_requires_enable_lock: false
+      hsi_frequency_hz: 48000000
+      hsi_error_percent: 2
+      hsi_supply_mv:
+      - 1800
+      - 3600
+      hsi_temperature_c:
+      - -40
+      - 85
+      low_voltage_threshold_mv: 1800
+      low_voltage_bus_max_hz: 24000000
+      high_voltage_bus_max_hz: 48000000
+      factory_hsi_trim_address: 1051136
+      default_hsi_divisor: 6
+      initial_flash_wait: 2
+      flash_wait_step_hz: 24000000
+      hse:
+        crystal:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 2000
+          - 3600
+          temperature_c:
+          - -40
+          - 85
+        bypass:
+          minimum_hz: 4000000
+          maximum_hz: 32000000
+          supply_mv:
+          - 2000
+          - 3600
+          temperature_c:
+          - -40
+          - 85
+        filter_maximum_hz: 8000000
+        startup_cycles:
+        - 8192
+        - 32768
+        - 131072
+        - 262144
+        frequency_ranges_hz:
+        - - 4000000
+          - 8000000
+        - - 8000000
+          - 16000000
+        - - 16000000
+          - 24000000
+        - - 24000000
+          - 32000000
+        ccs_cycle_count: 131072
+        ccs_numerator_hz: 8000000000
+        ccs_maximum_count: 2047
+        ccs_lsi_maximum_hz: 36080
+        ccs_lsi_supply_mv:
+        - 2000
+        - 3600
+        ccs_lsi_temperature_c:
+        - -40
+        - 85
+        ccs_requires_lsi: true
+        bypass_duty_percent:
+        - 40
+        - 60
+        bypass_minimum_high_low_ns: 15
+        bypass_maximum_rise_fall_ns: 20
+    adc_limits:
+      supply_mv:
+      - 1800
+      - 3600
+      minimum_clock_hz: 0
+      sample_cycles:
+      - 5
+      - 6
+      - 8
+      - 10
+      comparison_cycles: 19
+      supply_bands:
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2400
+        maximum_clock_hz: 12000000
+        maximum_sample_rate_hz: 500000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2700
+        maximum_clock_hz: 24000000
+        maximum_sample_rate_hz: 1000000
+        minimum_acquisition_ps: 0
+      internal_1v5_bands:
+      - supply_min_mv: 1800
+        maximum_clock_hz: 2000000
+        maximum_sample_rate_hz: 100000
+        minimum_acquisition_ps: 0
+      - supply_min_mv: 2000
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      internal_2v5_bands:
+      - supply_min_mv: 2800
+        maximum_clock_hz: 4000000
+        maximum_sample_rate_hz: 200000
+        minimum_acquisition_ps: 0
+      input_follower_maximum_rate_hz: 200000
+      temperature_acquisition_maximum_rate_hz: 200000
+      internal_acquisition_ps: 0
+    iwdt_clock:
+      typical_hz: 8000
+      minimum_hz: 4000
+      maximum_hz: 12000
+      uses_lsi: false
+    i2c_limits:
+      maximum_frequency_hz: 1000000
+      waveform: null
+    flash_limits:
+      supply_mv:
+      - 2000
+      - 3600
+      lock_group_bytes: 4096
+      lock_mask: 65535
+      has_cache_control: false
+      maximum_hclk_hz: 48000000
+      low_voltage_threshold_mv: 1800
+      low_voltage_maximum_hclk_hz: 24000000
+      wait_step_hz: 24000000
+      maximum_wait_states: 2
+    factory_trim_source:
+      artifact: cw32w031/Libraries/inc/cw32w031_rcc.h
+      sha256: 29bbaacf4cad7cd57fd1165773a36b6afc9d4a6ec36a06eb9615f790370dcdd6
+      line_1_based: 118
+      value: 1051136
+      qualification: Own-family official SDK factory-trim definition; arbitrary user trim is not qualified.
+      source_ref: member:cw32w031/Libraries/inc/cw32w031_rcc.h
+    hse_sources:
+    - source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+      sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+      pdf_pages_1_based:
+      - 50
+      - 51
+      - 57
+      - 58
+      - 59
+      - 60
+      - 68
+      - 69
+      - 72
+      - 73
+      - 166
+      printed_pages:
+      - 49
+      - 50
+      - 56
+      - 57
+      - 58
+      - 59
+      - 67
+      - 68
+      - 71
+      - 72
+      - 165
+    - source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+      sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+      pdf_pages_1_based:
+      - 30
+      - 41
+      - 50
+      - 52
+      - 53
+      printed_pages:
+      - 29
+      - 40
+      - 49
+      - 51
+      - 52

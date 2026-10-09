@@ -1,0 +1,3018 @@
+{
+  "schema_version": 1,
+  "scope": "Blocking LVD polling and IR modulation routing. No hardware execution, IRQ, asynchronous, DMA or full voltage-protection claim.",
+  "families": {
+    "CW32A030": {
+      "sources": {
+        "manual": {
+          "path": "CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 492,
+            "lvd_cr1": 493,
+            "lvd_sr": 494,
+            "ir_control": 433
+          },
+          "version": "2.5",
+          "text_sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf",
+          "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+          "document_filename": "CW32A030_DataSheet_CN_V1.1.pdf",
+          "memory_map_pdf_page_indices": [
+            28
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+          "sdk_sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+          "header": "Libraries/inc/cw32f030_gpio.h",
+          "header_sha256": "3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32f030/Libraries/inc/cw32f030_lvd.h",
+            "sha256": "2f79203ab78b9d39a2fc03d49582c14b6c7a91250b9d0045654417fa6cb8a13a",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32f030_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32f030/Libraries/src/cw32f030_lvd.c",
+            "sha256": "8a35569527252100dd76de0b698b76b5c8b50c067d0613799544bab432102f68",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32f030_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          2000,
+          2110,
+          2220,
+          2330,
+          2440,
+          2560,
+          2670,
+          2780,
+          2890,
+          3000,
+          3110,
+          3220,
+          3330,
+          3440,
+          3560,
+          3670
+        ],
+        "supply_name": "VDDA",
+        "inputs": [
+          {
+            "pin": "PA0",
+            "selector": 1
+          },
+          {
+            "pin": "PB0",
+            "selector": 2
+          },
+          {
+            "pin": "PB11",
+            "selector": 3
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IR",
+        "register": "IRMOD",
+        "mode_configurable": true,
+        "software_control": false,
+        "invert": false
+      },
+      "ir_controller": "SYSCTRL",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM1_CH1 & GTIM2_CH1"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM1_CH1 & GTIM2_CH2"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM1_CH2 & GTIM2_CH1"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM1_CH2 & GTIM2_CH2"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM1_CH1 | GTIM2_CH1"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM1_CH1 | GTIM2_CH2"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM1_CH2 | GTIM2_CH1"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM1_CH2 | GTIM2_CH2"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM1_CH1"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM1_CH1"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM1_CH2"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM1_CH2"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & GTIM2_CH1"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | GTIM2_CH1"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & GTIM2_CH2"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | GTIM2_CH2"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA13",
+          "af": 6,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 26,
+          "printed_page": 25,
+          "bbox": [
+            446.199,
+            362.5297,
+            473.7911,
+            385.3937
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 27,
+          "printed_page": 26,
+          "bbox": [
+            323.2987,
+            280.3857,
+            350.8907,
+            303.2497
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [],
+      "register_versions": {
+        "LVD": "v1",
+        "SYSCTRL": "v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled"
+      ]
+    },
+    "CW32F002": {
+      "sources": {
+        "manual": {
+          "path": "CW32F002_UserManual_CN_V1.4.pdf",
+          "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 355,
+            "lvd_cr1": 356,
+            "lvd_sr": 357,
+            "ir_control": 300
+          },
+          "version": "1.4",
+          "text_sha256": "cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32F002_DataSheet_CN_V1.2.pdf",
+          "sha256": "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506",
+          "document_filename": "CW32F002_DataSheet_CN_V1.2.pdf",
+          "memory_map_pdf_page_indices": [
+            25
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+          "sdk_sha256": "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc",
+          "header": "Libraries/inc/cw32f002_gpio.h",
+          "header_sha256": "12ab69693119a4fe4c731bb1545f5a9e6954f1e83ba6ed0c7da3d759a2d05b63"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32f002/Libraries/inc/cw32f002_lvd.h",
+            "sha256": "f2a57c7c6b967d8d25997fc0c84107cb393f5eb3df28918adf14238b27701532",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32f002_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32f002/Libraries/src/cw32f002_lvd.c",
+            "sha256": "4e36367cc8414d77e2b2be89003f99d0a969e79b97721b01a263cebb08fcf025",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32f002_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          1800,
+          1900,
+          2000,
+          2100,
+          2200,
+          2300,
+          2400,
+          2500,
+          2600,
+          2700,
+          2800,
+          2900,
+          3000,
+          3100,
+          3200,
+          3300
+        ],
+        "supply_name": "VDD",
+        "inputs": [
+          {
+            "pin": "PB6",
+            "selector": 1
+          },
+          {
+            "pin": "PB3",
+            "selector": 2
+          },
+          {
+            "pin": "PA0",
+            "selector": 3
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IR",
+        "register": "IRMOD",
+        "mode_configurable": true,
+        "software_control": true,
+        "invert": false
+      },
+      "ir_controller": "SYSCTRL",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM_CH1 & BTIM2_TOGP"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM_CH1 & IRSW"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM_CH2 & BTIM3_TOGP"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM_CH2 & IRSW"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM_CH1 | BTIM2_TOGP"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM_CH1 | IRSW"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM_CH2 | BTIM3_TOGP"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM_CH2 | IRSW"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM_CH1"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM_CH1"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM_CH2"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM_CH2"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & BTIM2_TOGP"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | BTIM2_TOGP"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & BTIM3_TOGP"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | BTIM3_TOGP"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA4",
+          "af": 2,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            198.6232,
+            173.9697,
+            226.2152,
+            196.8337
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 7,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            508.315,
+            367.7863,
+            535.907,
+            390.6502
+          ]
+        },
+        {
+          "pin": "PC2",
+          "af": 2,
+          "function": "IR_OUT",
+          "table": "5-5",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            200.3914,
+            532.6667,
+            227.9834,
+            555.5307
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [
+        {
+          "pin": "PC4",
+          "af": 2,
+          "function": "IROUT",
+          "source_macro": "PC04_AFx_IROUT",
+          "source_line": 552,
+          "gpio_register": "AFRL",
+          "gpio_field": "AFR4",
+          "reason": "No exact peripheral-prefix mapping; shared or special function needs manual review"
+        }
+      ],
+      "limitations": [
+        "PC4 IR_OUT exists in SDK only and is excluded by datasheet/package evidence."
+      ],
+      "register_versions": {
+        "LVD": "v1",
+        "SYSCTRL": "cw32f002_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled"
+      ]
+    },
+    "CW32F003": {
+      "sources": {
+        "manual": {
+          "path": "CW32F003_UserManual_CN_V2.3.pdf",
+          "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 419,
+            "lvd_cr1": 420,
+            "lvd_sr": 421,
+            "ir_control": 360
+          },
+          "version": "2.3",
+          "text_sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251226/CW32F003_DataSheet_CN_V1.9.pdf",
+          "sha256": "5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd",
+          "document_filename": "CW32F003_DataSheet_CN_V1.9.pdf",
+          "memory_map_pdf_page_indices": [
+            26
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+          "sdk_sha256": "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+          "header": "Libraries/inc/cw32f003_gpio.h",
+          "header_sha256": "f4970bcdfb6da3403aa0d43e13ca1acfc82f3e3f19e2d2b557806ee456df5ce1"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32f003/Libraries/inc/cw32f003_lvd.h",
+            "sha256": "aa6fdd2e3b34473a5ad2cae7ec22cf731d2fe5129d822a5051dba78ca1551cb6",
+            "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32f003_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32f003/Libraries/src/cw32f003_lvd.c",
+            "sha256": "e116d2f6ec8e6be3f46b8c11adb0635c80aa9a20694ca758aaac4152476da0f5",
+            "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32f003_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          1800,
+          1900,
+          2000,
+          2100,
+          2200,
+          2300,
+          2400,
+          2500,
+          2600,
+          2700,
+          2800,
+          2900,
+          3000,
+          3100,
+          3200,
+          3300
+        ],
+        "supply_name": "VDD",
+        "inputs": [
+          {
+            "pin": "PB6",
+            "selector": 1
+          },
+          {
+            "pin": "PB3",
+            "selector": 2
+          },
+          {
+            "pin": "PA0",
+            "selector": 3
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IR",
+        "register": "IRMOD",
+        "mode_configurable": true,
+        "software_control": true,
+        "invert": false
+      },
+      "ir_controller": "SYSCTRL",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM_CH1 & BTIM2_TOGP"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM_CH1 & IRSW"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM_CH2 & BTIM3_TOGP"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM_CH2 & IRSW"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM_CH1 | BTIM2_TOGP"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM_CH1 | IRSW"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM_CH2 | BTIM3_TOGP"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM_CH2 | IRSW"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM_CH1"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM_CH1"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM_CH2"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM_CH2"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & BTIM2_TOGP"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | BTIM2_TOGP"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & BTIM3_TOGP"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | BTIM3_TOGP"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA4",
+          "af": 2,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            198.6152,
+            193.3057,
+            226.2072,
+            216.1697
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 7,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            508.3152,
+            387.1248,
+            535.9072,
+            409.9888
+          ]
+        },
+        {
+          "pin": "PC2",
+          "af": 2,
+          "function": "IR_OUT",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            200.3916,
+            571.3439,
+            227.9836,
+            594.2079
+          ]
+        },
+        {
+          "pin": "PC4",
+          "af": 2,
+          "function": "IR_OUT",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            200.3996,
+            610.0159,
+            227.9916,
+            632.8799
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [],
+      "register_versions": {
+        "IR": "cw32f003_v1",
+        "LVD": "v1",
+        "SYSCTRL": "cw32f003_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled"
+      ]
+    },
+    "CW32F020": {
+      "sources": {
+        "manual": {
+          "path": "CW32F020_UserManual_CN_V1.4.pdf",
+          "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 429,
+            "lvd_cr1": 430,
+            "lvd_sr": 431,
+            "ir_control": 371
+          },
+          "version": "1.4",
+          "text_sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32F020_DataSheet_CN_V1.3.pdf",
+          "sha256": "1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0",
+          "document_filename": "CW32F020_DataSheet_CN_V1.3.pdf",
+          "memory_map_pdf_page_indices": [
+            29
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+          "sdk_sha256": "1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d",
+          "header": "Libraries/inc/cw32f020_gpio.h",
+          "header_sha256": "eccc3bb68452d2e3218397b2a795c4330e4a3d9b5a76481de128655e4602874d"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32f020/Libraries/inc/cw32f020_lvd.h",
+            "sha256": "6551722b7ed3425a160af6d8f5e2bc0a38c75f31de1ecf84e78b6b185947d7bf",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32f020_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32f020/Libraries/src/cw32f020_lvd.c",
+            "sha256": "6eb666b62db4e19eba6fbbd6090d22625fe1cb0f5740bcff04b131ff98f432ec",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32f020_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          2000,
+          2110,
+          2220,
+          2330,
+          2440,
+          2560,
+          2670,
+          2780,
+          2890,
+          3000,
+          3110,
+          3220,
+          3330,
+          3440,
+          3560,
+          3670
+        ],
+        "supply_name": "VDDA",
+        "inputs": [
+          {
+            "pin": "PA0",
+            "selector": 1
+          },
+          {
+            "pin": "PB0",
+            "selector": 2
+          },
+          {
+            "pin": "PB11",
+            "selector": 3
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IR",
+        "register": "IRMOD",
+        "mode_configurable": true,
+        "software_control": false,
+        "invert": false
+      },
+      "ir_controller": "SYSCTRL",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM1_CH1 & GTIM2_CH1"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM1_CH1 & GTIM2_CH2"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM1_CH2 & GTIM2_CH1"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM1_CH2 & GTIM2_CH2"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM1_CH1 | GTIM2_CH1"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM1_CH1 | GTIM2_CH2"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM1_CH2 | GTIM2_CH1"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM1_CH2 | GTIM2_CH2"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM1_CH1"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM1_CH1"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM1_CH2"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM1_CH2"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & GTIM2_CH1"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | GTIM2_CH1"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & GTIM2_CH2"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | GTIM2_CH2"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA13",
+          "af": 6,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            446.1951,
+            362.5297,
+            473.7872,
+            385.3937
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 26,
+          "printed_page": 25,
+          "bbox": [
+            323.3067,
+            280.3857,
+            350.8987,
+            303.2497
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [
+        "Own manual threshold table supersedes the inconsistent SDK rounding/table from selector5 onwards."
+      ],
+      "register_versions": {
+        "LVD": "v1",
+        "SYSCTRL": "cw32f020_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled"
+      ]
+    },
+    "CW32F030": {
+      "sources": {
+        "manual": {
+          "path": "CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 492,
+            "lvd_cr1": 493,
+            "lvd_sr": 494,
+            "ir_control": 433
+          },
+          "version": "2.5",
+          "text_sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf",
+          "sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2",
+          "document_filename": "CW32F030_DataSheet_CN_V1.9.pdf",
+          "memory_map_pdf_page_indices": [
+            31
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+          "sdk_sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+          "header": "Libraries/inc/cw32f030_gpio.h",
+          "header_sha256": "3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32f030/Libraries/inc/cw32f030_lvd.h",
+            "sha256": "2f79203ab78b9d39a2fc03d49582c14b6c7a91250b9d0045654417fa6cb8a13a",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32f030_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32f030/Libraries/src/cw32f030_lvd.c",
+            "sha256": "8a35569527252100dd76de0b698b76b5c8b50c067d0613799544bab432102f68",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32f030_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          2000,
+          2110,
+          2220,
+          2330,
+          2440,
+          2560,
+          2670,
+          2780,
+          2890,
+          3000,
+          3110,
+          3220,
+          3330,
+          3440,
+          3560,
+          3670
+        ],
+        "supply_name": "VDDA",
+        "inputs": [
+          {
+            "pin": "PA0",
+            "selector": 1
+          },
+          {
+            "pin": "PB0",
+            "selector": 2
+          },
+          {
+            "pin": "PB11",
+            "selector": 3
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IR",
+        "register": "IRMOD",
+        "mode_configurable": true,
+        "software_control": false,
+        "invert": false
+      },
+      "ir_controller": "SYSCTRL",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM1_CH1 & GTIM2_CH1"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM1_CH1 & GTIM2_CH2"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM1_CH2 & GTIM2_CH1"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM1_CH2 & GTIM2_CH2"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM1_CH1 | GTIM2_CH1"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM1_CH1 | GTIM2_CH2"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM1_CH2 | GTIM2_CH1"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM1_CH2 | GTIM2_CH2"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM1_CH1"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM1_CH1"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM1_CH2"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM1_CH2"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & GTIM2_CH1"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | GTIM2_CH1"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & GTIM2_CH2"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | GTIM2_CH2"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA13",
+          "af": 6,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 29,
+          "printed_page": 28,
+          "bbox": [
+            446.191,
+            362.5297,
+            473.7831,
+            385.3937
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 30,
+          "printed_page": 29,
+          "bbox": [
+            323.2987,
+            280.3857,
+            350.8907,
+            303.2497
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [],
+      "register_versions": {
+        "LVD": "v1",
+        "SYSCTRL": "v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled"
+      ]
+    },
+    "CW32L010": {
+      "sources": {
+        "manual": {
+          "path": "CW32L010_UserManual_CN_V1.2.pdf",
+          "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+          "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 547,
+            "lvd_cr1": 548,
+            "lvd_sr": 549,
+            "ir_control": 501
+          },
+          "version": "1.2",
+          "text_sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf",
+          "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+          "document_filename": "CW32L010_DataSheet_CN_V1.3.pdf",
+          "memory_map_pdf_page_indices": [
+            26
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "sdk_sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+          "header": "Libraries/inc/cw32l010_gpio.h",
+          "header_sha256": "1ec5958352e78cfdb050b4e648373ed25f2befc01d6724602b0e69c4d098969e"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_lvd.h",
+            "sha256": "26559561966fc6786e5f42b023c090727cd12077fdeea1f8619d40a123b361f2",
+            "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+            "archive_member_chain": [
+              "CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_lvd.c",
+            "sha256": "bb3157dc6440723217e2ea7bc4a06ee958fedc34ffc17718175c31c6095816c1",
+            "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+            "archive_member_chain": [
+              "CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          1800,
+          2200,
+          2600,
+          3000,
+          3400,
+          3800,
+          4200,
+          4600
+        ],
+        "supply_name": "VDD",
+        "inputs": [
+          {
+            "pin": "PA3",
+            "selector": 1
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IRMOD",
+        "register": "CR",
+        "mode_configurable": true,
+        "software_control": true,
+        "invert": true
+      },
+      "ir_controller": "IRMOD",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM_CH1 & ATIM_CH1 & IRSW"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM_CH1 & ATIM_CH2 & IRSW"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM_CH2 & ATIM_CH1 & IRSW"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM_CH2 & ATIM_CH2 & IRSW"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM_CH1 | ATIM_CH1 | IRSW"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM_CH1 | ATIM_CH2 | IRSW"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM_CH2 | ATIM_CH1 | IRSW"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM_CH2 | ATIM_CH2 | IRSW"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM_CH1 & IRSW"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM_CH1 | IRSW"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM_CH2 & IRSW"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM_CH2 | IRSW"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & ATIM_CH1 & IRSW"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | ATIM_CH1 | IRSW"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & ATIM_CH2 & IRSW"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | ATIM_CH2 | IRSW"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA2",
+          "af": 5,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            388.2631,
+            447.2678,
+            415.8552,
+            470.1318
+          ]
+        },
+        {
+          "pin": "PA3",
+          "af": 5,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            388.2552,
+            466.6038,
+            415.8472,
+            489.4678
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [],
+      "register_versions": {
+        "IRMOD": "cw32l010_v1",
+        "LVD": "cw32l010_v1",
+        "SYSCTRL": "cw32l010_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled",
+        "SYSCTRL.CR2.LVDBRKEN=1"
+      ]
+    },
+    "CW32L011": {
+      "sources": {
+        "manual": {
+          "path": "CW32L011_UserManual_CN_V1.1.pdf",
+          "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+          "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 549,
+            "lvd_cr1": 550,
+            "lvd_sr": 551,
+            "ir_control": 503
+          },
+          "version": "1.1",
+          "text_sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf",
+          "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+          "document_filename": "CW32L011_DataSheet_CN_V1.1.pdf",
+          "memory_map_pdf_page_indices": [
+            33
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "sdk_sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+          "header": "Libraries/inc/cw32l011_gpio.h",
+          "header_sha256": "d78a3f5f0c4c04e7f948189b70a4e7ffe18025c98cc48418676ab1fa6ec8b78b"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32l011/Libraries/inc/cw32l011_lvd.h",
+            "sha256": "aff336841c2267b4763d970e2ee61e9abf0295e65a5cf0ebf3cda92a717777ee",
+            "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32l011_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32l011/Libraries/src/cw32l011_lvd.c",
+            "sha256": "67ec178fbef3a23874e527c17074c50ac447f158f743a566eab02baeaa5a5d0a",
+            "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32l011_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          1800,
+          2200,
+          2600,
+          3000,
+          3400,
+          3800,
+          4200,
+          4600
+        ],
+        "supply_name": "VDDA",
+        "inputs": [
+          {
+            "pin": "PA0",
+            "selector": 1
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IRMOD",
+        "register": "CR",
+        "mode_configurable": true,
+        "software_control": true,
+        "invert": true
+      },
+      "ir_controller": "IRMOD",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM1_CH1 & GTIM2_CH1 & IRSW"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM1_CH1 & GTIM2_CH2 & IRSW"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM1_CH2 & GTIM2_CH1 & IRSW"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM1_CH2 & GTIM2_CH2 & IRSW"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM1_CH1 | GTIM2_CH1 | IRSW"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM1_CH1 | GTIM2_CH2 | IRSW"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM1_CH2 | GTIM2_CH1 | IRSW"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM1_CH2 | GTIM2_CH2 | IRSW"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM1_CH1 & IRSW"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM1_CH1 | IRSW"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM1_CH2 & IRSW"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM1_CH2 | IRSW"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & GTIM2_CH1 & IRSW"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | GTIM2_CH1 | IRSW"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & GTIM2_CH2 & IRSW"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | GTIM2_CH2 | IRSW"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA8",
+          "af": 3,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            231.843,
+            544.5891,
+            266.333,
+            573.1691
+          ]
+        },
+        {
+          "pin": "PA13",
+          "af": 6,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            428.043,
+            656.8391,
+            462.533,
+            685.4191
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            299.951,
+            124.579,
+            334.441,
+            153.159
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [],
+      "register_versions": {
+        "IRMOD": "cw32l011_v1",
+        "LVD": "cw32l010_v1",
+        "SYSCTRL": "cw32l011_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled",
+        "SYSCTRL.CR2.LVDBRKEN=1"
+      ]
+    },
+    "CW32L012": {
+      "sources": {
+        "manual": {
+          "path": "CW32L012_UserManual_CN_V1.4.pdf",
+          "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+          "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 667,
+            "lvd_cr1": 668,
+            "lvd_sr": 669,
+            "ir_control": 597
+          },
+          "version": "1.4",
+          "text_sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+          "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+          "document_filename": "CW32L012_DataSheet_CN_V1.0.pdf",
+          "memory_map_pdf_page_indices": [
+            40
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "sdk_sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+          "header": "Libraries/inc/cw32l012_gpio.h",
+          "header_sha256": "45f356e8028475c2e25d135c5fdd0b75babb6b1c83f1d5534038e9355822d717"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32l012/Libraries/inc/cw32l012_lvd.h",
+            "sha256": "4678781353bbe5c585424e72d07bc0c92c4b4c74927dcf92d6eccd44b615d25c",
+            "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32l012_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32l012/Libraries/src/cw32l012_lvd.c",
+            "sha256": "0e9cf90c6be3c4509a9790d53f620fec9ce4cbd742ee5992bf43cdf6fe2be6f3",
+            "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32l012_lvd.c"
+            ]
+          },
+          {
+            "path": "cw32l012/Libraries/inc/cw32l012_irmod.h",
+            "sha256": "30214f206c3926eb9619cb2c2b018f7b81a1c68f86a8ea83795590bee95f8bef",
+            "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32l012_irmod.h"
+            ]
+          },
+          {
+            "path": "cw32l012/Libraries/src/cw32l012_irmod.c",
+            "sha256": "b47b164044efc287025fde23ca00c3b89415ad734a003e1765707380398f574d",
+            "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32l012_irmod.c"
+            ]
+          }
+        ],
+        "manual_en": {
+          "path": "CW32L012_UserManual_EN_V1.0.pdf",
+          "sha256": "5e4937c3c93855d13befb1a88bf6f7572f460c46552db26393bf760a88761459",
+          "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_EN_V1.0.pdf",
+          "printed_page": 630,
+          "pdf_page": 656,
+          "version": "1.0"
+        }
+      },
+      "lvd": {
+        "thresholds_mv": [
+          1800,
+          2200,
+          2600,
+          3000,
+          3400,
+          3800,
+          4200,
+          4600
+        ],
+        "supply_name": "VDDA",
+        "inputs": [
+          {
+            "pin": "PA0",
+            "selector": 1
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IRMOD",
+        "register": "CR",
+        "mode_configurable": false,
+        "software_control": true,
+        "invert": true
+      },
+      "ir_controller": "IRMOD",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM1_CH1 & GTIM2_CH1 & IRSW"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM1_CH1 & GTIM2_CH2 & IRSW"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM1_CH2 & GTIM2_CH1 & IRSW"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM1_CH2 & GTIM2_CH2 & IRSW"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM1_CH1 | GTIM2_CH1 | IRSW"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM1_CH1 | GTIM2_CH2 | IRSW"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM1_CH2 | GTIM2_CH1 | IRSW"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM1_CH2 | GTIM2_CH2 | IRSW"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM1_CH1 & IRSW"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM1_CH1 | IRSW"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM1_CH2 & IRSW"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM1_CH2 | IRSW"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & GTIM2_CH1 & IRSW"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | GTIM2_CH1 | IRSW"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & GTIM2_CH2 & IRSW"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | GTIM2_CH2 | IRSW"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA8",
+          "af": 3,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            208.199,
+            217.261,
+            232.342,
+            237.267
+          ]
+        },
+        {
+          "pin": "PA13",
+          "af": 6,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            357.415,
+            291.511,
+            381.558,
+            311.517
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            248.524,
+            388.261,
+            272.667,
+            408.267
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            248.524,
+            507.061,
+            272.667,
+            527.067
+          ]
+        },
+        {
+          "pin": "PF3",
+          "af": 7,
+          "function": "IR_OUT",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            398.937,
+            128.161,
+            423.08,
+            148.167
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [
+        "Manual CN V1.4 and EN V1.0 agree on modes but current SDK disagrees for all16 encodings. Safe source-mode writes are withheld; existing MOD is preserved.",
+        "Thresholds are nominal for Vcore=1.6 V as stated by CR0. HAL never changes Vcore or references."
+      ],
+      "register_versions": {
+        "IRMOD": "cw32l012_v1",
+        "LVD": "cw32l010_v1",
+        "SYSCTRL": "cw32l012_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled",
+        "SYSCTRL.CR2.LVDBRKEN=1"
+      ]
+    },
+    "CW32L031": {
+      "sources": {
+        "manual": {
+          "path": "CW32L031_UserManual_CN_V1.6.pdf",
+          "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 492,
+            "lvd_cr1": 493,
+            "lvd_sr": 494,
+            "ir_control": 430
+          },
+          "version": "1.6",
+          "text_sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L031_DataSheet_CN_V1.9.pdf",
+          "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+          "document_filename": "CW32L031_DataSheet_CN_V1.9.pdf",
+          "memory_map_pdf_page_indices": [
+            31
+          ],
+          "memory_size_table_pdf_page_indices": [
+            9
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+          "sdk_sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d",
+          "header": "Libraries/inc/cw32l031_gpio.h",
+          "header_sha256": "3fd23de982d603dcfc4516dd6ef2202014934164aac351053f79b0aef5b575b7"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32l031/Libraries/inc/cw32l031_lvd.h",
+            "sha256": "40a4f7a3b185d975365dc515f9415aa7bd3729f1cd74c8b9dabc9fad3b1cf1cf",
+            "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32l031_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32l031/Libraries/src/cw32l031_lvd.c",
+            "sha256": "d9fd2ed1ee69e4beefb7ec6bf1c90d666e340b22ce0e3693515bd4099634b001",
+            "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32l031_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          1800,
+          1900,
+          2000,
+          2100,
+          2200,
+          2300,
+          2400,
+          2500,
+          2600,
+          2700,
+          2800,
+          2900,
+          3000,
+          3100,
+          3200,
+          3300
+        ],
+        "supply_name": "VDDA",
+        "inputs": [
+          {
+            "pin": "PA0",
+            "selector": 1
+          },
+          {
+            "pin": "PB0",
+            "selector": 2
+          },
+          {
+            "pin": "PB11",
+            "selector": 3
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IR",
+        "register": "IRMOD",
+        "mode_configurable": true,
+        "software_control": false,
+        "invert": false
+      },
+      "ir_controller": "SYSCTRL",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM1_CH1 & GTIM2_CH1"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM1_CH1 & GTIM2_CH2"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM1_CH2 & GTIM2_CH1"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM1_CH2 & GTIM2_CH2"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM1_CH1 | GTIM2_CH1"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM1_CH1 | GTIM2_CH2"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM1_CH2 | GTIM2_CH1"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM1_CH2 | GTIM2_CH2"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM1_CH1"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM1_CH1"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM1_CH2"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM1_CH2"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & GTIM2_CH1"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | GTIM2_CH1"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & GTIM2_CH2"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | GTIM2_CH2"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA13",
+          "af": 6,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 29,
+          "printed_page": 28,
+          "bbox": [
+            446.1832,
+            596.7639,
+            473.7752,
+            619.6279
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 30,
+          "printed_page": 29,
+          "bbox": [
+            323.3226,
+            293.3857,
+            350.9146,
+            316.2497
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [],
+      "register_versions": {
+        "LVD": "cw32l031_v1",
+        "SYSCTRL": "cw32l031_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled"
+      ]
+    },
+    "CW32L052": {
+      "sources": {
+        "manual": {
+          "path": "CW32L052_UserManual_CN_V1.5.pdf",
+          "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 532,
+            "lvd_cr1": 533,
+            "lvd_sr": 534,
+            "ir_control": 467
+          },
+          "version": "1.5",
+          "text_sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L052_DataSheet_CN_V1.3.pdf",
+          "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+          "document_filename": "CW32L052_DataSheet_CN_V1.3.pdf",
+          "memory_map_pdf_page_indices": [
+            35
+          ],
+          "memory_size_table_pdf_page_indices": [
+            9
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+          "sdk_sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+          "header": "Libraries/inc/cw32l052_gpio.h",
+          "header_sha256": "59f0d8904b2724ddbc137287d80f83297eb903e1909763e84cf11c157514bc18"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lvd.h",
+            "sha256": "bd044fe229a5a8f583d72735a7d07c4ffe34621f3b241ff6cfc8e12a6e47626f",
+            "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+            "archive_member_chain": [
+              "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_lvd.c",
+            "sha256": "0c8907d8c8d6c679c925f4a1aab5116c213d93fd1dce6a487cc7aa7656409f13",
+            "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+            "archive_member_chain": [
+              "CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          1800,
+          1900,
+          2000,
+          2100,
+          2200,
+          2300,
+          2400,
+          2500,
+          2600,
+          2700,
+          2800,
+          2900,
+          3000,
+          3100,
+          3200,
+          3300
+        ],
+        "supply_name": "VDDA",
+        "inputs": [
+          {
+            "pin": "PA0",
+            "selector": 1
+          },
+          {
+            "pin": "PB0",
+            "selector": 2
+          },
+          {
+            "pin": "PB11",
+            "selector": 3
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IR",
+        "register": "IRMOD",
+        "mode_configurable": true,
+        "software_control": false,
+        "invert": false
+      },
+      "ir_controller": "SYSCTRL",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM1_CH1 & GTIM2_CH1"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM1_CH1 & GTIM2_CH2"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM1_CH2 & GTIM2_CH1"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM1_CH2 & GTIM2_CH2"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM1_CH1 | GTIM2_CH1"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM1_CH1 | GTIM2_CH2"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM1_CH2 | GTIM2_CH1"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM1_CH2 | GTIM2_CH2"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM1_CH1"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM1_CH1"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM1_CH2"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM1_CH2"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & GTIM2_CH1"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | GTIM2_CH1"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & GTIM2_CH2"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | GTIM2_CH2"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA13",
+          "af": 6,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 30,
+          "bbox": [
+            439.0073,
+            359.7297,
+            466.5993,
+            382.5937
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 31,
+          "bbox": [
+            323.5153,
+            280.3857,
+            351.1073,
+            303.2497
+          ]
+        },
+        {
+          "pin": "PC4",
+          "af": 3,
+          "function": "IR_OUT",
+          "table": "5-5",
+          "pdf_page": 33,
+          "printed_page": 32,
+          "bbox": [
+            261.9031,
+            183.7057,
+            289.4951,
+            206.5697
+          ]
+        },
+        {
+          "pin": "PC11",
+          "af": 3,
+          "function": "IR_OUT",
+          "table": "5-5",
+          "pdf_page": 33,
+          "printed_page": 32,
+          "bbox": [
+            261.9432,
+            319.0577,
+            289.5352,
+            341.9217
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [],
+      "register_versions": {
+        "LVD": "cw32l031_v1",
+        "SYSCTRL": "cw32l052_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled"
+      ]
+    },
+    "CW32L083": {
+      "sources": {
+        "manual": {
+          "path": "CW32L083_UserManual_CN_V2.0.pdf",
+          "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 534,
+            "lvd_cr1": 535,
+            "lvd_sr": 536,
+            "ir_control": 472
+          },
+          "version": "2.0",
+          "text_sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+          "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+          "document_filename": "CW32L083_DataSheet_CN_V1.9.pdf",
+          "memory_map_pdf_page_indices": [
+            39
+          ],
+          "memory_size_table_pdf_page_indices": [
+            9
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+          "sdk_sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+          "header": "Libraries/inc/cw32l083_gpio.h",
+          "header_sha256": "fd987e9c1ba1514d278b06613e2604eff30e5e12e0a07f2c8ccd29fa307f75fb"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32l083/Libraries/inc/cw32l083_lvd.h",
+            "sha256": "5bee4bc1adf9401922532b4aef2500858e02e24d835aa741c965ff8697c003ae",
+            "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32l083_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32l083/Libraries/src/cw32l083_lvd.c",
+            "sha256": "35916c798e40ffba184a6dfb9301bc69d6bf4abebb08784c2b34b08fac0c8d15",
+            "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32l083_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          1800,
+          1900,
+          2000,
+          2100,
+          2200,
+          2300,
+          2400,
+          2500,
+          2600,
+          2700,
+          2800,
+          2900,
+          3000,
+          3100,
+          3200,
+          3300
+        ],
+        "supply_name": "VDDA",
+        "inputs": [
+          {
+            "pin": "PA0",
+            "selector": 1
+          },
+          {
+            "pin": "PB0",
+            "selector": 2
+          },
+          {
+            "pin": "PB11",
+            "selector": 3
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IR",
+        "register": "IRMOD",
+        "mode_configurable": true,
+        "software_control": false,
+        "invert": false
+      },
+      "ir_controller": "SYSCTRL",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM1_CH1 & GTIM2_CH1"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM1_CH1 & GTIM2_CH2"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM1_CH2 & GTIM2_CH1"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM1_CH2 & GTIM2_CH2"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM1_CH1 | GTIM2_CH1"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM1_CH1 | GTIM2_CH2"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM1_CH2 | GTIM2_CH1"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM1_CH2 | GTIM2_CH2"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM1_CH1"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM1_CH1"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM1_CH2"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM1_CH2"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & GTIM2_CH1"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | GTIM2_CH1"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & GTIM2_CH2"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | GTIM2_CH2"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA13",
+          "af": 6,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 34,
+          "printed_page": 33,
+          "bbox": [
+            436.7065,
+            362.5297,
+            464.2986,
+            385.3937
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 35,
+          "printed_page": 34,
+          "bbox": [
+            323.2907,
+            280.3857,
+            350.8828,
+            303.2497
+          ]
+        },
+        {
+          "pin": "PC4",
+          "af": 3,
+          "function": "IR_OUT",
+          "table": "5-5",
+          "pdf_page": 36,
+          "printed_page": 35,
+          "bbox": [
+            269.344,
+            183.7057,
+            296.936,
+            206.5697
+          ]
+        },
+        {
+          "pin": "PC11",
+          "af": 3,
+          "function": "IR_OUT",
+          "table": "5-5",
+          "pdf_page": 36,
+          "printed_page": 35,
+          "bbox": [
+            269.36,
+            319.0577,
+            296.952,
+            341.9217
+          ]
+        },
+        {
+          "pin": "PE2",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-7",
+          "pdf_page": 38,
+          "printed_page": 37,
+          "bbox": [
+            323.423,
+            146.0337,
+            351.0151,
+            168.8977
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [],
+      "register_versions": {
+        "LVD": "cw32l031_v1",
+        "SYSCTRL": "cw32l083_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled"
+      ]
+    },
+    "CW32R031": {
+      "sources": {
+        "manual": {
+          "path": "CW32R031_UserManual_CN_V1.3.pdf",
+          "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 494,
+            "lvd_cr1": 495,
+            "lvd_sr": 496,
+            "ir_control": 433
+          },
+          "version": "1.3",
+          "text_sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32R031_DataSheet_CN_V1.2.pdf",
+          "sha256": "88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805",
+          "document_filename": "CW32R031_DataSheet_CN_V1.2.pdf",
+          "memory_map_pdf_page_indices": [
+            34
+          ],
+          "memory_size_table_pdf_page_indices": [
+            10
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+          "sdk_sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082",
+          "header": "Libraries/inc/cw32r031_gpio.h",
+          "header_sha256": "ebd615d243577417faa4e8d0546b3d72236f932fc64e1a57a27b239a82becc24"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32r031/Libraries/inc/cw32r031_lvd.h",
+            "sha256": "38506d1a78d1a402fecb25200a348d71b4bbaf72a2cd68cfa384fc7b3bc837cc",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32r031_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32r031/Libraries/src/cw32r031_lvd.c",
+            "sha256": "6427e54448a5afc87fa76e467fe31762f8be00f36344c95054aaf6d2f875501a",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32r031_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          1800,
+          1900,
+          2000,
+          2100,
+          2200,
+          2300,
+          2400,
+          2500,
+          2600,
+          2700,
+          2800,
+          2900,
+          3000,
+          3100,
+          3200,
+          3300
+        ],
+        "supply_name": "VDDA",
+        "inputs": [
+          {
+            "pin": "PB0",
+            "selector": 2
+          },
+          {
+            "pin": "PB11",
+            "selector": 3
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IR",
+        "register": "IRMOD",
+        "mode_configurable": true,
+        "software_control": false,
+        "invert": false
+      },
+      "ir_controller": "SYSCTRL",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM1_CH1 & GTIM2_CH1"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM1_CH1 & GTIM2_CH2"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM1_CH2 & GTIM2_CH1"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM1_CH2 & GTIM2_CH2"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM1_CH1 | GTIM2_CH1"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM1_CH1 | GTIM2_CH2"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM1_CH2 | GTIM2_CH1"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM1_CH2 | GTIM2_CH2"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM1_CH1"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM1_CH1"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM1_CH2"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM1_CH2"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & GTIM2_CH1"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | GTIM2_CH1"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & GTIM2_CH2"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | GTIM2_CH2"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA13",
+          "af": 6,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 32,
+          "printed_page": 31,
+          "bbox": [
+            446.1832,
+            295.1857,
+            473.7752,
+            318.0497
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [
+        {
+          "pin": "PB9",
+          "af": 4,
+          "function": "IROUT",
+          "source_macro": "PB09_AFx_IROUT",
+          "source_line": 1075,
+          "gpio_register": "AFRH",
+          "gpio_field": "AFR9",
+          "reason": "No exact peripheral-prefix mapping; shared or special function needs manual review"
+        }
+      ],
+      "limitations": [
+        "LVD SOURCE=1 is absent from own manual; SDK PA0 mapping is not promoted.",
+        "Only IR_OUT PA13/AF6 exists in own datasheet; safe HAL excludes debug PA13. SDK PB9 candidate is excluded."
+      ],
+      "register_versions": {
+        "LVD": "cw32l031_v1",
+        "SYSCTRL": "cw32l031_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled"
+      ]
+    },
+    "CW32W031": {
+      "sources": {
+        "manual": {
+          "path": "CW32W031_UserManual_CN_V1.4.pdf",
+          "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+          "pdf_pages": {
+            "lvd_cr0": 495,
+            "lvd_cr1": 496,
+            "lvd_sr": 497,
+            "ir_control": 433
+          },
+          "version": "1.4",
+          "text_sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf",
+          "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c",
+          "document_filename": "CW32W031_DataSheet_CN_V1.3.pdf",
+          "memory_map_pdf_page_indices": [
+            33
+          ],
+          "memory_size_table_pdf_page_indices": [
+            8
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant."
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+          "sdk_sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+          "header": "Libraries/inc/cw32w031_gpio.h",
+          "header_sha256": "1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc"
+        },
+        "lvd_sdk_members": [
+          {
+            "path": "cw32w031/Libraries/inc/cw32w031_lvd.h",
+            "sha256": "f3e77d0dd5cc45deb535f57132762d3ddb5d89265a6c22054be94aa6ff494e91",
+            "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+            "archive_member_chain": [
+              "Libraries/inc/cw32w031_lvd.h"
+            ]
+          },
+          {
+            "path": "cw32w031/Libraries/src/cw32w031_lvd.c",
+            "sha256": "3c862190eab3d84c99ac9f4534863d138f93abfa41735bc7557e406dcd59a6de",
+            "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+            "archive_member_chain": [
+              "Libraries/src/cw32w031_lvd.c"
+            ]
+          }
+        ]
+      },
+      "lvd": {
+        "thresholds_mv": [
+          1800,
+          1900,
+          2000,
+          2100,
+          2200,
+          2300,
+          2400,
+          2500,
+          2600,
+          2700,
+          2800,
+          2900,
+          3000,
+          3100,
+          3200,
+          3300
+        ],
+        "supply_name": "VDDA",
+        "inputs": [
+          {
+            "pin": "PA0",
+            "selector": 1
+          },
+          {
+            "pin": "PB0",
+            "selector": 2
+          },
+          {
+            "pin": "PB11",
+            "selector": 3
+          }
+        ]
+      },
+      "ir": {
+        "owner": "IR",
+        "register": "IRMOD",
+        "mode_configurable": true,
+        "software_control": false,
+        "invert": false
+      },
+      "ir_controller": "SYSCTRL",
+      "manual_ir_modes": [
+        {
+          "value": 0,
+          "expression": "GTIM1_CH1 & GTIM2_CH1"
+        },
+        {
+          "value": 1,
+          "expression": "GTIM1_CH1 & GTIM2_CH2"
+        },
+        {
+          "value": 2,
+          "expression": "GTIM1_CH2 & GTIM2_CH1"
+        },
+        {
+          "value": 3,
+          "expression": "GTIM1_CH2 & GTIM2_CH2"
+        },
+        {
+          "value": 4,
+          "expression": "GTIM1_CH1 | GTIM2_CH1"
+        },
+        {
+          "value": 5,
+          "expression": "GTIM1_CH1 | GTIM2_CH2"
+        },
+        {
+          "value": 6,
+          "expression": "GTIM1_CH2 | GTIM2_CH1"
+        },
+        {
+          "value": 7,
+          "expression": "GTIM1_CH2 | GTIM2_CH2"
+        },
+        {
+          "value": 8,
+          "expression": "UART1_TXD & GTIM1_CH1"
+        },
+        {
+          "value": 9,
+          "expression": "UART1_TXD | GTIM1_CH1"
+        },
+        {
+          "value": 10,
+          "expression": "UART1_TXD & GTIM1_CH2"
+        },
+        {
+          "value": 11,
+          "expression": "UART1_TXD | GTIM1_CH2"
+        },
+        {
+          "value": 12,
+          "expression": "UART2_TXD & GTIM2_CH1"
+        },
+        {
+          "value": 13,
+          "expression": "UART2_TXD | GTIM2_CH1"
+        },
+        {
+          "value": 14,
+          "expression": "UART2_TXD & GTIM2_CH2"
+        },
+        {
+          "value": 15,
+          "expression": "UART2_TXD | GTIM2_CH2"
+        }
+      ],
+      "ir_pin_cells": [
+        {
+          "pin": "PA13",
+          "af": 6,
+          "function": "IR_OUT",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 30,
+          "bbox": [
+            446.1832,
+            378.5297,
+            473.7752,
+            401.3937
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 4,
+          "function": "IR_OUT",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 31,
+          "bbox": [
+            323.3626,
+            210.0417,
+            350.9546,
+            232.9057
+          ]
+        }
+      ],
+      "excluded_sdk_ir_routes": [],
+      "limitations": [],
+      "register_versions": {
+        "LVD": "cw32l031_v1",
+        "SYSCTRL": "cw32l031_v1"
+      },
+      "rcc_policy": "No independent LVD or IR gate/reset is documented. No RCC_INFO is fabricated; only GPIO uses its existing central RCC owner.",
+      "lvd_write_set": [
+        "CR0.SOURCE",
+        "CR0.VTH",
+        "CR0.EN"
+      ],
+      "lvd_preserve_set": [
+        "CR0.ACTION",
+        "CR0.IE if present",
+        "CR1 all fields",
+        "SR all fields",
+        "NVIC",
+        "SYSCTRL reset flags/BOR/clock/reference settings"
+      ],
+      "lvd_reject_conditions": [
+        "EN=1",
+        "ACTION=1",
+        "IE=1",
+        "LEVEL/RISE/FALL nonzero",
+        "filter enabled"
+      ]
+    }
+  }
+}

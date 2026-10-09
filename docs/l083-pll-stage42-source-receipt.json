@@ -1,0 +1,1521 @@
+{
+  "schema_version": 1,
+  "scope": "Fresh isolated combination of delivered Stage42 plus the accepted L083 factory-HSI PLL delta; current source/build qualification only",
+  "inputs": {
+    "embassy-cw32-stage39-source-2026-10-09.zip": "2d052b2b3b9a5489e797991109df4fb197042f5caf2382e13f04349206d2bd03",
+    "cw32-l083-hsi-pll-candidate-source-20261009.zip": "233d8a88eb643fa6af255b576d133fdeb9d51ec1341f1bfcf258380e3c168eb7",
+    "embassy-cw32-stage42-source-2026-10-09.zip": "5330dd2f25f18510992542ae711a38271dcb0f6c1c7f201a1496f2178c2dc0b3"
+  },
+  "accepted_source_reuse": {
+    "PLL_runtime": "Five HAL source files remain byte-identical to the accepted Stage39-based PLL candidate",
+    "shared_RCC": "Stage42 runtime is byte-identical; only module documentation changed",
+    "shared_build_script": "Only metadata-derived PLL cfg, exact accepted generator function and its call are added; inverse reproduces Stage42",
+    "preserved": "Stage40 optional HSE ranges and L010/L011 controls; Stage41 L012 prewrite inherited-HSE rejection; Stage42 common LSE capture, GPIO guards, metadata, and all source-guard changes"
+  },
+  "current_model_and_runtime_sha256": {
+    "cw32-data-serde/src/lib.rs": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
+    "cw32-metapac-gen/src/data.rs": "d72f44ee7602c515e8638a2662612f82d1420f67a7e70c9473619401f38f8925",
+    "cw32-metapac-gen/res/src/metadata.rs": "7a41a47e4564d60527228f385021f0f4a801fb33afe675b4af92ec4e9874a926",
+    "embassy-cw32/build.rs": "bbe54df7f54b316782aba9f02660f0690193b7c7e323cc3b81168466be4b6972",
+    "embassy-cw32/src/lib.rs": "b12d91f92cf5eb146f992c6e7dfce0cc924e780be8939cf34168c2f2ba2d60b3",
+    "embassy-cw32/src/gpio.rs": "b4a85ee287470620d4d91289f3bb7e2c28efe6847667dfb26a3c9c9f1a832988",
+    "embassy-cw32/src/rcc/mod.rs": "e53f4c098e0e7b6a263a7b243cce1a22dfd4c14ba48f1c271f664e9849a7832e",
+    "embassy-cw32/src/rcc/bounds.rs": "879faec62568c419aa273c7802d9c39a188e3db8da324c3724e12acf5a266512",
+    "embassy-cw32/src/rcc/l052_l083.rs": "e67f83cfddaafb3a0c00be4345305b151f2c8a29425fd389740f51d6b6b903f4",
+    "embassy-cw32/src/rcc/l010_l011.rs": "b4855a802efc1a5b7faf493ce55c0e6f97804eee364ab9f8fff55ae0074a107c",
+    "embassy-cw32/src/rcc/l012.rs": "6248b42467bad89db802b3615b374035da729797a44ef2a33a8309857baa8e40",
+    "embassy-cw32/src/adc/classic.rs": "59be5690f15a12ca28db649a6ec42f20a46c297c4e87015b287937e889a5752b",
+    "embassy-cw32/src/lptim.rs": "e4d2039fcaf3680cf67cc5a690dfea9accca5331221e6ad5cd609e4563ed2c79",
+    "embassy-cw32/src/time_driver.rs": "f23f754fa62f62664cee5d30d7fb37c6964e4b58c788b726325bf99674991924"
+  },
+  "current_schema_review": "pll-stage42-schema-review.json",
+  "current_schema_identity_verification": "pll-stage42-identity-note.json",
+  "clock_consumer_review": {
+    "sha256": "1881c2e66bf30dc1ecaa45717831a4f111412163c028c3aed305e38ab4e74234",
+    "result": "Accepted at all frozen runtime hashes; source-only semantic review separate from builds"
+  },
+  "build": {
+    "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1\n",
+    "normal_arm_library_builds": 31,
+    "normal_linked_firmware_images": 20,
+    "profile": "dev, debug information disabled",
+    "target": "thumbv6m-none-eabi",
+    "commands": [
+      {
+        "name": "rustc-version",
+        "command": [
+          "rustc",
+          "-Vv"
+        ],
+        "exit_code": 0,
+        "log_sha256": "b569b0c98ea3133c7252b4b8ea6b39b7b353813df0dd5f5c412c355691424112"
+      },
+      {
+        "name": "gen-all",
+        "command": [
+          "bash",
+          "./d",
+          "gen-all"
+        ],
+        "exit_code": 0,
+        "log_sha256": "3d8351abfee7c4d8f1400811efb6503b5c0a072a34b449c98bf3d04f5355f2a8"
+      },
+      {
+        "name": "lib-cw32l052-rt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l052,rt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "f42885175f9764e2b5838880f2bd461753e786adda48c0d52053e2e25729c931"
+      },
+      {
+        "name": "lib-cw32l052-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l052,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "1c438a73ea3847d381c7fd1d3c51d480947856032f813c105998cadb645795a3"
+      },
+      {
+        "name": "lib-cw32l052c8t6-rt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l052c8t6,rt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "6c16072cc43b41a50883b292ebd70551ee1f4b7c2259fbc38ad255eff099dfee"
+      },
+      {
+        "name": "lib-cw32l052c8t6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l052c8t6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "feeebac08d1ed5bc7ab1071095bd83fbc076c4c5e18a113dfcd28068123cdc33"
+      },
+      {
+        "name": "lib-cw32l052r8s6-rt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l052r8s6,rt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "7fd3281484e7bb8f31aac583cc4fd961c9218cb759e7f2074f646e0ef04fa4ab"
+      },
+      {
+        "name": "lib-cw32l052r8s6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l052r8s6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "26dbbd02b8ffc22d001f91c47575700a1e41e94a957123913f5e500ffd3a2dd9"
+      },
+      {
+        "name": "lib-cw32l052r8t6-rt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l052r8t6,rt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "5e943becebd963e257ba0408b85ac6de93491b6b535eb9f2f9c21f51ffdcdd5d"
+      },
+      {
+        "name": "lib-cw32l052r8t6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l052r8t6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "8b8bad67f566bfb44658ab7492c0c108f7f1c0f4142d2883ad799424475f48f9"
+      },
+      {
+        "name": "lib-cw32l083-rt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083,rt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "f7857adba83d614a236fc766e0bdf7b2602dba1d577e30289992b63b1463519b"
+      },
+      {
+        "name": "lib-cw32l083-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "a4b4625786e87b595f7f919ee4741825b249366c51aa24f5a3accaea0bcfddfa"
+      },
+      {
+        "name": "lib-cw32l083mct6-rt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083mct6,rt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "0b85643bee6dccb254369070b2a29328d642876bf24b0c388c7de96d8a0f8a6b"
+      },
+      {
+        "name": "lib-cw32l083mct6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083mct6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "80429d70d11c0f4cc74b3aba153f2b139200421e0f0f23e3b00e784fcc901368"
+      },
+      {
+        "name": "lib-cw32l083rbt6-rt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083rbt6,rt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "c11f77032a89ccba2b9820841bae8a9287637c7ba132d398d16265ba6d77cf90"
+      },
+      {
+        "name": "lib-cw32l083rbt6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083rbt6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "ec305b48ebd2175121517ab4b91754455ef4fd979baa42c11dffafb746c332f8"
+      },
+      {
+        "name": "lib-cw32l083rcs6-rt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083rcs6,rt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "8f5266621aaa48984a43c41fddcea68109637c8226bd84005c9bd89ee1cd3c82"
+      },
+      {
+        "name": "lib-cw32l083rcs6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083rcs6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "12e4269f33b1b9085ea1b15935f912ceea065d2ca97db1b0e534044751fca424"
+      },
+      {
+        "name": "lib-cw32l083rct6-rt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6,rt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "8ff9099e057cecbff849618cf0ff62b31e95690626ba9be4153b7743b37653ad"
+      },
+      {
+        "name": "lib-cw32l083rct6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "8fa21beb6f83d680d28e42bcde3cec876b339af6d2cea4f1878e96143a410c66"
+      },
+      {
+        "name": "lib-cw32l083vct6-rt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083vct6,rt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "afb1e4c61130f71bc3a4ac8b6d9a040042278d4eaa6d22df66ae5bab9127e757"
+      },
+      {
+        "name": "lib-cw32l083vct6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l083vct6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "1cb63efbc6fe4e9718473cafe46599f50513a4a2c755a72e142fb10b5f6fb3cb"
+      },
+      {
+        "name": "lib-cw32a030c8t7-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32a030c8t7,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "193e65b848db44d56f7fb1863cd70419a8deb669e6b59f14482500cc479bd1cc"
+      },
+      {
+        "name": "lib-cw32f002f3p7-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32f002f3p7,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "1fc376360931246b2bceec18e744759292b07d4a58234bc480c5054d1a23aaea"
+      },
+      {
+        "name": "lib-cw32f003e4p7-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32f003e4p7,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e9ccdeda0ca7be9a3bac93be935015bcdac82a6a8016a5cba18f4f11cf63c044"
+      },
+      {
+        "name": "lib-cw32f020c6u7-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32f020c6u7,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e8daaa3ea4067d40fc256238d27b8c1faa7f97b23bf00cfe84c5febe4cd586aa"
+      },
+      {
+        "name": "lib-cw32f030c8t7-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "38e658194000d287c2300e6989ed0d6b878ff127befb8834928b20a1c70465d6"
+      },
+      {
+        "name": "lib-cw32l010f8p6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l010f8p6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "d8808f1cd06b7aac2905fd517c574c9ac8e2129596be304c0b4a27ab5104bd7b"
+      },
+      {
+        "name": "lib-cw32l011k8t6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l011k8t6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "604c64388e18f1a38bc6136c0ce489c32f98e6cacb8ab48f1f8c3b4145385f6c"
+      },
+      {
+        "name": "lib-cw32l012c8t6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l012c8t6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "a3610429d47a130d6dae83b0e16d375a80d3f090b8f8d2dce4074ade78d147ac"
+      },
+      {
+        "name": "lib-cw32l031c8t6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32l031c8t6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "d2310541d95e8e6acb4d587b49ab716c5d97a42bd7dc78aaae121d861a33c4e1"
+      },
+      {
+        "name": "lib-cw32r031c8u6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32r031c8u6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "5e943becebd963e257ba0408b85ac6de93491b6b535eb9f2f9c21f51ffdcdd5d"
+      },
+      {
+        "name": "lib-cw32w031r8u6-rt-defmt",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--no-default-features",
+          "--features",
+          "cw32w031r8u6,rt,defmt",
+          "--target",
+          "thumbv6m-none-eabi"
+        ],
+        "exit_code": 0,
+        "log_sha256": "4928ccd8d753f9c2f6f855528c31081eb268b265243c282c1f6f1dcd6c26f241"
+      },
+      {
+        "name": "pll-uart-cw32l083mct6",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/pll-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083mct6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "pll-uart"
+        ],
+        "exit_code": 0,
+        "log_sha256": "8bf25070a8ec358f3fa9901bbd65df3d03631fe27ded68801c1344ccf6ad7e07"
+      },
+      {
+        "name": "pll-uart-cw32l083rbt6",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/pll-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083rbt6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "pll-uart"
+        ],
+        "exit_code": 0,
+        "log_sha256": "4aab8d298a7375b737391a27acce3d838c394b45401b8376930f856837baa93a"
+      },
+      {
+        "name": "pll-uart-cw32l083rcs6",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/pll-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083rcs6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "pll-uart"
+        ],
+        "exit_code": 0,
+        "log_sha256": "076e2b25badc83679952bd75ac61b6372ddf348a61ed3e9ed86017c36f15d4d4"
+      },
+      {
+        "name": "pll-uart-cw32l083rct6",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/pll-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "pll-uart"
+        ],
+        "exit_code": 0,
+        "log_sha256": "42e7b7e71e7fa3d577119e1d5418ed54ac4b00db29b74d039a1020d23b52873e"
+      },
+      {
+        "name": "pll-uart-cw32l083vct6",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/pll-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083vct6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "pll-uart"
+        ],
+        "exit_code": 0,
+        "log_sha256": "af3dd4c40fd367fc98091da96b337ebab58dc5a4903ed4fef022c1d60c6c3c77"
+      },
+      {
+        "name": "pll-uart-fractional",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/pll-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6,fractional",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "pll-uart"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e3f82bf004b40ce58d7065cea1efa95540b6306bb612be52e1a4154b9a806da4"
+      },
+      {
+        "name": "pll-uart-low-voltage",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/pll-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6,low-voltage",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "pll-uart"
+        ],
+        "exit_code": 0,
+        "log_sha256": "5f9199a7f30e60631635afa5238e4efbb5470945f34cf64adbcd8c11367546b1"
+      },
+      {
+        "name": "pll-uart-fractional-low-voltage",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/pll-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6,fractional,low-voltage",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "pll-uart"
+        ],
+        "exit_code": 0,
+        "log_sha256": "8da44446528ebcc73a8a160ae8a0e4af91b98e8b218d0a44acae2c147b65ac0c"
+      },
+      {
+        "name": "pll-time-embassy-time",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/pll-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6,embassy-time",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "pll-time"
+        ],
+        "exit_code": 0,
+        "log_sha256": "ef05a733f0787fb86cbc1b3edc3ba0c97c59b2c8fab850bdd445c9fa493e254d"
+      },
+      {
+        "name": "pll-time-embassy-time-low-voltage",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/pll-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6,embassy-time,low-voltage",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "pll-time"
+        ],
+        "exit_code": 0,
+        "log_sha256": "5695571da6e821fb1228822455af50de707da897c03fd46f39c8d76efb8bd983"
+      },
+      {
+        "name": "hse-cw32l052c8t6-crystal",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/hse-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l052c8t6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "crystal"
+        ],
+        "exit_code": 0,
+        "log_sha256": "b632802e385dd51ac3790d6ef87b779a4bf830da77a2d3ccac4f8f4dd10fb7d4"
+      },
+      {
+        "name": "hse-cw32l052c8t6-bypass",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/hse-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l052c8t6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "bypass"
+        ],
+        "exit_code": 0,
+        "log_sha256": "a3bdf4502bc6aa7f8c236e2f271c1c4bf342ce41c892cf92b9699e00abd9b349"
+      },
+      {
+        "name": "hse-cw32l083rct6-crystal",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/hse-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "crystal"
+        ],
+        "exit_code": 0,
+        "log_sha256": "ac85edf504ffcf098008b847af41bc6331fd1f22cc95735fc90c4c9e82a428f7"
+      },
+      {
+        "name": "hse-cw32l083rct6-bypass",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/hse-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "bypass"
+        ],
+        "exit_code": 0,
+        "log_sha256": "c41f2c298a35a9142d445a180bf56114d7c9fe58da3338baa890227dac9ff6de"
+      },
+      {
+        "name": "hse-cw32l010f8p6-crystal",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/hse-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l010f8p6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "crystal"
+        ],
+        "exit_code": 0,
+        "log_sha256": "80e9b07c5a0ad1af15355c1e67438007647b7af8971fecb0d9b116817ff6d2a4"
+      },
+      {
+        "name": "hse-cw32l010f8p6-bypass",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/hse-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l010f8p6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "bypass"
+        ],
+        "exit_code": 0,
+        "log_sha256": "d1cad2c984ab0c688ec6b62dd14713f691ca4e006d0b2e0cfd23d8ea82ddd324"
+      },
+      {
+        "name": "hse-cw32l011k8t6-crystal",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/hse-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l011k8t6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "crystal"
+        ],
+        "exit_code": 0,
+        "log_sha256": "80e9b07c5a0ad1af15355c1e67438007647b7af8971fecb0d9b116817ff6d2a4"
+      },
+      {
+        "name": "hse-cw32l011k8t6-bypass",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/hse-clock/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l011k8t6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "bypass"
+        ],
+        "exit_code": 0,
+        "log_sha256": "d1cad2c984ab0c688ec6b62dd14713f691ca4e006d0b2e0cfd23d8ea82ddd324"
+      },
+      {
+        "name": "rtc-retained-cw32l010f8p6",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/rtc-calendar/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l010f8p6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "preserve_calendar"
+        ],
+        "exit_code": 0,
+        "log_sha256": "262a38c33be19f17a47333e1ba5259ee3b8701f2e6af80a48650c531404f912b"
+      },
+      {
+        "name": "rtc-retained-cw32l012c8t6",
+        "command": [
+          "cargo",
+          "build",
+          "--locked",
+          "--manifest-path",
+          "examples/rtc-calendar/Cargo.toml",
+          "--no-default-features",
+          "--features",
+          "cw32l012c8t6",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--bin",
+          "preserve_calendar"
+        ],
+        "exit_code": 0,
+        "log_sha256": "10ed1d4a1a52c456d0e272298b27889fb8f1097f9e8f97ab721f51541a7c6973"
+      }
+    ],
+    "elfs": [
+      {
+        "name": "pll-uart-cw32l083mct6",
+        "chip": "cw32l083mct6",
+        "elf_sha256": "0036e0ec76f3cbee0f95a7a5d491b9fedf85aa4e1b587d2bba3d6290d5f740f9",
+        "bytes": 231608,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "pll-uart-cw32l083rbt6",
+        "chip": "cw32l083rbt6",
+        "elf_sha256": "99abb6d9e86dab55ab88ffd3b994a9e5da2034ad939a91318232649a62c22ede",
+        "bytes": 231628,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "pll-uart-cw32l083rcs6",
+        "chip": "cw32l083rcs6",
+        "elf_sha256": "a7eff54c7c133fe1513b0c25346e923adad92f17bd154c8dcd17e6ec4613fbd1",
+        "bytes": 231592,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "pll-uart-cw32l083rct6",
+        "chip": "cw32l083rct6",
+        "elf_sha256": "7df36f8f8dadb0225a5d82ec5e53328dc9f60fed3a1b0fb69600a4008b75798d",
+        "bytes": 231596,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "pll-uart-cw32l083vct6",
+        "chip": "cw32l083vct6",
+        "elf_sha256": "ae63578bf06a268d583b03034738511d1bdaffe62a2ea63c38674fef39207884",
+        "bytes": 231628,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "pll-uart-fractional",
+        "chip": "cw32l083rct6",
+        "elf_sha256": "dc2ab4b03caf5b1e42d5e80f8943406358949f03b0e523da3df3d17c6a6ae73d",
+        "bytes": 231596,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "pll-uart-low-voltage",
+        "chip": "cw32l083rct6",
+        "elf_sha256": "627022538959af5371ae807e4037229d8154035daa0b3237cb4c642491e4927b",
+        "bytes": 231596,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "pll-uart-fractional-low-voltage",
+        "chip": "cw32l083rct6",
+        "elf_sha256": "b776aa7a818d62b1a2e2110c56569bc2f7c86005af8aa3a84afbb4ec625e9f80",
+        "bytes": 231596,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "pll-time-embassy-time",
+        "chip": "cw32l083rct6",
+        "elf_sha256": "e5eb76e7086b61774f451fe9cc1d8bc6cdc613401bffb57b729f2ea34172a25c",
+        "bytes": 237640,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "pll-time-embassy-time-low-voltage",
+        "chip": "cw32l083rct6",
+        "elf_sha256": "a9049537d1db10a43347e6ce67aba3ca8943e13fd88f59249bc8f369f1630b1e",
+        "bytes": 237640,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "hse-cw32l052c8t6-crystal",
+        "chip": "cw32l052c8t6",
+        "elf_sha256": "7b0b738cc5782574beda32a936b99195878efa5d6eb1f61d63b2f792a23207ff",
+        "bytes": 224412,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 188,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "hse-cw32l052c8t6-bypass",
+        "chip": "cw32l052c8t6",
+        "elf_sha256": "f91f4f58638951dfb18ea956d311cc15bbba2e3efce3daf3b05cbbcacffe6f16",
+        "bytes": 224412,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 188,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "hse-cw32l083rct6-crystal",
+        "chip": "cw32l083rct6",
+        "elf_sha256": "bc44883730bf3840490ebfda008ee865b2182da7a533b2626f17e199113fc159",
+        "bytes": 231488,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "hse-cw32l083rct6-bypass",
+        "chip": "cw32l083rct6",
+        "elf_sha256": "db4ddd1ff4f43be8edffcf4a2c77426fdd0c0a1a48345789f8c9a3cb4cdb9a5d",
+        "bytes": 231484,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "hse-cw32l010f8p6-crystal",
+        "chip": "cw32l010f8p6",
+        "elf_sha256": "9d4fcb32696afa4b7c27c032f53bc7deeb0eee6b5bf973a00aa911362e3ef93c",
+        "bytes": 218780,
+        "initial_sp": 536875008,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "hse-cw32l010f8p6-bypass",
+        "chip": "cw32l010f8p6",
+        "elf_sha256": "3d64f56c270d82cb9b33aeb78a346a403733aae4c90eb56a8417458db0c5db43",
+        "bytes": 218780,
+        "initial_sp": 536875008,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "hse-cw32l011k8t6-crystal",
+        "chip": "cw32l011k8t6",
+        "elf_sha256": "beaa994f7a0748e4e66d5fd65d131da8a97922391acf74c3ffb1bd78be81407a",
+        "bytes": 220028,
+        "initial_sp": 536877056,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "hse-cw32l011k8t6-bypass",
+        "chip": "cw32l011k8t6",
+        "elf_sha256": "b4f4df06c6cdba2505daa95750d6702cb3131a6578f1c8182423a8adeb2b403a",
+        "bytes": 220028,
+        "initial_sp": 536877056,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "rtc-retained-cw32l010f8p6",
+        "chip": "cw32l010f8p6",
+        "elf_sha256": "0dd66cb1819786ff246a7585b040601a5cc10e84c2f44a89ac6c560ebf2cfedc",
+        "bytes": 217072,
+        "initial_sp": 536875008,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      },
+      {
+        "name": "rtc-retained-cw32l012c8t6",
+        "chip": "cw32l012c8t6",
+        "elf_sha256": "5d6f8f3e1ceb709f818fa194f22abdef59af40287c563195cc669e6e3f9ddd0c",
+        "bytes": 148172,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "elf_entry": 193,
+        "vector_bytes": 192,
+        "result": "PASS: actual SP/reset/Thumb code, every declared IRQ vector, nonempty executable load, VMA and flash LMA extents"
+      }
+    ],
+    "no_hal_tests_models_harnesses": true,
+    "no_hardware_execution": true
+  },
+  "source_checks": {
+    "raw_original_checks": {
+      "documents": [
+        {
+          "file": "CW32L083_UserManual_CN_V2.0.pdf",
+          "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+          "raw_pdf_pages_checked": [
+            59,
+            60,
+            82
+          ]
+        },
+        {
+          "file": "CW32L083_DataSheet_CN_V1.9.pdf",
+          "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+          "raw_pdf_pages_checked": [
+            47,
+            55,
+            56
+          ]
+        }
+      ],
+      "claims": [
+        "RM SOURCE=11 means HSIOSC after HSI divider; literal MUL 2..12",
+        "RM one bin required for actual input/output; FREQOUT last bin 48..72MHz does not override DS 64MHz electrical maximum",
+        "RM PLLEN=0 then observe STABLE=0 before parameters; PLLEN=1 then observe STABLE=1; startup encoding 7 = 16384 clocks",
+        "RM PLL at 0x28, STABLE bit15 RO, RFU19:16 debug default 0x5 preserved",
+        "DS HSI factory \u00b12%, duty45..55%; PLL input4..24MHz duty40..60%; output8..64MHz; cycle-to-cycle jitter300ps is not absolute period bound"
+      ]
+    },
+    "raw_policy_arithmetic": {
+      "pairs": [
+        {
+          "hsi_div": 6,
+          "mul": 2,
+          "minimum_hz": "15680000",
+          "maximum_hz": "16320000"
+        },
+        {
+          "hsi_div": 6,
+          "mul": 4,
+          "minimum_hz": "31360000",
+          "maximum_hz": "32640000"
+        },
+        {
+          "hsi_div": 6,
+          "mul": 5,
+          "minimum_hz": "39200000",
+          "maximum_hz": "40800000"
+        },
+        {
+          "hsi_div": 6,
+          "mul": 7,
+          "minimum_hz": "54880000",
+          "maximum_hz": "57120000"
+        },
+        {
+          "hsi_div": 10,
+          "mul": 3,
+          "minimum_hz": "14112000",
+          "maximum_hz": "14688000"
+        },
+        {
+          "hsi_div": 10,
+          "mul": 4,
+          "minimum_hz": "18816000",
+          "maximum_hz": "19584000"
+        },
+        {
+          "hsi_div": 10,
+          "mul": 6,
+          "minimum_hz": "28224000",
+          "maximum_hz": "29376000"
+        },
+        {
+          "hsi_div": 10,
+          "mul": 7,
+          "minimum_hz": "32928000",
+          "maximum_hz": "34272000"
+        },
+        {
+          "hsi_div": 10,
+          "mul": 8,
+          "minimum_hz": "37632000",
+          "maximum_hz": "39168000"
+        },
+        {
+          "hsi_div": 10,
+          "mul": 9,
+          "minimum_hz": "42336000",
+          "maximum_hz": "44064000"
+        },
+        {
+          "hsi_div": 10,
+          "mul": 11,
+          "minimum_hz": "51744000",
+          "maximum_hz": "53856000"
+        },
+        {
+          "hsi_div": 10,
+          "mul": 12,
+          "minimum_hz": "56448000",
+          "maximum_hz": "58752000"
+        }
+      ],
+      "count": 12,
+      "scope": "Exact arithmetic on authored source envelopes; not runtime/HAL test or model"
+    },
+    "generated_metadata": {
+      "qualified_pll_profiles": [
+        "CW32L083",
+        "CW32L083MCT6",
+        "CW32L083RBT6",
+        "CW32L083RCS6",
+        "CW32L083RCT6",
+        "CW32L083VCT6"
+      ],
+      "pll_absent_elsewhere": true,
+      "all_previous_clock_limits_hse_lse_values_identical_to_stage42": [
+        "CW32A030",
+        "CW32A030C8T7",
+        "CW32F002",
+        "CW32F002F3P7",
+        "CW32F002F3U7",
+        "CW32F003",
+        "CW32F003E4P7",
+        "CW32F003F4P7",
+        "CW32F003F4U7",
+        "CW32F020",
+        "CW32F020C6U7",
+        "CW32F020F6U7",
+        "CW32F020K6U7",
+        "CW32F030",
+        "CW32F030C8",
+        "CW32F030C8T7",
+        "CW32F030F6",
+        "CW32F030F6P7",
+        "CW32F030F8",
+        "CW32F030F8V7",
+        "CW32F030K8",
+        "CW32F030K8T7",
+        "CW32F030K8U7",
+        "CW32L010",
+        "CW32L010F8P6",
+        "CW32L010F8U6",
+        "CW32L010Y8M6",
+        "CW32L011",
+        "CW32L011K8T6",
+        "CW32L011K8U6",
+        "CW32L012",
+        "CW32L012C8T6",
+        "CW32L012C8U6",
+        "CW32L031",
+        "CW32L031C8T6",
+        "CW32L031C8U6",
+        "CW32L031F8P6",
+        "CW32L031F8U6",
+        "CW32L031K8U6",
+        "CW32L031K8V6",
+        "CW32L052",
+        "CW32L052C8T6",
+        "CW32L052R8S6",
+        "CW32L052R8T6",
+        "CW32L083",
+        "CW32L083MCT6",
+        "CW32L083RBT6",
+        "CW32L083RCS6",
+        "CW32L083RCT6",
+        "CW32L083VCT6",
+        "CW32R031",
+        "CW32R031C8U6",
+        "CW32W031",
+        "CW32W031R8U6"
+      ]
+    },
+    "generated_pac": {
+      "PLL_STABLE_getter_only": true,
+      "source_yamls": [
+        "cw32-data/field-access.yaml",
+        "cw32-data/registers/sysctrl_cw32l083_v1.yaml",
+        "cw32-data/register-reuse.yaml"
+      ],
+      "typed_PLL_setters": []
+    },
+    "shared_runtime_inverse": {
+      "build_rs_remove_only_PLL_cfg_call_and_exact_accepted_function_restores_stage42": true,
+      "rcc_mod_change_documentation_only": true
+    },
+    "stage40_41_42_preserved_files": [
+      "GPIO guard",
+      "L010/L011 direct HSE controls",
+      "L012 prewrite inherited-HSE rejection",
+      "common LSE capture",
+      "LSE ownership policy",
+      "HSE qualified policy",
+      "LSE verifier",
+      "LSE contract docs"
+    ],
+    "authored_yaml_inventory": {
+      "total": 293,
+      "registers": 137,
+      "other": 156,
+      "direct_source_locator_files": 283,
+      "indirect_review_locator_files": 10
+    }
+  },
+  "historical_evidence": "l083-hsi-pll-source-receipt.json and pll-schema-review.json retain old Stage39-candidate evidence; their 31-library/14-ELF and data/PAC checks are not counted as current combined results",
+  "delivery": "Authored source only; generated JSON/PAC/coverage/build products, raw vendor PDF/SDK/SVD originals and compiled images remain excluded. Existing eleven approved headers and license boundary retained.",
+  "legal_clearance": false,
+  "serial_qualification": {
+    "scope": "Classic I2C and SPI are documented source-qualified rate/relative-setting APIs; no added HAL pulse-by-pulse high/low/setup duration promise",
+    "i2c": "Own D083 PDF69/printed68 section7.3.20 guarantees correctly configured I2C timing by design; U083 PDF440/441 gives BRR/filter configuration. L083 metadata has waveform:null.",
+    "spi": "Own U083 PDF402/428/429 supplies legal /4..128 selection and relative HalfPeriod; D083 PDF70 Table7-39 is characterized waveform with external-device conditions. No absolute PLL period bound is inferred.",
+    "LPI2C": "L012-only waveform solver; this L083-only PLL cannot feed it",
+    "runtime_change_required": false,
+    "independent_addendum": "pll-stage42-serial-addendum.json",
+    "independent_addendum_sha256": "cb6095e58f6fd3c8a78cc8cac3bdbc3a78fa9fb63589fdd8b7822fde3c29f92f"
+  },
+  "current_metadata_checker_correction": {
+    "path": "tests/reviewed_metadata.py",
+    "before_sha256": "d79526e890bb76d8e21347095369cbd347575db6d1c7885d136b08c64d02faf5",
+    "after_sha256": "465423f9e49e1402827700b58f3e0a70356ba97992ae5c0a59fd66192747f5bb",
+    "reviewed_patch_sha256": "31c9fc680ea6bb56fc8048e61c3267a98d141ae713ccc5ac143dcd8f1b259f9b",
+    "scope": "Correct the inherited exact package oscillator-alias expectation to include OSC32_IN/OUT as LSE_IN/OUT only where own LSE metadata exists. Preserve exact equality, common bonded-pad intersection, no-AF condition and all previous HSE checks. No hardware or runtime changes.",
+    "command": [
+      "python",
+      "tests/test_metadata_contracts.py"
+    ],
+    "current_result": "All 22 existing metadata-contract checks passed in complete combined candidate tree",
+    "log_sha256": "c38d75b6e3b920497f901400aecd2627cfd263b2e4943e8574926623d274c25b",
+    "no_hal_tests": true
+  }
+}

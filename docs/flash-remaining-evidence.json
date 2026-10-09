@@ -1,0 +1,1287 @@
+{
+  "schema_version": 1,
+  "status": "Source-qualified implementation; independent source/schema/output identity review pending; no execution, emulation or silicon validation.",
+  "families": [
+    {
+      "family": "CW32L010",
+      "generic_profile": {
+        "memory": [],
+        "capacity_known": false,
+        "safe_full_capacity_constructor": false
+      },
+      "observed_pac_version": "cw32l010_v1",
+      "controller_base": "0x40022000",
+      "main_flash_base": 0,
+      "exact_part_flash_sizes_bytes": [
+        65536
+      ],
+      "main_array": {
+        "erase_bytes": 512,
+        "erased_value": 255,
+        "program_access_bytes": [
+          1,
+          2,
+          4
+        ],
+        "natural_alignment_required": true,
+        "each_programmed_access_must_be_fully_erased": true,
+        "read_min_bytes": 1,
+        "suggested_NorFlash_WRITE_SIZE": 1,
+        "suggested_NorFlash_ERASE_SIZE": 512,
+        "MultiwriteNorFlash": false,
+        "independent_RWW_banks_proven": false,
+        "documented_contiguous_main_array_regions": 1
+      },
+      "registers": {
+        "CR1_offset": 0,
+        "CR2_offset": 4,
+        "lock_offsets": [
+          8
+        ],
+        "IER_offset": 32,
+        "ISR_offset": 36,
+        "ICR_offset": 40,
+        "SDKCFR_offset": 112,
+        "CR1_MODE_bits": [
+          0,
+          1
+        ],
+        "CR1_SECURITY_bits": [
+          5,
+          6
+        ],
+        "BUSY_register": "ISR",
+        "BUSY_bit": 5,
+        "STANDBY_bit": null,
+        "CR2_WAIT_bits": [
+          0,
+          2
+        ],
+        "CR2_FETCH_bit": null,
+        "CR2_CACHE_bit": null,
+        "CR2_CACHEINVALID_bit": null,
+        "error_bits": {
+          "PC": 0,
+          "PAGELOCK": 1,
+          "PROG": 4
+        },
+        "ICR_clear_semantics": "W0C, writing 1 leaves the corresponding error flag unchanged",
+        "ICR_PROG_read_semantics": "R1W0",
+        "KEY": {
+          "bits": [
+            16,
+            31
+          ],
+          "value": "0x5A5A",
+          "registers": [
+            "CR1",
+            "CR2",
+            "PAGELOCK"
+          ]
+        },
+        "MODE_values": {
+          "0": "Read",
+          "1": "Program",
+          "2": "PageErase",
+          "3": "ChipErase (not exposed by proposed HAL)"
+        },
+        "reset": {
+          "CR1": "0x00000000",
+          "CR2": "0x00000000",
+          "PAGELOCK": "0x00000000",
+          "IER": "0x00000000",
+          "ISR": "0x00000000",
+          "ICR": "0x0000001F",
+          "SDKCFR": "0x0000007F"
+        },
+        "error_mask_hex": "0x13"
+      },
+      "protection": {
+        "lock_bits_documented": 16,
+        "erase_pages_per_lock_bit": 8,
+        "lock_group_bytes": 4096,
+        "unlock_value": 1,
+        "lock_value": 0,
+        "bootloader_access": "Excluded; system ROM is not main storage",
+        "option_bytes_or_security_mutation": "Unavailable; security-level changes can erase all data or remove recovery",
+        "SLIB": {
+          "descriptor_range_inclusive": [
+            "0x0000FFF0",
+            "0x0000FFFF"
+          ],
+          "contents": "8-byte password, start page, end page0x7F, signature and CRC16_X25",
+          "public_safe_storage_exclusion": "Descriptor and whole containing erase page, plus any active protected library range",
+          "read_behavior": "Execution allowed, readout blocked; L012 explicitly includes DMA",
+          "documented_disable": "authenticated ISP chip erase or RAM-executed chip erase"
+        },
+        "read_protection": {
+          "level0": "SWD/ISP readable",
+          "level1": "not externally readable; lowering via ISP/SWD erases main flash",
+          "level2": "SWD disabled; ISP downgrade erases main flash",
+          "level3": "ISP/SWD downgrade prohibited; irreversible external recovery restriction"
+        },
+        "read_protection_change_limit": null
+      },
+      "clock": {
+        "read_wait_thresholds_mhz": [
+          24,
+          48
+        ],
+        "wait_values": [
+          0,
+          1
+        ],
+        "warning": "WAIT=2 encoding is not permission to exceed the datasheet HCLK/VDD limit",
+        "configuration_clock_required": true,
+        "gate": "SYSCTRL_AHBEN.FLASH bit1; AHBEN requires same-write KEY",
+        "reset": "SYSCTRL_AHBRST.FLASH bit1 active low; not a documented safe BUSY abort",
+        "SYSCTRL_CR2_FLASHWAIT_alias": true,
+        "separate_program_clock_configuration": "No separate program-clock divider requirement established in reviewed FLASH operation sequence"
+      },
+      "execution": {
+        "flash_fetch": "CPU stalls subsequent flash instruction fetch until operation completes",
+        "ram_fetch": "CPU continues; poll the family-specific BUSY field before subsequent flash work",
+        "pc_page": "attempt to modify current executing page fails with PC error",
+        "cache_prefetch": "No FETCH/CACHE fields in this FLASH controller map",
+        "completion_interrupt": false,
+        "error_irq": [
+          {
+            "interrupt": "FLASHRAM",
+            "signal": "GLOBAL"
+          }
+        ],
+        "deep_sleep": "Require BUSY=0 and MODE=Read first",
+        "abort_reset_recovery": "No documented in-flight abort, safe reset-during-BUSY guarantee or power-fail atomicity; do not fabricate one"
+      },
+      "electrical": {
+        "datasheet_flash_section": "7.3.9",
+        "flash_characteristics_pdf_page": 44,
+        "flash_characteristics_printed_page": 43,
+        "general_conditions_pdf_page": 32,
+        "general_conditions_printed_page": 31,
+        "typical_program_us_by_access_bytes": {
+          "1": 31,
+          "2": 39,
+          "4": 55
+        },
+        "typical_page_erase_ms": 2.5,
+        "typical_mass_erase_ms_not_API": 35,
+        "program_voltage_range_V": null,
+        "program_voltage_evidence": "No separate Vprog row; do not borrow the legacy-family range",
+        "max_device_HCLK_MHz": 48,
+        "characterized_temperature_C": [
+          -40,
+          85
+        ],
+        "guaranteed_max_program_or_erase_time": null,
+        "endurance_min_cycles": 10000,
+        "retention": "25 years at -40..85 C",
+        "general_VDD_range_V": [
+          1.62,
+          5.5
+        ],
+        "low_voltage_HCLK_limit": "At 1.62 <= VDD <1.8 V, HCLK <=24 MHz; higher maximum needs VDD >=1.8 V"
+      },
+      "sources": {
+        "manual": "CW32L010_UserManual_CN_V1.2.pdf",
+        "manual_flash_chapter_pdf_pages": [
+          104,
+          118
+        ],
+        "manual_control_pdf_page": 114,
+        "datasheet": "CW32L010_DataSheet_CN_V1.3.pdf",
+        "sdk": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+        "sdk_note": "Own SDK inspected; copied fields are not independent hardware proof",
+        "clock_gate_reset_pdf_pages": [
+          79,
+          82
+        ],
+        "geometry_pdf_page": 104,
+        "operations_pdf_pages": [
+          105,
+          106
+        ],
+        "stall_deepsleep_pdf_page": 112,
+        "SLIB_pdf_page": 110,
+        "register_section": "7.10",
+        "geometry_and_wait_sections": "7.3–7.4",
+        "operations_sections": "7.5.1–7.5.2",
+        "protection_sections": "7.6",
+        "stall_deepsleep_section": "7.8"
+      }
+    },
+    {
+      "family": "CW32L011",
+      "generic_profile": {
+        "memory": [],
+        "capacity_known": false,
+        "safe_full_capacity_constructor": false
+      },
+      "observed_pac_version": "cw32l011_v1",
+      "controller_base": "0x40022000",
+      "main_flash_base": 0,
+      "exact_part_flash_sizes_bytes": [
+        65536
+      ],
+      "main_array": {
+        "erase_bytes": 512,
+        "erased_value": 255,
+        "program_access_bytes": [
+          1,
+          2,
+          4
+        ],
+        "natural_alignment_required": true,
+        "each_programmed_access_must_be_fully_erased": true,
+        "read_min_bytes": 1,
+        "suggested_NorFlash_WRITE_SIZE": 1,
+        "suggested_NorFlash_ERASE_SIZE": 512,
+        "MultiwriteNorFlash": false,
+        "independent_RWW_banks_proven": false,
+        "documented_contiguous_main_array_regions": 1
+      },
+      "registers": {
+        "CR1_offset": 0,
+        "CR2_offset": 4,
+        "lock_offsets": [
+          8
+        ],
+        "IER_offset": 32,
+        "ISR_offset": 36,
+        "ICR_offset": 40,
+        "SDKCFR_offset": 112,
+        "CR1_MODE_bits": [
+          0,
+          1
+        ],
+        "CR1_SECURITY_bits": [
+          5,
+          6
+        ],
+        "BUSY_register": "ISR",
+        "BUSY_bit": 5,
+        "STANDBY_bit": null,
+        "CR2_WAIT_bits": [
+          0,
+          2
+        ],
+        "CR2_FETCH_bit": null,
+        "CR2_CACHE_bit": null,
+        "CR2_CACHEINVALID_bit": null,
+        "error_bits": {
+          "PC": 0,
+          "PAGELOCK": 1,
+          "PROG": 4,
+          "SDKERR": 2
+        },
+        "ICR_clear_semantics": "W0C, writing 1 leaves the corresponding error flag unchanged",
+        "ICR_PROG_read_semantics": "R1W0",
+        "KEY": {
+          "bits": [
+            16,
+            31
+          ],
+          "value": "0x5A5A",
+          "registers": [
+            "CR1",
+            "CR2",
+            "PAGELOCK"
+          ]
+        },
+        "MODE_values": {
+          "0": "Read",
+          "1": "Program",
+          "2": "PageErase",
+          "3": "ChipErase (not exposed by proposed HAL)"
+        },
+        "reset": {
+          "CR1": "0x00000000",
+          "CR2": "0x00000000",
+          "PAGELOCK": "0x00000000",
+          "IER": "0x00000000",
+          "ISR": "0x00000000",
+          "ICR": "0x0000001F",
+          "SDKCFR": "0x0000007F"
+        },
+        "error_mask_hex": "0x17"
+      },
+      "protection": {
+        "lock_bits_documented": 16,
+        "erase_pages_per_lock_bit": 8,
+        "lock_group_bytes": 4096,
+        "unlock_value": 1,
+        "lock_value": 0,
+        "bootloader_access": "Excluded; system ROM is not main storage",
+        "option_bytes_or_security_mutation": "Unavailable; security-level changes can erase all data or remove recovery",
+        "SLIB": {
+          "descriptor_range_inclusive": [
+            "0x0000FFF0",
+            "0x0000FFFF"
+          ],
+          "contents": "8-byte password, start page, end page0x7F, signature and CRC16_X25",
+          "public_safe_storage_exclusion": "Descriptor and whole containing erase page, plus any active protected library range",
+          "read_behavior": "Execution allowed, readout blocked; L012 explicitly includes DMA",
+          "documented_disable": "authenticated ISP chip erase only; do not infer RAM route from sibling SDK examples"
+        },
+        "read_protection": {
+          "level0": "SWD/ISP readable",
+          "level1": "not externally readable; lowering via ISP/SWD erases main flash",
+          "level2": "SWD disabled; ISP downgrade erases main flash",
+          "level3": "ISP/SWD downgrade prohibited; irreversible external recovery restriction"
+        },
+        "read_protection_change_limit": null
+      },
+      "clock": {
+        "read_wait_thresholds_mhz": [
+          24,
+          48,
+          72,
+          96
+        ],
+        "wait_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "warning": "WAIT=2 encoding is not permission to exceed the datasheet HCLK/VDD limit",
+        "configuration_clock_required": true,
+        "gate": "SYSCTRL_AHBEN.FLASH bit1; AHBEN requires same-write KEY",
+        "reset": "SYSCTRL_AHBRST.FLASH bit1 active low; not a documented safe BUSY abort",
+        "SYSCTRL_CR2_FLASHWAIT_alias": true,
+        "separate_program_clock_configuration": "No separate program-clock divider requirement established in reviewed FLASH operation sequence"
+      },
+      "execution": {
+        "flash_fetch": "CPU stalls subsequent flash instruction fetch until operation completes",
+        "ram_fetch": "CPU continues; poll the family-specific BUSY field before subsequent flash work",
+        "pc_page": "attempt to modify current executing page fails with PC error",
+        "cache_prefetch": "No FETCH/CACHE fields in this FLASH controller map",
+        "completion_interrupt": false,
+        "error_irq": [
+          {
+            "interrupt": "FLASHRAM",
+            "signal": "GLOBAL"
+          }
+        ],
+        "deep_sleep": "Require BUSY=0 and MODE=Read first",
+        "abort_reset_recovery": "No documented in-flight abort, safe reset-during-BUSY guarantee or power-fail atomicity; do not fabricate one"
+      },
+      "electrical": {
+        "datasheet_flash_section": "7.3.9",
+        "flash_characteristics_pdf_page": 52,
+        "flash_characteristics_printed_page": 49,
+        "general_conditions_pdf_page": 39,
+        "general_conditions_printed_page": 36,
+        "typical_program_us_by_access_bytes": {
+          "1": 31,
+          "2": 39,
+          "4": 55
+        },
+        "typical_page_erase_ms": 2.5,
+        "typical_mass_erase_ms_not_API": 35,
+        "program_voltage_range_V": null,
+        "program_voltage_evidence": "No separate Vprog row; do not borrow the legacy-family range",
+        "max_device_HCLK_MHz": 96,
+        "characterized_temperature_C": [
+          -40,
+          85
+        ],
+        "guaranteed_max_program_or_erase_time": null,
+        "endurance_min_cycles": 10000,
+        "retention": "25 years at -40..85 C",
+        "general_VDD_range_V": [
+          1.7,
+          5.5
+        ],
+        "low_voltage_HCLK_limit": "At 1.7 <= VDD <1.8 V, HCLK <=24 MHz; higher maximum needs VDD >=1.8 V"
+      },
+      "sources": {
+        "manual": "CW32L011_UserManual_CN_V1.1.pdf",
+        "manual_flash_chapter_pdf_pages": [
+          102,
+          117
+        ],
+        "manual_control_pdf_page": 113,
+        "datasheet": "CW32L011_DataSheet_CN_V1.1.pdf",
+        "sdk": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+        "sdk_note": "Own SDK inspected; copied fields are not independent hardware proof",
+        "clock_gate_reset_pdf_pages": [
+          77,
+          80
+        ],
+        "geometry_pdf_page": 102,
+        "operations_pdf_pages": [
+          103,
+          104
+        ],
+        "stall_deepsleep_pdf_page": 111,
+        "SLIB_pdf_page": 109,
+        "register_section": "7.10",
+        "geometry_and_wait_sections": "7.3–7.4",
+        "operations_sections": "7.5.1–7.5.2",
+        "protection_sections": "7.6",
+        "stall_deepsleep_section": "7.8"
+      }
+    },
+    {
+      "family": "CW32L012",
+      "generic_profile": {
+        "memory": [],
+        "capacity_known": false,
+        "safe_full_capacity_constructor": false
+      },
+      "observed_pac_version": "cw32l012_v1",
+      "controller_base": "0x40022000",
+      "main_flash_base": 0,
+      "exact_part_flash_sizes_bytes": [
+        65536
+      ],
+      "main_array": {
+        "erase_bytes": 512,
+        "erased_value": 255,
+        "program_access_bytes": [
+          1,
+          2,
+          4
+        ],
+        "natural_alignment_required": true,
+        "each_programmed_access_must_be_fully_erased": true,
+        "read_min_bytes": 1,
+        "suggested_NorFlash_WRITE_SIZE": 1,
+        "suggested_NorFlash_ERASE_SIZE": 512,
+        "MultiwriteNorFlash": false,
+        "independent_RWW_banks_proven": false,
+        "documented_contiguous_main_array_regions": 1
+      },
+      "registers": {
+        "CR1_offset": 0,
+        "CR2_offset": 4,
+        "lock_offsets": [
+          8
+        ],
+        "IER_offset": 32,
+        "ISR_offset": 36,
+        "ICR_offset": 40,
+        "SDKCFR_offset": 112,
+        "CR1_MODE_bits": [
+          0,
+          1
+        ],
+        "CR1_SECURITY_bits": [
+          5,
+          6
+        ],
+        "BUSY_register": "ISR",
+        "BUSY_bit": 5,
+        "STANDBY_bit": null,
+        "CR2_WAIT_bits": [
+          0,
+          2
+        ],
+        "CR2_FETCH_bit": 3,
+        "CR2_CACHE_bit": 4,
+        "CR2_CACHEINVALID_bit": 5,
+        "error_bits": {
+          "PC": 0,
+          "PAGELOCK": 1,
+          "PROG": 4,
+          "SDKERR": 2,
+          "CACHEON": 3
+        },
+        "ICR_clear_semantics": "W0C, writing 1 leaves the corresponding error flag unchanged",
+        "ICR_PROG_read_semantics": "R1W0",
+        "KEY": {
+          "bits": [
+            16,
+            31
+          ],
+          "value": "0x5A5A",
+          "registers": [
+            "CR1",
+            "CR2",
+            "PAGELOCK"
+          ]
+        },
+        "MODE_values": {
+          "0": "Read",
+          "1": "Program",
+          "2": "PageErase",
+          "3": "ChipErase (not exposed by proposed HAL)"
+        },
+        "reset": {
+          "CR1": "0x00000000",
+          "CR2": "0x00000000",
+          "PAGELOCK": "0x00000000",
+          "IER": "0x00000000",
+          "ISR": "0x00000000",
+          "ICR": "0x0000001F",
+          "SDKCFR": "0x0000007F"
+        },
+        "error_mask_hex": "0x1f"
+      },
+      "protection": {
+        "lock_bits_documented": 16,
+        "erase_pages_per_lock_bit": 8,
+        "lock_group_bytes": 4096,
+        "unlock_value": 1,
+        "lock_value": 0,
+        "bootloader_access": "Excluded; system ROM is not main storage",
+        "option_bytes_or_security_mutation": "Unavailable; security-level changes can erase all data or remove recovery",
+        "SLIB": {
+          "descriptor_range_inclusive": [
+            "0x0000FFF0",
+            "0x0000FFFF"
+          ],
+          "contents": "8-byte password, start page, end page0x7F, signature and CRC16_X25",
+          "public_safe_storage_exclusion": "Descriptor and whole containing erase page, plus any active protected library range",
+          "read_behavior": "Execution allowed, readout blocked; L012 explicitly includes DMA",
+          "documented_disable": "authenticated ISP chip erase only; do not infer RAM route from sibling SDK examples"
+        },
+        "read_protection": {
+          "level0": "SWD/ISP readable",
+          "level1": "not externally readable; lowering via ISP/SWD erases main flash",
+          "level2": "SWD disabled; ISP downgrade erases main flash",
+          "level3": "ISP/SWD downgrade prohibited; irreversible external recovery restriction"
+        },
+        "read_protection_change_limit": null
+      },
+      "clock": {
+        "read_wait_thresholds_mhz": [
+          24,
+          48,
+          72,
+          96
+        ],
+        "wait_values": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "warning": "WAIT=2 encoding is not permission to exceed the datasheet HCLK/VDD limit",
+        "configuration_clock_required": true,
+        "gate": "SYSCTRL_AHBEN.FLASH bit1; AHBEN requires same-write KEY",
+        "reset": "SYSCTRL_AHBRST.FLASH bit1 active low; not a documented safe BUSY abort",
+        "SYSCTRL_CR2_FLASHWAIT_alias": true,
+        "separate_program_clock_configuration": "No separate program-clock divider requirement established in reviewed FLASH operation sequence"
+      },
+      "execution": {
+        "flash_fetch": "CPU stalls subsequent flash instruction fetch until operation completes",
+        "ram_fetch": "CPU continues; poll the family-specific BUSY field before subsequent flash work",
+        "pc_page": "attempt to modify current executing page fails with PC error",
+        "cache_prefetch": "disable FETCH/CACHE before erase/program, restore after MODE=Read",
+        "completion_interrupt": false,
+        "error_irq": [
+          {
+            "interrupt": "FLASHRAM",
+            "signal": "GLOBAL"
+          }
+        ],
+        "deep_sleep": "Require BUSY=0 and MODE=Read first",
+        "abort_reset_recovery": "No documented in-flight abort, safe reset-during-BUSY guarantee or power-fail atomicity; do not fabricate one",
+        "cache_invalidation": "CACHEINVALID bit5 requires explicit1 then0 toggle, not self-clearing. Manual operation sequence mandates cache/prefetch disable but does not explicitly mandate this toggle for every operation; do not claim it does."
+      },
+      "electrical": {
+        "datasheet_flash_section": "7.3.9",
+        "flash_characteristics_pdf_page": 59,
+        "flash_characteristics_printed_page": 56,
+        "general_conditions_pdf_page": 47,
+        "general_conditions_printed_page": 44,
+        "typical_program_us_by_access_bytes": {
+          "1": 31,
+          "2": 39,
+          "4": 55
+        },
+        "typical_page_erase_ms": 2.5,
+        "typical_mass_erase_ms_not_API": 35,
+        "program_voltage_range_V": null,
+        "program_voltage_evidence": "No separate Vprog row; do not borrow the legacy-family range",
+        "max_device_HCLK_MHz": 96,
+        "characterized_temperature_C": [
+          -40,
+          85
+        ],
+        "guaranteed_max_program_or_erase_time": null,
+        "endurance_min_cycles": 10000,
+        "retention": "25 years at -40..85 C",
+        "general_VDD_range_V": [
+          1.7,
+          5.5
+        ],
+        "low_voltage_HCLK_limit": "At 1.7 <= VDD <1.8 V, HCLK <=24 MHz; higher maximum needs VDD >=1.8 V"
+      },
+      "sources": {
+        "manual": "CW32L012_UserManual_CN_V1.4.pdf",
+        "manual_flash_chapter_pdf_pages": [
+          114,
+          131
+        ],
+        "manual_control_pdf_page": 126,
+        "datasheet": "CW32L012_DataSheet_CN_V1.0.pdf",
+        "sdk": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sdk_note": "Own SDK inspected; copied fields are not independent hardware proof",
+        "clock_gate_reset_pdf_pages": [
+          82,
+          86
+        ],
+        "geometry_pdf_page": 114,
+        "operations_pdf_pages": [
+          116,
+          117
+        ],
+        "stall_deepsleep_pdf_page": 124,
+        "SLIB_pdf_page": 122,
+        "register_section": "7.10",
+        "geometry_and_wait_sections": "7.3–7.4",
+        "operations_sections": "7.5.1–7.5.2",
+        "protection_sections": "7.6",
+        "stall_deepsleep_section": "7.8"
+      }
+    },
+    {
+      "family": "CW32L083",
+      "generic_profile": {
+        "memory": [],
+        "capacity_known": false,
+        "safe_full_capacity_constructor": false
+      },
+      "observed_pac_version": "cw32l083_v1",
+      "controller_base": "0x40022000",
+      "main_flash_base": 0,
+      "exact_part_flash_sizes_bytes": [
+        131072,
+        262144
+      ],
+      "main_array": {
+        "erase_bytes": 512,
+        "erased_value": 255,
+        "program_access_bytes": [
+          1,
+          2,
+          4
+        ],
+        "natural_alignment_required": true,
+        "each_programmed_access_must_be_fully_erased": true,
+        "read_min_bytes": 1,
+        "suggested_NorFlash_WRITE_SIZE": 1,
+        "suggested_NorFlash_ERASE_SIZE": 512,
+        "MultiwriteNorFlash": false,
+        "independent_RWW_banks_proven": false,
+        "documented_contiguous_main_array_regions": 1
+      },
+      "registers": {
+        "CR1_offset": 0,
+        "CR2_offset": 4,
+        "lock_offsets": [
+          8,
+          12,
+          16,
+          20
+        ],
+        "IER_offset": 32,
+        "ISR_offset": 36,
+        "ICR_offset": 40,
+        "SDKCFR_offset": null,
+        "CR1_MODE_bits": [
+          0,
+          1
+        ],
+        "CR1_SECURITY_bits": [
+          6,
+          7
+        ],
+        "BUSY_register": "CR1",
+        "BUSY_bit": 5,
+        "STANDBY_bit": 4,
+        "CR2_WAIT_bits": [
+          0,
+          2
+        ],
+        "CR2_FETCH_bit": null,
+        "CR2_CACHE_bit": null,
+        "CR2_CACHEINVALID_bit": null,
+        "error_bits": {
+          "PC": 0,
+          "PAGELOCK": 1,
+          "PROG": 4
+        },
+        "ICR_clear_semantics": "W0C, writing 1 leaves the corresponding error flag unchanged",
+        "ICR_PROG_read_semantics": "R1W0",
+        "KEY": {
+          "bits": [
+            16,
+            31
+          ],
+          "value": "0x5A5A",
+          "registers": [
+            "CR1",
+            "CR2",
+            "PAGELOCK1..4"
+          ]
+        },
+        "MODE_values": {
+          "0": "Read",
+          "1": "Program",
+          "2": "PageErase",
+          "3": "ChipErase (not exposed by proposed HAL)"
+        },
+        "reset": {
+          "CR1": "0x00000010",
+          "CR2": "0x00000000",
+          "PAGELOCK": "0x00000000",
+          "IER": "0x00000000",
+          "ISR": "0x00000000",
+          "ICR": "0x0000001F"
+        },
+        "error_mask_hex": "0x13"
+      },
+      "protection": {
+        "lock_bits_documented": 64,
+        "erase_pages_per_lock_bit": 8,
+        "lock_group_bytes": 4096,
+        "unlock_value": 1,
+        "lock_value": 0,
+        "bootloader_access": "Excluded; system ROM is not main storage",
+        "option_bytes_or_security_mutation": "Unavailable; security-level changes can erase all data or remove recovery",
+        "SLIB": "Not established in this FLASH chapter",
+        "read_protection": {
+          "level0": "SWD/ISP readable",
+          "level1": "not externally readable; lowering via ISP/SWD erases main flash",
+          "level2": "SWD disabled; ISP downgrade erases main flash",
+          "level3": "ISP/SWD downgrade prohibited; irreversible external recovery restriction"
+        },
+        "read_protection_change_limit": null
+      },
+      "clock": {
+        "read_wait_thresholds_mhz": [
+          24,
+          48,
+          72
+        ],
+        "wait_values": [
+          0,
+          1,
+          2
+        ],
+        "warning": "WAIT=2 encoding is not permission to exceed the datasheet HCLK/VDD limit",
+        "configuration_clock_required": true,
+        "gate": "SYSCTRL_AHBEN.FLASH bit1; no KEY field in this AHBEN table",
+        "reset": "SYSCTRL_AHBRST.FLASH bit1 active low; not a documented safe BUSY abort",
+        "SYSCTRL_CR2_FLASHWAIT_alias": true,
+        "separate_program_clock_configuration": "No separate program-clock divider requirement established in reviewed FLASH operation sequence"
+      },
+      "execution": {
+        "flash_fetch": "CPU stalls subsequent flash instruction fetch until operation completes",
+        "ram_fetch": "CPU continues; poll the family-specific BUSY field before subsequent flash work",
+        "pc_page": "attempt to modify current executing page fails with PC error",
+        "cache_prefetch": "No FETCH/CACHE fields in this FLASH controller map",
+        "completion_interrupt": false,
+        "error_irq": [
+          {
+            "interrupt": "FLASHRAM",
+            "signal": "GLOBAL"
+          }
+        ],
+        "deep_sleep": "Require BUSY=0 and MODE=Read first",
+        "abort_reset_recovery": "No documented in-flight abort, safe reset-during-BUSY guarantee or power-fail atomicity; do not fabricate one"
+      },
+      "electrical": {
+        "datasheet_flash_section": "7.3.10",
+        "flash_characteristics_pdf_page": 57,
+        "flash_characteristics_printed_page": 56,
+        "general_conditions_pdf_page": 47,
+        "general_conditions_printed_page": 46,
+        "typical_program_us_by_access_bytes": {
+          "1": 30,
+          "2": 37,
+          "4": 51
+        },
+        "typical_page_erase_ms": 4.6,
+        "typical_mass_erase_ms_not_API": 35,
+        "program_voltage_range_V": [
+          1.65,
+          5.5
+        ],
+        "program_voltage_evidence": "Vprog row",
+        "max_device_HCLK_MHz": 64,
+        "characterized_temperature_C": [
+          -40,
+          85
+        ],
+        "guaranteed_max_program_or_erase_time": null,
+        "endurance_min_cycles": 20000,
+        "retention": "100 years at25 C /25 years at85 C",
+        "low_voltage_HCLK_limit": "At 1.65 <= VDD <1.8 V, HCLK <=24 MHz; higher maximum needs VDD >=1.8 V",
+        "general_VDD_range_V": [
+          1.65,
+          5.5
+        ]
+      },
+      "sources": {
+        "manual": "CW32L083_UserManual_CN_V2.0.pdf",
+        "manual_flash_chapter_pdf_pages": [
+          121,
+          134
+        ],
+        "manual_control_pdf_page": 130,
+        "datasheet": "CW32L083_DataSheet_CN_V1.9.pdf",
+        "sdk": "CW32L083_StandardPeripheralLib_V2.2.zip",
+        "sdk_note": "Own SDK inspected; copied fields are not independent hardware proof",
+        "clock_gate_reset_pdf_pages": [
+          86,
+          90
+        ],
+        "geometry_pdf_page": 121,
+        "operations_pdf_pages": [
+          122,
+          123
+        ],
+        "stall_deepsleep_pdf_page": 128,
+        "register_section": "7.9",
+        "geometry_and_wait_sections": "7.3–7.4",
+        "operations_sections": "7.5.1–7.5.2",
+        "protection_sections": "7.6",
+        "stall_deepsleep_section": "7.7"
+      }
+    }
+  ],
+  "exact_ordering_codes": [
+    {
+      "part": "CW32L010F8P6",
+      "family": "CW32L010",
+      "package": "TSSOP20",
+      "flash_base": 0,
+      "flash_bytes": 65536,
+      "erase_pages": 128,
+      "SRAM_bytes": 4096,
+      "source": "CW32L010_DataSheet_CN_V1.3.pdf",
+      "datasheet_size_table_pdf_pages": [
+        8
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        27
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L010F8U6",
+      "family": "CW32L010",
+      "package": "QFN20",
+      "flash_base": 0,
+      "flash_bytes": 65536,
+      "erase_pages": 128,
+      "SRAM_bytes": 4096,
+      "source": "CW32L010_DataSheet_CN_V1.3.pdf",
+      "datasheet_size_table_pdf_pages": [
+        8
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        27
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L010Y8M6",
+      "family": "CW32L010",
+      "package": "SOP16",
+      "flash_base": 0,
+      "flash_bytes": 65536,
+      "erase_pages": 128,
+      "SRAM_bytes": 4096,
+      "source": "CW32L010_DataSheet_CN_V1.3.pdf",
+      "datasheet_size_table_pdf_pages": [
+        8
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        27
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L011K8T6",
+      "family": "CW32L011",
+      "package": "LQFP32",
+      "flash_base": 0,
+      "flash_bytes": 65536,
+      "erase_pages": 128,
+      "SRAM_bytes": 6144,
+      "source": "CW32L011_DataSheet_CN_V1.1.pdf",
+      "datasheet_size_table_pdf_pages": [
+        8
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        34
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L011K8U6",
+      "family": "CW32L011",
+      "package": "QFN32",
+      "flash_base": 0,
+      "flash_bytes": 65536,
+      "erase_pages": 128,
+      "SRAM_bytes": 6144,
+      "source": "CW32L011_DataSheet_CN_V1.1.pdf",
+      "datasheet_size_table_pdf_pages": [
+        8
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        34
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L012C8T6",
+      "family": "CW32L012",
+      "package": "LQFP48",
+      "flash_base": 0,
+      "flash_bytes": 65536,
+      "erase_pages": 128,
+      "SRAM_bytes": 8192,
+      "source": "CW32L012_DataSheet_CN_V1.0.pdf",
+      "datasheet_size_table_pdf_pages": [
+        8
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        41
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L012C8U6",
+      "family": "CW32L012",
+      "package": "QFN48",
+      "flash_base": 0,
+      "flash_bytes": 65536,
+      "erase_pages": 128,
+      "SRAM_bytes": 8192,
+      "source": "CW32L012_DataSheet_CN_V1.0.pdf",
+      "datasheet_size_table_pdf_pages": [
+        8
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        41
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L083MCT6",
+      "family": "CW32L083",
+      "package": "LQFP80",
+      "flash_base": 0,
+      "flash_bytes": 262144,
+      "erase_pages": 512,
+      "SRAM_bytes": 24576,
+      "source": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "datasheet_size_table_pdf_pages": [
+        10
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        40
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L083RBT6",
+      "family": "CW32L083",
+      "package": "LQFP64（10×10mm）",
+      "flash_base": 0,
+      "flash_bytes": 131072,
+      "erase_pages": 256,
+      "SRAM_bytes": 24576,
+      "source": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "datasheet_size_table_pdf_pages": [
+        10
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        40
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L083RCS6",
+      "family": "CW32L083",
+      "package": "LQFP64（7×7mm）",
+      "flash_base": 0,
+      "flash_bytes": 262144,
+      "erase_pages": 512,
+      "SRAM_bytes": 24576,
+      "source": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "datasheet_size_table_pdf_pages": [
+        10
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        40
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L083RCT6",
+      "family": "CW32L083",
+      "package": "LQFP64（10×10mm）",
+      "flash_base": 0,
+      "flash_bytes": 262144,
+      "erase_pages": 512,
+      "SRAM_bytes": 24576,
+      "source": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "datasheet_size_table_pdf_pages": [
+        10
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        40
+      ],
+      "notes": []
+    },
+    {
+      "part": "CW32L083VCT6",
+      "family": "CW32L083",
+      "package": "LQFP100",
+      "flash_base": 0,
+      "flash_bytes": 262144,
+      "erase_pages": 512,
+      "SRAM_bytes": 24576,
+      "source": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "datasheet_size_table_pdf_pages": [
+        10
+      ],
+      "datasheet_memory_map_pdf_pages": [
+        40
+      ],
+      "notes": []
+    }
+  ],
+  "sources": {
+    "CW32L010_DataSheet_CN_V1.3.pdf": {
+      "path": "CW32L010_DataSheet_CN_V1.3.pdf",
+      "path_root": "CW32_SOURCES",
+      "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+      "url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf",
+      "kind": "official PDF",
+      "text": {
+        "path": "CW32L010_DataSheet_CN_V1.3.txt",
+        "sha256": "ba32a6838b5375c7a4d0225d9aeed6ebcad964e5668080ee87c8ddac1036595f"
+      }
+    },
+    "CW32L010_UserManual_CN_V1.2.pdf": {
+      "path": "CW32L010_UserManual_CN_V1.2.pdf",
+      "path_root": "CW32_SOURCES",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+      "kind": "official PDF",
+      "text": {
+        "path": "CW32L010_UserManual_CN_V1.2.txt",
+        "sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938"
+      }
+    },
+    "CW32L011_DataSheet_CN_V1.1.pdf": {
+      "path": "CW32L011_DataSheet_CN_V1.1.pdf",
+      "path_root": "CW32_SOURCES",
+      "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+      "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf",
+      "kind": "official PDF",
+      "text": {
+        "path": "CW32L011_DataSheet_CN_V1.1.txt",
+        "sha256": "f8429daa0082c24f2d191855d6405d38cc1994c8d468827cb402bc6effc1ea6c"
+      }
+    },
+    "CW32L011_UserManual_CN_V1.1.pdf": {
+      "path": "CW32L011_UserManual_CN_V1.1.pdf",
+      "path_root": "CW32_SOURCES",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+      "kind": "official PDF",
+      "text": {
+        "path": "CW32L011_UserManual_CN_V1.1.txt",
+        "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3"
+      }
+    },
+    "CW32L012_DataSheet_CN_V1.0.pdf": {
+      "path": "CW32L012_DataSheet_CN_V1.0.pdf",
+      "path_root": "CW32_SOURCES",
+      "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+      "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+      "kind": "official PDF",
+      "text": {
+        "path": "CW32L012_DataSheet_CN_V1.0.txt",
+        "sha256": "00ba7e2c9d26a8ce5a4eaa4cc2e7790773c427b13a4d491838622041abfa8b0a"
+      }
+    },
+    "CW32L012_UserManual_CN_V1.4.pdf": {
+      "path": "CW32L012_UserManual_CN_V1.4.pdf",
+      "path_root": "CW32_SOURCES",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "kind": "official PDF",
+      "text": {
+        "path": "CW32L012_UserManual_CN_V1.4.txt",
+        "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505"
+      }
+    },
+    "CW32L083_DataSheet_CN_V1.9.pdf": {
+      "path": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "path_root": "CW32_SOURCES",
+      "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+      "url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+      "kind": "official PDF",
+      "text": {
+        "path": "CW32L083_DataSheet_CN_V1.9.txt",
+        "sha256": "2124f5c492e1d58b51674805b2d8a58f82b2ce462c8b73beaba63c6d93780220"
+      }
+    },
+    "CW32L083_UserManual_CN_V2.0.pdf": {
+      "path": "CW32L083_UserManual_CN_V2.0.pdf",
+      "path_root": "CW32_SOURCES",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+      "kind": "official PDF",
+      "text": {
+        "path": "CW32L083_UserManual_CN_V2.0.txt",
+        "sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564"
+      }
+    },
+    "CW32L010_StandardPeripheralLib_V1.0.9.zip": {
+      "path": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "path_root": "CW32_SOURCES",
+      "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "kind": "official SDK archive"
+    },
+    "cw32l010_flash.c": {
+      "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_flash.c",
+      "path_root": "CW32_SOURCES",
+      "sha256": "3288d4595d5c6e653123a271660821c3ebc907f58756db7a3bee8317140b4896",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "kind": "official SDK member"
+    },
+    "cw32l010_flash.h": {
+      "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_flash.h",
+      "path_root": "CW32_SOURCES",
+      "sha256": "05841f2bb73fcf5601548e222830fa45dd39e8c305a2bb6ed575baff0f7b3030",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "kind": "official SDK member"
+    },
+    "cw32l010.h": {
+      "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "path_root": "CW32_SOURCES",
+      "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "kind": "official SDK member"
+    },
+    "CW32L011_StandardPeripheralLib_V1.0.3.zip": {
+      "path": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "path_root": "CW32_SOURCES",
+      "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "kind": "official SDK archive"
+    },
+    "cw32l011_flash.c": {
+      "path": "cw32l011/Libraries/src/cw32l011_flash.c",
+      "path_root": "CW32_SOURCES",
+      "sha256": "88474089f7ee9917081a690955f861970a113b03b0158c6a89a807a31806a019",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "kind": "official SDK member"
+    },
+    "cw32l011_flash.h": {
+      "path": "cw32l011/Libraries/inc/cw32l011_flash.h",
+      "path_root": "CW32_SOURCES",
+      "sha256": "53236c96dda689b460c34b58a142d40dff7a084cf2c2a541c33cb46c76ed1048",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "kind": "official SDK member"
+    },
+    "cw32l011.h": {
+      "path": "cw32l011/Libraries/inc/cw32l011.h",
+      "path_root": "CW32_SOURCES",
+      "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "kind": "official SDK member"
+    },
+    "CW32L012_StandardPeripheralLib_V1.0.5.zip": {
+      "path": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "path_root": "CW32_SOURCES",
+      "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "kind": "official SDK archive"
+    },
+    "cw32l012_flash.c": {
+      "path": "cw32l012/Libraries/src/cw32l012_flash.c",
+      "path_root": "CW32_SOURCES",
+      "sha256": "d4045c0ab56c27490439a7ccaee89f6257dd0433d97f399d4f85598dbc855d0c",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "kind": "official SDK member"
+    },
+    "cw32l012_flash.h": {
+      "path": "cw32l012/Libraries/inc/cw32l012_flash.h",
+      "path_root": "CW32_SOURCES",
+      "sha256": "11014ce8ab671738975bb4f879bb55cee584ff5ecdb696d126160a6da5535bf7",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "kind": "official SDK member"
+    },
+    "cw32l012.h": {
+      "path": "cw32l012/Libraries/inc/cw32l012.h",
+      "path_root": "CW32_SOURCES",
+      "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "kind": "official SDK member"
+    },
+    "CW32L083_StandardPeripheralLib_V2.2.zip": {
+      "path": "CW32L083_StandardPeripheralLib_V2.2.zip",
+      "path_root": "CW32_SOURCES",
+      "sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+      "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+      "kind": "official SDK archive"
+    },
+    "cw32l083_flash.c": {
+      "path": "cw32l083/Libraries/src/cw32l083_flash.c",
+      "path_root": "CW32_SOURCES",
+      "sha256": "5a13bf0d8338fcbade6f48cc73a7a6df338c4561ead799653bbdf04fcfb59aa3",
+      "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+      "kind": "official SDK member"
+    },
+    "cw32l083_flash.h": {
+      "path": "cw32l083/Libraries/inc/cw32l083_flash.h",
+      "path_root": "CW32_SOURCES",
+      "sha256": "bacb499521823f3dd27ca8b27bd4278d662d29ed493c85d9c7fdea4833d6980c",
+      "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+      "kind": "official SDK member"
+    },
+    "cw32l083.h": {
+      "path": "cw32l083/Libraries/inc/cw32l083.h",
+      "path_root": "CW32_SOURCES",
+      "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5",
+      "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+      "kind": "official SDK member"
+    },
+    "embassy-flash-mod.rs": {
+      "path": "/workspace/shared/cw32-upstream/embassy/embassy-stm32/src/flash/mod.rs",
+      "path_root": "upstream checkout",
+      "sha256": "2a9569c4dc661cc81adf87390049ee02bf15b4811bcbad07984bd417b7734f76",
+      "url": "https://github.com/embassy-rs/embassy/blob/f16efeffe37581092ec184718e6fdb1620393214/embassy-stm32/src/flash/mod.rs",
+      "kind": "upstream API reference"
+    },
+    "embassy-flash-common.rs": {
+      "path": "/workspace/shared/cw32-upstream/embassy/embassy-stm32/src/flash/common.rs",
+      "path_root": "upstream checkout",
+      "sha256": "85ff591c74623936b0318b50538fa257aa0518faaf2b9b8bfc3563e254fac4fd",
+      "url": "https://github.com/embassy-rs/embassy/blob/f16efeffe37581092ec184718e6fdb1620393214/embassy-stm32/src/flash/common.rs",
+      "kind": "upstream API reference"
+    },
+    "embassy-flash-asynch.rs": {
+      "path": "/workspace/shared/cw32-upstream/embassy/embassy-stm32/src/flash/asynch.rs",
+      "path_root": "upstream checkout",
+      "sha256": "f4aedfb66a08f6760af045ab39916832f2364608adaf8a96959e01f34f0bf2a3",
+      "url": "https://github.com/embassy-rs/embassy/blob/f16efeffe37581092ec184718e6fdb1620393214/embassy-stm32/src/flash/asynch.rs",
+      "kind": "upstream API reference"
+    }
+  },
+  "upstream_embassy_commit": "f16efeffe37581092ec184718e6fdb1620393214",
+  "decisions": {
+    "L01x_supply": "Own general working conditions plus own FLASH characterization; no independent Vprog row.",
+    "program_clock": "No separate program-clock divider established. Actual HCLK bound constrained to own supply maximum and current WAIT.",
+    "SLIB": "Always exclude descriptor erase page 0xFE00..0x10000; reject intersection with any nonempty SDKCFR START..END inclusive interval on each state check.",
+    "L012_cache": "Disable FETCH/CACHE with WAIT preserved before operation. Return Read; verified CACHEINVALID=1 then 0; only then restore saved FETCH/CACHE. Invalidation on every mutation is conservative policy.",
+    "L083_LOCK56": "Manual table typo 488..455 retained as source discrepancy; eight-page rule and adjacent entries qualify 448..455.",
+    "schema": "Project-authored independent schema retained; FlashLimits.lock_mask widened u32 to u64, exact existing integer values unchanged. No field-order or omission-rule change. Identity review pending.",
+    "trait": "ReadNorFlash only; no NorFlash/MultiwriteNorFlash, no power-loss guarantee, no post-trigger bounded abort."
+  }
+}

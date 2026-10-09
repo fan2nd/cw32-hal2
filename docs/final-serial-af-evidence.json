@@ -1,0 +1,5453 @@
+{
+  "schema_version": 1,
+  "scope": [
+    "CW32F002",
+    "CW32F003",
+    "CW32L010",
+    "CW32L011",
+    "CW32L012"
+  ],
+  "profiles": [
+    {
+      "profile": "CW32F002",
+      "sources": {
+        "candidate": {
+          "path": "cw32-data/af/cw32f002.yaml",
+          "sha256": "ad2faf10e3271b0f84ef045fe69cacc8dc170538240f9df1d1cc168270080e1e"
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+          "sdk_sha256": "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc",
+          "header": "Libraries/inc/cw32f002_gpio.h",
+          "header_sha256": "12ab69693119a4fe4c731bb1545f5a9e6954f1e83ba6ed0c7da3d759a2d05b63"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32F002_DataSheet_CN_V1.2.pdf",
+          "sha256": "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506",
+          "document_filename": "CW32F002_DataSheet_CN_V1.2.pdf",
+          "memory_map_pdf_page_indices": [
+            25
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant.",
+          "af_evidence": "Own-family Tables 5-3, 5-4, 5-5; 42 serial cells checked by positioned-PDF extraction against original SDK macros and prior rendered audit. PDF pages [24]. Per-cell proof: docs/final-serial-af-evidence.json."
+        },
+        "pinout": {
+          "path": "cw32-data/pinouts/cw32f002.yaml",
+          "sha256": "71163520d8e0384063b5ff48765d03872c1332a6112e83573c0c57af4d9cfd4f"
+        }
+      },
+      "counts": {
+        "reviewed": 42,
+        "sdk_serial": 52,
+        "sdk_only_excluded": 10,
+        "datasheet_only": 0,
+        "corrected_sdk": 0
+      },
+      "selector_capability": {
+        "min": 1,
+        "max": 7,
+        "pdf_printed_page_offset": 1,
+        "evidence": "Numbered function columns in the cited own-family datasheet AF tables; register width alone never authorizes selectors."
+      },
+      "cells": [
+        {
+          "pin": "PA0",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.4552,
+            106.3617,
+            173.3512,
+            129.2257
+          ]
+        },
+        {
+          "pin": "PA0",
+          "af": 2,
+          "function": "UART2_RTS",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            191.4232,
+            106.3617,
+            233.4232,
+            129.2257
+          ]
+        },
+        {
+          "pin": "PA0",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            258.5512,
+            106.3617,
+            289.3352,
+            129.2257
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.6392,
+            125.6977,
+            173.1672,
+            148.5617
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            256.4072,
+            125.6977,
+            291.4713,
+            148.5617
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.4552,
+            149.8337,
+            173.3512,
+            172.6977
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            191.1592,
+            149.8337,
+            233.6872,
+            172.6977
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 3,
+          "function": "I2C_SDA",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            258.6712,
+            149.8337,
+            289.2072,
+            172.6977
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.4472,
+            173.9697,
+            173.3432,
+            196.8337
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            256.4072,
+            173.9697,
+            291.4713,
+            196.8337
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.6392,
+            198.1057,
+            173.1672,
+            220.9697
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            190.9752,
+            198.1057,
+            233.8712,
+            220.9697
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 3,
+          "function": "I2C_SCL",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            259.0712,
+            198.1057,
+            288.8072,
+            220.9697
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 1,
+          "function": "UART1_CTS",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.8632,
+            222.2417,
+            172.9432,
+            245.1057
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            191.1592,
+            222.2417,
+            233.6872,
+            245.1057
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 3,
+          "function": "I2C_SDA",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            258.6712,
+            222.2417,
+            289.2072,
+            245.1057
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 1,
+          "function": "UART1_RTS",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.9032,
+            241.5777,
+            172.9032,
+            264.4417
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            190.9753,
+            241.5777,
+            233.8712,
+            264.4417
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.795,
+            309.7783,
+            173.691,
+            332.6422
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 2,
+          "function": "I2C_SDA",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            198.627,
+            309.7783,
+            229.163,
+            332.6422
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            262.739,
+            309.7783,
+            288.347,
+            332.6422
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.971,
+            329.1143,
+            173.499,
+            351.9782
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 3,
+          "function": "I2C_SCL",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            260.667,
+            329.1143,
+            290.403,
+            351.9782
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.955,
+            348.4503,
+            173.483,
+            371.3142
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 2,
+          "function": "UART2_CTS",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            192.827,
+            348.4503,
+            234.907,
+            371.3142
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            262.715,
+            348.4503,
+            288.3231,
+            371.3142
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.763,
+            367.7863,
+            173.659,
+            390.6502
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 2,
+          "function": "I2C_SDA",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            198.595,
+            367.7863,
+            229.131,
+            390.6502
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.939,
+            387.1223,
+            173.467,
+            409.9862
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 2,
+          "function": "I2C_SCL",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            198.987,
+            387.1223,
+            228.723,
+            409.9862
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.747,
+            406.4583,
+            173.643,
+            429.3222
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 2,
+          "function": "I2C_SDA",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            198.579,
+            406.4583,
+            229.115,
+            429.3222
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            130.923,
+            425.7943,
+            173.451,
+            448.6582
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 2,
+          "function": "I2C_SCL",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            198.971,
+            425.7943,
+            228.707,
+            448.6582
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-4",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            262.683,
+            425.7943,
+            288.2911,
+            448.6582
+          ]
+        },
+        {
+          "pin": "PC0",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-5",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            131.1995,
+            493.9947,
+            174.0955,
+            516.8587
+          ]
+        },
+        {
+          "pin": "PC0",
+          "af": 2,
+          "function": "UART1_TXD",
+          "table": "5-5",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            192.9035,
+            493.9947,
+            235.4315,
+            516.8587
+          ]
+        },
+        {
+          "pin": "PC0",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-5",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            260.2955,
+            493.9947,
+            291.0795,
+            516.8587
+          ]
+        },
+        {
+          "pin": "PC1",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-5",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            131.3995,
+            513.3307,
+            173.9275,
+            536.1948
+          ]
+        },
+        {
+          "pin": "PC1",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-5",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            258.1675,
+            513.3307,
+            293.2315,
+            536.1948
+          ]
+        },
+        {
+          "pin": "PC2",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-5",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            131.2234,
+            532.6667,
+            174.1194,
+            555.5307
+          ]
+        },
+        {
+          "pin": "PC2",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-5",
+          "pdf_page": 24,
+          "printed_page": 23,
+          "bbox": [
+            258.1754,
+            532.6667,
+            293.2395,
+            555.5307
+          ]
+        }
+      ],
+      "excluded_confirmation": {
+        "document_filename": "CW32F002_UserManual_CN_V1.4.pdf",
+        "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+        "table": "8-2",
+        "pdf_page": 105,
+        "printed_page": 104,
+        "documented_pads": [
+          "PA0",
+          "PA1",
+          "PA2",
+          "PA4",
+          "PA5",
+          "PA6",
+          "PA7",
+          "PB0",
+          "PB1",
+          "PB2",
+          "PB3",
+          "PB4",
+          "PB5",
+          "PB6",
+          "PC0",
+          "PC1",
+          "PC2"
+        ],
+        "omitted_sdk_pads": [
+          "PA3",
+          "PB7",
+          "PC3",
+          "PC4"
+        ]
+      },
+      "packages": [
+        {
+          "name": "CW32F002F3U7",
+          "package": "QFN20",
+          "bonded_routes": 42,
+          "safe_routes": 36,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 29,
+          "excluded_debug_reset_pins": [
+            "PA2",
+            "PA5",
+            "PC5"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA4",
+            "PA6",
+            "PA7",
+            "PB0",
+            "PB1",
+            "PB2",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6",
+            "PC0",
+            "PC1",
+            "PC2"
+          ]
+        },
+        {
+          "name": "CW32F002F3P7",
+          "package": "TSSOP20",
+          "bonded_routes": 42,
+          "safe_routes": 36,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 29,
+          "excluded_debug_reset_pins": [
+            "PA2",
+            "PA5",
+            "PC5"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA4",
+            "PA6",
+            "PA7",
+            "PB0",
+            "PB1",
+            "PB2",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6",
+            "PC0",
+            "PC1",
+            "PC2"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "CW32F003",
+      "sources": {
+        "candidate": {
+          "path": "cw32-data/af/cw32f003.yaml",
+          "sha256": "335e35021f2ee0dcd25e3b80ce232577e13ec2fe2ed69e13c108d3ae517a0cf9"
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+          "sdk_sha256": "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+          "header": "Libraries/inc/cw32f003_gpio.h",
+          "header_sha256": "f4970bcdfb6da3403aa0d43e13ca1acfc82f3e3f19e2d2b557806ee456df5ce1"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20251226/CW32F003_DataSheet_CN_V1.9.pdf",
+          "sha256": "5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd",
+          "document_filename": "CW32F003_DataSheet_CN_V1.9.pdf",
+          "memory_map_pdf_page_indices": [
+            26
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant.",
+          "af_evidence": "Own-family Tables 5-3, 5-4, 5-5; 52 serial cells checked by positioned-PDF extraction against original SDK macros and prior rendered audit. PDF pages [25]. Per-cell proof: docs/final-serial-af-evidence.json."
+        },
+        "pinout": {
+          "path": "cw32-data/pinouts/cw32f003.yaml",
+          "sha256": "c7cbb26c157b6a878563181d53bd024fb8710fb9aa2e0a5c277bbc51331dcb6d"
+        }
+      },
+      "counts": {
+        "reviewed": 52,
+        "sdk_serial": 52,
+        "sdk_only_excluded": 0,
+        "datasheet_only": 0,
+        "corrected_sdk": 0
+      },
+      "selector_capability": {
+        "min": 1,
+        "max": 7,
+        "pdf_printed_page_offset": 1,
+        "evidence": "Numbered function columns in the cited own-family datasheet AF tables; register width alone never authorizes selectors."
+      },
+      "cells": [
+        {
+          "pin": "PA0",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.4552,
+            106.3617,
+            173.3512,
+            129.2257
+          ]
+        },
+        {
+          "pin": "PA0",
+          "af": 2,
+          "function": "UART2_RTS",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            191.4232,
+            106.3617,
+            233.4232,
+            129.2257
+          ]
+        },
+        {
+          "pin": "PA0",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            258.5512,
+            106.3617,
+            289.3352,
+            129.2257
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.6392,
+            125.6977,
+            173.1672,
+            148.5617
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            256.4072,
+            125.6977,
+            291.4713,
+            148.5617
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.4552,
+            149.8337,
+            173.3512,
+            172.6977
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            191.1592,
+            149.8337,
+            233.6872,
+            172.6977
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 3,
+          "function": "I2C_SDA",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            258.6712,
+            149.8337,
+            289.2072,
+            172.6977
+          ]
+        },
+        {
+          "pin": "PA3",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.6312,
+            173.9697,
+            173.1592,
+            196.8337
+          ]
+        },
+        {
+          "pin": "PA3",
+          "af": 2,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            190.9672,
+            173.9697,
+            233.8632,
+            196.8337
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.4392,
+            193.3057,
+            173.3352,
+            216.1697
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            256.3992,
+            193.3057,
+            291.4633,
+            216.1697
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.6312,
+            217.4417,
+            173.1592,
+            240.3057
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            190.9672,
+            217.4417,
+            233.8632,
+            240.3057
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 3,
+          "function": "I2C_SCL",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            259.0632,
+            217.4417,
+            288.7992,
+            240.3057
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 1,
+          "function": "UART1_CTS",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.8552,
+            241.5777,
+            172.9352,
+            264.4417
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            191.1512,
+            241.5777,
+            233.6792,
+            264.4417
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 3,
+          "function": "I2C_SDA",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            258.6632,
+            241.5777,
+            289.1992,
+            264.4417
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 1,
+          "function": "UART1_RTS",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.8952,
+            260.9137,
+            172.8952,
+            283.7777
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            190.9673,
+            260.9137,
+            233.8633,
+            283.7777
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.7951,
+            329.1168,
+            173.6911,
+            351.9808
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 2,
+          "function": "I2C_SDA",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            198.6271,
+            329.1168,
+            229.1631,
+            351.9808
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            262.7391,
+            329.1168,
+            288.3471,
+            351.9808
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.9711,
+            348.4528,
+            173.4991,
+            371.3168
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 3,
+          "function": "I2C_SCL",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            260.6671,
+            348.4528,
+            290.4031,
+            371.3168
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.9551,
+            367.7888,
+            173.4831,
+            390.6528
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 2,
+          "function": "UART2_CTS",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            192.8271,
+            367.7888,
+            234.9072,
+            390.6528
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            262.7151,
+            367.7888,
+            288.3232,
+            390.6528
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.7631,
+            387.1248,
+            173.6591,
+            409.9888
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 2,
+          "function": "I2C_SDA",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            198.5951,
+            387.1248,
+            229.1311,
+            409.9888
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.9391,
+            406.4608,
+            173.4671,
+            429.3248
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 2,
+          "function": "I2C_SCL",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            198.9872,
+            406.4608,
+            228.7232,
+            429.3248
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.7471,
+            425.7968,
+            173.6431,
+            448.6608
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 2,
+          "function": "I2C_SDA",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            198.5791,
+            425.7968,
+            229.1152,
+            448.6608
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.9232,
+            445.1328,
+            173.4512,
+            467.9968
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 2,
+          "function": "I2C_SCL",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            198.9712,
+            445.1328,
+            228.7072,
+            467.9968
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            262.6832,
+            445.1328,
+            288.2912,
+            467.9968
+          ]
+        },
+        {
+          "pin": "PB7",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.7312,
+            464.4688,
+            173.6272,
+            487.3328
+          ]
+        },
+        {
+          "pin": "PB7",
+          "af": 2,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            192.5632,
+            464.4688,
+            235.0912,
+            487.3328
+          ]
+        },
+        {
+          "pin": "PB7",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            260.0832,
+            464.4688,
+            290.8672,
+            487.3328
+          ]
+        },
+        {
+          "pin": "PC0",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            131.1996,
+            532.6719,
+            174.0956,
+            555.5359
+          ]
+        },
+        {
+          "pin": "PC0",
+          "af": 2,
+          "function": "UART1_TXD",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            192.9036,
+            532.6719,
+            235.4316,
+            555.5359
+          ]
+        },
+        {
+          "pin": "PC0",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            260.2956,
+            532.6719,
+            291.0796,
+            555.5359
+          ]
+        },
+        {
+          "pin": "PC1",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            131.3996,
+            552.0079,
+            173.9276,
+            574.8719
+          ]
+        },
+        {
+          "pin": "PC1",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            258.1676,
+            552.0079,
+            293.2316,
+            574.8719
+          ]
+        },
+        {
+          "pin": "PC2",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            131.2236,
+            571.3439,
+            174.1196,
+            594.2079
+          ]
+        },
+        {
+          "pin": "PC2",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            258.1756,
+            571.3439,
+            293.2396,
+            594.2079
+          ]
+        },
+        {
+          "pin": "PC3",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            131.4076,
+            590.6799,
+            173.9356,
+            613.5439
+          ]
+        },
+        {
+          "pin": "PC3",
+          "af": 2,
+          "function": "SPI_CS",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            201.3836,
+            590.6799,
+            226.9916,
+            613.5439
+          ]
+        },
+        {
+          "pin": "PC3",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            258.1756,
+            590.6799,
+            293.2396,
+            613.5439
+          ]
+        },
+        {
+          "pin": "PC4",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            131.2316,
+            610.0159,
+            174.1276,
+            632.8799
+          ]
+        },
+        {
+          "pin": "PC4",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            258.1836,
+            610.0159,
+            293.2476,
+            632.8799
+          ]
+        }
+      ],
+      "excluded_confirmation": null,
+      "packages": [
+        {
+          "name": "CW32F003F4U7",
+          "package": "QFN20",
+          "bonded_routes": 42,
+          "safe_routes": 36,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 29,
+          "excluded_debug_reset_pins": [
+            "PA2",
+            "PA5",
+            "PC5"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA4",
+            "PA6",
+            "PA7",
+            "PB0",
+            "PB1",
+            "PB2",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6",
+            "PC0",
+            "PC1",
+            "PC2"
+          ]
+        },
+        {
+          "name": "CW32F003F4P7",
+          "package": "TSSOP20",
+          "bonded_routes": 42,
+          "safe_routes": 36,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 29,
+          "excluded_debug_reset_pins": [
+            "PA2",
+            "PA5",
+            "PC5"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA4",
+            "PA6",
+            "PA7",
+            "PB0",
+            "PB1",
+            "PB2",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6",
+            "PC0",
+            "PC1",
+            "PC2"
+          ]
+        },
+        {
+          "name": "CW32F003E4P7",
+          "package": "TSSOP24",
+          "bonded_routes": 52,
+          "safe_routes": 46,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 38,
+          "excluded_debug_reset_pins": [
+            "PA2",
+            "PA5",
+            "PC5"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA3",
+            "PA4",
+            "PA6",
+            "PA7",
+            "PB0",
+            "PB1",
+            "PB2",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6",
+            "PB7",
+            "PC0",
+            "PC1",
+            "PC2",
+            "PC3",
+            "PC4"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "CW32L010",
+      "sources": {
+        "candidate": {
+          "path": "cw32-data/af/cw32l010.yaml",
+          "sha256": "c6f30057752de6c8a3a6dffee70f84ec5dedc8ae1393f930da4fcc10feef014e"
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "sdk_sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+          "header": "Libraries/inc/cw32l010_gpio.h",
+          "header_sha256": "1ec5958352e78cfdb050b4e648373ed25f2befc01d6724602b0e69c4d098969e"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf",
+          "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+          "document_filename": "CW32L010_DataSheet_CN_V1.3.pdf",
+          "memory_map_pdf_page_indices": [
+            26
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant.",
+          "af_evidence": "Own-family Tables 5-3, 5-4; 43 serial cells checked by positioned-PDF extraction against original SDK macros and prior rendered audit. PDF pages [25]. Per-cell proof: docs/final-serial-af-evidence.json."
+        },
+        "pinout": {
+          "path": "cw32-data/pinouts/cw32l010.yaml",
+          "sha256": "f7906510f8cc9f6e33cac628645c228b7ef76a6e0b8266e93a0431917efdaa13"
+        }
+      },
+      "counts": {
+        "reviewed": 43,
+        "sdk_serial": 43,
+        "sdk_only_excluded": 0,
+        "datasheet_only": 0,
+        "corrected_sdk": 0
+      },
+      "selector_capability": {
+        "min": 1,
+        "max": 7,
+        "pdf_printed_page_offset": 1,
+        "evidence": "Numbered function columns in the cited own-family datasheet AF tables; register width alone never authorizes selectors."
+      },
+      "cells": [
+        {
+          "pin": "PA0",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.2071,
+            408.5958,
+            173.1031,
+            431.4598
+          ]
+        },
+        {
+          "pin": "PA0",
+          "af": 2,
+          "function": "I2C_SDA",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            196.9111,
+            408.5958,
+            227.4471,
+            431.4598
+          ]
+        },
+        {
+          "pin": "PA0",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            258.3031,
+            408.5958,
+            289.0871,
+            431.4598
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.3911,
+            427.9318,
+            172.9191,
+            450.7958
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 2,
+          "function": "I2C_SCL",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            197.3111,
+            427.9318,
+            227.0471,
+            450.7958
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            260.8951,
+            427.9318,
+            286.5031,
+            450.7958
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            260.8951,
+            447.2678,
+            286.5031,
+            470.1318
+          ]
+        },
+        {
+          "pin": "PA3",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.3991,
+            466.6038,
+            172.9271,
+            489.4678
+          ]
+        },
+        {
+          "pin": "PA3",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            256.1671,
+            466.6038,
+            291.2312,
+            489.4678
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.2072,
+            485.9398,
+            173.1032,
+            508.8038
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            256.1592,
+            485.9398,
+            291.2232,
+            508.8038
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.2072,
+            505.2758,
+            173.1032,
+            528.1398
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            258.3032,
+            505.2758,
+            289.0872,
+            528.1398
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 4,
+          "function": "I2C_SDA",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            322.6312,
+            505.2758,
+            353.1672,
+            528.1398
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.3992,
+            524.6118,
+            172.9272,
+            547.4758
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            256.1752,
+            524.6118,
+            291.2392,
+            547.4758
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 4,
+          "function": "I2C_SCL",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            323.0392,
+            524.6118,
+            352.7752,
+            547.4758
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.2232,
+            543.9478,
+            173.1192,
+            566.8118
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 2,
+          "function": "I2C_SDA",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            196.9272,
+            543.9478,
+            227.4632,
+            566.8118
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            256.1832,
+            543.9478,
+            291.2472,
+            566.8118
+          ]
+        },
+        {
+          "pin": "PA8",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.4072,
+            563.2838,
+            172.9352,
+            586.1478
+          ]
+        },
+        {
+          "pin": "PA8",
+          "af": 2,
+          "function": "I2C_SCL",
+          "table": "5-3",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            197.3272,
+            563.2838,
+            227.0632,
+            586.1478
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.7951,
+            631.4896,
+            173.6911,
+            654.3536
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 2,
+          "function": "UART2_CTS",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            192.8511,
+            631.4896,
+            234.9311,
+            654.3536
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            260.1471,
+            631.4896,
+            290.9311,
+            654.3536
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 4,
+          "function": "I2C_SDA",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            321.9231,
+            631.4896,
+            352.4591,
+            654.3536
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.9711,
+            650.8255,
+            173.4991,
+            673.6895
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 2,
+          "function": "UART2_RTS",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            192.8831,
+            650.8255,
+            234.8831,
+            673.6895
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            262.7311,
+            650.8255,
+            288.3391,
+            673.6895
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 4,
+          "function": "I2C_SCL",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            322.3151,
+            650.8255,
+            352.0511,
+            673.6895
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.9551,
+            670.1616,
+            173.4831,
+            693.0256
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 2,
+          "function": "UART1_CTS",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            192.8271,
+            670.1616,
+            234.9072,
+            693.0256
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            257.9872,
+            670.1616,
+            293.0512,
+            693.0256
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.7632,
+            689.4975,
+            173.6592,
+            712.3615
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 2,
+          "function": "UART1_RTS",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            192.8592,
+            689.4975,
+            234.8591,
+            712.3615
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            257.9792,
+            689.4975,
+            293.0432,
+            712.3615
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.9392,
+            708.8336,
+            173.4672,
+            731.6976
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.9312,
+            728.1695,
+            173.4592,
+            751.0335
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            257.9632,
+            728.1695,
+            293.0272,
+            751.0335
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 4,
+          "function": "I2C_SDA",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            321.8752,
+            728.1695,
+            352.4112,
+            751.0335
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            130.7312,
+            747.5056,
+            173.6272,
+            770.3696
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            257.9472,
+            747.5056,
+            293.0112,
+            770.3696
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 4,
+          "function": "I2C_SCL",
+          "table": "5-4",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "bbox": [
+            322.2592,
+            747.5056,
+            351.9951,
+            770.3696
+          ]
+        }
+      ],
+      "excluded_confirmation": null,
+      "packages": [
+        {
+          "name": "CW32L010Y8M6",
+          "package": "SOP16",
+          "bonded_routes": 35,
+          "safe_routes": 30,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 26,
+          "excluded_debug_reset_pins": [
+            "PA7",
+            "PA8",
+            "PB7"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA3",
+            "PA4",
+            "PA5",
+            "PA6",
+            "PB0",
+            "PB1",
+            "PB5",
+            "PB6"
+          ]
+        },
+        {
+          "name": "CW32L010F8P6",
+          "package": "TSSOP20",
+          "bonded_routes": 43,
+          "safe_routes": 38,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 31,
+          "excluded_debug_reset_pins": [
+            "PA7",
+            "PA8",
+            "PB7"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA2",
+            "PA3",
+            "PA4",
+            "PA5",
+            "PA6",
+            "PB0",
+            "PB1",
+            "PB2",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6"
+          ]
+        },
+        {
+          "name": "CW32L010F8U6",
+          "package": "QFN20",
+          "bonded_routes": 43,
+          "safe_routes": 38,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 31,
+          "excluded_debug_reset_pins": [
+            "PA7",
+            "PA8",
+            "PB7"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA2",
+            "PA3",
+            "PA4",
+            "PA5",
+            "PA6",
+            "PB0",
+            "PB1",
+            "PB2",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "CW32L011",
+      "sources": {
+        "candidate": {
+          "path": "cw32-data/af/cw32l011.yaml",
+          "sha256": "05c84c7a1f521c6867004cf9cb8d545a7dcba188d16f7eed51512a657d33ec6e"
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "sdk_sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+          "header": "Libraries/inc/cw32l011_gpio.h",
+          "header_sha256": "d78a3f5f0c4c04e7f948189b70a4e7ffe18025c98cc48418676ab1fa6ec8b78b"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf",
+          "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+          "document_filename": "CW32L011_DataSheet_CN_V1.1.pdf",
+          "memory_map_pdf_page_indices": [
+            33
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant.",
+          "af_evidence": "Own-family Tables 5-3, 5-4, 5-5; 70 serial cells checked by positioned-PDF extraction against original SDK macros and prior rendered audit. PDF pages [31, 32]. Per-cell proof: docs/final-serial-af-evidence.json."
+        },
+        "pinout": {
+          "path": "cw32-data/pinouts/cw32l011.yaml",
+          "sha256": "57906eb125837bc3e2e1ac1e8383142e0c51d2c5006624304ef755edea6e02cb"
+        }
+      },
+      "counts": {
+        "reviewed": 70,
+        "sdk_serial": 70,
+        "sdk_only_excluded": 0,
+        "datasheet_only": 0,
+        "corrected_sdk": 0
+      },
+      "selector_capability": {
+        "min": 1,
+        "max": 7,
+        "pdf_printed_page_offset": 3,
+        "evidence": "Numbered function columns in the cited own-family datasheet AF tables; register width alone never authorizes selectors."
+      },
+      "cells": [
+        {
+          "pin": "PA0",
+          "af": 1,
+          "function": "UART1_CTS",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            103.058,
+            376.589,
+            155.658,
+            405.169
+          ]
+        },
+        {
+          "pin": "PA0",
+          "af": 2,
+          "function": "UART3_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            162.668,
+            376.589,
+            216.288,
+            405.169
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 1,
+          "function": "UART1_RTS",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            103.108,
+            397.589,
+            155.608,
+            426.169
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 2,
+          "function": "UART3_TXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            162.898,
+            397.589,
+            216.058,
+            426.169
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.778,
+            418.589,
+            155.938,
+            447.169
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            162.898,
+            418.589,
+            216.058,
+            447.169
+          ]
+        },
+        {
+          "pin": "PA3",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.548,
+            439.589,
+            156.168,
+            468.169
+          ]
+        },
+        {
+          "pin": "PA3",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            162.668,
+            439.589,
+            216.288,
+            468.169
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 1,
+          "function": "UART3_TXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.778,
+            460.589,
+            155.938,
+            489.169
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 2,
+          "function": "I2C_SCL",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            170.893,
+            460.589,
+            208.063,
+            489.169
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            233.083,
+            460.589,
+            265.093,
+            489.169
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 1,
+          "function": "UART3_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.548,
+            481.589,
+            156.168,
+            510.169
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 2,
+          "function": "I2C_SDA",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            170.393,
+            481.589,
+            208.563,
+            510.169
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            229.848,
+            481.589,
+            268.328,
+            510.169
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.548,
+            502.589,
+            156.168,
+            531.169
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            227.173,
+            502.589,
+            271.003,
+            531.169
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.778,
+            523.5891,
+            155.938,
+            552.1691
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            227.173,
+            523.5891,
+            271.003,
+            552.1691
+          ]
+        },
+        {
+          "pin": "PA8",
+          "af": 1,
+          "function": "UART3_TXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.778,
+            544.5891,
+            155.938,
+            573.1691
+          ]
+        },
+        {
+          "pin": "PA9",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.778,
+            565.5891,
+            155.938,
+            594.1691
+          ]
+        },
+        {
+          "pin": "PA9",
+          "af": 2,
+          "function": "UART3_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            162.668,
+            565.5891,
+            216.288,
+            594.1691
+          ]
+        },
+        {
+          "pin": "PA9",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            233.083,
+            565.5891,
+            265.093,
+            594.1691
+          ]
+        },
+        {
+          "pin": "PA9",
+          "af": 4,
+          "function": "I2C_SCL",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            293.383,
+            565.5891,
+            330.553,
+            594.1691
+          ]
+        },
+        {
+          "pin": "PA10",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.548,
+            586.5891,
+            156.168,
+            615.1691
+          ]
+        },
+        {
+          "pin": "PA10",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            229.848,
+            586.5891,
+            268.328,
+            615.1691
+          ]
+        },
+        {
+          "pin": "PA10",
+          "af": 4,
+          "function": "I2C_SDA",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            292.883,
+            586.5891,
+            331.053,
+            615.1691
+          ]
+        },
+        {
+          "pin": "PA11",
+          "af": 1,
+          "function": "UART1_CTS",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            103.058,
+            607.5891,
+            155.658,
+            636.1691
+          ]
+        },
+        {
+          "pin": "PA11",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            227.173,
+            607.5891,
+            271.003,
+            636.1691
+          ]
+        },
+        {
+          "pin": "PA12",
+          "af": 1,
+          "function": "UART1_RTS",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            103.108,
+            628.5891,
+            155.608,
+            657.1691
+          ]
+        },
+        {
+          "pin": "PA12",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            227.173,
+            628.5891,
+            271.003,
+            657.1691
+          ]
+        },
+        {
+          "pin": "PA13",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.548,
+            656.8391,
+            156.168,
+            685.4191
+          ]
+        },
+        {
+          "pin": "PA13",
+          "af": 2,
+          "function": "UART3_TXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            162.898,
+            656.8391,
+            216.058,
+            685.4191
+          ]
+        },
+        {
+          "pin": "PA13",
+          "af": 3,
+          "function": "UART2_RTS",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            222.838,
+            656.8391,
+            275.338,
+            685.4191
+          ]
+        },
+        {
+          "pin": "PA13",
+          "af": 4,
+          "function": "I2C_SDA",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            292.883,
+            656.8391,
+            331.053,
+            685.4191
+          ]
+        },
+        {
+          "pin": "PA14",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.778,
+            692.3391,
+            155.938,
+            720.9191
+          ]
+        },
+        {
+          "pin": "PA14",
+          "af": 2,
+          "function": "UART3_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            162.668,
+            692.3391,
+            216.288,
+            720.9191
+          ]
+        },
+        {
+          "pin": "PA14",
+          "af": 3,
+          "function": "UART2_CTS",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            222.788,
+            692.3391,
+            275.388,
+            720.9191
+          ]
+        },
+        {
+          "pin": "PA14",
+          "af": 4,
+          "function": "I2C_SCL",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            293.383,
+            692.3391,
+            330.553,
+            720.9191
+          ]
+        },
+        {
+          "pin": "PA15",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            102.548,
+            720.5891,
+            156.168,
+            749.1691
+          ]
+        },
+        {
+          "pin": "PA15",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            162.668,
+            720.5891,
+            216.288,
+            749.1691
+          ]
+        },
+        {
+          "pin": "PA15",
+          "af": 3,
+          "function": "SPI_CS",
+          "table": "5-3",
+          "pdf_page": 31,
+          "printed_page": 28,
+          "bbox": [
+            233.083,
+            720.5891,
+            265.093,
+            749.1691
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            97.664,
+            103.579,
+            151.284,
+            132.159
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            158.667,
+            103.579,
+            211.827,
+            132.159
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            97.894,
+            124.579,
+            151.054,
+            153.159
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            158.437,
+            124.579,
+            212.057,
+            153.159
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            97.894,
+            145.579,
+            151.054,
+            174.159
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            158.667,
+            145.579,
+            211.827,
+            174.159
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 3,
+          "function": "SPI_SCK",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            230.329,
+            145.579,
+            268.809,
+            174.159
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 4,
+          "function": "UART3_CTS",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            290.896,
+            145.579,
+            343.496,
+            174.159
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 1,
+          "function": "UART3_TXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            97.894,
+            166.579,
+            151.054,
+            195.159
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 2,
+          "function": "UART2_CTS",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            158.947,
+            166.579,
+            211.547,
+            195.159
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 3,
+          "function": "SPI_MISO",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            227.654,
+            166.579,
+            271.484,
+            195.159
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 4,
+          "function": "UART3_RTS",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            290.946,
+            166.579,
+            343.446,
+            195.159
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 1,
+          "function": "UART3_RXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            97.664,
+            187.579,
+            151.284,
+            216.159
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 2,
+          "function": "UART2_RTS",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            158.997,
+            187.579,
+            211.497,
+            216.159
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 3,
+          "function": "SPI_MOSI",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            227.654,
+            187.579,
+            271.484,
+            216.159
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            97.894,
+            208.579,
+            151.054,
+            237.159
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            158.437,
+            208.579,
+            212.057,
+            237.159
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 3,
+          "function": "I2C_SCL",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            230.984,
+            208.579,
+            268.154,
+            237.159
+          ]
+        },
+        {
+          "pin": "PB7",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            97.664,
+            229.579,
+            151.284,
+            258.159
+          ]
+        },
+        {
+          "pin": "PB7",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            158.667,
+            229.579,
+            211.827,
+            258.159
+          ]
+        },
+        {
+          "pin": "PB7",
+          "af": 3,
+          "function": "I2C_SDA",
+          "table": "5-4",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            230.484,
+            229.579,
+            268.654,
+            258.159
+          ]
+        },
+        {
+          "pin": "PC14",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-5",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            100.077,
+            315.079,
+            153.697,
+            343.659
+          ]
+        },
+        {
+          "pin": "PC14",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-5",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            163.029,
+            315.079,
+            216.649,
+            343.659
+          ]
+        },
+        {
+          "pin": "PC14",
+          "af": 3,
+          "function": "UART3_CTS",
+          "table": "5-5",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            225.957,
+            315.079,
+            278.557,
+            343.659
+          ]
+        },
+        {
+          "pin": "PC14",
+          "af": 4,
+          "function": "I2C_SDA",
+          "table": "5-5",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            294.297,
+            315.079,
+            332.467,
+            343.659
+          ]
+        },
+        {
+          "pin": "PC15",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-5",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            100.307,
+            336.079,
+            153.467,
+            364.659
+          ]
+        },
+        {
+          "pin": "PC15",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-5",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            163.259,
+            336.079,
+            216.419,
+            364.659
+          ]
+        },
+        {
+          "pin": "PC15",
+          "af": 3,
+          "function": "UART3_RTS",
+          "table": "5-5",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            226.007,
+            336.079,
+            278.507,
+            364.659
+          ]
+        },
+        {
+          "pin": "PC15",
+          "af": 4,
+          "function": "I2C_SCL",
+          "table": "5-5",
+          "pdf_page": 32,
+          "printed_page": 29,
+          "bbox": [
+            294.797,
+            336.079,
+            331.967,
+            364.659
+          ]
+        }
+      ],
+      "excluded_confirmation": null,
+      "packages": [
+        {
+          "name": "CW32L011K8T6",
+          "package": "LQFP32",
+          "bonded_routes": 70,
+          "safe_routes": 62,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 49,
+          "excluded_debug_reset_pins": [
+            "PA13",
+            "PA14"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA10",
+            "PA11",
+            "PA12",
+            "PA15",
+            "PA2",
+            "PA3",
+            "PA4",
+            "PA5",
+            "PA6",
+            "PA7",
+            "PA8",
+            "PA9",
+            "PB0",
+            "PB1",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6",
+            "PB7",
+            "PC14",
+            "PC15"
+          ]
+        },
+        {
+          "name": "CW32L011K8U6",
+          "package": "QFN32",
+          "bonded_routes": 70,
+          "safe_routes": 62,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 49,
+          "excluded_debug_reset_pins": [
+            "PA13",
+            "PA14"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA10",
+            "PA11",
+            "PA12",
+            "PA15",
+            "PA2",
+            "PA3",
+            "PA4",
+            "PA5",
+            "PA6",
+            "PA7",
+            "PA8",
+            "PA9",
+            "PB0",
+            "PB1",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6",
+            "PB7",
+            "PC14",
+            "PC15"
+          ]
+        }
+      ]
+    },
+    {
+      "profile": "CW32L012",
+      "sources": {
+        "candidate": {
+          "path": "cw32-data/af/cw32l012.yaml",
+          "sha256": "130aab7ba3ee34a8fa83a4cbafa052d415dca2b4f1a5d0853d8ead9ac9421afb"
+        },
+        "sdk": {
+          "sdk_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "sdk_sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+          "header": "Libraries/inc/cw32l012_gpio.h",
+          "header_sha256": "45f356e8028475c2e25d135c5fdd0b75babb6b1c83f1d5534038e9355822d717"
+        },
+        "datasheet": {
+          "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+          "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+          "document_filename": "CW32L012_DataSheet_CN_V1.0.pdf",
+          "memory_map_pdf_page_indices": [
+            40
+          ],
+          "memory_size_table_pdf_page_indices": [
+            7
+          ],
+          "memory_map_evidence": "Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000. Family-product table establishes package/size variant.",
+          "af_evidence": "Own-family Tables 5-3, 5-4, 5-5, 5-6; 133 serial cells checked by positioned-PDF extraction against original SDK macros and prior rendered audit. PDF pages [39, 40]. Per-cell proof: docs/final-serial-af-evidence.json."
+        },
+        "pinout": {
+          "path": "cw32-data/pinouts/cw32l012.yaml",
+          "sha256": "70ad225317acd9b1bd51a19fff15f6834f3efb4f58563b33344ab5d69eab07fb"
+        }
+      },
+      "counts": {
+        "reviewed": 133,
+        "sdk_serial": 133,
+        "sdk_only_excluded": 0,
+        "datasheet_only": 0,
+        "corrected_sdk": 0
+      },
+      "selector_capability": {
+        "min": 1,
+        "max": 9,
+        "pdf_printed_page_offset": 3,
+        "evidence": "Numbered function columns in the cited own-family datasheet AF tables; register width alone never authorizes selectors."
+      },
+      "cells": [
+        {
+          "pin": "PA0",
+          "af": 1,
+          "function": "UART1_CTS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.775,
+            98.461,
+            147.595,
+            118.467
+          ]
+        },
+        {
+          "pin": "PA0",
+          "af": 2,
+          "function": "UART3_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            156.154,
+            98.461,
+            193.688,
+            118.467
+          ]
+        },
+        {
+          "pin": "PA0",
+          "af": 8,
+          "function": "SPI2_MISO",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            445.668,
+            98.461,
+            480.094,
+            118.467
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 1,
+          "function": "UART1_RTS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.81,
+            113.311,
+            147.56,
+            133.317
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 2,
+          "function": "UART3_TXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            156.315,
+            113.311,
+            193.527,
+            133.317
+          ]
+        },
+        {
+          "pin": "PA1",
+          "af": 8,
+          "function": "SPI2_MOSI",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            445.668,
+            113.311,
+            480.094,
+            133.317
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.579,
+            128.161,
+            147.791,
+            148.167
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            156.315,
+            128.161,
+            193.527,
+            148.167
+          ]
+        },
+        {
+          "pin": "PA2",
+          "af": 8,
+          "function": "SPI2_SCK",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            447.541,
+            128.161,
+            478.222,
+            148.167
+          ]
+        },
+        {
+          "pin": "PA3",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.418,
+            143.011,
+            147.952,
+            163.017
+          ]
+        },
+        {
+          "pin": "PA3",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            156.154,
+            143.011,
+            193.688,
+            163.017
+          ]
+        },
+        {
+          "pin": "PA3",
+          "af": 8,
+          "function": "SPI2_CS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            449.805,
+            143.011,
+            475.957,
+            163.017
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 1,
+          "function": "UART3_TXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.579,
+            157.861,
+            147.791,
+            177.867
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 2,
+          "function": "I2C1_SCL",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            160.039,
+            157.861,
+            189.803,
+            177.867
+          ]
+        },
+        {
+          "pin": "PA4",
+          "af": 3,
+          "function": "SPI1_CS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            207.194,
+            157.861,
+            233.346,
+            177.867
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 1,
+          "function": "UART3_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.418,
+            172.711,
+            147.952,
+            192.717
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 2,
+          "function": "I2C1_SDA",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            159.689,
+            172.711,
+            190.153,
+            192.717
+          ]
+        },
+        {
+          "pin": "PA5",
+          "af": 3,
+          "function": "SPI1_SCK",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            204.93,
+            172.711,
+            235.611,
+            192.717
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.418,
+            187.561,
+            147.952,
+            207.567
+          ]
+        },
+        {
+          "pin": "PA6",
+          "af": 3,
+          "function": "SPI1_MISO",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            203.057,
+            187.561,
+            237.483,
+            207.567
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.579,
+            202.411,
+            147.791,
+            222.417
+          ]
+        },
+        {
+          "pin": "PA7",
+          "af": 3,
+          "function": "SPI1_MOSI",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            203.057,
+            202.411,
+            237.483,
+            222.417
+          ]
+        },
+        {
+          "pin": "PA8",
+          "af": 1,
+          "function": "UART3_TXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.579,
+            217.261,
+            147.791,
+            237.267
+          ]
+        },
+        {
+          "pin": "PA8",
+          "af": 8,
+          "function": "SPI3_CS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            449.805,
+            217.261,
+            475.957,
+            237.267
+          ]
+        },
+        {
+          "pin": "PA9",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.579,
+            232.111,
+            147.791,
+            252.117
+          ]
+        },
+        {
+          "pin": "PA9",
+          "af": 2,
+          "function": "UART3_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            156.154,
+            232.111,
+            193.688,
+            252.117
+          ]
+        },
+        {
+          "pin": "PA9",
+          "af": 3,
+          "function": "SPI1_CS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            207.194,
+            232.111,
+            233.346,
+            252.117
+          ]
+        },
+        {
+          "pin": "PA9",
+          "af": 4,
+          "function": "I2C1_SCL",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            253.217,
+            232.111,
+            282.981,
+            252.117
+          ]
+        },
+        {
+          "pin": "PA9",
+          "af": 8,
+          "function": "SPI3_SCK",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            447.541,
+            232.111,
+            478.222,
+            252.117
+          ]
+        },
+        {
+          "pin": "PA10",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.418,
+            246.961,
+            147.952,
+            266.967
+          ]
+        },
+        {
+          "pin": "PA10",
+          "af": 3,
+          "function": "SPI1_SCK",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            204.93,
+            246.961,
+            235.611,
+            266.967
+          ]
+        },
+        {
+          "pin": "PA10",
+          "af": 4,
+          "function": "I2C1_SDA",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            252.867,
+            246.961,
+            283.331,
+            266.967
+          ]
+        },
+        {
+          "pin": "PA10",
+          "af": 8,
+          "function": "SPI3_MISO",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            445.668,
+            246.961,
+            480.094,
+            266.967
+          ]
+        },
+        {
+          "pin": "PA11",
+          "af": 1,
+          "function": "UART1_CTS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.775,
+            261.811,
+            147.595,
+            281.817
+          ]
+        },
+        {
+          "pin": "PA11",
+          "af": 3,
+          "function": "SPI1_MISO",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            203.057,
+            261.811,
+            237.483,
+            281.817
+          ]
+        },
+        {
+          "pin": "PA11",
+          "af": 8,
+          "function": "SPI3_MOSI",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            445.668,
+            261.811,
+            480.094,
+            281.817
+          ]
+        },
+        {
+          "pin": "PA12",
+          "af": 1,
+          "function": "UART1_RTS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.81,
+            276.661,
+            147.56,
+            296.667
+          ]
+        },
+        {
+          "pin": "PA12",
+          "af": 3,
+          "function": "SPI1_MOSI",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            203.057,
+            276.661,
+            237.483,
+            296.667
+          ]
+        },
+        {
+          "pin": "PA13",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.418,
+            291.511,
+            147.952,
+            311.517
+          ]
+        },
+        {
+          "pin": "PA13",
+          "af": 2,
+          "function": "UART3_TXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            156.315,
+            291.511,
+            193.527,
+            311.517
+          ]
+        },
+        {
+          "pin": "PA13",
+          "af": 3,
+          "function": "UART2_RTS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            201.895,
+            291.511,
+            238.645,
+            311.517
+          ]
+        },
+        {
+          "pin": "PA13",
+          "af": 4,
+          "function": "I2C1_SDA",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            252.867,
+            291.511,
+            283.331,
+            311.517
+          ]
+        },
+        {
+          "pin": "PA14",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.579,
+            306.361,
+            147.791,
+            326.367
+          ]
+        },
+        {
+          "pin": "PA14",
+          "af": 2,
+          "function": "UART3_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            156.154,
+            306.361,
+            193.688,
+            326.367
+          ]
+        },
+        {
+          "pin": "PA14",
+          "af": 3,
+          "function": "UART2_CTS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            201.86,
+            306.361,
+            238.68,
+            326.367
+          ]
+        },
+        {
+          "pin": "PA14",
+          "af": 4,
+          "function": "I2C1_SCL",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            253.217,
+            306.361,
+            282.981,
+            326.367
+          ]
+        },
+        {
+          "pin": "PA15",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            110.418,
+            321.211,
+            147.952,
+            341.217
+          ]
+        },
+        {
+          "pin": "PA15",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            156.154,
+            321.211,
+            193.688,
+            341.217
+          ]
+        },
+        {
+          "pin": "PA15",
+          "af": 3,
+          "function": "SPI1_CS",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            207.194,
+            321.211,
+            233.346,
+            341.217
+          ]
+        },
+        {
+          "pin": "PA15",
+          "af": 9,
+          "function": "SPI2_SCK",
+          "table": "5-3",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            496.563,
+            321.211,
+            527.244,
+            341.217
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.801,
+            373.411,
+            126.335,
+            393.417
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            138.878,
+            373.411,
+            176.09,
+            393.417
+          ]
+        },
+        {
+          "pin": "PB0",
+          "af": 8,
+          "function": "I2C2_SCL",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            440.572,
+            373.411,
+            470.336,
+            393.417
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.962,
+            388.261,
+            126.174,
+            408.267
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            138.717,
+            388.261,
+            176.251,
+            408.267
+          ]
+        },
+        {
+          "pin": "PB1",
+          "af": 8,
+          "function": "I2C2_SDA",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            440.222,
+            388.261,
+            470.686,
+            408.267
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 1,
+          "function": "UART3_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.962,
+            403.111,
+            126.174,
+            423.117
+          ]
+        },
+        {
+          "pin": "PB2",
+          "af": 2,
+          "function": "UART2_CTS",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            139.074,
+            403.111,
+            175.894,
+            423.117
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.962,
+            417.961,
+            126.174,
+            437.967
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            138.878,
+            417.961,
+            176.09,
+            437.967
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 3,
+          "function": "SPI1_SCK",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            194.703,
+            417.961,
+            225.384,
+            437.967
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 4,
+          "function": "UART3_CTS",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            242.186,
+            417.961,
+            279.006,
+            437.967
+          ]
+        },
+        {
+          "pin": "PB3",
+          "af": 9,
+          "function": "SPI2_MISO",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            492.149,
+            417.961,
+            526.575,
+            437.967
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 1,
+          "function": "UART3_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.962,
+            432.811,
+            126.174,
+            452.817
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 2,
+          "function": "UART2_CTS",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            139.074,
+            432.811,
+            175.894,
+            452.817
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 3,
+          "function": "SPI1_MISO",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            192.83,
+            432.811,
+            227.256,
+            452.817
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 4,
+          "function": "UART3_RTS",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            242.221,
+            432.811,
+            278.971,
+            452.817
+          ]
+        },
+        {
+          "pin": "PB4",
+          "af": 9,
+          "function": "SPI2_MOSI",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            492.149,
+            432.811,
+            526.575,
+            452.817
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 1,
+          "function": "UART3_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.801,
+            447.661,
+            126.335,
+            467.667
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 2,
+          "function": "UART2_RTS",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            139.109,
+            447.661,
+            175.859,
+            467.667
+          ]
+        },
+        {
+          "pin": "PB5",
+          "af": 3,
+          "function": "SPI1_MOSI",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            192.83,
+            447.661,
+            227.256,
+            467.667
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.962,
+            462.511,
+            126.174,
+            482.517
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            138.717,
+            462.511,
+            176.251,
+            482.517
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 3,
+          "function": "I2C1_SCL",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            195.161,
+            462.511,
+            224.925,
+            482.517
+          ]
+        },
+        {
+          "pin": "PB6",
+          "af": 8,
+          "function": "SPI3_MOSI",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            438.241,
+            462.511,
+            472.667,
+            482.517
+          ]
+        },
+        {
+          "pin": "PB7",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.801,
+            477.3611,
+            126.335,
+            497.367
+          ]
+        },
+        {
+          "pin": "PB7",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            138.878,
+            477.3611,
+            176.09,
+            497.367
+          ]
+        },
+        {
+          "pin": "PB7",
+          "af": 3,
+          "function": "I2C1_SDA",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            194.811,
+            477.3611,
+            225.275,
+            497.367
+          ]
+        },
+        {
+          "pin": "PB7",
+          "af": 8,
+          "function": "SPI3_MISO",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            438.241,
+            477.3611,
+            472.667,
+            497.367
+          ]
+        },
+        {
+          "pin": "PB8",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.801,
+            492.211,
+            126.335,
+            512.217
+          ]
+        },
+        {
+          "pin": "PB8",
+          "af": 2,
+          "function": "UART3_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            138.878,
+            492.211,
+            176.09,
+            512.217
+          ]
+        },
+        {
+          "pin": "PB8",
+          "af": 3,
+          "function": "I2C1_SCL",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            195.161,
+            492.211,
+            224.925,
+            512.217
+          ]
+        },
+        {
+          "pin": "PB8",
+          "af": 8,
+          "function": "SPI3_SCK",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            440.114,
+            492.211,
+            470.795,
+            512.217
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.962,
+            507.061,
+            126.174,
+            527.067
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 2,
+          "function": "UART3_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            138.717,
+            507.061,
+            176.251,
+            527.067
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 3,
+          "function": "I2C1_SDA",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            194.811,
+            507.061,
+            225.275,
+            527.067
+          ]
+        },
+        {
+          "pin": "PB9",
+          "af": 8,
+          "function": "SPI3_CS",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            442.378,
+            507.061,
+            468.53,
+            527.067
+          ]
+        },
+        {
+          "pin": "PB10",
+          "af": 1,
+          "function": "UART3_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.801,
+            521.911,
+            126.335,
+            541.9171
+          ]
+        },
+        {
+          "pin": "PB10",
+          "af": 2,
+          "function": "UART2_RTS",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            139.109,
+            521.911,
+            175.859,
+            541.9171
+          ]
+        },
+        {
+          "pin": "PB10",
+          "af": 3,
+          "function": "I2C1_SCL",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            195.161,
+            521.911,
+            224.925,
+            541.9171
+          ]
+        },
+        {
+          "pin": "PB10",
+          "af": 8,
+          "function": "I2C2_SCL",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            440.572,
+            521.911,
+            470.336,
+            541.9171
+          ]
+        },
+        {
+          "pin": "PB11",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.801,
+            536.761,
+            126.335,
+            556.767
+          ]
+        },
+        {
+          "pin": "PB11",
+          "af": 3,
+          "function": "I2C1_SDA",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            194.811,
+            536.761,
+            225.275,
+            556.767
+          ]
+        },
+        {
+          "pin": "PB11",
+          "af": 8,
+          "function": "I2C2_SDA",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            440.222,
+            536.761,
+            470.686,
+            556.767
+          ]
+        },
+        {
+          "pin": "PB12",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.962,
+            551.611,
+            126.174,
+            571.6171
+          ]
+        },
+        {
+          "pin": "PB12",
+          "af": 3,
+          "function": "SPI1_CS",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            196.967,
+            551.611,
+            223.119,
+            571.6171
+          ]
+        },
+        {
+          "pin": "PB12",
+          "af": 8,
+          "function": "SPI2_CS",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            442.378,
+            551.611,
+            468.53,
+            571.6171
+          ]
+        },
+        {
+          "pin": "PB13",
+          "af": 1,
+          "function": "UART2_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.801,
+            566.461,
+            126.335,
+            586.467
+          ]
+        },
+        {
+          "pin": "PB13",
+          "af": 3,
+          "function": "SPI1_SCK",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            194.703,
+            566.461,
+            225.384,
+            586.467
+          ]
+        },
+        {
+          "pin": "PB13",
+          "af": 8,
+          "function": "SPI2_SCK",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            440.114,
+            566.461,
+            470.795,
+            586.467
+          ]
+        },
+        {
+          "pin": "PB14",
+          "af": 1,
+          "function": "UART2_TXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.962,
+            581.311,
+            126.174,
+            601.317
+          ]
+        },
+        {
+          "pin": "PB14",
+          "af": 3,
+          "function": "SPI1_MISO",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            192.83,
+            581.311,
+            227.256,
+            601.317
+          ]
+        },
+        {
+          "pin": "PB14",
+          "af": 8,
+          "function": "SPI2_MISO",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            438.241,
+            581.311,
+            472.667,
+            601.317
+          ]
+        },
+        {
+          "pin": "PB15",
+          "af": 1,
+          "function": "UART3_RXD",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            88.801,
+            596.161,
+            126.335,
+            616.1671
+          ]
+        },
+        {
+          "pin": "PB15",
+          "af": 3,
+          "function": "SPI1_MOSI",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            192.83,
+            596.161,
+            227.256,
+            616.1671
+          ]
+        },
+        {
+          "pin": "PB15",
+          "af": 8,
+          "function": "SPI2_MOSI",
+          "table": "5-4",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            438.241,
+            596.161,
+            472.667,
+            616.1671
+          ]
+        },
+        {
+          "pin": "PC14",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-5",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            94.775,
+            663.211,
+            132.309,
+            683.217
+          ]
+        },
+        {
+          "pin": "PC14",
+          "af": 2,
+          "function": "UART2_RXD",
+          "table": "5-5",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            145.609,
+            663.211,
+            183.143,
+            683.217
+          ]
+        },
+        {
+          "pin": "PC14",
+          "af": 3,
+          "function": "UART3_CTS",
+          "table": "5-5",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            196.37,
+            663.211,
+            233.19,
+            683.217
+          ]
+        },
+        {
+          "pin": "PC14",
+          "af": 4,
+          "function": "I2C1_SDA",
+          "table": "5-5",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            245.698,
+            663.211,
+            276.162,
+            683.217
+          ]
+        },
+        {
+          "pin": "PC14",
+          "af": 8,
+          "function": "SPI3_MISO",
+          "table": "5-5",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            446.58,
+            663.211,
+            481.006,
+            683.217
+          ]
+        },
+        {
+          "pin": "PC15",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-5",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            94.936,
+            678.061,
+            132.148,
+            698.067
+          ]
+        },
+        {
+          "pin": "PC15",
+          "af": 2,
+          "function": "UART2_TXD",
+          "table": "5-5",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            145.77,
+            678.061,
+            182.982,
+            698.067
+          ]
+        },
+        {
+          "pin": "PC15",
+          "af": 3,
+          "function": "UART3_RTS",
+          "table": "5-5",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            196.405,
+            678.061,
+            233.155,
+            698.067
+          ]
+        },
+        {
+          "pin": "PC15",
+          "af": 4,
+          "function": "I2C1_SCL",
+          "table": "5-5",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            246.048,
+            678.061,
+            275.812,
+            698.067
+          ]
+        },
+        {
+          "pin": "PC15",
+          "af": 8,
+          "function": "SPI3_MOSI",
+          "table": "5-5",
+          "pdf_page": 39,
+          "printed_page": 36,
+          "bbox": [
+            446.58,
+            678.061,
+            481.006,
+            698.067
+          ]
+        },
+        {
+          "pin": "PF0",
+          "af": 1,
+          "function": "UART1_RXD",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            108.36,
+            98.461,
+            145.894,
+            118.467
+          ]
+        },
+        {
+          "pin": "PF0",
+          "af": 4,
+          "function": "I2C1_SDA",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            248.587,
+            98.461,
+            279.051,
+            118.467
+          ]
+        },
+        {
+          "pin": "PF0",
+          "af": 8,
+          "function": "SPI3_SCK",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            445.013,
+            98.461,
+            475.694,
+            118.467
+          ]
+        },
+        {
+          "pin": "PF1",
+          "af": 1,
+          "function": "UART1_TXD",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            108.521,
+            113.311,
+            145.733,
+            133.317
+          ]
+        },
+        {
+          "pin": "PF1",
+          "af": 4,
+          "function": "I2C1_SCL",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            248.937,
+            113.311,
+            278.701,
+            133.317
+          ]
+        },
+        {
+          "pin": "PF1",
+          "af": 8,
+          "function": "SPI3_CS",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            447.277,
+            113.311,
+            473.429,
+            133.317
+          ]
+        },
+        {
+          "pin": "PF6",
+          "af": 1,
+          "function": "UART1_CTS",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            108.717,
+            143.011,
+            145.537,
+            163.017
+          ]
+        },
+        {
+          "pin": "PF6",
+          "af": 2,
+          "function": "UART3_RXD",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            155.505,
+            143.011,
+            193.039,
+            163.017
+          ]
+        },
+        {
+          "pin": "PF6",
+          "af": 3,
+          "function": "UART2_CTS",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            202.609,
+            143.011,
+            239.429,
+            163.017
+          ]
+        },
+        {
+          "pin": "PF6",
+          "af": 4,
+          "function": "I2C1_SCL",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            248.937,
+            143.011,
+            278.701,
+            163.017
+          ]
+        },
+        {
+          "pin": "PF6",
+          "af": 8,
+          "function": "I2C2_SCL",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            445.471,
+            143.011,
+            475.235,
+            163.017
+          ]
+        },
+        {
+          "pin": "PF7",
+          "af": 1,
+          "function": "UART1_RTS",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            108.752,
+            157.861,
+            145.502,
+            177.867
+          ]
+        },
+        {
+          "pin": "PF7",
+          "af": 2,
+          "function": "UART3_TXD",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            155.666,
+            157.861,
+            192.878,
+            177.867
+          ]
+        },
+        {
+          "pin": "PF7",
+          "af": 3,
+          "function": "UART2_RTS",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            202.644,
+            157.861,
+            239.394,
+            177.867
+          ]
+        },
+        {
+          "pin": "PF7",
+          "af": 4,
+          "function": "I2C1_SDA",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            248.587,
+            157.861,
+            279.051,
+            177.867
+          ]
+        },
+        {
+          "pin": "PF7",
+          "af": 8,
+          "function": "I2C2_SDA",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            445.121,
+            157.861,
+            475.585,
+            177.867
+          ]
+        },
+        {
+          "pin": "PF7",
+          "af": 9,
+          "function": "SPI2_CS",
+          "table": "5-6",
+          "pdf_page": 40,
+          "printed_page": 37,
+          "bbox": [
+            499.204,
+            157.861,
+            525.356,
+            177.867
+          ]
+        }
+      ],
+      "excluded_confirmation": null,
+      "packages": [
+        {
+          "name": "CW32L012C8U6",
+          "package": "QFN48",
+          "bonded_routes": 133,
+          "safe_routes": 125,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 99,
+          "excluded_debug_reset_pins": [
+            "PA13",
+            "PA14"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA10",
+            "PA11",
+            "PA12",
+            "PA15",
+            "PA2",
+            "PA3",
+            "PA4",
+            "PA5",
+            "PA6",
+            "PA7",
+            "PA8",
+            "PA9",
+            "PB0",
+            "PB1",
+            "PB10",
+            "PB11",
+            "PB12",
+            "PB13",
+            "PB14",
+            "PB15",
+            "PB2",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6",
+            "PB7",
+            "PB8",
+            "PB9",
+            "PC14",
+            "PC15",
+            "PF0",
+            "PF1",
+            "PF6",
+            "PF7"
+          ]
+        },
+        {
+          "name": "CW32L012C8T6",
+          "package": "LQFP48",
+          "bonded_routes": 133,
+          "safe_routes": 125,
+          "hal_tx_rx_sck_mosi_miso_scl_sda_routes": 99,
+          "excluded_debug_reset_pins": [
+            "PA13",
+            "PA14"
+          ],
+          "safe_serial_pins": [
+            "PA0",
+            "PA1",
+            "PA10",
+            "PA11",
+            "PA12",
+            "PA15",
+            "PA2",
+            "PA3",
+            "PA4",
+            "PA5",
+            "PA6",
+            "PA7",
+            "PA8",
+            "PA9",
+            "PB0",
+            "PB1",
+            "PB10",
+            "PB11",
+            "PB12",
+            "PB13",
+            "PB14",
+            "PB15",
+            "PB2",
+            "PB3",
+            "PB4",
+            "PB5",
+            "PB6",
+            "PB7",
+            "PB8",
+            "PB9",
+            "PC14",
+            "PC15",
+            "PF0",
+            "PF1",
+            "PF6",
+            "PF7"
+          ]
+        }
+      ]
+    }
+  ]
+}

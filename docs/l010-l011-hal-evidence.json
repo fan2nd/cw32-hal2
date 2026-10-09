@@ -1,0 +1,123 @@
+{
+  "scope": "GPIO and HSI-only Embassy HAL; source/PAC-RAM/protocol checks, no silicon validation",
+  "sources": [
+    {
+      "family": "CW32L010",
+      "artifact": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h",
+      "sha256": "81d6c37b3920465595b702bdf102e5710c22490efa422207e5148852d719e91f",
+      "claims": [
+        "HSI oscillator frequency, all divider encodings, trim address, key and clock sources"
+      ]
+    },
+    {
+      "family": "CW32L010",
+      "artifact": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_sysctrl.c",
+      "sha256": "5b90bab195a6308aab9194451c862553cb14d11b23ef3d128d05e443ffc6ad92",
+      "claims": [
+        "HSI enable protocol and independent HSI divider lookup table"
+      ]
+    },
+    {
+      "family": "CW32L010",
+      "artifact": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_flash.c",
+      "sha256": "3288d4595d5c6e653123a271660821c3ebc907f58756db7a3bee8317140b4896",
+      "claims": [
+        "Keyed FLASH gate and 24 MHz wait-state thresholds"
+      ]
+    },
+    {
+      "family": "CW32L010",
+      "artifact": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_gpio.c",
+      "sha256": "03fa3ca19374131e18ba177ac3c9a77089d60fb7ca4e760d0678841cd7c781e6",
+      "claims": [
+        "Keyed GPIO gates and supported floating/pull-up and push-pull/open-drain modes"
+      ]
+    },
+    {
+      "family": "CW32L010",
+      "artifact": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+      "sha256": "1ec5958352e78cfdb050b4e648373ed25f2befc01d6724602b0e69c4d098969e",
+      "claims": [
+        "No programmable speed or supported pull-down mode"
+      ]
+    },
+    {
+      "family": "CW32L010",
+      "artifact": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+      "claims": [
+        "Independent generated-PAC register offsets and field widths"
+      ]
+    },
+    {
+      "family": "CW32L011",
+      "artifact": "cw32l011/Libraries/inc/cw32l011_sysctrl.h",
+      "sha256": "3c9927ef4eb1126500c4528e0892ebd90bb217c2bdd64935d6e52d252c54507e",
+      "claims": [
+        "HSI oscillator frequency, all divider encodings, trim address, key and clock sources"
+      ]
+    },
+    {
+      "family": "CW32L011",
+      "artifact": "cw32l011/Libraries/src/cw32l011_sysctrl.c",
+      "sha256": "7bdc0138bd94c7d0986d79b6f601954c86d04ab1d794af7484b218ba8d2cca89",
+      "claims": [
+        "HSI enable protocol and independent HSI divider lookup table"
+      ]
+    },
+    {
+      "family": "CW32L011",
+      "artifact": "cw32l011/Libraries/src/cw32l011_flash.c",
+      "sha256": "88474089f7ee9917081a690955f861970a113b03b0158c6a89a807a31806a019",
+      "claims": [
+        "Keyed FLASH gate and 24 MHz wait-state thresholds"
+      ]
+    },
+    {
+      "family": "CW32L011",
+      "artifact": "cw32l011/Libraries/src/cw32l011_gpio.c",
+      "sha256": "4ab2b3bdced61e7c8dbb15f0d570cdacd60cb51a4d98ec729380484635617b43",
+      "claims": [
+        "Keyed GPIO gates and supported floating/pull-up and push-pull/open-drain modes"
+      ]
+    },
+    {
+      "family": "CW32L011",
+      "artifact": "cw32l011/Libraries/inc/cw32l011_gpio.h",
+      "sha256": "d78a3f5f0c4c04e7f948189b70a4e7ffe18025c98cc48418676ab1fa6ec8b78b",
+      "claims": [
+        "No programmable speed or supported pull-down mode"
+      ]
+    },
+    {
+      "family": "CW32L011",
+      "artifact": "cw32l011/Libraries/inc/cw32l011.h",
+      "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8",
+      "claims": [
+        "Independent generated-PAC register offsets and field widths"
+      ]
+    }
+  ],
+  "reviewed_manual": "CW32L010_UserManual_CN_V1.2.pdf",
+  "reviewed_datasheets": [
+    "CW32L010_DataSheet_CN_V1.3.pdf",
+    "CW32L011_DataSheet_CN_V1.1.pdf"
+  ],
+  "source_protocol_notes": [
+    "L010 GPIOB PDR is present only in SDK header/generated fieldset, absent from manual register inventory and intentionally not used by SDK driver; HAL omits pull-down and never accesses PDR.",
+    "L011 own User Manual CN V1.1 now independently corroborates clock, flash and GPIO semantics; see l011-manual-follow-up-audit.md.",
+    "L010 HSI trim address 0x001007c0, nominal 48 MHz, divisors by encoding [16,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].",
+    "L011 HSI trim address 0x001007c0, nominal 96 MHz, divisors by encoding [32,1,2,3,4,5,6,7,8,9,10,12,16,20,24,28].",
+    "L010 safe pads exclude SWD PA7/PA8 and input-only PB7/NRST; L011 exclude SWD PA13/PA14, dedicated NRST is not GPIO.",
+    "Critical stopped-calibration audit: L010 UserManual CN V1.2 section4.3.4 page50 expressly prohibits oscillator parameter changes after startup; section4.5.2 only permits DIV changes preserving TRIM. The backend now uses temporary LSI, disables automatic CLKCCS during calibration, verifies HSIEN=0 and STABLE=0 before HSI writes, restores entry temporary controls after successful HSI handover.",
+    "L011 own manual \u00a74.3.4 p48 explicitly prohibits oscillator-parameter changes after startup. Its existing stopped-calibration sequence is required by own-family evidence, despite the SDK's live-TRIM sequence.",
+    "Voltage-transition audit: both datasheets Table7-4 limit HCLK/PCLK to24 MHz below1.8 V; lower bound1.62 V L010 and1.7 V L011. Final requested bus prescalers are now verified on temporary LSI before the HSI mux write, so a legal final24 MHz tree cannot transiently run48/96 MHz. The HAL cannot measureVDD and explicitly documents user responsibility for a voltage-legal final configuration.",
+    "LSI restoration audit: L010 UserManual section4.7.2 page68 explicitly lists hardware LSI requests that do not set SYSCTRL_CR1.LSIEN (clock security, GPIO/VC/LVD filters, IWDT). The HAL restores only its software-enable request and no longer incorrectly requires STABLE to clear. Positive host coverage preserves an independently running LSI and all parameters."
+  ],
+  "reviewed_l011_manual": {
+    "artifact": "CW32L011_UserManual_CN_V1.1.pdf",
+    "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+    "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+    "sections": "4.3.4 p48; 4.7.1\u20135 pp64\u201369; 4.7.11\u201316 pp76\u201381; 7.4 p101; 8.3/8.6 pp119\u2013130"
+  }
+}

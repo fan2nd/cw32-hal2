@@ -1,0 +1,2923 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-08",
+  "scope": "Own-family timer ICR W0C seeds and buffered CNT.UIFCPY read-only field restrictions. Source/PAC review only; no HAL harness, MMIO, firmware execution or silicon validation.",
+  "schema_changes": {
+    "required": false,
+    "field_access": "Existing schema_version 1 ReadOnlyField records: block, register, fieldset, field, bit_offset, bit_size, evidence. Read-only is implicit in this dedicated schema; do not add an unsupported access key.",
+    "register_writes": "Existing schema_version 1 RegisterWrite records: block, register, fieldset, reset_value, write_noop, zero_to_clear_fields, evidence. No new optional schema fields.",
+    "rust_schema_or_generator_changes": []
+  },
+  "families": {
+    "CW32A030": {
+      "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+      "filename": "CW32x030_UserManual_CN_V2.5.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "revision": "CN V2.5",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_v1",
+          "section": "13.7.7",
+          "printed_page": 215,
+          "pdf_page_1_based": 216,
+          "extract_sha256": "f0939feca9cd78af5f83fde1800cfd51835e12442457eca0525640722d7ba9fa",
+          "reset_value": 7,
+          "write_noop": 7,
+          "defined_clear_mask": 7,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TOP",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_v1",
+          "section": "14.8.13",
+          "printed_page": 250,
+          "pdf_page_1_based": 251,
+          "extract_sha256": "5fa5124c91be947e37ce7c39aed237fe2634183864683bff8cc862e149856c6c",
+          "reset_value": 1023,
+          "write_noop": 1023,
+          "defined_clear_mask": 639,
+          "reserved_preserve_ones": 384,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "UD",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3",
+              "bit_offset": 5,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRCHANGE",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32F002": {
+      "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+      "filename": "CW32F002_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+      "revision": "CN V1.4",
+      "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_cw32f002_v1",
+          "section": "11.7.7",
+          "printed_page": 149,
+          "pdf_page_1_based": 150,
+          "extract_sha256": "e4aa4cc5eca8e4e228f6556ba1e67aa88005433c0f6323823cdb471e10180ae6",
+          "reset_value": 7,
+          "write_noop": 7,
+          "defined_clear_mask": 7,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TOP",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_cw32f002_v1",
+          "section": "12.7.13",
+          "printed_page": 183,
+          "pdf_page_1_based": 184,
+          "extract_sha256": "49b719b966d7485d44b932f01db1cd72892022814becc2d55808b2db271d02ab",
+          "reset_value": 1023,
+          "write_noop": 1023,
+          "defined_clear_mask": 639,
+          "reserved_preserve_ones": 384,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "UD",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3",
+              "bit_offset": 5,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRCHANGE",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32F003": {
+      "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+      "filename": "CW32F003_UserManual_CN_V2.3.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+      "revision": "CN V2.3",
+      "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_cw32f002_v1",
+          "section": "11.7.7",
+          "printed_page": 151,
+          "pdf_page_1_based": 152,
+          "extract_sha256": "59c8c6f0f5e4442a8a4e1d18f175f96211d426518cbb0fabf434ec3f1a1b4c37",
+          "reset_value": 7,
+          "write_noop": 7,
+          "defined_clear_mask": 7,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TOP",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_cw32f002_v1",
+          "section": "12.7.13",
+          "printed_page": 185,
+          "pdf_page_1_based": 186,
+          "extract_sha256": "0b92acdd296a46885cb7552818eceb37bc9665851b0f6ee131c2333766310d72",
+          "reset_value": 1023,
+          "write_noop": 1023,
+          "defined_clear_mask": 639,
+          "reserved_preserve_ones": 384,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "UD",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3",
+              "bit_offset": 5,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRCHANGE",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32F020": {
+      "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+      "filename": "CW32F020_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+      "revision": "CN V1.4",
+      "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_v1",
+          "section": "13.7.7",
+          "printed_page": 212,
+          "pdf_page_1_based": 213,
+          "extract_sha256": "3581d153f5a9b61dd588465a4a19cbe69e235e413bbd0c0a3cd749ff5bee8f4f",
+          "reset_value": 7,
+          "write_noop": 7,
+          "defined_clear_mask": 7,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TOP",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_v1",
+          "section": "14.8.13",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "extract_sha256": "56af0117627fb2e2c6537dfa0087294be01cb5da84fa8ff2b90de2ab37343e69",
+          "reset_value": 1023,
+          "write_noop": 1023,
+          "defined_clear_mask": 639,
+          "reserved_preserve_ones": 384,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "UD",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3",
+              "bit_offset": 5,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRCHANGE",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32F030": {
+      "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+      "filename": "CW32x030_UserManual_CN_V2.5.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "revision": "CN V2.5",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_v1",
+          "section": "13.7.7",
+          "printed_page": 215,
+          "pdf_page_1_based": 216,
+          "extract_sha256": "f0939feca9cd78af5f83fde1800cfd51835e12442457eca0525640722d7ba9fa",
+          "reset_value": 7,
+          "write_noop": 7,
+          "defined_clear_mask": 7,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TOP",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_v1",
+          "section": "14.8.13",
+          "printed_page": 250,
+          "pdf_page_1_based": 251,
+          "extract_sha256": "5fa5124c91be947e37ce7c39aed237fe2634183864683bff8cc862e149856c6c",
+          "reset_value": 1023,
+          "write_noop": 1023,
+          "defined_clear_mask": 639,
+          "reserved_preserve_ones": 384,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "UD",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3",
+              "bit_offset": 5,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRCHANGE",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32L010": {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "filename": "CW32L010_UserManual_CN_V1.2.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+      "revision": "CN V1.2",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_cw32l010_v1",
+          "section": "11.9.6",
+          "printed_page": 183,
+          "pdf_page_1_based": 184,
+          "extract_sha256": "5249bddd0a6bf21ca5fff8fe75b760d5690ac0eb8f0fe2a8645c8b9e5349a2c8",
+          "reset_value": 65,
+          "write_noop": 65,
+          "defined_clear_mask": 65,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "UIF",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TIF",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "BTIM",
+          "register": "CNT",
+          "variant": "btim_cw32l010_v1",
+          "section": "11.9.8",
+          "printed_page": 184,
+          "pdf_page_1_based": 185,
+          "extract_sha256": "2cb3e3391d055c9a379eaba84d38400d54bac160e9eed4173745c66402866fb2",
+          "fields": [
+            {
+              "name": "CNT",
+              "bit_offset": 0,
+              "bit_size": 16,
+              "access": "RW"
+            },
+            {
+              "name": "UIFCPY",
+              "bit_offset": 31,
+              "bit_size": 1,
+              "access": "RO"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_cw32l010_v1",
+          "section": "13.9.6",
+          "printed_page": 267,
+          "pdf_page_1_based": 268,
+          "extract_sha256": "0124483936d89484b307c997bd82414e98ee4ea34e4e0098684e7ef9f7a6a9a4",
+          "reset_value": 15736415,
+          "write_noop": 15736415,
+          "defined_clear_mask": 15736415,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "UIF",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1IF",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2IF",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3IF",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4IF",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TIF",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1OF",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2OF",
+              "bit_offset": 10,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3OF",
+              "bit_offset": 11,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4OF",
+              "bit_offset": 12,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "IDXF",
+              "bit_offset": 20,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRF",
+              "bit_offset": 21,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "IERRF",
+              "bit_offset": 22,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TERRF",
+              "bit_offset": 23,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "CNT",
+          "variant": "gtim_cw32l010_v1",
+          "section": "13.9.13",
+          "printed_page": 276,
+          "pdf_page_1_based": 277,
+          "extract_sha256": "4002abb2d9111b1b0f7d649d652d4ad4e02d63f8664b5973df9a1c78bd93f682",
+          "fields": [
+            {
+              "name": "CNT",
+              "bit_offset": 0,
+              "bit_size": 16,
+              "access": "RW"
+            },
+            {
+              "name": "UIFCPY",
+              "bit_offset": 31,
+              "bit_size": 1,
+              "access": "RO"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32L011": {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "filename": "CW32L011_UserManual_CN_V1.1.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+      "revision": "CN V1.1",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_cw32l010_v1",
+          "section": "11.9.6",
+          "printed_page": 183,
+          "pdf_page_1_based": 184,
+          "extract_sha256": "a5ee1bc8c99d5e82507154726871fce1a0bfeef53e98f7a54cc003402a883d69",
+          "reset_value": 65,
+          "write_noop": 65,
+          "defined_clear_mask": 65,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "UIF",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TIF",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "BTIM",
+          "register": "CNT",
+          "variant": "btim_cw32l010_v1",
+          "section": "11.9.8",
+          "printed_page": 184,
+          "pdf_page_1_based": 185,
+          "extract_sha256": "d3cd8f696000ea981b85ca899b2b61a14d23c68de950a1f75cb668872133357b",
+          "fields": [
+            {
+              "name": "CNT",
+              "bit_offset": 0,
+              "bit_size": 16,
+              "access": "RW"
+            },
+            {
+              "name": "UIFCPY",
+              "bit_offset": 31,
+              "bit_size": 1,
+              "access": "RO"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_cw32l010_v1",
+          "section": "13.9.6",
+          "printed_page": 267,
+          "pdf_page_1_based": 268,
+          "extract_sha256": "d021dc752e8d5cfb0bf10f2502925abaac5e15f1ace337fc1987590dba2d0da5",
+          "reset_value": 15736415,
+          "write_noop": 15736415,
+          "defined_clear_mask": 15736415,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "UIF",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1IF",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2IF",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3IF",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4IF",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TIF",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1OF",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2OF",
+              "bit_offset": 10,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3OF",
+              "bit_offset": 11,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4OF",
+              "bit_offset": 12,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "IDXF",
+              "bit_offset": 20,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRF",
+              "bit_offset": 21,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "IERRF",
+              "bit_offset": 22,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TERRF",
+              "bit_offset": 23,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "CNT",
+          "variant": "gtim_cw32l010_v1",
+          "section": "13.9.13",
+          "printed_page": 276,
+          "pdf_page_1_based": 277,
+          "extract_sha256": "cce75e35e0b5a3246cd301c45301a9600a2a36de30a0e9efa000c0d73dd84f06",
+          "fields": [
+            {
+              "name": "CNT",
+              "bit_offset": 0,
+              "bit_size": 16,
+              "access": "RW"
+            },
+            {
+              "name": "UIFCPY",
+              "bit_offset": 31,
+              "bit_size": 1,
+              "access": "RO"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32L012": {
+      "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+      "filename": "CW32L012_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "revision": "CN V1.4",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_cw32l012_v1",
+          "section": "14.10.6",
+          "printed_page": 208,
+          "pdf_page_1_based": 234,
+          "extract_sha256": "5c83df2aef71ac2e291f0c165117e2e3d5981fc03706e9e8af53baa0332c74bf",
+          "reset_value": 65,
+          "write_noop": 65,
+          "defined_clear_mask": 65,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "UIF",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TIF",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "BTIM",
+          "register": "CNT",
+          "variant": "btim_cw32l012_v1",
+          "section": "14.10.8",
+          "printed_page": 208,
+          "pdf_page_1_based": 234,
+          "extract_sha256": "5c83df2aef71ac2e291f0c165117e2e3d5981fc03706e9e8af53baa0332c74bf",
+          "fields": [
+            {
+              "name": "CNT",
+              "bit_offset": 0,
+              "bit_size": 16,
+              "access": "RW"
+            },
+            {
+              "name": "UIFCPY",
+              "bit_offset": 31,
+              "bit_size": 1,
+              "access": "RO"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_cw32l012_v1",
+          "section": "16.10.6",
+          "printed_page": 294,
+          "pdf_page_1_based": 320,
+          "extract_sha256": "54e54b781e48298edb24e73ea03cfb6776d911c5ec6cb380746d2d864c3879ee",
+          "reset_value": 15736415,
+          "write_noop": 15736415,
+          "defined_clear_mask": 15736415,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "UIF",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1IF",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2IF",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3IF",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4IF",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TIF",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1OF",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2OF",
+              "bit_offset": 10,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3OF",
+              "bit_offset": 11,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4OF",
+              "bit_offset": 12,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "IDXF",
+              "bit_offset": 20,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRF",
+              "bit_offset": 21,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "IERRF",
+              "bit_offset": 22,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TERRF",
+              "bit_offset": 23,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "CNT",
+          "variant": "gtim_cw32l012_v1",
+          "section": "16.10.13",
+          "printed_page": 303,
+          "pdf_page_1_based": 329,
+          "extract_sha256": "5e3cd3fb5118df0ff3c6672174265ec19d7b8ce5e3ba19f76caf5dddd5d0a187",
+          "fields": [
+            {
+              "name": "CNT",
+              "bit_offset": 0,
+              "bit_size": 16,
+              "access": "RW"
+            },
+            {
+              "name": "UIFCPY",
+              "bit_offset": 31,
+              "bit_size": 1,
+              "access": "RO"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32L031": {
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "filename": "CW32L031_UserManual_CN_V1.6.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+      "revision": "CN V1.6",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_cw32l031_v1",
+          "section": "13.7.8",
+          "printed_page": 207,
+          "pdf_page_1_based": 208,
+          "extract_sha256": "11e276c88bb3ad16815393281433872df2fad09306a63135996e85a3f5ee45d4",
+          "reset_value": 7,
+          "write_noop": 7,
+          "defined_clear_mask": 7,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TOP",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_cw32l031_v1",
+          "section": "14.7.14",
+          "printed_page": 241,
+          "pdf_page_1_based": 242,
+          "extract_sha256": "14d66018015ccc16d23b557698f76da2d9cf4521ed377e6d2b3227e18ec73456",
+          "reset_value": 1023,
+          "write_noop": 1023,
+          "defined_clear_mask": 639,
+          "reserved_preserve_ones": 384,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "UD",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3",
+              "bit_offset": 5,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRCHANGE",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32L052": {
+      "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+      "filename": "CW32L052_UserManual_CN_V1.5.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+      "revision": "CN V1.5",
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_cw32l052_v1",
+          "section": "13.7.8",
+          "printed_page": 220,
+          "pdf_page_1_based": 221,
+          "extract_sha256": "11f89f01e8da5631194b62ca55fe8dc00fa8fbd734459b3d33367d9dc72e45ad",
+          "reset_value": 7,
+          "write_noop": 7,
+          "defined_clear_mask": 7,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TOP",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_cw32l052_v1",
+          "section": "15.8.14",
+          "printed_page": 278,
+          "pdf_page_1_based": 279,
+          "extract_sha256": "b4239ef752dea515ea31d01d0d175af52e53dbe4cb50b6ab969b9abe7506759b",
+          "reset_value": 1023,
+          "write_noop": 1023,
+          "defined_clear_mask": 639,
+          "reserved_preserve_ones": 384,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "UD",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3",
+              "bit_offset": 5,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRCHANGE",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32L083": {
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "filename": "CW32L083_UserManual_CN_V2.0.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+      "revision": "CN V2.0",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_cw32l031_v1",
+          "section": "13.7.8",
+          "printed_page": 232,
+          "pdf_page_1_based": 233,
+          "extract_sha256": "16a10f7484c507421c2153ba0ffb796a069ad2c67aa2add58c4535dbb279996b",
+          "reset_value": 7,
+          "write_noop": 7,
+          "defined_clear_mask": 7,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TOP",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_cw32l031_v1",
+          "section": "15.8.14",
+          "printed_page": 290,
+          "pdf_page_1_based": 291,
+          "extract_sha256": "e5db503452d6057501b35ad17f5fc787e76dae341c28b7b60f3ad3e6c443dcb4",
+          "reset_value": 1023,
+          "write_noop": 1023,
+          "defined_clear_mask": 639,
+          "reserved_preserve_ones": 384,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "UD",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3",
+              "bit_offset": 5,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRCHANGE",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32R031": {
+      "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+      "filename": "CW32R031_UserManual_CN_V1.3.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+      "revision": "CN V1.3",
+      "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_cw32l031_v1",
+          "section": "13.7.8",
+          "printed_page": 209,
+          "pdf_page_1_based": 210,
+          "extract_sha256": "74312672988c7d7f20c57c9fd8509db3750984d53916c30ee5395b41ed3e28f5",
+          "reset_value": 7,
+          "write_noop": 7,
+          "defined_clear_mask": 7,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TOP",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_cw32l031_v1",
+          "section": "14.7.14",
+          "printed_page": 243,
+          "pdf_page_1_based": 244,
+          "extract_sha256": "1fb9035dcd760628665fe82c1f2617869ff91561e483071ad9018e360e770439",
+          "reset_value": 1023,
+          "write_noop": 1023,
+          "defined_clear_mask": 639,
+          "reserved_preserve_ones": 384,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "UD",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3",
+              "bit_offset": 5,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRCHANGE",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        }
+      ]
+    },
+    "CW32W031": {
+      "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+      "filename": "CW32W031_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+      "revision": "CN V1.4",
+      "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "sections": [
+        {
+          "block": "BTIM",
+          "register": "ICR",
+          "variant": "btim_cw32l031_v1",
+          "section": "13.7.8",
+          "printed_page": 209,
+          "pdf_page_1_based": 210,
+          "extract_sha256": "707f388340ae0d3c2d665ba17ae50bca27b0a87e3c653f64ae6bb9b65cbb8317",
+          "reset_value": 7,
+          "write_noop": 7,
+          "defined_clear_mask": 7,
+          "reserved_preserve_ones": 0,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TOP",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        },
+        {
+          "block": "GTIM",
+          "register": "ICR",
+          "variant": "gtim_cw32l031_v1",
+          "section": "14.7.14",
+          "printed_page": 243,
+          "pdf_page_1_based": 244,
+          "extract_sha256": "9484293bb42b9bd0efbad31791f5cddbebf517ccb3b55cd0ad75118187caf848",
+          "reset_value": 1023,
+          "write_noop": 1023,
+          "defined_clear_mask": 639,
+          "reserved_preserve_ones": 384,
+          "fields": [
+            {
+              "name": "OV",
+              "bit_offset": 0,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "TI",
+              "bit_offset": 1,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "UD",
+              "bit_offset": 2,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC1",
+              "bit_offset": 3,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC2",
+              "bit_offset": 4,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC3",
+              "bit_offset": 5,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "CC4",
+              "bit_offset": 6,
+              "bit_size": 1,
+              "access": "R1W0"
+            },
+            {
+              "name": "DIRCHANGE",
+              "bit_offset": 9,
+              "bit_size": 1,
+              "access": "R1W0"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "registers": {
+    "btim_cw32l010_v1": {
+      "families": [
+        "CW32L010",
+        "CW32L011"
+      ],
+      "read_only_fields": [
+        {
+          "block": "BTIM",
+          "register": "CNT",
+          "fieldset": "CNT",
+          "field": "UIFCPY",
+          "bit_offset": 31,
+          "bit_size": 1
+        }
+      ],
+      "icr": {
+        "block": "BTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 65,
+        "write_noop": 65,
+        "zero_to_clear_fields": [
+          "UIF",
+          "TIF"
+        ]
+      },
+      "defined_clear_mask": 65,
+      "reserved_preserve_ones": 0
+    },
+    "gtim_cw32l010_v1": {
+      "families": [
+        "CW32L010",
+        "CW32L011"
+      ],
+      "read_only_fields": [
+        {
+          "block": "GTIM",
+          "register": "CNT",
+          "fieldset": "CNT",
+          "field": "UIFCPY",
+          "bit_offset": 31,
+          "bit_size": 1
+        }
+      ],
+      "icr": {
+        "block": "GTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 15736415,
+        "write_noop": 15736415,
+        "zero_to_clear_fields": [
+          "UIF",
+          "CC1IF",
+          "CC2IF",
+          "CC3IF",
+          "CC4IF",
+          "TIF",
+          "CC1OF",
+          "CC2OF",
+          "CC3OF",
+          "CC4OF",
+          "IDXF",
+          "DIRF",
+          "IERRF",
+          "TERRF"
+        ]
+      },
+      "defined_clear_mask": 15736415,
+      "reserved_preserve_ones": 0
+    },
+    "btim_cw32l012_v1": {
+      "families": [
+        "CW32L012"
+      ],
+      "read_only_fields": [
+        {
+          "block": "BTIM",
+          "register": "CNT",
+          "fieldset": "CNT",
+          "field": "UIFCPY",
+          "bit_offset": 31,
+          "bit_size": 1
+        }
+      ],
+      "icr": {
+        "block": "BTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 65,
+        "write_noop": 65,
+        "zero_to_clear_fields": [
+          "UIF",
+          "TIF"
+        ]
+      },
+      "defined_clear_mask": 65,
+      "reserved_preserve_ones": 0
+    },
+    "gtim_cw32l012_v1": {
+      "families": [
+        "CW32L012"
+      ],
+      "read_only_fields": [
+        {
+          "block": "GTIM",
+          "register": "CNT",
+          "fieldset": "CNT",
+          "field": "UIFCPY",
+          "bit_offset": 31,
+          "bit_size": 1
+        }
+      ],
+      "icr": {
+        "block": "GTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 15736415,
+        "write_noop": 15736415,
+        "zero_to_clear_fields": [
+          "UIF",
+          "CC1IF",
+          "CC2IF",
+          "CC3IF",
+          "CC4IF",
+          "TIF",
+          "CC1OF",
+          "CC2OF",
+          "CC3OF",
+          "CC4OF",
+          "IDXF",
+          "DIRF",
+          "IERRF",
+          "TERRF"
+        ]
+      },
+      "defined_clear_mask": 15736415,
+      "reserved_preserve_ones": 0
+    },
+    "btim_cw32f002_v1": {
+      "families": [
+        "CW32F002",
+        "CW32F003"
+      ],
+      "icr": {
+        "block": "BTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 7,
+        "write_noop": 7,
+        "zero_to_clear_fields": [
+          "OV",
+          "TI",
+          "TOP"
+        ]
+      },
+      "defined_clear_mask": 7,
+      "reserved_preserve_ones": 0
+    },
+    "btim_cw32l031_v1": {
+      "families": [
+        "CW32L031",
+        "CW32L083",
+        "CW32R031",
+        "CW32W031"
+      ],
+      "icr": {
+        "block": "BTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 7,
+        "write_noop": 7,
+        "zero_to_clear_fields": [
+          "OV",
+          "TI",
+          "TOP"
+        ]
+      },
+      "defined_clear_mask": 7,
+      "reserved_preserve_ones": 0
+    },
+    "btim_cw32l052_v1": {
+      "families": [
+        "CW32L052"
+      ],
+      "icr": {
+        "block": "BTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 7,
+        "write_noop": 7,
+        "zero_to_clear_fields": [
+          "OV",
+          "TI",
+          "TOP"
+        ]
+      },
+      "defined_clear_mask": 7,
+      "reserved_preserve_ones": 0
+    },
+    "btim_v1": {
+      "families": [
+        "CW32A030",
+        "CW32F020",
+        "CW32F030"
+      ],
+      "icr": {
+        "block": "BTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 7,
+        "write_noop": 7,
+        "zero_to_clear_fields": [
+          "OV",
+          "TI",
+          "TOP"
+        ]
+      },
+      "defined_clear_mask": 7,
+      "reserved_preserve_ones": 0
+    },
+    "gtim_cw32f002_v1": {
+      "families": [
+        "CW32F002",
+        "CW32F003"
+      ],
+      "icr": {
+        "block": "GTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 1023,
+        "write_noop": 1023,
+        "zero_to_clear_fields": [
+          "OV",
+          "TI",
+          "UD",
+          "CC1",
+          "CC2",
+          "CC3",
+          "CC4",
+          "DIRCHANGE"
+        ]
+      },
+      "defined_clear_mask": 639,
+      "reserved_preserve_ones": 384
+    },
+    "gtim_cw32l031_v1": {
+      "families": [
+        "CW32L031",
+        "CW32L083",
+        "CW32R031",
+        "CW32W031"
+      ],
+      "icr": {
+        "block": "GTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 1023,
+        "write_noop": 1023,
+        "zero_to_clear_fields": [
+          "OV",
+          "TI",
+          "UD",
+          "CC1",
+          "CC2",
+          "CC3",
+          "CC4",
+          "DIRCHANGE"
+        ]
+      },
+      "defined_clear_mask": 639,
+      "reserved_preserve_ones": 384
+    },
+    "gtim_cw32l052_v1": {
+      "families": [
+        "CW32L052"
+      ],
+      "icr": {
+        "block": "GTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 1023,
+        "write_noop": 1023,
+        "zero_to_clear_fields": [
+          "OV",
+          "TI",
+          "UD",
+          "CC1",
+          "CC2",
+          "CC3",
+          "CC4",
+          "DIRCHANGE"
+        ]
+      },
+      "defined_clear_mask": 639,
+      "reserved_preserve_ones": 384
+    },
+    "gtim_v1": {
+      "families": [
+        "CW32A030",
+        "CW32F020",
+        "CW32F030"
+      ],
+      "icr": {
+        "block": "GTIM",
+        "register": "ICR",
+        "fieldset": "ICR",
+        "reset_value": 1023,
+        "write_noop": 1023,
+        "zero_to_clear_fields": [
+          "OV",
+          "TI",
+          "UD",
+          "CC1",
+          "CC2",
+          "CC3",
+          "CC4",
+          "DIRCHANGE"
+        ]
+      },
+      "defined_clear_mask": 639,
+      "reserved_preserve_ones": 384
+    }
+  },
+  "preservation": {
+    "canonical_reuse_ledger_sha256": "70a9bd20b12e7ce4a2b202cbc55c3b2723a73562e10458d53ea9e3c61ca39c1b",
+    "upstream_rewrite_provenance_sha256": "a4a78b9127b4ef726ee43c3f79c555e59738731301110cd8eb8dff8147f9357d",
+    "policy": "No authored register YAML, normalized IR, canonical mapping, source-version mapping, EGR access, existing source pin or independent rewrite provenance changes. Canonical reuse remains exact whole-IR equality; overlays are separately source-checked for every consumer family.",
+    "canonical_registers": {
+      "btim_cw32l010_v1": {
+        "yaml_sha256": "28ad5fa2063cca1e10c98a6bfd28d53237f2a75aac902c5e68d8f16301648628",
+        "canonical_ir_sha256": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+        "source_versions": [
+          "btim_cw32l010_v1.yaml",
+          "btim_cw32l011_v1.yaml"
+        ]
+      },
+      "gtim_cw32l010_v1": {
+        "yaml_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+        "canonical_ir_sha256": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+        "source_versions": [
+          "gtim_cw32l010_v1.yaml",
+          "gtim_cw32l011_v1.yaml"
+        ]
+      },
+      "btim_cw32l012_v1": {
+        "yaml_sha256": "ac555d6c4fbe8aefc0c29dc7b6965411032135fbf8c64572317497de22cdb385",
+        "canonical_ir_sha256": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+        "source_versions": [
+          "btim_cw32l012_v1.yaml"
+        ]
+      },
+      "gtim_cw32l012_v1": {
+        "yaml_sha256": "0d3f18470945cdb11378313b8fec18426b06af213e0b18dbfc62a5bdcb911069",
+        "canonical_ir_sha256": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+        "source_versions": [
+          "gtim_cw32l012_v1.yaml"
+        ]
+      },
+      "btim_cw32f002_v1": {
+        "yaml_sha256": "a7b7fbffbcd92f516d282eefcf84e69e2409b448920d75768e06bc0c13336baa",
+        "canonical_ir_sha256": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+        "source_versions": [
+          "btim_cw32f002_v1.yaml",
+          "btim_cw32f003_v1.yaml"
+        ]
+      },
+      "btim_cw32l031_v1": {
+        "yaml_sha256": "48812e20451265875f00f2e749a88e8e269b832dbdc4a3f9f99892a7f2cbf7cb",
+        "canonical_ir_sha256": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+        "source_versions": [
+          "btim_cw32l031_v1.yaml",
+          "btim_cw32l083_v1.yaml",
+          "btim_cw32r031_v1.yaml",
+          "btim_cw32w031_v1.yaml"
+        ]
+      },
+      "btim_cw32l052_v1": {
+        "yaml_sha256": "29dc09c9bfd47a4b86d044b98753a956a3fad9c76b4cdf021a84e40f2f8ec19c",
+        "canonical_ir_sha256": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+        "source_versions": [
+          "btim_cw32l052_v1.yaml"
+        ]
+      },
+      "btim_v1": {
+        "yaml_sha256": "984aed0391d3bf6f816dcb2991c4f0fb038abb791fab4ecd33d172f4fc2297f3",
+        "canonical_ir_sha256": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+        "source_versions": [
+          "btim_cw32f020_v1.yaml",
+          "btim_v1.yaml"
+        ]
+      },
+      "gtim_cw32f002_v1": {
+        "yaml_sha256": "06c67dd71b5f37c4f763c607b1e768719b5c396e1e458a6b42259ef68f485327",
+        "canonical_ir_sha256": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+        "source_versions": [
+          "gtim_cw32f002_v1.yaml",
+          "gtim_cw32f003_v1.yaml"
+        ]
+      },
+      "gtim_cw32l031_v1": {
+        "yaml_sha256": "6208e675c426debc1acfffb9866855dc5c380d80eaf875691703f5f48cb7995e",
+        "canonical_ir_sha256": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+        "source_versions": [
+          "gtim_cw32l031_v1.yaml",
+          "gtim_cw32l083_v1.yaml",
+          "gtim_cw32r031_v1.yaml",
+          "gtim_cw32w031_v1.yaml"
+        ]
+      },
+      "gtim_cw32l052_v1": {
+        "yaml_sha256": "269d4da9ca989243d9132348c5e5a4efd0ef44894bdfa11b9c8f6148414122fb",
+        "canonical_ir_sha256": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+        "source_versions": [
+          "gtim_cw32l052_v1.yaml"
+        ]
+      },
+      "gtim_v1": {
+        "yaml_sha256": "739c03dad1d5334b46d5077c9cfb356bbbabc8aa0e98501c69e2c94c68017b53",
+        "canonical_ir_sha256": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+        "source_versions": [
+          "gtim_cw32f020_v1.yaml",
+          "gtim_v1.yaml"
+        ]
+      }
+    },
+    "unrelated_overlay_records": {
+      "field-access.json": "9d43a3649ef84a0a1fd06473e5b406f4f49daaf88649a641ab7288379f5f2304",
+      "register-writes.json": "e7911e0cdcfb3b6719a81c07985d2f2691a5938d625611762ee0fd9d0953f600"
+    }
+  },
+  "dependency_provenance": {
+    "source": "sources/evidence-sources.json#/upstream/unitrait",
+    "reason": "The optional pinned Embassy time stack adds unitrait and unitrait-macros 2.0.0 at bb96601b3d293fa27d1ca2891f6ea148e534e433. The canonical upstream ledger now pins this new dependency; all preexisting source pins and rewrite history remain unchanged.",
+    "license_evidence": "Both package manifests declare MIT OR Apache-2.0; the pinned tree contains no standalone LICENSE/COPYING file. The ledger records this distinction and inspected content hashes."
+  },
+  "integration_baseline_history": [
+    {
+      "previous_stage17_preservation": {
+        "canonical_reuse_ledger_sha256": "0cb5d1f9bd7027f7a42b15baa1bba4b2f6dcd28949cdcace81b71a73c8c5072f",
+        "upstream_rewrite_provenance_sha256": "0a2875bb06fe455de60d4d19c97be793d233c379c90afb09555fd49393b7325f",
+        "policy": "No authored register YAML, normalized IR, canonical mapping, source-version mapping, EGR access, existing source pin or independent rewrite provenance changes. Canonical reuse remains exact whole-IR equality; overlays are separately source-checked for every consumer family.",
+        "canonical_registers": {
+          "btim_cw32l010_v1": {
+            "yaml_sha256": "28ad5fa2063cca1e10c98a6bfd28d53237f2a75aac902c5e68d8f16301648628",
+            "canonical_ir_sha256": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+            "source_versions": [
+              "btim_cw32l010_v1.yaml",
+              "btim_cw32l011_v1.yaml"
+            ]
+          },
+          "gtim_cw32l010_v1": {
+            "yaml_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+            "canonical_ir_sha256": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+            "source_versions": [
+              "gtim_cw32l010_v1.yaml",
+              "gtim_cw32l011_v1.yaml"
+            ]
+          },
+          "btim_cw32l012_v1": {
+            "yaml_sha256": "ac555d6c4fbe8aefc0c29dc7b6965411032135fbf8c64572317497de22cdb385",
+            "canonical_ir_sha256": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+            "source_versions": [
+              "btim_cw32l012_v1.yaml"
+            ]
+          },
+          "gtim_cw32l012_v1": {
+            "yaml_sha256": "0d3f18470945cdb11378313b8fec18426b06af213e0b18dbfc62a5bdcb911069",
+            "canonical_ir_sha256": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+            "source_versions": [
+              "gtim_cw32l012_v1.yaml"
+            ]
+          },
+          "btim_cw32f002_v1": {
+            "yaml_sha256": "a7b7fbffbcd92f516d282eefcf84e69e2409b448920d75768e06bc0c13336baa",
+            "canonical_ir_sha256": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+            "source_versions": [
+              "btim_cw32f002_v1.yaml",
+              "btim_cw32f003_v1.yaml"
+            ]
+          },
+          "btim_cw32l031_v1": {
+            "yaml_sha256": "48812e20451265875f00f2e749a88e8e269b832dbdc4a3f9f99892a7f2cbf7cb",
+            "canonical_ir_sha256": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+            "source_versions": [
+              "btim_cw32l031_v1.yaml",
+              "btim_cw32l083_v1.yaml",
+              "btim_cw32r031_v1.yaml",
+              "btim_cw32w031_v1.yaml"
+            ]
+          },
+          "btim_cw32l052_v1": {
+            "yaml_sha256": "29dc09c9bfd47a4b86d044b98753a956a3fad9c76b4cdf021a84e40f2f8ec19c",
+            "canonical_ir_sha256": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+            "source_versions": [
+              "btim_cw32l052_v1.yaml"
+            ]
+          },
+          "btim_v1": {
+            "yaml_sha256": "984aed0391d3bf6f816dcb2991c4f0fb038abb791fab4ecd33d172f4fc2297f3",
+            "canonical_ir_sha256": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+            "source_versions": [
+              "btim_cw32f020_v1.yaml",
+              "btim_v1.yaml"
+            ]
+          },
+          "gtim_cw32f002_v1": {
+            "yaml_sha256": "06c67dd71b5f37c4f763c607b1e768719b5c396e1e458a6b42259ef68f485327",
+            "canonical_ir_sha256": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+            "source_versions": [
+              "gtim_cw32f002_v1.yaml",
+              "gtim_cw32f003_v1.yaml"
+            ]
+          },
+          "gtim_cw32l031_v1": {
+            "yaml_sha256": "6208e675c426debc1acfffb9866855dc5c380d80eaf875691703f5f48cb7995e",
+            "canonical_ir_sha256": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+            "source_versions": [
+              "gtim_cw32l031_v1.yaml",
+              "gtim_cw32l083_v1.yaml",
+              "gtim_cw32r031_v1.yaml",
+              "gtim_cw32w031_v1.yaml"
+            ]
+          },
+          "gtim_cw32l052_v1": {
+            "yaml_sha256": "269d4da9ca989243d9132348c5e5a4efd0ef44894bdfa11b9c8f6148414122fb",
+            "canonical_ir_sha256": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+            "source_versions": [
+              "gtim_cw32l052_v1.yaml"
+            ]
+          },
+          "gtim_v1": {
+            "yaml_sha256": "739c03dad1d5334b46d5077c9cfb356bbbabc8aa0e98501c69e2c94c68017b53",
+            "canonical_ir_sha256": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+            "source_versions": [
+              "gtim_cw32f020_v1.yaml",
+              "gtim_v1.yaml"
+            ]
+          }
+        },
+        "unrelated_overlay_records": {
+          "field-access.json": "9d43a3649ef84a0a1fd06473e5b406f4f49daaf88649a641ab7288379f5f2304",
+          "register-writes.json": "c84dd5da20a5e5e88aabb572dcb45327ed31bce4e1b3debcbbe934d3381e779a"
+        }
+      },
+      "current_stage18_plus_trigger_preservation": {
+        "canonical_reuse_ledger_sha256": "9716590ce7326b3e111ce8ba307d797bd20f23ee0d2cf036f10a14291f216364",
+        "upstream_rewrite_provenance_sha256": "d1f483ebc34d2fdc4d47fa6d2483780d40ef4f879beb7c51d95389f4902812c1",
+        "policy": "No authored register YAML, normalized IR, canonical mapping, source-version mapping, EGR access, existing source pin or independent rewrite provenance changes. Canonical reuse remains exact whole-IR equality; overlays are separately source-checked for every consumer family.",
+        "canonical_registers": {
+          "btim_cw32l010_v1": {
+            "yaml_sha256": "28ad5fa2063cca1e10c98a6bfd28d53237f2a75aac902c5e68d8f16301648628",
+            "canonical_ir_sha256": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+            "source_versions": [
+              "btim_cw32l010_v1.yaml",
+              "btim_cw32l011_v1.yaml"
+            ]
+          },
+          "gtim_cw32l010_v1": {
+            "yaml_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+            "canonical_ir_sha256": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+            "source_versions": [
+              "gtim_cw32l010_v1.yaml",
+              "gtim_cw32l011_v1.yaml"
+            ]
+          },
+          "btim_cw32l012_v1": {
+            "yaml_sha256": "ac555d6c4fbe8aefc0c29dc7b6965411032135fbf8c64572317497de22cdb385",
+            "canonical_ir_sha256": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+            "source_versions": [
+              "btim_cw32l012_v1.yaml"
+            ]
+          },
+          "gtim_cw32l012_v1": {
+            "yaml_sha256": "0d3f18470945cdb11378313b8fec18426b06af213e0b18dbfc62a5bdcb911069",
+            "canonical_ir_sha256": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+            "source_versions": [
+              "gtim_cw32l012_v1.yaml"
+            ]
+          },
+          "btim_cw32f002_v1": {
+            "yaml_sha256": "a7b7fbffbcd92f516d282eefcf84e69e2409b448920d75768e06bc0c13336baa",
+            "canonical_ir_sha256": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+            "source_versions": [
+              "btim_cw32f002_v1.yaml",
+              "btim_cw32f003_v1.yaml"
+            ]
+          },
+          "btim_cw32l031_v1": {
+            "yaml_sha256": "48812e20451265875f00f2e749a88e8e269b832dbdc4a3f9f99892a7f2cbf7cb",
+            "canonical_ir_sha256": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+            "source_versions": [
+              "btim_cw32l031_v1.yaml",
+              "btim_cw32l083_v1.yaml",
+              "btim_cw32r031_v1.yaml",
+              "btim_cw32w031_v1.yaml"
+            ]
+          },
+          "btim_cw32l052_v1": {
+            "yaml_sha256": "29dc09c9bfd47a4b86d044b98753a956a3fad9c76b4cdf021a84e40f2f8ec19c",
+            "canonical_ir_sha256": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+            "source_versions": [
+              "btim_cw32l052_v1.yaml"
+            ]
+          },
+          "btim_v1": {
+            "yaml_sha256": "984aed0391d3bf6f816dcb2991c4f0fb038abb791fab4ecd33d172f4fc2297f3",
+            "canonical_ir_sha256": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+            "source_versions": [
+              "btim_cw32f020_v1.yaml",
+              "btim_v1.yaml"
+            ]
+          },
+          "gtim_cw32f002_v1": {
+            "yaml_sha256": "06c67dd71b5f37c4f763c607b1e768719b5c396e1e458a6b42259ef68f485327",
+            "canonical_ir_sha256": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+            "source_versions": [
+              "gtim_cw32f002_v1.yaml",
+              "gtim_cw32f003_v1.yaml"
+            ]
+          },
+          "gtim_cw32l031_v1": {
+            "yaml_sha256": "6208e675c426debc1acfffb9866855dc5c380d80eaf875691703f5f48cb7995e",
+            "canonical_ir_sha256": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+            "source_versions": [
+              "gtim_cw32l031_v1.yaml",
+              "gtim_cw32l083_v1.yaml",
+              "gtim_cw32r031_v1.yaml",
+              "gtim_cw32w031_v1.yaml"
+            ]
+          },
+          "gtim_cw32l052_v1": {
+            "yaml_sha256": "269d4da9ca989243d9132348c5e5a4efd0ef44894bdfa11b9c8f6148414122fb",
+            "canonical_ir_sha256": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+            "source_versions": [
+              "gtim_cw32l052_v1.yaml"
+            ]
+          },
+          "gtim_v1": {
+            "yaml_sha256": "739c03dad1d5334b46d5077c9cfb356bbbabc8aa0e98501c69e2c94c68017b53",
+            "canonical_ir_sha256": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+            "source_versions": [
+              "gtim_cw32f020_v1.yaml",
+              "gtim_v1.yaml"
+            ]
+          }
+        },
+        "unrelated_overlay_records": {
+          "field-access.json": "9d43a3649ef84a0a1fd06473e5b406f4f49daaf88649a641ab7288379f5f2304",
+          "register-writes.json": "c84dd5da20a5e5e88aabb572dcb45327ed31bce4e1b3debcbbe934d3381e779a"
+        }
+      },
+      "reason": "Only time-driver additions are reversed against the current accepted FLASH/RTC/trigger baseline. Earlier reviewed schema identities and FLASH MODE metadata remain preserved.",
+      "stage18_archive_sha256": "9a5b33bbfc920033b8989f9ccba97a45a442a1b8e13bdf622a988b0bd151ec7c",
+      "trigger_manifest_sha256": "02c6f8d13af4b1ace5c2b649f3c8d463094acee877696303ffa5eef29b7c13f0"
+    },
+    {
+      "stage": "Stage21",
+      "previous_preservation": {
+        "canonical_reuse_ledger_sha256": "9716590ce7326b3e111ce8ba307d797bd20f23ee0d2cf036f10a14291f216364",
+        "upstream_rewrite_provenance_sha256": "d1f483ebc34d2fdc4d47fa6d2483780d40ef4f879beb7c51d95389f4902812c1",
+        "policy": "No authored register YAML, normalized IR, canonical mapping, source-version mapping, EGR access, existing source pin or independent rewrite provenance changes. Canonical reuse remains exact whole-IR equality; overlays are separately source-checked for every consumer family.",
+        "canonical_registers": {
+          "btim_cw32l010_v1": {
+            "yaml_sha256": "28ad5fa2063cca1e10c98a6bfd28d53237f2a75aac902c5e68d8f16301648628",
+            "canonical_ir_sha256": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+            "source_versions": [
+              "btim_cw32l010_v1.yaml",
+              "btim_cw32l011_v1.yaml"
+            ]
+          },
+          "gtim_cw32l010_v1": {
+            "yaml_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+            "canonical_ir_sha256": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+            "source_versions": [
+              "gtim_cw32l010_v1.yaml",
+              "gtim_cw32l011_v1.yaml"
+            ]
+          },
+          "btim_cw32l012_v1": {
+            "yaml_sha256": "ac555d6c4fbe8aefc0c29dc7b6965411032135fbf8c64572317497de22cdb385",
+            "canonical_ir_sha256": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+            "source_versions": [
+              "btim_cw32l012_v1.yaml"
+            ]
+          },
+          "gtim_cw32l012_v1": {
+            "yaml_sha256": "0d3f18470945cdb11378313b8fec18426b06af213e0b18dbfc62a5bdcb911069",
+            "canonical_ir_sha256": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+            "source_versions": [
+              "gtim_cw32l012_v1.yaml"
+            ]
+          },
+          "btim_cw32f002_v1": {
+            "yaml_sha256": "a7b7fbffbcd92f516d282eefcf84e69e2409b448920d75768e06bc0c13336baa",
+            "canonical_ir_sha256": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+            "source_versions": [
+              "btim_cw32f002_v1.yaml",
+              "btim_cw32f003_v1.yaml"
+            ]
+          },
+          "btim_cw32l031_v1": {
+            "yaml_sha256": "48812e20451265875f00f2e749a88e8e269b832dbdc4a3f9f99892a7f2cbf7cb",
+            "canonical_ir_sha256": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+            "source_versions": [
+              "btim_cw32l031_v1.yaml",
+              "btim_cw32l083_v1.yaml",
+              "btim_cw32r031_v1.yaml",
+              "btim_cw32w031_v1.yaml"
+            ]
+          },
+          "btim_cw32l052_v1": {
+            "yaml_sha256": "29dc09c9bfd47a4b86d044b98753a956a3fad9c76b4cdf021a84e40f2f8ec19c",
+            "canonical_ir_sha256": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+            "source_versions": [
+              "btim_cw32l052_v1.yaml"
+            ]
+          },
+          "btim_v1": {
+            "yaml_sha256": "984aed0391d3bf6f816dcb2991c4f0fb038abb791fab4ecd33d172f4fc2297f3",
+            "canonical_ir_sha256": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+            "source_versions": [
+              "btim_cw32f020_v1.yaml",
+              "btim_v1.yaml"
+            ]
+          },
+          "gtim_cw32f002_v1": {
+            "yaml_sha256": "06c67dd71b5f37c4f763c607b1e768719b5c396e1e458a6b42259ef68f485327",
+            "canonical_ir_sha256": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+            "source_versions": [
+              "gtim_cw32f002_v1.yaml",
+              "gtim_cw32f003_v1.yaml"
+            ]
+          },
+          "gtim_cw32l031_v1": {
+            "yaml_sha256": "6208e675c426debc1acfffb9866855dc5c380d80eaf875691703f5f48cb7995e",
+            "canonical_ir_sha256": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+            "source_versions": [
+              "gtim_cw32l031_v1.yaml",
+              "gtim_cw32l083_v1.yaml",
+              "gtim_cw32r031_v1.yaml",
+              "gtim_cw32w031_v1.yaml"
+            ]
+          },
+          "gtim_cw32l052_v1": {
+            "yaml_sha256": "269d4da9ca989243d9132348c5e5a4efd0ef44894bdfa11b9c8f6148414122fb",
+            "canonical_ir_sha256": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+            "source_versions": [
+              "gtim_cw32l052_v1.yaml"
+            ]
+          },
+          "gtim_v1": {
+            "yaml_sha256": "739c03dad1d5334b46d5077c9cfb356bbbabc8aa0e98501c69e2c94c68017b53",
+            "canonical_ir_sha256": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+            "source_versions": [
+              "gtim_cw32f020_v1.yaml",
+              "gtim_v1.yaml"
+            ]
+          }
+        },
+        "unrelated_overlay_records": {
+          "field-access.json": "9d43a3649ef84a0a1fd06473e5b406f4f49daaf88649a641ab7288379f5f2304",
+          "register-writes.json": "c84dd5da20a5e5e88aabb572dcb45327ed31bce4e1b3debcbbe934d3381e779a"
+        }
+      },
+      "current_preservation": {
+        "canonical_reuse_ledger_sha256": "9716590ce7326b3e111ce8ba307d797bd20f23ee0d2cf036f10a14291f216364",
+        "upstream_rewrite_provenance_sha256": "8d01c1f963d07fd0c7a57342ee8c2f48d89f6bea1be611469c8d966e386c1586",
+        "policy": "No authored register YAML, normalized IR, canonical mapping, source-version mapping, EGR access, existing source pin or independent rewrite provenance changes. Canonical reuse remains exact whole-IR equality; overlays are separately source-checked for every consumer family.",
+        "canonical_registers": {
+          "btim_cw32l010_v1": {
+            "yaml_sha256": "28ad5fa2063cca1e10c98a6bfd28d53237f2a75aac902c5e68d8f16301648628",
+            "canonical_ir_sha256": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+            "source_versions": [
+              "btim_cw32l010_v1.yaml",
+              "btim_cw32l011_v1.yaml"
+            ]
+          },
+          "gtim_cw32l010_v1": {
+            "yaml_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+            "canonical_ir_sha256": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+            "source_versions": [
+              "gtim_cw32l010_v1.yaml",
+              "gtim_cw32l011_v1.yaml"
+            ]
+          },
+          "btim_cw32l012_v1": {
+            "yaml_sha256": "ac555d6c4fbe8aefc0c29dc7b6965411032135fbf8c64572317497de22cdb385",
+            "canonical_ir_sha256": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+            "source_versions": [
+              "btim_cw32l012_v1.yaml"
+            ]
+          },
+          "gtim_cw32l012_v1": {
+            "yaml_sha256": "0d3f18470945cdb11378313b8fec18426b06af213e0b18dbfc62a5bdcb911069",
+            "canonical_ir_sha256": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+            "source_versions": [
+              "gtim_cw32l012_v1.yaml"
+            ]
+          },
+          "btim_cw32f002_v1": {
+            "yaml_sha256": "a7b7fbffbcd92f516d282eefcf84e69e2409b448920d75768e06bc0c13336baa",
+            "canonical_ir_sha256": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+            "source_versions": [
+              "btim_cw32f002_v1.yaml",
+              "btim_cw32f003_v1.yaml"
+            ]
+          },
+          "btim_cw32l031_v1": {
+            "yaml_sha256": "48812e20451265875f00f2e749a88e8e269b832dbdc4a3f9f99892a7f2cbf7cb",
+            "canonical_ir_sha256": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+            "source_versions": [
+              "btim_cw32l031_v1.yaml",
+              "btim_cw32l083_v1.yaml",
+              "btim_cw32r031_v1.yaml",
+              "btim_cw32w031_v1.yaml"
+            ]
+          },
+          "btim_cw32l052_v1": {
+            "yaml_sha256": "29dc09c9bfd47a4b86d044b98753a956a3fad9c76b4cdf021a84e40f2f8ec19c",
+            "canonical_ir_sha256": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+            "source_versions": [
+              "btim_cw32l052_v1.yaml"
+            ]
+          },
+          "btim_v1": {
+            "yaml_sha256": "984aed0391d3bf6f816dcb2991c4f0fb038abb791fab4ecd33d172f4fc2297f3",
+            "canonical_ir_sha256": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+            "source_versions": [
+              "btim_cw32f020_v1.yaml",
+              "btim_v1.yaml"
+            ]
+          },
+          "gtim_cw32f002_v1": {
+            "yaml_sha256": "06c67dd71b5f37c4f763c607b1e768719b5c396e1e458a6b42259ef68f485327",
+            "canonical_ir_sha256": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+            "source_versions": [
+              "gtim_cw32f002_v1.yaml",
+              "gtim_cw32f003_v1.yaml"
+            ]
+          },
+          "gtim_cw32l031_v1": {
+            "yaml_sha256": "6208e675c426debc1acfffb9866855dc5c380d80eaf875691703f5f48cb7995e",
+            "canonical_ir_sha256": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+            "source_versions": [
+              "gtim_cw32l031_v1.yaml",
+              "gtim_cw32l083_v1.yaml",
+              "gtim_cw32r031_v1.yaml",
+              "gtim_cw32w031_v1.yaml"
+            ]
+          },
+          "gtim_cw32l052_v1": {
+            "yaml_sha256": "269d4da9ca989243d9132348c5e5a4efd0ef44894bdfa11b9c8f6148414122fb",
+            "canonical_ir_sha256": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+            "source_versions": [
+              "gtim_cw32l052_v1.yaml"
+            ]
+          },
+          "gtim_v1": {
+            "yaml_sha256": "739c03dad1d5334b46d5077c9cfb356bbbabc8aa0e98501c69e2c94c68017b53",
+            "canonical_ir_sha256": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+            "source_versions": [
+              "gtim_cw32f020_v1.yaml",
+              "gtim_v1.yaml"
+            ]
+          }
+        },
+        "unrelated_overlay_records": {
+          "field-access.json": "9d43a3649ef84a0a1fd06473e5b406f4f49daaf88649a641ab7288379f5f2304",
+          "register-writes.json": "b132a1147a0571fcca72db4d40c262d9a4c8cee074d536b8c8b1c233128b5823"
+        }
+      },
+      "reason": "Accepted optional RTC alarm metadata schema and seven RTC ICR seeds; all original time-driver command and read-only policies unchanged.",
+      "review": "docs/stage21-schema-review.json"
+    },
+    {
+      "stage": "Stage22",
+      "previous_preservation": {
+        "canonical_reuse_ledger_sha256": "9716590ce7326b3e111ce8ba307d797bd20f23ee0d2cf036f10a14291f216364",
+        "upstream_rewrite_provenance_sha256": "8d01c1f963d07fd0c7a57342ee8c2f48d89f6bea1be611469c8d966e386c1586",
+        "policy": "No authored register YAML, normalized IR, canonical mapping, source-version mapping, EGR access, existing source pin or independent rewrite provenance changes. Canonical reuse remains exact whole-IR equality; overlays are separately source-checked for every consumer family.",
+        "canonical_registers": {
+          "btim_cw32l010_v1": {
+            "yaml_sha256": "28ad5fa2063cca1e10c98a6bfd28d53237f2a75aac902c5e68d8f16301648628",
+            "canonical_ir_sha256": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+            "source_versions": [
+              "btim_cw32l010_v1.yaml",
+              "btim_cw32l011_v1.yaml"
+            ]
+          },
+          "gtim_cw32l010_v1": {
+            "yaml_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+            "canonical_ir_sha256": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+            "source_versions": [
+              "gtim_cw32l010_v1.yaml",
+              "gtim_cw32l011_v1.yaml"
+            ]
+          },
+          "btim_cw32l012_v1": {
+            "yaml_sha256": "ac555d6c4fbe8aefc0c29dc7b6965411032135fbf8c64572317497de22cdb385",
+            "canonical_ir_sha256": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+            "source_versions": [
+              "btim_cw32l012_v1.yaml"
+            ]
+          },
+          "gtim_cw32l012_v1": {
+            "yaml_sha256": "0d3f18470945cdb11378313b8fec18426b06af213e0b18dbfc62a5bdcb911069",
+            "canonical_ir_sha256": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+            "source_versions": [
+              "gtim_cw32l012_v1.yaml"
+            ]
+          },
+          "btim_cw32f002_v1": {
+            "yaml_sha256": "a7b7fbffbcd92f516d282eefcf84e69e2409b448920d75768e06bc0c13336baa",
+            "canonical_ir_sha256": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+            "source_versions": [
+              "btim_cw32f002_v1.yaml",
+              "btim_cw32f003_v1.yaml"
+            ]
+          },
+          "btim_cw32l031_v1": {
+            "yaml_sha256": "48812e20451265875f00f2e749a88e8e269b832dbdc4a3f9f99892a7f2cbf7cb",
+            "canonical_ir_sha256": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+            "source_versions": [
+              "btim_cw32l031_v1.yaml",
+              "btim_cw32l083_v1.yaml",
+              "btim_cw32r031_v1.yaml",
+              "btim_cw32w031_v1.yaml"
+            ]
+          },
+          "btim_cw32l052_v1": {
+            "yaml_sha256": "29dc09c9bfd47a4b86d044b98753a956a3fad9c76b4cdf021a84e40f2f8ec19c",
+            "canonical_ir_sha256": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+            "source_versions": [
+              "btim_cw32l052_v1.yaml"
+            ]
+          },
+          "btim_v1": {
+            "yaml_sha256": "984aed0391d3bf6f816dcb2991c4f0fb038abb791fab4ecd33d172f4fc2297f3",
+            "canonical_ir_sha256": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+            "source_versions": [
+              "btim_cw32f020_v1.yaml",
+              "btim_v1.yaml"
+            ]
+          },
+          "gtim_cw32f002_v1": {
+            "yaml_sha256": "06c67dd71b5f37c4f763c607b1e768719b5c396e1e458a6b42259ef68f485327",
+            "canonical_ir_sha256": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+            "source_versions": [
+              "gtim_cw32f002_v1.yaml",
+              "gtim_cw32f003_v1.yaml"
+            ]
+          },
+          "gtim_cw32l031_v1": {
+            "yaml_sha256": "6208e675c426debc1acfffb9866855dc5c380d80eaf875691703f5f48cb7995e",
+            "canonical_ir_sha256": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+            "source_versions": [
+              "gtim_cw32l031_v1.yaml",
+              "gtim_cw32l083_v1.yaml",
+              "gtim_cw32r031_v1.yaml",
+              "gtim_cw32w031_v1.yaml"
+            ]
+          },
+          "gtim_cw32l052_v1": {
+            "yaml_sha256": "269d4da9ca989243d9132348c5e5a4efd0ef44894bdfa11b9c8f6148414122fb",
+            "canonical_ir_sha256": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+            "source_versions": [
+              "gtim_cw32l052_v1.yaml"
+            ]
+          },
+          "gtim_v1": {
+            "yaml_sha256": "739c03dad1d5334b46d5077c9cfb356bbbabc8aa0e98501c69e2c94c68017b53",
+            "canonical_ir_sha256": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+            "source_versions": [
+              "gtim_cw32f020_v1.yaml",
+              "gtim_v1.yaml"
+            ]
+          }
+        },
+        "unrelated_overlay_records": {
+          "field-access.json": "9d43a3649ef84a0a1fd06473e5b406f4f49daaf88649a641ab7288379f5f2304",
+          "register-writes.json": "b132a1147a0571fcca72db4d40c262d9a4c8cee074d536b8c8b1c233128b5823"
+        }
+      },
+      "current_preservation": {
+        "canonical_reuse_ledger_sha256": "9716590ce7326b3e111ce8ba307d797bd20f23ee0d2cf036f10a14291f216364",
+        "upstream_rewrite_provenance_sha256": "53d246dd8e0586b2e4712d2cb1f0cb8164be03a11b3bf30a3c98e9b067527f1b",
+        "policy": "No authored register YAML, normalized IR, canonical mapping, source-version mapping, EGR access, existing source pin or independent rewrite provenance changes. Canonical reuse remains exact whole-IR equality; overlays are separately source-checked for every consumer family.",
+        "canonical_registers": {
+          "btim_cw32l010_v1": {
+            "yaml_sha256": "28ad5fa2063cca1e10c98a6bfd28d53237f2a75aac902c5e68d8f16301648628",
+            "canonical_ir_sha256": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+            "source_versions": [
+              "btim_cw32l010_v1.yaml",
+              "btim_cw32l011_v1.yaml"
+            ]
+          },
+          "gtim_cw32l010_v1": {
+            "yaml_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+            "canonical_ir_sha256": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+            "source_versions": [
+              "gtim_cw32l010_v1.yaml",
+              "gtim_cw32l011_v1.yaml"
+            ]
+          },
+          "btim_cw32l012_v1": {
+            "yaml_sha256": "ac555d6c4fbe8aefc0c29dc7b6965411032135fbf8c64572317497de22cdb385",
+            "canonical_ir_sha256": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+            "source_versions": [
+              "btim_cw32l012_v1.yaml"
+            ]
+          },
+          "gtim_cw32l012_v1": {
+            "yaml_sha256": "0d3f18470945cdb11378313b8fec18426b06af213e0b18dbfc62a5bdcb911069",
+            "canonical_ir_sha256": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+            "source_versions": [
+              "gtim_cw32l012_v1.yaml"
+            ]
+          },
+          "btim_cw32f002_v1": {
+            "yaml_sha256": "a7b7fbffbcd92f516d282eefcf84e69e2409b448920d75768e06bc0c13336baa",
+            "canonical_ir_sha256": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+            "source_versions": [
+              "btim_cw32f002_v1.yaml",
+              "btim_cw32f003_v1.yaml"
+            ]
+          },
+          "btim_cw32l031_v1": {
+            "yaml_sha256": "48812e20451265875f00f2e749a88e8e269b832dbdc4a3f9f99892a7f2cbf7cb",
+            "canonical_ir_sha256": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+            "source_versions": [
+              "btim_cw32l031_v1.yaml",
+              "btim_cw32l083_v1.yaml",
+              "btim_cw32r031_v1.yaml",
+              "btim_cw32w031_v1.yaml"
+            ]
+          },
+          "btim_cw32l052_v1": {
+            "yaml_sha256": "29dc09c9bfd47a4b86d044b98753a956a3fad9c76b4cdf021a84e40f2f8ec19c",
+            "canonical_ir_sha256": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+            "source_versions": [
+              "btim_cw32l052_v1.yaml"
+            ]
+          },
+          "btim_v1": {
+            "yaml_sha256": "984aed0391d3bf6f816dcb2991c4f0fb038abb791fab4ecd33d172f4fc2297f3",
+            "canonical_ir_sha256": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+            "source_versions": [
+              "btim_cw32f020_v1.yaml",
+              "btim_v1.yaml"
+            ]
+          },
+          "gtim_cw32f002_v1": {
+            "yaml_sha256": "06c67dd71b5f37c4f763c607b1e768719b5c396e1e458a6b42259ef68f485327",
+            "canonical_ir_sha256": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+            "source_versions": [
+              "gtim_cw32f002_v1.yaml",
+              "gtim_cw32f003_v1.yaml"
+            ]
+          },
+          "gtim_cw32l031_v1": {
+            "yaml_sha256": "6208e675c426debc1acfffb9866855dc5c380d80eaf875691703f5f48cb7995e",
+            "canonical_ir_sha256": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+            "source_versions": [
+              "gtim_cw32l031_v1.yaml",
+              "gtim_cw32l083_v1.yaml",
+              "gtim_cw32r031_v1.yaml",
+              "gtim_cw32w031_v1.yaml"
+            ]
+          },
+          "gtim_cw32l052_v1": {
+            "yaml_sha256": "269d4da9ca989243d9132348c5e5a4efd0ef44894bdfa11b9c8f6148414122fb",
+            "canonical_ir_sha256": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+            "source_versions": [
+              "gtim_cw32l052_v1.yaml"
+            ]
+          },
+          "gtim_v1": {
+            "yaml_sha256": "739c03dad1d5334b46d5077c9cfb356bbbabc8aa0e98501c69e2c94c68017b53",
+            "canonical_ir_sha256": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+            "source_versions": [
+              "gtim_cw32f020_v1.yaml",
+              "gtim_v1.yaml"
+            ]
+          }
+        },
+        "unrelated_overlay_records": {
+          "field-access.json": "9d43a3649ef84a0a1fd06473e5b406f4f49daaf88649a641ab7288379f5f2304",
+          "register-writes.json": "b132a1147a0571fcca72db4d40c262d9a4c8cee074d536b8c8b1c233128b5823"
+        }
+      },
+      "reason": "Accepted additive classic-input/complementary metadata schema; time-driver fields/commands unchanged.",
+      "review": "docs/stage22-schema-review.json"
+    },
+    {
+      "previous_stage22_preservation": {
+        "canonical_reuse_ledger_sha256": "9716590ce7326b3e111ce8ba307d797bd20f23ee0d2cf036f10a14291f216364",
+        "upstream_rewrite_provenance_sha256": "53d246dd8e0586b2e4712d2cb1f0cb8164be03a11b3bf30a3c98e9b067527f1b",
+        "policy": "No authored register YAML, normalized IR, canonical mapping, source-version mapping, EGR access, existing source pin or independent rewrite provenance changes. Canonical reuse remains exact whole-IR equality; overlays are separately source-checked for every consumer family.",
+        "canonical_registers": {
+          "btim_cw32l010_v1": {
+            "yaml_sha256": "28ad5fa2063cca1e10c98a6bfd28d53237f2a75aac902c5e68d8f16301648628",
+            "canonical_ir_sha256": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+            "source_versions": [
+              "btim_cw32l010_v1.yaml",
+              "btim_cw32l011_v1.yaml"
+            ]
+          },
+          "gtim_cw32l010_v1": {
+            "yaml_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+            "canonical_ir_sha256": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+            "source_versions": [
+              "gtim_cw32l010_v1.yaml",
+              "gtim_cw32l011_v1.yaml"
+            ]
+          },
+          "btim_cw32l012_v1": {
+            "yaml_sha256": "ac555d6c4fbe8aefc0c29dc7b6965411032135fbf8c64572317497de22cdb385",
+            "canonical_ir_sha256": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+            "source_versions": [
+              "btim_cw32l012_v1.yaml"
+            ]
+          },
+          "gtim_cw32l012_v1": {
+            "yaml_sha256": "0d3f18470945cdb11378313b8fec18426b06af213e0b18dbfc62a5bdcb911069",
+            "canonical_ir_sha256": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+            "source_versions": [
+              "gtim_cw32l012_v1.yaml"
+            ]
+          },
+          "btim_cw32f002_v1": {
+            "yaml_sha256": "a7b7fbffbcd92f516d282eefcf84e69e2409b448920d75768e06bc0c13336baa",
+            "canonical_ir_sha256": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+            "source_versions": [
+              "btim_cw32f002_v1.yaml",
+              "btim_cw32f003_v1.yaml"
+            ]
+          },
+          "btim_cw32l031_v1": {
+            "yaml_sha256": "48812e20451265875f00f2e749a88e8e269b832dbdc4a3f9f99892a7f2cbf7cb",
+            "canonical_ir_sha256": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+            "source_versions": [
+              "btim_cw32l031_v1.yaml",
+              "btim_cw32l083_v1.yaml",
+              "btim_cw32r031_v1.yaml",
+              "btim_cw32w031_v1.yaml"
+            ]
+          },
+          "btim_cw32l052_v1": {
+            "yaml_sha256": "29dc09c9bfd47a4b86d044b98753a956a3fad9c76b4cdf021a84e40f2f8ec19c",
+            "canonical_ir_sha256": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+            "source_versions": [
+              "btim_cw32l052_v1.yaml"
+            ]
+          },
+          "btim_v1": {
+            "yaml_sha256": "984aed0391d3bf6f816dcb2991c4f0fb038abb791fab4ecd33d172f4fc2297f3",
+            "canonical_ir_sha256": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+            "source_versions": [
+              "btim_cw32f020_v1.yaml",
+              "btim_v1.yaml"
+            ]
+          },
+          "gtim_cw32f002_v1": {
+            "yaml_sha256": "06c67dd71b5f37c4f763c607b1e768719b5c396e1e458a6b42259ef68f485327",
+            "canonical_ir_sha256": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+            "source_versions": [
+              "gtim_cw32f002_v1.yaml",
+              "gtim_cw32f003_v1.yaml"
+            ]
+          },
+          "gtim_cw32l031_v1": {
+            "yaml_sha256": "6208e675c426debc1acfffb9866855dc5c380d80eaf875691703f5f48cb7995e",
+            "canonical_ir_sha256": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+            "source_versions": [
+              "gtim_cw32l031_v1.yaml",
+              "gtim_cw32l083_v1.yaml",
+              "gtim_cw32r031_v1.yaml",
+              "gtim_cw32w031_v1.yaml"
+            ]
+          },
+          "gtim_cw32l052_v1": {
+            "yaml_sha256": "269d4da9ca989243d9132348c5e5a4efd0ef44894bdfa11b9c8f6148414122fb",
+            "canonical_ir_sha256": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+            "source_versions": [
+              "gtim_cw32l052_v1.yaml"
+            ]
+          },
+          "gtim_v1": {
+            "yaml_sha256": "739c03dad1d5334b46d5077c9cfb356bbbabc8aa0e98501c69e2c94c68017b53",
+            "canonical_ir_sha256": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+            "source_versions": [
+              "gtim_cw32f020_v1.yaml",
+              "gtim_v1.yaml"
+            ]
+          }
+        },
+        "unrelated_overlay_records": {
+          "field-access.json": "9d43a3649ef84a0a1fd06473e5b406f4f49daaf88649a641ab7288379f5f2304",
+          "register-writes.json": "b132a1147a0571fcca72db4d40c262d9a4c8cee074d536b8c8b1c233128b5823"
+        }
+      },
+      "reason": "Stage23 reviewed ADC arrays/F002 reserved fields and additive metadata schema; every timer canonical field/command remains unchanged.",
+      "review": "docs/stage23-schema-review.json"
+    },
+    {
+      "previous_stage23_preservation": {
+        "canonical_reuse_ledger_sha256": "fe50fcaa8b4e3db4cc9e257e694ecea2ce4ca7e3f09f46e87effefca90d26ff5",
+        "upstream_rewrite_provenance_sha256": "bc468ed74ae48441ff4c0a812991addffc87b03c50696c46979e9391094dc312",
+        "policy": "No authored register YAML, normalized IR, canonical mapping, source-version mapping, EGR access, existing source pin or independent rewrite provenance changes. Canonical reuse remains exact whole-IR equality; overlays are separately source-checked for every consumer family.",
+        "canonical_registers": {
+          "btim_cw32l010_v1": {
+            "yaml_sha256": "28ad5fa2063cca1e10c98a6bfd28d53237f2a75aac902c5e68d8f16301648628",
+            "canonical_ir_sha256": "04a6870b5c85753f96b770c723071a2eaa42ee38710d1d9d7eaed02a290ef333",
+            "source_versions": [
+              "btim_cw32l010_v1.yaml",
+              "btim_cw32l011_v1.yaml"
+            ]
+          },
+          "gtim_cw32l010_v1": {
+            "yaml_sha256": "5591f85a0ace1d7bca7f4062ef0310a96a7465ba52df141845e7a9b0a92093bb",
+            "canonical_ir_sha256": "174fee9bd6ee8e6a776079d80ad9645c72e9614faa9355ea94798c095f4f8381",
+            "source_versions": [
+              "gtim_cw32l010_v1.yaml",
+              "gtim_cw32l011_v1.yaml"
+            ]
+          },
+          "btim_cw32l012_v1": {
+            "yaml_sha256": "ac555d6c4fbe8aefc0c29dc7b6965411032135fbf8c64572317497de22cdb385",
+            "canonical_ir_sha256": "718996f8e7011890574203bfe83a4c368d3f2fef35c33ae26b05da3d35c04c5d",
+            "source_versions": [
+              "btim_cw32l012_v1.yaml"
+            ]
+          },
+          "gtim_cw32l012_v1": {
+            "yaml_sha256": "0d3f18470945cdb11378313b8fec18426b06af213e0b18dbfc62a5bdcb911069",
+            "canonical_ir_sha256": "f837b7cb490767b4a211820d78d9ddb06fbe02494da178be6a306d8f260bd7bc",
+            "source_versions": [
+              "gtim_cw32l012_v1.yaml"
+            ]
+          },
+          "btim_cw32f002_v1": {
+            "yaml_sha256": "a7b7fbffbcd92f516d282eefcf84e69e2409b448920d75768e06bc0c13336baa",
+            "canonical_ir_sha256": "fdd91226db2a3058972780f7a462dab0653721bc98a3ef4440e794eca88faa57",
+            "source_versions": [
+              "btim_cw32f002_v1.yaml",
+              "btim_cw32f003_v1.yaml"
+            ]
+          },
+          "btim_cw32l031_v1": {
+            "yaml_sha256": "48812e20451265875f00f2e749a88e8e269b832dbdc4a3f9f99892a7f2cbf7cb",
+            "canonical_ir_sha256": "e72f8e66ce727383491a85718729f442c937ad8e05fdc5d7971417920d159145",
+            "source_versions": [
+              "btim_cw32l031_v1.yaml",
+              "btim_cw32l083_v1.yaml",
+              "btim_cw32r031_v1.yaml",
+              "btim_cw32w031_v1.yaml"
+            ]
+          },
+          "btim_cw32l052_v1": {
+            "yaml_sha256": "29dc09c9bfd47a4b86d044b98753a956a3fad9c76b4cdf021a84e40f2f8ec19c",
+            "canonical_ir_sha256": "8aaa283bfb23b43a47f0c6fbdd3b868f2bdc1f831fc318987f8a74110439f966",
+            "source_versions": [
+              "btim_cw32l052_v1.yaml"
+            ]
+          },
+          "btim_v1": {
+            "yaml_sha256": "984aed0391d3bf6f816dcb2991c4f0fb038abb791fab4ecd33d172f4fc2297f3",
+            "canonical_ir_sha256": "7da4dfad836bae063aa0b719c5d98c4f88313058a95f7d41e838664bf353bfbd",
+            "source_versions": [
+              "btim_cw32f020_v1.yaml",
+              "btim_v1.yaml"
+            ]
+          },
+          "gtim_cw32f002_v1": {
+            "yaml_sha256": "06c67dd71b5f37c4f763c607b1e768719b5c396e1e458a6b42259ef68f485327",
+            "canonical_ir_sha256": "32ce199c92ba9a039ff7a14a696fa8c5560aa3d31eb9fd91ce27bb1348fb2812",
+            "source_versions": [
+              "gtim_cw32f002_v1.yaml",
+              "gtim_cw32f003_v1.yaml"
+            ]
+          },
+          "gtim_cw32l031_v1": {
+            "yaml_sha256": "6208e675c426debc1acfffb9866855dc5c380d80eaf875691703f5f48cb7995e",
+            "canonical_ir_sha256": "d1f7883187864f06105832f1bea25b92ee05771b3f95df2250c376d3a4bc5a04",
+            "source_versions": [
+              "gtim_cw32l031_v1.yaml",
+              "gtim_cw32l083_v1.yaml",
+              "gtim_cw32r031_v1.yaml",
+              "gtim_cw32w031_v1.yaml"
+            ]
+          },
+          "gtim_cw32l052_v1": {
+            "yaml_sha256": "269d4da9ca989243d9132348c5e5a4efd0ef44894bdfa11b9c8f6148414122fb",
+            "canonical_ir_sha256": "7b8cefaa43cea6de8598e065adf6beef7dbf28c2a789d44527c59d1c06532a57",
+            "source_versions": [
+              "gtim_cw32l052_v1.yaml"
+            ]
+          },
+          "gtim_v1": {
+            "yaml_sha256": "739c03dad1d5334b46d5077c9cfb356bbbabc8aa0e98501c69e2c94c68017b53",
+            "canonical_ir_sha256": "86741724b2329e2f1e7a8619d3cd79bdc3ec637c3d65643ec115ccc250b4f76b",
+            "source_versions": [
+              "gtim_cw32f020_v1.yaml",
+              "gtim_v1.yaml"
+            ]
+          }
+        },
+        "unrelated_overlay_records": {
+          "field-access.json": "9d43a3649ef84a0a1fd06473e5b406f4f49daaf88649a641ab7288379f5f2304",
+          "register-writes.json": "b132a1147a0571fcca72db4d40c262d9a4c8cee074d536b8c8b1c233128b5823"
+        }
+      },
+      "reason": "Accepted all-family ADC scan arrays, L012 ICR no-op and additive schema; archived-predecessor exclusion record added. Timer register layouts and command words unchanged.",
+      "review": "docs/stage24-schema-review.json"
+    }
+  ]
+}

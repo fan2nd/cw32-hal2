@@ -1,0 +1,13 @@
+# Stage22: timer capture, quadrature and complementary PWM
+
+Classic GTIM variants now expose owned polling input capture and quadrature encoder operation across ten families. Together with the earlier buffered variants, qualified GTIM inputs cover all thirteen families. Classic encoders require ARR=0xffff; capture events remain coalesced and no overcapture FIFO, lossless history, IRQ or DMA interface is claimed. The authored catalog describes 129 classic instances across 44 selections and 1,225 package-qualified CAP routes.
+
+L010/L011/L012 buffered ATIM supports qualified complementary output pairs, constructor-only symmetric dead time, software BK1 and qualified external BK1 pins on L011/L012. Construction keeps pair outputs and MOE disabled. Automatic output restart remains disabled, and endpoint transitions leave MOE disabled until explicitly enabled. L010 external BK and CH4N are excluded by pad ownership qualification, not asserted absent in hardware. Classic ATIM, BK2, internal break routing, filter/locking modes, automatic restart, asymmetric or runtime dead-time changes remain unsupported. No hardware protection or glitch-free output guarantee is made.
+
+The combined source passed 121 ordinary ARM library builds and 103 real firmware links, including Embassy time coexistence and the L010 SOP16 ATIM capture case. The time driver's reserved timer stays unavailable to other timer APIs. Independent source and operational reviews covered both input and complementary implementations; the additive shared metadata was reviewed against the accepted Stage21 baseline.
+
+Data validation required three bounded maintenance corrections: new optional metadata in an existing synthetic fixture, a no-GTIM early exit for the classic-input generator on that synthetic device, and exact expected CAP/complementary route projections in older topology/PWM validators. PWM sets remain checked independently and every CAP counterpart must match its qualified route. No HAL runtime or generated PAC register behavior changed during these corrections.
+
+All verification is software/source-based. No HAL tests were restored, and no firmware was executed. RF remains deferred. ADC scan and metadata-fact cleanup are separately reviewed candidates for the next batch, not included here.
+
+All 54 PAC selections and 216 metadata checks passed. The PAC loop was interrupted after 19 selections; all frozen inputs were checked before resuming only the remaining 35. The complete source/data checks and deterministic regeneration had already passed. Historical failed checks and their bounded fixes remain recorded in the verification logs.

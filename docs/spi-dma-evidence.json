@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-09",
+  "scope": "Own source implementation and primary manual/SDK/PAC inspection; no hardware execution or measured performance. Separate external receipts identify final ordinary ARM builds and real firmware ELFs.",
+  "baseline_source_archive_sha256": "04a6b33ae439a4f4b16e23b53fb29fed1129bf7cdde5d49e13aa57a9bacc6a45",
+  "implementation_inputs": {
+    "embassy-cw32/src/spi.rs": {
+      "sha256": "b3aace2237cddcb7b2bcf123938c9bee9f2f8da314b21d5ad3fe0d24d38f9136",
+      "bytes": 52632
+    },
+    "embassy-cw32/src/dma.rs": {
+      "sha256": "a196e023be00a2b39fb1328eca612fc499421cf683a8fcf84faeb2280b19260d",
+      "bytes": 45665
+    },
+    "embassy-cw32/build.rs": {
+      "sha256": "24e1582af767404d53e0a9274541f30a1114fbb15ff6ae59cb2f6262d5af55c6",
+      "bytes": 117236
+    },
+    "cw32-data/registers/spi_v1.yaml": {
+      "sha256": "9ed6dcbe22649fb5edeba957e0c713f295ee94582199094d0ce883b75dbf407e",
+      "bytes": 4335
+    },
+    "docs/spi-dma.md": {
+      "sha256": "a17c70ca67f3f7bec024ad19805db9c596b2c62c0440708f07e8514ebc12172d",
+      "bytes": 9391
+    },
+    "examples/spi-dma/src/main.rs": {
+      "sha256": "60019f9c4f15fedbcc45f8a31486fae4acdd03cf8b3bcc838c9508b5853bd6dc",
+      "bytes": 2634
+    }
+  },
+  "primary_sources": [
+    {
+      "filename": "CW32x030_UserManual_CN_V2.5.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "locator": "§8.4–8.8 pp127–139; §19.3.8–19.8 pp375–393; paired master §19.6.1.3 pp381–382",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "bytes": 9989317
+    },
+    {
+      "filename": "CW32F030_StandardPeripheralLib_V2.2.zip",
+      "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+      "locator": "Libraries/src/cw32f030_spi.c:51–68,326–338; Examples/SPI/SPI_DMA/USER/src/main.c:237–263",
+      "sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+      "bytes": 8457933
+    }
+  ],
+  "generated_evidence": {
+    "cw32-metapac/src/peripherals/spi_v1.rs": {
+      "sha256": "334e5754135d95bd1db3da6306a68e9b27999fa0d4f6431bb9110b12170f111a",
+      "bytes": 27724
+    },
+    "cw32-data/data/chips/CW32F030C8T7.json": {
+      "sha256": "6170cef35862b0736d0d58c7964d92b669bbd7a42ab7c95a11dc98f1cdf02724",
+      "bytes": 101527
+    },
+    "cw32-data/data/chips/CW32A030C8T7.json": {
+      "sha256": "19d853559ba4ce078d41ee328aca148d9b0f0134ec54cd76a9eaf3f727ae2d48",
+      "bytes": 101323
+    }
+  },
+  "claims": {
+    "memory_safety": "Caller slices are CPU copies only; static staging and both channels are persistently reserved until two clean DMA terminals plus request closure, no SPI error, wire idle and retirement fences.",
+    "cancellation": "Keep original device selection and successfully flush before changing CS; no generic SpiDevice cancellation guarantee.",
+    "faults": "Permanent pair quarantine; no reset/flush/EN-clear memory-drain inference.",
+    "scope": "x030 full-duplex master, bytes, staged async SpiBus; no borrowed zero-copy or hardware validation."
+  },
+  "sdk_members": {
+    "Libraries/src/cw32f030_spi.c": {
+      "zip_member": "Libraries/src/cw32f030_spi.c",
+      "matches_retained_copy": true,
+      "sha256": "83295653367079fb0125604a1d31cd523b1ee16f71382f314a8d1ff4dd5fa936",
+      "bytes": 14351
+    },
+    "Examples/SPI/SPI_DMA/USER/src/main.c": {
+      "zip_member": "Examples/SPI/SPI_DMA/USER/src/main.c",
+      "matches_retained_copy": true,
+      "sha256": "cc5da1b31dbebe8e78481b1d699c41b7e100325749c2cee2343edaa5dc65e3e9",
+      "bytes": 13943
+    }
+  }
+}

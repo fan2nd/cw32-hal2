@@ -1,0 +1,1529 @@
+schema_version: 1
+family: CW32L083
+presence: present
+coverage:
+  channels: complete
+  interrupts: complete
+  requests: complete
+  meaning: Complete for the cited official manual request table; no silicon validation.
+hardware_validated: false
+sources:
+  cmsis_header:
+    path: cw32l083/Libraries/inc/cw32l083.h
+    sha256: 06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5
+    archive_url: https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip
+    source_ref: member:cw32l083/Libraries/inc/cw32l083.h
+  manual:
+    path: CW32L083_UserManual_CN_V2.0.pdf
+    sha256: 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3
+    url: https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf
+    text_sha256: 6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564
+    source_ref: vendor:CW32L083_UserManual_CN_V2.0.pdf
+  dma_header:
+    path: cw32l083/Libraries/inc/cw32l083_dma.h
+    sha256: e76079e457c5488e348170a05129b560af0f3098cfe368bec00cf3d976a93a61
+    archive_url: https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip
+    source_ref: member:cw32l083/Libraries/inc/cw32l083_dma.h
+evidence:
+  software_block_copy:
+    source: manual
+    section: 8.4.1-8.4.2, 8.5
+    pdf_page_indices: [136, 137, 138, 142]
+    printed_pages: [136, 137, 138, 142]
+    interpretation: Software BLOCK uses matching 8/16/32-bit widths, REPEAT=1, count 1..65535, EN then SOFTSRC.
+  successful_copy_completion:
+    source: manual
+    section: 8.6, 8.8.3, 8.8.4
+    pdf_page_indices: [143, 147, 149]
+    printed_pages: [143, 147, 149]
+    interpretation: TC means all data transferred correctly; release owned resources only for TC without TE, STATUS=5, and SOFTSRC=0. EN-clear or TE is not documented as bus drain.
+  software_copy_sram:
+    source: manual
+    section: 2.3, 6.1-6.3
+    pdf_page_indices: [32, 114, 115]
+    printed_pages: [32, 114, 115]
+    interpretation: DMA can access SRAM in aligned 8/16/32-bit widths; exact capacity comes from parts.yaml and each selected generated memory map.
+  controller_shared_gate:
+    source: manual
+    section: 4.7.12, 4.7.15
+    pdf_page_indices: [85, 89]
+    printed_pages: [85, 89]
+    interpretation: AHBEN.DMA is the shared enable and AHBRST.DMA the shared active-low reset; use central RCC controls without channel-local reset or gate disable.
+  staged_hardware_block:
+    source: manual
+    section: 8.4.4, 8.5, 8.6, 8.8.3-8.8.4
+    pdf_page_indices: [140, 142, 143, 147, 148, 149]
+    printed_pages: [140, 142, 143, 147, 148, 149]
+    interpretation: UART1-6 and SPI1-2 RX/TX are qualified for static staged byte BLOCK requests on all five channels. TC without TE plus STATUS=5 permits retirement after peripheral request closure; SOFTSRC is not hardware completion evidence. Other L083 routes are outside this HAL subset.
+  staged_uart:
+    source: manual
+    section: 5.4, 19.3.3.4, 19.5-19.7.1.6, 19.9.9
+    pdf_page_indices: [105, 378, 383, 384, 389, 390, 400]
+    printed_pages: [105, 378, 383, 384, 389, 390, 400]
+    interpretation: Byte TX/RX enables the channel before DMATX/DMARX and closes the request after TC. TX additionally waits TXBUSY for wire idle. UART1/4, 2/5 and 3/6 share vectors. FE/PE and overwrite without overrun reporting require finite-chunk loss caveats and retained unresolved leases.
+  staged_spi:
+    source: manual
+    section: 20.3.9-20.6.1.3, 20.8.5-20.8.7
+    pdf_page_indices: [415, 416, 417, 420, 421, 431, 432]
+    printed_pages: [415, 416, 417, 420, 421, 431, 432]
+    interpretation: Master byte DMA uses paired TX/RX descriptors and both clean terminals, closes both requests, then waits BUSY=0 before CS release. MODF/OV/SSERR/UD do not prove DMA drain; errors retain the pair. Existing 12MHz/divisor-4 minimum SPI clock policy remains authoritative.
+  channel_count:
+    source: manual
+    section: '8.2'
+    pdf_page_indices:
+    - 134
+    printed_pages:
+    - 134
+  request_table:
+    source: manual
+    section: 8.8.4, DMA_TRIGy.HARDSRC[7:2]
+    pdf_page_indices:
+    - 148
+    - 149
+    printed_pages:
+    - 148
+    - 149
+  channel_constraint:
+    source: manual
+    section: 8.8.4
+    pdf_page_indices:
+    - 147
+    printed_pages:
+    - 147
+    interpretation: One common HARDSRC table applies to every channel y=1~5; no channel-specific restriction
+      is documented.
+  interrupts:
+    source: manual
+    section: 5.4, Table 5-1
+    pdf_page_indices:
+    - 104
+    printed_pages:
+    - 104
+core_dma_channels:
+- name: DMA_CH1
+  dma: DMA
+  channel: 0
+- name: DMA_CH2
+  dma: DMA
+  channel: 1
+- name: DMA_CH3
+  dma: DMA
+  channel: 2
+- name: DMA_CH4
+  dma: DMA
+  channel: 3
+- name: DMA_CH5
+  dma: DMA
+  channel: 4
+channel_details:
+- name: DMA_CH1
+  physical_channel: 1
+  register_peripheral: DMACHANNEL1
+  interrupt: DMACH1
+  interrupt_number: 9
+  cmsis_symbol: DMACH1_IRQn
+  cmsis_line: 75
+  evidence:
+  - channel_count
+  - interrupts
+- name: DMA_CH2
+  physical_channel: 2
+  register_peripheral: DMACHANNEL2
+  interrupt: DMACH23
+  interrupt_number: 10
+  cmsis_symbol: DMACH23_IRQn
+  cmsis_line: 76
+  evidence:
+  - channel_count
+  - interrupts
+- name: DMA_CH3
+  physical_channel: 3
+  register_peripheral: DMACHANNEL3
+  interrupt: DMACH23
+  interrupt_number: 10
+  cmsis_symbol: DMACH23_IRQn
+  cmsis_line: 76
+  evidence:
+  - channel_count
+  - interrupts
+- name: DMA_CH4
+  physical_channel: 4
+  register_peripheral: DMACHANNEL4
+  interrupt: DMACH45
+  interrupt_number: 11
+  cmsis_symbol: DMACH45_IRQn
+  cmsis_line: 77
+  evidence:
+  - channel_count
+  - interrupts
+- name: DMA_CH5
+  physical_channel: 5
+  register_peripheral: DMACHANNEL5
+  interrupt: DMACH45
+  interrupt_number: 11
+  cmsis_symbol: DMACH45_IRQn
+  cmsis_line: 77
+  evidence:
+  - channel_count
+  - interrupts
+peripheral_dma_channels:
+  UART1:
+  - signal: RX
+    dma: DMA
+    request: 0
+  - signal: TX
+    dma: DMA
+    request: 1
+  UART2:
+  - signal: RX
+    dma: DMA
+    request: 2
+  - signal: TX
+    dma: DMA
+    request: 3
+  UART3:
+  - signal: RX
+    dma: DMA
+    request: 4
+  - signal: TX
+    dma: DMA
+    request: 5
+  SPI1:
+  - signal: RX
+    dma: DMA
+    request: 6
+  - signal: TX
+    dma: DMA
+    request: 7
+  SPI2:
+  - signal: RX
+    dma: DMA
+    request: 8
+  - signal: TX
+    dma: DMA
+    request: 9
+  ADC:
+  - signal: SEQ
+    dma: DMA
+    request: 10
+  - signal: SINGLE
+    dma: DMA
+    request: 50
+  BTIM1:
+  - signal: UP
+    dma: DMA
+    request: 11
+  - signal: TRIG
+    dma: DMA
+    request: 12
+  BTIM2:
+  - signal: UP
+    dma: DMA
+    request: 13
+  - signal: TRIG
+    dma: DMA
+    request: 14
+  BTIM3:
+  - signal: UP
+    dma: DMA
+    request: 15
+  - signal: TRIG
+    dma: DMA
+    request: 16
+  ATIM:
+  - signal: CH1A2A3A4_UP
+    dma: DMA
+    request: 17
+  - signal: CH1B2B3B_UP
+    dma: DMA
+    request: 18
+  GTIM1:
+  - signal: UP
+    dma: DMA
+    request: 19
+  - signal: TRIG
+    dma: DMA
+    request: 20
+  - signal: CH1
+    dma: DMA
+    request: 21
+  - signal: CH2
+    dma: DMA
+    request: 22
+  - signal: CH3
+    dma: DMA
+    request: 23
+  - signal: CH4
+    dma: DMA
+    request: 24
+  GTIM2:
+  - signal: UP
+    dma: DMA
+    request: 25
+  - signal: TRIG
+    dma: DMA
+    request: 26
+  - signal: CH1
+    dma: DMA
+    request: 27
+  - signal: CH2
+    dma: DMA
+    request: 28
+  - signal: CH3
+    dma: DMA
+    request: 29
+  - signal: CH4
+    dma: DMA
+    request: 30
+  GTIM3:
+  - signal: UP
+    dma: DMA
+    request: 31
+  - signal: TRIG
+    dma: DMA
+    request: 32
+  - signal: CH1
+    dma: DMA
+    request: 33
+  - signal: CH2
+    dma: DMA
+    request: 34
+  - signal: CH3
+    dma: DMA
+    request: 35
+  - signal: CH4
+    dma: DMA
+    request: 36
+  GTIM4:
+  - signal: UP
+    dma: DMA
+    request: 37
+  - signal: TRIG
+    dma: DMA
+    request: 38
+  - signal: CH1
+    dma: DMA
+    request: 39
+  - signal: CH2
+    dma: DMA
+    request: 40
+  - signal: CH3
+    dma: DMA
+    request: 41
+  - signal: CH4
+    dma: DMA
+    request: 42
+  UART4:
+  - signal: RX
+    dma: DMA
+    request: 43
+  - signal: TX
+    dma: DMA
+    request: 44
+  UART5:
+  - signal: RX
+    dma: DMA
+    request: 45
+  - signal: TX
+    dma: DMA
+    request: 46
+  UART6:
+  - signal: RX
+    dma: DMA
+    request: 47
+  - signal: TX
+    dma: DMA
+    request: 48
+  LCD:
+  - signal: FRAME
+    dma: DMA
+    request: 49
+requests:
+- peripheral: UART1
+  signal: RX
+  dma: DMA
+  request: 0
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART1_RXBufferNE
+    line: 102
+    raw_value: 0
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000000'
+    description: UART1 接收 Buf 非空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART1
+  signal: TX
+  dma: DMA
+  request: 1
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART1_TXBufferE
+    line: 103
+    raw_value: 4
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000001'
+    description: UART1 发送 Buf 空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART2
+  signal: RX
+  dma: DMA
+  request: 2
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART2_RXBufferNE
+    line: 104
+    raw_value: 8
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000010'
+    description: UART2 接收 Buf 非空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART2
+  signal: TX
+  dma: DMA
+  request: 3
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART2_TXBufferE
+    line: 105
+    raw_value: 12
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000011'
+    description: UART2 发送 Buf 空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART3
+  signal: RX
+  dma: DMA
+  request: 4
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART3_RXBufferNE
+    line: 106
+    raw_value: 16
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000100'
+    description: UART3 接收 Buf 非空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART3
+  signal: TX
+  dma: DMA
+  request: 5
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART3_TXBufferE
+    line: 107
+    raw_value: 20
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000101'
+    description: UART3 发送 Buf 空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: SPI1
+  signal: RX
+  dma: DMA
+  request: 6
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_SPI1_RXBufferNE
+    line: 109
+    raw_value: 24
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000110'
+    description: SPI1 接收 Buf 非空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: SPI1
+  signal: TX
+  dma: DMA
+  request: 7
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_SPI1_TXBufferE
+    line: 110
+    raw_value: 28
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000111'
+    description: SPI1 发送 Buf 空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: SPI2
+  signal: RX
+  dma: DMA
+  request: 8
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_SPI2_RXBufferNE
+    line: 111
+    raw_value: 32
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001000'
+    description: SPI2 接收 Buf 非空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: SPI2
+  signal: TX
+  dma: DMA
+  request: 9
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_SPI2_TXBufferE
+    line: 112
+    raw_value: 36
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001001'
+    description: SPI2 发送 Buf 空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: ADC
+  signal: SEQ
+  dma: DMA
+  request: 10
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_ADC_TRANSCOMPLETE
+    line: 114
+    raw_value: 40
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001010'
+    description: ADC 序列转换完成标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM1
+  signal: UP
+  dma: DMA
+  request: 11
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM1_OVERINT
+    line: 116
+    raw_value: 44
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001011'
+    description: BTIM1 溢出中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM1
+  signal: TRIG
+  dma: DMA
+  request: 12
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM1_TRIGINT
+    line: 117
+    raw_value: 48
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001100'
+    description: BTIM1 触发中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM2
+  signal: UP
+  dma: DMA
+  request: 13
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM2_OVERINT
+    line: 118
+    raw_value: 52
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001101'
+    description: BTIM2 溢出中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM2
+  signal: TRIG
+  dma: DMA
+  request: 14
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM2_TRIGINT
+    line: 119
+    raw_value: 56
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001110'
+    description: BTIM2 触发中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM3
+  signal: UP
+  dma: DMA
+  request: 15
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM3_OVERINT
+    line: 120
+    raw_value: 60
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001111'
+    description: BTIM3 溢出中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM3
+  signal: TRIG
+  dma: DMA
+  request: 16
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM3_TRIGINT
+    line: 121
+    raw_value: 64
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010000'
+    description: BTIM3 触发中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: ATIM
+  signal: CH1A2A3A4_UP
+  dma: DMA
+  request: 17
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_ATIM_CH1A2A3A4
+    line: 123
+    raw_value: 68
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010001'
+    description: ATIM CHxA、CH4 比较捕获标志，事件更新标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: ATIM
+  signal: CH1B2B3B_UP
+  dma: DMA
+  request: 18
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_ATIM_CH1B2B3B
+    line: 124
+    raw_value: 72
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010010'
+    description: ATIM CHxB 比较捕获标志，事件更新标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: UP
+  dma: DMA
+  request: 19
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_OVERINT
+    line: 126
+    raw_value: 76
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010011'
+    description: GTIM1 溢出中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: TRIG
+  dma: DMA
+  request: 20
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_TRIGINT
+    line: 127
+    raw_value: 80
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010100'
+    description: GTIM1 触发中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: CH1
+  dma: DMA
+  request: 21
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_CH1COMINT
+    line: 128
+    raw_value: 84
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010101'
+    description: GTIM1 通道 1 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: CH2
+  dma: DMA
+  request: 22
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_CH2COMINT
+    line: 129
+    raw_value: 88
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010110'
+    description: GTIM1 通道 2 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: CH3
+  dma: DMA
+  request: 23
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_CH3COMINT
+    line: 130
+    raw_value: 92
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010111'
+    description: GTIM1 通道 3 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: CH4
+  dma: DMA
+  request: 24
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_CH4COMINT
+    line: 131
+    raw_value: 96
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011000'
+    description: GTIM1 通道 4 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: UP
+  dma: DMA
+  request: 25
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_OVERINT
+    line: 133
+    raw_value: 100
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011001'
+    description: GTIM2 溢出中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: TRIG
+  dma: DMA
+  request: 26
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_TRIGINT
+    line: 134
+    raw_value: 104
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011010'
+    description: GTIM2 触发中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: CH1
+  dma: DMA
+  request: 27
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_CH1COMINT
+    line: 135
+    raw_value: 108
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011011'
+    description: GTIM2 通道 1 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: CH2
+  dma: DMA
+  request: 28
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_CH2COMINT
+    line: 136
+    raw_value: 112
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011100'
+    description: GTIM2 通道 2 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: CH3
+  dma: DMA
+  request: 29
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_CH3COMINT
+    line: 137
+    raw_value: 116
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011101'
+    description: GTIM2 通道 3 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: CH4
+  dma: DMA
+  request: 30
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_CH4COMINT
+    line: 138
+    raw_value: 120
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011110'
+    description: GTIM2 通道 4 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: UP
+  dma: DMA
+  request: 31
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_OVERINT
+    line: 140
+    raw_value: 124
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011111'
+    description: GTIM3 溢出中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: TRIG
+  dma: DMA
+  request: 32
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_TRIGINT
+    line: 141
+    raw_value: 128
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100000'
+    description: GTIM3 触发中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: CH1
+  dma: DMA
+  request: 33
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_CH1COMINT
+    line: 142
+    raw_value: 132
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100001'
+    description: GTIM3 通道 1 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: CH2
+  dma: DMA
+  request: 34
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_CH2COMINT
+    line: 143
+    raw_value: 136
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100010'
+    description: GTIM3 通道 2 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: CH3
+  dma: DMA
+  request: 35
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_CH3COMINT
+    line: 144
+    raw_value: 140
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100011'
+    description: GTIM3 通道 3 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: CH4
+  dma: DMA
+  request: 36
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_CH4COMINT
+    line: 145
+    raw_value: 144
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100100'
+    description: GTIM3 通道 4 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: UP
+  dma: DMA
+  request: 37
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_OVERINT
+    line: 147
+    raw_value: 148
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100101'
+    description: GTIM4 溢出中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: TRIG
+  dma: DMA
+  request: 38
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_TRIGINT
+    line: 148
+    raw_value: 152
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100110'
+    description: GTIM4 触发中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: CH1
+  dma: DMA
+  request: 39
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_CH1COMINT
+    line: 149
+    raw_value: 156
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100111'
+    description: GTIM4 通道 1 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: CH2
+  dma: DMA
+  request: 40
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_CH2COMINT
+    line: 150
+    raw_value: 160
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101000'
+    description: GTIM4 通道 2 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: CH3
+  dma: DMA
+  request: 41
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_CH3COMINT
+    line: 151
+    raw_value: 164
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101001'
+    description: GTIM4 通道 3 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: CH4
+  dma: DMA
+  request: 42
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_CH4COMINT
+    line: 152
+    raw_value: 168
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101010'
+    description: GTIM4 通道 4 比较捕获中断标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART4
+  signal: RX
+  dma: DMA
+  request: 43
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART4_RXBufferNE
+    line: 154
+    raw_value: 172
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101011'
+    description: UART4 接收 Buf 非空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART4
+  signal: TX
+  dma: DMA
+  request: 44
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART4_TXBufferE
+    line: 155
+    raw_value: 176
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101100'
+    description: UART4 发送 Buf 空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART5
+  signal: RX
+  dma: DMA
+  request: 45
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART5_RXBufferNE
+    line: 156
+    raw_value: 180
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101101'
+    description: UART5 接收 Buf 非空标志
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART5
+  signal: TX
+  dma: DMA
+  request: 46
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART5_TXBufferE
+    line: 157
+    raw_value: 184
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101110'
+    description: UART5 发送 Buf 空标志
+    pdf_page_index: 149
+    printed_page: 149
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART6
+  signal: RX
+  dma: DMA
+  request: 47
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART6_RXBufferNE
+    line: 158
+    raw_value: 188
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101111'
+    description: UART6 接收 Buf 非空标志
+    pdf_page_index: 149
+    printed_page: 149
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART6
+  signal: TX
+  dma: DMA
+  request: 48
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART6_TXBufferE
+    line: 159
+    raw_value: 192
+    encoding: shifted_left_2_define
+  manual:
+    binary: '110000'
+    description: UART6 发送 Buf 空标志
+    pdf_page_index: 149
+    printed_page: 149
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: LCD
+  signal: FRAME
+  dma: DMA
+  request: 49
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_LCD_FRAMEINT
+    line: 160
+    raw_value: 196
+    encoding: shifted_left_2_define
+  manual:
+    binary: '110001'
+    description: LCD Frame 中断标志
+    pdf_page_index: 149
+    printed_page: 149
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: ADC
+  signal: SINGLE
+  dma: DMA
+  request: 50
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_ADC_SINGLETRANSCOM
+    line: 161
+    raw_value: 200
+    encoding: shifted_left_2_define
+  manual:
+    binary: '110010'
+    description: ADC 单次转换完成标志
+    pdf_page_index: 149
+    printed_page: 149
+  evidence:
+  - request_table
+  - channel_constraint
+excluded_sdk_requests: []
+unknowns: []
+request_register:
+  peripheral_kind: dmachannel
+  register: TRIG
+  field: HARDSRC
+  bit_offset: 2
+  bit_size: 6
+normalization:
+  channel_index: Zero-based upstream channel index; physical_channel is the one-based vendor ordinal.
+  request: Unshifted six-bit HARDSRC value, not the SDK macro value shifted left by two.
+  irq: CMSIS/generated interrupt spelling; the manual abbreviates DMACH as DMA.
+  signals: UART/SPI/I2C TX/RX; timer UP/TRIG/CHn; grouped ATIM sources remain grouped; ADC COMPLETE or
+    SEQ/SINGLE matches the manual wording.
+  dmamux: 'No separate DMAMUX instance: request selection is internal to each DMA channel.'

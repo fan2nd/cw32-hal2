@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "status": "accepted",
+  "review_date": "2026-10-09",
+  "scope": "Coordinator independent static source review of the exact two-file HEX timer-evidence validator adaptation. Negative probes accepted from the existing implementation receipt; coordinator did not independently rerun them. No HAL, firmware or hardware acceptance is implied.",
+  "accepted_patch_sha256": "d31438219fc20a7101454e3bc4fc40bf57fb5635b879447f2969f2bb00e0635c",
+  "files": [
+    {
+      "path": "tests/verify_timer_commands.py",
+      "before_sha256": "d30e2314db6fd875f8f982a066b0ce7c03728683008ca4f9449c0990b9bb3786",
+      "after_sha256": "6759e960630a8de9c2ce46a4586363821f082e334cceffffc6e8fc62764b8a3f"
+    },
+    {
+      "path": "docs/hex-register-reuse-additions.json",
+      "before_sha256": null,
+      "after_sha256": "72782255e4e464f190fd2fd4cc577712c967901987b5b7ce60d907005bf4ed5b"
+    }
+  ],
+  "validation": {
+    "source_only_timer_check": {
+      "status": "passed by implementation worker",
+      "command": "python3 -B tests/verify_timer_commands.py --source-only --manual-dir /workspace/shared/cw32-sources",
+      "log_sha256": "d8576a0de0069ccd2c69306c8ad0e58c970a7d1e8b66d5a87e54f4f178eb072d"
+    },
+    "negative_probe_receipt_sha256": "91c154cba58d2c2c8fbd726dee2d2816b0f5e342fc7a5ac7a7fc8f1254f8f595",
+    "negative_probe_count": 16,
+    "negative_probe_cases": [
+      "HEX canonical digest changed",
+      "HEX current curation prose changed",
+      "Older AWT history lost",
+      "HEX source family scope widened",
+      "Unrelated reuse basis changed",
+      "VREF prior history forged",
+      "Combined lineage accepted flag cleared",
+      "Combined extension dropped",
+      "VREF accepted before hash changed",
+      "Metapac ancestry relabeled",
+      "Standalone HEX component review dropped",
+      "Current serde body altered",
+      "Current static model body altered",
+      "Schema additive proof altered",
+      "Reuse additive proof altered",
+      "Curated AWT YAML bytes altered"
+    ],
+    "independent_rerun": false
+  },
+  "historical_timer_evidence_sha256": "46f246e129925a19e69d64150f773061cd48b3c584f30350fc223414b7c1a108",
+  "historical_expected_digests_unchanged": true,
+  "parent_vref_inverse_preserved": true,
+  "models_and_lineage_unchanged": true,
+  "proof_reference": "docs/hex-register-reuse-additions.json",
+  "legal_clearance": false,
+  "main_edited": false,
+  "uploaded": false
+}

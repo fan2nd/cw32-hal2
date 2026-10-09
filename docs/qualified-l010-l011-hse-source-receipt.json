@@ -1,0 +1,702 @@
+{
+  "schema_version": 1,
+  "source_authority": "sources/evidence-sources.json",
+  "reviewed_on": "2026-10-09",
+  "scope": "Source qualification for bounded direct HSE crystal/bypass on CW32L010 and CW32L011 only. No HAL execution, PLL, sleep/resume or runtime recovery.",
+  "baseline": {
+    "archive": "embassy-cw32-stage39-source-2026-10-09.zip",
+    "sha256": "2d052b2b3b9a5489e797991109df4fb197042f5caf2382e13f04349206d2bd03"
+  },
+  "source_identities": [
+    {
+      "kind": "sdk",
+      "path": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+      "bytes": 2442266,
+      "id": "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "printed_revision": "1.0.9",
+      "publication_date": null,
+      "selected_members": [
+        {
+          "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h",
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h",
+          "sha256": "81d6c37b3920465595b702bdf102e5710c22490efa422207e5148852d719e91f",
+          "bytes": 35109
+        },
+        {
+          "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_sysctrl.c",
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_sysctrl.c",
+          "sha256": "5b90bab195a6308aab9194451c862553cb14d11b23ef3d128d05e443ffc6ad92",
+          "bytes": 24957
+        },
+        {
+          "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+          "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+          "bytes": 540100
+        }
+      ]
+    },
+    {
+      "kind": "sdk",
+      "path": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+      "bytes": 1808978,
+      "id": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "printed_revision": null,
+      "publication_date": null,
+      "selected_members": [
+        {
+          "source_ref": "member:cw32l011/Libraries/inc/cw32l011_sysctrl.h",
+          "path": "cw32l011/Libraries/inc/cw32l011_sysctrl.h",
+          "sha256": "3c9927ef4eb1126500c4528e0892ebd90bb217c2bdd64935d6e52d252c54507e",
+          "bytes": 47296
+        },
+        {
+          "source_ref": "member:cw32l011/Libraries/src/cw32l011_sysctrl.c",
+          "path": "cw32l011/Libraries/src/cw32l011_sysctrl.c",
+          "sha256": "7bdc0138bd94c7d0986d79b6f601954c86d04ab1d794af7484b218ba8d2cca89",
+          "bytes": 29407
+        },
+        {
+          "source_ref": "member:cw32l011/Libraries/inc/cw32l011.h",
+          "path": "cw32l011/Libraries/inc/cw32l011.h",
+          "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8",
+          "bytes": 594153
+        }
+      ]
+    },
+    {
+      "kind": "pdf",
+      "path": "CW32L010_DataSheet_CN_V1.3.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf",
+      "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+      "bytes": 3467805,
+      "id": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+      "printed_revision": "1.3",
+      "publication_date": "2026-04-16",
+      "derived_text": {
+        "path": "CW32L010_DataSheet_CN_V1.3.txt",
+        "sha256": "ba32a6838b5375c7a4d0225d9aeed6ebcad964e5668080ee87c8ddac1036595f",
+        "bytes": 188029,
+        "evidence": [
+          "docs/comparator-low-evidence.json"
+        ]
+      }
+    },
+    {
+      "kind": "pdf",
+      "path": "CW32L010_UserManual_CN_V1.2.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "bytes": 15074519,
+      "id": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "printed_revision": "1.2",
+      "publication_date": "2026-05",
+      "derived_text": {
+        "path": "CW32L010_UserManual_CN_V1.2.txt",
+        "sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938",
+        "bytes": 1653688,
+        "evidence": [
+          "docs/comparator-low-evidence.json"
+        ]
+      }
+    },
+    {
+      "kind": "pdf",
+      "path": "CW32L011_DataSheet_CN_V1.1.pdf",
+      "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf",
+      "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+      "bytes": 2687011,
+      "id": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "printed_revision": "1.1",
+      "publication_date": "2025-07",
+      "derived_text": {
+        "path": "CW32L011_DataSheet_CN_V1.1.txt",
+        "sha256": "f8429daa0082c24f2d191855d6405d38cc1994c8d468827cb402bc6effc1ea6c",
+        "bytes": 157393,
+        "evidence": [
+          "docs/comparator-low-evidence.json"
+        ]
+      }
+    },
+    {
+      "kind": "pdf",
+      "path": "CW32L011_UserManual_CN_V1.1.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "bytes": 15199549,
+      "id": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "printed_revision": "1.1",
+      "publication_date": "2026-06",
+      "derived_text": {
+        "path": "CW32L011_UserManual_CN_V1.1.txt",
+        "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3",
+        "bytes": 1667087,
+        "evidence": [
+          "docs/comparator-low-evidence.json"
+        ]
+      }
+    }
+  ],
+  "claims": [
+    {
+      "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+      "pdf_pages_1_based": [
+        23,
+        24,
+        66
+      ],
+      "printed_pages": [
+        22,
+        23,
+        65
+      ],
+      "claims": "SOP16 diagram, Table5-2 exact package oscillator pads and ordering"
+    },
+    {
+      "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+      "pdf_pages_1_based": [
+        31,
+        32,
+        39,
+        40,
+        41,
+        43,
+        45,
+        46
+      ],
+      "printed_pages": [
+        30,
+        31,
+        38,
+        39,
+        40,
+        42,
+        44,
+        45
+      ],
+      "claims": "Tables7-4/14/16/18/19, supply/bus/temperature, bypass waveform/crystal frequency, HSI48 and LSI accuracy; I/O ratings"
+    },
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "pdf_pages_1_based": [
+        28,
+        29,
+        46,
+        47,
+        67,
+        68,
+        69
+      ],
+      "printed_pages": [
+        27,
+        28,
+        45,
+        46,
+        66,
+        67,
+        68
+      ],
+      "claims": "Own complete memory map/source list/clock tree/mux/CR1; no documented PLL/AUTOTRIM and retained automatic LSI requests"
+    },
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "pdf_pages_1_based": [
+        49,
+        50,
+        51,
+        56,
+        57,
+        58,
+        59
+      ],
+      "printed_pages": [
+        48,
+        49,
+        50,
+        55,
+        56,
+        57,
+        58
+      ],
+      "claims": "HSE modes, 4–32MHz crystal/1–32MHz bypass; HSI48/LSI range; STABLE latch, startup/failure detection and fixed4MHz CCS fallback"
+    },
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "pdf_pages_1_based": [
+        62,
+        63,
+        64,
+        65,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        76,
+        77,
+        78,
+        114
+      ],
+      "printed_pages": [
+        61,
+        62,
+        63,
+        64,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        75,
+        76,
+        77,
+        113
+      ],
+      "claims": "Switch sequence, live DIV rule, own register fields/encodings, sticky/edge flag differences, Flash WAIT0/1"
+    },
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "pdf_pages_1_based": [
+        126,
+        127,
+        128,
+        129,
+        130
+      ],
+      "printed_pages": [
+        125,
+        126,
+        127,
+        128,
+        129
+      ],
+      "claims": "Complete GPIO map and pad controls; no PDR/input-enable/lock register"
+    },
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "pdf_pages_1_based": [
+        148,
+        152,
+        153,
+        504,
+        513,
+        517,
+        529,
+        543,
+        547,
+        548
+      ],
+      "printed_pages": [
+        147,
+        151,
+        152,
+        503,
+        512,
+        516,
+        528,
+        542,
+        546,
+        547
+      ],
+      "claims": "RTC/AWT source ownership; ADC PCLK/BGR shared analog ownership; LVD SYSCLK/LSI filter and fields"
+    },
+    {
+      "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "pdf_pages_1_based": [
+        25,
+        26,
+        31,
+        71
+      ],
+      "printed_pages": [
+        22,
+        23,
+        28,
+        68
+      ],
+      "claims": "Own package diagrams, Table5-2 exact pads and ordering"
+    },
+    {
+      "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "pdf_pages_1_based": [
+        38,
+        39,
+        47,
+        49,
+        51,
+        53,
+        54
+      ],
+      "printed_pages": [
+        35,
+        36,
+        44,
+        46,
+        48,
+        50,
+        51
+      ],
+      "claims": "Tables7-4/14/16/18/19, supply/bus/temperature, bypass waveform/crystal frequency, HSI96 and LSI−10/+25% accuracy; I/O ratings"
+    },
+    {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "pdf_pages_1_based": [
+        27,
+        28,
+        45,
+        46,
+        65,
+        66,
+        67
+      ],
+      "printed_pages": [
+        26,
+        27,
+        44,
+        45,
+        64,
+        65,
+        66
+      ],
+      "claims": "Own complete memory map/source list/clock tree/mux/CR1; no documented PLL/AUTOTRIM and retained automatic LSI requests"
+    },
+    {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "pdf_pages_1_based": [
+        47,
+        48,
+        49,
+        54,
+        55,
+        56,
+        57
+      ],
+      "printed_pages": [
+        46,
+        47,
+        48,
+        53,
+        54,
+        55,
+        56
+      ],
+      "claims": "HSE crystal4–32MHz and bypass4–32MHz own-manual range conflicts with datasheet1–32MHz; HSI96/LSI range, STABLE latch, failure detection, fixed4MHz fallback"
+    },
+    {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "pdf_pages_1_based": [
+        60,
+        61,
+        62,
+        63,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        74,
+        75,
+        76,
+        113
+      ],
+      "printed_pages": [
+        59,
+        60,
+        61,
+        62,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        73,
+        74,
+        75,
+        112
+      ],
+      "claims": "Switch/live DIV rule, own bitfields/divider codes, HSERDY clear semantics and Flash WAIT0..3"
+    },
+    {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "pdf_pages_1_based": [
+        126,
+        127,
+        128,
+        129,
+        130
+      ],
+      "printed_pages": [
+        125,
+        126,
+        127,
+        128,
+        129
+      ],
+      "claims": "Own GPIO complete register map and real pad controls; no PDR/input-enable/lock register"
+    },
+    {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "pdf_pages_1_based": [
+        148,
+        152,
+        153,
+        506,
+        518,
+        531,
+        545,
+        549,
+        550
+      ],
+      "printed_pages": [
+        147,
+        151,
+        152,
+        505,
+        517,
+        530,
+        544,
+        548,
+        549
+      ],
+      "claims": "RTC/AWT source ownership; ADC PCLK and BGR retained analog owner; LVD SYSCLK/LSI filter"
+    },
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "pdf_pages_1_based": [
+        538
+      ],
+      "printed_pages": [
+        537
+      ],
+      "claims": "VCx_CR1 BLANKTIME is expressed in PCLK cycles and BLANKCH1..6 select timer-triggered blanking. Reject enabled comparator blanking before changing bus clocks independently of FLTCLK and filter enable. Own source text checked for this implementation."
+    },
+    {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "pdf_pages_1_based": [
+        540
+      ],
+      "printed_pages": [
+        539
+      ],
+      "claims": "VCx_CR1 BLANKTIME is expressed in PCLK cycles and BLANKCH1..6 select timer-triggered blanking. Reject enabled comparator blanking before changing bus clocks independently of FLTCLK and filter enable. Own source text checked for this implementation."
+    },
+    {
+      "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+      "pdf_pages_1_based": [
+        24
+      ],
+      "printed_pages": [
+        23
+      ],
+      "claims": "PA00/OSC_IN shares the VC1_CH1 analog input on all three modeled packages; PA01/OSC_OUT has no VC input listed."
+    },
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "pdf_pages_1_based": [
+        537
+      ],
+      "printed_pages": [
+        536
+      ],
+      "claims": "VC1_CR0.INP=01 and INN=01 select VC1_CH1. Enabled VC1 on either selection owns PA0 and blocks HSE stop/restart/reconfiguration and all oscillator-pad writes. Only exact already-running HSE/pad reuse without oscillator or pad writes preserves that owner."
+    },
+    {
+      "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "pdf_pages_1_based": [
+        31
+      ],
+      "printed_pages": [
+        28
+      ],
+      "claims": "PC13/OSC_IN and PB07/OSC_OUT rows have no analog VC input function. Do not project the L010 PA0 comparator overlap onto L011."
+    }
+  ],
+  "qualified_families": {
+    "CW32L010": {
+      "conditions": "Own DS Table7-4 printed31/PDF32 qualifies VDD1.62..5.5V; actual HCLK/PCLK<=24MHz below1.8V and<=48MHz otherwise. Retained factory HSIOSC48MHz+/-2% means47.04..48.96MHz; own Table7-18 printed42/PDF43 keeps the combined ambient range-40..85C. Flash WAIT0/1 covers actual HCLK<=24/48MHz (own RM printed113/PDF114).",
+      "bypass_coverage": "Own RM printed49/PDF50 and DS Table7-14 printed38/PDF39 both support1..32MHz bypass. This initial implementation deliberately admits only actual4..32MHz for the bounded detector/startup policy. The excluded1..<4MHz band is deferred software coverage, not a hardware limitation or source conflict.",
+      "lsi_bound": "Own RM printed55/PDF56 permits legal LSI32.8kHz+/-10%, yielding36080Hz maximum. Own DS Table7-19 printed42/PDF43 factory+/-3% is narrower and must not be assigned to arbitrary inherited trim. Retained LSI must already be legally operating and unchanged.",
+      "pins": "Own DS Table5-2 printed23/PDF24: PA00=OSC_IN and PA01=OSC_OUT are TTa. CW32L010F8P6/TSSOP20 pins5/6; CW32L010F8U6/QFN20 pins2/3; CW32L010Y8M6/SOP16 pins4/5. The SOP16 diagram printed22/PDF23 independently agrees.",
+      "hsi_divider": "Own HSI DIV code0=/16; codes1..15=/1..15. Reset nominal4MHz and CCS fallback are equivalent to/12.",
+      "fault_flag_difference": "Own RM printed76/PDF77 says clearing HSEFAIL/HSEFAULT does not clear HSERDY. The initializer does not clear any of these flags; do not import the L011 side effect.",
+      "registers": "Own RM section4.7.6: HSE+0x1c reset0x0027ff22 has DRIVER[3:0], WAITCYCLE[5:4], MODE6, HEXENPOL7, DETCNT[18:8], STABLE19 RO, PDRIVER[23:20] and DIGFLT24. No FREQRANGE or PFREQRANGE selector exists; frequency_ranges_hz is omitted to encode None. Both four-bit drive fields document only codes0..7, despite wider SDK macros/comments. Configure both phases before enable; board selects the drive. Preserve HEXENPOL and reserved bits; initial DIGFLT=false.",
+      "selectors": "Own RM section4.7.1: SYSCLK codes HSI0/HSE1/LSI3/LSE4; codes2/5/6/7 reserved. Complete own clock tree/register map has no documented PLL or AUTOTRIM. HSI.TRIM[10:0], DIV[14:11], STABLE15 has no WAITCYCLE. Live divider-only changes are permitted by section4.5.2 while TRIM is unchanged. Factory trim halfword at0x001007c0; erased0xffff is not admitted.",
+      "security": "Preserve CLKCCS/HSECCS/LSECCS/LSELOCK independently. CLKCCS forces nominal4MHz HSI regardless of the requested divider; retained factory-HSI fallback bounds are3.92..4.08MHz. The effective fallback frequency is documented, but the exact internal DIV/enable mutation mechanism is not. Check requested-HSI and forced-fallback actual envelopes through final HCLK/PCLK/Flash settings. HSECCS/LSECCS automatically request LSI without setting softwareLSIEN; preserve unchanged legal LSI, its trim/wait and software-request state.",
+      "detector": "DETCNT is1..2047. HSE detection counts131072 cycles during DETCNT/LSI. Use ceil(8000000000/actual_minimum_hz), and prove actual_minimum_hz*DETCNT > 131072*ccs_lsi_maximum_hz. At4MHz the count2000 fits11 bits; the chosen full4..32MHz range preserves positive margin. WAITCYCLE3 means262144 cycles, not a wall-clock timeout.",
+      "retained_consumers": "RTC.CR1.SOURCE1 owns HSE even if calendarSTART=0, because AWT can useRTCCLKD. Reuse only exact enabled/stable HSE parameters and pads; do not stop/rewrite a retained HSE. SOURCE3 owns raw HSIOSC and requires enabled/stable factory-correct trim; divider-only changes preserve raw HSIOSC. RTC sources0/2 and all RTC/AWT state are preserved;4..7 are reserved. ADC is PCLK-derived: require ADC.CR.EN=0 before bus changes, preserving BGREN/TSEN and shared analog owners. Reject enabled LVD with FLTTIME!=0 and FLTCLK=SYSCLK; preserve legal LSI-filtered or unfiltered LVD. Other bus-dependent consumers, including a PCLK-filtered VC, must be quiescent. Independently reject an enabled VC with any VCx_CR1.BLANKCH1..6 selected: its BLANKTIME window counts PCLK cycles even with LSI filtering or the output filter disabled (own RM section21.7.3 printed537/PDF538).",
+      "gpio": "Own GPIO map has DIR, PUR, AFRH/L, ANALOG, RISEIE/FALLIE, OPENDRAIN and FILTER, with no PDR, input-enable or lock register. Configure owned pads input first, disable pad-local pull-up/open-drain/edge interrupts/filter, AF0, then analog for crystal or digital for bypass. Preserve unrelated pins and shared filter-clock fields. Crystal reserves both pads; bypass onlyOSC_IN. Preserve the whole-boot union of incoming enabled and requested HSE pad ownership.",
+      "transition": "Entry must already have legal actual source/bus/Flash state. Raise Flash WAIT to the own documented maximum, then guard AHB/APB at least/8 without weakening larger inherited divisors. Prefer unchanged factory-correct HSI. Retrim only without a raw-HSI owner, via unchanged legal LSI bridge and temporarily suppressed CLKCCS; restore original policy. Never retune/reset LSI. Configure/read HSE while stopped and STABLE clear; switch/read selector before installing final divisors and lowering Flash WAIT. Preserve all key-protected unrelated bits and CR2 controls.",
+      "fault_contract": "STABLE is a startup latch and does not clear after later failure; HSERDY is a separate edge flag. Reject relevant HSE/LSE FAIL/FAULT without clearing ready/fault flags. Recheck effective source, enable/STABLE, trim/divider, HSE parameters, mux/prescalers, preserved policy and faults before freezing. Finite polls count CPU iterations while execution continues; no elapsed-time or source-loss recovery guarantee. Failure publishes no frozen clocks and may leave the guarded/bridge state reached; reset before retry. No PLL, sleep/resume, runtime retuning or recovery is qualified.",
+      "retained_analog_pad": "Own DS Table 5-2 printed 23/PDF 24 identifies PA00 as both OSC_IN and VC1_CH1. Own RM section 21.7.2 printed 536/PDF 537 identifies VC1_CR0.INP=01 and INN=01 as CH1. An enabled VC1 selecting either input owns PA0 independently of the comparator filter clock or blanking state. Before any HSE stop, restart, parameter change or pad write, reject this retained owner. Exact reuse of an already enabled, stable, matching HSE and matching pads is permitted only with no oscillator or pad writes; preserve the comparator and its inputs."
+    },
+    "CW32L011": {
+      "conditions": "Own DS Table7-4 printed36/PDF39 qualifies VDD1.7..5.5V with VDDA=VDD; actual HCLK/PCLK<=24MHz below1.8V and<=96MHz otherwise. Retained factory HSIOSC96MHz+/-2% means94.08..97.92MHz; own Table7-18 printed48/PDF51 keeps the combined ambient range-40..85C. Flash WAIT0/1/2/3 covers actual HCLK<=24/48/72/96MHz (own RM printed112/PDF113).",
+      "bypass_conflict": "Own RM printed47/PDF48 says4..32MHz bypass, while own DS Table7-14 printed44/PDF47 says1..32MHz. Only the actual4..32MHz intersection is admitted;1MHz capability remains unresolved by these sources.",
+      "lsi_bound": "Own RM printed53/PDF54 says legal LSI32.8kHz+/-10%, while own DS Table7-19 printed48/PDF51 specifies factory-10/+25%, up to41000Hz. Detector arithmetic conservatively uses41000Hz; this does not resolve the discrepancy or assert that factory LSI always lies within the narrower RM range. Entry still requires legally operating unchanged LSI.",
+      "pins": "Own DS Table5-2 printed28/PDF31: PC13=OSC_IN pin31 and PB07=OSC_OUT pin30, both TC, on CW32L011K8T6/LQFP32 and CW32L011K8U6/QFN32. These are not the L010 PA0/PA1 pads.",
+      "hsi_divider": "Own HSI DIV code0=/32; codes1..10=/1..10,11=/12,12=/16,13=/20,14=/24,15=/28. Reset nominal4MHz and CCS fallback are equivalent to/24.",
+      "fault_flag_difference": "Own RM printed74/PDF75 says clearing HSEFAIL/HSEFAULT clears HSERDY too. The initializer does not clear any of these flags; do not assume the L010 side effect.",
+      "registers": "Own RM section4.7.6: HSE+0x1c reset0x0027ff22 has DRIVER[3:0], WAITCYCLE[5:4], MODE6, HEXENPOL7, DETCNT[18:8], STABLE19 RO, PDRIVER[23:20] and DIGFLT24. No FREQRANGE or PFREQRANGE selector exists; frequency_ranges_hz is omitted to encode None. Both four-bit drive fields document only codes0..7, despite wider SDK macros/comments. Configure both phases before enable; board selects the drive. Preserve HEXENPOL and reserved bits; initial DIGFLT=false.",
+      "selectors": "Own RM section4.7.1: SYSCLK codes HSI0/HSE1/LSI3/LSE4; codes2/5/6/7 reserved. Complete own clock tree/register map has no documented PLL or AUTOTRIM. HSI.TRIM[10:0], DIV[14:11], STABLE15 has no WAITCYCLE. Live divider-only changes are permitted by section4.5.2 while TRIM is unchanged. Factory trim halfword at0x001007c0; erased0xffff is not admitted.",
+      "security": "Preserve CLKCCS/HSECCS/LSECCS/LSELOCK independently. CLKCCS forces nominal4MHz HSI regardless of the requested divider; retained factory-HSI fallback bounds are3.92..4.08MHz. The effective fallback frequency is documented, but the exact internal DIV/enable mutation mechanism is not. Check requested-HSI and forced-fallback actual envelopes through final HCLK/PCLK/Flash settings. HSECCS/LSECCS automatically request LSI without setting softwareLSIEN; preserve unchanged legal LSI, its trim/wait and software-request state.",
+      "detector": "DETCNT is1..2047. HSE detection counts131072 cycles during DETCNT/LSI. Use ceil(8000000000/actual_minimum_hz), and prove actual_minimum_hz*DETCNT > 131072*ccs_lsi_maximum_hz. At4MHz the count2000 fits11 bits; the chosen full4..32MHz range preserves positive margin. WAITCYCLE3 means262144 cycles, not a wall-clock timeout.",
+      "retained_consumers": "RTC.CR1.SOURCE1 owns HSE even if calendarSTART=0, because AWT can useRTCCLKD. Reuse only exact enabled/stable HSE parameters and pads; do not stop/rewrite a retained HSE. SOURCE3 owns raw HSIOSC and requires enabled/stable factory-correct trim; divider-only changes preserve raw HSIOSC. RTC sources0/2 and all RTC/AWT state are preserved;4..7 are reserved. ADC is PCLK-derived: require ADC.CR.EN=0 before bus changes, preserving BGREN/TSEN and shared analog owners. Reject enabled LVD with FLTTIME!=0 and FLTCLK=SYSCLK; preserve legal LSI-filtered or unfiltered LVD. Other bus-dependent consumers, including a PCLK-filtered VC, must be quiescent. Independently reject an enabled VC with any VCx_CR1.BLANKCH1..6 selected: its BLANKTIME window counts PCLK cycles even with LSI filtering or the output filter disabled (own RM section21.7.3 printed539/PDF540).",
+      "gpio": "Own GPIO map has DIR, PUR, AFRH/L, ANALOG, RISEIE/FALLIE, OPENDRAIN and FILTER, with no PDR, input-enable or lock register. Configure owned pads input first, disable pad-local pull-up/open-drain/edge interrupts/filter, AF0, then analog for crystal or digital for bypass. Preserve unrelated pins and shared filter-clock fields. Crystal reserves both pads; bypass onlyOSC_IN. Preserve the whole-boot union of incoming enabled and requested HSE pad ownership.",
+      "transition": "Entry must already have legal actual source/bus/Flash state. Raise Flash WAIT to the own documented maximum, then guard AHB/APB at least/8 without weakening larger inherited divisors. Prefer unchanged factory-correct HSI. Retrim only without a raw-HSI owner, via unchanged legal LSI bridge and temporarily suppressed CLKCCS; restore original policy. Never retune/reset LSI. Configure/read HSE while stopped and STABLE clear; switch/read selector before installing final divisors and lowering Flash WAIT. Preserve all key-protected unrelated bits and CR2 controls.",
+      "fault_contract": "STABLE is a startup latch and does not clear after later failure; HSERDY is a separate edge flag. Reject relevant HSE/LSE FAIL/FAULT without clearing ready/fault flags. Recheck effective source, enable/STABLE, trim/divider, HSE parameters, mux/prescalers, preserved policy and faults before freezing. Finite polls count CPU iterations while execution continues; no elapsed-time or source-loss recovery guarantee. Failure publishes no frozen clocks and may leave the guarded/bridge state reached; reset before retry. No PLL, sleep/resume, runtime retuning or recovery is qualified.",
+      "retained_analog_pad": "Own DS Table 5-2 printed 28/PDF 31 identifies PC13 as OSC_IN and PB07 as OSC_OUT, with no analog VC input function on either row. The L010 PA0/VC1_CH1 overlap is not applied to L011. This bounded pin-table conclusion does not relax the independent retained comparator PCLK-filter or blanking restrictions."
+    }
+  },
+  "canonical_enum_changes": [
+    {
+      "canonical": "sysctrl_cw32l010_v1.yaml",
+      "before_sha256": "67f4805bc76a58a17d80b3ada9bbcb807b5394ffe38ac73834ba385ba057fffa",
+      "before_ir_sha256": "610fad9de095c2644478d8d8fe79827e6d2a0a3a8a630202599b405db81d99a0",
+      "after_sha256": "2aedc60336b23fb36c4c6713f9c88b51a42e2c60a6d34c30fe9ad5bab6788cb1",
+      "after_ir_sha256": "a362263b3c6abbc7c47ec231dd3c3bdfbfe8c432fcbfcba93a9de9c297863ee9",
+      "enum_names": [
+        "Sysclk",
+        "HseDrive",
+        "HseWait"
+      ],
+      "associations": [
+        {
+          "fieldset": "CR0",
+          "field": "SYSCLK",
+          "enum": "Sysclk",
+          "bit_offset": 0,
+          "bit_size": 3
+        },
+        {
+          "fieldset": "HSE",
+          "field": "DRIVER",
+          "enum": "HseDrive",
+          "bit_offset": 0,
+          "bit_size": 4
+        },
+        {
+          "fieldset": "HSE",
+          "field": "WAITCYCLE",
+          "enum": "HseWait",
+          "bit_offset": 4,
+          "bit_size": 2
+        },
+        {
+          "fieldset": "HSE",
+          "field": "PDRIVER",
+          "enum": "HseDrive",
+          "bit_offset": 20,
+          "bit_size": 4
+        }
+      ],
+      "evidence": "docs/qualified-l010-l011-hse-source-receipt.json",
+      "scope": "Only own-source enum definitions and four associations; every pre-existing register, bit offset, width, access and description equals the frozen baseline. STABLE RO is a separate field-access sidecar correction."
+    },
+    {
+      "canonical": "sysctrl_cw32l011_v1.yaml",
+      "before_sha256": "608236645dd868c40be0b9fe5cbd6dc386a8e29aad5c48186afe66ecce05287c",
+      "before_ir_sha256": "1dda5667f911961a0881fc49c22cbf51ceb73af9936a4f1a3408a8e7102da25a",
+      "after_sha256": "727439dd5f060f0a80b8d091131fe1fa25055617c1b2b9377f277bcaaf324287",
+      "after_ir_sha256": "8911717d51c3290b099ea715a66f0fe913d4c6673fb3dad92af2ff8a307f3702",
+      "enum_names": [
+        "Sysclk",
+        "HseDrive",
+        "HseWait"
+      ],
+      "associations": [
+        {
+          "fieldset": "CR0",
+          "field": "SYSCLK",
+          "enum": "Sysclk",
+          "bit_offset": 0,
+          "bit_size": 3
+        },
+        {
+          "fieldset": "HSE",
+          "field": "DRIVER",
+          "enum": "HseDrive",
+          "bit_offset": 0,
+          "bit_size": 4
+        },
+        {
+          "fieldset": "HSE",
+          "field": "WAITCYCLE",
+          "enum": "HseWait",
+          "bit_offset": 4,
+          "bit_size": 2
+        },
+        {
+          "fieldset": "HSE",
+          "field": "PDRIVER",
+          "enum": "HseDrive",
+          "bit_offset": 20,
+          "bit_size": 4
+        }
+      ],
+      "evidence": "docs/qualified-l010-l011-hse-source-receipt.json",
+      "scope": "Only own-source enum definitions and four associations; every pre-existing register, bit offset, width, access and description equals the frozen baseline. STABLE RO is a separate field-access sidecar correction."
+    }
+  ],
+  "hardware_access_changes": [
+    {
+      "canonical": "sysctrl_cw32l010_v1.yaml",
+      "register": "HSE",
+      "register_offset": 28,
+      "register_access_before": "ReadWrite",
+      "register_access_after": "ReadWrite",
+      "field": "STABLE",
+      "bit_offset": 19,
+      "bit_size": 1,
+      "field_access": "Read",
+      "projection": "cw32-data/field-access.yaml",
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "pdf_page_1_based": 73,
+      "printed_page": 72,
+      "scope": "Getter remains; generated field setter must be withheld by the existing field-access mechanism. This changes the PAC access API independently of the optional-frequency-selector metadata schema."
+    },
+    {
+      "canonical": "sysctrl_cw32l011_v1.yaml",
+      "register": "HSE",
+      "register_offset": 28,
+      "register_access_before": "ReadWrite",
+      "register_access_after": "ReadWrite",
+      "field": "STABLE",
+      "bit_offset": 19,
+      "bit_size": 1,
+      "field_access": "Read",
+      "projection": "cw32-data/field-access.yaml",
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "pdf_page_1_based": 71,
+      "printed_page": 70,
+      "scope": "Getter remains; generated field setter must be withheld by the existing field-access mechanism. This changes the PAC access API independently of the optional-frequency-selector metadata schema."
+    }
+  ],
+  "schema_separation": "The metadata schema permits an absent frequency-range selector. This receipt records only the source fact (no selector in either own HSE register) and omits frequency_ranges_hz to encode None; schema implementation and its independent review remain separate from the hardware-access correction.",
+  "verification": {
+    "original_artifact_hashes": "All six own PDF/SDK artifact SHA-256 identities match the canonical selected source lock and local originals.",
+    "derived_text_hashes": "All four own PDF text SHA-256 identities match the source authority.",
+    "selected_sdk_members": "All six selected sysctrl header/implementation and CMSIS header hashes match the audit and local originals.",
+    "current_ir_comparison": "Removing only the three enum definitions and four enum associations yields exact frozen Stage39 authored IR for both SYSCTRL variants, including every register access, offset, width and description.",
+    "field_access_comparison": "Only the two HSE.STABLE RO restrictions were added to the field-access sidecar; every prior entry is unchanged.",
+    "pin_routes": "Own DS table images inspected for all five modeled package routes; pre-existing package routes are unchanged.",
+    "not_run": [
+      "normal data/PAC generation",
+      "ARM compilation",
+      "HAL tests or models",
+      "oscillator or board execution"
+    ],
+    "retained_analog_pad": "Own L010 DS PDF24 and RM PDF537 text checked together; own L011 DS PDF31 checked independently. The shared pad is a retained hardware owner independently of filter or blanking clocks."
+  }
+}

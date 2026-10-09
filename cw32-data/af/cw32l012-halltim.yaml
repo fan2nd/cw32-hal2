@@ -1,0 +1,271 @@
+schema_version: 1
+profile: CW32L012
+status: verified-sdk-and-datasheet
+source:
+  sdk_url: https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip
+  sdk_sha256: 8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f
+  header: Libraries/inc/cw32l012_gpio.h
+  header_sha256: 45f356e8028475c2e25d135c5fdd0b75babb6b1c83f1d5534038e9355822d717
+datasheet:
+  url: https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf
+  sha256: 08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76
+  document_filename: CW32L012_DataSheet_CN_V1.0.pdf
+  memory_map_pdf_page_indices:
+  - 40
+  memory_size_table_pdf_page_indices:
+  - 7
+  memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+    Family-product table establishes package/size variant.
+  af_evidence: Own datasheet V1.0 tables5-3 and5-4, printed36/PDF39; rendered and checked against exact
+    GPIO SDK macros. Hall inputs only.
+  source_ref: vendor:CW32L012_DataSheet_CN_V1.0.pdf
+selector_capability:
+  min: 1
+  max: 9
+  pdf_printed_page_offset: 3
+  evidence: Numbered function columns in the cited own-family datasheet AF tables; register width alone
+    never authorizes selectors.
+kind: hall-input
+register_version: cw32l012_v1
+alias_pin_policy: common-package-intersection
+routes:
+- pin: PA3
+  af: 9
+  function: HALLTIMCH1
+  source_macro: PA03_AFx_HALLTIMCH1
+  source_line: 666
+  gpio_register: AFRL
+  gpio_field: PIN3
+  peripheral: HALLTIM
+  signal: CH1
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA3
+    af: 9
+    table: 5-3
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH1
+  package_positions:
+    LQFP48: '13'
+    QFN48: '13'
+- pin: PA4
+  af: 9
+  function: HALLTIMCH2
+  source_macro: PA04_AFx_HALLTIMCH2
+  source_line: 676
+  gpio_register: AFRL
+  gpio_field: PIN4
+  peripheral: HALLTIM
+  signal: CH2
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA4
+    af: 9
+    table: 5-3
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH2
+  package_positions:
+    LQFP48: '14'
+    QFN48: '14'
+- pin: PA5
+  af: 9
+  function: HALLTIMCH3
+  source_macro: PA05_AFx_HALLTIMCH3
+  source_line: 686
+  gpio_register: AFRL
+  gpio_field: PIN5
+  peripheral: HALLTIM
+  signal: CH3
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PA5
+    af: 9
+    table: 5-3
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH3
+  package_positions:
+    LQFP48: '15'
+    QFN48: '15'
+- pin: PB2
+  af: 9
+  function: HALLTIMCH1
+  source_macro: PB02_AFx_HALLTIMCH1
+  source_line: 815
+  gpio_register: AFRL
+  gpio_field: PIN2
+  peripheral: HALLTIM
+  signal: CH1
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB2
+    af: 9
+    table: 5-4
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH1
+  package_positions:
+    LQFP48: '20'
+    QFN48: '20'
+- pin: PB5
+  af: 9
+  function: HALLTIMCH1
+  source_macro: PB05_AFx_HALLTIMCH1
+  source_line: 845
+  gpio_register: AFRL
+  gpio_field: PIN5
+  peripheral: HALLTIM
+  signal: CH1
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB5
+    af: 9
+    table: 5-4
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH1
+  package_positions:
+    LQFP48: '41'
+    QFN48: '41'
+- pin: PB6
+  af: 9
+  function: HALLTIMCH2
+  source_macro: PB06_AFx_HALLTIMCH2
+  source_line: 855
+  gpio_register: AFRL
+  gpio_field: PIN6
+  peripheral: HALLTIM
+  signal: CH2
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB6
+    af: 9
+    table: 5-4
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH2
+  package_positions:
+    LQFP48: '42'
+    QFN48: '42'
+- pin: PB7
+  af: 9
+  function: HALLTIMCH3
+  source_macro: PB07_AFx_HALLTIMCH3
+  source_line: 865
+  gpio_register: AFRL
+  gpio_field: PIN7
+  peripheral: HALLTIM
+  signal: CH3
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB7
+    af: 9
+    table: 5-4
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH3
+  package_positions:
+    LQFP48: '43'
+    QFN48: '43'
+- pin: PB10
+  af: 9
+  function: HALLTIMCH2
+  source_macro: PB10_AFx_HALLTIMCH2
+  source_line: 893
+  gpio_register: AFRH
+  gpio_field: PIN10
+  peripheral: HALLTIM
+  signal: CH2
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB10
+    af: 9
+    table: 5-4
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH2
+  package_positions:
+    LQFP48: '21'
+    QFN48: '21'
+- pin: PB11
+  af: 9
+  function: HALLTIMCH3
+  source_macro: PB11_AFx_HALLTIMCH3
+  source_line: 903
+  gpio_register: AFRH
+  gpio_field: PIN11
+  peripheral: HALLTIM
+  signal: CH3
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB11
+    af: 9
+    table: 5-4
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH3
+  package_positions:
+    LQFP48: '22'
+    QFN48: '22'
+- pin: PB13
+  af: 9
+  function: HALLTIMCH1
+  source_macro: PB13_AFx_HALLTIMCH1
+  source_line: 923
+  gpio_register: AFRH
+  gpio_field: PIN13
+  peripheral: HALLTIM
+  signal: CH1
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB13
+    af: 9
+    table: 5-4
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH1
+  package_positions:
+    LQFP48: '26'
+    QFN48: '26'
+- pin: PB14
+  af: 9
+  function: HALLTIMCH2
+  source_macro: PB14_AFx_HALLTIMCH2
+  source_line: 933
+  gpio_register: AFRH
+  gpio_field: PIN14
+  peripheral: HALLTIM
+  signal: CH2
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB14
+    af: 9
+    table: 5-4
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH2
+  package_positions:
+    LQFP48: '27'
+    QFN48: '27'
+- pin: PB15
+  af: 9
+  function: HALLTIMCH3
+  source_macro: PB15_AFx_HALLTIMCH3
+  source_line: 943
+  gpio_register: AFRH
+  gpio_field: PIN15
+  peripheral: HALLTIM
+  signal: CH3
+  source_kind: sdk-and-datasheet
+  datasheet_cell:
+    pin: PB15
+    af: 9
+    table: 5-4
+    pdf_page: 39
+    printed_page: 36
+    function: HALLTIM_CH3
+  package_positions:
+    LQFP48: '28'
+    QFN48: '28'

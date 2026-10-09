@@ -1,0 +1,145 @@
+schema_version: 1
+spi_metadata: cw32-data/spi.yaml
+source:
+  path: sources/vendor/CW32F030.svd
+  sha256: c59bdc211510db5a8117d4d7610c2ef9b7ba328d9221c166354766f07e079aaa
+  url: https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip
+  source_ref: member:cw32f030/IdeSupport/EWARM/arm/config/debugger/CW/CW32F030.svd
+family: CW32A0
+line: CW32A030
+register_version: v1
+nvic_priority_bits: 2
+nvic_priority_bits_evidence: 'CW32x030 User Manual EN V1.0 section 5.5.3 page 99: only upper two priority
+  bits; CMSIS __NVIC_PRIO_BITS=2. https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf'
+memory_evidence: 'CW32F030 Datasheet CN V1.9: C8/K8/F8 64KiB Flash and 8KiB SRAM; F6 32KiB Flash and 6KiB
+  SRAM (pack incorrect for F6). https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf'
+chips:
+- name: CW32A030
+  memory: []
+expected_svd_name: CW32F030
+core: cm0p
+die: CW32A030
+chip_prefix: CW32A030
+gpio_dir_pin_fields: true
+register_aliases:
+- block: GPIO
+  register: ODR
+  alias: ODRLOWBYTE
+- block: GPIO
+  register: ODR
+  alias: ODRHIGHBYTE
+- block: GPIOC
+  register: ODR
+  alias: ODRLOWBYTE
+- block: GPIOC
+  register: ODR
+  alias: ODRHIGHBYTE
+- block: GPIOF
+  register: ODR
+  alias: ODRLOWBYTE
+- block: CRC
+  register: DR8
+  alias: DR16
+- block: CRC
+  register: DR8
+  alias: DR32
+- block: CRC
+  register: DR16
+  alias: DR32
+- block: CRC
+  register: RESULT16
+  alias: RESULT32
+supplemental_interrupts:
+- name: FAULT
+  number: 31
+  evidence: Official SDK v2.2 Libraries/inc/cw32f030.h FAULT_IRQn=31, SHA256 7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862
+register_overrides:
+- block: GPIO
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: CW32x030 User Manual EN V1.0 section9.6.14 page165 explicitly marks GPIOx_ISR read-only. https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf
+- block: GPIOC
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: CW32x030 User Manual EN V1.0 section9.6.14 page165 explicitly marks GPIOx_ISR read-only. https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf
+- block: GPIOF
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: CW32x030 User Manual EN V1.0 section9.6.14 page165 explicitly marks GPIOx_ISR read-only. https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf
+- block: GPIOC
+  register: IDR
+  expected_access: ReadWrite
+  access: Read
+  evidence: CW32x030 User Manual EN V1.0 section9.6.18 page167 marks GPIOx_IDR read-only. https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf
+- block: GPIOF
+  register: IDR
+  expected_access: ReadWrite
+  access: Read
+  evidence: CW32x030 User Manual EN V1.0 section9.6.18 page167 marks GPIOx_IDR read-only. https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf
+- block: RTC
+  register: TAMPDATE
+  expected_access: ReadWrite
+  access: Read
+  evidence: CW32x030 User Manual EN V1.0 section12.5.10 page206 marks all fields read-only. https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf
+- block: RTC
+  register: TAMPTIME
+  expected_access: ReadWrite
+  access: Read
+  evidence: CW32x030 User Manual EN V1.0 section12.5.11 page207 marks all fields read-only. https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf
+- block: GTIM
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: CW32x030 User Manual EN V1.0 section14.8.12 page272 marks all fields read-only. https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf
+parts_catalog: cw32-data/parts.yaml
+shared_map_evidence: 'cw32-data/register-source-aliases.yaml: official shared CW32x030 reference manual
+  explicitly covers CW32F030/CW32A030; A030 datasheet address boundaries agree. No independently imported
+  A030 SVD.'
+source_notes:
+- A030 is a documentary shared-register-map profile using the corrected F030 SVD under the shared vendor
+  CW32x030 manual, not an independently sourced A030 SVD. See cw32-data/register-source-aliases.yaml.
+register_versions:
+  adc: v1
+  atim: v1
+  awt: cw32f030_v1
+  btim: v1
+  crc: v1
+  dma: v1
+  dmachannel: v1
+  flash: v1
+  gpio: v1
+  gpioc: v1
+  gpiof: v1
+  gtim: v1
+  i2c: v1
+  iwdt: v1
+  lvd: v1
+  ram: v1
+  rtc: v1
+  spi: v1
+  sysctrl: v1
+  uart: v1
+  vc: v1
+  wwdt: v1
+field_removals:
+- fieldset: COMPEN
+  field: FREQ
+  expected_bit_offset: 16
+  expected_bit_size: 4
+  evidence: RTC.COMPEN bits31:16 are reserved in shared CW32x030 manual CN V2.5 section12.5.5 page189
+    and EN V1.0 section12.5.5 page203. Remove obsolete SVD FREQ bits19:16 only. https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf
+pinout_metadata: cw32-data/pinouts/cw32a030.yaml
+alias_pin_policy: common-package-intersection
+dma_metadata: cw32-data/dma/cw32a030.yaml
+clock_metadata: cw32-data/clock/cw32a030.yaml
+af_metadata: cw32-data/af/cw32a030.yaml
+analog_metadata: cw32-data/af/x030-analog.yaml
+atim_pwm_metadata: cw32-data/af/cw32a030-atim-pwm.yaml
+gpio_interrupt_metadata: cw32-data/gpio-interrupt.yaml
+electrical_metadata: cw32-data/electrical.yaml
+comparator_metadata: cw32-data/af/cw32a030-comparator.yaml
+classic_adc_scan_metadata: cw32-data/classic-adc-scans.yaml
+atim_complementary_metadata: cw32-data/af/cw32a030-atim-complementary.yaml

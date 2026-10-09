@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "scope": "Source audit for blocking full-duplex SPI master and seven-bit I2C master only; no silicon validation.",
+  "families": [
+    {
+      "family": "CW32L031",
+      "register_version": "cw32l031_v1",
+      "instances": [
+        "SPI1",
+        "I2C1"
+      ],
+      "spi_limit": {
+        "max_hz": 12000000,
+        "minimum_pclk_divisor": 4
+      },
+      "i2c_limit_hz": 1000000,
+      "sources": {
+        "usermanual": {
+          "file": "CW32L031_UserManual_CN_V1.6.pdf",
+          "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf"
+        },
+        "datasheet": {
+          "file": "CW32L031_DataSheet_CN_V1.9.pdf",
+          "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L031_DataSheet_CN_V1.9.pdf"
+        },
+        "sdk": {
+          "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+          "archive_sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d",
+          "header_sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27"
+        },
+        "spi_implementation": {
+          "member": "Libraries/src/cw32l031_spi.c",
+          "sha256": "c456b382f940ee220a70009faf89b7dd8f065e0c1a68595b60e846dc2d8cdf66"
+        },
+        "i2c_implementation": {
+          "member": "Libraries/src/cw32l031_i2c.c",
+          "sha256": "23f963a97cebbcd9f86f71697188a11ad1abe720ab08d0b0e739eee56c8f9436"
+        }
+      }
+    },
+    {
+      "family": "CW32R031",
+      "register_version": "cw32l031_v1",
+      "instances": [
+        "SPI1",
+        "I2C1"
+      ],
+      "spi_limit": {
+        "max_hz": 12000000,
+        "minimum_pclk_divisor": 4
+      },
+      "i2c_limit_hz": 1000000,
+      "sources": {
+        "usermanual": {
+          "file": "CW32R031_UserManual_CN_V1.3.pdf",
+          "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf"
+        },
+        "datasheet": {
+          "file": "CW32R031_DataSheet_CN_V1.2.pdf",
+          "sha256": "88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805",
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32R031_DataSheet_CN_V1.2.pdf"
+        },
+        "sdk": {
+          "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+          "archive_sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082",
+          "header_sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385"
+        },
+        "spi_implementation": {
+          "member": "Libraries/src/cw32r031_spi.c",
+          "sha256": "363dd2fc7378677e34876369d5f37bb5e5f5377eee5439c9e32c09796c75fcb7"
+        },
+        "i2c_implementation": {
+          "member": "Libraries/src/cw32r031_i2c.c",
+          "sha256": "c20b1230c82e17a4f5e0f138404a1b3b063deb4f955ee37d5a3bfe993bae7535"
+        }
+      }
+    },
+    {
+      "family": "CW32W031",
+      "register_version": "cw32l031_v1",
+      "instances": [
+        "SPI1",
+        "I2C1"
+      ],
+      "spi_limit": {
+        "max_hz": 12000000,
+        "minimum_pclk_divisor": 4
+      },
+      "i2c_limit_hz": 1000000,
+      "sources": {
+        "usermanual": {
+          "file": "CW32W031_UserManual_CN_V1.4.pdf",
+          "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf"
+        },
+        "datasheet": {
+          "file": "CW32W031_DataSheet_CN_V1.3.pdf",
+          "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c",
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf"
+        },
+        "sdk": {
+          "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+          "archive_sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+          "header_sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69"
+        },
+        "spi_implementation": {
+          "member": "Libraries/src/cw32w031_spi.c",
+          "sha256": "0062878431df00f7f8fb5fec930cce235d0d0da50cee16d46f4944b69821e2db"
+        },
+        "i2c_implementation": {
+          "member": "Libraries/src/cw32w031_i2c.c",
+          "sha256": "d047d5c1d1c033628acc759b67b4f9c609ab4c44d4d1063d34263f7c536def09"
+        }
+      }
+    },
+    {
+      "family": "CW32L052",
+      "register_version": "cw32l031_v1",
+      "instances": [
+        "SPI1",
+        "SPI2",
+        "I2C1",
+        "I2C2"
+      ],
+      "spi_limit": {
+        "max_hz": 12000000,
+        "minimum_pclk_divisor": 4
+      },
+      "i2c_limit_hz": 1000000,
+      "sources": {
+        "usermanual": {
+          "file": "CW32L052_UserManual_CN_V1.5.pdf",
+          "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf"
+        },
+        "datasheet": {
+          "file": "CW32L052_DataSheet_CN_V1.3.pdf",
+          "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L052_DataSheet_CN_V1.3.pdf"
+        },
+        "sdk": {
+          "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+          "archive_sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+          "header_sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1"
+        },
+        "spi_implementation": {
+          "member": "Libraries/src/cw32l052_spi.c",
+          "sha256": "b31f1e2b7661177036d9f3aa316e24a96b74473df992d6f14095ee3754c6c0b5"
+        },
+        "i2c_implementation": {
+          "member": "Libraries/src/cw32l052_i2c.c",
+          "sha256": "d9dd59975303d4fb329513a3b5e91ce7db24b7105e4cee5cfb1534f6e4b5455f"
+        }
+      }
+    },
+    {
+      "family": "CW32L083",
+      "register_version": "cw32l031_v1",
+      "instances": [
+        "SPI1",
+        "SPI2",
+        "I2C1",
+        "I2C2"
+      ],
+      "spi_limit": {
+        "max_hz": 12000000,
+        "minimum_pclk_divisor": 4
+      },
+      "i2c_limit_hz": 1000000,
+      "sources": {
+        "usermanual": {
+          "file": "CW32L083_UserManual_CN_V2.0.pdf",
+          "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf"
+        },
+        "datasheet": {
+          "file": "CW32L083_DataSheet_CN_V1.9.pdf",
+          "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf"
+        },
+        "sdk": {
+          "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+          "archive_sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+          "header_sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5"
+        },
+        "spi_implementation": {
+          "member": "Libraries/src/cw32l083_spi.c",
+          "sha256": "554c10c16bced125195f8207633b01aca65408bf434f185f94cfe6b6dd85aa0d"
+        },
+        "i2c_implementation": {
+          "member": "Libraries/src/cw32l083_i2c.c",
+          "sha256": "265b6df0e05b0c5f06d05d718bcf0e91d9d30dc143e8f8e4415e91f62c784b6c"
+        }
+      }
+    }
+  ]
+}

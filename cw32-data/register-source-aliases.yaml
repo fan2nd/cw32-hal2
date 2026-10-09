@@ -1,0 +1,33 @@
+schema_version: 1
+aliases:
+- source_line: CW32F030
+  target_line: CW32A030
+  parts:
+  - CW32A030C8T7
+  status: shared-reference-manual-compatible
+  allow_register_map_reuse: true
+  independent_svd_available: false
+  hardware_validated: false
+  evidence:
+  - url: https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    description: Current manual explicitly covers CW32F030/CW32A030; no family-specific register exceptions
+      found in full-text review. Table2-1 printed pp26–27 gives common peripheral boundaries; RAM controller
+      covered insection6.5 p108.
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  - url: https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf
+    sha256: 690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9
+    description: 'A030 datasheet table6-1 printed p28: all32 memory/peripheral ranges numerically match
+      common manual.'
+    source_ref: vendor:CW32A030_DataSheet_CN_V1.1.pdf
+  - url: https://www.whxy.com/tongyonggaoxingnengMCU/CW32A030C8T7.html?act=doc&cid=21
+    description: Official A030 product manual tab directly associates common CW32F030/CW32A030 manual
+      with this part.
+  cautions:
+  - Reuse must include the documented corrections to F030 imported data. A shared manual does not independently
+    validate each vendor SVD field.
+  - F030 DFP1.0.5 contains only F030 device entries; no dedicated A030 SDK/DFP found.
+  - Do not infer A030 pin exposure, alternate functions, electrical limits or hardware validation from
+    this register-map relationship.
+  - 'Current Chinese V2.5 manual supersedes older English behavioral descriptions: V2.4 removed RTC_1Hz
+    high-frequency compensation and V2.5 updated SPI_ISR.BUSY behavior wording.'

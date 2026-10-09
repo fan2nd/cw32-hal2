@@ -1,0 +1,199 @@
+schema_version: 1
+family: CW32L010
+register_versions:
+  BTIM1: cw32l010_v1
+  BTIM2: cw32l010_v1
+  ADC: cw32l010_v1
+status: verified-own-manual-sdk
+sources:
+- family: CW32L010
+  kind: official_reference_manual
+  path: CW32L010_UserManual_CN_V1.2.pdf
+  sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  official_url: https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf
+  bytes: 15074519
+  source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+- family: CW32L010
+  kind: official_sdk_member
+  path: cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_btim.h
+  sha256: e156ee79c987073517f0fd6df7deb0fe8886a2aeae7dbeb7e172f2661aaf8b50
+  official_url: https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip
+  bytes: 23660
+  source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_btim.h
+- family: CW32L010
+  kind: official_sdk_member
+  path: cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_adc.h
+  sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  official_url: https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip
+  bytes: 18077
+  source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_adc.h
+- family: CW32L010
+  kind: official_cmsis_header
+  path: cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h
+  sha256: 28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b
+  official_url: https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip
+  bytes: 540100
+  source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h
+routes:
+- destination: ADC
+  signal: START_CONVERSION
+  source: BTIM1_TRGO
+  source_event: UPDATE
+  registers:
+  - peripheral: BTIM1
+    register: CR2
+    field: MMS
+    role: source_event
+    bit_offset: 4
+    bit_size: 3
+    value: 2
+  - peripheral: ADC
+    register: TRIGGER
+    field: BTIM1TRGO
+    role: independent_enable
+    bit_offset: 13
+    bit_size: 1
+    value: 1
+  status: documented
+  conflict_ids: []
+  references:
+  - source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+    pdf_page_1based: 521
+    printed_page: 520
+    section: 20.12.7
+    table: null
+    source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  - source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+    pdf_page_1based: 181
+    printed_page: 180
+    section: 11.9.2
+    source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+- destination: BTIM2
+  signal: TRGI
+  source: BTIM1_TRGO
+  source_event: UPDATE
+  registers:
+  - peripheral: BTIM1
+    register: CR2
+    field: MMS
+    role: source_event
+    bit_offset: 4
+    bit_size: 3
+    value: 2
+  - peripheral: BTIM2
+    register: SMCR
+    field: TRGISRC
+    role: selector
+    bit_offset: 7
+    bit_size: 4
+    value: 8
+  status: documented
+  conflict_ids: []
+  references:
+  - source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+    pdf_page_1based: 182
+    printed_page: 181
+    section: 11.9.3
+    table: null
+    source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  - source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+    pdf_page_1based: 183
+    printed_page: 182
+    section: 11.9.3
+    table: null
+    source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  - source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+    pdf_page_1based: 181
+    printed_page: 180
+    section: 11.9.2
+    source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+limitations:
+- Exactly these two internal paths are qualified. No universal ITR numbers, reserved, self-feedback or
+  conflicted routes.
+- Runtime uses static HAL resource ownership; public PAC writes remain an explicit outside-HAL concurrency
+  boundary.
+- ADC runtime is one-shot hardware-triggered sampling, not periodic lossless acquisition.
+- No silicon execution or timing validation.
+- Disarm/timeout is terminal for the ADC owner; no immediate abort or trigger-pipeline drain guarantee.
+- Cascade stop disables BTIM2 before SMS=0, and detaches BTIM2 before stopping the producer. No atomic
+  cutoff or maximum lossless trigger rate is established.
+runtime_references:
+- id: timer_enable_and_oneshot
+  section: 11.3.1.1
+  pdf_page_1based: 163
+  printed_page: 162
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: EN rises one PCLK before CNT_EN; one-shot overflow stops counting and clears EN
+- id: timer_oneshot_diagram
+  section: 11.3.1.1
+  pdf_page_1based: 164
+  printed_page: 163
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: Figure 11-2 illustrates a single terminal update; no extra-pulse inference from enable latency
+  section_continued_from_pdf_page: 163
+- id: master_output
+  section: 11.9.2
+  pdf_page_1based: 181
+  printed_page: 180
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: MMS reset mode forwards UG; destinations must be detached before source UG
+- id: internal_count_mode
+  section: 11.3.2.1
+  pdf_page_1based: 167
+  printed_page: 166
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: 'SMS=0 selects PCLK: disable destination counting before changing SMS'
+- id: external_count_mode
+  section: 11.3.2.2
+  pdf_page_1based: 168
+  printed_page: 167
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: External counter uses TRGI rising edges
+- id: adc_single_sequence
+  section: 20.5.2
+  pdf_page_1based: 509
+  printed_page: 508
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: CONT=0 produces one sequence per software or hardware start; EOC per result, EOS at end, START
+    auto-clears
+- id: adc_hardware_trigger
+  section: '20.6'
+  pdf_page_1based: 511
+  printed_page: 510
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: Enabled external signals start ADC conversions
+- id: adc_control
+  section: 20.12.1
+  pdf_page_1based: 517
+  printed_page: 516
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: CONT=0 and ENS=0 select a single slot; existing analog startup qualification is retained
+- id: adc_stop_command
+  section: 20.12.2
+  pdf_page_1based: 518
+  printed_page: 517
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: START=0 stops conversion and resets the sequence; no abort/drain latency bound is documented
+- id: adc_completion_status
+  section: 20.12.9
+  pdf_page_1based: 523
+  printed_page: 522
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: EOC bit0 and EOS bit1 report conversion/sequence completion
+- id: adc_status_clear
+  section: 20.12.10
+  pdf_page_1based: 524
+  printed_page: 523
+  source_id: CW32L010:CW32L010_UserManual_CN_V1.2.pdf
+  source_sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+  fact: ADC_ICR defined flags are R1W0

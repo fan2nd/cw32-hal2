@@ -1,0 +1,554 @@
+schema_version: 1
+command_evidence: docs/gpio-async-evidence.json
+profiles:
+  CW32F030:
+    command_source:
+      family: CW32F030
+      source: CW32x030_UserManual_CN_V2.5.pdf
+      url: https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf
+      sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+      text_sha256: 23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe
+      section: 9.6.15
+      printed_page: 156
+      pdf_page_one_based: 157
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: false
+      source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOB:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOC:
+        serviced_mask: 57344
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOF:
+        serviced_mask: 203
+        clear_noop_mask: 65535
+        level_trigger: true
+  CW32A030:
+    command_source:
+      family: CW32A030
+      source: CW32x030_UserManual_CN_V2.5.pdf
+      url: https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf
+      sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+      text_sha256: 23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe
+      section: 9.6.15
+      printed_page: 156
+      pdf_page_one_based: 157
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: true
+      source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOB:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOC:
+        serviced_mask: 57344
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOF:
+        serviced_mask: 203
+        clear_noop_mask: 65535
+        level_trigger: true
+  CW32F020:
+    command_source:
+      family: CW32F020
+      source: CW32F020_UserManual_CN_V1.4.pdf
+      url: https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf
+      sha256: 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed
+      text_sha256: 58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db
+      section: 9.6.15
+      printed_page: 153
+      pdf_page_one_based: 154
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: false
+      source_ref: vendor:CW32F020_UserManual_CN_V1.4.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOB:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOC:
+        serviced_mask: 57344
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOF:
+        serviced_mask: 203
+        clear_noop_mask: 65535
+        level_trigger: true
+  CW32F002:
+    command_source:
+      family: CW32F002
+      source: CW32F002_UserManual_CN_V1.4.pdf
+      url: https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf
+      sha256: e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add
+      text_sha256: cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01
+      section: 8.6.12
+      printed_page: 112
+      pdf_page_one_based: 113
+      command_bits: 8
+      no_op_mask: '0xff'
+      reserved_bits: '31:8'
+      a030_shared_manual: false
+      source_ref: vendor:CW32F002_UserManual_CN_V1.4.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 255
+        clear_noop_mask: 255
+        level_trigger: true
+      GPIOB:
+        serviced_mask: 255
+        clear_noop_mask: 255
+        level_trigger: true
+      GPIOC:
+        serviced_mask: 63
+        clear_noop_mask: 255
+        level_trigger: true
+  CW32F003:
+    command_source:
+      family: CW32F003
+      source: CW32F003_UserManual_CN_V2.3.pdf
+      url: https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf
+      sha256: 0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738
+      text_sha256: 6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319
+      section: 8.6.12
+      printed_page: 114
+      pdf_page_one_based: 115
+      command_bits: 8
+      no_op_mask: '0xff'
+      reserved_bits: '31:8'
+      a030_shared_manual: false
+      source_ref: vendor:CW32F003_UserManual_CN_V2.3.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 255
+        clear_noop_mask: 255
+        level_trigger: true
+      GPIOB:
+        serviced_mask: 255
+        clear_noop_mask: 255
+        level_trigger: true
+      GPIOC:
+        serviced_mask: 63
+        clear_noop_mask: 255
+        level_trigger: true
+  CW32L010:
+    command_source:
+      family: CW32L010
+      source: CW32L010_UserManual_CN_V1.2.pdf
+      url: https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf
+      sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+      text_sha256: bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938
+      section: 8.6.10
+      printed_page: 128
+      pdf_page_one_based: 129
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: false
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 511
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOB:
+        serviced_mask: 255
+        clear_noop_mask: 65535
+        level_trigger: false
+  CW32L011:
+    command_source:
+      family: CW32L011
+      source: CW32L011_UserManual_CN_V1.1.pdf
+      url: https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf
+      sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+      text_sha256: 769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3
+      section: 8.6.10
+      printed_page: 128
+      pdf_page_one_based: 129
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: false
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOB:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOC:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+  CW32L012:
+    command_source:
+      family: CW32L012
+      source: CW32L012_UserManual_CN_V1.4.pdf
+      url: https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf
+      sha256: a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340
+      text_sha256: 57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505
+      section: 9.6.11
+      printed_page: 136
+      pdf_page_one_based: 162
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: false
+      source_ref: vendor:CW32L012_UserManual_CN_V1.4.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOB:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOC:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOF:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+  CW32L031:
+    command_source:
+      family: CW32L031
+      source: CW32L031_UserManual_CN_V1.6.pdf
+      url: https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf
+      sha256: 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760
+      text_sha256: 20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1
+      section: 9.6.11
+      printed_page: 148
+      pdf_page_one_based: 149
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: false
+      source_ref: vendor:CW32L031_UserManual_CN_V1.6.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOB:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOC:
+        serviced_mask: 57344
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOF:
+        serviced_mask: 203
+        clear_noop_mask: 65535
+        level_trigger: false
+  CW32R031:
+    command_source:
+      family: CW32R031
+      source: CW32R031_UserManual_CN_V1.3.pdf
+      url: https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf
+      sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+      text_sha256: b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b
+      section: 9.6.11
+      printed_page: 150
+      pdf_page_one_based: 151
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: false
+      source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOB:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOC:
+        serviced_mask: 57344
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOF:
+        serviced_mask: 203
+        clear_noop_mask: 65535
+        level_trigger: false
+  CW32W031:
+    command_source:
+      family: CW32W031
+      source: CW32W031_UserManual_CN_V1.4.pdf
+      url: https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf
+      sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+      text_sha256: 43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac
+      section: 9.6.11
+      printed_page: 149
+      pdf_page_one_based: 150
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: false
+      source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOB:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOC:
+        serviced_mask: 57344
+        clear_noop_mask: 65535
+        level_trigger: false
+      GPIOF:
+        serviced_mask: 203
+        clear_noop_mask: 65535
+        level_trigger: false
+  CW32L052:
+    command_source:
+      family: CW32L052
+      source: CW32L052_UserManual_CN_V1.5.pdf
+      url: https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf
+      sha256: 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41
+      text_sha256: 2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb
+      section: 9.6.13
+      printed_page: 155
+      pdf_page_one_based: 156
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: false
+      source_ref: vendor:CW32L052_UserManual_CN_V1.5.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOB:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOC:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOD:
+        serviced_mask: 4
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOF:
+        serviced_mask: 251
+        clear_noop_mask: 65535
+        level_trigger: true
+  CW32L083:
+    command_source:
+      family: CW32L083
+      source: CW32L083_UserManual_CN_V2.0.pdf
+      url: https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf
+      sha256: 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3
+      text_sha256: 6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564
+      section: 9.6.13
+      printed_page: 167
+      pdf_page_one_based: 168
+      command_bits: 16
+      no_op_mask: '0xffff'
+      reserved_bits: '31:16'
+      a030_shared_manual: false
+      source_ref: vendor:CW32L083_UserManual_CN_V2.0.pdf
+    serviced_policy:
+      basis: Preserve the reviewed asynchronous GPIO upper-bound policy; software active ownership further
+        narrows every serviced flag. This is not a package pad map, command domain or assertion that all
+        documented fields are physically implemented.
+      source: docs/gpio-async-expansion.md#register-and-irq-policies
+      prior_source: embassy-cw32/src/exti/registers.rs pending_mask(port), before this metadata projection
+      prior_source_sha256: 72fd43ab2bebfd5fd87e924d0fc57266db30ae3796e72fe1f00bab0ab59de24c
+      manual_context: Conservative documented status-field upper bound for L011/L012; otherwise retained
+        sparse bank policy from own-manual reset/status tables and vendor bank fields. Reset values are
+        not used for W0C commands.
+    level_trigger_source: docs/gpio-async-read-only-audit.md#irq-map-checked-against-primary-sources-and-generated-metadata
+    peripherals:
+      GPIOA:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOB:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOC:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOD:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOE:
+        serviced_mask: 65535
+        clear_noop_mask: 65535
+        level_trigger: true
+      GPIOF:
+        serviced_mask: 2047
+        clear_noop_mask: 65535
+        level_trigger: true

@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "status": "passed_conditional_on_lineage_update",
+  "review_date": "2026-10-09",
+  "scope": "Independent narrow technical static review and byte-exact additive composition proof for the three HEX models rebased onto accepted Stage28 VREF; excludes hardware qualification, runtime behavior, firmware, full builds and legal clearance.",
+  "baseline_archive_sha256": "569ad4a10a22ed2a47def4dbf42f468373fe6cfb835eef647261f8505e3fa691",
+  "stage27_archive_sha256": "b5795126c3cf57cebd1d9122783397baf1229a0c14ee89c6a528c4beb669c4fd",
+  "accepted_stage27_hex_archive_sha256": "ab27f951fe83cf5cd6cef49cccb19a9ea84c8ff4c5cf17eb29d1887acc9dde0e",
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "stage27_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+      "accepted_hex_sha256": "6e226f5fcd3be01948c92cef653774119d34a1b7ff490cd08cadb0252d132477",
+      "before_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
+      "after_sha256": "1240bf168f847297ede62b2423d8376d2c260d2eace27e74c726623859e0707f",
+      "added_lines": 14,
+      "deleted_lines": 0,
+      "byte_exact_reverse": true,
+      "hex_insertions_byte_identical_to_accepted": true,
+      "remove_vref_reconstructs_accepted_hex": true
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "stage27_sha256": "790df91fb9a852b4955893bd4ffabece577bb6a979b2d8fe2fa403e2c5e56304",
+      "accepted_hex_sha256": "0abcfdcac076ed2ab26a3a1496b5e0733ed9e27048e12394539d4f74334c2fbe",
+      "before_sha256": "85f6f65033ab8454861f9d6b0b7552cbd4aafdd3dea0179c84a9d5c56fdc3e21",
+      "after_sha256": "c53354b75e9b50c72714f3476a3da9ecfc32dcaa29342968bf604bc32f10e6d0",
+      "added_lines": 14,
+      "deleted_lines": 0,
+      "byte_exact_reverse": true,
+      "hex_insertions_byte_identical_to_accepted": true,
+      "remove_vref_reconstructs_accepted_hex": true
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "stage27_sha256": "35689bbff0951a5f6e95f908fe2d2b95ebf25cbd82dbe07d9b490fee9379bc94",
+      "accepted_hex_sha256": "d4a93db712f212ee08b0e2259613860ef289d852de8e0b4397770397613a51bc",
+      "before_sha256": "ec74116b6393bd764ede2f0c06f6a50bd883ebe6e01fb887d9c2d8cd8914a4c1",
+      "after_sha256": "2b1fa6d62be812e01ee2dbf9e90626cc6f1b658960fcbd99cf9fa221455ba4e8",
+      "added_lines": 13,
+      "deleted_lines": 0,
+      "byte_exact_reverse": true,
+      "hex_insertions_byte_identical_to_accepted": true,
+      "remove_vref_reconstructs_accepted_hex": true
+    }
+  ],
+  "checks": [
+    "Independently read Stage27, Stage28 and accepted HEX ZIP bytes, recomputed diffs and hashes; did not rely on implementation proof Boolean conclusions.",
+    "All three before/after snapshots match the archived Stage28 and candidate model bytes; all six frozen snapshots have mode 0444.",
+    "Removing the independently derived HEX insertions reconstructs accepted Stage28 byte for byte; removing independently derived VREF insertions reconstructs accepted Stage27 HEX byte for byte.",
+    "Removing both additions in either order reconstructs the identical Stage27 baseline; only HEX insertion counts 14/14/13 and unchanged VREF insertion counts 11/11/9 occur.",
+    "The 981-entry initial candidate-source-manifest matched all candidate file bytes at review time. This is a snapshot result, not a claim about later non-model acceptance edits.",
+    "Current provenance inventory was byte-identical to Stage28; proposed previous_review equaled the complete accepted VREF replacement_review and accepted_extensions was retained unchanged.",
+    "The authored additive evidence was read and verified against independently accepted insertion text and model hashes; all current candidate model hashes rechecked before this receipt was written."
+  ],
+  "compatibility": {
+    "optional_fields": "HEX and reference_divider retain Option fields. Serde missing/null values yield None and None is omitted during serialization. Generator models retain default None and static models retain corresponding Option types.",
+    "required_nested_fields": "Present HEX requires all six nested fields and its input requires all four ExternalClockLimits fields. Present VREF requires its five fields. No default synthesizes electrical facts.",
+    "types": "All three model projections retain reviewed field widths, signedness and fixed tuple shapes; VREF static strings/slices and custom generator Debug field remain unchanged.",
+    "source_compatibility": "Backward-compatible JSON is not Rust struct literal source compatibility: consumers constructing these public structs directly must provide the added fields.",
+    "validation_boundary": "Schemas constrain structure and numeric representation, not physical admissibility, interval ordering, percentages, source qualification or HSE/HEX mutual exclusion."
+  },
+  "lineage_preconditions": [
+    "Install this actual independent review as docs/hex-stage28-schema-review.json and the verified additive evidence as docs/hex-stage28-schema-additions.json.",
+    "Advance serde replacement_review tip to the exact accepted combined hash and references only after acceptance; set independent_review_passed=true and move pending_extension into accepted_extensions.",
+    "Nest the complete current VREF replacement_review as previous_review and preserve all historical accepted_extensions, original predecessor identities, project-authored replacement status, exclusions and unresolved permission findings.",
+    "Retain the independently accepted standalone HEX review with its original Stage27 scope; record both metapac identities without changing adapted-source ancestry or historical observed hashes.",
+    "Keep legal_clearance=false. Regenerate/relock affected provenance inventories and pass distribution verification after acceptance edits before packaging.",
+    "Do not distribute frozen predecessor bodies, historical saved bases or predecessor deletion hunks."
+  ],
+  "evidence": {
+    "model_delta": {
+      "path": "schema-review/model-delta.patch",
+      "sha256": "0d3f879f2fec83037a4988722f1dc66bdcd68fe7cd73dc2c3afc47cdf5ce3db5"
+    },
+    "implementation_inverse": {
+      "path": "schema-review/exact-additive-inverse.json",
+      "sha256": "5b022e9797e1b4396299a0c243e9fea3551530eec04faa96255597ca8e524c64"
+    },
+    "verified_authored_additions": {
+      "path": "docs/hex-stage28-schema-additions.json",
+      "sha256": "8f2da1ce61f71f66beaf9761786ee3d8e0b5d176802b790573efda4d28a0e056"
+    },
+    "accepted_stage27_hex_review_sha256": "a39002ed2109ac413c39e7163b38a4a197ef5e7e4eadfc5ff3c40cadb0f833f6",
+    "stage28_provenance_inventory_sha256": "1ce2e2bf7b84dcf6542197dd90a124d2f0b654878766164ca075d00d8251a364",
+    "initial_candidate_manifest_sha256": "e4a157699eb2eb496ab0da52acffcc83b222d5884dbd89173d26f4fe55abdd26"
+  },
+  "limits": [
+    "This reviewer did not rerun Cargo tests, full generator/build checks, HAL tests or hardware tests. Prior independent HEX/VREF test reports were read as historical evidence only.",
+    "Later RTC ledger synchronization is outside this review; accepted model bytes were rechecked unchanged.",
+    "Post-acceptance provenance/distribution verification is a prerequisite, not a result claimed by this receipt."
+  ],
+  "legal_clearance": false,
+  "models_edited_by_reviewer": false,
+  "main_tree_edited_by_reviewer": false,
+  "uploaded": false
+}

@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "status": "own-source qualification and metadata projection completed; technical acceptance is separately recorded",
+  "source_authority": "sources/evidence-sources.json",
+  "own_sources": [
+    {
+      "family": "CW32F002",
+      "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+      "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+      "pdf_pages_1_based": [
+        42,
+        47,
+        54,
+        55,
+        57,
+        129
+      ],
+      "printed_pages": [
+        41,
+        46,
+        53,
+        54,
+        56,
+        128
+      ]
+    },
+    {
+      "family": "CW32F002",
+      "source_ref": "vendor:CW32F002_DataSheet_CN_V1.2.pdf",
+      "sha256": "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506",
+      "pdf_pages_1_based": [
+        22,
+        30,
+        31,
+        36,
+        37,
+        40
+      ],
+      "printed_pages": [
+        21,
+        29,
+        30,
+        35,
+        36,
+        39
+      ]
+    },
+    {
+      "family": "CW32F003",
+      "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+      "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+      "pdf_pages_1_based": [
+        44,
+        49,
+        56,
+        57,
+        59,
+        131
+      ],
+      "printed_pages": [
+        43,
+        48,
+        55,
+        56,
+        58,
+        130
+      ]
+    },
+    {
+      "family": "CW32F003",
+      "source_ref": "vendor:CW32F003_DataSheet_CN_V1.9.pdf",
+      "sha256": "5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd",
+      "pdf_pages_1_based": [
+        23,
+        31,
+        32,
+        37,
+        38,
+        41
+      ],
+      "printed_pages": [
+        22,
+        30,
+        31,
+        36,
+        37,
+        40
+      ]
+    }
+  ],
+  "pin_facts": {
+    "CW32F002": {
+      "TSSOP20": {
+        "PB0": "5",
+        "PB1": "6"
+      },
+      "QFN20": {
+        "PB0": "2",
+        "PB1": "3"
+      }
+    },
+    "CW32F003": {
+      "TSSOP24": {
+        "PB0": "6",
+        "PB1": "8"
+      },
+      "TSSOP20": {
+        "PB0": "5",
+        "PB1": "6"
+      },
+      "QFN20": {
+        "PB0": "2",
+        "PB1": "3"
+      }
+    }
+  },
+  "qualification": {
+    "frequency_conflict": "Own RMs require actual 4..32 MHz; own DS external-input tables state 1..32 MHz. Admit their intersection 4..32 MHz including complete board-guaranteed minimum and maximum, never nominal frequency alone.",
+    "conditions": "Use own general supply 1.65..5.5 V and conservative ambient -40..105 C. The conditional low-power 125 C extension is not adopted; retained factory HSI is qualified only through 105 C.",
+    "waveform": "All waveform limits apply together at the pad. Duty is 40..60 percent; each high/low pulse is at least 15 ns; each rise/fall is at most 20 ns. At 32 MHz, 40 percent gives 12.5 ns and is therefore insufficient. DS waveform characteristics are guaranteed by design, not production-tested.",
+    "levels": "high_level_vddio_percent is 70..100; low_level_vddio_percent is 0..30, where 0 denotes VSS and percentages are relative to VSS. Own I/O and absolute-maximum limits also apply.",
+    "accuracy": "No default ppm or inherited HSI accuracy. Board guarantees include temperature, supply, aging, load and short-term cycle variation across declared operating conditions.",
+    "pins": "Own datasheet Table 5-2 labels HEX_PB00 and HEX_PB01 in PB00/PB01 rows. These reviewed routes are peripheral-controlled inputs without numbered AFs. Existing independently reviewed physical pinouts determine exact-package availability; aliases retain the common GPIO intersection. Physical pinout catalogs are unchanged.",
+    "clock_loss": "STABLE is a startup latch, not continuous clock-loss detection. No usable CCS, automatic fallback or PLL mechanism is documented for this pair; copied SDK CCS/LSELOCK helpers do not authorize writes to reserved CR1 bits.",
+    "retained_awt": "AWT SRC=2/3 independently selects PB00/PB01. HEXEN=0 or a different system PINMUX does not prove the other AWT input pad is unused."
+  },
+  "awt_curation": {
+    "canonical": "awt_v1",
+    "families": [
+      "CW32F002",
+      "CW32F003"
+    ],
+    "scope": "Complete documented Source enum with LSI=1, HEX_PB00=2, HEX_PB01=3 and ETR=4. Preserve the existing HSIOSC=0 encoding and all register layout/access/other enums.",
+    "prior_review_context": "The Stage27 HSE review kept awt_v1 unchanged while splitting F020/x030 semantics. This own-source HEX review supersedes that historical unchanged statement only for the newly reviewed F002/F003 Source names. hse-qualified.yaml and the separate HSE-family AWT definition remain unchanged."
+  },
+  "files": [
+    {
+      "path": "cw32-data/hex-qualified.yaml",
+      "sha256": "cc7b6f5da58f76ad76a32ba71ce894bc4fb62158ebf1a19bc3330421c9c04126"
+    },
+    {
+      "path": "cw32-data/electrical.yaml",
+      "sha256": "860f1d06779cd9d042e6884c89d068a03557745851c22835828388f7e181febb"
+    },
+    {
+      "path": "cw32-data/pinouts/cw32f002.yaml",
+      "sha256": "71163520d8e0384063b5ff48765d03872c1332a6112e83573c0c57af4d9cfd4f"
+    },
+    {
+      "path": "cw32-data/pinouts/cw32f003.yaml",
+      "sha256": "c7cbb26c157b6a878563181d53bd024fb8710fb9aa2e0a5c277bbc51331dcb6d"
+    },
+    {
+      "path": "cw32-data/registers/sysctrl_cw32f002_v1.yaml",
+      "sha256": "d11e4f09cea40af75ad6b844dd15dcc4ece2e0e196b248f62ec16c7a96254da1"
+    },
+    {
+      "path": "cw32-data/registers/sysctrl_cw32f003_v1.yaml",
+      "sha256": "ea91d5451fff028a6d28d088dce2be1d3996f7d11a4dbe1695838ab7437e8c65"
+    },
+    {
+      "path": "cw32-data/registers/awt_v1.yaml",
+      "sha256": "cc688d2b019c6fb5c809434412a096b36ea4b9f0961b5593d002423a94f10561"
+    },
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "sha256": "6e226f5fcd3be01948c92cef653774119d34a1b7ff490cd08cadb0252d132477"
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "sha256": "0abcfdcac076ed2ab26a3a1496b5e0733ed9e27048e12394539d4f74334c2fbe"
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "sha256": "d4a93db712f212ee08b0e2259613860ef289d852de8e0b4397770397613a51bc"
+    }
+  ],
+  "hse_policy_unchanged_sha256": "757ea9b106d3f41234d7e11d2e07408c0a1440a6a935d7c25dc8eeb630805ef4",
+  "validation": "Direct own-PDF text inspection; all four actual PDF SHA256 hashes matched canonical selected own-family authority. Generator/PAC and production ARM verification are separate evidence, not silicon validation.",
+  "prior_read_only_audit": {
+    "recommendation_sha256": "4c384a1979bbaf417c9b3f7432bcf0c45bef7e679a8e56ddd4667b9e30797852",
+    "facts_sha256": "748d1368897b40b7295ecddbcfe20a5f79466fb641c3d28b6f0e056cccfb9270",
+    "verification_sha256": "709860b03494a97c2d2c57abfd6ea0f1aa18246a2fc733716b3b9f519f52b9ec"
+  },
+  "projection_disposition": "Original physical pinout catalogs remain byte-exact. HEX_PB00/PB01 routes are authored in hex-qualified.yaml, projected through electrical.rs, then intersected with the existing exact-package/common-alias GPIO pin sets."
+}

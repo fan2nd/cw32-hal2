@@ -1,0 +1,3345 @@
+{
+  "schema_version": 1,
+  "audited_utc": "2026-10-08",
+  "scope": "Source qualification for ordered software-triggered bounded blocking classic ADC scans; no silicon validation.",
+  "provenance": "Official locally retained PDFs inspected independently for every family. F030 and A030 share the explicitly named CW32x030 manual. Register-version reuse is reported separately from source-family evidence.",
+  "page_convention": "printed_pages are the printed labels; pdf_pages_1_based are the physical PDF page numbers. In these sources PDF=printed+1.",
+  "families": [
+    {
+      "family": "CW32F030",
+      "register_version": "v1",
+      "source_path": "CW32x030_UserManual_CN_V2.5.pdf",
+      "source_sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "slots": 4,
+      "scan_mode": 4,
+      "single_mode": 0,
+      "mode_field": {
+        "register_offset": 0,
+        "bit_offset": 1,
+        "bit_size": 3
+      },
+      "sequence": {
+        "registers": [
+          {
+            "name": "SQR",
+            "offset": 12,
+            "slot_indices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 262143
+          }
+        ],
+        "length_register_offset": 12,
+        "length_bit_offset": 16,
+        "length_bit_size": 2,
+        "length_encoding": "slot_count_minus_one",
+        "min_slots": 1,
+        "max_slots": 4,
+        "ordered_slots": true,
+        "repeated_channel_selection": "Each slot has its own mux field; no distinct-channel requirement is stated."
+      },
+      "channels": {
+        "external_raw_mux_values": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "external_signal_labels": [
+          "AIN0",
+          "AIN1",
+          "AIN2",
+          "AIN3",
+          "AIN4",
+          "AIN5",
+          "AIN6",
+          "AIN7",
+          "AIN8",
+          "AIN9",
+          "AIN10",
+          "AIN11",
+          "AIN12"
+        ],
+        "supply_div3": 13,
+        "temperature": 14,
+        "vrefint_1v2": 15,
+        "reserved_or_unqualified_raw_mux_values": []
+      },
+      "common_controls": {
+        "sampling_cycles": true,
+        "input_buffer": true,
+        "reference": true,
+        "clock_divider": true,
+        "per_slot_controls": false,
+        "sampling_cycles_encodings": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "sampling_field": [
+          11,
+          2
+        ],
+        "buffer_bit": 13,
+        "reference_field": [
+          6,
+          2
+        ],
+        "clock_field": [
+          8,
+          3
+        ],
+        "clock_divisor_encodings": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "reference_encodings": {
+          "0": "internal_1v5",
+          "1": "internal_2v5",
+          "2": "external",
+          "3": "VDDA"
+        },
+        "temperature_enable_bit": 5,
+        "bgr_enable_bit": 4
+      },
+      "conservative_policy": {
+        "buffered_requires_single_channel_single_shot": true,
+        "internal_requires_single_channel_single_shot": true,
+        "multi_slot_external_only": true,
+        "multi_slot_input_buffer_allowed": false,
+        "singleton_buffered_or_internal_uses_mode": 0,
+        "note": "Buffer restriction is a conservative resolution of contradictory adjacent accuracy paragraphs, not a claim that hardware cannot scan buffered external inputs."
+      },
+      "completion": {
+        "per_conversion_flag": "EOC",
+        "per_conversion_flag_bit": 0,
+        "end_of_sequence_flag": "EOS",
+        "end_of_sequence_flag_bit": 1,
+        "scan_automatically_clears_start": true,
+        "start_offset": 8,
+        "start_bit": 0,
+        "recommended_acceptance": "fresh EOS and START=0 and OVW=0",
+        "autostop_bit": 1,
+        "autostop_effect": "When set, clears CR0.EN after the scan; it is independent of the MODE=4 START automatic clear.",
+        "recommended_autostop": false
+      },
+      "results": {
+        "first_offset": 32,
+        "stride": 4,
+        "count": 4,
+        "access": "read_only",
+        "width_bits": 16,
+        "adc_resolution_bits": 12,
+        "right_alignment_bit": 6,
+        "right_alignment_encoding": 0,
+        "mapping": "RESULT index equals sequence slot index, not analog channel number.",
+        "read_clears_result_storage": null,
+        "read_clears_eoc_or_eos": null,
+        "read_clear_qualification": "No ADC chapter statement establishes a result-read clear/acknowledgment contract. Clear EOC/EOS/OVW via ICR.",
+        "overwrite_flag_bit": 6,
+        "discard_bit": 5,
+        "discard_scope": "Own CR1 description specifies single-channel conversion only. Sequence overwrite/discard policy is not separately specified.",
+        "common_result_offset": null
+      },
+      "interrupts": {
+        "ier_offset": 52,
+        "icr_offset": 56,
+        "isr_offset": 60,
+        "isr_access": "read_only",
+        "ready_bit": 7,
+        "icr_access": "R1W0",
+        "icr_reset_and_valid_mask": 127,
+        "icr_clear_expression": "0x7f & ~flags",
+        "ready_clear_through_icr": false,
+        "dma_enable_bits": [
+          7
+        ]
+      },
+      "sources": [
+        {
+          "path": "CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+          "official_url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+          "revision": "Rev 2.5",
+          "language": "Chinese",
+          "own_families": [
+            "CW32F030",
+            "CW32A030"
+          ]
+        }
+      ],
+      "page_refs": {
+        "accuracy_and_result_mapping": {
+          "section": "22.4.3-22.4.4",
+          "printed_pages": [
+            437
+          ],
+          "pdf_pages_1_based": [
+            438
+          ]
+        },
+        "scan_completion": {
+          "section": "22.5.5",
+          "printed_pages": [
+            446
+          ],
+          "pdf_pages_1_based": [
+            447
+          ]
+        },
+        "software_scan_flow": {
+          "section": "22.5.5",
+          "printed_pages": [
+            447
+          ],
+          "pdf_pages_1_based": [
+            448
+          ]
+        },
+        "cr0_common_controls": {
+          "section": "22.13.1",
+          "printed_pages": [
+            460,
+            461
+          ],
+          "pdf_pages_1_based": [
+            461,
+            462
+          ]
+        },
+        "cr1_alignment_discard_dma": {
+          "section": "22.13.2",
+          "printed_pages": [
+            462
+          ],
+          "pdf_pages_1_based": [
+            463
+          ]
+        },
+        "sequence_registers": {
+          "section": "22.13.4",
+          "printed_pages": [
+            463
+          ],
+          "pdf_pages_1_based": [
+            464
+          ]
+        },
+        "start_and_interrupt_enable": {
+          "section": "22.13 ADC_START/ADC_IER",
+          "printed_pages": [
+            466
+          ],
+          "pdf_pages_1_based": [
+            467
+          ]
+        },
+        "status_flags": {
+          "section": "22.13 ADC_ISR",
+          "printed_pages": [
+            467
+          ],
+          "pdf_pages_1_based": [
+            468
+          ]
+        },
+        "flag_clear": {
+          "section": "22.13 ADC_ICR",
+          "printed_pages": [
+            468
+          ],
+          "pdf_pages_1_based": [
+            469
+          ]
+        },
+        "result_registers": {
+          "section": "22.13 ADC_RESULT0-ADC_RESULT3",
+          "printed_pages": [
+            468,
+            469
+          ],
+          "pdf_pages_1_based": [
+            469,
+            470
+          ]
+        },
+        "register_list": {
+          "section": "22.12",
+          "printed_pages": [
+            459
+          ],
+          "pdf_pages_1_based": [
+            460
+          ]
+        },
+        "ready_startup": {
+          "section": "22.4.1",
+          "printed_pages": [
+            435
+          ],
+          "pdf_pages_1_based": [
+            436
+          ]
+        },
+        "bgr_startup_approximate": {
+          "section": "23.3.1",
+          "printed_pages": [
+            472
+          ],
+          "pdf_pages_1_based": [
+            473
+          ]
+        }
+      }
+    },
+    {
+      "family": "CW32A030",
+      "register_version": "v1",
+      "source_path": "CW32x030_UserManual_CN_V2.5.pdf",
+      "source_sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "slots": 4,
+      "scan_mode": 4,
+      "single_mode": 0,
+      "mode_field": {
+        "register_offset": 0,
+        "bit_offset": 1,
+        "bit_size": 3
+      },
+      "sequence": {
+        "registers": [
+          {
+            "name": "SQR",
+            "offset": 12,
+            "slot_indices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 262143
+          }
+        ],
+        "length_register_offset": 12,
+        "length_bit_offset": 16,
+        "length_bit_size": 2,
+        "length_encoding": "slot_count_minus_one",
+        "min_slots": 1,
+        "max_slots": 4,
+        "ordered_slots": true,
+        "repeated_channel_selection": "Each slot has its own mux field; no distinct-channel requirement is stated."
+      },
+      "channels": {
+        "external_raw_mux_values": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "external_signal_labels": [
+          "AIN0",
+          "AIN1",
+          "AIN2",
+          "AIN3",
+          "AIN4",
+          "AIN5",
+          "AIN6",
+          "AIN7",
+          "AIN8",
+          "AIN9",
+          "AIN10",
+          "AIN11",
+          "AIN12"
+        ],
+        "supply_div3": 13,
+        "temperature": 14,
+        "vrefint_1v2": 15,
+        "reserved_or_unqualified_raw_mux_values": []
+      },
+      "common_controls": {
+        "sampling_cycles": true,
+        "input_buffer": true,
+        "reference": true,
+        "clock_divider": true,
+        "per_slot_controls": false,
+        "sampling_cycles_encodings": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "sampling_field": [
+          11,
+          2
+        ],
+        "buffer_bit": 13,
+        "reference_field": [
+          6,
+          2
+        ],
+        "clock_field": [
+          8,
+          3
+        ],
+        "clock_divisor_encodings": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "reference_encodings": {
+          "0": "internal_1v5",
+          "1": "internal_2v5",
+          "2": "external",
+          "3": "VDDA"
+        },
+        "temperature_enable_bit": 5,
+        "bgr_enable_bit": 4
+      },
+      "conservative_policy": {
+        "buffered_requires_single_channel_single_shot": true,
+        "internal_requires_single_channel_single_shot": true,
+        "multi_slot_external_only": true,
+        "multi_slot_input_buffer_allowed": false,
+        "singleton_buffered_or_internal_uses_mode": 0,
+        "note": "Buffer restriction is a conservative resolution of contradictory adjacent accuracy paragraphs, not a claim that hardware cannot scan buffered external inputs."
+      },
+      "completion": {
+        "per_conversion_flag": "EOC",
+        "per_conversion_flag_bit": 0,
+        "end_of_sequence_flag": "EOS",
+        "end_of_sequence_flag_bit": 1,
+        "scan_automatically_clears_start": true,
+        "start_offset": 8,
+        "start_bit": 0,
+        "recommended_acceptance": "fresh EOS and START=0 and OVW=0",
+        "autostop_bit": 1,
+        "autostop_effect": "When set, clears CR0.EN after the scan; it is independent of the MODE=4 START automatic clear.",
+        "recommended_autostop": false
+      },
+      "results": {
+        "first_offset": 32,
+        "stride": 4,
+        "count": 4,
+        "access": "read_only",
+        "width_bits": 16,
+        "adc_resolution_bits": 12,
+        "right_alignment_bit": 6,
+        "right_alignment_encoding": 0,
+        "mapping": "RESULT index equals sequence slot index, not analog channel number.",
+        "read_clears_result_storage": null,
+        "read_clears_eoc_or_eos": null,
+        "read_clear_qualification": "No ADC chapter statement establishes a result-read clear/acknowledgment contract. Clear EOC/EOS/OVW via ICR.",
+        "overwrite_flag_bit": 6,
+        "discard_bit": 5,
+        "discard_scope": "Own CR1 description specifies single-channel conversion only. Sequence overwrite/discard policy is not separately specified.",
+        "common_result_offset": null
+      },
+      "interrupts": {
+        "ier_offset": 52,
+        "icr_offset": 56,
+        "isr_offset": 60,
+        "isr_access": "read_only",
+        "ready_bit": 7,
+        "icr_access": "R1W0",
+        "icr_reset_and_valid_mask": 127,
+        "icr_clear_expression": "0x7f & ~flags",
+        "ready_clear_through_icr": false,
+        "dma_enable_bits": [
+          7
+        ]
+      },
+      "sources": [
+        {
+          "path": "CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+          "official_url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+          "revision": "Rev 2.5",
+          "language": "Chinese",
+          "own_families": [
+            "CW32F030",
+            "CW32A030"
+          ]
+        }
+      ],
+      "page_refs": {
+        "accuracy_and_result_mapping": {
+          "section": "22.4.3-22.4.4",
+          "printed_pages": [
+            437
+          ],
+          "pdf_pages_1_based": [
+            438
+          ]
+        },
+        "scan_completion": {
+          "section": "22.5.5",
+          "printed_pages": [
+            446
+          ],
+          "pdf_pages_1_based": [
+            447
+          ]
+        },
+        "software_scan_flow": {
+          "section": "22.5.5",
+          "printed_pages": [
+            447
+          ],
+          "pdf_pages_1_based": [
+            448
+          ]
+        },
+        "cr0_common_controls": {
+          "section": "22.13.1",
+          "printed_pages": [
+            460,
+            461
+          ],
+          "pdf_pages_1_based": [
+            461,
+            462
+          ]
+        },
+        "cr1_alignment_discard_dma": {
+          "section": "22.13.2",
+          "printed_pages": [
+            462
+          ],
+          "pdf_pages_1_based": [
+            463
+          ]
+        },
+        "sequence_registers": {
+          "section": "22.13.4",
+          "printed_pages": [
+            463
+          ],
+          "pdf_pages_1_based": [
+            464
+          ]
+        },
+        "start_and_interrupt_enable": {
+          "section": "22.13 ADC_START/ADC_IER",
+          "printed_pages": [
+            466
+          ],
+          "pdf_pages_1_based": [
+            467
+          ]
+        },
+        "status_flags": {
+          "section": "22.13 ADC_ISR",
+          "printed_pages": [
+            467
+          ],
+          "pdf_pages_1_based": [
+            468
+          ]
+        },
+        "flag_clear": {
+          "section": "22.13 ADC_ICR",
+          "printed_pages": [
+            468
+          ],
+          "pdf_pages_1_based": [
+            469
+          ]
+        },
+        "result_registers": {
+          "section": "22.13 ADC_RESULT0-ADC_RESULT3",
+          "printed_pages": [
+            468,
+            469
+          ],
+          "pdf_pages_1_based": [
+            469,
+            470
+          ]
+        },
+        "register_list": {
+          "section": "22.12",
+          "printed_pages": [
+            459
+          ],
+          "pdf_pages_1_based": [
+            460
+          ]
+        },
+        "ready_startup": {
+          "section": "22.4.1",
+          "printed_pages": [
+            435
+          ],
+          "pdf_pages_1_based": [
+            436
+          ]
+        },
+        "bgr_startup_approximate": {
+          "section": "23.3.1",
+          "printed_pages": [
+            472
+          ],
+          "pdf_pages_1_based": [
+            473
+          ]
+        }
+      }
+    },
+    {
+      "family": "CW32F020",
+      "register_version": "cw32f020_v1",
+      "source_path": "CW32F020_UserManual_CN_V1.4.pdf",
+      "source_sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+      "slots": 4,
+      "scan_mode": 4,
+      "single_mode": 0,
+      "mode_field": {
+        "register_offset": 0,
+        "bit_offset": 1,
+        "bit_size": 3
+      },
+      "sequence": {
+        "registers": [
+          {
+            "name": "SQR",
+            "offset": 12,
+            "slot_indices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 262143
+          }
+        ],
+        "length_register_offset": 12,
+        "length_bit_offset": 16,
+        "length_bit_size": 2,
+        "length_encoding": "slot_count_minus_one",
+        "min_slots": 1,
+        "max_slots": 4,
+        "ordered_slots": true,
+        "repeated_channel_selection": "Each slot has its own mux field; no distinct-channel requirement is stated."
+      },
+      "channels": {
+        "external_raw_mux_values": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "external_signal_labels": [
+          "AIN0",
+          "AIN1",
+          "AIN2",
+          "AIN3",
+          "AIN4",
+          "AIN5",
+          "AIN6",
+          "AIN7",
+          "AIN8",
+          "AIN9",
+          "AIN10",
+          "AIN11",
+          "AIN12"
+        ],
+        "supply_div3": 13,
+        "temperature": 14,
+        "vrefint_1v2": 15,
+        "reserved_or_unqualified_raw_mux_values": []
+      },
+      "common_controls": {
+        "sampling_cycles": true,
+        "input_buffer": true,
+        "reference": true,
+        "clock_divider": true,
+        "per_slot_controls": false,
+        "sampling_cycles_encodings": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "sampling_field": [
+          11,
+          2
+        ],
+        "buffer_bit": 13,
+        "reference_field": [
+          6,
+          2
+        ],
+        "clock_field": [
+          8,
+          3
+        ],
+        "clock_divisor_encodings": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "reference_encodings": {
+          "0": "internal_1v5",
+          "1": "internal_2v5",
+          "2": "external",
+          "3": "VDDA"
+        },
+        "temperature_enable_bit": 5,
+        "bgr_enable_bit": 4
+      },
+      "conservative_policy": {
+        "buffered_requires_single_channel_single_shot": true,
+        "internal_requires_single_channel_single_shot": true,
+        "multi_slot_external_only": true,
+        "multi_slot_input_buffer_allowed": false,
+        "singleton_buffered_or_internal_uses_mode": 0,
+        "note": "Buffer restriction is a conservative resolution of contradictory adjacent accuracy paragraphs, not a claim that hardware cannot scan buffered external inputs."
+      },
+      "completion": {
+        "per_conversion_flag": "EOC",
+        "per_conversion_flag_bit": 0,
+        "end_of_sequence_flag": "EOS",
+        "end_of_sequence_flag_bit": 1,
+        "scan_automatically_clears_start": true,
+        "start_offset": 8,
+        "start_bit": 0,
+        "recommended_acceptance": "fresh EOS and START=0 and OVW=0",
+        "autostop_bit": 1,
+        "autostop_effect": "When set, clears CR0.EN after the scan; it is independent of the MODE=4 START automatic clear.",
+        "recommended_autostop": false
+      },
+      "results": {
+        "first_offset": 32,
+        "stride": 4,
+        "count": 4,
+        "access": "read_only",
+        "width_bits": 16,
+        "adc_resolution_bits": 12,
+        "right_alignment_bit": 6,
+        "right_alignment_encoding": 0,
+        "mapping": "RESULT index equals sequence slot index, not analog channel number.",
+        "read_clears_result_storage": null,
+        "read_clears_eoc_or_eos": null,
+        "read_clear_qualification": "No ADC chapter statement establishes a result-read clear/acknowledgment contract. Clear EOC/EOS/OVW via ICR.",
+        "overwrite_flag_bit": 6,
+        "discard_bit": 5,
+        "discard_scope": "Own CR1 description specifies single-channel conversion only. Sequence overwrite/discard policy is not separately specified.",
+        "common_result_offset": null
+      },
+      "interrupts": {
+        "ier_offset": 52,
+        "icr_offset": 56,
+        "isr_offset": 60,
+        "isr_access": "read_only",
+        "ready_bit": 7,
+        "icr_access": "R1W0",
+        "icr_reset_and_valid_mask": 127,
+        "icr_clear_expression": "0x7f & ~flags",
+        "ready_clear_through_icr": false,
+        "dma_enable_bits": [
+          7
+        ]
+      },
+      "sources": [
+        {
+          "path": "CW32F020_UserManual_CN_V1.4.pdf",
+          "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+          "official_url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+          "revision": "Rev 1.4",
+          "language": "Chinese",
+          "own_families": [
+            "CW32F020"
+          ]
+        }
+      ],
+      "page_refs": {
+        "accuracy_and_result_mapping": {
+          "section": "21.4.3-21.4.4",
+          "printed_pages": [
+            375
+          ],
+          "pdf_pages_1_based": [
+            376
+          ]
+        },
+        "scan_completion": {
+          "section": "21.5.5",
+          "printed_pages": [
+            384
+          ],
+          "pdf_pages_1_based": [
+            385
+          ]
+        },
+        "software_scan_flow": {
+          "section": "21.5.5",
+          "printed_pages": [
+            385
+          ],
+          "pdf_pages_1_based": [
+            386
+          ]
+        },
+        "cr0_common_controls": {
+          "section": "21.13.1",
+          "printed_pages": [
+            398,
+            399
+          ],
+          "pdf_pages_1_based": [
+            399,
+            400
+          ]
+        },
+        "cr1_alignment_discard_dma": {
+          "section": "21.13.2",
+          "printed_pages": [
+            400
+          ],
+          "pdf_pages_1_based": [
+            401
+          ]
+        },
+        "sequence_registers": {
+          "section": "21.13.4",
+          "printed_pages": [
+            401
+          ],
+          "pdf_pages_1_based": [
+            402
+          ]
+        },
+        "start_and_interrupt_enable": {
+          "section": "21.13 ADC_START/ADC_IER",
+          "printed_pages": [
+            404
+          ],
+          "pdf_pages_1_based": [
+            405
+          ]
+        },
+        "status_flags": {
+          "section": "21.13 ADC_ISR",
+          "printed_pages": [
+            405
+          ],
+          "pdf_pages_1_based": [
+            406
+          ]
+        },
+        "flag_clear": {
+          "section": "21.13 ADC_ICR",
+          "printed_pages": [
+            406
+          ],
+          "pdf_pages_1_based": [
+            407
+          ]
+        },
+        "result_registers": {
+          "section": "21.13 ADC_RESULT0-ADC_RESULT3",
+          "printed_pages": [
+            406,
+            407
+          ],
+          "pdf_pages_1_based": [
+            407,
+            408
+          ]
+        },
+        "register_list": {
+          "section": "21.12",
+          "printed_pages": [
+            397
+          ],
+          "pdf_pages_1_based": [
+            398
+          ]
+        },
+        "ready_startup": {
+          "section": "21.4.1",
+          "printed_pages": [
+            373
+          ],
+          "pdf_pages_1_based": [
+            374
+          ]
+        },
+        "bgr_startup_approximate": {
+          "section": "22.3.1",
+          "printed_pages": [
+            410
+          ],
+          "pdf_pages_1_based": [
+            411
+          ]
+        }
+      }
+    },
+    {
+      "family": "CW32F002",
+      "register_version": "cw32f002_v1",
+      "source_path": "CW32F002_UserManual_CN_V1.4.pdf",
+      "source_sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+      "slots": 4,
+      "scan_mode": 4,
+      "single_mode": 0,
+      "mode_field": {
+        "register_offset": 0,
+        "bit_offset": 1,
+        "bit_size": 3
+      },
+      "sequence": {
+        "registers": [
+          {
+            "name": "SQR",
+            "offset": 12,
+            "slot_indices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 262143
+          }
+        ],
+        "length_register_offset": 12,
+        "length_bit_offset": 16,
+        "length_bit_size": 2,
+        "length_encoding": "slot_count_minus_one",
+        "min_slots": 1,
+        "max_slots": 4,
+        "ordered_slots": true,
+        "repeated_channel_selection": "Each slot has its own mux field; no distinct-channel requirement is stated."
+      },
+      "channels": {
+        "external_raw_mux_values": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "external_signal_labels": [
+          "AIN0",
+          "AIN1",
+          "AIN2",
+          "AIN3",
+          "AIN4",
+          "AIN5",
+          "AIN6",
+          "AIN7",
+          "AIN8",
+          "AIN9",
+          "AIN10",
+          "AIN11",
+          "AIN12"
+        ],
+        "supply_div3": 13,
+        "temperature": null,
+        "vrefint_1v2": null,
+        "reserved_or_unqualified_raw_mux_values": [
+          14,
+          15
+        ]
+      },
+      "common_controls": {
+        "sampling_cycles": true,
+        "input_buffer": true,
+        "reference": true,
+        "clock_divider": true,
+        "per_slot_controls": false,
+        "sampling_cycles_encodings": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "sampling_field": [
+          11,
+          2
+        ],
+        "buffer_bit": 13,
+        "reference_field": [
+          6,
+          2
+        ],
+        "clock_field": [
+          8,
+          3
+        ],
+        "clock_divisor_encodings": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "reference_encodings": {
+          "2": "external",
+          "3": "VDD"
+        },
+        "temperature_enable_bit": null,
+        "bgr_enable_bit": null
+      },
+      "conservative_policy": {
+        "buffered_requires_single_channel_single_shot": true,
+        "internal_requires_single_channel_single_shot": true,
+        "multi_slot_external_only": true,
+        "multi_slot_input_buffer_allowed": false,
+        "singleton_buffered_or_internal_uses_mode": 0,
+        "note": "Buffer restriction is a conservative resolution of contradictory adjacent accuracy paragraphs, not a claim that hardware cannot scan buffered external inputs."
+      },
+      "completion": {
+        "per_conversion_flag": "EOC",
+        "per_conversion_flag_bit": 0,
+        "end_of_sequence_flag": "EOS",
+        "end_of_sequence_flag_bit": 1,
+        "scan_automatically_clears_start": true,
+        "start_offset": 8,
+        "start_bit": 0,
+        "recommended_acceptance": "fresh EOS and START=0 and OVW=0",
+        "autostop_bit": 1,
+        "autostop_effect": "When set, clears CR0.EN after the scan; it is independent of the MODE=4 START automatic clear.",
+        "recommended_autostop": false
+      },
+      "results": {
+        "first_offset": 32,
+        "stride": 4,
+        "count": 4,
+        "access": "read_only",
+        "width_bits": 16,
+        "adc_resolution_bits": 12,
+        "right_alignment_bit": 6,
+        "right_alignment_encoding": 0,
+        "mapping": "RESULT index equals sequence slot index, not analog channel number.",
+        "read_clears_result_storage": null,
+        "read_clears_eoc_or_eos": null,
+        "read_clear_qualification": "No ADC chapter statement establishes a result-read clear/acknowledgment contract. Clear EOC/EOS/OVW via ICR.",
+        "overwrite_flag_bit": 6,
+        "discard_bit": 5,
+        "discard_scope": "Own CR1 description specifies single-channel conversion only. Sequence overwrite/discard policy is not separately specified.",
+        "common_result_offset": null
+      },
+      "interrupts": {
+        "ier_offset": 52,
+        "icr_offset": 56,
+        "isr_offset": 60,
+        "isr_access": "read_only",
+        "ready_bit": 7,
+        "icr_access": "R1W0",
+        "icr_reset_and_valid_mask": 127,
+        "icr_clear_expression": "0x7f & ~flags",
+        "ready_clear_through_icr": false,
+        "dma_enable_bits": []
+      },
+      "sources": [
+        {
+          "path": "CW32F002_UserManual_CN_V1.4.pdf",
+          "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+          "official_url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+          "revision": "Rev 1.4",
+          "language": "Chinese",
+          "own_families": [
+            "CW32F002"
+          ]
+        }
+      ],
+      "page_refs": {
+        "accuracy_and_result_mapping": {
+          "section": "19.4.3-19.4.4",
+          "printed_pages": [
+            304
+          ],
+          "pdf_pages_1_based": [
+            305
+          ]
+        },
+        "scan_completion": {
+          "section": "19.5.5",
+          "printed_pages": [
+            313
+          ],
+          "pdf_pages_1_based": [
+            314
+          ]
+        },
+        "software_scan_flow": {
+          "section": "19.5.5",
+          "printed_pages": [
+            314
+          ],
+          "pdf_pages_1_based": [
+            315
+          ]
+        },
+        "cr0_common_controls": {
+          "section": "19.12.1",
+          "printed_pages": [
+            326
+          ],
+          "pdf_pages_1_based": [
+            327
+          ]
+        },
+        "cr1_alignment_discard_dma": {
+          "section": "19.12.2",
+          "printed_pages": [
+            327
+          ],
+          "pdf_pages_1_based": [
+            328
+          ]
+        },
+        "sequence_registers": {
+          "section": "19.12.4",
+          "printed_pages": [
+            328
+          ],
+          "pdf_pages_1_based": [
+            329
+          ]
+        },
+        "start_and_interrupt_enable": {
+          "section": "19.12 ADC_START/ADC_IER",
+          "printed_pages": [
+            331
+          ],
+          "pdf_pages_1_based": [
+            332
+          ]
+        },
+        "status_flags": {
+          "section": "19.12 ADC_ISR",
+          "printed_pages": [
+            332
+          ],
+          "pdf_pages_1_based": [
+            333
+          ]
+        },
+        "flag_clear": {
+          "section": "19.12 ADC_ICR",
+          "printed_pages": [
+            333
+          ],
+          "pdf_pages_1_based": [
+            334
+          ]
+        },
+        "result_registers": {
+          "section": "19.12 ADC_RESULT0-ADC_RESULT3",
+          "printed_pages": [
+            333,
+            334
+          ],
+          "pdf_pages_1_based": [
+            334,
+            335
+          ]
+        },
+        "register_list": {
+          "section": "19.11",
+          "printed_pages": [
+            325
+          ],
+          "pdf_pages_1_based": [
+            326
+          ]
+        },
+        "ready_startup": {
+          "section": "19.4.1",
+          "printed_pages": [
+            302
+          ],
+          "pdf_pages_1_based": [
+            303
+          ]
+        }
+      }
+    },
+    {
+      "family": "CW32F003",
+      "register_version": "cw32f003_v1",
+      "source_path": "CW32F003_UserManual_CN_V2.3.pdf",
+      "source_sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+      "slots": 4,
+      "scan_mode": 4,
+      "single_mode": 0,
+      "mode_field": {
+        "register_offset": 0,
+        "bit_offset": 1,
+        "bit_size": 3
+      },
+      "sequence": {
+        "registers": [
+          {
+            "name": "SQR",
+            "offset": 12,
+            "slot_indices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 262143
+          }
+        ],
+        "length_register_offset": 12,
+        "length_bit_offset": 16,
+        "length_bit_size": 2,
+        "length_encoding": "slot_count_minus_one",
+        "min_slots": 1,
+        "max_slots": 4,
+        "ordered_slots": true,
+        "repeated_channel_selection": "Each slot has its own mux field; no distinct-channel requirement is stated."
+      },
+      "channels": {
+        "external_raw_mux_values": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "external_signal_labels": [
+          "AIN0",
+          "AIN1",
+          "AIN2",
+          "AIN3",
+          "AIN4",
+          "AIN5",
+          "AIN6",
+          "AIN7",
+          "AIN8",
+          "AIN9",
+          "AIN10",
+          "AIN11",
+          "AIN12"
+        ],
+        "supply_div3": 13,
+        "temperature": 14,
+        "vrefint_1v2": 15,
+        "reserved_or_unqualified_raw_mux_values": []
+      },
+      "common_controls": {
+        "sampling_cycles": true,
+        "input_buffer": true,
+        "reference": true,
+        "clock_divider": true,
+        "per_slot_controls": false,
+        "sampling_cycles_encodings": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "sampling_field": [
+          11,
+          2
+        ],
+        "buffer_bit": 13,
+        "reference_field": [
+          6,
+          2
+        ],
+        "clock_field": [
+          8,
+          3
+        ],
+        "clock_divisor_encodings": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "reference_encodings": {
+          "0": "internal_1v5",
+          "1": "internal_2v5",
+          "2": "external",
+          "3": "VDD"
+        },
+        "temperature_enable_bit": 5,
+        "bgr_enable_bit": 4
+      },
+      "conservative_policy": {
+        "buffered_requires_single_channel_single_shot": true,
+        "internal_requires_single_channel_single_shot": true,
+        "multi_slot_external_only": true,
+        "multi_slot_input_buffer_allowed": false,
+        "singleton_buffered_or_internal_uses_mode": 0,
+        "note": "Buffer restriction is a conservative resolution of contradictory adjacent accuracy paragraphs, not a claim that hardware cannot scan buffered external inputs."
+      },
+      "completion": {
+        "per_conversion_flag": "EOC",
+        "per_conversion_flag_bit": 0,
+        "end_of_sequence_flag": "EOS",
+        "end_of_sequence_flag_bit": 1,
+        "scan_automatically_clears_start": true,
+        "start_offset": 8,
+        "start_bit": 0,
+        "recommended_acceptance": "fresh EOS and START=0 and OVW=0",
+        "autostop_bit": 1,
+        "autostop_effect": "When set, clears CR0.EN after the scan; it is independent of the MODE=4 START automatic clear.",
+        "recommended_autostop": false
+      },
+      "results": {
+        "first_offset": 32,
+        "stride": 4,
+        "count": 4,
+        "access": "read_only",
+        "width_bits": 16,
+        "adc_resolution_bits": 12,
+        "right_alignment_bit": 6,
+        "right_alignment_encoding": 0,
+        "mapping": "RESULT index equals sequence slot index, not analog channel number.",
+        "read_clears_result_storage": null,
+        "read_clears_eoc_or_eos": null,
+        "read_clear_qualification": "No ADC chapter statement establishes a result-read clear/acknowledgment contract. Clear EOC/EOS/OVW via ICR.",
+        "overwrite_flag_bit": 6,
+        "discard_bit": 5,
+        "discard_scope": "Own CR1 description specifies single-channel conversion only. Sequence overwrite/discard policy is not separately specified.",
+        "common_result_offset": null
+      },
+      "interrupts": {
+        "ier_offset": 52,
+        "icr_offset": 56,
+        "isr_offset": 60,
+        "isr_access": "read_only",
+        "ready_bit": 7,
+        "icr_access": "R1W0",
+        "icr_reset_and_valid_mask": 127,
+        "icr_clear_expression": "0x7f & ~flags",
+        "ready_clear_through_icr": false,
+        "dma_enable_bits": []
+      },
+      "sources": [
+        {
+          "path": "CW32F003_UserManual_CN_V2.3.pdf",
+          "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+          "official_url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+          "revision": "Rev 2.3",
+          "language": "Chinese",
+          "own_families": [
+            "CW32F003"
+          ]
+        }
+      ],
+      "page_refs": {
+        "accuracy_and_result_mapping": {
+          "section": "20.4.3-20.4.4",
+          "printed_pages": [
+            364
+          ],
+          "pdf_pages_1_based": [
+            365
+          ]
+        },
+        "scan_completion": {
+          "section": "20.5.5",
+          "printed_pages": [
+            373
+          ],
+          "pdf_pages_1_based": [
+            374
+          ]
+        },
+        "software_scan_flow": {
+          "section": "20.5.5",
+          "printed_pages": [
+            374
+          ],
+          "pdf_pages_1_based": [
+            375
+          ]
+        },
+        "cr0_common_controls": {
+          "section": "20.13.1",
+          "printed_pages": [
+            387,
+            388
+          ],
+          "pdf_pages_1_based": [
+            388,
+            389
+          ]
+        },
+        "cr1_alignment_discard_dma": {
+          "section": "20.13.2",
+          "printed_pages": [
+            389
+          ],
+          "pdf_pages_1_based": [
+            390
+          ]
+        },
+        "sequence_registers": {
+          "section": "20.13.4",
+          "printed_pages": [
+            390
+          ],
+          "pdf_pages_1_based": [
+            391
+          ]
+        },
+        "start_and_interrupt_enable": {
+          "section": "20.13 ADC_START/ADC_IER",
+          "printed_pages": [
+            393
+          ],
+          "pdf_pages_1_based": [
+            394
+          ]
+        },
+        "status_flags": {
+          "section": "20.13 ADC_ISR",
+          "printed_pages": [
+            394
+          ],
+          "pdf_pages_1_based": [
+            395
+          ]
+        },
+        "flag_clear": {
+          "section": "20.13 ADC_ICR",
+          "printed_pages": [
+            395
+          ],
+          "pdf_pages_1_based": [
+            396
+          ]
+        },
+        "result_registers": {
+          "section": "20.13 ADC_RESULT0-ADC_RESULT3",
+          "printed_pages": [
+            395,
+            396
+          ],
+          "pdf_pages_1_based": [
+            396,
+            397
+          ]
+        },
+        "register_list": {
+          "section": "20.12",
+          "printed_pages": [
+            386
+          ],
+          "pdf_pages_1_based": [
+            387
+          ]
+        },
+        "ready_startup": {
+          "section": "20.4.1",
+          "printed_pages": [
+            362
+          ],
+          "pdf_pages_1_based": [
+            363
+          ]
+        },
+        "bgr_startup_approximate": {
+          "section": "21.3.1",
+          "printed_pages": [
+            399
+          ],
+          "pdf_pages_1_based": [
+            400
+          ]
+        }
+      }
+    },
+    {
+      "family": "CW32L031",
+      "register_version": "cw32l031_v1",
+      "source_path": "CW32L031_UserManual_CN_V1.6.pdf",
+      "source_sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "slots": 8,
+      "scan_mode": 4,
+      "single_mode": 0,
+      "mode_field": {
+        "register_offset": 0,
+        "bit_offset": 1,
+        "bit_size": 3
+      },
+      "sequence": {
+        "registers": [
+          {
+            "name": "SQR0",
+            "offset": 80,
+            "slot_indices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 524287
+          },
+          {
+            "name": "SQR1",
+            "offset": 84,
+            "slot_indices": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 65535
+          }
+        ],
+        "length_register_offset": 80,
+        "length_bit_offset": 16,
+        "length_bit_size": 3,
+        "length_encoding": "slot_count_minus_one",
+        "min_slots": 1,
+        "max_slots": 8,
+        "ordered_slots": true,
+        "repeated_channel_selection": "Each slot has its own mux field; no distinct-channel requirement is stated."
+      },
+      "channels": {
+        "external_raw_mux_values": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "external_signal_labels": [
+          "AIN0",
+          "AIN1",
+          "AIN2",
+          "AIN3",
+          "AIN4",
+          "AIN5",
+          "AIN6",
+          "AIN7",
+          "AIN8",
+          "AIN9",
+          "AIN10",
+          "AIN11",
+          "AIN12"
+        ],
+        "supply_div3": 13,
+        "temperature": 14,
+        "vrefint_1v2": 15,
+        "reserved_or_unqualified_raw_mux_values": []
+      },
+      "common_controls": {
+        "sampling_cycles": true,
+        "input_buffer": true,
+        "reference": true,
+        "clock_divider": true,
+        "per_slot_controls": false,
+        "sampling_cycles_encodings": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "sampling_field": [
+          11,
+          2
+        ],
+        "buffer_bit": 13,
+        "reference_field": [
+          6,
+          2
+        ],
+        "clock_field": [
+          8,
+          3
+        ],
+        "clock_divisor_encodings": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "reference_encodings": {
+          "0": "internal_1v5",
+          "1": "internal_2v5",
+          "2": "external",
+          "3": "VDDA"
+        },
+        "temperature_enable_bit": 5,
+        "bgr_enable_bit": null
+      },
+      "conservative_policy": {
+        "buffered_requires_single_channel_single_shot": true,
+        "internal_requires_single_channel_single_shot": true,
+        "multi_slot_external_only": true,
+        "multi_slot_input_buffer_allowed": false,
+        "singleton_buffered_or_internal_uses_mode": 0,
+        "note": "Buffer restriction is a conservative resolution of contradictory adjacent accuracy paragraphs, not a claim that hardware cannot scan buffered external inputs."
+      },
+      "completion": {
+        "per_conversion_flag": "EOC",
+        "per_conversion_flag_bit": 0,
+        "end_of_sequence_flag": "EOS",
+        "end_of_sequence_flag_bit": 1,
+        "scan_automatically_clears_start": true,
+        "start_offset": 8,
+        "start_bit": 0,
+        "recommended_acceptance": "fresh EOS and START=0 and OVW=0",
+        "autostop_bit": 1,
+        "autostop_effect": "When set, clears CR0.EN after the scan; it is independent of the MODE=4 START automatic clear.",
+        "recommended_autostop": false
+      },
+      "results": {
+        "first_offset": 32,
+        "stride": 4,
+        "count": 8,
+        "access": "read_only",
+        "width_bits": 16,
+        "adc_resolution_bits": 12,
+        "right_alignment_bit": 6,
+        "right_alignment_encoding": 0,
+        "mapping": "RESULT index equals sequence slot index, not analog channel number.",
+        "read_clears_result_storage": null,
+        "read_clears_eoc_or_eos": null,
+        "read_clear_qualification": "No ADC chapter statement establishes a result-read clear/acknowledgment contract. Clear EOC/EOS/OVW via ICR.",
+        "overwrite_flag_bit": 6,
+        "discard_bit": 5,
+        "discard_scope": "Own CR1 description specifies single-channel conversion only. Sequence overwrite/discard policy is not separately specified.",
+        "common_result_offset": null
+      },
+      "interrupts": {
+        "ier_offset": 68,
+        "icr_offset": 72,
+        "isr_offset": 76,
+        "isr_access": "read_only",
+        "ready_bit": 7,
+        "icr_access": "R1W0",
+        "icr_reset_and_valid_mask": 127,
+        "icr_clear_expression": "0x7f & ~flags",
+        "ready_clear_through_icr": false,
+        "dma_enable_bits": [
+          14,
+          15
+        ]
+      },
+      "sources": [
+        {
+          "path": "CW32L031_UserManual_CN_V1.6.pdf",
+          "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+          "official_url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+          "revision": "Rev 1.6",
+          "language": "Chinese",
+          "own_families": [
+            "CW32L031"
+          ]
+        }
+      ],
+      "page_refs": {
+        "accuracy_and_result_mapping": {
+          "section": "22.4.3-22.4.4",
+          "printed_pages": [
+            434
+          ],
+          "pdf_pages_1_based": [
+            435
+          ]
+        },
+        "scan_completion": {
+          "section": "22.5.5",
+          "printed_pages": [
+            443
+          ],
+          "pdf_pages_1_based": [
+            444
+          ]
+        },
+        "software_scan_flow": {
+          "section": "22.5.5",
+          "printed_pages": [
+            444
+          ],
+          "pdf_pages_1_based": [
+            445
+          ]
+        },
+        "cr0_common_controls": {
+          "section": "22.13.1",
+          "printed_pages": [
+            458,
+            459
+          ],
+          "pdf_pages_1_based": [
+            459,
+            460
+          ]
+        },
+        "cr1_alignment_discard_dma": {
+          "section": "22.13.2",
+          "printed_pages": [
+            460
+          ],
+          "pdf_pages_1_based": [
+            461
+          ]
+        },
+        "sequence_registers": {
+          "section": "22.13.4-22.13.5",
+          "printed_pages": [
+            461,
+            462
+          ],
+          "pdf_pages_1_based": [
+            462,
+            463
+          ]
+        },
+        "start_and_interrupt_enable": {
+          "section": "22.13 ADC_START/ADC_IER",
+          "printed_pages": [
+            465
+          ],
+          "pdf_pages_1_based": [
+            466
+          ]
+        },
+        "status_flags": {
+          "section": "22.13 ADC_ISR",
+          "printed_pages": [
+            466
+          ],
+          "pdf_pages_1_based": [
+            467
+          ]
+        },
+        "flag_clear": {
+          "section": "22.13 ADC_ICR",
+          "printed_pages": [
+            467
+          ],
+          "pdf_pages_1_based": [
+            468
+          ]
+        },
+        "result_registers": {
+          "section": "22.13 ADC_RESULT0-ADC_RESULT7",
+          "printed_pages": [
+            467,
+            468,
+            469
+          ],
+          "pdf_pages_1_based": [
+            468,
+            469,
+            470
+          ]
+        },
+        "register_list": {
+          "section": "22.12",
+          "printed_pages": [
+            457
+          ],
+          "pdf_pages_1_based": [
+            458
+          ]
+        },
+        "ready_startup": {
+          "section": "22.4.1",
+          "printed_pages": [
+            432
+          ],
+          "pdf_pages_1_based": [
+            433
+          ]
+        },
+        "bgr_startup_approximate": {
+          "section": "23.3.1",
+          "printed_pages": [
+            472
+          ],
+          "pdf_pages_1_based": [
+            473
+          ]
+        }
+      }
+    },
+    {
+      "family": "CW32R031",
+      "register_version": "cw32l031_v1",
+      "source_path": "CW32R031_UserManual_CN_V1.3.pdf",
+      "source_sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+      "slots": 8,
+      "scan_mode": 4,
+      "single_mode": 0,
+      "mode_field": {
+        "register_offset": 0,
+        "bit_offset": 1,
+        "bit_size": 3
+      },
+      "sequence": {
+        "registers": [
+          {
+            "name": "SQR0",
+            "offset": 80,
+            "slot_indices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 524287
+          },
+          {
+            "name": "SQR1",
+            "offset": 84,
+            "slot_indices": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 65535
+          }
+        ],
+        "length_register_offset": 80,
+        "length_bit_offset": 16,
+        "length_bit_size": 3,
+        "length_encoding": "slot_count_minus_one",
+        "min_slots": 1,
+        "max_slots": 8,
+        "ordered_slots": true,
+        "repeated_channel_selection": "Each slot has its own mux field; no distinct-channel requirement is stated."
+      },
+      "channels": {
+        "external_raw_mux_values": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "external_signal_labels": [
+          "AIN0",
+          "AIN1",
+          "AIN2",
+          "AIN3",
+          "AIN4",
+          "AIN5",
+          "AIN6",
+          "AIN7",
+          "AIN8"
+        ],
+        "supply_div3": 13,
+        "temperature": 14,
+        "vrefint_1v2": 15,
+        "reserved_or_unqualified_raw_mux_values": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "common_controls": {
+        "sampling_cycles": true,
+        "input_buffer": true,
+        "reference": true,
+        "clock_divider": true,
+        "per_slot_controls": false,
+        "sampling_cycles_encodings": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "sampling_field": [
+          11,
+          2
+        ],
+        "buffer_bit": 13,
+        "reference_field": [
+          6,
+          2
+        ],
+        "clock_field": [
+          8,
+          3
+        ],
+        "clock_divisor_encodings": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "reference_encodings": {
+          "0": "internal_1v5",
+          "1": "internal_2v5",
+          "2": "external",
+          "3": "VDDA"
+        },
+        "temperature_enable_bit": 5,
+        "bgr_enable_bit": null
+      },
+      "conservative_policy": {
+        "buffered_requires_single_channel_single_shot": true,
+        "internal_requires_single_channel_single_shot": true,
+        "multi_slot_external_only": true,
+        "multi_slot_input_buffer_allowed": false,
+        "singleton_buffered_or_internal_uses_mode": 0,
+        "note": "Buffer restriction is a conservative resolution of contradictory adjacent accuracy paragraphs, not a claim that hardware cannot scan buffered external inputs."
+      },
+      "completion": {
+        "per_conversion_flag": "EOC",
+        "per_conversion_flag_bit": 0,
+        "end_of_sequence_flag": "EOS",
+        "end_of_sequence_flag_bit": 1,
+        "scan_automatically_clears_start": true,
+        "start_offset": 8,
+        "start_bit": 0,
+        "recommended_acceptance": "fresh EOS and START=0 and OVW=0",
+        "autostop_bit": 1,
+        "autostop_effect": "When set, clears CR0.EN after the scan; it is independent of the MODE=4 START automatic clear.",
+        "recommended_autostop": false
+      },
+      "results": {
+        "first_offset": 32,
+        "stride": 4,
+        "count": 8,
+        "access": "read_only",
+        "width_bits": 16,
+        "adc_resolution_bits": 12,
+        "right_alignment_bit": 6,
+        "right_alignment_encoding": 0,
+        "mapping": "RESULT index equals sequence slot index, not analog channel number.",
+        "read_clears_result_storage": null,
+        "read_clears_eoc_or_eos": null,
+        "read_clear_qualification": "No ADC chapter statement establishes a result-read clear/acknowledgment contract. Clear EOC/EOS/OVW via ICR.",
+        "overwrite_flag_bit": 6,
+        "discard_bit": 5,
+        "discard_scope": "Own CR1 description specifies single-channel conversion only. Sequence overwrite/discard policy is not separately specified.",
+        "common_result_offset": null
+      },
+      "interrupts": {
+        "ier_offset": 68,
+        "icr_offset": 72,
+        "isr_offset": 76,
+        "isr_access": "read_only",
+        "ready_bit": 7,
+        "icr_access": "R1W0",
+        "icr_reset_and_valid_mask": 127,
+        "icr_clear_expression": "0x7f & ~flags",
+        "ready_clear_through_icr": false,
+        "dma_enable_bits": [
+          14,
+          15
+        ]
+      },
+      "sources": [
+        {
+          "path": "CW32R031_UserManual_CN_V1.3.pdf",
+          "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+          "official_url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+          "revision": "Rev 1.3",
+          "language": "Chinese",
+          "own_families": [
+            "CW32R031"
+          ]
+        }
+      ],
+      "page_refs": {
+        "accuracy_and_result_mapping": {
+          "section": "22.4.3-22.4.4",
+          "printed_pages": [
+            437
+          ],
+          "pdf_pages_1_based": [
+            438
+          ]
+        },
+        "scan_completion": {
+          "section": "22.5.5",
+          "printed_pages": [
+            446
+          ],
+          "pdf_pages_1_based": [
+            447
+          ]
+        },
+        "software_scan_flow": {
+          "section": "22.5.5",
+          "printed_pages": [
+            447
+          ],
+          "pdf_pages_1_based": [
+            448
+          ]
+        },
+        "cr0_common_controls": {
+          "section": "22.13.1",
+          "printed_pages": [
+            460,
+            461
+          ],
+          "pdf_pages_1_based": [
+            461,
+            462
+          ]
+        },
+        "cr1_alignment_discard_dma": {
+          "section": "22.13.2",
+          "printed_pages": [
+            462
+          ],
+          "pdf_pages_1_based": [
+            463
+          ]
+        },
+        "sequence_registers": {
+          "section": "22.13.4-22.13.5",
+          "printed_pages": [
+            463,
+            464
+          ],
+          "pdf_pages_1_based": [
+            464,
+            465
+          ]
+        },
+        "start_and_interrupt_enable": {
+          "section": "22.13 ADC_START/ADC_IER",
+          "printed_pages": [
+            467
+          ],
+          "pdf_pages_1_based": [
+            468
+          ]
+        },
+        "status_flags": {
+          "section": "22.13 ADC_ISR",
+          "printed_pages": [
+            468
+          ],
+          "pdf_pages_1_based": [
+            469
+          ]
+        },
+        "flag_clear": {
+          "section": "22.13 ADC_ICR",
+          "printed_pages": [
+            469
+          ],
+          "pdf_pages_1_based": [
+            470
+          ]
+        },
+        "result_registers": {
+          "section": "22.13 ADC_RESULT0-ADC_RESULT7",
+          "printed_pages": [
+            469,
+            470,
+            471
+          ],
+          "pdf_pages_1_based": [
+            470,
+            471,
+            472
+          ]
+        },
+        "register_list": {
+          "section": "22.12",
+          "printed_pages": [
+            459
+          ],
+          "pdf_pages_1_based": [
+            460
+          ]
+        },
+        "ready_startup": {
+          "section": "22.4.1",
+          "printed_pages": [
+            435
+          ],
+          "pdf_pages_1_based": [
+            436
+          ]
+        },
+        "bgr_startup_approximate": {
+          "section": "23.3.1",
+          "printed_pages": [
+            474
+          ],
+          "pdf_pages_1_based": [
+            475
+          ]
+        }
+      }
+    },
+    {
+      "family": "CW32W031",
+      "register_version": "cw32l031_v1",
+      "source_path": "CW32W031_UserManual_CN_V1.4.pdf",
+      "source_sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "slots": 8,
+      "scan_mode": 4,
+      "single_mode": 0,
+      "mode_field": {
+        "register_offset": 0,
+        "bit_offset": 1,
+        "bit_size": 3
+      },
+      "sequence": {
+        "registers": [
+          {
+            "name": "SQR0",
+            "offset": 80,
+            "slot_indices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 524287
+          },
+          {
+            "name": "SQR1",
+            "offset": 84,
+            "slot_indices": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 65535
+          }
+        ],
+        "length_register_offset": 80,
+        "length_bit_offset": 16,
+        "length_bit_size": 3,
+        "length_encoding": "slot_count_minus_one",
+        "min_slots": 1,
+        "max_slots": 8,
+        "ordered_slots": true,
+        "repeated_channel_selection": "Each slot has its own mux field; no distinct-channel requirement is stated."
+      },
+      "channels": {
+        "external_raw_mux_values": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "external_signal_labels": [
+          "AIN0",
+          "AIN1",
+          "AIN2",
+          "AIN3",
+          "AIN4",
+          "AIN5",
+          "AIN6",
+          "AIN7",
+          "AIN8",
+          "AIN9",
+          "AIN10",
+          "AIN11",
+          "AIN12"
+        ],
+        "supply_div3": 13,
+        "temperature": 14,
+        "vrefint_1v2": 15,
+        "reserved_or_unqualified_raw_mux_values": []
+      },
+      "common_controls": {
+        "sampling_cycles": true,
+        "input_buffer": true,
+        "reference": true,
+        "clock_divider": true,
+        "per_slot_controls": false,
+        "sampling_cycles_encodings": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "sampling_field": [
+          11,
+          2
+        ],
+        "buffer_bit": 13,
+        "reference_field": [
+          6,
+          2
+        ],
+        "clock_field": [
+          8,
+          3
+        ],
+        "clock_divisor_encodings": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "reference_encodings": {
+          "0": "internal_1v5",
+          "1": "internal_2v5",
+          "2": "external",
+          "3": "VDDA"
+        },
+        "temperature_enable_bit": 5,
+        "bgr_enable_bit": null
+      },
+      "conservative_policy": {
+        "buffered_requires_single_channel_single_shot": true,
+        "internal_requires_single_channel_single_shot": true,
+        "multi_slot_external_only": true,
+        "multi_slot_input_buffer_allowed": false,
+        "singleton_buffered_or_internal_uses_mode": 0,
+        "note": "Buffer restriction is a conservative resolution of contradictory adjacent accuracy paragraphs, not a claim that hardware cannot scan buffered external inputs."
+      },
+      "completion": {
+        "per_conversion_flag": "EOC",
+        "per_conversion_flag_bit": 0,
+        "end_of_sequence_flag": "EOS",
+        "end_of_sequence_flag_bit": 1,
+        "scan_automatically_clears_start": true,
+        "start_offset": 8,
+        "start_bit": 0,
+        "recommended_acceptance": "fresh EOS and START=0 and OVW=0",
+        "autostop_bit": 1,
+        "autostop_effect": "When set, clears CR0.EN after the scan; it is independent of the MODE=4 START automatic clear.",
+        "recommended_autostop": false
+      },
+      "results": {
+        "first_offset": 32,
+        "stride": 4,
+        "count": 8,
+        "access": "read_only",
+        "width_bits": 16,
+        "adc_resolution_bits": 12,
+        "right_alignment_bit": 6,
+        "right_alignment_encoding": 0,
+        "mapping": "RESULT index equals sequence slot index, not analog channel number.",
+        "read_clears_result_storage": null,
+        "read_clears_eoc_or_eos": null,
+        "read_clear_qualification": "No ADC chapter statement establishes a result-read clear/acknowledgment contract. Clear EOC/EOS/OVW via ICR.",
+        "overwrite_flag_bit": 6,
+        "discard_bit": 5,
+        "discard_scope": "Own CR1 description specifies single-channel conversion only. Sequence overwrite/discard policy is not separately specified.",
+        "common_result_offset": null
+      },
+      "interrupts": {
+        "ier_offset": 68,
+        "icr_offset": 72,
+        "isr_offset": 76,
+        "isr_access": "read_only",
+        "ready_bit": 7,
+        "icr_access": "R1W0",
+        "icr_reset_and_valid_mask": 127,
+        "icr_clear_expression": "0x7f & ~flags",
+        "ready_clear_through_icr": false,
+        "dma_enable_bits": [
+          14,
+          15
+        ]
+      },
+      "sources": [
+        {
+          "path": "CW32W031_UserManual_CN_V1.4.pdf",
+          "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+          "official_url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+          "revision": "Rev 1.4",
+          "language": "Chinese",
+          "own_families": [
+            "CW32W031"
+          ]
+        }
+      ],
+      "page_refs": {
+        "accuracy_and_result_mapping": {
+          "section": "22.4.3-22.4.4",
+          "printed_pages": [
+            437
+          ],
+          "pdf_pages_1_based": [
+            438
+          ]
+        },
+        "scan_completion": {
+          "section": "22.5.5",
+          "printed_pages": [
+            446
+          ],
+          "pdf_pages_1_based": [
+            447
+          ]
+        },
+        "software_scan_flow": {
+          "section": "22.5.5",
+          "printed_pages": [
+            447
+          ],
+          "pdf_pages_1_based": [
+            448
+          ]
+        },
+        "cr0_common_controls": {
+          "section": "22.13.1",
+          "printed_pages": [
+            461,
+            462
+          ],
+          "pdf_pages_1_based": [
+            462,
+            463
+          ]
+        },
+        "cr1_alignment_discard_dma": {
+          "section": "22.13.2",
+          "printed_pages": [
+            463
+          ],
+          "pdf_pages_1_based": [
+            464
+          ]
+        },
+        "sequence_registers": {
+          "section": "22.13.4-22.13.5",
+          "printed_pages": [
+            464,
+            465
+          ],
+          "pdf_pages_1_based": [
+            465,
+            466
+          ]
+        },
+        "start_and_interrupt_enable": {
+          "section": "22.13 ADC_START/ADC_IER",
+          "printed_pages": [
+            468
+          ],
+          "pdf_pages_1_based": [
+            469
+          ]
+        },
+        "status_flags": {
+          "section": "22.13 ADC_ISR",
+          "printed_pages": [
+            469
+          ],
+          "pdf_pages_1_based": [
+            470
+          ]
+        },
+        "flag_clear": {
+          "section": "22.13 ADC_ICR",
+          "printed_pages": [
+            470
+          ],
+          "pdf_pages_1_based": [
+            471
+          ]
+        },
+        "result_registers": {
+          "section": "22.13 ADC_RESULT0-ADC_RESULT7",
+          "printed_pages": [
+            470,
+            471,
+            472
+          ],
+          "pdf_pages_1_based": [
+            471,
+            472,
+            473
+          ]
+        },
+        "register_list": {
+          "section": "22.12",
+          "printed_pages": [
+            460
+          ],
+          "pdf_pages_1_based": [
+            461
+          ]
+        },
+        "ready_startup": {
+          "section": "22.4.1",
+          "printed_pages": [
+            435
+          ],
+          "pdf_pages_1_based": [
+            436
+          ]
+        },
+        "bgr_startup_approximate": {
+          "section": "23.3.1",
+          "printed_pages": [
+            475
+          ],
+          "pdf_pages_1_based": [
+            476
+          ]
+        }
+      }
+    },
+    {
+      "family": "CW32L052",
+      "register_version": "cw32l052_v1",
+      "source_path": "CW32L052_UserManual_CN_V1.5.pdf",
+      "source_sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "slots": 8,
+      "scan_mode": 4,
+      "single_mode": 0,
+      "mode_field": {
+        "register_offset": 0,
+        "bit_offset": 1,
+        "bit_size": 3
+      },
+      "sequence": {
+        "registers": [
+          {
+            "name": "SQR0",
+            "offset": 80,
+            "slot_indices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 524287
+          },
+          {
+            "name": "SQR1",
+            "offset": 84,
+            "slot_indices": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 65535
+          }
+        ],
+        "length_register_offset": 80,
+        "length_bit_offset": 16,
+        "length_bit_size": 3,
+        "length_encoding": "slot_count_minus_one",
+        "min_slots": 1,
+        "max_slots": 8,
+        "ordered_slots": true,
+        "repeated_channel_selection": "Each slot has its own mux field; no distinct-channel requirement is stated."
+      },
+      "channels": {
+        "external_raw_mux_values": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "external_signal_labels": [
+          "AIN0",
+          "AIN1",
+          "AIN2",
+          "AIN3",
+          "AIN4",
+          "AIN5",
+          "AIN6",
+          "AIN7",
+          "AIN8",
+          "AIN9",
+          "AIN10",
+          "AIN11",
+          "AIN12"
+        ],
+        "supply_div3": 13,
+        "temperature": 14,
+        "vrefint_1v2": 15,
+        "reserved_or_unqualified_raw_mux_values": []
+      },
+      "common_controls": {
+        "sampling_cycles": true,
+        "input_buffer": true,
+        "reference": true,
+        "clock_divider": true,
+        "per_slot_controls": false,
+        "sampling_cycles_encodings": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "sampling_field": [
+          11,
+          2
+        ],
+        "buffer_bit": 13,
+        "reference_field": [
+          6,
+          2
+        ],
+        "clock_field": [
+          8,
+          3
+        ],
+        "clock_divisor_encodings": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "reference_encodings": {
+          "0": "internal_1v5",
+          "1": "internal_2v5",
+          "2": "external",
+          "3": "VDDA"
+        },
+        "temperature_enable_bit": 5,
+        "bgr_enable_bit": null
+      },
+      "conservative_policy": {
+        "buffered_requires_single_channel_single_shot": true,
+        "internal_requires_single_channel_single_shot": true,
+        "multi_slot_external_only": true,
+        "multi_slot_input_buffer_allowed": false,
+        "singleton_buffered_or_internal_uses_mode": 0,
+        "note": "Buffer restriction is a conservative resolution of contradictory adjacent accuracy paragraphs, not a claim that hardware cannot scan buffered external inputs."
+      },
+      "completion": {
+        "per_conversion_flag": "EOC",
+        "per_conversion_flag_bit": 0,
+        "end_of_sequence_flag": "EOS",
+        "end_of_sequence_flag_bit": 1,
+        "scan_automatically_clears_start": true,
+        "start_offset": 8,
+        "start_bit": 0,
+        "recommended_acceptance": "fresh EOS and START=0 and OVW=0",
+        "autostop_bit": 1,
+        "autostop_effect": "When set, clears CR0.EN after the scan; it is independent of the MODE=4 START automatic clear.",
+        "recommended_autostop": false
+      },
+      "results": {
+        "first_offset": 32,
+        "stride": 4,
+        "count": 8,
+        "access": "read_only",
+        "width_bits": 16,
+        "adc_resolution_bits": 12,
+        "right_alignment_bit": 6,
+        "right_alignment_encoding": 0,
+        "mapping": "RESULT index equals sequence slot index, not analog channel number.",
+        "read_clears_result_storage": null,
+        "read_clears_eoc_or_eos": null,
+        "read_clear_qualification": "No ADC chapter statement establishes a result-read clear/acknowledgment contract. Clear EOC/EOS/OVW via ICR.",
+        "overwrite_flag_bit": 6,
+        "discard_bit": 5,
+        "discard_scope": "Own CR1 description specifies single-channel conversion only. Sequence overwrite/discard policy is not separately specified.",
+        "common_result_offset": 92
+      },
+      "interrupts": {
+        "ier_offset": 68,
+        "icr_offset": 72,
+        "isr_offset": 76,
+        "isr_access": "read_only",
+        "ready_bit": 7,
+        "icr_access": "R1W0",
+        "icr_reset_and_valid_mask": 127,
+        "icr_clear_expression": "0x7f & ~flags",
+        "ready_clear_through_icr": false,
+        "dma_enable_bits": [
+          14,
+          15
+        ]
+      },
+      "sources": [
+        {
+          "path": "CW32L052_UserManual_CN_V1.5.pdf",
+          "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+          "official_url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+          "revision": "Rev 1.5",
+          "language": "Chinese",
+          "own_families": [
+            "CW32L052"
+          ]
+        }
+      ],
+      "page_refs": {
+        "accuracy_and_result_mapping": {
+          "section": "23.4.3-23.4.4",
+          "printed_pages": [
+            471
+          ],
+          "pdf_pages_1_based": [
+            472
+          ]
+        },
+        "scan_completion": {
+          "section": "23.5.5",
+          "printed_pages": [
+            480
+          ],
+          "pdf_pages_1_based": [
+            481
+          ]
+        },
+        "software_scan_flow": {
+          "section": "23.5.5",
+          "printed_pages": [
+            481
+          ],
+          "pdf_pages_1_based": [
+            482
+          ]
+        },
+        "cr0_common_controls": {
+          "section": "23.13.1",
+          "printed_pages": [
+            496,
+            497
+          ],
+          "pdf_pages_1_based": [
+            497,
+            498
+          ]
+        },
+        "cr1_alignment_discard_dma": {
+          "section": "23.13.2",
+          "printed_pages": [
+            498
+          ],
+          "pdf_pages_1_based": [
+            499
+          ]
+        },
+        "sequence_registers": {
+          "section": "23.13.4-23.13.5",
+          "printed_pages": [
+            499,
+            500
+          ],
+          "pdf_pages_1_based": [
+            500,
+            501
+          ]
+        },
+        "start_and_interrupt_enable": {
+          "section": "23.13 ADC_START/ADC_IER",
+          "printed_pages": [
+            505
+          ],
+          "pdf_pages_1_based": [
+            506
+          ]
+        },
+        "status_flags": {
+          "section": "23.13 ADC_ISR",
+          "printed_pages": [
+            506
+          ],
+          "pdf_pages_1_based": [
+            507
+          ]
+        },
+        "flag_clear": {
+          "section": "23.13 ADC_ICR",
+          "printed_pages": [
+            507
+          ],
+          "pdf_pages_1_based": [
+            508
+          ]
+        },
+        "result_registers": {
+          "section": "23.13 ADC_RESULT0-ADC_RESULT7",
+          "printed_pages": [
+            508,
+            509
+          ],
+          "pdf_pages_1_based": [
+            509,
+            510
+          ]
+        },
+        "register_list": {
+          "section": "23.12",
+          "printed_pages": [
+            495
+          ],
+          "pdf_pages_1_based": [
+            496
+          ]
+        },
+        "ready_startup": {
+          "section": "23.4.1",
+          "printed_pages": [
+            469
+          ],
+          "pdf_pages_1_based": [
+            470
+          ]
+        },
+        "bgr_startup_approximate": {
+          "section": "24.3.1",
+          "printed_pages": [
+            512
+          ],
+          "pdf_pages_1_based": [
+            513
+          ]
+        }
+      }
+    },
+    {
+      "family": "CW32L083",
+      "register_version": "cw32l083_v1",
+      "source_path": "CW32L083_UserManual_CN_V2.0.pdf",
+      "source_sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "slots": 8,
+      "scan_mode": 4,
+      "single_mode": 0,
+      "mode_field": {
+        "register_offset": 0,
+        "bit_offset": 1,
+        "bit_size": 3
+      },
+      "sequence": {
+        "registers": [
+          {
+            "name": "SQR0",
+            "offset": 80,
+            "slot_indices": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 524287
+          },
+          {
+            "name": "SQR1",
+            "offset": 84,
+            "slot_indices": [
+              4,
+              5,
+              6,
+              7
+            ],
+            "slot_bit_offsets": [
+              0,
+              4,
+              8,
+              12
+            ],
+            "slot_bit_size": 4,
+            "valid_mask": 65535
+          }
+        ],
+        "length_register_offset": 80,
+        "length_bit_offset": 16,
+        "length_bit_size": 3,
+        "length_encoding": "slot_count_minus_one",
+        "min_slots": 1,
+        "max_slots": 8,
+        "ordered_slots": true,
+        "repeated_channel_selection": "Each slot has its own mux field; no distinct-channel requirement is stated."
+      },
+      "channels": {
+        "external_raw_mux_values": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "external_signal_labels": [
+          "AIN0",
+          "AIN1",
+          "AIN2",
+          "AIN3",
+          "AIN4",
+          "AIN5",
+          "AIN6",
+          "AIN7",
+          "AIN8",
+          "AIN9",
+          "AIN10",
+          "AIN11",
+          "AIN12"
+        ],
+        "supply_div3": 13,
+        "temperature": 14,
+        "vrefint_1v2": 15,
+        "reserved_or_unqualified_raw_mux_values": []
+      },
+      "common_controls": {
+        "sampling_cycles": true,
+        "input_buffer": true,
+        "reference": true,
+        "clock_divider": true,
+        "per_slot_controls": false,
+        "sampling_cycles_encodings": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "sampling_field": [
+          11,
+          2
+        ],
+        "buffer_bit": 13,
+        "reference_field": [
+          6,
+          2
+        ],
+        "clock_field": [
+          8,
+          3
+        ],
+        "clock_divisor_encodings": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "reference_encodings": {
+          "0": "internal_1v5",
+          "1": "internal_2v5",
+          "2": "external",
+          "3": "VDDA"
+        },
+        "temperature_enable_bit": 5,
+        "bgr_enable_bit": null
+      },
+      "conservative_policy": {
+        "buffered_requires_single_channel_single_shot": true,
+        "internal_requires_single_channel_single_shot": true,
+        "multi_slot_external_only": true,
+        "multi_slot_input_buffer_allowed": false,
+        "singleton_buffered_or_internal_uses_mode": 0,
+        "note": "Buffer restriction is a conservative resolution of contradictory adjacent accuracy paragraphs, not a claim that hardware cannot scan buffered external inputs."
+      },
+      "completion": {
+        "per_conversion_flag": "EOC",
+        "per_conversion_flag_bit": 0,
+        "end_of_sequence_flag": "EOS",
+        "end_of_sequence_flag_bit": 1,
+        "scan_automatically_clears_start": true,
+        "start_offset": 8,
+        "start_bit": 0,
+        "recommended_acceptance": "fresh EOS and START=0 and OVW=0",
+        "autostop_bit": 1,
+        "autostop_effect": "When set, clears CR0.EN after the scan; it is independent of the MODE=4 START automatic clear.",
+        "recommended_autostop": false
+      },
+      "results": {
+        "first_offset": 32,
+        "stride": 4,
+        "count": 8,
+        "access": "read_only",
+        "width_bits": 16,
+        "adc_resolution_bits": 12,
+        "right_alignment_bit": 6,
+        "right_alignment_encoding": 0,
+        "mapping": "RESULT index equals sequence slot index, not analog channel number.",
+        "read_clears_result_storage": null,
+        "read_clears_eoc_or_eos": null,
+        "read_clear_qualification": "No ADC chapter statement establishes a result-read clear/acknowledgment contract. Clear EOC/EOS/OVW via ICR.",
+        "overwrite_flag_bit": 6,
+        "discard_bit": 5,
+        "discard_scope": "Own CR1 description specifies single-channel conversion only. Sequence overwrite/discard policy is not separately specified.",
+        "common_result_offset": null
+      },
+      "interrupts": {
+        "ier_offset": 68,
+        "icr_offset": 72,
+        "isr_offset": 76,
+        "isr_access": "read_only",
+        "ready_bit": 7,
+        "icr_access": "R1W0",
+        "icr_reset_and_valid_mask": 127,
+        "icr_clear_expression": "0x7f & ~flags",
+        "ready_clear_through_icr": false,
+        "dma_enable_bits": [
+          14,
+          15
+        ]
+      },
+      "sources": [
+        {
+          "path": "CW32L083_UserManual_CN_V2.0.pdf",
+          "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+          "official_url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+          "revision": "Rev 2.0",
+          "language": "Chinese",
+          "own_families": [
+            "CW32L083"
+          ]
+        }
+      ],
+      "page_refs": {
+        "accuracy_and_result_mapping": {
+          "section": "23.4.3-23.4.4",
+          "printed_pages": [
+            476
+          ],
+          "pdf_pages_1_based": [
+            477
+          ]
+        },
+        "scan_completion": {
+          "section": "23.5.5",
+          "printed_pages": [
+            485
+          ],
+          "pdf_pages_1_based": [
+            486
+          ]
+        },
+        "software_scan_flow": {
+          "section": "23.5.5",
+          "printed_pages": [
+            486
+          ],
+          "pdf_pages_1_based": [
+            487
+          ]
+        },
+        "cr0_common_controls": {
+          "section": "23.13.1",
+          "printed_pages": [
+            500,
+            501
+          ],
+          "pdf_pages_1_based": [
+            501,
+            502
+          ]
+        },
+        "cr1_alignment_discard_dma": {
+          "section": "23.13.2",
+          "printed_pages": [
+            502
+          ],
+          "pdf_pages_1_based": [
+            503
+          ]
+        },
+        "sequence_registers": {
+          "section": "23.13.4-23.13.5",
+          "printed_pages": [
+            503,
+            504
+          ],
+          "pdf_pages_1_based": [
+            504,
+            505
+          ]
+        },
+        "start_and_interrupt_enable": {
+          "section": "23.13 ADC_START/ADC_IER",
+          "printed_pages": [
+            507
+          ],
+          "pdf_pages_1_based": [
+            508
+          ]
+        },
+        "status_flags": {
+          "section": "23.13 ADC_ISR",
+          "printed_pages": [
+            508
+          ],
+          "pdf_pages_1_based": [
+            509
+          ]
+        },
+        "flag_clear": {
+          "section": "23.13 ADC_ICR",
+          "printed_pages": [
+            509
+          ],
+          "pdf_pages_1_based": [
+            510
+          ]
+        },
+        "result_registers": {
+          "section": "23.13 ADC_RESULT0-ADC_RESULT7",
+          "printed_pages": [
+            509,
+            510,
+            511
+          ],
+          "pdf_pages_1_based": [
+            510,
+            511,
+            512
+          ]
+        },
+        "register_list": {
+          "section": "23.12",
+          "printed_pages": [
+            499
+          ],
+          "pdf_pages_1_based": [
+            500
+          ]
+        },
+        "ready_startup": {
+          "section": "23.4.1",
+          "printed_pages": [
+            474
+          ],
+          "pdf_pages_1_based": [
+            475
+          ]
+        },
+        "bgr_startup_approximate": {
+          "section": "24.3.1",
+          "printed_pages": [
+            514
+          ],
+          "pdf_pages_1_based": [
+            515
+          ]
+        }
+      }
+    }
+  ],
+  "supplementary_startup_evidence": [
+    {
+      "family": "CW32F030",
+      "source_path": "CW32F030_DataSheet_CN_V1.9.pdf",
+      "source_sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2",
+      "official_url": "https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf",
+      "revision": "Rev 1.9",
+      "page_ref": {
+        "section": "7.3.15 table 7-31",
+        "printed_pages": [
+          54
+        ],
+        "pdf_pages_1_based": [
+          55
+        ]
+      },
+      "temperature_startup_max_us": 45,
+      "temperature_acquisition_min_us": 5,
+      "software_temperature_guard_us": 50,
+      "bgr_approximate_startup_us": 20,
+      "software_bgr_guard_us": 25,
+      "guard_qualification": "50/25 us are software margins; the BGR source states an approximate delay, not a maximum."
+    },
+    {
+      "family": "CW32A030",
+      "source_path": "CW32A030_DataSheet_CN_V1.1.pdf",
+      "source_sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+      "official_url": "https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf",
+      "revision": "Rev 1.1",
+      "page_ref": {
+        "section": "7.3.15 table 7-30",
+        "printed_pages": [
+          51
+        ],
+        "pdf_pages_1_based": [
+          52
+        ]
+      },
+      "temperature_startup_max_us": 45,
+      "temperature_acquisition_min_us": 5,
+      "software_temperature_guard_us": 50,
+      "bgr_approximate_startup_us": 20,
+      "software_bgr_guard_us": 25,
+      "guard_qualification": "50/25 us are software margins; the BGR source states an approximate delay, not a maximum."
+    },
+    {
+      "family": "CW32F020",
+      "source_path": "current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+      "source_sha256": "1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0",
+      "official_url": "https://www.whxy.com/uploads/files/20251230/CW32F020_DataSheet_CN_V1.3.pdf",
+      "revision": "Rev 1.3",
+      "page_ref": {
+        "section": "7.3.15 table 7-31",
+        "printed_pages": [
+          52
+        ],
+        "pdf_pages_1_based": [
+          53
+        ]
+      },
+      "temperature_startup_max_us": 45,
+      "temperature_acquisition_min_us": 5,
+      "software_temperature_guard_us": 50,
+      "bgr_approximate_startup_us": 20,
+      "software_bgr_guard_us": 25,
+      "guard_qualification": "50/25 us are software margins; the BGR source states an approximate delay, not a maximum."
+    }
+  ],
+  "implementation_guidance": [
+    "Use MODE=4 for one software START of an ordered scan. MODE=2 is single-channel continuous, not scan. Independent manual mode tables also name 0 single-shot,1 single-channel repeated,3 sequence continuous,5 sequence repeated,6 sequence discontinuous; only modes0/4 are within this deliverable.",
+    "Validate all inputs, slot count and common timing/reference/buffer compatibility before MMIO. Use package-qualified owned pins and the existing family electrical policy.",
+    "Sequence slots only encode channel mux. SAM,BUF,REF,CLK are common to the entire scan; silently accepting differing per-slot settings is unsupported.",
+    "Stop and mask trigger/interrupt/DMA sources before reconfiguration. Configure idle enabled ADC as the manual scan flow does, await READY, drain prior result slots, clear stale EOC/EOS/OVW via ICR, then issue one START.",
+    "Accept a complete frame only after fresh EOS plus stopped START, rejecting OVW. Read each active RESULT slot in index order; repeated mux choices still produce separate slot results.",
+    "On timeout/overrun/cancellation, stop, disable requests, discard partial frame, drain all potentially written slots and clear event flags; conservative power-down/reinitialization is justified because abort latency/completion is not documented.",
+    "Length-one buffered/internal reads must use MODE0 to satisfy the explicit accuracy requirement. Restrict MODE4 scan support to externally driven unbuffered inputs until buffered sequence restrictions are resolved.",
+    "Do not clear ISR or READY. ICR bits0..6 are R1W0; clear selected events using 0x7f & ~flags, with reserved bits zero."
+  ],
+  "differences_and_limits": [
+    {
+      "family": "CW32F002",
+      "finding": "Sequence narrative says 16 channels, but feature/channel/SQR tables only allow mux0..13. CR0 reserves TSEN/BGREN positions and offers only REF2/3. Restrictive own register/channel table controls."
+    },
+    {
+      "family": "CW32R031",
+      "finding": "Raw external mux codes are4..12 while signal names are AIN0..8. Do not infer mux from signal suffix."
+    },
+    {
+      "family": "CW32L052",
+      "finding": "Additional ALTR@0x58 and shared RESULT@0x5c support another conversion mode. Ordered MODE4 still writes distinct RESULT0..7; its own scan flow waits EOS and then reads slot results. Generic OVW wording does not specify internal unread bookkeeping for shared RESULT, so hardware qualification should test repeated scans and overflow behavior."
+    },
+    {
+      "families": "all",
+      "finding": "Adjacent accuracy paragraphs first require single-shot for weak/internal inputs, then discuss buffered multichannel weak inputs <=200kSPS. The recommended no-buffer/no-internal scan boundary is conservative and must not be presented as a verified hardware prohibition."
+    },
+    {
+      "families": "all",
+      "finding": "No explicit result-read data clear or EOC/EOS read-clear contract found. ICR is the documented flag-clear path. DISCARD is documented for single-channel mode, not a general sequence retention guarantee."
+    },
+    {
+      "family": "CW32F020",
+      "finding": "Root CW32F020_DataSheet_CN_V1.3.pdf actually prints Rev1.2. Only current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf, printed Rev1.3, supports the supplementary temperature finding."
+    },
+    {
+      "families": [
+        "CW32L031",
+        "CW32R031",
+        "CW32W031",
+        "CW32L052",
+        "CW32L083"
+      ],
+      "finding": "CR0 bit4 is reserved, unlike BGREN4 in x030/F020/F003. Never share the latter write across all classic families."
+    },
+    {
+      "families": "all",
+      "finding": "Bounded poll counts, masks and sequencing can be host-tested; analog settling, frame coherency at electrical limits and abort timing require physical hardware."
+    }
+  ]
+}

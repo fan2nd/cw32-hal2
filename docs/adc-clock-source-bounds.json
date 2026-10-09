@@ -1,0 +1,3730 @@
+{
+  "schema_version": 1,
+  "scope": "Reviewed factory-HSI and ADC source facts. Values are conditional on the cited supply, ambient TA, factory trim, divider and channel/reference assumptions. No silicon measurements.",
+  "source_authority": "sources/evidence-sources.json",
+  "reference_convention": "source_ref resolves to canonical original URL, SHA256, printed revision and separate cover/history/acquisition dates. PDF page numbers are 1-based and kept distinct from printed page numbers.",
+  "normalization": "Classic ADC and low-family ADC fact keys retain their audit-specific names to avoid inventing equivalence for voltage boundary notation. HSI common fields are normalized across all 13 families.",
+  "temperature_scope_warning": "Bounds use ambient TA, not junction temperature. The F/A-family HSI bound ends at +105 C although general operating tables can allow +125 C at low dissipation; no accuracy bound is claimed for +105..+125 C. The L-family HSI bound ends at +85 C although general conditions can permit +105 C; no accuracy bound is claimed for +85..+105 C. Use each family's exact cited interval.",
+  "source_revision_warning": "F020 uses current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf, printed Rev1.3 dated2025-12-30, SHA1e330d8..., not root legacy file printed Rev1.2 despite same V1.3 filename. Legacy source is not used for any conclusion.",
+  "audit_inputs": [
+    {
+      "name": "classic-family-policy.json",
+      "sha256": "c98384795bdbbb33cfb8aaacd95ab6614f7fb19805cba7e2d53156545d698935"
+    },
+    {
+      "name": "low-family-policy.json",
+      "sha256": "327687cb7bbb0b75f3d4cdaa439fc54f6a3a214bc9b1cf502970a32816a6fc4a"
+    }
+  ],
+  "families": {
+    "CW32A030": {
+      "backend": "classic",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 47040000,
+        "actual_oscillator_max_hz": 48960000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 105,
+        "supply_min_mv": 1650,
+        "supply_max_mv": 5500,
+        "at_25_c_error_bound_ppm": 5000,
+        "trim_step_typical_ppm": 2000,
+        "scope": "Only documented factory 48 MHz calibration value loaded into SYSCTRL_HSI.TRIM; not arbitrary user trims or AUTOTRIM",
+        "supported_divisors": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "divisor_encodings": [
+          6,
+          8,
+          9,
+          5,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "extended_temperature_bound": null,
+        "manual_target_range_hz": [
+          32000000,
+          48000000
+        ],
+        "manual_target_range_note": "Manual4.4.2 describes tuning32..48MHz and restoring factory48MHz. Interpreted here as a tuning-target range, not zero positive factory error; nominal/actual distinction is not explicit in that prose. Do not tighten the independent DS factory-error envelope using this statement.",
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "extended_temperature_note": "DS general conditions allow ambient to125C at low power; no HSI accuracy bound found for105..125C.",
+        "evidence": {
+          "hsi_table_source": {
+            "source_ref": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+            "printed_pages": [
+              42
+            ],
+            "pdf_pages_1_based": [
+              43
+            ],
+            "page_tables": {
+              "42": [
+                {
+                  "table": "7-4",
+                  "title": "一般工作条件提示的测试环境抽样测试。"
+                },
+                {
+                  "table": "7-16",
+                  "title": "HSI 振荡器特性"
+                },
+                {
+                  "table": "7-17",
+                  "title": "LSI 振荡器特性"
+                },
+                {
+                  "table": "7-18",
+                  "title": "RC10K 振荡器特性"
+                }
+              ]
+            }
+          },
+          "trim_and_divider_source": {
+            "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+            "printed_pages": [
+              56,
+              72
+            ],
+            "pdf_pages_1_based": [
+              57,
+              73
+            ],
+            "page_tables": {
+              "56": [],
+              "72": []
+            }
+          }
+        }
+      },
+      "supply": {
+        "min_mv": 1650,
+        "max_mv": 5500,
+        "vdda_must_equal_vdd": true,
+        "additional_condition": null,
+        "source": {
+          "source_ref": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+          "printed_pages": [
+            34
+          ],
+          "pdf_pages_1_based": [
+            35
+          ],
+          "page_tables": {
+            "34": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件"
+              },
+              {
+                "table": "7-4",
+                "title": "一般工作条件列出的工作条件下测试得到的。"
+              },
+              {
+                "table": "7-5",
+                "title": "上电 / 掉电时的工作条件"
+              }
+            ]
+          }
+        }
+      },
+      "adc": {
+        "divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "sample_cycles": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "comparison_cycles": 19,
+        "actual_adcclk_min_hz": null,
+        "min_clock_status": "no minimum found in reviewed own RM/DS; null does not mean 0Hz is an operating clock",
+        "external_reference": "HAL exposes supply reference; external ExRef unsupported",
+        "supply_reference_bands": [
+          {
+            "supply_min_mv": 1650,
+            "supply_max_exclusive_mv": 1800,
+            "actual_adcclk_max_hz": 500000,
+            "conversion_rate_max_sps": 25000
+          },
+          {
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "actual_adcclk_max_hz": 2000000,
+            "conversion_rate_max_sps": 100000
+          },
+          {
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 2400,
+            "actual_adcclk_max_hz": 4000000,
+            "conversion_rate_max_sps": 200000
+          },
+          {
+            "supply_min_mv": 2400,
+            "supply_max_exclusive_mv": 2700,
+            "actual_adcclk_max_hz": 12000000,
+            "conversion_rate_max_sps": 500000
+          },
+          {
+            "supply_min_mv": 2700,
+            "supply_max_exclusive_mv": 5501,
+            "actual_adcclk_max_hz": 24000000,
+            "conversion_rate_max_sps": 1000000
+          }
+        ],
+        "input_follower_rate_max_sps": 200000,
+        "external_acquisition_min_ps": null,
+        "external_acquisition_note": "No universal absolute-time minimum in classic own source; board source impedance and selected cycles remain obligations",
+        "temperature_acquisition_min_ps": 5000000,
+        "temperature_startup_max_us": 45,
+        "internal_reference_limits": [
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "max_adc_hz": 2000000,
+            "max_sps": 100000
+          },
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          },
+          {
+            "reference": "Internal2V5",
+            "supply_min_mv": 2800,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          }
+        ],
+        "clock_rate_cycle_source": {
+          "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "printed_pages": [
+            435,
+            436
+          ],
+          "pdf_pages_1_based": [
+            436,
+            437
+          ],
+          "page_tables": {
+            "435": [
+              {
+                "table": "22-1",
+                "title": "ADC 时钟配置表"
+              }
+            ],
+            "436": [
+              {
+                "table": "22-2",
+                "title": "ADC 采样周期选择表"
+              },
+              {
+                "table": "22-3",
+                "title": "ADC 转换速度与电压对照表"
+              }
+            ]
+          }
+        },
+        "datasheet_source": {
+          "source_ref": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+          "printed_pages": [
+            49,
+            51
+          ],
+          "pdf_pages_1_based": [
+            50,
+            52
+          ],
+          "page_tables": {
+            "49": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件提示的测试环境。"
+              },
+              {
+                "table": "7-28",
+                "title": "ADC 特性"
+              }
+            ],
+            "51": [
+              {
+                "table": "7-30",
+                "title": "温度传感器特性"
+              }
+            ]
+          }
+        },
+        "input_follower_source": {
+          "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "printed_pages": [
+            437,
+            460
+          ],
+          "pdf_pages_1_based": [
+            438,
+            461
+          ],
+          "page_tables": {
+            "437": [],
+            "460": []
+          }
+        }
+      },
+      "parameter_definition_source": {
+        "source_ref": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+        "printed_pages": [
+          29
+        ],
+        "pdf_pages_1_based": [
+          30
+        ],
+        "page_tables": {
+          "29": []
+        }
+      }
+    },
+    "CW32F002": {
+      "backend": "classic",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 50000,
+        "actual_oscillator_min_hz": 45600000,
+        "actual_oscillator_max_hz": 50400000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 105,
+        "supply_min_mv": 1650,
+        "supply_max_mv": 5500,
+        "at_25_c_error_bound_ppm": 5000,
+        "trim_step_typical_ppm": 2000,
+        "scope": "Only documented factory 48 MHz calibration value loaded into SYSCTRL_HSI.TRIM; not arbitrary user trims or AUTOTRIM",
+        "supported_divisors": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "divisor_encodings": [
+          6,
+          8,
+          9,
+          5,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "extended_temperature_bound": null,
+        "manual_target_range_hz": [
+          32000000,
+          48000000
+        ],
+        "manual_target_range_note": "Manual4.4.2 describes tuning32..48MHz and restoring factory48MHz. Interpreted here as a tuning-target range, not zero positive factory error; nominal/actual distinction is not explicit in that prose. Do not tighten the independent DS factory-error envelope using this statement.",
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "extended_temperature_note": "DS general conditions allow ambient to125C at low power; no HSI accuracy bound found for105..125C.",
+        "evidence": {
+          "hsi_table_source": {
+            "source_ref": "vendor:CW32F002_DataSheet_CN_V1.2.pdf",
+            "printed_pages": [
+              36
+            ],
+            "pdf_pages_1_based": [
+              37
+            ],
+            "page_tables": {
+              "36": [
+                {
+                  "table": "7-4",
+                  "title": "一般工作条件提示的测试环境抽样测试。"
+                },
+                {
+                  "table": "7-13",
+                  "title": "HSI 振荡器特性"
+                },
+                {
+                  "table": "7-14",
+                  "title": "LSI 振荡器特性"
+                },
+                {
+                  "table": "7-15",
+                  "title": "RC10K 振荡器特性"
+                }
+              ]
+            }
+          },
+          "trim_and_divider_source": {
+            "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+            "printed_pages": [
+              45,
+              55
+            ],
+            "pdf_pages_1_based": [
+              46,
+              56
+            ],
+            "page_tables": {
+              "45": [],
+              "55": []
+            }
+          }
+        }
+      },
+      "supply": {
+        "min_mv": 1650,
+        "max_mv": 5500,
+        "vdda_must_equal_vdd": false,
+        "additional_condition": null,
+        "source": {
+          "source_ref": "vendor:CW32F002_DataSheet_CN_V1.2.pdf",
+          "printed_pages": [
+            30
+          ],
+          "pdf_pages_1_based": [
+            31
+          ],
+          "page_tables": {
+            "30": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件"
+              },
+              {
+                "table": "7-4",
+                "title": "一般工作条件列出的工作条件下测试得到的。"
+              },
+              {
+                "table": "7-5",
+                "title": "上电 / 掉电时的工作条件"
+              }
+            ]
+          }
+        }
+      },
+      "adc": {
+        "divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "sample_cycles": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "comparison_cycles": 19,
+        "actual_adcclk_min_hz": null,
+        "min_clock_status": "no minimum found in reviewed own RM/DS; null does not mean 0Hz is an operating clock",
+        "external_reference": "HAL exposes supply reference; external ExRef unsupported",
+        "supply_reference_bands": [
+          {
+            "supply_min_mv": 1650,
+            "supply_max_exclusive_mv": 1800,
+            "actual_adcclk_max_hz": 500000,
+            "conversion_rate_max_sps": 25000
+          },
+          {
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "actual_adcclk_max_hz": 2000000,
+            "conversion_rate_max_sps": 100000
+          },
+          {
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 2400,
+            "actual_adcclk_max_hz": 4000000,
+            "conversion_rate_max_sps": 200000
+          },
+          {
+            "supply_min_mv": 2400,
+            "supply_max_exclusive_mv": 2700,
+            "actual_adcclk_max_hz": 12000000,
+            "conversion_rate_max_sps": 500000
+          },
+          {
+            "supply_min_mv": 2700,
+            "supply_max_exclusive_mv": 5501,
+            "actual_adcclk_max_hz": 24000000,
+            "conversion_rate_max_sps": 1000000
+          }
+        ],
+        "input_follower_rate_max_sps": 200000,
+        "external_acquisition_min_ps": null,
+        "external_acquisition_note": "No universal absolute-time minimum in classic own source; board source impedance and selected cycles remain obligations",
+        "temperature_acquisition_min_ps": null,
+        "temperature_startup_max_us": null,
+        "internal_reference_limits": [],
+        "clock_rate_cycle_source": {
+          "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+          "printed_pages": [
+            302,
+            303
+          ],
+          "pdf_pages_1_based": [
+            303,
+            304
+          ],
+          "page_tables": {
+            "302": [
+              {
+                "table": "19-1",
+                "title": "ADC 时钟配置表"
+              }
+            ],
+            "303": [
+              {
+                "table": "19-2",
+                "title": "ADC 采样周期选择表"
+              },
+              {
+                "table": "19-3",
+                "title": "ADC 转换速度与电压对照表"
+              }
+            ]
+          }
+        },
+        "datasheet_source": {
+          "source_ref": "vendor:CW32F002_DataSheet_CN_V1.2.pdf",
+          "printed_pages": [
+            43
+          ],
+          "pdf_pages_1_based": [
+            44
+          ],
+          "page_tables": {
+            "43": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件提示的测试环境。"
+              },
+              {
+                "table": "7-25",
+                "title": "ADC 特性"
+              }
+            ]
+          }
+        },
+        "input_follower_source": {
+          "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+          "printed_pages": [
+            304,
+            326
+          ],
+          "pdf_pages_1_based": [
+            305,
+            327
+          ],
+          "page_tables": {
+            "304": [],
+            "326": []
+          }
+        }
+      },
+      "parameter_definition_source": {
+        "source_ref": "vendor:CW32F002_DataSheet_CN_V1.2.pdf",
+        "printed_pages": [
+          26
+        ],
+        "pdf_pages_1_based": [
+          27
+        ],
+        "page_tables": {
+          "26": []
+        }
+      }
+    },
+    "CW32F003": {
+      "backend": "classic",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 47040000,
+        "actual_oscillator_max_hz": 48960000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 105,
+        "supply_min_mv": 1650,
+        "supply_max_mv": 5500,
+        "at_25_c_error_bound_ppm": 5000,
+        "trim_step_typical_ppm": 2000,
+        "scope": "Only documented factory 48 MHz calibration value loaded into SYSCTRL_HSI.TRIM; not arbitrary user trims or AUTOTRIM",
+        "supported_divisors": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "divisor_encodings": [
+          6,
+          8,
+          9,
+          5,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "extended_temperature_bound": null,
+        "manual_target_range_hz": [
+          32000000,
+          48000000
+        ],
+        "manual_target_range_note": "Manual4.4.2 describes tuning32..48MHz and restoring factory48MHz. Interpreted here as a tuning-target range, not zero positive factory error; nominal/actual distinction is not explicit in that prose. Do not tighten the independent DS factory-error envelope using this statement.",
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "extended_temperature_note": "DS general conditions allow ambient to125C at low power; no HSI accuracy bound found for105..125C.",
+        "evidence": {
+          "hsi_table_source": {
+            "source_ref": "vendor:CW32F003_DataSheet_CN_V1.9.pdf",
+            "printed_pages": [
+              37
+            ],
+            "pdf_pages_1_based": [
+              38
+            ],
+            "page_tables": {
+              "37": [
+                {
+                  "table": "7-4",
+                  "title": "一般工作条件提示的测试环境抽样测试。"
+                },
+                {
+                  "table": "7-14",
+                  "title": "HSI 振荡器特性"
+                },
+                {
+                  "table": "7-15",
+                  "title": "LSI 振荡器特性"
+                },
+                {
+                  "table": "7-16",
+                  "title": "RC10K 振荡器特性"
+                }
+              ]
+            }
+          },
+          "trim_and_divider_source": {
+            "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+            "printed_pages": [
+              47,
+              57
+            ],
+            "pdf_pages_1_based": [
+              48,
+              58
+            ],
+            "page_tables": {
+              "47": [],
+              "57": []
+            }
+          }
+        }
+      },
+      "supply": {
+        "min_mv": 1650,
+        "max_mv": 5500,
+        "vdda_must_equal_vdd": false,
+        "additional_condition": null,
+        "source": {
+          "source_ref": "vendor:CW32F003_DataSheet_CN_V1.9.pdf",
+          "printed_pages": [
+            31
+          ],
+          "pdf_pages_1_based": [
+            32
+          ],
+          "page_tables": {
+            "31": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件"
+              },
+              {
+                "table": "7-4",
+                "title": "一般工作条件列出的工作条件下测试得到的。"
+              },
+              {
+                "table": "7-5",
+                "title": "上电 / 掉电时的工作条件"
+              }
+            ]
+          }
+        }
+      },
+      "adc": {
+        "divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "sample_cycles": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "comparison_cycles": 19,
+        "actual_adcclk_min_hz": null,
+        "min_clock_status": "no minimum found in reviewed own RM/DS; null does not mean 0Hz is an operating clock",
+        "external_reference": "HAL exposes supply reference; external ExRef unsupported",
+        "supply_reference_bands": [
+          {
+            "supply_min_mv": 1650,
+            "supply_max_exclusive_mv": 1800,
+            "actual_adcclk_max_hz": 500000,
+            "conversion_rate_max_sps": 25000
+          },
+          {
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "actual_adcclk_max_hz": 2000000,
+            "conversion_rate_max_sps": 100000
+          },
+          {
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 2400,
+            "actual_adcclk_max_hz": 4000000,
+            "conversion_rate_max_sps": 200000
+          },
+          {
+            "supply_min_mv": 2400,
+            "supply_max_exclusive_mv": 2700,
+            "actual_adcclk_max_hz": 12000000,
+            "conversion_rate_max_sps": 500000
+          },
+          {
+            "supply_min_mv": 2700,
+            "supply_max_exclusive_mv": 5501,
+            "actual_adcclk_max_hz": 24000000,
+            "conversion_rate_max_sps": 1000000
+          }
+        ],
+        "input_follower_rate_max_sps": 200000,
+        "external_acquisition_min_ps": null,
+        "external_acquisition_note": "No universal absolute-time minimum in classic own source; board source impedance and selected cycles remain obligations",
+        "temperature_acquisition_min_ps": 5000000,
+        "temperature_startup_max_us": 45,
+        "internal_reference_limits": [
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "max_adc_hz": 2000000,
+            "max_sps": 100000
+          },
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          },
+          {
+            "reference": "Internal2V5",
+            "supply_min_mv": 2800,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          }
+        ],
+        "clock_rate_cycle_source": {
+          "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+          "printed_pages": [
+            362,
+            363
+          ],
+          "pdf_pages_1_based": [
+            363,
+            364
+          ],
+          "page_tables": {
+            "362": [
+              {
+                "table": "20-1",
+                "title": "ADC 时钟配置表"
+              }
+            ],
+            "363": [
+              {
+                "table": "20-2",
+                "title": "ADC 采样周期选择表"
+              },
+              {
+                "table": "20-3",
+                "title": "ADC 转换速度与电压对照表"
+              }
+            ]
+          }
+        },
+        "datasheet_source": {
+          "source_ref": "vendor:CW32F003_DataSheet_CN_V1.9.pdf",
+          "printed_pages": [
+            44,
+            46
+          ],
+          "pdf_pages_1_based": [
+            45,
+            47
+          ],
+          "page_tables": {
+            "44": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件提示的测试环境。"
+              },
+              {
+                "table": "7-26",
+                "title": "ADC 特性"
+              }
+            ],
+            "46": [
+              {
+                "table": "7-28",
+                "title": "温度传感器特性"
+              }
+            ]
+          }
+        },
+        "input_follower_source": {
+          "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+          "printed_pages": [
+            364,
+            387
+          ],
+          "pdf_pages_1_based": [
+            365,
+            388
+          ],
+          "page_tables": {
+            "364": [],
+            "387": []
+          }
+        }
+      },
+      "parameter_definition_source": {
+        "source_ref": "vendor:CW32F003_DataSheet_CN_V1.9.pdf",
+        "printed_pages": [
+          27
+        ],
+        "pdf_pages_1_based": [
+          28
+        ],
+        "page_tables": {
+          "27": []
+        }
+      }
+    },
+    "CW32F020": {
+      "backend": "classic",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 50000,
+        "actual_oscillator_min_hz": 45600000,
+        "actual_oscillator_max_hz": 50400000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 105,
+        "supply_min_mv": 1650,
+        "supply_max_mv": 5500,
+        "at_25_c_error_bound_ppm": 5000,
+        "trim_step_typical_ppm": 2000,
+        "scope": "Only documented factory 48 MHz calibration value loaded into SYSCTRL_HSI.TRIM; not arbitrary user trims or AUTOTRIM",
+        "supported_divisors": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "divisor_encodings": [
+          6,
+          8,
+          9,
+          5,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "extended_temperature_bound": null,
+        "manual_target_range_hz": [
+          32000000,
+          48000000
+        ],
+        "manual_target_range_note": "Manual4.4.2 describes tuning32..48MHz and restoring factory48MHz. Interpreted here as a tuning-target range, not zero positive factory error; nominal/actual distinction is not explicit in that prose. Do not tighten the independent DS factory-error envelope using this statement.",
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "extended_temperature_note": "DS general conditions allow ambient to125C at low power; no HSI accuracy bound found for105..125C.",
+        "evidence": {
+          "hsi_table_source": {
+            "source_ref": "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+            "printed_pages": [
+              43
+            ],
+            "pdf_pages_1_based": [
+              44
+            ],
+            "page_tables": {
+              "43": [
+                {
+                  "table": "7-4",
+                  "title": "一般工作条件提示的测试环境抽样测试。"
+                },
+                {
+                  "table": "7-17",
+                  "title": "HSI 振荡器特性"
+                },
+                {
+                  "table": "7-18",
+                  "title": "LSI 振荡器特性"
+                },
+                {
+                  "table": "7-19",
+                  "title": "RC10K 振荡器特性"
+                }
+              ]
+            }
+          },
+          "trim_and_divider_source": {
+            "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+            "printed_pages": [
+              54,
+              70
+            ],
+            "pdf_pages_1_based": [
+              55,
+              71
+            ],
+            "page_tables": {
+              "54": [],
+              "70": []
+            }
+          }
+        }
+      },
+      "supply": {
+        "min_mv": 1650,
+        "max_mv": 5500,
+        "vdda_must_equal_vdd": true,
+        "additional_condition": null,
+        "source": {
+          "source_ref": "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+          "printed_pages": [
+            35
+          ],
+          "pdf_pages_1_based": [
+            36
+          ],
+          "page_tables": {
+            "35": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件"
+              },
+              {
+                "table": "7-4",
+                "title": "一般工作条件列出的工作条件下测试得到的。"
+              },
+              {
+                "table": "7-5",
+                "title": "上电 / 掉电时的工作条件"
+              }
+            ]
+          }
+        }
+      },
+      "adc": {
+        "divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "sample_cycles": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "comparison_cycles": 19,
+        "actual_adcclk_min_hz": null,
+        "min_clock_status": "no minimum found in reviewed own RM/DS; null does not mean 0Hz is an operating clock",
+        "external_reference": "HAL exposes supply reference; external ExRef unsupported",
+        "supply_reference_bands": [
+          {
+            "supply_min_mv": 1650,
+            "supply_max_exclusive_mv": 1800,
+            "actual_adcclk_max_hz": 500000,
+            "conversion_rate_max_sps": 25000
+          },
+          {
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "actual_adcclk_max_hz": 2000000,
+            "conversion_rate_max_sps": 100000
+          },
+          {
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 2400,
+            "actual_adcclk_max_hz": 4000000,
+            "conversion_rate_max_sps": 200000
+          },
+          {
+            "supply_min_mv": 2400,
+            "supply_max_exclusive_mv": 2700,
+            "actual_adcclk_max_hz": 12000000,
+            "conversion_rate_max_sps": 500000
+          },
+          {
+            "supply_min_mv": 2700,
+            "supply_max_exclusive_mv": 5501,
+            "actual_adcclk_max_hz": 24000000,
+            "conversion_rate_max_sps": 1000000
+          }
+        ],
+        "input_follower_rate_max_sps": 200000,
+        "external_acquisition_min_ps": null,
+        "external_acquisition_note": "No universal absolute-time minimum in classic own source; board source impedance and selected cycles remain obligations",
+        "temperature_acquisition_min_ps": 5000000,
+        "temperature_startup_max_us": 45,
+        "internal_reference_limits": [
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "max_adc_hz": 2000000,
+            "max_sps": 100000
+          },
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          },
+          {
+            "reference": "Internal2V5",
+            "supply_min_mv": 2800,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          }
+        ],
+        "clock_rate_cycle_source": {
+          "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+          "printed_pages": [
+            373,
+            374
+          ],
+          "pdf_pages_1_based": [
+            374,
+            375
+          ],
+          "page_tables": {
+            "373": [
+              {
+                "table": "21-1",
+                "title": "ADC 时钟配置表"
+              }
+            ],
+            "374": [
+              {
+                "table": "21-2",
+                "title": "ADC 采样周期选择表"
+              },
+              {
+                "table": "21-3",
+                "title": "ADC 转换速度与电压对照表"
+              }
+            ]
+          }
+        },
+        "datasheet_source": {
+          "source_ref": "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+          "printed_pages": [
+            50,
+            52
+          ],
+          "pdf_pages_1_based": [
+            51,
+            53
+          ],
+          "page_tables": {
+            "50": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件提示的测试环境。"
+              },
+              {
+                "table": "7-29",
+                "title": "ADC 特性"
+              }
+            ],
+            "52": [
+              {
+                "table": "7-31",
+                "title": "温度传感器特性"
+              }
+            ]
+          }
+        },
+        "input_follower_source": {
+          "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+          "printed_pages": [
+            375,
+            398
+          ],
+          "pdf_pages_1_based": [
+            376,
+            399
+          ],
+          "page_tables": {
+            "375": [],
+            "398": []
+          }
+        }
+      },
+      "parameter_definition_source": {
+        "source_ref": "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+        "printed_pages": [
+          30
+        ],
+        "pdf_pages_1_based": [
+          31
+        ],
+        "page_tables": {
+          "30": []
+        }
+      }
+    },
+    "CW32F030": {
+      "backend": "classic",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 47040000,
+        "actual_oscillator_max_hz": 48960000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 105,
+        "supply_min_mv": 1650,
+        "supply_max_mv": 5500,
+        "at_25_c_error_bound_ppm": 5000,
+        "trim_step_typical_ppm": 2000,
+        "scope": "Only documented factory 48 MHz calibration value loaded into SYSCTRL_HSI.TRIM; not arbitrary user trims or AUTOTRIM",
+        "supported_divisors": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "divisor_encodings": [
+          6,
+          8,
+          9,
+          5,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "extended_temperature_bound": null,
+        "manual_target_range_hz": [
+          32000000,
+          48000000
+        ],
+        "manual_target_range_note": "Manual4.4.2 describes tuning32..48MHz and restoring factory48MHz. Interpreted here as a tuning-target range, not zero positive factory error; nominal/actual distinction is not explicit in that prose. Do not tighten the independent DS factory-error envelope using this statement.",
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "extended_temperature_note": "DS general conditions allow ambient to125C at low power; no HSI accuracy bound found for105..125C.",
+        "evidence": {
+          "hsi_table_source": {
+            "source_ref": "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+            "printed_pages": [
+              45
+            ],
+            "pdf_pages_1_based": [
+              46
+            ],
+            "page_tables": {
+              "45": [
+                {
+                  "table": "7-4",
+                  "title": "一般工作条件提示的测试环境抽样测试。"
+                },
+                {
+                  "table": "7-17",
+                  "title": "HSI 振荡器特性"
+                },
+                {
+                  "table": "7-18",
+                  "title": "LSI 振荡器特性"
+                },
+                {
+                  "table": "7-19",
+                  "title": "RC10K 振荡器特性"
+                }
+              ]
+            }
+          },
+          "trim_and_divider_source": {
+            "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+            "printed_pages": [
+              56,
+              72
+            ],
+            "pdf_pages_1_based": [
+              57,
+              73
+            ],
+            "page_tables": {
+              "56": [],
+              "72": []
+            }
+          }
+        }
+      },
+      "supply": {
+        "min_mv": 1650,
+        "max_mv": 5500,
+        "vdda_must_equal_vdd": true,
+        "additional_condition": null,
+        "source": {
+          "source_ref": "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+          "printed_pages": [
+            37
+          ],
+          "pdf_pages_1_based": [
+            38
+          ],
+          "page_tables": {
+            "37": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件"
+              },
+              {
+                "table": "7-4",
+                "title": "一般工作条件列出的工作条件下测试得到的。"
+              },
+              {
+                "table": "7-5",
+                "title": "上电 / 掉电时的工作条件"
+              }
+            ]
+          }
+        }
+      },
+      "adc": {
+        "divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "sample_cycles": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "comparison_cycles": 19,
+        "actual_adcclk_min_hz": null,
+        "min_clock_status": "no minimum found in reviewed own RM/DS; null does not mean 0Hz is an operating clock",
+        "external_reference": "HAL exposes supply reference; external ExRef unsupported",
+        "supply_reference_bands": [
+          {
+            "supply_min_mv": 1650,
+            "supply_max_exclusive_mv": 1800,
+            "actual_adcclk_max_hz": 500000,
+            "conversion_rate_max_sps": 25000
+          },
+          {
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "actual_adcclk_max_hz": 2000000,
+            "conversion_rate_max_sps": 100000
+          },
+          {
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 2400,
+            "actual_adcclk_max_hz": 4000000,
+            "conversion_rate_max_sps": 200000
+          },
+          {
+            "supply_min_mv": 2400,
+            "supply_max_exclusive_mv": 2700,
+            "actual_adcclk_max_hz": 12000000,
+            "conversion_rate_max_sps": 500000
+          },
+          {
+            "supply_min_mv": 2700,
+            "supply_max_exclusive_mv": 5501,
+            "actual_adcclk_max_hz": 24000000,
+            "conversion_rate_max_sps": 1000000
+          }
+        ],
+        "input_follower_rate_max_sps": 200000,
+        "external_acquisition_min_ps": null,
+        "external_acquisition_note": "No universal absolute-time minimum in classic own source; board source impedance and selected cycles remain obligations",
+        "temperature_acquisition_min_ps": 5000000,
+        "temperature_startup_max_us": 45,
+        "internal_reference_limits": [
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "max_adc_hz": 2000000,
+            "max_sps": 100000
+          },
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          },
+          {
+            "reference": "Internal2V5",
+            "supply_min_mv": 2800,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          }
+        ],
+        "clock_rate_cycle_source": {
+          "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "printed_pages": [
+            435,
+            436
+          ],
+          "pdf_pages_1_based": [
+            436,
+            437
+          ],
+          "page_tables": {
+            "435": [
+              {
+                "table": "22-1",
+                "title": "ADC 时钟配置表"
+              }
+            ],
+            "436": [
+              {
+                "table": "22-2",
+                "title": "ADC 采样周期选择表"
+              },
+              {
+                "table": "22-3",
+                "title": "ADC 转换速度与电压对照表"
+              }
+            ]
+          }
+        },
+        "datasheet_source": {
+          "source_ref": "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+          "printed_pages": [
+            52,
+            54
+          ],
+          "pdf_pages_1_based": [
+            53,
+            55
+          ],
+          "page_tables": {
+            "52": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件提示的测试环境。"
+              },
+              {
+                "table": "7-29",
+                "title": "ADC 特性"
+              }
+            ],
+            "54": [
+              {
+                "table": "7-31",
+                "title": "温度传感器特性"
+              }
+            ]
+          }
+        },
+        "input_follower_source": {
+          "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "printed_pages": [
+            437,
+            460
+          ],
+          "pdf_pages_1_based": [
+            438,
+            461
+          ],
+          "page_tables": {
+            "437": [],
+            "460": []
+          }
+        }
+      },
+      "parameter_definition_source": {
+        "source_ref": "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+        "printed_pages": [
+          32
+        ],
+        "pdf_pages_1_based": [
+          33
+        ],
+        "page_tables": {
+          "32": []
+        }
+      }
+    },
+    "CW32L010": {
+      "backend": "low",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 47040000,
+        "actual_oscillator_max_hz": 48960000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 85,
+        "supply_min_mv": 1620,
+        "supply_max_mv": 5500,
+        "scope": "Documented factory trim loaded from 0x001007c0; no arbitrary user trim or AUTOTRIM; ambient TA and stated supply only.",
+        "supported_divisors": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "divisor_encodings": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          0
+        ],
+        "evidence": {
+          "accuracy": {
+            "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+            "printed_pages": [
+              42
+            ],
+            "pdf_pages_1_based": [
+              43
+            ],
+            "section": "7.3.8 Table 7-18"
+          },
+          "general_conditions": {
+            "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+            "printed_pages": [
+              31
+            ],
+            "pdf_pages_1_based": [
+              32
+            ],
+            "section": "7.3.1 Table 7-4"
+          },
+          "parameter_conditions": {
+            "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+            "printed_pages": [
+              27
+            ],
+            "pdf_pages_1_based": [
+              28
+            ],
+            "section": "7.1.1-7.1.2"
+          },
+          "calibration": {
+            "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+            "printed_pages": [
+              55
+            ],
+            "pdf_pages_1_based": [
+              56
+            ],
+            "section": "4.4.2"
+          },
+          "dividers_trim": {
+            "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+            "printed_pages": [
+              70
+            ],
+            "pdf_pages_1_based": [
+              71
+            ],
+            "section": "4.7.4 SYSCTRL_HSI"
+          }
+        },
+        "safe_manual_tuning_range_hz": [
+          47000000,
+          49000000
+        ],
+        "safe_tuning_range_is_not_factory_frequency_tolerance": true,
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "factory_trim_flash_address": "0x001007c0",
+        "factory_trim_required": true,
+        "supports_user_trim_in_hal": false,
+        "bound_min_multiplier": {
+          "numerator": 98,
+          "denominator": 100
+        },
+        "bound_max_multiplier": {
+          "numerator": 102,
+          "denominator": 100
+        },
+        "temperature_bounds": [
+          {
+            "ta_min_c": -40,
+            "ta_max_c": 85,
+            "error_ppm": 20000
+          },
+          {
+            "ta_min_c": -20,
+            "ta_max_c": 50,
+            "error_ppm": 10000
+          },
+          {
+            "ta_min_c": 25,
+            "ta_max_c": 25,
+            "error_ppm": 5000
+          }
+        ],
+        "supply_qualifier": "HSI table invokes Table 7-4 general operating conditions; no separate HSI voltage restriction. L011/L012 VDDA must equal VDD.",
+        "trim_step_typical_ppm": 2000,
+        "trim_step_is_guaranteed_exact": false,
+        "error_is_not_added_to_factory_error": true,
+        "qualification": "Section 7.3.8 says sample-tested under Table 7-4. Accuracy is explicitly factory-calibrated min/max; do not claim each part individually tested to full temperature span or guaranteed exact endpoint realization."
+      },
+      "adc": {
+        "min_clock_hz": null,
+        "datasheet_typical_clock_hz": 48000000,
+        "datasheet_max_clock_hz": null,
+        "conservative_manual_max_clock_hz": 48000000,
+        "datasheet_max_sample_rate_hz": 2000000,
+        "prescalers": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "comparison_cycles": 15,
+        "sample_cycles": [
+          6,
+          7,
+          9,
+          12,
+          18,
+          24,
+          30,
+          42,
+          54,
+          70,
+          102,
+          134,
+          166,
+          198,
+          262,
+          390
+        ],
+        "bands": [
+          {
+            "supply_lower_mv": 1620,
+            "supply_upper_mv": 1800,
+            "max_clock_hz": 4000000,
+            "max_sample_rate_hz": 200000,
+            "min_acquisition_ps": 1250000
+          },
+          {
+            "supply_lower_mv": 1800,
+            "supply_upper_mv": 2800,
+            "max_clock_hz": 12000000,
+            "max_sample_rate_hz": 500000,
+            "min_acquisition_ps": 750000
+          },
+          {
+            "supply_lower_mv": 2800,
+            "supply_upper_mv": 3300,
+            "max_clock_hz": 24000000,
+            "max_sample_rate_hz": 1000000,
+            "min_acquisition_ps": 375000
+          },
+          {
+            "supply_lower_mv": 3300,
+            "supply_upper_mv": 5500,
+            "max_clock_hz": 48000000,
+            "max_sample_rate_hz": 2000000,
+            "min_acquisition_ps": 187500
+          }
+        ],
+        "band_boundary_caveat": "Datasheet acquisition rows use strict inequalities; manual range notation is inclusive/unspecified. Witnesses use interior voltages, not 1.8/2.8/3.3 V boundary interpretations. Current HAL chooses higher band at equality; retaining that is an independent source interpretation.",
+        "evidence": {
+          "electrical": {
+            "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+            "printed_pages": [
+              48
+            ],
+            "pdf_pages_1_based": [
+              49
+            ],
+            "section": "7.3.13 Table 7-27"
+          },
+          "voltage_clock_rate": {
+            "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+            "printed_pages": [
+              505
+            ],
+            "pdf_pages_1_based": [
+              506
+            ],
+            "section": "20.4.2 Table 20-3"
+          }
+        },
+        "conflict": "DS 48 MHz is typical only; no DS ADC min/max clock in this table."
+      }
+    },
+    "CW32L011": {
+      "backend": "low",
+      "hsi": {
+        "nominal_oscillator_hz": 96000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 94080000,
+        "actual_oscillator_max_hz": 97920000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 85,
+        "supply_min_mv": 1700,
+        "supply_max_mv": 5500,
+        "scope": "Documented factory trim loaded from 0x001007c0; no arbitrary user trim or AUTOTRIM; ambient TA and stated supply only.",
+        "supported_divisors": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          12,
+          16,
+          20,
+          24,
+          28,
+          32
+        ],
+        "divisor_encodings": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          0
+        ],
+        "evidence": {
+          "accuracy": {
+            "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+            "printed_pages": [
+              48
+            ],
+            "pdf_pages_1_based": [
+              51
+            ],
+            "section": "7.3.8 Table 7-18"
+          },
+          "general_conditions": {
+            "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+            "printed_pages": [
+              36
+            ],
+            "pdf_pages_1_based": [
+              39
+            ],
+            "section": "7.3.1 Table 7-4"
+          },
+          "parameter_conditions": {
+            "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+            "printed_pages": [
+              32
+            ],
+            "pdf_pages_1_based": [
+              35
+            ],
+            "section": "7.1.1-7.1.2"
+          },
+          "calibration": {
+            "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+            "printed_pages": [
+              53
+            ],
+            "pdf_pages_1_based": [
+              54
+            ],
+            "section": "4.4.2"
+          },
+          "dividers_trim": {
+            "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+            "printed_pages": [
+              68
+            ],
+            "pdf_pages_1_based": [
+              69
+            ],
+            "section": "4.7.4 SYSCTRL_HSI"
+          }
+        },
+        "safe_manual_tuning_range_hz": [
+          90000000,
+          100000000
+        ],
+        "safe_tuning_range_is_not_factory_frequency_tolerance": true,
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "factory_trim_flash_address": "0x001007c0",
+        "factory_trim_required": true,
+        "supports_user_trim_in_hal": false,
+        "bound_min_multiplier": {
+          "numerator": 98,
+          "denominator": 100
+        },
+        "bound_max_multiplier": {
+          "numerator": 102,
+          "denominator": 100
+        },
+        "temperature_bounds": [
+          {
+            "ta_min_c": -40,
+            "ta_max_c": 85,
+            "error_ppm": 20000
+          },
+          {
+            "ta_min_c": -20,
+            "ta_max_c": 50,
+            "error_ppm": 10000
+          },
+          {
+            "ta_min_c": 25,
+            "ta_max_c": 25,
+            "error_ppm": 5000
+          }
+        ],
+        "supply_qualifier": "HSI table invokes Table 7-4 general operating conditions; no separate HSI voltage restriction. L011/L012 VDDA must equal VDD.",
+        "trim_step_typical_ppm": 2000,
+        "trim_step_is_guaranteed_exact": false,
+        "error_is_not_added_to_factory_error": true,
+        "qualification": "Section 7.3.8 says sample-tested under Table 7-4. Accuracy is explicitly factory-calibrated min/max; do not claim each part individually tested to full temperature span or guaranteed exact endpoint realization."
+      },
+      "adc": {
+        "min_clock_hz": 4000000,
+        "datasheet_typical_clock_hz": 48000000,
+        "datasheet_max_clock_hz": 96000000,
+        "conservative_manual_max_clock_hz": 48000000,
+        "datasheet_max_sample_rate_hz": 1000000,
+        "prescalers": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "comparison_cycles": 15,
+        "sample_cycles": [
+          6,
+          7,
+          9,
+          12,
+          18,
+          24,
+          30,
+          42,
+          54,
+          70,
+          102,
+          134,
+          166,
+          198,
+          262,
+          390
+        ],
+        "bands": [
+          {
+            "supply_lower_mv": 1700,
+            "supply_upper_mv": 1800,
+            "max_clock_hz": 6000000,
+            "max_sample_rate_hz": 200000,
+            "min_acquisition_ps": 1000000
+          },
+          {
+            "supply_lower_mv": 1800,
+            "supply_upper_mv": 2800,
+            "max_clock_hz": 12000000,
+            "max_sample_rate_hz": 500000,
+            "min_acquisition_ps": 500000
+          },
+          {
+            "supply_lower_mv": 2800,
+            "supply_upper_mv": 3300,
+            "max_clock_hz": 24000000,
+            "max_sample_rate_hz": 1000000,
+            "min_acquisition_ps": 250000
+          },
+          {
+            "supply_lower_mv": 3300,
+            "supply_upper_mv": 5500,
+            "max_clock_hz": 48000000,
+            "max_sample_rate_hz": 1000000,
+            "min_acquisition_ps": 125000
+          }
+        ],
+        "band_boundary_caveat": "Datasheet acquisition rows use strict inequalities; manual range notation is inclusive/unspecified. Witnesses use interior voltages, not 1.8/2.8/3.3 V boundary interpretations. Current HAL chooses higher band at equality; retaining that is an independent source interpretation.",
+        "evidence": {
+          "electrical": {
+            "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+            "printed_pages": [
+              53
+            ],
+            "pdf_pages_1_based": [
+              56
+            ],
+            "section": "7.3.13 Table 7-27"
+          },
+          "voltage_clock_rate": {
+            "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+            "printed_pages": [
+              507
+            ],
+            "pdf_pages_1_based": [
+              508
+            ],
+            "section": "20.4.2 Table 20-3"
+          }
+        },
+        "conflict": "DS fADC max 96 MHz conflicts with manual max 48 MHz; conservatively enforce manual 48 MHz, but do not label 48 MHz an unambiguous DS actual electrical max."
+      }
+    },
+    "CW32L012": {
+      "backend": "l012",
+      "hsi": {
+        "nominal_oscillator_hz": 96000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 94080000,
+        "actual_oscillator_max_hz": 97920000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 85,
+        "supply_min_mv": 1700,
+        "supply_max_mv": 5500,
+        "scope": "Documented factory trim loaded from 0x001007c0; no arbitrary user trim or AUTOTRIM; ambient TA and stated supply only.",
+        "supported_divisors": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          12,
+          16,
+          20,
+          24,
+          28,
+          32
+        ],
+        "divisor_encodings": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          0
+        ],
+        "evidence": {
+          "accuracy": {
+            "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+            "printed_pages": [
+              55
+            ],
+            "pdf_pages_1_based": [
+              58
+            ],
+            "section": "7.3.8 Table 7-18"
+          },
+          "general_conditions": {
+            "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+            "printed_pages": [
+              44
+            ],
+            "pdf_pages_1_based": [
+              47
+            ],
+            "section": "7.3.1 Table 7-4"
+          },
+          "parameter_conditions": {
+            "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+            "printed_pages": [
+              40
+            ],
+            "pdf_pages_1_based": [
+              43
+            ],
+            "section": "7.1.1-7.1.2"
+          },
+          "calibration": {
+            "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+            "printed_pages": [
+              33
+            ],
+            "pdf_pages_1_based": [
+              59
+            ],
+            "section": "4.4.2"
+          },
+          "dividers_trim": {
+            "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+            "printed_pages": [
+              48
+            ],
+            "pdf_pages_1_based": [
+              74
+            ],
+            "section": "4.7.4 SYSCTRL_HSI"
+          }
+        },
+        "safe_manual_tuning_range_hz": [
+          90000000,
+          100000000
+        ],
+        "safe_tuning_range_is_not_factory_frequency_tolerance": true,
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "factory_trim_flash_address": "0x001007c0",
+        "factory_trim_required": true,
+        "supports_user_trim_in_hal": false,
+        "bound_min_multiplier": {
+          "numerator": 98,
+          "denominator": 100
+        },
+        "bound_max_multiplier": {
+          "numerator": 102,
+          "denominator": 100
+        },
+        "temperature_bounds": [
+          {
+            "ta_min_c": -40,
+            "ta_max_c": 85,
+            "error_ppm": 20000
+          },
+          {
+            "ta_min_c": -20,
+            "ta_max_c": 50,
+            "error_ppm": 10000
+          },
+          {
+            "ta_min_c": 25,
+            "ta_max_c": 25,
+            "error_ppm": 5000
+          }
+        ],
+        "supply_qualifier": "HSI table invokes Table 7-4 general operating conditions; no separate HSI voltage restriction. L011/L012 VDDA must equal VDD.",
+        "trim_step_typical_ppm": 2000,
+        "trim_step_is_guaranteed_exact": false,
+        "error_is_not_added_to_factory_error": true,
+        "qualification": "Section 7.3.8 says sample-tested under Table 7-4. Accuracy is explicitly factory-calibrated min/max; do not claim each part individually tested to full temperature span or guaranteed exact endpoint realization."
+      },
+      "adc": {
+        "min_clock_hz": 4000000,
+        "datasheet_typical_clock_hz": 48000000,
+        "datasheet_max_clock_hz": 96000000,
+        "conservative_manual_max_clock_hz": 48000000,
+        "datasheet_max_sample_rate_hz": 1000000,
+        "prescalers": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "comparison_cycles": 15,
+        "sample_cycles": [
+          6,
+          7,
+          9,
+          12,
+          18,
+          24,
+          30,
+          42,
+          54,
+          70,
+          102,
+          134,
+          166,
+          198,
+          262,
+          518
+        ],
+        "bands": [
+          {
+            "supply_lower_mv": 1700,
+            "supply_upper_mv": 1800,
+            "max_clock_hz": 6000000,
+            "max_sample_rate_hz": 200000,
+            "min_acquisition_ps": 1000000
+          },
+          {
+            "supply_lower_mv": 1800,
+            "supply_upper_mv": 2800,
+            "max_clock_hz": 12000000,
+            "max_sample_rate_hz": 500000,
+            "min_acquisition_ps": 500000
+          },
+          {
+            "supply_lower_mv": 2800,
+            "supply_upper_mv": 3300,
+            "max_clock_hz": 24000000,
+            "max_sample_rate_hz": 1000000,
+            "min_acquisition_ps": 250000
+          },
+          {
+            "supply_lower_mv": 3300,
+            "supply_upper_mv": 5500,
+            "max_clock_hz": 48000000,
+            "max_sample_rate_hz": 1000000,
+            "min_acquisition_ps": 125000
+          }
+        ],
+        "band_boundary_caveat": "Datasheet acquisition rows use strict inequalities; manual range notation is inclusive/unspecified. Witnesses use interior voltages, not 1.8/2.8/3.3 V boundary interpretations. Current HAL chooses higher band at equality; retaining that is an independent source interpretation.",
+        "evidence": {
+          "electrical": {
+            "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+            "printed_pages": [
+              60
+            ],
+            "pdf_pages_1_based": [
+              63
+            ],
+            "section": "7.3.13 Table 7-28"
+          },
+          "voltage_clock_rate": {
+            "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+            "printed_pages": [
+              577
+            ],
+            "pdf_pages_1_based": [
+              603
+            ],
+            "section": "25.4.2 Table 25-3"
+          }
+        },
+        "conflict": "DS fADC max 96 MHz conflicts with manual max 48 MHz; conservatively enforce manual 48 MHz, but do not label 48 MHz an unambiguous DS actual electrical max."
+      }
+    },
+    "CW32L031": {
+      "backend": "classic",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 47040000,
+        "actual_oscillator_max_hz": 48960000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 85,
+        "supply_min_mv": 1650,
+        "supply_max_mv": 5500,
+        "at_25_c_error_bound_ppm": 5000,
+        "trim_step_typical_ppm": 2000,
+        "scope": "Only documented factory 48 MHz calibration value loaded into SYSCTRL_HSI.TRIM; not arbitrary user trims or AUTOTRIM",
+        "supported_divisors": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "divisor_encodings": [
+          6,
+          8,
+          9,
+          5,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "extended_temperature_bound": null,
+        "manual_target_range_hz": [
+          32000000,
+          48000000
+        ],
+        "manual_target_range_note": "Manual4.4.2 describes tuning32..48MHz and restoring factory48MHz. Interpreted here as a tuning-target range, not zero positive factory error; nominal/actual distinction is not explicit in that prose. Do not tighten the independent DS factory-error envelope using this statement.",
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "extended_temperature_note": "DS general conditions allow ambient to105C at low power; no HSI accuracy bound found for85..105C.",
+        "evidence": {
+          "hsi_table_source": {
+            "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+            "printed_pages": [
+              46
+            ],
+            "pdf_pages_1_based": [
+              47
+            ],
+            "page_tables": {
+              "46": [
+                {
+                  "table": "7-4",
+                  "title": "一般工作条件提示的测试环境抽样测试。"
+                },
+                {
+                  "table": "7-18",
+                  "title": "HSI 振荡器特性"
+                },
+                {
+                  "table": "7-19",
+                  "title": "LSI 振荡器特性"
+                },
+                {
+                  "table": "7-20",
+                  "title": "RC10K 振荡器特性"
+                }
+              ]
+            }
+          },
+          "trim_and_divider_source": {
+            "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+            "printed_pages": [
+              55,
+              69
+            ],
+            "pdf_pages_1_based": [
+              56,
+              70
+            ],
+            "page_tables": {
+              "55": [],
+              "69": []
+            }
+          }
+        }
+      },
+      "supply": {
+        "min_mv": 1650,
+        "max_mv": 5500,
+        "vdda_must_equal_vdd": true,
+        "additional_condition": null,
+        "source": {
+          "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+          "printed_pages": [
+            37
+          ],
+          "pdf_pages_1_based": [
+            38
+          ],
+          "page_tables": {
+            "37": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件"
+              },
+              {
+                "table": "7-4",
+                "title": "一般工作条件列出的工作条件下测试得到的。"
+              },
+              {
+                "table": "7-5",
+                "title": "上电 / 掉电时的工作条件"
+              }
+            ]
+          }
+        }
+      },
+      "adc": {
+        "divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "sample_cycles": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "comparison_cycles": 19,
+        "actual_adcclk_min_hz": null,
+        "min_clock_status": "no minimum found in reviewed own RM/DS; null does not mean 0Hz is an operating clock",
+        "external_reference": "HAL exposes supply reference; external ExRef unsupported",
+        "supply_reference_bands": [
+          {
+            "supply_min_mv": 1650,
+            "supply_max_exclusive_mv": 1800,
+            "actual_adcclk_max_hz": 500000,
+            "conversion_rate_max_sps": 25000
+          },
+          {
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "actual_adcclk_max_hz": 2000000,
+            "conversion_rate_max_sps": 100000
+          },
+          {
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 2400,
+            "actual_adcclk_max_hz": 4000000,
+            "conversion_rate_max_sps": 200000
+          },
+          {
+            "supply_min_mv": 2400,
+            "supply_max_exclusive_mv": 2700,
+            "actual_adcclk_max_hz": 12000000,
+            "conversion_rate_max_sps": 500000
+          },
+          {
+            "supply_min_mv": 2700,
+            "supply_max_exclusive_mv": 5501,
+            "actual_adcclk_max_hz": 24000000,
+            "conversion_rate_max_sps": 1000000
+          }
+        ],
+        "input_follower_rate_max_sps": 200000,
+        "external_acquisition_min_ps": null,
+        "external_acquisition_note": "No universal absolute-time minimum in classic own source; board source impedance and selected cycles remain obligations",
+        "temperature_acquisition_min_ps": 5000000,
+        "temperature_startup_max_us": 45,
+        "internal_reference_limits": [
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "max_adc_hz": 2000000,
+            "max_sps": 100000
+          },
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          },
+          {
+            "reference": "Internal2V5",
+            "supply_min_mv": 2800,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          }
+        ],
+        "clock_rate_cycle_source": {
+          "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+          "printed_pages": [
+            432,
+            433
+          ],
+          "pdf_pages_1_based": [
+            433,
+            434
+          ],
+          "page_tables": {
+            "432": [
+              {
+                "table": "22-1",
+                "title": "ADC 时钟配置表"
+              }
+            ],
+            "433": [
+              {
+                "table": "22-2",
+                "title": "ADC 采样周期选择表"
+              },
+              {
+                "table": "22-3",
+                "title": "ADC 转换速度与电压对照表"
+              }
+            ]
+          }
+        },
+        "datasheet_source": {
+          "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+          "printed_pages": [
+            52,
+            54
+          ],
+          "pdf_pages_1_based": [
+            53,
+            55
+          ],
+          "page_tables": {
+            "52": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件提示的测试环境。"
+              },
+              {
+                "table": "7-29",
+                "title": "ADC 特性"
+              }
+            ],
+            "54": [
+              {
+                "table": "7-31",
+                "title": "温度传感器特性"
+              }
+            ]
+          }
+        },
+        "input_follower_source": {
+          "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+          "printed_pages": [
+            434,
+            458
+          ],
+          "pdf_pages_1_based": [
+            435,
+            459
+          ],
+          "page_tables": {
+            "434": [],
+            "458": []
+          }
+        }
+      },
+      "parameter_definition_source": {
+        "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+        "printed_pages": [
+          32
+        ],
+        "pdf_pages_1_based": [
+          33
+        ],
+        "page_tables": {
+          "32": []
+        }
+      }
+    },
+    "CW32L052": {
+      "backend": "classic",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 47040000,
+        "actual_oscillator_max_hz": 48960000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 85,
+        "supply_min_mv": 1650,
+        "supply_max_mv": 5500,
+        "at_25_c_error_bound_ppm": 5000,
+        "trim_step_typical_ppm": 2000,
+        "scope": "Only documented factory 48 MHz calibration value loaded into SYSCTRL_HSI.TRIM; not arbitrary user trims or AUTOTRIM",
+        "supported_divisors": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "divisor_encodings": [
+          6,
+          8,
+          9,
+          5,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "extended_temperature_bound": null,
+        "manual_target_range_hz": [
+          32000000,
+          48000000
+        ],
+        "manual_target_range_note": "Manual4.4.2 describes tuning32..48MHz and restoring factory48MHz. Interpreted here as a tuning-target range, not zero positive factory error; nominal/actual distinction is not explicit in that prose. Do not tighten the independent DS factory-error envelope using this statement.",
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "extended_temperature_note": "DS general conditions allow ambient to105C at low power; no HSI accuracy bound found for85..105C.",
+        "evidence": {
+          "hsi_table_source": {
+            "source_ref": "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+            "printed_pages": [
+              50
+            ],
+            "pdf_pages_1_based": [
+              51
+            ],
+            "page_tables": {
+              "50": [
+                {
+                  "table": "7-4",
+                  "title": "一般工作条件提示的测试环境抽样测试。"
+                },
+                {
+                  "table": "7-17",
+                  "title": "HSI 振荡器特性"
+                },
+                {
+                  "table": "7-18",
+                  "title": "LSI 振荡器特性"
+                },
+                {
+                  "table": "7-19",
+                  "title": "RC10K 振荡器特性"
+                }
+              ]
+            }
+          },
+          "trim_and_divider_source": {
+            "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+            "printed_pages": [
+              58,
+              72
+            ],
+            "pdf_pages_1_based": [
+              59,
+              73
+            ],
+            "page_tables": {
+              "58": [],
+              "72": []
+            }
+          }
+        }
+      },
+      "supply": {
+        "min_mv": 1650,
+        "max_mv": 5500,
+        "vdda_must_equal_vdd": true,
+        "additional_condition": null,
+        "source": {
+          "source_ref": "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+          "printed_pages": [
+            42
+          ],
+          "pdf_pages_1_based": [
+            43
+          ],
+          "page_tables": {
+            "42": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件"
+              },
+              {
+                "table": "7-4",
+                "title": "一般工作条件列出的工作条件下测试得到的。"
+              },
+              {
+                "table": "7-5",
+                "title": "上电 / 掉电时的工作条件"
+              }
+            ]
+          }
+        }
+      },
+      "adc": {
+        "divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "sample_cycles": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "comparison_cycles": 19,
+        "actual_adcclk_min_hz": null,
+        "min_clock_status": "no minimum found in reviewed own RM/DS; null does not mean 0Hz is an operating clock",
+        "external_reference": "HAL exposes supply reference; external ExRef unsupported",
+        "supply_reference_bands": [
+          {
+            "supply_min_mv": 1650,
+            "supply_max_exclusive_mv": 1800,
+            "actual_adcclk_max_hz": 500000,
+            "conversion_rate_max_sps": 25000
+          },
+          {
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "actual_adcclk_max_hz": 2000000,
+            "conversion_rate_max_sps": 100000
+          },
+          {
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 2400,
+            "actual_adcclk_max_hz": 4000000,
+            "conversion_rate_max_sps": 200000
+          },
+          {
+            "supply_min_mv": 2400,
+            "supply_max_exclusive_mv": 2700,
+            "actual_adcclk_max_hz": 12000000,
+            "conversion_rate_max_sps": 500000
+          },
+          {
+            "supply_min_mv": 2700,
+            "supply_max_exclusive_mv": 5501,
+            "actual_adcclk_max_hz": 24000000,
+            "conversion_rate_max_sps": 1000000
+          }
+        ],
+        "input_follower_rate_max_sps": 200000,
+        "external_acquisition_min_ps": null,
+        "external_acquisition_note": "No universal absolute-time minimum in classic own source; board source impedance and selected cycles remain obligations",
+        "temperature_acquisition_min_ps": 5000000,
+        "temperature_startup_max_us": 45,
+        "internal_reference_limits": [
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "max_adc_hz": 2000000,
+            "max_sps": 100000
+          },
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          },
+          {
+            "reference": "Internal2V5",
+            "supply_min_mv": 2800,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          }
+        ],
+        "clock_rate_cycle_source": {
+          "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+          "printed_pages": [
+            469,
+            470
+          ],
+          "pdf_pages_1_based": [
+            470,
+            471
+          ],
+          "page_tables": {
+            "469": [
+              {
+                "table": "23-1",
+                "title": "ADC 时钟配置表"
+              }
+            ],
+            "470": [
+              {
+                "table": "23-2",
+                "title": "ADC 采样周期选择表"
+              },
+              {
+                "table": "23-3",
+                "title": "ADC 转换速度与电压对照表"
+              }
+            ]
+          }
+        },
+        "datasheet_source": {
+          "source_ref": "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+          "printed_pages": [
+            57,
+            59
+          ],
+          "pdf_pages_1_based": [
+            58,
+            60
+          ],
+          "page_tables": {
+            "57": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件提示的测试环境。"
+              },
+              {
+                "table": "7-28",
+                "title": "ADC 特性"
+              }
+            ],
+            "59": [
+              {
+                "table": "7-30",
+                "title": "温度传感器特性"
+              }
+            ]
+          }
+        },
+        "input_follower_source": {
+          "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+          "printed_pages": [
+            471,
+            496
+          ],
+          "pdf_pages_1_based": [
+            472,
+            497
+          ],
+          "page_tables": {
+            "471": [],
+            "496": []
+          }
+        }
+      },
+      "parameter_definition_source": {
+        "source_ref": "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+        "printed_pages": [
+          37
+        ],
+        "pdf_pages_1_based": [
+          38
+        ],
+        "page_tables": {
+          "37": []
+        }
+      }
+    },
+    "CW32L083": {
+      "backend": "classic",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 47040000,
+        "actual_oscillator_max_hz": 48960000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 85,
+        "supply_min_mv": 1650,
+        "supply_max_mv": 5500,
+        "at_25_c_error_bound_ppm": 5000,
+        "trim_step_typical_ppm": 2000,
+        "scope": "Only documented factory 48 MHz calibration value loaded into SYSCTRL_HSI.TRIM; not arbitrary user trims or AUTOTRIM",
+        "supported_divisors": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "divisor_encodings": [
+          6,
+          8,
+          9,
+          5,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "extended_temperature_bound": null,
+        "manual_target_range_hz": [
+          32000000,
+          48000000
+        ],
+        "manual_target_range_note": "Manual4.4.2 describes tuning32..48MHz and restoring factory48MHz. Interpreted here as a tuning-target range, not zero positive factory error; nominal/actual distinction is not explicit in that prose. Do not tighten the independent DS factory-error envelope using this statement.",
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "extended_temperature_note": "DS general conditions allow ambient to105C at low power; no HSI accuracy bound found for85..105C.",
+        "evidence": {
+          "hsi_table_source": {
+            "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+            "printed_pages": [
+              54
+            ],
+            "pdf_pages_1_based": [
+              55
+            ],
+            "page_tables": {
+              "54": [
+                {
+                  "table": "7-4",
+                  "title": "一般工作条件提示的测试环境抽样测试。"
+                },
+                {
+                  "table": "7-17",
+                  "title": "HSI 振荡器特性"
+                },
+                {
+                  "table": "7-18",
+                  "title": "LSI 振荡器特性"
+                },
+                {
+                  "table": "7-19",
+                  "title": "RC10K 振荡器特性"
+                }
+              ]
+            }
+          },
+          "trim_and_divider_source": {
+            "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+            "printed_pages": [
+              61,
+              77
+            ],
+            "pdf_pages_1_based": [
+              62,
+              78
+            ],
+            "page_tables": {
+              "61": [],
+              "77": []
+            }
+          }
+        }
+      },
+      "supply": {
+        "min_mv": 1650,
+        "max_mv": 5500,
+        "vdda_must_equal_vdd": true,
+        "additional_condition": null,
+        "source": {
+          "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+          "printed_pages": [
+            46
+          ],
+          "pdf_pages_1_based": [
+            47
+          ],
+          "page_tables": {
+            "46": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件"
+              },
+              {
+                "table": "7-4",
+                "title": "一般工作条件列出的工作条件下测试得到的。"
+              },
+              {
+                "table": "7-5",
+                "title": "上电 / 掉电时的工作条件"
+              }
+            ]
+          }
+        }
+      },
+      "adc": {
+        "divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "sample_cycles": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "comparison_cycles": 19,
+        "actual_adcclk_min_hz": null,
+        "min_clock_status": "no minimum found in reviewed own RM/DS; null does not mean 0Hz is an operating clock",
+        "external_reference": "HAL exposes supply reference; external ExRef unsupported",
+        "supply_reference_bands": [
+          {
+            "supply_min_mv": 1650,
+            "supply_max_exclusive_mv": 1800,
+            "actual_adcclk_max_hz": 500000,
+            "conversion_rate_max_sps": 25000
+          },
+          {
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "actual_adcclk_max_hz": 2000000,
+            "conversion_rate_max_sps": 100000
+          },
+          {
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 2400,
+            "actual_adcclk_max_hz": 4000000,
+            "conversion_rate_max_sps": 200000
+          },
+          {
+            "supply_min_mv": 2400,
+            "supply_max_exclusive_mv": 2700,
+            "actual_adcclk_max_hz": 12000000,
+            "conversion_rate_max_sps": 500000
+          },
+          {
+            "supply_min_mv": 2700,
+            "supply_max_exclusive_mv": 5501,
+            "actual_adcclk_max_hz": 24000000,
+            "conversion_rate_max_sps": 1000000
+          }
+        ],
+        "input_follower_rate_max_sps": 200000,
+        "external_acquisition_min_ps": null,
+        "external_acquisition_note": "No universal absolute-time minimum in classic own source; board source impedance and selected cycles remain obligations",
+        "temperature_acquisition_min_ps": 5000000,
+        "temperature_startup_max_us": 45,
+        "internal_reference_limits": [
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "max_adc_hz": 2000000,
+            "max_sps": 100000
+          },
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          },
+          {
+            "reference": "Internal2V5",
+            "supply_min_mv": 2800,
+            "supply_max_exclusive_mv": 5501,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          }
+        ],
+        "clock_rate_cycle_source": {
+          "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+          "printed_pages": [
+            474,
+            475
+          ],
+          "pdf_pages_1_based": [
+            475,
+            476
+          ],
+          "page_tables": {
+            "474": [
+              {
+                "table": "23-1",
+                "title": "ADC 时钟配置表"
+              }
+            ],
+            "475": [
+              {
+                "table": "23-2",
+                "title": "ADC 采样周期选择表"
+              },
+              {
+                "table": "23-3",
+                "title": "ADC 转换速度与电压对照表"
+              }
+            ]
+          }
+        },
+        "datasheet_source": {
+          "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+          "printed_pages": [
+            61,
+            63
+          ],
+          "pdf_pages_1_based": [
+            62,
+            64
+          ],
+          "page_tables": {
+            "61": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件提示的测试环境。"
+              },
+              {
+                "table": "7-29",
+                "title": "ADC 特性"
+              }
+            ],
+            "63": [
+              {
+                "table": "7-31",
+                "title": "温度传感器特性"
+              }
+            ]
+          }
+        },
+        "input_follower_source": {
+          "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+          "printed_pages": [
+            476,
+            500
+          ],
+          "pdf_pages_1_based": [
+            477,
+            501
+          ],
+          "page_tables": {
+            "476": [],
+            "500": []
+          }
+        }
+      },
+      "parameter_definition_source": {
+        "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+        "printed_pages": [
+          41
+        ],
+        "pdf_pages_1_based": [
+          42
+        ],
+        "page_tables": {
+          "41": []
+        }
+      }
+    },
+    "CW32R031": {
+      "backend": "classic",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 47040000,
+        "actual_oscillator_max_hz": 48960000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 85,
+        "supply_min_mv": 2200,
+        "supply_max_mv": 3600,
+        "at_25_c_error_bound_ppm": 5000,
+        "trim_step_typical_ppm": 2000,
+        "scope": "Only documented factory 48 MHz calibration value loaded into SYSCTRL_HSI.TRIM; not arbitrary user trims or AUTOTRIM",
+        "supported_divisors": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "divisor_encodings": [
+          6,
+          8,
+          9,
+          5,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "extended_temperature_bound": "not claimed beyond above interval",
+        "manual_target_range_hz": [
+          32000000,
+          48000000
+        ],
+        "manual_target_range_note": "Manual4.4.2 describes tuning32..48MHz and restoring factory48MHz. Interpreted here as a tuning-target range, not zero positive factory error; nominal/actual distinction is not explicit in that prose. Do not tighten the independent DS factory-error envelope using this statement.",
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "evidence": {
+          "hsi_table_source": {
+            "source_ref": "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+            "printed_pages": [
+              53
+            ],
+            "pdf_pages_1_based": [
+              54
+            ],
+            "page_tables": {
+              "53": [
+                {
+                  "table": "7-4",
+                  "title": "一般工作条件提示的测试环境抽样测试。"
+                },
+                {
+                  "table": "7-22",
+                  "title": "HSI 振荡器特性"
+                },
+                {
+                  "table": "7-23",
+                  "title": "LSI 振荡器特性"
+                },
+                {
+                  "table": "7-24",
+                  "title": "RC10K 振荡器特性"
+                }
+              ]
+            }
+          },
+          "trim_and_divider_source": {
+            "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+            "printed_pages": [
+              57,
+              71
+            ],
+            "pdf_pages_1_based": [
+              58,
+              72
+            ],
+            "page_tables": {
+              "57": [],
+              "71": []
+            }
+          }
+        }
+      },
+      "supply": {
+        "min_mv": 2200,
+        "max_mv": 3600,
+        "vdda_must_equal_vdd": true,
+        "additional_condition": null,
+        "source": {
+          "source_ref": "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+          "printed_pages": [
+            41
+          ],
+          "pdf_pages_1_based": [
+            42
+          ],
+          "page_tables": {
+            "41": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件"
+              },
+              {
+                "table": "7-5",
+                "title": "RF BLE-Lite ™特性"
+              }
+            ]
+          }
+        }
+      },
+      "adc": {
+        "divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "sample_cycles": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "comparison_cycles": 19,
+        "actual_adcclk_min_hz": null,
+        "min_clock_status": "no minimum found in reviewed own RM/DS; null does not mean 0Hz is an operating clock",
+        "external_reference": "HAL exposes supply reference; external ExRef unsupported",
+        "supply_reference_bands": [
+          {
+            "supply_min_mv": 2200,
+            "supply_max_exclusive_mv": 2400,
+            "actual_adcclk_max_hz": 4000000,
+            "conversion_rate_max_sps": 200000
+          },
+          {
+            "supply_min_mv": 2400,
+            "supply_max_exclusive_mv": 2700,
+            "actual_adcclk_max_hz": 12000000,
+            "conversion_rate_max_sps": 500000
+          },
+          {
+            "supply_min_mv": 2700,
+            "supply_max_exclusive_mv": 3601,
+            "actual_adcclk_max_hz": 24000000,
+            "conversion_rate_max_sps": 1000000
+          }
+        ],
+        "input_follower_rate_max_sps": 200000,
+        "external_acquisition_min_ps": null,
+        "external_acquisition_note": "No universal absolute-time minimum in classic own source; board source impedance and selected cycles remain obligations",
+        "temperature_acquisition_min_ps": 5000000,
+        "temperature_startup_max_us": 45,
+        "internal_reference_limits": [
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 2200,
+            "supply_max_exclusive_mv": 3601,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          },
+          {
+            "reference": "Internal2V5",
+            "supply_min_mv": 2800,
+            "supply_max_exclusive_mv": 3601,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          }
+        ],
+        "clock_rate_cycle_source": {
+          "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+          "printed_pages": [
+            435,
+            436
+          ],
+          "pdf_pages_1_based": [
+            436,
+            437
+          ],
+          "page_tables": {
+            "435": [
+              {
+                "table": "22-1",
+                "title": "ADC 时钟配置表"
+              }
+            ],
+            "436": [
+              {
+                "table": "22-2",
+                "title": "ADC 采样周期选择表"
+              },
+              {
+                "table": "22-3",
+                "title": "ADC 转换速度与电压对照表"
+              }
+            ]
+          }
+        },
+        "datasheet_source": {
+          "source_ref": "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+          "printed_pages": [
+            59,
+            61
+          ],
+          "pdf_pages_1_based": [
+            60,
+            62
+          ],
+          "page_tables": {
+            "59": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件提示的测试环境。"
+              },
+              {
+                "table": "7-33",
+                "title": "ADC 特性"
+              }
+            ],
+            "61": [
+              {
+                "table": "7-35",
+                "title": "温度传感器特性"
+              }
+            ]
+          }
+        },
+        "input_follower_source": {
+          "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+          "printed_pages": [
+            437,
+            460
+          ],
+          "pdf_pages_1_based": [
+            438,
+            461
+          ],
+          "page_tables": {
+            "437": [],
+            "460": []
+          }
+        }
+      },
+      "parameter_definition_source": {
+        "source_ref": "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+        "printed_pages": [
+          35
+        ],
+        "pdf_pages_1_based": [
+          36
+        ],
+        "page_tables": {
+          "35": []
+        }
+      }
+    },
+    "CW32W031": {
+      "backend": "classic",
+      "hsi": {
+        "nominal_oscillator_hz": 48000000,
+        "factory_error_bound_ppm": 20000,
+        "actual_oscillator_min_hz": 47040000,
+        "actual_oscillator_max_hz": 48960000,
+        "ambient_temperature_min_c": -40,
+        "ambient_temperature_max_c": 85,
+        "supply_min_mv": 1800,
+        "supply_max_mv": 3600,
+        "at_25_c_error_bound_ppm": 5000,
+        "trim_step_typical_ppm": 2000,
+        "scope": "Only documented factory 48 MHz calibration value loaded into SYSCTRL_HSI.TRIM; not arbitrary user trims or AUTOTRIM",
+        "supported_divisors": [
+          1,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16
+        ],
+        "divisor_encodings": [
+          6,
+          8,
+          9,
+          5,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "extended_temperature_bound": "not claimed beyond above interval",
+        "manual_target_range_hz": [
+          32000000,
+          48000000
+        ],
+        "manual_target_range_note": "Manual4.4.2 describes tuning32..48MHz and restoring factory48MHz. Interpreted here as a tuning-target range, not zero positive factory error; nominal/actual distinction is not explicit in that prose. Do not tighten the independent DS factory-error envelope using this statement.",
+        "ahb_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "apb_divisors": [
+          1,
+          2,
+          4,
+          8
+        ],
+        "supply_condition": "1.8V minimum only for RF LDO;2.0V minimum RF DCDC.",
+        "evidence": {
+          "hsi_table_source": {
+            "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+            "printed_pages": [
+              52
+            ],
+            "pdf_pages_1_based": [
+              53
+            ],
+            "page_tables": {
+              "52": [
+                {
+                  "table": "7-4",
+                  "title": "一般工作条件提示的测试环境抽样测试。"
+                },
+                {
+                  "table": "7-23",
+                  "title": "HSI 振荡器特性"
+                },
+                {
+                  "table": "7-24",
+                  "title": "LSI 振荡器特性"
+                },
+                {
+                  "table": "7-25",
+                  "title": "RC10K 振荡器特性"
+                }
+              ]
+            }
+          },
+          "trim_and_divider_source": {
+            "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+            "printed_pages": [
+              56,
+              70
+            ],
+            "pdf_pages_1_based": [
+              57,
+              71
+            ],
+            "page_tables": {
+              "56": [],
+              "70": []
+            }
+          }
+        }
+      },
+      "supply": {
+        "min_mv": 1800,
+        "max_mv": 3600,
+        "vdda_must_equal_vdd": true,
+        "additional_condition": "W031 RF DCDC requires>=2000mV",
+        "source": {
+          "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+          "printed_pages": [
+            40
+          ],
+          "pdf_pages_1_based": [
+            41
+          ],
+          "page_tables": {
+            "40": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件"
+              }
+            ]
+          }
+        }
+      },
+      "adc": {
+        "divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128
+        ],
+        "sample_cycles": [
+          5,
+          6,
+          8,
+          10
+        ],
+        "comparison_cycles": 19,
+        "actual_adcclk_min_hz": null,
+        "min_clock_status": "no minimum found in reviewed own RM/DS; null does not mean 0Hz is an operating clock",
+        "external_reference": "HAL exposes supply reference; external ExRef unsupported",
+        "supply_reference_bands": [
+          {
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "actual_adcclk_max_hz": 2000000,
+            "conversion_rate_max_sps": 100000
+          },
+          {
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 2400,
+            "actual_adcclk_max_hz": 4000000,
+            "conversion_rate_max_sps": 200000
+          },
+          {
+            "supply_min_mv": 2400,
+            "supply_max_exclusive_mv": 2700,
+            "actual_adcclk_max_hz": 12000000,
+            "conversion_rate_max_sps": 500000
+          },
+          {
+            "supply_min_mv": 2700,
+            "supply_max_exclusive_mv": 3601,
+            "actual_adcclk_max_hz": 24000000,
+            "conversion_rate_max_sps": 1000000
+          }
+        ],
+        "input_follower_rate_max_sps": 200000,
+        "external_acquisition_min_ps": null,
+        "external_acquisition_note": "No universal absolute-time minimum in classic own source; board source impedance and selected cycles remain obligations",
+        "temperature_acquisition_min_ps": 5000000,
+        "temperature_startup_max_us": 45,
+        "internal_reference_limits": [
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 1800,
+            "supply_max_exclusive_mv": 2000,
+            "max_adc_hz": 2000000,
+            "max_sps": 100000
+          },
+          {
+            "reference": "Internal1V5",
+            "supply_min_mv": 2000,
+            "supply_max_exclusive_mv": 3601,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          },
+          {
+            "reference": "Internal2V5",
+            "supply_min_mv": 2800,
+            "supply_max_exclusive_mv": 3601,
+            "max_adc_hz": 4000000,
+            "max_sps": 200000
+          }
+        ],
+        "clock_rate_cycle_source": {
+          "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+          "printed_pages": [
+            435,
+            436
+          ],
+          "pdf_pages_1_based": [
+            436,
+            437
+          ],
+          "page_tables": {
+            "435": [
+              {
+                "table": "22-1",
+                "title": "ADC 时钟配置表"
+              }
+            ],
+            "436": [
+              {
+                "table": "22-2",
+                "title": "ADC 采样周期选择表"
+              },
+              {
+                "table": "22-3",
+                "title": "ADC 转换速度与电压对照表"
+              }
+            ]
+          }
+        },
+        "datasheet_source": {
+          "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+          "printed_pages": [
+            58,
+            60
+          ],
+          "pdf_pages_1_based": [
+            59,
+            61
+          ],
+          "page_tables": {
+            "58": [
+              {
+                "table": "7-4",
+                "title": "一般工作条件提示的测试环境。"
+              },
+              {
+                "table": "7-34",
+                "title": "ADC 特性"
+              }
+            ],
+            "60": [
+              {
+                "table": "7-36",
+                "title": "温度传感器特性"
+              }
+            ]
+          }
+        },
+        "input_follower_source": {
+          "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+          "printed_pages": [
+            437,
+            461
+          ],
+          "pdf_pages_1_based": [
+            438,
+            462
+          ],
+          "page_tables": {
+            "437": [],
+            "461": []
+          }
+        }
+      },
+      "parameter_definition_source": {
+        "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+        "printed_pages": [
+          34
+        ],
+        "pdf_pages_1_based": [
+          35
+        ],
+        "page_tables": {
+          "34": []
+        }
+      }
+    }
+  },
+  "hardware_validation": false
+}

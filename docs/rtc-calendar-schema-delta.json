@@ -1,0 +1,28 @@
+{
+  "basis": "Immutable Stage16 independently rewritten schema plus the optional project-authored RTC calendar source facts.",
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "72a4b739ee3e9cd50ae5767da5c1d378f83d6a76de88640f0ec4f095c69231e3",
+      "after_sha256": "0cf5e0b3fa85f73b21622bfdecfc2a81f3d6cdc94e97fbd51546b292bf5e5772",
+      "diff": "--- before/cw32-data-serde/src/lib.rs\n+++ after/cw32-data-serde/src/lib.rs\n@@ -177,6 +177,20 @@\n                 Lvd { pub thresholds_mv: Vec<u16>, pub supply_name: String, pub inputs: Vec<LvdInput>, }\n             }\n             record! {\n+                /// Reviewed calendar source envelope and nominal hardware division.\n+                RtcCalendar { pub source: String,\n+                    pub source_encoding: u8,\n+                    pub nominal_hz: u32,\n+                    pub minimum_hz: u32,\n+                    pub maximum_hz: u32,\n+                    pub temperature_c: (i16, i16),\n+                    pub supply_mv: (u16, u16),\n+                    pub factory_trim_address: u32,\n+                    pub calendar_divisor: u32,\n+                    pub prescaler_first: u16,\n+                    pub prescaler_second: u32, }\n+            }\n+            record! {\n                 Lcd { pub segments: Vec<u8>, pub ram_registers: Vec<u8>, pub lsi_typical_hz: u32, }\n             }\n             record! {\n@@ -385,6 +399,8 @@\n                 #[serde(default, skip_serializing_if = \"Option::is_none\")]\n                 pub lcd: Option<peripheral::Lcd>,\n                 #[serde(default, skip_serializing_if = \"Option::is_none\")]\n+                pub rtc_calendar: Option<peripheral::RtcCalendar>,\n+                #[serde(default, skip_serializing_if = \"Option::is_none\")]\n                 pub ir: Option<peripheral::Ir>,\n                 #[serde(default, skip_serializing_if = \"Option::is_none\")]\n                 pub gpio_interrupt: Option<peripheral::GpioInterrupt>,\n"
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "9768d14c1268fcdb1f7d4d85ab67345973176e1340776de798e3d101e0050b2a",
+      "after_sha256": "86873680cec50d76ce90613b8c2061b95d5370955698a9cadf969575cf97132f",
+      "diff": "--- before/cw32-metapac-gen/src/data.rs\n+++ after/cw32-metapac-gen/src/data.rs\n@@ -387,6 +387,7 @@\n     #[serde(default)]\n     pub lvd: Option<PeripheralLvd>,\n     pub lcd: Option<PeripheralLcd>,\n+    pub rtc_calendar: Option<PeripheralRtcCalendar>,\n     #[serde(default)]\n     pub ir: Option<PeripheralIr>,\n     #[serde(default)]\n@@ -432,6 +433,7 @@\n             .field(\"spi\", &self.spi)\n             .field(\"lvd\", &self.lvd)\n             .field(\"lcd\", &self.lcd)\n+            .field(\"rtc_calendar\", &self.rtc_calendar)\n             .field(\"ir\", &self.ir)\n             .field(\"gpio_interrupt\", &self.gpio_interrupt)\n             .field(\"clock_limits\", &self.clock_limits)\n@@ -720,3 +722,18 @@\n     pub ram_registers: Vec<u8>,\n     pub lsi_typical_hz: u32,\n }\n+\n+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]\n+pub struct PeripheralRtcCalendar {\n+    pub source: String,\n+    pub source_encoding: u8,\n+    pub nominal_hz: u32,\n+    pub minimum_hz: u32,\n+    pub maximum_hz: u32,\n+    pub temperature_c: (i16, i16),\n+    pub supply_mv: (u16, u16),\n+    pub factory_trim_address: u32,\n+    pub calendar_divisor: u32,\n+    pub prescaler_first: u16,\n+    pub prescaler_second: u32,\n+}\n"
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "7b90d63c4184e540a967d69c3e76e00e54723943ee84834c6e528b3d5fcb6d5b",
+      "after_sha256": "7d2eab08b3dc62582f2a781ea4e605c8cb8673ca0ad1c6edbdcf12e57adb4e19",
+      "diff": "--- before/cw32-metapac-gen/res/src/metadata.rs\n+++ after/cw32-metapac-gen/res/src/metadata.rs\n@@ -179,6 +179,7 @@\n     pub spi: Option<PeripheralSpi>,\n     pub lvd: Option<PeripheralLvd>,\n     pub lcd: Option<PeripheralLcd>,\n+    pub rtc_calendar: Option<PeripheralRtcCalendar>,\n     pub ir: Option<PeripheralIr>,\n     pub gpio_interrupt: Option<PeripheralGpioInterrupt>,\n     pub clock_limits: Option<PeripheralClockLimits>,\n@@ -455,3 +456,18 @@\n     pub ram_registers: &'static [u8],\n     pub lsi_typical_hz: u32,\n }\n+\n+#[derive(Debug, Eq, PartialEq, Clone)]\n+pub struct PeripheralRtcCalendar {\n+pub source: &'static str,\n+                    pub source_encoding: u8,\n+                    pub nominal_hz: u32,\n+                    pub minimum_hz: u32,\n+                    pub maximum_hz: u32,\n+                    pub temperature_c: (i16, i16),\n+                    pub supply_mv: (u16, u16),\n+                    pub factory_trim_address: u32,\n+                    pub calendar_divisor: u32,\n+                    pub prescaler_first: u16,\n+                    pub prescaler_second: u32,\n+}\n"
+    }
+  ],
+  "wire_compatibility": "Absent/null rtc_calendar decodes None and omitted None stays absent in chip JSON. Existing field order/width/defaults remain unchanged.",
+  "source_compatibility": "Public Peripheral literals need rtc_calendar: None.",
+  "verification": "cw32-data-serde/tests/schema_contracts.rs optional/null/roundtrip fixture and all generated chip roundtrips pass; data/PAC generators pass.",
+  "independent_review_passed": false,
+  "legal_clearance_claimed": false
+}

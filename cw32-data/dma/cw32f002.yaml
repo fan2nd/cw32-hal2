@@ -1,0 +1,35 @@
+schema_version: 1
+family: CW32F002
+presence: absent
+coverage:
+  channels: complete
+  interrupts: complete
+  requests: complete
+  meaning: No DMA controller in the cited family datasheet, CMSIS header, and SVD inventory; empty routing
+    is intentional.
+hardware_validated: false
+sources:
+  cmsis_header:
+    path: cw32f002/Libraries/inc/cw32f002.h
+    sha256: 399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54
+    archive_url: https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip
+    source_ref: member:cw32f002/Libraries/inc/cw32f002.h
+  datasheet:
+    path: CW32F002_DataSheet_CN_V1.2.pdf
+    sha256: 6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506
+    url: https://www.whxy.com/uploads/files/20251230/CW32F002_DataSheet_CN_V1.2.pdf
+    source_ref: vendor:CW32F002_DataSheet_CN_V1.2.pdf
+evidence:
+  absence:
+    source: datasheet
+    section: '6, Table 6-1: complete memory/peripheral map'
+    pdf_page_indices:
+    - 25
+    interpretation: No DMA controller in the complete peripheral map, CMSIS header, or independently imported
+      SVD inventory.
+core_dma_channels: []
+channel_details: []
+peripheral_dma_channels: {}
+requests: []
+excluded_sdk_requests: []
+unknowns: []

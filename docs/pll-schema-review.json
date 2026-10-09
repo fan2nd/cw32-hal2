@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "review_date_utc": "2026-10-09T10:38:20.559007+00:00",
+  "reviewer": "independent source safety and schema reviewer",
+  "status": "accepted for this narrow addition; final immutable source/build review pending",
+  "scope": "CW32L083 factory-HSI-fed PLL during one-time initialization only",
+  "baseline": {
+    "filename": "embassy-cw32-stage39-source-2026-10-09.zip",
+    "archive_sha256": "2d052b2b3b9a5489e797991109df4fb197042f5caf2382e13f04349206d2bd03",
+    "verified": true
+  },
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "e70e0c81debc6484b2949b12590fe54670001188d5caf23f3d432a61c24de133",
+      "after_sha256": "c42ba9daafed740a5ef3772d99849f2f5e1dcc99c9a09bd5a3331616dd82c959",
+      "reviewed_delta": "--- Stage39/cw32-data-serde/src/lib.rs\n+++ PLL/cw32-data-serde/src/lib.rs\n@@ -298,6 +298,23 @@\n                 }\n             }\n             record! {\n+                /// Own-family PLL qualification; analog bins are distinct from electrical limits.\n+                PllLimits {\n+    pub input_range_hz: (u32, u32),\n+    pub output_range_hz: (u32, u32),\n+    pub input_ranges_hz: [(u32, u32); 4],\n+    pub output_ranges_hz: [(u32, u32); 5],\n+    pub multiplier_range: (u8, u8),\n+    pub supply_mv: (u16, u16),\n+    pub temperature_c: (i16, i16),\n+    pub hsi_supported: bool,\n+    pub startup_cycles: u32,\n+    pub startup_encoding: u8,\n+    pub reserved_debug_default: u8,\n+    pub cycle_to_cycle_jitter_ps: u32,\n+                }\n+            }\n+            record! {\n                 ClockLimits {\n                     pub hsi_frequency_hz: u32,\n                     pub hsi_error_percent: u32,\n@@ -314,6 +331,8 @@\n                     pub hse: Option<HseLimits>,\n                     #[serde(default, skip_serializing_if = \"Option::is_none\")]\n                     pub hex: Option<HexLimits>,\n+                    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n+                    pub pll: Option<PllLimits>,\n                 }\n             }\n             record! {\n"
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "c53354b75e9b50c72714f3476a3da9ecfc32dcaa29342968bf604bc32f10e6d0",
+      "after_sha256": "f35909acfb0b7a69fb57d6e38ec342688c78130626d3932b990bc462d0eb0821",
+      "reviewed_delta": "--- Stage39/cw32-metapac-gen/src/data.rs\n+++ PLL/cw32-metapac-gen/src/data.rs\n@@ -680,6 +680,22 @@\n }\n \n #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]\n+pub struct PeripheralPllLimits {\n+    pub input_range_hz: (u32, u32),\n+    pub output_range_hz: (u32, u32),\n+    pub input_ranges_hz: [(u32, u32); 4],\n+    pub output_ranges_hz: [(u32, u32); 5],\n+    pub multiplier_range: (u8, u8),\n+    pub supply_mv: (u16, u16),\n+    pub temperature_c: (i16, i16),\n+    pub hsi_supported: bool,\n+    pub startup_cycles: u32,\n+    pub startup_encoding: u8,\n+    pub reserved_debug_default: u8,\n+    pub cycle_to_cycle_jitter_ps: u32,\n+}\n+\n+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]\n pub struct PeripheralClockLimits {\n     pub hsi_frequency_hz: u32,\n     pub hsi_error_percent: u32,\n@@ -696,6 +712,8 @@\n     pub hse: Option<PeripheralHseLimits>,\n     #[serde(default)]\n     pub hex: Option<PeripheralHexLimits>,\n+    #[serde(default)]\n+    pub pll: Option<PeripheralPllLimits>,\n }\n \n #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]\n"
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "2b1fa6d62be812e01ee2dbf9e90626cc6f1b658960fcbd99cf9fa221455ba4e8",
+      "after_sha256": "a906816ea381eb9784ba1b769b0eab4f2c7a63885e7896cc3b6d5286ad5bbea9",
+      "reviewed_delta": "--- Stage39/cw32-metapac-gen/res/src/metadata.rs\n+++ PLL/cw32-metapac-gen/res/src/metadata.rs\n@@ -405,6 +405,22 @@\n }\n \n #[derive(Debug, Eq, PartialEq, Clone)]\n+pub struct PeripheralPllLimits {\n+    pub input_range_hz: (u32, u32),\n+    pub output_range_hz: (u32, u32),\n+    pub input_ranges_hz: &'static [(u32, u32); 4],\n+    pub output_ranges_hz: &'static [(u32, u32); 5],\n+    pub multiplier_range: (u8, u8),\n+    pub supply_mv: (u16, u16),\n+    pub temperature_c: (i16, i16),\n+    pub hsi_supported: bool,\n+    pub startup_cycles: u32,\n+    pub startup_encoding: u8,\n+    pub reserved_debug_default: u8,\n+    pub cycle_to_cycle_jitter_ps: u32,\n+}\n+\n+#[derive(Debug, Eq, PartialEq, Clone)]\n pub struct PeripheralClockLimits {\n     pub hsi_frequency_hz: u32,\n     pub hsi_error_percent: u32,\n@@ -419,6 +435,7 @@\n     pub flash_wait_step_hz: u32,\n     pub hse: Option<PeripheralHseLimits>,\n     pub hex: Option<PeripheralHexLimits>,\n+    pub pll: Option<PeripheralPllLimits>,\n }\n \n #[derive(Debug, Eq, PartialEq, Clone)]\n"
+    }
+  ],
+  "new_record": {
+    "serde_name": "chip::core::peripheral::PllLimits",
+    "metapac_owned_and_static_name": "PeripheralPllLimits",
+    "field_order_and_owned_types": [
+      [
+        "input_range_hz",
+        "(u32, u32)"
+      ],
+      [
+        "output_range_hz",
+        "(u32, u32)"
+      ],
+      [
+        "input_ranges_hz",
+        "[(u32, u32); 4]"
+      ],
+      [
+        "output_ranges_hz",
+        "[(u32, u32); 5]"
+      ],
+      [
+        "multiplier_range",
+        "(u8, u8)"
+      ],
+      [
+        "supply_mv",
+        "(u16, u16)"
+      ],
+      [
+        "temperature_c",
+        "(i16, i16)"
+      ],
+      [
+        "hsi_supported",
+        "bool"
+      ],
+      [
+        "startup_cycles",
+        "u32"
+      ],
+      [
+        "startup_encoding",
+        "u8"
+      ],
+      [
+        "reserved_debug_default",
+        "u8"
+      ],
+      [
+        "cycle_to_cycle_jitter_ps",
+        "u32"
+      ]
+    ],
+    "static_difference": "input_ranges_hz and output_ranges_hz are &'static references to the same fixed-size arrays; other field types/order agree"
+  },
+  "new_optional_field": {
+    "owner": "ClockLimits / PeripheralClockLimits",
+    "position": "appended after existing hse and hex fields",
+    "name": "pll",
+    "serde_type": "Option<PllLimits>",
+    "serde_attributes": [
+      "default",
+      "skip_serializing_if = \"Option::is_none\""
+    ],
+    "metapac_owned_type": "Option<PeripheralPllLimits>",
+    "metapac_owned_attributes": [
+      "default"
+    ],
+    "static_type": "Option<PeripheralPllLimits>"
+  },
+  "compatibility": {
+    "all_prior_fields_types_widths_order_and_serde_attributes_unchanged": true,
+    "existing_HseLimits_and_HexLimits_definitions_byte_unchanged": true,
+    "missing_pll_deserializes_as_None": true,
+    "none_pll_omitted_from_chip_json": true,
+    "source_level_struct_literals_need_new_field": true,
+    "does_not_expand_HSE_or_HEX_qualification": true,
+    "does_not_qualify_L052_or_other_PLL_families": true
+  },
+  "source_qualification": {
+    "authored_policy": "cw32-data/pll-qualified.yaml",
+    "source_authority": "sources/evidence-sources.json",
+    "generator": "cw32-data-gen/src/electrical.rs",
+    "checks": [
+      "exact SHA-256 of authored policy",
+      "exact equality of PLL facts and source lists with authored policy",
+      "CW32L083 and hsi_supported only",
+      "selected own-family manual/datasheet provenance hashes and valid paired PDF/printed page lists",
+      "nonzero ordered electrical intervals and analog bins",
+      "PLL operating conditions cover the factory-HSI qualification"
+    ],
+    "manual": {
+      "name": "CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "pdf_pages": [
+        59,
+        60,
+        72,
+        82
+      ]
+    },
+    "datasheet": {
+      "name": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+      "pdf_pages": [
+        47,
+        55,
+        56
+      ]
+    }
+  },
+  "policy_meaning": {
+    "input_range_hz": [
+      4000000,
+      24000000
+    ],
+    "qualified_output_range_hz": [
+      12000000,
+      64000000
+    ],
+    "multiplier_range": [
+      2,
+      12
+    ],
+    "hsi_source_after_existing_divider": true,
+    "startup_encoding": 7,
+    "startup_cycles": 16384,
+    "reserved_debug_default": 5,
+    "cycle_to_cycle_jitter_ps": 300,
+    "jitter_is_not_absolute_period_or_phase_bound": true
+  },
+  "generated_data_inspection": {
+    "PLL_profiles": [
+      "CW32L083",
+      "CW32L083RBT6",
+      "CW32L083RCT6",
+      "CW32L083RCS6",
+      "CW32L083MCT6",
+      "CW32L083VCT6"
+    ],
+    "none_elsewhere": true,
+    "normal_PAC_static_metadata_generation_matches_reviewed_shapes": true
+  },
+  "identity_disposition": "The independent review permits advancing only the isolated candidate schema source identity from the listed baseline SHA-256 to the listed current SHA-256; preserve prior review records. This does not approve unrelated schema changes.",
+  "verification_boundary": "Read-only original-source, exact source-diff and generated-output inspection. Reviewer ran no Cargo, HAL tests, model or firmware. Build evidence is a separate receipt.",
+  "legal_clearance": false
+}

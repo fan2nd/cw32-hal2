@@ -1,0 +1,271 @@
+{
+  "schema_version": 1,
+  "source_authority": "sources/evidence-sources.json",
+  "scope": "Own-source CW32L083 direct crystal/bypass HSE; existing HseLimits schema, no L052 extension or PLL output configuration.",
+  "reviewed_on": "2026-10-09",
+  "page_convention": "One-based PDF pages; printed pages are one lower.",
+  "source_identities": [
+    {
+      "id": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "kind": "pdf",
+      "path": "CW32L083_UserManual_CN_V2.0.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "bytes": 11981462,
+      "printed_revision": "2.0",
+      "publication_date": "2024-09"
+    },
+    {
+      "id": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "kind": "pdf",
+      "path": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+      "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+      "bytes": 2900110,
+      "printed_revision": "1.9",
+      "publication_date": "2025-12-29"
+    },
+    {
+      "id": "vendor:CW32L083_StandardPeripheralLib_V2.2.zip",
+      "kind": "sdk",
+      "path": "CW32L083_StandardPeripheralLib_V2.2.zip",
+      "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+      "sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+      "bytes": 2307769,
+      "printed_revision": "2.2",
+      "publication_date": "2024-08-21",
+      "selected_members": [
+        {
+          "source_ref": "member:cw32l083/Libraries/inc/cw32l083.h",
+          "path": "cw32l083/Libraries/inc/cw32l083.h",
+          "members": [
+            "Libraries/inc/cw32l083.h"
+          ],
+          "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5",
+          "bytes": 884832
+        },
+        {
+          "source_ref": "member:cw32l083/Libraries/inc/cw32l083_gpio.h",
+          "path": "cw32l083/Libraries/inc/cw32l083_gpio.h",
+          "members": [
+            "Libraries/inc/cw32l083_gpio.h"
+          ],
+          "sha256": "fd987e9c1ba1514d278b06613e2604eff30e5e12e0a07f2c8ccd29fa307f75fb",
+          "bytes": 148488
+        },
+        {
+          "source_ref": "member:cw32l083/Libraries/inc/cw32l083_rcc.h",
+          "path": "cw32l083/Libraries/inc/cw32l083_rcc.h",
+          "members": [
+            "Libraries/inc/cw32l083_rcc.h"
+          ],
+          "sha256": "f2229ea4528f2c3d8d5d59db036cfa2aa248a312c6cf94d5fbe58e4798f04ebf",
+          "bytes": 37433
+        },
+        {
+          "source_ref": "member:cw32l083/Libraries/src/cw32l083_rcc.c",
+          "path": "cw32l083/Libraries/src/cw32l083_rcc.c",
+          "members": [
+            "Libraries/src/cw32l083_rcc.c"
+          ],
+          "sha256": "ac56c4b3cbf24e709d53f26ba255dd9442d3cd27b1e0aca4e297e7941d73edad",
+          "bytes": 32843
+        }
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "claim": "source envelope and startup",
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "pdf_pages_1_based": [
+        53,
+        54,
+        62,
+        63,
+        65,
+        70,
+        80
+      ],
+      "printed_pages": [
+        52,
+        53,
+        61,
+        62,
+        64,
+        69,
+        79
+      ],
+      "scope": "Crystal/bypass 4..32 MHz; nominal range bins and drive; unchanged LSI 32.8 kHz +/-10%; STABLE startup latch; detector 131072 edges and 8000/fMHz; longest 262144-cycle wait, FLT=0."
+    },
+    {
+      "claim": "electrical qualification",
+      "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "pdf_pages_1_based": [
+        47,
+        52,
+        54,
+        55,
+        58
+      ],
+      "printed_pages": [
+        46,
+        51,
+        53,
+        54,
+        57
+      ],
+      "scope": "VDD 1.65..5.5 V, VDDA=VDD, actual buses 24 MHz below1.8 V/64 MHz otherwise; ambient -40..85 C from retained factory HSI +/-2%; DS bypass1..32 MHz intersected with RM4..32 MHz; simultaneous duty40..60%, high/low>=15ns, rise/fall<=20ns, high70..100%VDDIO/low0..30%VDDIO and own pad limits."
+    },
+    {
+      "claim": "selectors, CCS and transition",
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "pdf_pages_1_based": [
+        63,
+        67,
+        68,
+        69,
+        75,
+        76,
+        79,
+        80,
+        84,
+        85,
+        86
+      ],
+      "printed_pages": [
+        62,
+        66,
+        67,
+        68,
+        74,
+        75,
+        78,
+        79,
+        83,
+        84,
+        85
+      ],
+      "scope": "SYSCLK HSI0/HSE1/PLL2/LSI3/LSE4; preserve configurable CCS and unrelated enables/LSELOCK; leave PLL via unchanged HSI before LSI, stop PLL before source changes; live HSI divider; HSE STABLE19 RO and reserved31:20; relevant sticky faults must not be cleared."
+    },
+    {
+      "claim": "Flash actual-rate limits",
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "pdf_pages_1_based": [
+        121,
+        131
+      ],
+      "printed_pages": [
+        120,
+        130
+      ],
+      "scope": "WAIT0/1/2 for HCLK<=24/48/72MHz, separately bounded by own bus ceilings. Use maximum of selected HSE and retained HSI HCLK endpoints."
+    },
+    {
+      "claim": "retained ownership and inspection gates",
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "pdf_pages_1_based": [
+        87,
+        89,
+        178,
+        187,
+        205,
+        206,
+        530,
+        534,
+        535
+      ],
+      "printed_pages": [
+        86,
+        88,
+        177,
+        186,
+        204,
+        205,
+        529,
+        533,
+        534
+      ],
+      "scope": "RTC APBEN1 bit3; AUTOTRIM APBEN2 bit13; restore gates without reset. RTC SOURCE4..7 owns HSE even when START0. Active AUTOTRIM admits MD3/AUTO0; HSIOSC0,LSI1,HSE2,LSE3,ETR4. Reject active calibration/reserved sources and ETR with HSE. LVD EN/FLTEN/FLTCLK protects raw HSIOSC during retrim."
+    },
+    {
+      "claim": "own GPIO pad operations",
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "pdf_pages_1_based": [
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169
+      ],
+      "printed_pages": [
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168
+      ],
+      "scope": "Use real LCKR+0x3c and key0x5a5a. Only owned pads change: input first, local pulls/IRQs/open-drain/filter clear, AF0, then analog crystal/digital bypass. Preserve shared FLTCLK and GPIO ICR."
+    },
+    {
+      "claim": "all exact-package oscillator routes",
+      "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "pdf_pages_1_based": [
+        27
+      ],
+      "printed_pages": [
+        26
+      ],
+      "scope": "PF0/PF1: LQFP100 pins12/13, LQFP80 pins7/8, LQFP64 pins5/6 for both body sizes and RB/RC. PF0 also has AUTOTRIM ETR, so active ETR is conservatively excluded with an HSE request."
+    }
+  ],
+  "sdk_crosschecks": [
+    {
+      "source_ref": "member:cw32l083/Libraries/inc/cw32l083_rcc.h",
+      "lines_1_based": [
+        122,
+        123
+      ],
+      "scope": "Factory HSI trim address0x00100A00; own typed configuration constants are cross-checks, not electrical authority."
+    },
+    {
+      "source_ref": "member:cw32l083/Libraries/src/cw32l083_rcc.c",
+      "lines_1_based": [
+        365,
+        404
+      ],
+      "scope": "Upper nominal frequency bin at8/16/24MHz;32MHz special case. Do not copy WAITCYCLE2, forced CCS, raw replacement, bypass pull-down or timeout bug."
+    },
+    {
+      "source_ref": "member:cw32l083/Libraries/inc/cw32l083_gpio.h",
+      "scope": "Own GPIO names/AF routes cross-check; no SDK source is newly redistributed."
+    }
+  ],
+  "modeled_parts": [
+    "CW32L083RBT6",
+    "CW32L083RCS6",
+    "CW32L083RCT6",
+    "CW32L083MCT6",
+    "CW32L083VCT6"
+  ],
+  "policy": "cw32-data/hse-qualified.yaml#/families/CW32L083",
+  "projection": "cw32-data/electrical.yaml#/profiles/CW32L083",
+  "audit_inputs": [
+    {
+      "name": "report.md",
+      "sha256": "9a59ab24ac8eb78a8f6f46c1adb8b27fa74c8d057e025a0416b5f6128ef2dcd7"
+    },
+    {
+      "name": "source-pins.json",
+      "sha256": "53944d3b9d1d7158f5410c65cd5969584dc9a1791a97c9453fd3c78914a79ec7"
+    }
+  ],
+  "embassy_revision": "f16efeffe37581092ec184718e6fdb1620393214",
+  "verification": "Own original manual/datasheet/SDK hashes checked against canonical pins. This receipt establishes source qualification only; generation, production build and hardware outcomes are not asserted."
+}

@@ -1,0 +1,55 @@
+{
+  "status": "passed_conditional_on_lineage_update",
+  "review_date": "2026-10-09",
+  "scope": "Independent narrow technical review of additive VREF shared-model delta against delivered Stage27; not hardware or legal clearance.",
+  "baseline_archive_sha256": "b5795126c3cf57cebd1d9122783397baf1229a0c14ee89c6a528c4beb669c4fd",
+  "frozen_candidate_patch_sha256": "3b3690a5e9020e8d7ee5796eda7cc59835f9cc5caeb810e2d9b23925af4d04b8",
+  "schema_patch_sha256": "d8af178e669b3d5b89635c9e0442d4a6552d77c22f3bccf50f39009ed2f290a6",
+  "schema_patch_lines": 86,
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+      "after_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
+      "byte_exact_reverse": true
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "790df91fb9a852b4955893bd4ffabece577bb6a979b2d8fe2fa403e2c5e56304",
+      "after_sha256": "85f6f65033ab8454861f9d6b0b7552cbd4aafdd3dea0179c84a9d5c56fdc3e21",
+      "byte_exact_reverse": true
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "35689bbff0951a5f6e95f908fe2d2b95ebf25cbd82dbe07d9b490fee9379bc94",
+      "after_sha256": "ec74116b6393bd764ede2f0c06f6a50bd883ebe6e01fb887d9c2d8cd8914a4c1",
+      "byte_exact_reverse": true
+    }
+  ],
+  "checks": [
+    "Baseline ZIP and candidate patch hashes independently verified.",
+    "All three before files equal delivered ZIP bytes; all three after files equal frozen VREF source tree and source manifest.",
+    "Independent unified diff exactly reproduces 86-line schema.patch; additions only. In-memory hunk reversal restores every before byte.",
+    "Coordinator explicitly confirmed frozen before/after and VREF candidate identities.",
+    "Six isolated serde probes passed: absent/null omission, complete facts roundtrip, required nested fields, widths/types/tuple shapes, structural-versus-hardware validation boundary, full 54-chip JSON roundtrip.",
+    "Generated catalog inspection: 10 qualified chip selections, 13 reference banks, 1832 other peripheral omissions."
+  ],
+  "compatibility": {
+    "optional_field": "Missing or null reference_divider deserializes to None; serde omits None. Generator deserializer defaults None; static PAC model stores Option.",
+    "nested_fields": "clock_owner String, consumers Vec<String>, negative_mux u8, supply_mv (u16,u16), input_uses_vdda bool are all required.",
+    "projection": "Static fields use static str and static slice of static str; Debug includes reference_divider and existing stringify list-borrow conversion matches consumers.",
+    "rust_source_break": "Downstream direct Peripheral struct literals must provide the added field; JSON compatibility does not imply Rust source compatibility.",
+    "validation_boundary": "Schema enforces structure and widths; empty consumers or reversed voltage bounds require generator semantic validation."
+  },
+  "lineage_preconditions": [
+    "Wrap complete existing serde replacement_review as previous_review, retaining all history and accepted_extensions.",
+    "Set new serde replacement_sha256 to 9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d and reference this technical review.",
+    "Retain project-authored independent-replacement identity for serde and unresolved historical permission finding.",
+    "Record metapac before/after identities without changing their adapted-source ancestry to independently rewritten.",
+    "Regenerate and revalidate provenance after update; do not reintroduce historical source bodies, saved bases, or predecessor deletion hunks."
+  ],
+  "legal_clearance": false,
+  "main_tree_edited_by_reviewer": false,
+  "uploaded": false,
+  "probe_note": "Executed in isolated /tmp workspace. Initial attempt lacked register_write module; copied unchanged frozen module and reran successfully. No additional HAL tests, mocks, or hardware execution."
+}

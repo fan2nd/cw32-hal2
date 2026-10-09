@@ -1,0 +1,3072 @@
+schema_version: 1
+family: CW32L083
+status: verified-from-official-datasheet
+source:
+  source_id: CW32L083_datasheet
+  url: https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf
+  sha256: 852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e
+  document_filename: CW32L083_DataSheet_CN_V1.9.pdf
+  pinout_evidence: 'Table 5-2: complete physical-position, pin-name and pin-type columns; oscillator aliases
+    only when explicitly stated in the same row.'
+  table_pdf_page_indices:
+  - 26
+  - 27
+  - 28
+  - 29
+  - 30
+  - 31
+  - 32
+  visually_reviewed_pdf_page_indices:
+  - 27
+  - 30
+  - 31
+  validation: Independent PDF-grid and pdftotext position extraction; rendered-page review of per-family
+    tables and ambiguous cases; not silicon-tested.
+  source_ref: vendor:CW32L083_DataSheet_CN_V1.9.pdf
+notes:
+- Package pins retain physical position strings, including vendor-numbered exposed pads. A dash in the
+  source is unbonded and becomes null only in table_rows; it is never emitted as a package pin.
+- GPIO names are normalized by removing leading zeroes (PA00 to PA0). Other pin labels preserve source
+  spelling. Direct pin-name aliases and OSC/OSC32 analog aliases are included; numbered alternate-function
+  routing is outside this dataset.
+- gpio_pins lists output-capable MCU GPIO pins according to this family's pin-type table, including debug/reset
+  pads that require explicit reconfiguration. input_only_pins contains MCU GPIO names only. Neither list
+  claims safe electrical configuration or silicon verification.
+- Unnumbered thermal pads are not assigned invented positions or signals. Numbered pad 0 is included only
+  where explicitly documented.
+- Both LQFP64 body sizes and both memory variants use the single LQFP64 pin-definition column. PF4, PF5
+  and PF7 are absent from LQFP100 even though the smaller LQFP80/LQFP64 packages expose them; do not assume
+  larger-package GPIO sets are supersets.
+table_columns:
+- LQFP100
+- LQFP80
+- LQFP64
+table_rows:
+- positions:
+    LQFP100: '1'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE02
+  signals:
+  - PE2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    LQFP100: '2'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE03
+  signals:
+  - PE3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 26
+- positions:
+    LQFP100: '3'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE04
+  signals:
+  - PE4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 26
+- positions:
+    LQFP100: '4'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE05
+  signals:
+  - PE5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 26
+- positions:
+    LQFP100: '5'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE06
+  signals:
+  - PE6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 26
+- positions:
+    LQFP100: '6'
+    LQFP80: '1'
+    LQFP64: '1'
+  source_name: Vcore
+  signals:
+  - Vcore
+  source_type: '-'
+  pin_type: '-'
+  io_structure: '-'
+  pdf_page_index: 26
+- positions:
+    LQFP100: '7'
+    LQFP80: '2'
+    LQFP64: '2'
+  source_name: PC13
+  signals:
+  - PC13
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 26
+- positions:
+    LQFP100: '8'
+    LQFP80: '3'
+    LQFP64: '3'
+  source_name: PC14
+  signals:
+  - PC14
+  - OSC32_IN
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 26
+- positions:
+    LQFP100: '9'
+    LQFP80: '4'
+    LQFP64: '4'
+  source_name: PC15
+  signals:
+  - PC15
+  - OSC32_OUT
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 26
+- positions:
+    LQFP100: '10'
+    LQFP80: '5'
+    LQFP64: null
+  source_name: PF09
+  signals:
+  - PF9
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 26
+- positions:
+    LQFP100: '11'
+    LQFP80: '6'
+    LQFP64: null
+  source_name: PF10
+  signals:
+  - PF10
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 26
+- positions:
+    LQFP100: '12'
+    LQFP80: '7'
+    LQFP64: '5'
+  source_name: PF00
+  signals:
+  - PF0
+  - OSC_IN
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 26
+- positions:
+    LQFP100: '13'
+    LQFP80: '8'
+    LQFP64: '6'
+  source_name: PF01
+  signals:
+  - PF1
+  - OSC_OUT
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 26
+- positions:
+    LQFP100: '14'
+    LQFP80: '9'
+    LQFP64: '7'
+  source_name: NRST
+  signals:
+  - NRST
+  source_type: I
+  pin_type: I
+  io_structure: RST
+  pdf_page_index: 26
+- positions:
+    LQFP100: '15'
+    LQFP80: '10'
+    LQFP64: '8'
+  source_name: PC00
+  signals:
+  - PC0
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 27
+- positions:
+    LQFP100: '16'
+    LQFP80: '11'
+    LQFP64: '9'
+  source_name: PC01
+  signals:
+  - PC1
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 27
+- positions:
+    LQFP100: '17'
+    LQFP80: '12'
+    LQFP64: '10'
+  source_name: PC02
+  signals:
+  - PC2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 27
+- positions:
+    LQFP100: '18'
+    LQFP80: '13'
+    LQFP64: '11'
+  source_name: PC03
+  signals:
+  - PC3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 27
+- positions:
+    LQFP100: '19'
+    LQFP80: '14'
+    LQFP64: null
+  source_name: PF02
+  signals:
+  - PF2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    LQFP100: '20'
+    LQFP80: '15'
+    LQFP64: '12'
+  source_name: VSSA
+  signals:
+  - VSSA
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 27
+- positions:
+    LQFP100: '21'
+    LQFP80: '16'
+    LQFP64: '13'
+  source_name: VDDA
+  signals:
+  - VDDA
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 27
+- positions:
+    LQFP100: '22'
+    LQFP80: '17'
+    LQFP64: null
+  source_name: PF08
+  signals:
+  - PF8
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    LQFP100: '23'
+    LQFP80: '18'
+    LQFP64: '14'
+  source_name: PA00
+  signals:
+  - PA0
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 27
+- positions:
+    LQFP100: '24'
+    LQFP80: '19'
+    LQFP64: '15'
+  source_name: PA01
+  signals:
+  - PA1
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 27
+- positions:
+    LQFP100: '25'
+    LQFP80: '20'
+    LQFP64: '16'
+  source_name: PA02
+  signals:
+  - PA2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 27
+- positions:
+    LQFP100: '26'
+    LQFP80: '21'
+    LQFP64: '17'
+  source_name: PA03
+  signals:
+  - PA3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 27
+- positions:
+    LQFP100: null
+    LQFP80: '22'
+    LQFP64: '18'
+  source_name: PF04
+  signals:
+  - PF4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    LQFP100: '27'
+    LQFP80: null
+    LQFP64: null
+  source_name: VSS
+  signals:
+  - VSS
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 27
+- positions:
+    LQFP100: null
+    LQFP80: '23'
+    LQFP64: '19'
+  source_name: PF05
+  signals:
+  - PF5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 27
+- positions:
+    LQFP100: '28'
+    LQFP80: null
+    LQFP64: null
+  source_name: VDD
+  signals:
+  - VDD
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 27
+- positions:
+    LQFP100: '29'
+    LQFP80: '24'
+    LQFP64: '20'
+  source_name: PA04
+  signals:
+  - PA4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 27
+- positions:
+    LQFP100: '30'
+    LQFP80: '25'
+    LQFP64: '21'
+  source_name: PA05
+  signals:
+  - PA5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '31'
+    LQFP80: '26'
+    LQFP64: '22'
+  source_name: PA06
+  signals:
+  - PA6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '32'
+    LQFP80: '27'
+    LQFP64: '23'
+  source_name: PA07
+  signals:
+  - PA7
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '33'
+    LQFP80: '28'
+    LQFP64: '24'
+  source_name: PC04
+  signals:
+  - PC4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '34'
+    LQFP80: '29'
+    LQFP64: '25'
+  source_name: PC05
+  signals:
+  - PC5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '35'
+    LQFP80: '30'
+    LQFP64: '26'
+  source_name: PB00
+  signals:
+  - PB0
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '36'
+    LQFP80: '31'
+    LQFP64: '27'
+  source_name: PB01
+  signals:
+  - PB1
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '37'
+    LQFP80: '32'
+    LQFP64: '28'
+  source_name: PB02
+  signals:
+  - PB2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '38'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE07
+  signals:
+  - PE7
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '39'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE08
+  signals:
+  - PE8
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '40'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE09
+  signals:
+  - PE9
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '41'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE10
+  signals:
+  - PE10
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '42'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE11
+  signals:
+  - PE11
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 28
+- positions:
+    LQFP100: '43'
+    LQFP80: '33'
+    LQFP64: null
+  source_name: PE12
+  signals:
+  - PE12
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP100: '44'
+    LQFP80: '34'
+    LQFP64: null
+  source_name: PE13
+  signals:
+  - PE13
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '45'
+    LQFP80: '35'
+    LQFP64: null
+  source_name: PE14
+  signals:
+  - PE14
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '46'
+    LQFP80: '36'
+    LQFP64: null
+  source_name: PE15
+  signals:
+  - PE15
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '47'
+    LQFP80: '37'
+    LQFP64: '29'
+  source_name: PB10
+  signals:
+  - PB10
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '48'
+    LQFP80: '38'
+    LQFP64: '30'
+  source_name: PB11
+  signals:
+  - PB11
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '49'
+    LQFP80: '39'
+    LQFP64: '31'
+  source_name: VSS
+  signals:
+  - VSS
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 29
+- positions:
+    LQFP100: '50'
+    LQFP80: '40'
+    LQFP64: '32'
+  source_name: VDD
+  signals:
+  - VDD
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 29
+- positions:
+    LQFP100: '51'
+    LQFP80: '41'
+    LQFP64: '33'
+  source_name: PB12
+  signals:
+  - PB12
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '52'
+    LQFP80: '42'
+    LQFP64: '34'
+  source_name: PB13
+  signals:
+  - PB13
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '53'
+    LQFP80: '43'
+    LQFP64: '35'
+  source_name: PB14
+  signals:
+  - PB14
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '54'
+    LQFP80: '44'
+    LQFP64: '36'
+  source_name: PB15
+  signals:
+  - PB15
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '55'
+    LQFP80: '45'
+    LQFP64: null
+  source_name: PD08
+  signals:
+  - PD8
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '56'
+    LQFP80: '46'
+    LQFP64: null
+  source_name: PD09
+  signals:
+  - PD9
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '57'
+    LQFP80: '47'
+    LQFP64: null
+  source_name: PD10
+  signals:
+  - PD10
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '58'
+    LQFP80: '48'
+    LQFP64: null
+  source_name: PD11
+  signals:
+  - PD11
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP100: '59'
+    LQFP80: null
+    LQFP64: null
+  source_name: PD12
+  signals:
+  - PD12
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '60'
+    LQFP80: null
+    LQFP64: null
+  source_name: PD13
+  signals:
+  - PD13
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '61'
+    LQFP80: null
+    LQFP64: null
+  source_name: PD14
+  signals:
+  - PD14
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '62'
+    LQFP80: null
+    LQFP64: null
+  source_name: PD15
+  signals:
+  - PD15
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '63'
+    LQFP80: '49'
+    LQFP64: '37'
+  source_name: PC06
+  signals:
+  - PC6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '64'
+    LQFP80: '50'
+    LQFP64: '38'
+  source_name: PC07
+  signals:
+  - PC7
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '65'
+    LQFP80: '51'
+    LQFP64: '39'
+  source_name: PC08
+  signals:
+  - PC8
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '66'
+    LQFP80: '52'
+    LQFP64: '40'
+  source_name: PC09
+  signals:
+  - PC9
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '67'
+    LQFP80: '53'
+    LQFP64: '41'
+  source_name: PA08
+  signals:
+  - PA8
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '68'
+    LQFP80: '54'
+    LQFP64: '42'
+  source_name: PA09
+  signals:
+  - PA9
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '69'
+    LQFP80: '55'
+    LQFP64: '43'
+  source_name: PA10
+  signals:
+  - PA10
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '70'
+    LQFP80: '56'
+    LQFP64: '44'
+  source_name: PA11
+  signals:
+  - PA11
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '71'
+    LQFP80: '57'
+    LQFP64: '45'
+  source_name: PA12
+  signals:
+  - PA12
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 30
+- positions:
+    LQFP100: '72'
+    LQFP80: '58'
+    LQFP64: '46'
+  source_name: PA13/SWDIO
+  signals:
+  - PA13
+  - SWDIO
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 30
+- positions:
+    LQFP100: '73'
+    LQFP80: '59'
+    LQFP64: '47'
+  source_name: PF06
+  signals:
+  - PF6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 30
+- positions:
+    LQFP100: '74'
+    LQFP80: null
+    LQFP64: null
+  source_name: VSS
+  signals:
+  - VSS
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 31
+- positions:
+    LQFP100: null
+    LQFP80: '60'
+    LQFP64: '48'
+  source_name: PF07
+  signals:
+  - PF7
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 31
+- positions:
+    LQFP100: '75'
+    LQFP80: null
+    LQFP64: null
+  source_name: VDD
+  signals:
+  - VDD
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 31
+- positions:
+    LQFP100: '76'
+    LQFP80: '61'
+    LQFP64: '49'
+  source_name: PA14/SWCLK
+  signals:
+  - PA14
+  - SWCLK
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 31
+- positions:
+    LQFP100: '77'
+    LQFP80: '62'
+    LQFP64: '50'
+  source_name: PA15
+  signals:
+  - PA15
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 31
+- positions:
+    LQFP100: '78'
+    LQFP80: '63'
+    LQFP64: '51'
+  source_name: PC10
+  signals:
+  - PC10
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 31
+- positions:
+    LQFP100: '79'
+    LQFP80: '64'
+    LQFP64: '52'
+  source_name: PC11
+  signals:
+  - PC11
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 31
+- positions:
+    LQFP100: '80'
+    LQFP80: '65'
+    LQFP64: '53'
+  source_name: PC12
+  signals:
+  - PC12
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 31
+- positions:
+    LQFP100: '81'
+    LQFP80: '66'
+    LQFP64: null
+  source_name: PD00
+  signals:
+  - PD0
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 31
+- positions:
+    LQFP100: '82'
+    LQFP80: '67'
+    LQFP64: null
+  source_name: PD01
+  signals:
+  - PD1
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 31
+- positions:
+    LQFP100: '83'
+    LQFP80: '68'
+    LQFP64: '54'
+  source_name: PD02
+  signals:
+  - PD2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 31
+- positions:
+    LQFP100: '84'
+    LQFP80: '69'
+    LQFP64: null
+  source_name: PD03
+  signals:
+  - PD3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 31
+- positions:
+    LQFP100: '85'
+    LQFP80: '70'
+    LQFP64: null
+  source_name: PD04
+  signals:
+  - PD4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 31
+- positions:
+    LQFP100: '86'
+    LQFP80: null
+    LQFP64: null
+  source_name: PD05
+  signals:
+  - PD5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 31
+- positions:
+    LQFP100: '87'
+    LQFP80: null
+    LQFP64: null
+  source_name: PD06
+  signals:
+  - PD6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 31
+- positions:
+    LQFP100: '88'
+    LQFP80: null
+    LQFP64: null
+  source_name: PD07
+  signals:
+  - PD7
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 32
+- positions:
+    LQFP100: '89'
+    LQFP80: '71'
+    LQFP64: '55'
+  source_name: PB03
+  signals:
+  - PB3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 32
+- positions:
+    LQFP100: '90'
+    LQFP80: '72'
+    LQFP64: '56'
+  source_name: PB04
+  signals:
+  - PB4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 32
+- positions:
+    LQFP100: '91'
+    LQFP80: '73'
+    LQFP64: '57'
+  source_name: PB05
+  signals:
+  - PB5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 32
+- positions:
+    LQFP100: '92'
+    LQFP80: '74'
+    LQFP64: '58'
+  source_name: PB06
+  signals:
+  - PB6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 32
+- positions:
+    LQFP100: '93'
+    LQFP80: '75'
+    LQFP64: '59'
+  source_name: PB07
+  signals:
+  - PB7
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 32
+- positions:
+    LQFP100: '94'
+    LQFP80: '76'
+    LQFP64: '60'
+  source_name: PF03/BOOT
+  signals:
+  - PF3
+  - BOOT
+  source_type: I
+  pin_type: I
+  io_structure: B
+  pdf_page_index: 32
+- positions:
+    LQFP100: '95'
+    LQFP80: '77'
+    LQFP64: '61'
+  source_name: PB08
+  signals:
+  - PB8
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 32
+- positions:
+    LQFP100: '96'
+    LQFP80: '78'
+    LQFP64: '62'
+  source_name: PB09
+  signals:
+  - PB9
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 32
+- positions:
+    LQFP100: '97'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE00
+  signals:
+  - PE0
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 32
+- positions:
+    LQFP100: '98'
+    LQFP80: null
+    LQFP64: null
+  source_name: PE01
+  signals:
+  - PE1
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 32
+- positions:
+    LQFP100: '99'
+    LQFP80: '79'
+    LQFP64: '63'
+  source_name: VSS
+  signals:
+  - VSS
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 32
+- positions:
+    LQFP100: '100'
+    LQFP80: '80'
+    LQFP64: '64'
+  source_name: VDD
+  signals:
+  - VDD
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 32
+packages:
+- name: CW32L083RBT6
+  key: cw32l083rbt
+  family_part: CW32L083RB
+  package: LQFP64（10×10mm）
+  table_column: LQFP64
+  documented_orderable_parts:
+  - CW32L083RBT6
+  flash_bytes: 131072
+  ram_bytes: 24576
+  lead_count: 64
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - Vcore
+  - position: '2'
+    signals:
+    - PC13
+  - position: '3'
+    signals:
+    - PC14
+    - OSC32_IN
+  - position: '4'
+    signals:
+    - PC15
+    - OSC32_OUT
+  - position: '5'
+    signals:
+    - PF0
+    - OSC_IN
+  - position: '6'
+    signals:
+    - PF1
+    - OSC_OUT
+  - position: '7'
+    signals:
+    - NRST
+  - position: '8'
+    signals:
+    - PC0
+  - position: '9'
+    signals:
+    - PC1
+  - position: '10'
+    signals:
+    - PC2
+  - position: '11'
+    signals:
+    - PC3
+  - position: '12'
+    signals:
+    - VSSA
+  - position: '13'
+    signals:
+    - VDDA
+  - position: '14'
+    signals:
+    - PA0
+  - position: '15'
+    signals:
+    - PA1
+  - position: '16'
+    signals:
+    - PA2
+  - position: '17'
+    signals:
+    - PA3
+  - position: '18'
+    signals:
+    - PF4
+  - position: '19'
+    signals:
+    - PF5
+  - position: '20'
+    signals:
+    - PA4
+  - position: '21'
+    signals:
+    - PA5
+  - position: '22'
+    signals:
+    - PA6
+  - position: '23'
+    signals:
+    - PA7
+  - position: '24'
+    signals:
+    - PC4
+  - position: '25'
+    signals:
+    - PC5
+  - position: '26'
+    signals:
+    - PB0
+  - position: '27'
+    signals:
+    - PB1
+  - position: '28'
+    signals:
+    - PB2
+  - position: '29'
+    signals:
+    - PB10
+  - position: '30'
+    signals:
+    - PB11
+  - position: '31'
+    signals:
+    - VSS
+  - position: '32'
+    signals:
+    - VDD
+  - position: '33'
+    signals:
+    - PB12
+  - position: '34'
+    signals:
+    - PB13
+  - position: '35'
+    signals:
+    - PB14
+  - position: '36'
+    signals:
+    - PB15
+  - position: '37'
+    signals:
+    - PC6
+  - position: '38'
+    signals:
+    - PC7
+  - position: '39'
+    signals:
+    - PC8
+  - position: '40'
+    signals:
+    - PC9
+  - position: '41'
+    signals:
+    - PA8
+  - position: '42'
+    signals:
+    - PA9
+  - position: '43'
+    signals:
+    - PA10
+  - position: '44'
+    signals:
+    - PA11
+  - position: '45'
+    signals:
+    - PA12
+  - position: '46'
+    signals:
+    - PA13
+    - SWDIO
+  - position: '47'
+    signals:
+    - PF6
+  - position: '48'
+    signals:
+    - PF7
+  - position: '49'
+    signals:
+    - PA14
+    - SWCLK
+  - position: '50'
+    signals:
+    - PA15
+  - position: '51'
+    signals:
+    - PC10
+  - position: '52'
+    signals:
+    - PC11
+  - position: '53'
+    signals:
+    - PC12
+  - position: '54'
+    signals:
+    - PD2
+  - position: '55'
+    signals:
+    - PB3
+  - position: '56'
+    signals:
+    - PB4
+  - position: '57'
+    signals:
+    - PB5
+  - position: '58'
+    signals:
+    - PB6
+  - position: '59'
+    signals:
+    - PB7
+  - position: '60'
+    signals:
+    - PF3
+    - BOOT
+  - position: '61'
+    signals:
+    - PB8
+  - position: '62'
+    signals:
+    - PB9
+  - position: '63'
+    signals:
+    - VSS
+  - position: '64'
+    signals:
+    - VDD
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA13
+  - PA14
+  - PA15
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB13
+  - PB14
+  - PB15
+  - PC0
+  - PC1
+  - PC2
+  - PC3
+  - PC4
+  - PC5
+  - PC6
+  - PC7
+  - PC8
+  - PC9
+  - PC10
+  - PC11
+  - PC12
+  - PC13
+  - PC14
+  - PC15
+  - PD2
+  - PF0
+  - PF1
+  - PF4
+  - PF5
+  - PF6
+  - PF7
+  gpio_count: 55
+  input_only_pins:
+  - PF3
+  debug_pins:
+  - PA13
+  - PA14
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA15
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB13
+  - PB14
+  - PB15
+  - PC0
+  - PC1
+  - PC2
+  - PC3
+  - PC4
+  - PC5
+  - PC6
+  - PC7
+  - PC8
+  - PC9
+  - PC10
+  - PC11
+  - PC12
+  - PC13
+  - PC14
+  - PC15
+  - PD2
+  - PF0
+  - PF1
+  - PF4
+  - PF5
+  - PF6
+  - PF7
+- name: CW32L083RCS6
+  key: cw32l083rcs
+  family_part: CW32L083RC
+  package: LQFP64（7×7mm）
+  table_column: LQFP64
+  documented_orderable_parts:
+  - CW32L083RCS6
+  flash_bytes: 262144
+  ram_bytes: 24576
+  lead_count: 64
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - Vcore
+  - position: '2'
+    signals:
+    - PC13
+  - position: '3'
+    signals:
+    - PC14
+    - OSC32_IN
+  - position: '4'
+    signals:
+    - PC15
+    - OSC32_OUT
+  - position: '5'
+    signals:
+    - PF0
+    - OSC_IN
+  - position: '6'
+    signals:
+    - PF1
+    - OSC_OUT
+  - position: '7'
+    signals:
+    - NRST
+  - position: '8'
+    signals:
+    - PC0
+  - position: '9'
+    signals:
+    - PC1
+  - position: '10'
+    signals:
+    - PC2
+  - position: '11'
+    signals:
+    - PC3
+  - position: '12'
+    signals:
+    - VSSA
+  - position: '13'
+    signals:
+    - VDDA
+  - position: '14'
+    signals:
+    - PA0
+  - position: '15'
+    signals:
+    - PA1
+  - position: '16'
+    signals:
+    - PA2
+  - position: '17'
+    signals:
+    - PA3
+  - position: '18'
+    signals:
+    - PF4
+  - position: '19'
+    signals:
+    - PF5
+  - position: '20'
+    signals:
+    - PA4
+  - position: '21'
+    signals:
+    - PA5
+  - position: '22'
+    signals:
+    - PA6
+  - position: '23'
+    signals:
+    - PA7
+  - position: '24'
+    signals:
+    - PC4
+  - position: '25'
+    signals:
+    - PC5
+  - position: '26'
+    signals:
+    - PB0
+  - position: '27'
+    signals:
+    - PB1
+  - position: '28'
+    signals:
+    - PB2
+  - position: '29'
+    signals:
+    - PB10
+  - position: '30'
+    signals:
+    - PB11
+  - position: '31'
+    signals:
+    - VSS
+  - position: '32'
+    signals:
+    - VDD
+  - position: '33'
+    signals:
+    - PB12
+  - position: '34'
+    signals:
+    - PB13
+  - position: '35'
+    signals:
+    - PB14
+  - position: '36'
+    signals:
+    - PB15
+  - position: '37'
+    signals:
+    - PC6
+  - position: '38'
+    signals:
+    - PC7
+  - position: '39'
+    signals:
+    - PC8
+  - position: '40'
+    signals:
+    - PC9
+  - position: '41'
+    signals:
+    - PA8
+  - position: '42'
+    signals:
+    - PA9
+  - position: '43'
+    signals:
+    - PA10
+  - position: '44'
+    signals:
+    - PA11
+  - position: '45'
+    signals:
+    - PA12
+  - position: '46'
+    signals:
+    - PA13
+    - SWDIO
+  - position: '47'
+    signals:
+    - PF6
+  - position: '48'
+    signals:
+    - PF7
+  - position: '49'
+    signals:
+    - PA14
+    - SWCLK
+  - position: '50'
+    signals:
+    - PA15
+  - position: '51'
+    signals:
+    - PC10
+  - position: '52'
+    signals:
+    - PC11
+  - position: '53'
+    signals:
+    - PC12
+  - position: '54'
+    signals:
+    - PD2
+  - position: '55'
+    signals:
+    - PB3
+  - position: '56'
+    signals:
+    - PB4
+  - position: '57'
+    signals:
+    - PB5
+  - position: '58'
+    signals:
+    - PB6
+  - position: '59'
+    signals:
+    - PB7
+  - position: '60'
+    signals:
+    - PF3
+    - BOOT
+  - position: '61'
+    signals:
+    - PB8
+  - position: '62'
+    signals:
+    - PB9
+  - position: '63'
+    signals:
+    - VSS
+  - position: '64'
+    signals:
+    - VDD
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA13
+  - PA14
+  - PA15
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB13
+  - PB14
+  - PB15
+  - PC0
+  - PC1
+  - PC2
+  - PC3
+  - PC4
+  - PC5
+  - PC6
+  - PC7
+  - PC8
+  - PC9
+  - PC10
+  - PC11
+  - PC12
+  - PC13
+  - PC14
+  - PC15
+  - PD2
+  - PF0
+  - PF1
+  - PF4
+  - PF5
+  - PF6
+  - PF7
+  gpio_count: 55
+  input_only_pins:
+  - PF3
+  debug_pins:
+  - PA13
+  - PA14
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA15
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB13
+  - PB14
+  - PB15
+  - PC0
+  - PC1
+  - PC2
+  - PC3
+  - PC4
+  - PC5
+  - PC6
+  - PC7
+  - PC8
+  - PC9
+  - PC10
+  - PC11
+  - PC12
+  - PC13
+  - PC14
+  - PC15
+  - PD2
+  - PF0
+  - PF1
+  - PF4
+  - PF5
+  - PF6
+  - PF7
+- name: CW32L083RCT6
+  key: cw32l083rct
+  family_part: CW32L083RC
+  package: LQFP64（10×10mm）
+  table_column: LQFP64
+  documented_orderable_parts:
+  - CW32L083RCT6
+  flash_bytes: 262144
+  ram_bytes: 24576
+  lead_count: 64
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - Vcore
+  - position: '2'
+    signals:
+    - PC13
+  - position: '3'
+    signals:
+    - PC14
+    - OSC32_IN
+  - position: '4'
+    signals:
+    - PC15
+    - OSC32_OUT
+  - position: '5'
+    signals:
+    - PF0
+    - OSC_IN
+  - position: '6'
+    signals:
+    - PF1
+    - OSC_OUT
+  - position: '7'
+    signals:
+    - NRST
+  - position: '8'
+    signals:
+    - PC0
+  - position: '9'
+    signals:
+    - PC1
+  - position: '10'
+    signals:
+    - PC2
+  - position: '11'
+    signals:
+    - PC3
+  - position: '12'
+    signals:
+    - VSSA
+  - position: '13'
+    signals:
+    - VDDA
+  - position: '14'
+    signals:
+    - PA0
+  - position: '15'
+    signals:
+    - PA1
+  - position: '16'
+    signals:
+    - PA2
+  - position: '17'
+    signals:
+    - PA3
+  - position: '18'
+    signals:
+    - PF4
+  - position: '19'
+    signals:
+    - PF5
+  - position: '20'
+    signals:
+    - PA4
+  - position: '21'
+    signals:
+    - PA5
+  - position: '22'
+    signals:
+    - PA6
+  - position: '23'
+    signals:
+    - PA7
+  - position: '24'
+    signals:
+    - PC4
+  - position: '25'
+    signals:
+    - PC5
+  - position: '26'
+    signals:
+    - PB0
+  - position: '27'
+    signals:
+    - PB1
+  - position: '28'
+    signals:
+    - PB2
+  - position: '29'
+    signals:
+    - PB10
+  - position: '30'
+    signals:
+    - PB11
+  - position: '31'
+    signals:
+    - VSS
+  - position: '32'
+    signals:
+    - VDD
+  - position: '33'
+    signals:
+    - PB12
+  - position: '34'
+    signals:
+    - PB13
+  - position: '35'
+    signals:
+    - PB14
+  - position: '36'
+    signals:
+    - PB15
+  - position: '37'
+    signals:
+    - PC6
+  - position: '38'
+    signals:
+    - PC7
+  - position: '39'
+    signals:
+    - PC8
+  - position: '40'
+    signals:
+    - PC9
+  - position: '41'
+    signals:
+    - PA8
+  - position: '42'
+    signals:
+    - PA9
+  - position: '43'
+    signals:
+    - PA10
+  - position: '44'
+    signals:
+    - PA11
+  - position: '45'
+    signals:
+    - PA12
+  - position: '46'
+    signals:
+    - PA13
+    - SWDIO
+  - position: '47'
+    signals:
+    - PF6
+  - position: '48'
+    signals:
+    - PF7
+  - position: '49'
+    signals:
+    - PA14
+    - SWCLK
+  - position: '50'
+    signals:
+    - PA15
+  - position: '51'
+    signals:
+    - PC10
+  - position: '52'
+    signals:
+    - PC11
+  - position: '53'
+    signals:
+    - PC12
+  - position: '54'
+    signals:
+    - PD2
+  - position: '55'
+    signals:
+    - PB3
+  - position: '56'
+    signals:
+    - PB4
+  - position: '57'
+    signals:
+    - PB5
+  - position: '58'
+    signals:
+    - PB6
+  - position: '59'
+    signals:
+    - PB7
+  - position: '60'
+    signals:
+    - PF3
+    - BOOT
+  - position: '61'
+    signals:
+    - PB8
+  - position: '62'
+    signals:
+    - PB9
+  - position: '63'
+    signals:
+    - VSS
+  - position: '64'
+    signals:
+    - VDD
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA13
+  - PA14
+  - PA15
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB13
+  - PB14
+  - PB15
+  - PC0
+  - PC1
+  - PC2
+  - PC3
+  - PC4
+  - PC5
+  - PC6
+  - PC7
+  - PC8
+  - PC9
+  - PC10
+  - PC11
+  - PC12
+  - PC13
+  - PC14
+  - PC15
+  - PD2
+  - PF0
+  - PF1
+  - PF4
+  - PF5
+  - PF6
+  - PF7
+  gpio_count: 55
+  input_only_pins:
+  - PF3
+  debug_pins:
+  - PA13
+  - PA14
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA15
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB13
+  - PB14
+  - PB15
+  - PC0
+  - PC1
+  - PC2
+  - PC3
+  - PC4
+  - PC5
+  - PC6
+  - PC7
+  - PC8
+  - PC9
+  - PC10
+  - PC11
+  - PC12
+  - PC13
+  - PC14
+  - PC15
+  - PD2
+  - PF0
+  - PF1
+  - PF4
+  - PF5
+  - PF6
+  - PF7
+- name: CW32L083MCT6
+  key: cw32l083mct
+  family_part: CW32L083MC
+  package: LQFP80
+  table_column: LQFP80
+  documented_orderable_parts:
+  - CW32L083MCT6
+  flash_bytes: 262144
+  ram_bytes: 24576
+  lead_count: 80
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - Vcore
+  - position: '2'
+    signals:
+    - PC13
+  - position: '3'
+    signals:
+    - PC14
+    - OSC32_IN
+  - position: '4'
+    signals:
+    - PC15
+    - OSC32_OUT
+  - position: '5'
+    signals:
+    - PF9
+  - position: '6'
+    signals:
+    - PF10
+  - position: '7'
+    signals:
+    - PF0
+    - OSC_IN
+  - position: '8'
+    signals:
+    - PF1
+    - OSC_OUT
+  - position: '9'
+    signals:
+    - NRST
+  - position: '10'
+    signals:
+    - PC0
+  - position: '11'
+    signals:
+    - PC1
+  - position: '12'
+    signals:
+    - PC2
+  - position: '13'
+    signals:
+    - PC3
+  - position: '14'
+    signals:
+    - PF2
+  - position: '15'
+    signals:
+    - VSSA
+  - position: '16'
+    signals:
+    - VDDA
+  - position: '17'
+    signals:
+    - PF8
+  - position: '18'
+    signals:
+    - PA0
+  - position: '19'
+    signals:
+    - PA1
+  - position: '20'
+    signals:
+    - PA2
+  - position: '21'
+    signals:
+    - PA3
+  - position: '22'
+    signals:
+    - PF4
+  - position: '23'
+    signals:
+    - PF5
+  - position: '24'
+    signals:
+    - PA4
+  - position: '25'
+    signals:
+    - PA5
+  - position: '26'
+    signals:
+    - PA6
+  - position: '27'
+    signals:
+    - PA7
+  - position: '28'
+    signals:
+    - PC4
+  - position: '29'
+    signals:
+    - PC5
+  - position: '30'
+    signals:
+    - PB0
+  - position: '31'
+    signals:
+    - PB1
+  - position: '32'
+    signals:
+    - PB2
+  - position: '33'
+    signals:
+    - PE12
+  - position: '34'
+    signals:
+    - PE13
+  - position: '35'
+    signals:
+    - PE14
+  - position: '36'
+    signals:
+    - PE15
+  - position: '37'
+    signals:
+    - PB10
+  - position: '38'
+    signals:
+    - PB11
+  - position: '39'
+    signals:
+    - VSS
+  - position: '40'
+    signals:
+    - VDD
+  - position: '41'
+    signals:
+    - PB12
+  - position: '42'
+    signals:
+    - PB13
+  - position: '43'
+    signals:
+    - PB14
+  - position: '44'
+    signals:
+    - PB15
+  - position: '45'
+    signals:
+    - PD8
+  - position: '46'
+    signals:
+    - PD9
+  - position: '47'
+    signals:
+    - PD10
+  - position: '48'
+    signals:
+    - PD11
+  - position: '49'
+    signals:
+    - PC6
+  - position: '50'
+    signals:
+    - PC7
+  - position: '51'
+    signals:
+    - PC8
+  - position: '52'
+    signals:
+    - PC9
+  - position: '53'
+    signals:
+    - PA8
+  - position: '54'
+    signals:
+    - PA9
+  - position: '55'
+    signals:
+    - PA10
+  - position: '56'
+    signals:
+    - PA11
+  - position: '57'
+    signals:
+    - PA12
+  - position: '58'
+    signals:
+    - PA13
+    - SWDIO
+  - position: '59'
+    signals:
+    - PF6
+  - position: '60'
+    signals:
+    - PF7
+  - position: '61'
+    signals:
+    - PA14
+    - SWCLK
+  - position: '62'
+    signals:
+    - PA15
+  - position: '63'
+    signals:
+    - PC10
+  - position: '64'
+    signals:
+    - PC11
+  - position: '65'
+    signals:
+    - PC12
+  - position: '66'
+    signals:
+    - PD0
+  - position: '67'
+    signals:
+    - PD1
+  - position: '68'
+    signals:
+    - PD2
+  - position: '69'
+    signals:
+    - PD3
+  - position: '70'
+    signals:
+    - PD4
+  - position: '71'
+    signals:
+    - PB3
+  - position: '72'
+    signals:
+    - PB4
+  - position: '73'
+    signals:
+    - PB5
+  - position: '74'
+    signals:
+    - PB6
+  - position: '75'
+    signals:
+    - PB7
+  - position: '76'
+    signals:
+    - PF3
+    - BOOT
+  - position: '77'
+    signals:
+    - PB8
+  - position: '78'
+    signals:
+    - PB9
+  - position: '79'
+    signals:
+    - VSS
+  - position: '80'
+    signals:
+    - VDD
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA13
+  - PA14
+  - PA15
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB13
+  - PB14
+  - PB15
+  - PC0
+  - PC1
+  - PC2
+  - PC3
+  - PC4
+  - PC5
+  - PC6
+  - PC7
+  - PC8
+  - PC9
+  - PC10
+  - PC11
+  - PC12
+  - PC13
+  - PC14
+  - PC15
+  - PD0
+  - PD1
+  - PD2
+  - PD3
+  - PD4
+  - PD8
+  - PD9
+  - PD10
+  - PD11
+  - PE12
+  - PE13
+  - PE14
+  - PE15
+  - PF0
+  - PF1
+  - PF2
+  - PF4
+  - PF5
+  - PF6
+  - PF7
+  - PF8
+  - PF9
+  - PF10
+  gpio_count: 71
+  input_only_pins:
+  - PF3
+  debug_pins:
+  - PA13
+  - PA14
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA15
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB13
+  - PB14
+  - PB15
+  - PC0
+  - PC1
+  - PC2
+  - PC3
+  - PC4
+  - PC5
+  - PC6
+  - PC7
+  - PC8
+  - PC9
+  - PC10
+  - PC11
+  - PC12
+  - PC13
+  - PC14
+  - PC15
+  - PD0
+  - PD1
+  - PD2
+  - PD3
+  - PD4
+  - PD8
+  - PD9
+  - PD10
+  - PD11
+  - PE12
+  - PE13
+  - PE14
+  - PE15
+  - PF0
+  - PF1
+  - PF2
+  - PF4
+  - PF5
+  - PF6
+  - PF7
+  - PF8
+  - PF9
+  - PF10
+- name: CW32L083VCT6
+  key: cw32l083vct
+  family_part: CW32L083VC
+  package: LQFP100
+  table_column: LQFP100
+  documented_orderable_parts:
+  - CW32L083VCT6
+  flash_bytes: 262144
+  ram_bytes: 24576
+  lead_count: 100
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - PE2
+  - position: '2'
+    signals:
+    - PE3
+  - position: '3'
+    signals:
+    - PE4
+  - position: '4'
+    signals:
+    - PE5
+  - position: '5'
+    signals:
+    - PE6
+  - position: '6'
+    signals:
+    - Vcore
+  - position: '7'
+    signals:
+    - PC13
+  - position: '8'
+    signals:
+    - PC14
+    - OSC32_IN
+  - position: '9'
+    signals:
+    - PC15
+    - OSC32_OUT
+  - position: '10'
+    signals:
+    - PF9
+  - position: '11'
+    signals:
+    - PF10
+  - position: '12'
+    signals:
+    - PF0
+    - OSC_IN
+  - position: '13'
+    signals:
+    - PF1
+    - OSC_OUT
+  - position: '14'
+    signals:
+    - NRST
+  - position: '15'
+    signals:
+    - PC0
+  - position: '16'
+    signals:
+    - PC1
+  - position: '17'
+    signals:
+    - PC2
+  - position: '18'
+    signals:
+    - PC3
+  - position: '19'
+    signals:
+    - PF2
+  - position: '20'
+    signals:
+    - VSSA
+  - position: '21'
+    signals:
+    - VDDA
+  - position: '22'
+    signals:
+    - PF8
+  - position: '23'
+    signals:
+    - PA0
+  - position: '24'
+    signals:
+    - PA1
+  - position: '25'
+    signals:
+    - PA2
+  - position: '26'
+    signals:
+    - PA3
+  - position: '27'
+    signals:
+    - VSS
+  - position: '28'
+    signals:
+    - VDD
+  - position: '29'
+    signals:
+    - PA4
+  - position: '30'
+    signals:
+    - PA5
+  - position: '31'
+    signals:
+    - PA6
+  - position: '32'
+    signals:
+    - PA7
+  - position: '33'
+    signals:
+    - PC4
+  - position: '34'
+    signals:
+    - PC5
+  - position: '35'
+    signals:
+    - PB0
+  - position: '36'
+    signals:
+    - PB1
+  - position: '37'
+    signals:
+    - PB2
+  - position: '38'
+    signals:
+    - PE7
+  - position: '39'
+    signals:
+    - PE8
+  - position: '40'
+    signals:
+    - PE9
+  - position: '41'
+    signals:
+    - PE10
+  - position: '42'
+    signals:
+    - PE11
+  - position: '43'
+    signals:
+    - PE12
+  - position: '44'
+    signals:
+    - PE13
+  - position: '45'
+    signals:
+    - PE14
+  - position: '46'
+    signals:
+    - PE15
+  - position: '47'
+    signals:
+    - PB10
+  - position: '48'
+    signals:
+    - PB11
+  - position: '49'
+    signals:
+    - VSS
+  - position: '50'
+    signals:
+    - VDD
+  - position: '51'
+    signals:
+    - PB12
+  - position: '52'
+    signals:
+    - PB13
+  - position: '53'
+    signals:
+    - PB14
+  - position: '54'
+    signals:
+    - PB15
+  - position: '55'
+    signals:
+    - PD8
+  - position: '56'
+    signals:
+    - PD9
+  - position: '57'
+    signals:
+    - PD10
+  - position: '58'
+    signals:
+    - PD11
+  - position: '59'
+    signals:
+    - PD12
+  - position: '60'
+    signals:
+    - PD13
+  - position: '61'
+    signals:
+    - PD14
+  - position: '62'
+    signals:
+    - PD15
+  - position: '63'
+    signals:
+    - PC6
+  - position: '64'
+    signals:
+    - PC7
+  - position: '65'
+    signals:
+    - PC8
+  - position: '66'
+    signals:
+    - PC9
+  - position: '67'
+    signals:
+    - PA8
+  - position: '68'
+    signals:
+    - PA9
+  - position: '69'
+    signals:
+    - PA10
+  - position: '70'
+    signals:
+    - PA11
+  - position: '71'
+    signals:
+    - PA12
+  - position: '72'
+    signals:
+    - PA13
+    - SWDIO
+  - position: '73'
+    signals:
+    - PF6
+  - position: '74'
+    signals:
+    - VSS
+  - position: '75'
+    signals:
+    - VDD
+  - position: '76'
+    signals:
+    - PA14
+    - SWCLK
+  - position: '77'
+    signals:
+    - PA15
+  - position: '78'
+    signals:
+    - PC10
+  - position: '79'
+    signals:
+    - PC11
+  - position: '80'
+    signals:
+    - PC12
+  - position: '81'
+    signals:
+    - PD0
+  - position: '82'
+    signals:
+    - PD1
+  - position: '83'
+    signals:
+    - PD2
+  - position: '84'
+    signals:
+    - PD3
+  - position: '85'
+    signals:
+    - PD4
+  - position: '86'
+    signals:
+    - PD5
+  - position: '87'
+    signals:
+    - PD6
+  - position: '88'
+    signals:
+    - PD7
+  - position: '89'
+    signals:
+    - PB3
+  - position: '90'
+    signals:
+    - PB4
+  - position: '91'
+    signals:
+    - PB5
+  - position: '92'
+    signals:
+    - PB6
+  - position: '93'
+    signals:
+    - PB7
+  - position: '94'
+    signals:
+    - PF3
+    - BOOT
+  - position: '95'
+    signals:
+    - PB8
+  - position: '96'
+    signals:
+    - PB9
+  - position: '97'
+    signals:
+    - PE0
+  - position: '98'
+    signals:
+    - PE1
+  - position: '99'
+    signals:
+    - VSS
+  - position: '100'
+    signals:
+    - VDD
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA13
+  - PA14
+  - PA15
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB13
+  - PB14
+  - PB15
+  - PC0
+  - PC1
+  - PC2
+  - PC3
+  - PC4
+  - PC5
+  - PC6
+  - PC7
+  - PC8
+  - PC9
+  - PC10
+  - PC11
+  - PC12
+  - PC13
+  - PC14
+  - PC15
+  - PD0
+  - PD1
+  - PD2
+  - PD3
+  - PD4
+  - PD5
+  - PD6
+  - PD7
+  - PD8
+  - PD9
+  - PD10
+  - PD11
+  - PD12
+  - PD13
+  - PD14
+  - PD15
+  - PE0
+  - PE1
+  - PE2
+  - PE3
+  - PE4
+  - PE5
+  - PE6
+  - PE7
+  - PE8
+  - PE9
+  - PE10
+  - PE11
+  - PE12
+  - PE13
+  - PE14
+  - PE15
+  - PF0
+  - PF1
+  - PF2
+  - PF6
+  - PF8
+  - PF9
+  - PF10
+  gpio_count: 87
+  input_only_pins:
+  - PF3
+  debug_pins:
+  - PA13
+  - PA14
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA15
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PB8
+  - PB9
+  - PB10
+  - PB11
+  - PB12
+  - PB13
+  - PB14
+  - PB15
+  - PC0
+  - PC1
+  - PC2
+  - PC3
+  - PC4
+  - PC5
+  - PC6
+  - PC7
+  - PC8
+  - PC9
+  - PC10
+  - PC11
+  - PC12
+  - PC13
+  - PC14
+  - PC15
+  - PD0
+  - PD1
+  - PD2
+  - PD3
+  - PD4
+  - PD5
+  - PD6
+  - PD7
+  - PD8
+  - PD9
+  - PD10
+  - PD11
+  - PD12
+  - PD13
+  - PD14
+  - PD15
+  - PE0
+  - PE1
+  - PE2
+  - PE3
+  - PE4
+  - PE5
+  - PE6
+  - PE7
+  - PE8
+  - PE9
+  - PE10
+  - PE11
+  - PE12
+  - PE13
+  - PE14
+  - PE15
+  - PF0
+  - PF1
+  - PF2
+  - PF6
+  - PF8
+  - PF9
+  - PF10

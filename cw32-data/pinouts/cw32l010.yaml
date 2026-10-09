@@ -1,0 +1,595 @@
+schema_version: 1
+family: CW32L010
+status: verified-from-official-datasheet
+source:
+  source_id: CW32L010_datasheet
+  url: https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf
+  sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+  document_filename: CW32L010_DataSheet_CN_V1.3.pdf
+  pinout_evidence: 'Table 5-2: complete physical-position, pin-name and pin-type columns; oscillator aliases
+    only when explicitly stated in the same row.'
+  table_pdf_page_indices:
+  - 23
+  - 24
+  visually_reviewed_pdf_page_indices:
+  - 23
+  validation: Independent PDF-grid and pdftotext position extraction; rendered-page review of per-family
+    tables and ambiguous cases; not silicon-tested.
+  source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+notes:
+- Package pins retain physical position strings, including vendor-numbered exposed pads. A dash in the
+  source is unbonded and becomes null only in table_rows; it is never emitted as a package pin.
+- GPIO names are normalized by removing leading zeroes (PA00 to PA0). Other pin labels preserve source
+  spelling. Direct pin-name aliases and OSC/OSC32 analog aliases are included; numbered alternate-function
+  routing is outside this dataset.
+- gpio_pins lists output-capable MCU GPIO pins according to this family's pin-type table, including debug/reset
+  pads that require explicit reconfiguration. input_only_pins contains MCU GPIO names only. Neither list
+  claims safe electrical configuration or silicon verification.
+- Unnumbered thermal pads are not assigned invented positions or signals. Numbered pad 0 is included only
+  where explicitly documented.
+- PB7/NRST is input-only even when reset is disabled through SYSCTRL_CR2.RSTIO. SWD uses PA7 and PA8.
+  OSC32_OUT is PB0 and OSC32_IN is PB1.
+table_columns:
+- TSSOP20
+- QFN20
+- SOP16
+table_rows:
+- positions:
+    TSSOP20: '1'
+    QFN20: '18'
+    SOP16: null
+  source_name: PB04
+  signals:
+  - PB4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '2'
+    QFN20: '19'
+    SOP16: '1'
+  source_name: PB05
+  signals:
+  - PB5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '3'
+    QFN20: '20'
+    SOP16: '2'
+  source_name: PB06
+  signals:
+  - PB6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '4'
+    QFN20: '1'
+    SOP16: '3'
+  source_name: PB07/NRST
+  signals:
+  - PB7
+  - NRST
+  source_type: I
+  pin_type: I
+  io_structure: RST
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '5'
+    QFN20: '2'
+    SOP16: '4'
+  source_name: PA00
+  signals:
+  - PA0
+  - OSC_IN
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '6'
+    QFN20: '3'
+    SOP16: '5'
+  source_name: PA01
+  signals:
+  - PA1
+  - OSC_OUT
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '7'
+    QFN20: '4'
+    SOP16: '6'
+  source_name: VSS
+  signals:
+  - VSS
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '8'
+    QFN20: '5'
+    SOP16: '7'
+  source_name: Vcore
+  signals:
+  - Vcore
+  source_type: '-'
+  pin_type: '-'
+  io_structure: '-'
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '9'
+    QFN20: '6'
+    SOP16: '8'
+  source_name: VDD
+  signals:
+  - VDD
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '10'
+    QFN20: '7'
+    SOP16: null
+  source_name: PA02
+  signals:
+  - PA2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '11'
+    QFN20: '8'
+    SOP16: '9'
+  source_name: PB00
+  signals:
+  - PB0
+  - OSC32_OUT
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '12'
+    QFN20: '9'
+    SOP16: '10'
+  source_name: PB01
+  signals:
+  - PB1
+  - OSC32_IN
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '13'
+    QFN20: '10'
+    SOP16: '11'
+  source_name: PA03
+  signals:
+  - PA3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '14'
+    QFN20: '11'
+    SOP16: '12'
+  source_name: PA04
+  signals:
+  - PA4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '15'
+    QFN20: '12'
+    SOP16: '13'
+  source_name: PA05
+  signals:
+  - PA5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '16'
+    QFN20: '13'
+    SOP16: '14'
+  source_name: PA06
+  signals:
+  - PA6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 23
+- positions:
+    TSSOP20: '17'
+    QFN20: '14'
+    SOP16: '15'
+  source_name: PA07/SWDIO
+  signals:
+  - PA7
+  - SWDIO
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 24
+- positions:
+    TSSOP20: '18'
+    QFN20: '15'
+    SOP16: '16'
+  source_name: PA08/SWCLK
+  signals:
+  - PA8
+  - SWCLK
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 24
+- positions:
+    TSSOP20: '19'
+    QFN20: '16'
+    SOP16: null
+  source_name: PB02
+  signals:
+  - PB2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 24
+- positions:
+    TSSOP20: '20'
+    QFN20: '17'
+    SOP16: null
+  source_name: PB03
+  signals:
+  - PB3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 24
+packages:
+- name: CW32L010Y8M6
+  key: cw32l010y8m
+  family_part: CW32L010Y8
+  package: SOP16
+  table_column: SOP16
+  documented_orderable_parts:
+  - CW32L010Y8M6
+  flash_bytes: 65536
+  ram_bytes: 4096
+  lead_count: 16
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - PB5
+  - position: '2'
+    signals:
+    - PB6
+  - position: '3'
+    signals:
+    - PB7
+    - NRST
+  - position: '4'
+    signals:
+    - PA0
+    - OSC_IN
+  - position: '5'
+    signals:
+    - PA1
+    - OSC_OUT
+  - position: '6'
+    signals:
+    - VSS
+  - position: '7'
+    signals:
+    - Vcore
+  - position: '8'
+    signals:
+    - VDD
+  - position: '9'
+    signals:
+    - PB0
+    - OSC32_OUT
+  - position: '10'
+    signals:
+    - PB1
+    - OSC32_IN
+  - position: '11'
+    signals:
+    - PA3
+  - position: '12'
+    signals:
+    - PA4
+  - position: '13'
+    signals:
+    - PA5
+  - position: '14'
+    signals:
+    - PA6
+  - position: '15'
+    signals:
+    - PA7
+    - SWDIO
+  - position: '16'
+    signals:
+    - PA8
+    - SWCLK
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PB0
+  - PB1
+  - PB5
+  - PB6
+  gpio_count: 12
+  input_only_pins:
+  - PB7
+  debug_pins:
+  - PA7
+  - PA8
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PB0
+  - PB1
+  - PB5
+  - PB6
+- name: CW32L010F8P6
+  key: cw32l010f8p
+  family_part: CW32L010F8
+  package: TSSOP20
+  table_column: TSSOP20
+  documented_orderable_parts:
+  - CW32L010F8P6
+  flash_bytes: 65536
+  ram_bytes: 4096
+  lead_count: 20
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - PB4
+  - position: '2'
+    signals:
+    - PB5
+  - position: '3'
+    signals:
+    - PB6
+  - position: '4'
+    signals:
+    - PB7
+    - NRST
+  - position: '5'
+    signals:
+    - PA0
+    - OSC_IN
+  - position: '6'
+    signals:
+    - PA1
+    - OSC_OUT
+  - position: '7'
+    signals:
+    - VSS
+  - position: '8'
+    signals:
+    - Vcore
+  - position: '9'
+    signals:
+    - VDD
+  - position: '10'
+    signals:
+    - PA2
+  - position: '11'
+    signals:
+    - PB0
+    - OSC32_OUT
+  - position: '12'
+    signals:
+    - PB1
+    - OSC32_IN
+  - position: '13'
+    signals:
+    - PA3
+  - position: '14'
+    signals:
+    - PA4
+  - position: '15'
+    signals:
+    - PA5
+  - position: '16'
+    signals:
+    - PA6
+  - position: '17'
+    signals:
+    - PA7
+    - SWDIO
+  - position: '18'
+    signals:
+    - PA8
+    - SWCLK
+  - position: '19'
+    signals:
+    - PB2
+  - position: '20'
+    signals:
+    - PB3
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  gpio_count: 16
+  input_only_pins:
+  - PB7
+  debug_pins:
+  - PA7
+  - PA8
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+- name: CW32L010F8U6
+  key: cw32l010f8u
+  family_part: CW32L010F8
+  package: QFN20
+  table_column: QFN20
+  documented_orderable_parts:
+  - CW32L010F8U6
+  flash_bytes: 65536
+  ram_bytes: 4096
+  lead_count: 20
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - PB7
+    - NRST
+  - position: '2'
+    signals:
+    - PA0
+    - OSC_IN
+  - position: '3'
+    signals:
+    - PA1
+    - OSC_OUT
+  - position: '4'
+    signals:
+    - VSS
+  - position: '5'
+    signals:
+    - Vcore
+  - position: '6'
+    signals:
+    - VDD
+  - position: '7'
+    signals:
+    - PA2
+  - position: '8'
+    signals:
+    - PB0
+    - OSC32_OUT
+  - position: '9'
+    signals:
+    - PB1
+    - OSC32_IN
+  - position: '10'
+    signals:
+    - PA3
+  - position: '11'
+    signals:
+    - PA4
+  - position: '12'
+    signals:
+    - PA5
+  - position: '13'
+    signals:
+    - PA6
+  - position: '14'
+    signals:
+    - PA7
+    - SWDIO
+  - position: '15'
+    signals:
+    - PA8
+    - SWCLK
+  - position: '16'
+    signals:
+    - PB2
+  - position: '17'
+    signals:
+    - PB3
+  - position: '18'
+    signals:
+    - PB4
+  - position: '19'
+    signals:
+    - PB5
+  - position: '20'
+    signals:
+    - PB6
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  gpio_count: 16
+  input_only_pins:
+  - PB7
+  debug_pins:
+  - PA7
+  - PA8
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PB0
+  - PB1
+  - PB2
+  - PB3
+  - PB4
+  - PB5
+  - PB6

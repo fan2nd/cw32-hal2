@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "scope": "Exact project-owned additive HEX model text rebased onto independently accepted Stage28 VREF models; no predecessor source body is embedded.",
+  "review_reference": "docs/hex-stage28-schema-review.json",
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
+      "after_sha256": "1240bf168f847297ede62b2423d8376d2c260d2eace27e74c726623859e0707f",
+      "accepted_stage27_hex_sha256": "6e226f5fcd3be01948c92cef653774119d34a1b7ff490cd08cadb0252d132477",
+      "byte_exact_reverse": true,
+      "hex_insertions_byte_identical_to_accepted": true,
+      "remove_vref_reconstructs_accepted_hex": true,
+      "added_runs": [
+        "                /// Direct HEX input limits; no crystal, detector or automatic fallback is implied.\n                HexLimits {\n                    pub input: ExternalClockLimits,\n                    pub duty_percent: (u8, u8),\n                    pub minimum_high_low_ns: u16,\n                    pub maximum_rise_fall_ns: u16,\n                    /// Percent of VDDIOx relative to VSS.\n                    pub high_level_vddio_percent: (u8, u8),\n                    pub low_level_vddio_percent: (u8, u8),\n                }\n            }\n            record! {\n",
+        "                    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n                    pub hex: Option<HexLimits>,\n"
+      ]
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "85f6f65033ab8454861f9d6b0b7552cbd4aafdd3dea0179c84a9d5c56fdc3e21",
+      "after_sha256": "c53354b75e9b50c72714f3476a3da9ecfc32dcaa29342968bf604bc32f10e6d0",
+      "accepted_stage27_hex_sha256": "0abcfdcac076ed2ab26a3a1496b5e0733ed9e27048e12394539d4f74334c2fbe",
+      "byte_exact_reverse": true,
+      "hex_insertions_byte_identical_to_accepted": true,
+      "remove_vref_reconstructs_accepted_hex": true,
+      "added_runs": [
+        "/// Direct HEX input limits; no crystal, detector or automatic fallback is implied.\npub struct PeripheralHexLimits {\n    pub input: PeripheralExternalClockLimits,\n    pub duty_percent: (u8, u8),\n    pub minimum_high_low_ns: u16,\n    pub maximum_rise_fall_ns: u16,\n    /// Percent of VDDIOx relative to VSS.\n    pub high_level_vddio_percent: (u8, u8),\n    pub low_level_vddio_percent: (u8, u8),\n}\n\n#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]\n",
+        "    #[serde(default)]\n    pub hex: Option<PeripheralHexLimits>,\n"
+      ]
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "ec74116b6393bd764ede2f0c06f6a50bd883ebe6e01fb887d9c2d8cd8914a4c1",
+      "after_sha256": "2b1fa6d62be812e01ee2dbf9e90626cc6f1b658960fcbd99cf9fa221455ba4e8",
+      "accepted_stage27_hex_sha256": "d4a93db712f212ee08b0e2259613860ef289d852de8e0b4397770397613a51bc",
+      "byte_exact_reverse": true,
+      "hex_insertions_byte_identical_to_accepted": true,
+      "remove_vref_reconstructs_accepted_hex": true,
+      "added_runs": [
+        "/// Direct HEX input limits; no crystal, detector or automatic fallback is implied.\npub struct PeripheralHexLimits {\n    pub input: PeripheralExternalClockLimits,\n    pub duty_percent: (u8, u8),\n    pub minimum_high_low_ns: u16,\n    pub maximum_rise_fall_ns: u16,\n    /// Percent of VDDIOx relative to VSS.\n    pub high_level_vddio_percent: (u8, u8),\n    pub low_level_vddio_percent: (u8, u8),\n}\n\n#[derive(Debug, Eq, PartialEq, Clone)]\n",
+        "    pub hex: Option<PeripheralHexLimits>,\n"
+      ]
+    }
+  ],
+  "legal_clearance": false
+}

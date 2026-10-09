@@ -1,0 +1,120 @@
+schema_version: 1
+trigger_metadata: cw32-data/triggers/cw32l010.yaml
+spi_metadata: cw32-data/spi.yaml
+source:
+  path: sources/vendor/CW32L010.svd
+  sha256: 733cc8ff3e186a128342134aee71db1d155e5e2b95ab1c8c8a77054391cb8c66
+  url: https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip
+  source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP.1.0.2/WHXY.CW32L010_DFP/SVD/CW32L010.svd
+expected_svd_name: CW32L010
+core: cm0p
+die: CW32L010
+chip_prefix: CW32L010
+gpio_dir_pin_fields: false
+register_aliases:
+- block: ATIM
+  register: CCMR1CAP
+  alias: CCMR1CMP
+- block: ATIM
+  register: CCMR2CAP
+  alias: CCMR2CMP
+- block: ATIM
+  register: CCMR3CAP
+  alias: CCMR3CMP
+- block: GTIM
+  register: CCMR1CAP
+  alias: CCMR1CMP
+- block: GTIM
+  register: CCMR2CAP
+  alias: CCMR2CMP
+supplemental_interrupts: []
+family: CW32L0
+line: CW32L010
+register_version: cw32l010_v1
+nvic_priority_bits: 2
+nvic_priority_bits_evidence: Official CW32L010 SDK Libraries/inc header __NVIC_PRIO_BITS=2; SHA256 28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b
+chips:
+- name: CW32L010
+  memory: []
+parts_catalog: cw32-data/parts.yaml
+register_versions:
+  adc: cw32l010_v1
+  atim: cw32l010_v1
+  btim: cw32l010_v1
+  crc: cw32l010_v1
+  flash: cw32l010_v1
+  gpio: cw32l010_v1
+  gpiob: cw32l010_v1
+  gtim: cw32l010_v1
+  i2c: cw32l010_v1
+  irmod: cw32l010_v1
+  iwdt: v1
+  lptim: cw32l010_v1
+  lvd: cw32l010_v1
+  ram: cw32l010_v1
+  rtc: cw32l010_v1
+  spi: cw32l010_v1
+  sysctrl: cw32l010_v1
+  uart: cw32l010_v1
+  vc: cw32l010_v1
+  vcdiv: cw32l010_v1
+pinout_metadata: cw32-data/pinouts/cw32l010.yaml
+alias_pin_policy: common-package-intersection
+dma_metadata: cw32-data/dma/cw32l010.yaml
+clock_metadata: cw32-data/clock/cw32l010.yaml
+af_metadata: cw32-data/af/cw32l010-serial.yaml
+register_overrides:
+- block: GPIO
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32L010 User Manual CN V1.2 section 8.6.9, printed page 128/PDF page 129: GPIOx_ISR at offset
+    0x34 is RO for x=A,B. Access-only correction; existing register width and fieldsets unchanged. PDF
+    SHA256 b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa. https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf'
+- block: GPIOB
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32L010 User Manual CN V1.2 section 8.6.9, printed page 128/PDF page 129: GPIOx_ISR at offset
+    0x34 is RO for x=A,B. Access-only correction; existing register width and fieldsets unchanged. PDF
+    SHA256 b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa. https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf'
+analog_metadata: cw32-data/af/cw32l010-analog.yaml
+field_width_overrides:
+- block: RTC
+  fieldset: DATE
+  field: DAY
+  expected_bit_offset: 0
+  expected_bit_size: 8
+  bit_size: 6
+  evidence: 'Own CW32L010 User Manual CN V1.2 section 10.5.6, printed page 153/PDF page 154: RTC_DATE.DAY
+    is bits5:0 and MONTH is bits12:8; bits7:6 and bits15:13 are reserved. Correct only the copied SVD
+    8-bit field widths; preserve all offsets and other fields. PDF SHA256 b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa.
+    https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf'
+- block: RTC
+  fieldset: DATE
+  field: MONTH
+  expected_bit_offset: 8
+  expected_bit_size: 8
+  bit_size: 5
+  evidence: 'Own CW32L010 User Manual CN V1.2 section 10.5.6, printed page 153/PDF page 154: RTC_DATE.DAY
+    is bits5:0 and MONTH is bits12:8; bits7:6 and bits15:13 are reserved. Correct only the copied SVD
+    8-bit field widths; preserve all offsets and other fields. PDF SHA256 b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa.
+    https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf'
+pwm_metadata: cw32-data/af/cw32l010-pwm.yaml
+atim_pwm_metadata: cw32-data/af/cw32l010-atim-pwm.yaml
+gpio_interrupt_metadata: cw32-data/gpio-interrupt.yaml
+electrical_metadata: cw32-data/electrical.yaml
+comparator_metadata: cw32-data/af/cw32l010-comparator.yaml
+interrupt_association_overrides:
+- interrupt: FLASHRAM
+  number: 3
+  expected_owners:
+  - FLASH
+  owners:
+  - FLASH
+  - RAM
+  evidence: 'CW32L010 own manual section 5.4 interrupt table PDF page 89 and RAM section 6.4: FLASHRAM
+    IRQ3 is shared by FLASH and RAM parity. Official CMSIS FLASHRAM_IRQn=3. https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf
+    PDF SHA256 b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa. See docs/ram-parity-evidence.json.'
+atim_complementary_metadata: cw32-data/af/cw32l010-atim-complementary.yaml
+adc_sequence_metadata: cw32-data/adc-sequences.yaml

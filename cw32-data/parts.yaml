@@ -1,0 +1,1084 @@
+schema_version: 1
+snapshot_at_utc: '2026-10-08T02:47:00Z'
+scope: Exact 37 parts from catalog.json. Main Flash and SRAM only; excludes option bytes, factory ROM,
+  trim areas and peripheral registers. No memory layout is inferred from part-code digits alone.
+validation_scope: Datasheet family table plus per-family memory boundaries, checked against official catalog
+  and available DFP device entries. Not silicon-tested.
+sources:
+  CW32R031_datasheet:
+    url: https://www.whxy.com/uploads/files/20251230/CW32R031_DataSheet_CN_V1.2.pdf
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    document_filename: CW32R031_DataSheet_CN_V1.2.pdf
+    memory_map_pdf_page_indices:
+    - 34
+    memory_size_table_pdf_page_indices:
+    - 10
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  CW32R031_dfp:
+    url: https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip
+    archive_sha256: cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082
+    archive_entry: IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/WHXY.CW32R031_DFP.pdsc
+    sha256: efdd38b9ecf017f74d8ae86682588d772503fe0fe07b3af56964133327c35c9f
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/WHXY.CW32R031_DFP.pdsc
+  CW32W031_datasheet:
+    url: https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    document_filename: CW32W031_DataSheet_CN_V1.3.pdf
+    memory_map_pdf_page_indices:
+    - 33
+    memory_size_table_pdf_page_indices:
+    - 8
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  CW32W031_dfp:
+    url: https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip
+    archive_sha256: 1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337
+    archive_entry: IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/WHXY.CW32W031_DFP.pdsc
+    sha256: 932cf4107a4a543cb92de4a80bf3e286f49dec9f5ea36659b682eff26f7d5b36
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/WHXY.CW32W031_DFP.pdsc
+  CW32F002_datasheet:
+    url: https://www.whxy.com/uploads/files/20251230/CW32F002_DataSheet_CN_V1.2.pdf
+    sha256: 6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506
+    document_filename: CW32F002_DataSheet_CN_V1.2.pdf
+    memory_map_pdf_page_indices:
+    - 25
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32F002_DataSheet_CN_V1.2.pdf
+  CW32F002_dfp:
+    url: https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip
+    archive_sha256: 108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc
+    archive_entry: IdeSupport/MDK/WHXY.CW32F002_DFP.1.0.2/WHXY.CW32F002_DFP.pdsc
+    sha256: 7496b30d9173b761f0ea77e91a93c5c74917781f8f3ece69d78a6b95b0fbfe65
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32f002/IdeSupport/MDK/WHXY.CW32F002_DFP.1.0.2/WHXY.CW32F002_DFP.pdsc
+  CW32F020_datasheet:
+    url: https://www.whxy.com/uploads/files/20251230/CW32F020_DataSheet_CN_V1.3.pdf
+    sha256: 1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0
+    document_filename: CW32F020_DataSheet_CN_V1.3.pdf
+    memory_map_pdf_page_indices:
+    - 29
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf
+  CW32F020_dfp:
+    url: https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip
+    archive_sha256: 1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d
+    archive_entry: IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/WHXY.CW32F020_DFP.pdsc
+    sha256: 0f52e575b13726a6ba68150fbf0fd761cc057ddee43141e68dc2acdcc9c7c910
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/WHXY.CW32F020_DFP.pdsc
+  CW32F003_datasheet:
+    url: https://www.whxy.com/uploads/files/20251226/CW32F003_DataSheet_CN_V1.9.pdf
+    sha256: 5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd
+    document_filename: CW32F003_DataSheet_CN_V1.9.pdf
+    memory_map_pdf_page_indices:
+    - 26
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32F003_DataSheet_CN_V1.9.pdf
+  CW32F003_dfp:
+    url: https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip
+    archive_sha256: fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333
+    archive_entry: IdeSupport/MDK/WHXY.CW32F003_DFP.1.0.2/WHXY.CW32F003_DFP.pdsc
+    sha256: d2cf4a2e46eee04118d96205011d94f36a83188708230510198a499a0dcc81e4
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32f003/IdeSupport/MDK/WHXY.CW32F003_DFP.1.0.2/WHXY.CW32F003_DFP.pdsc
+  CW32F030_datasheet:
+    url: https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    document_filename: CW32F030_DataSheet_CN_V1.9.pdf
+    memory_map_pdf_page_indices:
+    - 31
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  CW32F030_dfp:
+    url: https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip
+    archive_sha256: 7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780
+    archive_entry: IdeSupport/MDK/WHXY.CW32F030_DFP.1.0.5/WHXY.CW32F030_DFP.pdsc
+    sha256: dda0b15961881182aab0e0b09685b213c355d28a71eb2a77a21db8a074f84780
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32f030/IdeSupport/MDK/WHXY.CW32F030_DFP.1.0.5/WHXY.CW32F030_DFP.pdsc
+  CW32L012_datasheet:
+    url: https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf
+    sha256: 08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76
+    document_filename: CW32L012_DataSheet_CN_V1.0.pdf
+    memory_map_pdf_page_indices:
+    - 40
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32L012_DataSheet_CN_V1.0.pdf
+  CW32L012_dfp:
+    url: https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip
+    archive_sha256: 8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f
+    archive_entry: IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/WHXY.CW32L012_DFP.pdsc
+    sha256: 0c88e4226659eadac050161d2b5ca3b1c4695c2793a3f609e0eb58646003657c
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/WHXY.CW32L012_DFP.pdsc
+  CW32L011_datasheet:
+    url: https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf
+    sha256: 0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5
+    document_filename: CW32L011_DataSheet_CN_V1.1.pdf
+    memory_map_pdf_page_indices:
+    - 33
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+  CW32L011_dfp:
+    url: https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip
+    archive_sha256: 76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e
+    archive_entry: IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/WHXY.CW32L011_DFP.pdsc
+    sha256: 90dbabd9c1f2870c9db4f2b814808b2b822293548b5858ed2c65ad0b72b7d23f
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32l011/IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/WHXY.CW32L011_DFP.pdsc
+  CW32L010_datasheet:
+    url: https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    document_filename: CW32L010_DataSheet_CN_V1.3.pdf
+    memory_map_pdf_page_indices:
+    - 26
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  CW32L010_dfp:
+    url: https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip
+    archive_sha256: 84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716
+    archive_entry: CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP/WHXY.CW32L010_DFP.pdsc
+    sha256: 3d4adb6e098dfa9190a85bf5c05a2adcc7599435b19ef16f1a1ebf29c6c3cf3d
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP/WHXY.CW32L010_DFP.pdsc
+  CW32L052_datasheet:
+    url: https://www.whxy.com/uploads/files/20251229/CW32L052_DataSheet_CN_V1.3.pdf
+    sha256: f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f
+    document_filename: CW32L052_DataSheet_CN_V1.3.pdf
+    memory_map_pdf_page_indices:
+    - 35
+    memory_size_table_pdf_page_indices:
+    - 9
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32L052_DataSheet_CN_V1.3.pdf
+  CW32L052_dfp:
+    url: https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip
+    archive_sha256: d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f
+    archive_entry: CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/WHXY.CW32L052_DFP.pdsc
+    sha256: 395db42c49f85d953349dbaad6d35185ef1ce023b6e90d7d44986b01a0e20781
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/WHXY.CW32L052_DFP.pdsc
+  CW32L031_datasheet:
+    url: https://www.whxy.com/uploads/files/20251229/CW32L031_DataSheet_CN_V1.9.pdf
+    sha256: 90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855
+    document_filename: CW32L031_DataSheet_CN_V1.9.pdf
+    memory_map_pdf_page_indices:
+    - 31
+    memory_size_table_pdf_page_indices:
+    - 9
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32L031_DataSheet_CN_V1.9.pdf
+  CW32L031_dfp:
+    url: https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip
+    archive_sha256: ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d
+    archive_entry: IdeSupport/MDK/WHXY.CW32L031_DFP.1.0.4/WHXY.CW32L031_DFP.pdsc
+    sha256: ca9e0a8c3c6d147e682ea7d4fa72767602b1cf98d8256142bca2b4bab6bfa128
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32l031/IdeSupport/MDK/WHXY.CW32L031_DFP.1.0.4/WHXY.CW32L031_DFP.pdsc
+  CW32L083_datasheet:
+    url: https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf
+    sha256: 852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e
+    document_filename: CW32L083_DataSheet_CN_V1.9.pdf
+    memory_map_pdf_page_indices:
+    - 39
+    memory_size_table_pdf_page_indices:
+    - 9
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32L083_DataSheet_CN_V1.9.pdf
+  CW32L083_dfp:
+    url: https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip
+    archive_sha256: 2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73
+    archive_entry: IdeSupport/MDK/WHXY.CW32L083_DFP.1.0.9/WHXY.CW32L083_DFP.pdsc
+    sha256: 29aaaa6519fabcdfc7427735761bfbfbc08e394f87c05e020d822d55c262fd1d
+    evidence: Official DFP device memory elements; not used over a conflicting datasheet.
+    source_ref: member:cw32l083/IdeSupport/MDK/WHXY.CW32L083_DFP.1.0.9/WHXY.CW32L083_DFP.pdsc
+  CW32A030_datasheet:
+    url: https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf
+    sha256: 690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9
+    document_filename: CW32A030_DataSheet_CN_V1.1.pdf
+    memory_map_pdf_page_indices:
+    - 28
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    source_ref: vendor:CW32A030_DataSheet_CN_V1.1.pdf
+parts:
+- name: CW32R031C8U6
+  feature: cw32r031c8u6
+  family: CW32R031
+  package: QFN48
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32R031_datasheet
+  - CW32R031_dfp
+  dfp_device: CW32R031C8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/wuxianshepinMCU.html
+  datasheet_source_id: CW32R031_datasheet
+  notes: []
+- name: CW32W031R8U6
+  feature: cw32w031r8u6
+  family: CW32W031
+  package: QFN64
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32W031_datasheet
+  - CW32W031_dfp
+  dfp_device: CW32W031R8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/wuxianshepinMCU.html
+  datasheet_source_id: CW32W031_datasheet
+  notes: []
+- name: CW32A030C8T7
+  feature: cw32a030c8t7
+  family: CW32A030
+  package: LQFP48
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32A030_datasheet
+  dfp_device: null
+  dfp_cross_check: no matching DFP device; validated by family datasheet tables
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32A030_datasheet
+  notes: []
+- name: CW32F002F3U7
+  feature: cw32f002f3u7
+  family: CW32F002
+  package: QFN20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 16384
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 2048
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F002_datasheet
+  - CW32F002_dfp
+  dfp_device: CW32F002F3
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F002_datasheet
+  notes: []
+- name: CW32F002F3P7
+  feature: cw32f002f3p7
+  family: CW32F002
+  package: TSSOP20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 16384
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 2048
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F002_datasheet
+  - CW32F002_dfp
+  dfp_device: CW32F002F3
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F002_datasheet
+  notes: []
+- name: CW32F020F6U7
+  feature: cw32f020f6u7
+  family: CW32F020
+  package: QFN20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 32768
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F020_datasheet
+  - CW32F020_dfp
+  dfp_device: CW32F020F6
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F020_datasheet
+  notes: []
+- name: CW32F020K6U7
+  feature: cw32f020k6u7
+  family: CW32F020
+  package: QFN32
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 32768
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F020_datasheet
+  - CW32F020_dfp
+  dfp_device: CW32F020K6
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F020_datasheet
+  notes: []
+- name: CW32F020C6U7
+  feature: cw32f020c6u7
+  family: CW32F020
+  package: QFN48
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 32768
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F020_datasheet
+  - CW32F020_dfp
+  dfp_device: CW32F020C6
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F020_datasheet
+  notes: []
+- name: CW32F003F4U7
+  feature: cw32f003f4u7
+  family: CW32F003
+  package: QFN20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 20480
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 3072
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F003_datasheet
+  - CW32F003_dfp
+  dfp_device: CW32F003F4
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F003_datasheet
+  notes: []
+- name: CW32F003F4P7
+  feature: cw32f003f4p7
+  family: CW32F003
+  package: TSSOP20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 20480
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 3072
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F003_datasheet
+  - CW32F003_dfp
+  dfp_device: CW32F003F4
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F003_datasheet
+  notes: []
+- name: CW32F003E4P7
+  feature: cw32f003e4p7
+  family: CW32F003
+  package: TSSOP24
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 20480
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 3072
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F003_datasheet
+  dfp_device: null
+  dfp_cross_check: no matching DFP device; validated by family datasheet tables
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F003_datasheet
+  notes: []
+- name: CW32F030F8V7
+  feature: cw32f030f8v7
+  family: CW32F030
+  package: QFN20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F030_datasheet
+  - CW32F030_dfp
+  dfp_device: CW32F030F8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F030_datasheet
+  notes: []
+- name: CW32F030F6P7
+  feature: cw32f030f6p7
+  family: CW32F030
+  package: TSSOP20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 32768
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 6144
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F030_datasheet
+  - CW32F030_dfp
+  dfp_device: CW32F030F6
+  dfp_cross_check: DFP conflicts; datasheet wins
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F030_datasheet
+  notes:
+  - DFP1.0.5 claims8KiB RAM; datasheet Table3-1 and official catalog specify6KiB.
+- name: CW32F030K8U7
+  feature: cw32f030k8u7
+  family: CW32F030
+  package: QFN32
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F030_datasheet
+  - CW32F030_dfp
+  dfp_device: CW32F030K8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F030_datasheet
+  notes: []
+- name: CW32F030K8T7
+  feature: cw32f030k8t7
+  family: CW32F030
+  package: LQFP32
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F030_datasheet
+  - CW32F030_dfp
+  dfp_device: CW32F030K8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F030_datasheet
+  notes: []
+- name: CW32F030C8T7
+  feature: cw32f030c8t7
+  family: CW32F030
+  package: LQFP48
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F030_datasheet
+  - CW32F030_dfp
+  dfp_device: CW32F030C8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/tongyonggaoxingnengMCU.html
+  datasheet_source_id: CW32F030_datasheet
+  notes: []
+- name: CW32L012C8U6
+  feature: cw32l012c8u6
+  family: CW32L012
+  package: QFN48
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L012_datasheet
+  - CW32L012_dfp
+  dfp_device: CW32L012C8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L012_datasheet
+  notes: []
+- name: CW32L012C8T6
+  feature: cw32l012c8t6
+  family: CW32L012
+  package: LQFP48
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L012_datasheet
+  - CW32L012_dfp
+  dfp_device: CW32L012C8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L012_datasheet
+  notes: []
+- name: CW32L011K8T6
+  feature: cw32l011k8t6
+  family: CW32L011
+  package: LQFP32
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 6144
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L011_datasheet
+  - CW32L011_dfp
+  dfp_device: CW32L011K8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L011_datasheet
+  notes: []
+- name: CW32L011K8U6
+  feature: cw32l011k8u6
+  family: CW32L011
+  package: QFN32
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 6144
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L011_datasheet
+  - CW32L011_dfp
+  dfp_device: CW32L011K8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L011_datasheet
+  notes: []
+- name: CW32L010Y8M6
+  feature: cw32l010y8m6
+  family: CW32L010
+  package: SOP16
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 4096
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L010_datasheet
+  dfp_device: null
+  dfp_cross_check: no matching DFP device; validated by family datasheet tables
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L010_datasheet
+  notes: []
+- name: CW32L010F8P6
+  feature: cw32l010f8p6
+  family: CW32L010
+  package: TSSOP20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 4096
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L010_datasheet
+  - CW32L010_dfp
+  dfp_device: CW32L010F8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L010_datasheet
+  notes: []
+- name: CW32L010F8U6
+  feature: cw32l010f8u6
+  family: CW32L010
+  package: QFN20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 4096
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L010_datasheet
+  - CW32L010_dfp
+  dfp_device: CW32L010F8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L010_datasheet
+  notes: []
+- name: CW32L052C8T6
+  feature: cw32l052c8t6
+  family: CW32L052
+  package: LQFP48
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L052_datasheet
+  - CW32L052_dfp
+  dfp_device: CW32L052C8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L052_datasheet
+  notes: []
+- name: CW32L052R8S6
+  feature: cw32l052r8s6
+  family: CW32L052
+  package: LQFP64（7×7mm）
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L052_datasheet
+  - CW32L052_dfp
+  dfp_device: CW32L052R8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L052_datasheet
+  notes: []
+- name: CW32L052R8T6
+  feature: cw32l052r8t6
+  family: CW32L052
+  package: LQFP64（10×10mm）
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L052_datasheet
+  - CW32L052_dfp
+  dfp_device: CW32L052R8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L052_datasheet
+  notes: []
+- name: CW32L031F8P6
+  feature: cw32l031f8p6
+  family: CW32L031
+  package: TSSOP20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L031_datasheet
+  - CW32L031_dfp
+  dfp_device: CW32L031F8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L031_datasheet
+  notes: []
+- name: CW32L031F8U6
+  feature: cw32l031f8u6
+  family: CW32L031
+  package: QFN20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L031_datasheet
+  - CW32L031_dfp
+  dfp_device: CW32L031F8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L031_datasheet
+  notes: []
+- name: CW32L031K8V6
+  feature: cw32l031k8v6
+  family: CW32L031
+  package: QFN32（4×4mm）
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L031_datasheet
+  - CW32L031_dfp
+  dfp_device: CW32L031K8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L031_datasheet
+  notes: []
+- name: CW32L031K8U6
+  feature: cw32l031k8u6
+  family: CW32L031
+  package: QFN32（5×5mm）
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L031_datasheet
+  - CW32L031_dfp
+  dfp_device: CW32L031K8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L031_datasheet
+  notes: []
+- name: CW32L031C8U6
+  feature: cw32l031c8u6
+  family: CW32L031
+  package: QFN48
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L031_datasheet
+  - CW32L031_dfp
+  dfp_device: CW32L031C8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L031_datasheet
+  notes: []
+- name: CW32L031C8T6
+  feature: cw32l031c8t6
+  family: CW32L031
+  package: LQFP48
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L031_datasheet
+  - CW32L031_dfp
+  dfp_device: CW32L031C8
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L031_datasheet
+  notes: []
+- name: CW32L083RBT6
+  feature: cw32l083rbt6
+  family: CW32L083
+  package: LQFP64（10×10mm）
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 131072
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 24576
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L083_datasheet
+  - CW32L083_dfp
+  dfp_device: CW32L083RB
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L083_datasheet
+  notes: []
+- name: CW32L083RCS6
+  feature: cw32l083rcs6
+  family: CW32L083
+  package: LQFP64（7×7mm）
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 262144
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 24576
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L083_datasheet
+  - CW32L083_dfp
+  dfp_device: CW32L083RC
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L083_datasheet
+  notes: []
+- name: CW32L083RCT6
+  feature: cw32l083rct6
+  family: CW32L083
+  package: LQFP64（10×10mm）
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 262144
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 24576
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L083_datasheet
+  - CW32L083_dfp
+  dfp_device: CW32L083RC
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L083_datasheet
+  notes: []
+- name: CW32L083MCT6
+  feature: cw32l083mct6
+  family: CW32L083
+  package: LQFP80
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 262144
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 24576
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L083_datasheet
+  - CW32L083_dfp
+  dfp_device: CW32L083MC
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L083_datasheet
+  notes: []
+- name: CW32L083VCT6
+  feature: cw32l083vct6
+  family: CW32L083
+  package: LQFP100
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 262144
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 24576
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32L083_datasheet
+  - CW32L083_dfp
+  dfp_device: CW32L083VC
+  dfp_cross_check: matching DFP device agrees on bases and sizes
+  catalog_source_url: https://www.whxy.com/anquandigonghaoMCU.html
+  datasheet_source_id: CW32L083_datasheet
+  notes: []

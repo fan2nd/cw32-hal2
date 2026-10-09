@@ -1,0 +1,214 @@
+schema_version: 1
+family: CW32L011
+register_versions:
+  BTIM1: cw32l010_v1
+  BTIM2: cw32l010_v1
+  ADC: cw32l011_v1
+status: verified-own-manual-sdk
+sources:
+- family: CW32L011
+  kind: official_reference_manual
+  path: CW32L011_UserManual_CN_V1.1.pdf
+  sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  official_url: https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf
+  bytes: 15199549
+  source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+  revision:
+    printed: '1.1'
+    cover_date: 2026-06
+    revision_history_date: '2025-09-19'
+    pdf_pages: 564
+- family: CW32L011
+  kind: official_sdk_member
+  path: cw32l011/Libraries/inc/cw32l011_btim.h
+  sha256: 028bb59c2cee0752aa456a9eded30d72328ef45e2b0ac0479d3d20339abbad01
+  official_url: https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip
+  bytes: 24113
+  source_ref: member:cw32l011/Libraries/inc/cw32l011_btim.h
+- family: CW32L011
+  kind: official_sdk_member
+  path: cw32l011/Libraries/inc/cw32l011_adc.h
+  sha256: a3a7006c78013ccd308d696d1dbdd839344e589a2038e23374c801ea42decfe5
+  official_url: https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip
+  bytes: 20018
+  source_ref: member:cw32l011/Libraries/inc/cw32l011_adc.h
+- family: CW32L011
+  kind: official_cmsis_header
+  path: cw32l011/Libraries/inc/cw32l011.h
+  sha256: 2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8
+  official_url: https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip
+  bytes: 594153
+  source_ref: member:cw32l011/Libraries/inc/cw32l011.h
+routes:
+- destination: ADC
+  signal: START_CONVERSION
+  source: BTIM1_TRGO
+  source_event: UPDATE
+  registers:
+  - peripheral: BTIM1
+    register: CR2
+    field: MMS
+    role: source_event
+    bit_offset: 4
+    bit_size: 3
+    value: 2
+  - peripheral: ADC
+    register: TRIGGER
+    field: BTIM1TRGO
+    role: independent_enable
+    bit_offset: 13
+    bit_size: 1
+    value: 1
+  status: documented
+  conflict_ids: []
+  references:
+  - source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+    pdf_page_1based: 523
+    printed_page: 522
+    section: 20.11.7
+    table: null
+    source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  - source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+    pdf_page_1based: 181
+    printed_page: 180
+    section: 11.9.2
+    source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+- destination: BTIM2
+  signal: TRGI
+  source: BTIM1_TRGO
+  source_event: UPDATE
+  registers:
+  - peripheral: BTIM1
+    register: CR2
+    field: MMS
+    role: source_event
+    bit_offset: 4
+    bit_size: 3
+    value: 2
+  - peripheral: BTIM2
+    register: SMCR
+    field: TRGISRC
+    role: selector
+    bit_offset: 7
+    bit_size: 4
+    value: 8
+  status: documented
+  conflict_ids: []
+  references:
+  - source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+    pdf_page_1based: 182
+    printed_page: 181
+    section: 11.9.3
+    table: null
+    source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  - source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+    pdf_page_1based: 183
+    printed_page: 182
+    section: 11.9.3
+    table: null
+    source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  - source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+    pdf_page_1based: 181
+    printed_page: 180
+    section: 11.9.2
+    source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+limitations:
+- Exactly these two internal paths are qualified. No universal ITR numbers, reserved, self-feedback or
+  conflicted routes.
+- Runtime uses static HAL resource ownership; public PAC writes remain an explicit outside-HAL concurrency
+  boundary.
+- ADC runtime is one-shot hardware-triggered sampling, not periodic lossless acquisition.
+- No silicon execution or timing validation.
+- Disarm/timeout is terminal for the ADC owner; no immediate abort or trigger-pipeline drain guarantee.
+- Cascade stop disables BTIM2 before SMS=0, and detaches BTIM2 before stopping the producer. No atomic
+  cutoff or maximum lossless trigger rate is established.
+runtime_references:
+- id: timer_enable_and_oneshot
+  section: 11.3.1.1
+  pdf_page_1based: 163
+  printed_page: 162
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: EN rises one PCLK before CNT_EN; one-shot overflow stops counting and clears EN
+- id: timer_oneshot_diagram
+  section: 11.3.1.1
+  pdf_page_1based: 164
+  printed_page: 163
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: Figure 11-2 illustrates a single terminal update; no extra-pulse inference from enable latency
+  section_continued_from_pdf_page: 163
+- id: master_output
+  section: 11.9.2
+  pdf_page_1based: 181
+  printed_page: 180
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: MMS reset mode forwards UG; destinations must be detached before source UG
+- id: internal_count_mode
+  section: 11.3.2.1
+  pdf_page_1based: 167
+  printed_page: 166
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: 'SMS=0 selects PCLK: disable destination counting before changing SMS'
+- id: external_count_mode
+  section: 11.3.2.2
+  pdf_page_1based: 168
+  printed_page: 167
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: External counter uses TRGI rising edges
+- id: adc_single_sequence
+  section: 20.5.2
+  pdf_page_1based: 511
+  printed_page: 510
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: CONT=0 produces one sequence per software or hardware start; EOC per result, EOS at end, START
+    auto-clears
+- id: adc_hardware_trigger
+  section: '20.6'
+  pdf_page_1based: 513
+  printed_page: 512
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: Enabled external signals start ADC conversions
+- id: adc_control
+  section: 20.11.1
+  pdf_page_1based: 518
+  printed_page: 517
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: CONT=0 and ENS=0 select a single slot; existing analog startup qualification is retained
+- id: adc_stop_command
+  section: 20.11.2
+  pdf_page_1based: 519
+  printed_page: 518
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: START=0 stops conversion and resets the sequence; no abort/drain latency bound is documented
+- id: adc_completion_status
+  section: 20.11.9
+  pdf_page_1based: 525
+  printed_page: 524
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: EOC bit0 and EOS bit1 report conversion/sequence completion
+- id: adc_status_clear
+  section: 20.11.10
+  pdf_page_1based: 526
+  printed_page: 525
+  source_id: CW32L011:CW32L011_UserManual_CN_V1.1.pdf
+  source_sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+  fact: ADC_ICR defined flags are R1W0
+excluded_conflicts:
+- id: LOW_BTIM_UARTX_MAP
+  scope: BTIM TRGISRC/RSTISRC code 5 unresolved UARTx identity; absent from this subset
+- id: LOW_BTIM_SDK_STALE_AWT
+  scope: SDK BTIM code 0 names nonexistent AWT; route code 0 remains unexposed, SMS=0 disables destination
+    trigger counting
+- id: CW32L011_ADC_SDK_MACROS_MISSING
+  scope: SDK lacks ADC bits 19–24; this subset uses only bit 13 present in manual/SDK/CMSIS
+- id: L011_TISEL_ZERO_CHANNEL_LABEL
+  scope: GTIM TI2–4 pad labels conflict; no GTIM or pad-remap trigger selected

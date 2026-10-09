@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "status": "Identity and independent review pending",
+  "basis": "Change to the existing project-authored independent schema; no predecessor or upstream schema implementation copied. Independent ancestry and prior replacement evidence in docs/schema-reimplementation.json remain unmodified.",
+  "delta": "FlashLimits.lock_mask widened from u32 to u64 to preserve all 64 L083 protection groups; existing wire integer values, field order, omission rules and unrelated records unchanged. Source metadata remains optional on peripherals.",
+  "source": "docs/flash-remaining-evidence.json",
+  "changed_schema_and_fixture": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "72a4b739ee3e9cd50ae5767da5c1d378f83d6a76de88640f0ec4f095c69231e3",
+      "after_sha256": "ebac4081d66f4c245c3d5f3a997cfc789f168123a17b182a1d3b6d9801b688ef"
+    },
+    {
+      "path": "cw32-data-serde/tests/schema_contracts.rs",
+      "before_sha256": "7d3ccdf31b209ee41f6dc1b45cdc1e350d147155f695009da0dcbf292050156e",
+      "after_sha256": "83a3a27a48f0cbb1d303e1975bd23ae9276c111987b868b51807cf7073cfc2e6"
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "9768d14c1268fcdb1f7d4d85ab67345973176e1340776de798e3d101e0050b2a",
+      "after_sha256": "70b62a537bd4ccfdf7a615f8ef105afe2573b0e07951c4e72ebfb1eea3838176"
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "7b90d63c4184e540a967d69c3e76e00e54723943ee84834c6e528b3d5fcb6d5b",
+      "after_sha256": "4185952633b4a9699d650ba247d0d875e1aeaa14e1dd0965030846b41511beb2"
+    }
+  ],
+  "new_optional_fields": [],
+  "consumer_projections": [
+    "cw32-data/data/chips/CW32L083RBT6.json",
+    "cw32-data/data/chips/CW32L083MCT6.json",
+    "cw32-metapac/src/metadata.rs",
+    "cw32-metapac/src/chips/cw32l083mct6/metadata.rs"
+  ],
+  "fixture": "Data-only schema roundtrip of u64::MAX and the legacy 65535 value; missing required mask rejected; absent optional flash_limits preserved. No HAL tests, mocks, compile-negative fixtures or runtime harness."
+}

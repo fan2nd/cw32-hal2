@@ -1,0 +1,537 @@
+{
+  "status": "IMPLEMENTED POLLING RESET-MODE; HOST/COMPILE VALIDATION ONLY; NO HARDWARE EXECUTION",
+  "reference_audit": "read-only-crc-wwdt-audit.json",
+  "upstream": {
+    "revision": "f16efeffe37581092ec184718e6fdb1620393214",
+    "file": "embassy-stm32/src/wdg/mod.rs",
+    "sha256": "7c689010c88a7233b1b946817929a6f32c3167c34d39be9998cacfad09daf8a8"
+  },
+  "families": [
+    {
+      "family": "CW32F002",
+      "manual": "CW32F002_UserManual_CN_V1.4.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "v1",
+      "wwdt_base": "0x40002c00",
+      "wwdt_reference": "chapter 14; \u00a7\u00a714.2\u201314.6; printed pp193\u2013200",
+      "wwdt_gate": {
+        "register": "APBEN1",
+        "bit": 4,
+        "key": null
+      },
+      "wwdt_reset": {
+        "register": "APBRST1",
+        "bit": 4,
+        "active_low": true,
+        "key": null
+      }
+    },
+    {
+      "family": "CW32F003",
+      "manual": "CW32F003_UserManual_CN_V2.3.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "v1",
+      "wwdt_base": "0x40002c00",
+      "wwdt_reference": "chapter 15; \u00a7\u00a715.2\u201315.6; printed pp253\u2013260",
+      "wwdt_gate": {
+        "register": "APBEN1",
+        "bit": 4,
+        "key": null
+      },
+      "wwdt_reset": {
+        "register": "APBRST1",
+        "bit": 4,
+        "active_low": true,
+        "key": null
+      }
+    },
+    {
+      "family": "CW32F020",
+      "manual": "CW32F020_UserManual_CN_V1.4.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "v1",
+      "wwdt_base": "0x40002c00",
+      "wwdt_reference": "chapter 16; \u00a7\u00a716.2\u201316.6; printed pp258\u2013265",
+      "wwdt_gate": {
+        "register": "APBEN1",
+        "bit": 4,
+        "key": null
+      },
+      "wwdt_reset": {
+        "register": "APBRST1",
+        "bit": 4,
+        "active_low": true,
+        "key": null
+      }
+    },
+    {
+      "family": "CW32F030",
+      "manual": "CW32x030_UserManual_CN_V2.5.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "v1",
+      "wwdt_base": "0x40002c00",
+      "wwdt_reference": "chapter 17; \u00a7\u00a717.2\u201317.6; printed pp320\u2013327",
+      "wwdt_gate": {
+        "register": "APBEN1",
+        "bit": 4,
+        "key": null
+      },
+      "wwdt_reset": {
+        "register": "APBRST1",
+        "bit": 4,
+        "active_low": true,
+        "key": null
+      }
+    },
+    {
+      "family": "CW32A030",
+      "manual": "CW32x030_UserManual_CN_V2.5.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "v1",
+      "wwdt_base": "0x40002c00",
+      "wwdt_reference": "chapter 17; \u00a7\u00a717.2\u201317.6; printed pp320\u2013327",
+      "wwdt_gate": {
+        "register": "APBEN1",
+        "bit": 4,
+        "key": null
+      },
+      "wwdt_reset": {
+        "register": "APBRST1",
+        "bit": 4,
+        "active_low": true,
+        "key": null
+      }
+    },
+    {
+      "family": "CW32L010",
+      "manual": "CW32L010_UserManual_CN_V1.2.pdf",
+      "wwdt_present": false,
+      "wwdt_register_version": null,
+      "wwdt_base": null,
+      "wwdt_reference": "No WWDT in selected own-family SVD/header/chip metadata; own datasheet watchdog list contains IWDT only.",
+      "wwdt_gate": null,
+      "wwdt_reset": null
+    },
+    {
+      "family": "CW32L011",
+      "manual": null,
+      "wwdt_present": false,
+      "wwdt_register_version": null,
+      "wwdt_base": null,
+      "wwdt_reference": "No WWDT in selected own-family SVD/header/chip metadata; own datasheet watchdog list contains IWDT only.",
+      "wwdt_gate": null,
+      "wwdt_reset": null
+    },
+    {
+      "family": "CW32L012",
+      "manual": "CW32L012_UserManual_CN_V1.4.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "cw32l012_v1",
+      "wwdt_base": "0x40005400",
+      "wwdt_reference": "chapter 20; \u00a7\u00a720.2\u201320.6; printed pp436\u2013444",
+      "wwdt_gate": {
+        "register": "APBEN2",
+        "bit": 5,
+        "key": "0x5a5a0000"
+      },
+      "wwdt_reset": {
+        "register": "APBRST2",
+        "bit": 5,
+        "active_low": true,
+        "key": null
+      }
+    },
+    {
+      "family": "CW32L031",
+      "manual": "CW32L031_UserManual_CN_V1.6.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "cw32l031_v1",
+      "wwdt_base": "0x40002c00",
+      "wwdt_reference": "chapter 17; \u00a7\u00a717.2\u201317.6; printed pp311\u2013318",
+      "wwdt_gate": {
+        "register": "APBEN1",
+        "bit": 4,
+        "key": null
+      },
+      "wwdt_reset": {
+        "register": "APBRST1",
+        "bit": 4,
+        "active_low": true,
+        "key": null
+      }
+    },
+    {
+      "family": "CW32L052",
+      "manual": "CW32L052_UserManual_CN_V1.5.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "cw32l031_v1",
+      "wwdt_base": "0x40002c00",
+      "wwdt_reference": "chapter 18; \u00a7\u00a718.2\u201318.6; printed pp348\u2013355",
+      "wwdt_gate": {
+        "register": "APBEN1",
+        "bit": 4,
+        "key": null
+      },
+      "wwdt_reset": {
+        "register": "APBRST1",
+        "bit": 4,
+        "active_low": true,
+        "key": null
+      }
+    },
+    {
+      "family": "CW32L083",
+      "manual": "CW32L083_UserManual_CN_V2.0.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "cw32l031_v1",
+      "wwdt_base": "0x40002c00",
+      "wwdt_reference": "chapter 18; \u00a7\u00a718.2\u201318.6; printed pp360\u2013367",
+      "wwdt_gate": {
+        "register": "APBEN1",
+        "bit": 4,
+        "key": null
+      },
+      "wwdt_reset": {
+        "register": "APBRST1",
+        "bit": 4,
+        "active_low": true,
+        "key": null
+      }
+    },
+    {
+      "family": "CW32R031",
+      "manual": "CW32R031_UserManual_CN_V1.3.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "cw32l031_v1",
+      "wwdt_base": "0x40002c00",
+      "wwdt_reference": "chapter 17; \u00a7\u00a717.2\u201317.6; printed pp314\u2013321",
+      "wwdt_gate": {
+        "register": "APBEN1",
+        "bit": 4,
+        "key": null
+      },
+      "wwdt_reset": {
+        "register": "APBRST1",
+        "bit": 4,
+        "active_low": true,
+        "key": null
+      }
+    },
+    {
+      "family": "CW32W031",
+      "manual": "CW32W031_UserManual_CN_V1.4.pdf",
+      "wwdt_present": true,
+      "wwdt_register_version": "cw32l031_v1",
+      "wwdt_base": "0x40002c00",
+      "wwdt_reference": "chapter 17; \u00a7\u00a717.2\u201317.6; printed pp314\u2013321",
+      "wwdt_gate": {
+        "register": "APBEN1",
+        "bit": 4,
+        "key": null
+      },
+      "wwdt_reset": {
+        "register": "APBRST1",
+        "bit": 4,
+        "active_low": true,
+        "key": null
+      }
+    }
+  ],
+  "sources": [
+    {
+      "file": "CW32F002_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+      "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add"
+    },
+    {
+      "file": "CW32F003_UserManual_CN_V2.3.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+      "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738"
+    },
+    {
+      "file": "CW32F020_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+      "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed"
+    },
+    {
+      "file": "CW32L012_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340"
+    },
+    {
+      "file": "CW32L031_UserManual_CN_V1.6.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760"
+    },
+    {
+      "file": "CW32L052_UserManual_CN_V1.5.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41"
+    },
+    {
+      "file": "CW32L083_UserManual_CN_V2.0.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3"
+    },
+    {
+      "file": "CW32R031_UserManual_CN_V1.3.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+      "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb"
+    },
+    {
+      "file": "CW32W031_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+      "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9"
+    },
+    {
+      "file": "CW32x030_UserManual_CN_V2.5.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2"
+    },
+    {
+      "file": "cw32f002/Libraries/inc/cw32f002.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+      "sha256": "399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54"
+    },
+    {
+      "file": "cw32f002/Libraries/inc/cw32f002_wwdt.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+      "sha256": "10e8cac6342db8c091b79728eb56e61602d966cc73f0ba0b9ff138689df040f3"
+    },
+    {
+      "file": "cw32f002/Libraries/src/cw32f002_wwdt.c",
+      "archive_url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+      "sha256": "8a56d929e7e94e6fd766496e5da0f85227fbac8b7a409785ee15c43c68e2579e"
+    },
+    {
+      "file": "cw32f003/Libraries/inc/cw32f003.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+      "sha256": "1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f"
+    },
+    {
+      "file": "cw32f003/Libraries/inc/cw32f003_wwdt.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+      "sha256": "852e56233f0eccae8452edd46d9a6ee3e67b31f0073a577e08e08797de86b901"
+    },
+    {
+      "file": "cw32f003/Libraries/src/cw32f003_wwdt.c",
+      "archive_url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+      "sha256": "f406a6530c7535d3cef0ebd991bcba24ad0f90aff4426933a72f54aa3d36bf87"
+    },
+    {
+      "file": "cw32f020/Libraries/inc/cw32f020.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f"
+    },
+    {
+      "file": "cw32f020/Libraries/inc/cw32f020_wwdt.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "230d345066ed1e45804f84b47f97547517508c55102e923fb432cf227a3ee4d9"
+    },
+    {
+      "file": "cw32f020/Libraries/src/cw32f020_wwdt.c",
+      "archive_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "d5a2e7164b6329b8d411204d1c14363fb2e5c0fe87d71db0da9f55869818d5ea"
+    },
+    {
+      "file": "cw32f030/Libraries/inc/cw32f030.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+      "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862"
+    },
+    {
+      "file": "cw32f030/Libraries/inc/cw32f030_wwdt.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+      "sha256": "29d71f24542a736d74124f0f7280296670d5c27c6c25db8a4ab16a874b0dcce8"
+    },
+    {
+      "file": "cw32f030/Libraries/src/cw32f030_wwdt.c",
+      "archive_url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+      "sha256": "adae77537546194765004ddf94c64e8ed5c636192f09a8ed1c197abdab7e705d"
+    },
+    {
+      "file": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b"
+    },
+    {
+      "file": "cw32l011/Libraries/inc/cw32l011.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8"
+    },
+    {
+      "file": "cw32l012/Libraries/inc/cw32l012.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000"
+    },
+    {
+      "file": "cw32l012/Libraries/inc/cw32l012_wwdt.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sha256": "87c566a4e8e1f0001a1963ddcb68f32ef799d21e6b7aeddb8e44b46001ccfa77"
+    },
+    {
+      "file": "cw32l012/Libraries/src/cw32l012_wwdt.c",
+      "archive_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sha256": "cfc5ac7afbafbda0270597cd335e824780aaadfee47465f883b193c276fd333a"
+    },
+    {
+      "file": "cw32l031/Libraries/inc/cw32l031.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+      "sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27"
+    },
+    {
+      "file": "cw32l031/Libraries/inc/cw32l031_wwdt.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+      "sha256": "43844d62d050cd9c718a7befcf4e1a0743dce4b296f1bb1ee05850b02fb05c7c"
+    },
+    {
+      "file": "cw32l031/Libraries/src/cw32l031_wwdt.c",
+      "archive_url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+      "sha256": "ecd067d3f4ea8444cc457a1407fd8bcea7fb5f1beb2baa90a29eed7400061c11"
+    },
+    {
+      "file": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+      "sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1"
+    },
+    {
+      "file": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_wwdt.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+      "sha256": "1b23c7c123e555def7a7c4930e5d249ef2e65cfa933c247ad6821ef6c8d8ff47"
+    },
+    {
+      "file": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_wwdt.c",
+      "archive_url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+      "sha256": "15096c852cf7f7f01d63a32f2718cd8fc1a92f95c86272ba15b3e68df67a623b"
+    },
+    {
+      "file": "cw32l083/Libraries/inc/cw32l083.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+      "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5"
+    },
+    {
+      "file": "cw32l083/Libraries/inc/cw32l083_wwdt.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+      "sha256": "45e758628e3a9a9703c08d95aab02cd1e95067b5532cbb349beec673e635f5ce"
+    },
+    {
+      "file": "cw32l083/Libraries/src/cw32l083_wwdt.c",
+      "archive_url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+      "sha256": "8ff5e66f9afd94c034da56370be4bc2ce98f9c263359f3c74c77a1ee62196677"
+    },
+    {
+      "file": "cw32r031/Libraries/inc/cw32r031.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+      "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385"
+    },
+    {
+      "file": "cw32r031/Libraries/inc/cw32r031_wwdt.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+      "sha256": "f4fd26209ae1ee6db897e40fbfab5bb1a4b0a81c2bd91980ae619a52ed477b68"
+    },
+    {
+      "file": "cw32r031/Libraries/src/cw32r031_wwdt.c",
+      "archive_url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+      "sha256": "cafa0996ebc3a500b75a8ce7ea2e9679c22bf5a8b12fb77417247358890e2f84"
+    },
+    {
+      "file": "cw32w031/Libraries/inc/cw32w031.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+      "sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69"
+    },
+    {
+      "file": "cw32w031/Libraries/inc/cw32w031_wwdt.h",
+      "archive_url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+      "sha256": "de8222db50970ef90fa808df7353b35ccd6551bd8a8c511f8d8ffad48718d470"
+    },
+    {
+      "file": "cw32w031/Libraries/src/cw32w031_wwdt.c",
+      "archive_url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+      "sha256": "6c49f2bbc4b0efa3461e92b36a097a916e66498e02b1dc1dc02c2e34f2861052"
+    },
+    {
+      "file": "CW32F002_UserManual_CN_V1.4.txt",
+      "derived_from": "CW32F002_UserManual_CN_V1.4.pdf",
+      "sha256": "cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01"
+    },
+    {
+      "file": "CW32F003_UserManual_CN_V2.3.txt",
+      "derived_from": "CW32F003_UserManual_CN_V2.3.pdf",
+      "sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319"
+    },
+    {
+      "file": "CW32F020_UserManual_CN_V1.4.txt",
+      "derived_from": "CW32F020_UserManual_CN_V1.4.pdf",
+      "sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db"
+    },
+    {
+      "file": "CW32L012_UserManual_CN_V1.4.txt",
+      "derived_from": "CW32L012_UserManual_CN_V1.4.pdf",
+      "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505"
+    },
+    {
+      "file": "CW32L031_UserManual_CN_V1.6.txt",
+      "derived_from": "CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1"
+    },
+    {
+      "file": "CW32L052_UserManual_CN_V1.5.txt",
+      "derived_from": "CW32L052_UserManual_CN_V1.5.pdf",
+      "sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb"
+    },
+    {
+      "file": "CW32L083_UserManual_CN_V2.0.txt",
+      "derived_from": "CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564"
+    },
+    {
+      "file": "CW32R031_UserManual_CN_V1.3.txt",
+      "derived_from": "CW32R031_UserManual_CN_V1.3.pdf",
+      "sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b"
+    },
+    {
+      "file": "CW32W031_UserManual_CN_V1.4.txt",
+      "derived_from": "CW32W031_UserManual_CN_V1.4.pdf",
+      "sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac"
+    },
+    {
+      "file": "CW32x030_UserManual_CN_V2.5.txt",
+      "derived_from": "CW32x030_UserManual_CN_V2.5.pdf",
+      "sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe"
+    }
+  ],
+  "common": {
+    "register_offsets": {
+      "CR0": 0,
+      "CR1": 4,
+      "SR": 8
+    },
+    "field_masks": {
+      "CR0_WCNT": 127,
+      "CR0_EN": 128,
+      "CR1_WINR": 127,
+      "CR1_PRS": 896,
+      "CR1_IE": 1024,
+      "SR_POV": 1
+    },
+    "prs_divisors": [
+      4096,
+      8192,
+      16384,
+      32768,
+      65536,
+      131072,
+      262144,
+      524288
+    ],
+    "count_invariant": "0x40 <= window < reload <= 0x7f",
+    "live_refresh_bounds": "0x40 <= counter <= window",
+    "cr0_reset": 127,
+    "cr1_reset": 127,
+    "sr_reset": 0,
+    "en_irreversible": true,
+    "ie_irreversible": true,
+    "pov_clear": "write zero",
+    "interrupt_api": false
+  },
+  "source_date_utc": "2026-10-08"
+}

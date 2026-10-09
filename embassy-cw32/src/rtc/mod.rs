@@ -1,0 +1,505 @@
+//! Owned blocking whole-second calendars for all eleven RTC-bearing families.
+//!
+//! L010/L011/L012 use frozen HSIOSC and exact nominal prescalers. The eight
+//! classic families require a verified factory-trim LSI capability; their
+//! nominal rate is 32800/32768 calendar ticks per SI second, with the own RC
+//! tolerance retained in ClockBounds. This is not a precision wall clock.
+//! Attach and reads preserve retained calendar/event state. Drop never stops,
+//! resets or gates the RTC or its oscillator. Cold initialization is explicit.
+//! Weekly Alarm A and A/B event flags are supported; run-mode async waits are limited to L010/L011/L012.
+//! No compensation, subseconds, low-power or battery guarantee.
+//! Sources and unsupported boundaries: docs/rtc-remaining-evidence.json.
+mod alarm;
+#[cfg(rtc_alarm_direct_access)]
+mod alarm_interrupt;
+mod datetime;
+use crate::{
+    Peri, pac,
+    peripherals::RTC,
+    rcc::{CalendarClock, ClockBounds},
+};
+pub use alarm::{Alarm, AlarmAConfig, AlarmDays, AlarmStatus};
+#[cfg(rtc_alarm_direct_access)]
+pub use alarm_interrupt::AlarmInterruptHandler;
+pub use datetime::{DateTime, DayOfWeek, Error as DateTimeError};
+use sealed::Instance;
+
+pub(crate) mod sealed {
+    pub trait Instance: crate::rcc::RccPeripheral {
+        const SOURCE: u8;
+        const SOURCE_NOMINAL_HZ: u32;
+        const SOURCE_MINIMUM_HZ: u32;
+        const SOURCE_MAXIMUM_HZ: u32;
+        const TEMPERATURE_C: (i16, i16);
+        const SUPPLY_MV: (u16, u16);
+        #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+        const FACTORY_TRIM_ADDRESS: usize;
+        const CALENDAR_DIVISOR: u32;
+        #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
+        const PRESCALER_FIRST: u16;
+        #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
+        const PRESCALER_SECOND: u32;
+    }
+}
+/// A failed deliberate write can be partial; no rollback is promised.
+#[non_exhaustive]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub enum RtcError {
+    InvalidDateTime(DateTimeError),
+    InvalidTimeout,
+    /// An alarm hour, minute or second is outside its binary range.
+    InvalidAlarm,
+    /// Disable the selected comparator before replacing its match.
+    AlarmAlreadyEnabled,
+    /// Enable the selected comparator before awaiting a match.
+    AlarmDisabled,
+    /// A retained peripheral interrupt is already enabled; it is left untouched.
+    InterruptInUse,
+    ClockGateTimeout,
+    ClockNotReady,
+    IncompatibleClock,
+    /// L010 RTCLPM prevents synchronized writes. It is never changed here.
+    LowPowerSynchronization,
+    NotRunning,
+    AlreadyRunning,
+    AlreadyConfigured,
+    /// Another ACCESS transaction was already active; it is left untouched.
+    AccessInUse,
+    SynchronizationTimeout,
+    ReadFailure,
+    WriteFailure,
+}
+#[non_exhaustive]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct RtcConfig {
+    /// Register polls per synchronization step, not a time duration.
+    pub timeout: u32,
+    /// Complete snapshot attempts; each masks ordinary interrupts briefly.
+    pub read_retries: u32,
+}
+impl Default for RtcConfig {
+    fn default() -> Self {
+        Self {
+            timeout: 100_000,
+            read_retries: 8,
+        }
+    }
+}
+impl RtcConfig {
+    fn validate(self) -> Result<Self, RtcError> {
+        if self.timeout == 0 || self.read_retries == 0 {
+            Err(RtcError::InvalidTimeout)
+        } else {
+            Ok(self)
+        }
+    }
+}
+/// Unique RTC plus a retained source capability; no cloneable provider.
+pub struct Rtc<'d> {
+    _rtc: Peri<'d, RTC>,
+    clock: CalendarClock<'d>,
+    config: RtcConfig,
+}
+impl<'d> Rtc<'d> {
+    /// Enable only the APB configuration gate, then validate the retained source,
+    /// format, prescalers and calendar. No reset, unlock, stop, trim, compensation,
+    /// event or global reset-flag write is performed. Both hour formats work.
+    pub fn attach_preserving_state(
+        rtc: Peri<'d, RTC>,
+        clock: CalendarClock<'d>,
+        config: RtcConfig,
+    ) -> Result<Self, RtcError> {
+        let config = config.validate()?;
+        enable_gate(config)?;
+        check_clock()?;
+        read_calendar(config)?;
+        Ok(Self {
+            _rtc: rtc,
+            clock,
+            config,
+        })
+    }
+    /// Explicitly initialize a stopped, DATE=0, inactive calendar only.
+    ///
+    /// Existing compensation/event/interrupt configuration causes an error.
+    /// Inactive alarm matches and AWT reload are preserved. Source and format
+    /// are configured without peripheral reset or clearing flags. Failure can
+    /// leave partial configuration; use borrowed tokens if retry is required.
+    /// Classic LSI must already carry factory trim before obtaining its clock
+    /// capability; this constructor does not calibrate shared oscillators.
+    pub fn initialize_if_unset(
+        rtc: Peri<'d, RTC>,
+        clock: CalendarClock<'d>,
+        config: RtcConfig,
+        datetime: DateTime,
+    ) -> Result<Self, RtcError> {
+        let config = config.validate()?;
+        enable_gate(config)?;
+        if !CalendarClock::is_ready() {
+            return Err(RtcError::ClockNotReady);
+        }
+        check_write_mode()?;
+        if pac::RTC.cr0().read().start() {
+            return Err(RtcError::AlreadyRunning);
+        }
+        let mut controls = pac::RTC.cr0().read();
+        controls.set_h24(false);
+        if pac::RTC.date().read().0 != 0
+            || controls.0 != 0
+            || pac::RTC.cr2().read().0 != 0
+            || compensation() != 0
+            || pac::RTC.ier().read().0 != 0
+        {
+            return Err(RtcError::AlreadyConfigured);
+        }
+        check_access_free()?;
+        wait_load(config)?;
+        let guard = Unlocked::new();
+        // Fresh typed write excludes WINDOW/WAIT status bits.
+        pac::RTC.cr1().write(|w| w.set_source(RTC::SOURCE.into()));
+        #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
+        pac::RTC.psc().write(|w| {
+            w.set_psc1((RTC::PRESCALER_FIRST - 1) as u8);
+            w.set_psc2(RTC::PRESCALER_SECOND - 1);
+        });
+        pac::RTC.cr0().write(|w| w.set_h24(true));
+        check_clock()?;
+        if !pac::RTC.cr0().read().h24() {
+            return Err(RtcError::WriteFailure);
+        }
+        write_stopped(config, datetime, true)?;
+        pac::RTC.cr0().modify(|w| w.set_start(true));
+        poll(
+            config.timeout,
+            || pac::RTC.cr0().read().start(),
+            RtcError::WriteFailure,
+        )?;
+        drop(guard);
+        Ok(Self {
+            _rtc: rtc,
+            clock,
+            config,
+        })
+    }
+    /// Bounded repeated complete pairs, using the own-manual fast-read exception.
+    /// No full-calendar hardware latch is documented; rollover needs board QA.
+    /// Invalid BCD, impossible Gregorian dates and weekday mismatch are errors.
+    pub fn now(&self) -> Result<DateTime, RtcError> {
+        check_clock()?;
+        read_calendar(self.config)
+    }
+    /// Source-qualified envelope before the calendar divider.
+    pub const fn source_clock_bounds(&self) -> ClockBounds {
+        self.clock.bounds()
+    }
+    /// Exact envelope of calendar second transitions. Whole-Hz getters round;
+    /// duration methods retain the exact 32800/32768 classic LSI fraction.
+    pub const fn calendar_tick_bounds(&self) -> ClockBounds {
+        self.clock.bounds().divided_by(RTC::CALENDAR_DIVISOR)
+    }
+    /// Deliberate time jump preserving current 12/24-hour format and events.
+    ///
+    /// Classic and L010 use their own ACCESS transaction without stopping time.
+    /// DATE/TIME are written and read back in a fixed-size critical section.
+    /// L011/L012 explicitly stop START, drain WAIT and verify both writes before
+    /// restarting; an error can leave them stopped. TIME clears subseconds.
+    /// ACCESS and write protection are restored on every exit. No failure is
+    /// rolled back, and event timing can change. Debugger/NMI stalls are outside
+    /// the documented one-second transaction bound; do not single-step a write.
+    pub fn set_datetime(&mut self, datetime: DateTime) -> Result<(), RtcError> {
+        check_clock()?;
+        check_write_mode()?;
+        check_access_free()?;
+        wait_load(self.config)?;
+        #[cfg(any(rtc_cw32l011_v1, rtc_cw32l012_v1))]
+        {
+            let _guard = Unlocked::new();
+            let old = pac::RTC.cr0().read();
+            pac::RTC.cr0().modify(|w| w.set_start(false));
+            poll(
+                self.config.timeout,
+                || !pac::RTC.cr0().read().start(),
+                RtcError::WriteFailure,
+            )?;
+            wait_load(self.config)?;
+            write_stopped(self.config, datetime, old.h24())?;
+            pac::RTC.cr0().modify(|w| w.set_start(true));
+            poll(
+                self.config.timeout,
+                || pac::RTC.cr0().read().start(),
+                RtcError::WriteFailure,
+            )
+        }
+        #[cfg(not(any(rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+        {
+            if !pac::RTC.cr0().read().start() {
+                return Err(RtcError::NotRunning);
+            }
+            #[cfg(not(rtc_cw32l010_v1))]
+            wait_classic_window(self.config)?;
+            #[cfg(rtc_cw32l010_v1)]
+            critical_section::with(|_| {
+                let _guard = Unlocked::new();
+                let _access = Access::new();
+                // Limit ACCESS-held work independently of a large caller budget.
+                // No normal interrupt or user callback can extend this window.
+                // A slow/missing domain can be retried after the guard releases.
+                poll(
+                    self.config.timeout.min(32),
+                    || pac::RTC.cr1().read().window(),
+                    RtcError::SynchronizationTimeout,
+                )?;
+                write_pair(datetime, pac::RTC.cr0().read().h24())
+            })?;
+            #[cfg(not(rtc_cw32l010_v1))]
+            critical_section::with(|_| {
+                // The pre-wait had interrupts enabled. Recheck before unlocking.
+                if !pac::RTC.cr1().read().window() {
+                    return Err(RtcError::SynchronizationTimeout);
+                }
+                let _guard = Unlocked::new();
+                let _access = Access::new();
+                write_pair(datetime, pac::RTC.cr0().read().h24())
+            })?;
+            wait_load(self.config)
+        }
+    }
+}
+fn poll(budget: u32, mut ready: impl FnMut() -> bool, error: RtcError) -> Result<(), RtcError> {
+    for _ in 0..budget {
+        if ready() {
+            return Ok(());
+        }
+        core::hint::spin_loop();
+    }
+    Err(error)
+}
+#[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+fn wait_classic_window(config: RtcConfig) -> Result<(), RtcError> {
+    let cycles = crate::rcc::clocks().hclk_bounds().delay_cycles_us(10_000) as u32;
+    for _ in 0..config.timeout.min(1000) {
+        if pac::RTC.cr1().read().window() {
+            return Ok(());
+        }
+        cortex_m::asm::delay(cycles);
+    }
+    Err(RtcError::SynchronizationTimeout)
+}
+fn enable_gate(config: RtcConfig) -> Result<(), RtcError> {
+    use crate::rcc::{Readback, SealedRccPeripheral};
+    let info = RTC::RCC_INFO;
+    critical_section::with(|cs| {
+        info.enable_with_cs_readback(cs, Readback::None)
+            .expect("unpolled RTC gate cannot fail")
+    });
+    poll(
+        config.timeout,
+        || info.is_enabled(),
+        RtcError::ClockGateTimeout,
+    )
+}
+fn check_write_mode() -> Result<(), RtcError> {
+    #[cfg(rtc_cw32l010_v1)]
+    if pac::SYSCTRL.cr2().read().rtclpm() {
+        return Err(RtcError::LowPowerSynchronization);
+    }
+    Ok(())
+}
+fn check_access_free() -> Result<(), RtcError> {
+    #[cfg(not(any(rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+    if pac::RTC.cr1().read().access() {
+        return Err(RtcError::AccessInUse);
+    }
+    Ok(())
+}
+fn load_ready() -> bool {
+    #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
+    {
+        !pac::RTC.cr1().read().wait()
+    }
+    #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+    {
+        true
+    }
+}
+fn wait_load(config: RtcConfig) -> Result<(), RtcError> {
+    poll(config.timeout, load_ready, RtcError::SynchronizationTimeout)
+}
+fn compensation() -> u32 {
+    #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
+    {
+        pac::RTC.compcfr1().read().0
+    }
+    #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+    {
+        pac::RTC.compen().read().0
+    }
+}
+fn check_clock() -> Result<(), RtcError> {
+    if !CalendarClock::is_ready() {
+        return Err(RtcError::ClockNotReady);
+    }
+    if u8::from(pac::RTC.cr1().read().source()) != RTC::SOURCE {
+        return Err(RtcError::IncompatibleClock);
+    }
+    #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
+    {
+        let p = pac::RTC.psc().read();
+        let first = u32::from(p.psc1()) + 1;
+        let second = p.psc2() + 1;
+        if ClockBounds::rtc_source()
+            .divided_by(first)
+            .maximum_exceeds(1_000_000)
+            || u64::from(first) * u64::from(second) * 2 != u64::from(RTC::SOURCE_NOMINAL_HZ)
+        {
+            return Err(RtcError::IncompatibleClock);
+        }
+        if pac::RTC.compcfr1().read().en() {
+            return Err(RtcError::IncompatibleClock);
+        }
+    }
+    #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+    if pac::RTC.compen().read().en() {
+        return Err(RtcError::IncompatibleClock);
+    }
+    check_access_free()
+}
+fn read_calendar(config: RtcConfig) -> Result<DateTime, RtcError> {
+    if !pac::RTC.cr0().read().start() {
+        return Err(RtcError::NotRunning);
+    }
+    wait_load(config)?;
+    for _ in 0..config.read_retries {
+        let snapshot = critical_section::with(|_| {
+            let control = pac::RTC.cr0().read();
+            let t1 = pac::RTC.time().read();
+            let d1 = pac::RTC.date().read();
+            let t2 = pac::RTC.time().read();
+            let d2 = pac::RTC.date().read();
+            let t3 = pac::RTC.time().read();
+            (load_ready() && control.start() && t1 == t2 && t2 == t3 && d1 == d2).then_some((
+                d1,
+                t1,
+                control.h24(),
+            ))
+        });
+        if let Some((d, t, h24)) = snapshot {
+            return decode(d, t, h24);
+        }
+    }
+    Err(RtcError::ReadFailure)
+}
+fn write_stopped(config: RtcConfig, datetime: DateTime, h24: bool) -> Result<(), RtcError> {
+    let (date, time) = encode(datetime, h24);
+    pac::RTC.date().write_value(date);
+    wait_load(config)?;
+    pac::RTC.time().write_value(time);
+    wait_load(config)?;
+    poll(
+        config.timeout,
+        || pac::RTC.date().read() == date && pac::RTC.time().read() == time,
+        RtcError::WriteFailure,
+    )
+}
+#[cfg(not(any(rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+fn write_pair(datetime: DateTime, h24: bool) -> Result<(), RtcError> {
+    let (date, time) = encode(datetime, h24);
+    pac::RTC.date().write_value(date);
+    pac::RTC.time().write_value(time);
+    if pac::RTC.date().read() != date || pac::RTC.time().read() != time {
+        Err(RtcError::WriteFailure)
+    } else {
+        Ok(())
+    }
+}
+struct Unlocked;
+impl Unlocked {
+    fn new() -> Self {
+        pac::RTC.key().write(|w| w.set_key(0xca));
+        pac::RTC.key().write(|w| w.set_key(0x53));
+        Self
+    }
+}
+impl Drop for Unlocked {
+    fn drop(&mut self) {
+        pac::RTC.key().write(|w| w.set_key(0xca));
+        pac::RTC.key().write(|w| w.set_key(0));
+    }
+}
+#[cfg(not(any(rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+struct Access;
+#[cfg(not(any(rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+impl Access {
+    fn new() -> Self {
+        pac::RTC.cr1().write(|w| {
+            w.set_source(RTC::SOURCE.into());
+            w.set_access(true);
+        });
+        Self
+    }
+}
+#[cfg(not(any(rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+impl Drop for Access {
+    fn drop(&mut self) {
+        pac::RTC.cr1().write(|w| w.set_source(RTC::SOURCE.into()));
+    }
+}
+fn unbcd(value: u8) -> Result<u8, RtcError> {
+    if value & 15 > 9 || value >> 4 > 9 {
+        Err(RtcError::InvalidDateTime(DateTimeError::InvalidBcd))
+    } else {
+        Ok((value >> 4) * 10 + (value & 15))
+    }
+}
+fn bcd(value: u8) -> u8 {
+    value / 10 * 16 + value % 10
+}
+fn decode(
+    date: pac::rtc::regs::Date,
+    time: pac::rtc::regs::Time,
+    h24: bool,
+) -> Result<DateTime, RtcError> {
+    let raw = time.hour();
+    let hour = if h24 {
+        unbcd(raw)?
+    } else {
+        let h = unbcd(raw & 0x1f)?;
+        if !(1..=12).contains(&h) {
+            return Err(RtcError::InvalidDateTime(DateTimeError::InvalidHour));
+        }
+        h % 12 + if raw & 0x20 != 0 { 12 } else { 0 }
+    };
+    DateTime::from(
+        2000 + u16::from(unbcd(date.year())?),
+        unbcd(date.month())?,
+        unbcd(date.day())?,
+        DayOfWeek::from_hardware(date.week()).map_err(RtcError::InvalidDateTime)?,
+        hour,
+        unbcd(time.minute())?,
+        unbcd(time.second())?,
+        0,
+    )
+    .map_err(RtcError::InvalidDateTime)
+}
+fn encode(dt: DateTime, h24: bool) -> (pac::rtc::regs::Date, pac::rtc::regs::Time) {
+    let mut date = pac::rtc::regs::Date::default();
+    let mut time = pac::rtc::regs::Time::default();
+    date.set_day(bcd(dt.day()));
+    date.set_month(bcd(dt.month()));
+    date.set_year(bcd((dt.year() - 2000) as u8));
+    date.set_week(dt.day_of_week().hardware());
+    let hour = if h24 {
+        bcd(dt.hour())
+    } else {
+        bcd(if dt.hour() % 12 == 0 {
+            12
+        } else {
+            dt.hour() % 12
+        }) | if dt.hour() >= 12 { 0x20 } else { 0 }
+    };
+    time.set_hour(hour);
+    time.set_minute(bcd(dt.minute()));
+    time.set_second(bcd(dt.second()));
+    (date, time)
+}

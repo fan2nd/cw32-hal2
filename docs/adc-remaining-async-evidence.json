@@ -1,0 +1,1831 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-09",
+  "scope": "Finite software-triggered async single reads and ordered scans on CW32L012 ADC1 and all ten classic lines. CW32L012 ADC2 remains blocking.",
+  "source_policy": "Resolve source_ref through sources/evidence-sources.json. Own manuals establish conversion and cancellation semantics; already-pinned own CMSIS headers corroborate vectors. No additional SDK example or startup member is a qualification input.",
+  "verification_limits": [
+    "Source-level contract only; no silicon or electrical validation.",
+    "Target build results must be reported separately.",
+    "No maximum analog abort latency, independent BUSY/drain acknowledgement, instantaneous sampling cutoff, or lossless streaming guarantee."
+  ],
+  "l012": {
+    "family": "CW32L012",
+    "manual": {
+      "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+      "printed_revision": "1.4"
+    },
+    "cmsis": {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+      "symbols": {
+        "ADC1_IRQn": {
+          "line": 77,
+          "value": 12
+        },
+        "ADC2_DAC_IRQn": {
+          "line": 95,
+          "value": 30
+        }
+      }
+    },
+    "facts": {
+      "interrupts": {
+        "manual_section": "5.4 Table5-1",
+        "printed_pages": [
+          70,
+          71
+        ],
+        "pdf_pages_1_based": [
+          96,
+          97
+        ],
+        "instances": [
+          {
+            "name": "ADC1",
+            "irq_name": "ADC1",
+            "irq_number": 12,
+            "shared_with": []
+          },
+          {
+            "name": "ADC2",
+            "irq_name": "ADC2_DAC",
+            "irq_number": 30,
+            "shared_with": [
+              "DAC"
+            ]
+          }
+        ],
+        "sdk_header_lines": [
+          77,
+          95
+        ],
+        "generated_matches_manual_and_header": true
+      },
+      "finite_sequence": {
+        "manual_sections": [
+          "25.4.1",
+          "25.5.2"
+        ],
+        "printed_pages": [
+          575,
+          576,
+          581,
+          582
+        ],
+        "pdf_pages_1_based": [
+          601,
+          602,
+          607,
+          608
+        ],
+        "mode": "CONT=0,SLAVE=0,ENS=length-1; software START",
+        "slots": [
+          1,
+          8
+        ],
+        "completion": [
+          "ISR.EOS",
+          "ISR.EOC",
+          "START.START=false"
+        ],
+        "isr_retains_completion": true,
+        "result_read_acknowledges": false
+      },
+      "stop": {
+        "manual_sections": [
+          "25.5.1",
+          "25.12.2"
+        ],
+        "printed_pages": [
+          579,
+          590
+        ],
+        "pdf_pages_1_based": [
+          605,
+          616
+        ],
+        "start_zero_stops": true,
+        "start_zero_resets_sequence_cursor": true,
+        "independent_busy_or_drain_ack": false,
+        "specified_maximum_abort_latency": false
+      },
+      "interrupt_access": {
+        "manual_sections": [
+          "25.10 Table25-6",
+          "25.12.8",
+          "25.12.9",
+          "25.12.10"
+        ],
+        "printed_pages": [
+          587,
+          596,
+          597
+        ],
+        "pdf_pages_1_based": [
+          613,
+          622,
+          623
+        ],
+        "ier": "RW active-high source enables",
+        "isr": "Read",
+        "icr": "R1W0",
+        "icr_reset_value": 15,
+        "icr_write_noop": 31,
+        "owned_clear_value_for_eoc_eos": 28,
+        "preserved_fields": [
+          "AWDL",
+          "AWDH",
+          "reserved bit2"
+        ],
+        "not_present": [
+          "READY",
+          "OVW",
+          "BUSY"
+        ],
+        "dma_request_enable_fields": [
+          "DMAEOC",
+          "DMAEOS"
+        ]
+      },
+      "shared_resources": {
+        "manual_sections": [
+          "25.12.1",
+          "25.12.19"
+        ],
+        "printed_pages": [
+          589,
+          599
+        ],
+        "pdf_pages_1_based": [
+          615,
+          625
+        ],
+        "common_borrows": "BGR token owned by Common, shared by independently owned ADC1 and ADC2",
+        "policy": "No reset or clock release; monotonic BGR and TS; preserve sibling state; reject sibling SLAVE before converter mutation"
+      },
+      "dac_neighbor": {
+        "manual_sections": [
+          "26.8 Table26-2"
+        ],
+        "printed_pages": [
+          607
+        ],
+        "pdf_pages_1_based": [
+          633
+        ],
+        "sources": [
+          "DOR1.DMAUDR1 gated by CR0.DMAUDRIE1",
+          "DOR2.DMAUDR2 gated by CR0.DMAUDRIE2"
+        ],
+        "current_driver": "direct-load whole-DAC owner; constructor zeros IRQ/request enables; no IRQ handler/state/quiet-peer lease",
+        "new_shared_vector_owner_required_for_current_fault_contract": true
+      }
+    },
+    "implemented_instances": [
+      "ADC1"
+    ],
+    "blocking_only_instances": {
+      "ADC2": "Its IRQ30 is shared with DAC. The current DAC API supplies neither a checked quiet-peer lease nor a shared IRQ owner with terminal-fault containment. The finite conversion evidence is complete; shared-vector ownership is a separate increment."
+    },
+    "existing_electrical_basis": [
+      "docs/adc-l012-scans.md",
+      "docs/adc-clock-source-bounds.json"
+    ]
+  },
+  "classic": {
+    "common_contract": {
+      "vector": {
+        "name": "ADC",
+        "irq_number": 12,
+        "exception_number": 28,
+        "vector_offset": 112,
+        "dedicated_to_adc": true
+      },
+      "IER": {
+        "EOC": 0,
+        "EOS": 1,
+        "EOA": 2,
+        "WDTL": 3,
+        "WDTH": 4,
+        "WDTR": 5,
+        "OVW": 6
+      },
+      "ISR": {
+        "access": "RO",
+        "EOC": 0,
+        "EOS": 1,
+        "EOA": 2,
+        "WDTL": 3,
+        "WDTH": 4,
+        "WDTR": 5,
+        "OVW": 6,
+        "READY": 7
+      },
+      "ICR": {
+        "access": "R1W0",
+        "reset": 127,
+        "valid_mask": 127,
+        "clear_zero_preserve_one": true,
+        "READY_field": false,
+        "ack_owned_eoc_eos_ovw_preserve_eoa_watchdog": 60
+      },
+      "finite_modes": {
+        "single": 0,
+        "scan": 4,
+        "START_hardware_clears_on_completion": true,
+        "software_START_zero_stops": true,
+        "explicit_software_stop_sequence_cursor_reset": false,
+        "independent_BUSY_or_abort_drain_ack": false,
+        "maximum_abort_latency_documented": false
+      },
+      "source_contract_caveat": "Classic START zero is documented stop, not the L010/L011 explicit cursor-reset contract. MODE4 independently says each START converts the entire selected sequence exactly once. Fresh owned mode/configuration after stop is a software reuse argument, not proof of instantaneous analog cutoff or result-drain timing."
+    },
+    "implementation": {
+      "single_irq": "MODE0 EOC plus OVW error",
+      "scan_irq": "MODE4 EOS plus OVW error; do not enable per-slot EOC",
+      "terminal_observation": "Single: EOC and START=0. Scan: EOS and START=0. OVW wins over completion. Use finite synchronous finalization once a completion event is retained.",
+      "acknowledgment": "Typed ICR clears EOC/EOS/OVW and preserves EOA/WDTL/WDTH/WDTR; READY is status only.",
+      "reuse_inference": "START=0 is documented stop. With EN disabled/reinitialized, all used mode/sequence fields freshly programmed and owned flags cleared, MODE4 documents a full finite sequence from the next start. Explicit sequence-cursor reset and analog drain timing are not claimed.",
+      "inherited_state_rejection": "Before async ownership mutation, reject active external triggers, watchdog monitor/IRQ, EOA IRQ, accumulation and implemented DMA request enables; preserve inactive watchdog selection/thresholds and unrelated status.",
+      "shared_analog": "Preserve live BGREN and retain its gate on F030/A030/F020/F003. F002 reserves BGREN/TSEN. L031/R031/W031/L052/L083 reserve BGREN and retain the existing exclusive ADC reference/source contract."
+    },
+    "families": [
+      {
+        "family": "CW32F030",
+        "register_version": "v1",
+        "slots": 4,
+        "manual": {
+          "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "page_refs": {
+            "scan_completion": {
+              "section": "22.5.5",
+              "printed_pages": [
+                446
+              ],
+              "pdf_pages_1_based": [
+                447
+              ]
+            },
+            "software_scan_flow": {
+              "section": "22.5.5",
+              "printed_pages": [
+                447
+              ],
+              "pdf_pages_1_based": [
+                448
+              ]
+            },
+            "cr0_common_controls": {
+              "section": "22.13.1",
+              "printed_pages": [
+                460,
+                461
+              ],
+              "pdf_pages_1_based": [
+                461,
+                462
+              ]
+            },
+            "cr1_alignment_discard_dma": {
+              "section": "22.13.2",
+              "printed_pages": [
+                462
+              ],
+              "pdf_pages_1_based": [
+                463
+              ]
+            },
+            "sequence_registers": {
+              "section": "22.13.4",
+              "printed_pages": [
+                463
+              ],
+              "pdf_pages_1_based": [
+                464
+              ]
+            },
+            "start_and_interrupt_enable": {
+              "section": "22.13 ADC_START/ADC_IER",
+              "printed_pages": [
+                466
+              ],
+              "pdf_pages_1_based": [
+                467
+              ]
+            },
+            "status_flags": {
+              "section": "22.13 ADC_ISR",
+              "printed_pages": [
+                467
+              ],
+              "pdf_pages_1_based": [
+                468
+              ]
+            },
+            "flag_clear": {
+              "section": "22.13 ADC_ICR",
+              "printed_pages": [
+                468
+              ],
+              "pdf_pages_1_based": [
+                469
+              ]
+            },
+            "result_registers": {
+              "section": "22.13 ADC_RESULT0-ADC_RESULT3",
+              "printed_pages": [
+                468,
+                469
+              ],
+              "pdf_pages_1_based": [
+                469,
+                470
+              ]
+            },
+            "ready_startup": {
+              "section": "22.4.1",
+              "printed_pages": [
+                435
+              ],
+              "pdf_pages_1_based": [
+                436
+              ]
+            },
+            "dedicated_irq_vector": {
+              "section": "5.4, Table 5-1",
+              "printed_pages": [
+                95
+              ],
+              "pdf_pages_1_based": [
+                96
+              ]
+            },
+            "single_completion": {
+              "section": "22.5.1",
+              "printed_pages": [
+                439
+              ],
+              "pdf_pages_1_based": [
+                440
+              ]
+            },
+            "ADC_TRIGGER": {
+              "section": "22.13.7",
+              "printed_pages": [
+                464,
+                465
+              ],
+              "pdf_pages_1_based": [
+                465,
+                466
+              ]
+            },
+            "comparator_BGR_dependency": {
+              "section": "23.3.1",
+              "printed_pages": [
+                472
+              ],
+              "pdf_pages_1_based": [
+                473
+              ]
+            }
+          }
+        },
+        "cmsis": {
+          "source_ref": "member:cw32f030/Libraries/inc/cw32f030.h",
+          "symbol_lines_1_based": {
+            "ADC_IRQn": [
+              79
+            ]
+          },
+          "ADC_IRQn": 12,
+          "dedicated": true
+        }
+      },
+      {
+        "family": "CW32A030",
+        "register_version": "v1",
+        "slots": 4,
+        "manual": {
+          "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "page_refs": {
+            "scan_completion": {
+              "section": "22.5.5",
+              "printed_pages": [
+                446
+              ],
+              "pdf_pages_1_based": [
+                447
+              ]
+            },
+            "software_scan_flow": {
+              "section": "22.5.5",
+              "printed_pages": [
+                447
+              ],
+              "pdf_pages_1_based": [
+                448
+              ]
+            },
+            "cr0_common_controls": {
+              "section": "22.13.1",
+              "printed_pages": [
+                460,
+                461
+              ],
+              "pdf_pages_1_based": [
+                461,
+                462
+              ]
+            },
+            "cr1_alignment_discard_dma": {
+              "section": "22.13.2",
+              "printed_pages": [
+                462
+              ],
+              "pdf_pages_1_based": [
+                463
+              ]
+            },
+            "sequence_registers": {
+              "section": "22.13.4",
+              "printed_pages": [
+                463
+              ],
+              "pdf_pages_1_based": [
+                464
+              ]
+            },
+            "start_and_interrupt_enable": {
+              "section": "22.13 ADC_START/ADC_IER",
+              "printed_pages": [
+                466
+              ],
+              "pdf_pages_1_based": [
+                467
+              ]
+            },
+            "status_flags": {
+              "section": "22.13 ADC_ISR",
+              "printed_pages": [
+                467
+              ],
+              "pdf_pages_1_based": [
+                468
+              ]
+            },
+            "flag_clear": {
+              "section": "22.13 ADC_ICR",
+              "printed_pages": [
+                468
+              ],
+              "pdf_pages_1_based": [
+                469
+              ]
+            },
+            "result_registers": {
+              "section": "22.13 ADC_RESULT0-ADC_RESULT3",
+              "printed_pages": [
+                468,
+                469
+              ],
+              "pdf_pages_1_based": [
+                469,
+                470
+              ]
+            },
+            "ready_startup": {
+              "section": "22.4.1",
+              "printed_pages": [
+                435
+              ],
+              "pdf_pages_1_based": [
+                436
+              ]
+            },
+            "dedicated_irq_vector": {
+              "section": "5.4, Table 5-1",
+              "printed_pages": [
+                95
+              ],
+              "pdf_pages_1_based": [
+                96
+              ]
+            },
+            "single_completion": {
+              "section": "22.5.1",
+              "printed_pages": [
+                439
+              ],
+              "pdf_pages_1_based": [
+                440
+              ]
+            },
+            "ADC_TRIGGER": {
+              "section": "22.13.7",
+              "printed_pages": [
+                464,
+                465
+              ],
+              "pdf_pages_1_based": [
+                465,
+                466
+              ]
+            },
+            "comparator_BGR_dependency": {
+              "section": "23.3.1",
+              "printed_pages": [
+                472
+              ],
+              "pdf_pages_1_based": [
+                473
+              ]
+            }
+          }
+        },
+        "cmsis": {
+          "source_ref": "member:cw32f030/Libraries/inc/cw32f030.h",
+          "symbol_lines_1_based": {
+            "ADC_IRQn": [
+              79
+            ]
+          },
+          "ADC_IRQn": 12,
+          "dedicated": true
+        },
+        "source_relationship": "The shared CW32x030 manual explicitly covers A030/F030; A030 retains the qualified F030 register-source alias. No separate A030 SDK is claimed."
+      },
+      {
+        "family": "CW32F020",
+        "register_version": "cw32f020_v1",
+        "slots": 4,
+        "manual": {
+          "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+          "page_refs": {
+            "scan_completion": {
+              "section": "21.5.5",
+              "printed_pages": [
+                384
+              ],
+              "pdf_pages_1_based": [
+                385
+              ]
+            },
+            "software_scan_flow": {
+              "section": "21.5.5",
+              "printed_pages": [
+                385
+              ],
+              "pdf_pages_1_based": [
+                386
+              ]
+            },
+            "cr0_common_controls": {
+              "section": "21.13.1",
+              "printed_pages": [
+                398,
+                399
+              ],
+              "pdf_pages_1_based": [
+                399,
+                400
+              ]
+            },
+            "cr1_alignment_discard_dma": {
+              "section": "21.13.2",
+              "printed_pages": [
+                400
+              ],
+              "pdf_pages_1_based": [
+                401
+              ]
+            },
+            "sequence_registers": {
+              "section": "21.13.4",
+              "printed_pages": [
+                401
+              ],
+              "pdf_pages_1_based": [
+                402
+              ]
+            },
+            "start_and_interrupt_enable": {
+              "section": "21.13 ADC_START/ADC_IER",
+              "printed_pages": [
+                404
+              ],
+              "pdf_pages_1_based": [
+                405
+              ]
+            },
+            "status_flags": {
+              "section": "21.13 ADC_ISR",
+              "printed_pages": [
+                405
+              ],
+              "pdf_pages_1_based": [
+                406
+              ]
+            },
+            "flag_clear": {
+              "section": "21.13 ADC_ICR",
+              "printed_pages": [
+                406
+              ],
+              "pdf_pages_1_based": [
+                407
+              ]
+            },
+            "result_registers": {
+              "section": "21.13 ADC_RESULT0-ADC_RESULT3",
+              "printed_pages": [
+                406,
+                407
+              ],
+              "pdf_pages_1_based": [
+                407,
+                408
+              ]
+            },
+            "ready_startup": {
+              "section": "21.4.1",
+              "printed_pages": [
+                373
+              ],
+              "pdf_pages_1_based": [
+                374
+              ]
+            },
+            "dedicated_irq_vector": {
+              "section": "5.4, Table 5-1",
+              "printed_pages": [
+                93
+              ],
+              "pdf_pages_1_based": [
+                94
+              ]
+            },
+            "single_completion": {
+              "section": "21.5.1",
+              "printed_pages": [
+                377
+              ],
+              "pdf_pages_1_based": [
+                378
+              ]
+            },
+            "ADC_TRIGGER": {
+              "section": "21.13.7",
+              "printed_pages": [
+                402,
+                403
+              ],
+              "pdf_pages_1_based": [
+                403,
+                404
+              ]
+            },
+            "comparator_BGR_dependency": {
+              "section": "22.3.1",
+              "printed_pages": [
+                410
+              ],
+              "pdf_pages_1_based": [
+                411
+              ]
+            }
+          }
+        },
+        "cmsis": {
+          "source_ref": "member:cw32f020/Libraries/inc/cw32f020.h",
+          "symbol_lines_1_based": {
+            "ADC_IRQn": [
+              78
+            ]
+          },
+          "ADC_IRQn": 12,
+          "dedicated": true
+        }
+      },
+      {
+        "family": "CW32F002",
+        "register_version": "cw32f002_v1",
+        "slots": 4,
+        "manual": {
+          "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+          "page_refs": {
+            "scan_completion": {
+              "section": "19.5.5",
+              "printed_pages": [
+                313
+              ],
+              "pdf_pages_1_based": [
+                314
+              ]
+            },
+            "software_scan_flow": {
+              "section": "19.5.5",
+              "printed_pages": [
+                314
+              ],
+              "pdf_pages_1_based": [
+                315
+              ]
+            },
+            "cr0_common_controls": {
+              "section": "19.12.1",
+              "printed_pages": [
+                326
+              ],
+              "pdf_pages_1_based": [
+                327
+              ]
+            },
+            "cr1_alignment_discard_dma": {
+              "section": "19.12.2",
+              "printed_pages": [
+                327
+              ],
+              "pdf_pages_1_based": [
+                328
+              ]
+            },
+            "sequence_registers": {
+              "section": "19.12.4",
+              "printed_pages": [
+                328
+              ],
+              "pdf_pages_1_based": [
+                329
+              ]
+            },
+            "start_and_interrupt_enable": {
+              "section": "19.12 ADC_START/ADC_IER",
+              "printed_pages": [
+                331
+              ],
+              "pdf_pages_1_based": [
+                332
+              ]
+            },
+            "status_flags": {
+              "section": "19.12 ADC_ISR",
+              "printed_pages": [
+                332
+              ],
+              "pdf_pages_1_based": [
+                333
+              ]
+            },
+            "flag_clear": {
+              "section": "19.12 ADC_ICR",
+              "printed_pages": [
+                333
+              ],
+              "pdf_pages_1_based": [
+                334
+              ]
+            },
+            "result_registers": {
+              "section": "19.12 ADC_RESULT0-ADC_RESULT3",
+              "printed_pages": [
+                333,
+                334
+              ],
+              "pdf_pages_1_based": [
+                334,
+                335
+              ]
+            },
+            "ready_startup": {
+              "section": "19.4.1",
+              "printed_pages": [
+                302
+              ],
+              "pdf_pages_1_based": [
+                303
+              ]
+            },
+            "dedicated_irq_vector": {
+              "section": "5.4, Table 5-1",
+              "printed_pages": [
+                71
+              ],
+              "pdf_pages_1_based": [
+                72
+              ]
+            },
+            "single_completion": {
+              "section": "19.5.1",
+              "printed_pages": [
+                306
+              ],
+              "pdf_pages_1_based": [
+                307
+              ]
+            },
+            "ADC_TRIGGER": {
+              "section": "19.12.7",
+              "printed_pages": [
+                329,
+                330
+              ],
+              "pdf_pages_1_based": [
+                330,
+                331
+              ]
+            }
+          }
+        },
+        "cmsis": {
+          "source_ref": "member:cw32f002/Libraries/inc/cw32f002.h",
+          "symbol_lines_1_based": {
+            "ADC_IRQn": [
+              51
+            ]
+          },
+          "ADC_IRQn": 12,
+          "dedicated": true
+        }
+      },
+      {
+        "family": "CW32F003",
+        "register_version": "cw32f003_v1",
+        "slots": 4,
+        "manual": {
+          "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+          "page_refs": {
+            "scan_completion": {
+              "section": "20.5.5",
+              "printed_pages": [
+                373
+              ],
+              "pdf_pages_1_based": [
+                374
+              ]
+            },
+            "software_scan_flow": {
+              "section": "20.5.5",
+              "printed_pages": [
+                374
+              ],
+              "pdf_pages_1_based": [
+                375
+              ]
+            },
+            "cr0_common_controls": {
+              "section": "20.13.1",
+              "printed_pages": [
+                387,
+                388
+              ],
+              "pdf_pages_1_based": [
+                388,
+                389
+              ]
+            },
+            "cr1_alignment_discard_dma": {
+              "section": "20.13.2",
+              "printed_pages": [
+                389
+              ],
+              "pdf_pages_1_based": [
+                390
+              ]
+            },
+            "sequence_registers": {
+              "section": "20.13.4",
+              "printed_pages": [
+                390
+              ],
+              "pdf_pages_1_based": [
+                391
+              ]
+            },
+            "start_and_interrupt_enable": {
+              "section": "20.13 ADC_START/ADC_IER",
+              "printed_pages": [
+                393
+              ],
+              "pdf_pages_1_based": [
+                394
+              ]
+            },
+            "status_flags": {
+              "section": "20.13 ADC_ISR",
+              "printed_pages": [
+                394
+              ],
+              "pdf_pages_1_based": [
+                395
+              ]
+            },
+            "flag_clear": {
+              "section": "20.13 ADC_ICR",
+              "printed_pages": [
+                395
+              ],
+              "pdf_pages_1_based": [
+                396
+              ]
+            },
+            "result_registers": {
+              "section": "20.13 ADC_RESULT0-ADC_RESULT3",
+              "printed_pages": [
+                395,
+                396
+              ],
+              "pdf_pages_1_based": [
+                396,
+                397
+              ]
+            },
+            "ready_startup": {
+              "section": "20.4.1",
+              "printed_pages": [
+                362
+              ],
+              "pdf_pages_1_based": [
+                363
+              ]
+            },
+            "dedicated_irq_vector": {
+              "section": "5.4, Table 5-1",
+              "printed_pages": [
+                73
+              ],
+              "pdf_pages_1_based": [
+                74
+              ]
+            },
+            "single_completion": {
+              "section": "20.5.1",
+              "printed_pages": [
+                366
+              ],
+              "pdf_pages_1_based": [
+                367
+              ]
+            },
+            "ADC_TRIGGER": {
+              "section": "20.13.7",
+              "printed_pages": [
+                391,
+                392
+              ],
+              "pdf_pages_1_based": [
+                392,
+                393
+              ]
+            },
+            "comparator_BGR_dependency": {
+              "section": "21.3.1",
+              "printed_pages": [
+                399
+              ],
+              "pdf_pages_1_based": [
+                400
+              ]
+            }
+          }
+        },
+        "cmsis": {
+          "source_ref": "member:cw32f003/Libraries/inc/cw32f003.h",
+          "symbol_lines_1_based": {
+            "ADC_IRQn": [
+              73
+            ]
+          },
+          "ADC_IRQn": 12,
+          "dedicated": true
+        }
+      },
+      {
+        "family": "CW32L031",
+        "register_version": "cw32l031_v1",
+        "slots": 8,
+        "manual": {
+          "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+          "page_refs": {
+            "scan_completion": {
+              "section": "22.5.5",
+              "printed_pages": [
+                443
+              ],
+              "pdf_pages_1_based": [
+                444
+              ]
+            },
+            "software_scan_flow": {
+              "section": "22.5.5",
+              "printed_pages": [
+                444
+              ],
+              "pdf_pages_1_based": [
+                445
+              ]
+            },
+            "cr0_common_controls": {
+              "section": "22.13.1",
+              "printed_pages": [
+                458,
+                459
+              ],
+              "pdf_pages_1_based": [
+                459,
+                460
+              ]
+            },
+            "cr1_alignment_discard_dma": {
+              "section": "22.13.2",
+              "printed_pages": [
+                460
+              ],
+              "pdf_pages_1_based": [
+                461
+              ]
+            },
+            "sequence_registers": {
+              "section": "22.13.4-22.13.5",
+              "printed_pages": [
+                461,
+                462
+              ],
+              "pdf_pages_1_based": [
+                462,
+                463
+              ]
+            },
+            "start_and_interrupt_enable": {
+              "section": "22.13 ADC_START/ADC_IER",
+              "printed_pages": [
+                465
+              ],
+              "pdf_pages_1_based": [
+                466
+              ]
+            },
+            "status_flags": {
+              "section": "22.13 ADC_ISR",
+              "printed_pages": [
+                466
+              ],
+              "pdf_pages_1_based": [
+                467
+              ]
+            },
+            "flag_clear": {
+              "section": "22.13 ADC_ICR",
+              "printed_pages": [
+                467
+              ],
+              "pdf_pages_1_based": [
+                468
+              ]
+            },
+            "result_registers": {
+              "section": "22.13 ADC_RESULT0-ADC_RESULT7",
+              "printed_pages": [
+                467,
+                468,
+                469
+              ],
+              "pdf_pages_1_based": [
+                468,
+                469,
+                470
+              ]
+            },
+            "ready_startup": {
+              "section": "22.4.1",
+              "printed_pages": [
+                432
+              ],
+              "pdf_pages_1_based": [
+                433
+              ]
+            },
+            "dedicated_irq_vector": {
+              "section": "5.4, Table 5-1",
+              "printed_pages": [
+                90
+              ],
+              "pdf_pages_1_based": [
+                91
+              ]
+            },
+            "single_completion": {
+              "section": "22.5.1",
+              "printed_pages": [
+                436
+              ],
+              "pdf_pages_1_based": [
+                437
+              ]
+            },
+            "ADC_TRIGGER": {
+              "section": "22.13.8",
+              "printed_pages": [
+                463,
+                464
+              ],
+              "pdf_pages_1_based": [
+                464,
+                465
+              ]
+            },
+            "comparator_BGR_dependency": {
+              "section": "23.3.1",
+              "printed_pages": [
+                472
+              ],
+              "pdf_pages_1_based": [
+                473
+              ]
+            }
+          }
+        },
+        "cmsis": {
+          "source_ref": "member:cw32l031/Libraries/inc/cw32l031.h",
+          "symbol_lines_1_based": {
+            "ADC_IRQn": [
+              78
+            ]
+          },
+          "ADC_IRQn": 12,
+          "dedicated": true
+        }
+      },
+      {
+        "family": "CW32R031",
+        "register_version": "cw32l031_v1",
+        "slots": 8,
+        "manual": {
+          "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+          "page_refs": {
+            "scan_completion": {
+              "section": "22.5.5",
+              "printed_pages": [
+                446
+              ],
+              "pdf_pages_1_based": [
+                447
+              ]
+            },
+            "software_scan_flow": {
+              "section": "22.5.5",
+              "printed_pages": [
+                447
+              ],
+              "pdf_pages_1_based": [
+                448
+              ]
+            },
+            "cr0_common_controls": {
+              "section": "22.13.1",
+              "printed_pages": [
+                460,
+                461
+              ],
+              "pdf_pages_1_based": [
+                461,
+                462
+              ]
+            },
+            "cr1_alignment_discard_dma": {
+              "section": "22.13.2",
+              "printed_pages": [
+                462
+              ],
+              "pdf_pages_1_based": [
+                463
+              ]
+            },
+            "sequence_registers": {
+              "section": "22.13.4-22.13.5",
+              "printed_pages": [
+                463,
+                464
+              ],
+              "pdf_pages_1_based": [
+                464,
+                465
+              ]
+            },
+            "start_and_interrupt_enable": {
+              "section": "22.13 ADC_START/ADC_IER",
+              "printed_pages": [
+                467
+              ],
+              "pdf_pages_1_based": [
+                468
+              ]
+            },
+            "status_flags": {
+              "section": "22.13 ADC_ISR",
+              "printed_pages": [
+                468
+              ],
+              "pdf_pages_1_based": [
+                469
+              ]
+            },
+            "flag_clear": {
+              "section": "22.13 ADC_ICR",
+              "printed_pages": [
+                469
+              ],
+              "pdf_pages_1_based": [
+                470
+              ]
+            },
+            "result_registers": {
+              "section": "22.13 ADC_RESULT0-ADC_RESULT7",
+              "printed_pages": [
+                469,
+                470,
+                471
+              ],
+              "pdf_pages_1_based": [
+                470,
+                471,
+                472
+              ]
+            },
+            "ready_startup": {
+              "section": "22.4.1",
+              "printed_pages": [
+                435
+              ],
+              "pdf_pages_1_based": [
+                436
+              ]
+            },
+            "dedicated_irq_vector": {
+              "section": "5.4, Table 5-1",
+              "printed_pages": [
+                92
+              ],
+              "pdf_pages_1_based": [
+                93
+              ]
+            },
+            "single_completion": {
+              "section": "22.5.1",
+              "printed_pages": [
+                439
+              ],
+              "pdf_pages_1_based": [
+                440
+              ]
+            },
+            "ADC_TRIGGER": {
+              "section": "22.13.8",
+              "printed_pages": [
+                465,
+                466
+              ],
+              "pdf_pages_1_based": [
+                466,
+                467
+              ]
+            },
+            "comparator_BGR_dependency": {
+              "section": "23.3.1",
+              "printed_pages": [
+                474
+              ],
+              "pdf_pages_1_based": [
+                475
+              ]
+            }
+          }
+        },
+        "cmsis": {
+          "source_ref": "member:cw32r031/Libraries/inc/cw32r031.h",
+          "symbol_lines_1_based": {
+            "ADC_IRQn": [
+              78
+            ]
+          },
+          "ADC_IRQn": 12,
+          "dedicated": true
+        }
+      },
+      {
+        "family": "CW32W031",
+        "register_version": "cw32l031_v1",
+        "slots": 8,
+        "manual": {
+          "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+          "page_refs": {
+            "scan_completion": {
+              "section": "22.5.5",
+              "printed_pages": [
+                446
+              ],
+              "pdf_pages_1_based": [
+                447
+              ]
+            },
+            "software_scan_flow": {
+              "section": "22.5.5",
+              "printed_pages": [
+                447
+              ],
+              "pdf_pages_1_based": [
+                448
+              ]
+            },
+            "cr0_common_controls": {
+              "section": "22.13.1",
+              "printed_pages": [
+                461,
+                462
+              ],
+              "pdf_pages_1_based": [
+                462,
+                463
+              ]
+            },
+            "cr1_alignment_discard_dma": {
+              "section": "22.13.2",
+              "printed_pages": [
+                463
+              ],
+              "pdf_pages_1_based": [
+                464
+              ]
+            },
+            "sequence_registers": {
+              "section": "22.13.4-22.13.5",
+              "printed_pages": [
+                464,
+                465
+              ],
+              "pdf_pages_1_based": [
+                465,
+                466
+              ]
+            },
+            "start_and_interrupt_enable": {
+              "section": "22.13 ADC_START/ADC_IER",
+              "printed_pages": [
+                468
+              ],
+              "pdf_pages_1_based": [
+                469
+              ]
+            },
+            "status_flags": {
+              "section": "22.13 ADC_ISR",
+              "printed_pages": [
+                469
+              ],
+              "pdf_pages_1_based": [
+                470
+              ]
+            },
+            "flag_clear": {
+              "section": "22.13 ADC_ICR",
+              "printed_pages": [
+                470
+              ],
+              "pdf_pages_1_based": [
+                471
+              ]
+            },
+            "result_registers": {
+              "section": "22.13 ADC_RESULT0-ADC_RESULT7",
+              "printed_pages": [
+                470,
+                471,
+                472
+              ],
+              "pdf_pages_1_based": [
+                471,
+                472,
+                473
+              ]
+            },
+            "ready_startup": {
+              "section": "22.4.1",
+              "printed_pages": [
+                435
+              ],
+              "pdf_pages_1_based": [
+                436
+              ]
+            },
+            "dedicated_irq_vector": {
+              "section": "5.4, Table 5-1",
+              "printed_pages": [
+                91
+              ],
+              "pdf_pages_1_based": [
+                92
+              ]
+            },
+            "single_completion": {
+              "section": "22.5.1",
+              "printed_pages": [
+                439
+              ],
+              "pdf_pages_1_based": [
+                440
+              ]
+            },
+            "ADC_TRIGGER": {
+              "section": "22.13.8",
+              "printed_pages": [
+                466,
+                467
+              ],
+              "pdf_pages_1_based": [
+                467,
+                468
+              ]
+            },
+            "comparator_BGR_dependency": {
+              "section": "23.3.1",
+              "printed_pages": [
+                475
+              ],
+              "pdf_pages_1_based": [
+                476
+              ]
+            }
+          }
+        },
+        "cmsis": {
+          "source_ref": "member:cw32w031/Libraries/inc/cw32w031.h",
+          "symbol_lines_1_based": {
+            "ADC_IRQn": [
+              73
+            ]
+          },
+          "ADC_IRQn": 12,
+          "dedicated": true
+        }
+      },
+      {
+        "family": "CW32L052",
+        "register_version": "cw32l052_v1",
+        "slots": 8,
+        "manual": {
+          "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+          "page_refs": {
+            "scan_completion": {
+              "section": "23.5.5",
+              "printed_pages": [
+                480
+              ],
+              "pdf_pages_1_based": [
+                481
+              ]
+            },
+            "software_scan_flow": {
+              "section": "23.5.5",
+              "printed_pages": [
+                481
+              ],
+              "pdf_pages_1_based": [
+                482
+              ]
+            },
+            "cr0_common_controls": {
+              "section": "23.13.1",
+              "printed_pages": [
+                496,
+                497
+              ],
+              "pdf_pages_1_based": [
+                497,
+                498
+              ]
+            },
+            "cr1_alignment_discard_dma": {
+              "section": "23.13.2",
+              "printed_pages": [
+                498
+              ],
+              "pdf_pages_1_based": [
+                499
+              ]
+            },
+            "sequence_registers": {
+              "section": "23.13.4-23.13.5",
+              "printed_pages": [
+                499,
+                500
+              ],
+              "pdf_pages_1_based": [
+                500,
+                501
+              ]
+            },
+            "start_and_interrupt_enable": {
+              "section": "23.13 ADC_START/ADC_IER",
+              "printed_pages": [
+                505
+              ],
+              "pdf_pages_1_based": [
+                506
+              ]
+            },
+            "status_flags": {
+              "section": "23.13 ADC_ISR",
+              "printed_pages": [
+                506
+              ],
+              "pdf_pages_1_based": [
+                507
+              ]
+            },
+            "flag_clear": {
+              "section": "23.13 ADC_ICR",
+              "printed_pages": [
+                507
+              ],
+              "pdf_pages_1_based": [
+                508
+              ]
+            },
+            "result_registers": {
+              "section": "23.13 ADC_RESULT0-ADC_RESULT7",
+              "printed_pages": [
+                508,
+                509
+              ],
+              "pdf_pages_1_based": [
+                509,
+                510
+              ]
+            },
+            "ready_startup": {
+              "section": "23.4.1",
+              "printed_pages": [
+                469
+              ],
+              "pdf_pages_1_based": [
+                470
+              ]
+            },
+            "dedicated_irq_vector": {
+              "section": "5.4, Table 5-1",
+              "printed_pages": [
+                95
+              ],
+              "pdf_pages_1_based": [
+                96
+              ]
+            },
+            "single_completion": {
+              "section": "23.5.1",
+              "printed_pages": [
+                473
+              ],
+              "pdf_pages_1_based": [
+                474
+              ]
+            },
+            "ADC_TRIGGER": {
+              "section": "23.13.9",
+              "printed_pages": [
+                503,
+                504
+              ],
+              "pdf_pages_1_based": [
+                504,
+                505
+              ]
+            },
+            "comparator_BGR_dependency": {
+              "section": "24.3.1",
+              "printed_pages": [
+                512
+              ],
+              "pdf_pages_1_based": [
+                513
+              ]
+            }
+          }
+        },
+        "cmsis": {
+          "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+          "symbol_lines_1_based": {
+            "ADC_IRQn": [
+              78
+            ]
+          },
+          "ADC_IRQn": 12,
+          "dedicated": true
+        }
+      },
+      {
+        "family": "CW32L083",
+        "register_version": "cw32l083_v1",
+        "slots": 8,
+        "manual": {
+          "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+          "page_refs": {
+            "scan_completion": {
+              "section": "23.5.5",
+              "printed_pages": [
+                485
+              ],
+              "pdf_pages_1_based": [
+                486
+              ]
+            },
+            "software_scan_flow": {
+              "section": "23.5.5",
+              "printed_pages": [
+                486
+              ],
+              "pdf_pages_1_based": [
+                487
+              ]
+            },
+            "cr0_common_controls": {
+              "section": "23.13.1",
+              "printed_pages": [
+                500,
+                501
+              ],
+              "pdf_pages_1_based": [
+                501,
+                502
+              ]
+            },
+            "cr1_alignment_discard_dma": {
+              "section": "23.13.2",
+              "printed_pages": [
+                502
+              ],
+              "pdf_pages_1_based": [
+                503
+              ]
+            },
+            "sequence_registers": {
+              "section": "23.13.4-23.13.5",
+              "printed_pages": [
+                503,
+                504
+              ],
+              "pdf_pages_1_based": [
+                504,
+                505
+              ]
+            },
+            "start_and_interrupt_enable": {
+              "section": "23.13 ADC_START/ADC_IER",
+              "printed_pages": [
+                507
+              ],
+              "pdf_pages_1_based": [
+                508
+              ]
+            },
+            "status_flags": {
+              "section": "23.13 ADC_ISR",
+              "printed_pages": [
+                508
+              ],
+              "pdf_pages_1_based": [
+                509
+              ]
+            },
+            "flag_clear": {
+              "section": "23.13 ADC_ICR",
+              "printed_pages": [
+                509
+              ],
+              "pdf_pages_1_based": [
+                510
+              ]
+            },
+            "result_registers": {
+              "section": "23.13 ADC_RESULT0-ADC_RESULT7",
+              "printed_pages": [
+                509,
+                510,
+                511
+              ],
+              "pdf_pages_1_based": [
+                510,
+                511,
+                512
+              ]
+            },
+            "ready_startup": {
+              "section": "23.4.1",
+              "printed_pages": [
+                474
+              ],
+              "pdf_pages_1_based": [
+                475
+              ]
+            },
+            "dedicated_irq_vector": {
+              "section": "5.4, Table 5-1",
+              "printed_pages": [
+                104
+              ],
+              "pdf_pages_1_based": [
+                105
+              ]
+            },
+            "single_completion": {
+              "section": "23.5.1",
+              "printed_pages": [
+                478
+              ],
+              "pdf_pages_1_based": [
+                479
+              ]
+            },
+            "ADC_TRIGGER": {
+              "section": "23.13.8",
+              "printed_pages": [
+                505,
+                506
+              ],
+              "pdf_pages_1_based": [
+                506,
+                507
+              ]
+            },
+            "comparator_BGR_dependency": {
+              "section": "24.3.1",
+              "printed_pages": [
+                514
+              ],
+              "pdf_pages_1_based": [
+                515
+              ]
+            }
+          }
+        },
+        "cmsis": {
+          "source_ref": "member:cw32l083/Libraries/inc/cw32l083.h",
+          "symbol_lines_1_based": {
+            "ADC_IRQn": [
+              78
+            ]
+          },
+          "ADC_IRQn": 12,
+          "dedicated": true
+        }
+      }
+    ],
+    "source_discrepancies": [
+      {
+        "family": "CW32F002",
+        "manual_source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+        "section": "19.12.7",
+        "printed_page": 330,
+        "pdf_page_1_based": 331,
+        "cmsis_source_ref": "member:cw32f002/Libraries/inc/cw32f002.h",
+        "cmsis_lines": [
+          228,
+          2533,
+          2534
+        ],
+        "finding": "TRIGGER bit3 is PA02 in the manual and PA32 in the SDK/PAC. Bit location and disable polarity agree; software-only preflight does not qualify a new external trigger route."
+      },
+      {
+        "families": [
+          "CW32L031",
+          "CW32R031",
+          "CW32W031"
+        ],
+        "finding": "Manual SPI/I2C trigger labels correspond to SDK/PAC SPI1/I2C1 at the same bits."
+      }
+    ],
+    "existing_electrical_basis": [
+      "docs/adc-classic-family-electrical-audit.md",
+      "docs/classic-adc-scans.md",
+      "docs/adc-clock-source-bounds.json"
+    ]
+  },
+  "lifecycle": {
+    "ownership": "Typed IRQ binding and per-instance AtomicWaker/active/fault state; no caller buffer pointer in ISR or DMA.",
+    "event_handoff": "Handler filters active owner and enabled pending owned source, masks the owned event(s), retains status and wakes. Task registers waker before final status check.",
+    "result_commit": "Stage retained results locally, verify terminal state and owned mask/ack, then commit the entire output without an await; errors/cancellation leave output unchanged.",
+    "cancellation": "Finite local mask/stop/disable/clear readbacks. Success permits fresh initialization. A failed required readback latches Faulted across mode changes and reconstructed owners until chip reset.",
+    "interrupt_containment": "Normal cancellation leaves NVIC enabled. Emergency IRQ disable is allowed only on the metadata-proven dedicated line after failed owned masking.",
+    "forgotten_future": "No borrowed pointer survives in ISR state, but forgetting skips cleanup and makes no quiescence promise. Every later operation repairs stopped/configured state.",
+    "deadline": "Config.timeout bounds synchronous poll attempts only. Caller composes ordinary with_timeout/select using a functioning time/wake source."
+  },
+  "upstream_pattern": {
+    "commit": "f16efeffe37581092ec184718e6fdb1620393214",
+    "url": "https://github.com/embassy-rs/embassy/tree/f16efeffe37581092ec184718e6fdb1620393214",
+    "paths": [
+      "embassy-stm32/src/adc/mod.rs",
+      "embassy-stm32/src/adc/v1.rs",
+      "embassy-futures/src/select.rs",
+      "embassy-time/src/timer.rs"
+    ],
+    "scope": "Existing pinned Embassy waker, binding, scoped cleanup and caller composition structure; no CW32 hardware evidence."
+  }
+}

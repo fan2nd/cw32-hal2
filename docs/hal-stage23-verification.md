@@ -1,0 +1,11 @@
+# Stage23: ordered ADC scans and generated capability facts
+
+L010/L011 now support 1–8 ordered blocking software-triggered ADC slots, with per-slot sample times and repeated owned or borrowed channel handles. Every slot must satisfy the existing voltage, acquisition and actual ClockBounds limits at one common divider. Results are copied only after the complete sequence finishes; timeout leaves the caller buffer unchanged. Existing single reads and the separate L010 BTIM1-triggered single-conversion API remain supported. Samples are sequential. Continuous, IRQ, DMA and externally triggered scans remain outside this snapshot.
+
+The last four authored-data reads were removed from the HAL build script. GPIO output/pull masks, CORDIC domains, AES/TRNG word geometry and RAM parity status capability now use the normal data-generation and metapac metadata pipeline. The isolated metadata-only comparison proved identical generated constants and allocated ARM firmware sections; the combined projection also recovers all54 Stage22 chip JSON values after removing only the reviewed new records.
+
+F002 ADC_CR0 bits5:4 are reserved in its own Rev1.4 manual, so the incorrectly exposed BGREN/TSEN PAC accessors were removed. Existing F002 HAL never set them. L010/L011 sample, mux and result PAC fields now use indexed array accessors. Direct PAC users must account for these interface changes; the existing HAL single-read API remains available.
+
+Independent source/operational and combined-schema reviews passed. Final combined verification passed108 ordinary ARM library builds,22 real scan/trigger firmware links including Embassy time coexistence, all54 PAC selections and216 PAC metadata checks. No HAL tests were restored and no firmware was executed.
+
+The initial data run caught three stale canonical ADC fingerprints omitted from the candidate packets. Only those reviewed IR fingerprints were corrected; all group membership and source mappings stayed unchanged. The runtime freeze had already passed unchanged; its later ledger/provenance and reporting-only delta is explicitly recorded. Remaining data checks, deterministic regeneration and the full PAC selection matrix then passed on unchanged final inputs.

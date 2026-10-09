@@ -1,0 +1,15 @@
+[package]
+name = "cw32-data-gen"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+anyhow.workspace = true
+chiptool.workspace = true
+cw32-data-serde = { path = "../cw32-data-serde" }
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+sha2 = "0.10"
+svd-parser = { git = "https://github.com/embassy-rs/svd.git", rev = "f4f192d083946fc6227db7ac17eba8aa58bb9d4c", features = ["derive-from", "expand"] }

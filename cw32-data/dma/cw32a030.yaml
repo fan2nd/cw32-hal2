@@ -1,0 +1,1284 @@
+schema_version: 1
+family: CW32A030
+presence: present
+coverage:
+  channels: complete
+  interrupts: complete
+  requests: complete
+  meaning: Complete for the cited official manual request table; no silicon validation.
+hardware_validated: false
+sources:
+  cmsis_header:
+    path: cw32f030/Libraries/inc/cw32f030.h
+    sha256: 7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862
+    archive_url: https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip
+    source_ref: member:cw32f030/Libraries/inc/cw32f030.h
+  manual:
+    path: CW32x030_UserManual_EN_V1.0.pdf
+    sha256: 22eda878089565b7609f42215253227bb8e7b8072ea0378eae8a5ad489e3e3ec
+    url: https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf
+    text_sha256: 6df7cd462a95f66028dc9dda01652240a6c1d20e892f37fc928f9d9b4f031f6f
+    source_ref: vendor:CW32x030_UserManual_EN_V1.0.pdf
+  dma_header:
+    path: cw32f030/Libraries/inc/cw32f030_dma.h
+    sha256: e3fa208e64150dfc74ab9ca922b19effe9b3643aa8f356730208ee7ca2872c1e
+    archive_url: https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip
+    source_ref: member:cw32f030/Libraries/inc/cw32f030_dma.h
+evidence:
+  channel_count:
+    source: manual
+    section: '8.2'
+    pdf_page_indices:
+    - 130
+    printed_pages:
+    - 130
+  request_table:
+    source: manual
+    section: 8.8.4, DMA_TRIGy.HARDSRC[7:2]
+    pdf_page_indices:
+    - 147
+    - 148
+    printed_pages:
+    - 147
+    - 148
+  channel_constraint:
+    source: manual
+    section: 8.8.4
+    pdf_page_indices:
+    - 147
+    printed_pages:
+    - 147
+    interpretation: One common HARDSRC table applies to every channel y=1~5; no channel-specific restriction
+      is documented.
+  interrupts:
+    source: manual
+    section: 5.4, Table 5-1
+    pdf_page_indices:
+    - 97
+    - 98
+    printed_pages:
+    - 97
+    - 98
+  shared_manual:
+    source: manual
+    pdf_page_indices:
+    - 130
+    - 147
+    interpretation: The manual explicitly covers CW32F030/CW32A030. F030 SDK symbol corroboration is shared-source
+      evidence, not an independent A030 SDK.
+core_dma_channels:
+- name: DMA_CH1
+  dma: DMA
+  channel: 0
+- name: DMA_CH2
+  dma: DMA
+  channel: 1
+- name: DMA_CH3
+  dma: DMA
+  channel: 2
+- name: DMA_CH4
+  dma: DMA
+  channel: 3
+- name: DMA_CH5
+  dma: DMA
+  channel: 4
+channel_details:
+- name: DMA_CH1
+  physical_channel: 1
+  register_peripheral: DMACHANNEL1
+  interrupt: DMACH1
+  interrupt_number: 9
+  cmsis_symbol: DMACH1_IRQn
+  cmsis_line: 76
+  evidence:
+  - channel_count
+  - interrupts
+- name: DMA_CH2
+  physical_channel: 2
+  register_peripheral: DMACHANNEL2
+  interrupt: DMACH23
+  interrupt_number: 10
+  cmsis_symbol: DMACH23_IRQn
+  cmsis_line: 77
+  evidence:
+  - channel_count
+  - interrupts
+- name: DMA_CH3
+  physical_channel: 3
+  register_peripheral: DMACHANNEL3
+  interrupt: DMACH23
+  interrupt_number: 10
+  cmsis_symbol: DMACH23_IRQn
+  cmsis_line: 77
+  evidence:
+  - channel_count
+  - interrupts
+- name: DMA_CH4
+  physical_channel: 4
+  register_peripheral: DMACHANNEL4
+  interrupt: DMACH45
+  interrupt_number: 11
+  cmsis_symbol: DMACH45_IRQn
+  cmsis_line: 78
+  evidence:
+  - channel_count
+  - interrupts
+- name: DMA_CH5
+  physical_channel: 5
+  register_peripheral: DMACHANNEL5
+  interrupt: DMACH45
+  interrupt_number: 11
+  cmsis_symbol: DMACH45_IRQn
+  cmsis_line: 78
+  evidence:
+  - channel_count
+  - interrupts
+peripheral_dma_channels:
+  UART1:
+  - signal: RX
+    dma: DMA
+    request: 0
+  - signal: TX
+    dma: DMA
+    request: 1
+  UART2:
+  - signal: RX
+    dma: DMA
+    request: 2
+  - signal: TX
+    dma: DMA
+    request: 3
+  UART3:
+  - signal: RX
+    dma: DMA
+    request: 4
+  - signal: TX
+    dma: DMA
+    request: 5
+  SPI1:
+  - signal: RX
+    dma: DMA
+    request: 6
+  - signal: TX
+    dma: DMA
+    request: 7
+  SPI2:
+  - signal: RX
+    dma: DMA
+    request: 8
+  - signal: TX
+    dma: DMA
+    request: 9
+  ADC:
+  - signal: COMPLETE
+    dma: DMA
+    request: 10
+  BTIM1:
+  - signal: UP
+    dma: DMA
+    request: 11
+  - signal: TRIG
+    dma: DMA
+    request: 12
+  BTIM2:
+  - signal: UP
+    dma: DMA
+    request: 13
+  - signal: TRIG
+    dma: DMA
+    request: 14
+  BTIM3:
+  - signal: UP
+    dma: DMA
+    request: 15
+  - signal: TRIG
+    dma: DMA
+    request: 16
+  ATIM:
+  - signal: CH1A2A3A4_UP
+    dma: DMA
+    request: 17
+  - signal: CH1B2B3B_UP
+    dma: DMA
+    request: 18
+  GTIM1:
+  - signal: UP
+    dma: DMA
+    request: 19
+  - signal: TRIG
+    dma: DMA
+    request: 20
+  - signal: CH1
+    dma: DMA
+    request: 21
+  - signal: CH2
+    dma: DMA
+    request: 22
+  - signal: CH3
+    dma: DMA
+    request: 23
+  - signal: CH4
+    dma: DMA
+    request: 24
+  GTIM2:
+  - signal: UP
+    dma: DMA
+    request: 25
+  - signal: TRIG
+    dma: DMA
+    request: 26
+  - signal: CH1
+    dma: DMA
+    request: 27
+  - signal: CH2
+    dma: DMA
+    request: 28
+  - signal: CH3
+    dma: DMA
+    request: 29
+  - signal: CH4
+    dma: DMA
+    request: 30
+  GTIM3:
+  - signal: UP
+    dma: DMA
+    request: 31
+  - signal: TRIG
+    dma: DMA
+    request: 32
+  - signal: CH1
+    dma: DMA
+    request: 33
+  - signal: CH2
+    dma: DMA
+    request: 34
+  - signal: CH3
+    dma: DMA
+    request: 35
+  - signal: CH4
+    dma: DMA
+    request: 36
+  GTIM4:
+  - signal: UP
+    dma: DMA
+    request: 37
+  - signal: TRIG
+    dma: DMA
+    request: 38
+  - signal: CH1
+    dma: DMA
+    request: 39
+  - signal: CH2
+    dma: DMA
+    request: 40
+  - signal: CH3
+    dma: DMA
+    request: 41
+  - signal: CH4
+    dma: DMA
+    request: 42
+requests:
+- peripheral: UART1
+  signal: RX
+  dma: DMA
+  request: 0
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART1_RXBufferNE
+    line: 105
+    raw_value: 0
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000000'
+    description: UART1 receive Buf non-empty flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART1
+  signal: TX
+  dma: DMA
+  request: 1
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART1_TXBufferE
+    line: 106
+    raw_value: 4
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000001'
+    description: UART1 send Buf empty flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART2
+  signal: RX
+  dma: DMA
+  request: 2
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART2_RXBufferNE
+    line: 107
+    raw_value: 8
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000010'
+    description: UART2 receive Buf non-empty flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART2
+  signal: TX
+  dma: DMA
+  request: 3
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART2_TXBufferE
+    line: 108
+    raw_value: 12
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000011'
+    description: UART2 send Buf empty flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART3
+  signal: RX
+  dma: DMA
+  request: 4
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART3_RXBufferNE
+    line: 109
+    raw_value: 16
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000100'
+    description: UART3 receive Buf non-empty flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: UART3
+  signal: TX
+  dma: DMA
+  request: 5
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_UART3_TXBufferE
+    line: 110
+    raw_value: 20
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000101'
+    description: UART3 send Buf empty flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: SPI1
+  signal: RX
+  dma: DMA
+  request: 6
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_SPI1_RXBufferNE
+    line: 112
+    raw_value: 24
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000110'
+    description: SPI1 receive Buf non-empty flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: SPI1
+  signal: TX
+  dma: DMA
+  request: 7
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_SPI1_TXBufferE
+    line: 113
+    raw_value: 28
+    encoding: shifted_left_2_define
+  manual:
+    binary: '000111'
+    description: SPI1 send Buf empty flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: SPI2
+  signal: RX
+  dma: DMA
+  request: 8
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_SPI2_RXBufferNE
+    line: 114
+    raw_value: 32
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001000'
+    description: SPI2 receive Buf non-empty flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: SPI2
+  signal: TX
+  dma: DMA
+  request: 9
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_SPI2_TXBufferE
+    line: 115
+    raw_value: 36
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001001'
+    description: SPI2 send Buf empty flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: ADC
+  signal: COMPLETE
+  dma: DMA
+  request: 10
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_ADC_TRANSCOMPLETE
+    line: 117
+    raw_value: 40
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001010'
+    description: ADC conversion complete flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM1
+  signal: UP
+  dma: DMA
+  request: 11
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM1_OVERINT
+    line: 119
+    raw_value: 44
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001011'
+    description: BTIM1 overflow interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM1
+  signal: TRIG
+  dma: DMA
+  request: 12
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM1_TRIGINT
+    line: 120
+    raw_value: 48
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001100'
+    description: BTIM1 trigger interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM2
+  signal: UP
+  dma: DMA
+  request: 13
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM2_OVERINT
+    line: 121
+    raw_value: 52
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001101'
+    description: BTIM2 overflow interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM2
+  signal: TRIG
+  dma: DMA
+  request: 14
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM2_TRIGINT
+    line: 122
+    raw_value: 56
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001110'
+    description: BTIM2 trigger interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM3
+  signal: UP
+  dma: DMA
+  request: 15
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM3_OVERINT
+    line: 123
+    raw_value: 60
+    encoding: shifted_left_2_define
+  manual:
+    binary: '001111'
+    description: BTIM3 overflow interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: BTIM3
+  signal: TRIG
+  dma: DMA
+  request: 16
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_BTIM3_TRIGINT
+    line: 124
+    raw_value: 64
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010000'
+    description: BTIM3 trigger interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: ATIM
+  signal: CH1A2A3A4_UP
+  dma: DMA
+  request: 17
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_ATIM_CH1A2A3A4
+    line: 126
+    raw_value: 68
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010001'
+    description: ATIM CHxA, CH4 compare capture flags, event update
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: ATIM
+  signal: CH1B2B3B_UP
+  dma: DMA
+  request: 18
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_ATIM_CH1B2B3B
+    line: 127
+    raw_value: 72
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010010'
+    description: ATIM CHxB compare capture flags, event update flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: UP
+  dma: DMA
+  request: 19
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_OVERINT
+    line: 129
+    raw_value: 76
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010011'
+    description: GTIM1 overflow interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: TRIG
+  dma: DMA
+  request: 20
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_TRIGINT
+    line: 130
+    raw_value: 80
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010100'
+    description: GTIM1 trigger interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: CH1
+  dma: DMA
+  request: 21
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_CH1COMINT
+    line: 131
+    raw_value: 84
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010101'
+    description: GTIM1 channel 1 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: CH2
+  dma: DMA
+  request: 22
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_CH2COMINT
+    line: 132
+    raw_value: 88
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010110'
+    description: GTIM1 channel 2 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: CH3
+  dma: DMA
+  request: 23
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_CH3COMINT
+    line: 133
+    raw_value: 92
+    encoding: shifted_left_2_define
+  manual:
+    binary: '010111'
+    description: GTIM1 channel 3 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM1
+  signal: CH4
+  dma: DMA
+  request: 24
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM1_CH4COMINT
+    line: 134
+    raw_value: 96
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011000'
+    description: GTIM1 channel 4 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: UP
+  dma: DMA
+  request: 25
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_OVERINT
+    line: 136
+    raw_value: 100
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011001'
+    description: GTIM2 overflow interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: TRIG
+  dma: DMA
+  request: 26
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_TRIGINT
+    line: 137
+    raw_value: 104
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011010'
+    description: GTIM2 trigger interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: CH1
+  dma: DMA
+  request: 27
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_CH1COMINT
+    line: 138
+    raw_value: 108
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011011'
+    description: GTIM2 channel 1 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: CH2
+  dma: DMA
+  request: 28
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_CH2COMINT
+    line: 139
+    raw_value: 112
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011100'
+    description: GTIM2 channel 2 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: CH3
+  dma: DMA
+  request: 29
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_CH3COMINT
+    line: 140
+    raw_value: 116
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011101'
+    description: GTIM2 channel 3 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM2
+  signal: CH4
+  dma: DMA
+  request: 30
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM2_CH4COMINT
+    line: 141
+    raw_value: 120
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011110'
+    description: GTIM2 channel 4 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: UP
+  dma: DMA
+  request: 31
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_OVERINT
+    line: 143
+    raw_value: 124
+    encoding: shifted_left_2_define
+  manual:
+    binary: '011111'
+    description: GTIM3 overflow interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: TRIG
+  dma: DMA
+  request: 32
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_TRIGINT
+    line: 144
+    raw_value: 128
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100000'
+    description: GTIM3 trigger interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: CH1
+  dma: DMA
+  request: 33
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_CH1COMINT
+    line: 145
+    raw_value: 132
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100001'
+    description: GTIM3 channel 1 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: CH2
+  dma: DMA
+  request: 34
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_CH2COMINT
+    line: 146
+    raw_value: 136
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100010'
+    description: GTIM3 channel 2 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: CH3
+  dma: DMA
+  request: 35
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_CH3COMINT
+    line: 147
+    raw_value: 140
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100011'
+    description: GTIM3 channel 3 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM3
+  signal: CH4
+  dma: DMA
+  request: 36
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM3_CH4COMINT
+    line: 148
+    raw_value: 144
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100100'
+    description: GTIM3 channel 4 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: UP
+  dma: DMA
+  request: 37
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_OVERINT
+    line: 150
+    raw_value: 148
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100101'
+    description: GTIM4 overflow interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: TRIG
+  dma: DMA
+  request: 38
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_TRIGINT
+    line: 151
+    raw_value: 152
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100110'
+    description: GTIM4 trigger interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: CH1
+  dma: DMA
+  request: 39
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_CH1COMINT
+    line: 152
+    raw_value: 156
+    encoding: shifted_left_2_define
+  manual:
+    binary: '100111'
+    description: GTIM4 channel 1 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: CH2
+  dma: DMA
+  request: 40
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_CH2COMINT
+    line: 153
+    raw_value: 160
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101000'
+    description: GTIM4 channel 2 compare capture interrupt flag
+    pdf_page_index: 147
+    printed_page: 147
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: CH3
+  dma: DMA
+  request: 41
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_CH3COMINT
+    line: 154
+    raw_value: 164
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101001'
+    description: GTIM4 channel 3 compare capture interrupt flag
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+- peripheral: GTIM4
+  signal: CH4
+  dma: DMA
+  request: 42
+  channels:
+  - DMA_CH1
+  - DMA_CH2
+  - DMA_CH3
+  - DMA_CH4
+  - DMA_CH5
+  sdk:
+    symbol: DMA_HardTrig_GTIM4_CH4COMINT
+    line: 155
+    raw_value: 168
+    encoding: shifted_left_2_define
+  manual:
+    binary: '101010'
+    description: GTIM4 channel 4 compare capture interrupt flag
+    pdf_page_index: 148
+    printed_page: 148
+  evidence:
+  - request_table
+  - channel_constraint
+excluded_sdk_requests: []
+unknowns: []
+request_register:
+  peripheral_kind: dmachannel
+  register: TRIG
+  field: HARDSRC
+  bit_offset: 2
+  bit_size: 6
+normalization:
+  channel_index: Zero-based upstream channel index; physical_channel is the one-based vendor ordinal.
+  request: Unshifted six-bit HARDSRC value, not the SDK macro value shifted left by two.
+  irq: CMSIS/generated interrupt spelling; the manual abbreviates DMACH as DMA.
+  signals: UART/SPI/I2C TX/RX; timer UP/TRIG/CHn; grouped ATIM sources remain grouped; ADC COMPLETE or
+    SEQ/SINGLE matches the manual wording.
+  dmamux: 'No separate DMAMUX instance: request selection is internal to each DMA channel.'

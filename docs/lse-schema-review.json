@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-09",
+  "decision": "accepted_exact_model_hashes",
+  "scope": "Independent narrow LSE ownership schema/data/generator review. Technical acceptance only; no legal clearance or HAL/silicon validation claim.",
+  "baseline": {
+    "archive": "embassy-cw32-stage41-source-2026-10-09.zip",
+    "sha256": "88f6423b1d742155713ff31cbc566fcefd2a9c821e3be0ae70c4119c55778375",
+    "serde_tip_sha256": "3dfa050491fe73aa16bd1d5f96e5ae01beb76affc5253222faeba073e2b0759c"
+  },
+  "models": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "3dfa050491fe73aa16bd1d5f96e5ae01beb76affc5253222faeba073e2b0759c",
+      "after_sha256": "c183923bcb189ea2d6617d6ff13963070d64e06d8308c856b8d1b45cef78c810",
+      "purely_additive": true,
+      "reverse_to_baseline_byte_identical": true,
+      "insertion_runs": [
+        {
+          "at_original_line": 303,
+          "inserted_lines": 9
+        },
+        {
+          "at_original_line": 319,
+          "inserted_lines": 2
+        }
+      ]
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "7d45b9cbf5e0ea80fc2660f9f05c4c57423313ad8377e18ed7e8871fbdb3a1ff",
+      "after_sha256": "e5a47e53e92f4b0c2853fb4e5925e369c4575627ff287f712a878e9c110d2ae9",
+      "purely_additive": true,
+      "reverse_to_baseline_byte_identical": true,
+      "insertion_runs": [
+        {
+          "at_original_line": 685,
+          "inserted_lines": 9
+        },
+        {
+          "at_original_line": 701,
+          "inserted_lines": 2
+        }
+      ]
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "047f42e6eb9207f1b7dfec7624de5ebacfb123b63373cd0da8f34a44a3ec670f",
+      "after_sha256": "b2670e75d4a042579a50217a93efec343d0dba80aa823ed22eeb0bbecdade210",
+      "purely_additive": true,
+      "reverse_to_baseline_byte_identical": true,
+      "insertion_runs": [
+        {
+          "at_original_line": 409,
+          "inserted_lines": 9
+        },
+        {
+          "at_original_line": 423,
+          "inserted_lines": 1
+        }
+      ]
+    }
+  ],
+  "schema_contract": {
+    "change": "Append optional ClockLimits.lse and add Lse/PeripheralLse with exactly two bool fields, pin_lock then pin_lock_requires_enable_lock.",
+    "existing_contracts": "Removing the two exact insertion runs in each model recovers Stage41 bytes. Existing types, widths, field order, defaults, derives and historical extensions are unchanged.",
+    "wire": "Serde model absent/null lse deserialize to None and serialize with lse omitted. Generator-owned model absent/null lse default to None; static metadata has Option<PeripheralLse>. A present record requires both real JSON booleans. false values remain explicit.",
+    "validation_boundary": "The schema represents all four bool pairs; source validation rejects pin_lock=false with pin_lock_requires_enable_lock=true. None denotes source-qualified absence of LSE IP, not an unbonded package. Package pin absence is independent.",
+    "rust_source_compatibility": "Downstream direct ClockLimits/PeripheralClockLimits struct literals must supply the added lse field. JSON compatibility does not imply Rust source compatibility."
+  },
+  "source_and_projection": {
+    "evidence": "docs/lse-pad-source-evidence.json",
+    "evidence_sha256": "d8ce52c86974651c618a1a6abad195cfeeb1e1a35ae5153f4b2558858a9761d6",
+    "evidence_correspondence": "Byte-identical copy of 2026-10-09 independent LSE source audit sources.json; it describes its historical Stage40 baseline.",
+    "policy": "cw32-data/lse-ownership.yaml",
+    "policy_sha256": "c86ac477489a820cbc4586a399d17cf3ae4fe99648a061a43c7e207e988eecfd",
+    "lock_chain": "Electrical policy hash, audit hash, source/catalog locks, selected own-family manual/datasheet SHA-256 and chip_scope all checked.",
+    "families": [
+      {
+        "family": "CW32A030",
+        "lse": {
+          "pin_lock": false,
+          "pin_lock_requires_enable_lock": false
+        },
+        "package_records_checked": 1,
+        "selectors_checked": 2
+      },
+      {
+        "family": "CW32F002",
+        "lse": null,
+        "package_records_checked": 2,
+        "selectors_checked": 3
+      },
+      {
+        "family": "CW32F003",
+        "lse": null,
+        "package_records_checked": 3,
+        "selectors_checked": 4
+      },
+      {
+        "family": "CW32F020",
+        "lse": {
+          "pin_lock": false,
+          "pin_lock_requires_enable_lock": false
+        },
+        "package_records_checked": 3,
+        "selectors_checked": 4
+      },
+      {
+        "family": "CW32F030",
+        "lse": {
+          "pin_lock": false,
+          "pin_lock_requires_enable_lock": false
+        },
+        "package_records_checked": 5,
+        "selectors_checked": 10
+      },
+      {
+        "family": "CW32L010",
+        "lse": {
+          "pin_lock": true,
+          "pin_lock_requires_enable_lock": false
+        },
+        "package_records_checked": 3,
+        "selectors_checked": 4
+      },
+      {
+        "family": "CW32L011",
+        "lse": {
+          "pin_lock": true,
+          "pin_lock_requires_enable_lock": true
+        },
+        "package_records_checked": 2,
+        "selectors_checked": 3
+      },
+      {
+        "family": "CW32L012",
+        "lse": {
+          "pin_lock": true,
+          "pin_lock_requires_enable_lock": true
+        },
+        "package_records_checked": 2,
+        "selectors_checked": 3
+      },
+      {
+        "family": "CW32L031",
+        "lse": {
+          "pin_lock": false,
+          "pin_lock_requires_enable_lock": false
+        },
+        "package_records_checked": 6,
+        "selectors_checked": 7
+      },
+      {
+        "family": "CW32L052",
+        "lse": {
+          "pin_lock": false,
+          "pin_lock_requires_enable_lock": false
+        },
+        "package_records_checked": 3,
+        "selectors_checked": 4
+      },
+      {
+        "family": "CW32L083",
+        "lse": {
+          "pin_lock": false,
+          "pin_lock_requires_enable_lock": false
+        },
+        "package_records_checked": 5,
+        "selectors_checked": 6
+      },
+      {
+        "family": "CW32R031",
+        "lse": {
+          "pin_lock": false,
+          "pin_lock_requires_enable_lock": false
+        },
+        "package_records_checked": 1,
+        "selectors_checked": 2
+      },
+      {
+        "family": "CW32W031",
+        "lse": {
+          "pin_lock": false,
+          "pin_lock_requires_enable_lock": false
+        },
+        "package_records_checked": 1,
+        "selectors_checked": 2
+      }
+    ],
+    "registers": "All selected IR inspected: F002/F003 lack LSE and CR1.LSEEN/LSELOCK; other 11 families have LSE at 0x24, CR1 at 0x04, LSEEN[4]/LSELOCK[5]/MODE[6] each width 1. PINLOCK[17] width 1 exists exactly for L010/L011/L012. No enum or array substitution.",
+    "generation_guards": "build.rs::generate_lse requires metadata Option presence to equal actual selected IR LSE presence; None also requires absent LSEEN/LSELOCK fields and LSE pin signals. It validates widths/offsets/readable registers and PINLOCK existence. Pin projection consumes OSC32 aliases with no digital AF, exactly one GPIO identity, and intersection across package aliases.",
+    "package_result": "All 54 generated selector JSON files, including 37 catalog selectors, match own-source package rows and physical positions. L010 is PB1 input/PB0 output; other bonded families use PC14/PC15. Unbonded packages and aliases without common pads retain no projected pad. L012 projection is independent of HSE support.",
+    "ownership_fact_result": "L010 pad lock uses PINLOCK alone; L011/L012 require PINLOCK && LSELOCK; other families have no separate pad lock. These are conservative reservation facts, not universal hardware write-blocking guarantees or LSE setup qualification."
+  },
+  "verification": {
+    "static_review": "passed; delivered Stage41 archive SHA-256 independently verified",
+    "data_probe": "passed with rustc 1.99.0, actual cw32-data-serde source and exact extracted metapac clock records; no Cargo invocation",
+    "probe_result": "PASS: 54 complete generated chip JSON round trips; 47 LSE-present / 7 LSE-absent profiles; serde + exact metapac records agree; absent/null omission, all boolean pairs, required bool type rejection, and existing u8/u16/i16/u32 bounds checked. The false/true lock pair is representable in the schema and rejected by source validation, as designed.",
+    "probe_note": "Reviewer-only probe initially used edition-2024 reserved identifier gen; renamed to generated, then passed. Candidate source was unchanged.",
+    "probe_log_sha256": "cb528e39d5e96fa6af88c21595ad46079aa3872f06110332814213b4485bdf5e",
+    "not_run": [
+      "HAL tests",
+      "full Cargo suite",
+      "hardware or silicon tests"
+    ],
+    "boundary": "This receipt accepts the exact models and source/projection facts. Parent owns final production compile evidence and runtime integration review; neither is inferred from this receipt."
+  },
+  "provenance_requirements": {
+    "accepted_serde_sha256": "c183923bcb189ea2d6617d6ff13963070d64e06d8308c856b8d1b45cef78c810",
+    "previous_review_canonical_sha256": "9c2fd3987892d1d57b3ef913bce120bc8a6d458f4c3cf8c55f0b6daab987c39f",
+    "update": "Nest the COMPLETE Stage41 serde replacement_review as previous_review, retaining all accepted_extensions/history. Advance tip only to accepted_serde_sha256 and reference this receipt. Preserve predecessor hashes, replacement status, exclusions and unresolved permissions.",
+    "metapac": "Record both before/after model hashes above while retaining adapted upstream ancestry and package-license evidence. Do not replace historical observed hashes or relabel these as independent replacements.",
+    "legal_clearance": false
+  },
+  "open_findings": []
+}

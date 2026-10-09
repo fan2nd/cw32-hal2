@@ -1,0 +1,93 @@
+{
+  "reviewed_utc": "2026-10-08T22:16:26Z",
+  "scope": "Read-only source qualification against classic-gtim-input-evidence.json. No tests, builds, harnesses or hardware operations performed by this reviewer.",
+  "result": "No remaining register-mode, acknowledgement, pin-direction, ownership, fixed-ARR, or start-mode blocker found after the ICR correction. Both documentation clarifications are resolved in the final authored implementation.",
+  "files": [
+    {
+      "path": "embassy-cw32/src/timer/classic_input.rs",
+      "sha256": "f4f1604f080b409a6f1303d4a599f1abeaebf1bfb221fb0cb3c2218f43ba4d39"
+    },
+    {
+      "path": "embassy-cw32/src/timer/input_capture.rs",
+      "sha256": "0883698358043d47173395be3e47f055011ee393e2204cd5976ba1eab70ded57"
+    },
+    {
+      "path": "embassy-cw32/src/timer/qei.rs",
+      "sha256": "4a85d7f8b15ede946b3a8ee2ce6ba6c7e882d68008e31015296c0dfdb8e266a7"
+    },
+    {
+      "path": "embassy-cw32/src/timer/input.rs",
+      "sha256": "a2dfe94c9c3f4f380adda233b76eceaca54c640a3614b016b1f73eb3290d5e0d"
+    },
+    {
+      "path": "embassy-cw32/src/timer/mod.rs",
+      "sha256": "5493f39bf0907cbb79fe0a2f2f8975d3bde799fee36e1cdf1d03c9b465b5fae6"
+    },
+    {
+      "path": "embassy-cw32/src/timer/classic.rs",
+      "sha256": "28dd4e148bbf9956ffe61d7dcd96678b3fe4c4040c81a96723e21d4cf2b3aa5a"
+    },
+    {
+      "path": "embassy-cw32/src/timer/cw32l031_v1.rs",
+      "sha256": "877d9b762a3021babd4d87ad420ad3d9daf766d2a6d48b2b7aea5412f0079c26"
+    },
+    {
+      "path": "embassy-cw32/src/timer/cw32f002_v1.rs",
+      "sha256": "c27d924df585c47107fff24e74f8c3f9fe1b6505441aa5b227b7fd6ae3f334d3"
+    },
+    {
+      "path": "embassy-cw32/src/timer/v1.rs",
+      "sha256": "07ed944134c0325ccf676b536dc7d4212b8de6850c10e7a6b005f1979d3f0abf"
+    },
+    {
+      "path": "embassy-cw32/src/timer/low_level.rs",
+      "sha256": "2d48497d8c32aeaa73a655f379bbc8375e0c91eafc665d78eedc1c8397c85a1e"
+    },
+    {
+      "path": "embassy-cw32/src/gpio.rs",
+      "sha256": "708ecd85cc3e5d78f2b0c0095b84fb98d9c1fcd443ae2ae4c024b8fb757f94e6"
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "f5f177b215605c68440a345ab318c3269c7afd93113df5f36bf4f90e904e58bc"
+    },
+    {
+      "path": "cw32-data-gen/src/classic_timer_input.rs",
+      "sha256": "df8eae52f88ad5db276b997c4c8cc7966c59698f9a47fa351deae22e3ac9e6ad"
+    }
+  ],
+  "corrected_finding": {
+    "issue": "New capture and underflow acknowledgements originally used zero-default PAC ICR writes, changing reserved reset-one bits 8:7.",
+    "resolution": "Both now seed pac::gtim::regs::Icr::write_noop(), set only the intended typed flag false, and perform one write_value. Verified against generated no-op seed 0x3ff and own-manual ICR reset/reserved semantics."
+  },
+  "observations": [
+    "Classic QEI fixed reload 65535 validation happens before timer configuration.",
+    "Classic input_start modifies only EN, retaining ENCMODE programmed immediately before it.",
+    "Classic QEI leaves CMMR captures disabled, matching own manual and SDK encoder initialization.",
+    "Timer reset/init clears CR0 auxiliary modes including L052 XOR/capture reset, disables interrupts/DMA, clears flags and resets CNT before pins connect.",
+    "Capture uses correct CMMR 1/2/3 encodings, typed CCR reads and explicit separate W0C acknowledgements; classic exposes no fabricated overcapture API.",
+    "Classic filters match all own-family tables and polarity is non-inverted.",
+    "Both capture and QEI select per-instance SYSCTRL channel mux 0 before connecting pins.",
+    "AF input connection passes output=false, enables digital input and leaves the output driver disabled.",
+    "QEI Div1 produces PSC 0 or PRS 0, consistent with reset-state encoder sequence; no programmable QEI prescaling is exposed.",
+    "QEI has distinct OV and UD access/clear paths; reading DIR is independent and non-atomic with CNT.",
+    "Drop stops timer before disconnecting inputs and delegates clock-gate shutdown to owned inner Timer.",
+    "The enclosing build.rs peripheral loop excludes the time-driver timer before every pin-trait emission.",
+    "Classic source catalog requires own-family evidence, expected register contracts, instance set, hash-pinned route source, and a match against already qualified package-bonded CH route before CAP promotion."
+  ],
+  "nonblocking_documentation_notes": [],
+  "resolved_documentation_notes": [
+    {
+      "path": "embassy-cw32/src/timer/classic_input.rs",
+      "finding": "Module documentation now says no overcapture flag is documented, matching documentary scope."
+    },
+    {
+      "path": "embassy-cw32/src/timer/qei.rs",
+      "finding": "QEI documentation now distinguishes classic up-wrap OV and down-wrap UD while explaining that coalesced flags cannot reconstruct the count or ordering of missed wraps."
+    }
+  ],
+  "final_refresh": {
+    "scope": "Refreshed the reviewed implementation file hashes and confirmed the two wording corrections only. Source evidence was not changed; source research, tests and builds were not repeated.",
+    "refreshed_utc": "2026-10-08T22:16:26Z"
+  }
+}

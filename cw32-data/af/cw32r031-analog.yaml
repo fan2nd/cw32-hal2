@@ -1,0 +1,367 @@
+schema_version: 1
+profile: CW32R031
+kind: analog
+status: verified-sdk-datasheet-reference-manual
+sources:
+  datasheet:
+    file: CW32R031_DataSheet_CN_V1.2.pdf
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    url: https://www.whxy.com/uploads/files/20251230/CW32R031_DataSheet_CN_V1.2.pdf
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  reference_manual:
+    file: CW32R031_UserManual_CN_V1.3.pdf
+    sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+    url: https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf
+    source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+  sdk_archive:
+    file: CW32R031_StandardPeripheralLib_V1.1.zip
+    sha256: cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082
+    source_ref: vendor:CW32R031_StandardPeripheralLib_V1.1.zip
+  adc_header:
+    file: cw32r031/Libraries/inc/cw32r031_adc.h
+    sha256: d9a2e9c4555b7b90c93808339fe60cf802cfc4a3ea14f83a3ec586c2712aa733
+    source_ref: member:cw32r031/Libraries/inc/cw32r031_adc.h
+  pinouts:
+    file: cw32-data/pinouts/cw32r031.yaml
+    sha256: 17573fdbfee2678d4336d12fa1104a4082a1f8d986f8c69245361a2c41e1f070
+register_version: cw32l031_v1
+alias_pin_policy: common-package-intersection
+limitations:
+- Source-level route qualification only; no hardware validation.
+- Source signal identities and hardware mux encodings are independent.
+- Package bonding and ownership are mandatory. No external-reference, DMA, scan, trigger or wider-resolution
+  support is implied.
+routes:
+- peripheral: ADC
+  pin: PA4
+  signal: IN0
+  source_signal: ADC_IN0
+  channel: 0
+  mux: 4
+  af: null
+  source_macro: ADC_ExInputCH0
+  source_line: 208
+  sdk_pin_comment_line: 195
+  sdk_comment_pin: PA4
+  source_sha256: d9a2e9c4555b7b90c93808339fe60cf802cfc4a3ea14f83a3ec586c2712aa733
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 22-5
+    pdf_page: 440
+    printed_page: 439
+    source_signal: AIN0
+    mux_bits: '0100'
+    pin: PA4
+    sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+    source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+  package_pins:
+    CW32R031C8U6: '17'
+  pin_cell:
+    pin: PA4
+    source_name: PA04
+    source_signal: ADC_IN0
+    table: 5-2
+    pdf_page: 29
+    printed_page: 28
+    positions:
+      QFN48: '17'
+    pin_type: I/O
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PA5
+  signal: IN1
+  source_signal: ADC_IN1
+  channel: 1
+  mux: 5
+  af: null
+  source_macro: ADC_ExInputCH1
+  source_line: 209
+  sdk_pin_comment_line: 196
+  sdk_comment_pin: PA5
+  source_sha256: d9a2e9c4555b7b90c93808339fe60cf802cfc4a3ea14f83a3ec586c2712aa733
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 22-5
+    pdf_page: 440
+    printed_page: 439
+    source_signal: AIN1
+    mux_bits: '0101'
+    pin: PA5
+    sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+    source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+  package_pins:
+    CW32R031C8U6: '18'
+  pin_cell:
+    pin: PA5
+    source_name: PA05
+    source_signal: ADC_IN1
+    table: 5-2
+    pdf_page: 29
+    printed_page: 28
+    positions:
+      QFN48: '18'
+    pin_type: I/O
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PA6
+  signal: IN2
+  source_signal: ADC_IN2
+  channel: 2
+  mux: 6
+  af: null
+  source_macro: ADC_ExInputCH2
+  source_line: 210
+  sdk_pin_comment_line: 197
+  sdk_comment_pin: PA6
+  source_sha256: d9a2e9c4555b7b90c93808339fe60cf802cfc4a3ea14f83a3ec586c2712aa733
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 22-5
+    pdf_page: 440
+    printed_page: 439
+    source_signal: AIN2
+    mux_bits: '0110'
+    pin: PA6
+    sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+    source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+  package_pins:
+    CW32R031C8U6: '19'
+  pin_cell:
+    pin: PA6
+    source_name: PA06
+    source_signal: ADC_IN2
+    table: 5-2
+    pdf_page: 29
+    printed_page: 28
+    positions:
+      QFN48: '19'
+    pin_type: I/O
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PA7
+  signal: IN3
+  source_signal: ADC_IN3
+  channel: 3
+  mux: 7
+  af: null
+  source_macro: ADC_ExInputCH3
+  source_line: 211
+  sdk_pin_comment_line: 198
+  sdk_comment_pin: PA7
+  source_sha256: d9a2e9c4555b7b90c93808339fe60cf802cfc4a3ea14f83a3ec586c2712aa733
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 22-5
+    pdf_page: 440
+    printed_page: 439
+    source_signal: AIN3
+    mux_bits: '0111'
+    pin: PA7
+    sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+    source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+  package_pins:
+    CW32R031C8U6: '20'
+  pin_cell:
+    pin: PA7
+    source_name: PA07
+    source_signal: ADC_IN3
+    table: 5-2
+    pdf_page: 29
+    printed_page: 28
+    positions:
+      QFN48: '20'
+    pin_type: I/O
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PB0
+  signal: IN4
+  source_signal: ADC_IN4
+  channel: 4
+  mux: 8
+  af: null
+  source_macro: ADC_ExInputCH4
+  source_line: 212
+  sdk_pin_comment_line: 199
+  sdk_comment_pin: PB0
+  source_sha256: d9a2e9c4555b7b90c93808339fe60cf802cfc4a3ea14f83a3ec586c2712aa733
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 22-5
+    pdf_page: 440
+    printed_page: 439
+    source_signal: AIN4
+    mux_bits: '1000'
+    pin: PB0
+    sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+    source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+  package_pins:
+    CW32R031C8U6: '21'
+  pin_cell:
+    pin: PB0
+    source_name: PB00
+    source_signal: ADC_IN4
+    table: 5-2
+    pdf_page: 30
+    printed_page: 29
+    positions:
+      QFN48: '21'
+    pin_type: I/O
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PB1
+  signal: IN5
+  source_signal: ADC_IN5
+  channel: 5
+  mux: 9
+  af: null
+  source_macro: ADC_ExInputCH5
+  source_line: 213
+  sdk_pin_comment_line: 200
+  sdk_comment_pin: PB1
+  source_sha256: d9a2e9c4555b7b90c93808339fe60cf802cfc4a3ea14f83a3ec586c2712aa733
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 22-5
+    pdf_page: 440
+    printed_page: 439
+    source_signal: AIN5
+    mux_bits: '1001'
+    pin: PB1
+    sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+    source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+  package_pins:
+    CW32R031C8U6: '22'
+  pin_cell:
+    pin: PB1
+    source_name: PB01
+    source_signal: ADC_IN5
+    table: 5-2
+    pdf_page: 30
+    printed_page: 29
+    positions:
+      QFN48: '22'
+    pin_type: I/O
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PB2
+  signal: IN6
+  source_signal: ADC_IN6
+  channel: 6
+  mux: 10
+  af: null
+  source_macro: ADC_ExInputCH6
+  source_line: 214
+  sdk_pin_comment_line: 201
+  sdk_comment_pin: PB2
+  source_sha256: d9a2e9c4555b7b90c93808339fe60cf802cfc4a3ea14f83a3ec586c2712aa733
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 22-5
+    pdf_page: 440
+    printed_page: 439
+    source_signal: AIN6
+    mux_bits: '1010'
+    pin: PB2
+    sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+    source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+  package_pins:
+    CW32R031C8U6: '23'
+  pin_cell:
+    pin: PB2
+    source_name: PB02
+    source_signal: ADC_IN6
+    table: 5-2
+    pdf_page: 30
+    printed_page: 29
+    positions:
+      QFN48: '23'
+    pin_type: I/O
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PB10
+  signal: IN7
+  source_signal: ADC_IN7
+  channel: 7
+  mux: 11
+  af: null
+  source_macro: ADC_ExInputCH7
+  source_line: 215
+  sdk_pin_comment_line: 202
+  sdk_comment_pin: PB10
+  source_sha256: d9a2e9c4555b7b90c93808339fe60cf802cfc4a3ea14f83a3ec586c2712aa733
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 22-5
+    pdf_page: 440
+    printed_page: 439
+    source_signal: AIN7
+    mux_bits: '1011'
+    pin: PB10
+    sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+    source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+  package_pins:
+    CW32R031C8U6: '24'
+  pin_cell:
+    pin: PB10
+    source_name: PB10
+    source_signal: ADC_IN7
+    table: 5-2
+    pdf_page: 30
+    printed_page: 29
+    positions:
+      QFN48: '24'
+    pin_type: I/O
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PB11
+  signal: IN8
+  source_signal: ADC_IN8
+  channel: 8
+  mux: 12
+  af: null
+  source_macro: ADC_ExInputCH8
+  source_line: 216
+  sdk_pin_comment_line: 203
+  sdk_comment_pin: PB11
+  source_sha256: d9a2e9c4555b7b90c93808339fe60cf802cfc4a3ea14f83a3ec586c2712aa733
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 22-5
+    pdf_page: 440
+    printed_page: 439
+    source_signal: AIN8
+    mux_bits: '1100'
+    pin: PB11
+    sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+    source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+  package_pins:
+    CW32R031C8U6: '25'
+  pin_cell:
+    pin: PB11
+    source_name: PB11
+    source_signal: ADC_IN8
+    table: 5-2
+    pdf_page: 30
+    printed_page: 29
+    positions:
+      QFN48: '25'
+    pin_type: I/O
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  oscillator_aliases: []

@@ -1,0 +1,67 @@
+//! Declared board conditions qualifying factory-HSI clocks and bus limits.
+use super::{Clocks, Error, HSI_BOUND_SUPPLY_MV, HSI_BOUND_TEMPERATURE_C};
+
+/// Board-guaranteed supply and ambient-temperature ranges, including tolerance.
+///
+/// These are declarations, not measurements. Actual VDD and ambient TA must
+/// remain within the supplied intervals throughout initialization and use.
+/// Thermal/junction, analog-supply and peripheral-specific limits still apply.
+/// A narrower interval does not tighten the factory HSI error bound.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub struct OperatingConditions {
+    /// Lowest guaranteed VDD in millivolts, including supply tolerance.
+    pub min_supply_mv: u16,
+    /// Highest guaranteed VDD in millivolts, including supply tolerance.
+    pub max_supply_mv: u16,
+    /// Lowest guaranteed ambient TA in degrees Celsius.
+    pub min_temperature_c: i16,
+    /// Highest guaranteed ambient TA in degrees Celsius.
+    pub max_temperature_c: i16,
+}
+impl OperatingConditions {
+    /// Full source-qualified voltage/ambient range for the selected family.
+    /// For families supporting VDD below1.8V this selects the24MHz bus ceiling.
+    pub const fn new() -> Self {
+        Self {
+            min_supply_mv: HSI_BOUND_SUPPLY_MV.0,
+            max_supply_mv: HSI_BOUND_SUPPLY_MV.1,
+            min_temperature_c: HSI_BOUND_TEMPERATURE_C.0,
+            max_temperature_c: HSI_BOUND_TEMPERATURE_C.1,
+        }
+    }
+}
+impl Default for OperatingConditions {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+pub(crate) fn validate(c: OperatingConditions, clocks: Clocks) -> Result<(), Error> {
+    if c.min_supply_mv > c.max_supply_mv {
+        return Err(Error::InvalidSupplyRange);
+    }
+    if c.min_temperature_c > c.max_temperature_c {
+        return Err(Error::InvalidTemperatureRange);
+    }
+    if c.min_supply_mv < HSI_BOUND_SUPPLY_MV.0 || c.max_supply_mv > HSI_BOUND_SUPPLY_MV.1 {
+        return Err(Error::SupplyOutsideQualifiedRange);
+    }
+    if c.min_temperature_c < HSI_BOUND_TEMPERATURE_C.0
+        || c.max_temperature_c > HSI_BOUND_TEMPERATURE_C.1
+    {
+        return Err(Error::TemperatureOutsideQualifiedRange);
+    }
+    let maximum = if c.min_supply_mv < crate::RCC_LOW_VOLTAGE_THRESHOLD_MV {
+        crate::RCC_LOW_VOLTAGE_BUS_MAX_HZ
+    } else {
+        crate::RCC_HIGH_VOLTAGE_BUS_MAX_HZ
+    };
+    if clocks.hclk_bounds().maximum_exceeds(maximum) {
+        return Err(Error::HclkTooHigh);
+    }
+    if clocks.pclk_bounds().maximum_exceeds(maximum) {
+        return Err(Error::PclkTooHigh);
+    }
+    Ok(())
+}

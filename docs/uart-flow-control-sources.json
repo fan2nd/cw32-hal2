@@ -1,0 +1,705 @@
+{
+  "schema_version": 1,
+  "status": "official-source-reviewed; not silicon-tested",
+  "upstream": {
+    "url": "https://github.com/embassy-rs/embassy/blob/f16efeffe37581092ec184718e6fdb1620393214/embassy-stm32/src/usart/mod.rs",
+    "revision": "f16efeffe37581092ec184718e6fdb1620393214",
+    "sha256": "3d79b51c7e48ff2dcb89016ac40319697a48f878599d52ad6c8692525a4a7adf",
+    "review": "CtsPin/RtsPin, Config.cts_pull, new[_blocking]_with_rtscts/cts/rts and direction-owned optional Flex pins; CW32 async remains byte IRQ without DMA."
+  },
+  "families": {
+    "CW32A030": {
+      "manual": {
+        "artifact": "CW32x030_UserManual_CN_V2.5.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+        "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+        "flow_section": "18.3.3.7",
+        "rts_pdf_page": 342,
+        "cts_pdf_page": 342,
+        "cr2_pdf_page": 357,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32F030_StandardPeripheralLib_V2.2.zip",
+        "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+        "sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32f030/Libraries/inc/cw32f030.h",
+            "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32f030/Libraries/inc/cw32f030_uart.h",
+            "sha256": "c46d116b1d34343bc1ab5100c9bf5fce3a650642c2a3a1fe62db9d8806e97aae",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32f030/Libraries/src/cw32f030_uart.c",
+            "sha256": "69b062544d4e5fb16927d6388412a0ca0ddb752d17821e35dfcf3f23d982cd0d",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32f030/Libraries/inc/cw32f030_gpio.h",
+            "sha256": "3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip"
+          }
+        }
+      },
+      "register_version": "v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32a030.yaml",
+        "sha256": "c9a873fa956fa2ef875a83ee0a702661bc7b6977a75943d9a3a4c142b240f8d8",
+        "qualified_flow_routes_before_package_filter": 26
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames.",
+        "Official shared CW32x030 manual and A030 own datasheet; vendor distributes F030 SDK for A030. Existing A030 register-reuse/source-compatibility qualification is preserved; no independent A030 SDK is claimed."
+      ]
+    },
+    "CW32F002": {
+      "manual": {
+        "artifact": "CW32F002_UserManual_CN_V1.4.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+        "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+        "flow_section": "15.3.3.7",
+        "rts_pdf_page": 215,
+        "cts_pdf_page": 216,
+        "cr2_pdf_page": 228,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32F002_StandardPeripheralLib_V1.2.zip",
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+        "sha256": "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32f002/Libraries/inc/cw32f002.h",
+            "sha256": "399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32f002/Libraries/inc/cw32f002_uart.h",
+            "sha256": "0c86efe39e08c3c97e66118e01a889d5d61bcfc522a1edbce2212c5356085f9b",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32f002/Libraries/src/cw32f002_uart.c",
+            "sha256": "4031b9740d1a7f6425edd2144199fb4b3dfa7b00472d150e69960f33577a0e89",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32f002/Libraries/inc/cw32f002_gpio.h",
+            "sha256": "12ab69693119a4fe4c731bb1545f5a9e6954f1e83ba6ed0c7da3d759a2d05b63",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip"
+          }
+        }
+      },
+      "register_version": "cw32f002_v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32f002-serial.yaml",
+        "sha256": "23391a77d6ec27d4295bd341237a9052ef65d37d32c16091f996be1b064aacbd",
+        "qualified_flow_routes_before_package_filter": 4
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames."
+      ]
+    },
+    "CW32F003": {
+      "manual": {
+        "artifact": "CW32F003_UserManual_CN_V2.3.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+        "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+        "flow_section": "16.3.3.7",
+        "rts_pdf_page": 275,
+        "cts_pdf_page": 275,
+        "cr2_pdf_page": 287,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32F003_StandardPeripheralLib_V1.7.zip",
+        "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+        "sha256": "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32f003/Libraries/inc/cw32f003.h",
+            "sha256": "1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f",
+            "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32f003/Libraries/inc/cw32f003_uart.h",
+            "sha256": "d75572002fa307b1c21fa752704e984ca6a3b8c094db2a5c3521bc12721fcfcb",
+            "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32f003/Libraries/src/cw32f003_uart.c",
+            "sha256": "48246ec7c7f31a8f80cc08533aefbf24c8a2e4ba304377894ccf2a769230fc6a",
+            "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32f003/Libraries/inc/cw32f003_gpio.h",
+            "sha256": "f4970bcdfb6da3403aa0d43e13ca1acfc82f3e3f19e2d2b557806ee456df5ce1",
+            "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip"
+          }
+        }
+      },
+      "register_version": "cw32f002_v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32f003-serial.yaml",
+        "sha256": "59bdcc86b5982ec56d88bf22e57224640361cb28ea63dda6881639334db22818",
+        "qualified_flow_routes_before_package_filter": 4
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames."
+      ]
+    },
+    "CW32F020": {
+      "manual": {
+        "artifact": "CW32F020_UserManual_CN_V1.4.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+        "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+        "flow_section": "17.3.3.7",
+        "rts_pdf_page": 280,
+        "cts_pdf_page": 280,
+        "cr2_pdf_page": 295,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32F020_StandardPeripheralLib_V1.2.zip",
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+        "sha256": "1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32f020/Libraries/inc/cw32f020.h",
+            "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32f020/Libraries/inc/cw32f020_uart.h",
+            "sha256": "be03af90b5c4c7d2431e28d29e7dda7ae9f44ffe610de7a272d7afed491fbb48",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32f020/Libraries/src/cw32f020_uart.c",
+            "sha256": "ed93f8f63e13580c8cffe8541681a9d14c91d8bea6c37b295537c7bb1ead266f",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32f020/Libraries/inc/cw32f020_gpio.h",
+            "sha256": "eccc3bb68452d2e3218397b2a795c4330e4a3d9b5a76481de128655e4602874d",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip"
+          }
+        }
+      },
+      "register_version": "v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32f020-serial.yaml",
+        "sha256": "6e32407b4e928be691ff988f177d35bac77eec52e5134530ec028f503606a85c",
+        "qualified_flow_routes_before_package_filter": 26
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames."
+      ]
+    },
+    "CW32F030": {
+      "manual": {
+        "artifact": "CW32x030_UserManual_CN_V2.5.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+        "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+        "flow_section": "18.3.3.7",
+        "rts_pdf_page": 342,
+        "cts_pdf_page": 342,
+        "cr2_pdf_page": 357,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32F030_StandardPeripheralLib_V2.2.zip",
+        "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+        "sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32f030/Libraries/inc/cw32f030.h",
+            "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32f030/Libraries/inc/cw32f030_uart.h",
+            "sha256": "c46d116b1d34343bc1ab5100c9bf5fce3a650642c2a3a1fe62db9d8806e97aae",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32f030/Libraries/src/cw32f030_uart.c",
+            "sha256": "69b062544d4e5fb16927d6388412a0ca0ddb752d17821e35dfcf3f23d982cd0d",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32f030/Libraries/inc/cw32f030_gpio.h",
+            "sha256": "3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e",
+            "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip"
+          }
+        }
+      },
+      "register_version": "v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32f030.yaml",
+        "sha256": "0b713cdd1a00b38a68a315270e7fb9f7f6bd106e58d5401a4f400ff54805bd7f",
+        "qualified_flow_routes_before_package_filter": 26
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames."
+      ]
+    },
+    "CW32L010": {
+      "manual": {
+        "artifact": "CW32L010_UserManual_CN_V1.2.pdf",
+        "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+        "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+        "flow_section": "16.3.3.7",
+        "rts_pdf_page": 403,
+        "cts_pdf_page": 403,
+        "cr2_pdf_page": 423,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+        "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+        "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+            "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+            "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_uart.h",
+            "sha256": "04d759fa0cb30c7036f69eca6865914e52ff17ca8ce39d255567de0599604e58",
+            "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_uart.c",
+            "sha256": "e1e4ec5ba2c819a2eb7a12ff645bc7ce291a30bb69ad62e07018fac003dae8ed",
+            "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+            "sha256": "1ec5958352e78cfdb050b4e648373ed25f2befc01d6724602b0e69c4d098969e",
+            "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+          }
+        }
+      },
+      "register_version": "cw32l010_v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32l010-serial.yaml",
+        "sha256": "6106cd56d0ebb4f28e3d3e3171e5f31769e859aae7018aa3cf0e4f2b4efd21a0",
+        "qualified_flow_routes_before_package_filter": 4
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames.",
+        "CR3.DEM has priority over RTSEN; existing configure explicitly clears DEM before flow control is enabled."
+      ]
+    },
+    "CW32L011": {
+      "manual": {
+        "artifact": "CW32L011_UserManual_CN_V1.1.pdf",
+        "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+        "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+        "flow_section": "16.3.3.7",
+        "rts_pdf_page": 405,
+        "cts_pdf_page": 405,
+        "cr2_pdf_page": 425,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+        "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+        "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32l011/Libraries/inc/cw32l011.h",
+            "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8",
+            "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32l011/Libraries/inc/cw32l011_uart.h",
+            "sha256": "9e658501b0fc851f2269b9535f8fa427b77110ed6ae585e6b36f286d2ce0a10e",
+            "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32l011/Libraries/src/cw32l011_uart.c",
+            "sha256": "d3e5e9dfa1be93bfc072b794d28e05aa9a31ddf6def64343ed634f4bb6dd3aeb",
+            "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32l011/Libraries/inc/cw32l011_gpio.h",
+            "sha256": "d78a3f5f0c4c04e7f948189b70a4e7ffe18025c98cc48418676ab1fa6ec8b78b",
+            "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+          }
+        }
+      },
+      "register_version": "cw32l010_v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32l011-serial.yaml",
+        "sha256": "69a2b685467b2cdb4bafdbe39dbbcba1907644174f90fc349de8dbca80de468a",
+        "qualified_flow_routes_before_package_filter": 12
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames.",
+        "CR3.DEM has priority over RTSEN; existing configure explicitly clears DEM before flow control is enabled."
+      ]
+    },
+    "CW32L012": {
+      "manual": {
+        "artifact": "CW32L012_UserManual_CN_V1.4.pdf",
+        "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+        "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+        "flow_section": "21.3.3.7",
+        "rts_pdf_page": 485,
+        "cts_pdf_page": 485,
+        "cr2_pdf_page": 509,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32l012/Libraries/inc/cw32l012.h",
+            "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+            "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32l012/Libraries/inc/cw32l012_uart.h",
+            "sha256": "689975d2980e5748dde9ddf419b57fa27621617126bd7652f65e186a69d8e5c2",
+            "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32l012/Libraries/src/cw32l012_uart.c",
+            "sha256": "49199142bb1e564d0edc297a08bf5e2b138b96111b9fc42b81539419c051c065",
+            "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32l012/Libraries/inc/cw32l012_gpio.h",
+            "sha256": "45f356e8028475c2e25d135c5fdd0b75babb6b1c83f1d5534038e9355822d717",
+            "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+          }
+        }
+      },
+      "register_version": "cw32l012_v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32l012-serial.yaml",
+        "sha256": "868ba565822a89d08ec3ffb47067b47f3f2acb74d4dbe37b7377cc03a4216128",
+        "qualified_flow_routes_before_package_filter": 18
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames.",
+        "CR3.DEM has priority over RTSEN; existing configure explicitly clears DEM before flow control is enabled."
+      ]
+    },
+    "CW32L031": {
+      "manual": {
+        "artifact": "CW32L031_UserManual_CN_V1.6.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+        "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+        "flow_section": "18.3.3.7",
+        "rts_pdf_page": 333,
+        "cts_pdf_page": 333,
+        "cr2_pdf_page": 353,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32L031_StandardPeripheralLib_V1.4.zip",
+        "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+        "sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32l031/Libraries/inc/cw32l031.h",
+            "sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27",
+            "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32l031/Libraries/inc/cw32l031_uart.h",
+            "sha256": "6fe63dd031a8a18cb90d8192c33c85c547630760a19c889f644c6c0c68b91c9b",
+            "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32l031/Libraries/src/cw32l031_uart.c",
+            "sha256": "e0a7c855829d4d222a84c384def93adbb96c4be29c8cf60f5570dc7ce8e0fe50",
+            "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32l031/Libraries/inc/cw32l031_gpio.h",
+            "sha256": "3fd23de982d603dcfc4516dd6ef2202014934164aac351053f79b0aef5b575b7",
+            "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip"
+          }
+        }
+      },
+      "register_version": "cw32l031_v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32l031-serial.yaml",
+        "sha256": "c809396ccd4be8db63c03beaaeeb793be1ca9754af10fbc356ebfd40c1899e49",
+        "qualified_flow_routes_before_package_filter": 26
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames."
+      ]
+    },
+    "CW32L052": {
+      "manual": {
+        "artifact": "CW32L052_UserManual_CN_V1.5.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+        "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+        "flow_section": "19.3.3.7",
+        "rts_pdf_page": 370,
+        "cts_pdf_page": 370,
+        "cr2_pdf_page": 390,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32L052_StandardPeripheralLib_V1.4.zip",
+        "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+        "sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+            "sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1",
+            "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_uart.h",
+            "sha256": "74b7386d7f44c4676505c21bc5ac78180775c21dbcf67f18a4157b4bdea78a67",
+            "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_uart.c",
+            "sha256": "4cb850d1c762fe86e87aa6f3212b71238455df94e6fc1278c1b255f916921b50",
+            "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gpio.h",
+            "sha256": "59f0d8904b2724ddbc137287d80f83297eb903e1909763e84cf11c157514bc18",
+            "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip"
+          }
+        }
+      },
+      "register_version": "cw32l052_v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32l052-serial.yaml",
+        "sha256": "779dd93ca333f3c963860ed52b5adf33159e5d842303fad308504b4d25a768be",
+        "qualified_flow_routes_before_package_filter": 29
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames."
+      ]
+    },
+    "CW32L083": {
+      "manual": {
+        "artifact": "CW32L083_UserManual_CN_V2.0.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+        "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+        "flow_section": "19.3.3.7",
+        "rts_pdf_page": 382,
+        "cts_pdf_page": 382,
+        "cr2_pdf_page": 397,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32L083_StandardPeripheralLib_V2.2.zip",
+        "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+        "sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32l083/Libraries/inc/cw32l083.h",
+            "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5",
+            "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32l083/Libraries/inc/cw32l083_uart.h",
+            "sha256": "aaecdff0c6d1ac9814fed8f9ecc5cb5d010266e985acfcecda298685a82ab374",
+            "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32l083/Libraries/src/cw32l083_uart.c",
+            "sha256": "218df44964661652d7f1afeec6f5388135a47dc716681a6c2b93dc43b6344520",
+            "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32l083/Libraries/inc/cw32l083_gpio.h",
+            "sha256": "fd987e9c1ba1514d278b06613e2604eff30e5e12e0a07f2c8ccd29fa307f75fb",
+            "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip"
+          }
+        }
+      },
+      "register_version": "cw32l083_v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32l083-serial.yaml",
+        "sha256": "3a34dd5c8ed600e82c2ccba86186e80d41ab1ed8280fa4f7e52258685b21c93f",
+        "qualified_flow_routes_before_package_filter": 38
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames."
+      ]
+    },
+    "CW32R031": {
+      "manual": {
+        "artifact": "CW32R031_UserManual_CN_V1.3.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+        "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+        "flow_section": "18.3.3.7",
+        "rts_pdf_page": 336,
+        "cts_pdf_page": 336,
+        "cr2_pdf_page": 356,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32R031_StandardPeripheralLib_V1.1.zip",
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+        "sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32r031/Libraries/inc/cw32r031.h",
+            "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32r031/Libraries/inc/cw32r031_uart.h",
+            "sha256": "6929dde7817c1ab016c4d9dffdb8a295bd7d8e33f527ac0d91d7ac9842588819",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32r031/Libraries/src/cw32r031_uart.c",
+            "sha256": "121370be08784b0f892a82a652434b6e0c7452788735923bcc639185ea16e365",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32r031/Libraries/inc/cw32r031_gpio.h",
+            "sha256": "ebd615d243577417faa4e8d0546b3d72236f932fc64e1a57a27b239a82becc24",
+            "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip"
+          }
+        }
+      },
+      "register_version": "cw32l031_v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32r031-serial.yaml",
+        "sha256": "7c9dfe7f6da1fc09d8a540046d30e1c99be79902404e1f1d7cd9b77b54b7291b",
+        "qualified_flow_routes_before_package_filter": 18
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames."
+      ]
+    },
+    "CW32W031": {
+      "manual": {
+        "artifact": "CW32W031_UserManual_CN_V1.4.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+        "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+        "flow_section": "18.3.3.7",
+        "rts_pdf_page": 336,
+        "cts_pdf_page": 336,
+        "cr2_pdf_page": 356,
+        "page_numbering": "one-based PDF pages, not printed footer"
+      },
+      "sdk": {
+        "archive": "CW32W031_StandardPeripheralLib_V1.3.zip",
+        "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+        "sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+        "members": {
+          "cmsis_header": {
+            "artifact": "cw32w031/Libraries/inc/cw32w031.h",
+            "sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69",
+            "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip"
+          },
+          "uart_header": {
+            "artifact": "cw32w031/Libraries/inc/cw32w031_uart.h",
+            "sha256": "14967f7106fe76f64029a673eb1f5bf7d00b9705fac88744940a255b071ff607",
+            "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip"
+          },
+          "uart_driver": {
+            "artifact": "cw32w031/Libraries/src/cw32w031_uart.c",
+            "sha256": "18946ce7b16ee1c62cb374fefe68a1733734253677e1c30fa7d1f22daa7c4a51",
+            "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip"
+          },
+          "gpio_header": {
+            "artifact": "cw32w031/Libraries/inc/cw32w031_gpio.h",
+            "sha256": "1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc",
+            "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip"
+          }
+        }
+      },
+      "register_version": "cw32l031_v1",
+      "fields": {
+        "CR2.CTSEN": 2,
+        "CR2.RTSEN": 3
+      },
+      "af": {
+        "path": "cw32-data/af/cw32w031-serial.yaml",
+        "sha256": "3f448a236db13f469c701ecec95016df60fc4a4a62497d5934bbc02cfc4921f9",
+        "qualified_flow_routes_before_package_filter": 20
+      },
+      "notes": [
+        "CTS prose abbreviates UARTx_CR.CTSEN; CR2 register table and own SDK both explicitly establish CR2 bit 2.",
+        "RTS mirrors receive-ready (RC=0 low, RC=1 high); clearing RC after consuming RDR resumes the peer. CTS low allows a new frame, high finishes the active frame and pauses subsequent frames."
+      ]
+    }
+  }
+}

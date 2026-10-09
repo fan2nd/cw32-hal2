@@ -1,0 +1,124 @@
+schema_version: 1
+spi_metadata: cw32-data/spi.yaml
+source:
+  path: sources/vendor/CW32F002.svd
+  sha256: d103e33a01e45d8359b7e13c0644f3aec0ea74e440db9fd37bd7755097bf6b71
+  url: https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip
+  source_ref: member:cw32f002/IdeSupport/MDK/WHXY.CW32F002_DFP.1.0.2/SVD/CW32F002.svd
+expected_svd_name: CW32F002
+core: cm0p
+die: CW32F002
+chip_prefix: CW32F002
+gpio_dir_pin_fields: false
+register_aliases: []
+supplemental_interrupts: []
+family: CW32F0
+line: CW32F002
+register_version: cw32f002_v1
+nvic_priority_bits: 2
+nvic_priority_bits_evidence: Official CW32F002 SDK Libraries/inc header __NVIC_PRIO_BITS=2; SHA256 399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54
+chips:
+- name: CW32F002
+  memory: []
+parts_catalog: cw32-data/parts.yaml
+register_versions:
+  adc: cw32f002_v1
+  awt: v1
+  btim: cw32f002_v1
+  crc: cw32f002_v1
+  flash: cw32f002_v1
+  gpio: cw32f002_v1
+  gpioc: cw32f002_v1
+  gtim: cw32f002_v1
+  i2c: cw32f002_v1
+  iwdt: v1
+  lvd: v1
+  ram: v1
+  spi: cw32f002_v1
+  sysctrl: cw32f002_v1
+  uart: cw32f002_v1
+  vc: cw32f002_v1
+  wwdt: v1
+pinout_metadata: cw32-data/pinouts/cw32f002.yaml
+alias_pin_policy: common-package-intersection
+dma_metadata: cw32-data/dma/cw32f002.yaml
+clock_metadata: cw32-data/clock/cw32f002.yaml
+af_metadata: cw32-data/af/cw32f002-serial.yaml
+register_overrides:
+- block: GPIO
+  register: IDR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F002 User Manual CN V1.4 section 8.6.14, printed page 113/PDF page 114: GPIOx_IDR at
+    offset 0x50 marks PINy[7:0] RO for x=A,B,C. Access-only correction; existing register width, fields
+    and pin inventory unchanged. Original SVD register access is read-write. PDF SHA256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add.
+    https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf'
+- block: GPIOC
+  register: IDR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F002 User Manual CN V1.4 section 8.6.14, printed page 113/PDF page 114: GPIOx_IDR at
+    offset 0x50 marks PINy[7:0] RO for x=A,B,C. Access-only correction; existing register width, fields
+    and pin inventory unchanged. Original SVD register access is read-write. PDF SHA256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add.
+    https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf'
+- block: GPIO
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F002 User Manual CN V1.4 section 8.6.11, printed page 112/PDF page 113: GPIOx_ISR at
+    offset 0x34 is RO for x=A,B,C. Access-only correction; existing register width and fieldsets unchanged.
+    PDF SHA256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add. https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf'
+- block: GPIOC
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F002 User Manual CN V1.4 section 8.6.11, printed page 112/PDF page 113: GPIOx_ISR at
+    offset 0x34 is RO for x=A,B,C. Access-only correction; existing register width and fieldsets unchanged.
+    PDF SHA256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add. https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf'
+- block: GTIM
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32F002 User Manual CN V1.4 section 12.7.12, printed page 182/PDF page 183: GTIM ISR at
+    offset 0x318 marks every defined status field RO; flags clear through the separate ICR. Access-only
+    correction; widths, offsets and fields unchanged. PDF SHA256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add.
+    https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf'
+field_removals:
+- fieldset: PAGELOCK
+  field: LOCK8
+  expected_bit_offset: 8
+  expected_bit_size: 1
+  evidence: 'Own CW32F002 User Manual CN V1.4 section 7.9.3, printed page 96/PDF page 97: FLASH_PAGELOCK
+    bits15:8 are reserved; only LOCK0..7 are writable, KEY remains31:16. Vendor CMSIS/SVD exposes extra
+    lock fields. PDF SHA256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add. https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf'
+- fieldset: PAGELOCK
+  field: LOCK9
+  expected_bit_offset: 9
+  expected_bit_size: 1
+  evidence: 'Own CW32F002 User Manual CN V1.4 section 7.9.3, printed page 96/PDF page 97: FLASH_PAGELOCK
+    bits15:8 are reserved; only LOCK0..7 are writable, KEY remains31:16. Vendor CMSIS/SVD exposes extra
+    lock fields. PDF SHA256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add. https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf'
+- block: ADC
+  fieldset: CR0
+  field: BGREN
+  expected_bit_offset: 4
+  expected_bit_size: 1
+  evidence: 'Own CW32F002 User Manual CN V1.4 section 19.12.1, printed page 326/PDF page 327: ADC_CR0
+    at offset 0x00 reserves bits5:4. Vendor SVD/SDK incorrectly exposes BGREN4/TSEN5. Only ADC.CR0 fields
+    BGREN and TSEN are removed. PDF SHA256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add.
+    https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf'
+- block: ADC
+  fieldset: CR0
+  field: TSEN
+  expected_bit_offset: 5
+  expected_bit_size: 1
+  evidence: 'Own CW32F002 User Manual CN V1.4 section 19.12.1, printed page 326/PDF page 327: ADC_CR0
+    at offset 0x00 reserves bits5:4. Vendor SVD/SDK incorrectly exposes BGREN4/TSEN5. Only ADC.CR0 fields
+    BGREN and TSEN are removed. PDF SHA256 e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add.
+    https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf'
+analog_metadata: cw32-data/af/cw32f002-analog.yaml
+pwm_metadata: cw32-data/af/cw32f002-pwm.yaml
+gpio_interrupt_metadata: cw32-data/gpio-interrupt.yaml
+electrical_metadata: cw32-data/electrical.yaml
+comparator_metadata: cw32-data/af/cw32f002-comparator.yaml
+classic_adc_scan_metadata: cw32-data/classic-adc-scans.yaml

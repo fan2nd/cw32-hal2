@@ -1,0 +1,55 @@
+{
+  "basis": "Stage14 independently rewritten schema; only additive project-authored LCD fields and records.",
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "2b53b5486a2a1f208922367fb36a9ced580fad7af3b815634cb75eb73e1fd160",
+      "after_sha256": "f6396a837541f01d28fce71042169e343965051e9737cdfd6639ba7e5979c8c6",
+      "additions": [
+        {
+          "text": "            record! {\n                Lcd { pub segments: Vec<u8>, pub ram_registers: Vec<u8>, pub lsi_typical_hz: u32, }\n            }\n"
+        },
+        {
+          "text": "                #[serde(default, skip_serializing_if = \"Option::is_none\")]\n                pub lcd: Option<peripheral::Lcd>,\n"
+        }
+      ],
+      "reconstructs_stage14_exactly": true
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "67b1c18839f2ac3672ba9f5968040dfb1a86c8c340b1c2a7231b08901c9c3167",
+      "after_sha256": "f6c45df3fc73bf2e6eef23db3f8c3b986558e85a81ef174edf9b3fb84a6cf00a",
+      "additions": [
+        {
+          "text": "    pub lcd: Option<PeripheralLcd>,\n"
+        },
+        {
+          "text": "\n#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]\npub struct PeripheralLcd {\n    pub segments: Vec<u8>,\n    pub ram_registers: Vec<u8>,\n    pub lsi_typical_hz: u32,\n}\n"
+        },
+        {
+          "text": "            .field(\"lcd\", &self.lcd)\n"
+        }
+      ],
+      "reconstructs_stage14_exactly": true
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "64ea2a34dd21248a574224e0942edc4864d3c3eaf3cd99356049f3562358471a",
+      "after_sha256": "3e8cdcb88bc62c82a534c21f516b64c8478810c188f5b2ab65518922c698bb60",
+      "additions": [
+        {
+          "text": "    pub lcd: Option<PeripheralLcd>,\n"
+        },
+        {
+          "text": "\n#[derive(Debug, Eq, PartialEq, Clone)]\npub struct PeripheralLcd {\n    pub segments: &'static [u8],\n    pub ram_registers: &'static [u8],\n    pub lsi_typical_hz: u32,\n}\n"
+        }
+      ],
+      "reconstructs_stage14_exactly": true
+    }
+  ],
+  "verification": "Mechanical removal of the recorded insertion runs reconstructs exact Stage14 bytes; schema fixture 11 cases passed, generated data/parity checks pass. Parent must independently review with other integrated schema changes.",
+  "independent_review_passed": false,
+  "wire_compatibility": "Optional peripheral.lcd omits None; missing lcd deserializes as None. No existing widths, defaults or order changed.",
+  "rust_source_compatibility": "Public Peripheral struct literals must add lcd; static metadata transports same optional facts.",
+  "legal_clearance_claimed": false
+}

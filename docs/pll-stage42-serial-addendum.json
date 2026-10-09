@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-09T11:41:56.622327+00:00",
+  "status": "closed: no overlooked L083 serial strict-duration synthesis and no runtime change required",
+  "scope": "Supplemental independent read-only classification of L083 classic I2C and SPI consumers of PLL rate-only ClockBounds. Preserves prior receipts and narrows one LPI2C family statement.",
+  "supersedes": null,
+  "supplements": {
+    "clock-consumer-review.json": "1881c2e66bf30dc1ecaa45717831a4f111412163c028c3aed305e38ab4e74234",
+    "clock-consumer-review.md": "e58775a233ac4e91e37345289bc7cf4a10367d897eb0acb8339f7a2215fb74a7"
+  },
+  "candidate_path": "/workspace/shared/cw32-l083-pll-stage42-rebase-20261009/embassy-cw32",
+  "runtime_sha256_reverified": {
+    "embassy-cw32/build.rs": "bbe54df7f54b316782aba9f02660f0690193b7c7e323cc3b81168466be4b6972",
+    "embassy-cw32/src/lib.rs": "b12d91f92cf5eb146f992c6e7dfce0cc924e780be8939cf34168c2f2ba2d60b3",
+    "embassy-cw32/src/gpio.rs": "b4a85ee287470620d4d91289f3bb7e2c28efe6847667dfb26a3c9c9f1a832988",
+    "embassy-cw32/src/rcc/mod.rs": "e53f4c098e0e7b6a263a7b243cce1a22dfd4c14ba48f1c271f664e9849a7832e",
+    "embassy-cw32/src/rcc/bounds.rs": "879faec62568c419aa273c7802d9c39a188e3db8da324c3724e12acf5a266512",
+    "embassy-cw32/src/rcc/l052_l083.rs": "e67f83cfddaafb3a0c00be4345305b151f2c8a29425fd389740f51d6b6b903f4",
+    "embassy-cw32/src/rcc/l010_l011.rs": "b4855a802efc1a5b7faf493ce55c0e6f97804eee364ab9f8fff55ae0074a107c",
+    "embassy-cw32/src/rcc/l012.rs": "6248b42467bad89db802b3615b374035da729797a44ef2a33a8309857baa8e40",
+    "embassy-cw32/src/adc/classic.rs": "59be5690f15a12ca28db649a6ec42f20a46c297c4e87015b287937e889a5752b",
+    "embassy-cw32/src/lptim.rs": "e4d2039fcaf3680cf67cc5a690dfea9accca5331221e6ad5cd609e4563ed2c79",
+    "embassy-cw32/src/time_driver.rs": "f23f754fa62f62664cee5d30d7fb37c6964e4b58c788b726325bf99674991924"
+  },
+  "inspected_file_sha256": {
+    "embassy-cw32/src/i2c/classic.rs": "8c4581321c62d5a707fcb1e7b215ab4ce7680805296eb02d2f309ca876f3694c",
+    "embassy-cw32/src/i2c/mod.rs": "c67437574b1c2d326dc2a239761523f026140d3bdee0a2345532c0d4eb37d452",
+    "embassy-cw32/src/i2c/lpi2c/timing.rs": "fdc6e18e9a7d5d11339bf31dd6a54dd6cfb227c06d9ee718691727cf232dc288",
+    "embassy-cw32/src/spi.rs": "47f737ac82b84d1dca423d0754bc8a54b0ff60a0f1e77f2d56cff1428c91c123",
+    "embassy-cw32/src/rcc/bounds.rs": "879faec62568c419aa273c7802d9c39a188e3db8da324c3724e12acf5a266512",
+    "embassy-cw32/src/rcc/l052_l083.rs": "e67f83cfddaafb3a0c00be4345305b151f2c8a29425fd389740f51d6b6b903f4",
+    "cw32-data/electrical.yaml": "951049836afba10e7f88250f1b43a0ab6c270f468ddf27155d9b2b9b36743929"
+  },
+  "sources": {
+    "CW32L083_UserManual_CN_V2.0.pdf": {
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "pages_1_based": [
+        50,
+        59,
+        60,
+        402,
+        428,
+        429,
+        440,
+        441,
+        463
+      ],
+      "printed_pages": [
+        49,
+        58,
+        59,
+        401,
+        427,
+        428,
+        439,
+        440,
+        462
+      ]
+    },
+    "CW32L083_DataSheet_CN_V1.9.pdf": {
+      "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+      "pages_1_based": [
+        14,
+        47,
+        56,
+        69,
+        70
+      ],
+      "printed_pages": [
+        13,
+        46,
+        55,
+        68,
+        69
+      ]
+    }
+  },
+  "i2c": {
+    "callers": [
+      "embassy-cw32/src/i2c/classic.rs:122 Config.frequency",
+      "embassy-cw32/src/i2c/classic.rs:188 try_new_blocking",
+      "embassy-cw32/src/i2c/classic.rs:258 frequency getters",
+      "embassy-cw32/src/i2c/classic.rs:330 Timing.control",
+      "embassy-cw32/src/i2c/classic.rs:338 select_timing"
+    ],
+    "implementation": "Selects BRR=1..255 from ceil(maximum PCLK/[8*requested SCL]) with BRR+1 at least2; applies FLT when BRR<=9. L083 i2c_limits.waveform is null. No high/low/setup nanosecond solver or strict ClockBounds duration helper occurs in this backend.",
+    "public_claim": "A source-qualified ceiling on divider-generated SCL rate. Getter explicitly excludes stretching, rise time and SI-service delays from its lower endpoint. Board electrical/rise-time constraints remain applicable.",
+    "own_source_contract": "D083 section7.3.20 Table7-38 PDF69/printed68 states I2C timing is guaranteed by design when correctly configured, then specifies SCL high/low, SDA setup, START/STOP and bus-free timings; footnote says not production-tested. U083 section21.4.2 PDF440 gives the PCLK/[8*(BRR+1)] formula and legal BRR1..255; section21.4.3 PDF441 gives the exact filter threshold used.",
+    "classification": "The electrical pulse minima are part of the qualified peripheral operating contract, not durations calculated by inverting the PLL source envelope. This is distinct from a HAL function returning a strict nanosecond bound from ClockBounds."
+  },
+  "spi": {
+    "callers": [
+      "embassy-cw32/src/spi.rs:174 SampleDelay.HalfPeriod",
+      "embassy-cw32/src/spi.rs:190 Config.frequency",
+      "embassy-cw32/src/spi.rs:343 get_current_frequency_bounds",
+      "embassy-cw32/src/spi.rs:533 Info.select_prescaler"
+    ],
+    "implementation": "Selects legal L083 /4..128 divisors using exact divided source-rate upper comparisons and a separate12MHz cap. Does not calculate SCK pulse width, setup/hold nanoseconds or board/slave timing margins. Returned ClockBounds retains rate_only. HalfPeriod denotes a relative sampling position within actual SCK.",
+    "own_source_contract": "U083 PDF402/printed401 limits master rate to PCLK/4; PDF429/printed428 documents BR encodings including /4..128 and reserved111; PDF428/printed427 defines SMP delay as half an SCK cycle. D083 PDF70/printed69 Table7-39 specifies high/low relative to actual tc(SCK), external-input setup/hold and output characteristics with stated PCLK conditions, based on characterization rather than production testing.",
+    "classification": "Ordinary source-qualified divided-rate and relative-clock-setting API. The maximum-rate request does not become a guarantee that every pulse has duration at least the reciprocal of a rate endpoint. The driver explicitly excludes certification of board signal integrity or slave timing. Characterized table values are not extended to unstated PCLK conditions by this review."
+  },
+  "pll_relationship": "U083 PDF50 documents PLL as a SYSCLK choice, then HCLK/APB division supplying SPI/I2C PCLK. D083 PLL and bus electrical limits and U083 PLL operating controls support ordinary peripheral operation from qualified PLL. The independent64MHz raw PLL maximum and voltage-dependent bus ceilings are not an absolute instantaneous-period bound derived from multiplied HSI error. D083300ps cycle-to-cycle jitter alone neither supplies that bound nor proves the serial path defective.",
+  "adc_distinction": "Classic ADC additionally exposes explicit minimum-acquisition and worst-case-conversion nanosecond results derived from ClockBounds. Withholding that additional strict duration qualification is consistent with retaining vendor-supported ordinary serial operation.",
+  "precision_correction": "The LPI2C waveform-solving backend is L012-only, as selected by embassy-cw32/src/i2c/mod.rs. Earlier review wording listing L010/L011/L012 as a broad non-L083 exclusion must not be read as saying all three have that backend. L010/L011 use classic I2C.",
+  "current_authored_clarification": "Read docs/l083-pll-stage42.md paragraph beginning Classic I2C remains a rate/BRR configuration API. It accurately states this bounded distinction and L012-only selection, without introducing a nanosecond promise.",
+  "blocking_findings": [],
+  "acceptance": "Prior narrow clock-consumer acceptance remains valid at the reverified runtime hashes. No serial runtime fix or HAL test is required by this classification closure.",
+  "performed": [
+    "Static source and own-manual/datasheet inspection",
+    "Rehashed unchanged runtime and selected input files"
+  ],
+  "not_performed": [
+    "Runtime/model/code edits",
+    "HAL tests/models/harnesses",
+    "Cargo or firmware rebuilds",
+    "Hardware execution"
+  ]
+}

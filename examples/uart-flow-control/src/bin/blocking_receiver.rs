@@ -1,0 +1,17 @@
+#![no_std]
+#![no_main]
+use cw32_uart_flow_control_examples as examples;
+use embassy_cw32 as hal;
+#[cortex_m_rt::entry]
+fn main() -> ! {
+    let p = hal::init(Default::default());
+    let (peri, _tx, rx, rts, _cts) = examples::pins!(p);
+    let mut config = hal::usart::Config::default();
+    config.cts_pull = hal::gpio::Pull::Up;
+    let mut uart = hal::usart::UartRx::new_blocking_with_rts(peri, rx, rts, config).unwrap();
+    loop {
+        let mut byte = [0];
+        uart.blocking_read(&mut byte).unwrap();
+        core::hint::black_box(byte);
+    }
+}

@@ -1,0 +1,34 @@
+{
+  "basis": "Immutable Stage15 plus accepted LCD optional facts and RAM field-access model; HALLTIM does not change shared models.",
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "0ed2f1ebbe890dca06de3c2bf78c3c45776ab7fe5a519b1c6f00ac19fd08aa6f",
+      "after_sha256": "72a4b739ee3e9cd50ae5767da5c1d378f83d6a76de88640f0ec4f095c69231e3"
+    },
+    {
+      "path": "cw32-data-serde/src/register_write.rs",
+      "before_sha256": "a09e62641b7eed05db9c7e92745fcb977c03c126d4284a2fbe427645e4c36e4d",
+      "after_sha256": "adc844f15ba62f31147787f7cbe61dcd81f1c15d59d3f79c493fc2967effa4fe"
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "068cb7713870c478764624b716de791a9905e9448e5b90d181fba5e5e93e70c7",
+      "after_sha256": "9768d14c1268fcdb1f7d4d85ab67345973176e1340776de798e3d101e0050b2a"
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "90dc3c579805c12385ae529a2694f3f990c64cb91cd3789040c262dda3e32ef1",
+      "after_sha256": "7b90d63c4184e540a967d69c3e76e00e54723943ee84834c6e528b3d5fcb6d5b"
+    }
+  ],
+  "packets": [
+    "/workspace/shared/cw32-lcd-handoff",
+    "/workspace/shared/cw32-ram-parity-handoff"
+  ],
+  "independent_review_passed": true,
+  "review_method": "Reverse only exact accepted LCD/RAM additive hunks to reconstruct immutable Stage15 serde files; generator models differ only by harmless blank-separator placement after OPA types.",
+  "wire_compatibility": "LCD absent/null defaults None and omits from chip JSON; existing register-write model fields and strictness unchanged; new RAM field-access models deny unknown fields.",
+  "rust_source_compatibility": "New public fields require updates to struct literals.",
+  "legal_clearance_claimed": false
+}

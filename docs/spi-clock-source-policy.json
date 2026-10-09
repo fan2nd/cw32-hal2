@@ -1,0 +1,580 @@
+{
+  "schema_version": 1,
+  "scope": "SPI master clock-divider bounds only. Preserves prior cap and divider policies, source-qualified through shared RCC bounds. No hardware/electrical validation.",
+  "hsi_source_policy": "adc-clock-source-bounds.json",
+  "families": {
+    "CW32F030": {
+      "maximum_sck_hz": 16000000,
+      "minimum_divisor": 2,
+      "maximum_divisor": 128,
+      "divider_kind": "power_of_two",
+      "policy_note": "Existing electrical-table 62.5 ns policy retained; summary says12 Mbit/s. No16 MHz absolute-cap witness found.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32F030_DataSheet_CN_V1.9.pdf",
+          "sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 60,
+              "printed_page": 59,
+              "extract": "spi-clock-evidence/CW32F030_DataSheet_CN_V1.9-pdf60.txt",
+              "extract_sha256": "4c89c4a30b912cf8dc7dd3e4e70c750ba71e1949424a8ebf149473f9242236fa"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 390,
+              "printed_page": 389,
+              "extract": "spi-clock-evidence/CW32x030_UserManual_CN_V2.5-pdf390.txt",
+              "extract_sha256": "597bfab4c69192ebfc7adbb914740d8cf1f84035e19038f7b86d1fcb5b90da7a"
+            }
+          ]
+        }
+      }
+    },
+    "CW32A030": {
+      "maximum_sck_hz": 16000000,
+      "minimum_divisor": 2,
+      "maximum_divisor": 128,
+      "divider_kind": "power_of_two",
+      "policy_note": "Existing electrical-table 62.5 ns policy retained; summary says12 Mbit/s. No16 MHz absolute-cap witness found.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32A030_DataSheet_CN_V1.1.pdf",
+          "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 57,
+              "printed_page": 56,
+              "extract": "spi-clock-evidence/CW32A030_DataSheet_CN_V1.1-pdf57.txt",
+              "extract_sha256": "e00d2b64e50474415ddd910e2b648012e331e47edce9b8d59779a093f8310525"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 390,
+              "printed_page": 389,
+              "extract": "spi-clock-evidence/CW32x030_UserManual_CN_V2.5-pdf390.txt",
+              "extract_sha256": "597bfab4c69192ebfc7adbb914740d8cf1f84035e19038f7b86d1fcb5b90da7a"
+            }
+          ]
+        }
+      }
+    },
+    "CW32F002": {
+      "maximum_sck_hz": 12000000,
+      "minimum_divisor": 2,
+      "maximum_divisor": 128,
+      "divider_kind": "power_of_two",
+      "policy_note": "Conservative12 Mbit/s summary policy retained despite16 MHz electrical-table conflict; no unambiguous12 MHz electrical violation claimed.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32F002_DataSheet_CN_V1.2.pdf",
+          "sha256": "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506",
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32F002_DataSheet_CN_V1.2.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 4,
+              "printed_page": 3,
+              "extract": "spi-clock-evidence/CW32F002_DataSheet_CN_V1.2-pdf4.txt",
+              "extract_sha256": "54b8ef5d6b03629b23d2108d1d8c7f8690e07cd7254a3dce24cdd8995642d8d7"
+            },
+            {
+              "pdf_page_1_based": 50,
+              "printed_page": 49,
+              "extract": "spi-clock-evidence/CW32F002_DataSheet_CN_V1.2-pdf50.txt",
+              "extract_sha256": "2e45136b43853ea27feee571de2b283e989abddd5536798a1fc2e426fb7e048e"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32F002_UserManual_CN_V1.4.pdf",
+          "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 257,
+              "printed_page": 256,
+              "extract": "spi-clock-evidence/CW32F002_UserManual_CN_V1.4-pdf257.txt",
+              "extract_sha256": "b89bbf2757c7292e760fce72552c65ff728473a680e77756115f73d4a2f31dd4"
+            }
+          ]
+        }
+      }
+    },
+    "CW32F003": {
+      "maximum_sck_hz": 12000000,
+      "minimum_divisor": 2,
+      "maximum_divisor": 128,
+      "divider_kind": "power_of_two",
+      "policy_note": "Conservative12 Mbit/s summary policy retained despite16 MHz electrical-table conflict; no unambiguous12 MHz electrical violation claimed.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32F003_DataSheet_CN_V1.9.pdf",
+          "sha256": "5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd",
+          "url": "https://www.whxy.com/uploads/files/20251226/CW32F003_DataSheet_CN_V1.9.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 4,
+              "printed_page": 3,
+              "extract": "spi-clock-evidence/CW32F003_DataSheet_CN_V1.9-pdf4.txt",
+              "extract_sha256": "b78974b86dbe875f18af1ff0d5c5b142b4dd92df93e409451118097b566e1561"
+            },
+            {
+              "pdf_page_1_based": 52,
+              "printed_page": 51,
+              "extract": "spi-clock-evidence/CW32F003_DataSheet_CN_V1.9-pdf52.txt",
+              "extract_sha256": "e4576d034bbecf667297db905b7bc47a8fac13e75cf501e4d5fd130cab83cb56"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32F003_UserManual_CN_V2.3.pdf",
+          "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 316,
+              "printed_page": 315,
+              "extract": "spi-clock-evidence/CW32F003_UserManual_CN_V2.3-pdf316.txt",
+              "extract_sha256": "02050908aa1b5af3fdce56ea2076f50c2d296ecc8d6cb9632608cc07225ed929"
+            }
+          ]
+        }
+      }
+    },
+    "CW32F020": {
+      "maximum_sck_hz": 12000000,
+      "minimum_divisor": 2,
+      "maximum_divisor": 128,
+      "divider_kind": "power_of_two",
+      "policy_note": "Conservative12 Mbit/s summary policy retained despite16 MHz electrical-table conflict; no unambiguous12 MHz electrical violation claimed.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32F020_DataSheet_CN_V1.3.pdf",
+          "sha256": "9fe3f5cf054612faf3b94de3e0f4166886e7b7ab2a43ebced009a48270aaca91",
+          "url": "https://www.whxy.com/uploads/files/20250821/CW32F020_DataSheet_CN_V1.3.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 5,
+              "printed_page": 4,
+              "extract": "spi-clock-evidence/CW32F020_DataSheet_CN_V1.3-pdf5.txt",
+              "extract_sha256": "05ee968bab901eb7030130492db9ee984ff73d21d3c856c315dbd12153baa39c"
+            },
+            {
+              "pdf_page_1_based": 55,
+              "printed_page": 54,
+              "extract": "spi-clock-evidence/CW32F020_DataSheet_CN_V1.3-pdf55.txt",
+              "extract_sha256": "e1f5482a002a5dcfdc51b77d79dd4c739496c959bda25eaa57ab5128c9e1b293"
+            }
+          ],
+          "printed_revision": "1.2",
+          "provenance_note": "Superseded historical source retained for the conservative SPI policy; filename V1.3 is not its printed revision. Current HSI electrical bounds use the current-datasheets Rev1.3 source.",
+          "source_ref": "vendor:CW32F020_DataSheet_CN_V1.3.pdf",
+          "superseded_by_ref": "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf"
+        },
+        "manual": {
+          "filename": "CW32F020_UserManual_CN_V1.4.pdf",
+          "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 328,
+              "printed_page": 327,
+              "extract": "spi-clock-evidence/CW32F020_UserManual_CN_V1.4-pdf328.txt",
+              "extract_sha256": "5440458ba8cf00e964fc15c8f4051ece389bbbce6117aeef83a285712474a40c"
+            }
+          ]
+        }
+      }
+    },
+    "CW32L031": {
+      "maximum_sck_hz": 12000000,
+      "minimum_divisor": 4,
+      "maximum_divisor": 128,
+      "divider_kind": "power_of_two",
+      "policy_note": "Conservative12 Mbit/s summary policy retained despite16 MHz electrical-table conflict; no unambiguous12 MHz electrical violation claimed.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32L031_DataSheet_CN_V1.9.pdf",
+          "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L031_DataSheet_CN_V1.9.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 6,
+              "printed_page": 5,
+              "extract": "spi-clock-evidence/CW32L031_DataSheet_CN_V1.9-pdf6.txt",
+              "extract_sha256": "99306073f8cfd5a918fbb70e5560c33c6553d030bcee0f493da0f8f13bf0b94a"
+            },
+            {
+              "pdf_page_1_based": 60,
+              "printed_page": 59,
+              "extract": "spi-clock-evidence/CW32L031_DataSheet_CN_V1.9-pdf60.txt",
+              "extract_sha256": "b399396c7e188ef6650bfa7ecaec65bf16025d15db183bedf6a0c779fd8f2b2c"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32L031_UserManual_CN_V1.6.pdf",
+          "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 360,
+              "printed_page": 359,
+              "extract": "spi-clock-evidence/CW32L031_UserManual_CN_V1.6-pdf360.txt",
+              "extract_sha256": "25beccfa10517a2f9313f5ae7c699d860fd12e5680ac0da9c0988db54d90b580"
+            },
+            {
+              "pdf_page_1_based": 387,
+              "printed_page": 386,
+              "extract": "spi-clock-evidence/CW32L031_UserManual_CN_V1.6-pdf387.txt",
+              "extract_sha256": "2fb298301b5bffb637bd301fe5e0e62902eb19860e90693df3f09d92aebff145"
+            }
+          ]
+        }
+      }
+    },
+    "CW32R031": {
+      "maximum_sck_hz": 12000000,
+      "minimum_divisor": 4,
+      "maximum_divisor": 128,
+      "divider_kind": "power_of_two",
+      "policy_note": "Conservative12 Mbit/s summary policy retained despite16 MHz electrical-table conflict; no unambiguous12 MHz electrical violation claimed.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32R031_DataSheet_CN_V1.2.pdf",
+          "sha256": "88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805",
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32R031_DataSheet_CN_V1.2.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 6,
+              "printed_page": 5,
+              "extract": "spi-clock-evidence/CW32R031_DataSheet_CN_V1.2-pdf6.txt",
+              "extract_sha256": "25b43f9d8dcb02088776ee357747ed8d34185ef6de895ab1fa73479177e0e77d"
+            },
+            {
+              "pdf_page_1_based": 67,
+              "printed_page": 66,
+              "extract": "spi-clock-evidence/CW32R031_DataSheet_CN_V1.2-pdf67.txt",
+              "extract_sha256": "56dabc1d7f3cb5413d23524d2b9df0b474d9390db7695c5f18138f682c72cd4d"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32R031_UserManual_CN_V1.3.pdf",
+          "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 363,
+              "printed_page": 362,
+              "extract": "spi-clock-evidence/CW32R031_UserManual_CN_V1.3-pdf363.txt",
+              "extract_sha256": "9111b5b5eccbcaa14801f739023fb5fb5d428a2d2036d449808d147f38092b11"
+            },
+            {
+              "pdf_page_1_based": 390,
+              "printed_page": 389,
+              "extract": "spi-clock-evidence/CW32R031_UserManual_CN_V1.3-pdf390.txt",
+              "extract_sha256": "1a089d6b96fc060427d000f3f986c5cf04d7762d7d4b809736a737eb8d828fed"
+            }
+          ]
+        }
+      }
+    },
+    "CW32W031": {
+      "maximum_sck_hz": 12000000,
+      "minimum_divisor": 4,
+      "maximum_divisor": 128,
+      "divider_kind": "power_of_two",
+      "policy_note": "Conservative12 Mbit/s summary policy retained despite16 MHz electrical-table conflict; no unambiguous12 MHz electrical violation claimed.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32W031_DataSheet_CN_V1.3.pdf",
+          "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c",
+          "url": "https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 5,
+              "printed_page": 4,
+              "extract": "spi-clock-evidence/CW32W031_DataSheet_CN_V1.3-pdf5.txt",
+              "extract_sha256": "7f8f15e8a85486a5046ef1bd4cbf56a9142e253605fab8665bcfe8b47c2fcdee"
+            },
+            {
+              "pdf_page_1_based": 66,
+              "printed_page": 65,
+              "extract": "spi-clock-evidence/CW32W031_DataSheet_CN_V1.3-pdf66.txt",
+              "extract_sha256": "fce48f4ca7d5c48481a1ef5b395d1cc8d8e758d479bfefb60e572dbfcaddfe2a"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32W031_UserManual_CN_V1.4.pdf",
+          "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 363,
+              "printed_page": 362,
+              "extract": "spi-clock-evidence/CW32W031_UserManual_CN_V1.4-pdf363.txt",
+              "extract_sha256": "2d9b4bc6a51e62e593b899622450d91e3d7b4c5da525a6459352af947c4b8d26"
+            },
+            {
+              "pdf_page_1_based": 390,
+              "printed_page": 389,
+              "extract": "spi-clock-evidence/CW32W031_UserManual_CN_V1.4-pdf390.txt",
+              "extract_sha256": "24411e763155768641498667906f884b11713718cfd8a7494632d43e41326080"
+            }
+          ]
+        }
+      }
+    },
+    "CW32L052": {
+      "maximum_sck_hz": 12000000,
+      "minimum_divisor": 4,
+      "maximum_divisor": 128,
+      "divider_kind": "power_of_two",
+      "policy_note": "Conservative12 Mbit/s summary policy retained despite16 MHz electrical-table conflict; no unambiguous12 MHz electrical violation claimed.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32L052_DataSheet_CN_V1.3.pdf",
+          "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L052_DataSheet_CN_V1.3.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 6,
+              "printed_page": 5,
+              "extract": "spi-clock-evidence/CW32L052_DataSheet_CN_V1.3-pdf6.txt",
+              "extract_sha256": "4b14d2e9d965a61b427e25334d53193ef3e6844be1e9f0c3dc61e982b3756f82"
+            },
+            {
+              "pdf_page_1_based": 66,
+              "printed_page": 65,
+              "extract": "spi-clock-evidence/CW32L052_DataSheet_CN_V1.3-pdf66.txt",
+              "extract_sha256": "12e36035be5d633de29a2cbacf4090896f446323821200793955fa9f99f2b251"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32L052_UserManual_CN_V1.5.pdf",
+          "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 397,
+              "printed_page": 396,
+              "extract": "spi-clock-evidence/CW32L052_UserManual_CN_V1.5-pdf397.txt",
+              "extract_sha256": "46db110ea23a9836d0d4ef0d2234d2f8f9c70355eb8efd0f5d7e2570a27fc5b6"
+            },
+            {
+              "pdf_page_1_based": 424,
+              "printed_page": 423,
+              "extract": "spi-clock-evidence/CW32L052_UserManual_CN_V1.5-pdf424.txt",
+              "extract_sha256": "4c0c5beda853a7b587afe181e24f230804fcc4a3463f356993ec3dd34f20493f"
+            }
+          ]
+        }
+      }
+    },
+    "CW32L083": {
+      "maximum_sck_hz": 12000000,
+      "minimum_divisor": 4,
+      "maximum_divisor": 128,
+      "divider_kind": "power_of_two",
+      "policy_note": "Conservative12 Mbit/s summary policy retained despite16 MHz electrical-table conflict; no unambiguous12 MHz electrical violation claimed.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32L083_DataSheet_CN_V1.9.pdf",
+          "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+          "url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 6,
+              "printed_page": 5,
+              "extract": "spi-clock-evidence/CW32L083_DataSheet_CN_V1.9-pdf6.txt",
+              "extract_sha256": "5f36f94b08dfd1bad4248c21cfd55a646d17f35e496971a5c7bc7ca0b749c47b"
+            },
+            {
+              "pdf_page_1_based": 70,
+              "printed_page": 69,
+              "extract": "spi-clock-evidence/CW32L083_DataSheet_CN_V1.9-pdf70.txt",
+              "extract_sha256": "78d1aaf59866d7b21dd47d64b9a5763980f79fb377bd53c099f1de46e1f924ec"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32L083_UserManual_CN_V2.0.pdf",
+          "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+          "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 402,
+              "printed_page": 401,
+              "extract": "spi-clock-evidence/CW32L083_UserManual_CN_V2.0-pdf402.txt",
+              "extract_sha256": "a8366a5ebf8c1d46af1afb6fbc3e8b48698e59babb11a77d8d7e7f6622d044ad"
+            },
+            {
+              "pdf_page_1_based": 429,
+              "printed_page": 428,
+              "extract": "spi-clock-evidence/CW32L083_UserManual_CN_V2.0-pdf429.txt",
+              "extract_sha256": "8467de81af749d6e3b538ebba6f6ff417ea86c191694f60315e3a15bd669e706"
+            }
+          ]
+        }
+      }
+    },
+    "CW32L010": {
+      "maximum_sck_hz": 24000000,
+      "minimum_divisor": 2,
+      "maximum_divisor": 256,
+      "divider_kind": "power_of_two",
+      "policy_note": "Adopted feature-summary cap; 41.6 ns electrical period row is conditional on PCLK=48 MHz and characterization.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32L010_DataSheet_CN_V1.3.pdf",
+          "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+          "url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 5,
+              "printed_page": 4,
+              "extract": "spi-clock-evidence/CW32L010_DataSheet_CN_V1.3-pdf5.txt",
+              "extract_sha256": "ec687efabdebdb89d9658908dabac572975979933569e55426af04fdd80919a7"
+            },
+            {
+              "pdf_page_1_based": 56,
+              "printed_page": 55,
+              "extract": "spi-clock-evidence/CW32L010_DataSheet_CN_V1.3-pdf56.txt",
+              "extract_sha256": "ab98f02856d838e2de9e353b35286770f493d26cb3364856f594730ad51e2d58"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32L010_UserManual_CN_V1.2.pdf",
+          "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+          "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 454,
+              "printed_page": 453,
+              "extract": "spi-clock-evidence/CW32L010_UserManual_CN_V1.2-pdf454.txt",
+              "extract_sha256": "d5f399bbf70f0ceeaae2802950014c2110b8d0ff4bd6641947f3dc90e37d1b44"
+            },
+            {
+              "pdf_page_1_based": 455,
+              "printed_page": 454,
+              "extract": "spi-clock-evidence/CW32L010_UserManual_CN_V1.2-pdf455.txt",
+              "extract_sha256": "9c89877b2a825988c12de75950ff5ee3ca3de9fe9416f39b5bdb32d862ff3ae2"
+            }
+          ]
+        }
+      }
+    },
+    "CW32L011": {
+      "maximum_sck_hz": 24000000,
+      "minimum_divisor": 2,
+      "maximum_divisor": 256,
+      "divider_kind": "power_of_two",
+      "policy_note": "Adopted feature-summary cap; 41.6 ns electrical period row is conditional on PCLK=48 MHz and characterization.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32L011_DataSheet_CN_V1.1.pdf",
+          "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+          "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 5,
+              "printed_page": 2,
+              "extract": "spi-clock-evidence/CW32L011_DataSheet_CN_V1.1-pdf5.txt",
+              "extract_sha256": "fd28771b6dda994620aa936dd0d2ba5319e4e35d1ef91a10dc5704d7ecfb89f7"
+            },
+            {
+              "pdf_page_1_based": 61,
+              "printed_page": 58,
+              "extract": "spi-clock-evidence/CW32L011_DataSheet_CN_V1.1-pdf61.txt",
+              "extract_sha256": "3900dff1e91cd8439da3046a79e0f284a8e663f12acebe81b23c76089db39223"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32L011_UserManual_CN_V1.1.pdf",
+          "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+          "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 456,
+              "printed_page": 455,
+              "extract": "spi-clock-evidence/CW32L011_UserManual_CN_V1.1-pdf456.txt",
+              "extract_sha256": "a52121f7956bbd3e969bbbc900d4fd0f6592fe7a7fc70678e34e22ab9c6577c4"
+            },
+            {
+              "pdf_page_1_based": 457,
+              "printed_page": 456,
+              "extract": "spi-clock-evidence/CW32L011_UserManual_CN_V1.1-pdf457.txt",
+              "extract_sha256": "15180c802fa5191a1a929895965e3fbbe3417d3aafa1b702999394a327a5b57e"
+            }
+          ]
+        }
+      }
+    },
+    "CW32L012": {
+      "maximum_sck_hz": 24000000,
+      "minimum_divisor": 2,
+      "maximum_divisor": 256,
+      "divider_kind": "linear_even",
+      "policy_note": "Explicit master SCK limit; malformed electrical-table period row is not used to reinterpret it.",
+      "sources": {
+        "datasheet": {
+          "filename": "CW32L012_DataSheet_CN_V1.0.pdf",
+          "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+          "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 30,
+              "printed_page": 27,
+              "extract": "spi-clock-evidence/CW32L012_DataSheet_CN_V1.0-pdf30.txt",
+              "extract_sha256": "67a50cf8cb5deaea4c8d4b278207643565f6067ba3da65fbe0c74721d3f34f52"
+            },
+            {
+              "pdf_page_1_based": 71,
+              "printed_page": 68,
+              "extract": "spi-clock-evidence/CW32L012_DataSheet_CN_V1.0-pdf71.txt",
+              "extract_sha256": "5f00417804fea8c255183130d704067d9da396b135c47101b2e7afd630f0f816"
+            }
+          ]
+        },
+        "manual": {
+          "filename": "CW32L012_UserManual_CN_V1.4.pdf",
+          "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+          "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+          "pages": [
+            {
+              "pdf_page_1_based": 542,
+              "printed_page": 516,
+              "extract": "spi-clock-evidence/CW32L012_UserManual_CN_V1.4-pdf542.txt",
+              "extract_sha256": "487fc49a096c40502fd3e6e90285c81cabc0fcccea9a936bac29c3415141fc0d"
+            },
+            {
+              "pdf_page_1_based": 543,
+              "printed_page": 517,
+              "extract": "spi-clock-evidence/CW32L012_UserManual_CN_V1.4-pdf543.txt",
+              "extract_sha256": "9084f26c10efe97ef33e1d6a5ecab402f0edd0b3d83b27f53d824489c3ebbe0e"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

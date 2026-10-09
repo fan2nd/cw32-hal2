@@ -1,0 +1,7 @@
+# Stage19: Embassy time and bounded trigger routes
+
+Adds an optional global Embassy time driver that reserves GTIM or GTIM1, its vector, channels, pin bindings and DMA request paths. It uses exact nominal 1 MHz prescalers, a wide epoch, a race-aware alarm queue and coherent fault-context timestamp publication. Run-mode timing requires service of every half-boundary in strictly less than 32768 actual ticks: less than 31.207619 ms for qualified ±5% sources, or 32.125490 ms for ±2%. Missed wraps, Flash stalls, debug halts and deep sleep cannot be reconstructed. Monotonicity does not imply accurate elapsed time after those violations. Reentrant or NMI/HardFault scheduling panics before protected-state aliasing.
+
+L010 now exposes destination-local BTIM1 UPDATE to BTIM2 cascade and a separate owned, one-shot triggered ADC API. Timer and pin ownership is retained; ADC cancellation/timeout is terminal because no drain latency is documented. No universal TriggerSource enum, lossless throughput, atomic cutoff, DMA or silicon timing guarantee is claimed.
+
+Combined validation passed 108 enabled ARM builds, 13 disabled-driver family builds, four intended selector rejections, 26 genuine Embassy Timer links with exact interrupt-vector checks, and 12 L010 trigger links with and without the time driver. Full 54-selection data/PAC checks passed. Source hashes remained unchanged in each final run. No HAL tests were added and no firmware was executed.

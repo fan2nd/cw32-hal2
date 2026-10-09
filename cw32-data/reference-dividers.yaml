@@ -1,0 +1,294 @@
+schema_version: 1
+scope: Only CW32L010/L011 VCDIV and CW32L012 VC12REF/VC34REF. Immutable shared-reference
+  ownership and external-positive/internal-divider-negative comparator polling.
+profiles:
+- line: CW32L010
+  sources:
+    manual:
+      file: CW32L010_UserManual_CN_V1.2.pdf
+      sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+      url: https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      printed_revision: Rev 1.2
+    datasheet:
+      file: CW32L010_DataSheet_CN_V1.3.pdf
+      sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+      url: https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf
+      source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+    sdk:
+      file: CW32L010_StandardPeripheralLib_V1.0.9.zip
+      sha256: 84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716
+      url: https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip
+      source_ref: vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip
+    cw32l010_h:
+      file: cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h
+      sha256: 28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b
+      source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h
+    cw32l010_vc_h:
+      file: cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_vc.h
+      sha256: b879c348b656a056944888f41bc0a17c94b911a1e72dad3b5fda9c08debb20db
+      source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_vc.h
+    cw32l010_vc_c:
+      file: cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_vc.c
+      sha256: ff2b8564a6ea965f036b00660541dffb68597c8db014ad3e4a28f4dbf7fd87a3
+      source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_vc.c
+  manual_printed_pages:
+  - 528
+  - 533
+  - 534
+  - 535
+  register_version: cw32l010_v1
+  register_kind: vcdiv
+  control_register: DIV
+  div_width: 3
+  legal_div_range:
+  - 0
+  - 7
+  ratio_denominator: 8
+  core_voltage_nominal_mv: 1600
+  clock_access_policy: Enable the generated clock owner VC module configuration gate;
+    reject held VC reset. No helper functional kernel/reset domain is asserted. Never
+    reset or disable the shared clock.
+  instances:
+  - name: VCDIV
+    facts:
+      clock_owner: VC1
+      consumers:
+      - VC1
+      - VC2
+      negative_mux: 3
+      supply_mv:
+      - 1620
+      - 5500
+      input_uses_vdda: false
+  manual_pdf_pages_1_based:
+  - 529
+  - 534
+  - 535
+  - 536
+  clock_evidence:
+    clock_section: 4.7.12 SYSCTRL_APBEN1 and4.7.15 SYSCTRL_APBRST1
+    clock_printed_pages:
+    - 79
+    - 82
+    clock_pdf_pages_1_based:
+    - 80
+    - 83
+  electrical_evidence:
+    electrical_section: 7.3.15 table7-31
+    electrical_printed_pages:
+    - 51
+    electrical_pdf_pages_1_based:
+    - 52
+  sdk_evidence:
+    divider_initialization: cw32l010_vc.c lines221-236 (VC1VC2_DIVInit); independently
+      qualifies codes0..7 and source selection
+  rendered_register_evidence:
+    pdf_page_1_based: 536
+    printed_page: 535
+    inspection: Own PDF rendered and inspected on2026-10-09. Images remain outside
+      source distribution.
+    render_sha256: 04a7523984de1d7f53ce3a5cfa565bdf16bb5920fcf09453ba625699e5641694
+- line: CW32L011
+  sources:
+    manual:
+      file: CW32L011_UserManual_CN_V1.1.pdf
+      sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+      url: https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      printed_revision: Rev 1.1
+    datasheet:
+      file: CW32L011_DataSheet_CN_V1.1.pdf
+      sha256: 0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5
+      url: https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf
+      source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+    sdk:
+      file: CW32L011_StandardPeripheralLib_V1.0.3.zip
+      sha256: 76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e
+      url: https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip
+      source_ref: vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip
+    cw32l011_h:
+      file: cw32l011/Libraries/inc/cw32l011.h
+      sha256: 2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8
+      source_ref: member:cw32l011/Libraries/inc/cw32l011.h
+    cw32l011_vc_h:
+      file: cw32l011/Libraries/inc/cw32l011_vc.h
+      sha256: dc80bc24eace611303e49eafb1134f6df1368eb04e2e49e8c7d6c4306539f7d5
+      source_ref: member:cw32l011/Libraries/inc/cw32l011_vc.h
+    cw32l011_vc_c:
+      file: cw32l011/Libraries/src/cw32l011_vc.c
+      sha256: df0128f5a7edd3d58bd842c283ccd464f47117f5d29c4164d70d398ab05b4618
+      source_ref: member:cw32l011/Libraries/src/cw32l011_vc.c
+  manual_printed_pages:
+  - 530
+  - 535
+  - 536
+  - 537
+  register_version: cw32l010_v1
+  register_kind: vcdiv
+  control_register: DIV
+  div_width: 3
+  legal_div_range:
+  - 0
+  - 7
+  ratio_denominator: 8
+  core_voltage_nominal_mv: 1600
+  clock_access_policy: Enable the generated clock owner VC module configuration gate;
+    reject held VC reset. No helper functional kernel/reset domain is asserted. Never
+    reset or disable the shared clock.
+  instances:
+  - name: VCDIV
+    facts:
+      clock_owner: VC1
+      consumers:
+      - VC1
+      - VC2
+      negative_mux: 3
+      supply_mv:
+      - 1700
+      - 5500
+      input_uses_vdda: true
+  manual_pdf_pages_1_based:
+  - 531
+  - 536
+  - 537
+  - 538
+  clock_evidence:
+    clock_section: 4.7.12 SYSCTRL_APBEN1 and4.7.15 SYSCTRL_APBRST1
+    clock_printed_pages:
+    - 77
+    - 80
+    clock_pdf_pages_1_based:
+    - 78
+    - 81
+  electrical_evidence:
+    electrical_section: 7.3.15 table7-30
+    electrical_printed_pages:
+    - 55
+    electrical_pdf_pages_1_based:
+    - 58
+  sdk_evidence:
+    divider_initialization: cw32l011_vc.c lines221-236 (VC1VC2_DIVInit); independently
+      qualifies codes0..7 and source selection
+  rendered_register_evidence:
+    pdf_page_1_based: 538
+    printed_page: 537
+    inspection: Own PDF rendered and inspected on2026-10-09. Images remain outside
+      source distribution.
+    render_sha256: 7c0b497ef7b5555127ccabd836a60d8fe2e21739eca71b3865ad44db0758e35d
+- line: CW32L012
+  sources:
+    manual:
+      file: CW32L012_UserManual_CN_V1.4.pdf
+      sha256: a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340
+      url: https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf
+      source_ref: vendor:CW32L012_UserManual_CN_V1.4.pdf
+      printed_revision: Rev 1.4
+    datasheet:
+      file: CW32L012_DataSheet_CN_V1.0.pdf
+      sha256: 08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76
+      url: https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf
+      source_ref: vendor:CW32L012_DataSheet_CN_V1.0.pdf
+    sdk:
+      file: CW32L012_StandardPeripheralLib_V1.0.5.zip
+      sha256: 8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f
+      url: https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip
+      source_ref: vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip
+    cw32l012_h:
+      file: cw32l012/Libraries/inc/cw32l012.h
+      sha256: 3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000
+      source_ref: member:cw32l012/Libraries/inc/cw32l012.h
+    cw32l012_vc_h:
+      file: cw32l012/Libraries/inc/cw32l012_vc.h
+      sha256: f36845838fa199430eae571f8ec4fe03717c486dfb854e6f0ead5a87e0562e96
+      source_ref: member:cw32l012/Libraries/inc/cw32l012_vc.h
+    cw32l012_vc_c:
+      file: cw32l012/Libraries/src/cw32l012_vc.c
+      sha256: 148231c50feedb413cd7da256258f242a8c4f86d7b06bc23f0de9b0ad9220ae7
+      source_ref: member:cw32l012/Libraries/src/cw32l012_vc.c
+  manual_printed_pages:
+  - 619
+  - 620
+  - 625
+  - 626
+  - 627
+  register_version: cw32l012_v1
+  register_kind: vc2ref
+  control_register: REF
+  div_width: 4
+  legal_div_range:
+  - 0
+  - 7
+  ratio_denominator: 8
+  core_voltage_nominal_mv: 1600
+  clock_access_policy: Enable the generated clock owner VC module configuration gate;
+    reject held VC reset. No helper functional kernel/reset domain is asserted. Never
+    reset or disable the shared clock.
+  instances:
+  - name: VC12REF
+    facts:
+      clock_owner: VC1
+      consumers:
+      - VC1
+      - VC2
+      negative_mux: 3
+      supply_mv:
+      - 1700
+      - 5500
+      input_uses_vdda: true
+  - name: VC34REF
+    facts:
+      clock_owner: VC3
+      consumers:
+      - VC3
+      - VC4
+      negative_mux: 3
+      supply_mv:
+      - 1700
+      - 5500
+      input_uses_vdda: true
+  manual_pdf_pages_1_based:
+  - 645
+  - 646
+  - 651
+  - 652
+  - 653
+  clock_evidence:
+    clock_section: 4.7.12 SYSCTRL_APBEN1 and4.7.15 SYSCTRL_APBRST1
+    clock_printed_pages:
+    - 57
+    - 58
+    - 61
+    clock_pdf_pages_1_based:
+    - 83
+    - 84
+    - 87
+  electrical_evidence:
+    electrical_section: 7.3.16 table7-32
+    electrical_printed_pages:
+    - 63
+    electrical_pdf_pages_1_based:
+    - 66
+  sdk_evidence:
+    divider_initialization: cw32l012_vc.c lines121-129; cw32l012_vc.h lines64-80;
+      cw32l012.h lines4598-4611 and8714-8719
+  rendered_register_evidence:
+    pdf_page_1_based: 653
+    printed_page: 627
+    inspection: Own PDF rendered and inspected on2026-10-09. Images remain outside
+      source distribution.
+    render_sha256: 821f577f40d442fda36d9df4962495611607c1d34ddbb74b81a72568a5f69c31
+l012_div_width_conflict:
+  manual: CN Rev1.4 physical PDF page653, printed627, sections27.7.1 and27.7.2 render
+    DIV[3:0]. Functional section27.3.1 printed620 permits only codes0..7.
+  sdk: V1.0.5 cw32l012.h VCREF_DIV_DIV_Msk=0x7 and three-bit DIV member; cw32l012_vc.h
+    VC_Divider lists0..7.
+  resolution: PAC models four-bit field from own manual. HAL only writes documented
+    codes0..7 and rejects inherited codes8..15 before any reference write, preserving
+    uncertain bit3. No ratio is asserted for codes8..15.
+startup: No independent guaranteed divider settling maximum/readiness flag was found.
+  Comparator Readiness remains Unknown. Core rail is nominal, not a calibrated reference.
+  Board must qualify analog settling.
+electrical: Own-family comparator supply/input ranges apply; Vcore input does not
+  relax them. VDDA=VDD where VDDA exists. No reference output pin or programmable
+  BGR voltage is exposed.

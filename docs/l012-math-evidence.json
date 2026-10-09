@@ -1,0 +1,295 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-08",
+  "status": "Own-source implementation review; no hardware execution.",
+  "manual": {
+    "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+    "path": "CW32L012_UserManual_CN_V1.4.pdf",
+    "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+    "printed_revision": "1.4",
+    "revision_date": "2026-06-03",
+    "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+    "printed_pages": [
+      56,
+      60,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158,
+      159,
+      160,
+      161,
+      672
+    ],
+    "pdf_page_offset": 26,
+    "rendered_table_pdf_pages": [
+      182,
+      183
+    ],
+    "section_printed_pages": {
+      "EAU": [
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153
+      ],
+      "CORDIC": [
+        154,
+        155,
+        156,
+        157,
+        158,
+        159,
+        160,
+        161
+      ],
+      "iteration_revision_note": [
+        672
+      ],
+      "AHB_gate_reset": [
+        56,
+        60
+      ]
+    },
+    "pdf_pages_1_based": [
+      82,
+      86,
+      172,
+      173,
+      174,
+      175,
+      176,
+      177,
+      178,
+      179,
+      180,
+      181,
+      182,
+      183,
+      184,
+      185,
+      186,
+      187,
+      698
+    ]
+  },
+  "datasheet": {
+    "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+    "printed_pages": [
+      10,
+      21
+    ],
+    "scope": "Peripheral existence only; operational details follow own manual.",
+    "pdf_pages_1_based": [
+      13,
+      24
+    ]
+  },
+  "sdk": {
+    "source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+    "version": "1.0.5",
+    "members": [
+      {
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012_cordic.h"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_cordic.c"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012_eau.h"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_eau.c"
+      },
+      {
+        "source_ref": "member:cw32l012/Examples/CORDIC/cordic_cos/USER/src/main.c"
+      },
+      {
+        "source_ref": "member:cw32l012/Examples/CORDIC/cordic_atan2/USER/src/main.c"
+      },
+      {
+        "source_ref": "member:cw32l012/Examples/CORDIC/cordic_sinh/USER/src/main.c"
+      },
+      {
+        "source_ref": "member:cw32l012/Examples/CORDIC/cordic_ln/USER/src/main.c"
+      },
+      {
+        "source_ref": "member:cw32l012/Examples/CORDIC/cordic_sqrt/USER/src/main.c"
+      }
+    ]
+  },
+  "registers": {
+    "eau_cw32l012_v1": {
+      "CSR.MODE": {
+        "UNSIGNED_DIVISION": 0,
+        "SIGNED_DIVISION": 1,
+        "SQUARE_ROOT": 2
+      },
+      "CSR.BUSY": 4,
+      "CSR.ZERO": 3,
+      "CSR.OVR": 2,
+      "division_trigger": "DIVISOR after DIVIDEND",
+      "square_root_trigger": "DIVIDEND",
+      "access_width_bits": 32
+    },
+    "cordic_cw32l012_v1": {
+      "CSR.FUNC": [
+        "COS",
+        "SIN",
+        "ATAN2",
+        "HYPOT",
+        "ATAN",
+        "COSH",
+        "SINH",
+        "ATANH",
+        "LN",
+        "SQRT"
+      ],
+      "CSR.FORMAT": {
+        "Q1_15": 0,
+        "Q1_31": 1
+      },
+      "CSR.ITER": "Explicit table 0=2, 1=4, 15=32; driver always selects 15. Prose disagrees and no timing/accuracy guarantee is exposed.",
+      "CSR.COMP": {
+        "COMPENSATED": 0,
+        "UNCOMPENSATED": 1
+      },
+      "single_input_trigger": "write the one operand",
+      "dual_input_trigger": "write X then Y",
+      "completion": "BUSY=0 and EOC=1 before any result read",
+      "eoc_clear": "Hardware clears after result read; hardware also clears upon next start"
+    }
+  },
+  "policy": {
+    "ownership": "Peri retained; sealed instance; no shared mutable PAC state",
+    "startup": "central RCC_INFO enable, no reset pulse/release, busy guard",
+    "timeout": "bounded CSR observations; no abort/reset; busy engine left clocked",
+    "drop": "nonblocking; disable only when idle and central RCC policy permits independent gating",
+    "phase_domain": "x>0 only, because table says atan(y/x) and does not define branch cuts",
+    "numeric_guarantees": "No hardware execution, error bound, rounding or +1 saturation guarantee",
+    "excluded": [
+      "Q1.15",
+      "asynchronous operation",
+      "IRQ and DMA",
+      "software fallback",
+      "automatic range extension",
+      "configurable iterations",
+      "full-quadrant phase"
+    ],
+    "sdk_comp_discrepancy": "SDK Q1.31 sqrt example selects COMP=1, but manual says this is uncompensated. HAL follows manual COMP=0."
+  },
+  "q31_domains": {
+    "HYPERBOLIC": {
+      "minimum": [
+        -559,
+        1000
+      ],
+      "maximum": [
+        559,
+        1000
+      ],
+      "maximum_inclusive": true
+    },
+    "ATANH": {
+      "minimum": [
+        -403,
+        1000
+      ],
+      "maximum": [
+        403,
+        1000
+      ],
+      "maximum_inclusive": true
+    },
+    "LN1": {
+      "minimum": [
+        535,
+        10000
+      ],
+      "maximum": [
+        1,
+        2
+      ],
+      "maximum_inclusive": false
+    },
+    "LN2": {
+      "minimum": [
+        1,
+        4
+      ],
+      "maximum": [
+        3,
+        4
+      ],
+      "maximum_inclusive": false
+    },
+    "LN3": {
+      "minimum": [
+        3,
+        8
+      ],
+      "maximum": [
+        7,
+        8
+      ],
+      "maximum_inclusive": false
+    },
+    "LN4": {
+      "minimum": [
+        7,
+        16
+      ],
+      "maximum": [
+        584,
+        1000
+      ],
+      "maximum_inclusive": false
+    },
+    "SQRT0": {
+      "minimum": [
+        27,
+        1000
+      ],
+      "maximum": [
+        3,
+        4
+      ],
+      "maximum_inclusive": false
+    },
+    "SQRT1": {
+      "minimum": [
+        3,
+        8
+      ],
+      "maximum": [
+        7,
+        8
+      ],
+      "maximum_inclusive": false
+    },
+    "SQRT2": {
+      "minimum": [
+        7,
+        16
+      ],
+      "maximum": [
+        585,
+        1000
+      ],
+      "maximum_inclusive": true
+    }
+  }
+}

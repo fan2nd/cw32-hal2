@@ -1,0 +1,703 @@
+schema_version: 1
+family: CW32L011
+status: verified-from-official-datasheet
+source:
+  source_id: CW32L011_datasheet
+  url: https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf
+  sha256: 0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5
+  document_filename: CW32L011_DataSheet_CN_V1.1.pdf
+  pinout_evidence: 'Table 5-2: complete physical-position, pin-name and pin-type columns; oscillator aliases
+    only when explicitly stated in the same row.'
+  table_pdf_page_indices:
+  - 28
+  - 29
+  - 30
+  visually_reviewed_pdf_page_indices:
+  - 28
+  validation: Independent PDF-grid and pdftotext position extraction; rendered-page review of per-family
+    tables and ambiguous cases; not silicon-tested.
+  source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+notes:
+- Package pins retain physical position strings, including vendor-numbered exposed pads. A dash in the
+  source is unbonded and becomes null only in table_rows; it is never emitted as a package pin.
+- GPIO names are normalized by removing leading zeroes (PA00 to PA0). Other pin labels preserve source
+  spelling. Direct pin-name aliases and OSC/OSC32 analog aliases are included; numbered alternate-function
+  routing is outside this dataset.
+- gpio_pins lists output-capable MCU GPIO pins according to this family's pin-type table, including debug/reset
+  pads that require explicit reconfiguration. input_only_pins contains MCU GPIO names only. Neither list
+  claims safe electrical configuration or silicon verification.
+- Unnumbered thermal pads are not assigned invented positions or signals. Numbered pad 0 is included only
+  where explicitly documented.
+table_columns:
+- LQFP32
+- QFN32
+table_rows:
+- positions:
+    LQFP32: '1'
+    QFN32: '1'
+  source_name: Vcore
+  signals:
+  - Vcore
+  source_type: '-'
+  pin_type: '-'
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    LQFP32: '2'
+    QFN32: '2'
+  source_name: PC14
+  signals:
+  - PC14
+  - OSC32_IN
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 28
+- positions:
+    LQFP32: '3'
+    QFN32: '3'
+  source_name: PC15
+  signals:
+  - PC15
+  - OSC32_OUT
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 28
+- positions:
+    LQFP32: '4'
+    QFN32: '4'
+  source_name: NRST
+  signals:
+  - NRST
+  source_type: I
+  pin_type: I
+  io_structure: RST
+  pdf_page_index: 28
+- positions:
+    LQFP32: '5'
+    QFN32: '5'
+  source_name: VDDA
+  signals:
+  - VDDA
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 28
+- positions:
+    LQFP32: '6'
+    QFN32: '6'
+  source_name: PA00
+  signals:
+  - PA0
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP32: '7'
+    QFN32: '7'
+  source_name: PA01
+  signals:
+  - PA1
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP32: '8'
+    QFN32: '8'
+  source_name: PA02
+  signals:
+  - PA2
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP32: '9'
+    QFN32: '9'
+  source_name: PA03
+  signals:
+  - PA3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP32: '10'
+    QFN32: '10'
+  source_name: PA04
+  signals:
+  - PA4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 28
+- positions:
+    LQFP32: '11'
+    QFN32: '11'
+  source_name: PA05
+  signals:
+  - PA5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP32: '12'
+    QFN32: '12'
+  source_name: PA06
+  signals:
+  - PA6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP32: '13'
+    QFN32: '13'
+  source_name: PA07
+  signals:
+  - PA7
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP32: '14'
+    QFN32: '14'
+  source_name: PB00
+  signals:
+  - PB0
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP32: '15'
+    QFN32: '15'
+  source_name: PB01
+  signals:
+  - PB1
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP32: '16'
+    QFN32: '16'
+  source_name: VSS
+  signals:
+  - VSS
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 29
+- positions:
+    LQFP32: '17'
+    QFN32: '17'
+  source_name: VDD
+  signals:
+  - VDD
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 29
+- positions:
+    LQFP32: '18'
+    QFN32: '18'
+  source_name: PA08
+  signals:
+  - PA8
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP32: '19'
+    QFN32: '19'
+  source_name: PA09
+  signals:
+  - PA9
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP32: '20'
+    QFN32: '20'
+  source_name: PA10
+  signals:
+  - PA10
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP32: '21'
+    QFN32: '21'
+  source_name: PA11
+  signals:
+  - PA11
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TTa
+  pdf_page_index: 29
+- positions:
+    LQFP32: '22'
+    QFN32: '22'
+  source_name: PA12
+  signals:
+  - PA12
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+- positions:
+    LQFP32: '23'
+    QFN32: '23'
+  source_name: PA13/SWDIO
+  signals:
+  - PA13
+  - SWDIO
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+- positions:
+    LQFP32: '24'
+    QFN32: '24'
+  source_name: PA14/SWCLK
+  signals:
+  - PA14
+  - SWCLK
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+- positions:
+    LQFP32: '25'
+    QFN32: '25'
+  source_name: PA15
+  signals:
+  - PA15
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+- positions:
+    LQFP32: '26'
+    QFN32: '26'
+  source_name: PB03
+  signals:
+  - PB3
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+- positions:
+    LQFP32: '27'
+    QFN32: '27'
+  source_name: PB04
+  signals:
+  - PB4
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 29
+- positions:
+    LQFP32: '28'
+    QFN32: '28'
+  source_name: PB05
+  signals:
+  - PB5
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 30
+- positions:
+    LQFP32: '29'
+    QFN32: '29'
+  source_name: PB06
+  signals:
+  - PB6
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 30
+- positions:
+    LQFP32: '30'
+    QFN32: '30'
+  source_name: PB07
+  signals:
+  - PB7
+  - OSC_OUT
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 30
+- positions:
+    LQFP32: '31'
+    QFN32: '31'
+  source_name: PC13
+  signals:
+  - PC13
+  - OSC_IN
+  source_type: I/O
+  pin_type: I/O
+  io_structure: TC
+  pdf_page_index: 30
+- positions:
+    LQFP32: '32'
+    QFN32: '32'
+  source_name: VSS
+  signals:
+  - VSS
+  source_type: S
+  pin_type: S
+  io_structure: '-'
+  pdf_page_index: 30
+packages:
+- name: CW32L011K8T6
+  key: cw32l011k8t
+  family_part: CW32L011K8
+  package: LQFP32
+  table_column: LQFP32
+  documented_orderable_parts:
+  - CW32L011K8T6
+  flash_bytes: 65536
+  ram_bytes: 6144
+  lead_count: 32
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - Vcore
+  - position: '2'
+    signals:
+    - PC14
+    - OSC32_IN
+  - position: '3'
+    signals:
+    - PC15
+    - OSC32_OUT
+  - position: '4'
+    signals:
+    - NRST
+  - position: '5'
+    signals:
+    - VDDA
+  - position: '6'
+    signals:
+    - PA0
+  - position: '7'
+    signals:
+    - PA1
+  - position: '8'
+    signals:
+    - PA2
+  - position: '9'
+    signals:
+    - PA3
+  - position: '10'
+    signals:
+    - PA4
+  - position: '11'
+    signals:
+    - PA5
+  - position: '12'
+    signals:
+    - PA6
+  - position: '13'
+    signals:
+    - PA7
+  - position: '14'
+    signals:
+    - PB0
+  - position: '15'
+    signals:
+    - PB1
+  - position: '16'
+    signals:
+    - VSS
+  - position: '17'
+    signals:
+    - VDD
+  - position: '18'
+    signals:
+    - PA8
+  - position: '19'
+    signals:
+    - PA9
+  - position: '20'
+    signals:
+    - PA10
+  - position: '21'
+    signals:
+    - PA11
+  - position: '22'
+    signals:
+    - PA12
+  - position: '23'
+    signals:
+    - PA13
+    - SWDIO
+  - position: '24'
+    signals:
+    - PA14
+    - SWCLK
+  - position: '25'
+    signals:
+    - PA15
+  - position: '26'
+    signals:
+    - PB3
+  - position: '27'
+    signals:
+    - PB4
+  - position: '28'
+    signals:
+    - PB5
+  - position: '29'
+    signals:
+    - PB6
+  - position: '30'
+    signals:
+    - PB7
+    - OSC_OUT
+  - position: '31'
+    signals:
+    - PC13
+    - OSC_IN
+  - position: '32'
+    signals:
+    - VSS
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA13
+  - PA14
+  - PA15
+  - PB0
+  - PB1
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PC13
+  - PC14
+  - PC15
+  gpio_count: 26
+  input_only_pins: []
+  debug_pins:
+  - PA13
+  - PA14
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA15
+  - PB0
+  - PB1
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PC13
+  - PC14
+  - PC15
+- name: CW32L011K8U6
+  key: cw32l011k8u
+  family_part: CW32L011K8
+  package: QFN32
+  table_column: QFN32
+  documented_orderable_parts:
+  - CW32L011K8U6
+  flash_bytes: 65536
+  ram_bytes: 6144
+  lead_count: 32
+  additional_numbered_pads: []
+  pins:
+  - position: '1'
+    signals:
+    - Vcore
+  - position: '2'
+    signals:
+    - PC14
+    - OSC32_IN
+  - position: '3'
+    signals:
+    - PC15
+    - OSC32_OUT
+  - position: '4'
+    signals:
+    - NRST
+  - position: '5'
+    signals:
+    - VDDA
+  - position: '6'
+    signals:
+    - PA0
+  - position: '7'
+    signals:
+    - PA1
+  - position: '8'
+    signals:
+    - PA2
+  - position: '9'
+    signals:
+    - PA3
+  - position: '10'
+    signals:
+    - PA4
+  - position: '11'
+    signals:
+    - PA5
+  - position: '12'
+    signals:
+    - PA6
+  - position: '13'
+    signals:
+    - PA7
+  - position: '14'
+    signals:
+    - PB0
+  - position: '15'
+    signals:
+    - PB1
+  - position: '16'
+    signals:
+    - VSS
+  - position: '17'
+    signals:
+    - VDD
+  - position: '18'
+    signals:
+    - PA8
+  - position: '19'
+    signals:
+    - PA9
+  - position: '20'
+    signals:
+    - PA10
+  - position: '21'
+    signals:
+    - PA11
+  - position: '22'
+    signals:
+    - PA12
+  - position: '23'
+    signals:
+    - PA13
+    - SWDIO
+  - position: '24'
+    signals:
+    - PA14
+    - SWCLK
+  - position: '25'
+    signals:
+    - PA15
+  - position: '26'
+    signals:
+    - PB3
+  - position: '27'
+    signals:
+    - PB4
+  - position: '28'
+    signals:
+    - PB5
+  - position: '29'
+    signals:
+    - PB6
+  - position: '30'
+    signals:
+    - PB7
+    - OSC_OUT
+  - position: '31'
+    signals:
+    - PC13
+    - OSC_IN
+  - position: '32'
+    signals:
+    - VSS
+  gpio_pins:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA13
+  - PA14
+  - PA15
+  - PB0
+  - PB1
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PC13
+  - PC14
+  - PC15
+  gpio_count: 26
+  input_only_pins: []
+  debug_pins:
+  - PA13
+  - PA14
+  gpio_pins_preserving_swd:
+  - PA0
+  - PA1
+  - PA2
+  - PA3
+  - PA4
+  - PA5
+  - PA6
+  - PA7
+  - PA8
+  - PA9
+  - PA10
+  - PA11
+  - PA12
+  - PA15
+  - PB0
+  - PB1
+  - PB3
+  - PB4
+  - PB5
+  - PB6
+  - PB7
+  - PC13
+  - PC14
+  - PC15

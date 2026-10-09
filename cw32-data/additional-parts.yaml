@@ -1,0 +1,562 @@
+schema_version: 1
+snapshot_at_utc: '2026-10-08T03:03:00Z'
+scope: Explicit full order codes in Table 9-1 of the 13 downloaded current official family datasheets,
+  beyond the unchanged 37-part web-catalog snapshot. Naming-option Cartesian products, historical document
+  hunting, custom-programmed suffixes and inferred codes are excluded.
+validation_scope: Read all 13 ordering tables and full-text exact-code matches. Visually checked the additional-code
+  ordering rows, memory/package tables, address maps and F030 naming/history pages. All 13 audited PDF
+  hashes match the pinned parts.json sources. No live stock/orderability or silicon testing.
+base_catalog_part_count: 37
+documented_order_code_count: 40
+additional_legacy_chip_name_count: 2
+additional_shipping_sku_alias_count: 1
+additional_distinct_hardware_count: 0
+integration_policy: Keep the 37 current catalog chip selections unchanged. Every additional record has
+  generate_chip_selection=false and count_as_distinct_hardware=false. Its feature and recommended_base_pac_feature
+  point to an existing catalog feature. Shipping-SKU aliases remain separate from parts. If a front end
+  accepts legacy order codes, resolve them through alias_of instead of creating independent PAC models.
+sources:
+  CW32A030_datasheet:
+    url: https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf
+    sha256: 690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9
+    document_filename: CW32A030_DataSheet_CN_V1.1.pdf
+    memory_map_pdf_page_indices:
+    - 28
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 62
+    ordering_table_printed_pages:
+    - 62
+    source_ref: vendor:CW32A030_DataSheet_CN_V1.1.pdf
+  CW32F002_datasheet:
+    url: https://www.whxy.com/uploads/files/20251230/CW32F002_DataSheet_CN_V1.2.pdf
+    sha256: 6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506
+    document_filename: CW32F002_DataSheet_CN_V1.2.pdf
+    memory_map_pdf_page_indices:
+    - 25
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 57
+    ordering_table_printed_pages:
+    - 57
+    source_ref: vendor:CW32F002_DataSheet_CN_V1.2.pdf
+  CW32F003_datasheet:
+    url: https://www.whxy.com/uploads/files/20251226/CW32F003_DataSheet_CN_V1.9.pdf
+    sha256: 5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd
+    document_filename: CW32F003_DataSheet_CN_V1.9.pdf
+    memory_map_pdf_page_indices:
+    - 26
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 61
+    ordering_table_printed_pages:
+    - 61
+    nomenclature_pdf_page_indices:
+    - 61
+    source_ref: vendor:CW32F003_DataSheet_CN_V1.9.pdf
+  CW32F020_datasheet:
+    url: https://www.whxy.com/uploads/files/20251230/CW32F020_DataSheet_CN_V1.3.pdf
+    sha256: 1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0
+    document_filename: CW32F020_DataSheet_CN_V1.3.pdf
+    memory_map_pdf_page_indices:
+    - 29
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 68
+    ordering_table_printed_pages:
+    - 68
+    source_ref: vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf
+  CW32F030_datasheet:
+    url: https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    document_filename: CW32F030_DataSheet_CN_V1.9.pdf
+    memory_map_pdf_page_indices:
+    - 31
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 75
+    ordering_table_printed_pages:
+    - 75
+    nomenclature_pdf_page_indices:
+    - 74
+    revision_history_pdf_page_indices:
+    - 76
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  CW32L010_datasheet:
+    url: https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    document_filename: CW32L010_DataSheet_CN_V1.3.pdf
+    memory_map_pdf_page_indices:
+    - 26
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 65
+    ordering_table_printed_pages:
+    - 65
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  CW32L011_datasheet:
+    url: https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf
+    sha256: 0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5
+    document_filename: CW32L011_DataSheet_CN_V1.1.pdf
+    memory_map_pdf_page_indices:
+    - 33
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 70
+    ordering_table_printed_pages:
+    - 68
+    source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+  CW32L012_datasheet:
+    url: https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf
+    sha256: 08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76
+    document_filename: CW32L012_DataSheet_CN_V1.0.pdf
+    memory_map_pdf_page_indices:
+    - 40
+    memory_size_table_pdf_page_indices:
+    - 7
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 80
+    ordering_table_printed_pages:
+    - 78
+    source_ref: vendor:CW32L012_DataSheet_CN_V1.0.pdf
+  CW32L031_datasheet:
+    url: https://www.whxy.com/uploads/files/20251229/CW32L031_DataSheet_CN_V1.9.pdf
+    sha256: 90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855
+    document_filename: CW32L031_DataSheet_CN_V1.9.pdf
+    memory_map_pdf_page_indices:
+    - 31
+    memory_size_table_pdf_page_indices:
+    - 9
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 77
+    ordering_table_printed_pages:
+    - 77
+    source_ref: vendor:CW32L031_DataSheet_CN_V1.9.pdf
+  CW32L052_datasheet:
+    url: https://www.whxy.com/uploads/files/20251229/CW32L052_DataSheet_CN_V1.3.pdf
+    sha256: f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f
+    document_filename: CW32L052_DataSheet_CN_V1.3.pdf
+    memory_map_pdf_page_indices:
+    - 35
+    memory_size_table_pdf_page_indices:
+    - 9
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 78
+    ordering_table_printed_pages:
+    - 78
+    source_ref: vendor:CW32L052_DataSheet_CN_V1.3.pdf
+  CW32L083_datasheet:
+    url: https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf
+    sha256: 852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e
+    document_filename: CW32L083_DataSheet_CN_V1.9.pdf
+    memory_map_pdf_page_indices:
+    - 39
+    memory_size_table_pdf_page_indices:
+    - 9
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 85
+    ordering_table_printed_pages:
+    - 85
+    source_ref: vendor:CW32L083_DataSheet_CN_V1.9.pdf
+  CW32R031_datasheet:
+    url: https://www.whxy.com/uploads/files/20251230/CW32R031_DataSheet_CN_V1.2.pdf
+    sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+    document_filename: CW32R031_DataSheet_CN_V1.2.pdf
+    memory_map_pdf_page_indices:
+    - 34
+    memory_size_table_pdf_page_indices:
+    - 10
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 72
+    ordering_table_printed_pages:
+    - 72
+    source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+  CW32W031_datasheet:
+    url: https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    document_filename: CW32W031_DataSheet_CN_V1.3.pdf
+    memory_map_pdf_page_indices:
+    - 33
+    memory_size_table_pdf_page_indices:
+    - 8
+    memory_map_evidence: Per-family table explicitly places main Flash at0x00000000 and SRAM at0x20000000.
+      Family-product table establishes package/size variant.
+    ordering_table: Table 9-1 (minimum order quantities)
+    ordering_table_pdf_page_indices:
+    - 70
+    ordering_table_printed_pages:
+    - 70
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+audited_families:
+- family: CW32A030
+  datasheet_source_id: CW32A030_datasheet
+  ordering_table_pdf_page_indices:
+  - 62
+  documented_order_codes:
+  - CW32A030C8T7
+  codes_absent_from_catalog: []
+- family: CW32F002
+  datasheet_source_id: CW32F002_datasheet
+  ordering_table_pdf_page_indices:
+  - 57
+  documented_order_codes:
+  - CW32F002F3P7
+  - CW32F002F3U7
+  codes_absent_from_catalog: []
+- family: CW32F003
+  datasheet_source_id: CW32F003_datasheet
+  ordering_table_pdf_page_indices:
+  - 61
+  documented_order_codes:
+  - CW32F003E4P7
+  - CW32F003F4P7
+  - CW32F003F4P7TR
+  - CW32F003F4U7
+  codes_absent_from_catalog:
+  - CW32F003F4P7TR
+- family: CW32F020
+  datasheet_source_id: CW32F020_datasheet
+  ordering_table_pdf_page_indices:
+  - 68
+  documented_order_codes:
+  - CW32F020C6U7
+  - CW32F020F6U7
+  - CW32F020K6U7
+  codes_absent_from_catalog: []
+- family: CW32F030
+  datasheet_source_id: CW32F030_datasheet
+  ordering_table_pdf_page_indices:
+  - 75
+  documented_order_codes:
+  - CW32F030C8T6
+  - CW32F030C8T7
+  - CW32F030F6P6
+  - CW32F030F6P7
+  - CW32F030F8V7
+  - CW32F030K8T7
+  - CW32F030K8U7
+  codes_absent_from_catalog:
+  - CW32F030C8T6
+  - CW32F030F6P6
+- family: CW32L010
+  datasheet_source_id: CW32L010_datasheet
+  ordering_table_pdf_page_indices:
+  - 65
+  documented_order_codes:
+  - CW32L010F8P6
+  - CW32L010F8U6
+  - CW32L010Y8M6
+  codes_absent_from_catalog: []
+- family: CW32L011
+  datasheet_source_id: CW32L011_datasheet
+  ordering_table_pdf_page_indices:
+  - 70
+  documented_order_codes:
+  - CW32L011K8T6
+  - CW32L011K8U6
+  codes_absent_from_catalog: []
+- family: CW32L012
+  datasheet_source_id: CW32L012_datasheet
+  ordering_table_pdf_page_indices:
+  - 80
+  documented_order_codes:
+  - CW32L012C8T6
+  - CW32L012C8U6
+  codes_absent_from_catalog: []
+- family: CW32L031
+  datasheet_source_id: CW32L031_datasheet
+  ordering_table_pdf_page_indices:
+  - 77
+  documented_order_codes:
+  - CW32L031C8T6
+  - CW32L031C8U6
+  - CW32L031F8P6
+  - CW32L031F8U6
+  - CW32L031K8U6
+  - CW32L031K8V6
+  codes_absent_from_catalog: []
+- family: CW32L052
+  datasheet_source_id: CW32L052_datasheet
+  ordering_table_pdf_page_indices:
+  - 78
+  documented_order_codes:
+  - CW32L052C8T6
+  - CW32L052R8S6
+  - CW32L052R8T6
+  codes_absent_from_catalog: []
+- family: CW32L083
+  datasheet_source_id: CW32L083_datasheet
+  ordering_table_pdf_page_indices:
+  - 85
+  documented_order_codes:
+  - CW32L083MCT6
+  - CW32L083RBT6
+  - CW32L083RCS6
+  - CW32L083RCT6
+  - CW32L083VCT6
+  codes_absent_from_catalog: []
+- family: CW32R031
+  datasheet_source_id: CW32R031_datasheet
+  ordering_table_pdf_page_indices:
+  - 72
+  documented_order_codes:
+  - CW32R031C8U6
+  codes_absent_from_catalog: []
+- family: CW32W031
+  datasheet_source_id: CW32W031_datasheet
+  ordering_table_pdf_page_indices:
+  - 70
+  documented_order_codes:
+  - CW32W031R8U6
+  codes_absent_from_catalog: []
+parts:
+- name: CW32F030C8T6
+  feature: cw32f030c8t7
+  family: CW32F030
+  package: LQFP48
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 65536
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 8192
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F030_datasheet
+  dfp_device: null
+  dfp_cross_check: Not used for this alias audit; memory and package mapping are verified from the same
+    official datasheet as the explicit order code.
+  catalog_source_url: null
+  datasheet_source_id: CW32F030_datasheet
+  notes:
+  - This is a documented legacy name, not an additional silicon or package variant. The feature field
+    selects the existing replacement PAC model; do not generate a second chip selection from this record.
+  - The current datasheet retains the legacy code in Table 9-1 but records its renaming in Table 10-1.
+    Current commercial availability and ordering acceptance have not been verified.
+  - The PAC mapping covers registers, memory and physical package only. The legacy suffix-6 temperature
+    grade must not be upgraded to suffix-7 solely because the PAC feature is shared.
+  kind: legacy-chip-name-alias
+  alias_of: CW32F030C8T7
+  recommended_base_pac_feature: cw32f030c8t7
+  generate_chip_selection: false
+  count_as_distinct_hardware: false
+  catalog_status: absent-from-37-part-current-web-catalog-snapshot
+  availability_status: not-verified
+  current_status: renamed-but-retained-in-current-ordering-table
+  documented_temperature_range_celsius:
+    minimum: -40
+    maximum: 85
+  renamed_in_revision:
+    revision: Rev 1.4
+    date: '2022-01-10'
+    replacement: CW32F030C8T7
+  evidence:
+  - source_id: CW32F030_datasheet
+    pdf_page_indices:
+    - 75
+    table: 9-1
+    supports: Full legacy code appears explicitly in the same MOQ row as its replacement.
+  - source_id: CW32F030_datasheet
+    pdf_page_indices:
+    - 7
+    table: 3-1
+    supports: Family-product column gives the exact Flash/SRAM sizes and physical package.
+  - source_id: CW32F030_datasheet
+    pdf_page_indices:
+    - 31
+    table: 6-1
+    supports: Main Flash base 0x00000000 and SRAM base 0x20000000; use variant sizes from Table 3-1 rather
+      than the full-family maxima in this map.
+  - source_id: CW32F030_datasheet
+    pdf_page_indices:
+    - 74
+    section: '9'
+    supports: Suffix 6 is the -40 to +85 degree Celsius temperature grade; temperature rating is not inherited
+      from the replacement PAC selection.
+  - source_id: CW32F030_datasheet
+    pdf_page_indices:
+    - 76
+    table: 10-1
+    supports: Rev 1.4 explicitly says this code was updated to its replacement based on operating-temperature
+      range.
+- name: CW32F030F6P6
+  feature: cw32f030f6p7
+  family: CW32F030
+  package: TSSOP20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 32768
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 6144
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F030_datasheet
+  dfp_device: null
+  dfp_cross_check: Not used for this alias audit; memory and package mapping are verified from the same
+    official datasheet as the explicit order code.
+  catalog_source_url: null
+  datasheet_source_id: CW32F030_datasheet
+  notes:
+  - This is a documented legacy name, not an additional silicon or package variant. The feature field
+    selects the existing replacement PAC model; do not generate a second chip selection from this record.
+  - The current datasheet retains the legacy code in Table 9-1 but records its renaming in Table 10-1.
+    Current commercial availability and ordering acceptance have not been verified.
+  - The PAC mapping covers registers, memory and physical package only. The legacy suffix-6 temperature
+    grade must not be upgraded to suffix-7 solely because the PAC feature is shared.
+  - Table 3-1 specifies 32 KiB Flash and 6 KiB SRAM for CW32F030F6. The generic map shows the family maximum
+    of 64/8 KiB and must not override the variant table.
+  kind: legacy-chip-name-alias
+  alias_of: CW32F030F6P7
+  recommended_base_pac_feature: cw32f030f6p7
+  generate_chip_selection: false
+  count_as_distinct_hardware: false
+  catalog_status: absent-from-37-part-current-web-catalog-snapshot
+  availability_status: not-verified
+  current_status: renamed-but-retained-in-current-ordering-table
+  documented_temperature_range_celsius:
+    minimum: -40
+    maximum: 85
+  renamed_in_revision:
+    revision: Rev 1.4
+    date: '2022-01-10'
+    replacement: CW32F030F6P7
+  evidence:
+  - source_id: CW32F030_datasheet
+    pdf_page_indices:
+    - 75
+    table: 9-1
+    supports: Full legacy code appears explicitly in the same MOQ row as its replacement.
+  - source_id: CW32F030_datasheet
+    pdf_page_indices:
+    - 7
+    table: 3-1
+    supports: Family-product column gives the exact Flash/SRAM sizes and physical package.
+  - source_id: CW32F030_datasheet
+    pdf_page_indices:
+    - 31
+    table: 6-1
+    supports: Main Flash base 0x00000000 and SRAM base 0x20000000; use variant sizes from Table 3-1 rather
+      than the full-family maxima in this map.
+  - source_id: CW32F030_datasheet
+    pdf_page_indices:
+    - 74
+    section: '9'
+    supports: Suffix 6 is the -40 to +85 degree Celsius temperature grade; temperature rating is not inherited
+      from the replacement PAC selection.
+  - source_id: CW32F030_datasheet
+    pdf_page_indices:
+    - 76
+    table: 10-1
+    supports: Rev 1.4 explicitly says this code was updated to its replacement based on operating-temperature
+      range.
+shipping_sku_aliases:
+- name: CW32F003F4P7TR
+  feature: cw32f003f4p7
+  family: CW32F003
+  package: TSSOP20
+  memory:
+  - name: FLASH
+    kind: flash
+    address: 0
+    size: 20480
+  - name: RAM
+    kind: ram
+    address: 536870912
+    size: 3072
+  memory_status: verified-from-official-datasheet
+  evidence_confidence: high
+  source_ids:
+  - CW32F003_datasheet
+  dfp_device: null
+  dfp_cross_check: Not used for this alias audit; memory and package mapping are verified from the same
+    official datasheet as the explicit order code.
+  catalog_source_url: null
+  datasheet_source_id: CW32F003_datasheet
+  notes:
+  - TR changes shipment packaging only. This code maps to the existing cw32f003f4p7 PAC feature and must
+    not create a separate chip feature or inflate hardware coverage.
+  kind: shipping-packaging-alias
+  alias_of: CW32F003F4P7
+  recommended_base_pac_feature: cw32f003f4p7
+  generate_chip_selection: false
+  count_as_distinct_hardware: false
+  catalog_status: absent-from-37-part-current-web-catalog-snapshot
+  availability_status: not-verified
+  current_status: explicitly-listed-in-current-ordering-table
+  shipping_packaging:
+    type: reel
+    pieces_per_reel: 4000
+    minimum_order_quantity_pieces: 4000
+  evidence:
+  - source_id: CW32F003_datasheet
+    pdf_page_indices:
+    - 61
+    table: 9-1
+    supports: Full CW32F003F4P7TR code appears in its own Reel row; CW32F003F4P7 appears in the Tube row.
+  - source_id: CW32F003_datasheet
+    pdf_page_indices:
+    - 61
+    section: '9'
+    supports: TR is explicitly defined as tape-and-reel packaging. P denotes TSSOP, F denotes 20 pins.
+  - source_id: CW32F003_datasheet
+    pdf_page_indices:
+    - 7
+    table: 3-1
+    supports: CW32F003F4 has 20 KiB Flash and 3 KiB SRAM and includes the TSSOP20 package.
+  - source_id: CW32F003_datasheet
+    pdf_page_indices:
+    - 26
+    table: 6-1
+    supports: Main Flash 0x00000000-0x00004FFF; SRAM 0x20000000-0x20000BFF.

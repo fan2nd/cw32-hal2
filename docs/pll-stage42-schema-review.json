@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "review_date_utc": "2026-10-09T11:30:21.422345+00:00",
+  "reviewer": "independent combined-schema reviewer",
+  "status": "accepted: exact additive PLL rebase onto Stage42; provenance advance permitted only under conditions below",
+  "scope": "Three schema models and their inherited/default/static projection contracts; no HAL or hardware validation claim.",
+  "inputs": {
+    "stage39": {
+      "filename": "embassy-cw32-stage39-source-2026-10-09.zip",
+      "sha256": "2d052b2b3b9a5489e797991109df4fb197042f5caf2382e13f04349206d2bd03"
+    },
+    "accepted_pll": {
+      "filename": "cw32-l083-hsi-pll-candidate-source-20261009.zip",
+      "sha256": "233d8a88eb643fa6af255b576d133fdeb9d51ec1341f1bfcf258380e3c168eb7"
+    },
+    "stage42": {
+      "filename": "embassy-cw32-stage42-source-2026-10-09.zip",
+      "sha256": "5330dd2f25f18510992542ae711a38271dcb0f6c1c7f201a1496f2178c2dc0b3"
+    }
+  },
+  "frozen_manifest_sha256": "6d23f35542926c3da17323aed4b1fd92b9521c531141b25d072e78bb96a23ba0",
+  "model_proofs": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "sha256": {
+        "stage39": "e70e0c81debc6484b2949b12590fe54670001188d5caf23f3d432a61c24de133",
+        "accepted_pll": "c42ba9daafed740a5ef3772d99849f2f5e1dcc99c9a09bd5a3331616dd82c959",
+        "stage42": "c183923bcb189ea2d6617d6ff13963070d64e06d8308c856b8d1b45cef78c810",
+        "combined": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b"
+      },
+      "pll_insertions": [
+        {
+          "lines": 17,
+          "sha256": "041e3040922f1952061b4e5a4a749a94d928b8f20840e7b3ad18306444ed4111"
+        },
+        {
+          "lines": 2,
+          "sha256": "e9ce74cc89dcbb505d8fcf1494ed4e4ff799a169da659341100990ff1fcfb232"
+        }
+      ],
+      "pll_insertion_runs_byte_equal_to_accepted_stage39_delta": true,
+      "remove_pll_yields_exact_stage42_sha256": "c183923bcb189ea2d6617d6ff13963070d64e06d8308c856b8d1b45cef78c810",
+      "reverse_optional_hse_and_lse_yields_exact_accepted_pll_sha256": "c42ba9daafed740a5ef3772d99849f2f5e1dcc99c9a09bd5a3331616dd82c959",
+      "reverse_both_yields_exact_stage39_sha256": "e70e0c81debc6484b2949b12590fe54670001188d5caf23f3d432a61c24de133"
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "sha256": {
+        "stage39": "c53354b75e9b50c72714f3476a3da9ecfc32dcaa29342968bf604bc32f10e6d0",
+        "accepted_pll": "f35909acfb0b7a69fb57d6e38ec342688c78130626d3932b990bc462d0eb0821",
+        "stage42": "e5a47e53e92f4b0c2853fb4e5925e369c4575627ff287f712a878e9c110d2ae9",
+        "combined": "d72f44ee7602c515e8638a2662612f82d1420f67a7e70c9473619401f38f8925"
+      },
+      "pll_insertions": [
+        {
+          "lines": 16,
+          "sha256": "d3cb5daa5a7b837417b589a80a1eda6efa060cc0c6d747aaf93befbf8d6e2fb1"
+        },
+        {
+          "lines": 2,
+          "sha256": "b949c276c6a7ca33216356f639fcca719862f902ce66df94849ba1c4f3a030b8"
+        }
+      ],
+      "pll_insertion_runs_byte_equal_to_accepted_stage39_delta": true,
+      "remove_pll_yields_exact_stage42_sha256": "e5a47e53e92f4b0c2853fb4e5925e369c4575627ff287f712a878e9c110d2ae9",
+      "reverse_optional_hse_and_lse_yields_exact_accepted_pll_sha256": "f35909acfb0b7a69fb57d6e38ec342688c78130626d3932b990bc462d0eb0821",
+      "reverse_both_yields_exact_stage39_sha256": "c53354b75e9b50c72714f3476a3da9ecfc32dcaa29342968bf604bc32f10e6d0"
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "sha256": {
+        "stage39": "2b1fa6d62be812e01ee2dbf9e90626cc6f1b658960fcbd99cf9fa221455ba4e8",
+        "accepted_pll": "a906816ea381eb9784ba1b769b0eab4f2c7a63885e7896cc3b6d5286ad5bbea9",
+        "stage42": "b2670e75d4a042579a50217a93efec343d0dba80aa823ed22eeb0bbecdade210",
+        "combined": "7a41a47e4564d60527228f385021f0f4a801fb33afe675b4af92ec4e9874a926"
+      },
+      "pll_insertions": [
+        {
+          "lines": 16,
+          "sha256": "e677e796c0ed5eae2bcfa2bdc0b9d376094c632f220850630c14610990aa03d7"
+        },
+        {
+          "lines": 1,
+          "sha256": "62aa3d3f3fe908369afef3276f1bffe525892adfb858f575f8d5de3d32ae55d2"
+        }
+      ],
+      "pll_insertion_runs_byte_equal_to_accepted_stage39_delta": true,
+      "remove_pll_yields_exact_stage42_sha256": "b2670e75d4a042579a50217a93efec343d0dba80aa823ed22eeb0bbecdade210",
+      "reverse_optional_hse_and_lse_yields_exact_accepted_pll_sha256": "a906816ea381eb9784ba1b769b0eab4f2c7a63885e7896cc3b6d5286ad5bbea9",
+      "reverse_both_yields_exact_stage39_sha256": "2b1fa6d62be812e01ee2dbf9e90626cc6f1b658960fcbd99cf9fa221455ba4e8"
+    }
+  ],
+  "pll_field_order_and_owned_types": [
+    [
+      "input_range_hz",
+      "(u32, u32)"
+    ],
+    [
+      "output_range_hz",
+      "(u32, u32)"
+    ],
+    [
+      "input_ranges_hz",
+      "[(u32, u32); 4]"
+    ],
+    [
+      "output_ranges_hz",
+      "[(u32, u32); 5]"
+    ],
+    [
+      "multiplier_range",
+      "(u8, u8)"
+    ],
+    [
+      "supply_mv",
+      "(u16, u16)"
+    ],
+    [
+      "temperature_c",
+      "(i16, i16)"
+    ],
+    [
+      "hsi_supported",
+      "bool"
+    ],
+    [
+      "startup_cycles",
+      "u32"
+    ],
+    [
+      "startup_encoding",
+      "u8"
+    ],
+    [
+      "reserved_debug_default",
+      "u8"
+    ],
+    [
+      "cycle_to_cycle_jitter_ps",
+      "u32"
+    ]
+  ],
+  "contracts": {
+    "all_stage42_existing_model_bytes_retained_in_order": true,
+    "no_historical_model_body_restored": true,
+    "pll_field_appended_after_existing_hse_hex_lse": true,
+    "serde_missing_pll_defaults_to_none": true,
+    "serde_none_pll_skipped_when_serializing": true,
+    "metapac_owned_missing_pll_defaults_to_none": true,
+    "static_arrays": "Exactly input_ranges_hz and output_ranges_hz become static references with unchanged element widths and lengths 4 and 5.",
+    "hse_optional_ranges_and_lse_ownership": "Byte-identical to delivered Stage42, including serde attributes and static Option-owned HSE range arrays.",
+    "projection_generator_byte_identical_to_all_three_inputs": "2fa92927fef3b1f6d0deb40b25c370e669e0b7d62ee1c127e714369ab9d058e9"
+  },
+  "provenance_before_update_sha256": "83c4ce2c3dbca9865985e3a289cd96357969e285e86240bfed6a180d3f15b252",
+  "provenance_conditions": [
+    "Advance only serde replacement_review tip to b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b.",
+    "Keep entire delivered Stage42 replacement_review object as new previous_review; preserve earlier ancestry and review records.",
+    "Record combined owned/static hashes while retaining original adapted metapac ancestry, provenance entries and license caveats.",
+    "Retain legal_clearance false; this review grants no legal clearance."
+  ],
+  "verification_boundary": "Archive SHA-256 verification, exact byte-level additive/inverse proofs, source contract and projection inspection. Generated-output checks, if added, are read-only. Reviewer runs no HAL tests or rebuild.",
+  "legal_clearance": false,
+  "generated_data_and_static_projection": {
+    "generated_chip_json_count": 54,
+    "generated_clock_limits_count": 54,
+    "pll_profile_names": [
+      "CW32L083",
+      "CW32L083MCT6",
+      "CW32L083RBT6",
+      "CW32L083RCS6",
+      "CW32L083RCT6",
+      "CW32L083VCT6"
+    ],
+    "other_clock_limits_pll_key_omitted_count": 48,
+    "all_generated_clock_fields_exactly_match_static_metadata": true,
+    "actual_numeric_widths_and_fixed_array_lengths_validated": true,
+    "generated_static_schema_matches_reviewed_template": true,
+    "projection_input_set_sha256": "5539c40b5884933a247bbd6c526a91e3a2010325aaad6716b505849225dd80fe",
+    "standalone_static_data_probe": {
+      "toolchain": "rustc 1.99.0 (b940084d7 2026-09-28)",
+      "source_sha256": "5c1b222b33f1131c499f26c56fe1af3e0de8efbe2aaeae915e3c70fd9523245b",
+      "exit_code": 0,
+      "stdout": "54 static clock initializers compiled; 6 PLL profiles",
+      "scope": "Compiles generated clock initializers against exact metadata template only; no Cargo, HAL, model logic or firmware executed."
+    }
+  }
+}

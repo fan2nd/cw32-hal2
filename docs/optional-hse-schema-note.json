@@ -1,0 +1,62 @@
+{
+  "scope": "Author-maintained summary of independent narrow technical reviews; complete original reviewer receipts remain sealed outside this source-only package. This summary is not byte-identical to those receipts.",
+  "baseline_project_archive": "embassy-cw32-stage39-source-2026-10-09.zip",
+  "baseline_archive_sha256": "2d052b2b3b9a5489e797991109df4fb197042f5caf2382e13f04349206d2bd03",
+  "reviewed_models": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "stage39_sha256": "e70e0c81debc6484b2949b12590fe54670001188d5caf23f3d432a61c24de133",
+      "accepted_code_sha256": "25ee1092bf6f7a5b1126b5dd1e2293638d68e0dd0f057d26c6525c98f869fa93",
+      "final_sha256": "3dfa050491fe73aa16bd1d5f96e5ae01beb76affc5253222faeba073e2b0759c",
+      "last_delta": "One selector-neutral rustdoc replacement only; all other bytes unchanged."
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "stage39_sha256": "c53354b75e9b50c72714f3476a3da9ecfc32dcaa29342968bf604bc32f10e6d0",
+      "accepted_code_sha256": "37d363f1fedd500c881f9617d883d13610916a2dbdf190c9e0b18dcbc5c3e77b",
+      "final_sha256": "7d45b9cbf5e0ea80fc2660f9f05c4c57423313ad8377e18ed7e8871fbdb3a1ff",
+      "last_delta": "One selector-neutral rustdoc replacement only; all other bytes unchanged."
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "stage39_sha256": "2b1fa6d62be812e01ee2dbf9e90626cc6f1b658960fcbd99cf9fa221455ba4e8",
+      "accepted_code_sha256": "acc378f5af6e4d928c044ee87606996ba9ab68bc3a0886732e962e1e74ab542f",
+      "final_sha256": "047f42e6eb9207f1b7dfec7624de5ebacfb123b63373cd0da8f34a44a3ec670f",
+      "last_delta": "One selector-neutral rustdoc replacement only; all other bytes unchanged."
+    }
+  ],
+  "original_review_receipts": [
+    {
+      "receipt_filename": "review.json",
+      "original_receipt_sha256": "b35e066e7599674309c6617d9821b7e38eb149e388c197e88c49b67ce44e6d43"
+    },
+    {
+      "receipt_filename": "selector-doc-review.json",
+      "original_receipt_sha256": "d6e3d45d5e437c0b7114a71f0c38c20cfc11057fbf3ae692f60ff318e8b49beb"
+    },
+    {
+      "receipt_filename": "generator-supplement-review.json",
+      "original_receipt_sha256": "58151b503a02c8ed2f915456bb3123ca1e72a8899e04619958e1f032f4c15b3f"
+    }
+  ],
+  "accepted_checks": [
+    "The three model deltas restore exact Stage39 bytes in reverse; existing arrays preserve their YAML/JSON representation. Missing/null maps to None and canonical serialization omits None.",
+    "Static metadata uses an inline Option<[(u32,u32);4]> with the existing generation mechanism; Rust field consumers must adapt from the old fixed array/reference types.",
+    "Original frozen selector check rejected F020 FREQ. Corrected generator qualifies exact selected IP, real FREQ/FREQRANGE name, bit2, width2 and HseRange enum; absent selector emits no invented bins.",
+    "GPIO PDR access requires both actual register presence and the own per-pad capability.",
+    "Independent comparison found prior HSE values unchanged for37 generated chip selections, including aliases. This is not37 exact packages or hardware validation.",
+    "Final three-model delta after code review changes only FREQRANGE-specific rustdoc to frequency-range wording.",
+    "The retained-VC-pad generator supplement is one isolated insertion; reversing it restores the accepted selector generator bytes. Its runtime semantics are checked separately.",
+    "The parent accepted a final narrow scope guard around the retained-VC projection for its existing L010/L011 SYSCTRL consumers. Nine actual low-family generated outputs remained byte-identical; affected old-family ordinary builds were repeated without unused-mask warnings. No schema, HAL runtime or hardware facts changed."
+  ],
+  "generator_identity": {
+    "stage39_sha256": "d9b3c2f27c0d8641c47978872bbcc3e4ac15d2d65df01e0bf45d5e5ce272752a",
+    "accepted_selector_sha256": "9c002835985b8566da0766b5bb83f681cedbe47e29a9d3f5d0735f267074e38f",
+    "accepted_retained_vc_projection_sha256": "0bae1b9752f931e2d7d7401456a240b1be4e79f3dc3d5efae11d8b788c8ffe27",
+    "final_consumer_scoped_generator_sha256": "a942e7a0b3435b184df4631a223dc37b0358dad81c5ab735b069bf9831d5ae37"
+  },
+  "ancestry": "The serde current replacement identity advances to the accepted final hash with its complete previous_review chain retained. The two metapac files retain their adapted upstream origin and package declaration; they are not reclassified as independent replacements.",
+  "limits": "Technical acceptance is narrow. It does not establish legal permission, repository-wide original authorship, full HAL runtime behavior or physical oscillator qualification. Normal ARM builds and the separate clock-safety review have their own receipts.",
+  "parent_acceptance": "The parent accepted the final three-model tip and these narrow supplements before candidate identity update.",
+  "legal_clearance": false
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "scope": "Additive project-authored optional DAC/OPA records; preserve rewritten schema ancestry. Existing independent-review identities are not changed by this candidate.",
+  "models": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "2b53b5486a2a1f208922367fb36a9ced580fad7af3b815634cb75eb73e1fd160",
+      "after_sha256": "0ed2f1ebbe890dca06de3c2bf78c3c45776ab7fe5a519b1c6f00ac19fd08aa6f"
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "67b1c18839f2ac3672ba9f5968040dfb1a86c8c340b1c2a7231b08901c9c3167",
+      "after_sha256": "068cb7713870c478764624b716de791a9905e9448e5b90d181fba5e5e93e70c7"
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "64ea2a34dd21248a574224e0942edc4864d3c3eaf3cd99356049f3562358471a",
+      "after_sha256": "90dc3c579805c12385ae529a2694f3f990c64cb91cd3789040c262dda3e32ef1"
+    }
+  ],
+  "new_records": {
+    "DacLimits": {
+      "supply_mv": "(u16,u16)",
+      "resolution_bits": "u8"
+    },
+    "OpaLimits": {
+      "supply_mv": "(u16,u16)",
+      "output_headroom_mv": "u16"
+    }
+  },
+  "new_peripheral_fields": {
+    "dac_limits": "Option<DacLimits>",
+    "opa_limits": "Option<OpaLimits>"
+  },
+  "compatibility": "Absent values preserve prior JSON serialization; Rust struct literal source and generated metadata text do change. Generator Debug projection and resource metadata match field order/types.",
+  "required_before_release": "Independent additive-delta review and exact approved identity update; do not treat compilation as provenance approval.",
+  "independent_review": {
+    "accepted": true,
+    "date": "2026-10-08",
+    "scope": "Exact additive records/optional fields and matching Debug projection; independently rewritten serde ancestry preserved. All three accepted hashes match current main.",
+    "legal_clearance_claimed": false
+  }
+}

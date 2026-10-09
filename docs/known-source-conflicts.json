@@ -1,0 +1,35 @@
+{
+  "status": "Known unresolved source disagreements; no speculative PAC patch applied",
+  "CW32L012": {
+    "sources": {
+      "CW32L012_UserManual_CN_V1.4.pdf": {
+        "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340"
+      },
+      "CW32L012_StandardPeripheralLib_V1.0.5.zip": {
+        "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f"
+      }
+    },
+    "conflicts": [
+      {
+        "peripheral": "I2C",
+        "fields": [
+          "MFIFOCR.RXWATER",
+          "MFIFOSR.RXCNT"
+        ],
+        "manual": "UM23.8.9–10, printed552: bits27:16; feature summary describes a one-byte RX FIFO",
+        "vendor_header_and_imported_pac": "bits17:16",
+        "resolution": "Unresolved; imported vendor widths remain explicitly unverified against conflicting manual text",
+        "driver_boundary": "Uses watermark0, RXNE and MRDR.EMPTY; does not depend on disputed high bits or RXCNT depth"
+      },
+      {
+        "peripheral": "I2C",
+        "field": "MCR0.CLKSRC encoding3",
+        "manual": "UM23.8.2 and clock diagram identify HSI",
+        "vendor_header": "cw32l012_lpi2c.h names LSI",
+        "resolution": "Unresolved; no semantic enum promoted from conflicting sources",
+        "driver_boundary": "Only frozen PCLK source is configured"
+      }
+    ]
+  },
+  "hardware_validation": false
+}

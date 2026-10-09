@@ -1,0 +1,88 @@
+target/
+/.rustup/
+/.cargo/
+/build/
+__pycache__/
+*.pyc
+
+# Acquired vendor bytes are local. Acquisition and catalog locks are source.
+/sources/*
+!/sources/evidence-sources.json
+!/sources/catalog.json
+!/sources/layout-history.json
+!/sources/README.md
+!/sources/SOURCES.md
+!/sources/REFERENCE-PACKAGE.md
+# Only the inspected, unchanged Apache-2.0 headers and their notices are bundled.
+!/sources/approved-sdk-members/
+
+# Regenerate with ./d gen-all; keep cw32-metapac-gen/res as authored templates.
+/cw32-data/data/
+/cw32-metapac/
+/cw32-data/coverage.json
+/cw32-data/source-audit.json
+/cw32-data/source-lock.json
+/cw32-data/vendor-sources.json
+/cw32-data/reference-index.json
+/cw32-data/SOURCE-CATALOG.md
+/cw32-data/evidence-sources.json
+
+# Per-run receipts, reports and snapshots are local build products.
+/docs/verification-logs/
+/docs/*coverage*.json
+/docs/*verification*.json
+/docs/*report*.json
+/docs/*manifest*.json
+/docs/*migration*.json
+/docs/*refactor*.json
+/docs/*equivalence*.json
+/docs/*layout.json
+/docs/*review.json
+/docs/*rebase.json
+/docs/generated-data-parity.json
+/docs/schema-reimplementation.json
+
+# Locally produced packages and firmware, including nested examples.
+*.zip
+*.zip.sha256
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.a
+*.log
+
+# Authored acceptance evidence retained by the immutable provenance record.
+!/docs/combined-schema-extension-review.json
+!/docs/combined-schema-extension-review.md
+!/docs/dac-opa-schema-delta.json
+!/docs/schema-reimplementation-review.md
+!/docs/schema-reimplementation-verification.json
+!/docs/spi-metadata-refactor.json
+!/docs/spi-metadata-refactor.md
+!/docs/stage14-schema-review.json
+!/docs/stage14-schema-review.md
+!/docs/stage16-schema-review.json
+!/docs/stage18-schema-review.json
+!/docs/stage19-schema-review.json
+!/docs/stage21-schema-review.json
+!/docs/stage22-schema-review.json
+!/docs/stage23-schema-review.json
+!/docs/stage24-schema-review.json
+
+# Pinned historical acceptance source; cannot be regenerated from current code.
+!/docs/electrical-metadata-equivalence.json
+!/docs/flash-breadth-source-review.json
+
+# Accepted HSE schema extension evidence retained by the full review chain.
+!/docs/hse-schema-review.json
+
+# Accepted direct HEX schema extension; preserve the complete review chain.
+!/docs/hex-schema-review.json
+
+# Accepted composition of HEX metadata with the Stage28 VREF model.
+!/docs/hex-stage28-schema-review.json
+
+# Independent L083 PLL schema extension; preserve the complete review chain.
+!/docs/pll-schema-review.json

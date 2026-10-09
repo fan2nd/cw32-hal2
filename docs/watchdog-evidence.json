@@ -1,0 +1,731 @@
+{
+  "scope": "Source/PAC/protocol/compile evidence only; no hardware validation",
+  "embassy_commit": "f16efeffe37581092ec184718e6fdb1620393214",
+  "common": {
+    "prescalers": [
+      4,
+      8,
+      16,
+      32,
+      64,
+      128,
+      256,
+      512
+    ],
+    "counter_bits": 12,
+    "keys": {
+      "start": "0xcccc",
+      "unlock": "0x5555",
+      "lock": "0x6666",
+      "refresh": "0xaaaa",
+      "stop_not_exposed": [
+        "0x5a5a",
+        "0xa5a5"
+      ]
+    },
+    "register_offsets": {
+      "KR": 0,
+      "CR": 4,
+      "ARR": 8,
+      "SR": 12,
+      "WINR": 16,
+      "CNT": 36
+    }
+  },
+  "families": [
+    {
+      "family": "CW32F002",
+      "register_version": "v1",
+      "base_address": "0x40003000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN1",
+      "gate_bit": 5,
+      "gate_key": null,
+      "clock_typical_hz": 8000,
+      "accuracy_percent": [
+        -50,
+        50
+      ],
+      "clock_min_hz": 4000,
+      "clock_max_hz": 12000,
+      "temperature_c": [
+        -40,
+        105
+      ],
+      "manual_iwdt_chapter": 13,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20251230/CW32F002_DataSheet_CN_V1.2.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32f002/Libraries/inc/cw32f002_iwdt.h",
+          "sha256": "c243c6a29b02d5df680a6935fc9e25a4908e191db1c84ae5832a39d479959443"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32f002/Libraries/src/cw32f002_iwdt.c",
+          "sha256": "b9852abe3eedfb2a75dc92d071b06519542ce98705c3d2fa196c5510ede95f07"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32f002/Libraries/inc/cw32f002.h",
+          "sha256": "399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54"
+        },
+        "datasheet_pdf": {
+          "path": "CW32F002_DataSheet_CN_V1.2.pdf",
+          "sha256": "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506"
+        },
+        "datasheet_text": {
+          "path": "CW32F002_DataSheet_CN_V1.2.txt",
+          "sha256": "78fb075e343dd0e2e14c83079a8e255f000cff4bae631262679ac209123d7f67"
+        },
+        "manual_pdf": {
+          "path": "CW32F002_UserManual_CN_V1.4.pdf",
+          "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add"
+        },
+        "manual_text": {
+          "path": "CW32F002_UserManual_CN_V1.4.txt",
+          "sha256": "cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01"
+        }
+      }
+    },
+    {
+      "family": "CW32F003",
+      "register_version": "v1",
+      "base_address": "0x40003000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN1",
+      "gate_bit": 5,
+      "gate_key": null,
+      "clock_typical_hz": 8000,
+      "accuracy_percent": [
+        -50,
+        50
+      ],
+      "clock_min_hz": 4000,
+      "clock_max_hz": 12000,
+      "temperature_c": [
+        -40,
+        105
+      ],
+      "manual_iwdt_chapter": 14,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20251226/CW32F003_DataSheet_CN_V1.9.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32f003/Libraries/inc/cw32f003_iwdt.h",
+          "sha256": "56efb5b00c34c3b6469f7b73e541aeeec76941d3edc1f35e4ef5f5598443afdd"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32f003/Libraries/src/cw32f003_iwdt.c",
+          "sha256": "7fbe2222149139ec08d1ce95dc36f62137c0f2e348faf5e213c3f640682df1a6"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32f003/Libraries/inc/cw32f003.h",
+          "sha256": "1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f"
+        },
+        "datasheet_pdf": {
+          "path": "CW32F003_DataSheet_CN_V1.9.pdf",
+          "sha256": "5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd"
+        },
+        "datasheet_text": {
+          "path": "CW32F003_DataSheet_CN_V1.9.txt",
+          "sha256": "1c78a99eee262f3fb85457ffe171f0a92f0979cc847d2ba72e880305ff955580"
+        },
+        "manual_pdf": {
+          "path": "CW32F003_UserManual_CN_V2.3.pdf",
+          "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738"
+        },
+        "manual_text": {
+          "path": "CW32F003_UserManual_CN_V2.3.txt",
+          "sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319"
+        }
+      }
+    },
+    {
+      "family": "CW32F020",
+      "register_version": "v1",
+      "base_address": "0x40003000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN1",
+      "gate_bit": 5,
+      "gate_key": null,
+      "clock_typical_hz": 8000,
+      "accuracy_percent": [
+        -50,
+        50
+      ],
+      "clock_min_hz": 4000,
+      "clock_max_hz": 12000,
+      "temperature_c": [
+        -40,
+        105
+      ],
+      "manual_iwdt_chapter": 15,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20250821/CW32F020_DataSheet_CN_V1.3.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32f020/Libraries/inc/cw32f020_iwdt.h",
+          "sha256": "251d5fb8637d32211597510917d48bd286138c25a4fbc6f2b75964d4723cbeff"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32f020/Libraries/src/cw32f020_iwdt.c",
+          "sha256": "4c194a636b6fe102d4b7755cb0aa88bce9b7f050bc23e6e7fb56f4eb6f24caf5"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32f020/Libraries/inc/cw32f020.h",
+          "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f"
+        },
+        "datasheet_pdf": {
+          "path": "current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+          "sha256": "1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0"
+        },
+        "datasheet_text": {
+          "path": "current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+          "sha256": "c561aa8acbafc12cd6ac39fc0595f58a168b02dfda301b90df4fdd067a69d233"
+        },
+        "manual_pdf": {
+          "path": "CW32F020_UserManual_CN_V1.4.pdf",
+          "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed"
+        },
+        "manual_text": {
+          "path": "CW32F020_UserManual_CN_V1.4.txt",
+          "sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db"
+        }
+      }
+    },
+    {
+      "family": "CW32F030",
+      "register_version": "v1",
+      "base_address": "0x40003000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN1",
+      "gate_bit": 5,
+      "gate_key": null,
+      "clock_typical_hz": 8000,
+      "accuracy_percent": [
+        -50,
+        50
+      ],
+      "clock_min_hz": 4000,
+      "clock_max_hz": 12000,
+      "temperature_c": [
+        -40,
+        105
+      ],
+      "manual_iwdt_chapter": 16,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32f030/Libraries/inc/cw32f030_iwdt.h",
+          "sha256": "d28e294c248e617f0fd5cadfe9d2752cd2cf93dc0df195d131f5964cd4114bc0"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32f030/Libraries/src/cw32f030_iwdt.c",
+          "sha256": "83b11772ec1d3a7f87c85deec036465b5d01c4d65672a6eae50fa596ea4fcec8"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32f030/Libraries/inc/cw32f030.h",
+          "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862"
+        },
+        "datasheet_pdf": {
+          "path": "CW32F030_DataSheet_CN_V1.9.pdf",
+          "sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2"
+        },
+        "datasheet_text": {
+          "path": "CW32F030_DataSheet_CN_V1.9.txt",
+          "sha256": "7c4d70098481fb58e0924901dbbe24cb88cf445689efaf718410617b37f4e5bf"
+        },
+        "manual_pdf": {
+          "path": "CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2"
+        },
+        "manual_text": {
+          "path": "CW32x030_UserManual_CN_V2.5.txt",
+          "sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe"
+        }
+      }
+    },
+    {
+      "family": "CW32A030",
+      "register_version": "v1",
+      "base_address": "0x40003000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN1",
+      "gate_bit": 5,
+      "gate_key": null,
+      "clock_typical_hz": 8000,
+      "accuracy_percent": [
+        -50,
+        50
+      ],
+      "clock_min_hz": 4000,
+      "clock_max_hz": 12000,
+      "temperature_c": [
+        -40,
+        105
+      ],
+      "manual_iwdt_chapter": 16,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32f030/Libraries/inc/cw32f030_iwdt.h",
+          "sha256": "d28e294c248e617f0fd5cadfe9d2752cd2cf93dc0df195d131f5964cd4114bc0"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32f030/Libraries/src/cw32f030_iwdt.c",
+          "sha256": "83b11772ec1d3a7f87c85deec036465b5d01c4d65672a6eae50fa596ea4fcec8"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32f030/Libraries/inc/cw32f030.h",
+          "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862"
+        },
+        "datasheet_pdf": {
+          "path": "CW32A030_DataSheet_CN_V1.1.pdf",
+          "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9"
+        },
+        "datasheet_text": {
+          "path": "CW32A030_DataSheet_CN_V1.1.txt",
+          "sha256": "87c782da759a6893bca9f773a474a7b0445f77cd51d86d9cb2d2d8b8de8d05b9"
+        },
+        "manual_pdf": {
+          "path": "CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2"
+        },
+        "manual_text": {
+          "path": "CW32x030_UserManual_CN_V2.5.txt",
+          "sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe"
+        }
+      }
+    },
+    {
+      "family": "CW32L010",
+      "register_version": "v1",
+      "base_address": "0x40005000",
+      "clock_source": "LSI",
+      "gate_register": "APBEN2",
+      "gate_bit": 4,
+      "gate_key": "0x5a5a",
+      "clock_typical_hz": 32800,
+      "accuracy_percent": [
+        -3,
+        3
+      ],
+      "clock_min_hz": 31816,
+      "clock_max_hz": 33784,
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "manual_iwdt_chapter": 15,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_iwdt.h",
+          "sha256": "17cbdad76c6d9490b058dc1fa56b3771d9a3dd4eba1ac8a9ea2595ccd7b831db"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_iwdt.c",
+          "sha256": "8ae8e5bd5c654316200dda8d613783cc5e98f37f0376aaa750b18d27a860ea35"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+          "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b"
+        },
+        "datasheet_pdf": {
+          "path": "CW32L010_DataSheet_CN_V1.3.pdf",
+          "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86"
+        },
+        "datasheet_text": {
+          "path": "CW32L010_DataSheet_CN_V1.3.txt",
+          "sha256": "ba32a6838b5375c7a4d0225d9aeed6ebcad964e5668080ee87c8ddac1036595f"
+        },
+        "manual_pdf": {
+          "path": "CW32L010_UserManual_CN_V1.2.pdf",
+          "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa"
+        },
+        "manual_text": {
+          "path": "CW32L010_UserManual_CN_V1.2.txt",
+          "sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938"
+        }
+      }
+    },
+    {
+      "family": "CW32L011",
+      "register_version": "v1",
+      "base_address": "0x40005000",
+      "clock_source": "LSI",
+      "gate_register": "APBEN2",
+      "gate_bit": 4,
+      "gate_key": "0x5a5a",
+      "clock_typical_hz": 32800,
+      "accuracy_percent": [
+        -10,
+        25
+      ],
+      "clock_min_hz": 29520,
+      "clock_max_hz": 41000,
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "manual_iwdt_chapter": 15,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32l011/Libraries/inc/cw32l011_iwdt.h",
+          "sha256": "eff5f0e7234aad6426014989669eb17c0483b30f9a4d6e659dae5951123ef78d"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32l011/Libraries/src/cw32l011_iwdt.c",
+          "sha256": "8b862897c0c8ffa406b1e0045456095dd43e52fd6dabb67ffec203c23de2a94c"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32l011/Libraries/inc/cw32l011.h",
+          "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8"
+        },
+        "datasheet_pdf": {
+          "path": "CW32L011_DataSheet_CN_V1.1.pdf",
+          "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5"
+        },
+        "datasheet_text": {
+          "path": "CW32L011_DataSheet_CN_V1.1.txt",
+          "sha256": "f8429daa0082c24f2d191855d6405d38cc1994c8d468827cb402bc6effc1ea6c"
+        },
+        "sdk_reset_example": {
+          "path": "cw32l011/Examples/IWDT/IWDT_reset/readme.txt",
+          "sha256": "e4d2198b191e3b7551b2903ccd7b8c8ac56c4cf5c80191c24465e290ccf87c02"
+        },
+        "manual_pdf": {
+          "path": "CW32L011_UserManual_CN_V1.1.pdf",
+          "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f"
+        },
+        "manual_text": {
+          "path": "CW32L011_UserManual_CN_V1.1.txt",
+          "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3"
+        }
+      },
+      "manual_url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf"
+    },
+    {
+      "family": "CW32L012",
+      "register_version": "v1",
+      "base_address": "0x40005000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN2",
+      "gate_bit": 4,
+      "gate_key": "0x5a5a",
+      "clock_typical_hz": 10500,
+      "accuracy_percent": [
+        -25,
+        25
+      ],
+      "clock_min_hz": 7875,
+      "clock_max_hz": 13125,
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "manual_iwdt_chapter": 19,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32l012/Libraries/inc/cw32l012_iwdt.h",
+          "sha256": "23b0b694bcde3bfc128e728faa82118d1296faa3f5ec13dfff79726d15021a67"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32l012/Libraries/src/cw32l012_iwdt.c",
+          "sha256": "755d184242d1136830bc99b9a5118add82f4cfa613052b5b96072db1983aec29"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32l012/Libraries/inc/cw32l012.h",
+          "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000"
+        },
+        "datasheet_pdf": {
+          "path": "CW32L012_DataSheet_CN_V1.0.pdf",
+          "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76"
+        },
+        "datasheet_text": {
+          "path": "CW32L012_DataSheet_CN_V1.0.txt",
+          "sha256": "00ba7e2c9d26a8ce5a4eaa4cc2e7790773c427b13a4d491838622041abfa8b0a"
+        },
+        "manual_pdf": {
+          "path": "CW32L012_UserManual_CN_V1.4.pdf",
+          "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340"
+        },
+        "manual_text": {
+          "path": "CW32L012_UserManual_CN_V1.4.txt",
+          "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505"
+        }
+      }
+    },
+    {
+      "family": "CW32L031",
+      "register_version": "cw32l031_v1",
+      "base_address": "0x40003000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN1",
+      "gate_bit": 5,
+      "gate_key": null,
+      "clock_typical_hz": 8000,
+      "accuracy_percent": [
+        -50,
+        50
+      ],
+      "clock_min_hz": 4000,
+      "clock_max_hz": 12000,
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "manual_iwdt_chapter": 16,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20251229/CW32L031_DataSheet_CN_V1.9.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32l031/Libraries/inc/cw32l031_iwdt.h",
+          "sha256": "2c5d834a1496169acde68d8da9118a3da7bdf903d785a3b920707aa4e785dc27"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32l031/Libraries/src/cw32l031_iwdt.c",
+          "sha256": "f23e8caafcf1723fa1bcd3bb4bf4d4b90e0ff7053ed166b4d03aaa5e61882e37"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32l031/Libraries/inc/cw32l031.h",
+          "sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27"
+        },
+        "datasheet_pdf": {
+          "path": "CW32L031_DataSheet_CN_V1.9.pdf",
+          "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855"
+        },
+        "datasheet_text": {
+          "path": "CW32L031_DataSheet_CN_V1.9.txt",
+          "sha256": "60ac2bf5a0e8eedaa8f7a386024b0ef9b240616ca3874ff054335f9d8390ab19"
+        },
+        "manual_pdf": {
+          "path": "CW32L031_UserManual_CN_V1.6.pdf",
+          "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760"
+        },
+        "manual_text": {
+          "path": "CW32L031_UserManual_CN_V1.6.txt",
+          "sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1"
+        }
+      }
+    },
+    {
+      "family": "CW32R031",
+      "register_version": "cw32l031_v1",
+      "base_address": "0x40003000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN1",
+      "gate_bit": 5,
+      "gate_key": null,
+      "clock_typical_hz": 8000,
+      "accuracy_percent": [
+        -50,
+        50
+      ],
+      "clock_min_hz": 4000,
+      "clock_max_hz": 12000,
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "manual_iwdt_chapter": 16,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20251230/CW32R031_DataSheet_CN_V1.2.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32r031/Libraries/inc/cw32r031_iwdt.h",
+          "sha256": "5224417572c0b225253cf921af4ef13b8a41f1c778c54ae2adc735f7350839d0"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32r031/Libraries/src/cw32r031_iwdt.c",
+          "sha256": "6aaa1af6404d1a43d6e02955de337f63846909e01a8178d69d911f9b5f050b9e"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32r031/Libraries/inc/cw32r031.h",
+          "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385"
+        },
+        "datasheet_pdf": {
+          "path": "CW32R031_DataSheet_CN_V1.2.pdf",
+          "sha256": "88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805"
+        },
+        "datasheet_text": {
+          "path": "CW32R031_DataSheet_CN_V1.2.txt",
+          "sha256": "59496e16c1815fd3dc33d5b556b54db5adc04a9c358dce102dc9f9adff04fce8"
+        },
+        "manual_pdf": {
+          "path": "CW32R031_UserManual_CN_V1.3.pdf",
+          "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb"
+        },
+        "manual_text": {
+          "path": "CW32R031_UserManual_CN_V1.3.txt",
+          "sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b"
+        }
+      }
+    },
+    {
+      "family": "CW32W031",
+      "register_version": "cw32l031_v1",
+      "base_address": "0x40003000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN1",
+      "gate_bit": 5,
+      "gate_key": null,
+      "clock_typical_hz": 8000,
+      "accuracy_percent": [
+        -50,
+        50
+      ],
+      "clock_min_hz": 4000,
+      "clock_max_hz": 12000,
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "manual_iwdt_chapter": 16,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32w031/Libraries/inc/cw32w031_iwdt.h",
+          "sha256": "cde0a79e6f75257826037435e60cf2a806ec9dbbd790ceddbe8671bbfb935d5f"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32w031/Libraries/src/cw32w031_iwdt.c",
+          "sha256": "eb4592bf503f8de2ee0e1fe502ad1cbd8915578a7df3583f0697573d89a33468"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32w031/Libraries/inc/cw32w031.h",
+          "sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69"
+        },
+        "datasheet_pdf": {
+          "path": "CW32W031_DataSheet_CN_V1.3.pdf",
+          "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c"
+        },
+        "datasheet_text": {
+          "path": "CW32W031_DataSheet_CN_V1.3.txt",
+          "sha256": "8b766288a879c9ec4fae74a26ed40d58b18676d29531442ab981da4e346542fb"
+        },
+        "manual_pdf": {
+          "path": "CW32W031_UserManual_CN_V1.4.pdf",
+          "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9"
+        },
+        "manual_text": {
+          "path": "CW32W031_UserManual_CN_V1.4.txt",
+          "sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac"
+        }
+      }
+    },
+    {
+      "family": "CW32L052",
+      "register_version": "cw32l031_v1",
+      "base_address": "0x40003000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN1",
+      "gate_bit": 5,
+      "gate_key": null,
+      "clock_typical_hz": 8500,
+      "accuracy_percent": [
+        -50,
+        50
+      ],
+      "clock_min_hz": 4250,
+      "clock_max_hz": 12750,
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "manual_iwdt_chapter": 17,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20251229/CW32L052_DataSheet_CN_V1.3.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_iwdt.h",
+          "sha256": "7a07699d67d938b03ee6eede15a333fd12d3851bc6a42522f7c0a5b2f36e913c"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_iwdt.c",
+          "sha256": "1a59a38bc89b1e5b4e0e960757e18cf5fce24027578008dade79ec7ce09c1c62"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+          "sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1"
+        },
+        "datasheet_pdf": {
+          "path": "CW32L052_DataSheet_CN_V1.3.pdf",
+          "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f"
+        },
+        "datasheet_text": {
+          "path": "CW32L052_DataSheet_CN_V1.3.txt",
+          "sha256": "8b1d9ac2caafd9e81dc5292f68bf1b1b04f0fef5a612bf1271edc9b77067be7c"
+        },
+        "manual_pdf": {
+          "path": "CW32L052_UserManual_CN_V1.5.pdf",
+          "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41"
+        },
+        "manual_text": {
+          "path": "CW32L052_UserManual_CN_V1.5.txt",
+          "sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb"
+        }
+      }
+    },
+    {
+      "family": "CW32L083",
+      "register_version": "cw32l031_v1",
+      "base_address": "0x40003000",
+      "clock_source": "RC10K",
+      "gate_register": "APBEN1",
+      "gate_bit": 5,
+      "gate_key": null,
+      "clock_typical_hz": 8500,
+      "accuracy_percent": [
+        -50,
+        50
+      ],
+      "clock_min_hz": 4250,
+      "clock_max_hz": 12750,
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "manual_iwdt_chapter": 17,
+      "datasheet_url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+      "sdk_url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+      "sources": {
+        "sdk_iwdt_header": {
+          "path": "cw32l083/Libraries/inc/cw32l083_iwdt.h",
+          "sha256": "d45e9817a5e3bcb97ebd98d99a43504dc51030fbc983430b5cd0cf698f8fcdf8"
+        },
+        "sdk_iwdt_driver": {
+          "path": "cw32l083/Libraries/src/cw32l083_iwdt.c",
+          "sha256": "12744646c97cd5cf5f97fd181bb047e189944350158909aa127226929b7db262"
+        },
+        "sdk_cmsis_header": {
+          "path": "cw32l083/Libraries/inc/cw32l083.h",
+          "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5"
+        },
+        "datasheet_pdf": {
+          "path": "CW32L083_DataSheet_CN_V1.9.pdf",
+          "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e"
+        },
+        "datasheet_text": {
+          "path": "CW32L083_DataSheet_CN_V1.9.txt",
+          "sha256": "2124f5c492e1d58b51674805b2d8a58f82b2ce462c8b73beaba63c6d93780220"
+        },
+        "manual_pdf": {
+          "path": "CW32L083_UserManual_CN_V2.0.pdf",
+          "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3"
+        },
+        "manual_text": {
+          "path": "CW32L083_UserManual_CN_V2.0.txt",
+          "sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564"
+        }
+      }
+    }
+  ]
+}

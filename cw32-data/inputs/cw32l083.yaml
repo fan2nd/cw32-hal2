@@ -1,0 +1,102 @@
+schema_version: 1
+spi_metadata: cw32-data/spi.yaml
+source:
+  path: sources/vendor/CW32L083.svd
+  sha256: ddc840e2c52840ca3687fb78edeffff8ef7a41d6acd33cba32f44ec1b606a334
+  url: https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip
+  source_ref: member:cw32l083/IdeSupport/MDK/WHXY.CW32L083_DFP.1.0.9/SVD/CW32L083.svd
+expected_svd_name: CW32L083
+core: cm0p
+die: CW32L083
+chip_prefix: CW32L083
+gpio_dir_pin_fields: false
+register_aliases: []
+supplemental_interrupts:
+- name: CLKFAULT
+  number: 31
+  evidence: Official CW32L083 SDK Libraries/inc header CLKFAULT_IRQn=31; SHA256 06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5
+family: CW32L0
+line: CW32L083
+register_version: cw32l083_v1
+nvic_priority_bits: 2
+nvic_priority_bits_evidence: Official CW32L083 SDK Libraries/inc header __NVIC_PRIO_BITS=2; SHA256 06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5
+chips:
+- name: CW32L083
+  memory: []
+parts_catalog: cw32-data/parts.yaml
+register_versions:
+  adc: cw32l083_v1
+  aes: cw32l083_v1
+  atim: v1
+  autotrim: cw32l083_v1
+  btim: cw32l031_v1
+  crc: cw32l031_v1
+  dma: v1
+  dmachannel: v1
+  flash: cw32l083_v1
+  gpio: cw32l083_v1
+  gtim: cw32l031_v1
+  i2c: cw32l031_v1
+  iwdt: cw32l031_v1
+  lcd: cw32l083_v1
+  lptim: cw32l083_v1
+  lvd: cw32l031_v1
+  ram: cw32l031_v1
+  rtc: cw32l031_v1
+  spi: cw32l031_v1
+  sysctrl: cw32l083_v1
+  trng: cw32l083_v1
+  uart: cw32l083_v1
+  vc: cw32l031_v1
+  wwdt: cw32l031_v1
+pinout_metadata: cw32-data/pinouts/cw32l083.yaml
+alias_pin_policy: common-package-intersection
+dma_metadata: cw32-data/dma/cw32l083.yaml
+clock_metadata: cw32-data/clock/cw32l083.yaml
+af_metadata: cw32-data/af/cw32l083-serial.yaml
+register_overrides:
+- block: GTIM
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32L083 User Manual CN V2.0 section 15.8.13, printed page 289/PDF page 290: GTIM ISR at
+    offset 0x318 marks every defined status field RO; flags clear through the separate ICR. Access-only
+    correction; widths, offsets and fields unchanged. PDF SHA256 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3.
+    https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf'
+- block: AUTOTRIM
+  register: FCAP
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'Own CW32L083 User Manual CN V2.0 section 11.8.7, printed pp189-190/PDF190-191: FCAP is RO.
+    Access-only SVD correction; offsets, fields and widths unchanged. PDF SHA256 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3.
+    https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf; docs/autotrim-counter-evidence.json.'
+- block: AUTOTRIM
+  register: TVAL
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'Own CW32L083 User Manual CN V2.0 section 11.8.8, printed pp189-190/PDF190-191: TVAL is RO.
+    Access-only SVD correction; offsets, fields and widths unchanged. PDF SHA256 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3.
+    https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf; docs/autotrim-counter-evidence.json.'
+- block: AUTOTRIM
+  register: FLIM
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'Own CW32L083 User Manual CN V2.0 section 11.8.9, printed pp189-190/PDF190-191: FLIM is RO.
+    Access-only SVD correction; offsets, fields and widths unchanged. PDF SHA256 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3.
+    https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf; docs/autotrim-counter-evidence.json.'
+analog_metadata: cw32-data/af/cw32l083-analog.yaml
+field_removals:
+- fieldset: COMPEN
+  field: FREQ
+  expected_bit_offset: 16
+  expected_bit_size: 4
+  evidence: 'Own CW32L083 User Manual CN V2.0 section 12.5.5, printed page 206/PDF page 207: RTC_COMPEN
+    bits31:16 are reserved. Remove obsolete SVD FREQ bits19:16 only; lower sixteen bits and SOURCE HSE
+    dividers remain valid. PDF SHA256 9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3.
+    https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf'
+pwm_metadata: cw32-data/af/cw32l083-pwm.yaml
+atim_pwm_metadata: cw32-data/af/cw32l083-atim-pwm.yaml
+gpio_interrupt_metadata: cw32-data/gpio-interrupt.yaml
+electrical_metadata: cw32-data/electrical.yaml
+comparator_metadata: cw32-data/af/cw32l083-comparator.yaml
+classic_adc_scan_metadata: cw32-data/classic-adc-scans.yaml

@@ -1,0 +1,59 @@
+{
+  "status": "passed_conditional_on_lineage_update",
+  "review_date": "2026-10-09",
+  "scope": "Independent narrow technical review of additive HSE shared-model delta against delivered Stage25; not a hardware or legal clearance review.",
+  "baseline_archive_sha256": "6acc06d20d13bd284cd7248a5027ac6ada5c9ef9c9da6244749ba673f026c732",
+  "frozen_manifest_sha256": "ff3d84794dd7c3be632f4876a8264c7a46a314352cb8831cc0a94697f929cc87",
+  "manifest_entries_verified": 1833,
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "adc50cb1275be65b6451f1d283426ec3ec842460ee95d724600922f733c1081f",
+      "after_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+      "byte_exact_reverse": true,
+      "added_lines": 31
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "200f8d573b641f4e6a2f83195ea760b69e1c8bcce4261960f20890eb0c5a8c6f",
+      "after_sha256": "790df91fb9a852b4955893bd4ffabece577bb6a979b2d8fe2fa403e2c5e56304",
+      "byte_exact_reverse": true,
+      "added_lines": 29
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "368e0c813e4a0ad40142f10f263ff16cd7af63d89f1d45d3d572e6cc15bd2c09",
+      "after_sha256": "35689bbff0951a5f6e95f908fe2d2b95ebf25cbd82dbe07d9b490fee9379bc94",
+      "byte_exact_reverse": true,
+      "added_lines": 28
+    }
+  ],
+  "checks": [
+    "All three model diffs contain insertions only; dropping those insertions reconstructs delivered baseline bytes exactly.",
+    "16 existing schema contract tests passed; full curated chip JSON round-trip included.",
+    "6 isolated independent probes passed: complete HSE roundtrip, absent/null HSE omission, exact four-element arrays, required nested fields, widths/signed temperature, existing Pin omissions.",
+    "Frozen manifest verified twice with no mismatches.",
+    "Coordinator confirmed freeze fingerprint."
+  ],
+  "compatibility": {
+    "hse": "ClockLimits.hse defaults to None on missing/null and is omitted when None. Generator deserializer defaults None; static PAC model stores Option.",
+    "array_shapes": "startup_cycles [u32;4] and frequency_ranges_hz [(u32,u32);4]; PAC uses references to exact-size static arrays, matching existing stringify list borrowing.",
+    "numeric_types": "Frequency u32; supply u16 tuple; temperature signed i16 tuple; CCS numerator u64; count u16; bypass duty u8 tuple; timing u16. No new numeric enum or narrowing conversion.",
+    "pins": "No Pin, Core::Pin, or PackagePin record definition changed. Existing peripheral::Pin carries HSE_IN/HSE_OUT, af/adc_mux/comparator_mux=None and omits those options.",
+    "rust_source_break": "Downstream direct ClockLimits / PeripheralClockLimits struct literals need the new hse field; wire-format backward compatibility does not imply Rust source compatibility.",
+    "validation_boundary": "Schemas enforce structure/widths, not physical interval ordering or source meaning. Existing generator performs own-source/envelope validation; hardware assertions excluded from this narrow review."
+  },
+  "lineage_preconditions": [
+    "Append independent HSE review with these exact before/after hashes, review scope, tests and legal_clearance=false.",
+    "Update cw32-data-serde/src/lib.rs replacement_review tip to 19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b; retain previous_review including Stage24 tip and accepted_extensions rather than overwriting history.",
+    "Point current review_reference and verification_reference to the new HSE review evidence. Preserve original predecessor hashes, unresolved permission finding and project-authored replacement status.",
+    "Record the two metapac model before/after identities in the HSE review; do not mislabel their licensed adapted ancestry as the independently replaced schema.",
+    "Re-run source provenance verification after tip update; regenerate/relock any generated provenance inventories affected by the review records.",
+    "No prior upstream source bodies, saved bases or predecessor deletion hunks may enter the source release. This model-only insertion patch contains no predecessor deletion hunks."
+  ],
+  "legal_clearance": false,
+  "main_tree_edited": false,
+  "notes": [
+    "Indentation of the two new record macro bodies is uneven but semantic-neutral; if reformatted, freeze hashes and review identities must be updated."
+  ]
+}

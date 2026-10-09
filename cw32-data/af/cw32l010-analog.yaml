@@ -1,0 +1,658 @@
+schema_version: 1
+profile: CW32L010
+kind: analog
+status: verified-sdk-datasheet-reference-manual
+sources:
+  datasheet:
+    file: CW32L010_DataSheet_CN_V1.3.pdf
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    url: https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  reference_manual:
+    file: CW32L010_UserManual_CN_V1.2.pdf
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    url: https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  sdk_archive:
+    file: CW32L010_StandardPeripheralLib_V1.0.9.zip
+    sha256: 84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716
+    source_ref: vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip
+  adc_header:
+    file: cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_adc.h
+    sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+    url: https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip
+    source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_adc.h
+  pinouts:
+    file: cw32-data/pinouts/cw32l010.yaml
+    sha256: f7906510f8cc9f6e33cac628645c228b7ef76a6e0b8266e93a0431917efdaa13
+register_version: cw32l010_v1
+alias_pin_policy: common-package-intersection
+limitations:
+- Source-level route qualification only; no hardware validation.
+- Logical signal names, sequence slots and hardware mux encodings are distinct concepts.
+- Only externally bonded safe GPIO routes become pin metadata. Internal TS/BGR sources never become pin
+  routes.
+- Oscillator-alias pins require exclusive GPIO ownership and must not be used while their oscillator function
+  is active.
+internal_sources:
+- signal: TEMPERATURE
+  mux: 14
+  source_macro: ADC_InputTs
+  source_line: 200
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    mux_bits: '1110'
+    source_signal: TS 内置温度传感器
+    gpio: '-'
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+- signal: BGR1P2
+  mux: 15
+  source_macro: ADC_InputVref1P2
+  source_line: 201
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    mux_bits: '1111'
+    source_signal: 1.2V 内核电压基准源
+    gpio: '-'
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+routes:
+- peripheral: ADC
+  pin: PA0
+  signal: IN0
+  source_signal: ADC_IN0
+  channel: 0
+  mux: 0
+  af: null
+  source_macro: ADC_InputCH0
+  source_line: 186
+  sdk_pin_comment_line: 169
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PA0
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN0
+    mux_bits: '0000'
+    pin: PA0
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: '4'
+    CW32L010F8P6: '5'
+    CW32L010F8U6: '2'
+  pin_cell:
+    pin: PA0
+    source_name: PA00
+    source_signal: ADC_IN0
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '5'
+      QFN20: '2'
+      SOP16: '4'
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases:
+  - OSC_IN
+- peripheral: ADC
+  pin: PA1
+  signal: IN1
+  source_signal: ADC_IN1
+  channel: 1
+  mux: 1
+  af: null
+  source_macro: ADC_InputCH1
+  source_line: 187
+  sdk_pin_comment_line: 170
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PA1
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN1
+    mux_bits: '0001'
+    pin: PA1
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: '5'
+    CW32L010F8P6: '6'
+    CW32L010F8U6: '3'
+  pin_cell:
+    pin: PA1
+    source_name: PA01
+    source_signal: ADC_IN1
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '6'
+      QFN20: '3'
+      SOP16: '5'
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases:
+  - OSC_OUT
+- peripheral: ADC
+  pin: PA2
+  signal: IN2
+  source_signal: ADC_IN2
+  channel: 2
+  mux: 2
+  af: null
+  source_macro: ADC_InputCH2
+  source_line: 188
+  sdk_pin_comment_line: 171
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PA2
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN2
+    mux_bits: '0010'
+    pin: PA2
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: null
+    CW32L010F8P6: '10'
+    CW32L010F8U6: '7'
+  pin_cell:
+    pin: PA2
+    source_name: PA02
+    source_signal: ADC_IN2
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '10'
+      QFN20: '7'
+      SOP16: null
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PA3
+  signal: IN3
+  source_signal: ADC_IN3
+  channel: 3
+  mux: 3
+  af: null
+  source_macro: ADC_InputCH3
+  source_line: 189
+  sdk_pin_comment_line: 172
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PA3
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN3
+    mux_bits: '0011'
+    pin: PA3
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: '11'
+    CW32L010F8P6: '13'
+    CW32L010F8U6: '10'
+  pin_cell:
+    pin: PA3
+    source_name: PA03
+    source_signal: ADC_IN3
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '13'
+      QFN20: '10'
+      SOP16: '11'
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PA4
+  signal: IN4
+  source_signal: ADC_IN4
+  channel: 4
+  mux: 4
+  af: null
+  source_macro: ADC_InputCH4
+  source_line: 190
+  sdk_pin_comment_line: 173
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PA4
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN4
+    mux_bits: '0100'
+    pin: PA4
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: '12'
+    CW32L010F8P6: '14'
+    CW32L010F8U6: '11'
+  pin_cell:
+    pin: PA4
+    source_name: PA04
+    source_signal: ADC_IN4
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '14'
+      QFN20: '11'
+      SOP16: '12'
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PA5
+  signal: IN5
+  source_signal: ADC_IN5
+  channel: 5
+  mux: 5
+  af: null
+  source_macro: ADC_InputCH5
+  source_line: 191
+  sdk_pin_comment_line: 174
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PA5
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN5
+    mux_bits: '0101'
+    pin: PA5
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: '13'
+    CW32L010F8P6: '15'
+    CW32L010F8U6: '12'
+  pin_cell:
+    pin: PA5
+    source_name: PA05
+    source_signal: ADC_IN5
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '15'
+      QFN20: '12'
+      SOP16: '13'
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PA6
+  signal: IN6
+  source_signal: ADC_IN6
+  channel: 6
+  mux: 6
+  af: null
+  source_macro: ADC_InputCH6
+  source_line: 192
+  sdk_pin_comment_line: 175
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PA6
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN6
+    mux_bits: '0110'
+    pin: PA6
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: '14'
+    CW32L010F8P6: '16'
+    CW32L010F8U6: '13'
+  pin_cell:
+    pin: PA6
+    source_name: PA06
+    source_signal: ADC_IN6
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '16'
+      QFN20: '13'
+      SOP16: '14'
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PB0
+  signal: IN7
+  source_signal: ADC_IN7
+  channel: 7
+  mux: 7
+  af: null
+  source_macro: ADC_InputCH7
+  source_line: 193
+  sdk_pin_comment_line: 176
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PB0
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN7
+    mux_bits: '0111'
+    pin: PB0
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: '9'
+    CW32L010F8P6: '11'
+    CW32L010F8U6: '8'
+  pin_cell:
+    pin: PB0
+    source_name: PB00
+    source_signal: ADC_IN7
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '11'
+      QFN20: '8'
+      SOP16: '9'
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases:
+  - OSC32_OUT
+- peripheral: ADC
+  pin: PB1
+  signal: IN8
+  source_signal: ADC_IN8
+  channel: 8
+  mux: 8
+  af: null
+  source_macro: ADC_InputCH8
+  source_line: 194
+  sdk_pin_comment_line: 177
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PB1
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN8
+    mux_bits: '1000'
+    pin: PB1
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: '10'
+    CW32L010F8P6: '12'
+    CW32L010F8U6: '9'
+  pin_cell:
+    pin: PB1
+    source_name: PB01
+    source_signal: ADC_IN8
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '12'
+      QFN20: '9'
+      SOP16: '10'
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases:
+  - OSC32_IN
+- peripheral: ADC
+  pin: PB2
+  signal: IN9
+  source_signal: ADC_IN9
+  channel: 9
+  mux: 9
+  af: null
+  source_macro: ADC_InputCH9
+  source_line: 195
+  sdk_pin_comment_line: 178
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PB2
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN9
+    mux_bits: '1001'
+    pin: PB2
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: null
+    CW32L010F8P6: '19'
+    CW32L010F8U6: '16'
+  pin_cell:
+    pin: PB2
+    source_name: PB02
+    source_signal: ADC_IN9
+    table: 5-2
+    pdf_page: 25
+    printed_page: 24
+    positions:
+      TSSOP20: '19'
+      QFN20: '16'
+      SOP16: null
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PB3
+  signal: IN10
+  source_signal: ADC_IN10
+  channel: 10
+  mux: 10
+  af: null
+  source_macro: ADC_InputCH10
+  source_line: 196
+  sdk_pin_comment_line: 179
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PB3
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN10
+    mux_bits: '1010'
+    pin: PB3
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: null
+    CW32L010F8P6: '20'
+    CW32L010F8U6: '17'
+  pin_cell:
+    pin: PB3
+    source_name: PB03
+    source_signal: ADC_IN10
+    table: 5-2
+    pdf_page: 25
+    printed_page: 24
+    positions:
+      TSSOP20: '20'
+      QFN20: '17'
+      SOP16: null
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PB4
+  signal: IN11
+  source_signal: ADC_IN11
+  channel: 11
+  mux: 11
+  af: null
+  source_macro: ADC_InputCH11
+  source_line: 197
+  sdk_pin_comment_line: 180
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PB4
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN11
+    mux_bits: '1011'
+    pin: PB4
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: null
+    CW32L010F8P6: '1'
+    CW32L010F8U6: '18'
+  pin_cell:
+    pin: PB4
+    source_name: PB04
+    source_signal: ADC_IN11
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '1'
+      QFN20: '18'
+      SOP16: null
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PB5
+  signal: IN12
+  source_signal: ADC_IN12
+  channel: 12
+  mux: 12
+  af: null
+  source_macro: ADC_InputCH12
+  source_line: 198
+  sdk_pin_comment_line: 181
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PB5
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN12
+    mux_bits: '1100'
+    pin: PB5
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: '1'
+    CW32L010F8P6: '2'
+    CW32L010F8U6: '19'
+  pin_cell:
+    pin: PB5
+    source_name: PB05
+    source_signal: ADC_IN12
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '2'
+      QFN20: '19'
+      SOP16: '1'
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases: []
+- peripheral: ADC
+  pin: PB6
+  signal: IN13
+  source_signal: ADC_IN13
+  channel: 13
+  mux: 13
+  af: null
+  source_macro: ADC_InputCH13
+  source_line: 199
+  sdk_pin_comment_line: 182
+  sdk_pin_comment_column: 0
+  sdk_comment_pin: PB6
+  source_sha256: 2513c869773c3fc7eaf1bd16091e67290c99220e9cbfd10bbbb8d1b58d19b423
+  source_kind: sdk-mux-and-datasheet-reference-manual
+  manual_cell:
+    table: 20-4
+    pdf_page: 507
+    printed_page: 506
+    source_signal: ADC_IN13
+    mux_bits: '1101'
+    pin: PB6
+    sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+    source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+  package_pins:
+    CW32L010Y8M6: '2'
+    CW32L010F8P6: '3'
+    CW32L010F8U6: '20'
+  pin_cell:
+    pin: PB6
+    source_name: PB06
+    source_signal: ADC_IN13
+    table: 5-2
+    pdf_page: 24
+    printed_page: 23
+    positions:
+      TSSOP20: '3'
+      QFN20: '20'
+      SOP16: '2'
+    pin_type: I/O
+    sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+    source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+  oscillator_aliases: []

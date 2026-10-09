@@ -1,0 +1,503 @@
+schema_version: 1
+profile: CW32F030
+kind: complementary-pwm
+status: verified-sdk-and-datasheet
+register_version: v1
+alias_pin_policy: common-package-intersection
+sources:
+  datasheet:
+    file: CW32F030_DataSheet_CN_V1.9.pdf
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_id: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+    url: https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  reference_manual:
+    file: CW32x030_UserManual_CN_V2.5.pdf
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    source_id: vendor:CW32x030_UserManual_CN_V2.5.pdf
+    url: https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  gpio_header:
+    file: cw32f030/Libraries/inc/cw32f030_gpio.h
+    sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+    source_id: member:cw32f030/Libraries/inc/cw32f030_gpio.h
+    url: https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip
+    source_ref: member:cw32f030/Libraries/inc/cw32f030_gpio.h
+  sdk_archive:
+    file: CW32F030_StandardPeripheralLib_V2.2.zip
+    sha256: 7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780
+    source_id: vendor:CW32F030_StandardPeripheralLib_V2.2.zip
+    url: https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip
+    source_ref: vendor:CW32F030_StandardPeripheralLib_V2.2.zip
+  pinouts:
+    file: cw32-data/pinouts/cw32f030.yaml
+    sha256: 532c67ae4de8e0669aca64eb0554647ba6562b30a27f47fdf2cb0390ce19f2f4
+  sdk_candidates:
+    file: cw32-data/af/cw32f030.yaml
+    sha256: 0b713cdd1a00b38a68a315270e7fb9f7f6bd106e58d5401a4f400ff54805bd7f
+datasheet:
+  file: CW32F030_DataSheet_CN_V1.9.pdf
+  sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+  source_id: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  url: https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf
+  af_evidence: Own PDF AF cells, package grid and exact SDK macros; docs/classic-atim-complementary-route-evidence.json.
+  source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+selector_capability:
+  min: 1
+  max: 7
+  pdf_printed_page_offset: 1
+  evidence: Own numbered datasheet and reference-manual AF grids, corroborated against
+    exact SDK macro assignments.
+routes:
+- pin: PA15
+  af: 7
+  function: ATIMCH1B
+  source_macro: PA15_AFx_ATIMCH1B
+  source_line: 892
+  gpio_register: AFRH
+  gpio_field: AFR15
+  peripheral: ATIM
+  signal: CH1B
+  source_signal: CH1B
+  source_kind: sdk-and-datasheet
+  source_sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+  datasheet_cell:
+    pin: PA15
+    af: 7
+    function: ATIM_CH1B
+    table: 5-3
+    pdf_page: 29
+    printed_page: 28
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  manual_cell:
+    pin: PA15
+    af: 7
+    function: ATIM_CH1B
+    table: own-manual GPIO AF allocation
+    pdf_page: 148
+    printed_page: 147
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  pin_cell:
+    pin: PA15
+    pdf_page: 27
+    positions:
+      LQFP48: '38'
+      LQFP32: '25'
+      TSSOP20: null
+      QFN32: '25'
+      QFN20: null
+    pin_type: I/O
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  package_pins:
+    CW32F030F8V7: null
+    CW32F030F6P7: null
+    CW32F030K8U7: '25'
+    CW32F030K8T7: '25'
+    CW32F030C8T7: '38'
+  oscillator_aliases: []
+- pin: PA7
+  af: 7
+  function: ATIMCH1B
+  source_macro: PA07_AFx_ATIMCH1B
+  source_line: 833
+  gpio_register: AFRL
+  gpio_field: AFR7
+  peripheral: ATIM
+  signal: CH1B
+  source_signal: CH1B
+  source_kind: sdk-and-datasheet
+  source_sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+  datasheet_cell:
+    pin: PA7
+    af: 7
+    function: ATIM_CH1B
+    table: 5-3
+    pdf_page: 29
+    printed_page: 28
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  manual_cell:
+    pin: PA7
+    af: 7
+    function: ATIM_CH1B
+    table: own-manual GPIO AF allocation
+    pdf_page: 147
+    printed_page: 146
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  pin_cell:
+    pin: PA7
+    pdf_page: 25
+    positions:
+      LQFP48: '17'
+      LQFP32: '13'
+      TSSOP20: '13'
+      QFN32: '13'
+      QFN20: '10'
+    pin_type: I/O
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  package_pins:
+    CW32F030F8V7: '10'
+    CW32F030F6P7: '13'
+    CW32F030K8U7: '13'
+    CW32F030K8T7: '13'
+    CW32F030C8T7: '17'
+  oscillator_aliases: []
+- pin: PB0
+  af: 7
+  function: ATIMCH2B
+  source_macro: PB00_AFx_ATIMCH2B
+  source_line: 900
+  gpio_register: AFRL
+  gpio_field: AFR0
+  peripheral: ATIM
+  signal: CH2B
+  source_signal: CH2B
+  source_kind: sdk-and-datasheet
+  source_sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+  datasheet_cell:
+    pin: PB0
+    af: 7
+    function: ATIM_CH2B
+    table: 5-4
+    pdf_page: 30
+    printed_page: 29
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  manual_cell:
+    pin: PB0
+    af: 7
+    function: ATIM_CH2B
+    table: own-manual GPIO AF allocation
+    pdf_page: 148
+    printed_page: 147
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  pin_cell:
+    pin: PB0
+    pdf_page: 25
+    positions:
+      LQFP48: '18'
+      LQFP32: '14'
+      TSSOP20: null
+      QFN32: '14'
+      QFN20: null
+    pin_type: I/O
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  package_pins:
+    CW32F030F8V7: null
+    CW32F030F6P7: null
+    CW32F030K8U7: '14'
+    CW32F030K8T7: '14'
+    CW32F030C8T7: '18'
+  oscillator_aliases: []
+- pin: PB1
+  af: 7
+  function: ATIMCH3B
+  source_macro: PB01_AFx_ATIMCH3B
+  source_line: 908
+  gpio_register: AFRL
+  gpio_field: AFR1
+  peripheral: ATIM
+  signal: CH3B
+  source_signal: CH3B
+  source_kind: sdk-and-datasheet
+  source_sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+  datasheet_cell:
+    pin: PB1
+    af: 7
+    function: ATIM_CH3B
+    table: 5-4
+    pdf_page: 30
+    printed_page: 29
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  manual_cell:
+    pin: PB1
+    af: 7
+    function: ATIM_CH3B
+    table: own-manual GPIO AF allocation
+    pdf_page: 148
+    printed_page: 147
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  pin_cell:
+    pin: PB1
+    pdf_page: 25
+    positions:
+      LQFP48: '19'
+      LQFP32: '15'
+      TSSOP20: '14'
+      QFN32: '15'
+      QFN20: '11'
+    pin_type: I/O
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  package_pins:
+    CW32F030F8V7: '11'
+    CW32F030F6P7: '14'
+    CW32F030K8U7: '15'
+    CW32F030K8T7: '15'
+    CW32F030C8T7: '19'
+  oscillator_aliases: []
+- pin: PB13
+  af: 7
+  function: ATIMCH1B
+  source_macro: PB13_AFx_ATIMCH1B
+  source_line: 1003
+  gpio_register: AFRH
+  gpio_field: AFR13
+  peripheral: ATIM
+  signal: CH1B
+  source_signal: CH1B
+  source_kind: sdk-and-datasheet
+  source_sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+  datasheet_cell:
+    pin: PB13
+    af: 7
+    function: ATIM_CH1B
+    table: 5-4
+    pdf_page: 30
+    printed_page: 29
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  manual_cell:
+    pin: PB13
+    af: 7
+    function: ATIM_CH1B
+    table: own-manual GPIO AF allocation
+    pdf_page: 148
+    printed_page: 147
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  pin_cell:
+    pin: PB13
+    pdf_page: 26
+    positions:
+      LQFP48: '26'
+      LQFP32: null
+      TSSOP20: null
+      QFN32: null
+      QFN20: null
+    pin_type: I/O
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  package_pins:
+    CW32F030F8V7: null
+    CW32F030F6P7: null
+    CW32F030K8U7: null
+    CW32F030K8T7: null
+    CW32F030C8T7: '26'
+  oscillator_aliases: []
+- pin: PB14
+  af: 7
+  function: ATIMCH2B
+  source_macro: PB14_AFx_ATIMCH2B
+  source_line: 1011
+  gpio_register: AFRH
+  gpio_field: AFR14
+  peripheral: ATIM
+  signal: CH2B
+  source_signal: CH2B
+  source_kind: sdk-and-datasheet
+  source_sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+  datasheet_cell:
+    pin: PB14
+    af: 7
+    function: ATIM_CH2B
+    table: 5-4
+    pdf_page: 30
+    printed_page: 29
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  manual_cell:
+    pin: PB14
+    af: 7
+    function: ATIM_CH2B
+    table: own-manual GPIO AF allocation
+    pdf_page: 148
+    printed_page: 147
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  pin_cell:
+    pin: PB14
+    pdf_page: 26
+    positions:
+      LQFP48: '27'
+      LQFP32: null
+      TSSOP20: null
+      QFN32: null
+      QFN20: null
+    pin_type: I/O
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  package_pins:
+    CW32F030F8V7: null
+    CW32F030F6P7: null
+    CW32F030K8U7: null
+    CW32F030K8T7: null
+    CW32F030C8T7: '27'
+  oscillator_aliases: []
+- pin: PB15
+  af: 7
+  function: ATIMCH3B
+  source_macro: PB15_AFx_ATIMCH3B
+  source_line: 1019
+  gpio_register: AFRH
+  gpio_field: AFR15
+  peripheral: ATIM
+  signal: CH3B
+  source_signal: CH3B
+  source_kind: sdk-and-datasheet
+  source_sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+  datasheet_cell:
+    pin: PB15
+    af: 7
+    function: ATIM_CH3B
+    table: 5-4
+    pdf_page: 30
+    printed_page: 29
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  manual_cell:
+    pin: PB15
+    af: 7
+    function: ATIM_CH3B
+    table: own-manual GPIO AF allocation
+    pdf_page: 148
+    printed_page: 147
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  pin_cell:
+    pin: PB15
+    pdf_page: 26
+    positions:
+      LQFP48: '28'
+      LQFP32: null
+      TSSOP20: null
+      QFN32: null
+      QFN20: null
+    pin_type: I/O
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  package_pins:
+    CW32F030F8V7: null
+    CW32F030F6P7: null
+    CW32F030K8U7: null
+    CW32F030K8T7: null
+    CW32F030C8T7: '28'
+  oscillator_aliases: []
+- pin: PB3
+  af: 7
+  function: ATIMCH2B
+  source_macro: PB03_AFx_ATIMCH2B
+  source_line: 924
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: ATIM
+  signal: CH2B
+  source_signal: CH2B
+  source_kind: sdk-and-datasheet
+  source_sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+  datasheet_cell:
+    pin: PB3
+    af: 7
+    function: ATIM_CH2B
+    table: 5-4
+    pdf_page: 30
+    printed_page: 29
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  manual_cell:
+    pin: PB3
+    af: 7
+    function: ATIM_CH2B
+    table: own-manual GPIO AF allocation
+    pdf_page: 148
+    printed_page: 147
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  pin_cell:
+    pin: PB3
+    pdf_page: 27
+    positions:
+      LQFP48: '39'
+      LQFP32: '26'
+      TSSOP20: null
+      QFN32: '26'
+      QFN20: null
+    pin_type: I/O
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  package_pins:
+    CW32F030F8V7: null
+    CW32F030F6P7: null
+    CW32F030K8U7: '26'
+    CW32F030K8T7: '26'
+    CW32F030C8T7: '39'
+  oscillator_aliases: []
+- pin: PB4
+  af: 7
+  function: ATIMCH3B
+  source_macro: PB04_AFx_ATIMCH3B
+  source_line: 932
+  gpio_register: AFRL
+  gpio_field: AFR4
+  peripheral: ATIM
+  signal: CH3B
+  source_signal: CH3B
+  source_kind: sdk-and-datasheet
+  source_sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+  datasheet_cell:
+    pin: PB4
+    af: 7
+    function: ATIM_CH3B
+    table: 5-4
+    pdf_page: 30
+    printed_page: 29
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  manual_cell:
+    pin: PB4
+    af: 7
+    function: ATIM_CH3B
+    table: own-manual GPIO AF allocation
+    pdf_page: 148
+    printed_page: 147
+    sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+    source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+  pin_cell:
+    pin: PB4
+    pdf_page: 27
+    positions:
+      LQFP48: '40'
+      LQFP32: '27'
+      TSSOP20: null
+      QFN32: '27'
+      QFN20: null
+    pin_type: I/O
+    sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+    source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+  package_pins:
+    CW32F030F8V7: null
+    CW32F030F6P7: null
+    CW32F030K8U7: '27'
+    CW32F030K8T7: '27'
+    CW32F030C8T7: '40'
+  oscillator_aliases: []
+excluded_routes: []
+scope: Classic CH1B-3B routes. Main A routes are independently qualified. Complete
+  pairs are optional; no BK or per-pair gate API.
+capability:
+  channels: 3
+  dead_time_max_ticks: 1010
+  break_inputs: 0
+pin_role_mapping:
+  CH1B: TimerComplementaryPin<ATIM, Ch1>
+  CH2B: TimerComplementaryPin<ATIM, Ch2>
+  CH3B: TimerComplementaryPin<ATIM, Ch3>

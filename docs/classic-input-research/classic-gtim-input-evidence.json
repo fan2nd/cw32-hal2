@@ -1,0 +1,3777 @@
+{
+  "scope": "Authored documentary evidence for classic GTIM input drivers. Reviewed each own-family CN manual, own SDK GTIM driver/header and selected SVD. A030 uses vendor common x030 manual. No vendor files redistributed; no hardware or firmware validation performed.",
+  "created_utc": "2026-10-08",
+  "decision": "All listed timer instances document capture, QEI, and ETR external counting. The viable initial common hardware subset is polling capture on a selected external channel, CH1/CH2 quadrature counting without CH3 index, and single-polarity ETR external counting with explicit external mux selection. Package pin availability still requires pin capability evidence.",
+  "common_semantics": {
+    "capture": {
+      "mode_register": "CMMR",
+      "channel_field_width": 4,
+      "rising": 1,
+      "falling": 2,
+      "both_edges": 3,
+      "cc_flag_bits": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "ccr_width": 16,
+      "ccr_read_clears_flag": false,
+      "clear_basis": "Every capture programming example reads CCR then explicitly writes zero to ICR.CCy; CCR registers are RW with no read-clear attribute, and SDK getters only read CCR. All SDK clear helpers separately assign ICR = ~mask. This is documentary evidence, not silicon measurement.",
+      "overcapture_flag": "Not documented in any reviewed GTIM ISR, ICR, or capture section. Do not promise detection of overwritten captures or event-loss-free polling.",
+      "timestamp_width": "16-bit modulo ARR+1; set ARR=0xffff for modulo-65536 raw capture."
+    },
+    "qei": {
+      "ENCMODE_bits": [
+        15,
+        16
+      ],
+      "CH1_edges": 1,
+      "CH2_edges": 2,
+      "both_channels_edges": 3,
+      "ARR_required": 65535,
+      "direction_bit": 10,
+      "direction_values": {
+        "0": "up",
+        "1": "down"
+      },
+      "direction_change_bit": 9,
+      "overflow_bit": 0,
+      "underflow_bit": 2,
+      "down_wrap": "0 to 0xffff, with separate UD flag",
+      "index_options": "CH3 ENCRESET bits18:17 and ENCRELOAD bits20:19 exist, but are outside simplest common subset.",
+      "prescaler_policy": {
+        "qualification": "Documented operating sequence plus explicit inference; no silicon validation.",
+        "documented": "Every encoder section says counting is driven by each qualified CH1/CH2 transition. All own manual encoder programming sequences and own SDK GTIM_EncodeInit omit PRS/PSC writes. PSC reset is zero.",
+        "inference": "QEI counting does not require programming the PCLK/TRS prescaler. Keeping reset PSC=0 / PRS=0 is consistent with the documented sequence; no programmable QEI prescaling should be exposed.",
+        "limits": "No explicit statement that PSC is bypassed was found, so do not present bypass as a quoted hardware guarantee. The PSC=1 external TRS requirement belongs only to external-counter mode.",
+        "cmmr": "Neither manual encoder sequences nor SDK encoder initialization require enabling CMMR capture mode."
+      }
+    },
+    "external_counter": {
+      "CR0_MODE": 1,
+      "CR0_TRS": 0,
+      "CR0_POL": {
+        "0": "rising",
+        "1": "falling"
+      },
+      "SYSCTRL_GTIMETR_field": 0,
+      "counter_width": 16,
+      "divider_warning": "For separate PSC families PCLK uses divisor PSC+1, while external TRS uses divisor PSC with PSC>0. Use PSC=1 for one count per qualified ETR edge. For CR0.PRS families use PRS=0."
+    },
+    "filters": {
+      "channel": "CR1: each channel nibble contains FLT bits[2:0] and POL bit3",
+      "etr": "ETR.ETRFLT bits6:4",
+      "encodings": {
+        "0": "disabled",
+        "1": "PCLK, 2 identical samples",
+        "2": "PCLK, 4 identical samples",
+        "3": "PCLK, 6 identical samples",
+        "4": "PCLK/4, 4 identical samples",
+        "5": "PCLK/4, 6 identical samples",
+        "6": "PCLK/8, 4 identical samples",
+        "7": "PCLK/8, 6 identical samples"
+      },
+      "sampling_limit": "Manual input-control sections caution that inputs above half the actual sampling frequency can be missed. No-filter does not establish an asynchronous unlimited-rate counter."
+    },
+    "status_ack": {
+      "ISR": "Read-only state; OV0 TI1 UD2 CC1..4 bits3..6 DIRCHANGE9 DIR10",
+      "ICR": "R1W0 flags; selected bits written 0 clear, written 1 do nothing; DIR is not a clearable interrupt flag",
+      "write_rule": "Use one W0C write selecting only owned pending flags; do not read-modify-write a status register or assume CCR access acknowledges."
+    },
+    "source_routing": {
+      "capture": "SYSCTRL_GTIMCAP / GTIMxCAP, CH1..4 fields at bits2:0,6:4,10:8,14:12; zero means GPIO AF source",
+      "etr": "SYSCTRL_GTIMETR, timer fields at 4*(instance-1), width3; zero means GPIO AF source",
+      "external_route_requirement": "Explicitly select external mux zero when acquiring an input; prior internal-source configuration can otherwise silently remain active."
+    }
+  },
+  "family_differences": [
+    "F002/F003 have one GTIM, F020/F030/A030/L083 four, L031/R031/W031 two, L052 three.",
+    "F002/F003/F020/F030/A030 use CR0.PRS bits10:7 (powers of two); L031/L052/L083/R031/W031 have a separate 16-bit PSC and reserved CR0 bits14:7.",
+    "L031/R031/W031 manuals use GTIM1 base 0x40000700 plus ARR offset0 while SDK/SVD use base0x40000400 plus offset0x300. These are equal absolute addresses, not a register-placement discrepancy.",
+    "L052 adds CR0.TI1XOR bit21 and IC1RST/IC2RST/IC3RST bits22..24; keep them zero for the initial independent-channel capture/QEI subset. Its selected SVD names CR0 bit4 POLARITY where other families name it POL.",
+    "F002/F003 internal capture/ETR codes3 and7 are not listed; other F-series and L031/R031/W031 code3 is UART3,4 VC1,5 VC2,6 LVD.",
+    "L052 capture source code4 is MCO; codes5/6/7 are VC1/VC2/LVD. UART3 code3 appears for CH1/2 but is omitted for CH3/4; ETR UART3 code3 appears for GTIM1/2 but is omitted for GTIM3.",
+    "L083 capture source codes3/4 are UART3/UART4 for CH1/2 and UART6/UART5 for CH3/4; codes5/6/7 are VC1/VC2/LVD. ETR routing uses first pair for GTIM1/2 and second pair for GTIM3/4.",
+    "All examined own manuals and selected vendor SVDs contain ENCMODE and the matching encoder status flags; no true QEI absence found."
+  ],
+  "families": {
+    "CW32F002": {
+      "manual": {
+        "path": "CW32F002_UserManual_CN_V1.4.pdf",
+        "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+        "printed_revision": "1.4",
+        "printed_revision_date": "2024-07-19",
+        "superseded": false,
+        "sha256_verified": true,
+        "cover_date": "2024-09",
+        "manifest_origin": "cw32-adc-tolerance-audit/classic-source-index.json",
+        "text_sha256": "cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01",
+        "text_file": "CW32F002_UserManual_CN_V1.4.txt",
+        "revision_history_reference": {
+          "printed_page": 369,
+          "pdf_page_1_based": 370,
+          "date": "2024-07-19"
+        }
+      },
+      "instances": [
+        "GTIM"
+      ],
+      "documented_capture_channels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "documented_qei_channels": [
+        1,
+        2
+      ],
+      "documented_external_counter": "ETR pin route, ascending counter, CR0.MODE=1 and TRS=0",
+      "hardware_absence": null,
+      "chapter_refs": {
+        "overview": {
+          "section": "12.1",
+          "printed_page": 150,
+          "pdf_page_1_based": 151,
+          "source_text_line": 6588
+        },
+        "input_controls": {
+          "section": "12.3.1.3",
+          "printed_page": 153,
+          "pdf_page_1_based": 154,
+          "source_text_line": 6772
+        },
+        "external_counting": {
+          "section": "12.3.2.2",
+          "printed_page": 158,
+          "pdf_page_1_based": 159,
+          "source_text_line": 6992
+        },
+        "capture": {
+          "section": "12.3.3.1",
+          "printed_page": 161,
+          "pdf_page_1_based": 162,
+          "source_text_line": 7174
+        },
+        "capture_sources": {
+          "section": "12.3.3.2",
+          "printed_page": 162,
+          "pdf_page_1_based": 163,
+          "source_text_line": 7222
+        },
+        "qei": {
+          "section": "12.3.5",
+          "printed_page": 166,
+          "pdf_page_1_based": 167,
+          "source_text_line": 7394
+        },
+        "etr_sources": {
+          "section": "12.3.7",
+          "printed_page": 168,
+          "pdf_page_1_based": 169,
+          "source_text_line": 7490
+        },
+        "external_counter_example": {
+          "section": "12.5.2.1",
+          "printed_page": 170,
+          "pdf_page_1_based": 171,
+          "source_text_line": 7566
+        },
+        "capture_read_then_clear": {
+          "section": "12.5.5",
+          "printed_page": 172,
+          "pdf_page_1_based": 173,
+          "source_text_line": 7657
+        },
+        "qei_example": {
+          "section": "12.5.8",
+          "printed_page": 174,
+          "pdf_page_1_based": 175,
+          "source_text_line": 7721
+        },
+        "filter_encoding_pages": [
+          178,
+          179
+        ]
+      },
+      "register_refs": {
+        "CR0": {
+          "section": "12.7.1",
+          "printed_page": 176,
+          "pdf_page_1_based": 177,
+          "source_text_line": 7786
+        },
+        "CR1": {
+          "section": "12.7.2",
+          "printed_page": 178,
+          "pdf_page_1_based": 179,
+          "source_text_line": 7871
+        },
+        "ETR": {
+          "section": "12.7.3",
+          "printed_page": 179,
+          "pdf_page_1_based": 180,
+          "source_text_line": 7927
+        },
+        "CMMR": {
+          "section": "12.7.4",
+          "printed_page": 179,
+          "pdf_page_1_based": 180,
+          "source_text_line": 7952
+        },
+        "ARR": {
+          "section": "12.7.5",
+          "printed_page": 180,
+          "pdf_page_1_based": 181,
+          "source_text_line": 7992
+        },
+        "CNT": {
+          "section": "12.7.6",
+          "printed_page": 180,
+          "pdf_page_1_based": 181,
+          "source_text_line": 8007
+        },
+        "CCR1": {
+          "section": "12.7.7",
+          "printed_page": 180,
+          "pdf_page_1_based": 181,
+          "source_text_line": 8020
+        },
+        "CCR2": {
+          "section": "12.7.8",
+          "printed_page": 180,
+          "pdf_page_1_based": 181,
+          "source_text_line": 8033
+        },
+        "CCR3": {
+          "section": "12.7.9",
+          "printed_page": 180,
+          "pdf_page_1_based": 181,
+          "source_text_line": 8046
+        },
+        "CCR4": {
+          "section": "12.7.10",
+          "printed_page": 181,
+          "pdf_page_1_based": 182,
+          "source_text_line": 8064
+        },
+        "IER": {
+          "section": "12.7.11",
+          "printed_page": 181,
+          "pdf_page_1_based": 182,
+          "source_text_line": 8077
+        },
+        "ISR": {
+          "section": "12.7.12",
+          "printed_page": 182,
+          "pdf_page_1_based": 183,
+          "source_text_line": 8129
+        },
+        "ICR": {
+          "section": "12.7.13",
+          "printed_page": 183,
+          "pdf_page_1_based": 184,
+          "source_text_line": 8187
+        }
+      },
+      "sysctrl_route_refs": [
+        {
+          "register": "SYSCTRL_GTIMCAP",
+          "section": "4.7.18",
+          "printed_page": 67,
+          "pdf_page_1_based": 68,
+          "source_text_line": 2769
+        },
+        {
+          "register": "SYSCTRL_GTIMETR",
+          "section": "4.7.19",
+          "printed_page": 67,
+          "pdf_page_1_based": 68,
+          "source_text_line": 2806
+        }
+      ],
+      "external_count_unprescaled": {
+        "kind": "CR0.PRS",
+        "value": 0
+      },
+      "sdk": {
+        "family": "CW32F002",
+        "reuse_reason": null,
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+        "archive_sha256": "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc",
+        "gtim_c": {
+          "path": "cw32f002/Libraries/src/cw32f002_gtim.c",
+          "sha256": "a6f84557af1a88cca5412e3ac619b5bc2d8159bf12d2faa80a46bd761d3386d3",
+          "function_lines": {
+            "GTIM_EncodeInit": 75,
+            "GTIM_ICInit": 114,
+            "GTIM_ETRConfig": 145,
+            "GTIM_ICChannelConfig": 180,
+            "GTIM_GetCapture1": 256,
+            "GTIM_ClearITPendingBit": 334
+          }
+        },
+        "gtim_h": {
+          "path": "cw32f002/Libraries/inc/cw32f002_gtim.h",
+          "sha256": "98c8e1c184dc895041ef69cb7521704b6855cde2c9ebcd88ef2449dfa3f7104a"
+        },
+        "selected_svd": {
+          "path": "cw32f002/IdeSupport/MDK/WHXY.CW32F002_DFP.1.0.2/SVD/CW32F002.svd",
+          "sha256": "d103e33a01e45d8359b7e13c0644f3aec0ea74e440db9fd37bd7755097bf6b71"
+        },
+        "device_header": {
+          "path": "cw32f002/Libraries/inc/cw32f002.h",
+          "sha256": "399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54"
+        }
+      },
+      "datasheet_capture_channel_confirmation": {
+        "file": "CW32F002_DataSheet_CN_V1.2.pdf",
+        "sha256": "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506",
+        "sha256_verified": true,
+        "url": "https://www.whxy.com/uploads/files/20251230/CW32F002_DataSheet_CN_V1.2.pdf",
+        "printed_revision": "1.2",
+        "reference": {
+          "section": "4.12.1",
+          "printed_page": 15,
+          "pdf_page_1_based": 16
+        },
+        "finding": "The same four GTIM channels support both capture input and compare/PWM output. Own RM capture-source selection=0 connects the corresponding GPIO alternate-function channel input.",
+        "route_reuse_scope": "Only existing qualified, package-bonded GTIM_CH1–4 pin/AF identities; this report creates no new pin/AF route. Existing SWD/crystal exclusions remain necessary.",
+        "route_evidence": "docs/classic-pwm-route-evidence.json"
+      },
+      "qei_arr_restriction": {
+        "value": 65535,
+        "reference": {
+          "section": "12.7.5",
+          "printed_page": 180,
+          "pdf_page_1_based": 181
+        },
+        "finding": "Every own-family ARR register description explicitly says ARR should be 0xffff in encoder-counting mode. Generic example wording about choosing a suitable ARR does not lift this restriction."
+      },
+      "fact_evidence": {
+        "qei_arr": {
+          "reference": {
+            "section": "12.7.5",
+            "printed_page": 180,
+            "pdf_page_1_based": 181,
+            "source_text_line": 7992
+          },
+          "source_text_lines": [
+            8002,
+            8002
+          ],
+          "short_source_anchor": "注：编码计数模式下，ARR 应设置为 0xFFFF。"
+        },
+        "capture_explicit_clear": {
+          "reference": {
+            "section": "12.5.5",
+            "printed_page": 172,
+            "pdf_page_1_based": 173,
+            "source_text_line": 7657
+          },
+          "source_text_lines": [
+            7671,
+            7672
+          ],
+          "short_source_anchor": "步骤 10：等待捕获中断的产生，读取当前 GTIM_CCRy 中的值，然后设置 GTIM_ICR.CCy 的相应位为 0x0，清除"
+        },
+        "capture_external_mux": {
+          "reference": {
+            "section": "12.3.3.2",
+            "printed_page": 162,
+            "pdf_page_1_based": 163,
+            "source_text_line": 7222
+          },
+          "source_text_lines": [
+            7226,
+            7227
+          ],
+          "short_source_anchor": "当 SYSCTRL_GTIMCAP.CHy 为 0x00 时，输入捕获信号的外部输入端口由 GPIO 复用功能寄存器 GPIOx_AFRL 进"
+        },
+        "no_overcapture": {
+          "reference": {
+            "section": "12.7.12",
+            "printed_page": 182,
+            "pdf_page_1_based": 183,
+            "source_text_line": 8129
+          },
+          "finding": "Complete ISR table defines only DIR, DIRCHANGE, CC1..4, UD, TI, OV; bits31:11 and8:7 are reserved. No overcapture flag is documented. This is a scoped negative source finding, not a guarantee that no undocumented silicon behavior exists."
+        },
+        "qei_per_edge": {
+          "reference": {
+            "section": "12.3.5",
+            "printed_page": 166,
+            "pdf_page_1_based": 167,
+            "source_text_line": 7394
+          },
+          "source_text_lines": [
+            7404,
+            7405
+          ],
+          "short_source_anchor": "的 信 号 的 每 次 有 效 跳 变 驱 动。 根 据 两 个 输 入 信 号 的 跳 变 顺 序， 产 生 了 计 数 脉 冲 和 方 向 信 号。 编 码 器 当 前"
+        },
+        "qei_reset_state_sequence": {
+          "reference": {
+            "section": "12.5.8",
+            "printed_page": 174,
+            "pdf_page_1_based": 175,
+            "source_text_line": 7721
+          },
+          "finding": "The complete seven-step sequence does not program PSC/PRS; it programs ENCMODE, ARR, polarity, filters, optional direction-change interrupt, and EN. SDK GTIM_EncodeInit likewise leaves prescaling untouched. Reset PSC0/PRS0 follows this sequence; bypass is inference only.",
+          "sdk_function": "GTIM_EncodeInit",
+          "sdk_source_line": 75
+        },
+        "prs_reset": {
+          "reference": {
+            "section": "12.7.1",
+            "printed_page": 176,
+            "pdf_page_1_based": 177,
+            "source_text_line": 7786
+          },
+          "source_text_lines": [
+            7788,
+            7788
+          ],
+          "short_source_anchor": "Address offset: 0x310      Reset value: 0x0000 0000"
+        }
+      },
+      "original_pdf_visual_review": {
+        "method": "Rendered the original own-family source PDF pages with Poppler pdftoppm at 120 dpi and visually inspected PNGs. Temporary renders were kept outside the repository; not bundled.",
+        "pages": [
+          {
+            "section": "12.7.5",
+            "printed_page": 180,
+            "pdf_page_1_based": 181,
+            "source_text_line": 7992
+          },
+          {
+            "section": "12.7.12",
+            "printed_page": 182,
+            "pdf_page_1_based": 183,
+            "source_text_line": 8129
+          }
+        ],
+        "findings": [
+          "ARR note visibly requires 0xffff in encoder mode.",
+          "ISR rows visibly match DIR10, DIRCHANGE9, CC4..1 bits6..3, UD2, TI1, OV0; no overcapture flag, reserved 31:11 and 8:7."
+        ],
+        "reviewed_utc": "2026-10-08T22:03:34Z"
+      }
+    },
+    "CW32F003": {
+      "manual": {
+        "path": "CW32F003_UserManual_CN_V2.3.pdf",
+        "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+        "printed_revision": "2.3",
+        "printed_revision_date": "2024-07-24",
+        "superseded": false,
+        "sha256_verified": true,
+        "cover_date": "2024-09",
+        "manifest_origin": "cw32-adc-tolerance-audit/classic-source-index.json",
+        "text_sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319",
+        "text_file": "CW32F003_UserManual_CN_V2.3.txt",
+        "revision_history_reference": {
+          "printed_page": 433,
+          "pdf_page_1_based": 434,
+          "date": "2024-07-24"
+        }
+      },
+      "instances": [
+        "GTIM"
+      ],
+      "documented_capture_channels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "documented_qei_channels": [
+        1,
+        2
+      ],
+      "documented_external_counter": "ETR pin route, ascending counter, CR0.MODE=1 and TRS=0",
+      "hardware_absence": null,
+      "chapter_refs": {
+        "overview": {
+          "section": "12.1",
+          "printed_page": 152,
+          "pdf_page_1_based": 153,
+          "source_text_line": 6740
+        },
+        "input_controls": {
+          "section": "12.3.1.3",
+          "printed_page": 155,
+          "pdf_page_1_based": 156,
+          "source_text_line": 6924
+        },
+        "external_counting": {
+          "section": "12.3.2.2",
+          "printed_page": 160,
+          "pdf_page_1_based": 161,
+          "source_text_line": 7143
+        },
+        "capture": {
+          "section": "12.3.3.1",
+          "printed_page": 163,
+          "pdf_page_1_based": 164,
+          "source_text_line": 7325
+        },
+        "capture_sources": {
+          "section": "12.3.3.2",
+          "printed_page": 164,
+          "pdf_page_1_based": 165,
+          "source_text_line": 7373
+        },
+        "qei": {
+          "section": "12.3.5",
+          "printed_page": 168,
+          "pdf_page_1_based": 169,
+          "source_text_line": 7544
+        },
+        "etr_sources": {
+          "section": "12.3.7",
+          "printed_page": 170,
+          "pdf_page_1_based": 171,
+          "source_text_line": 7643
+        },
+        "external_counter_example": {
+          "section": "12.5.2.1",
+          "printed_page": 172,
+          "pdf_page_1_based": 173,
+          "source_text_line": 7721
+        },
+        "capture_read_then_clear": {
+          "section": "12.5.5",
+          "printed_page": 174,
+          "pdf_page_1_based": 175,
+          "source_text_line": 7812
+        },
+        "qei_example": {
+          "section": "12.5.8",
+          "printed_page": 176,
+          "pdf_page_1_based": 177,
+          "source_text_line": 7876
+        },
+        "filter_encoding_pages": [
+          180,
+          181
+        ]
+      },
+      "register_refs": {
+        "CR0": {
+          "section": "12.7.1",
+          "printed_page": 178,
+          "pdf_page_1_based": 179,
+          "source_text_line": 7941
+        },
+        "CR1": {
+          "section": "12.7.2",
+          "printed_page": 180,
+          "pdf_page_1_based": 181,
+          "source_text_line": 8026
+        },
+        "ETR": {
+          "section": "12.7.3",
+          "printed_page": 181,
+          "pdf_page_1_based": 182,
+          "source_text_line": 8082
+        },
+        "CMMR": {
+          "section": "12.7.4",
+          "printed_page": 181,
+          "pdf_page_1_based": 182,
+          "source_text_line": 8107
+        },
+        "ARR": {
+          "section": "12.7.5",
+          "printed_page": 182,
+          "pdf_page_1_based": 183,
+          "source_text_line": 8147
+        },
+        "CNT": {
+          "section": "12.7.6",
+          "printed_page": 182,
+          "pdf_page_1_based": 183,
+          "source_text_line": 8162
+        },
+        "CCR1": {
+          "section": "12.7.7",
+          "printed_page": 182,
+          "pdf_page_1_based": 183,
+          "source_text_line": 8175
+        },
+        "CCR2": {
+          "section": "12.7.8",
+          "printed_page": 182,
+          "pdf_page_1_based": 183,
+          "source_text_line": 8188
+        },
+        "CCR3": {
+          "section": "12.7.9",
+          "printed_page": 182,
+          "pdf_page_1_based": 183,
+          "source_text_line": 8201
+        },
+        "CCR4": {
+          "section": "12.7.10",
+          "printed_page": 183,
+          "pdf_page_1_based": 184,
+          "source_text_line": 8219
+        },
+        "IER": {
+          "section": "12.7.11",
+          "printed_page": 183,
+          "pdf_page_1_based": 184,
+          "source_text_line": 8232
+        },
+        "ISR": {
+          "section": "12.7.12",
+          "printed_page": 184,
+          "pdf_page_1_based": 185,
+          "source_text_line": 8284
+        },
+        "ICR": {
+          "section": "12.7.13",
+          "printed_page": 185,
+          "pdf_page_1_based": 186,
+          "source_text_line": 8342
+        }
+      },
+      "sysctrl_route_refs": [
+        {
+          "register": "SYSCTRL_GTIMCAP",
+          "section": "4.7.18",
+          "printed_page": 69,
+          "pdf_page_1_based": 70,
+          "source_text_line": 2880
+        },
+        {
+          "register": "SYSCTRL_GTIMETR",
+          "section": "4.7.20",
+          "printed_page": 70,
+          "pdf_page_1_based": 71,
+          "source_text_line": 2937
+        }
+      ],
+      "external_count_unprescaled": {
+        "kind": "CR0.PRS",
+        "value": 0
+      },
+      "sdk": {
+        "family": "CW32F003",
+        "reuse_reason": null,
+        "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+        "archive_sha256": "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+        "gtim_c": {
+          "path": "cw32f003/Libraries/src/cw32f003_gtim.c",
+          "sha256": "1e49150402103027ea53836f1c218b02b39e5faad61051750442fbc87a6bb754",
+          "function_lines": {
+            "GTIM_EncodeInit": 75,
+            "GTIM_ICInit": 114,
+            "GTIM_ETRConfig": 145,
+            "GTIM_ICChannelConfig": 180,
+            "GTIM_GetCapture1": 256,
+            "GTIM_ClearITPendingBit": 334
+          }
+        },
+        "gtim_h": {
+          "path": "cw32f003/Libraries/inc/cw32f003_gtim.h",
+          "sha256": "296105108378c56d6cc508dca6b41ce3c53fbc853ca137dd3738e1361a61a2d0"
+        },
+        "selected_svd": {
+          "path": "cw32f003/IdeSupport/MDK/WHXY.CW32F003_DFP.1.0.2/SVD/CW32F003.svd",
+          "sha256": "9535665c3cd517e4619121ccac8f47b91a6528d295e3c9aed99367691a094293"
+        },
+        "device_header": {
+          "path": "cw32f003/Libraries/inc/cw32f003.h",
+          "sha256": "1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f"
+        }
+      },
+      "datasheet_capture_channel_confirmation": {
+        "file": "CW32F003_DataSheet_CN_V1.9.pdf",
+        "sha256": "5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd",
+        "sha256_verified": true,
+        "url": "https://www.whxy.com/uploads/files/20251226/CW32F003_DataSheet_CN_V1.9.pdf",
+        "printed_revision": "1.9",
+        "reference": {
+          "section": "4.12.2",
+          "printed_page": 16,
+          "pdf_page_1_based": 17
+        },
+        "finding": "The same four GTIM channels support both capture input and compare/PWM output. Own RM capture-source selection=0 connects the corresponding GPIO alternate-function channel input.",
+        "route_reuse_scope": "Only existing qualified, package-bonded GTIM_CH1–4 pin/AF identities; this report creates no new pin/AF route. Existing SWD/crystal exclusions remain necessary.",
+        "route_evidence": "docs/classic-pwm-route-evidence.json"
+      },
+      "qei_arr_restriction": {
+        "value": 65535,
+        "reference": {
+          "section": "12.7.5",
+          "printed_page": 182,
+          "pdf_page_1_based": 183
+        },
+        "finding": "Every own-family ARR register description explicitly says ARR should be 0xffff in encoder-counting mode. Generic example wording about choosing a suitable ARR does not lift this restriction."
+      },
+      "fact_evidence": {
+        "qei_arr": {
+          "reference": {
+            "section": "12.7.5",
+            "printed_page": 182,
+            "pdf_page_1_based": 183,
+            "source_text_line": 8147
+          },
+          "source_text_lines": [
+            8157,
+            8157
+          ],
+          "short_source_anchor": "注：编码计数模式下，ARR 应设置为 0xFFFF。"
+        },
+        "capture_explicit_clear": {
+          "reference": {
+            "section": "12.5.5",
+            "printed_page": 174,
+            "pdf_page_1_based": 175,
+            "source_text_line": 7812
+          },
+          "source_text_lines": [
+            7826,
+            7827
+          ],
+          "short_source_anchor": "步骤 10：等待捕获中断的产生，读取当前 GTIM_CCRy 中的值，然后设置 GTIM_ICR.CCy 的相应位为 0x0，清除"
+        },
+        "capture_external_mux": {
+          "reference": {
+            "section": "12.3.3.2",
+            "printed_page": 164,
+            "pdf_page_1_based": 165,
+            "source_text_line": 7373
+          },
+          "source_text_lines": [
+            7377,
+            7378
+          ],
+          "short_source_anchor": "当 SYSCTRL_GTIMCAP.CHy 为 0x00 时，输入捕获信号的外部输入端口由 GPIO 复用功能寄存器 GPIOx_AFRL 进"
+        },
+        "no_overcapture": {
+          "reference": {
+            "section": "12.7.12",
+            "printed_page": 184,
+            "pdf_page_1_based": 185,
+            "source_text_line": 8284
+          },
+          "finding": "Complete ISR table defines only DIR, DIRCHANGE, CC1..4, UD, TI, OV; bits31:11 and8:7 are reserved. No overcapture flag is documented. This is a scoped negative source finding, not a guarantee that no undocumented silicon behavior exists."
+        },
+        "qei_per_edge": {
+          "reference": {
+            "section": "12.3.5",
+            "printed_page": 168,
+            "pdf_page_1_based": 169,
+            "source_text_line": 7544
+          },
+          "source_text_lines": [
+            7554,
+            7555
+          ],
+          "short_source_anchor": "的 信 号 的 每 次 有 效 跳 变 驱 动。 根 据 两 个 输 入 信 号 的 跳 变 顺 序， 产 生 了 计 数 脉 冲 和 方 向 信 号。 编 码 器 当 前"
+        },
+        "qei_reset_state_sequence": {
+          "reference": {
+            "section": "12.5.8",
+            "printed_page": 176,
+            "pdf_page_1_based": 177,
+            "source_text_line": 7876
+          },
+          "finding": "The complete seven-step sequence does not program PSC/PRS; it programs ENCMODE, ARR, polarity, filters, optional direction-change interrupt, and EN. SDK GTIM_EncodeInit likewise leaves prescaling untouched. Reset PSC0/PRS0 follows this sequence; bypass is inference only.",
+          "sdk_function": "GTIM_EncodeInit",
+          "sdk_source_line": 75
+        },
+        "prs_reset": {
+          "reference": {
+            "section": "12.7.1",
+            "printed_page": 178,
+            "pdf_page_1_based": 179,
+            "source_text_line": 7941
+          },
+          "source_text_lines": [
+            7943,
+            7943
+          ],
+          "short_source_anchor": "Address offset: 0x310      Reset value: 0x0000 0000"
+        }
+      }
+    },
+    "CW32F020": {
+      "manual": {
+        "path": "CW32F020_UserManual_CN_V1.4.pdf",
+        "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+        "printed_revision": "1.4",
+        "printed_revision_date": "2024-07-19",
+        "superseded": false,
+        "sha256_verified": true,
+        "cover_date": "2024-09",
+        "manifest_origin": "cw32-adc-tolerance-audit/classic-source-index.json",
+        "text_sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db",
+        "text_file": "CW32F020_UserManual_CN_V1.4.txt",
+        "revision_history_reference": {
+          "printed_page": 443,
+          "pdf_page_1_based": 444,
+          "date": "2024-07-19"
+        }
+      },
+      "instances": [
+        "GTIM1",
+        "GTIM2",
+        "GTIM3",
+        "GTIM4"
+      ],
+      "documented_capture_channels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "documented_qei_channels": [
+        1,
+        2
+      ],
+      "documented_external_counter": "ETR pin route, ascending counter, CR0.MODE=1 and TRS=0",
+      "hardware_absence": null,
+      "chapter_refs": {
+        "overview": {
+          "section": "14.1",
+          "printed_page": 213,
+          "pdf_page_1_based": 214,
+          "source_text_line": 9946
+        },
+        "input_controls": {
+          "section": "14.3.1.3",
+          "printed_page": 216,
+          "pdf_page_1_based": 217,
+          "source_text_line": 10134
+        },
+        "external_counting": {
+          "section": "14.3.2.2",
+          "printed_page": 221,
+          "pdf_page_1_based": 222,
+          "source_text_line": 10369
+        },
+        "capture": {
+          "section": "14.3.3.1",
+          "printed_page": 224,
+          "pdf_page_1_based": 225,
+          "source_text_line": 10557
+        },
+        "capture_sources": {
+          "section": "14.3.3.2",
+          "printed_page": 225,
+          "pdf_page_1_based": 226,
+          "source_text_line": 10605
+        },
+        "qei": {
+          "section": "14.3.5",
+          "printed_page": 229,
+          "pdf_page_1_based": 230,
+          "source_text_line": 10778
+        },
+        "etr_sources": {
+          "section": "14.3.7",
+          "printed_page": 231,
+          "pdf_page_1_based": 232,
+          "source_text_line": 10880
+        },
+        "external_counter_example": {
+          "section": "14.6.2.1",
+          "printed_page": 234,
+          "pdf_page_1_based": 235,
+          "source_text_line": 10980
+        },
+        "capture_read_then_clear": {
+          "section": "14.6.5",
+          "printed_page": 236,
+          "pdf_page_1_based": 237,
+          "source_text_line": 11075
+        },
+        "qei_example": {
+          "section": "14.6.8",
+          "printed_page": 238,
+          "pdf_page_1_based": 239,
+          "source_text_line": 11148
+        },
+        "filter_encoding_pages": [
+          242,
+          243
+        ]
+      },
+      "register_refs": {
+        "CR0": {
+          "section": "14.8.1",
+          "printed_page": 240,
+          "pdf_page_1_based": 241,
+          "source_text_line": 11222
+        },
+        "CR1": {
+          "section": "14.8.2",
+          "printed_page": 242,
+          "pdf_page_1_based": 243,
+          "source_text_line": 11307
+        },
+        "ETR": {
+          "section": "14.8.3",
+          "printed_page": 243,
+          "pdf_page_1_based": 244,
+          "source_text_line": 11363
+        },
+        "CMMR": {
+          "section": "14.8.4",
+          "printed_page": 243,
+          "pdf_page_1_based": 244,
+          "source_text_line": 11388
+        },
+        "ARR": {
+          "section": "14.8.5",
+          "printed_page": 244,
+          "pdf_page_1_based": 245,
+          "source_text_line": 11428
+        },
+        "CNT": {
+          "section": "14.8.6",
+          "printed_page": 244,
+          "pdf_page_1_based": 245,
+          "source_text_line": 11443
+        },
+        "CCR1": {
+          "section": "14.8.7",
+          "printed_page": 244,
+          "pdf_page_1_based": 245,
+          "source_text_line": 11456
+        },
+        "CCR2": {
+          "section": "14.8.8",
+          "printed_page": 244,
+          "pdf_page_1_based": 245,
+          "source_text_line": 11469
+        },
+        "CCR3": {
+          "section": "14.8.9",
+          "printed_page": 244,
+          "pdf_page_1_based": 245,
+          "source_text_line": 11482
+        },
+        "CCR4": {
+          "section": "14.8.10",
+          "printed_page": 245,
+          "pdf_page_1_based": 246,
+          "source_text_line": 11500
+        },
+        "IER": {
+          "section": "14.8.11",
+          "printed_page": 245,
+          "pdf_page_1_based": 246,
+          "source_text_line": 11513
+        },
+        "ISR": {
+          "section": "14.8.12",
+          "printed_page": 246,
+          "pdf_page_1_based": 247,
+          "source_text_line": 11565
+        },
+        "ICR": {
+          "section": "14.8.13",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11623
+        },
+        "DMA": {
+          "section": "14.8.14",
+          "printed_page": 248,
+          "pdf_page_1_based": 249,
+          "source_text_line": 11675
+        }
+      },
+      "sysctrl_route_refs": [
+        {
+          "register": "SYSCTRL_GTIM1CAP",
+          "section": "4.7.20",
+          "printed_page": 87,
+          "pdf_page_1_based": 88,
+          "source_text_line": 3828
+        },
+        {
+          "register": "SYSCTRL_GTIM2CAP",
+          "section": "4.7.21",
+          "printed_page": 87,
+          "pdf_page_1_based": 88,
+          "source_text_line": 3861
+        },
+        {
+          "register": "SYSCTRL_GTIM3CAP",
+          "section": "4.7.22",
+          "printed_page": 88,
+          "pdf_page_1_based": 89,
+          "source_text_line": 3899
+        },
+        {
+          "register": "SYSCTRL_GTIM4CAP",
+          "section": "4.7.23",
+          "printed_page": 88,
+          "pdf_page_1_based": 89,
+          "source_text_line": 3932
+        },
+        {
+          "register": "SYSCTRL_GTIMETR",
+          "section": "4.7.24",
+          "printed_page": 89,
+          "pdf_page_1_based": 90,
+          "source_text_line": 3974
+        }
+      ],
+      "external_count_unprescaled": {
+        "kind": "CR0.PRS",
+        "value": 0
+      },
+      "sdk": {
+        "family": "CW32F020",
+        "reuse_reason": null,
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+        "archive_sha256": "1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d",
+        "gtim_c": {
+          "path": "cw32f020/Libraries/src/cw32f020_gtim.c",
+          "sha256": "110c6548bc308f03ddb41d4b1b9eb7929ad2adf8763f2a73295d5b6327c01f49",
+          "function_lines": {
+            "GTIM_EncodeInit": 97,
+            "GTIM_ICInit": 137,
+            "GTIM_ETRConfig": 170,
+            "GTIM_ICChannelConfig": 252,
+            "GTIM_GetCapture1": 332,
+            "GTIM_ClearITPendingBit": 416
+          }
+        },
+        "gtim_h": {
+          "path": "cw32f020/Libraries/inc/cw32f020_gtim.h",
+          "sha256": "498187be89d4bbc7162bda3a8fd1bbe76a103186ff8b9b5f05526c59ce44778c"
+        },
+        "selected_svd": {
+          "path": "cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/SVD/CW32F020.svd",
+          "sha256": "e2e0bd198e6c39aa0807ad10080a26b9bccc4a4718eea5dd0d54a13630101f98"
+        },
+        "device_header": {
+          "path": "cw32f020/Libraries/inc/cw32f020.h",
+          "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f"
+        }
+      },
+      "datasheet_capture_channel_confirmation": {
+        "file": "current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+        "sha256": "1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0",
+        "sha256_verified": true,
+        "url": "https://www.whxy.com/uploads/files/20251230/CW32F020_DataSheet_CN_V1.3.pdf",
+        "printed_revision": "1.3",
+        "reference": {
+          "section": "4.13.1",
+          "printed_page": 16,
+          "pdf_page_1_based": 17
+        },
+        "finding": "The same four GTIM channels support both capture input and compare/PWM output. Own RM capture-source selection=0 connects the corresponding GPIO alternate-function channel input.",
+        "route_reuse_scope": "Only existing qualified, package-bonded GTIM_CH1–4 pin/AF identities; this report creates no new pin/AF route. Existing SWD/crystal exclusions remain necessary.",
+        "route_evidence": "docs/f020-adc-pwm-route-evidence.json"
+      },
+      "qei_arr_restriction": {
+        "value": 65535,
+        "reference": {
+          "section": "14.8.5",
+          "printed_page": 244,
+          "pdf_page_1_based": 245
+        },
+        "finding": "Every own-family ARR register description explicitly says ARR should be 0xffff in encoder-counting mode. Generic example wording about choosing a suitable ARR does not lift this restriction."
+      },
+      "fact_evidence": {
+        "qei_arr": {
+          "reference": {
+            "section": "14.8.5",
+            "printed_page": 244,
+            "pdf_page_1_based": 245,
+            "source_text_line": 11428
+          },
+          "source_text_lines": [
+            11438,
+            11438
+          ],
+          "short_source_anchor": "注：编码计数模式下，ARR 应设置为 0xFFFF。"
+        },
+        "capture_explicit_clear": {
+          "reference": {
+            "section": "14.6.5",
+            "printed_page": 236,
+            "pdf_page_1_based": 237,
+            "source_text_line": 11075
+          },
+          "source_text_lines": [
+            11092,
+            11093
+          ],
+          "short_source_anchor": "步骤 10：等待捕获中断的产生，读取当前 GTIMx_CCRy 中的值，然后设置 GTIMx_ICR.CCy 的相应位为 0x0，清"
+        },
+        "capture_external_mux": {
+          "reference": {
+            "section": "14.3.3.2",
+            "printed_page": 225,
+            "pdf_page_1_based": 226,
+            "source_text_line": 10605
+          },
+          "source_text_lines": [
+            10609,
+            10610
+          ],
+          "short_source_anchor": "当 SYSCTRL_GTIMxCAP.CHy 为 0x00 时，输入捕获信号的外部输入端口由 GPIO 复用功能寄存器 (GPIOx_AFRH"
+        },
+        "no_overcapture": {
+          "reference": {
+            "section": "14.8.12",
+            "printed_page": 246,
+            "pdf_page_1_based": 247,
+            "source_text_line": 11565
+          },
+          "finding": "Complete ISR table defines only DIR, DIRCHANGE, CC1..4, UD, TI, OV; bits31:11 and8:7 are reserved. No overcapture flag is documented. This is a scoped negative source finding, not a guarantee that no undocumented silicon behavior exists."
+        },
+        "qei_per_edge": {
+          "reference": {
+            "section": "14.3.5",
+            "printed_page": 229,
+            "pdf_page_1_based": 230,
+            "source_text_line": 10778
+          },
+          "source_text_lines": [
+            10788,
+            10789
+          ],
+          "short_source_anchor": "号的每次有效跳变驱动。根据两个输入信号的跳变顺序，产生了计数脉冲和方向信号。编码器当前计数方向"
+        },
+        "qei_reset_state_sequence": {
+          "reference": {
+            "section": "14.6.8",
+            "printed_page": 238,
+            "pdf_page_1_based": 239,
+            "source_text_line": 11148
+          },
+          "finding": "The complete seven-step sequence does not program PSC/PRS; it programs ENCMODE, ARR, polarity, filters, optional direction-change interrupt, and EN. SDK GTIM_EncodeInit likewise leaves prescaling untouched. Reset PSC0/PRS0 follows this sequence; bypass is inference only.",
+          "sdk_function": "GTIM_EncodeInit",
+          "sdk_source_line": 97
+        },
+        "prs_reset": {
+          "reference": {
+            "section": "14.8.1",
+            "printed_page": 240,
+            "pdf_page_1_based": 241,
+            "source_text_line": 11222
+          },
+          "source_text_lines": [
+            11224,
+            11224
+          ],
+          "short_source_anchor": "Address offset: 0x310      Reset value: 0x0000 0000"
+        }
+      }
+    },
+    "CW32F030": {
+      "manual": {
+        "path": "CW32x030_UserManual_CN_V2.5.pdf",
+        "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+        "printed_revision": "2.5",
+        "printed_revision_date": "2024-07-24",
+        "superseded": false,
+        "sha256_verified": true,
+        "cover_date": "2024-09",
+        "manifest_origin": "cw32-adc-tolerance-audit/classic-source-index.json",
+        "text_sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe",
+        "text_file": "CW32x030_UserManual_CN_V2.5.txt",
+        "revision_history_reference": {
+          "printed_page": 507,
+          "pdf_page_1_based": 508,
+          "date": "2024-07-24"
+        }
+      },
+      "instances": [
+        "GTIM1",
+        "GTIM2",
+        "GTIM3",
+        "GTIM4"
+      ],
+      "documented_capture_channels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "documented_qei_channels": [
+        1,
+        2
+      ],
+      "documented_external_counter": "ETR pin route, ascending counter, CR0.MODE=1 and TRS=0",
+      "hardware_absence": null,
+      "chapter_refs": {
+        "overview": {
+          "section": "14.1",
+          "printed_page": 216,
+          "pdf_page_1_based": 217,
+          "source_text_line": 10403
+        },
+        "input_controls": {
+          "section": "14.3.1.3",
+          "printed_page": 219,
+          "pdf_page_1_based": 220,
+          "source_text_line": 10594
+        },
+        "external_counting": {
+          "section": "14.3.2.2",
+          "printed_page": 224,
+          "pdf_page_1_based": 225,
+          "source_text_line": 10832
+        },
+        "capture": {
+          "section": "14.3.3.1",
+          "printed_page": 227,
+          "pdf_page_1_based": 228,
+          "source_text_line": 11023
+        },
+        "capture_sources": {
+          "section": "14.3.3.2",
+          "printed_page": 228,
+          "pdf_page_1_based": 229,
+          "source_text_line": 11072
+        },
+        "qei": {
+          "section": "14.3.5",
+          "printed_page": 232,
+          "pdf_page_1_based": 233,
+          "source_text_line": 11249
+        },
+        "etr_sources": {
+          "section": "14.3.7",
+          "printed_page": 234,
+          "pdf_page_1_based": 235,
+          "source_text_line": 11350
+        },
+        "external_counter_example": {
+          "section": "14.6.2.1",
+          "printed_page": 237,
+          "pdf_page_1_based": 238,
+          "source_text_line": 11453
+        },
+        "capture_read_then_clear": {
+          "section": "14.6.5",
+          "printed_page": 239,
+          "pdf_page_1_based": 240,
+          "source_text_line": 11550
+        },
+        "qei_example": {
+          "section": "14.6.8",
+          "printed_page": 241,
+          "pdf_page_1_based": 242,
+          "source_text_line": 11623
+        },
+        "filter_encoding_pages": [
+          245,
+          246
+        ]
+      },
+      "register_refs": {
+        "CR0": {
+          "section": "14.8.1",
+          "printed_page": 243,
+          "pdf_page_1_based": 244,
+          "source_text_line": 11698
+        },
+        "CR1": {
+          "section": "14.8.2",
+          "printed_page": 245,
+          "pdf_page_1_based": 246,
+          "source_text_line": 11785
+        },
+        "ETR": {
+          "section": "14.8.3",
+          "printed_page": 246,
+          "pdf_page_1_based": 247,
+          "source_text_line": 11842
+        },
+        "CMMR": {
+          "section": "14.8.4",
+          "printed_page": 246,
+          "pdf_page_1_based": 247,
+          "source_text_line": 11867
+        },
+        "ARR": {
+          "section": "14.8.5",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11908
+        },
+        "CNT": {
+          "section": "14.8.6",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11923
+        },
+        "CCR1": {
+          "section": "14.8.7",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11936
+        },
+        "CCR2": {
+          "section": "14.8.8",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11949
+        },
+        "CCR3": {
+          "section": "14.8.9",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11962
+        },
+        "CCR4": {
+          "section": "14.8.10",
+          "printed_page": 248,
+          "pdf_page_1_based": 249,
+          "source_text_line": 11981
+        },
+        "IER": {
+          "section": "14.8.11",
+          "printed_page": 248,
+          "pdf_page_1_based": 249,
+          "source_text_line": 11994
+        },
+        "ISR": {
+          "section": "14.8.12",
+          "printed_page": 249,
+          "pdf_page_1_based": 250,
+          "source_text_line": 12047
+        },
+        "ICR": {
+          "section": "14.8.13",
+          "printed_page": 250,
+          "pdf_page_1_based": 251,
+          "source_text_line": 12106
+        },
+        "DMA": {
+          "section": "14.8.14",
+          "printed_page": 251,
+          "pdf_page_1_based": 252,
+          "source_text_line": 12159
+        }
+      },
+      "sysctrl_route_refs": [
+        {
+          "register": "SYSCTRL_GTIM1CAP",
+          "section": "4.7.20",
+          "printed_page": 89,
+          "pdf_page_1_based": 90,
+          "source_text_line": 4023
+        },
+        {
+          "register": "SYSCTRL_GTIM2CAP",
+          "section": "4.7.21",
+          "printed_page": 89,
+          "pdf_page_1_based": 90,
+          "source_text_line": 4056
+        },
+        {
+          "register": "SYSCTRL_GTIM3CAP",
+          "section": "4.7.22",
+          "printed_page": 90,
+          "pdf_page_1_based": 91,
+          "source_text_line": 4095
+        },
+        {
+          "register": "SYSCTRL_GTIM4CAP",
+          "section": "4.7.23",
+          "printed_page": 90,
+          "pdf_page_1_based": 91,
+          "source_text_line": 4128
+        },
+        {
+          "register": "SYSCTRL_GTIMETR",
+          "section": "4.7.25",
+          "printed_page": 91,
+          "pdf_page_1_based": 92,
+          "source_text_line": 4186
+        }
+      ],
+      "external_count_unprescaled": {
+        "kind": "CR0.PRS",
+        "value": 0
+      },
+      "sdk": {
+        "family": "CW32F030",
+        "reuse_reason": null,
+        "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+        "archive_sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+        "gtim_c": {
+          "path": "cw32f030/Libraries/src/cw32f030_gtim.c",
+          "sha256": "37c2a3b9f4c21c8e9526883952b65671feeaac1ac5777a561c2444cb19ddac12",
+          "function_lines": {
+            "GTIM_EncodeInit": 95,
+            "GTIM_ICInit": 132,
+            "GTIM_ETRConfig": 162,
+            "GTIM_ICChannelConfig": 238,
+            "GTIM_GetCapture1": 310,
+            "GTIM_ClearITPendingBit": 388
+          }
+        },
+        "gtim_h": {
+          "path": "cw32f030/Libraries/inc/cw32f030_gtim.h",
+          "sha256": "81e89297aa564eca6ffd3d964d8bcca1de6193e56b493f3fbde05dac657bacac"
+        },
+        "selected_svd": {
+          "path": "cw32f030/IdeSupport/MDK/WHXY.CW32F030_DFP.1.0.5/SVD/CW32F030.svd",
+          "sha256": "c59bdc211510db5a8117d4d7610c2ef9b7ba328d9221c166354766f07e079aaa"
+        },
+        "device_header": {
+          "path": "cw32f030/Libraries/inc/cw32f030.h",
+          "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862"
+        }
+      },
+      "datasheet_capture_channel_confirmation": {
+        "file": "CW32F030_DataSheet_CN_V1.9.pdf",
+        "sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2",
+        "sha256_verified": true,
+        "url": "https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf",
+        "printed_revision": "1.9",
+        "reference": {
+          "section": "4.13.2",
+          "printed_page": 16,
+          "pdf_page_1_based": 17
+        },
+        "finding": "The same four GTIM channels support both capture input and compare/PWM output. Own RM capture-source selection=0 connects the corresponding GPIO alternate-function channel input.",
+        "route_reuse_scope": "Only existing qualified, package-bonded GTIM_CH1–4 pin/AF identities; this report creates no new pin/AF route. Existing SWD/crystal exclusions remain necessary."
+      },
+      "qei_arr_restriction": {
+        "value": 65535,
+        "reference": {
+          "section": "14.8.5",
+          "printed_page": 247,
+          "pdf_page_1_based": 248
+        },
+        "finding": "Every own-family ARR register description explicitly says ARR should be 0xffff in encoder-counting mode. Generic example wording about choosing a suitable ARR does not lift this restriction."
+      },
+      "fact_evidence": {
+        "qei_arr": {
+          "reference": {
+            "section": "14.8.5",
+            "printed_page": 247,
+            "pdf_page_1_based": 248,
+            "source_text_line": 11908
+          },
+          "source_text_lines": [
+            11918,
+            11918
+          ],
+          "short_source_anchor": "注：编码计数模式下，ARR 应设置为 0xFFFF。"
+        },
+        "capture_explicit_clear": {
+          "reference": {
+            "section": "14.6.5",
+            "printed_page": 239,
+            "pdf_page_1_based": 240,
+            "source_text_line": 11550
+          },
+          "source_text_lines": [
+            11567,
+            11568
+          ],
+          "short_source_anchor": "步骤 10：等待捕获中断的产生，读取当前 GTIMx_CCRy 中的值，然后设置 GTIMx_ICR.CCy 的相应位为 0x0，清"
+        },
+        "capture_external_mux": {
+          "reference": {
+            "section": "14.3.3.2",
+            "printed_page": 228,
+            "pdf_page_1_based": 229,
+            "source_text_line": 11072
+          },
+          "source_text_lines": [
+            11076,
+            11077
+          ],
+          "short_source_anchor": "当 SYSCTRL_GTIMxCAP.CHy 为 0x00 时，输入捕获信号的外部输入端口由 GPIO 复用功能寄存器 (GPIOx_AFRH"
+        },
+        "no_overcapture": {
+          "reference": {
+            "section": "14.8.12",
+            "printed_page": 249,
+            "pdf_page_1_based": 250,
+            "source_text_line": 12047
+          },
+          "finding": "Complete ISR table defines only DIR, DIRCHANGE, CC1..4, UD, TI, OV; bits31:11 and8:7 are reserved. No overcapture flag is documented. This is a scoped negative source finding, not a guarantee that no undocumented silicon behavior exists."
+        },
+        "qei_per_edge": {
+          "reference": {
+            "section": "14.3.5",
+            "printed_page": 232,
+            "pdf_page_1_based": 233,
+            "source_text_line": 11249
+          },
+          "source_text_lines": [
+            11259,
+            11260
+          ],
+          "short_source_anchor": "号的每次有效跳变驱动。根据两个输入信号的跳变顺序，产生了计数脉冲和方向信号。编码器当前计数方向"
+        },
+        "qei_reset_state_sequence": {
+          "reference": {
+            "section": "14.6.8",
+            "printed_page": 241,
+            "pdf_page_1_based": 242,
+            "source_text_line": 11623
+          },
+          "finding": "The complete seven-step sequence does not program PSC/PRS; it programs ENCMODE, ARR, polarity, filters, optional direction-change interrupt, and EN. SDK GTIM_EncodeInit likewise leaves prescaling untouched. Reset PSC0/PRS0 follows this sequence; bypass is inference only.",
+          "sdk_function": "GTIM_EncodeInit",
+          "sdk_source_line": 95
+        },
+        "prs_reset": {
+          "reference": {
+            "section": "14.8.1",
+            "printed_page": 243,
+            "pdf_page_1_based": 244,
+            "source_text_line": 11698
+          },
+          "source_text_lines": [
+            11700,
+            11700
+          ],
+          "short_source_anchor": "Address offset: 0x310      Reset value: 0x0000 0000"
+        }
+      }
+    },
+    "CW32A030": {
+      "manual": {
+        "path": "CW32x030_UserManual_CN_V2.5.pdf",
+        "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+        "printed_revision": "2.5",
+        "printed_revision_date": "2024-07-24",
+        "superseded": false,
+        "sha256_verified": true,
+        "cover_date": "2024-09",
+        "manifest_origin": "cw32-adc-tolerance-audit/classic-source-index.json",
+        "text_sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe",
+        "text_file": "CW32x030_UserManual_CN_V2.5.txt",
+        "revision_history_reference": {
+          "printed_page": 507,
+          "pdf_page_1_based": 508,
+          "date": "2024-07-24"
+        }
+      },
+      "instances": [
+        "GTIM1",
+        "GTIM2",
+        "GTIM3",
+        "GTIM4"
+      ],
+      "documented_capture_channels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "documented_qei_channels": [
+        1,
+        2
+      ],
+      "documented_external_counter": "ETR pin route, ascending counter, CR0.MODE=1 and TRS=0",
+      "hardware_absence": null,
+      "chapter_refs": {
+        "overview": {
+          "section": "14.1",
+          "printed_page": 216,
+          "pdf_page_1_based": 217,
+          "source_text_line": 10403
+        },
+        "input_controls": {
+          "section": "14.3.1.3",
+          "printed_page": 219,
+          "pdf_page_1_based": 220,
+          "source_text_line": 10594
+        },
+        "external_counting": {
+          "section": "14.3.2.2",
+          "printed_page": 224,
+          "pdf_page_1_based": 225,
+          "source_text_line": 10832
+        },
+        "capture": {
+          "section": "14.3.3.1",
+          "printed_page": 227,
+          "pdf_page_1_based": 228,
+          "source_text_line": 11023
+        },
+        "capture_sources": {
+          "section": "14.3.3.2",
+          "printed_page": 228,
+          "pdf_page_1_based": 229,
+          "source_text_line": 11072
+        },
+        "qei": {
+          "section": "14.3.5",
+          "printed_page": 232,
+          "pdf_page_1_based": 233,
+          "source_text_line": 11249
+        },
+        "etr_sources": {
+          "section": "14.3.7",
+          "printed_page": 234,
+          "pdf_page_1_based": 235,
+          "source_text_line": 11350
+        },
+        "external_counter_example": {
+          "section": "14.6.2.1",
+          "printed_page": 237,
+          "pdf_page_1_based": 238,
+          "source_text_line": 11453
+        },
+        "capture_read_then_clear": {
+          "section": "14.6.5",
+          "printed_page": 239,
+          "pdf_page_1_based": 240,
+          "source_text_line": 11550
+        },
+        "qei_example": {
+          "section": "14.6.8",
+          "printed_page": 241,
+          "pdf_page_1_based": 242,
+          "source_text_line": 11623
+        },
+        "filter_encoding_pages": [
+          245,
+          246
+        ]
+      },
+      "register_refs": {
+        "CR0": {
+          "section": "14.8.1",
+          "printed_page": 243,
+          "pdf_page_1_based": 244,
+          "source_text_line": 11698
+        },
+        "CR1": {
+          "section": "14.8.2",
+          "printed_page": 245,
+          "pdf_page_1_based": 246,
+          "source_text_line": 11785
+        },
+        "ETR": {
+          "section": "14.8.3",
+          "printed_page": 246,
+          "pdf_page_1_based": 247,
+          "source_text_line": 11842
+        },
+        "CMMR": {
+          "section": "14.8.4",
+          "printed_page": 246,
+          "pdf_page_1_based": 247,
+          "source_text_line": 11867
+        },
+        "ARR": {
+          "section": "14.8.5",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11908
+        },
+        "CNT": {
+          "section": "14.8.6",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11923
+        },
+        "CCR1": {
+          "section": "14.8.7",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11936
+        },
+        "CCR2": {
+          "section": "14.8.8",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11949
+        },
+        "CCR3": {
+          "section": "14.8.9",
+          "printed_page": 247,
+          "pdf_page_1_based": 248,
+          "source_text_line": 11962
+        },
+        "CCR4": {
+          "section": "14.8.10",
+          "printed_page": 248,
+          "pdf_page_1_based": 249,
+          "source_text_line": 11981
+        },
+        "IER": {
+          "section": "14.8.11",
+          "printed_page": 248,
+          "pdf_page_1_based": 249,
+          "source_text_line": 11994
+        },
+        "ISR": {
+          "section": "14.8.12",
+          "printed_page": 249,
+          "pdf_page_1_based": 250,
+          "source_text_line": 12047
+        },
+        "ICR": {
+          "section": "14.8.13",
+          "printed_page": 250,
+          "pdf_page_1_based": 251,
+          "source_text_line": 12106
+        },
+        "DMA": {
+          "section": "14.8.14",
+          "printed_page": 251,
+          "pdf_page_1_based": 252,
+          "source_text_line": 12159
+        }
+      },
+      "sysctrl_route_refs": [
+        {
+          "register": "SYSCTRL_GTIM1CAP",
+          "section": "4.7.20",
+          "printed_page": 89,
+          "pdf_page_1_based": 90,
+          "source_text_line": 4023
+        },
+        {
+          "register": "SYSCTRL_GTIM2CAP",
+          "section": "4.7.21",
+          "printed_page": 89,
+          "pdf_page_1_based": 90,
+          "source_text_line": 4056
+        },
+        {
+          "register": "SYSCTRL_GTIM3CAP",
+          "section": "4.7.22",
+          "printed_page": 90,
+          "pdf_page_1_based": 91,
+          "source_text_line": 4095
+        },
+        {
+          "register": "SYSCTRL_GTIM4CAP",
+          "section": "4.7.23",
+          "printed_page": 90,
+          "pdf_page_1_based": 91,
+          "source_text_line": 4128
+        },
+        {
+          "register": "SYSCTRL_GTIMETR",
+          "section": "4.7.25",
+          "printed_page": 91,
+          "pdf_page_1_based": 92,
+          "source_text_line": 4186
+        }
+      ],
+      "external_count_unprescaled": {
+        "kind": "CR0.PRS",
+        "value": 0
+      },
+      "sdk": {
+        "family": "CW32F030",
+        "reuse_reason": "Common vendor x030 reference manual explicitly covers F030 and A030; see CW32A030-register-compatibility-evidence.json",
+        "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip",
+        "archive_sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+        "gtim_c": {
+          "path": "cw32f030/Libraries/src/cw32f030_gtim.c",
+          "sha256": "37c2a3b9f4c21c8e9526883952b65671feeaac1ac5777a561c2444cb19ddac12",
+          "function_lines": {
+            "GTIM_EncodeInit": 95,
+            "GTIM_ICInit": 132,
+            "GTIM_ETRConfig": 162,
+            "GTIM_ICChannelConfig": 238,
+            "GTIM_GetCapture1": 310,
+            "GTIM_ClearITPendingBit": 388
+          }
+        },
+        "gtim_h": {
+          "path": "cw32f030/Libraries/inc/cw32f030_gtim.h",
+          "sha256": "81e89297aa564eca6ffd3d964d8bcca1de6193e56b493f3fbde05dac657bacac"
+        },
+        "selected_svd": {
+          "path": "cw32f030/IdeSupport/MDK/WHXY.CW32F030_DFP.1.0.5/SVD/CW32F030.svd",
+          "sha256": "c59bdc211510db5a8117d4d7610c2ef9b7ba328d9221c166354766f07e079aaa"
+        },
+        "device_header": {
+          "path": "cw32f030/Libraries/inc/cw32f030.h",
+          "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862"
+        }
+      },
+      "datasheet_capture_channel_confirmation": {
+        "file": "CW32A030_DataSheet_CN_V1.1.pdf",
+        "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+        "sha256_verified": true,
+        "url": "https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf",
+        "printed_revision": "1.1",
+        "reference": {
+          "section": "4.13.2",
+          "printed_page": 16,
+          "pdf_page_1_based": 17
+        },
+        "finding": "The same four GTIM channels support both capture input and compare/PWM output. Own RM capture-source selection=0 connects the corresponding GPIO alternate-function channel input.",
+        "route_reuse_scope": "Only existing qualified, package-bonded GTIM_CH1–4 pin/AF identities; this report creates no new pin/AF route. Existing SWD/crystal exclusions remain necessary."
+      },
+      "qei_arr_restriction": {
+        "value": 65535,
+        "reference": {
+          "section": "14.8.5",
+          "printed_page": 247,
+          "pdf_page_1_based": 248
+        },
+        "finding": "Every own-family ARR register description explicitly says ARR should be 0xffff in encoder-counting mode. Generic example wording about choosing a suitable ARR does not lift this restriction."
+      },
+      "fact_evidence": {
+        "qei_arr": {
+          "reference": {
+            "section": "14.8.5",
+            "printed_page": 247,
+            "pdf_page_1_based": 248,
+            "source_text_line": 11908
+          },
+          "source_text_lines": [
+            11918,
+            11918
+          ],
+          "short_source_anchor": "注：编码计数模式下，ARR 应设置为 0xFFFF。"
+        },
+        "capture_explicit_clear": {
+          "reference": {
+            "section": "14.6.5",
+            "printed_page": 239,
+            "pdf_page_1_based": 240,
+            "source_text_line": 11550
+          },
+          "source_text_lines": [
+            11567,
+            11568
+          ],
+          "short_source_anchor": "步骤 10：等待捕获中断的产生，读取当前 GTIMx_CCRy 中的值，然后设置 GTIMx_ICR.CCy 的相应位为 0x0，清"
+        },
+        "capture_external_mux": {
+          "reference": {
+            "section": "14.3.3.2",
+            "printed_page": 228,
+            "pdf_page_1_based": 229,
+            "source_text_line": 11072
+          },
+          "source_text_lines": [
+            11076,
+            11077
+          ],
+          "short_source_anchor": "当 SYSCTRL_GTIMxCAP.CHy 为 0x00 时，输入捕获信号的外部输入端口由 GPIO 复用功能寄存器 (GPIOx_AFRH"
+        },
+        "no_overcapture": {
+          "reference": {
+            "section": "14.8.12",
+            "printed_page": 249,
+            "pdf_page_1_based": 250,
+            "source_text_line": 12047
+          },
+          "finding": "Complete ISR table defines only DIR, DIRCHANGE, CC1..4, UD, TI, OV; bits31:11 and8:7 are reserved. No overcapture flag is documented. This is a scoped negative source finding, not a guarantee that no undocumented silicon behavior exists."
+        },
+        "qei_per_edge": {
+          "reference": {
+            "section": "14.3.5",
+            "printed_page": 232,
+            "pdf_page_1_based": 233,
+            "source_text_line": 11249
+          },
+          "source_text_lines": [
+            11259,
+            11260
+          ],
+          "short_source_anchor": "号的每次有效跳变驱动。根据两个输入信号的跳变顺序，产生了计数脉冲和方向信号。编码器当前计数方向"
+        },
+        "qei_reset_state_sequence": {
+          "reference": {
+            "section": "14.6.8",
+            "printed_page": 241,
+            "pdf_page_1_based": 242,
+            "source_text_line": 11623
+          },
+          "finding": "The complete seven-step sequence does not program PSC/PRS; it programs ENCMODE, ARR, polarity, filters, optional direction-change interrupt, and EN. SDK GTIM_EncodeInit likewise leaves prescaling untouched. Reset PSC0/PRS0 follows this sequence; bypass is inference only.",
+          "sdk_function": "GTIM_EncodeInit",
+          "sdk_source_line": 95
+        },
+        "prs_reset": {
+          "reference": {
+            "section": "14.8.1",
+            "printed_page": 243,
+            "pdf_page_1_based": 244,
+            "source_text_line": 11698
+          },
+          "source_text_lines": [
+            11700,
+            11700
+          ],
+          "short_source_anchor": "Address offset: 0x310      Reset value: 0x0000 0000"
+        }
+      }
+    },
+    "CW32L031": {
+      "manual": {
+        "path": "CW32L031_UserManual_CN_V1.6.pdf",
+        "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+        "printed_revision": "1.6",
+        "printed_revision_date": "2024-07-24",
+        "superseded": false,
+        "sha256_verified": true,
+        "cover_date": "2024-09",
+        "manifest_origin": "cw32-adc-tolerance-audit/classic-source-index.json",
+        "text_sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1",
+        "text_file": "CW32L031_UserManual_CN_V1.6.txt",
+        "revision_history_reference": {
+          "printed_page": 506,
+          "pdf_page_1_based": 507,
+          "date": "2024-07-24"
+        }
+      },
+      "instances": [
+        "GTIM1",
+        "GTIM2"
+      ],
+      "documented_capture_channels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "documented_qei_channels": [
+        1,
+        2
+      ],
+      "documented_external_counter": "ETR pin route, ascending counter, CR0.MODE=1 and TRS=0",
+      "hardware_absence": null,
+      "chapter_refs": {
+        "overview": {
+          "section": "14.1",
+          "printed_page": 208,
+          "pdf_page_1_based": 209,
+          "source_text_line": 9458
+        },
+        "input_controls": {
+          "section": "14.3.1.3",
+          "printed_page": 211,
+          "pdf_page_1_based": 212,
+          "source_text_line": 9635
+        },
+        "external_counting": {
+          "section": "14.3.2.2",
+          "printed_page": 216,
+          "pdf_page_1_based": 217,
+          "source_text_line": 9856
+        },
+        "capture": {
+          "section": "14.3.3.1",
+          "printed_page": 219,
+          "pdf_page_1_based": 220,
+          "source_text_line": 10047
+        },
+        "capture_sources": {
+          "section": "14.3.3.2",
+          "printed_page": 220,
+          "pdf_page_1_based": 221,
+          "source_text_line": 10095
+        },
+        "qei": {
+          "section": "14.3.5",
+          "printed_page": 224,
+          "pdf_page_1_based": 225,
+          "source_text_line": 10268
+        },
+        "etr_sources": {
+          "section": "14.3.7",
+          "printed_page": 226,
+          "pdf_page_1_based": 227,
+          "source_text_line": 10367
+        },
+        "external_counter_example": {
+          "section": "14.5.2.1",
+          "printed_page": 228,
+          "pdf_page_1_based": 229,
+          "source_text_line": 10446
+        },
+        "capture_read_then_clear": {
+          "section": "14.5.5",
+          "printed_page": 230,
+          "pdf_page_1_based": 231,
+          "source_text_line": 10541
+        },
+        "qei_example": {
+          "section": "14.5.8",
+          "printed_page": 231,
+          "pdf_page_1_based": 232,
+          "source_text_line": 10599
+        },
+        "filter_encoding_pages": [
+          235,
+          236
+        ]
+      },
+      "register_refs": {
+        "CR0": {
+          "section": "14.7.1",
+          "printed_page": 233,
+          "pdf_page_1_based": 234,
+          "source_text_line": 10670
+        },
+        "CR1": {
+          "section": "14.7.2",
+          "printed_page": 235,
+          "pdf_page_1_based": 236,
+          "source_text_line": 10747
+        },
+        "PSC": {
+          "section": "14.7.3",
+          "printed_page": 236,
+          "pdf_page_1_based": 237,
+          "source_text_line": 10803
+        },
+        "ETR": {
+          "section": "14.7.4",
+          "printed_page": 236,
+          "pdf_page_1_based": 237,
+          "source_text_line": 10818
+        },
+        "CMMR": {
+          "section": "14.7.5",
+          "printed_page": 237,
+          "pdf_page_1_based": 238,
+          "source_text_line": 10848
+        },
+        "ARR": {
+          "section": "14.7.6",
+          "printed_page": 237,
+          "pdf_page_1_based": 238,
+          "source_text_line": 10883
+        },
+        "CNT": {
+          "section": "14.7.7",
+          "printed_page": 237,
+          "pdf_page_1_based": 238,
+          "source_text_line": 10898
+        },
+        "CCR1": {
+          "section": "14.7.8",
+          "printed_page": 238,
+          "pdf_page_1_based": 239,
+          "source_text_line": 10916
+        },
+        "CCR2": {
+          "section": "14.7.9",
+          "printed_page": 238,
+          "pdf_page_1_based": 239,
+          "source_text_line": 10929
+        },
+        "CCR3": {
+          "section": "14.7.10",
+          "printed_page": 238,
+          "pdf_page_1_based": 239,
+          "source_text_line": 10942
+        },
+        "CCR4": {
+          "section": "14.7.11",
+          "printed_page": 238,
+          "pdf_page_1_based": 239,
+          "source_text_line": 10955
+        },
+        "IER": {
+          "section": "14.7.12",
+          "printed_page": 239,
+          "pdf_page_1_based": 240,
+          "source_text_line": 10973
+        },
+        "ISR": {
+          "section": "14.7.13",
+          "printed_page": 240,
+          "pdf_page_1_based": 241,
+          "source_text_line": 11025
+        },
+        "ICR": {
+          "section": "14.7.14",
+          "printed_page": 241,
+          "pdf_page_1_based": 242,
+          "source_text_line": 11083
+        },
+        "DMA": {
+          "section": "14.7.15",
+          "printed_page": 242,
+          "pdf_page_1_based": 243,
+          "source_text_line": 11135
+        }
+      },
+      "sysctrl_route_refs": [
+        {
+          "register": "SYSCTRL_GTIM1CAP",
+          "section": "4.7.19",
+          "printed_page": 84,
+          "pdf_page_1_based": 85,
+          "source_text_line": 3647
+        },
+        {
+          "register": "SYSCTRL_GTIM2CAP",
+          "section": "4.7.20",
+          "printed_page": 85,
+          "pdf_page_1_based": 86,
+          "source_text_line": 3691
+        },
+        {
+          "register": "SYSCTRL_GTIMETR",
+          "section": "4.7.22",
+          "printed_page": 86,
+          "pdf_page_1_based": 87,
+          "source_text_line": 3756
+        }
+      ],
+      "external_count_unprescaled": {
+        "kind": "PSC",
+        "value": 1
+      },
+      "sdk": {
+        "family": "CW32L031",
+        "reuse_reason": null,
+        "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+        "archive_sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d",
+        "gtim_c": {
+          "path": "cw32l031/Libraries/src/cw32l031_gtim.c",
+          "sha256": "ae8a4872e5c20d839abeeba75d88c9328c09d78c8cc2ea621f76ce46d1e62538",
+          "function_lines": {
+            "GTIM_EncodeInit": 86,
+            "GTIM_ICInit": 126,
+            "GTIM_ETRConfig": 159,
+            "GTIM_ICChannelConfig": 213,
+            "GTIM_GetCapture1": 293,
+            "GTIM_ClearITPendingBit": 377
+          }
+        },
+        "gtim_h": {
+          "path": "cw32l031/Libraries/inc/cw32l031_gtim.h",
+          "sha256": "9bbd830063a00e3fd49780fcafcb8c56bb3594defa3e25f26af706a83966725b"
+        },
+        "selected_svd": {
+          "path": "cw32l031/IdeSupport/EWARM/arm/config/debugger/WHXY/CW32L031.svd",
+          "sha256": "f8044dc562825ce49a32f7cfa19df1b09e0f60daebe61e4c91c7e973670be815"
+        },
+        "device_header": {
+          "path": "cw32l031/Libraries/inc/cw32l031.h",
+          "sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27"
+        }
+      },
+      "datasheet_capture_channel_confirmation": {
+        "file": "CW32L031_DataSheet_CN_V1.9.pdf",
+        "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+        "sha256_verified": true,
+        "url": "https://www.whxy.com/uploads/files/20251229/CW32L031_DataSheet_CN_V1.9.pdf",
+        "printed_revision": "1.9",
+        "reference": {
+          "section": "4.13.2",
+          "printed_page": 18,
+          "pdf_page_1_based": 19
+        },
+        "finding": "The same four GTIM channels support both capture input and compare/PWM output. Own RM capture-source selection=0 connects the corresponding GPIO alternate-function channel input.",
+        "route_reuse_scope": "Only existing qualified, package-bonded GTIM_CH1–4 pin/AF identities; this report creates no new pin/AF route. Existing SWD/crystal exclusions remain necessary.",
+        "route_evidence": "docs/classic-pwm-route-evidence.json"
+      },
+      "qei_arr_restriction": {
+        "value": 65535,
+        "reference": {
+          "section": "14.7.6",
+          "printed_page": 237,
+          "pdf_page_1_based": 238
+        },
+        "finding": "Every own-family ARR register description explicitly says ARR should be 0xffff in encoder-counting mode. Generic example wording about choosing a suitable ARR does not lift this restriction."
+      },
+      "fact_evidence": {
+        "qei_arr": {
+          "reference": {
+            "section": "14.7.6",
+            "printed_page": 237,
+            "pdf_page_1_based": 238,
+            "source_text_line": 10883
+          },
+          "source_text_lines": [
+            10893,
+            10893
+          ],
+          "short_source_anchor": "注：编码计数模式下，ARR 应设置为 0xFFFF。"
+        },
+        "capture_explicit_clear": {
+          "reference": {
+            "section": "14.5.5",
+            "printed_page": 230,
+            "pdf_page_1_based": 231,
+            "source_text_line": 10541
+          },
+          "source_text_lines": [
+            10555,
+            10556
+          ],
+          "short_source_anchor": "步骤 10：等待捕获中断的产生，读取当前 GTIMx_CCRy 中的值，然后设置 GTIMx_ICR.CCy 的相应位为 0x0，清"
+        },
+        "capture_external_mux": {
+          "reference": {
+            "section": "14.3.3.2",
+            "printed_page": 220,
+            "pdf_page_1_based": 221,
+            "source_text_line": 10095
+          },
+          "source_text_lines": [
+            10099,
+            10100
+          ],
+          "short_source_anchor": "当 SYSCTRL_GTIMxCAP.CHy 为 0x00 时，输入捕获信号的外部输入端口由 GPIO 复用功能寄存器 (GPIOx_AFRH"
+        },
+        "no_overcapture": {
+          "reference": {
+            "section": "14.7.13",
+            "printed_page": 240,
+            "pdf_page_1_based": 241,
+            "source_text_line": 11025
+          },
+          "finding": "Complete ISR table defines only DIR, DIRCHANGE, CC1..4, UD, TI, OV; bits31:11 and8:7 are reserved. No overcapture flag is documented. This is a scoped negative source finding, not a guarantee that no undocumented silicon behavior exists."
+        },
+        "qei_per_edge": {
+          "reference": {
+            "section": "14.3.5",
+            "printed_page": 224,
+            "pdf_page_1_based": 225,
+            "source_text_line": 10268
+          },
+          "source_text_lines": [
+            10278,
+            10279
+          ],
+          "short_source_anchor": "号的每次有效跳变驱动。根据两个输入信号的跳变顺序，产生了计数脉冲和方向信号。编码器当前计数方向"
+        },
+        "qei_reset_state_sequence": {
+          "reference": {
+            "section": "14.5.8",
+            "printed_page": 231,
+            "pdf_page_1_based": 232,
+            "source_text_line": 10599
+          },
+          "finding": "The complete seven-step sequence does not program PSC/PRS; it programs ENCMODE, ARR, polarity, filters, optional direction-change interrupt, and EN. SDK GTIM_EncodeInit likewise leaves prescaling untouched. Reset PSC0/PRS0 follows this sequence; bypass is inference only.",
+          "sdk_function": "GTIM_EncodeInit",
+          "sdk_source_line": 86
+        },
+        "psc_reset": {
+          "reference": {
+            "section": "14.7.3",
+            "printed_page": 236,
+            "pdf_page_1_based": 237,
+            "source_text_line": 10803
+          },
+          "source_text_lines": [
+            10805,
+            10805
+          ],
+          "short_source_anchor": "Address offset: 0x34     Reset value: 0x0000 0000"
+        }
+      }
+    },
+    "CW32L052": {
+      "manual": {
+        "path": "CW32L052_UserManual_CN_V1.5.pdf",
+        "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+        "printed_revision": "1.5",
+        "printed_revision_date": "2024-07-24",
+        "superseded": false,
+        "sha256_verified": true,
+        "cover_date": "2024-09",
+        "manifest_origin": "cw32-adc-tolerance-audit/classic-source-index.json",
+        "text_sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb",
+        "text_file": "CW32L052_UserManual_CN_V1.5.txt",
+        "revision_history_reference": {
+          "printed_page": 570,
+          "pdf_page_1_based": 571,
+          "date": "2024-07-24"
+        }
+      },
+      "instances": [
+        "GTIM1",
+        "GTIM2",
+        "GTIM3"
+      ],
+      "documented_capture_channels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "documented_qei_channels": [
+        1,
+        2
+      ],
+      "documented_external_counter": "ETR pin route, ascending counter, CR0.MODE=1 and TRS=0",
+      "hardware_absence": null,
+      "chapter_refs": {
+        "overview": {
+          "section": "15.1",
+          "printed_page": 241,
+          "pdf_page_1_based": 242,
+          "source_text_line": 11191
+        },
+        "input_controls": {
+          "section": "15.3.1.3",
+          "printed_page": 244,
+          "pdf_page_1_based": 245,
+          "source_text_line": 11376
+        },
+        "external_counting": {
+          "section": "15.3.2.2",
+          "printed_page": 250,
+          "pdf_page_1_based": 251,
+          "source_text_line": 11614
+        },
+        "capture": {
+          "section": "15.3.3.1",
+          "printed_page": 253,
+          "pdf_page_1_based": 254,
+          "source_text_line": 11819
+        },
+        "capture_sources": {
+          "section": "15.3.3.2",
+          "printed_page": 254,
+          "pdf_page_1_based": 255,
+          "source_text_line": 11867
+        },
+        "qei": {
+          "section": "15.3.5",
+          "printed_page": 258,
+          "pdf_page_1_based": 259,
+          "source_text_line": 12055
+        },
+        "etr_sources": {
+          "section": "15.3.7",
+          "printed_page": 260,
+          "pdf_page_1_based": 261,
+          "source_text_line": 12157
+        },
+        "external_counter_example": {
+          "section": "15.6.2.1",
+          "printed_page": 264,
+          "pdf_page_1_based": 265,
+          "source_text_line": 12284
+        },
+        "capture_read_then_clear": {
+          "section": "15.6.5",
+          "printed_page": 266,
+          "pdf_page_1_based": 267,
+          "source_text_line": 12379
+        },
+        "qei_example": {
+          "section": "15.6.8",
+          "printed_page": 268,
+          "pdf_page_1_based": 269,
+          "source_text_line": 12451
+        },
+        "filter_encoding_pages": [
+          272,
+          273
+        ]
+      },
+      "register_refs": {
+        "CR0": {
+          "section": "15.8.1",
+          "printed_page": 270,
+          "pdf_page_1_based": 271,
+          "source_text_line": 12525
+        },
+        "CR1": {
+          "section": "15.8.2",
+          "printed_page": 272,
+          "pdf_page_1_based": 273,
+          "source_text_line": 12618
+        },
+        "PSC": {
+          "section": "15.8.3",
+          "printed_page": 273,
+          "pdf_page_1_based": 274,
+          "source_text_line": 12674
+        },
+        "ETR": {
+          "section": "15.8.4",
+          "printed_page": 273,
+          "pdf_page_1_based": 274,
+          "source_text_line": 12689
+        },
+        "CMMR": {
+          "section": "15.8.5",
+          "printed_page": 274,
+          "pdf_page_1_based": 275,
+          "source_text_line": 12719
+        },
+        "ARR": {
+          "section": "15.8.6",
+          "printed_page": 274,
+          "pdf_page_1_based": 275,
+          "source_text_line": 12754
+        },
+        "CNT": {
+          "section": "15.8.7",
+          "printed_page": 274,
+          "pdf_page_1_based": 275,
+          "source_text_line": 12769
+        },
+        "CCR1": {
+          "section": "15.8.8",
+          "printed_page": 275,
+          "pdf_page_1_based": 276,
+          "source_text_line": 12787
+        },
+        "CCR2": {
+          "section": "15.8.9",
+          "printed_page": 275,
+          "pdf_page_1_based": 276,
+          "source_text_line": 12800
+        },
+        "CCR3": {
+          "section": "15.8.10",
+          "printed_page": 275,
+          "pdf_page_1_based": 276,
+          "source_text_line": 12813
+        },
+        "CCR4": {
+          "section": "15.8.11",
+          "printed_page": 275,
+          "pdf_page_1_based": 276,
+          "source_text_line": 12826
+        },
+        "IER": {
+          "section": "15.8.12",
+          "printed_page": 276,
+          "pdf_page_1_based": 277,
+          "source_text_line": 12844
+        },
+        "ISR": {
+          "section": "15.8.13",
+          "printed_page": 277,
+          "pdf_page_1_based": 278,
+          "source_text_line": 12896
+        },
+        "ICR": {
+          "section": "15.8.14",
+          "printed_page": 278,
+          "pdf_page_1_based": 279,
+          "source_text_line": 12954
+        },
+        "DMA": {
+          "section": "15.8.15",
+          "printed_page": 279,
+          "pdf_page_1_based": 280,
+          "source_text_line": 13006
+        }
+      },
+      "sysctrl_route_refs": [
+        {
+          "register": "SYSCTRL_GTIM1CAP",
+          "section": "4.7.19",
+          "printed_page": 88,
+          "pdf_page_1_based": 89,
+          "source_text_line": 3917
+        },
+        {
+          "register": "SYSCTRL_GTIM2CAP",
+          "section": "4.7.20",
+          "printed_page": 89,
+          "pdf_page_1_based": 90,
+          "source_text_line": 3967
+        },
+        {
+          "register": "SYSCTRL_GTIM3CAP",
+          "section": "4.7.21",
+          "printed_page": 90,
+          "pdf_page_1_based": 91,
+          "source_text_line": 4017
+        },
+        {
+          "register": "SYSCTRL_GTIMETR",
+          "section": "4.7.23",
+          "printed_page": 91,
+          "pdf_page_1_based": 92,
+          "source_text_line": 4088
+        }
+      ],
+      "external_count_unprescaled": {
+        "kind": "PSC",
+        "value": 1
+      },
+      "sdk": {
+        "family": "CW32L052",
+        "reuse_reason": null,
+        "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+        "archive_sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+        "gtim_c": {
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_gtim.c",
+          "sha256": "c3c5ffa3e90886e5c46e7b199fa999ef67dc4342edb1eafbc3ead51ed7de30df",
+          "function_lines": {
+            "GTIM_EncodeInit": 93,
+            "GTIM_ICInit": 133,
+            "GTIM_ETRConfig": 166,
+            "GTIM_ICChannelConfig": 236,
+            "GTIM_GetCapture1": 316,
+            "GTIM_ClearITPendingBit": 400
+          }
+        },
+        "gtim_h": {
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gtim.h",
+          "sha256": "47031228fc70b30d79668c9666caea3691bb1c7a96199e505152717f0b94cdbb"
+        },
+        "selected_svd": {
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/SVD/CW32L052.svd",
+          "sha256": "78920e75111aa9845d9f66a2f305f96ec5577cde8c52543f0fa1d708e53867c7"
+        },
+        "device_header": {
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+          "sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1"
+        }
+      },
+      "datasheet_capture_channel_confirmation": {
+        "file": "CW32L052_DataSheet_CN_V1.3.pdf",
+        "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+        "sha256_verified": true,
+        "url": "https://www.whxy.com/uploads/files/20251229/CW32L052_DataSheet_CN_V1.3.pdf",
+        "printed_revision": "1.3",
+        "reference": {
+          "section": "4.13.2",
+          "printed_page": 18,
+          "pdf_page_1_based": 19
+        },
+        "finding": "The same four GTIM channels support both capture input and compare/PWM output. Own RM capture-source selection=0 connects the corresponding GPIO alternate-function channel input.",
+        "route_reuse_scope": "Only existing qualified, package-bonded GTIM_CH1–4 pin/AF identities; this report creates no new pin/AF route. Existing SWD/crystal exclusions remain necessary.",
+        "route_evidence": "docs/classic-pwm-route-evidence.json"
+      },
+      "qei_arr_restriction": {
+        "value": 65535,
+        "reference": {
+          "section": "15.8.6",
+          "printed_page": 274,
+          "pdf_page_1_based": 275
+        },
+        "finding": "Every own-family ARR register description explicitly says ARR should be 0xffff in encoder-counting mode. Generic example wording about choosing a suitable ARR does not lift this restriction."
+      },
+      "fact_evidence": {
+        "qei_arr": {
+          "reference": {
+            "section": "15.8.6",
+            "printed_page": 274,
+            "pdf_page_1_based": 275,
+            "source_text_line": 12754
+          },
+          "source_text_lines": [
+            12764,
+            12764
+          ],
+          "short_source_anchor": "注：编码计数模式下，ARR 应设置为 0xFFFF。"
+        },
+        "capture_explicit_clear": {
+          "reference": {
+            "section": "15.6.5",
+            "printed_page": 266,
+            "pdf_page_1_based": 267,
+            "source_text_line": 12379
+          },
+          "source_text_lines": [
+            12395,
+            12396
+          ],
+          "short_source_anchor": "步骤 10：等待捕获中断的产生，读取当前 GTIMx_CCRy 中的值，然后设置 GTIMx_ICR.CCy 的相应位为 0x0，清"
+        },
+        "capture_external_mux": {
+          "reference": {
+            "section": "15.3.3.2",
+            "printed_page": 254,
+            "pdf_page_1_based": 255,
+            "source_text_line": 11867
+          },
+          "source_text_lines": [
+            11871,
+            11872
+          ],
+          "short_source_anchor": "当 SYSCTRL_GTIMxCAP.CHy 为 0x00 时，输入捕获信号的外部输入端口由 GPIO 复用功能寄存器 (GPIOx_AFRH"
+        },
+        "no_overcapture": {
+          "reference": {
+            "section": "15.8.13",
+            "printed_page": 277,
+            "pdf_page_1_based": 278,
+            "source_text_line": 12896
+          },
+          "finding": "Complete ISR table defines only DIR, DIRCHANGE, CC1..4, UD, TI, OV; bits31:11 and8:7 are reserved. No overcapture flag is documented. This is a scoped negative source finding, not a guarantee that no undocumented silicon behavior exists."
+        },
+        "qei_per_edge": {
+          "reference": {
+            "section": "15.3.5",
+            "printed_page": 258,
+            "pdf_page_1_based": 259,
+            "source_text_line": 12055
+          },
+          "source_text_lines": [
+            12065,
+            12066
+          ],
+          "short_source_anchor": "号的每次有效跳变驱动。根据两个输入信号的跳变顺序，产生了计数脉冲和方向信号。编码器当前计数方向"
+        },
+        "qei_reset_state_sequence": {
+          "reference": {
+            "section": "15.6.8",
+            "printed_page": 268,
+            "pdf_page_1_based": 269,
+            "source_text_line": 12451
+          },
+          "finding": "The complete seven-step sequence does not program PSC/PRS; it programs ENCMODE, ARR, polarity, filters, optional direction-change interrupt, and EN. SDK GTIM_EncodeInit likewise leaves prescaling untouched. Reset PSC0/PRS0 follows this sequence; bypass is inference only.",
+          "sdk_function": "GTIM_EncodeInit",
+          "sdk_source_line": 93
+        },
+        "psc_reset": {
+          "reference": {
+            "section": "15.8.3",
+            "printed_page": 273,
+            "pdf_page_1_based": 274,
+            "source_text_line": 12674
+          },
+          "source_text_lines": [
+            12676,
+            12676
+          ],
+          "short_source_anchor": "Address offset: 0x334      Reset value: 0x0000 0000"
+        }
+      },
+      "original_pdf_visual_review": {
+        "method": "Rendered the original own-family source PDF pages with Poppler pdftoppm at 120 dpi and visually inspected PNGs. Temporary renders were kept outside the repository; not bundled.",
+        "pages": [
+          {
+            "section": "15.8.6",
+            "printed_page": 274,
+            "pdf_page_1_based": 275,
+            "source_text_line": 12754
+          },
+          {
+            "section": "15.8.13",
+            "printed_page": 277,
+            "pdf_page_1_based": 278,
+            "source_text_line": 12896
+          }
+        ],
+        "findings": [
+          "ARR note visibly requires 0xffff in encoder mode.",
+          "ISR rows visibly match DIR10, DIRCHANGE9, CC4..1 bits6..3, UD2, TI1, OV0; no overcapture flag, reserved 31:11 and 8:7."
+        ],
+        "reviewed_utc": "2026-10-08T22:03:34Z"
+      }
+    },
+    "CW32L083": {
+      "manual": {
+        "path": "CW32L083_UserManual_CN_V2.0.pdf",
+        "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+        "printed_revision": "2.0",
+        "printed_revision_date": "2024-07-24",
+        "superseded": false,
+        "sha256_verified": true,
+        "cover_date": "2024-09",
+        "manifest_origin": "cw32-adc-tolerance-audit/classic-source-index.json",
+        "text_sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564",
+        "text_file": "CW32L083_UserManual_CN_V2.0.txt",
+        "revision_history_reference": {
+          "printed_page": 583,
+          "pdf_page_1_based": 584,
+          "date": "2024-07-24"
+        }
+      },
+      "instances": [
+        "GTIM1",
+        "GTIM2",
+        "GTIM3",
+        "GTIM4"
+      ],
+      "documented_capture_channels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "documented_qei_channels": [
+        1,
+        2
+      ],
+      "documented_external_counter": "ETR pin route, ascending counter, CR0.MODE=1 and TRS=0",
+      "hardware_absence": null,
+      "chapter_refs": {
+        "overview": {
+          "section": "15.1",
+          "printed_page": 253,
+          "pdf_page_1_based": 254,
+          "source_text_line": 11822
+        },
+        "input_controls": {
+          "section": "15.3.1.3",
+          "printed_page": 256,
+          "pdf_page_1_based": 257,
+          "source_text_line": 11998
+        },
+        "external_counting": {
+          "section": "15.3.2.2",
+          "printed_page": 262,
+          "pdf_page_1_based": 263,
+          "source_text_line": 12248
+        },
+        "capture": {
+          "section": "15.3.3.1",
+          "printed_page": 265,
+          "pdf_page_1_based": 266,
+          "source_text_line": 12445
+        },
+        "capture_sources": {
+          "section": "15.3.3.2",
+          "printed_page": 266,
+          "pdf_page_1_based": 267,
+          "source_text_line": 12493
+        },
+        "qei": {
+          "section": "15.3.5",
+          "printed_page": 270,
+          "pdf_page_1_based": 271,
+          "source_text_line": 12682
+        },
+        "etr_sources": {
+          "section": "15.3.7",
+          "printed_page": 272,
+          "pdf_page_1_based": 273,
+          "source_text_line": 12781
+        },
+        "external_counter_example": {
+          "section": "15.6.2.1",
+          "printed_page": 276,
+          "pdf_page_1_based": 277,
+          "source_text_line": 12916
+        },
+        "capture_read_then_clear": {
+          "section": "15.6.5",
+          "printed_page": 278,
+          "pdf_page_1_based": 279,
+          "source_text_line": 13011
+        },
+        "qei_example": {
+          "section": "15.6.8",
+          "printed_page": 280,
+          "pdf_page_1_based": 281,
+          "source_text_line": 13084
+        },
+        "filter_encoding_pages": [
+          284,
+          285
+        ]
+      },
+      "register_refs": {
+        "CR0": {
+          "section": "15.8.1",
+          "printed_page": 282,
+          "pdf_page_1_based": 283,
+          "source_text_line": 13160
+        },
+        "CR1": {
+          "section": "15.8.2",
+          "printed_page": 284,
+          "pdf_page_1_based": 285,
+          "source_text_line": 13237
+        },
+        "PSC": {
+          "section": "15.8.3",
+          "printed_page": 285,
+          "pdf_page_1_based": 286,
+          "source_text_line": 13293
+        },
+        "ETR": {
+          "section": "15.8.4",
+          "printed_page": 285,
+          "pdf_page_1_based": 286,
+          "source_text_line": 13308
+        },
+        "CMMR": {
+          "section": "15.8.5",
+          "printed_page": 286,
+          "pdf_page_1_based": 287,
+          "source_text_line": 13338
+        },
+        "ARR": {
+          "section": "15.8.6",
+          "printed_page": 286,
+          "pdf_page_1_based": 287,
+          "source_text_line": 13373
+        },
+        "CNT": {
+          "section": "15.8.7",
+          "printed_page": 286,
+          "pdf_page_1_based": 287,
+          "source_text_line": 13388
+        },
+        "CCR1": {
+          "section": "15.8.8",
+          "printed_page": 287,
+          "pdf_page_1_based": 288,
+          "source_text_line": 13406
+        },
+        "CCR2": {
+          "section": "15.8.9",
+          "printed_page": 287,
+          "pdf_page_1_based": 288,
+          "source_text_line": 13419
+        },
+        "CCR3": {
+          "section": "15.8.10",
+          "printed_page": 287,
+          "pdf_page_1_based": 288,
+          "source_text_line": 13432
+        },
+        "CCR4": {
+          "section": "15.8.11",
+          "printed_page": 287,
+          "pdf_page_1_based": 288,
+          "source_text_line": 13445
+        },
+        "IER": {
+          "section": "15.8.12",
+          "printed_page": 288,
+          "pdf_page_1_based": 289,
+          "source_text_line": 13463
+        },
+        "ISR": {
+          "section": "15.8.13",
+          "printed_page": 289,
+          "pdf_page_1_based": 290,
+          "source_text_line": 13515
+        },
+        "ICR": {
+          "section": "15.8.14",
+          "printed_page": 290,
+          "pdf_page_1_based": 291,
+          "source_text_line": 13573
+        },
+        "DMA": {
+          "section": "15.8.15",
+          "printed_page": 291,
+          "pdf_page_1_based": 292,
+          "source_text_line": 13625
+        }
+      },
+      "sysctrl_route_refs": [
+        {
+          "register": "SYSCTRL_GTIM1CAP",
+          "section": "4.7.20",
+          "printed_page": 95,
+          "pdf_page_1_based": 96,
+          "source_text_line": 4243
+        },
+        {
+          "register": "SYSCTRL_GTIM2CAP",
+          "section": "4.7.21",
+          "printed_page": 96,
+          "pdf_page_1_based": 97,
+          "source_text_line": 4293
+        },
+        {
+          "register": "SYSCTRL_GTIM3CAP",
+          "section": "4.7.22",
+          "printed_page": 97,
+          "pdf_page_1_based": 98,
+          "source_text_line": 4343
+        },
+        {
+          "register": "SYSCTRL_GTIM4CAP",
+          "section": "4.7.23",
+          "printed_page": 98,
+          "pdf_page_1_based": 99,
+          "source_text_line": 4393
+        },
+        {
+          "register": "SYSCTRL_GTIMETR",
+          "section": "4.7.25",
+          "printed_page": 100,
+          "pdf_page_1_based": 101,
+          "source_text_line": 4469
+        }
+      ],
+      "external_count_unprescaled": {
+        "kind": "PSC",
+        "value": 1
+      },
+      "sdk": {
+        "family": "CW32L083",
+        "reuse_reason": null,
+        "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+        "archive_sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+        "gtim_c": {
+          "path": "cw32l083/Libraries/src/cw32l083_gtim.c",
+          "sha256": "78d4d16aaf6174efaff8f0d4be708e8bb98122adde29ad395258361bd8b3a0c8",
+          "function_lines": {
+            "GTIM_EncodeInit": 96,
+            "GTIM_ICInit": 133,
+            "GTIM_ETRConfig": 163,
+            "GTIM_ICChannelConfig": 239,
+            "GTIM_GetCapture1": 311,
+            "GTIM_ClearITPendingBit": 389
+          }
+        },
+        "gtim_h": {
+          "path": "cw32l083/Libraries/inc/cw32l083_gtim.h",
+          "sha256": "51a5d3dc24c36f0e76c68487da7cf49bdd06e54a3ce15f2198af79b38d5135a7"
+        },
+        "selected_svd": {
+          "path": "cw32l083/IdeSupport/MDK/WHXY.CW32L083_DFP.1.0.9/SVD/CW32L083.svd",
+          "sha256": "ddc840e2c52840ca3687fb78edeffff8ef7a41d6acd33cba32f44ec1b606a334"
+        },
+        "device_header": {
+          "path": "cw32l083/Libraries/inc/cw32l083.h",
+          "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5"
+        }
+      },
+      "datasheet_capture_channel_confirmation": {
+        "file": "CW32L083_DataSheet_CN_V1.9.pdf",
+        "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+        "sha256_verified": true,
+        "url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+        "printed_revision": "1.9",
+        "reference": {
+          "section": "4.13.2",
+          "printed_page": 18,
+          "pdf_page_1_based": 19
+        },
+        "finding": "The same four GTIM channels support both capture input and compare/PWM output. Own RM capture-source selection=0 connects the corresponding GPIO alternate-function channel input.",
+        "route_reuse_scope": "Only existing qualified, package-bonded GTIM_CH1–4 pin/AF identities; this report creates no new pin/AF route. Existing SWD/crystal exclusions remain necessary.",
+        "route_evidence": "docs/classic-pwm-route-evidence.json"
+      },
+      "qei_arr_restriction": {
+        "value": 65535,
+        "reference": {
+          "section": "15.8.6",
+          "printed_page": 286,
+          "pdf_page_1_based": 287
+        },
+        "finding": "Every own-family ARR register description explicitly says ARR should be 0xffff in encoder-counting mode. Generic example wording about choosing a suitable ARR does not lift this restriction."
+      },
+      "fact_evidence": {
+        "qei_arr": {
+          "reference": {
+            "section": "15.8.6",
+            "printed_page": 286,
+            "pdf_page_1_based": 287,
+            "source_text_line": 13373
+          },
+          "source_text_lines": [
+            13383,
+            13383
+          ],
+          "short_source_anchor": "注：编码计数模式下，ARR 应设置为 0xFFFF。"
+        },
+        "capture_explicit_clear": {
+          "reference": {
+            "section": "15.6.5",
+            "printed_page": 278,
+            "pdf_page_1_based": 279,
+            "source_text_line": 13011
+          },
+          "source_text_lines": [
+            13028,
+            13029
+          ],
+          "short_source_anchor": "步骤 10：等待捕获中断的产生，读取当前 GTIMx_CCRy 中的值，然后设置 GTIMx_ICR.CCy 的相应位为 0x0，清"
+        },
+        "capture_external_mux": {
+          "reference": {
+            "section": "15.3.3.2",
+            "printed_page": 266,
+            "pdf_page_1_based": 267,
+            "source_text_line": 12493
+          },
+          "source_text_lines": [
+            12497,
+            12498
+          ],
+          "short_source_anchor": "当 SYSCTRL_GTIMxCAP.CHy 为 0x00 时，输入捕获信号的外部输入端口由 GPIO 复用功能寄存器 (GPIOx_AFRH"
+        },
+        "no_overcapture": {
+          "reference": {
+            "section": "15.8.13",
+            "printed_page": 289,
+            "pdf_page_1_based": 290,
+            "source_text_line": 13515
+          },
+          "finding": "Complete ISR table defines only DIR, DIRCHANGE, CC1..4, UD, TI, OV; bits31:11 and8:7 are reserved. No overcapture flag is documented. This is a scoped negative source finding, not a guarantee that no undocumented silicon behavior exists."
+        },
+        "qei_per_edge": {
+          "reference": {
+            "section": "15.3.5",
+            "printed_page": 270,
+            "pdf_page_1_based": 271,
+            "source_text_line": 12682
+          },
+          "source_text_lines": [
+            12692,
+            12693
+          ],
+          "short_source_anchor": "号的每次有效跳变驱动。根据两个输入信号的跳变顺序，产生了计数脉冲和方向信号。编码器当前计数方向"
+        },
+        "qei_reset_state_sequence": {
+          "reference": {
+            "section": "15.6.8",
+            "printed_page": 280,
+            "pdf_page_1_based": 281,
+            "source_text_line": 13084
+          },
+          "finding": "The complete seven-step sequence does not program PSC/PRS; it programs ENCMODE, ARR, polarity, filters, optional direction-change interrupt, and EN. SDK GTIM_EncodeInit likewise leaves prescaling untouched. Reset PSC0/PRS0 follows this sequence; bypass is inference only.",
+          "sdk_function": "GTIM_EncodeInit",
+          "sdk_source_line": 96
+        },
+        "psc_reset": {
+          "reference": {
+            "section": "15.8.3",
+            "printed_page": 285,
+            "pdf_page_1_based": 286,
+            "source_text_line": 13293
+          },
+          "source_text_lines": [
+            13295,
+            13295
+          ],
+          "short_source_anchor": "Address offset: 0x334      Reset value: 0x0000 0000"
+        }
+      }
+    },
+    "CW32R031": {
+      "manual": {
+        "path": "CW32R031_UserManual_CN_V1.3.pdf",
+        "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+        "printed_revision": "1.3",
+        "printed_revision_date": "2024-07-25",
+        "superseded": false,
+        "sha256_verified": true,
+        "cover_date": "2024-09",
+        "manifest_origin": "cw32-adc-tolerance-audit/classic-source-index.json",
+        "text_sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b",
+        "text_file": "CW32R031_UserManual_CN_V1.3.txt",
+        "revision_history_reference": {
+          "printed_page": 548,
+          "pdf_page_1_based": 549,
+          "date": "2024-07-25"
+        }
+      },
+      "instances": [
+        "GTIM1",
+        "GTIM2"
+      ],
+      "documented_capture_channels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "documented_qei_channels": [
+        1,
+        2
+      ],
+      "documented_external_counter": "ETR pin route, ascending counter, CR0.MODE=1 and TRS=0",
+      "hardware_absence": null,
+      "chapter_refs": {
+        "overview": {
+          "section": "14.1",
+          "printed_page": 210,
+          "pdf_page_1_based": 211,
+          "source_text_line": 9561
+        },
+        "input_controls": {
+          "section": "14.3.1.3",
+          "printed_page": 213,
+          "pdf_page_1_based": 214,
+          "source_text_line": 9738
+        },
+        "external_counting": {
+          "section": "14.3.2.2",
+          "printed_page": 218,
+          "pdf_page_1_based": 219,
+          "source_text_line": 9959
+        },
+        "capture": {
+          "section": "14.3.3.1",
+          "printed_page": 221,
+          "pdf_page_1_based": 222,
+          "source_text_line": 10150
+        },
+        "capture_sources": {
+          "section": "14.3.3.2",
+          "printed_page": 222,
+          "pdf_page_1_based": 223,
+          "source_text_line": 10198
+        },
+        "qei": {
+          "section": "14.3.5",
+          "printed_page": 226,
+          "pdf_page_1_based": 227,
+          "source_text_line": 10371
+        },
+        "etr_sources": {
+          "section": "14.3.7",
+          "printed_page": 228,
+          "pdf_page_1_based": 229,
+          "source_text_line": 10470
+        },
+        "external_counter_example": {
+          "section": "14.5.2.1",
+          "printed_page": 230,
+          "pdf_page_1_based": 231,
+          "source_text_line": 10547
+        },
+        "capture_read_then_clear": {
+          "section": "14.5.5",
+          "printed_page": 232,
+          "pdf_page_1_based": 233,
+          "source_text_line": 10642
+        },
+        "qei_example": {
+          "section": "14.5.8",
+          "printed_page": 233,
+          "pdf_page_1_based": 234,
+          "source_text_line": 10700
+        },
+        "filter_encoding_pages": [
+          237,
+          238
+        ]
+      },
+      "register_refs": {
+        "CR0": {
+          "section": "14.7.1",
+          "printed_page": 235,
+          "pdf_page_1_based": 236,
+          "source_text_line": 10771
+        },
+        "CR1": {
+          "section": "14.7.2",
+          "printed_page": 237,
+          "pdf_page_1_based": 238,
+          "source_text_line": 10848
+        },
+        "PSC": {
+          "section": "14.7.3",
+          "printed_page": 238,
+          "pdf_page_1_based": 239,
+          "source_text_line": 10904
+        },
+        "ETR": {
+          "section": "14.7.4",
+          "printed_page": 238,
+          "pdf_page_1_based": 239,
+          "source_text_line": 10919
+        },
+        "CMMR": {
+          "section": "14.7.5",
+          "printed_page": 239,
+          "pdf_page_1_based": 240,
+          "source_text_line": 10949
+        },
+        "ARR": {
+          "section": "14.7.6",
+          "printed_page": 239,
+          "pdf_page_1_based": 240,
+          "source_text_line": 10984
+        },
+        "CNT": {
+          "section": "14.7.7",
+          "printed_page": 239,
+          "pdf_page_1_based": 240,
+          "source_text_line": 10999
+        },
+        "CCR1": {
+          "section": "14.7.8",
+          "printed_page": 240,
+          "pdf_page_1_based": 241,
+          "source_text_line": 11017
+        },
+        "CCR2": {
+          "section": "14.7.9",
+          "printed_page": 240,
+          "pdf_page_1_based": 241,
+          "source_text_line": 11030
+        },
+        "CCR3": {
+          "section": "14.7.10",
+          "printed_page": 240,
+          "pdf_page_1_based": 241,
+          "source_text_line": 11043
+        },
+        "CCR4": {
+          "section": "14.7.11",
+          "printed_page": 240,
+          "pdf_page_1_based": 241,
+          "source_text_line": 11056
+        },
+        "IER": {
+          "section": "14.7.12",
+          "printed_page": 241,
+          "pdf_page_1_based": 242,
+          "source_text_line": 11074
+        },
+        "ISR": {
+          "section": "14.7.13",
+          "printed_page": 242,
+          "pdf_page_1_based": 243,
+          "source_text_line": 11126
+        },
+        "ICR": {
+          "section": "14.7.14",
+          "printed_page": 243,
+          "pdf_page_1_based": 244,
+          "source_text_line": 11184
+        },
+        "DMA": {
+          "section": "14.7.15",
+          "printed_page": 244,
+          "pdf_page_1_based": 245,
+          "source_text_line": 11236
+        }
+      },
+      "sysctrl_route_refs": [
+        {
+          "register": "SYSCTRL_GTIM1CAP",
+          "section": "4.7.19",
+          "printed_page": 86,
+          "pdf_page_1_based": 87,
+          "source_text_line": 3771
+        },
+        {
+          "register": "SYSCTRL_GTIM2CAP",
+          "section": "4.7.20",
+          "printed_page": 87,
+          "pdf_page_1_based": 88,
+          "source_text_line": 3815
+        },
+        {
+          "register": "SYSCTRL_GTIMETR",
+          "section": "4.7.22",
+          "printed_page": 88,
+          "pdf_page_1_based": 89,
+          "source_text_line": 3880
+        }
+      ],
+      "external_count_unprescaled": {
+        "kind": "PSC",
+        "value": 1
+      },
+      "sdk": {
+        "family": "CW32R031",
+        "reuse_reason": null,
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+        "archive_sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082",
+        "gtim_c": {
+          "path": "cw32r031/Libraries/src/cw32r031_gtim.c",
+          "sha256": "b6cef83dc2df97da3844d4231c7d0dd6e0f6fe96fde7bb5e1dc92759dfe34886",
+          "function_lines": {
+            "GTIM_EncodeInit": 86,
+            "GTIM_ICInit": 126,
+            "GTIM_ETRConfig": 159,
+            "GTIM_ICChannelConfig": 213,
+            "GTIM_GetCapture1": 293,
+            "GTIM_ClearITPendingBit": 377
+          }
+        },
+        "gtim_h": {
+          "path": "cw32r031/Libraries/inc/cw32r031_gtim.h",
+          "sha256": "49dfda9335d563fb5c3051043908b15481ddddb7afe468bda279563dce02e363"
+        },
+        "selected_svd": {
+          "path": "cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/SVD/CW32R031.svd",
+          "sha256": "0d9273507521d7f63e7614e9ddd445a315ea3206689c86fad9f45b60a44e656a"
+        },
+        "device_header": {
+          "path": "cw32r031/Libraries/inc/cw32r031.h",
+          "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385"
+        }
+      },
+      "datasheet_capture_channel_confirmation": {
+        "file": "CW32R031_DataSheet_CN_V1.2.pdf",
+        "sha256": "88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805",
+        "sha256_verified": true,
+        "url": "https://www.whxy.com/uploads/files/20251230/CW32R031_DataSheet_CN_V1.2.pdf",
+        "printed_revision": "1.2",
+        "reference": {
+          "section": "4.14.2",
+          "printed_page": 23,
+          "pdf_page_1_based": 24
+        },
+        "finding": "The same four GTIM channels support both capture input and compare/PWM output. Own RM capture-source selection=0 connects the corresponding GPIO alternate-function channel input.",
+        "route_reuse_scope": "Only existing qualified, package-bonded GTIM_CH1–4 pin/AF identities; this report creates no new pin/AF route. Existing SWD/crystal exclusions remain necessary.",
+        "route_evidence": "docs/classic-pwm-route-evidence.json"
+      },
+      "qei_arr_restriction": {
+        "value": 65535,
+        "reference": {
+          "section": "14.7.6",
+          "printed_page": 239,
+          "pdf_page_1_based": 240
+        },
+        "finding": "Every own-family ARR register description explicitly says ARR should be 0xffff in encoder-counting mode. Generic example wording about choosing a suitable ARR does not lift this restriction."
+      },
+      "fact_evidence": {
+        "qei_arr": {
+          "reference": {
+            "section": "14.7.6",
+            "printed_page": 239,
+            "pdf_page_1_based": 240,
+            "source_text_line": 10984
+          },
+          "source_text_lines": [
+            10994,
+            10994
+          ],
+          "short_source_anchor": "注：编码计数模式下，ARR 应设置为 0xFFFF。"
+        },
+        "capture_explicit_clear": {
+          "reference": {
+            "section": "14.5.5",
+            "printed_page": 232,
+            "pdf_page_1_based": 233,
+            "source_text_line": 10642
+          },
+          "source_text_lines": [
+            10656,
+            10657
+          ],
+          "short_source_anchor": "步骤 10：等待捕获中断的产生，读取当前 GTIMx_CCRy 中的值，然后设置 GTIMx_ICR.CCy 的相应位为 0x0，清"
+        },
+        "capture_external_mux": {
+          "reference": {
+            "section": "14.3.3.2",
+            "printed_page": 222,
+            "pdf_page_1_based": 223,
+            "source_text_line": 10198
+          },
+          "source_text_lines": [
+            10202,
+            10203
+          ],
+          "short_source_anchor": "当 SYSCTRL_GTIMxCAP.CHy 为 0x00 时，输入捕获信号的外部输入端口由 GPIO 复用功能寄存器 (GPIOx_AFRH"
+        },
+        "no_overcapture": {
+          "reference": {
+            "section": "14.7.13",
+            "printed_page": 242,
+            "pdf_page_1_based": 243,
+            "source_text_line": 11126
+          },
+          "finding": "Complete ISR table defines only DIR, DIRCHANGE, CC1..4, UD, TI, OV; bits31:11 and8:7 are reserved. No overcapture flag is documented. This is a scoped negative source finding, not a guarantee that no undocumented silicon behavior exists."
+        },
+        "qei_per_edge": {
+          "reference": {
+            "section": "14.3.5",
+            "printed_page": 226,
+            "pdf_page_1_based": 227,
+            "source_text_line": 10371
+          },
+          "source_text_lines": [
+            10381,
+            10382
+          ],
+          "short_source_anchor": "号的每次有效跳变驱动。根据两个输入信号的跳变顺序，产生了计数脉冲和方向信号。编码器当前计数方向"
+        },
+        "qei_reset_state_sequence": {
+          "reference": {
+            "section": "14.5.8",
+            "printed_page": 233,
+            "pdf_page_1_based": 234,
+            "source_text_line": 10700
+          },
+          "finding": "The complete seven-step sequence does not program PSC/PRS; it programs ENCMODE, ARR, polarity, filters, optional direction-change interrupt, and EN. SDK GTIM_EncodeInit likewise leaves prescaling untouched. Reset PSC0/PRS0 follows this sequence; bypass is inference only.",
+          "sdk_function": "GTIM_EncodeInit",
+          "sdk_source_line": 86
+        },
+        "psc_reset": {
+          "reference": {
+            "section": "14.7.3",
+            "printed_page": 238,
+            "pdf_page_1_based": 239,
+            "source_text_line": 10904
+          },
+          "source_text_lines": [
+            10906,
+            10906
+          ],
+          "short_source_anchor": "Address offset: 0x34     Reset value: 0x0000 0000"
+        }
+      }
+    },
+    "CW32W031": {
+      "manual": {
+        "path": "CW32W031_UserManual_CN_V1.4.pdf",
+        "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+        "printed_revision": "1.4",
+        "printed_revision_date": "2024-07-25",
+        "superseded": false,
+        "sha256_verified": true,
+        "cover_date": "2024-09",
+        "manifest_origin": "cw32-adc-tolerance-audit/classic-source-index.json",
+        "text_sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac",
+        "text_file": "CW32W031_UserManual_CN_V1.4.txt",
+        "revision_history_reference": {
+          "printed_page": 534,
+          "pdf_page_1_based": 535,
+          "date": "2024-07-25"
+        }
+      },
+      "instances": [
+        "GTIM1",
+        "GTIM2"
+      ],
+      "documented_capture_channels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "documented_qei_channels": [
+        1,
+        2
+      ],
+      "documented_external_counter": "ETR pin route, ascending counter, CR0.MODE=1 and TRS=0",
+      "hardware_absence": null,
+      "chapter_refs": {
+        "overview": {
+          "section": "14.1",
+          "printed_page": 210,
+          "pdf_page_1_based": 211,
+          "source_text_line": 9511
+        },
+        "input_controls": {
+          "section": "14.3.1.3",
+          "printed_page": 213,
+          "pdf_page_1_based": 214,
+          "source_text_line": 9688
+        },
+        "external_counting": {
+          "section": "14.3.2.2",
+          "printed_page": 218,
+          "pdf_page_1_based": 219,
+          "source_text_line": 9907
+        },
+        "capture": {
+          "section": "14.3.3.1",
+          "printed_page": 221,
+          "pdf_page_1_based": 222,
+          "source_text_line": 10098
+        },
+        "capture_sources": {
+          "section": "14.3.3.2",
+          "printed_page": 222,
+          "pdf_page_1_based": 223,
+          "source_text_line": 10146
+        },
+        "qei": {
+          "section": "14.3.5",
+          "printed_page": 226,
+          "pdf_page_1_based": 227,
+          "source_text_line": 10319
+        },
+        "etr_sources": {
+          "section": "14.3.7",
+          "printed_page": 228,
+          "pdf_page_1_based": 229,
+          "source_text_line": 10418
+        },
+        "external_counter_example": {
+          "section": "14.5.2.1",
+          "printed_page": 230,
+          "pdf_page_1_based": 231,
+          "source_text_line": 10497
+        },
+        "capture_read_then_clear": {
+          "section": "14.5.5",
+          "printed_page": 232,
+          "pdf_page_1_based": 233,
+          "source_text_line": 10592
+        },
+        "qei_example": {
+          "section": "14.5.8",
+          "printed_page": 233,
+          "pdf_page_1_based": 234,
+          "source_text_line": 10650
+        },
+        "filter_encoding_pages": [
+          237,
+          238
+        ]
+      },
+      "register_refs": {
+        "CR0": {
+          "section": "14.7.1",
+          "printed_page": 235,
+          "pdf_page_1_based": 236,
+          "source_text_line": 10721
+        },
+        "CR1": {
+          "section": "14.7.2",
+          "printed_page": 237,
+          "pdf_page_1_based": 238,
+          "source_text_line": 10798
+        },
+        "PSC": {
+          "section": "14.7.3",
+          "printed_page": 238,
+          "pdf_page_1_based": 239,
+          "source_text_line": 10854
+        },
+        "ETR": {
+          "section": "14.7.4",
+          "printed_page": 238,
+          "pdf_page_1_based": 239,
+          "source_text_line": 10869
+        },
+        "CMMR": {
+          "section": "14.7.5",
+          "printed_page": 239,
+          "pdf_page_1_based": 240,
+          "source_text_line": 10899
+        },
+        "ARR": {
+          "section": "14.7.6",
+          "printed_page": 239,
+          "pdf_page_1_based": 240,
+          "source_text_line": 10934
+        },
+        "CNT": {
+          "section": "14.7.7",
+          "printed_page": 239,
+          "pdf_page_1_based": 240,
+          "source_text_line": 10949
+        },
+        "CCR1": {
+          "section": "14.7.8",
+          "printed_page": 240,
+          "pdf_page_1_based": 241,
+          "source_text_line": 10967
+        },
+        "CCR2": {
+          "section": "14.7.9",
+          "printed_page": 240,
+          "pdf_page_1_based": 241,
+          "source_text_line": 10980
+        },
+        "CCR3": {
+          "section": "14.7.10",
+          "printed_page": 240,
+          "pdf_page_1_based": 241,
+          "source_text_line": 10993
+        },
+        "CCR4": {
+          "section": "14.7.11",
+          "printed_page": 240,
+          "pdf_page_1_based": 241,
+          "source_text_line": 11006
+        },
+        "IER": {
+          "section": "14.7.12",
+          "printed_page": 241,
+          "pdf_page_1_based": 242,
+          "source_text_line": 11024
+        },
+        "ISR": {
+          "section": "14.7.13",
+          "printed_page": 242,
+          "pdf_page_1_based": 243,
+          "source_text_line": 11076
+        },
+        "ICR": {
+          "section": "14.7.14",
+          "printed_page": 243,
+          "pdf_page_1_based": 244,
+          "source_text_line": 11134
+        },
+        "DMA": {
+          "section": "14.7.15",
+          "printed_page": 244,
+          "pdf_page_1_based": 245,
+          "source_text_line": 11186
+        }
+      },
+      "sysctrl_route_refs": [
+        {
+          "register": "SYSCTRL_GTIM1CAP",
+          "section": "4.7.19",
+          "printed_page": 85,
+          "pdf_page_1_based": 86,
+          "source_text_line": 3720
+        },
+        {
+          "register": "SYSCTRL_GTIM2CAP",
+          "section": "4.7.20",
+          "printed_page": 86,
+          "pdf_page_1_based": 87,
+          "source_text_line": 3764
+        },
+        {
+          "register": "SYSCTRL_GTIMETR",
+          "section": "4.7.22",
+          "printed_page": 87,
+          "pdf_page_1_based": 88,
+          "source_text_line": 3829
+        }
+      ],
+      "external_count_unprescaled": {
+        "kind": "PSC",
+        "value": 1
+      },
+      "sdk": {
+        "family": "CW32W031",
+        "reuse_reason": null,
+        "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+        "archive_sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+        "gtim_c": {
+          "path": "cw32w031/Libraries/src/cw32w031_gtim.c",
+          "sha256": "e6eca82eb229905113888322da0ddd0a7fad900e7cabc4a5c500ba7ce06db092",
+          "function_lines": {
+            "GTIM_EncodeInit": 85,
+            "GTIM_ICInit": 125,
+            "GTIM_ETRConfig": 158,
+            "GTIM_ICChannelConfig": 210,
+            "GTIM_GetCapture1": 290,
+            "GTIM_ClearITPendingBit": 374
+          }
+        },
+        "gtim_h": {
+          "path": "cw32w031/Libraries/inc/cw32w031_gtim.h",
+          "sha256": "8cc19a14ed111514c2abf0be55a13d42ca2fc3554f1c895c7fd10d18abafba78"
+        },
+        "selected_svd": {
+          "path": "cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/SVD/CW32W031.svd",
+          "sha256": "7b3f7cd1e1e9b311f8bf6da711b9af0a144040883a231dfcc93b9cd2bafe84d0"
+        },
+        "device_header": {
+          "path": "cw32w031/Libraries/inc/cw32w031.h",
+          "sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69"
+        }
+      },
+      "datasheet_capture_channel_confirmation": {
+        "file": "CW32W031_DataSheet_CN_V1.3.pdf",
+        "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c",
+        "sha256_verified": true,
+        "url": "https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf",
+        "printed_revision": "1.3",
+        "reference": {
+          "section": "4.14.2",
+          "printed_page": 21,
+          "pdf_page_1_based": 22
+        },
+        "finding": "The same four GTIM channels support both capture input and compare/PWM output. Own RM capture-source selection=0 connects the corresponding GPIO alternate-function channel input.",
+        "route_reuse_scope": "Only existing qualified, package-bonded GTIM_CH1–4 pin/AF identities; this report creates no new pin/AF route. Existing SWD/crystal exclusions remain necessary.",
+        "route_evidence": "docs/classic-pwm-route-evidence.json"
+      },
+      "qei_arr_restriction": {
+        "value": 65535,
+        "reference": {
+          "section": "14.7.6",
+          "printed_page": 239,
+          "pdf_page_1_based": 240
+        },
+        "finding": "Every own-family ARR register description explicitly says ARR should be 0xffff in encoder-counting mode. Generic example wording about choosing a suitable ARR does not lift this restriction."
+      },
+      "fact_evidence": {
+        "qei_arr": {
+          "reference": {
+            "section": "14.7.6",
+            "printed_page": 239,
+            "pdf_page_1_based": 240,
+            "source_text_line": 10934
+          },
+          "source_text_lines": [
+            10944,
+            10944
+          ],
+          "short_source_anchor": "注：编码计数模式下，ARR 应设置为 0xFFFF。"
+        },
+        "capture_explicit_clear": {
+          "reference": {
+            "section": "14.5.5",
+            "printed_page": 232,
+            "pdf_page_1_based": 233,
+            "source_text_line": 10592
+          },
+          "source_text_lines": [
+            10606,
+            10607
+          ],
+          "short_source_anchor": "步骤 10：等待捕获中断的产生，读取当前 GTIMx_CCRy 中的值，然后设置 GTIMx_ICR.CCy 的相应位为 0x0，清"
+        },
+        "capture_external_mux": {
+          "reference": {
+            "section": "14.3.3.2",
+            "printed_page": 222,
+            "pdf_page_1_based": 223,
+            "source_text_line": 10146
+          },
+          "source_text_lines": [
+            10150,
+            10151
+          ],
+          "short_source_anchor": "当 SYSCTRL_GTIMxCAP.CHy 为 0x00 时，输入捕获信号的外部输入端口由 GPIO 复用功能寄存器 (GPIOx_AFRH"
+        },
+        "no_overcapture": {
+          "reference": {
+            "section": "14.7.13",
+            "printed_page": 242,
+            "pdf_page_1_based": 243,
+            "source_text_line": 11076
+          },
+          "finding": "Complete ISR table defines only DIR, DIRCHANGE, CC1..4, UD, TI, OV; bits31:11 and8:7 are reserved. No overcapture flag is documented. This is a scoped negative source finding, not a guarantee that no undocumented silicon behavior exists."
+        },
+        "qei_per_edge": {
+          "reference": {
+            "section": "14.3.5",
+            "printed_page": 226,
+            "pdf_page_1_based": 227,
+            "source_text_line": 10319
+          },
+          "source_text_lines": [
+            10329,
+            10330
+          ],
+          "short_source_anchor": "号的每次有效跳变驱动。根据两个输入信号的跳变顺序，产生了计数脉冲和方向信号。编码器当前计数方向"
+        },
+        "qei_reset_state_sequence": {
+          "reference": {
+            "section": "14.5.8",
+            "printed_page": 233,
+            "pdf_page_1_based": 234,
+            "source_text_line": 10650
+          },
+          "finding": "The complete seven-step sequence does not program PSC/PRS; it programs ENCMODE, ARR, polarity, filters, optional direction-change interrupt, and EN. SDK GTIM_EncodeInit likewise leaves prescaling untouched. Reset PSC0/PRS0 follows this sequence; bypass is inference only.",
+          "sdk_function": "GTIM_EncodeInit",
+          "sdk_source_line": 85
+        },
+        "psc_reset": {
+          "reference": {
+            "section": "14.7.3",
+            "printed_page": 238,
+            "pdf_page_1_based": 239,
+            "source_text_line": 10854
+          },
+          "source_text_lines": [
+            10856,
+            10856
+          ],
+          "short_source_anchor": "Address offset: 0x34     Reset value: 0x0000 0000"
+        }
+      }
+    }
+  },
+  "implementation_scope_update": "Parent bounded implementation to capture and QEI on already qualified GTIM CH1–4 PWM pin/AF identities; external ETR counter is research only in this pass."
+}

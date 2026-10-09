@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "scope": "Exact project-owned additive VREF model text used to reconstruct the independently reviewed HSE baseline; no predecessor source body is embedded.",
+  "review_reference": "docs/vref-schema-review.json",
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+      "after_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
+      "byte_exact_reverse": true,
+      "added_runs": [
+        "                ReferenceDivider {\n                    pub clock_owner: String,\n                    pub consumers: Vec<String>,\n                    pub negative_mux: u8,\n                    pub supply_mv: (u16, u16),\n                    pub input_uses_vdda: bool,\n                }\n            }\n            record! {\n",
+        "                pub reference_divider: Option<peripheral::ReferenceDivider>,\n                #[serde(default, skip_serializing_if = \"Option::is_none\")]\n"
+      ]
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "790df91fb9a852b4955893bd4ffabece577bb6a979b2d8fe2fa403e2c5e56304",
+      "after_sha256": "85f6f65033ab8454861f9d6b0b7552cbd4aafdd3dea0179c84a9d5c56fdc3e21",
+      "byte_exact_reverse": true,
+      "added_runs": [
+        "    pub reference_divider: Option<PeripheralReferenceDivider>,\n    #[serde(default)]\n",
+        "            .field(\"reference_divider\", &self.reference_divider)\n",
+        "pub struct PeripheralReferenceDivider {\n    pub clock_owner: String,\n    pub consumers: Vec<String>,\n    pub negative_mux: u8,\n    pub supply_mv: (u16, u16),\n    pub input_uses_vdda: bool,\n}\n#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]\n"
+      ]
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "35689bbff0951a5f6e95f908fe2d2b95ebf25cbd82dbe07d9b490fee9379bc94",
+      "after_sha256": "ec74116b6393bd764ede2f0c06f6a50bd883ebe6e01fb887d9c2d8cd8914a4c1",
+      "byte_exact_reverse": true,
+      "added_runs": [
+        "    pub reference_divider: Option<PeripheralReferenceDivider>,\n",
+        "pub struct PeripheralReferenceDivider {\n    pub clock_owner: &'static str,\n    pub consumers: &'static [&'static str],\n    pub negative_mux: u8,\n    pub supply_mv: (u16, u16),\n    pub input_uses_vdda: bool,\n}\n#[derive(Debug, Eq, PartialEq, Clone)]\n"
+      ]
+    }
+  ],
+  "legal_clearance": false
+}

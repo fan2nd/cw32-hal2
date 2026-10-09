@@ -1,0 +1,2102 @@
+{
+  "schema_version": 1,
+  "classic": {
+    "scope": "Own-source classic ATIM internal PCLK up-count and CH1A–3A main-output PWM; no board validation.",
+    "audited_on": "2026-10-08",
+    "page_convention": "Printed pages equal zero-based PDF page indices in all citations below (verified each footer). PDF viewer one-based page is +1.",
+    "source_authority": "sources/evidence-sources.json and reference-index.json",
+    "sources": [
+      {
+        "families": [
+          "CW32F030",
+          "CW32A030"
+        ],
+        "register_variant": "v1",
+        "citations": {
+          "overview": {
+            "printed_page": 252,
+            "pdf_page_index": 252,
+            "whitespace_stripped_markers": [
+              "16位",
+              "6个独立"
+            ]
+          },
+          "clock_update": {
+            "printed_page": 254,
+            "pdf_page_index": 254,
+            "whitespace_stripped_markers": [
+              "ATIM_CR.CT为0",
+              "ATIM_CR.PRS",
+              "ATIM_CR的URS",
+              "ATIM_ISR.UIF"
+            ]
+          },
+          "upcount_sequence": {
+            "printed_page": 255,
+            "pdf_page_index": 255,
+            "whitespace_stripped_markers": [
+              "向上计数模式",
+              "当计数值到达重载值ARR",
+              "计数器被初始化为0",
+              "ATIM_ISR.OVF"
+            ]
+          },
+          "no_CH4_pad": {
+            "printed_page": 264,
+            "pdf_page_index": 264,
+            "whitespace_stripped_markers": [
+              "CH4",
+              "无外部引脚",
+              "不能用来捕获"
+            ]
+          },
+          "CCR_buffer": {
+            "printed_page": 268,
+            "pdf_page_index": 268,
+            "whitespace_stripped_markers": [
+              "ATIM_CHxCR.BUFEy为0",
+              "ATIM_CHxCR.BUFEy为1",
+              "更新事件UEV"
+            ]
+          },
+          "forced_output": {
+            "printed_page": 269,
+            "pdf_page_index": 269,
+            "whitespace_stripped_markers": [
+              "强制输出模式",
+              "设置为0x0",
+              "输出低电平"
+            ]
+          },
+          "PWM_modes": {
+            "printed_page": 271,
+            "pdf_page_index": 271,
+            "whitespace_stripped_markers": [
+              "独立PWM输出",
+              "PWM模式1",
+              "CNT<CHxCCRy"
+            ]
+          },
+          "CR_events": {
+            "printed_page": 295,
+            "pdf_page_index": 295,
+            "whitespace_stripped_markers": [
+              "25UG",
+              "软件更新后",
+              "27DIR"
+            ]
+          },
+          "CR_dividers_preload": {
+            "printed_page": 296,
+            "pdf_page_index": 296,
+            "whitespace_stripped_markers": [
+              "6:4PRS",
+              "111：256",
+              "BUFPEN",
+              "MODE",
+              "PWM2S"
+            ]
+          },
+          "ARR_CNT": {
+            "printed_page": 297,
+            "pdf_page_index": 297,
+            "whitespace_stripped_markers": [
+              "15:0ARR",
+              "15:0CNT",
+              "使用PWM比较输出时，初始化CNT值需要小于ARR的值"
+            ]
+          },
+          "ISR": {
+            "printed_page": 298,
+            "pdf_page_index": 298,
+            "whitespace_stripped_markers": [
+              "16OVF",
+              "17UNDF",
+              "18C4AF"
+            ]
+          },
+          "ICR": {
+            "printed_page": 300,
+            "pdf_page_index": 300,
+            "whitespace_stripped_markers": [
+              "0UIFR1W0",
+              "写0清除"
+            ]
+          },
+          "MSCR": {
+            "printed_page": 301,
+            "pdf_page_index": 301,
+            "whitespace_stripped_markers": [
+              "10:8SMS",
+              "000：使用内部时钟"
+            ]
+          },
+          "FLTR": {
+            "printed_page": 302,
+            "pdf_page_index": 302,
+            "whitespace_stripped_markers": [
+              "19CCP3A",
+              "11CCP2A",
+              "0：正常输出",
+              "1：反向输出"
+            ]
+          },
+          "FLTR_modes": {
+            "printed_page": 303,
+            "pdf_page_index": 303,
+            "whitespace_stripped_markers": [
+              "3CCP1A",
+              "000：强制输出低电平",
+              "001：强制输出高电平",
+              "110：PWM模式1"
+            ]
+          },
+          "DTR": {
+            "printed_page": 305,
+            "pdf_page_index": 305,
+            "whitespace_stripped_markers": [
+              "12MOE",
+              "9DTEN",
+              "独立PWM输出时禁止使能死区控制"
+            ]
+          },
+          "RCR": {
+            "printed_page": 306,
+            "pdf_page_index": 306,
+            "whitespace_stripped_markers": [
+              "RCR+1",
+              "RCR_CNT"
+            ]
+          },
+          "CHxCR": {
+            "printed_page": 307,
+            "pdf_page_index": 307,
+            "whitespace_stripped_markers": [
+              "1:0BKSA",
+              "高阻输出",
+              "6BUFEA",
+              "4CSA"
+            ]
+          },
+          "clock_gate": {
+            "printed_page": 83,
+            "pdf_page_index": 83,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBEN2",
+              "7ATIM",
+              "模块配置时钟及工作时钟使能控制"
+            ]
+          },
+          "module_reset": {
+            "printed_page": 86,
+            "pdf_page_index": 86,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBRST2",
+              "7ATIM",
+              "0：模块处于复位状态",
+              "1：模块正常工作"
+            ]
+          }
+        },
+        "pdf": {
+          "source_id": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "path": "CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2"
+        },
+        "text": {
+          "source_id": "text:CW32x030_UserManual_CN_V2.5.txt",
+          "path": "CW32x030_UserManual_CN_V2.5.txt",
+          "sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe"
+        }
+      },
+      {
+        "families": [
+          "CW32F003"
+        ],
+        "register_variant": "cw32f003_v1",
+        "citations": {
+          "overview": {
+            "printed_page": 186,
+            "pdf_page_index": 186,
+            "whitespace_stripped_markers": [
+              "16位",
+              "6个独立"
+            ]
+          },
+          "clock_update": {
+            "printed_page": 188,
+            "pdf_page_index": 188,
+            "whitespace_stripped_markers": [
+              "ATIM_CR.CT为0",
+              "ATIM_CR.PRS",
+              "ATIM_CR的URS",
+              "ATIM_ISR.UIF"
+            ]
+          },
+          "upcount_sequence": {
+            "printed_page": 189,
+            "pdf_page_index": 189,
+            "whitespace_stripped_markers": [
+              "向上计数模式",
+              "当计数值到达重载值ARR",
+              "计数器被初始化为0",
+              "ATIM_ISR.OVF"
+            ]
+          },
+          "no_CH4_pad": {
+            "printed_page": 198,
+            "pdf_page_index": 198,
+            "whitespace_stripped_markers": [
+              "CH4",
+              "无外部引脚",
+              "不能用来捕获"
+            ]
+          },
+          "CCR_buffer": {
+            "printed_page": 202,
+            "pdf_page_index": 202,
+            "whitespace_stripped_markers": [
+              "ATIM_CHxCR.BUFEy为0",
+              "ATIM_CHxCR.BUFEy为1",
+              "更新事件UEV"
+            ]
+          },
+          "forced_output": {
+            "printed_page": 203,
+            "pdf_page_index": 203,
+            "whitespace_stripped_markers": [
+              "强制输出模式",
+              "设置为0x0",
+              "输出低电平"
+            ]
+          },
+          "PWM_modes": {
+            "printed_page": 205,
+            "pdf_page_index": 205,
+            "whitespace_stripped_markers": [
+              "独立PWM输出",
+              "PWM模式1",
+              "CNT<CHxCCRy"
+            ]
+          },
+          "CR_events": {
+            "printed_page": 228,
+            "pdf_page_index": 228,
+            "whitespace_stripped_markers": [
+              "25UG",
+              "软件更新后",
+              "27DIR"
+            ]
+          },
+          "CR_dividers_preload": {
+            "printed_page": 229,
+            "pdf_page_index": 229,
+            "whitespace_stripped_markers": [
+              "6:4PRS",
+              "111：256",
+              "BUFPEN",
+              "MODE",
+              "PWM2S"
+            ]
+          },
+          "ARR_CNT": {
+            "printed_page": 230,
+            "pdf_page_index": 230,
+            "whitespace_stripped_markers": [
+              "15:0ARR",
+              "15:0CNT",
+              "使用PWM比较输出时，初始化CNT值需要小于ARR的值"
+            ]
+          },
+          "ISR": {
+            "printed_page": 231,
+            "pdf_page_index": 231,
+            "whitespace_stripped_markers": [
+              "16OVF",
+              "17UNDF",
+              "18C4AF"
+            ]
+          },
+          "ICR": {
+            "printed_page": 233,
+            "pdf_page_index": 233,
+            "whitespace_stripped_markers": [
+              "0UIFR1W0",
+              "写0清除"
+            ]
+          },
+          "MSCR": {
+            "printed_page": 234,
+            "pdf_page_index": 234,
+            "whitespace_stripped_markers": [
+              "10:8SMS",
+              "000：使用内部时钟"
+            ]
+          },
+          "FLTR": {
+            "printed_page": 235,
+            "pdf_page_index": 235,
+            "whitespace_stripped_markers": [
+              "19CCP3A",
+              "11CCP2A",
+              "0：正常输出",
+              "1：反向输出"
+            ]
+          },
+          "FLTR_modes": {
+            "printed_page": 236,
+            "pdf_page_index": 236,
+            "whitespace_stripped_markers": [
+              "3CCP1A",
+              "000：强制输出低电平",
+              "001：强制输出高电平",
+              "110：PWM模式1"
+            ]
+          },
+          "DTR": {
+            "printed_page": 238,
+            "pdf_page_index": 238,
+            "whitespace_stripped_markers": [
+              "12MOE",
+              "9DTEN",
+              "独立PWM输出时禁止使能死区控制"
+            ]
+          },
+          "RCR": {
+            "printed_page": 239,
+            "pdf_page_index": 239,
+            "whitespace_stripped_markers": [
+              "RCR+1",
+              "RCR_CNT"
+            ]
+          },
+          "CHxCR": {
+            "printed_page": 240,
+            "pdf_page_index": 240,
+            "whitespace_stripped_markers": [
+              "1:0BKSA",
+              "高阻输出",
+              "6BUFEA",
+              "4CSA"
+            ]
+          },
+          "clock_gate": {
+            "printed_page": 63,
+            "pdf_page_index": 63,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBEN2",
+              "7ATIM",
+              "模块配置时钟及工作时钟使能控制"
+            ]
+          },
+          "module_reset": {
+            "printed_page": 66,
+            "pdf_page_index": 66,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBRST2",
+              "7ATIM",
+              "0：模块处于复位状态",
+              "1：模块正常工作"
+            ]
+          }
+        },
+        "pdf": {
+          "source_id": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+          "path": "CW32F003_UserManual_CN_V2.3.pdf",
+          "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738"
+        },
+        "text": {
+          "source_id": "text:CW32F003_UserManual_CN_V2.3.txt",
+          "path": "CW32F003_UserManual_CN_V2.3.txt",
+          "sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319"
+        }
+      },
+      {
+        "families": [
+          "CW32L031"
+        ],
+        "register_variant": "v1",
+        "citations": {
+          "overview": {
+            "printed_page": 243,
+            "pdf_page_index": 243,
+            "whitespace_stripped_markers": [
+              "16位",
+              "6个独立"
+            ]
+          },
+          "clock_update": {
+            "printed_page": 245,
+            "pdf_page_index": 245,
+            "whitespace_stripped_markers": [
+              "ATIM_CR.CT为0",
+              "ATIM_CR.PRS",
+              "ATIM_CR的URS",
+              "ATIM_ISR.UIF"
+            ]
+          },
+          "upcount_sequence": {
+            "printed_page": 246,
+            "pdf_page_index": 246,
+            "whitespace_stripped_markers": [
+              "向上计数模式",
+              "当计数值到达重载值ARR",
+              "计数器被初始化为0",
+              "ATIM_ISR.OVF"
+            ]
+          },
+          "no_CH4_pad": {
+            "printed_page": 255,
+            "pdf_page_index": 255,
+            "whitespace_stripped_markers": [
+              "CH4",
+              "无外部引脚",
+              "不能用来捕获"
+            ]
+          },
+          "CCR_buffer": {
+            "printed_page": 259,
+            "pdf_page_index": 259,
+            "whitespace_stripped_markers": [
+              "ATIM_CHxCR.BUFEy为0",
+              "ATIM_CHxCR.BUFEy为1",
+              "更新事件UEV"
+            ]
+          },
+          "forced_output": {
+            "printed_page": 260,
+            "pdf_page_index": 260,
+            "whitespace_stripped_markers": [
+              "强制输出模式",
+              "设置为0x0",
+              "输出低电平"
+            ]
+          },
+          "PWM_modes": {
+            "printed_page": 262,
+            "pdf_page_index": 262,
+            "whitespace_stripped_markers": [
+              "独立PWM输出",
+              "PWM模式1",
+              "CNT<CHxCCRy"
+            ]
+          },
+          "CR_events": {
+            "printed_page": 286,
+            "pdf_page_index": 286,
+            "whitespace_stripped_markers": [
+              "25UG",
+              "软件更新后",
+              "27DIR"
+            ]
+          },
+          "CR_dividers_preload": {
+            "printed_page": 287,
+            "pdf_page_index": 287,
+            "whitespace_stripped_markers": [
+              "6:4PRS",
+              "111：256",
+              "BUFPEN",
+              "MODE",
+              "PWM2S"
+            ]
+          },
+          "ARR_CNT": {
+            "printed_page": 288,
+            "pdf_page_index": 288,
+            "whitespace_stripped_markers": [
+              "15:0ARR",
+              "15:0CNT",
+              "使用PWM比较输出时，初始化CNT值需要小于ARR的值"
+            ]
+          },
+          "ISR": {
+            "printed_page": 289,
+            "pdf_page_index": 289,
+            "whitespace_stripped_markers": [
+              "16OVF",
+              "17UNDF",
+              "18C4AF"
+            ]
+          },
+          "ICR": {
+            "printed_page": 291,
+            "pdf_page_index": 291,
+            "whitespace_stripped_markers": [
+              "0UIFR1W0",
+              "写0清除"
+            ]
+          },
+          "MSCR": {
+            "printed_page": 292,
+            "pdf_page_index": 292,
+            "whitespace_stripped_markers": [
+              "10:8SMS",
+              "000：使用内部时钟"
+            ]
+          },
+          "FLTR": {
+            "printed_page": 293,
+            "pdf_page_index": 293,
+            "whitespace_stripped_markers": [
+              "19CCP3A",
+              "11CCP2A",
+              "0：正常输出",
+              "1：反向输出"
+            ]
+          },
+          "FLTR_modes": {
+            "printed_page": 294,
+            "pdf_page_index": 294,
+            "whitespace_stripped_markers": [
+              "3CCP1A",
+              "000：强制输出低电平",
+              "001：强制输出高电平",
+              "110：PWM模式1"
+            ]
+          },
+          "DTR": {
+            "printed_page": 296,
+            "pdf_page_index": 296,
+            "whitespace_stripped_markers": [
+              "12MOE",
+              "9DTEN",
+              "独立PWM输出时禁止使能死区控制"
+            ]
+          },
+          "RCR": {
+            "printed_page": 297,
+            "pdf_page_index": 297,
+            "whitespace_stripped_markers": [
+              "RCR+1",
+              "RCR_CNT"
+            ]
+          },
+          "CHxCR": {
+            "printed_page": 298,
+            "pdf_page_index": 298,
+            "whitespace_stripped_markers": [
+              "1:0BKSA",
+              "高阻输出",
+              "6BUFEA",
+              "4CSA"
+            ]
+          },
+          "clock_gate": {
+            "printed_page": 78,
+            "pdf_page_index": 78,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBEN2",
+              "7ATIM",
+              "模块配置时钟及工作时钟使能控制"
+            ]
+          },
+          "module_reset": {
+            "printed_page": 81,
+            "pdf_page_index": 81,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBRST2",
+              "7ATIM",
+              "0：模块处于复位状态",
+              "1：模块正常工作"
+            ]
+          }
+        },
+        "pdf": {
+          "source_id": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+          "path": "CW32L031_UserManual_CN_V1.6.pdf",
+          "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760"
+        },
+        "text": {
+          "source_id": "text:CW32L031_UserManual_CN_V1.6.txt",
+          "path": "CW32L031_UserManual_CN_V1.6.txt",
+          "sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1"
+        }
+      },
+      {
+        "families": [
+          "CW32R031"
+        ],
+        "register_variant": "v1",
+        "citations": {
+          "overview": {
+            "printed_page": 246,
+            "pdf_page_index": 246,
+            "whitespace_stripped_markers": [
+              "16位",
+              "6个独立"
+            ]
+          },
+          "clock_update": {
+            "printed_page": 248,
+            "pdf_page_index": 248,
+            "whitespace_stripped_markers": [
+              "ATIM_CR.CT为0",
+              "ATIM_CR.PRS",
+              "ATIM_CR的URS",
+              "ATIM_ISR.UIF"
+            ]
+          },
+          "upcount_sequence": {
+            "printed_page": 249,
+            "pdf_page_index": 249,
+            "whitespace_stripped_markers": [
+              "向上计数模式",
+              "当计数值到达重载值ARR",
+              "计数器被初始化为0",
+              "ATIM_ISR.OVF"
+            ]
+          },
+          "no_CH4_pad": {
+            "printed_page": 258,
+            "pdf_page_index": 258,
+            "whitespace_stripped_markers": [
+              "CH4",
+              "无外部引脚",
+              "不能用来捕获"
+            ]
+          },
+          "CCR_buffer": {
+            "printed_page": 262,
+            "pdf_page_index": 262,
+            "whitespace_stripped_markers": [
+              "ATIM_CHxCR.BUFEy为0",
+              "ATIM_CHxCR.BUFEy为1",
+              "更新事件UEV"
+            ]
+          },
+          "forced_output": {
+            "printed_page": 263,
+            "pdf_page_index": 263,
+            "whitespace_stripped_markers": [
+              "强制输出模式",
+              "设置为0x0",
+              "输出低电平"
+            ]
+          },
+          "PWM_modes": {
+            "printed_page": 265,
+            "pdf_page_index": 265,
+            "whitespace_stripped_markers": [
+              "独立PWM输出",
+              "PWM模式1",
+              "CNT<CHxCCRy"
+            ]
+          },
+          "CR_events": {
+            "printed_page": 289,
+            "pdf_page_index": 289,
+            "whitespace_stripped_markers": [
+              "25UG",
+              "软件更新后",
+              "27DIR"
+            ]
+          },
+          "CR_dividers_preload": {
+            "printed_page": 290,
+            "pdf_page_index": 290,
+            "whitespace_stripped_markers": [
+              "6:4PRS",
+              "111：256",
+              "BUFPEN",
+              "MODE",
+              "PWM2S"
+            ]
+          },
+          "ARR_CNT": {
+            "printed_page": 291,
+            "pdf_page_index": 291,
+            "whitespace_stripped_markers": [
+              "15:0ARR",
+              "15:0CNT",
+              "使用PWM比较输出时，初始化CNT值需要小于ARR的值"
+            ]
+          },
+          "ISR": {
+            "printed_page": 292,
+            "pdf_page_index": 292,
+            "whitespace_stripped_markers": [
+              "16OVF",
+              "17UNDF",
+              "18C4AF"
+            ]
+          },
+          "ICR": {
+            "printed_page": 294,
+            "pdf_page_index": 294,
+            "whitespace_stripped_markers": [
+              "0UIFR1W0",
+              "写0清除"
+            ]
+          },
+          "MSCR": {
+            "printed_page": 295,
+            "pdf_page_index": 295,
+            "whitespace_stripped_markers": [
+              "10:8SMS",
+              "000：使用内部时钟"
+            ]
+          },
+          "FLTR": {
+            "printed_page": 296,
+            "pdf_page_index": 296,
+            "whitespace_stripped_markers": [
+              "19CCP3A",
+              "11CCP2A",
+              "0：正常输出",
+              "1：反向输出"
+            ]
+          },
+          "FLTR_modes": {
+            "printed_page": 297,
+            "pdf_page_index": 297,
+            "whitespace_stripped_markers": [
+              "3CCP1A",
+              "000：强制输出低电平",
+              "001：强制输出高电平",
+              "110：PWM模式1"
+            ]
+          },
+          "DTR": {
+            "printed_page": 299,
+            "pdf_page_index": 299,
+            "whitespace_stripped_markers": [
+              "12MOE",
+              "9DTEN",
+              "独立PWM输出时禁止使能死区控制"
+            ]
+          },
+          "RCR": {
+            "printed_page": 300,
+            "pdf_page_index": 300,
+            "whitespace_stripped_markers": [
+              "RCR+1",
+              "RCR_CNT"
+            ]
+          },
+          "CHxCR": {
+            "printed_page": 301,
+            "pdf_page_index": 301,
+            "whitespace_stripped_markers": [
+              "1:0BKSA",
+              "高阻输出",
+              "6BUFEA",
+              "4CSA"
+            ]
+          },
+          "clock_gate": {
+            "printed_page": 80,
+            "pdf_page_index": 80,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBEN2",
+              "7ATIM",
+              "模块配置时钟及工作时钟使能控制"
+            ]
+          },
+          "module_reset": {
+            "printed_page": 83,
+            "pdf_page_index": 83,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBRST2",
+              "7ATIM",
+              "0：模块处于复位状态",
+              "1：模块正常工作"
+            ]
+          }
+        },
+        "pdf": {
+          "source_id": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+          "path": "CW32R031_UserManual_CN_V1.3.pdf",
+          "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb"
+        },
+        "text": {
+          "source_id": "text:CW32R031_UserManual_CN_V1.3.txt",
+          "path": "CW32R031_UserManual_CN_V1.3.txt",
+          "sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b"
+        }
+      },
+      {
+        "families": [
+          "CW32W031"
+        ],
+        "register_variant": "v1",
+        "citations": {
+          "overview": {
+            "printed_page": 246,
+            "pdf_page_index": 246,
+            "whitespace_stripped_markers": [
+              "16位",
+              "6个独立"
+            ]
+          },
+          "clock_update": {
+            "printed_page": 248,
+            "pdf_page_index": 248,
+            "whitespace_stripped_markers": [
+              "ATIM_CR.CT为0",
+              "ATIM_CR.PRS",
+              "ATIM_CR的URS",
+              "ATIM_ISR.UIF"
+            ]
+          },
+          "upcount_sequence": {
+            "printed_page": 249,
+            "pdf_page_index": 249,
+            "whitespace_stripped_markers": [
+              "向上计数模式",
+              "当计数值到达重载值ARR",
+              "计数器被初始化为0",
+              "ATIM_ISR.OVF"
+            ]
+          },
+          "no_CH4_pad": {
+            "printed_page": 258,
+            "pdf_page_index": 258,
+            "whitespace_stripped_markers": [
+              "CH4",
+              "无外部引脚",
+              "不能用来捕获"
+            ]
+          },
+          "CCR_buffer": {
+            "printed_page": 262,
+            "pdf_page_index": 262,
+            "whitespace_stripped_markers": [
+              "ATIM_CHxCR.BUFEy为0",
+              "ATIM_CHxCR.BUFEy为1",
+              "更新事件UEV"
+            ]
+          },
+          "forced_output": {
+            "printed_page": 263,
+            "pdf_page_index": 263,
+            "whitespace_stripped_markers": [
+              "强制输出模式",
+              "设置为0x0",
+              "输出低电平"
+            ]
+          },
+          "PWM_modes": {
+            "printed_page": 265,
+            "pdf_page_index": 265,
+            "whitespace_stripped_markers": [
+              "独立PWM输出",
+              "PWM模式1",
+              "CNT<CHxCCRy"
+            ]
+          },
+          "CR_events": {
+            "printed_page": 289,
+            "pdf_page_index": 289,
+            "whitespace_stripped_markers": [
+              "25UG",
+              "软件更新后",
+              "27DIR"
+            ]
+          },
+          "CR_dividers_preload": {
+            "printed_page": 290,
+            "pdf_page_index": 290,
+            "whitespace_stripped_markers": [
+              "6:4PRS",
+              "111：256",
+              "BUFPEN",
+              "MODE",
+              "PWM2S"
+            ]
+          },
+          "ARR_CNT": {
+            "printed_page": 291,
+            "pdf_page_index": 291,
+            "whitespace_stripped_markers": [
+              "15:0ARR",
+              "15:0CNT",
+              "使用PWM比较输出时，初始化CNT值需要小于ARR的值"
+            ]
+          },
+          "ISR": {
+            "printed_page": 292,
+            "pdf_page_index": 292,
+            "whitespace_stripped_markers": [
+              "16OVF",
+              "17UNDF",
+              "18C4AF"
+            ]
+          },
+          "ICR": {
+            "printed_page": 294,
+            "pdf_page_index": 294,
+            "whitespace_stripped_markers": [
+              "0UIFR1W0",
+              "写0清除"
+            ]
+          },
+          "MSCR": {
+            "printed_page": 295,
+            "pdf_page_index": 295,
+            "whitespace_stripped_markers": [
+              "10:8SMS",
+              "000：使用内部时钟"
+            ]
+          },
+          "FLTR": {
+            "printed_page": 296,
+            "pdf_page_index": 296,
+            "whitespace_stripped_markers": [
+              "19CCP3A",
+              "11CCP2A",
+              "0：正常输出",
+              "1：反向输出"
+            ]
+          },
+          "FLTR_modes": {
+            "printed_page": 297,
+            "pdf_page_index": 297,
+            "whitespace_stripped_markers": [
+              "3CCP1A",
+              "000：强制输出低电平",
+              "001：强制输出高电平",
+              "110：PWM模式1"
+            ]
+          },
+          "DTR": {
+            "printed_page": 299,
+            "pdf_page_index": 299,
+            "whitespace_stripped_markers": [
+              "12MOE",
+              "9DTEN",
+              "独立PWM输出时禁止使能死区控制"
+            ]
+          },
+          "RCR": {
+            "printed_page": 300,
+            "pdf_page_index": 300,
+            "whitespace_stripped_markers": [
+              "RCR+1",
+              "RCR_CNT"
+            ]
+          },
+          "CHxCR": {
+            "printed_page": 301,
+            "pdf_page_index": 301,
+            "whitespace_stripped_markers": [
+              "1:0BKSA",
+              "高阻输出",
+              "6BUFEA",
+              "4CSA"
+            ]
+          },
+          "clock_gate": {
+            "printed_page": 79,
+            "pdf_page_index": 79,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBEN2",
+              "7ATIM",
+              "模块配置时钟及工作时钟使能控制"
+            ]
+          },
+          "module_reset": {
+            "printed_page": 82,
+            "pdf_page_index": 82,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBRST2",
+              "7ATIM",
+              "0：模块处于复位状态",
+              "1：模块正常工作"
+            ]
+          }
+        },
+        "pdf": {
+          "source_id": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+          "path": "CW32W031_UserManual_CN_V1.4.pdf",
+          "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9"
+        },
+        "text": {
+          "source_id": "text:CW32W031_UserManual_CN_V1.4.txt",
+          "path": "CW32W031_UserManual_CN_V1.4.txt",
+          "sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac"
+        }
+      },
+      {
+        "families": [
+          "CW32L052"
+        ],
+        "register_variant": "cw32l052_v1",
+        "citations": {
+          "overview": {
+            "printed_page": 280,
+            "pdf_page_index": 280,
+            "whitespace_stripped_markers": [
+              "16位",
+              "6个独立"
+            ]
+          },
+          "clock_update": {
+            "printed_page": 282,
+            "pdf_page_index": 282,
+            "whitespace_stripped_markers": [
+              "ATIM_CR.CT为0",
+              "ATIM_CR.PRS",
+              "ATIM_CR的URS",
+              "ATIM_ISR.UIF"
+            ]
+          },
+          "upcount_sequence": {
+            "printed_page": 283,
+            "pdf_page_index": 283,
+            "whitespace_stripped_markers": [
+              "向上计数模式",
+              "当计数值到达重载值ARR",
+              "计数器被初始化为0",
+              "ATIM_ISR.OVF"
+            ]
+          },
+          "no_CH4_pad": {
+            "printed_page": 292,
+            "pdf_page_index": 292,
+            "whitespace_stripped_markers": [
+              "CH4",
+              "无外部引脚",
+              "不能用来捕获"
+            ]
+          },
+          "CCR_buffer": {
+            "printed_page": 296,
+            "pdf_page_index": 296,
+            "whitespace_stripped_markers": [
+              "ATIM_CHxCR.BUFEy为0",
+              "ATIM_CHxCR.BUFEy为1",
+              "更新事件UEV"
+            ]
+          },
+          "forced_output": {
+            "printed_page": 297,
+            "pdf_page_index": 297,
+            "whitespace_stripped_markers": [
+              "强制输出模式",
+              "设置为0x0",
+              "输出低电平"
+            ]
+          },
+          "PWM_modes": {
+            "printed_page": 299,
+            "pdf_page_index": 299,
+            "whitespace_stripped_markers": [
+              "独立PWM输出",
+              "PWM模式1",
+              "CNT<CHxCCRy"
+            ]
+          },
+          "CR_events": {
+            "printed_page": 323,
+            "pdf_page_index": 323,
+            "whitespace_stripped_markers": [
+              "25UG",
+              "软件更新后",
+              "27DIR"
+            ]
+          },
+          "CR_dividers_preload": {
+            "printed_page": 324,
+            "pdf_page_index": 324,
+            "whitespace_stripped_markers": [
+              "6:4PRS",
+              "111：256",
+              "BUFPEN",
+              "MODE",
+              "PWM2S"
+            ]
+          },
+          "ARR_CNT": {
+            "printed_page": 325,
+            "pdf_page_index": 325,
+            "whitespace_stripped_markers": [
+              "15:0ARR",
+              "15:0CNT",
+              "使用PWM比较输出时，初始化CNT值需要小于ARR的值"
+            ]
+          },
+          "ISR": {
+            "printed_page": 326,
+            "pdf_page_index": 326,
+            "whitespace_stripped_markers": [
+              "16OVF",
+              "17UNDF",
+              "18C4AF"
+            ]
+          },
+          "ICR": {
+            "printed_page": 328,
+            "pdf_page_index": 328,
+            "whitespace_stripped_markers": [
+              "0UIFR1W0",
+              "写0清除"
+            ]
+          },
+          "MSCR": {
+            "printed_page": 329,
+            "pdf_page_index": 329,
+            "whitespace_stripped_markers": [
+              "10:8SMS",
+              "000：使用内部时钟"
+            ]
+          },
+          "FLTR": {
+            "printed_page": 330,
+            "pdf_page_index": 330,
+            "whitespace_stripped_markers": [
+              "19CCP3A",
+              "11CCP2A",
+              "0：正常输出",
+              "1：反向输出"
+            ]
+          },
+          "FLTR_modes": {
+            "printed_page": 331,
+            "pdf_page_index": 331,
+            "whitespace_stripped_markers": [
+              "3CCP1A",
+              "000：强制输出低电平",
+              "001：强制输出高电平",
+              "110：PWM模式1"
+            ]
+          },
+          "DTR": {
+            "printed_page": 333,
+            "pdf_page_index": 333,
+            "whitespace_stripped_markers": [
+              "12MOE",
+              "9DTEN",
+              "独立PWM输出时禁止使能死区控制"
+            ]
+          },
+          "RCR": {
+            "printed_page": 334,
+            "pdf_page_index": 334,
+            "whitespace_stripped_markers": [
+              "RCR+1",
+              "RCR_CNT"
+            ]
+          },
+          "CHxCR": {
+            "printed_page": 335,
+            "pdf_page_index": 335,
+            "whitespace_stripped_markers": [
+              "1:0BKSA",
+              "高阻输出",
+              "6BUFEA",
+              "4CSA"
+            ]
+          },
+          "clock_gate": {
+            "printed_page": 82,
+            "pdf_page_index": 82,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBEN2",
+              "7ATIM",
+              "模块配置时钟及工作时钟使能控制"
+            ]
+          },
+          "module_reset": {
+            "printed_page": 85,
+            "pdf_page_index": 85,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBRST2",
+              "7ATIM",
+              "0：模块处于复位状态",
+              "1：模块正常工作"
+            ]
+          }
+        },
+        "pdf": {
+          "source_id": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+          "path": "CW32L052_UserManual_CN_V1.5.pdf",
+          "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41"
+        },
+        "text": {
+          "source_id": "text:CW32L052_UserManual_CN_V1.5.txt",
+          "path": "CW32L052_UserManual_CN_V1.5.txt",
+          "sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb"
+        }
+      },
+      {
+        "families": [
+          "CW32L083"
+        ],
+        "register_variant": "v1",
+        "citations": {
+          "overview": {
+            "printed_page": 292,
+            "pdf_page_index": 292,
+            "whitespace_stripped_markers": [
+              "16位",
+              "6个独立"
+            ]
+          },
+          "clock_update": {
+            "printed_page": 294,
+            "pdf_page_index": 294,
+            "whitespace_stripped_markers": [
+              "ATIM_CR.CT为0",
+              "ATIM_CR.PRS",
+              "ATIM_CR的URS",
+              "ATIM_ISR.UIF"
+            ]
+          },
+          "upcount_sequence": {
+            "printed_page": 295,
+            "pdf_page_index": 295,
+            "whitespace_stripped_markers": [
+              "向上计数模式",
+              "当计数值到达重载值ARR",
+              "计数器被初始化为0",
+              "ATIM_ISR.OVF"
+            ]
+          },
+          "no_CH4_pad": {
+            "printed_page": 304,
+            "pdf_page_index": 304,
+            "whitespace_stripped_markers": [
+              "CH4",
+              "无外部引脚",
+              "不能用来捕获"
+            ]
+          },
+          "CCR_buffer": {
+            "printed_page": 308,
+            "pdf_page_index": 308,
+            "whitespace_stripped_markers": [
+              "ATIM_CHxCR.BUFEy为0",
+              "ATIM_CHxCR.BUFEy为1",
+              "更新事件UEV"
+            ]
+          },
+          "forced_output": {
+            "printed_page": 309,
+            "pdf_page_index": 309,
+            "whitespace_stripped_markers": [
+              "强制输出模式",
+              "设置为0x0",
+              "输出低电平"
+            ]
+          },
+          "PWM_modes": {
+            "printed_page": 311,
+            "pdf_page_index": 311,
+            "whitespace_stripped_markers": [
+              "独立PWM输出",
+              "PWM模式1",
+              "CNT<CHxCCRy"
+            ]
+          },
+          "CR_events": {
+            "printed_page": 335,
+            "pdf_page_index": 335,
+            "whitespace_stripped_markers": [
+              "25UG",
+              "软件更新后",
+              "27DIR"
+            ]
+          },
+          "CR_dividers_preload": {
+            "printed_page": 336,
+            "pdf_page_index": 336,
+            "whitespace_stripped_markers": [
+              "6:4PRS",
+              "111：256",
+              "BUFPEN",
+              "MODE",
+              "PWM2S"
+            ]
+          },
+          "ARR_CNT": {
+            "printed_page": 337,
+            "pdf_page_index": 337,
+            "whitespace_stripped_markers": [
+              "15:0ARR",
+              "15:0CNT",
+              "使用PWM比较输出时，初始化CNT值需要小于ARR的值"
+            ]
+          },
+          "ISR": {
+            "printed_page": 338,
+            "pdf_page_index": 338,
+            "whitespace_stripped_markers": [
+              "16OVF",
+              "17UNDF",
+              "18C4AF"
+            ]
+          },
+          "ICR": {
+            "printed_page": 340,
+            "pdf_page_index": 340,
+            "whitespace_stripped_markers": [
+              "0UIFR1W0",
+              "写0清除"
+            ]
+          },
+          "MSCR": {
+            "printed_page": 341,
+            "pdf_page_index": 341,
+            "whitespace_stripped_markers": [
+              "10:8SMS",
+              "000：使用内部时钟"
+            ]
+          },
+          "FLTR": {
+            "printed_page": 342,
+            "pdf_page_index": 342,
+            "whitespace_stripped_markers": [
+              "19CCP3A",
+              "11CCP2A",
+              "0：正常输出",
+              "1：反向输出"
+            ]
+          },
+          "FLTR_modes": {
+            "printed_page": 343,
+            "pdf_page_index": 343,
+            "whitespace_stripped_markers": [
+              "3CCP1A",
+              "000：强制输出低电平",
+              "001：强制输出高电平",
+              "110：PWM模式1"
+            ]
+          },
+          "DTR": {
+            "printed_page": 345,
+            "pdf_page_index": 345,
+            "whitespace_stripped_markers": [
+              "12MOE",
+              "9DTEN",
+              "独立PWM输出时禁止使能死区控制"
+            ]
+          },
+          "RCR": {
+            "printed_page": 346,
+            "pdf_page_index": 346,
+            "whitespace_stripped_markers": [
+              "RCR+1",
+              "RCR_CNT"
+            ]
+          },
+          "CHxCR": {
+            "printed_page": 347,
+            "pdf_page_index": 347,
+            "whitespace_stripped_markers": [
+              "1:0BKSA",
+              "高阻输出",
+              "6BUFEA",
+              "4CSA"
+            ]
+          },
+          "clock_gate": {
+            "printed_page": 88,
+            "pdf_page_index": 88,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBEN2",
+              "7ATIM",
+              "模块配置时钟及工作时钟使能控制"
+            ]
+          },
+          "module_reset": {
+            "printed_page": 92,
+            "pdf_page_index": 92,
+            "whitespace_stripped_markers": [
+              "SYSCTRL_APBRST2",
+              "7ATIM",
+              "0：模块处于复位状态",
+              "1：模块正常工作"
+            ]
+          }
+        },
+        "pdf": {
+          "source_id": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+          "path": "CW32L083_UserManual_CN_V2.0.pdf",
+          "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3"
+        },
+        "text": {
+          "source_id": "text:CW32L083_UserManual_CN_V2.0.txt",
+          "path": "CW32L083_UserManual_CN_V2.0.txt",
+          "sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564"
+        }
+      }
+    ],
+    "common_facts": {
+      "prescaler": {
+        "register": "CR.PRS[6:4]",
+        "encoded_divisors": [
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          256
+        ],
+        "PSC_register": false
+      },
+      "widths": {
+        "CNT": 16,
+        "ARR": 16,
+        "CCRx": 16,
+        "ARR_representable_min": 0,
+        "ARR_representable_max": 65535
+      },
+      "counter": {
+        "clock": "CR.CT=0 selects PCLK; MSCR.SMS=0 selects internal clock",
+        "up_mode": "CR.MODE=2, DIR=0, ONESHOT=0, EN=1",
+        "regular_updates": "RCR.RCR=0 and RCR.OV=RCR.UD=0",
+        "period_formula": "(ARR+1)*prescaler/PCLK; derived from own-manual count sequence 0..ARR then 0",
+        "counter_max_period_ticks": 65536,
+        "basic_counter_min": "No explicit nonzero minimum ARR in register table. SDK says 0..65535. Conservative HAL min=2 ticks is permissible but policy, not a universal documented hardware minimum."
+      },
+      "pwm": {
+        "main_pad_channels": [
+          "CH1A",
+          "CH2A",
+          "CH3A"
+        ],
+        "additional_pad_channels": [
+          "CH1B",
+          "CH2B",
+          "CH3B"
+        ],
+        "CH4": "Internal compare-only; explicitly no external pin and cannot capture. Not external PWM channel4.",
+        "configuration": "CR.MODE=2, DIR=0, CT=0, COMP=0, PWM2S=1; MSCR.SMS=0; CHxCR.CSA=0; DTR.MOE=1, DTEN=0; FLTR.OCMxAFLTxA=6 and CCPxA=0",
+        "PWM1": "Up-count single-point: high while CNT<CCRxA, low otherwise",
+        "PWM2": "Up-count single-point: low while CNT<CCRxA, high otherwise",
+        "polarity": "FLTR.CCP1A[3], CCP2A[11], CCP3A[19]: 0 normal,1 inverted",
+        "minimum": "Initial CNT must be < ARR. For initial CNT0, ARR>=1 and period>=2 ticks.",
+        "maximum": "Hardware period65536 (ARR65535) cannot represent CCR=65536 for conventional 100% duty. Bound ordinary PWM period<=65535 or deliberately implement forced-output endpoints.",
+        "MOE": "DTR.MOE[12] global output-compare enable. No per-channel output enable for CH1..3. MOE=0 electrical level is not specified; do not promise driven-low or use global MOE for single-channel disable.",
+        "inactive": "OCMxAFLTxA=0 forces low at normal polarity; mode1+CCR0 is mathematically always low. For strictly evidenced inactive state, normal polarity + forced low is documented.",
+        "forced_endpoints": "OCMxAFLTxA=0 force low;1 force high; these do not stop counter/compare events.",
+        "brake": "CHxCR.BKSA[1:0]/BKSB[3:2]:0 high impedance,1 unaffected,2 forced low,3 forced high during braking; not normal output-enable bits. Keep BKE/AOE/SAFEEN/VCE/deadtime/complementary out of bounded mode."
+      },
+      "preload_update": {
+        "ARR": "CR.BUFPEN[7]=0 immediate;1 update-event transfer. ARR cache updates immediately when counter disabled or cache disabled.",
+        "CCR": "CHxCR.BUFEA[6]/BUFEB[7]:0 immediate,1 transfer on UEV.",
+        "UG": "CR.UG[25]=1 self-clears; initializes counter, transfers enabled ARR/CCR buffers, clears prescaler counter without changing PRS.",
+        "URS": "CR.URS[17]=0:overflow/underflow/software UG/slave reset;1:overflow/underflow only. For guaranteed software initialization use URS0 then UG and clear flags; do not assume UG emits UEV while URS1.",
+        "RCR": "RCR[7:0] yields update after RCR+1 relevant overflows; masks OV[8]/UD[9]."
+      },
+      "interrupts": {
+        "ISR": "RO at0x10",
+        "ICR": "R1W0 at0x14; write0 clears requested bit, write1 preserves. SDK writes ~mask.",
+        "bits": {
+          "UIF": 0,
+          "C1AF": 2,
+          "C2AF": 3,
+          "C3AF": 4,
+          "C1BF": 5,
+          "C2BF": 6,
+          "C3BF": 7,
+          "BIF": 14,
+          "TIF": 15,
+          "OVF": 16,
+          "UNDF": 17,
+          "C4AF": 18
+        },
+        "capture_lost_bits": "8..13",
+        "enable_bits": "CR.UIE[10], OVE[28], UNDE[29]; CHxCR.CIEA[8]/CIEB[9]",
+        "UIF_vs_OVF": "Distinct update-event flag versus every-wrap overflow flag; RCR and URS affect update events."
+      },
+      "clock_reset": {
+        "base": "0x40012c00",
+        "enable": "SYSCTRL.APBEN2[7], offset0x34;1 enables configuration and working clock",
+        "reset": "SYSCTRL.APBRST2[7], offset0x44;0 assert,1 release",
+        "independence": "One ATIM per family; ATIM gate/reset separate from BTIM/GTIM, but all ATIM channels share the same ATIM gate/reset."
+      }
+    },
+    "differences_and_conflicts": [
+      {
+        "families": [
+          "CW32F003"
+        ],
+        "fact": "No DMA fields: CHxCR[11:10] reserved, CH4CR.CDE absent, MSCR[4:3] reserved. Existing cw32f003_v1 correctly omits these. Bounded mode uses same remaining fields."
+      },
+      {
+        "families": [
+          "CW32L052"
+        ],
+        "fact": "Own manual MSCR bit4 reserved (p329); SVD-derived cw32l052_v1 exposes MSM bit4. Keep zero. PAC removal or correction should be documented as a manual/SVD conflict, not treated as proven capability.",
+        "sdk_header_source": {
+          "reference_id": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+          "sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1",
+          "marker": "ATIM_MSCR_MSM",
+          "line_numbers": [
+            4656,
+            4657
+          ]
+        }
+      },
+      {
+        "families": [
+          "CW32F030",
+          "CW32A030"
+        ],
+        "fact": "Own shared timer pin table p264 lists CH2A PA05, conflicting with established datasheet PA04. Use package datasheet route evidence, not timer-table typo."
+      },
+      {
+        "families": "all audited classic",
+        "fact": "Update-event narrative calls clearing field ATIM_ICR.UIE; ICR register table names correct UIF bit0. Use UIF."
+      }
+    ],
+    "excluded_family": {
+      "family": "CW32F020",
+      "reason": "Own current datasheet p16 enumerates four GTIM and three BTIM; no ATIM. Own whole manual contains no ATIM token.",
+      "datasheet": {
+        "path": "current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+        "sha256": "c561aa8acbafc12cd6ac39fc0595f58a168b02dfda301b90df4fdd067a69d233",
+        "printed_page": 16,
+        "pdf_page_index": 16,
+        "marker": "CW32F020 微控制器内部集成多达四个通用定时器，以及三个基本定时器。"
+      },
+      "manual": {
+        "source_id": "text:CW32F020_UserManual_CN_V1.4.txt",
+        "path": "CW32F020_UserManual_CN_V1.4.txt",
+        "sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db",
+        "ATIM_occurrences": 0
+      },
+      "sdk_header": {
+        "path": "cw32f020/Libraries/inc/cw32f020.h",
+        "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f",
+        "ATIM_occurrences": 0
+      }
+    }
+  },
+  "buffered": {
+    "CW32L010": {
+      "sources": {
+        "reference_manual": {
+          "file": "CW32L010_UserManual_CN_V1.2.pdf",
+          "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+          "source_id": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf"
+        },
+        "datasheet": {
+          "file": "CW32L010_DataSheet_CN_V1.3.pdf",
+          "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+          "source_id": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260416/CW32L010_DataSheet_CN_V1.3.pdf"
+        }
+      },
+      "register_variant": "cw32l010_v1",
+      "sections": {
+        "CR1": {
+          "section": "14.9.1",
+          "pdf_page_index": 341,
+          "printed_page": 341
+        },
+        "CR2": {
+          "section": "14.9.2",
+          "pdf_page_index": 343,
+          "printed_page": 343
+        },
+        "SMCR": {
+          "section": "14.9.3",
+          "pdf_page_index": 345,
+          "printed_page": 345
+        },
+        "IER": {
+          "section": "14.9.4",
+          "pdf_page_index": 349,
+          "printed_page": 349
+        },
+        "ISR": {
+          "section": "14.9.5",
+          "pdf_page_index": 351,
+          "printed_page": 351
+        },
+        "ICR": {
+          "section": "14.9.6",
+          "pdf_page_index": 353,
+          "printed_page": 353
+        },
+        "EGR": {
+          "section": "14.9.7",
+          "pdf_page_index": 355,
+          "printed_page": 355
+        },
+        "CCMR1CMP": {
+          "section": "14.9.9",
+          "pdf_page_index": 358,
+          "printed_page": 358
+        },
+        "CCMR2CMP": {
+          "section": "14.9.11",
+          "pdf_page_index": 362,
+          "printed_page": 362
+        },
+        "CCMR3CMP": {
+          "section": "14.9.13",
+          "pdf_page_index": 364,
+          "printed_page": 364
+        },
+        "CCER": {
+          "section": "14.9.14",
+          "pdf_page_index": 365,
+          "printed_page": 365
+        },
+        "CNT": {
+          "section": "14.9.15",
+          "pdf_page_index": 367,
+          "printed_page": 367
+        },
+        "PSC": {
+          "section": "14.9.16",
+          "pdf_page_index": 367,
+          "printed_page": 367
+        },
+        "ARR": {
+          "section": "14.9.17",
+          "pdf_page_index": 367,
+          "printed_page": 367
+        },
+        "RCR": {
+          "section": "14.9.18",
+          "pdf_page_index": 368,
+          "printed_page": 368
+        },
+        "BDTR": {
+          "section": "14.9.25",
+          "pdf_page_index": 370,
+          "printed_page": 370
+        },
+        "DTR2": {
+          "section": "14.9.26",
+          "pdf_page_index": 374,
+          "printed_page": 374
+        },
+        "ECR": {
+          "section": "14.9.27",
+          "pdf_page_index": 375,
+          "printed_page": 375
+        },
+        "TISEL1": {
+          "section": "14.9.28",
+          "pdf_page_index": 376,
+          "printed_page": 376
+        },
+        "TISEL2": {
+          "section": "14.9.29",
+          "pdf_page_index": 376,
+          "printed_page": 376
+        },
+        "AF1": {
+          "section": "14.9.30",
+          "pdf_page_index": 377,
+          "printed_page": 377
+        },
+        "AF2": {
+          "section": "14.9.31",
+          "pdf_page_index": 378,
+          "printed_page": 378
+        }
+      },
+      "clock": {
+        "bus": "PCLK",
+        "address": 1073746944,
+        "enable_register": "APBEN1",
+        "reset_register": "APBRST1",
+        "bit": 5,
+        "enable_key": 23130,
+        "reset_active": 0
+      },
+      "counter": {
+        "width": 16,
+        "minimum_period_ticks": 2,
+        "maximum_period_ticks": 65536,
+        "divisors": "hardware PSC+1; HAL exposes powers of two 1..32768",
+        "period": "(PSC+1)*(ARR+1)/PCLK",
+        "minimum_reason": "ARR=0 explicitly stops counter"
+      },
+      "pwm": {
+        "channels": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "withheld": [
+          5,
+          6,
+          "all complementary",
+          "break",
+          "dead-time",
+          "capture",
+          "encoder",
+          "triggers"
+        ],
+        "modes": "4 forced low;5 forced high;6 PWM1 high CNT<CCR;7 PWM2 low CNT<CCR",
+        "preload": "CR1.ARPE=1;OCyPE=1;PSC always buffered;UG loads shadows and resets CNT/prescaler;RCR=0 updates every overflow",
+        "enable": "CCER=0x1111 and BDTR.MOE=1 after forced-inactive setup;CCPC=0 immediate mode changes;NE/NP and CH5/6 kept zero",
+        "protect": "BDTR.LOCK=0,AOE=0,BKE=0,BK2E=0,DTG=0;DTR2=0;AF1/AF2 break sources disabled;no safety-protection claim",
+        "shutdown": "force inactive,stop,disconnect pads,then clear CCER/MOE;no electrical claim when MOE=0"
+      },
+      "flags": {
+        "clearable_mask": 16728063,
+        "access": "ISR read-only;ICR R1W0",
+        "overflow": "UIF bit0 with RCR0;all other events preserved by clear"
+      }
+    },
+    "CW32L011": {
+      "sources": {
+        "reference_manual": {
+          "file": "CW32L011_UserManual_CN_V1.1.pdf",
+          "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+          "source_id": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf"
+        },
+        "datasheet": {
+          "file": "CW32L011_DataSheet_CN_V1.1.pdf",
+          "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+          "source_id": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+          "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf"
+        }
+      },
+      "register_variant": "cw32l010_v1",
+      "sections": {
+        "CR1": {
+          "section": "14.9.1",
+          "pdf_page_index": 342,
+          "printed_page": 342
+        },
+        "CR2": {
+          "section": "14.9.2",
+          "pdf_page_index": 344,
+          "printed_page": 344
+        },
+        "SMCR": {
+          "section": "14.9.3",
+          "pdf_page_index": 346,
+          "printed_page": 346
+        },
+        "IER": {
+          "section": "14.9.4",
+          "pdf_page_index": 350,
+          "printed_page": 350
+        },
+        "ISR": {
+          "section": "14.9.5",
+          "pdf_page_index": 352,
+          "printed_page": 352
+        },
+        "ICR": {
+          "section": "14.9.6",
+          "pdf_page_index": 354,
+          "printed_page": 354
+        },
+        "EGR": {
+          "section": "14.9.7",
+          "pdf_page_index": 356,
+          "printed_page": 356
+        },
+        "CCMR1CMP": {
+          "section": "14.9.9",
+          "pdf_page_index": 359,
+          "printed_page": 359
+        },
+        "CCMR2CMP": {
+          "section": "14.9.11",
+          "pdf_page_index": 363,
+          "printed_page": 363
+        },
+        "CCMR3CMP": {
+          "section": "14.9.13",
+          "pdf_page_index": 365,
+          "printed_page": 365
+        },
+        "CCER": {
+          "section": "14.9.14",
+          "pdf_page_index": 366,
+          "printed_page": 366
+        },
+        "CNT": {
+          "section": "14.9.15",
+          "pdf_page_index": 369,
+          "printed_page": 369
+        },
+        "PSC": {
+          "section": "14.9.16",
+          "pdf_page_index": 369,
+          "printed_page": 369
+        },
+        "ARR": {
+          "section": "14.9.17",
+          "pdf_page_index": 369,
+          "printed_page": 369
+        },
+        "RCR": {
+          "section": "14.9.18",
+          "pdf_page_index": 370,
+          "printed_page": 370
+        },
+        "BDTR": {
+          "section": "14.9.25",
+          "pdf_page_index": 372,
+          "printed_page": 372
+        },
+        "DTR2": {
+          "section": "14.9.26",
+          "pdf_page_index": 376,
+          "printed_page": 376
+        },
+        "ECR": {
+          "section": "14.9.27",
+          "pdf_page_index": 377,
+          "printed_page": 377
+        },
+        "TISEL1": {
+          "section": "14.9.28",
+          "pdf_page_index": 378,
+          "printed_page": 378
+        },
+        "TISEL2": {
+          "section": "14.9.29",
+          "pdf_page_index": 378,
+          "printed_page": 378
+        },
+        "AF1": {
+          "section": "14.9.30",
+          "pdf_page_index": 379,
+          "printed_page": 379
+        },
+        "AF2": {
+          "section": "14.9.31",
+          "pdf_page_index": 380,
+          "printed_page": 380
+        }
+      },
+      "clock": {
+        "bus": "PCLK",
+        "address": 1073746944,
+        "enable_register": "APBEN1",
+        "reset_register": "APBRST1",
+        "bit": 5,
+        "enable_key": 23130,
+        "reset_active": 0
+      },
+      "counter": {
+        "width": 16,
+        "minimum_period_ticks": 2,
+        "maximum_period_ticks": 65536,
+        "divisors": "hardware PSC+1; HAL exposes powers of two 1..32768",
+        "period": "(PSC+1)*(ARR+1)/PCLK",
+        "minimum_reason": "ARR=0 explicitly stops counter"
+      },
+      "pwm": {
+        "channels": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "withheld": [
+          5,
+          6,
+          "all complementary",
+          "break",
+          "dead-time",
+          "capture",
+          "encoder",
+          "triggers"
+        ],
+        "modes": "4 forced low;5 forced high;6 PWM1 high CNT<CCR;7 PWM2 low CNT<CCR",
+        "preload": "CR1.ARPE=1;OCyPE=1;PSC always buffered;UG loads shadows and resets CNT/prescaler;RCR=0 updates every overflow",
+        "enable": "CCER=0x1111 and BDTR.MOE=1 after forced-inactive setup;CCPC=0 immediate mode changes;NE/NP and CH5/6 kept zero",
+        "protect": "BDTR.LOCK=0,AOE=0,BKE=0,BK2E=0,DTG=0;DTR2=0;AF1/AF2 break sources disabled;no safety-protection claim",
+        "shutdown": "force inactive,stop,disconnect pads,then clear CCER/MOE;no electrical claim when MOE=0"
+      },
+      "flags": {
+        "clearable_mask": 16728063,
+        "access": "ISR read-only;ICR R1W0",
+        "overflow": "UIF bit0 with RCR0;all other events preserved by clear"
+      }
+    },
+    "CW32L012": {
+      "sources": {
+        "reference_manual": {
+          "file": "CW32L012_UserManual_CN_V1.4.pdf",
+          "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+          "source_id": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+          "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf"
+        },
+        "datasheet": {
+          "file": "CW32L012_DataSheet_CN_V1.0.pdf",
+          "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+          "source_id": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+          "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf"
+        }
+      },
+      "register_variant": "cw32l012_v1",
+      "sections": {
+        "CR1": {
+          "section": "17.10.1",
+          "pdf_page_index": 395,
+          "printed_page": 370
+        },
+        "CR2": {
+          "section": "17.10.2",
+          "pdf_page_index": 397,
+          "printed_page": 372
+        },
+        "SMCR": {
+          "section": "17.10.3",
+          "pdf_page_index": 399,
+          "printed_page": 374
+        },
+        "DIER": {
+          "section": "17.10.4",
+          "pdf_page_index": 403,
+          "printed_page": 378
+        },
+        "ISR": {
+          "section": "17.10.5",
+          "pdf_page_index": 405,
+          "printed_page": 380
+        },
+        "ICR": {
+          "section": "17.10.6",
+          "pdf_page_index": 408,
+          "printed_page": 383
+        },
+        "EGR": {
+          "section": "17.10.7",
+          "pdf_page_index": 409,
+          "printed_page": 384
+        },
+        "CCMR1CMP": {
+          "section": "17.10.9",
+          "pdf_page_index": 412,
+          "printed_page": 387
+        },
+        "CCMR2CMP": {
+          "section": "17.10.11",
+          "pdf_page_index": 416,
+          "printed_page": 391
+        },
+        "CCMR3CMP": {
+          "section": "17.10.13",
+          "pdf_page_index": 418,
+          "printed_page": 393
+        },
+        "CCER": {
+          "section": "17.10.14",
+          "pdf_page_index": 419,
+          "printed_page": 394
+        },
+        "CNT": {
+          "section": "17.10.15",
+          "pdf_page_index": 421,
+          "printed_page": 396
+        },
+        "PSC": {
+          "section": "17.10.16",
+          "pdf_page_index": 421,
+          "printed_page": 396
+        },
+        "ARR": {
+          "section": "17.10.17",
+          "pdf_page_index": 421,
+          "printed_page": 396
+        },
+        "RCR": {
+          "section": "17.10.18",
+          "pdf_page_index": 422,
+          "printed_page": 397
+        },
+        "BDTR": {
+          "section": "17.10.25",
+          "pdf_page_index": 426,
+          "printed_page": 401
+        },
+        "DTR2": {
+          "section": "17.10.26",
+          "pdf_page_index": 429,
+          "printed_page": 404
+        },
+        "ECR": {
+          "section": "17.10.27",
+          "pdf_page_index": 430,
+          "printed_page": 405
+        },
+        "TISEL1": {
+          "section": "17.10.28",
+          "pdf_page_index": 431,
+          "printed_page": 406
+        },
+        "TISEL2": {
+          "section": "17.10.29",
+          "pdf_page_index": 432,
+          "printed_page": 407
+        },
+        "AF1": {
+          "section": "17.10.30",
+          "pdf_page_index": 433,
+          "printed_page": 408
+        },
+        "AF2": {
+          "section": "17.10.31",
+          "pdf_page_index": 435,
+          "printed_page": 410
+        }
+      },
+      "clock": {
+        "bus": "PCLK",
+        "address": 1073746944,
+        "enable_register": "APBEN1",
+        "reset_register": "APBRST1",
+        "bit": 5,
+        "enable_key": 23130,
+        "reset_active": 0
+      },
+      "counter": {
+        "width": 16,
+        "minimum_period_ticks": 2,
+        "maximum_period_ticks": 65536,
+        "divisors": "hardware PSC+1; HAL exposes powers of two 1..32768",
+        "period": "(PSC+1)*(ARR+1)/PCLK",
+        "minimum_reason": "ARR=0 explicitly stops counter"
+      },
+      "pwm": {
+        "channels": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "withheld": [
+          5,
+          6,
+          "all complementary",
+          "break",
+          "dead-time",
+          "capture",
+          "encoder",
+          "triggers"
+        ],
+        "modes": "4 forced low;5 forced high;6 PWM1 high CNT<CCR;7 PWM2 low CNT<CCR",
+        "preload": "CR1.ARPE=1;OCyPE=1;PSC always buffered;UG loads shadows and resets CNT/prescaler;RCR=0 updates every overflow",
+        "enable": "CCER=0x1111 and BDTR.MOE=1 after forced-inactive setup;CCPC=0 immediate mode changes;NE/NP and CH5/6 kept zero",
+        "protect": "BDTR.LOCK=0,AOE=0,BKE=0,BK2E=0,DTG=0;DTR2=0;AF1/AF2 break sources disabled;no safety-protection claim",
+        "shutdown": "force inactive,stop,disconnect pads,then clear CCER/MOE;no electrical claim when MOE=0"
+      },
+      "flags": {
+        "clearable_mask": 16728063,
+        "access": "ISR read-only;ICR R1W0",
+        "overflow": "UIF bit0 with RCR0;all other events preserved by clear"
+      }
+    }
+  },
+  "hal_policy": {
+    "actual_clock": "RCC operating conditions qualify PCLK;ATIM selection uses PCLK ClockBounds.maximum(), getters separately report nominal frequency and bounds",
+    "classic_minimum_period": "two ticks conservatively for both polling and PWM;not asserted hardware counter minimum",
+    "classic_software_update": "temporarily URS0 for UG to resolve narrative ambiguity;IRQs/DMA are disabled;restore URS1 then clear pending update at construction/reconfiguration",
+    "shared_ownership": "one Peri ATIM owns all channels and independent gate/reset;no sibling BTIM/GTIM gate mutation",
+    "no_silicon_validation": true
+  }
+}

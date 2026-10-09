@@ -1,0 +1,91 @@
+schema_version: 1
+spi_metadata: cw32-data/spi.yaml
+source:
+  path: sources/vendor/CW32L031.svd
+  sha256: f8044dc562825ce49a32f7cfa19df1b09e0f60daebe61e4c91c7e973670be815
+  url: https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip
+  source_ref: member:cw32l031/IdeSupport/EWARM/arm/config/debugger/WHXY/CW32L031.svd
+expected_svd_name: CW32L031
+core: cm0p
+die: CW32L031
+chip_prefix: CW32L031
+gpio_dir_pin_fields: false
+register_aliases: []
+supplemental_interrupts:
+- name: CLKFAULT
+  number: 31
+  evidence: Official CW32L031 SDK Libraries/inc header CLKFAULT_IRQn=31; SHA256 573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27
+family: CW32L0
+line: CW32L031
+register_version: cw32l031_v1
+nvic_priority_bits: 2
+nvic_priority_bits_evidence: Official CW32L031 SDK Libraries/inc header __NVIC_PRIO_BITS=2; SHA256 573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27
+chips:
+- name: CW32L031
+  memory: []
+source_notes:
+- GTIM SVD base is0x300 lower than CMSIS base but every register offset is0x300 higher; absolute register
+  addresses agree. Preserve the SVD base+offset pair.
+- IRMOD singleton in CMSIS aliases SYSCTRL.IRMOD at0x40010074. No duplicate peripheral ownership added.
+  CW32L031 manual CN V1.6 section21.4 p429 confirms the shared address.
+parts_catalog: cw32-data/parts.yaml
+register_versions:
+  adc: cw32l031_v1
+  atim: v1
+  awt: cw32l031_v1
+  btim: cw32l031_v1
+  crc: cw32l031_v1
+  dma: cw32l031_v1
+  dmachannel: v1
+  flash: cw32l031_v1
+  gpio: cw32l031_v1
+  gtim: cw32l031_v1
+  i2c: cw32l031_v1
+  iwdt: cw32l031_v1
+  lvd: cw32l031_v1
+  ram: cw32l031_v1
+  rtc: cw32l031_v1
+  spi: cw32l031_v1
+  sysctrl: cw32l031_v1
+  uart: cw32l031_v1
+  vc: cw32l031_v1
+  wwdt: cw32l031_v1
+pinout_metadata: cw32-data/pinouts/cw32l031.yaml
+alias_pin_policy: common-package-intersection
+dma_metadata: cw32-data/dma/cw32l031.yaml
+clock_metadata: cw32-data/clock/cw32l031.yaml
+af_metadata: cw32-data/af/cw32l031-serial.yaml
+register_overrides:
+- block: UART
+  register: TIMCNT
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32L031 User Manual CN V1.6 section18.9.6 printed page354/PDF page355: UARTx_TIMCNT bits23:0
+    are RO; section18.8 applies to UART1/2/3. Offset0x18, 32-bit register with 24-bit field unchanged.
+    PDF SHA256 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760'
+analog_metadata: cw32-data/af/cw32l031-analog.yaml
+field_removals:
+- fieldset: COMPEN
+  field: FREQ
+  expected_bit_offset: 16
+  expected_bit_size: 4
+  evidence: 'Own CW32L031 User Manual CN V1.6 section 12.5.5, printed page 181/PDF page 182: RTC_COMPEN
+    bits31:16 are reserved. Remove obsolete SVD FREQ bits19:16 only; lower sixteen bits and SOURCE HSE
+    dividers remain valid. PDF SHA256 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760.
+    https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf'
+pwm_metadata: cw32-data/af/cw32l031-pwm.yaml
+atim_pwm_metadata: cw32-data/af/cw32l031-atim-pwm.yaml
+gpio_interrupt_metadata: cw32-data/gpio-interrupt.yaml
+electrical_metadata: cw32-data/electrical.yaml
+comparator_metadata: cw32-data/af/cw32l031-comparator.yaml
+field_width_overrides:
+- block: RAM
+  fieldset: ADDR
+  field: ADDR
+  expected_bit_offset: 0
+  expected_bit_size: 14
+  bit_size: 32
+  evidence: 'CW32L031 own 1.6 manual section 6.6.1, printed page 104/PDF page 105: RAM_ADDR is full absolute
+    bits31:0, reset 0x20000000. Correct the source SVD 14-bit truncation only. https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf
+    PDF SHA256 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760. See docs/ram-parity-evidence.json.'
+classic_adc_scan_metadata: cw32-data/classic-adc-scans.yaml

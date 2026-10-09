@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-09T12:16:04.554056+00:00",
+  "reviewer": "independent L012 HSE schema reviewer",
+  "status": "accepted_source_only_with_exact_generator_supplement",
+  "scope": "Static read-only schema, source-data preservation, source-fact mapping and provenance review. No HAL tests, HAL models, compilation, generated output or hardware validation.",
+  "inputs": {
+    "candidate_root": "/workspace/shared/cw32-l012-hse-stage44-rebase-20261009/embassy-cw32",
+    "baseline_root": "/workspace/shared/cw32-oscillator-access-stage43-20261009",
+    "baseline_stage43_archive_sha256_from_parent": "ba02f7552bab7cef29ecc3aa909b580dcfa8f3d05f81335c9e1ac7a479b0ea0b",
+    "freeze_manifest_sha256": "711479352c330688b1a18d96634d33e8bf0be540f3b417b449725fc0de8cdfc7",
+    "mechanical_rebase_sha256": "cb2a8ee613f827a030019edd552e96adadc66169e445b56783c097662022ec2b",
+    "three_model_patch_sha256": "f28fa3d277b910e34aa45cffb3db87ae65014914fc65be7146ea102e25a3ba4e",
+    "entire_patch_sha256": "c3959268223be96900322810f6366dea7d163b3c2d9dfb908ac6af64b3fb9be9",
+    "runtime_source_acceptance_sha256": "7b8347a47fb929b5e3319f9826d39bbb2576ccd7cb5d678f50883589d8cc9635",
+    "all_frozen_file_hashes_verified_count": 1096,
+    "initial_review_sha256": "ebd45d9e90a8bb38c0c6a25b0630b72253474db42dc7fccd66194cf91664b783",
+    "supplement_patch_sha256": "dcab4d4b7f1af105e11cbb49925b1e48781a2f5db8c5529db63772412d7dac8d",
+    "supplement_generator_before_sha256": "6da9e90eec04c2177a8d0b9cd1ca23d4b9af920dba9e1859b8a53ca3bc92eb32",
+    "supplement_generator_after_sha256": "bf19d16e442d9cbbbc1079c97fae20584d9db912e2a2dac038c1a0f6996cc73f"
+  },
+  "models": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "baseline_sha256": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
+      "candidate_sha256": "0b06a84ce26dc25558ec52f4b0d23e8690dfdc521f9798d71f27c4b50b9a907c",
+      "insertion_count": 2,
+      "insertion_runs": [
+        {
+          "line_count": 3,
+          "sha256": "d53b93b607e2ab8c72a4ebefc36c423354cc84f1682257d2ca844be40cb65e8f",
+          "text": "            /// Fixed HSIOSC divisor imposed by CCS, only when explicitly source-qualified.\n            #[serde(default, skip_serializing_if = \"Option::is_none\")]\n            pub fixed_ccs_hsi_divisor: Option<u8>,\n"
+        },
+        {
+          "line_count": 3,
+          "sha256": "96706cdbecc5593003d060e372e512ec8c60ca8c1c58fad67d9bcd22a41dc94b",
+          "text": "                    /// Required legal incoming HSIOSC range; not an arbitrary-TRIM frequency guarantee.\n                    #[serde(default, skip_serializing_if = \"Option::is_none\")]\n                    pub hsi_operating_range_hz: Option<(u32, u32)>,\n"
+        }
+      ],
+      "remove_exact_two_insertions_sha256": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
+      "inverse_byte_exact": true
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "baseline_sha256": "d72f44ee7602c515e8638a2662612f82d1420f67a7e70c9473619401f38f8925",
+      "candidate_sha256": "fc0cb79c104613fd44c7bde631123e0c78fa51f598b1b9dd878c201a62842a7f",
+      "insertion_count": 2,
+      "insertion_runs": [
+        {
+          "line_count": 3,
+          "sha256": "b84e1c60da0c48b62d299687dc253fc56246945d157c7b51aea93e9127234a88",
+          "text": "    /// Fixed HSIOSC divisor imposed by CCS, only when explicitly source-qualified.\n    #[serde(default)]\n    pub fixed_ccs_hsi_divisor: Option<u8>,\n"
+        },
+        {
+          "line_count": 3,
+          "sha256": "1f716a7d8145f6f75a57bc615e418600e8c6b77bc0875b827b29b4652e722477",
+          "text": "    /// Required legal incoming HSIOSC range; not an arbitrary-TRIM frequency guarantee.\n    #[serde(default)]\n    pub hsi_operating_range_hz: Option<(u32, u32)>,\n"
+        }
+      ],
+      "remove_exact_two_insertions_sha256": "d72f44ee7602c515e8638a2662612f82d1420f67a7e70c9473619401f38f8925",
+      "inverse_byte_exact": true
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "baseline_sha256": "7a41a47e4564d60527228f385021f0f4a801fb33afe675b4af92ec4e9874a926",
+      "candidate_sha256": "4b6d8c3e83766a3f1f652bd4751cbbe37251bc90cd73c1f94beccb97de4596ac",
+      "insertion_count": 2,
+      "insertion_runs": [
+        {
+          "line_count": 2,
+          "sha256": "c486e2b2217159a0581dc99d133bd481c1b4357499622aea13ec47fbfbaca394",
+          "text": "    /// Fixed HSIOSC divisor imposed by CCS, only when explicitly source-qualified.\n    pub fixed_ccs_hsi_divisor: Option<u8>,\n"
+        },
+        {
+          "line_count": 2,
+          "sha256": "7c847800a2bc3351620314cb688b08df736ed20d7fbc6bd5d3609b6286f44042",
+          "text": "    /// Required legal incoming HSIOSC range; not an arbitrary-TRIM frequency guarantee.\n    pub hsi_operating_range_hz: Option<(u32, u32)>,\n"
+        }
+      ],
+      "remove_exact_two_insertions_sha256": "7a41a47e4564d60527228f385021f0f4a801fb33afe675b4af92ec4e9874a926",
+      "inverse_byte_exact": true
+    }
+  ],
+  "contracts": {
+    "verification_method": "Rust field types, derive implementation, serde attributes and unchanged Debug-based static projection inspected; these are static conclusions, not dynamically executed serde tests.",
+    "serde_absent_and_null": "Both new options deserialize to None when absent or null; None serializes by omitting the key.",
+    "owned_generator_absent_and_null": "Both new options deserialize to None with #[serde(default)]; owned metadata model does not implement Serialize.",
+    "width_and_shape": "Some fixed divisor is u8; Some range is exactly a two-element tuple of u32. Negative, fractional, out-of-width and wrong-length inputs fail serde decoding. Semantic nonzero/ordering/source equality is generator responsibility.",
+    "static_projection": "Both fields retain Option-owned scalar/tuple types. Debug prints None or Some(value); stringify leaves scalar and tuple representation intact. No new static reference or array coercion is introduced.",
+    "existing_model_fields_order_attributes_and_types": "Byte-identical to baseline after removing the two exact insertion runs in each of three models.",
+    "projector_sha256": "2fa92927fef3b1f6d0deb40b25c370e669e0b7d62ee1c127e714369ab9d058e9"
+  },
+  "data_proof": {
+    "profiles_checked": 13,
+    "source_qualified_hse_families": 11,
+    "all_profiles_exactly_match_own_optional_hse_and_range_facts": true,
+    "reverse_new_data_additions_equals_baseline": true,
+    "every_old_pll_hse_lse_and_other_electrical_value_preserved": true,
+    "explicit_fixed_ccs_divisors": {
+      "CW32L010": {
+        "hsiosc_hz": 48000000,
+        "divisor": 12,
+        "nominal_fallback_hz": 4000000
+      },
+      "CW32L011": {
+        "hsiosc_hz": 96000000,
+        "divisor": 24,
+        "nominal_fallback_hz": 4000000
+      },
+      "CW32L012": {
+        "hsiosc_hz": 96000000,
+        "divisor": 24,
+        "nominal_fallback_hz": 4000000
+      },
+      "CW32L052": {
+        "hsiosc_hz": 48000000,
+        "divisor": 6,
+        "nominal_fallback_hz": 8000000
+      }
+    },
+    "l012_range_hz": [
+      90000000,
+      100000000
+    ],
+    "l012_range_source": "Own CW32L012 User Manual CN V1.4 section 4.4.2, PDF page 59 / printed page 33; legal operating prerequisite whenever enabled, including inherited trim. It is not an actual-frequency measurement or a guarantee for arbitrary trim.",
+    "source_verifier": "python tests/verify_l012_hse_sources.py --source-only: passed against locked original PDFs, extracted text and SVD; no generated/HAL execution.",
+    "source_receipt_sha256": "c5106003da76b2c181b9b590ec9e6be0f00e9aa588697c9266ee9fb4c71c2f19"
+  },
+  "provenance": {
+    "unchanged_file_sha256": "9a3284ba5fd211eb76d6e06acde6f978a433a2556191df2134086959ad3eedbd",
+    "current_serde_review_object_canonical_sha256": "5a043525fbb6d19724a33df241aaa692e4e5bcedf48a2bad4da1e31c83390fb7",
+    "current_lineage": [
+      {
+        "replacement_sha256": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
+        "accepted_extensions_count": 0,
+        "object_canonical_sha256": "5a043525fbb6d19724a33df241aaa692e4e5bcedf48a2bad4da1e31c83390fb7"
+      },
+      {
+        "replacement_sha256": "c183923bcb189ea2d6617d6ff13963070d64e06d8308c856b8d1b45cef78c810",
+        "accepted_extensions_count": 0,
+        "object_canonical_sha256": "7b7f6d1bbbbe6c9526ba6c4732e7b0bc0425b1b460dd6638b97845c559e94356"
+      },
+      {
+        "replacement_sha256": "3dfa050491fe73aa16bd1d5f96e5ae01beb76affc5253222faeba073e2b0759c",
+        "accepted_extensions_count": 0,
+        "object_canonical_sha256": "9c2fd3987892d1d57b3ef913bce120bc8a6d458f4c3cf8c55f0b6daab987c39f"
+      },
+      {
+        "replacement_sha256": "e70e0c81debc6484b2949b12590fe54670001188d5caf23f3d432a61c24de133",
+        "accepted_extensions_count": 9,
+        "object_canonical_sha256": "b917a700608e7e9d03ea82b0157de43ab48a34e486ea2a1ba45637d9d7ff7a02"
+      },
+      {
+        "replacement_sha256": "1240bf168f847297ede62b2423d8376d2c260d2eace27e74c726623859e0707f",
+        "accepted_extensions_count": 9,
+        "object_canonical_sha256": "e65bf8f30326dff2a48f9c6d67f9a313d26bbf16c451e194d948403ad5afe9d3"
+      },
+      {
+        "replacement_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
+        "accepted_extensions_count": 8,
+        "object_canonical_sha256": "fdc3843fb753f2233bda0d34ad6ff9ae779989edb8989b4f80e28df174ed9d7d"
+      },
+      {
+        "replacement_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+        "accepted_extensions_count": 7,
+        "object_canonical_sha256": "c1915dc83f1ee739ab6b0c1fb3a2a1a3bb16a4f696483837298efd13706aec3d"
+      },
+      {
+        "replacement_sha256": "adc50cb1275be65b6451f1d283426ec3ec842460ee95d724600922f733c1081f",
+        "accepted_extensions_count": 6,
+        "object_canonical_sha256": "ccec223020b9b59d06dc251eedb30bfd17d71096cdbae1ace1a75b9e04ea0e8f"
+      },
+      {
+        "replacement_sha256": "0ed2f1ebbe890dca06de3c2bf78c3c45776ab7fe5a519b1c6f00ac19fd08aa6f",
+        "accepted_extensions_count": 0,
+        "object_canonical_sha256": "6e435d890c41afd3388deee9f16bfdc7a1124ee2501393f7a35b22d183b45d7a"
+      },
+      {
+        "replacement_sha256": "2b53b5486a2a1f208922367fb36a9ced580fad7af3b815634cb75eb73e1fd160",
+        "accepted_extensions_count": 0,
+        "object_canonical_sha256": "0d0c5b0b45d3c77944c983c3a7c3acd8d47a4da7da624cfbdf724b1814f737b2"
+      },
+      {
+        "replacement_sha256": "7c1c569ee508dba0e77ce8f9f9eb3f049ad48f99aeb1813ec76bc9edf4ed8416",
+        "accepted_extensions_count": 0,
+        "object_canonical_sha256": "3907dbc39b1047d94c3981df88ef63b66a275cb387340eeb72fa64ed6f82c444"
+      },
+      {
+        "replacement_sha256": "aff3d62a4f1513f9573072ba8d0e1c397b5965c6e9039fe4f20d3eed1fa14108",
+        "accepted_extensions_count": 0,
+        "object_canonical_sha256": "d5b85c0457494ec36e4f766064c07b485a1b7ecf245b55621f0cc884cc701580"
+      }
+    ],
+    "adapted_metapac_entries_canonical_sha256": "f7fc163cc233f16322a31222e2f3899b69435c5ad3150b80082b51fc1363e91f",
+    "eligible_next_serde_sha256": "0b06a84ce26dc25558ec52f4b0d23e8690dfdc521f9798d71f27c4b50b9a907c",
+    "eligible_next_owned_metadata_sha256": "fc0cb79c104613fd44c7bde631123e0c78fa51f598b1b9dd878c201a62842a7f",
+    "eligible_next_static_metadata_sha256": "4b6d8c3e83766a3f1f652bd4751cbbe37251bc90cd73c1f94beccb97de4596ac",
+    "tip_advance_permitted_now": false,
+    "conditions_after_gate_acceptance": [
+      "Nest the entire unchanged current replacement_review object as previous_review; preserve all previous_review and accepted_extensions descendants without flattening or truncating.",
+      "Record exact next serde/owned/static hashes and the independent schema receipt; preserve adapted metapac ancestry entries and historical hashes.",
+      "Retain legal_clearance false and all existing licensing caveats; this is technical review only."
+    ],
+    "reason_tip_not_advanced": "Parent requested review and exact proposed identity only; candidate provenance remains untouched. The reviewed model identity is eligible when parent integrates the accepted composition and this receipt.",
+    "proposed_replacement_review_path": "/workspace/shared/cw32-l012-hse-schema-review-20261009/proposed-replacement-review.json",
+    "proposed_replacement_review_sha256": "8d666e123f4212a985b3aa5badce7733885f99c66d14cc530c4daabdcfafef16",
+    "proposed_full_provenance_path": "/workspace/shared/cw32-l012-hse-schema-review-20261009/proposed-upstream-file-provenance.json",
+    "proposed_full_provenance_sha256": "36afd7db3fb2d7f03c32c4744dfbdf4b1758994cf7f22d95b98c4ae62b4409cc",
+    "proposed_previous_review_deep_equals_entire_current_review": true,
+    "all_existing_accepted_extensions_descendants_retained": true,
+    "all_other_provenance_entries_unchanged": true,
+    "proposed_top_level_legal_clearance": false
+  },
+  "limits": {
+    "compilation_run": false,
+    "cargo_run": false,
+    "hal_tests_or_models_run": false,
+    "generated_output_checked": false,
+    "hardware_run": false,
+    "candidate_edited": false,
+    "identity_tip_edited": false,
+    "upload_run": false
+  },
+  "legal_clearance": false,
+  "resolved_findings": [
+    {
+      "id": "L012-HSE-SCHEMA-1",
+      "path": "cw32-data-gen/src/electrical.rs",
+      "line": 258,
+      "summary": "Required own-source facts can be silently omitted by the generator because option validation is conditional on presence.",
+      "cases": [
+        "L012 hsi_operating_range_hz absent/null with otherwise unchanged HSE: if-let skips required own-source range comparison.",
+        "A profile with c.hse absent can carry an undeclared Some range because the range validation is nested under HSE presence.",
+        "L012 c.hse absent/null and hse_sources empty skips its required fixed-divisor/HSE fact check; preserving the valid range does not restore that check."
+      ],
+      "mitigation_already_present": "HAL build requires the fixed divisor for L010/L011/L012/L052 and the operating range for L012 when HSE metadata is present; source verifier requires current L012 values. These guards do not replace generator source-fact applicability.",
+      "required_fix": "Verify the locked own HSE policy before the optional branch and compare serialized Option HSE and Option HSI range to source values unconditionally, including absent family/key as null. Retain numeric constraints and own-family checks when present. Preserve schema and runtime bytes.",
+      "proof_kind": "Static control-flow proof; no generator mutation experiment or compilation performed.",
+      "resolution": "Accepted exact generator supplement moves policy lock, HSE Option equality and range Option equality before optional branch; retains present interval/divisor and source attribution checks."
+    }
+  ],
+  "blocking_findings": [],
+  "supplement_proof": {
+    "exact_unified_patch_reconstruction": true,
+    "proof_method": "Read-only control-flow and serialized Option equality inspection; no dynamic generator rejection claims.",
+    "all_thirteen_profiles_consistent_with_unconditional_option_policy_comparison": true,
+    "cases_closed": [
+      "L012 missing or null HSI range serializes to Null and differs from own [90000000,100000000].",
+      "L012 missing or null HSE serializes to Null and differs from own required HSE object.",
+      "Any declared fixed CCS divisor missing or null inside a present HSE omits its serialized key and differs from the locked source object.",
+      "Undeclared Some HSI range on any other family differs from missing own range (Null), including F002/F003 with no HSE.",
+      "An HSE object on a family without own HSE qualification differs from missing own HSE (Null).",
+      "Correct absent HSE and range on F002/F003 both compare Null equal to Null, preserving old absence compatibility.",
+      "Present zero or reversed range still fails numeric check; wrong typed values remain rejected by serde.",
+      "Present zero divisor fails before modulus; mismatched and undeclared values fail exact source equality."
+    ],
+    "original_frozen_source_retained": true,
+    "only_generator_file_changed_by_supplement": true,
+    "models_and_runtime_changed_by_supplement": false
+  }
+}

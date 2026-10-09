@@ -1,0 +1,1480 @@
+schema_version: 1
+profile: CW32F002
+controller: SYSCTRL
+sources:
+  CW32F002_UserManual_CN_V1.4.pdf:
+    artifact: CW32F002_UserManual_CN_V1.4.pdf
+    sha256: e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add
+    url: https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf
+    source_ref: vendor:CW32F002_UserManual_CN_V1.4.pdf
+  CW32F002_UserManual_CN_V1.4.txt:
+    artifact: CW32F002_UserManual_CN_V1.4.txt
+    sha256: cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01
+    derived_from: CW32F002_UserManual_CN_V1.4.pdf
+    conversion: pdftotext -layout
+    url: https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf
+    source_ref: text:CW32F002_UserManual_CN_V1.4.txt
+  cw32f002/Libraries/inc/cw32f002.h:
+    artifact: cw32f002/Libraries/inc/cw32f002.h
+    sha256: 399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54
+    url: https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip
+    source_ref: member:cw32f002/Libraries/inc/cw32f002.h
+  cw32f002/Libraries/inc/cw32f002_awt.h:
+    artifact: cw32f002/Libraries/inc/cw32f002_awt.h
+    sha256: f11520623d24d2580542027464a2b053607bb4695bb79144ff7cc9414370e19a
+    url: https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip
+    source_ref: member:cw32f002/Libraries/inc/cw32f002_awt.h
+  cw32f002/Libraries/inc/cw32f002_uart.h:
+    artifact: cw32f002/Libraries/inc/cw32f002_uart.h
+    sha256: 0c86efe39e08c3c97e66118e01a889d5d61bcfc522a1edbce2212c5356085f9b
+    url: https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip
+    source_ref: member:cw32f002/Libraries/inc/cw32f002_uart.h
+stop_mode_policy:
+  value: Stop1
+  basis: conservative-build-policy
+  reason: Use the most conservative upstream StopMode limit until a CW32-specific low-power policy is
+    verified. CW32 Sleep/DeepSleep is not STM32 Stop1/Stop2.
+peripherals:
+- name: ADC
+  status: supported
+  bus_clock: PCLK
+  kernel_clock:
+    clock: PCLK
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN2
+    field: ADC
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST2
+    field: ADC
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3848-3849
+      claim: SYSCTRL.APBEN2.ADC is bit 2.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2518-2522
+      claim: 'SYSCTRL.APBEN2.ADC: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3883-3884
+      claim: SYSCTRL.APBRST2.ADC is bit 2.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2650-2654
+      claim: 'SYSCTRL.APBRST2.ADC: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2518-2522
+      claim: 'SYSCTRL.APBEN2.ADC: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 13613-13616
+      claim: ADC source is PCLK before the ADC_CR0.CLK prescaler.
+    kernel_prescaler:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 13613-13616
+      claim: ADC source is PCLK before the ADC_CR0.CLK prescaler.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2518-2522
+      claim: 'SYSCTRL.APBEN2.ADC: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2650-2654
+      claim: 'SYSCTRL.APBRST2.ADC: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes:
+  - Clock denotes PCLK input; actual ADCCLK is PCLK divided by ADC.CR0.CLK.
+  related_fields:
+  - role: kernel_prescaler
+    field:
+      peripheral: ADC
+      register: CR0
+      field: CLK
+- name: AWT
+  status: partial
+  bus_clock: PCLK
+  kernel_clock:
+    mux:
+      peripheral: AWT
+      register: CR
+      field: SRC
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN2
+    field: AWT
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST2
+    field: AWT
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3838-3839
+      claim: SYSCTRL.APBEN2.AWT is bit 13.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2492-2496
+      claim: 'SYSCTRL.APBEN2.AWT: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3873-3874
+      claim: SYSCTRL.APBRST2.AWT is bit 13.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2624-2628
+      claim: 'SYSCTRL.APBRST2.AWT: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2492-2496
+      claim: 'SYSCTRL.APBEN2.AWT: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: cw32f002/Libraries/inc/cw32f002_awt.h
+      locator: lines 47-51
+      claim: AWT count clock source options include the external ETR pin.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 5220-5222
+      claim: AWT count source is selected by local AWT.CR.SRC.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2492-2496
+      claim: 'SYSCTRL.APBEN2.AWT: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2624-2628
+      claim: 'SYSCTRL.APBRST2.AWT: 0 holds module in reset, 1 allows normal operation.'
+  blockers:
+  - Upstream Rcc mux field lacks peripheral scope; AWT.CR.SRC is local.
+  notes: []
+  related_fields: []
+  kernel_sources:
+  - HSIOSC
+  - LSI
+  - HEX_PB00
+  - HEX_PB01
+  - ETR
+- name: BTIM1
+  status: supported
+  bus_clock: PCLK
+  kernel_clock:
+    clock: PCLK
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN2
+    field: BTIM
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST2
+    field: BTIM
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3840-3841
+      claim: SYSCTRL.APBEN2.BTIM is bit 12.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2496-2500
+      claim: 'SYSCTRL.APBEN2.BTIM: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3875-3876
+      claim: SYSCTRL.APBRST2.BTIM is bit 12.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2496-2500
+      claim: 'SYSCTRL.APBEN2.BTIM: 0 disables the configuration clock, 1 enables it.'
+    shared_group:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 6238-6241
+      claim: BTIM1/2/3 share one BTIM gate; reset register table likewise addresses BTIM1-3.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2496-2500
+      claim: 'SYSCTRL.APBEN2.BTIM: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    shared_enable_group:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 6238-6241
+      claim: BTIM1/2/3 share one BTIM gate; reset register table likewise addresses BTIM1-3.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    shared_reset_group:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 6238-6241
+      claim: BTIM1/2/3 share one BTIM gate; reset register table likewise addresses BTIM1-3.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes:
+  - PCLK is the internal timer source. External-count/slave-trigger modes and prescalers remain peripheral-local
+    configuration.
+  related_fields: []
+  shared_enable_group: BTIM1-BTIM2-BTIM3
+  shared_reset_group: BTIM1-BTIM2-BTIM3
+- name: BTIM2
+  status: supported
+  bus_clock: PCLK
+  kernel_clock:
+    clock: PCLK
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN2
+    field: BTIM
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST2
+    field: BTIM
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3840-3841
+      claim: SYSCTRL.APBEN2.BTIM is bit 12.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2496-2500
+      claim: 'SYSCTRL.APBEN2.BTIM: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3875-3876
+      claim: SYSCTRL.APBRST2.BTIM is bit 12.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2496-2500
+      claim: 'SYSCTRL.APBEN2.BTIM: 0 disables the configuration clock, 1 enables it.'
+    shared_group:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 6238-6241
+      claim: BTIM1/2/3 share one BTIM gate; reset register table likewise addresses BTIM1-3.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2496-2500
+      claim: 'SYSCTRL.APBEN2.BTIM: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    shared_enable_group:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 6238-6241
+      claim: BTIM1/2/3 share one BTIM gate; reset register table likewise addresses BTIM1-3.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    shared_reset_group:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 6238-6241
+      claim: BTIM1/2/3 share one BTIM gate; reset register table likewise addresses BTIM1-3.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes:
+  - PCLK is the internal timer source. External-count/slave-trigger modes and prescalers remain peripheral-local
+    configuration.
+  related_fields: []
+  shared_enable_group: BTIM1-BTIM2-BTIM3
+  shared_reset_group: BTIM1-BTIM2-BTIM3
+- name: BTIM3
+  status: supported
+  bus_clock: PCLK
+  kernel_clock:
+    clock: PCLK
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN2
+    field: BTIM
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST2
+    field: BTIM
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3840-3841
+      claim: SYSCTRL.APBEN2.BTIM is bit 12.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2496-2500
+      claim: 'SYSCTRL.APBEN2.BTIM: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3875-3876
+      claim: SYSCTRL.APBRST2.BTIM is bit 12.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2496-2500
+      claim: 'SYSCTRL.APBEN2.BTIM: 0 disables the configuration clock, 1 enables it.'
+    shared_group:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 6238-6241
+      claim: BTIM1/2/3 share one BTIM gate; reset register table likewise addresses BTIM1-3.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2496-2500
+      claim: 'SYSCTRL.APBEN2.BTIM: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    shared_enable_group:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 6238-6241
+      claim: BTIM1/2/3 share one BTIM gate; reset register table likewise addresses BTIM1-3.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+    shared_reset_group:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 6238-6241
+      claim: BTIM1/2/3 share one BTIM gate; reset register table likewise addresses BTIM1-3.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2628-2632
+      claim: 'SYSCTRL.APBRST2.BTIM: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes:
+  - PCLK is the internal timer source. External-count/slave-trigger modes and prescalers remain peripheral-local
+    configuration.
+  related_fields: []
+  shared_enable_group: BTIM1-BTIM2-BTIM3
+  shared_reset_group: BTIM1-BTIM2-BTIM3
+- name: CRC
+  status: supported
+  bus_clock: HCLK
+  kernel_clock:
+    clock: HCLK
+  enable:
+    peripheral: SYSCTRL
+    register: AHBEN
+    field: CRC
+  reset:
+    peripheral: SYSCTRL
+    register: AHBRST
+    field: CRC
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3833-3834
+      claim: SYSCTRL.AHBEN.CRC is bit 2.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2422-2426
+      claim: 'SYSCTRL.AHBEN.CRC: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3868-3869
+      claim: SYSCTRL.AHBRST.CRC is bit 2.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2554-2558
+      claim: 'SYSCTRL.AHBRST.CRC: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2422-2426
+      claim: 'SYSCTRL.AHBEN.CRC: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2422-2426
+      claim: 'SYSCTRL.AHBEN.CRC: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2554-2558
+      claim: 'SYSCTRL.AHBRST.CRC: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes: []
+  related_fields: []
+- name: FLASH
+  status: partial
+  bus_clock: HCLK
+  enable:
+    peripheral: SYSCTRL
+    register: AHBEN
+    field: FLASH
+  reset:
+    peripheral: SYSCTRL
+    register: AHBRST
+    field: FLASH
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3835-3836
+      claim: SYSCTRL.AHBEN.FLASH is bit 1.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2426-2430
+      claim: 'SYSCTRL.AHBEN.FLASH: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3870-3871
+      claim: SYSCTRL.AHBRST.FLASH is bit 1.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2558-2562
+      claim: 'SYSCTRL.AHBRST.FLASH: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2426-2430
+      claim: 'SYSCTRL.AHBEN.FLASH: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock_ambiguity:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1716-1725
+      claim: RTC/UART/AWT/FLASH gate only configuration clock; source selection is local for independent
+        working clocks.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2426-2430
+      claim: 'SYSCTRL.AHBEN.FLASH: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2558-2562
+      claim: 'SYSCTRL.AHBRST.FLASH: 0 holds module in reset, 1 allows normal operation.'
+  blockers:
+  - Manual describes HCLK as FLASH configuration/working clock, but explicitly calls AHBEN.FLASH configuration-only
+    and claims local working-clock selection. No supported local clock-source field is established, so
+    kernel_clock is intentionally withheld.
+  notes: []
+  related_fields: []
+- name: GPIOA
+  status: supported
+  bus_clock: HCLK
+  kernel_clock:
+    clock: HCLK
+  enable:
+    peripheral: SYSCTRL
+    register: AHBEN
+    field: GPIOA
+  reset:
+    peripheral: SYSCTRL
+    register: AHBRST
+    field: GPIOA
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3831-3832
+      claim: SYSCTRL.AHBEN.GPIOA is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2416-2420
+      claim: 'SYSCTRL.AHBEN.GPIOA: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3866-3867
+      claim: SYSCTRL.AHBRST.GPIOA is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2548-2552
+      claim: 'SYSCTRL.AHBRST.GPIOA: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2416-2420
+      claim: 'SYSCTRL.AHBEN.GPIOA: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2416-2420
+      claim: 'SYSCTRL.AHBEN.GPIOA: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2548-2552
+      claim: 'SYSCTRL.AHBRST.GPIOA: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes:
+  - HCLK is GPIO configuration/main working clock. Optional input digital filter has additional sources;
+    this record does not model the filter clock.
+  related_fields: []
+- name: GPIOB
+  status: supported
+  bus_clock: HCLK
+  kernel_clock:
+    clock: HCLK
+  enable:
+    peripheral: SYSCTRL
+    register: AHBEN
+    field: GPIOB
+  reset:
+    peripheral: SYSCTRL
+    register: AHBRST
+    field: GPIOB
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3829-3830
+      claim: SYSCTRL.AHBEN.GPIOB is bit 5.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2412-2416
+      claim: 'SYSCTRL.AHBEN.GPIOB: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3864-3865
+      claim: SYSCTRL.AHBRST.GPIOB is bit 5.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2544-2548
+      claim: 'SYSCTRL.AHBRST.GPIOB: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2412-2416
+      claim: 'SYSCTRL.AHBEN.GPIOB: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2412-2416
+      claim: 'SYSCTRL.AHBEN.GPIOB: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2544-2548
+      claim: 'SYSCTRL.AHBRST.GPIOB: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes:
+  - HCLK is GPIO configuration/main working clock. Optional input digital filter has additional sources;
+    this record does not model the filter clock.
+  related_fields: []
+- name: GPIOC
+  status: supported
+  bus_clock: HCLK
+  kernel_clock:
+    clock: HCLK
+  enable:
+    peripheral: SYSCTRL
+    register: AHBEN
+    field: GPIOC
+  reset:
+    peripheral: SYSCTRL
+    register: AHBRST
+    field: GPIOC
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3827-3828
+      claim: SYSCTRL.AHBEN.GPIOC is bit 6.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2408-2412
+      claim: 'SYSCTRL.AHBEN.GPIOC: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3862-3863
+      claim: SYSCTRL.AHBRST.GPIOC is bit 6.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2540-2544
+      claim: 'SYSCTRL.AHBRST.GPIOC: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2408-2412
+      claim: 'SYSCTRL.AHBEN.GPIOC: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2408-2412
+      claim: 'SYSCTRL.AHBEN.GPIOC: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2540-2544
+      claim: 'SYSCTRL.AHBRST.GPIOC: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes:
+  - HCLK is GPIO configuration/main working clock. Optional input digital filter has additional sources;
+    this record does not model the filter clock.
+  related_fields: []
+- name: GTIM
+  status: supported
+  bus_clock: PCLK
+  kernel_clock:
+    clock: PCLK
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN1
+    field: GTIM
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST1
+    field: GTIM
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3859-3860
+      claim: SYSCTRL.APBEN1.GTIM is bit 1.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2470-2474
+      claim: 'SYSCTRL.APBEN1.GTIM: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3894-3895
+      claim: SYSCTRL.APBRST1.GTIM is bit 1.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2602-2606
+      claim: 'SYSCTRL.APBRST1.GTIM: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2470-2474
+      claim: 'SYSCTRL.APBEN1.GTIM: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2470-2474
+      claim: 'SYSCTRL.APBEN1.GTIM: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2602-2606
+      claim: 'SYSCTRL.APBRST1.GTIM: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes:
+  - PCLK is the internal timer source. External-count/slave-trigger modes and prescalers remain peripheral-local
+    configuration.
+  related_fields: []
+- name: I2C
+  status: supported
+  bus_clock: PCLK
+  kernel_clock:
+    clock: PCLK
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN1
+    field: I2C
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST1
+    field: I2C
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3851-3852
+      claim: SYSCTRL.APBEN1.I2C is bit 11.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2448-2452
+      claim: 'SYSCTRL.APBEN1.I2C: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3886-3887
+      claim: SYSCTRL.APBRST1.I2C is bit 11.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2580-2584
+      claim: 'SYSCTRL.APBRST1.I2C: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2448-2452
+      claim: 'SYSCTRL.APBEN1.I2C: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2448-2452
+      claim: 'SYSCTRL.APBEN1.I2C: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2580-2584
+      claim: 'SYSCTRL.APBRST1.I2C: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes: []
+  related_fields: []
+- name: IWDT
+  status: supported
+  bus_clock: PCLK
+  kernel_clock:
+    clock: RC10K
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN1
+    field: IWDT
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST1
+    field: IWDT
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3855-3856
+      claim: SYSCTRL.APBEN1.IWDT is bit 5.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2460-2464
+      claim: 'SYSCTRL.APBEN1.IWDT: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3890-3891
+      claim: SYSCTRL.APBRST1.IWDT is bit 5.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2592-2596
+      claim: 'SYSCTRL.APBRST1.IWDT: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2460-2464
+      claim: 'SYSCTRL.APBEN1.IWDT: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 8289-8292
+      claim: IWDT count clock is dedicated internal RC10K, independent of PCLK interface clock.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2460-2464
+      claim: 'SYSCTRL.APBEN1.IWDT: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2592-2596
+      claim: 'SYSCTRL.APBRST1.IWDT: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes:
+  - SYSCTRL gate controls configuration interface only; it does not gate the independently running watchdog
+    counter.
+  related_fields: []
+- name: LVD
+  status: partial
+  bus_clock: PCLK
+  kernel_clock:
+    mux:
+      peripheral: LVD
+      register: CR1
+      field: FLTCLK
+  reset_status: no-controller-reset
+  evidence:
+    enable_absence:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2401-2440
+      claim: Complete gate-register field table; this block has no independently named gate.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2441-2484
+      claim: Complete gate-register field table; this block has no independently named gate.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2485-2532
+      claim: Complete gate-register field table; this block has no independently named gate.
+    reset_absence:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2533-2572
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2573-2616
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2617-2664
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 15904-15908
+      claim: LVD filter chooses HSIOSC or RC150K; SDK HSI-named constant must not be interpreted as divided
+        system HSI.
+    reset_status:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2533-2572
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2573-2616
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2617-2664
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+  blockers:
+  - No corresponding independent SYSCTRL peripheral-clock-enable field in the complete documented AHBEN/APBEN1/APBEN2
+    tables.
+  - LVD optional filter source is local; no independent SYSCTRL gate/reset and no representable upstream
+    scoped mux.
+  notes:
+  - no-controller-reset means no independently named SYSCTRL reset, not proof that system reset or another
+    shared reset cannot affect this block.
+  related_fields: []
+  kernel_sources:
+  - RC150K
+  - HSIOSC
+- name: RAM
+  status: partial
+  reset_status: no-controller-reset
+  evidence:
+    enable_absence:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2401-2440
+      claim: Complete gate-register field table; this block has no independently named gate.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2441-2484
+      claim: Complete gate-register field table; this block has no independently named gate.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2485-2532
+      claim: Complete gate-register field table; this block has no independently named gate.
+    reset_absence:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2533-2572
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2573-2616
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2617-2664
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    reset_status:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2533-2572
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2573-2616
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2617-2664
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+  blockers:
+  - No corresponding independent SYSCTRL peripheral-clock-enable field in the complete documented AHBEN/APBEN1/APBEN2
+    tables.
+  - No independent peripheral kernel clock established for this register block; do not infer from base
+    address or SRAM CPU-access clock.
+  notes:
+  - no-controller-reset means no independently named SYSCTRL reset, not proof that system reset or another
+    shared reset cannot affect this block.
+  related_fields: []
+- name: SPI
+  status: supported
+  bus_clock: PCLK
+  kernel_clock:
+    clock: PCLK
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN2
+    field: SPI
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST2
+    field: SPI
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3844-3845
+      claim: SYSCTRL.APBEN2.SPI is bit 8.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2506-2510
+      claim: 'SYSCTRL.APBEN2.SPI: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3879-3880
+      claim: SYSCTRL.APBRST2.SPI is bit 8.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2638-2642
+      claim: 'SYSCTRL.APBRST2.SPI: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2506-2510
+      claim: 'SYSCTRL.APBEN2.SPI: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2506-2510
+      claim: 'SYSCTRL.APBEN2.SPI: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2638-2642
+      claim: 'SYSCTRL.APBRST2.SPI: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes: []
+  related_fields: []
+- name: SYSCTRL
+  status: partial
+  reset_status: no-controller-reset
+  evidence:
+    enable_absence:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2401-2440
+      claim: Complete gate-register field table; this block has no independently named gate.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2441-2484
+      claim: Complete gate-register field table; this block has no independently named gate.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2485-2532
+      claim: Complete gate-register field table; this block has no independently named gate.
+    reset_absence:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2533-2572
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2573-2616
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2617-2664
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    reset_status:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2533-2572
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2573-2616
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2617-2664
+      claim: Complete reset-register field table; this block has no independently named controller reset.
+  blockers:
+  - No corresponding independent SYSCTRL peripheral-clock-enable field in the complete documented AHBEN/APBEN1/APBEN2
+    tables.
+  - No independent peripheral kernel clock established for this register block; do not infer from base
+    address or SRAM CPU-access clock.
+  notes:
+  - no-controller-reset means no independently named SYSCTRL reset, not proof that system reset or another
+    shared reset cannot affect this block.
+  related_fields: []
+- name: UART1
+  status: partial
+  bus_clock: PCLK
+  kernel_clock:
+    mux:
+      peripheral: UART1
+      register: CR2
+      field: SOURCE
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN2
+    field: UART1
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST2
+    field: UART1
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3842-3843
+      claim: SYSCTRL.APBEN2.UART1 is bit 9.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2502-2506
+      claim: 'SYSCTRL.APBEN2.UART1: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3877-3878
+      claim: SYSCTRL.APBRST2.UART1 is bit 9.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2634-2638
+      claim: 'SYSCTRL.APBRST2.UART1: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2502-2506
+      claim: 'SYSCTRL.APBEN2.UART1: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: cw32f002/Libraries/inc/cw32f002_uart.h
+      locator: lines 105-108
+      claim: UART transmission clock source options.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 9042-9044
+      claim: UART uses peripheral-local UARTx_CR2.SOURCE selection.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2502-2506
+      claim: 'SYSCTRL.APBEN2.UART1: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2634-2638
+      claim: 'SYSCTRL.APBRST2.UART1: 0 holds module in reset, 1 allows normal operation.'
+  blockers:
+  - Upstream Rcc mux field lacks peripheral scope; UART.CR2.SOURCE is not a SYSCTRL register field.
+  notes: []
+  related_fields: []
+  kernel_sources:
+  - PCLK
+  - LSI
+- name: UART2
+  status: partial
+  bus_clock: PCLK
+  kernel_clock:
+    mux:
+      peripheral: UART2
+      register: CR2
+      field: SOURCE
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN1
+    field: UART2
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST1
+    field: UART2
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3853-3854
+      claim: SYSCTRL.APBEN1.UART2 is bit 7.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2454-2458
+      claim: 'SYSCTRL.APBEN1.UART2: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3888-3889
+      claim: SYSCTRL.APBRST1.UART2 is bit 7.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2586-2590
+      claim: 'SYSCTRL.APBRST1.UART2: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2454-2458
+      claim: 'SYSCTRL.APBEN1.UART2: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: cw32f002/Libraries/inc/cw32f002_uart.h
+      locator: lines 105-108
+      claim: UART transmission clock source options.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 9042-9044
+      claim: UART uses peripheral-local UARTx_CR2.SOURCE selection.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2454-2458
+      claim: 'SYSCTRL.APBEN1.UART2: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2586-2590
+      claim: 'SYSCTRL.APBRST1.UART2: 0 holds module in reset, 1 allows normal operation.'
+  blockers:
+  - Upstream Rcc mux field lacks peripheral scope; UART.CR2.SOURCE is not a SYSCTRL register field.
+  notes: []
+  related_fields: []
+  kernel_sources:
+  - PCLK
+  - LSI
+- name: VC1
+  status: partial
+  bus_clock: PCLK
+  kernel_clock:
+    mux:
+      peripheral: VC1
+      register: CR1
+      field: FLTCLK
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN2
+    field: VC
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST2
+    field: VC
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3846-3847
+      claim: SYSCTRL.APBEN2.VC is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2512-2516
+      claim: 'SYSCTRL.APBEN2.VC: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3881-3882
+      claim: SYSCTRL.APBRST2.VC is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2644-2648
+      claim: 'SYSCTRL.APBRST2.VC: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2512-2516
+      claim: 'SYSCTRL.APBEN2.VC: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 15414-15417
+      claim: 'VC digital-filter source: PCLK or RC150K, selected by VCx_CR1.FLTCLK.'
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2512-2516
+      claim: 'SYSCTRL.APBEN2.VC: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2644-2648
+      claim: 'SYSCTRL.APBRST2.VC: 0 holds module in reset, 1 allows normal operation.'
+    shared_enable_group:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3846-3847
+      claim: SYSCTRL.APBEN2.VC is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2512-2516
+      claim: 'SYSCTRL.APBEN2.VC: 0 disables the configuration clock, 1 enables it.'
+    shared_reset_group:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3881-3882
+      claim: SYSCTRL.APBRST2.VC is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2644-2648
+      claim: 'SYSCTRL.APBRST2.VC: 0 holds module in reset, 1 allows normal operation.'
+  blockers:
+  - Comparator filter is a peripheral-local optional clock mux; upstream Rcc cannot scope it, and analog
+    comparison is not a simple synchronous PCLK kernel.
+  notes:
+  - SYSCTRL VC gate/reset covers the comparator module; VC1 and VC2 are not independently gateable/resettable
+    here.
+  related_fields: []
+  shared_enable_group: VC1-VC2
+  shared_reset_group: VC1-VC2
+  kernel_sources:
+  - RC150K
+  - PCLK
+- name: VC2
+  status: partial
+  bus_clock: PCLK
+  kernel_clock:
+    mux:
+      peripheral: VC2
+      register: CR1
+      field: FLTCLK
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN2
+    field: VC
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST2
+    field: VC
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3846-3847
+      claim: SYSCTRL.APBEN2.VC is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2512-2516
+      claim: 'SYSCTRL.APBEN2.VC: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3881-3882
+      claim: SYSCTRL.APBRST2.VC is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2644-2648
+      claim: 'SYSCTRL.APBRST2.VC: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2512-2516
+      claim: 'SYSCTRL.APBEN2.VC: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 15414-15417
+      claim: 'VC digital-filter source: PCLK or RC150K, selected by VCx_CR1.FLTCLK.'
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2512-2516
+      claim: 'SYSCTRL.APBEN2.VC: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2644-2648
+      claim: 'SYSCTRL.APBRST2.VC: 0 holds module in reset, 1 allows normal operation.'
+    shared_enable_group:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3846-3847
+      claim: SYSCTRL.APBEN2.VC is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2512-2516
+      claim: 'SYSCTRL.APBEN2.VC: 0 disables the configuration clock, 1 enables it.'
+    shared_reset_group:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3881-3882
+      claim: SYSCTRL.APBRST2.VC is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2644-2648
+      claim: 'SYSCTRL.APBRST2.VC: 0 holds module in reset, 1 allows normal operation.'
+  blockers:
+  - Comparator filter is a peripheral-local optional clock mux; upstream Rcc cannot scope it, and analog
+    comparison is not a simple synchronous PCLK kernel.
+  notes:
+  - SYSCTRL VC gate/reset covers the comparator module; VC1 and VC2 are not independently gateable/resettable
+    here.
+  related_fields: []
+  shared_enable_group: VC1-VC2
+  shared_reset_group: VC1-VC2
+  kernel_sources:
+  - RC150K
+  - PCLK
+- name: WWDT
+  status: supported
+  bus_clock: PCLK
+  kernel_clock:
+    clock: PCLK
+  enable:
+    peripheral: SYSCTRL
+    register: APBEN1
+    field: WWDT
+  reset:
+    peripheral: SYSCTRL
+    register: APBRST1
+    field: WWDT
+  reset_status: verified-field
+  enable_active_value: 1
+  reset_asserted_value: 0
+  evidence:
+    enable:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3857-3858
+      claim: SYSCTRL.APBEN1.WWDT is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2464-2468
+      claim: 'SYSCTRL.APBEN1.WWDT: 0 disables the configuration clock, 1 enables it.'
+    reset:
+    - source_id: cw32f002/Libraries/inc/cw32f002.h
+      locator: lines 3892-3893
+      claim: SYSCTRL.APBRST1.WWDT is bit 4.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2596-2600
+      claim: 'SYSCTRL.APBRST1.WWDT: 0 holds module in reset, 1 allows normal operation.'
+    bus_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 1519-1524
+      claim: HCLK is the high-performance-bus source used for configuration and work; PCLK is derived
+        from HCLK for timers, SPI and I2C.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 781-829
+      claim: Vendor bus architecture directly identifies AHB and APB-connected blocks.
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2464-2468
+      claim: 'SYSCTRL.APBEN1.WWDT: 0 disables the configuration clock, 1 enables it.'
+    kernel_clock:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 8706-8708
+      claim: WWDT count-clock source is PCLK, divided by the peripheral prescaler.
+    enable_active_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2464-2468
+      claim: 'SYSCTRL.APBEN1.WWDT: 0 disables the configuration clock, 1 enables it.'
+    reset_asserted_value:
+    - source_id: CW32F002_UserManual_CN_V1.4.txt
+      locator: lines 2596-2600
+      claim: 'SYSCTRL.APBRST1.WWDT: 0 holds module in reset, 1 allows normal operation.'
+  blockers: []
+  notes: []
+  related_fields: []
+limitations:
+- All verified SYSCTRL peripheral-reset controls assert low (write 0) and release high (write 1). Upstream
+  Rcc field references cannot encode polarity; consumers must read this sidecar rather than use active-high
+  STM32 reset assumptions.
+- APBEN1/APBEN2 are register banks for one PCLK, not evidence for PCLK1/PCLK2.
+- Scoped peripheral-local muxes cannot be represented faithfully by upstream unscoped Rcc::Mux Field.
+  Such records are partial and must not be emitted with a fabricated fixed PCLK.
+- Kernel fixed-clock facts denote input source before peripheral prescalers, baud dividers, timer count-mode
+  routing, or optional digital filters; they are not guaranteed counter/output frequencies.
+- CW32 documents Sleep and DeepSleep; upstream Stop1/Stop2/Standby enum is not directly vendor-backed.
+  Apply an explicitly documented conservative software policy if emitting Rcc.
+- Shared gates/reset lines require shared ownership or reference counting. Resetting one member can affect
+  all members.

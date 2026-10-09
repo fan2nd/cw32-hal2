@@ -1,0 +1,494 @@
+schema_version: 1
+profile: CW32W031
+kind: pwm
+status: verified-sdk-and-datasheet
+register_version: v1
+alias_pin_policy: common-package-intersection
+sources:
+  datasheet:
+    file: CW32W031_DataSheet_CN_V1.3.pdf
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_id: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+    url: https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  reference_manual:
+    file: CW32W031_UserManual_CN_V1.4.pdf
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_id: vendor:CW32W031_UserManual_CN_V1.4.pdf
+    url: https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  gpio_header:
+    file: cw32w031/Libraries/inc/cw32w031_gpio.h
+    sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+    source_id: member:cw32w031/Libraries/inc/cw32w031_gpio.h
+    url: https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip
+    source_ref: member:cw32w031/Libraries/inc/cw32w031_gpio.h
+  sdk_archive:
+    file: CW32W031_StandardPeripheralLib_V1.3.zip
+    sha256: 1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337
+    source_id: vendor:CW32W031_StandardPeripheralLib_V1.3.zip
+    url: https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip
+    source_ref: vendor:CW32W031_StandardPeripheralLib_V1.3.zip
+  pinouts:
+    file: cw32-data/pinouts/cw32w031.yaml
+    sha256: 59959e2318af35d3415191686c9aacfd81036bdfe33b9907602bed103de74530
+  sdk_candidates:
+    file: cw32-data/af/cw32w031.yaml
+    sha256: da60583cd880d4dd34bd6a3e32e84e4e51d52536f147d4cc3e37df0f4d2429ed
+datasheet:
+  file: CW32W031_DataSheet_CN_V1.3.pdf
+  sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+  source_id: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  url: https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf
+  af_evidence: 'Own-family numbered datasheet/manual AF columns and exact SDK assignments; reproducible
+    evidence: docs/atim-pwm-route-evidence.json'
+  source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+selector_capability:
+  min: 1
+  max: 7
+  pdf_printed_page_offset: 1
+  evidence: Own numbered datasheet and reference-manual AF grids, corroborated against exact SDK macro
+    assignments.
+routes:
+- pin: PA10
+  af: 7
+  function: ATIMCH3A
+  source_macro: PA10_AFx_ATIMCH3A
+  source_line: 973
+  gpio_register: AFRH
+  gpio_field: AFR10
+  peripheral: ATIM
+  signal: CH3A
+  source_signal: CH3A
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA10
+    af: 7
+    function: ATIM_CH3A
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  manual_cell:
+    pin: PA10
+    af: 7
+    function: ATIM_CH3A
+    table: own-manual GPIO AF allocation
+    pdf_page: 142
+    printed_page: 141
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  pin_cell:
+    pin: PA10
+    pdf_page: 28
+    positions:
+      QFN64: '24'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '24'
+  oscillator_aliases: []
+- pin: PA3
+  af: 7
+  function: ATIMCH3A
+  source_macro: PA03_AFx_ATIMCH3A
+  source_line: 920
+  gpio_register: AFRL
+  gpio_field: AFR3
+  peripheral: ATIM
+  signal: CH3A
+  source_signal: CH3A
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA3
+    af: 7
+    function: ATIM_CH3A
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  manual_cell:
+    pin: PA3
+    af: 7
+    function: ATIM_CH3A
+    table: own-manual GPIO AF allocation
+    pdf_page: 142
+    printed_page: 141
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  pin_cell:
+    pin: PA3
+    pdf_page: 27
+    positions:
+      QFN64: '7'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '7'
+  oscillator_aliases: []
+- pin: PA4
+  af: 7
+  function: ATIMCH2A
+  source_macro: PA04_AFx_ATIMCH2A
+  source_line: 927
+  gpio_register: AFRL
+  gpio_field: AFR4
+  peripheral: ATIM
+  signal: CH2A
+  source_signal: CH2A
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA4
+    af: 7
+    function: ATIM_CH2A
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  manual_cell:
+    pin: PA4
+    af: 7
+    function: ATIM_CH2A
+    table: own-manual GPIO AF allocation
+    pdf_page: 142
+    printed_page: 141
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  pin_cell:
+    pin: PA4
+    pdf_page: 27
+    positions:
+      QFN64: '8'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '8'
+  oscillator_aliases: []
+- pin: PA5
+  af: 7
+  function: ATIMCH1A
+  source_macro: PA05_AFx_ATIMCH1A
+  source_line: 934
+  gpio_register: AFRL
+  gpio_field: AFR5
+  peripheral: ATIM
+  signal: CH1A
+  source_signal: CH1A
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA5
+    af: 7
+    function: ATIM_CH1A
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  manual_cell:
+    pin: PA5
+    af: 7
+    function: ATIM_CH1A
+    table: own-manual GPIO AF allocation
+    pdf_page: 142
+    printed_page: 141
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  pin_cell:
+    pin: PA5
+    pdf_page: 27
+    positions:
+      QFN64: '9'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '9'
+  oscillator_aliases: []
+- pin: PA8
+  af: 7
+  function: ATIMCH1A
+  source_macro: PA08_AFx_ATIMCH1A
+  source_line: 957
+  gpio_register: AFRH
+  gpio_field: AFR8
+  peripheral: ATIM
+  signal: CH1A
+  source_signal: CH1A
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA8
+    af: 7
+    function: ATIM_CH1A
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  manual_cell:
+    pin: PA8
+    af: 7
+    function: ATIM_CH1A
+    table: own-manual GPIO AF allocation
+    pdf_page: 142
+    printed_page: 141
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  pin_cell:
+    pin: PA8
+    pdf_page: 28
+    positions:
+      QFN64: '22'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '22'
+  oscillator_aliases: []
+- pin: PA9
+  af: 7
+  function: ATIMCH2A
+  source_macro: PA09_AFx_ATIMCH2A
+  source_line: 965
+  gpio_register: AFRH
+  gpio_field: AFR9
+  peripheral: ATIM
+  signal: CH2A
+  source_signal: CH2A
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PA9
+    af: 7
+    function: ATIM_CH2A
+    table: 5-3
+    pdf_page: 31
+    printed_page: 30
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  manual_cell:
+    pin: PA9
+    af: 7
+    function: ATIM_CH2A
+    table: own-manual GPIO AF allocation
+    pdf_page: 142
+    printed_page: 141
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  pin_cell:
+    pin: PA9
+    pdf_page: 28
+    positions:
+      QFN64: '23'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '23'
+  oscillator_aliases: []
+- pin: PB10
+  af: 7
+  function: ATIMCH2A
+  source_macro: PB10_AFx_ATIMCH2A
+  source_line: 1079
+  gpio_register: AFRH
+  gpio_field: AFR10
+  peripheral: ATIM
+  signal: CH2A
+  source_signal: CH2A
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB10
+    af: 7
+    function: ATIM_CH2A
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  manual_cell:
+    pin: PB10
+    af: 7
+    function: ATIM_CH2A
+    table: own-manual GPIO AF allocation
+    pdf_page: 142
+    printed_page: 141
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  pin_cell:
+    pin: PB10
+    pdf_page: 27
+    positions:
+      QFN64: '15'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '15'
+  oscillator_aliases: []
+- pin: PB11
+  af: 7
+  function: ATIMCH3A
+  source_macro: PB11_AFx_ATIMCH3A
+  source_line: 1085
+  gpio_register: AFRH
+  gpio_field: AFR11
+  peripheral: ATIM
+  signal: CH3A
+  source_signal: CH3A
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB11
+    af: 7
+    function: ATIM_CH3A
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  manual_cell:
+    pin: PB11
+    af: 7
+    function: ATIM_CH3A
+    table: own-manual GPIO AF allocation
+    pdf_page: 142
+    printed_page: 141
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  pin_cell:
+    pin: PB11
+    pdf_page: 28
+    positions:
+      QFN64: '16'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '16'
+  oscillator_aliases: []
+- pin: PB2
+  af: 7
+  function: ATIMCH1A
+  source_macro: PB02_AFx_ATIMCH1A
+  source_line: 1026
+  gpio_register: AFRL
+  gpio_field: AFR2
+  peripheral: ATIM
+  signal: CH1A
+  source_signal: CH1A
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB2
+    af: 7
+    function: ATIM_CH1A
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  manual_cell:
+    pin: PB2
+    af: 7
+    function: ATIM_CH1A
+    table: own-manual GPIO AF allocation
+    pdf_page: 142
+    printed_page: 141
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  pin_cell:
+    pin: PB2
+    pdf_page: 27
+    positions:
+      QFN64: '14'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '14'
+  oscillator_aliases: []
+- pin: PB7
+  af: 7
+  function: ATIMCH3A
+  source_macro: PB07_AFx_ATIMCH3A
+  source_line: 1059
+  gpio_register: AFRL
+  gpio_field: AFR7
+  peripheral: ATIM
+  signal: CH3A
+  source_signal: CH3A
+  source_kind: sdk-and-datasheet
+  source_sha256: 1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc
+  datasheet_cell:
+    pin: PB7
+    af: 7
+    function: ATIM_CH3A
+    table: 5-4
+    pdf_page: 32
+    printed_page: 31
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  manual_cell:
+    pin: PB7
+    af: 7
+    function: ATIM_CH3A
+    table: own-manual GPIO AF allocation
+    pdf_page: 142
+    printed_page: 141
+    sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+    source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+  pin_cell:
+    pin: PB7
+    pdf_page: 29
+    positions:
+      QFN64: '53'
+    pin_type: I/O
+    sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+    source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+  package_pins:
+    CW32W031R8U6: '53'
+  oscillator_aliases: []
+excluded_routes:
+- pin: PB5
+  af: 7
+  reason: missing-own-source-corroboration
+  datasheet: null
+  manual: null
+  sdk:
+    pin: PB5
+    af: 7
+    function: ATIMCH1A
+    source_macro: PB05_AFx_ATIMCH1A
+    source_line: 1047
+    gpio_register: AFRL
+    gpio_field: AFR5
+    peripheral: ATIM
+    signal: CH1A
+- pin: PB6
+  af: 7
+  reason: missing-own-source-corroboration
+  datasheet: null
+  manual: null
+  sdk:
+    pin: PB6
+    af: 7
+    function: ATIMCH2A
+    source_macro: PB06_AFx_ATIMCH2A
+    source_line: 1053
+    gpio_register: AFRL
+    gpio_field: AFR6
+    peripheral: ATIM
+    signal: CH2A
+scope: ATIM main CH1A–3A on classic or CH1–4 on buffered IP; complementary and advanced modes withheld.

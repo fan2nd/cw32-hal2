@@ -1,0 +1,122 @@
+schema_version: 1
+spi_metadata: cw32-data/spi.yaml
+source:
+  path: sources/vendor/CW32L052.svd
+  sha256: 78920e75111aa9845d9f66a2f305f96ec5577cde8c52543f0fa1d708e53867c7
+  url: https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip
+  source_ref: member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/SVD/CW32L052.svd
+expected_svd_name: CW32L052
+core: cm0p
+die: CW32L052
+chip_prefix: CW32L052
+gpio_dir_pin_fields: false
+register_aliases: []
+supplemental_interrupts: []
+family: CW32L0
+line: CW32L052
+register_version: cw32l052_v1
+nvic_priority_bits: 2
+nvic_priority_bits_evidence: Official CW32L052 SDK Libraries/inc header __NVIC_PRIO_BITS=2; SHA256 7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1
+chips:
+- name: CW32L052
+  memory: []
+parts_catalog: cw32-data/parts.yaml
+register_versions:
+  adc: cw32l052_v1
+  atim: cw32l052_v1
+  autotrim: cw32l052_v1
+  btim: cw32l052_v1
+  crc: cw32l052_v1
+  dma: cw32l031_v1
+  dmachannel: v1
+  flash: cw32l031_v1
+  gpio: cw32l052_v1
+  gtim: cw32l052_v1
+  i2c: cw32l031_v1
+  iwdt: cw32l031_v1
+  lcd: cw32l052_v1
+  lptim: cw32l010_v1
+  lvd: cw32l031_v1
+  ram: cw32l031_v1
+  rtc: cw32l052_v1
+  spi: cw32l031_v1
+  sysctrl: cw32l052_v1
+  uart: cw32l052_v1
+  vc: cw32l031_v1
+  wwdt: cw32l031_v1
+pinout_metadata: cw32-data/pinouts/cw32l052.yaml
+alias_pin_policy: common-package-intersection
+dma_metadata: cw32-data/dma/cw32l052.yaml
+clock_metadata: cw32-data/clock/cw32l052.yaml
+af_metadata: cw32-data/af/cw32l052-serial.yaml
+register_overrides:
+- block: GPIO
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32L052 User Manual CN V1.5 section 9.6.12, printed page 154/PDF page 155: GPIOx_ISR at
+    offset 0x34 is RO for x=A,B,C,D,F. Access-only correction; existing register width and fieldsets unchanged.
+    PDF SHA256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41. https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf'
+- block: GTIM
+  register: ISR
+  expected_access: ReadWrite
+  access: Read
+  evidence: 'CW32L052 User Manual CN V1.5 section 15.8.13, printed page 277/PDF page 278: GTIM ISR at
+    offset 0x318 marks every defined status field RO; flags clear through the separate ICR. Access-only
+    correction; widths, offsets and fields unchanged. PDF SHA256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41.
+    https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf'
+analog_metadata: cw32-data/af/cw32l052-analog.yaml
+field_removals:
+- fieldset: COMPEN
+  field: FREQ
+  expected_bit_offset: 16
+  expected_bit_size: 4
+  evidence: 'Own CW32L052 User Manual CN V1.5 section 12.5.5, printed page 194/PDF page 195: RTC_COMPEN
+    bits31:16 are reserved. Remove obsolete SVD FREQ bits19:16 only; lower sixteen bits and SOURCE HSE
+    dividers remain valid. PDF SHA256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41.
+    https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf'
+pwm_metadata: cw32-data/af/cw32l052-pwm.yaml
+atim_pwm_metadata: cw32-data/af/cw32l052-atim-pwm.yaml
+gpio_interrupt_metadata: cw32-data/gpio-interrupt.yaml
+electrical_metadata: cw32-data/electrical.yaml
+comparator_metadata: cw32-data/af/cw32l052-comparator.yaml
+field_width_overrides:
+- block: RAM
+  fieldset: ADDR
+  field: ADDR
+  expected_bit_offset: 0
+  expected_bit_size: 14
+  bit_size: 32
+  evidence: 'CW32L052 own 1.5 manual section 6.6.1, printed page 109/PDF page 110: RAM_ADDR is full absolute
+    bits31:0, reset 0x20000000. Correct the source SVD 14-bit truncation only. https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf
+    PDF SHA256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41. See docs/ram-parity-evidence.json.'
+register_removals:
+- block: LCD
+  register: RAM9
+  expected_byte_offset: 100
+  expected_fieldset: RAM9
+  evidence: 'Own CW32L052 UM V1.5 Table 26-9 printed p550/PDF p551 and §26.7.6–15 pp556–557: only RAM0–8
+    and RAM13 documented; RAM9–12 are unsupported SVD/SDK copy artifacts. https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf
+    SHA256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41'
+- block: LCD
+  register: RAM10
+  expected_byte_offset: 104
+  expected_fieldset: RAM10
+  evidence: 'Own CW32L052 UM V1.5 Table 26-9 printed p550/PDF p551 and §26.7.6–15 pp556–557: only RAM0–8
+    and RAM13 documented; RAM9–12 are unsupported SVD/SDK copy artifacts. https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf
+    SHA256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41'
+- block: LCD
+  register: RAM11
+  expected_byte_offset: 108
+  expected_fieldset: RAM11
+  evidence: 'Own CW32L052 UM V1.5 Table 26-9 printed p550/PDF p551 and §26.7.6–15 pp556–557: only RAM0–8
+    and RAM13 documented; RAM9–12 are unsupported SVD/SDK copy artifacts. https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf
+    SHA256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41'
+- block: LCD
+  register: RAM12
+  expected_byte_offset: 112
+  expected_fieldset: RAM12
+  evidence: 'Own CW32L052 UM V1.5 Table 26-9 printed p550/PDF p551 and §26.7.6–15 pp556–557: only RAM0–8
+    and RAM13 documented; RAM9–12 are unsupported SVD/SDK copy artifacts. https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf
+    SHA256 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41'
+classic_adc_scan_metadata: cw32-data/classic-adc-scans.yaml
