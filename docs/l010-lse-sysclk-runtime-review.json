@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-10T08:14:09.401681+00:00",
+  "decision": "accept_frozen_runtime_source_v2",
+  "open_material_findings": [],
+  "scope": [
+    "CW32L010F8P6",
+    "CW32L010F8U6",
+    "CW32L010Y8M6"
+  ],
+  "design": {
+    "path": "external-evidence/stage61-design/l010-lse-sysclk-design.md",
+    "sha256": "5106016cacafe1a67195f2a6c5a3537a0919a2eb0e22df3f30adfa3f5f978037"
+  },
+  "baseline": "external-evidence/stage60-baseline/source",
+  "reviewed_files": [
+    {
+      "path": "embassy-cw32/src/rcc/l010_l011.rs",
+      "sha256": "71a09a1893cb2e7a25f9e2e586aac44dcf1754948de63ed3ed73005728674799"
+    },
+    {
+      "path": "docs/l010-lse-sysclk.md",
+      "sha256": "b4f9601cd48a97dbec5e41d8484152f0e30c30535d482bbef7f966b7dab890ff"
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "35d9e73d810550093f80636cfbe03a3955643d0e3164853562c55d09a88decde"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/lse_native_low_power.rs",
+      "sha256": "0259c1b0d7d53fcf8c9f5a97e78b3905ae6164a309a537a7aeb6ce0deb727c5f"
+    }
+  ],
+  "checks": [
+    {
+      "id": "exact_three_target",
+      "result": "pass_source_review",
+      "finding": "all(cw32l010, rcc_lse) and exact-package build admission exclude generic L010/L011/L012. Own SYSCLK selector is 4."
+    },
+    {
+      "id": "bounded_fallback",
+      "result": "pass_source_review",
+      "finding": "Own fixed HSI 4 MHz with factory +/-2% gives 3.92..4.08 MHz; full upper bound checks both bus ceilings without divisor credit. Requested HSI and declared LSE bounds remain separately checked."
+    },
+    {
+      "id": "latched_first_lsi_request",
+      "result": "pass_source_review",
+      "finding": "Original entry-nonstable classification persists through both consumer passes, including needs_lsi without retrim; later STABLE cannot erase it."
+    },
+    {
+      "id": "consumer_irq_admission",
+      "result": "pass_source_review",
+      "finding": "Before mutation and at LSI request edge: RTC2/reserved, UART1/2 source3, enabled LPTIM3, MCO4, LSIRDY and enabled LSI-filtered VC/LVD reject. Held-reset domains reject; configuration gates restore with distinct enable/restore diagnostics."
+    },
+    {
+      "id": "owned_wait_readmission",
+      "result": "pass_source_review",
+      "finding": "Initial native preflight precedes the first gate. After owned WAIT1 readback, typed FLASHWAIT-only normalization proves original non-WAIT CR2, IER/MCO, LSE and LSI TRIM/WAIT before and after fresh native Admission, before source mutation."
+    },
+    {
+      "id": "monitor_inheritance",
+      "result": "pass_source_review",
+      "finding": "Original stable-LSI fact is retained for monitored mode; fresh Admission cannot manufacture inheritance. Native inherited-legal L010 monitoring, exact reuse and marker checks remain unchanged."
+    },
+    {
+      "id": "hsi_rtc_hse_ownership",
+      "result": "pass_source_review",
+      "finding": "Existing HSI/LSI calibration bridge and RTC SOURCE3 factory-ready admission remain; target HSI start/restart/unready admission rejects raw MCO3/HSIRDY. LSI parameters and original request, HSE policy and pad reservations are preserved as specified."
+    },
+    {
+      "id": "single_final_lse_switch",
+      "result": "pass_source_review",
+      "finding": "WAIT1 and guarded calibrated HSI precede final dividers; one final LSE mux write follows. No later CR0 or oscillator source write occurs."
+    },
+    {
+      "id": "flash_fault_marker_pad_freeze",
+      "result": "pass_source_review",
+      "finding": "Final Flash covers declared LSE HCLK, requested HSI HCLK and full fixed fallback. Fault-first source/policy/monitor/mux checks surround WAIT lowering and final pad inspection, before the sole CLOCKS publication."
+    },
+    {
+      "id": "failure_and_pad_contract",
+      "result": "pass_source_review",
+      "finding": "No borrowed flag clearing, route rollback or release of inherited/requested monotonic reservations. GPIOB work-gate progress, native RTC output handover, partial failure and source-loss limits are explicit."
+    },
+    {
+      "id": "public_entry_and_time_driver",
+      "result": "pass_source_review",
+      "finding": "Approved lib.rs insertion is exact; removing it restores baseline bytes. Existing 1 MHz time-driver rejection remains before Peripherals::take and RCC MMIO."
+    },
+    {
+      "id": "previous_path_isolation",
+      "result": "pass_source_review",
+      "finding": "82 of 84 baseline HAL src files are byte-identical; remaining changes are target runtime and public documentation. Native LSE leaf is identical. Added runtime branches short-circuit for non-LSE targets and preserve old tail/error behavior."
+    }
+  ],
+  "resolved_findings": [
+    "Native new-LSE RTC SOURCE0 handover now requires disconnected or inactive dependent RTC_OUT/RTC_1Hz observers; temporary-LSI/GPIO progress permission is separate.",
+    "V2 changes exactly two nonexistent FilterClock::Lsi references to typed InternalRc encoding 0. Reversing them reproduces v1 SHA-256 ae47bfd745b582455060bd6c766bc3f7b4780e69148e5fca49fc96bf0001c1e8. Failed v1 remains retained and is not accepted."
+  ],
+  "evidence": [
+    "external-evidence/stage61-design/consumer-audit/full-design-review.json",
+    "external-evidence/stage61-runtime/runtime/runtime-change-receipt.json",
+    "external-evidence/stage61-runtime/runtime/runtime-v2-minimal.diff",
+    "external-evidence/stage61-runtime/runtime/lib-init-docs.patch",
+    "external-evidence: CW32L010 User Manual CN V1.2, PDF52-59/63/67-84/87/114/139/152/200/202/234/281/311/377/420",
+    "external-evidence: CW32L010 Datasheet CN V1.3, PDF32/40/42/43"
+  ],
+  "limits": {
+    "method": "Independent source/document review, original-source corroboration, byte comparison and hashing; no code changes or firmware execution.",
+    "builds_run_by_reviewer": false,
+    "hal_tests_probes_harnesses": false,
+    "simulation": false,
+    "hardware": false,
+    "separate_build_elf_correspondence_required": true,
+    "not_established": [
+      "Physical incoming clock legality or waveform/jitter",
+      "Crystal startup distribution or runtime availability",
+      "Flash alias timing or fallback register effects",
+      "Source-loss continuity or whole-HAL soundness"
+    ],
+    "prior_paths": "Source isolation is checked; exhaustive behavioral equivalence of every prior 16 system and 23 auxiliary profile is not claimed."
+  }
+}

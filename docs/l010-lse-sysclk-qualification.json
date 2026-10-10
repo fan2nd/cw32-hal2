@@ -1,0 +1,245 @@
+{
+  "schema_version": 1,
+  "scope": "Init-only nominal 32768 Hz LSE SYSCLK on exactly three CW32L010 packages, using Config.lse and the unchanged native low-power oscillator admission. Generic L010, L011 and L012 are excluded. Source qualification only; no hardware validation.",
+  "parts": [
+    "CW32L010F8P6",
+    "CW32L010F8U6",
+    "CW32L010Y8M6"
+  ],
+  "sysclk_detector": {
+    "lse_edges": 128,
+    "lsi_cycles": 256,
+    "margin_lse_edges": 1
+  },
+  "sysclk_selector": 4,
+  "hardware_count_source": "Own RM PDF59/68: fewer than 128 LSE edges in 256 LSI cycles detects running failure when LSECCS is enabled.",
+  "margin_source": "Software policy adds one edge: minimum_LSE_hz * 256 > 129 * 36080, using the board individual-cycle lower bound. It is not a hardware threshold or a measured LSI guarantee.",
+  "native_lsi_reference": {
+    "metadata_source": "lse_configuration.native_low_power",
+    "monitor_reference": "inherited_legal",
+    "lsi_factory_trim_address": null,
+    "maximum_hz": 36080,
+    "detector_lse_edges": 128,
+    "detector_lsi_cycles": 256,
+    "detector_margin_lse_edges": 1,
+    "stable_before_monitored_preflight": true,
+    "software_lsien_required": false,
+    "trim_and_wait_retained": true,
+    "cold_start_does_not_qualify_monitor": true,
+    "basis": "RM PDF56 permits 32.8 kHz +/-10%; DS PDF43 factory +/-3% is a separate condition and is not substituted for inherited legal trim."
+  },
+  "ccs_policy": {
+    "preserve": [
+      "CLKCCS",
+      "HSECCS",
+      "LSELOCK"
+    ],
+    "startup_only_requires_lseccs": false,
+    "monitored_existing_routes_requires_lseccs": true,
+    "automatic_monitor_preparation": false
+  },
+  "fallback": {
+    "metadata_source": "clock_limits.hse.fixed_ccs_hsi_divisor",
+    "fixed_ccs_hsi_divisor": 12,
+    "documented_nominal_hz": 4000000,
+    "modeled_minimum_hz": 3920000,
+    "modeled_maximum_hz": 4080000,
+    "hsi_oscillator_nominal_hz": 48000000,
+    "hsi_factory_error_percent": 2,
+    "conservative_bus_and_flash_maximum_hz": 4080000,
+    "hsi_divider_credit": false,
+    "ahb_divider_credit": false,
+    "apb_divider_credit": false,
+    "hardware_divisor_rewrite_claimed": false,
+    "divisor_retention_proven": false,
+    "applies_when_clkccs_disabled": true,
+    "basis": "RM PDF59/68 documents effective HSI4MHz fallback for detected selected-LSE failure with CLKCCS=1. The existing /12 numerical model and DS PDF43 factory HSI +/-2% give 3.92-4.08MHz after factory trim is established. No HSI.DIV, HSIEN, CR0 or bus-divider post-fault mutation is specified. Qualify full 4.08MHz on both buses without divider credit, even with CLKCCS=0; independently validate requested HSI at final divisors."
+  },
+  "hsi_register": {
+    "factory_trim_address": 1050560,
+    "trim_bit_offset": 0,
+    "trim_bit_size": 11,
+    "div_bit_offset": 11,
+    "div_bit_size": 4,
+    "stable_bit": 15,
+    "has_wait_field": false,
+    "hardware_reset_factory_match_assumed": false
+  },
+  "electrical_limits": {
+    "supply_mv": [
+      1620,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "low_voltage_threshold_mv": 1800,
+    "low_voltage_bus_max_hz": 24000000,
+    "high_voltage_bus_max_hz": 48000000,
+    "flash_wait_step_hz": 24000000,
+    "initial_flash_wait": 1
+  },
+  "flash_fields": {
+    "sysctrl_cr2_flashwait": [
+      8,
+      4,
+      3
+    ],
+    "flash_cr2_wait": [
+      4,
+      0,
+      3
+    ],
+    "sysctrl_ahben_flash": [
+      48,
+      1,
+      1
+    ],
+    "key": 23130,
+    "same_function_documented": true,
+    "alias_timing_measured": false
+  },
+  "transition_policy": "Retain the existing factory-HSI calibration bridge with target-only, latched entry-nonstable LSI first-request admission. Keep LSI TRIM/WAIT unchanged. Raise and verify Flash WAIT1 before source transitions. After the owned WAIT change, prove original non-WAIT CR2, IER, LSE and LSI TRIM/WAIT identity before fresh native admission. Install and verify final divisors under calibrated HSI before the last LSE mux write; perform no subsequent CR0 write. Final Flash planning covers declared LSE HCLK, requested factory HSI HCLK and full 4.08MHz fallback. Publish only after final source, policy, mux/divider and post-pad-window checks.",
+  "cold_lsi_admission": "When the inherited backend will request LSI for needs_trim or needs_lsi and entry LSI was not stable, reject RTC SOURCE2, UART1/2 SOURCE3, enabled LPTIM ICLKSRC3, MCO SOURCE4, LSIRDY enable and enabled analog LSI requesters. Restore exact configuration gates; held reset and gate restoration errors remain visible. These checks do not prove uninspected timer, GPIO, IWDT or external roots idle; the caller must permit or disconnect their progress.",
+  "hsi_ownership": "RTC SOURCE3 requires already enabled, stable, factory-matching HSI. A target HSI start/restart also rejects MCO SOURCE3 and enabled HSIRDY; live factory-matching DIV-only changes preserve raw HSIOSC.",
+  "inherited_own_proofs": [
+    "docs/lse-l010-qualification.json",
+    "docs/lse-l010-rtc-admission.json"
+  ],
+  "auxiliary_projection": "Remove only sysclk_detector, then retain the existing native_low_power to native_l010 historical projection. All prior auxiliary facts and proof hashes remain unchanged.",
+  "lsi_sysclk_qualification": false,
+  "lsi_cycle_timing_qualified": false,
+  "limits": [
+    "StartupOnly loss can stop the CPU with STABLE still set and no failure flag. Poll budgets are CPU iterations only while execution continues.",
+    "Preserved fault routes can affect IRQs, timer capture/brake and external observers before return.",
+    "No frozen-clock validity, RTC continuity, recovery or bounded loss-to-fallback guarantee after source loss.",
+    "No LSI trim write, borrowed-flag clearing, RTC migration, runtime switching, wake/resume or silicon validation."
+  ],
+  "sources": [
+    {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "family": "CW32L010",
+      "pdf_pages_1_based": [
+        52,
+        53,
+        56,
+        57,
+        58,
+        59,
+        63,
+        67,
+        68,
+        69,
+        70,
+        71,
+        74,
+        75,
+        77,
+        78,
+        79,
+        80,
+        81,
+        83,
+        84,
+        87,
+        104,
+        114,
+        124,
+        130,
+        139,
+        140,
+        152,
+        200,
+        202,
+        234,
+        281,
+        311,
+        377,
+        420
+      ],
+      "printed_pages": [
+        51,
+        52,
+        55,
+        56,
+        57,
+        58,
+        62,
+        66,
+        67,
+        68,
+        69,
+        70,
+        73,
+        74,
+        76,
+        77,
+        78,
+        79,
+        80,
+        82,
+        83,
+        86,
+        103,
+        113,
+        123,
+        129,
+        138,
+        139,
+        151,
+        199,
+        201,
+        233,
+        280,
+        310,
+        376,
+        419
+      ]
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+      "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+      "family": "CW32L010",
+      "pdf_pages_1_based": [
+        32,
+        40,
+        42,
+        43
+      ],
+      "printed_pages": [
+        31,
+        39,
+        41,
+        42
+      ]
+    }
+  ],
+  "sdk_corroboration": {
+    "evidence_kind": "external-evidence",
+    "source_ref": "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+    "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+    "members": [
+      {
+        "archive_member": "CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP/SVD/CW32L010.svd",
+        "sha256": "733cc8ff3e186a128342134aee71db1d155e5e2b95ab1c8c8a77054391cb8c66",
+        "bytes": 349237
+      },
+      {
+        "archive_member": "CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h",
+        "sha256": "81d6c37b3920465595b702bdf102e5710c22490efa422207e5148852d719e91f",
+        "bytes": 35109
+      },
+      {
+        "archive_member": "CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/system_cw32l010.c",
+        "sha256": "c608a0fdc119be99c9207641173c715e4885c5d62d32067f8eaf619d76973f1d",
+        "bytes": 2670,
+        "binding": "Member identity is anchored to the locked archive; startup loads HSI and LSI factory trim, which the Rust initializer does not call."
+      }
+    ],
+    "authority_limit": "Selector and startup corroboration only. SDK LSE analog fields and broad helper writes do not override reserved own RM fields or native admission."
+  }
+}

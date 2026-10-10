@@ -182,6 +182,43 @@ pub struct Config {
 /// side-effect-free read. No particular unrelated output-level change is
 /// implied by gate opening.
 ///
+/// On CW32L010F8P6, CW32L010F8U6 and CW32L010Y8M6, selecting LSE SYSCLK
+/// retains factory-calibrated, enabled HSI. Preparing HSI may temporarily request
+/// unchanged LSI, whose inherited TRIM/WAIT and actual frequency must already
+/// satisfy the own legal 32.8 kHz ±10% regime, including after genuine reset.
+/// An entry-nonstable first request rejects RTC SOURCE = 2 even with START = 0,
+/// UART1/2 SOURCE = 3 even with RX/TX disabled, enabled LPTIM LSI, MCO SOURCE = 4,
+/// enabled LSIRDY, and enabled LSI-filtered VC/LVD even with zero filter count.
+/// This entry classification is retained through a second admission at the
+/// request edge; later STABLE cannot turn it into inherited monitored readiness.
+/// Stable legal automatically requested LSI with LSIEN = 0 remains supported.
+/// A needed HSI start/restart also rejects raw-HSIOSC MCO SOURCE = 3 and enabled
+/// HSIRDY; RTC SOURCE = 3 retains its existing factory-ready ownership rule.
+///
+/// These checks do not establish universal LSI idleness. The handover must
+/// permit or disconnect retained GTIM/ATIM LSI_OUT selector 9, whole-bank GPIO
+/// LSI filtering, IWDT and downstream timer/ADC/GPIO or external participants
+/// across temporary LSI start and restoration of the software LSI request.
+/// Their dormant working gates are not opened to inspect them. Reset-looking
+/// selectors, missing tokens, closed gates and interrupt masking cannot prove
+/// actual reset history or disconnect observers.
+///
+/// StartupOnly SYSCLK can stop the CPU on source loss without a fault or error
+/// return, even with inherited CLKCCS enabled. MonitoredExistingRoutes requires
+/// an already stable legal LSI before any LSI enable and preserves existing
+/// fault/IRQ/brake routes; faults may affect outputs or observers before error.
+/// CLKCCS is preserved. Documented HSI 4 MHz fallback is qualified up to 4.08 MHz
+/// without bus-divider credit, but gives no register-state or progress promise.
+/// All frozen LSE timings become invalid on loss/fallback. Dividers are installed
+/// under calibrated HSI before the final LSE mux write; no later CR0 write is
+/// made. Flash planning also covers requested HSI and fixed fallback. Final
+/// source, policy, monitor, mux/divider and pad checks precede publication.
+/// Errors may leave partial source/gate/Flash state and monotonic reservations;
+/// reset is required before retry and ordinary reset may retain LSE ownership.
+/// Poll budgets count CPU iterations only while execution continues. The fixed
+/// 1 MHz time driver rejects this 32768 Hz tree before tokens or RCC MMIO.
+/// See docs/l010-lse-sysclk.md for the complete own-source target contract.
+///
 /// CW32L011/L012 have the same functional requirement when a new LSE feeds
 /// RTC SOURCE0, and again when an RTC owner later activates or changes the
 /// calendar source: no independent RTC_OUT/RTC_1Hz recipient may depend on

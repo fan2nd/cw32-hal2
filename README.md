@@ -188,6 +188,21 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   acknowledgments; this intentionally stops its outputs. The caller must hand
   over quiescent consumers. No runtime switching, independent PLL-output
   lifecycle or fault recovery is added. See [the exact-five contract](docs/l083-lse-sysclk.md).
+- CW32L010F8P6, CW32L010F8U6 and CW32L010Y8M6: init-only native LSE SYSCLK
+  through the existing `Config.lse` declaration, bringing system targets to
+  nineteen exact packages. StartupOnly leaves LSECCS clear and can halt the
+  CPU after source loss without an error return. MonitoredExistingRoutes
+  requires already stable, legally operating, unchanged LSI; it does not
+  prepare a factory monitor. The HSI-calibration path may temporarily request
+  inherited-legal LSI under target-only first-request ownership checks and an
+  explicit residual-consumer handover. Factory HSI remains enabled on success.
+  Requested HSI is checked at final dividers; fixed fallback coverage uses
+  undivided 4.08 MHz without assuming divider retention or promising fallback.
+  Final divisors precede LSE selection and no CR0 write follows it. The previous
+  sixteen system paths and all twenty-three auxiliary qualifications remain
+  unchanged. L011/L012 and generic family aliases are excluded. See the
+  [L010 system contract](docs/l010-lse-sysclk.md) and
+  [crystal/bypass examples](examples/lse-sysclk/README.md).
 - F020/F030/A030: direct qualified HSE crystal/bypass system clocks with explicit
   board nominal/minimum/maximum bounds, preserved factory HSI, mandatory CCS/LSI,
   retained-source protection and oscillator-pad reservation. See

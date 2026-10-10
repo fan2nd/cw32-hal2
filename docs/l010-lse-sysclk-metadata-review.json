@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "scope": "Independent read-only exact-three CW32L010 init-only LSE SYSCLK metadata/source review",
+  "baseline_commit": "06ea411c47ec9c819586925e68fbf6a1fcde2b04",
+  "approved_design_sha256": "5106016cacafe1a67195f2a6c5a3537a0919a2eb0e22df3f30adfa3f5f978037",
+  "reviewed_source_files": {
+    "cw32-data/lse-qualified.yaml": {
+      "sha256": "9f546a85644e766690e5f0910454104daec3efaa45cf071da6e4dcc3b98850d5",
+      "bytes": 90346
+    },
+    "cw32-data-gen/src/electrical.rs": {
+      "sha256": "ad920e390ccf8ca098ef1bf425c53be3fa3701368b72e13f0cf61da978e0b470",
+      "bytes": 154903
+    },
+    "embassy-cw32/build.rs": {
+      "sha256": "87487b09a1f5e4b166cdac4c304e45add9f974f391e7ddaf0773227bcc217c3f",
+      "bytes": 181243
+    },
+    "ci/verify-l010-lse-data.py": {
+      "sha256": "11e0fd8aefb60c205e17bf0bae890d9cd35ec2905b31cdbb38ca04d4d3bb6248",
+      "bytes": 16900
+    },
+    "docs/l010-lse-sysclk-qualification.json": {
+      "sha256": "ca5d164c19ea1a50c0facaf691dd52142fc6d855135fbe664359e30ed360d182",
+      "bytes": 8688
+    },
+    "sources/evidence-sources.json": {
+      "sha256": "adf74c144a4b26f42eaec21c215263c878e132a949c6dafec36551103bf3073d",
+      "bytes": 354747
+    }
+  },
+  "qualified_parts": [
+    "CW32L010F8P6",
+    "CW32L010F8U6",
+    "CW32L010Y8M6"
+  ],
+  "preservation": {
+    "auxiliary_profiles": 23,
+    "previous_sysclk_profiles": 16,
+    "current_sysclk_profiles": 19,
+    "previous_sysclk_profiles_unchanged": true,
+    "all_auxiliary_profiles_unchanged_after_only_three_detector_removals": true,
+    "historical_policy_files_unchanged": 24,
+    "generic_l010_and_l011_l012_target_excluded": true,
+    "schema_and_registers_unchanged": true,
+    "source_authority_delta": "Five new own-proof evidence citations only; all artifact/member identities unchanged"
+  },
+  "own_facts": {
+    "sysclk_lse_selector": 4,
+    "monitor_reference": "inherited_legal",
+    "lsi_factory_trim_address": null,
+    "monitored_lsi_maximum_hz": 36080,
+    "detector_lse_edges": 128,
+    "detector_lsi_cycles": 256,
+    "software_margin_lse_edges": 1,
+    "lsi_sysclk_qualified": false,
+    "factory_rtc_lsi_qualification_added": false,
+    "factory_hsi_nominal_hz": 48000000,
+    "factory_hsi_error_percent": 2,
+    "fallback_nominal_hz": 4000000,
+    "fallback_minimum_hz": 3920000,
+    "fallback_maximum_hz": 4080000,
+    "fallback_requested_hsi_ahb_apb_divider_credit": false,
+    "fallback_register_mutation_or_retention_claim": false,
+    "flash_wait_step_hz": 24000000,
+    "maximum_legal_flash_wait": 1,
+    "hsi_has_wait_field": false
+  },
+  "external_evidence": [
+    {
+      "evidence_kind": "external-evidence",
+      "project_relative_path": "sources/vendor/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+      "bytes": 2442266
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "project_relative_path": "sources/vendor/CW32L010_DataSheet_CN_V1.3.pdf",
+      "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+      "bytes": 3467805
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "project_relative_path": "sources/vendor/CW32L010_UserManual_CN_V1.2.pdf",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "bytes": 15074519
+    }
+  ],
+  "original_evidence_review": {
+    "pdf_pages": "Own RM36 pages and DS4 pages listed in docs/l010-lse-sysclk-qualification.json read directly; RM67/139 and DS32/43 also rendered and inspected",
+    "sdk": "Original archive and selected members independently hashed; selector and explicit SystemInit factory loads inspected",
+    "source_checker": "Reviewed and independently executed ci/verify-l010-lse-data.py with --sources sources/vendor --data cw32-data/data; passed. Page identities and selected semantic anchors are machine-checked; not every sentence is mechanically proven."
+  },
+  "generated_projection": {
+    "selections_compared": 54,
+    "complete_chip_json_identical_after_only_three_detector_removals": true,
+    "entire_generated_pac_identical_except_two_shared_metadata_detector_additions": true,
+    "exact_three_and_generic_sibling_exclusion_checked": true,
+    "initial_projection_receipt_status_note": "Earlier generated projection receipt deferred HAL constants; emitted_constants_check and successful_ordinary_build_binding above close that item."
+  },
+  "external_verification_records": [
+    {
+      "evidence_kind": "external-evidence",
+      "record": "original-source-identities.json",
+      "sha256": "df352dd993bf8347479a3de6a7c9163362c13a3bbc9878f8f5203e21a81424ef"
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "record": "frozen-source-comparison.json",
+      "sha256": "66188a26e0ddff429ef31d5bd0d9180ecf4c045b104ee173ec73515aeeb102c3"
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "record": "current-source-check.json",
+      "sha256": "7252bd58cd383ec6bafcaadbd4e4ed64716afc8e38cfa556ebd046e5d91386c3"
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "record": "generated-projection-review.json",
+      "sha256": "d001c3d92f7a41827ecace8b66e6deb7e179d7f538db4eb2fd9a37aff55b0cc5"
+    }
+  ],
+  "findings": [],
+  "limits": [
+    "Metadata/source and generated-output qualification only; runtime sequencing is separately reviewed.",
+    "No HAL test, probe, build or hardware execution performed by this review. Ordinary build artifacts are inspected read-only.",
+    "No board waveform, jitter, startup, source-loss, fallback-latency or RTC-continuity validation.",
+    "Separate L083 checker inventory adjustment is outside the six-file metadata freeze."
+  ],
+  "initial_review": {
+    "evidence_kind": "external-evidence",
+    "record": "metadata-review-v1.json",
+    "sha256": "7a50aa71e0bf4dff39716c10264c602693e684f61bb771f22a0883b7412aa392",
+    "preserved_unchanged": true
+  },
+  "emitted_constants_check": {
+    "profile": "cw32l010f8p6,rt,defmt",
+    "scope": "Only F8P6 emitted HAL constants inspected individually. Other exact3/generic/sibling projections were checked in all 54 generated data/PAC selections and ordinary library build results.",
+    "generated_rs_sha256": "75f748ec282844b25dfad330c85763900210f2b5d7875a1025a1360632d807b2",
+    "build_output_sha256": "3a0ad1ae2b0b5e5f2883c791702a12394bd56bd5a4a84476bd87a22c21f230e4",
+    "build_rs_sha256": "87487b09a1f5e4b166cdac4c304e45add9f974f391e7ddaf0773227bcc217c3f",
+    "constants_checked": {
+      "RCC_LSE_SYSCLK_LSE_EDGES": 128,
+      "RCC_LSE_SYSCLK_LSI_CYCLES": 256,
+      "RCC_LSE_SYSCLK_MARGIN_LSE_EDGES": 1,
+      "RCC_LSE_MONITORED_LSI_MAXIMUM_HZ": 36080,
+      "RCC_LSE_DETECTOR_LSE_EDGES": 128,
+      "RCC_LSE_DETECTOR_LSI_CYCLES": 256,
+      "RCC_LSE_DETECTOR_MARGIN_LSE_EDGES": 1,
+      "RCC_HSI_FREQUENCY_HZ": 48000000,
+      "RCC_HSI_ERROR_PERCENT": 2,
+      "RCC_FACTORY_HSI_TRIM_ADDRESS": 1050560,
+      "RCC_INITIAL_FLASH_WAIT": 1,
+      "RCC_FLASH_WAIT_STEP_HZ": 24000000,
+      "RCC_FIXED_CCS_HSI_DIVISOR": 12
+    },
+    "lse_factory_lsi_address_absent": true,
+    "rcc_lsi_sysclk_cfg_absent": true,
+    "note": "The preserved emitted file first came from a completed build script whose downstream library failed. It is now bound to the unchanged build.rs and successful second ordinary library build; the failed first library attempt remains preserved."
+  },
+  "successful_ordinary_build_binding": {
+    "evidence_kind": "external-evidence",
+    "target": "thumbv6m-none-eabi",
+    "builds_executed_by_this_reviewer": false,
+    "source_before_sha256": "bbef08b5387912b059f6d53bd78aa5402254aaf4e8b5aa7f6520971e32208474",
+    "source_after_sha256": "bbef08b5387912b059f6d53bd78aa5402254aaf4e8b5aa7f6520971e32208474",
+    "source_before_equals_after": true,
+    "six_reviewed_hashes_match_build_source_snapshot": true,
+    "library_checks": [
+      {
+        "profile": "cw32l010f8p6,rt,defmt",
+        "exit": 0,
+        "record": "lib-cw32l010f8p6.log",
+        "log_sha256": "8f5c03e6607301c3ac2a8e844e8ac1764d0cf59204a9a719b44b2c83cd183f1c"
+      },
+      {
+        "profile": "cw32l010f8u6,rt,defmt",
+        "exit": 0,
+        "record": "lib-cw32l010f8u6.log",
+        "log_sha256": "604cf50962b817f46a57d8d3d733d12c4972790fd7e1c13c6ef69564c1be8b1d"
+      },
+      {
+        "profile": "cw32l010y8m6,rt,defmt",
+        "exit": 0,
+        "record": "lib-cw32l010y8m6.log",
+        "log_sha256": "ef5bf1665e24c335200ac2c6916cdb8aabeb749c2f59478853468d2d5728e745"
+      },
+      {
+        "profile": "cw32l010,rt,defmt",
+        "exit": 0,
+        "record": "lib-cw32l010.log",
+        "log_sha256": "323b342858af7a5ed1bf488dc09badc727c9a28a725b97e7265ef8596d286b53"
+      },
+      {
+        "profile": "cw32l011k8t6,rt,defmt",
+        "exit": 0,
+        "record": "lib-cw32l011k8t6.log",
+        "log_sha256": "c760a40bc44b5a537fd09a29b1ffe60190014c4062b45b557660fd442656b92f"
+      },
+      {
+        "profile": "cw32l012c8t6,rt,defmt",
+        "exit": 0,
+        "record": "lib-cw32l012c8t6.log",
+        "log_sha256": "df7550796d7eb1c14faf9efba657bf70107d178091a5d59ca4a28e8695181346"
+      },
+      {
+        "profile": "cw32f030c8t7,rt,defmt",
+        "exit": 0,
+        "record": "lib-cw32f030c8t7.log",
+        "log_sha256": "319fa78e6683c0ae636f0c5c4855c0c089dc2c258fb9f5479558adca1ad27192"
+      },
+      {
+        "profile": "cw32l052c8t6,rt,defmt",
+        "exit": 0,
+        "record": "lib-cw32l052c8t6.log",
+        "log_sha256": "1d779283a0e4d5f187fd19e6cde9c97832c069885f8217b971de92336da20636"
+      },
+      {
+        "profile": "cw32l083rct6,rt,defmt",
+        "exit": 0,
+        "record": "lib-cw32l083rct6.log",
+        "log_sha256": "7d810d957caaf6d38746cf8bc4f5a879179b8f120e15e095b8f6dda4faae88d2"
+      }
+    ],
+    "binding_scope": "Nine ordinary library commands/logs independently checked. ELF linkage is covered by the separate build receipt, not independently reviewed here."
+  }
+}

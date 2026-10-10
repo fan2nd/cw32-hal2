@@ -11,6 +11,17 @@ use embassy_cw32::{
 fn main() -> ! {
     let p = hal::init(board::config(LseMode::Oscillator));
     // Borrow the already configured physical SYSCLK oscillator for RTC.
+    #[cfg(any(
+        feature = "cw32l010f8p6",
+        feature = "cw32l010f8u6",
+        feature = "cw32l010y8m6"
+    ))]
+    let clock = LseClock::new(p.SYSCTRL, p.PB1, p.PB0).unwrap();
+    #[cfg(not(any(
+        feature = "cw32l010f8p6",
+        feature = "cw32l010f8u6",
+        feature = "cw32l010y8m6"
+    )))]
     let clock = LseClock::new(p.SYSCTRL, p.PC14, p.PC15).unwrap();
     core::hint::black_box((hal::rcc::clocks().sys_bounds(), clock.bounds()));
     let rtc =

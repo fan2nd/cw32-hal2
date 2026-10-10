@@ -159,8 +159,9 @@ still apply.
   Other ten families retain their previous qualification. Runtime switching and
   low-power restoration remain outside this slice. See the
   [complete factory-LSI contract](factory-lsi-sysclk.md).
-- Init-only LSE SYSCLK is qualified on sixteen exact packages through the single
-  Config.lse declaration: classic3, five L031/R031/W031, three L052 and five L083.
+- Init-only LSE SYSCLK is qualified on nineteen exact packages through the single
+  Config.lse declaration: classic3, five L031/R031/W031, three L052, five L083
+  and three L010.
   Family aliases and other packages are excluded. Classic CW32F020C6U7,
   CW32F030C8T7 and CW32A030C8T7 prepare factory detector LSI before mandatory
   CCS and retain HSI plus inherited PLL/reference; see the
@@ -170,7 +171,7 @@ still apply.
   startup/run analog banks and its independent undivided 8.16 MHz fixed fallback
   budget; see the [three-package contract](l052-lse-sysclk.md).
   L083 adds only CW32L083RBT6/RCT6/RCS6/MCT6/VCT6, with one analog bank and
-  no L052 startup-drive/amplitude fields. This raises the system target count
+  no L052 startup-drive/amplitude fields. Its earlier addition raised the system target count
   from eleven to sixteen while all 23 auxiliary-LSE qualifications remain unchanged.
   Its minimum declared VDD is at least 1.8 V; conservative raw factory-HSI
   fallback uses 48.96 MHz without HSI/AHB/APB divider credit, even with CLKCCS
@@ -181,10 +182,23 @@ still apply.
   intentionally stops its outputs, which the caller must leave quiescent.
   There is no independent PLL-output lifecycle; see the
   [L083 system contract](l083-lse-sysclk.md).
-  The modeled 129/256 count margin uses each family's LSI maximum and is
+  Native L010 adds only CW32L010F8P6/F8U6/Y8M6, bringing the current total to
+  nineteen; generic L010 and all L011/L012 system targets remain excluded.
+  Its existing native Lse declaration has independent four-bit run/startup drive
+  and no amplitude field. StartupOnly keeps LSECCS clear; later loss can leave
+  STABLE set and halt execution without returning an error. MonitoredExistingRoutes
+  requires already stable, unchanged, inherited-legal LSI at most 36080 Hz; it
+  does not cold-prepare a factory monitor. Establishing factory HSI can temporarily
+  request unchanged LSI under first-request RTC/UART/LPTIM/MCO/IRQ/analog-owner
+  checks, while residual timer/GPIO/IWDT and downstream progress require the
+  explicit functional handover. Successful return retains factory HSI. Requested
+  HSI is independently checked at final divisors; fixed fallback headroom uses
+  full 4.08 MHz without divider credit regardless of CLKCCS, and promises no
+  detection, fallback or continuity. See the [L010 system contract](l010-lse-sysclk.md).
+  For monitored operation, the modeled 129/256 count margin uses each family's LSI maximum and is
   distinct from board-qualified LSE every-cycle timing and rate-only LSI.
   Final bus divisors are installed on HSI before one LSE selection; Flash follows
-  each family's qualified sequence. L083 permits no later CR0 write, even on
+  each family's qualified sequence. L083 and L010 permit no later CR0 write, even on
   failure. The same LSE tuple supplies RTC.
   The fixed 1 MHz time driver rejects before ownership. Old source targets and
   auxiliary-LSE paths retain admission/order. Frozen LSE timing is invalid after

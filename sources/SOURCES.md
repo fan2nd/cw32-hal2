@@ -1,6 +1,6 @@
 # YAML 数据与官方原始资料
 
-本页对应当前整合源码、二十三个精确料号/封装的主动 LSE/RTC 资格及其中十六款的 LSE SYSCLK 资格（2026-10-10），回答“这份 YAML 依据哪一本原厂手册、哪个 SDK、哪几页”。当前源码包附带 `approved-sdk-members/` 下的 11 份 Apache-2.0 芯片主头文件及其许可；完整 PDF、SDK ZIP、SVD 与 HTML 原件未附。下列文档链接直达官网，运行获取脚本后才会写入本地 `sources/vendor/`。
+本页对应当前整合源码、二十三个精确料号/封装的主动 LSE/RTC 资格及其中十九款的 LSE SYSCLK 资格（2026-10-10），回答“这份 YAML 依据哪一本原厂手册、哪个 SDK、哪几页”。当前源码包附带 `approved-sdk-members/` 下的 11 份 Apache-2.0 芯片主头文件及其许可；完整 PDF、SDK ZIP、SVD 与 HTML 原件未附。下列文档链接直达官网，运行获取脚本后才会写入本地 `sources/vendor/`。
 
 `evidence-sources.json` 是唯一 URL / SHA-256 / SDK 成员锁；本页是阅读入口，不再复制一份 JSON。原件版本是项目选定快照，不能据此声称已是厂商最新版。页码与章节从现有 YAML 及其明确引用的记录摘出，本次未重新逐页校读原件。
 
@@ -423,4 +423,16 @@ CW32L083RBT6、CW32L083RCT6、CW32L083RCS6、CW32L083MCT6 与 CW32L083VCT6 单�
 
 该新系统目标要求声明最低 VDD≥1.8V、最高≤5.5V、VDDA=VDD 与环境−40…85°C。保守回退按原始48.96MHz覆盖，不计 HSI/AHB/APB 分频收益，即使 CLKCCS 为0也一样；这不是断言硬件重置分频器，也不回改既有直接 HSE 策略。最终分频下的配置 HSI 单独校验，Flash WAIT2保留；辅助 LSE 原1.65–5.5V源范围不变。继承 PLL 先经独立合法、未改参数且已就绪的 HSI 切换，再观察 PLLEN=0 与 PLL.STABLE=0 后才允许改参考。PLL配置保留，但停止会有意停止输出；调用方必须移交静止的输出与消费者。最终 LSE 选择后不再写 CR0，失败不重放选择、不恢复失钟或时间连续性。
 
-单模拟组、PC14/PC15、板级每周期界与保留消费者继续使用前述 L083 自身资料，不引入 L052 PDRIVER/PAMP。示例复用3.0–3.6V、−20…70°C与32766–32770Hz声明；必须由实际板级资格替换。`ci/check-lse-sysclk.sh` 只定义本地后续检查范围，所列17个库与16组晶振/旁路固件并非已执行数量；每次实际执行的子集、结果与未跑项目须分别记录，不据此宣称 hosted CI 或实板验证。
+单模拟组、PC14/PC15、板级每周期界与保留消费者继续使用前述 L083 自身资料，不引入 L052 PDRIVER/PAMP。示例复用3.0–3.6V、−20…70°C与32766–32770Hz声明；必须由实际板级资格替换。Stage60 时的 `ci/check-lse-sysclk.sh` 只定义当时的本地后续检查范围，所列17个库与16组晶振/旁路固件并非已执行数量；每次实际执行的子集、结果与未跑项目须分别记录，不据此宣称 hosted CI 或实板验证。
+
+### 三个 L010 精确封装的 init-only LSE SYSCLK
+
+仅 CW32L010F8P6、CW32L010F8U6、CW32L010Y8M6 通过原生 `Config.lse + Sysclk::LSE` 新增系统目标，合计十九个精确封装；此前十六款系统目标和二十三款辅助 LSE 资格保持不变，通用族别、L011/L012 不扩大。自身原件、页码及策略见 [系统源资格](../docs/l010-lse-sysclk-qualification.json) 与 [运行契约](../docs/l010-lse-sysclk.md)。原 `sysclk_detector` 记录增加这三款，不新增 schema 或另设 LSI 校准来源。
+
+`CW32L010_UserManual_CN_V1.2.pdf` 的 PDF52–53/74（书页51–52/73）支持四位运行/启动 drive 与启动计数；PDF57–59/68（56–58/67）区分启动 STABLE、128沿/256个LSI周期检测与开启 CLKCCS 时的有效 HSI4MHz 回退；PDF63/67（62/66）支持 LSE selector4、原生分频与 KEY。PDF69/71/75/77–78（68/70/74/76–77）支持自动 LSI 请求、HSI校准/未指定复位 trim 与 ready IRQ。PDF70/114（69/113）给出 SYSCTRL FLASHWAIT 与 FLASH WAIT 的同功能关系，不能把其余路由变化当作 Flash 别名。
+
+`CW32L010_DataSheet_CN_V1.3.pdf` 的 PDF32（书页31）限定1.62–5.5V及低于1.8V时24MHz、至少1.8V时48MHz总线上限；PDF40/42（39/41）支持100kHz旁路上限、45–55%占空、450ns最小脉宽、50ns最大边沿与仅典型的晶振启动时间；PDF43（42）支持原厂HSI48MHz±2%，固定4MHz回退独立按4.08MHz覆盖总线和Flash，不计分频收益。原厂LSI±3%不替代RM PDF56（55）的继承合法32.8kHz±10%契约。
+
+StartupOnly 保持LSECCS=0，后来失钟可能不清STABLE且直接停住CPU；MonitoredExistingRoutes 要求进入时已稳定、合法且参数不变的LSI，最大36080Hz，`256 * LSE_min_hz > 129 * 36080`，不自动冷启动或准备原厂监测。HSI重新校准可能临时请求继承合法LSI，需首次非稳定请求的RTC/UART/LPTIM/MCO/ready IRQ/模拟消费者否决，并保留未全查的timer/GPIO/IWDT及下游观察者功能移交。最终LSE选择后不写CR0；旧保护、IRQ、brake路由和部分失败状态保留，不承诺回退发生或时间连续性。
+
+示例使用PB1输入/PB0输出（F8P6脚12/11、F8U6脚9/8、Y8M6脚10/9），原生运行Level2/启动Level10及16384周期均须实板资格化。HSI默认/12；生成metadata提供三款各65536-byte Flash/4096-byte RAM，链接显式使用link.x。现有本地检查脚本的后续矩阵扩为20个库与19组晶振/旁路固件（38个二进制），只描述待执行范围，不是已跑数量，也不添加 hosted CI、HAL测试或实板验证。原件身份与许可边界不变；外部原件不复制入源码包。
