@@ -45,16 +45,26 @@ python3 cw32-data/tools/source_provenance.py
 # Fetch only the exact SVD inputs used by the generator.
 python3 cw32-data/tools/fetch_sources.py
 
-# Acquire the original PDF/SDK/HTML bytes only, without derivatives or reports.
+# Acquire the 43 hardware PDF/SDK originals only, without derivatives or reports.
 python3 cw32-data/tools/acquire_evidence.py --originals-only
 python3 cw32-data/tools/acquire_evidence.py --originals-only --verify
 
-# Acquire all pinned originals and selected derivatives.
+# Acquire all hardware-required originals and selected derivatives.
 python3 cw32-data/tools/acquire_evidence.py
 python3 cw32-data/tools/source_provenance.py --sources sources/vendor
+
+# Optional strict replay of all 45 selected originals, including historical HTML.
+python3 cw32-data/tools/acquire_evidence.py --verify --include-discovery
+
+# Separately observe current discovery pages without accepting or repinning them.
+./d refresh-discovery
 ```
 
-Full acquisition defaults to `sources/vendor/`; `--source-root` or `CW32_SOURCES`
+Default receipts explicitly report 43 required originals and two omitted discovery
+records; `complete_manifest=false` distinguishes this hardware scope from an
+all-record archival replay. See [discovery policy](../docs/a030-discovery-policy.json).
+
+Hardware acquisition defaults to `sources/vendor/`; `--source-root` or `CW32_SOURCES`
 can select another local cache. `--cache-root PATH --offline` can reconstruct from
 existing hash-verified originals. Acquisition never silently accepts changed
 bytes or replaces a pin. PDF text must match the recorded Poppler output exactly.

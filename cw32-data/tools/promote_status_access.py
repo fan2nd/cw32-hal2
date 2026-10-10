@@ -183,7 +183,7 @@ def main():
     if args.receipt:
         receipt = {"selection_sha256": digest(selection_data), "capture_sources": selection["sources"],
                    "script_sha256": digest(Path(__file__).read_bytes()),
-                   "source_parser_sha256": digest((ROOT / "cw32-data-gen/src/svd_access.rs").read_bytes()),
+                   "source_parser_sha256": digest((ROOT / "cw32-data-gen/src/svd_access/mod.rs").read_bytes()),
                    "rules_path": RULES, "input_sha256": digest(before.encode()), "output_sha256": digest(after.encode()),
                    "selected_rule_count": 23, "family_occurrence_count": len(bindings), "bindings": bindings}
         write_candidate(args.receipt, json.dumps(receipt, indent=2) + "\n")

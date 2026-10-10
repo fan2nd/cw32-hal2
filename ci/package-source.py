@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import sys
+import subprocess
 import zipfile
 
 
@@ -22,7 +23,7 @@ SOURCE_DECLARATIONS = {"ci/hal-capabilities.yaml"}
 SOURCE_MANIFESTS = {SOURCE_LOCK, "sources/catalog.json", "sources/layout-history.json", "sources/README.md",
                     "sources/SOURCES.md", "sources/REFERENCE-PACKAGE.md"} | APPROVED_SDK_DOCS
 EXCLUDED_ROOTS = {".cargo", ".rustup", "build", ".git", "target", "cw32-metapac"}
-EXCLUDED_DIRECTORIES = {"target", "__pycache__", ".git", "verification-logs"}
+EXCLUDED_DIRECTORIES = {"target", "__pycache__", ".git", ".venv", "verification-logs"}
 EXCLUDED_FILES = {
     "cw32-data/coverage.json", "cw32-data/source-audit.json",
     "cw32-data/source-lock.json", "cw32-data/vendor-sources.json",
@@ -121,6 +122,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output", type=Path)
     args = parser.parse_args()
+    subprocess.run([sys.executable, str(ROOT / "tests/test_module_layout.py")], cwd=ROOT, stdout=sys.stderr, check=True)
     files = collect_files(ROOT)
     validate_distribution(ROOT, files)
     assert any(str(relative) == "examples/cw32f030/.cargo/config.toml" for relative, _ in files)

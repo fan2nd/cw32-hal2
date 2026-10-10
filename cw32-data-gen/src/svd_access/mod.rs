@@ -973,5 +973,4 @@ fn same_field_array(array: &Option<ir::Array>, field: &Field) -> bool {
 }
 
 #[cfg(test)]
-#[path = "svd_access_tests.rs"]
 mod tests;

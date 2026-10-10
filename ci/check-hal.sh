@@ -48,6 +48,11 @@ PY
   echo 'HAL ARM production matrix passed.'
 fi
 if [[ "$mode" != --matrix-only ]]; then
+  echo '=== Link qualified x030 LSE calendar firmware ==='
+  for chip in cw32f030c8t7 cw32a030c8t7; do
+    cargo build --offline --locked --release --bins --target thumbv6m-none-eabi \
+      --manifest-path examples/lse-clock/Cargo.toml --no-default-features --features "$chip"
+  done
   echo '=== Link both digital HEX inputs for five exact F002/F003 packages ==='
   for chip in cw32f002f3p7 cw32f002f3u7 cw32f003e4p7 cw32f003f4p7 cw32f003f4u7; do
     cargo build --locked --release --bins --target thumbv6m-none-eabi \

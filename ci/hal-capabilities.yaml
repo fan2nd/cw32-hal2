@@ -644,7 +644,7 @@ functions:
       status: partial
       scope: Blocking calendar with preserved-state attach and explicit cold initialization.
       limitations:
-      - L010/L011/L012 use qualified HSIOSC; other RTC families require pretrimmed LSI. No UTC precision, compensation,
+      - L010/L011/L012 use qualified HSIOSC; classic RTCs use pretrimmed LSI, with held LSE also available on exact F030C8T7/A030C8T7. No UTC precision, compensation,
         subseconds or retention guarantee.
     - id: alarm_a
       status: partial
@@ -686,7 +686,7 @@ functions:
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.
       limitations:
-      - Low-power retention/wake, other calendar clock sources and compensation are not qualified.
+      - Low-power retention/wake, other unlisted calendar clock sources and compensation are not qualified.
   flash:
     register_kinds:
     - flash
@@ -1311,12 +1311,21 @@ functions:
       - path: docs/inherited-lse-pads.md
       - path: cw32-data/lse-ownership.yaml
     - id: external_low_speed
-      status: unimplemented
-      scope: No maintained HAL API declaration for this mode.
+      status: partial
+      scope: Init-only nominal 32768 Hz crystal/bypass LSE and held RTC source on exact F030C8T7/A030C8T7 LQFP48.
+      implemented_families: [CW32F030, CW32A030]
       limitations:
-      - LSE initialization/system-clock use is absent; RTC/LCD retained LSI paths are separate.
+      - Other packages retain inherited-pad protection only. Every-cycle board bounds, waveform, drive and load qualification are required.
+      - None preserves LSE parameters and pads while existing mandatory CCS remains; enabled reuse never restarts, and disabled startup rejects retained consumers.
+      - No LSE system clock, runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
       registers_any:
       - LSE
+      evidence:
+      - path: embassy-cw32/src/rcc/lse.rs
+        anchor: pub struct Lse
+      - path: embassy-cw32/src/rcc/rtc.rs
+        anchor: pub struct LseClock
+      - path: docs/qualified-lse.md
     - id: power_sleep_wakeup
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

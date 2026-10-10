@@ -18,12 +18,18 @@ pub enum RtcClockError {
     /// Factory calibration storage is erased or current LSI trim differs.
     /// No clock or trim write is performed on this error.
     IncompatibleCalibration,
+    /// The frozen LSE mode, pins or current source state do not match.
+    #[cfg(rcc_lse)]
+    IncompatibleConfiguration,
 }
 
 #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
 /// Calendar source on programmable-prescaler RTCs.
 pub type CalendarClock<'d> = HsiOscClock<'d>;
-#[cfg(any(rtc_v1, rtc_cw32f020_v1, rtc_cw32l031_v1, rtc_cw32l052_v1))]
+#[cfg(all(
+    not(rcc_lse),
+    any(rtc_v1, rtc_cw32f020_v1, rtc_cw32l031_v1, rtc_cw32l052_v1)
+))]
 /// Calendar source on fixed-/32768 RTCs.
 pub type CalendarClock<'d> = LsiClock<'d>;
 
@@ -40,7 +46,7 @@ impl<'d> HsiOscClock<'d> {
         if super::try_clocks().is_none() {
             return Err(RtcClockError::NotInitialized);
         }
-        if !Self::is_ready() {
+        if !Self::oscillator_ready() {
             return Err(RtcClockError::NotReady);
         }
         Ok(Self { _sysctrl: sysctrl })
@@ -51,7 +57,13 @@ impl<'d> HsiOscClock<'d> {
     pub const fn bounds(&self) -> ClockBounds {
         ClockBounds::rtc_source()
     }
-    pub(crate) fn is_ready() -> bool {
+    pub(crate) fn source(&self) -> crate::rtc::Source {
+        RTC::SOURCE.into()
+    }
+    pub(crate) fn is_ready(&self) -> bool {
+        Self::oscillator_ready()
+    }
+    fn oscillator_ready() -> bool {
         pac::SYSCTRL.cr1().read().hsien() && pac::SYSCTRL.hsi().read().stable()
     }
 }
@@ -94,7 +106,7 @@ impl<'d> LsiClock<'d> {
             })
         });
         for _ in 0..poll_budget {
-            if Self::is_ready() {
+            if Self::oscillator_ready() {
                 return Ok(Self { _sysctrl: sysctrl });
             }
             core::hint::spin_loop();
@@ -107,7 +119,143 @@ impl<'d> LsiClock<'d> {
     pub const fn bounds(&self) -> ClockBounds {
         ClockBounds::rtc_source()
     }
-    pub(crate) fn is_ready() -> bool {
+    pub(crate) fn source(&self) -> crate::rtc::Source {
+        RTC::SOURCE.into()
+    }
+    pub(crate) fn is_ready(&self) -> bool {
+        Self::oscillator_ready()
+    }
+    fn oscillator_ready() -> bool {
         pac::SYSCTRL.cr1().read().lsien() && pac::SYSCTRL.lsi().read().stable()
+    }
+}
+
+#[cfg(rcc_lse)]
+/// Source ownership for the two explicitly qualified x030 packages.
+/// Selecting LSE keeps its board-qualified envelope conditional on source health.
+/// No RTC fallback to LSI, elapsed-time continuity or fault recovery is promised.
+pub enum CalendarClock<'d> {
+    Lsi(LsiClock<'d>),
+    Lse(LseClock<'d>),
+}
+#[cfg(rcc_lse)]
+impl<'d> CalendarClock<'d> {
+    /// Existing factory-trim LSI acquisition path.
+    pub fn new(sysctrl: Peri<'d, SYSCTRL>, poll_budget: u32) -> Result<Self, RtcClockError> {
+        LsiClock::new(sysctrl, poll_budget).map(Self::Lsi)
+    }
+    pub const fn frequency(&self) -> Hertz {
+        match self {
+            Self::Lsi(c) => c.frequency(),
+            Self::Lse(c) => c.frequency(),
+        }
+    }
+    /// Declared healthy-source envelope, not a guarantee after oscillator faults.
+    pub const fn bounds(&self) -> ClockBounds {
+        match self {
+            Self::Lsi(c) => c.bounds(),
+            Self::Lse(c) => c.bounds(),
+        }
+    }
+    pub(crate) fn source(&self) -> crate::rtc::Source {
+        match self {
+            Self::Lsi(c) => c.source(),
+            Self::Lse(c) => c.source(),
+        }
+    }
+    pub(crate) fn is_ready(&self) -> bool {
+        match self {
+            Self::Lsi(c) => c.is_ready(),
+            Self::Lse(c) => c.is_ready(),
+        }
+    }
+}
+#[cfg(rcc_lse)]
+impl<'d> From<LsiClock<'d>> for CalendarClock<'d> {
+    fn from(clock: LsiClock<'d>) -> Self {
+        Self::Lsi(clock)
+    }
+}
+#[cfg(rcc_lse)]
+impl<'d> From<LseClock<'d>> for CalendarClock<'d> {
+    fn from(clock: LseClock<'d>) -> Self {
+        Self::Lse(clock)
+    }
+}
+
+#[cfg(rcc_lse)]
+/// Owns the source and its physical pads for an RCC-initialized LSE calendar.
+/// Acquisition only verifies the frozen init record and live state. It never
+/// starts, stops or reconfigures an oscillator or pad. Drop retains the source.
+/// Bounds require the board's complete per-cycle and electrical guarantees;
+/// EN/STABLE and sticky fault flags are checked by every RTC operation.
+pub struct LseClock<'d> {
+    _sysctrl: Peri<'d, SYSCTRL>,
+    _input: Peri<'d, crate::gpio::AnyPin>,
+    _output: Option<Peri<'d, crate::gpio::AnyPin>>,
+    config: super::Lse,
+    bounds: ClockBounds,
+}
+#[cfg(rcc_lse)]
+impl<'d> LseClock<'d> {
+    pub fn new(
+        sysctrl: Peri<'d, SYSCTRL>,
+        input: Peri<'d, impl crate::gpio::Pin>,
+        output: Peri<'d, impl crate::gpio::Pin>,
+    ) -> Result<Self, RtcClockError> {
+        Self::acquire(
+            sysctrl,
+            input.into(),
+            Some(output.into()),
+            super::LseMode::Oscillator,
+        )
+    }
+    pub fn new_bypass(
+        sysctrl: Peri<'d, SYSCTRL>,
+        input: Peri<'d, impl crate::gpio::Pin>,
+    ) -> Result<Self, RtcClockError> {
+        Self::acquire(sysctrl, input.into(), None, super::LseMode::Bypass)
+    }
+    fn acquire(
+        sysctrl: Peri<'d, SYSCTRL>,
+        input: Peri<'d, crate::gpio::AnyPin>,
+        output: Option<Peri<'d, crate::gpio::AnyPin>>,
+        mode: super::LseMode,
+    ) -> Result<Self, RtcClockError> {
+        let clocks = super::try_clocks().ok_or(RtcClockError::NotInitialized)?;
+        let (config, bounds) = clocks.lse.ok_or(RtcClockError::NotInitialized)?;
+        if config.mode != mode
+            || Some(input.pin_port) != crate::RCC_LSE_PINS.0
+            || output.as_ref().map(|p| p.pin_port)
+                != if mode == super::LseMode::Oscillator {
+                    crate::RCC_LSE_PINS.1
+                } else {
+                    None
+                }
+        {
+            return Err(RtcClockError::IncompatibleConfiguration);
+        }
+        critical_section::with(|cs| super::lse::verify(config, cs))
+            .map_err(|_| RtcClockError::IncompatibleConfiguration)?;
+        Ok(Self {
+            _sysctrl: sysctrl,
+            _input: input,
+            _output: output,
+            config,
+            bounds,
+        })
+    }
+    pub const fn frequency(&self) -> Hertz {
+        self.bounds.nominal()
+    }
+    /// Healthy-source envelope; average ppm alone does not establish this bound.
+    pub const fn bounds(&self) -> ClockBounds {
+        self.bounds
+    }
+    pub(crate) fn source(&self) -> crate::rtc::Source {
+        crate::RCC_LSE_RTC_SOURCE
+    }
+    pub(crate) fn is_ready(&self) -> bool {
+        super::lse::healthy(self.config)
     }
 }

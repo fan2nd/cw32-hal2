@@ -6,7 +6,12 @@ import os
 from pathlib import Path
 import yaml
 ROOT = Path(__file__).resolve().parents[1]
-SOURCES = Path(os.environ.get('CW32_SOURCES', '/workspace/shared/cw32-sources'))
+SOURCES = Path(os.environ.get('CW32_SOURCES', str(ROOT.parent / 'cw32-sources')))
+UPSTREAM = Path(os.environ.get('CW32_EMBASSY_UPSTREAM', str(ROOT.parent / 'cw32-upstream/embassy')))
+if 'CW32_EMBASSY_UPSTREAM' in os.environ:
+    assert UPSTREAM.is_dir(), f'Explicit upstream checkout missing: {UPSTREAM}'
+if not UPSTREAM.is_dir():
+    print('NOTE upstream FLASH API source rehash not run; set CW32_EMBASSY_UPSTREAM to the pinned checkout')
 def load(path): return yaml.safe_load(path.read_text()) if path.suffix == '.yaml' else json.loads(path.read_text())
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 audit = load(ROOT / 'docs/flash-next-batch-audit.json')
@@ -18,7 +23,17 @@ L01X = {'CW32L010', 'CW32L011', 'CW32L012'}
 assert len(FAMILIES) == 13
 verified = set()
 for source in proof['sources'].values():
-    path = SOURCES / source['path'] if source['path_root'] == 'CW32_SOURCES' else Path(source['path'])
+    if source['path_root'] == 'upstream checkout':
+        # API-reference checkout is optional in source-only CI, as for RTC.
+        # Explicitly requested or present checkouts retain exact pinned hashes.
+        assert source['kind'] == 'upstream API reference'
+        if not UPSTREAM.is_dir():
+            continue
+        relative = 'embassy-stm32/' + source['url'].split('/embassy-stm32/', 1)[1]
+        path = UPSTREAM / relative
+    else:
+        assert source['path_root'] == 'CW32_SOURCES'
+        path = SOURCES / source['path']
     assert sha(path) == source['sha256'], path
     verified.add(str(path))
     if 'text' in source:

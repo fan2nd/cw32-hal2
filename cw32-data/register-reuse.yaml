@@ -118,7 +118,7 @@ groups:
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
     fields and access. No approximate or semantic merging.
 - canonical: awt_cw32f030_v1.yaml
-  canonical_ir_sha256: 1d9451dd4b0c8336f3d9f40990b4e4760be3bb98d51410cfd75fd64625426e05
+  canonical_ir_sha256: 3864a5c7254a4bd61fe0a67a5d4a3fb8c6817a3f627dba6f29e39182c7891250
   source_versions:
   - awt_cw32f020_v1.yaml
   - awt_v1.yaml
@@ -134,6 +134,14 @@ groups:
     - awt_cw32f003_v1.yaml
     - awt_cw32f020_v1.yaml
     - awt_v1.yaml
+  canonical_ir_history:
+  - canonical: awt_cw32f030_v1.yaml
+    before_sha256: 1d9451dd4b0c8336f3d9f40990b4e4760be3bb98d51410cfd75fd64625426e05
+    after_sha256: 3864a5c7254a4bd61fe0a67a5d4a3fb8c6817a3f627dba6f29e39182c7891250
+    evidence: docs/lse-active-first-cohort.json
+    reason: Own x030 RM Rev2.5 typed LSE enums only; register offsets, widths, access, command semantics
+      and source reuse membership unchanged. AWT Source3=LSE also agrees with the independently checked
+      F020 manual.
 - canonical: awt_cw32l031_v1.yaml
   canonical_ir_sha256: 8f2369ea353bf3d59ef7eddd1752c5487026566ba0357c83b6f0c786c1783c38
   source_versions:
@@ -1184,7 +1192,7 @@ groups:
       reserved-debug19:16 default0x5, STABLE RO overlay. Existing field offsets/widths unchanged and no
       reuse membership change.'
 - canonical: sysctrl_v1.yaml
-  canonical_ir_sha256: 7bcb895c99747b06e4507d34ce609bd4630c065da95874b02b5e386d3070436d
+  canonical_ir_sha256: ca3b906d365794baca78ee7d88097bb4d8d0e53602b520f7a8139b0c730757aa
   source_versions:
   - sysctrl_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1196,6 +1204,12 @@ groups:
     evidence: cw32-data/hse-qualified.yaml
     reason: Own-manual typed HSE/system/RTC selectors added without changing register offsets, field widths
       or source reuse groups; no hardware execution.
+  - canonical: sysctrl_v1.yaml
+    before_sha256: 7bcb895c99747b06e4507d34ce609bd4630c065da95874b02b5e386d3070436d
+    after_sha256: ca3b906d365794baca78ee7d88097bb4d8d0e53602b520f7a8139b0c730757aa
+    evidence: docs/lse-active-first-cohort.json
+    reason: 'Own x030 RM Rev2.5 PDF76: typed LSE drive, amplitude and wait-cycle fields. Register offsets,
+      widths, access and source reuse membership unchanged.'
 - canonical: trng_cw32l083_v1.yaml
   canonical_ir_sha256: cef6187b3759e07b97ccb48fa097227dbb040e7f671258dd58d1880ddb03be77
   source_versions:

@@ -230,6 +230,10 @@ pub struct Config {
     pub hsi: Hsi,
     /// Optional external source, configured and reserved even when SYSCLK is HSI.
     pub hse: Option<Hse>,
+    /// Init-only board-qualified LSE. None preserves LSE parameters and pads;
+    /// the existing mandatory CLKCCS/HSECCS/LSECCS setup still applies.
+    #[cfg(rcc_lse)]
+    pub lse: Option<super::Lse>,
     /// System clock source. HSE requires `hse: Some(...)`.
     pub sys: Sysclk,
     /// HCLK prescaler.
@@ -251,6 +255,8 @@ impl Config {
                 div: crate::RCC_DEFAULT_HSI_DIV,
             },
             hse: None,
+            #[cfg(rcc_lse)]
+            lse: None,
             sys: Sysclk::HSI,
             ahb_pre: AHBPrescaler::Div1,
             apb_pre: APBPrescaler::Div1,
@@ -271,6 +277,11 @@ impl Config {
         if self.timeout == 0 {
             return Err(Error::InvalidTimeout);
         }
+        #[cfg(rcc_lse)]
+        let lse = self
+            .lse
+            .map(|c| c.bounds(self.operating_conditions).map(|b| (c, b)))
+            .transpose()?;
         let hsi = HSI_FREQ / self.hsi.div.divisor();
         let hse = if let Some(hse) = self.hse {
             let bounds = hse.bounds()?;
@@ -311,6 +322,8 @@ impl Config {
             ],
             source,
             hse: self.hse.map(|hse| hse.mode),
+            #[cfg(rcc_lse)]
+            lse,
         };
         crate::rcc::operating::validate(self.operating_conditions, clocks)?;
         // Mandatory CCS can select HSI. Its actual envelope must fit the final
@@ -349,6 +362,8 @@ pub struct Clocks {
     pub(crate) dividers: [u32; 3],
     pub(crate) source: crate::rcc::ClockBounds,
     hse: Option<HseMode>,
+    #[cfg(rcc_lse)]
+    pub(crate) lse: Option<(super::Lse, crate::rcc::ClockBounds)>,
 }
 
 /// A clock initialization failure.
@@ -362,6 +377,14 @@ pub struct Clocks {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
+    #[cfg(rcc_lse)]
+    InvalidLseBounds,
+    #[cfg(rcc_lse)]
+    LseNotReady,
+    #[cfg(rcc_lse)]
+    LsePinConflict,
+    #[cfg(rcc_lse)]
+    LseClockInUse,
     InvalidHseBounds,
     HseOutsideQualifiedRange,
     HseConditionsOutsideQualifiedRange,
@@ -515,10 +538,17 @@ fn set_flash_latency(wait: u32, timeout: u32) -> Result<(), Error> {
 
 fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Result<Clocks, Error> {
     let clocks = config.frequencies()?;
+    #[cfg(rcc_lse)]
+    let reuse_lse = config
+        .lse
+        .map(|c| super::lse::preflight(c, cs))
+        .transpose()?;
     let r = pac::SYSCTRL;
     let old_clock = r.cr0().read();
     let old_sources = r.cr1().read();
     let needs_lsi = config.hse.is_some() || old_sources.hseen() || old_sources.lseen();
+    #[cfg(rcc_lse)]
+    let needs_lsi = needs_lsi || config.lse.is_some();
     if !matches!(
         old_clock.sysclk(),
         ClockSource::Hsi
@@ -826,6 +856,10 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         (upper_hclk - 1) / crate::RCC_FLASH_WAIT_STEP_HZ,
         config.timeout,
     )?;
+    #[cfg(rcc_lse)]
+    if let Some(lse) = config.lse {
+        super::lse::start(lse, reuse_lse.unwrap(), cs)?;
+    }
     // Detect mux changes during the final Flash handshake before publishing.
     if r.cr0().read().sysclk() != sysclk {
         return Err(Error::ClockSwitchTimeout);

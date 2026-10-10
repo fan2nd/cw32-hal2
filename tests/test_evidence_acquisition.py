@@ -83,7 +83,16 @@ class AcquisitionTests(unittest.TestCase):
                      "l011-manual-follow-up-evidence", "remaining-uart-evidence", "l031-r031-w031-uart-evidence",
                      "final-serial-af-evidence", "remaining-serial-af-evidence", "l031-shared-serial-evidence",
                      "gpio-isr-access-corrections", "timer-adc-isr-access-corrections"):
-            check(json.loads((ROOT / "docs" / (name + ".json")).read_text()))
+            document = json.loads((ROOT / "docs" / (name + ".json")).read_text())
+            if name == "crc-evidence":
+                rows = {row["path"]: row for row in manifest["artifacts"]}
+                for history_name in ("listing_refresh_2026_10_08", "listing_refresh_2026_10_09"):
+                    for historical in document.pop(history_name):
+                        row = rows[historical["file"]]
+                        retained = {row["sha256"], *(pin["sha256"] for pin in row["pin_history"])}
+                        self.assertIn(historical["sha256"], retained)
+                        self.assertIn(historical["previous_sha256"], retained)
+            check(document)
 
     def test_shared_serial_archive_member_inputs_are_covered(self):
         manifest = a.load_manifest(a.MANIFEST)

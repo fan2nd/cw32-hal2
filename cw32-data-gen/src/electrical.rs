@@ -116,6 +116,10 @@ pub fn apply(root: &Path, path: &str, line: &str, peripherals: &mut [Peripheral]
     let w = family(&watchdog_policy, line)?;
     let i = family(&i2c_policy, line)?;
     let c = &p.clock_limits;
+    ensure!(
+        c.lse_configuration.is_none(),
+        "family electrical profiles cannot preseed active LSE qualification"
+    );
     let mut hex_routes = Vec::new();
     let lock: Value = serde_json::from_slice(&fs::read(root.join(&catalog.source_authority))?)?;
     let lse_path = "cw32-data/lse-ownership.yaml";
@@ -747,4 +751,539 @@ pub fn apply(root: &Path, path: &str, line: &str, peripherals: &mut [Peripheral]
         "electrical metadata missing hardware owner"
     );
     Ok(())
+}
+
+// Active LSE qualification is deliberately applied after exact-package expansion.
+// Family clock profiles can carry pad ownership, never oscillator qualification.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct LseCatalog {
+    schema_version: u32,
+    source_authority: String,
+    policies: BTreeMap<String, String>,
+    parts: BTreeMap<String, LseProfile>,
+}
+#[derive(Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+struct LseProfile {
+    family: String,
+    package: String,
+    input_pin: String,
+    output_pin: String,
+    sources: Vec<LseSource>,
+    configuration: cw32_data_serde::chip::core::peripheral::LseConfiguration,
+}
+#[derive(Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+struct LseSource {
+    citation_ref: String,
+    source_ref: String,
+    sha256: String,
+    pdf_pages_1_based: Vec<u32>,
+    printed_pages: Vec<u32>,
+}
+/// Decode through Value first: its mapping visitor rejects duplicate keys at
+/// every depth before typed BTreeMap fields could overwrite a prior entry.
+fn parse_lse_catalog(bytes: &[u8]) -> Result<LseCatalog> {
+    let unique: serde_yaml::Value = serde_yaml::from_slice(bytes)?;
+    Ok(serde_yaml::from_value(unique)?)
+}
+const LSE_PARTS: [(&str, &str); 2] = [("CW32A030C8T7", "CW32A030"), ("CW32F030C8T7", "CW32F030")];
+// Each tuple was re-read from x030 RM Rev2.5 PDF pages187–195. Values
+// and masks are observations, not writes. KEY and ICR are never included.
+const LSE_RTC_RESET: [(&str, u32, u32, u32); 13] = [
+    ("CR0", 4, 0, 0xef),
+    ("CR1", 8, 0, 0x703),
+    ("CR2", 12, 0, 0x6ff),
+    ("COMPEN", 16, 0, 0xffff),
+    ("DATE", 20, 0, 0x07ff_ffff),
+    ("TIME", 24, 0x0012_0000, 0x003f_7f7f),
+    ("ALARMA", 28, 0x0012_0000, 0x7fbf_ffff),
+    ("ALARMB", 32, 0x0012_0000, 0x7fbf_ffff),
+    ("TAMPDATE", 36, 0, 0xff3f),
+    ("TAMPTIME", 40, 0, 0x003f_7f7f),
+    ("AWTARR", 44, 0xffff, 0xffff),
+    ("IER", 48, 0, 0x5f),
+    ("ISR", 52, 0, 0x5f),
+];
+fn validate_lse_parts(catalog: &LseCatalog) -> Result<()> {
+    ensure!(
+        catalog.parts.len() == LSE_PARTS.len()
+            && LSE_PARTS
+                .iter()
+                .all(
+                    |(part, family)| catalog.parts.get(*part).is_some_and(|p| p.family == *family
+                        && p.package == "LQFP48"
+                        && p.input_pin == "PC14"
+                        && p.output_pin == "PC15")
+                ),
+        "active LSE qualification must be present for exactly the two reviewed exact parts"
+    );
+    Ok(())
+}
+fn validate_lse_configuration(
+    c: &cw32_data_serde::chip::core::peripheral::LseConfiguration,
+) -> Result<()> {
+    ensure!(
+        c.nominal_hz == 32_768
+            && c.maximum_hz == 1_000_000
+            && c.supply_mv == (1650, 5500)
+            && c.temperature_c == (-40, 105)
+            && c.startup_cycles == [256, 1024, 4096, 16384]
+            && (c.rtc_source, c.uart_source, c.awt_source, c.mco_source) == (0, 2, 3, 6)
+            && c.gpio_dir_offset == 0
+            && c.gpio_speed_offset == 8,
+        "LSE electrical/source/GPIO facts exceed the bounded own-source cohort"
+    );
+    ensure!(
+        c.rtc_reset.len() == 13,
+        "LSE requires the full RTC reset roster"
+    );
+    for ((name, offset, value, mask), actual) in LSE_RTC_RESET.iter().zip(&c.rtc_reset) {
+        ensure!(
+            actual.register == *name
+                && actual.byte_offset == *offset
+                && actual.value == *value
+                && actual.mask == *mask,
+            "LSE RTC reset roster must be exact, complete, unique and ordered"
+        );
+    }
+    ensure!(
+        c.output_routes.len() == 2
+            && c.output_routes[0].pin == "PB12"
+            && c.output_routes[0].af == 3
+            && c.output_routes[1].pin == "PF1"
+            && c.output_routes[1].af == 1,
+        "LSE direct-output routes must be the exact unique own-package pair"
+    );
+    Ok(())
+}
+fn lse_register<'a>(
+    registers: &'a BTreeMap<String, chiptool::ir::IR>,
+    core: &cw32_data_serde::chip::Core,
+    peripheral: &str,
+    register: &str,
+    offset: u32,
+) -> Result<(&'a chiptool::ir::IR, &'a chiptool::ir::FieldSet)> {
+    use chiptool::ir::BlockItemInner;
+    let owner = core
+        .peripherals
+        .iter()
+        .find(|p| p.name == peripheral)
+        .with_context(|| format!("missing LSE consumer {peripheral}"))?;
+    let selected = owner
+        .registers
+        .as_ref()
+        .context("LSE consumer has no selected registers")?;
+    let ir = registers
+        .get(&selected.kind)
+        .context("missing LSE selected register IR")?;
+    let block = ir
+        .blocks
+        .get(&selected.block)
+        .context("missing LSE selected block")?;
+    let item = block
+        .items
+        .iter()
+        .find(|r| r.name == register && r.byte_offset == offset)
+        .with_context(|| format!("LSE register layout mismatch: {peripheral}.{register}"))?;
+    let BlockItemInner::Register(reg) = &item.inner else {
+        anyhow::bail!("LSE register is not a register")
+    };
+    let fieldset = ir
+        .fieldsets
+        .get(reg.fieldset.as_ref().context("LSE register lacks fields")?)
+        .context("missing LSE fieldset")?;
+    Ok((ir, fieldset))
+}
+fn lse_field(fields: &chiptool::ir::FieldSet, name: &str, offset: u32, size: u32) -> Result<()> {
+    ensure!(
+        fields.fields.iter().any(|f| f.name == name
+            && f.bit_offset == chiptool::ir::BitOffset::Regular(offset)
+            && f.bit_size == size
+            && f.array.is_none()),
+        "LSE source field mismatch: {name}"
+    );
+    Ok(())
+}
+fn lse_source_enum(
+    ir: &chiptool::ir::IR,
+    fields: &chiptool::ir::FieldSet,
+    field: &str,
+    value: u8,
+) -> Result<()> {
+    let field = fields
+        .fields
+        .iter()
+        .find(|f| f.name == field)
+        .context("missing LSE source field")?;
+    let enumeration = ir
+        .enums
+        .get(
+            field
+                .enumm
+                .as_ref()
+                .context("LSE source must be native enum")?,
+        )
+        .context("missing LSE source enum")?;
+    ensure!(
+        enumeration
+            .variants
+            .iter()
+            .filter(|v| v.name == "LSE" && v.value == u64::from(value))
+            .count()
+            == 1,
+        "LSE source enum encoding differs from own manual"
+    );
+    Ok(())
+}
+/// Project exact-part LSE capabilities only after verifying package, own sources,
+/// selected register fields and the complete conservative consumer snapshot.
+pub fn apply_lse(
+    root: &Path,
+    chip: &crate::ChipInput,
+    line: &str,
+    core: &mut cw32_data_serde::chip::Core,
+    registers: &BTreeMap<String, chiptool::ir::IR>,
+) -> Result<()> {
+    ensure!(
+        core.peripherals.iter().all(|p| p
+            .clock_limits
+            .as_ref()
+            .is_none_or(|c| c.lse_configuration.is_none())),
+        "LSE configuration cannot be preseeded or inherited from a family profile"
+    );
+    let catalog = parse_lse_catalog(&fs::read(root.join("cw32-data/lse-qualified.yaml"))?)?;
+    ensure!(
+        catalog.schema_version == 1 && catalog.source_authority == "sources/evidence-sources.json",
+        "unknown active LSE source catalog"
+    );
+    validate_lse_parts(&catalog)?;
+    let read_policy = |path: &str| -> Result<Value> {
+        let bytes = fs::read(root.join(path))?;
+        ensure!(
+            catalog.policies.get(path) == Some(&format!("{:x}", Sha256::digest(&bytes))),
+            "active LSE source policy changed: {path}"
+        );
+        Ok(serde_json::from_slice(&bytes)?)
+    };
+    let proof = read_policy("docs/lse-active-first-cohort.json")?;
+    let rtc_proof = read_policy("docs/lse-active-rtc-admission.json")?;
+    ensure!(
+        proof["schema_version"] == 1 && rtc_proof["schema_version"] == 1,
+        "unknown LSE review schema"
+    );
+    for (part, p) in &catalog.parts {
+        validate_lse_configuration(&p.configuration)?;
+        let mut profile = serde_json::to_value(p)?;
+        profile.as_object_mut().unwrap().remove("configuration");
+        ensure!(
+            profile == proof["parts"][part]
+                && serde_json::to_value(&p.configuration)? == proof["configuration"]
+                && serde_json::to_value(&p.configuration.rtc_reset)? == rtc_proof["rtc_reset"],
+            "active LSE facts differ from new own-source review"
+        );
+    }
+    let Some(p) = catalog.parts.get(&chip.name) else {
+        return Ok(());
+    };
+    ensure!(
+        p.family == line
+            && p.package == "LQFP48"
+            && p.input_pin == "PC14"
+            && p.output_pin == "PC15",
+        "LSE cannot derive exact-part qualification from a family alias"
+    );
+    ensure!(
+        chip.packages.len() == 1 && chip.packages[0].package == p.package,
+        "LSE qualification requires the exact LQFP48 package"
+    );
+    for (pin, position, alias) in [("PC14", "3", "OSC32_IN"), ("PC15", "4", "OSC32_OUT")] {
+        ensure!(
+            core.pins.iter().any(|p| p.name == pin)
+                && chip.packages[0].pins.iter().any(|p| p.position == position
+                    && p.signals.iter().any(|s| s == pin)
+                    && p.signals.iter().any(|s| s == alias)),
+            "LSE requires the reviewed bonded oscillator pair"
+        );
+    }
+    let authority: Value =
+        serde_json::from_slice(&fs::read(root.join(&catalog.source_authority))?)?;
+    ensure!(
+        p.sources.len() == 2,
+        "LSE requires own manual and own datasheet"
+    );
+    let expected_datasheet = if line == "CW32A030" {
+        "vendor:CW32A030_DataSheet_CN_V1.1.pdf"
+    } else {
+        "vendor:CW32F030_DataSheet_CN_V1.9.pdf"
+    };
+    for (source, expected) in p
+        .sources
+        .iter()
+        .zip(["vendor:CW32x030_UserManual_CN_V2.5.pdf", expected_datasheet])
+    {
+        ensure!(
+            source.source_ref == expected,
+            "LSE requires canonical own-source IDs"
+        );
+        let original = authority["artifacts"]
+            .as_array()
+            .context("missing source authority")?
+            .iter()
+            .find(|a| a["id"] == source.source_ref)
+            .context("LSE source is not canonical")?;
+        let page_count = original["provenance"]["pdf_page_count"]
+            .as_u64()
+            .context("missing source page count")?;
+        ensure!(
+            original["sha256"] == source.sha256
+                && original["provenance"]["status"] == "selected"
+                && original["provenance"]["chip_scope"]
+                    .as_array()
+                    .context("missing source scope")?
+                    .iter()
+                    .any(|f| f == line)
+                && !source.pdf_pages_1_based.is_empty()
+                && source.pdf_pages_1_based.len() == source.printed_pages.len()
+                && source
+                    .pdf_pages_1_based
+                    .iter()
+                    .zip(&source.printed_pages)
+                    .all(|(pdf, printed)| *pdf > 0
+                        && u64::from(*pdf) <= page_count
+                        && *pdf == *printed + 1),
+            "LSE source identity, own-family scope or evidence pages changed"
+        );
+    }
+    let c = &p.configuration;
+    let (_, cr1) = lse_register(registers, core, "SYSCTRL", "CR1", 4)?;
+    for (name, offset, size) in [
+        ("LSEEN", 4, 1),
+        ("LSELOCK", 5, 1),
+        ("LSECCS", 6, 1),
+        ("HSECCS", 7, 1),
+        ("CLKCCS", 8, 1),
+        ("KEY", 16, 16),
+    ] {
+        lse_field(cr1, name, offset, size)?;
+    }
+    let (sysctrl, lse) = lse_register(registers, core, "SYSCTRL", "LSE", 36)?;
+    for (name, offset, size) in [
+        ("DRIVER", 0, 2),
+        ("AMP", 2, 2),
+        ("WAITCYCLE", 4, 2),
+        ("MODE", 6, 1),
+        ("STABLE", 15, 1),
+    ] {
+        lse_field(lse, name, offset, size)?;
+    }
+    for (field, name) in [
+        ("DRIVER", "LseDrive"),
+        ("AMP", "LseAmplitude"),
+        ("WAITCYCLE", "LseWait"),
+    ] {
+        ensure!(
+            lse.fields
+                .iter()
+                .find(|f| f.name == field)
+                .and_then(|f| f.enumm.as_deref())
+                == Some(name),
+            "LSE parameter requires its own native enum"
+        );
+        let enumeration = sysctrl
+            .enums
+            .get(name)
+            .context("missing native LSE parameter enum")?;
+        let values: std::collections::BTreeSet<_> =
+            enumeration.variants.iter().map(|v| v.value).collect();
+        ensure!(
+            enumeration.bit_size == 2
+                && enumeration.variants.len() == 4
+                && values == [0, 1, 2, 3].into_iter().collect(),
+            "LSE parameter enum must cover the four source-defined values exactly"
+        );
+    }
+    let (_, status) = lse_register(registers, core, "SYSCTRL", "ISR", 16)?;
+    lse_field(status, "LSEFAIL", 5, 1)?;
+    lse_field(status, "LSEFAULT", 7, 1)?;
+    let (_, mco) = lse_register(registers, core, "SYSCTRL", "MCO", 112)?;
+    lse_field(mco, "SOURCE", 0, 4)?;
+    let (awt_ir, awt) = lse_register(registers, core, "AWT", "CR", 0)?;
+    lse_field(awt, "SRC", 8, 3)?;
+    lse_field(awt, "EN", 0, 1)?;
+    lse_source_enum(awt_ir, awt, "SRC", c.awt_source)?;
+    for name in ["UART1", "UART2", "UART3"] {
+        let (uart_ir, uart) = lse_register(registers, core, name, "CR2", 4)?;
+        lse_field(uart, "SOURCE", 8, 2)?;
+        lse_source_enum(uart_ir, uart, "SOURCE", c.uart_source)?;
+    }
+    let (rtc_ir, rtc) = lse_register(registers, core, "RTC", "CR1", 8)?;
+    lse_field(rtc, "SOURCE", 8, 3)?;
+    lse_source_enum(rtc_ir, rtc, "SOURCE", c.rtc_source)?;
+    for entry in &c.rtc_reset {
+        let (_, fields) = lse_register(registers, core, "RTC", &entry.register, entry.byte_offset)?;
+        let mut mask = 0u32;
+        for field in &fields.fields {
+            let chiptool::ir::BitOffset::Regular(offset) = field.bit_offset else {
+                anyhow::bail!("nonregular RTC reset mask")
+            };
+            ensure!(
+                field.array.is_none()
+                    && field.bit_size > 0
+                    && field.bit_size < 32
+                    && offset + field.bit_size <= 32,
+                "unsupported RTC reset field"
+            );
+            mask |= ((1u32 << field.bit_size) - 1) << offset;
+        }
+        ensure!(
+            mask == entry.mask,
+            "RTC reset defined-bit mask differs from source roster: {}",
+            entry.register
+        );
+    }
+    for gpio in ["GPIOB", "GPIOC", "GPIOF"] {
+        lse_register(registers, core, gpio, "DIR", c.gpio_dir_offset)?;
+        lse_register(registers, core, gpio, "SPEED", c.gpio_speed_offset)?;
+        lse_register(registers, core, gpio, "ANALOG", 28)?;
+    }
+    for (gpio, register, offset, field, bit) in [
+        ("GPIOB", "AFRH", 20, "AFR12", 16),
+        ("GPIOF", "AFRL", 24, "AFR1", 4),
+    ] {
+        let (_, fields) = lse_register(registers, core, gpio, register, offset)?;
+        lse_field(fields, field, bit, 4)?;
+    }
+    for route in &c.output_routes {
+        ensure!(
+            core.pins.iter().any(|p| p.name == route.pin),
+            "unbonded LSE direct output"
+        );
+    }
+    let owner = core
+        .peripherals
+        .iter_mut()
+        .find(|p| p.name == "SYSCTRL")
+        .context("active LSE has no SYSCTRL owner")?;
+    owner
+        .clock_limits
+        .as_mut()
+        .context("LSE requires source-qualified clock limits")?
+        .lse_configuration = Some(c.clone());
+    Ok(())
+}
+
+#[cfg(test)]
+mod lse_tests {
+    use super::*;
+    fn catalog() -> LseCatalog {
+        parse_lse_catalog(include_bytes!("../../cw32-data/lse-qualified.yaml")).unwrap()
+    }
+    #[test]
+    fn lse_rejects_duplicate_catalog_keys() {
+        let original = include_str!("../../cw32-data/lse-qualified.yaml");
+        for (needle, replacement) in [
+            ("parts:\n", "parts:\n  CW32A030C8T7: {}\n"),
+            (
+                "policies:\n",
+                "policies:\n  docs/lse-active-first-cohort.json: duplicate\n",
+            ),
+            (
+                "    family: CW32A030\n",
+                "    family: CW32A030\n    family: CW32A030\n",
+            ),
+            (
+                "      nominal_hz: 32768\n",
+                "      nominal_hz: 32768\n      nominal_hz: 32768\n",
+            ),
+        ] {
+            assert!(original.contains(needle));
+            let duplicate = original.replacen(needle, replacement, 1);
+            let error = parse_lse_catalog(duplicate.as_bytes())
+                .err()
+                .expect("duplicate key must fail");
+            assert!(error.to_string().contains("duplicate"), "{error}");
+        }
+    }
+    #[test]
+    fn lse_rejects_broadened_or_incomplete_qualification() {
+        let mut c = catalog();
+        validate_lse_parts(&c).unwrap();
+        let p = c.parts.remove("CW32A030C8T7").unwrap();
+        assert!(validate_lse_parts(&c).is_err());
+        c.parts.insert("CW32A030".into(), p);
+        assert!(validate_lse_parts(&c).is_err());
+        let mut c = catalog();
+        c.parts.get_mut("CW32F030C8T7").unwrap().package = "QFN32".into();
+        assert!(validate_lse_parts(&c).is_err());
+    }
+    #[test]
+    fn lse_rejects_malformed_reset_routes_and_sources() {
+        let original = catalog()
+            .parts
+            .remove("CW32F030C8T7")
+            .unwrap()
+            .configuration;
+        validate_lse_configuration(&original).unwrap();
+        let mut c = original.clone();
+        c.rtc_reset.pop();
+        assert!(validate_lse_configuration(&c).is_err());
+        let mut c = original.clone();
+        c.rtc_reset[12] = c.rtc_reset[11].clone();
+        assert!(validate_lse_configuration(&c).is_err());
+        let mut c = original.clone();
+        c.rtc_reset[1].mask &= !1;
+        assert!(validate_lse_configuration(&c).is_err());
+        let mut c = original.clone();
+        c.output_routes[1] = c.output_routes[0].clone();
+        assert!(validate_lse_configuration(&c).is_err());
+        let mut c = original.clone();
+        c.awt_source = 2;
+        assert!(validate_lse_configuration(&c).is_err());
+        let mut c = original.clone();
+        c.mco_source = 5;
+        assert!(validate_lse_configuration(&c).is_err());
+        let mut c = original.clone();
+        c.gpio_dir_offset = 8;
+        assert!(validate_lse_configuration(&c).is_err());
+    }
+    #[test]
+    fn lse_rejects_preseed_before_package_admission() {
+        let c = catalog()
+            .parts
+            .remove("CW32F030C8T7")
+            .unwrap()
+            .configuration;
+        let electrical: Catalog =
+            serde_yaml::from_str(include_str!("../../cw32-data/electrical.yaml")).unwrap();
+        let mut limits = electrical.profiles["CW32F030"].clock_limits.clone();
+        limits.lse_configuration = Some(c);
+        let owner: Peripheral =
+            serde_json::from_value(serde_json::json!({"name":"SYSCTRL", "clock_limits":limits}))
+                .unwrap();
+        let mut core = cw32_data_serde::chip::Core {
+            name: "cm0p".into(),
+            nvic_priority_bits: None,
+            peripherals: vec![owner],
+            interrupts: vec![],
+            dma_channels: vec![],
+            pins: vec![],
+        };
+        let chip = crate::ChipInput {
+            name: "CW32F030".into(),
+            memory: vec![],
+            packages: vec![],
+            docs: vec![],
+        };
+        let error = apply_lse(
+            Path::new("unused"),
+            &chip,
+            "CW32F030",
+            &mut core,
+            &BTreeMap::new(),
+        )
+        .unwrap_err();
+        assert!(error.to_string().contains("preseeded"));
+    }
 }

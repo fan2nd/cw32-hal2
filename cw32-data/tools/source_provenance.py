@@ -23,6 +23,10 @@ import zipfile
 import zlib
 import yaml
 
+# Support both script execution and importlib-based source tests.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from source_scope import discovery_only, scope_report, validate_scope
+
 ROOT = Path(__file__).resolve().parents[2]
 LOCK = 'sources/evidence-sources.json'
 APPROVED_SDK_ROOT = 'sources/approved-sdk-members'
@@ -97,7 +101,8 @@ def source_nodes(lock):
         nodes.append({'id': row['id'], 'path': row['path'], 'sha256': row['sha256'],
                       'bytes': row['bytes'], 'kind': row['kind'], 'lock_pointer': base,
                       'original_id': row['id'], 'url': row['url'],
-                      'provenance': row['provenance'], 'license': row['license']})
+                      'provenance': row['provenance'], 'license': row['license'],
+                      **({'role': row['role']} if 'role' in row else {})})
         for j, member in enumerate(row.get('members', [])):
             nodes.append({'id': 'member:' + member['path'], 'path': member['path'],
                           'sha256': member['sha256'], 'bytes': member['bytes'], 'kind': 'sdk-member',
@@ -197,17 +202,21 @@ def input_paths(root):
                 continue
             yield rel
 
-def validate_lock(root, lock, sources=None):
+def validate_lock(root, lock, sources=None, include_discovery=False):
     require(lock['schema_version'] == 1, 'Unsupported source lock schema')
     nodes = source_nodes(lock)
     require(len({x['id'] for x in nodes}) == len(nodes), 'Duplicate source ID')
     require(len({x['path'] for x in nodes}) == len(nodes), 'Duplicate source output path')
+    try:
+        validate_scope(lock)
+    except ValueError as error:
+        raise ProvenanceError(str(error)) from error
     ids = {x['id'] for x in nodes}
     for node in nodes:
         safe_path(root, node['path'])
         require(bool(SHA.fullmatch(node['sha256'])), f'Invalid SHA256: {node["id"]}')
         require(isinstance(node['bytes'], int) and node['bytes'] > 0, f'Invalid size: {node["id"]}')
-        if sources:
+        if sources and (include_discovery or not discovery_only(node)):
             p = safe_path(sources, node['path'])
             require(p.is_file(), f'Missing acquired source: {p}')
             require(p.stat().st_size == node['bytes'] and digest(p) == node['sha256'],
@@ -690,9 +699,9 @@ def validate_distribution(root, files, lock=None):
         inspect_distribution_bytes(data, str(rel), hashes, budget)
 
 
-def generate(root, sources=None):
+def generate(root, sources=None, include_discovery=False):
     lock = json.loads((root / LOCK).read_text())
-    nodes = validate_lock(root, lock, sources)
+    nodes = validate_lock(root, lock, sources, include_discovery)
     index = reference_index(root, lock, nodes)
     result = compatibility_views(lock)
     result['build/provenance/reference-index.json'] = encode(index)
@@ -702,11 +711,12 @@ def generate(root, sources=None):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root', type=Path, default=ROOT)
-    p.add_argument('--sources', type=Path, help='Optional acquired-source directory (normally sources/vendor); verifies every locked byte')
+    p.add_argument('--sources', type=Path, help='Acquired-source directory; verifies all hardware-required original/member/text bytes')
+    p.add_argument('--include-discovery', action='store_true', help='Also require exact historical HTML bytes for an all-record archival replay')
     p.add_argument('--write', action='store_true', help='Regenerate only the four derived views; never repin sources')
     p.add_argument('--out-dir', type=Path, help='Directory for the four derived views (authored inputs still come from --root)')
     args = p.parse_args(argv)
-    result = generate(args.root, args.sources)
+    result = generate(args.root, args.sources, args.include_discovery)
     for rel, content in result.items():
         path = args.out_dir / Path(rel).name if args.out_dir is not None else args.root / rel
         if args.write:
@@ -714,7 +724,10 @@ def main(argv=None):
             path.write_text(content)
         else:
             require(path.is_file() and path.read_text() == content, f'Stale/missing generated view: {rel}; review and run --write')
-    print(f'PASS: canonical source lock, {len(result)} views, evidence references and dependency pins' + ('; acquired bytes verified' if args.sources else ' (offline metadata check)'))
+    if args.sources:
+        lock = json.loads((args.root / LOCK).read_text())
+        print(json.dumps({**scope_report(lock, args.include_discovery), 'complete_manifest': args.include_discovery, 'complete_hardware': True}, sort_keys=True))
+    print(f'PASS: canonical source lock, {len(result)} views, evidence references and dependency pins' + ('; acquired bytes verified in reported scope' if args.sources else ' (offline metadata check)'))
     return 0
 
 if __name__ == '__main__':

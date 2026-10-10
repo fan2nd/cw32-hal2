@@ -60,3 +60,5 @@ F030/A030 and buffered regression, plus real ELFs for every exact x030 package.
 The new classic API is limited to optional complete pairs, interior duty, fixed
 dead time and global MOE. Its own-PDF/data audit is
 `ci/verify-classic-atim-complementary-data.py`; it runs under `./d audit-current`.
+
+`./ci/check-lse-rtc.sh` builds the ordinary ARM libraries for thirteen family representatives, the F030 alias/unbonded exclusions, both qualified packages with defmt, four LSE firmware links, and fifteen retained calendar firmware links. It does not execute firmware or add HAL tests.

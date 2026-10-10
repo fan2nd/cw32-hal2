@@ -417,6 +417,37 @@ pub struct PeripheralLse {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralLseRtcReset {
+    pub register: &'static str,
+    pub byte_offset: u32,
+    pub value: u32,
+    pub mask: u32,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralLseOutputRoute {
+    pub pin: &'static str,
+    pub af: u8,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralLseConfiguration {
+    pub nominal_hz: u32,
+    pub maximum_hz: u32,
+    pub supply_mv: (u16, u16),
+    pub temperature_c: (i16, i16),
+    pub startup_cycles: &'static [u32; 4],
+    pub rtc_source: u8,
+    pub uart_source: u8,
+    pub awt_source: u8,
+    pub mco_source: u8,
+    pub gpio_dir_offset: u32,
+    pub gpio_speed_offset: u32,
+    pub rtc_reset: &'static [PeripheralLseRtcReset],
+    pub output_routes: &'static [PeripheralLseOutputRoute],
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub struct PeripheralPllLimits {
     pub input_range_hz: (u32, u32),
     pub output_range_hz: (u32, u32),
@@ -450,6 +481,7 @@ pub struct PeripheralClockLimits {
     pub hse: Option<PeripheralHseLimits>,
     pub hex: Option<PeripheralHexLimits>,
     pub lse: Option<PeripheralLse>,
+    pub lse_configuration: Option<PeripheralLseConfiguration>,
     pub pll: Option<PeripheralPllLimits>,
 }
 

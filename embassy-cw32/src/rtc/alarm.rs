@@ -73,7 +73,7 @@ impl Rtc<'_> {
     pub fn set_alarm_a(&mut self, config: AlarmAConfig) -> Result<(), RtcError> {
         let config = config.validate()?;
         let alarm = Alarm::A;
-        alarm_access(self.config, || {
+        alarm_access(&self.clock, self.config, || {
             if interrupt_enabled(alarm) {
                 return Err(RtcError::InterruptInUse);
             }
@@ -122,7 +122,7 @@ impl Rtc<'_> {
     /// does not acknowledge a previous event or disconnect an RTC_OUT route.
     pub fn set_alarm_a_enabled(&mut self, enable: bool) -> Result<(), RtcError> {
         let alarm = Alarm::A;
-        alarm_access(self.config, || {
+        alarm_access(&self.clock, self.config, || {
             if interrupt_enabled(alarm) {
                 return Err(RtcError::InterruptInUse);
             }
@@ -138,7 +138,7 @@ impl Rtc<'_> {
     /// Read one alarm's enable, interrupt enable and sticky match flag.
     /// Classic families use a bounded WINDOW/ACCESS transaction even for status.
     pub fn alarm_status(&mut self, alarm: Alarm) -> Result<AlarmStatus, RtcError> {
-        alarm_access(self.config, || {
+        alarm_access(&self.clock, self.config, || {
             Ok(AlarmStatus {
                 enabled: enabled(alarm),
                 interrupt_enabled: interrupt_enabled(alarm),
@@ -153,7 +153,7 @@ impl Rtc<'_> {
     /// be lost; a match after the write may already have reasserted the flag.
     /// Success means the bounded access completed, not that the flag stayed low.
     pub fn clear_alarm(&mut self, alarm: Alarm) -> Result<(), RtcError> {
-        alarm_access(self.config, || {
+        alarm_access(&self.clock, self.config, || {
             // Every own manual specifies ICR reset/read-one seed 0x0000_007f.
             // Preserve reserved bit 5 at its documented reset value, and write
             // one to every unselected R1W0 flag. Never read/modify/write ISR.
@@ -192,10 +192,11 @@ pub(super) fn pending(alarm: Alarm) -> bool {
 
 /// Only fixed-size driver operations enter this closure, never user code.
 fn alarm_access<T>(
+    clock: &crate::rcc::CalendarClock<'_>,
     config: RtcConfig,
     f: impl FnOnce() -> Result<T, RtcError>,
 ) -> Result<T, RtcError> {
-    check_clock()?;
+    check_clock(clock)?;
     check_write_mode()?;
     #[cfg(not(rtc_alarm_direct_access))]
     {
@@ -203,23 +204,36 @@ fn alarm_access<T>(
         if running {
             super::wait_classic_window(config)?;
         }
-        critical_section::with(|_| {
+        check_clock(clock)?;
+        let result = critical_section::with(|_| {
+            check_clock(clock)?;
             if running && !pac::RTC.cr1().read().window() {
                 return Err(RtcError::SynchronizationTimeout);
             }
             let _unlock = Unlocked::new();
-            let _access = running.then(super::Access::new);
-            f()
-        })
+            let _access = running.then(|| super::Access::new(clock.source()));
+            super::check_clock_source(clock)?;
+            let value = f()?;
+            super::check_clock_source(clock)?;
+            Ok(value)
+        })?;
+        check_clock(clock)?;
+        Ok(result)
     }
     #[cfg(rtc_alarm_direct_access)]
     {
         let _ = config;
         // Own access sections exclude ALARMx/CR2/IER/ISR/ICR from the
         // DATE/TIME/AWTARR synchronization protocol, including on L010.
-        critical_section::with(|_| {
+        let result = critical_section::with(|_| {
+            check_clock(clock)?;
             let _unlock = Unlocked::new();
-            f()
-        })
+            super::check_clock_source(clock)?;
+            let value = f()?;
+            super::check_clock_source(clock)?;
+            Ok(value)
+        })?;
+        check_clock(clock)?;
+        Ok(result)
     }
 }

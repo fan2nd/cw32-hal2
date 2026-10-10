@@ -145,7 +145,10 @@ def validate(manual_dir, source_only):
     assert split_command['evidence'][:-1] == old_command['evidence']
     assert split_command['evidence'][-1].startswith('cw32-data/hse-qualified.yaml: own F020/x030 AWT semantic split')
     for variant in ('sysctrl_v1', 'sysctrl_cw32f020_v1'):
-        restriction, = accesses['registers'][variant]
+        # Other reviewed status fields share SYSCTRL; this contract owns HSE.STABLE.
+        restriction, = (item for item in accesses['registers'][variant]
+                        if (item['block'], item['register'], item['fieldset'], item['field'])
+                        == ('SYSCTRL', 'HSE', 'HSE', 'STABLE'))
         assert {k: v for k, v in restriction.items() if k != 'evidence'} == {
             'block': 'SYSCTRL', 'register': 'HSE', 'fieldset': 'HSE', 'field': 'STABLE',
             'bit_offset': 19, 'bit_size': 1}

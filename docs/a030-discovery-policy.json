@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "recorded_on": "2026-10-09",
+  "purpose": "Separate historical website discovery from reproducible hardware evidence. No hardware claims or runtime behavior change.",
+  "discovery_ids": [
+    "vendor:a030-official-manuals.html",
+    "vendor:a030-official-sdk.html"
+  ],
+  "policy": {
+    "hardware_required_originals": 43,
+    "discovery_only_originals": 2,
+    "hardware_outputs_including_metadata": 553,
+    "default_acquisition": "Only 43 hardware originals and their exact locked derivatives are required. Receipts explicitly identify 2 omitted discovery records and complete_manifest=false.",
+    "default_source_verification": "All catalogued records, source references and history remain validated as metadata. Physical hardware-byte verification requires 43 originals; the 2 historical discovery pages are explicitly reported outside that scope.",
+    "archival_replay": "--include-discovery requires all45 exact selected originals. Historical pin_history hashes are exclusions and provenance, never acceptance alternatives.",
+    "refresh": "./d refresh-discovery captures at most 64 KiB per official response with a 30-second request timeout into a unique ignored build/discovery-observations directory. It reports unchanged/changed/missing/unavailable, returns 2 when any observation is not unchanged, and never changes the canonical source tree or claims acceptance.",
+    "redistribution": "Current and historical selected HTML hashes remain distribution-denied. Raw new observations and receipts remain in ignored build output and are excluded from source packaging.",
+    "no_new_accepted_hashes": true
+  },
+  "immutable_hardware_evidence": [
+    {
+      "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "cover_pdf_page_1_based": 1,
+      "claim": "Cover explicitly names CW32F030/CW32A030. Chapter 10 provides 10 CRC modes, parameters, input 8/16/32, result 16/32, base 0x40023000 and register offsets. Sections 4.7.12 and 4.7.15 provide clock/reset bit 2 and no key field.",
+      "pdf_pages_1_based": [
+        82,
+        85,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165
+      ],
+      "printed_pages": [
+        81,
+        84,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164
+      ]
+    },
+    {
+      "source_ref": "vendor:CW32x030_UserManual_EN_V1.0.pdf",
+      "sha256": "22eda878089565b7609f42215253227bb8e7b8072ea0378eae8a5ad489e3e3ec",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf",
+      "cover_pdf_page_1_based": 1,
+      "claim": "Cover independently names both families. Chapter 10 agrees on CRC modes, widths and register descriptions; current CN 2.5 remains preferred for changed peripheral behavior.",
+      "pdf_pages_1_based": [
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176
+      ],
+      "printed_pages": [
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175
+      ]
+    },
+    {
+      "source_ref": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+      "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+      "url": "https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf",
+      "claim": "Own A030 datasheet lists 10 CRC modes and the CRC memory range 0x40023000–0x400233FF.",
+      "pdf_pages_1_based": [
+        10,
+        29
+      ],
+      "printed_pages": [
+        9,
+        28
+      ]
+    }
+  ],
+  "sdk_scope": "The selected archive is the hash-locked F030 SDK. Documented register-map reuse is supported by the common manual and own A030 datasheet; it is not an independent A030 SDK or inherited electrical limits.",
+  "discovery_claim_boundary": "The reviewed 2026-10-09 snapshots associated the shared manual with the A030 product and showed an empty SDK category. That dated observation does not establish current or global absence of an A030 SDK. No hardware fact depends on current website availability or markup.",
+  "reason": "A fresh 36,655-byte manuals response differed solely by moving the 10-byte /index.php breadcrumb component to the 32-bit-MCU anchor. Its entire download table and manual URLs were unchanged. A fresh SDK response had the same breadcrumb change with its header-only table unchanged. Repeated exact-hash exceptions would make website navigation an unstable hardware build dependency.",
+  "consumer_changes": "CRC hardware audit verifies the already-locked shared manual and own datasheet directly. HTML identities remain in discovery_sources and canonical historical provenance. The manuals-tab alias citation is explicitly historical discovery only.",
+  "hardware_validation": false
+}

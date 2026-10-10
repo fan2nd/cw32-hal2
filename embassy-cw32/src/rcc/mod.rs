@@ -69,6 +69,13 @@ pub(crate) use l052_l083::init as init_backend;
 #[cfg(any(rcc_cw32l052_v1, rcc_cw32l083_v1))]
 pub use l052_l083::*;
 
+#[cfg(rcc_lse)]
+mod lse;
+#[cfg(rcc_lse)]
+pub use lse::{Lse, LseAmplitude, LseDrive, LseMode, LseWait};
+#[cfg(rcc_lse)]
+pub use rtc::LseClock;
+
 #[cfg(rtc)]
 mod rtc;
 #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
@@ -109,10 +116,17 @@ pub(crate) unsafe fn init(config: Config) -> Result<(), Error> {
     critical_section::with(|cs| {
         let inherited = crate::rcc_lse_owned_pads();
         let retained = LSE_PADS.borrow(cs).get();
+        #[cfg(rcc_lse)]
+        let requested = config
+            .lse
+            .map_or((false, false), |c| (true, c.mode == LseMode::Oscillator));
+        #[cfg(not(rcc_lse))]
+        let requested = (false, false);
         // Never release a captured pad during this boot, including on faults.
-        LSE_PADS
-            .borrow(cs)
-            .set((retained.0 || inherited.0, retained.1 || inherited.1));
+        LSE_PADS.borrow(cs).set((
+            retained.0 || inherited.0 || requested.0,
+            retained.1 || inherited.1 || requested.1,
+        ));
         unsafe { init_backend(config) }
     })
 }

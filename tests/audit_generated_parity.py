@@ -10,6 +10,8 @@ import argparse
 from collections import Counter
 import hashlib
 import json
+import os
+import subprocess
 from pathlib import Path
 import re
 import xml.etree.ElementTree as ET
@@ -176,6 +178,26 @@ def audit(manifest_path, data):
                 assert correction["expected_bit_offset"] + correction["bit_size"] <= size, context + " corrected field exceeds register"
                 expected_fields[field_name] = (correction["expected_bit_offset"], correction["bit_size"])
                 seen_field_width_overrides.add((block_name, fieldset_name, field_name))
+            if context == "CW32L083:SYSCTRL.PLL":
+                # The own manual documents a reserved debug default absent from SVD.
+                # The reviewed PLL API models it only to preserve/check that default.
+                policy = yaml.safe_load((ROOT / "cw32-data/pll-qualified.yaml").read_text())["families"]["CW32L083"]
+                source, = (s for s in policy["sources"] if s["source_ref"] == "vendor:CW32L083_UserManual_CN_V2.0.pdf")
+                sources = Path(os.environ.get("CW32_SOURCES", ROOT.parent / "cw32-sources"))
+                pdf = sources / "CW32L083_UserManual_CN_V2.0.pdf"
+                assert hashlib.sha256(pdf.read_bytes()).hexdigest() == source["sha256"]
+                assert 82 in source["pdf_pages_1_based"]
+                page = subprocess.check_output(["pdftotext", "-f", "82", "-l", "82", "-layout", str(pdf), "-"], text=True)
+                assert "4.7.8" in page and re.search(r"19:16\s+RFU\s+RW\s+调试控制位，请保持默认值", page)
+                assert re.search(r"Reset value:\s*0x0005\s+3483", page)
+                assert policy["pll"]["reserved_debug_default"] == 5
+                assert "RESERVED_DEBUG" not in expected_fields
+                assert all(offset + width <= 16 or offset >= 20 for offset, width in expected_fields.values())
+                expected_fields["RESERVED_DEBUG"] = (16, 4)
+                debug = generated_fields["RESERVED_DEBUG"]
+                assert debug.get("access", "ReadWrite") == "ReadWrite" and debug["enum"] == "PllDebug"
+                enum = ir["enum/PllDebug"]
+                assert enum["bit_size"] == 4 and [(v["name"], v["value"]) for v in enum["variants"]] == [("Default", 5)]
             assert generated_fields.keys() == expected_fields.keys(), context + " missing or extra fields"
             for field_name, (offset, width) in expected_fields.items():
                 actual = generated_fields[field_name]

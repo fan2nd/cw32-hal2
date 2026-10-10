@@ -30,6 +30,7 @@ fn main() {
     let serial = uart || spi || i2c;
     let cfgs = [
         "rcc_hse",
+        "rcc_lse",
         "rcc_pll",
         "rcc_external_clock",
         "aes_cw32l083_v1",
@@ -1930,6 +1931,7 @@ fn generate_electrical(out: &mut String) {
         println!("cargo:rustc-cfg=rcc_external_clock");
     }
     generate_lse(out, c);
+    generate_lse_configuration(out, c);
     generate_pll(out, c);
     generate_hse(out, c);
     generate_hex(out, c);
@@ -3599,4 +3601,236 @@ fn generate_time_driver(out: &mut String, selected: Option<&str>) {
          #[unsafe(no_mangle)] unsafe extern \"C\" fn {irq}() {{ crate::time_driver::on_interrupt(); }}\n\
          }}\n"
     ));
+}
+
+fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLimits) {
+    use cw32_metapac::metadata::{METADATA, ir};
+    use std::fmt::Write;
+    let expected = matches!(METADATA.name, "CW32F030C8T7" | "CW32A030C8T7");
+    assert_eq!(
+        c.lse_configuration.is_some(),
+        expected,
+        "exact-package LSE qualification missing or unexpected"
+    );
+    let Some(lse) = &c.lse_configuration else {
+        return;
+    };
+    println!("cargo:rustc-cfg=rcc_lse");
+    let peripheral = |name: &str| {
+        METADATA
+            .peripherals
+            .iter()
+            .find(|p| p.name == name)
+            .expect("missing LSE dependency")
+    };
+    let register = |name: &str, reg: &str, offset: Option<u32>| {
+        let regs = peripheral(name).registers.as_ref().unwrap();
+        let block = regs
+            .ir
+            .blocks
+            .iter()
+            .find(|b| b.name == regs.block)
+            .unwrap();
+        let item = block
+            .items
+            .iter()
+            .find(|r| r.name.eq_ignore_ascii_case(reg))
+            .expect("missing LSE dependency register");
+        if let Some(offset) = offset {
+            assert_eq!(item.byte_offset, offset);
+        }
+        assert!(item.array.is_none());
+        let ir::BlockItemInner::Register(r) = &item.inner else {
+            panic!("not a register")
+        };
+        assert_eq!(r.bit_size, 32);
+        assert!(matches!(r.access, ir::Access::Read | ir::Access::ReadWrite));
+        regs.ir
+            .fieldsets
+            .iter()
+            .find(|f| Some(f.name) == r.fieldset)
+            .unwrap()
+    };
+    let field = |name: &str, reg: &str, field: &str, bit: u32, width: u32| {
+        let f = register(name, reg, None)
+            .fields
+            .iter()
+            .find(|f| f.name.eq_ignore_ascii_case(field))
+            .expect("missing native LSE field");
+        assert!(f.array.is_none());
+        assert_eq!(f.bit_size, width);
+        assert!(matches!(&f.bit_offset, ir::BitOffset::Regular(p) if p.offset == bit));
+    };
+    assert_eq!(lse.nominal_hz, 32768);
+    assert_eq!(*lse.startup_cycles, [256, 1024, 4096, 16384]);
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSE_NOMINAL_HZ: u32 = {};",
+        lse.nominal_hz
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSE_SUPPLY_MV: (u16,u16) = {:?};",
+        lse.supply_mv
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSE_TEMPERATURE_C: (i16,i16) = {:?};",
+        lse.temperature_c
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSE_MAXIMUM_HZ: u32 = {};",
+        lse.maximum_hz
+    )
+    .unwrap();
+    writeln!(out, "pub(crate) const RCC_LSE_RTC_SOURCE: crate::pac::rtc::vals::Source = crate::pac::rtc::vals::Source::from_bits({});", lse.rtc_source).unwrap();
+    for (name, bit, width) in [
+        ("DRIVER", 0, 2),
+        ("AMP", 2, 2),
+        ("WAITCYCLE", 4, 2),
+        ("MODE", 6, 1),
+        ("STABLE", 15, 1),
+    ] {
+        field("SYSCTRL", "LSE", name, bit, width);
+    }
+    field("SYSCTRL", "CR1", "LSEEN", 4, 1);
+    field("SYSCTRL", "CR1", "LSELOCK", 5, 1);
+    let sysctrl = peripheral("SYSCTRL");
+    let pins: Vec<_> = ["LSE_IN", "LSE_OUT"]
+        .into_iter()
+        .map(|signal| {
+            let found: Vec<_> = sysctrl
+                .pins
+                .iter()
+                .filter(|p| p.signal == signal && p.af.is_none())
+                .collect();
+            assert_eq!(found.len(), 1);
+            let name = found[0].pin;
+            let port = name.as_bytes()[1] - b'A';
+            let bit: u8 = name[2..].parse().unwrap();
+            (port, bit)
+        })
+        .collect();
+    for (port, bit) in &pins {
+        let gpio = format!("GPIO{}", char::from(b'A' + port));
+        register(&gpio, "DIR", Some(lse.gpio_dir_offset));
+        register(&gpio, "SPEED", Some(lse.gpio_speed_offset));
+        for reg in [
+            "DIR",
+            "ANALOG",
+            "PUR",
+            "PDR",
+            "OPENDRAIN",
+            "FILTER",
+            "RISEIE",
+            "FALLIE",
+            "HIGHIE",
+            "LOWIE",
+            "LOCK",
+        ] {
+            field(&gpio, reg, &format!("PIN{bit}"), u32::from(*bit), 1);
+        }
+        field(
+            &gpio,
+            if *bit < 8 { "AFRL" } else { "AFRH" },
+            &format!("AFR{bit}"),
+            u32::from(*bit % 8) * 4,
+            4,
+        );
+    }
+    out.push_str("pub(crate) fn rcc_lse_pins_match(bypass: bool, unused: bool, timeout: u32, cs: critical_section::CriticalSection<'_>) -> Result<bool, crate::rcc::Error> {\nlet mut matches = true;\n");
+    for (i, (port, bit)) in pins.iter().enumerate() {
+        if i == 1 {
+            out.push_str("if !bypass {\n");
+        }
+        writeln!(out,"let info = gpio_rcc({port});\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LsePinConflict); }}\nmatches &= info.inspect_for_init(cs, timeout, || {{\nlet r=crate::pac::GPIO{};\nr.dir().read().pin{bit}()\n&& r.analog().read().pin{bit}() == {}\n&& r.{}().read().afr{bit}() == 0",char::from(b'A'+port),if i==0 {"(unused || !bypass)"}else{"true"},if *bit<8{"afrl"}else{"afrh"}).unwrap();
+        for reg in [
+            "pur",
+            "pdr",
+            "opendrain",
+            "filter",
+            "riseie",
+            "fallie",
+            "highie",
+            "lowie",
+            "lock",
+        ] {
+            writeln!(out, "&& !r.{reg}().read().pin{bit}()").unwrap();
+        }
+        out.push_str("}).map_err(|_| crate::rcc::Error::LsePinConflict)?;\n");
+        if i == 1 {
+            out.push_str("}\n");
+        }
+    }
+    out.push_str("Ok(matches)\n}\n");
+    // Admission already proved reset-like pad configuration. Crystal requires
+    // no pad change; bypass only enables the selected input's digital buffer.
+    let (port, bit) = pins[0];
+    writeln!(out,"pub(crate) fn rcc_configure_lse_pins(bypass: bool, timeout: u32, cs: critical_section::CriticalSection<'_>) -> Result<(), crate::rcc::Error> {{\nif !rcc_lse_pins_match(bypass, true, timeout, cs)? {{ return Err(crate::rcc::Error::LsePinConflict); }}\nif bypass {{\ngpio_rcc({port}).inspect_for_init(cs, timeout, || crate::pac::GPIO{}.analog().modify(|w| w.set_pin{bit}(false))).map_err(|_| crate::rcc::Error::LsePinConflict)?;\n}}\nif !rcc_lse_pins_match(bypass, false, timeout, cs)? {{ return Err(crate::rcc::Error::LsePinConflict); }}\nOk(())\n}}", char::from(b'A'+port)).unwrap();
+    out.push_str("pub(crate) fn rcc_lse_consumers_idle(timeout: u32, cs: critical_section::CriticalSection<'_>) -> Result<bool, crate::rcc::Error> {\nuse crate::rcc::SealedRccPeripheral;\n");
+    // Inspect controls before reading a running calendar's other registers.
+    out.push_str("let info = crate::peripherals::RTC::RCC_INFO;\nif info.reset_asserted() { return Err(crate::rcc::Error::LseClockInUse); }\nlet rtc_idle = info.inspect_for_init(cs, timeout, || {\nlet snapshot = || {\n");
+    let order = [
+        "CR0", "CR1", "CR2", "IER", "ISR", "COMPEN", "DATE", "TIME", "ALARMA", "ALARMB",
+        "TAMPDATE", "TAMPTIME", "AWTARR",
+    ];
+    assert_eq!(lse.rtc_reset.len(), order.len());
+    for (i, name) in order.iter().enumerate() {
+        let matching: Vec<_> = lse
+            .rtc_reset
+            .iter()
+            .filter(|r| r.register == *name)
+            .collect();
+        assert_eq!(matching.len(), 1);
+        let r = matching[0];
+        register("RTC", name, Some(r.byte_offset));
+        writeln!(
+            out,
+            "{}(crate::pac::RTC.{}().read().0 & {} == {})",
+            if i == 0 { "" } else { "&& " },
+            name.to_ascii_lowercase(),
+            r.mask,
+            r.value & r.mask
+        )
+        .unwrap();
+    }
+    out.push_str("};\nsnapshot() && snapshot()\n}).map_err(|_| crate::rcc::Error::RetainedClockInspectionTimeout)?;\nif !rtc_idle { return Ok(false); }\n");
+    field("AWT", "CR", "SRC", 8, 3);
+    writeln!(out,"let info = crate::peripherals::AWT::RCC_INFO;\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LseClockInUse); }}\nif info.inspect_for_init(cs, timeout, || u8::from(crate::pac::AWT.cr().read().src()) == {}).map_err(|_| crate::rcc::Error::RetainedClockInspectionTimeout)? {{ return Ok(false); }}",lse.awt_source).unwrap();
+    let uarts: Vec<_> = METADATA
+        .peripherals
+        .iter()
+        .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == "uart"))
+        .collect();
+    assert_eq!(uarts.len(), 3);
+    for uart in uarts {
+        field(uart.name, "CR2", "SOURCE", 8, 2);
+        writeln!(out,"let info = crate::peripherals::{}::RCC_INFO;\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LseClockInUse); }}\nif info.inspect_for_init(cs, timeout, || u8::from(crate::pac::{}.cr2().read().source()) == {}).map_err(|_| crate::rcc::Error::RetainedClockInspectionTimeout)? {{ return Ok(false); }}",uart.name,uart.name,lse.uart_source).unwrap();
+    }
+    field("SYSCTRL", "MCO", "SOURCE", 0, 4);
+    writeln!(
+        out,
+        "if crate::pac::SYSCTRL.mco().read().source() == {} {{ return Ok(false); }}",
+        lse.mco_source
+    )
+    .unwrap();
+    for route in lse.output_routes {
+        let port = route.pin.as_bytes()[1] - b'A';
+        let bit: u8 = route.pin[2..].parse().unwrap();
+        let gpio = format!("GPIO{}", char::from(b'A' + port));
+        let afreg = if bit < 8 { "afrl" } else { "afrh" };
+        field(
+            &gpio,
+            afreg,
+            &format!("AFR{bit}"),
+            u32::from(bit % 8) * 4,
+            4,
+        );
+        writeln!(out,"let info = gpio_rcc({port});\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LseClockInUse); }}\nif info.inspect_for_init(cs, timeout, || crate::pac::{gpio}.{afreg}().read().afr{bit}() == {}).map_err(|_| crate::rcc::Error::RetainedClockInspectionTimeout)? {{ return Ok(false); }}",route.af).unwrap();
+    }
+    out.push_str("Ok(true)\n}\n");
 }

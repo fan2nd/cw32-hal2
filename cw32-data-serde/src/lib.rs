@@ -312,6 +312,43 @@ pub mod chip {
                 }
             }
             record! {
+                /// Source-defined reset observation; excludes write-only command registers.
+                #[serde(deny_unknown_fields)]
+                LseRtcReset {
+                    pub register: String,
+                    pub byte_offset: u32,
+                    pub value: u32,
+                    pub mask: u32,
+                }
+            }
+            record! {
+                /// Direct LSE output alternate-function route.
+                #[serde(deny_unknown_fields)]
+                LseOutputRoute {
+                    pub pin: String,
+                    pub af: u8,
+                }
+            }
+            record! {
+                        /// Exact-part active LSE qualification. Board frequency bounds remain mandatory.
+                        #[serde(deny_unknown_fields)]
+                        LseConfiguration {
+                            pub nominal_hz: u32,
+            pub maximum_hz: u32,
+                            pub supply_mv: (u16, u16),
+                            pub temperature_c: (i16, i16),
+                            pub startup_cycles: [u32; 4],
+                            pub rtc_source: u8,
+                            pub uart_source: u8,
+                            pub awt_source: u8,
+                            pub mco_source: u8,
+                            pub gpio_dir_offset: u32,
+                            pub gpio_speed_offset: u32,
+                            pub rtc_reset: Vec<LseRtcReset>,
+                            pub output_routes: Vec<LseOutputRoute>,
+                        }
+                    }
+            record! {
                 /// Own-family PLL qualification; analog bins are distinct from electrical limits.
                 PllLimits {
     pub input_range_hz: (u32, u32),
@@ -350,6 +387,8 @@ pub mod chip {
                     pub hex: Option<HexLimits>,
                     #[serde(default, skip_serializing_if = "Option::is_none")]
                     pub lse: Option<Lse>,
+                    #[serde(default, skip_serializing_if = "Option::is_none")]
+                    pub lse_configuration: Option<LseConfiguration>,
                     #[serde(default, skip_serializing_if = "Option::is_none")]
                     pub pll: Option<PllLimits>,
                 }

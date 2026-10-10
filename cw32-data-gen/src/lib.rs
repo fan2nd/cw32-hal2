@@ -1025,6 +1025,7 @@ fn generate_inner(
             vref::apply(root, &input.line, &mut chip_core)?;
             dac_opa::apply(root, &input.line, &mut chip_core)?;
             rtc::apply(root, &input.line, &mut chip_core, &register_files)?;
+            electrical::apply_lse(root, chip, &input.line, &mut chip_core, &register_files)?;
             classic_timer_input::apply(root, &input.line, &mut chip_core, &register_files)?;
             if chip_core.peripherals.iter().any(|p| p.name == "LCD") {
                 lcd::apply(root, &input.line, &mut chip_core, &register_files)?;
@@ -1281,6 +1282,18 @@ mod tests {
             root.join("cw32-data/reference-dividers.yaml"),
         )
         .unwrap();
+        // Normal generation validates the authored LSE catalog even for an
+        // unrelated synthetic chip. Keep its declared policy inputs available.
+        let authored_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
+        let lse_catalog = fs::read(authored_root.join("cw32-data/lse-qualified.yaml")).unwrap();
+        fs::write(root.join("cw32-data/lse-qualified.yaml"), &lse_catalog).unwrap();
+        let lse_catalog: serde_yaml::Value = serde_yaml::from_slice(&lse_catalog).unwrap();
+        for policy in lse_catalog["policies"].as_mapping().unwrap().keys() {
+            let policy = policy.as_str().unwrap();
+            let destination = root.join(policy);
+            fs::create_dir_all(destination.parent().unwrap()).unwrap();
+            fs::copy(authored_root.join(policy), destination).unwrap();
+        }
         fs::write(
             root.join("cw32-data/field-access.yaml"),
             "schema_version: 1\nregisters: {}\n",

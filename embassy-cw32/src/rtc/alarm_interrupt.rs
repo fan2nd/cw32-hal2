@@ -53,7 +53,7 @@ impl Rtc<'_> {
         alarm: Alarm,
         _irq: impl Binding<RTC, AlarmInterruptHandler>,
     ) -> Result<(), RtcError> {
-        check_clock()?;
+        check_clock(&self.clock)?;
         check_write_mode()?;
         if !pac::RTC.cr0().read().start() {
             return Err(RtcError::NotRunning);
@@ -92,7 +92,7 @@ impl Rtc<'_> {
         })
         .await;
         drop(guard);
-        Ok(())
+        check_clock(&self.clock)
     }
 }
 

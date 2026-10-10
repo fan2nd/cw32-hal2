@@ -1,6 +1,6 @@
 # YAML 数据与官方原始资料
 
-本页对应包含 L010/L011 直接 HSE、F030/A030 互补 PWM 与当前异步 ADC 的整合源码（2026-10-09），回答“这份 YAML 依据哪一本原厂手册、哪个 SDK、哪几页”。当前源码包附带 `approved-sdk-members/` 下的 11 份 Apache-2.0 芯片主头文件及其许可；完整 PDF、SDK ZIP、SVD 与 HTML 原件未附。下列文档链接直达官网，运行获取脚本后才会写入本地 `sources/vendor/`。
+本页对应当前整合源码及两款 x030 LQFP48 的主动 LSE/RTC 资格（2026-10-09），回答“这份 YAML 依据哪一本原厂手册、哪个 SDK、哪几页”。当前源码包附带 `approved-sdk-members/` 下的 11 份 Apache-2.0 芯片主头文件及其许可；完整 PDF、SDK ZIP、SVD 与 HTML 原件未附。下列文档链接直达官网，运行获取脚本后才会写入本地 `sources/vendor/`。
 
 `evidence-sources.json` 是唯一 URL / SHA-256 / SDK 成员锁；本页是阅读入口，不再复制一份 JSON。原件版本是项目选定快照，不能据此声称已是厂商最新版。页码与章节从现有 YAML 及其明确引用的记录摘出，本次未重新逐页校读原件。
 
@@ -13,11 +13,11 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 
 ## 当前文件级来源覆盖
 
-只统计 `cw32-data/` 内的 293 份 authored YAML：137 份寄存器定义 + 156 份其他数据；不含 `cw32-data/data/` 等生成目录。本次新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；本批 HSE 没有新增 YAML 文件。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
+只统计 `cw32-data/` 内的 294 份 authored YAML：137 份寄存器定义 + 157 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；本次主动 LSE 新增 `lse-qualified.yaml`，直接记录两款器件的原厂文档 ID、SHA、PDF 页码与书页。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
 
 | 归类 | 文件数 | 边界 |
 | --- | ---: | --- |
-| 可直接定位原件中的内容 | 283 | 137 份寄存器有既有 canonical/input → 官方 SVD 结构来源；146 份其他 YAML 至少有文档章节/页码、SDK 符号/行号等入口。 |
+| 可直接定位原件中的内容 | 284 | 137 份寄存器有既有 canonical/input → 官方 SVD 结构来源；147 份其他 YAML 至少有文档章节/页码、SDK 符号/行号等入口。 |
 | 经明确引用的审阅记录可找到原件与章节/页码 | 10 | 下列十个根级能力文件；正文已摘出其中部分精确引文。 |
 | 只找到原文件，未找到上述内容定位 | 0 | 指整个文件没有任何内容定位；不表示每条事实都已有章节。 |
 | 连原文件都无法确定 | 0 | 仅表示这次文件级来源链检查没有遇到此类文件。 |
@@ -55,6 +55,8 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 ## 13 个芯片族对应的原件版本
 
 共 45 项固定来源：12 个 SDK ZIP、31 个 PDF、2 个 HTML。下表是各族主要来源，补充/历史原件另列；文件名、内部版本和日期分别记录，不能互相替代。
+
+默认获取与硬件审计要求 43 个 PDF/SDK 原件及其锁定派生文件；两份 HTML 是历史发现记录，单独使用 `./d refresh-discovery` 检查当前页面。追加 `--include-discovery` 可严格复验全部 45 项所选原件，仍拒绝缺失或变更的 HTML。此范围划分不改变下列硬件引用，详见 [发现记录策略](../docs/a030-discovery-policy.json)。
 
 | 芯片族 | 用户手册 RM | 数据手册 DS | SDK ZIP |
 | --- | --- | --- | --- |
@@ -297,3 +299,11 @@ HSIOSC fallback divisor: L010 /12, L011 /24, L052 /6, L012 /24. Absence provides
 no default/configured fallback inference. `hsi_operating_range_hz` records L012's
 own legal incoming 90–100 MHz HSIOSC requirement (RM §4.4.2 PDF59), not a bound
 for arbitrary TRIM. Generated L012 startup protection requires that fact.
+
+## 两款 x030 的主动 LSE 与 RTC 来源
+
+`cw32-data/lse-qualified.yaml` 仅资格 CW32F030C8T7 与 CW32A030C8T7 的 LQFP48，其他封装和族别不继承主动配置资格。共享 RM 为 `CW32x030_UserManual_CN_V2.5.pdf` Rev 2.5：LSE 控制、电气流程、保留源及 RTC 寄存器相关 PDF 页为 51–52、71、76、94、173、184、187–195、357，书页各减一；RTC 补偿独立消费 LSE 的补充依据见 `docs/lse-active-rtc-admission.json`，不因 RTC.SOURCE 选择 LSI/HSE 而忽略。
+
+各自 DS 为 F030 Rev 1.9（PDF 24、26、30、38、44–45）与 A030 Rev 1.1（PDF 22–23、27、35、41–42），书页各减一。PC14/PC15 引脚、供电/温度、晶体与旁路条件分别取自身表格。标称 32768 Hz、仅两精确料号、板级每周期边界和保守的全 RTC 复位态入场属于软件资格策略；典型启动时间不作为最长等待保证。
+
+共享 AWT 的 `Source::LSE=3` 还核对了 F020 自身 RM Rev 1.4 §11.8.1（PDF 170、书页169）；这只补齐共有寄存器枚举，不开放 F020 主动 LSE。上述数据、源码及编译检查均不替代实板验证。

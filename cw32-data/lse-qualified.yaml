@@ -1,0 +1,286 @@
+schema_version: 1
+source_authority: sources/evidence-sources.json
+policies:
+  docs/lse-active-first-cohort.json: 5663730111bf7966331f5e50b58e8e8a24de7d7ab5afc403f1f6290929e0f1e4
+  docs/lse-active-rtc-admission.json: 14bab43ef2684c8740aab468fd00145639fe01e8a638ab5eb543e13737ab22b4
+parts:
+  CW32A030C8T7:
+    family: CW32A030
+    package: LQFP48
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: manual
+      source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+      sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+      pdf_pages_1_based:
+      - 51
+      - 52
+      - 71
+      - 76
+      - 94
+      - 173
+      - 184
+      - 187
+      - 188
+      - 189
+      - 190
+      - 191
+      - 192
+      - 193
+      - 194
+      - 195
+      - 357
+      printed_pages:
+      - 50
+      - 51
+      - 70
+      - 75
+      - 93
+      - 172
+      - 183
+      - 186
+      - 187
+      - 188
+      - 189
+      - 190
+      - 191
+      - 192
+      - 193
+      - 194
+      - 356
+    - citation_ref: own_datasheet
+      source_ref: vendor:CW32A030_DataSheet_CN_V1.1.pdf
+      sha256: 690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9
+      pdf_pages_1_based:
+      - 22
+      - 23
+      - 27
+      - 35
+      - 41
+      - 42
+      printed_pages:
+      - 21
+      - 22
+      - 26
+      - 34
+      - 40
+      - 41
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 1650
+      - 5500
+      temperature_c:
+      - -40
+      - 105
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: 3
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: 8
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 1179648
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 3
+      - pin: PF1
+        af: 1
+      maximum_hz: 1000000
+  CW32F030C8T7:
+    family: CW32F030
+    package: LQFP48
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: manual
+      source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+      sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+      pdf_pages_1_based:
+      - 51
+      - 52
+      - 71
+      - 76
+      - 94
+      - 173
+      - 184
+      - 187
+      - 188
+      - 189
+      - 190
+      - 191
+      - 192
+      - 193
+      - 194
+      - 195
+      - 357
+      printed_pages:
+      - 50
+      - 51
+      - 70
+      - 75
+      - 93
+      - 172
+      - 183
+      - 186
+      - 187
+      - 188
+      - 189
+      - 190
+      - 191
+      - 192
+      - 193
+      - 194
+      - 356
+    - citation_ref: own_datasheet
+      source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+      sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+      pdf_pages_1_based:
+      - 24
+      - 26
+      - 30
+      - 38
+      - 44
+      - 45
+      printed_pages:
+      - 23
+      - 25
+      - 29
+      - 37
+      - 43
+      - 44
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 1650
+      - 5500
+      temperature_c:
+      - -40
+      - 105
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: 3
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: 8
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 1179648
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 3
+      - pin: PF1
+        af: 1
+      maximum_hz: 1000000

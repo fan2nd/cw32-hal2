@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-09",
+  "source": {
+    "citation_ref": "rtc_reset_and_admission",
+    "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+    "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+    "pdf_pages_1_based": [
+      176,
+      177,
+      178,
+      180,
+      181,
+      182,
+      183,
+      184,
+      185,
+      186,
+      187,
+      188,
+      189,
+      190,
+      191,
+      192,
+      193,
+      194,
+      195,
+      196
+    ],
+    "printed_pages": [
+      175,
+      176,
+      177,
+      179,
+      180,
+      181,
+      182,
+      183,
+      184,
+      185,
+      186,
+      187,
+      188,
+      189,
+      190,
+      191,
+      192,
+      193,
+      194,
+      195
+    ]
+  },
+  "rtc_reset": [
+    {
+      "register": "CR0",
+      "byte_offset": 4,
+      "value": 0,
+      "mask": 239
+    },
+    {
+      "register": "CR1",
+      "byte_offset": 8,
+      "value": 0,
+      "mask": 1795
+    },
+    {
+      "register": "CR2",
+      "byte_offset": 12,
+      "value": 0,
+      "mask": 1791
+    },
+    {
+      "register": "COMPEN",
+      "byte_offset": 16,
+      "value": 0,
+      "mask": 65535
+    },
+    {
+      "register": "DATE",
+      "byte_offset": 20,
+      "value": 0,
+      "mask": 134217727
+    },
+    {
+      "register": "TIME",
+      "byte_offset": 24,
+      "value": 1179648,
+      "mask": 4161407
+    },
+    {
+      "register": "ALARMA",
+      "byte_offset": 28,
+      "value": 1179648,
+      "mask": 2143289343
+    },
+    {
+      "register": "ALARMB",
+      "byte_offset": 32,
+      "value": 1179648,
+      "mask": 2143289343
+    },
+    {
+      "register": "TAMPDATE",
+      "byte_offset": 36,
+      "value": 0,
+      "mask": 65343
+    },
+    {
+      "register": "TAMPTIME",
+      "byte_offset": 40,
+      "value": 0,
+      "mask": 4161407
+    },
+    {
+      "register": "AWTARR",
+      "byte_offset": 44,
+      "value": 65535,
+      "mask": 65535
+    },
+    {
+      "register": "IER",
+      "byte_offset": 48,
+      "value": 0,
+      "mask": 95
+    },
+    {
+      "register": "ISR",
+      "byte_offset": 52,
+      "value": 0,
+      "mask": 95
+    }
+  ],
+  "controls_first": [
+    "CR0",
+    "CR1",
+    "CR2",
+    "IER",
+    "ISR"
+  ],
+  "reset_roster_policy": "Exactly13 unique readable non-command registers. Compare every defined bit with own reset, including CR1.ACCESS/WINDOW and all controls, before treating reset-default SOURCE0 as unused. Exclude WO KEY and R1W0 ICR.",
+  "read_policy": "Read controls first. If any controls differ from the reset snapshot, reject inherited RTC state before reading time/calendar registers. Never reset RTC, unlock KEY, open ACCESS, clear ICR or write RTC while checking admission.",
+  "wake_policy": "RTC_CR2.AWTEN and AWTSRC0..3 use RTCCLK/2,/4,/8,/16 without START. Only AWTSRC4..7 require RTC1Hz and START1. START0 alone never proves RTC is idle.",
+  "retention_policy": "Any nonreset readable RTC snapshot, for every SOURCE value, conservatively blocks a new disabled LSE start. Enabled exact-source reuse does not inspect or rewrite RTC. A pristine reset SOURCE0 alone does not establish an active consumer.",
+  "no_claims": [
+    "No LSE automatic enable inferred from SDK absence.",
+    "No software reset used to manufacture a pristine RTC.",
+    "No dynamic source switching, calibration, RTC compensation or clock output configuration qualified."
+  ],
+  "compensation_policy": "Own x030 RM CN2.5 PDF180/printed179 table12-3 has COMPEN.EN=1 and RTC1HZ=01 producing LSE-compensated 1Hz independent of CR1.SOURCE. Disabled-source startup requires the complete pristine RTC snapshot for every SOURCE value. Read CR0/CR1/CR2/IER/ISR first with short-circuit rejection before COMPEN or calendar reads, avoiding running WINDOW/ACCESS transactions. Never rewrite compensation or its output routes."
+}

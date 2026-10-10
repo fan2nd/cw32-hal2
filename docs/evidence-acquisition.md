@@ -39,19 +39,23 @@ The standalone helper defaults to `CW32_SOURCES`, or the ignored repository-loca
 
 [`sources/evidence-sources.json`](../sources/evidence-sources.json) pins:
 
-- 12 SDK ZIP archives, with 366 exact C/header/SVD/PDSC/readme members. Nested PACK
+- 12 SDK ZIP archives, with 478 exact C/header/SVD/PDSC/readme members. Nested PACK
   members are named explicitly. No complete SDK tree is blindly extracted.
-- 28 manual/datasheet/specification PDFs, including separate historical and current F020
+- 31 manual/datasheet/specification PDFs, including separate historical and current F020
   datasheet revisions and the canonical L011 manual from 2026-06-02.
-- 27 layout-preserving text companions generated from those PDFs.
-- Two A030 official product-page snapshots used by the CRC source audit.
+- 30 layout-preserving text companions generated from those PDFs.
+- Two historical A030 product-page snapshots classified as discovery-only.
+  They remain catalogued, while CRC hardware claims are checked against locked PDFs.
 - Two local metadata documents required by DMA re-extraction. These contain
   only the already-pinned official URLs, document names and hashes.
 
 Every downloaded original, extracted member and generated text has an exact
 SHA-256 and byte length. Each original also names its official HTTPS URL and
-its in-repository evidence references. The full materialized input set is
-437 files, about 266 MB (254 MiB), excluding filesystem overhead. The manifest
+its in-repository evidence references. The default hardware input set is 553 files including generated metadata:
+43 originals and their derivatives. The two discovery snapshots bring a strict
+all-record archival replay to 555 files. Default receipts explicitly report both
+omitted discovery IDs and `complete_manifest=false`; they never claim that all
+45 originals were physically verified. The manifest
 contains metadata only, not vendor source code or document content.
 
 The PDF text hashes were verified with Poppler **25.03.0** using
@@ -78,7 +82,9 @@ python3 cw32-data/tools/acquire_evidence.py \
 ```
 
 Without `--offline`, missing cache originals are downloaded from their pinned
-URLs. `--verify` performs no writes and no network requests. Omitting a cache
+URLs. `--verify` performs no writes and no network requests. Add
+`--include-discovery` to require both exact selected HTML snapshots as well;
+changed or missing snapshots then fail the archival replay. Omitting a cache
 requires no prior vendor files at all:
 
 ```sh
@@ -118,7 +124,19 @@ breadcrumb `/index.php/` placement changed. The product name and shared
 CW32F030/CW32A030 manual links were unchanged. The SDK category was empty in
 both snapshots and is negative evidence, not an independent A030 SDK. Previous
 hashes and the review reason are retained in the acquisition manifest and CRC
-evidence. Future page changes still fail closed.
+evidence. Website breadcrumb variation is not hardware evidence. The current
+policy marks exactly these two records `discovery-only`; it does not add accepted
+hashes, normalize page bytes, or weaken the immutable PDF/SDK/SVD checks.
+
+`./d refresh-discovery` separately observes the current pages with a 64 KiB size
+limit and 30-second request timeout. It writes candidates and receipts only to a
+unique ignored `build/discovery-observations/` directory. Changed or unavailable
+responses are reported with exit status 2 and never replace reviewed snapshots,
+canonical hashes, historical dates, or claims. `./d refresh-discovery --check-local
+/path/to/sources` reports unchanged, changed, missing or unavailable snapshots
+without network or writes. An empty SDK tab is a dated observation, not proof
+that no official SDK exists. See [the scope and immutable claim evidence](a030-discovery-policy.json).
+All-record archival verification still rejects any unpinned HTML response.
 
 Files remain local ignored inputs. No permission to redistribute official SDKs,
 PDFs or HTML is assumed. Do not include the acquired tree in source releases.

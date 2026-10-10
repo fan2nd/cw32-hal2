@@ -18,7 +18,7 @@
 python3 cw32-data/tools/acquire_evidence.py --originals-only
 ```
 
-将获取锁中 45 个原始文件到 `sources/vendor/`，按大小和 SHA-256 校验；遇到官网改版或字节变化会明确报错，不覆盖异文。此模式不需要 Poppler，不展开 SDK，也不生成 PDF 文本或中间报告。只取一个文件可追加 `--only 原文件名`；可重复指定。
+默认获取 43 个硬件依据原件（31 PDF、12 SDK ZIP）到 `sources/vendor/`，按大小和 SHA-256 校验；字节变化会明确报错，不覆盖异文。两份 HTML 仅保留为历史发现记录，默认回执会明确列出这两项未获取，并标记 `complete_manifest=false`。此模式不需要 Poppler，不展开 SDK，也不生成 PDF 文本或中间报告。只取一个文件可追加 `--only 原文件名`；可重复指定。
 
 验证已经下载的原件：
 
@@ -26,7 +26,9 @@ python3 cw32-data/tools/acquire_evidence.py --originals-only
 python3 cw32-data/tools/acquire_evidence.py --originals-only --verify
 ```
 
-需要运行完整原厂事实审计时，再使用原有完整模式生成所需 SDK 成员和 PDF 文本（需要项目记录的 Poppler 版本）：
+如需严格复验全部 45 项所选历史原件，在获取或验证命令后追加 `--include-discovery`；HTML 缺失或变化仍会失败。`./d refresh-discovery` 单独检查当前网页，将有界候选和回执写入忽略目录，不替换历史原件或更新锁。参见 [发现记录与硬件依据的范围](../docs/a030-discovery-policy.json)。
+
+需要运行完整硬件事实审计时，再生成所需 SDK 成员和 PDF 文本（共 553 个硬件输入及元数据文件，需要项目记录的 Poppler 版本）：
 
 ```sh
 python3 cw32-data/tools/acquire_evidence.py --offline

@@ -36,6 +36,17 @@ impl Fixture {
             root.join("cw32-data/reference-dividers.yaml"),
         )
         .unwrap();
+        // Preserve the normal generator's required catalog and policy inputs.
+        let authored_root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("..");
+        let lse_catalog = fs::read(authored_root.join("cw32-data/lse-qualified.yaml")).unwrap();
+        fs::write(root.join("cw32-data/lse-qualified.yaml"), &lse_catalog).unwrap();
+        let lse_catalog: serde_yaml::Value = serde_yaml::from_slice(&lse_catalog).unwrap();
+        for policy in lse_catalog["policies"].as_mapping().unwrap().keys() {
+            let policy = policy.as_str().unwrap();
+            let destination = root.join(policy);
+            fs::create_dir_all(destination.parent().unwrap()).unwrap();
+            fs::copy(authored_root.join(policy), destination).unwrap();
+        }
         let manifest = root.join("input.yaml");
         let fixture = Self { root, manifest };
         fixture.write_profile("CW32TEST", "v1", 0);

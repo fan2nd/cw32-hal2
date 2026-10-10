@@ -88,6 +88,7 @@ PYCOMMIT
 case "${1:-help}" in
   fetch-sources) python3 cw32-data/tools/fetch_sources.py ;;
   fetch-evidence) shift; python3 cw32-data/tools/acquire_evidence.py --source-root "$CW32_SOURCES" "$@" ;;
+  refresh-discovery) shift; python3 cw32-data/tools/refresh_discovery.py "$@" ;;
   provenance) shift; python3 cw32-data/tools/source_provenance.py "$@" ;;
   audit-sources) python3 cw32-data/tools/audit_sources.py ;;
   import-registers)
@@ -194,6 +195,7 @@ case "${1:-help}" in
     python3 tests/audit_l011_manual_sources.py
     python3 tests/check_gpio_irq_sources.py
     python3 tests/test_evidence_acquisition.py
+    python3 tests/test_discovery_scope.py
     python3 tests/verify_comparator_evidence.py
     python3 tests/verify_dac_opa_evidence.py
     python3 tests/verify_lcd_evidence.py
@@ -241,5 +243,5 @@ case "${1:-help}" in
       cargo test --locked --manifest-path firmware/Cargo.toml -p cw32-metapac --no-default-features --features "$chip,metadata" --test metadata
     done < <(sed -n 's/^\(cw32[a-z0-9-]*\) = \[\]/\1/p' cw32-metapac/Cargo.toml)
     ;;
-  *) echo 'Usage: ./d {fetch-sources|fetch-evidence|provenance|audit-sources|import-registers|gen|gen-all|test|audit-current|check|lint}' ;;
+  *) echo 'Usage: ./d {fetch-sources|fetch-evidence|refresh-discovery|provenance|audit-sources|import-registers|gen|gen-all|test|audit-current|check|lint}' ;;
 esac

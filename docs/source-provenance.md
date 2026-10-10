@@ -74,8 +74,16 @@ python3 tests/test_source_provenance.py
 python3 cw32-data/tools/acquire_evidence.py \
   --source-root /tmp/cw32-evidence --cache-root /path/to/cache --offline
 ./d provenance --sources /tmp/cw32-evidence
+# Optional strict archival replay also requires the two historical HTML files.
+./d provenance --sources /tmp/cw32-evidence --include-discovery
 python3 cw32-data/tools/acquire_evidence.py --source-root /tmp/cw32-evidence --verify
 ```
+
+Physical verification defaults to 43 hardware-required originals and their
+locked members/text. The two named A030 HTML records are discovery-only and are
+explicitly reported as omitted; `--include-discovery` verifies all 45 selected
+originals strictly. Metadata/reference closure and the distribution guard retain
+all records and historical exclusions regardless of verification scope.
 
 View generation does not download, change source pins, edit authored registers,
 change HAL/runtime code, or accept new vendor content. Missing evidence paths,

@@ -21,12 +21,34 @@ for source in EVIDENCE["sources"]:
     if path.suffix in {".h", ".c"}:
         texts[source["file"]] = content.decode("utf-8", errors="replace")
 
-# The A030 product page explicitly links the shared manual. Its empty SDK
-# category is not positive evidence for a separate A030 vendor SDK.
-a030_listing = (SOURCES / 'a030-official-manuals.html').read_text()
-assert 'CW32F030/CW32A030 用户手册' in a030_listing
-assert '/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf' in a030_listing
-assert 'CW32A030C8T7' in a030_listing
+# A030 compatibility is established directly by already-hash-verified originals.
+# Discovery HTML is a historical navigation record, outside hardware audit scope.
+def pdf_text(name):
+    return subprocess.run(["pdftotext", "-layout", str(SOURCES / name), "-"],
+                          check=True, text=True, capture_output=True).stdout
+
+
+x030_manual = pdf_text('CW32x030_UserManual_CN_V2.5.pdf')
+a030_datasheet = pdf_text('CW32A030_DataSheet_CN_V1.1.pdf')
+x030_pages = x030_manual.split('\f')
+a030_pages = a030_datasheet.split('\f')
+assert 'CW32F030/CW32A030' in x030_pages[0], 'Shared manual scope must explicitly include A030'
+assert 'CW32A030' in a030_pages[0], 'Own-family A030 datasheet required'
+assert 'CW32A030C8T7' in a030_pages[7]
+assert all(name in a030_pages[9] for name in
+           ['CRC16_IBM', 'CRC16_MAXIM', 'CRC16_USB', 'CRC16_MODBUS', 'CRC16_CCITT',
+            'CRC16_CCITT_FALSE', 'CRC16_X25', 'CRC16_XMODEM', 'CRC32', 'CRC32_MPEG2'])
+assert re.search(r'0x4002\s+3000\s*-\s*0x4002\s+33FF\s+1KB\s+CRC', a030_pages[28])
+assert re.search(r'CRC_BASE\s*=\s*0x4002\s+3000', x030_pages[163])
+crc_registers = x030_pages[164]
+assert [int(bits, 2) for bits in re.findall(r'([01]{4})：CRC(?:16_\w+|32(?:_MPEG2)?)', crc_registers)] == list(range(10))
+for bits, name in [('31:0', 'DR32'), ('15:0', 'DR16'), ('7:0', 'DR8')]:
+    assert re.search(bits + r'\s+' + name + r'\s+RW', crc_registers)
+for bits, name in [('31:0', 'RESULT32'), ('15:0', 'RESULT16')]:
+    assert re.search(bits + r'\s+' + name + r'\s+RO', crc_registers)
+assert re.search(r'2\s+CRC\s+RW', x030_pages[81]) and 'KEY' not in x030_pages[81]
+assert re.search(r'2\s+CRC\s+RW\s+0：模块处于复位状态\s+1：模块正常工作', x030_pages[84])
+assert 'KEY' not in x030_pages[84]
 
 # Parse the now-acquired own-family L011 manual directly from its verified PDF.
 # This checks the parameter table and register protocol, rather than relying on

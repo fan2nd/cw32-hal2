@@ -23,6 +23,10 @@ from urllib.parse import urlsplit
 import urllib.request
 import zipfile
 
+# Support both script execution and importlib-based source tests.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from source_scope import scope_artifacts, scope_report, validate_scope
+
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "sources/evidence-sources.json"
 CHUNK = 1024 * 1024
@@ -265,6 +269,7 @@ def load_manifest(path):
         relative_path(name)
         if name in paths:
             raise EvidenceError(f"Duplicate metadata path: {name}")
+    validate_scope(manifest)
     return manifest
 
 
@@ -276,6 +281,7 @@ def main(argv=None):
     parser.add_argument("--verify", action="store_true", help="Verify every output already exists; do not write or download")
     parser.add_argument("--originals-only", action="store_true", help="Acquire or verify original PDF/SDK/HTML files only; do not extract SDK members or generate text/reports")
     parser.add_argument("--only", action="append", metavar="PATH", help="Acquire one original artifact and its derivatives (repeatable); omit for complete evidence")
+    parser.add_argument("--include-discovery", action="store_true", help="Strict archival replay: also require the two exact historical HTML snapshots")
     args = parser.parse_args(argv)
     manifest = load_manifest(MANIFEST)
     root = args.source_root.expanduser().absolute()
@@ -283,13 +289,16 @@ def main(argv=None):
     for base in [root, *([cache] if cache else [])]:
         if base.is_symlink() or any(p.is_symlink() for p in base.parents):
             raise EvidenceError(f"Refusing symlinked source/cache root: {base}")
+    artifacts = scope_artifacts(manifest, args.include_discovery)
     selected = set(args.only or [])
     known = {row["path"] for row in manifest["artifacts"]}
     if selected - known:
         raise EvidenceError("Unknown --only artifact: " + ", ".join(sorted(selected - known)))
+    if selected - {row["path"] for row in artifacts}:
+        raise EvidenceError("Discovery snapshots require --include-discovery for strict replay; use refresh_discovery.py for current observations")
     opener = urllib.request.build_opener(OfficialRedirect())
     counts = {"existing": 0, "cache": 0, "download": 0, "outputs": 0}
-    for row in manifest["artifacts"]:
+    for row in artifacts:
         if selected and row["path"] not in selected:
             continue
         specs = [row] if args.originals_only else [row, *row.get("members", []), *([row["text"]] if "text" in row else [])]
@@ -311,7 +320,7 @@ def main(argv=None):
         for name, value in manifest["generated_metadata"].items():
             metadata(root, name, value, args.verify)
             counts["outputs"] += 1
-    print(json.dumps({"source_root": str(root), "complete_manifest": not bool(selected) and not args.originals_only, "originals_only": args.originals_only, **counts}, sort_keys=True))
+    print(json.dumps({"source_root": str(root), "complete_manifest": args.include_discovery and not bool(selected) and not args.originals_only, "complete_hardware": not bool(selected) and not args.originals_only, "originals_only": args.originals_only, **scope_report(manifest, args.include_discovery), **counts}, sort_keys=True))
     return 0
 
 

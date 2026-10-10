@@ -1,0 +1,416 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-09",
+  "status": "new bounded candidate reconstructed from current originals; not inherited acceptance",
+  "scope": "Only CW32A030C8T7 and CW32F030C8T7 LQFP48, PC14/OSC32_IN and PC15/OSC32_OUT, nominal 32768 Hz crystal or bypass. Other exact parts and all family aliases are unqualified.",
+  "sources": [
+    {
+      "citation_ref": "manual_lse_consumers",
+      "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "pdf_pages_1_based": [
+        46,
+        51,
+        52,
+        59,
+        60,
+        64,
+        71,
+        76,
+        78,
+        79,
+        80,
+        94,
+        152,
+        153,
+        154,
+        173,
+        184,
+        187,
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        195,
+        357
+      ],
+      "printed_pages": [
+        45,
+        50,
+        51,
+        58,
+        59,
+        63,
+        70,
+        75,
+        77,
+        78,
+        79,
+        93,
+        151,
+        152,
+        153,
+        172,
+        183,
+        186,
+        187,
+        188,
+        189,
+        190,
+        191,
+        192,
+        193,
+        194,
+        356
+      ]
+    },
+    {
+      "citation_ref": "a030_pads_routes_electrical",
+      "source_ref": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+      "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+      "pdf_pages_1_based": [
+        22,
+        23,
+        27,
+        35,
+        41,
+        42
+      ],
+      "printed_pages": [
+        21,
+        22,
+        26,
+        34,
+        40,
+        41
+      ]
+    },
+    {
+      "citation_ref": "f030_pads_routes_electrical",
+      "source_ref": "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+      "sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2",
+      "pdf_pages_1_based": [
+        24,
+        26,
+        30,
+        38,
+        44,
+        45
+      ],
+      "printed_pages": [
+        23,
+        25,
+        29,
+        37,
+        43,
+        44
+      ]
+    }
+  ],
+  "configuration": {
+    "nominal_hz": 32768,
+    "supply_mv": [
+      1650,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      105
+    ],
+    "startup_cycles": [
+      256,
+      1024,
+      4096,
+      16384
+    ],
+    "rtc_source": 0,
+    "uart_source": 2,
+    "awt_source": 3,
+    "mco_source": 6,
+    "gpio_dir_offset": 0,
+    "gpio_speed_offset": 8,
+    "rtc_reset": [
+      {
+        "register": "CR0",
+        "byte_offset": 4,
+        "value": 0,
+        "mask": 239
+      },
+      {
+        "register": "CR1",
+        "byte_offset": 8,
+        "value": 0,
+        "mask": 1795
+      },
+      {
+        "register": "CR2",
+        "byte_offset": 12,
+        "value": 0,
+        "mask": 1791
+      },
+      {
+        "register": "COMPEN",
+        "byte_offset": 16,
+        "value": 0,
+        "mask": 65535
+      },
+      {
+        "register": "DATE",
+        "byte_offset": 20,
+        "value": 0,
+        "mask": 134217727
+      },
+      {
+        "register": "TIME",
+        "byte_offset": 24,
+        "value": 1179648,
+        "mask": 4161407
+      },
+      {
+        "register": "ALARMA",
+        "byte_offset": 28,
+        "value": 1179648,
+        "mask": 2143289343
+      },
+      {
+        "register": "ALARMB",
+        "byte_offset": 32,
+        "value": 1179648,
+        "mask": 2143289343
+      },
+      {
+        "register": "TAMPDATE",
+        "byte_offset": 36,
+        "value": 0,
+        "mask": 65343
+      },
+      {
+        "register": "TAMPTIME",
+        "byte_offset": 40,
+        "value": 0,
+        "mask": 4161407
+      },
+      {
+        "register": "AWTARR",
+        "byte_offset": 44,
+        "value": 65535,
+        "mask": 65535
+      },
+      {
+        "register": "IER",
+        "byte_offset": 48,
+        "value": 0,
+        "mask": 95
+      },
+      {
+        "register": "ISR",
+        "byte_offset": 52,
+        "value": 0,
+        "mask": 95
+      }
+    ],
+    "output_routes": [
+      {
+        "pin": "PB12",
+        "af": 3
+      },
+      {
+        "pin": "PF1",
+        "af": 1
+      }
+    ],
+    "maximum_hz": 1000000
+  },
+  "electrical": {
+    "board_per_cycle_bounds_required": true,
+    "board_bounds_rule": "Board supplies nonzero minimum_hz <= 32768 <= maximum_hz <= 1000000 covering tolerance, temperature, supply, aging and every cycle; nominal is not an accuracy guarantee.",
+    "maximum_oscillator_hz": 1000000,
+    "bypass_duty_percent": [
+      45,
+      55
+    ],
+    "bypass_minimum_high_low_ns": 450,
+    "bypass_maximum_rise_fall_ns": 50,
+    "bypass_high_level_vddio_percent": [
+      70,
+      100
+    ],
+    "bypass_low_level_vddio_percent": [
+      0,
+      30
+    ],
+    "crystal_startup_typical_ms": 1500,
+    "crystal_startup_maximum_ms": null,
+    "startup_note": "Typical startup is not a timeout bound. Board selects load capacitors, drive and amplitude from actual crystal and layout. Per-cycle bounds are board declarations, not manufactured datasheet accuracy."
+  },
+  "semantics": {
+    "enable": "CR1.LSEEN bit4 is software RW enable, default0; STABLE bit15 is separate RO status. Only power-on reset resets LSEEN/LSE register. No automatic LSE request is asserted from SDK silence.",
+    "mode": "MODE0 requires both pads analog; MODE1 requires PC14 digital input, PC15 can be GPIO.",
+    "lock": "CR1.LSELOCK bit5 prevents clearing LSEEN; it is not a configuration lock. Configure all LSE parameters before enable and do not change them while enabled.",
+    "write_key": "CR1.KEY bits31:16 must be 0x5A5A. Preserve and write1 CLKCCS/HSECCS/LSECCS bits8/7/6 as explicitly required by the register table.",
+    "fault": "ISR.LSEFAIL bit5 indicates startup failure; ISR.LSEFAULT bit7 indicates running failure. Neither is source enable. Running detection needs LSI and checks128 LSE cycles per256 LSI cycles. ICR uses write0 clear; broad flag clearing is outside this cohort.",
+    "consumers": "RTC, AWT and UART configuration bus gates do not prove their independent working clocks are idle. MCO SOURCE6 and enabled direct LSE outputs also retain LSE.",
+    "gpio": "DIR offset0 controls input/output; SPEED offset8 controls slew. Analog selector offset28. Direct outputs require digital output (ANALOG0/DIR0) and matching AF. This is distinct from SPEED."
+  },
+  "parts": {
+    "CW32A030C8T7": {
+      "family": "CW32A030",
+      "package": "LQFP48",
+      "input_pin": "PC14",
+      "output_pin": "PC15",
+      "sources": [
+        {
+          "citation_ref": "manual",
+          "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+          "pdf_pages_1_based": [
+            51,
+            52,
+            71,
+            76,
+            94,
+            173,
+            184,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            357
+          ],
+          "printed_pages": [
+            50,
+            51,
+            70,
+            75,
+            93,
+            172,
+            183,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            356
+          ]
+        },
+        {
+          "citation_ref": "own_datasheet",
+          "source_ref": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+          "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+          "pdf_pages_1_based": [
+            22,
+            23,
+            27,
+            35,
+            41,
+            42
+          ],
+          "printed_pages": [
+            21,
+            22,
+            26,
+            34,
+            40,
+            41
+          ]
+        }
+      ]
+    },
+    "CW32F030C8T7": {
+      "family": "CW32F030",
+      "package": "LQFP48",
+      "input_pin": "PC14",
+      "output_pin": "PC15",
+      "sources": [
+        {
+          "citation_ref": "manual",
+          "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+          "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+          "pdf_pages_1_based": [
+            51,
+            52,
+            71,
+            76,
+            94,
+            173,
+            184,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            195,
+            357
+          ],
+          "printed_pages": [
+            50,
+            51,
+            70,
+            75,
+            93,
+            172,
+            183,
+            186,
+            187,
+            188,
+            189,
+            190,
+            191,
+            192,
+            193,
+            194,
+            356
+          ]
+        },
+        {
+          "citation_ref": "own_datasheet",
+          "source_ref": "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+          "sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2",
+          "pdf_pages_1_based": [
+            24,
+            26,
+            30,
+            38,
+            44,
+            45
+          ],
+          "printed_pages": [
+            23,
+            25,
+            29,
+            37,
+            43,
+            44
+          ]
+        }
+      ]
+    }
+  },
+  "independent_rtc_compensation_consumer": {
+    "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+    "citation_ref": "rtc_compensated_1hz",
+    "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+    "pdf_pages_1_based": [
+      180
+    ],
+    "printed_pages": [
+      179
+    ],
+    "condition": "RTC.COMPEN.EN=1, RTC.CR0.RTC1HZ=01; RTC.CR1.SOURCE is ignored for compensated1Hz output. New disabled LSE startup requires a pristine RTC snapshot for every SOURCE; controls are checked first before reading compensation/calendar registers."
+  }
+}
