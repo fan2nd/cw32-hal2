@@ -97,6 +97,20 @@ pub struct Config {
 /// runs. Runtime integration and direct PAC access must preserve HAL ownership.
 /// This is the platform entry model, not a per-driver unsafe caller obligation.
 ///
+/// On CW32F002F3P7/F3U7 only, selecting factory LSI SYSCLK can briefly run
+/// each whole GPIOA/B/C bank to inspect retained selectors. Sampling, filters
+/// and armed events may advance before an error; restored gates cannot undo
+/// progress. Configuration and locks are preserved. Software does not clear
+/// flags, including LSIRDY, but flags may change naturally. Cold admission
+/// also checks AWT, UART1/2, MCO and RCC ready/NVIC observers; F002 has no RTC.
+/// A failed transition may leave attempted TRIM, an enabled gate, conservative
+/// Flash/bus guards or a permanent LSI request. HSI-calibration failure may
+/// leave execution on LSI with HSI stopped or incompletely restarted. Reset
+/// before retrying hardware initialization. ADC rejects LSI rate-only timing;
+/// the fixed 1 MHz time driver rejects selected LSI before singleton acquisition.
+/// This functional handover adds no hardware-validation or recovery guarantee.
+/// See docs/f002-factory-lsi-sysclk.md for the complete exact-package contract.
+///
 /// On F020/F030/A030, selecting factory LSI SYSCLK (or LSE SYSCLK on the
 /// three qualified packages) may briefly open each
 /// entire GPIOA/B/C/F bank to inspect retained source selectors. Sampling,

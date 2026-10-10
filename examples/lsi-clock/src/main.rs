@@ -1,15 +1,19 @@
 #![no_std]
 #![no_main]
 
-use embassy_cw32::{
-    self as hal, rcc,
-    rtc::{DateTime, DayOfWeek, Rtc},
-};
+use embassy_cw32::{self as hal, rcc};
+#[cfg(any(
+    feature = "cw32f020c6u7",
+    feature = "cw32f030c8t7",
+    feature = "cw32a030c8t7"
+))]
+use embassy_cw32::rtc::{DateTime, DayOfWeek, Rtc};
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
     // This firmware requires 1.65..5.5 V and ambient -40..105 C. These are
-    // board conditions, not measurements. No external crystal or pin is used.
+    // example board declarations, not measurements. Qualify the actual board
+    // across its complete operating envelope. No external crystal or pin is used.
     let mut config = hal::Config::default();
     config.rcc.operating_conditions = rcc::OperatingConditions {
         min_supply_mv: 1_650,
@@ -19,6 +23,30 @@ fn main() -> ! {
     };
     config.rcc.sys = rcc::Sysclk::LSI;
     let p = hal::try_init(config).unwrap_or_else(|error| stop(error));
+    run(p)
+}
+
+#[cfg(any(feature = "cw32f002f3p7", feature = "cw32f002f3u7"))]
+fn run(_p: hal::Peripherals) -> ! {
+    // F002 has no RTC. Successful init exposes factory LSI rate bounds for
+    // SYSCLK and both buses, while HSI keeps its independent qualification.
+    let clocks = rcc::clocks();
+    loop {
+        core::hint::black_box((
+            clocks.sys_bounds(),
+            clocks.hclk_bounds(),
+            clocks.pclk_bounds(),
+            clocks.hsi_bounds(),
+        ));
+    }
+}
+
+#[cfg(any(
+    feature = "cw32f020c6u7",
+    feature = "cw32f030c8t7",
+    feature = "cw32a030c8t7"
+))]
+fn run(p: hal::Peripherals) -> ! {
     let lsi = rcc::LsiClock::new(p.SYSCTRL, 100_000).unwrap_or_else(|error| stop(error));
     core::hint::black_box((rcc::clocks().sys_bounds(), lsi.bounds()));
     let clock = rcc::CalendarClock::Lsi(lsi);

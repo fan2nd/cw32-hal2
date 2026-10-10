@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-10",
+  "verdict": "accepted_exact_three_model_technical_identity_only",
+  "scope": "Static Option type delta only. Semantic qualification, data generation, consumer integration, runtime behavior, builds and publication are separate gates.",
+  "baseline": {
+    "label": "external-evidence/stage64/stage64-source.zip",
+    "sha256": "2772e65c38f0d3b946daf2a1ce2ce6b7c409fe5fd39ca91bc769ed03f1fe3357",
+    "models_match_immutable_source": true
+  },
+  "design": {
+    "label": "external-evidence/stage65/f002-factory-lsi-sysclk-design.md",
+    "sha256": "c4a37911b3046be65bbc17ce6fd24779459e11e9d8bbe47af5f0f0704f2bf344",
+    "independent_review_label": "external-evidence/stage65/independent-review/review.md",
+    "independent_review_sha256": "32cf0ae72799e650f2919a1d64eb4604a97d108d88a6f726a71ed231ee050c18"
+  },
+  "patch": {
+    "label": "external-evidence/stage65/f002-lsi-schema-only.patch",
+    "sha256": "2e17f72486e6fa239488861a04227c992ca2a5a08c88e94bae70bfd5ff85b5b3",
+    "exact_unified_diff": true,
+    "file_count": 3,
+    "changed_field_count": 3
+  },
+  "models": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "f36ce5da85172080d963347d8c9e25985b02d92e1a1227df78850cf7dd1ea9b1",
+      "after_sha256": "b4d875955a51d7e8061e2459b975362ac45a1723819ba9256bd62949d45feefc",
+      "delta_before": "pub lsi_output_pin: String,",
+      "delta_after": "pub lsi_output_pin: Option<String>,",
+      "unique_occurrences": 1,
+      "forward_exact": true,
+      "reverse_restores_baseline_bytes": true,
+      "baseline_matches_archive_entry": true
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "227095b7b073825f26e34d2fbfe745c0938b8861dd53f68f00cf788668f6fc3c",
+      "after_sha256": "f0415cfd5e5ca402213bcf1942849b6fa9665fc475f5e8e803e2c1537785a774",
+      "delta_before": "pub lsi_output_pin: String,",
+      "delta_after": "pub lsi_output_pin: Option<String>,",
+      "unique_occurrences": 1,
+      "forward_exact": true,
+      "reverse_restores_baseline_bytes": true,
+      "baseline_matches_archive_entry": true
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "d5a1ab60f97e6a097e1970bd3c32667828563035442fb8fa299c8270147d516c",
+      "after_sha256": "adceff0bcaa25727ab3c8e2515b08a85220f149c92bb730c03195a18e7af79b5",
+      "delta_before": "pub lsi_output_pin: &'static str,",
+      "delta_after": "pub lsi_output_pin: Option<&'static str>,",
+      "unique_occurrences": 1,
+      "forward_exact": true,
+      "reverse_restores_baseline_bytes": true,
+      "baseline_matches_archive_entry": true
+    }
+  ],
+  "structural_semantics": {
+    "basis": "Static inspection of unchanged derived Serde attributes; no deserialization program was run.",
+    "old_string": "Present string values continue to deserialize as Some(String).",
+    "absent_or_null": "An absent key or explicit null can structurally deserialize as None; deny_unknown_fields does not enforce key presence.",
+    "empty_string": "An empty string is structurally Some(\"\"); it is not an absence marker and must fail hardware qualification.",
+    "serialization": "The inner Option field has no skip_serializing_if. Project-serde Some serializes as the prior string value; None serializes as explicit null. The existing outer lsi_sysclk Option and its omission policy are unchanged.",
+    "other_fields": "No other model bytes, field order, width, attributes, derives or comments changed."
+  },
+  "semantic_acceptance_requirements": [
+    "Authored raw policy must explicitly contain lsi_output_pin before typed decoding; missing is rejected independently of Option decoding.",
+    "Only the qualified CW32F002F3P7 and CW32F002F3U7 facts may use null/None after own-source and complete AF absence validation. None alone is not hardware authority.",
+    "None requires empty lsi_output_allowed_af; Some requires a nonempty valid pin and the complete nonempty legal AF set. Reject None with AF values, Some with empty AF, and fake empty-string absence.",
+    "Classic qualified families retain Some(\"PB11\"), RTC and direct-output inspection with all existing source values, operation statements, order and semantics.",
+    "RTC presence and its source allowlist must agree: F002 has no RTC and an empty list; classic RTC cannot be skipped because a list was emptied.",
+    "Exact-package/source/IR/presence/allowlist validation must reject aliases, F003 and unqualified families rather than infer absence or eligibility from Option."
+  ],
+  "rust_api": {
+    "visible_change": "Owned public fields are Option<String>; static metadata is Option<&'static str>. Struct literals, field consumers and Debug/generated Rust shape change. No Rust source or ABI compatibility is claimed.",
+    "classic_generated_shape": "Classic JSON string values can stay equal while generated Rust changes from lsi_output_pin: \"PB11\" to lsi_output_pin: Some(\"PB11\"). Whole generated Rust metadata is not byte-identical.",
+    "generator_path": "cw32-metapac-gen/src/lib.rs stringify uses derived Debug and slice rewriting. The owned/static Option shapes correspond; generated output has not been executed or accepted by this review."
+  },
+  "consumer_review": {
+    "status": "pending_owner_freeze_and_separate_supplement",
+    "direct_search": "Source-wide including ignored files search for lsi_output_pin, LsiSysclk and PeripheralLsiSysclk found the three models, policy/profile values, historical review records and embassy-cw32/build.rs direct reads.",
+    "inspected_paths": [
+      "cw32-data-gen/src/lib.rs",
+      "cw32-data-gen/src/electrical.rs",
+      "cw32-data-gen/src/lsi.rs",
+      "cw32-metapac-gen/src/lib.rs",
+      "embassy-cw32/build.rs"
+    ],
+    "observed_incomplete_state": "The in-progress build consumer still used direct string as_bytes/index operations and unconditional RTC/direct-output roots when inspected. No consumer pass or compilation success is claimed.",
+    "needed_evidence": "Frozen validator/raw-key/None-Some checks and build generator review, followed by separately authorized actual generation demonstrating exact2 and classic metadata/root differences."
+  },
+  "identity_wrapper_constraints": {
+    "current_provenance_path": "docs/upstream-file-provenance.json",
+    "unchanged_provenance_sha256": "0d5d1d829d1758755e6b67e308bcc4d0f2f829c8fd938d02e902fddef5f7d5b2",
+    "old_tip": "f36ce5da85172080d963347d8c9e25985b02d92e1a1227df78850cf7dd1ea9b1",
+    "accepted_new_tip": "b4d875955a51d7e8061e2459b975362ac45a1723819ba9256bd62949d45feefc",
+    "entire_old_replacement_review_canonical_sha256": "93fff95bb990f948503009b943c4559f3ac6bcf3b70f88cc6b7640858e2c6b7d",
+    "canonicalization": "UTF-8 JSON, sort_keys=true, separators=(comma,colon), ensure_ascii=false, no final newline",
+    "existing_previous_review_chain_nodes": 21,
+    "requirement": "Nest the entire old replacement_review unchanged as previous_review; preserve every extension, compatibility note, component review and historical reference. Bind this receipt and both metapac model before/after identities. Preserve all outer observed/upstream hashes, adapted ancestry, declarations, notices and unresolved permission finding.",
+    "legal_clearance": false,
+    "lineage_edited_by_review": false,
+    "publication_authorized": false
+  },
+  "activity": {
+    "source_edited": false,
+    "lineage_edited": false,
+    "cargo_run": false,
+    "generation_run": false,
+    "hal_test_or_probe_run": false,
+    "model_or_harness_run": false,
+    "remote_action": false,
+    "silicon_operation": false,
+    "read_only_hash_diff_archive_checks": true
+  }
+}

@@ -1,5 +1,10 @@
 # Init-only factory LSI SYSCLK on F020/F030/A030
 
+CW32F002F3P7/F3U7 use a separate [exact-two contract](f002-factory-lsi-sysclk.md),
+with their own consumer roster and no RTC or dedicated LSI_OUT pad. The optional
+`lsi_output_pin` metadata representation preserves the real classic output pin
+and all classic consumer checks described here.
+
 `rcc::Sysclk::LSI` selects the factory-qualified nominal 32,800 Hz oscillator at
 one-time HAL initialization. HSI remains the default, and successful initialization
 keeps factory-qualified HSI available. This capability is generated only from the
@@ -29,8 +34,7 @@ consistently return `has_cycle_timing_bounds() == false`, even with HSI SYSCLK.
 This is a public compatibility change: calling strict `minimum_duration_ns` or
 `maximum_duration_ns` on those bounds now fails their existing qualification
 assertion. Nominal/minimum/maximum rates, operating conditions and the exact
-32800/32768 calendar ratio are retained. The other ten families' qualification
-and native HSIOSC RTC are unchanged. The existing post-init `LsiClock::new`
+32800/32768 calendar ratio are retained. Other families' RTC qualification and native HSIOSC RTC are unchanged. The existing post-init `LsiClock::new`
 remains compare-and-enable; it does not gain permission to trim a stopped or
 running source.
 
@@ -54,7 +58,8 @@ Selecting LSI explicitly permits bounded opening of the entire GPIOA/B/C/F
 working clocks to inspect retained FILTER selectors and PB11's LSI_OUT selector.
 Sampling, filters and armed events may advance during each interval, even if
 initialization later fails. Gate restoration cannot undo this progress. Every
-GPIO setting, lock and flag is preserved. No pin-only isolation or absence of
+GPIO setting and lock is preserved. Software does not clear flags, but flags
+can change naturally. No pin-only isolation or absence of
 functional effects is promised, and there is no extra unsafe constructor or
 caller risk checkbox.
 

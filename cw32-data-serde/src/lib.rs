@@ -447,7 +447,7 @@ pub mod chip {
                     pub gpio_banks: Vec<String>,
                     pub gpio_filter_allowed_sources: Vec<u8>,
                     pub mco_allowed_sources: Vec<u8>,
-                    pub lsi_output_pin: String,
+                    pub lsi_output_pin: Option<String>,
                     pub lsi_output_allowed_af: Vec<u8>,
                     pub rcc_irq: u16,
                 }

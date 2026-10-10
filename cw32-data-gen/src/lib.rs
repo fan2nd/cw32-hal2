@@ -1027,7 +1027,7 @@ fn generate_inner(
             dac_opa::apply(root, &input.line, &mut chip_core)?;
             rtc::apply(root, &input.line, &mut chip_core, &register_files)?;
             electrical::apply_lse(root, chip, &input.line, &mut chip_core, &register_files)?;
-            lsi::validate(root, &input.line, &chip_core, &register_files)?;
+            lsi::apply(root, chip, &input.line, &mut chip_core, &register_files)?;
             classic_timer_input::apply(root, &input.line, &mut chip_core, &register_files)?;
             if chip_core.peripherals.iter().any(|p| p.name == "LCD") {
                 lcd::apply(root, &input.line, &mut chip_core, &register_files)?;

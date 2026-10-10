@@ -6,8 +6,8 @@
 //! extended 85..105 C operation on some L families has no qualified HSI bound.
 //! HSE envelopes instead use the explicitly declared board-qualified source
 //! endpoints and conditions. Neither source accuracy is inferred from the other.
-//! F020/F030/A030 factory-LSI envelopes qualify rate under their own source
-//! conditions; they do not establish strict cycle-duration bounds.
+//! F020/F030/A030 and the two qualified F002 packages have factory-LSI rate
+//! envelopes under their own source conditions, without strict cycle-duration bounds.
 use crate::time::Hertz;
 
 /// Qualified ambient-temperature interval for the factory HSI error bound.

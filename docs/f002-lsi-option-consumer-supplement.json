@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-10",
+  "verdict": "accepted_static_option_consumer_coherence",
+  "scope": "Supplement to exact three-model identity acceptance. Read-only source review of Option, authored-key validation, presence qualification and classic root preservation. Does not accept runtime implementation, complete data semantics, actual generated output or builds.",
+  "schema_acceptance": {
+    "label": "external-evidence/stage65/schema-review/f002-lsi-option-schema-acceptance.json",
+    "sha256": "3a3358c9c8bc0715aa4a0787d595ac04661a7ecb747861040309beb489e42395",
+    "three_model_hashes_still_match": true
+  },
+  "frozen_inputs": [
+    {
+      "path": "cw32-data-gen/src/lsi.rs",
+      "before_sha256": "b11c315d3077c57efcd2af9ff7c059581a498ef64527fb32a937e43f744c938a",
+      "after_sha256": "9afc8be5e4f12e33d6c57de9a6bfa9169cba11132f09792b57bcdb042868f2b7"
+    },
+    {
+      "path": "cw32-data-gen/src/lib.rs",
+      "before_sha256": "8f2f515d5b1f7f5c889a0cbc23ffcce4c797583af48698aaca7cd0eaad16feb1",
+      "after_sha256": "5c7c7b4d4566e5096d7e60777628300658d17d4aa87d9d8b6b480685689f22fd"
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "before_sha256": "cb2a48ca5675ba7b2f850276e196ddc4e1ceaa107f395e8fd370938272ab1436",
+      "after_sha256": "a65330df2340dccb84f8784956211d992813f50cfbe0664d0f4afdfec41b5d79"
+    },
+    {
+      "path": "cw32-data/lsi-sysclk-qualified.yaml",
+      "before_sha256": "bfc0ab1711058d88d984d90c4b9fd10cb9bf55494d3421bfb2826fd379308d1a",
+      "after_sha256": "dc052bbf989fff8092697dffd7b47df7b744af6ffce8a8addd1c07617ec3608c"
+    },
+    {
+      "path": "cw32-data/electrical.yaml",
+      "before_sha256": "c9293fabd4bfaec32cd8c34f6de9b56a100837a22683777b163dbe4249ee3fda",
+      "after_sha256": "4294bf2a6114195338120c83cd9e2ae8d739ae38aa74d31f3b9553b333695365"
+    },
+    {
+      "path": "cw32-data/af/cw32f002.yaml",
+      "before_sha256": "ad2faf10e3271b0f84ef045fe69cacc8dc170538240f9df1d1cc168270080e1e",
+      "after_sha256": "ad2faf10e3271b0f84ef045fe69cacc8dc170538240f9df1d1cc168270080e1e"
+    },
+    {
+      "path": "cw32-metapac-gen/src/lib.rs",
+      "before_sha256": "2fa92927fef3b1f6d0deb40b25c370e669e0b7d62ee1c127e714369ab9d058e9",
+      "after_sha256": "2fa92927fef3b1f6d0deb40b25c370e669e0b7d62ee1c127e714369ab9d058e9"
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "before_sha256": "ca5fa04337464797466d7fa90a9b4b5e43cf0d1aa913eef27b743732c024e6d8",
+      "after_sha256": "ca5fa04337464797466d7fa90a9b4b5e43cf0d1aa913eef27b743732c024e6d8"
+    },
+    {
+      "path": "cw32-data/parts.yaml",
+      "before_sha256": "6e8194c84122d440e5476ba527cc04ff6c0e5c196bc413fa02dbbba41458f899",
+      "after_sha256": "6e8194c84122d440e5476ba527cc04ff6c0e5c196bc413fa02dbbba41458f899"
+    }
+  ],
+  "consumer_inventory": {
+    "search": "Source-wide including ignored source files: lsi_output_pin, LsiSysclk and PeripheralLsiSysclk; additionally reviewed indirect metadata serialization and generation.",
+    "direct_field_readers": [
+      "cw32-data-gen/src/lsi.rs",
+      "embassy-cw32/build.rs"
+    ],
+    "model_definitions": [
+      "cw32-data-serde/src/lib.rs",
+      "cw32-metapac-gen/src/data.rs",
+      "cw32-metapac-gen/res/src/metadata.rs"
+    ],
+    "indirect_flow": [
+      "cw32-data-gen/src/lib.rs:1030 package-expanded lsi::apply before chip JSON serialization",
+      "cw32-data-gen/src/electrical.rs existing profile-to-clock projection",
+      "cw32-metapac-gen/src/lib.rs:155 stringify(&core.peripherals)",
+      "cw32-metapac-gen/src/lib.rs:544 Debug and slice rewriting"
+    ],
+    "other_field_mentions": "Canonical policy/profile values and immutable historical review records. No remaining direct string access on the Option was found."
+  },
+  "static_findings": [
+    {
+      "topic": "raw key and decoding",
+      "reference": "cw32-data-gen/src/lsi.rs:76",
+      "finding": "Raw lsi_sysclk object contains_key(\"lsi_output_pin\") is required before typed from_value. Both owned models keep deny_unknown_fields. Missing Option can decode structurally in isolation, but missing authored policy is rejected by this separate key check."
+    },
+    {
+      "topic": "classic Some and roots",
+      "reference": "cw32-data-gen/src/lsi.rs:86",
+      "finding": "Classic facts must equal the source policy and require Some(\"PB11\"), AF [0,2,3,4,5,6,7], RTC [0,4,5,6,7], UART1/2/3 and GPIOA/B/C/F. None, empty string, absent key, empty AF or RTC lists cannot downgrade classic inspection. Same-source RTC envelope/address checks remain."
+    },
+    {
+      "topic": "F002 None and exact admission",
+      "reference": "cw32-data-gen/src/lsi.rs:547",
+      "finding": "Only the two enumerated part/package pairs can reach injection after all checks. F002 typed facts require None with empty AF and RTC lists, exact UART1/2 and GPIOA/B/C rosters. Raw key presence makes None explicit null. Family profiles must have no preseeded capability; generic F002 and F003 receive no injected facts."
+    },
+    {
+      "topic": "hardware absence authority",
+      "reference": "cw32-data-gen/src/lsi.rs:420",
+      "finding": "Null is backed by exact own RM/DS identities and page-bound complete-AF proof plus unchanged full SDK AF catalog hash ad2faf10e3271b0f84ef045fe69cacc8dc170538240f9df1d1cc168270080e1e. All 107 routes, 21 GPIO selections and 15 unresolved entries are scanned for LSI; own locked SDK/header identity and selected core pin absence are checked. F002 RTC and other prohibited roots are rejected against actual core/IR."
+    },
+    {
+      "topic": "build representation",
+      "reference": "embassy-cw32/build.rs:2470",
+      "finding": "Actual RTC presence must equal nonempty RTC allowlist. RTC is conditionally inserted before AWT; direct output is mapped from Option, and None must equal empty AF list. The Option value is unwrapped only inside map. Existing metapac Debug rendering matches the new static Option type."
+    },
+    {
+      "topic": "classic generation preservation",
+      "reference": "embassy-cw32/build.rs:2533",
+      "finding": "Classic RTC/AWT/UART and GPIO branch operation strings remain unchanged, with the same order, selector sets and PB11 AFRH/AFR11 path. Stronger in-window gate/reset checks are selected only by already-qualified F002 SYSCTRL IP, not by absent RTC/output. No classic behavior widening is accepted."
+    },
+    {
+      "topic": "F002 generator root shape",
+      "reference": "embassy-cw32/build.rs:2492",
+      "finding": "F002 has six gates and seven sources; no RTC or direct-output PAC access is generated by those branches. The extra HEX GPIO gate index is derived only in the F002 IP branch from actual selected HEX pins and validated GPIO roster. Runtime use remains a separate review."
+    }
+  ],
+  "classic_static_expectation": {
+    "policy_values_unchanged": [
+      "CW32F020",
+      "CW32F030",
+      "CW32A030"
+    ],
+    "electrical_only_change": "lsi-sysclk-qualified.yaml digest; all other parsed electrical values unchanged",
+    "gated_roots_in_order": [
+      "RTC",
+      "AWT",
+      "UART1",
+      "UART2",
+      "UART3",
+      "GPIOA",
+      "GPIOB",
+      "GPIOC",
+      "GPIOF"
+    ],
+    "ungated_source_slots": {
+      "9": "MCO",
+      "10": "PB11 direct-output AF"
+    },
+    "source_count": 11,
+    "gate_count": 9,
+    "json": "Existing classic pin string remains PB11 under Option Some serialization.",
+    "rust": "Generated metadata must visibly contain Some(\"PB11\"); whole metadata bytes change. Actual generated content comparison has not run."
+  },
+  "f002_static_expectation": {
+    "qualified_parts": [
+      "CW32F002F3P7",
+      "CW32F002F3U7"
+    ],
+    "gated_roots_in_order": [
+      "AWT",
+      "UART1",
+      "UART2",
+      "GPIOA",
+      "GPIOB",
+      "GPIOC"
+    ],
+    "ungated_source_slots": {
+      "6": "MCO"
+    },
+    "source_count": 7,
+    "gate_count": 6,
+    "pin_fact": null,
+    "lsi_output_allowed_af": [],
+    "rtc_allowed_sources": []
+  },
+  "remaining_gate": "Separately authorized actual generation must confirm exact2 JSON/static metadata, alias/F003 exclusion, classic Some-shape differences, and identical classic consumer operation output. This source review is not that execution evidence.",
+  "limits": {
+    "cargo_run": false,
+    "generation_run": false,
+    "hal_test_or_probe_run": false,
+    "model_or_harness_run": false,
+    "source_edited_by_review": false,
+    "lineage_edited_by_review": false,
+    "legal_clearance": false,
+    "publication_authorized": false,
+    "runtime_or_silicon_accepted": false
+  }
+}

@@ -535,7 +535,7 @@ pub struct PeripheralLsiSysclk {
     pub gpio_banks: &'static [&'static str],
     pub gpio_filter_allowed_sources: &'static [u8],
     pub mco_allowed_sources: &'static [u8],
-    pub lsi_output_pin: &'static str,
+    pub lsi_output_pin: Option<&'static str>,
     pub lsi_output_allowed_af: &'static [u8],
     pub rcc_irq: u16,
 }

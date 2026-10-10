@@ -1,0 +1,1260 @@
+{
+  "schema_version": 1,
+  "status": "accepted_independent_runtime_source_and_retained_build_receipts",
+  "review_date": "2026-10-10",
+  "scope": [
+    "CW32F002F3P7",
+    "CW32F002F3U7"
+  ],
+  "conclusion": "No remaining blocking finding in the final frozen runtime, F002 generated source, or inspected ordinary build receipts. Acceptance covers the approved init-only factory-LSI design and the accepted narrow owned-HEX GPIO gate progression. It does not establish hardware behavior or authorize publication.",
+  "blocking_findings": [],
+  "publication": "All existing publication holds remain separate and unchanged by this review.",
+  "review_activity": {
+    "project_source_edited": false,
+    "cargo_executed_by_reviewer": false,
+    "hal_tests_executed": false,
+    "probes_executed": false,
+    "model_or_harness_executed": false,
+    "hardware_executed": false,
+    "network_or_remote_actions": false,
+    "performed": [
+      "Read locked own F002 original text and SDK members and independently recomputed their hashes.",
+      "Read the complete frozen design and independent design review.",
+      "Traced the final runtime and actual generated consumer windows, masks, capability cfg and driver selection.",
+      "Compared accepted Stage64 source operations and unchanged helper/driver hashes.",
+      "Independently rehashed all 1283 frozen authored inputs, 34 retained generated files, 17 build logs and 8 ELF files.",
+      "Inspected both exact-package ELF headers, vectors, sections and load segments; independently decoded all eight ELF header/load-segment receipts."
+    ]
+  },
+  "design_bindings": [
+    {
+      "label": "external-evidence/stage65/f002-factory-lsi-sysclk-design.md",
+      "sha256": "c4a37911b3046be65bbc17ce6fd24779459e11e9d8bbe47af5f0f0704f2bf344"
+    },
+    {
+      "label": "external-evidence/stage65/external/review-f002-lsi/review.md",
+      "sha256": "32cf0ae72799e650f2919a1d64eb4604a97d108d88a6f726a71ed231ee050c18"
+    },
+    {
+      "label": "external-evidence/stage65/runtime-proposal/hex-gate-progression-v1.md",
+      "sha256": "4cb60858acca01a92222fc00f24d1675f02410e22846259c510ab1f929db3f91"
+    },
+    {
+      "label": "external-evidence/stage65/runtime-proposal/hex-gate-progression.md",
+      "sha256": "9699310a8b25899ffe3490626be585275470211743a0d70f7d5f1de402137424"
+    },
+    {
+      "label": "external-evidence/stage65/runtime-review/hex-gate-supplement-review-v1.md",
+      "sha256": "c5dc179ebbf98a5a076d2d55c7c4b42ee1f112cc1df66f08ed9be5a24eab7087"
+    },
+    {
+      "label": "external-evidence/stage65/runtime-review/hex-gate-supplement-review.md",
+      "sha256": "8c5826fe1e7d308954d602ba341aa75935c169d59b5bb294e2f5a4d8dcece559"
+    },
+    {
+      "label": "external-evidence/stage65/runtime-review/own-source-bindings.json",
+      "sha256": "b637e4d91299c678d33ff9d8126de8693caa6b9a9071ec2fc33c437be0df94a9"
+    }
+  ],
+  "frozen_project_files": [
+    {
+      "path": "embassy-cw32/src/rcc/f002_f003.rs",
+      "sha256": "4a33c60bb584867384afc398107a0cdb4298249685913de20067b87c557240b6"
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "11389ba92bbf84169f773a29ad44dfe609abb04361e367973441fda30550aafe"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/mod.rs",
+      "sha256": "396dab99b5799c1576fe85d06e0009e6ff9afd0a6305fd13c367093fc27a9f28"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/peripheral.rs",
+      "sha256": "92fce92a5ad9f68106dfa400ecea2e0798e3dd4204baa300e00bd8b224351284"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/bounds.rs",
+      "sha256": "e4f7b93bd93fa60ee7ce6316fa83d411d0b2033000f5ec5ee49df8ff64806506"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/operating.rs",
+      "sha256": "1807ed96557149d78e3a256d64f036fadf16511fec7ec58eb2a636ac26477519"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/hsi_48mhz.rs",
+      "sha256": "793e9e5e0bb1040728da36167c43b6cf24e10f0b695b3cec6dd777daf953e4cf"
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "7943220f47587eade5ab572f9e739b68b3a30fde377b9689bab4855fef47b7d9"
+    },
+    {
+      "path": "embassy-cw32/src/adc/classic.rs",
+      "sha256": "f08973c004ba5bb5b9efca7b17354fece22bf58642959eaff671e4a5502048e9"
+    },
+    {
+      "path": "embassy-cw32/src/adc/mod.rs",
+      "sha256": "91142df61612a95d12a2046ff1bcc9faa15ff081c297eee2c84808be02ac3f78"
+    },
+    {
+      "path": "embassy-cw32/src/time_driver.rs",
+      "sha256": "f23f754fa62f62664cee5d30d7fb37c6964e4b58c788b726325bf99674991924"
+    },
+    {
+      "path": "embassy-cw32/src/awt.rs",
+      "sha256": "e6a52f40384943dcd423982c06f0e49eb188c5fc233a6aa0d12be2bfb51579a6"
+    },
+    {
+      "path": "embassy-cw32/src/flash.rs",
+      "sha256": "c367f7c31acc45584306a027f5a04368bd52a305d786adb4d5af4453104d6454"
+    },
+    {
+      "path": "docs/f002-factory-lsi-sysclk.md",
+      "sha256": "02ff79dd653fef8efd52ba5956a98e0f7c27c29bd73c0d3bc66c6530b89e3ea5"
+    },
+    {
+      "path": "README.md",
+      "sha256": "68e50467b477f98b588f6b16828b6db6b0ba6a63902acf3000e05cc2c8f5aa0c"
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "sha256": "ca5fa04337464797466d7fa90a9b4b5e43cf0d1aa913eef27b743732c024e6d8"
+    },
+    {
+      "path": "cw32-metapac/src/peripherals/sysctrl_cw32f002_v1.rs",
+      "sha256": "6d7b06b796c239ea1dd17c8a3e7b5f315b5086159672bdaddd1269f44dae5572"
+    },
+    {
+      "path": "cw32-metapac/src/chips/metadata_0002.rs",
+      "sha256": "a47dbc775b57e0afea0072bc670eedf7af180ee9fc4dc6d51cc7c47f903c3291"
+    },
+    {
+      "path": "cw32-metapac/src/chips/metadata_0003.rs",
+      "sha256": "2756ee6cf7da911c1cceba96572ab5185a3428727b55503aeb0fd3a3a68a4d45"
+    },
+    {
+      "path": "cw32-metapac/src/chips/metadata_0004.rs",
+      "sha256": "84f56ccd79cbb41c7ab1e7f87222eda291104d07c2a489e7b943ae6f615310a1"
+    },
+    {
+      "path": "cw32-metapac/src/chips/cw32f002f3p7/metadata.rs",
+      "sha256": "0868f03f9bbe704bc883aefbd515f00b849a3d8bf703aeb9c039d92448e99b33"
+    },
+    {
+      "path": "cw32-metapac/src/chips/cw32f002f3u7/metadata.rs",
+      "sha256": "6c1748144fe0bcffa9772f7c6cb35591774bb8d96e679011e7db15e9b9cde29f"
+    },
+    {
+      "path": "cw32-data/data/chips/CW32F002F3P7.json",
+      "sha256": "844db2da4e468b401eb90f0b7bf7ac1024ae374c884b1c680f0fed3f1b3cd37d"
+    },
+    {
+      "path": "cw32-data/data/chips/CW32F002F3U7.json",
+      "sha256": "0e760416f8e5e7cf85fd3c9a0f0bbac8aaae0342eeba2680bbd02842badfe858"
+    }
+  ],
+  "frozen_authored_tree": {
+    "manifest_label": "external-evidence/stage65/source-manifest.json",
+    "manifest_sha256": "8b58de027e9a70e0c3152490dcf5d919e87244655c936dfa05a154191cb456d6",
+    "source_before_label": "external-evidence/stage65/verification/main/source-before.json",
+    "source_before_sha256": "10a065fdc576dc050532b656d0a724555d7158dd3ad3e4da7b1747557068c48b",
+    "source_after_label": "external-evidence/stage65/verification/main/source-after.json",
+    "source_after_sha256": "10a065fdc576dc050532b656d0a724555d7158dd3ad3e4da7b1747557068c48b",
+    "file_count": 1283,
+    "before_after_equal": true,
+    "independent_current_disk_hash_mismatches": []
+  },
+  "generated_source_bindings": [
+    {
+      "command": "lib-cw32f002f3p7",
+      "label": "external-evidence/stage65/verification/main/lib-cw32f002f3p7-_generated.rs",
+      "sha256": "33dd37b78139ab1016a480c915a32eb0461cb39d855264905a456999b3b53d3d",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f002_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f002_v1",
+        "cw32f002",
+        "adc_cw32f002_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    },
+    {
+      "command": "lib-cw32f002f3u7",
+      "label": "external-evidence/stage65/verification/main/lib-cw32f002f3u7-_generated.rs",
+      "sha256": "33dd37b78139ab1016a480c915a32eb0461cb39d855264905a456999b3b53d3d",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f002_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f002_v1",
+        "cw32f002",
+        "adc_cw32f002_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    },
+    {
+      "command": "lib-cw32f002f3p7-time",
+      "label": "external-evidence/stage65/verification/main/lib-cw32f002f3p7-time-_generated.rs",
+      "sha256": "92532a306524d2c365110251bc92dea6563c621adac3947de2ca7c0f1406d283",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f002_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f002_v1",
+        "cw32f002",
+        "adc_cw32f002_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    },
+    {
+      "command": "lib-cw32f002f3u7-time",
+      "label": "external-evidence/stage65/verification/main/lib-cw32f002f3u7-time-_generated.rs",
+      "sha256": "92532a306524d2c365110251bc92dea6563c621adac3947de2ca7c0f1406d283",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f002_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f002_v1",
+        "cw32f002",
+        "adc_cw32f002_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    },
+    {
+      "command": "lib-cw32f002",
+      "label": "external-evidence/stage65/verification/main/lib-cw32f002-_generated.rs",
+      "sha256": "40a41072f7b12ad8672b039278279a1ea4b296aff46b005b5ad9cebe53e8496d",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f002_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f002_v1",
+        "cw32f002",
+        "adc_cw32f002_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    },
+    {
+      "command": "lib-cw32f003",
+      "label": "external-evidence/stage65/verification/main/lib-cw32f003-_generated.rs",
+      "sha256": "a4c0b27662565a6152904cdedd54940632207b443cb33aa7c2ddeb3faf13a3f3",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "atim",
+        "atim_cw32f003_v1",
+        "atim_classic",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f003_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f003_v1",
+        "cw32f003",
+        "adc_cw32f003_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    },
+    {
+      "command": "lib-cw32f020c6u7",
+      "label": "external-evidence/stage65/verification/main/lib-cw32f020c6u7-_generated.rs",
+      "sha256": "816699702863232eda20048dc6bb2b4913b2e1645f9283d89d0a629f5ba4e628",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "rtc",
+        "rtc_cw32f020_v1",
+        "btim",
+        "btim_v1",
+        "gtim_classic",
+        "gtim_v1",
+        "flash",
+        "flash_cw32f020_v1",
+        "gpio_v1",
+        "rcc_cw32f020_v1",
+        "cw32f020",
+        "adc_cw32f020_v1",
+        "gtim_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "crc_poly_8005",
+        "crc_input_16bit",
+        "crc_input_32bit",
+        "wwdt",
+        "uart",
+        "uart_v1",
+        "spi",
+        "spi_v1",
+        "i2c",
+        "i2c_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_hse",
+        "rcc_external_clock",
+        "rcc_lse",
+        "rcc_pll",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes"
+      ]
+    },
+    {
+      "command": "lib-cw32f030c8t7",
+      "label": "external-evidence/stage65/verification/main/lib-cw32f030c8t7-_generated.rs",
+      "sha256": "6c37e2f13e15909901775e9493afe0443da4279ba34406d47ff22656e9f4e1e5",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "rtc",
+        "rtc_v1",
+        "btim",
+        "btim_v1",
+        "atim",
+        "atim_v1",
+        "atim_classic",
+        "gtim_classic",
+        "gtim_v1",
+        "flash",
+        "flash_v1",
+        "dma_v1",
+        "uart_dma",
+        "spi_dma",
+        "gpio_v1",
+        "rcc_v1",
+        "cw32x030",
+        "gpio_exti",
+        "crc_32bit",
+        "adc_v1",
+        "gtim_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "crc_poly_8005",
+        "crc_input_16bit",
+        "crc_input_32bit",
+        "wwdt",
+        "uart",
+        "uart_v1",
+        "spi",
+        "spi_v1",
+        "i2c",
+        "i2c_v1",
+        "gpio_af",
+        "iwdt",
+        "atim_classic_complementary",
+        "gpio_irq_level",
+        "rcc_hse",
+        "rcc_external_clock",
+        "rcc_lse",
+        "rcc_pll",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes"
+      ]
+    },
+    {
+      "command": "lib-cw32a030c8t7",
+      "label": "external-evidence/stage65/verification/main/lib-cw32a030c8t7-_generated.rs",
+      "sha256": "6c37e2f13e15909901775e9493afe0443da4279ba34406d47ff22656e9f4e1e5",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "rtc",
+        "rtc_v1",
+        "btim",
+        "btim_v1",
+        "atim",
+        "atim_v1",
+        "atim_classic",
+        "gtim_classic",
+        "gtim_v1",
+        "flash",
+        "flash_v1",
+        "dma_v1",
+        "uart_dma",
+        "spi_dma",
+        "gpio_v1",
+        "rcc_v1",
+        "cw32x030",
+        "gpio_exti",
+        "crc_32bit",
+        "adc_v1",
+        "gtim_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "crc_poly_8005",
+        "crc_input_16bit",
+        "crc_input_32bit",
+        "wwdt",
+        "uart",
+        "uart_v1",
+        "spi",
+        "spi_v1",
+        "i2c",
+        "i2c_v1",
+        "gpio_af",
+        "iwdt",
+        "atim_classic_complementary",
+        "gpio_irq_level",
+        "rcc_hse",
+        "rcc_external_clock",
+        "rcc_lse",
+        "rcc_pll",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes"
+      ]
+    },
+    {
+      "command": "lsi-clock-cw32f002f3p7",
+      "label": "external-evidence/stage65/verification/main/lsi-clock-cw32f002f3p7-_generated.rs",
+      "sha256": "33dd37b78139ab1016a480c915a32eb0461cb39d855264905a456999b3b53d3d",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f002_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f002_v1",
+        "cw32f002",
+        "adc_cw32f002_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    },
+    {
+      "command": "lsi-clock-cw32f002f3u7",
+      "label": "external-evidence/stage65/verification/main/lsi-clock-cw32f002f3u7-_generated.rs",
+      "sha256": "33dd37b78139ab1016a480c915a32eb0461cb39d855264905a456999b3b53d3d",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f002_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f002_v1",
+        "cw32f002",
+        "adc_cw32f002_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    },
+    {
+      "command": "lsi-clock-cw32f020c6u7",
+      "label": "external-evidence/stage65/verification/main/lsi-clock-cw32f020c6u7-_generated.rs",
+      "sha256": "816699702863232eda20048dc6bb2b4913b2e1645f9283d89d0a629f5ba4e628",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "rtc",
+        "rtc_cw32f020_v1",
+        "btim",
+        "btim_v1",
+        "gtim_classic",
+        "gtim_v1",
+        "flash",
+        "flash_cw32f020_v1",
+        "gpio_v1",
+        "rcc_cw32f020_v1",
+        "cw32f020",
+        "adc_cw32f020_v1",
+        "gtim_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "crc_poly_8005",
+        "crc_input_16bit",
+        "crc_input_32bit",
+        "wwdt",
+        "uart",
+        "uart_v1",
+        "spi",
+        "spi_v1",
+        "i2c",
+        "i2c_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_hse",
+        "rcc_external_clock",
+        "rcc_lse",
+        "rcc_pll",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes"
+      ]
+    },
+    {
+      "command": "lsi-clock-cw32f030c8t7",
+      "label": "external-evidence/stage65/verification/main/lsi-clock-cw32f030c8t7-_generated.rs",
+      "sha256": "6c37e2f13e15909901775e9493afe0443da4279ba34406d47ff22656e9f4e1e5",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "rtc",
+        "rtc_v1",
+        "btim",
+        "btim_v1",
+        "atim",
+        "atim_v1",
+        "atim_classic",
+        "gtim_classic",
+        "gtim_v1",
+        "flash",
+        "flash_v1",
+        "dma_v1",
+        "uart_dma",
+        "spi_dma",
+        "gpio_v1",
+        "rcc_v1",
+        "cw32x030",
+        "gpio_exti",
+        "crc_32bit",
+        "adc_v1",
+        "gtim_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "crc_poly_8005",
+        "crc_input_16bit",
+        "crc_input_32bit",
+        "wwdt",
+        "uart",
+        "uart_v1",
+        "spi",
+        "spi_v1",
+        "i2c",
+        "i2c_v1",
+        "gpio_af",
+        "iwdt",
+        "atim_classic_complementary",
+        "gpio_irq_level",
+        "rcc_hse",
+        "rcc_external_clock",
+        "rcc_lse",
+        "rcc_pll",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes"
+      ]
+    },
+    {
+      "command": "lsi-clock-cw32a030c8t7",
+      "label": "external-evidence/stage65/verification/main/lsi-clock-cw32a030c8t7-_generated.rs",
+      "sha256": "6c37e2f13e15909901775e9493afe0443da4279ba34406d47ff22656e9f4e1e5",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "rtc",
+        "rtc_v1",
+        "btim",
+        "btim_v1",
+        "atim",
+        "atim_v1",
+        "atim_classic",
+        "gtim_classic",
+        "gtim_v1",
+        "flash",
+        "flash_v1",
+        "dma_v1",
+        "uart_dma",
+        "spi_dma",
+        "gpio_v1",
+        "rcc_v1",
+        "cw32x030",
+        "gpio_exti",
+        "crc_32bit",
+        "adc_v1",
+        "gtim_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "crc_poly_8005",
+        "crc_input_16bit",
+        "crc_input_32bit",
+        "wwdt",
+        "uart",
+        "uart_v1",
+        "spi",
+        "spi_v1",
+        "i2c",
+        "i2c_v1",
+        "gpio_af",
+        "iwdt",
+        "atim_classic_complementary",
+        "gpio_irq_level",
+        "rcc_hse",
+        "rcc_external_clock",
+        "rcc_lse",
+        "rcc_pll",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes"
+      ]
+    },
+    {
+      "command": "hex-clock-cw32f002f3p7",
+      "label": "external-evidence/stage65/verification/main/hex-clock-cw32f002f3p7-_generated.rs",
+      "sha256": "33dd37b78139ab1016a480c915a32eb0461cb39d855264905a456999b3b53d3d",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f002_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f002_v1",
+        "cw32f002",
+        "adc_cw32f002_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    },
+    {
+      "command": "hex-clock-cw32f003e4p7",
+      "label": "external-evidence/stage65/verification/main/hex-clock-cw32f003e4p7-_generated.rs",
+      "sha256": "e1bdd6549a457a70bbac58a2c5d1e817635283b9a5194a7a8b79fe0d1293d128",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "atim",
+        "atim_cw32f003_v1",
+        "atim_classic",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f003_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f003_v1",
+        "cw32f003",
+        "adc_cw32f003_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    },
+    {
+      "command": "low-power-timers-cw32f002f3p7",
+      "label": "external-evidence/stage65/verification/main/low-power-timers-cw32f002f3p7-_generated.rs",
+      "sha256": "33dd37b78139ab1016a480c915a32eb0461cb39d855264905a456999b3b53d3d",
+      "independently_rehashed": true,
+      "cfgs": [
+        "ram_enable_status",
+        "awt",
+        "vc",
+        "vc_ready",
+        "btim",
+        "btim_cw32f002_v1",
+        "gtim_classic",
+        "gtim_cw32f002_v1",
+        "flash",
+        "flash_cw32f002_v1",
+        "gpio_cw32f002_v1",
+        "rcc_cw32f002_v1",
+        "cw32f002",
+        "adc_cw32f002_v1",
+        "adc",
+        "gpio_exti",
+        "crc",
+        "wwdt",
+        "uart",
+        "uart_cw32f002_v1",
+        "spi",
+        "spi_cw32f002_v1",
+        "i2c",
+        "i2c_cw32f002_v1",
+        "gpio_af",
+        "iwdt",
+        "gpio_irq_level",
+        "rcc_external_clock",
+        "rcc_lsi_sysclk",
+        "ir_sysctrl",
+        "ir_modes",
+        "ir_software"
+      ]
+    }
+  ],
+  "generated_integration": {
+    "exact2": "Both exact package outputs carry rcc_lsi_sysclk, rcc_cw32f002_v1 and adc_cw32f002_v1; no RTC capability is generated. The generic F002 and F003 outputs omit rcc_lsi_sysclk and the factory-LSI helper.",
+    "f002_constants": {
+      "nominal_hz": 32800,
+      "minimum_hz": 31160,
+      "maximum_hz": 34440,
+      "supply_mv": [
+        1650,
+        5500
+      ],
+      "temperature_c": [
+        -40,
+        105
+      ],
+      "factory_trim_address": "0x001007BA",
+      "lsi_parameters_mask": "0xffff7fff",
+      "hsi_parameters_mask": "0xffff7fff",
+      "hex_parameters_mask": "0xfff7ffff",
+      "hex_gpio_gate_index": 4
+    },
+    "f002_roots": {
+      "selectors": 7,
+      "gates": 6,
+      "gate_order": [
+        "AWT",
+        "UART1",
+        "UART2",
+        "GPIOA",
+        "GPIOB",
+        "GPIOC"
+      ],
+      "ungated_root": "MCO",
+      "allowed_sources": {
+        "AWT": [
+          0,
+          2,
+          3,
+          4
+        ],
+        "UART1": [
+          0,
+          1
+        ],
+        "UART2": [
+          0,
+          1
+        ],
+        "GPIOA": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6
+        ],
+        "GPIOB": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6
+        ],
+        "GPIOC": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          6
+        ],
+        "MCO": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          8,
+          9
+        ]
+      }
+    },
+    "f002_gate_layout": "Actual generated RccInfo words are AWT (13,13)/(17,13), UART1 (13,9)/(17,9), UART2 (14,7)/(18,7), GPIOA/B/C (12,4/5/6)/(16,4/5/6): SYSCTRL word offsets, unkeyed, enable-active true, reset-asserted false. They match own byte offsets and preserve shared neighbors through the unchanged central helper.",
+    "classic_preservation": "Actual current F020/F030/A030 outputs retain 11 selectors and 9 gates, RTC/AWT/UART1-3/GPIOA-B-C-F order, PB11 AFRH direct-output read, MCO and old allowed sets. The accepted Stage64 generator emission statements and order correspond directly to the unchanged classic branch. The Option API shape changes from string to Some(string); no fabricated F002 RTC/output is added.",
+    "classic_comparison_limit": "No Stage64 classic OUT_DIR artifact is claimed as a bound comparator. Preservation is supported by accepted Stage64 generator source-operation comparison, unchanged classic backend/helper hashes and inspection of this batch's actual classic outputs, not by an invented old/new generated-body byte comparison.",
+    "time_driver": "Actual time-feature output selects GTIM, IRQ 16. Both package names exercise the same one applicable timer type."
+  },
+  "operation_review": [
+    {
+      "phase": "P0 pure configuration",
+      "finding": "The new cfg-gated LSI arm validates own source conditions and calls ClockBounds::lsi, then existing bus/electrical validation. Existing Config fields and HSI default are retained. try_init validates the exact nominal 1 MHz divisor before Peripherals::take and before RCC MMIO."
+    },
+    {
+      "phase": "P1 immutable classification",
+      "finding": "capture freezes original CR0/CR1/HSI/HEX/IER, whole LSI parameter state, requested/selected identity and cold classification before guards. WO KEY fields are normalized away using their typed setters on local values. No fresh capture reclassifies cold or accepts later parameter drift. Factory u16 raw all ones is rejected before ten-bit PAC projection; zero and nonzero high six bits remain admitted."
+    },
+    {
+      "phase": "Entry combinations",
+      "finding": "Selected LSI requires dual startup stability; requested-only matching LSI may complete startup within budget. Live/in-flight nonfactory trim, inconsistent dual status and unowned stable state reject without stop/retrim. Original ownership remains required. A separate ready boolean records observed progress without fabricating a PAC RO setter."
+    },
+    {
+      "phase": "P2 guards",
+      "finding": "The unchanged FLASH gate/readback and WAIT2 precede the monotonic AHB at least /4 and APB /8 guard, readback and barriers. Only verified guard divider fields advance expected CR0 before cold preparation. Flash latency does not replace bus-ceiling proof."
+    },
+    {
+      "phase": "P3 cold passes",
+      "finding": "Two complete consumer passes use the same expected global identity, original gates and deasserted reset invariant. A final global check is adjacent to the optional TRIM-only RMW; matching cold trim still performs both passes. Full raw LSI readback retains WAIT and every non-TRIM bit. Only expected TRIM advances; the third complete use-edge pass and final global check precede the very first CR1 write with no intervening HSI/source/consumer write."
+    },
+    {
+      "phase": "True per-consumer windows",
+      "finding": "Every generated F002 window records the incoming gate and rejects held reset, then checks actual gate/readability and reset immediately before and after its typed selector read. The closure buffers its Result until inspect_for_init completes restoration. Enable failure still attempts restoration; restore failure takes priority over enable/selector/reset refusal. Final original-gate comparison precedes buffered error propagation. All successful reset states are fixed false, so the tuple need not store a redundant reset array."
+    },
+    {
+      "phase": "Observers and prohibited writes",
+      "finding": "Cold guards exclude LSI request/selection, both stable views, IER.LSIRDY, ISR.LSIRDY and NVIC RCC IRQ 4 pending. No ICR/NVIC clear, reset, FIFO/data access or consumer-selector write creates admission. CR2 is untouched. After the first source request, naturally changing LSIRDY/shared pending are allowed without clearing; IER and parameter/consumer identities remain checked."
+    },
+    {
+      "phase": "P4 permanent request",
+      "finding": "The first keyed CR1 RMW requests HSI and LSI together, then full normalized source control and LSI request/parameters/dual status are checked before the original HSI wait/switch. Readiness is latched; later double-not-stable is refused rather than treated as a fresh startup opportunity."
+    },
+    {
+      "phase": "P5 HSI calibration",
+      "finding": "Existing AWT HSIOSC, retained pad/ETR and LVD guards remain in original order. Target-LSI calibration uses the already qualified permanent bridge. HSI stop/start reassert LSIEN and check it in request readback. Old request restoration is restricted to nonpermanent targets. Failures can leave CPU on LSI and HSI stopped/restarting; no cleanup clears the permanent target."
+    },
+    {
+      "phase": "P6 independent HEX",
+      "finding": "None/preserved/reconfigured HEX behavior remains. HEX stop/start reassert and read back LSIEN. Under the accepted supplement, the complete old consumer identity and readiness are checked before the existing pad function; only after its success does expected gate index 4 advance to true. No selector, other gate, reset or cold identity is refreshed. Error exits precede advancement."
+    },
+    {
+      "phase": "P7 target and buses",
+      "finding": "Permanent LSI request/dual readiness/parameters and cold consumer identity are checked while conservative buses remain. SYSCLK LSI is selected/read back/barriered before final divisors, whose RMW explicitly retains LSI. Final source and divisors are read back before continuing."
+    },
+    {
+      "phase": "P8 final Flash/tree",
+      "finding": "Before and after final Flash latency, verification covers source/dividers, normalized CR1, permanent LSI/IER, factory HSI trim/divider/request/dual readiness, retained HEX control/readiness, AWT CR, configured HEX pad and cold consumers. The newly added full-CR AWT window also uses immediate gate/reset checks, buffering and restore-error priority. Final WAIT uses max(target LSI HCLK upper bound, retained factory-HSI HCLK upper bound) with outward rounding, then actual WAIT is checked."
+    },
+    {
+      "phase": "P9 publication",
+      "finding": "Only successful configure reaches the existing CLOCKS publication. Every earlier error returns without frozen clocks. No independent lifetime owner, runtime switching, background monitor, fault recovery or rollback path is added."
+    },
+    {
+      "phase": "Non-target isolation",
+      "finding": "For HSI/HEX targets permanent_lsi is false: no new capture/prepare/consumer/final routine executes; added setters do not run and rewritten request predicates perform the same existing CR1 read and original boolean test. The original AWT/LVD/HEX, trim bridge, source/divider and Flash operation order is preserved. F003 and generic F002 remain without the public LSI variant."
+    }
+  ],
+  "bounds_and_consumers": {
+    "rate_only": "Actual exact2 cfg activates the existing ClockBounds rate_only field. LSI sets it true and integer division preserves it and the exact 32800/31160/34440 source numerators. Nominal/minimum round down and maximum rounds up; /128 then /8 yields displayed 32/30/34 Hz while retaining divisor 1024. HSI bounds remain independent and cycle-qualified.",
+    "adc": "Actual adc_cw32f002_v1 selects adc/classic.rs. Config::timing refuses rate-only at entry before cycle calculations. Blocking and async constructors invoke it before RCC/gate/MMIO; their earlier check_fault is only an atomic load. Both set_config paths and delegated single/sequence reads retain timing validation before hardware changes. The ADC file is unchanged from accepted Stage64.",
+    "time_driver": "32800 cannot have a nonzero exact divisor to 1000000 times any positive cumulative bus divisor. time_driver::validate_clock remains before singleton and MMIO. No tick change or fractional divider was introduced; ordinary time-feature compilation is not runtime execution of the rejection.",
+    "awt": "The unchanged driver constructs its own ClockBounds::hsi(1) and writes HSIOSC, so LSI SYSCLK does not contaminate its strict duration qualification.",
+    "flash": "Existing Flash driver validates electrical conditions and actual upper HCLK; no cycle-duration helper is called and no own documented positive minimum HCLK was added. This does not establish program/erase timing, IRQ/watchdog latency or low-frequency silicon behavior.",
+    "public_contract": "The public Sysclk variant, init documentation, README and own F002 contract disclose whole GPIOA/B/C work windows, natural flags/events, bounded restoration that may fail, attempted TRIM and permanent-request error states. The platform entry/exclusivity model remains explicit without imposing a hidden new Rust memory-safety obligation."
+  },
+  "closed_findings": [
+    {
+      "finding": "Owned independent HEX gate would invalidate unchanged cold GPIOB expectation.",
+      "resolution": "Accepted narrow supplement advances only the generated bank gate expectation after the existing owned operation succeeds; the final source and actual generated index 4 are inspected.",
+      "status": "closed"
+    },
+    {
+      "finding": "New final AWT owner inspection initially lacked immediate per-read gate/reset guards.",
+      "resolution": "Final frozen verify_final buffers the typed full CR read through central restoration, then checks original gate/reset and owner with restore-error priority. Existing P1 legacy semantics are unchanged.",
+      "status": "closed"
+    },
+    {
+      "finding": "First runtime freeze used eight unavailable RO STABLE setters.",
+      "rejected_runtime_sha256": "4b05be149200856b38d63a82ffe2c8fe138dab1bea5128daf73f71cc707886f9",
+      "receipt_label": "external-evidence/stage65/verification/initial-compile.log",
+      "receipt_sha256": "3f1723b580126e02b0f8fbd83104609386f376a325a17507867364f6fd6d38f4",
+      "resolution": "Final backend 4a33c60b uses an independent ready-history boolean and IR-derived HSI/HEX parameter masks from final build generator 11389ba9. PAC RO access remains unchanged. Both actual exact-package outputs and successful main ordinary compilation close the compile blocker.",
+      "status": "closed"
+    }
+  ],
+  "retained_build_receipts": {
+    "commands_label": "external-evidence/stage65/verification/main/commands.json",
+    "commands_sha256": "fc50517d1f4d324989ffe12714078d1eb4e8382346852932d3d46ea957a54fdc",
+    "summary_label": "external-evidence/stage65/verification/main/summary.json",
+    "summary_sha256": "9f9864d560d73b3c2497d949cf6581499ba315eeb6e3632c202ddc4c9127891b",
+    "commands": 17,
+    "ordinary_library_checks": 9,
+    "ordinary_release_elfs": 8,
+    "all_commands_exit_zero": true,
+    "independent_receipt_hash_mismatches": [],
+    "generated_files_rehashed": 34,
+    "elf_bindings": [
+      {
+        "label": "external-evidence/stage65/verification/main/lsi-clock-cw32f002f3p7-cw32-lsi-clock-example.elf",
+        "sha256": "eedf999db2a253050752633b825fe43995ddc031410c79d2a2e9ef5395099e8f",
+        "chip": "cw32f002f3p7",
+        "entry": 189,
+        "stack": 536872960,
+        "text_bytes": 10564,
+        "independent_header_and_load_segment_match": true
+      },
+      {
+        "label": "external-evidence/stage65/verification/main/lsi-clock-cw32f002f3u7-cw32-lsi-clock-example.elf",
+        "sha256": "7e525a0dbd6064d4e9ce99f5f1d199db8b2d4b73341abbe38771b532f112965c",
+        "chip": "cw32f002f3u7",
+        "entry": 189,
+        "stack": 536872960,
+        "text_bytes": 10564,
+        "independent_header_and_load_segment_match": true
+      },
+      {
+        "label": "external-evidence/stage65/verification/main/lsi-clock-cw32f020c6u7-cw32-lsi-clock-example.elf",
+        "sha256": "9ddae229ad93ac86d489896fa40b19587fc5aafbf74226766f449488c173fbcc",
+        "chip": "cw32f020c6u7",
+        "entry": 193,
+        "stack": 536879104,
+        "text_bytes": 22044,
+        "independent_header_and_load_segment_match": true
+      },
+      {
+        "label": "external-evidence/stage65/verification/main/lsi-clock-cw32f030c8t7-cw32-lsi-clock-example.elf",
+        "sha256": "efe73624580129f928d6cd9410e87aebe0be3f46004edfee55e0b62872de9461",
+        "chip": "cw32f030c8t7",
+        "entry": 193,
+        "stack": 536879104,
+        "text_bytes": 22300,
+        "independent_header_and_load_segment_match": true
+      },
+      {
+        "label": "external-evidence/stage65/verification/main/lsi-clock-cw32a030c8t7-cw32-lsi-clock-example.elf",
+        "sha256": "3561c4245398b81c4cc9391190d8d4573dc0a3d87e55bb7c474992bd71623b76",
+        "chip": "cw32a030c8t7",
+        "entry": 193,
+        "stack": 536879104,
+        "text_bytes": 22300,
+        "independent_header_and_load_segment_match": true
+      },
+      {
+        "label": "external-evidence/stage65/verification/main/hex-clock-cw32f002f3p7-pb0.elf",
+        "sha256": "8d4281ff5f15565018b6fee089b6302a0dd71c552ab17e98aeb9d1ceb48e6436",
+        "chip": "cw32f002f3p7",
+        "entry": 193,
+        "stack": 536872960,
+        "text_bytes": 12312,
+        "independent_header_and_load_segment_match": true
+      },
+      {
+        "label": "external-evidence/stage65/verification/main/hex-clock-cw32f003e4p7-pb0.elf",
+        "sha256": "980c3c7c1607c2b6d4648b60ae7353bc96c3874e4d75291cf5d38e7a1154f346",
+        "chip": "cw32f003e4p7",
+        "entry": 193,
+        "stack": 536873984,
+        "text_bytes": 7132,
+        "independent_header_and_load_segment_match": true
+      },
+      {
+        "label": "external-evidence/stage65/verification/main/low-power-timers-cw32f002f3p7-polling.elf",
+        "sha256": "8f646f2f1877360619795882f866e35cf80ecfb91c6c869bacaec3a81dacd7e3",
+        "chip": "cw32f002f3p7",
+        "entry": 189,
+        "stack": 536872960,
+        "text_bytes": 10528,
+        "independent_header_and_load_segment_match": true
+      }
+    ],
+    "exact2_elf_structure": "Both retained exact LSI images are ELF32 little-endian ARM EXEC, entry/reset 0xbd, initial stack 0x20000800, vector bytes 0xbc, executable .text bytes 0x2944, Flash load end 0x2b82 and static RAM end 0x20000040. These fit the own 16 KiB Flash / 2 KiB SRAM linker regions. No stack-depth or running-memory-use guarantee is inferred."
+  },
+  "limits": [
+    "All source/state/error findings are static operation-sequence review; no HAL-state branches were executed or fault-injected.",
+    "Ordinary compilation and ELF inspection establish build/link structure, not oscillator startup, electrical bounds, functional event behavior, race handling or silicon correctness.",
+    "The exclusive initialization and continuous legal execution-clock model remains required; rechecks cannot freeze external hardware or guarantee progress after loss of the executing clock.",
+    "No new capability is inferred for F003, generic F002, RTC, AUTOTRIM or complementary PWM.",
+    "Deep metadata qualification validation and any final packaging/release decision are separate reviews; this report binds the final runtime and actual integration bytes examined."
+  ],
+  "generated_baseline_correspondence": {
+    "label": "external-evidence/stage65/verification/generated-baseline-correspondence.json",
+    "sha256": "e7c8680eb7082ccd2a37b5714bba95d5a8add5cc85fa36f08198c9668fc89c59",
+    "independent_read_only_confirmation": {
+      "generated_data_files": 416,
+      "only_changed_data_files": [
+        "chips/CW32F002F3P7.json",
+        "chips/CW32F002F3U7.json"
+      ],
+      "exact2_remove_new_lsi_sysclk_restores_all_prior_json_facts": true,
+      "register_and_peripheral_pac_files": 276,
+      "register_and_peripheral_pac_byte_mismatches": [],
+      "per_chip_metadata_include_correspondences": 54,
+      "chip_wrapper_mismatches_after_dedup_index_normalization": [],
+      "nonexact_shared_body_mismatches_after_only_string_to_some_shape_normalization": []
+    },
+    "limitation": "The extra shared metadata file reflects deduplication after exact F002 differs from its generic alias. This confirms generated data/PAC facts and Option shape correspondence; it is not a comparison of historical Stage64 HAL OUT_DIR consumer bodies."
+  },
+  "generator_freeze_clarification": "The narrow supplement review recorded generator a65330df as the source snapshot for the owned HEX gate rule. This final runtime review additionally covers final generator 11389ba92bbf84169f773a29ad44dfe609abb04361e367973441fda30550aafe, its RO-mask increment, and actual generated outputs after successful compilation.",
+  "unchanged_from_accepted64": [
+    {
+      "path": "embassy-cw32/src/rcc/hsi_48mhz.rs",
+      "sha256": "793e9e5e0bb1040728da36167c43b6cf24e10f0b695b3cec6dd777daf953e4cf",
+      "independently_equal_to_baseline": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/peripheral.rs",
+      "sha256": "92fce92a5ad9f68106dfa400ecea2e0798e3dd4204baa300e00bd8b224351284",
+      "independently_equal_to_baseline": true
+    },
+    {
+      "path": "embassy-cw32/src/adc/classic.rs",
+      "sha256": "f08973c004ba5bb5b9efca7b17354fece22bf58642959eaff671e4a5502048e9",
+      "independently_equal_to_baseline": true
+    },
+    {
+      "path": "embassy-cw32/src/time_driver.rs",
+      "sha256": "f23f754fa62f62664cee5d30d7fb37c6964e4b58c788b726325bf99674991924",
+      "independently_equal_to_baseline": true
+    },
+    {
+      "path": "embassy-cw32/src/awt.rs",
+      "sha256": "e6a52f40384943dcd423982c06f0e49eb188c5fc233a6aa0d12be2bfb51579a6",
+      "independently_equal_to_baseline": true
+    },
+    {
+      "path": "embassy-cw32/src/flash.rs",
+      "sha256": "c367f7c31acc45584306a027f5a04368bd52a305d786adb4d5af4453104d6454",
+      "independently_equal_to_baseline": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/operating.rs",
+      "sha256": "1807ed96557149d78e3a256d64f036fadf16511fec7ec58eb2a636ac26477519",
+      "independently_equal_to_baseline": true
+    }
+  ]
+}

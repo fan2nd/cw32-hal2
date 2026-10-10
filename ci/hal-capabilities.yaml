@@ -1136,22 +1136,36 @@ functions:
         measurement or complete oscillator calibration.
     - id: factory_lsi_sysclk
       status: partial
-      scope: Init-only factory-qualified nominal 32800 Hz LSI SYSCLK on F020/F030/A030.
-      implemented_families: [CW32F020, CW32F030, CW32A030]
+      scope: Init-only factory-qualified nominal 32800 Hz LSI SYSCLK on F020/F030/A030 and exactly CW32F002F3P7/F3U7.
+      implemented_families: [CW32F002, CW32F020, CW32F030, CW32A030]
       limitations:
-      - Complete stopped-source admission precedes the first mandatory CCS write; all RTC/AWT/UART/MCO/GPIO
-        roots and ready observers must be absent. Running factory-matching LSI is reused without retrim.
-      - Whole GPIOA/B/C/F inspection windows may advance sampling, filters and armed events, even before
-        failure. Gate restoration preserves settings but cannot undo progress; failed restore may leave a gate active.
+      - F002 means CW32F002F3P7 and CW32F002F3U7 only. Its generic alias, F003 and every other
+        unlisted part gain no capability. Own bounds are 31160..34440 Hz at 1.65..5.5 V and -40..105 C.
+        F002 has no RTC, dedicated LSI_OUT, PLL, LSE or classic CCS fields.
+      - Complete stopped-source admission precedes the first source request. Classic mandatory CCS
+        checks retain their existing roster. F002 checks AWT, UART1/2, GPIOA/B/C, MCO and ready
+        observers in two passes plus a post-trim use-edge pass, even if cold TRIM already matches.
+        Running factory-matching LSI is reused without retrim or WAIT writes.
+      - Whole GPIOA/B/C on F002, or GPIOA/B/C/F on classic, inspection windows may advance sampling,
+        filters and armed events, even before failure. Software does not clear flags; they may change
+        naturally. Restoring gates cannot undo progress; failed restore may leave a gate active.
+      - F002 cold preparation uses the own 0x001007BA factory halfword and typed ten-bit TRIM-only
+        writes with WAIT preserved. An admission/readback failure after trim can leave attempted TRIM.
+        No ready event or RCC IRQ4 pending state is cleared to obtain admission or after a new start.
       - Target LSIEN remains requested after enable attempts. HSI calibration can fail with HSI stopped
         while executing on LSI. No automatic rollback, runtime switching, source-loss or low-power recovery.
-      - Factory bounds and same-family LsiClock/CalendarClock/RTC aliases are rate-only, including when
-        SYSCLK is HSI. Strict duration helpers, ADC and complementary PWM reject this qualification;
-        fixed 1 MHz time-driver selection fails before singleton acquisition. Other ten families are unchanged.
+      - Selected LSI SYSCLK/bus bounds are rate-only. Classic LsiClock/CalendarClock/RTC aliases
+        remain rate-only even with HSI SYSCLK; F002 gains none of those RTC APIs. Strict duration helpers
+        and ADC reject this qualification; classic complementary PWM does too. Fixed 1 MHz time-driver
+        selection fails before singleton acquisition. F002 AWT retains independent HSIOSC timing.
+      - Metadata lsi_output_pin becomes Option to express F002 hardware absence. Classic retains its
+        real output pin, RTC source set and complete consumer checks. No hardware validation is claimed.
       registers_any: [LSI]
       evidence:
       - path: cw32-data/lsi-sysclk-qualified.yaml
       - path: docs/factory-lsi-sysclk.md
+      - path: docs/f002-factory-lsi-sysclk.md
+      - path: embassy-cw32/src/rcc/f002_f003.rs
       - path: embassy-cw32/src/rcc/hsi_48mhz.rs
         anchor: fn prepare_factory_lsi
       - path: examples/lsi-clock/src/main.rs
