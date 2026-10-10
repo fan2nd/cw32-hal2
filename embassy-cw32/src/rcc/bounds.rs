@@ -244,7 +244,7 @@ impl ClockBounds {
     /// CPU cycles covering a peripheral's slowest possible cycle interval.
     /// Treating the endpoints independently is conservative even for a common
     /// oscillator; this also covers bounded drift during startup.
-    #[cfg(any(adc_cw32l010_v1, adc_cw32l011_v1, adc_cw32l012_v1))]
+    #[cfg(any(lptim, adc_cw32l010_v1, adc_cw32l011_v1, adc_cw32l012_v1))]
     pub(crate) fn cycles_for(self, peripheral: Self, cycles: u32) -> u64 {
         (u64::from(self.maximum_source) * u64::from(peripheral.divisor) * u64::from(cycles))
             .div_ceil(u64::from(self.divisor) * u64::from(peripheral.minimum_source))

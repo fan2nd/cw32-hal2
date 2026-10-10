@@ -214,8 +214,9 @@ impl<'d, T: Instance, M: Mode> Lptim<'d, T, M> {
         // are conservative for the common frozen source and integer divisors.
         // On L083, HCLK and PCLK-derived LPTIM retain the same PLL reference;
         // this relative cycle wait makes no absolute nanosecond/jitter claim.
-        let cpu = crate::rcc::try_clocks().unwrap().hclk_bounds().maximum().0;
-        let cycles = (u64::from(cpu) * 2).div_ceil(u64::from(self.tick.minimum().0));
+        // Keep exact source fractions: a valid divided tick can be below 1 Hz.
+        let cpu = crate::rcc::try_clocks().unwrap().hclk_bounds();
+        let cycles = cpu.cycles_for(self.tick, 2);
         cortex_m::asm::delay(cycles as u32);
     }
     fn poll(&self, mut ready: impl FnMut() -> bool) -> Result<(), Error> {

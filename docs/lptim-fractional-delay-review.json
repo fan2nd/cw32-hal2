@@ -1,0 +1,1058 @@
+{
+  "schema_version": 1,
+  "stage": 73,
+  "review_date": "2026-10-10",
+  "decision": "accepted",
+  "acceptance_scope": "Independent acceptance of the applied LPTIM arithmetic change, its single startup documentation paragraph, and the completed bounded main verification. Final source-package clean replay is separate and pending at this receipt.",
+  "intended_project_path": "docs/lptim-fractional-delay-review.json",
+  "baseline": {
+    "source_package_label": "Stage72 source ZIP",
+    "source_package_sha256": "cc43626fb231b31de6284136b3fb90c0aac2e1dc304e1f13e5dd9aa4e7fcfdc1",
+    "baseline_manifest": {
+      "artifact": "external-evidence/baseline-manifest.json",
+      "sha256": "0330f6a05cc9883dc91a0e552ddfc008d4f1fd260084d9bc931a98cb2b701454"
+    },
+    "source_files": 1302,
+    "executable_files": 27,
+    "independent_zip_member_hash_and_mode_comparison": "all 1302 entries equal the baseline manifest",
+    "recorded_publication_comparison": "all 1302 entries match the recorded Stage72 publication Git blob IDs and executable modes; this is a local artifact comparison, not a new remote query"
+  },
+  "proposal_acceptance": {
+    "proposal": {
+      "artifact": "external-evidence/design-review/proposed.patch",
+      "sha256": "8d8bb7f8e9cbe537700aca1367b50c2e95680cf6946a06838dfc35fa1016f079"
+    },
+    "proposal_manifest": {
+      "artifact": "external-evidence/design-review/proposed-files.json",
+      "sha256": "f0da52fa1fb000d99c18931af7d1d5c831bc2b7235c5fd4d9cfbae370b31e051"
+    },
+    "design": {
+      "artifact": "external-evidence/design-review/arithmetic-review.md",
+      "sha256": "a7e5c08f8b331264c05f370f555568d67a5283393fcd16cf04af42fe4c88fb7b"
+    },
+    "original_independent_review": {
+      "artifact": "external-evidence/design-review/independent-review.md",
+      "sha256": "ad00d030857a13c2a68003f9ab4b242b8a544f9a25575a1bb86211fe278c69fd"
+    },
+    "original_independent_acceptance": {
+      "artifact": "external-evidence/design-review/independent-review.json",
+      "sha256": "12a70f833b19f1f5dedbfe6dd0724f804885077d53cd7c855dbd7dc6af9aea24"
+    },
+    "unchanged": true
+  },
+  "applied_delta": {
+    "functional_files": 2,
+    "documentation_files": 1,
+    "added_paths": [],
+    "removed_paths": [],
+    "mode_changes": [],
+    "files": [
+      {
+        "path": "docs/low-power-timers.md",
+        "before_sha256": "78df28d84b7e56a4a772cdb42aa14699ea3fcf4756ba38830937b4cb8eef9b9f",
+        "after_sha256": "d6c6bdb0c7844765a483f90e2156cd0e15f5b99e47529ace8e1e7f83b472fc7e",
+        "mode": "100644",
+        "role": "documentation"
+      },
+      {
+        "path": "embassy-cw32/src/lptim.rs",
+        "before_sha256": "e4d2039fcaf3680cf67cc5a690dfea9accca5331221e6ad5cd609e4563ed2c79",
+        "after_sha256": "a5ef67812baa36fa2d192faea4e25e242eb28c7fbf1b22666051f1744310a869",
+        "mode": "100644",
+        "role": "functional"
+      },
+      {
+        "path": "embassy-cw32/src/rcc/bounds.rs",
+        "before_sha256": "1051c95b71ab34fb46e27f95bcd4311df5f289b0ac00a7edcb833bce1acb2e98",
+        "after_sha256": "0ed93793cfe7d9b57bb19b80f7a49bc7cd49d884ed91575a78f0150c57e43247",
+        "mode": "100644",
+        "role": "functional"
+      }
+    ],
+    "functional_after_hashes_equal_accepted_proposal": true,
+    "documentation_patch": {
+      "artifact": "external-evidence/verification/docs-paragraph.patch",
+      "sha256": "84094ccbdc9288aa41596fa2dca28490b438f80e3ae3bf220c9649ef84a4e095"
+    },
+    "documentation_review": "The single changed startup paragraph explains exact rational endpoints, valid sub-hertz rates, and the relative-cycle limit. It does not expand rate-only sources into absolute timing guarantees."
+  },
+  "main_source_identity": {
+    "manifest": {
+      "artifact": "external-evidence/source-manifest.json",
+      "sha256": "1fe185bcba62855be885666cf2551598b15d28898382b48c4285fc3af93929c3"
+    },
+    "source_files": 1302,
+    "executable_files": 27,
+    "source_package": {
+      "artifact": "external-evidence/stage73-main-source.zip",
+      "sha256": "37de01571017e42e672810cc1a4a0b9a51246d0432255e655a28069efb2482f1"
+    },
+    "package_member_hashes_and_modes_match_manifest": true,
+    "before": {
+      "artifact": "external-evidence/verification/main/source-before.json",
+      "sha256": "5d440a867b3fc701c12fbce95093328b90dfe5632f5c96e9b223bf595a24a3fe"
+    },
+    "after": {
+      "artifact": "external-evidence/verification/main/source-after.json",
+      "sha256": "5d440a867b3fc701c12fbce95093328b90dfe5632f5c96e9b223bf595a24a3fe"
+    },
+    "modes": {
+      "artifact": "external-evidence/verification/main/source-modes.json",
+      "sha256": "af864e6ad7915910c215ef6e40126dc294a86405d9425e6ef089743698c818e6"
+    },
+    "all_current_files_and_modes_match": true,
+    "before_equals_after": true,
+    "scope_note": "This is the main-build source snapshot before this new review document is installed. The final package will additionally contain this document and must receive a separate clean replay."
+  },
+  "arithmetic_review": {
+    "existing_defect": "enable writes EN before dividing by the whole-hertz floor of a positive timer lower bound; supported sub-hertz ticks produce a zero denominator and panic instead of an Error return.",
+    "supported_witness": {
+      "part": "CW32L010F8P6",
+      "sysclk": "LSE",
+      "nominal_hz": 32768,
+      "source_minimum_hz": 32766,
+      "source_maximum_hz": 32770,
+      "retained_hsi_divisor": 12,
+      "ahb_divisor": 128,
+      "apb_divisor": 8,
+      "lptim_divisor": 128,
+      "cpu_upper_exact_hz": "32770/128",
+      "cpu_upper_whole_hz": 257,
+      "timer_lower_exact_hz": "32766/131072",
+      "timer_lower_whole_hz": 0,
+      "new_delay_cpu_cycles": 2049,
+      "preconditions": "Successful current RCC initialization, existing qualified physical board/source/pad/handover conditions, no fixed-1-MHz time-driver feature; not a claim of observed board admission."
+    },
+    "formula": "ceil(Smax * timer_divisor * 2 / (cpu_divisor * Smin)) = ceil(2 * APB_divisor * LPTIM_divisor * Smax / Smin)",
+    "intermediate_bounds": {
+      "source_numerators": "positive u32, with external zero minima rejected and PLL multiplication checked",
+      "source_divisor_maximum": 32,
+      "cpu_divisor_maximum": 4096,
+      "timer_divisor_maximum": 4194304,
+      "u64_numerator": "< 2^55",
+      "u64_denominator": "positive and < 2^44"
+    },
+    "source_ratio_bounds": {
+      "HSI": "102/98 on all five current LPTIM families",
+      "HSE": "at most 8 from admitted 4..32 MHz endpoints",
+      "LSI": "33784/31816 on the currently qualified L052/L083 SYSCLK exact parts; L010/L011/L012 have no admitted LSI SYSCLK path",
+      "PLL": "current L083 HSI/HSE-fed positive checked multiplier preserves the source endpoint ratio",
+      "LSE": "minimum >=1 Hz; native L010/L011/L012 maximum <=100000 Hz; L052/L083 maximum <=1000000 Hz; detector checks can tighten admission",
+      "loose_universal_maximum": 1000000
+    },
+    "maximum_delay_cpu_cycles": 2048000000,
+    "u32_maximum": 4294967295,
+    "unchanged_u32_cast_lossless": true,
+    "rounding": "Whenever the old floor denominator is positive, ceil(2*ceil(H)/floor(T)) >= ceil(2*H/T). Integer rates agree; the exact-fraction calculation removes excess outward rounding while retaining a final ceiling.",
+    "timing_scope": "HCLK and the configured PCLK-backed timer share the same frozen SYSCLK and integer divider chain. This is a relative common-source cycle wait, including rate-only LSI/PLL. No absolute period, jitter, upper deadline, watchdog, source-loss, dynamic retuning, fallback, or deep-sleep guarantee is added.",
+    "future_changes": "Revisit the proof if source bounds, divider widths, clock topology, direct independent LPTIM sources, families, or cycle count change."
+  },
+  "own_source_review": {
+    "canonical_lock": "sources/evidence-sources.json",
+    "timer_evidence": "docs/low-power-timers-evidence.json",
+    "original_timer_manuals_hash_matched": 5,
+    "original_sdk_lptim_source_and_header_members_hash_matched": 10,
+    "additional_datasheet_hash_matched": "CW32L010_DataSheet_CN_V1.3.pdf",
+    "two_counter_cycle_physical_pdf_pages": {
+      "CW32L010 CN Rev1.2": 191,
+      "CW32L011 CN Rev1.1": 191,
+      "CW32L012 CN Rev1.4": 241,
+      "CW32L052 CN Rev1.5": 226,
+      "CW32L083 CN Rev2.0": 238
+    },
+    "l010_clock_divider_physical_pdf_pages": [
+      47,
+      67
+    ],
+    "l010_counter_prescaler_physical_pdf_pages": [
+      189,
+      201
+    ],
+    "l012_locator_limit": "Use physical PDF241; the historical evidence entry printed-page locator is unreliable and was not changed."
+  },
+  "source_and_generation_checks": {
+    "generation_receipt": {
+      "artifact": "external-evidence/verification/main-generation.json",
+      "sha256": "64f239b849a6f2830e982ac57a49545dc0cfb794e8a74cad236c95b8af16acff"
+    },
+    "generation_log": {
+      "artifact": "external-evidence/verification/main-generation.log",
+      "sha256": "7da47027acb03f6190f8776f6727b3cf5aba1deba14cb27e79eac801462b3a1b"
+    },
+    "generation_exit_code": 0,
+    "generated_correspondence_receipt": {
+      "artifact": "external-evidence/verification/main-generated-correspondence.json",
+      "sha256": "c39512616510df65555b9e52c2d639198e41ea4b8dad7d6d4d86ae71df83bd65"
+    },
+    "independent_byte_comparison": {
+      "cw32-data/data": 416,
+      "cw32-metapac": 488,
+      "chip_objects": 54,
+      "differences": 0
+    },
+    "data_commands": [
+      {
+        "name": "source-derived-data",
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main-data/source-derived-data.log",
+          "sha256": "ede75656b2001292bd260d75448fcb8d7ed6be25506b9fa23d1dcc1e6fe8e0e2"
+        }
+      },
+      {
+        "name": "hardware-source-provenance",
+        "exit_code": 1,
+        "log": {
+          "artifact": "external-evidence/verification/main-data/hardware-source-provenance.log",
+          "sha256": "56f67e2422d31d62bff6a56c9e29f6ca4961407609e2b8ba29c5bf807acb8b9d"
+        }
+      },
+      {
+        "name": "hardware-source-provenance-resolved-root",
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main-data/hardware-source-provenance-resolved-root.log",
+          "sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f"
+        }
+      },
+      {
+        "name": "module-layout",
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main-data/module-layout.log",
+          "sha256": "462364cfa481e63dc679e3313c2b1ac20ee3e4d5f0b5b50a9b069c0b646ed3fd"
+        }
+      }
+    ],
+    "data_command_successes": 3,
+    "preserved_preparation_failure": {
+      "name": "hardware-source-provenance",
+      "exit_code": 1,
+      "reason": "The initially supplied original-source location contained a symlinked CW32F002 SDK archive and the provenance validator refused it. The resolved pinned original-source root subsequently passed; the failure log remains retained."
+    },
+    "successful_hardware_source_scope": {
+      "required_originals": 43,
+      "required_source_files": 551,
+      "catalogued_originals": 45,
+      "complete_hardware": true,
+      "complete_manifest": false,
+      "omitted_discovery": [
+        "a030-official-manuals.html",
+        "a030-official-sdk.html"
+      ]
+    },
+    "module_layout": "Recorded validation passed for 571 Rust source files. No HAL test invocation was run."
+  },
+  "main_verification": {
+    "plan": {
+      "artifact": "external-evidence/verification/build-plan.json",
+      "sha256": "e6ae21ee1bbbcc2d93dfcfa7d8f751dc77a9dd55054c10929ecd33ba1dbcc3b2"
+    },
+    "preflight": {
+      "artifact": "external-evidence/verification/matrix-preflight.json",
+      "sha256": "a82ea5f4550689c9d9991deeacb53af80140a6ce7cb0129595ae7bfb649119b0"
+    },
+    "commands": {
+      "artifact": "external-evidence/verification/main/commands.json",
+      "sha256": "4766c606c1928a438c3c8678ce0cbd40dfc9d003d55ea478103e88b84236897a"
+    },
+    "summary": {
+      "artifact": "external-evidence/verification/main/summary.json",
+      "sha256": "f0f83b1228aa5bdcd8263fff1bdc7b18b40ebb8a5e7814ebd9ace5ec48053cf7"
+    },
+    "target": "thumbv6m-none-eabi",
+    "strategy": "Serial shared target within the main phase, with each generated output, linker input and binary preserved before the next row. This differs from the earlier proposed per-row target directories and is recorded explicitly. Clean replay requires a separate target and fresh unpacking.",
+    "successful_library_builds": 6,
+    "successful_elf_links": 4,
+    "failed_build_attempts": 0,
+    "all_logs_terminal_success": true,
+    "all_artifact_hashes_verified": true,
+    "all_relevant_compiler_artifacts_fresh_false": true,
+    "rows": [
+      {
+        "row": "main-01-cw32l010f8p6-dev",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l010f8p6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main/main-01-cw32l010f8p6-dev.log",
+          "sha256": "9d35c423f08e6b7b418f557cab52219e5c4de8cf3afbe716e2380d14f1f7d117"
+        },
+        "cargo_build_finished_success": true,
+        "compiler_artifacts": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "artifacts": [
+          {
+            "kind": "rlib",
+            "artifact": "external-evidence/verification/main/main-01-cw32l010f8p6-dev.rlib",
+            "sha256": "c6bb2085a6fba2080981f584fff5d8f789e0eba2df02455493205772d2b58e3c",
+            "bytes": 6167990,
+            "archive_header_valid": true
+          }
+        ],
+        "rendered_warnings": [
+          "warning: constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "json_compiler_warning_count": 0,
+        "relevant_generated_cfgs": [
+          "lptim",
+          "adc_cw32l010_v1"
+        ],
+        "all_preserved_generated_hal_and_linker_inputs_hash_verified": true
+      },
+      {
+        "row": "main-02-cw32l011k8t6-release",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l011k8t6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main/main-02-cw32l011k8t6-release.log",
+          "sha256": "f29767b4aa1ea8c9974f939ab9435022c22c04f7b060c136bc9f1c7fb4dee92b"
+        },
+        "cargo_build_finished_success": true,
+        "compiler_artifacts": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "artifacts": [
+          {
+            "kind": "rlib",
+            "artifact": "external-evidence/verification/main/main-02-cw32l011k8t6-release.rlib",
+            "sha256": "85fc3a52a0984d73df2017ccdb32d2494306a3e622003bc293d93a6a8cf169ae",
+            "bytes": 5649972,
+            "archive_header_valid": true
+          }
+        ],
+        "rendered_warnings": [
+          "warning: constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "json_compiler_warning_count": 0,
+        "relevant_generated_cfgs": [
+          "lptim",
+          "adc_cw32l011_v1"
+        ],
+        "all_preserved_generated_hal_and_linker_inputs_hash_verified": true
+      },
+      {
+        "row": "main-03-cw32l012c8t6-release",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l012c8t6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main/main-03-cw32l012c8t6-release.log",
+          "sha256": "3e645b189c8b8741375a5fdf0b04541c7a20932008731c30815f5ab13898db95"
+        },
+        "cargo_build_finished_success": true,
+        "compiler_artifacts": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "artifacts": [
+          {
+            "kind": "rlib",
+            "artifact": "external-evidence/verification/main/main-03-cw32l012c8t6-release.rlib",
+            "sha256": "675ffb38f764abf3f50c529ce08e7a1a57fef31cf9e219d0e5a7a7c6460fc7db",
+            "bytes": 7476658,
+            "archive_header_valid": true
+          }
+        ],
+        "rendered_warnings": [],
+        "json_compiler_warning_count": 0,
+        "relevant_generated_cfgs": [
+          "lptim",
+          "lptim_cr0",
+          "adc_cw32l012_v1"
+        ],
+        "all_preserved_generated_hal_and_linker_inputs_hash_verified": true
+      },
+      {
+        "row": "main-04-cw32l052c8t6-release",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l052c8t6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main/main-04-cw32l052c8t6-release.log",
+          "sha256": "537c4f53d87d24f026a87adba5cdc721003d892625ac7780909b85855debad70"
+        },
+        "cargo_build_finished_success": true,
+        "compiler_artifacts": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "artifacts": [
+          {
+            "kind": "rlib",
+            "artifact": "external-evidence/verification/main/main-04-cw32l052c8t6-release.rlib",
+            "sha256": "f6337b8a499c14c339ddd0ce15d744f6a8f5ec6f3a589a1b15dd2daa5e671d30",
+            "bytes": 6384680,
+            "archive_header_valid": true
+          }
+        ],
+        "rendered_warnings": [],
+        "json_compiler_warning_count": 0,
+        "relevant_generated_cfgs": [
+          "lptim",
+          "adc_cw32l052_v1"
+        ],
+        "all_preserved_generated_hal_and_linker_inputs_hash_verified": true
+      },
+      {
+        "row": "main-05-cw32l083mct6-release",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083mct6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main/main-05-cw32l083mct6-release.log",
+          "sha256": "07a20730f06e57ccc49c273d4b60423ab735cd6ee597e6d9de1afe148c97bc65"
+        },
+        "cargo_build_finished_success": true,
+        "compiler_artifacts": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "artifacts": [
+          {
+            "kind": "rlib",
+            "artifact": "external-evidence/verification/main/main-05-cw32l083mct6-release.rlib",
+            "sha256": "6d154e9ee0a20e6ebff578195b1897846aaa32339ed7f5535894795b6b8ed3c4",
+            "bytes": 8294506,
+            "archive_header_valid": true
+          }
+        ],
+        "rendered_warnings": [],
+        "json_compiler_warning_count": 0,
+        "relevant_generated_cfgs": [
+          "lptim",
+          "adc_cw32l083_v1"
+        ],
+        "all_preserved_generated_hal_and_linker_inputs_hash_verified": true
+      },
+      {
+        "row": "main-06-cw32f030c8t7-release",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--lib",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main/main-06-cw32f030c8t7-release.log",
+          "sha256": "cca8ca72e9b583da4ac2ae354b370e85b6debf021a4bb966eac23dcc222cf7b8"
+        },
+        "cargo_build_finished_success": true,
+        "compiler_artifacts": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "artifacts": [
+          {
+            "kind": "rlib",
+            "artifact": "external-evidence/verification/main/main-06-cw32f030c8t7-release.rlib",
+            "sha256": "ff828eee841480d248b6667fb4f90a4cd86543b6b3bb59067847361f40cb7445",
+            "bytes": 6705950,
+            "archive_header_valid": true
+          }
+        ],
+        "rendered_warnings": [],
+        "json_compiler_warning_count": 0,
+        "relevant_generated_cfgs": [],
+        "all_preserved_generated_hal_and_linker_inputs_hash_verified": true
+      },
+      {
+        "row": "main-07-cw32l010f8p6-polling",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "examples/low-power-timers/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l010f8p6",
+          "--bin",
+          "polling"
+        ],
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main/main-07-cw32l010f8p6-polling.log",
+          "sha256": "967e3ae6aab72b9fec82e57d6ba9f8f921fc45f13aef41404d68f9dc67982a5a"
+        },
+        "cargo_build_finished_success": true,
+        "compiler_artifacts": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "polling",
+            "fresh": false
+          }
+        ],
+        "artifacts": [
+          {
+            "kind": "elf",
+            "artifact": "external-evidence/verification/main/main-07-cw32l010f8p6-polling-polling.elf",
+            "sha256": "b268941f0f24ae06e970841ec19a1f97d293a0a1607cd71a57349b458ecdc3fb",
+            "bytes": 207588,
+            "class": 32,
+            "endian": "little",
+            "type": "EXEC",
+            "machine": "ARM",
+            "entry": 193,
+            "initial_stack": 536875008,
+            "vector_table_bytes": 192,
+            "text_bytes": 18088,
+            "memory": [
+              {
+                "address": 0,
+                "kind": "flash",
+                "name": "FLASH",
+                "size": 65536
+              },
+              {
+                "address": 536870912,
+                "kind": "ram",
+                "name": "RAM",
+                "size": 4096
+              }
+            ],
+            "load_segments": [
+              {
+                "offset": 65536,
+                "vaddr": 0,
+                "paddr": 0,
+                "filesz": 192,
+                "memsz": 192,
+                "flags": 4
+              },
+              {
+                "offset": 65728,
+                "vaddr": 192,
+                "paddr": 192,
+                "filesz": 18088,
+                "memsz": 18088,
+                "flags": 5
+              },
+              {
+                "offset": 83816,
+                "vaddr": 18280,
+                "paddr": 18280,
+                "filesz": 320,
+                "memsz": 320,
+                "flags": 4
+              },
+              {
+                "offset": 131072,
+                "vaddr": 536870912,
+                "paddr": 18600,
+                "filesz": 108,
+                "memsz": 108,
+                "flags": 6
+              },
+              {
+                "offset": 196716,
+                "vaddr": 536871020,
+                "paddr": 536871020,
+                "filesz": 0,
+                "memsz": 12,
+                "flags": 6
+              }
+            ],
+            "independent_structure_and_memory_review": "passed"
+          }
+        ],
+        "rendered_warnings": [
+          "warning: constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "json_compiler_warning_count": 0,
+        "relevant_generated_cfgs": [
+          "lptim",
+          "adc_cw32l010_v1"
+        ],
+        "all_preserved_generated_hal_and_linker_inputs_hash_verified": true
+      },
+      {
+        "row": "main-08-cw32l012c8t6-interrupt",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "examples/low-power-timers/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l012c8t6",
+          "--bin",
+          "interrupt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main/main-08-cw32l012c8t6-interrupt.log",
+          "sha256": "e73a7020aebabcc02b47c131396c26e1cd5a3424dfb4471403898d7e16c6667c"
+        },
+        "cargo_build_finished_success": true,
+        "compiler_artifacts": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "interrupt",
+            "fresh": false
+          }
+        ],
+        "artifacts": [
+          {
+            "kind": "elf",
+            "artifact": "external-evidence/verification/main/main-08-cw32l012c8t6-interrupt-interrupt.elf",
+            "sha256": "465265ccf702746d47c0b7adad014036cb8f3c9422ecba81c2b91538a44ef05e",
+            "bytes": 212428,
+            "class": 32,
+            "endian": "little",
+            "type": "EXEC",
+            "machine": "ARM",
+            "entry": 193,
+            "initial_stack": 536879104,
+            "vector_table_bytes": 192,
+            "text_bytes": 29496,
+            "memory": [
+              {
+                "address": 0,
+                "kind": "flash",
+                "name": "FLASH",
+                "size": 65536
+              },
+              {
+                "address": 536870912,
+                "kind": "ram",
+                "name": "RAM",
+                "size": 8192
+              }
+            ],
+            "load_segments": [
+              {
+                "offset": 65536,
+                "vaddr": 0,
+                "paddr": 0,
+                "filesz": 192,
+                "memsz": 192,
+                "flags": 4
+              },
+              {
+                "offset": 65728,
+                "vaddr": 192,
+                "paddr": 192,
+                "filesz": 29496,
+                "memsz": 29496,
+                "flags": 5
+              },
+              {
+                "offset": 95224,
+                "vaddr": 29688,
+                "paddr": 29688,
+                "filesz": 568,
+                "memsz": 568,
+                "flags": 4
+              },
+              {
+                "offset": 131072,
+                "vaddr": 536870912,
+                "paddr": 30256,
+                "filesz": 108,
+                "memsz": 108,
+                "flags": 6
+              },
+              {
+                "offset": 196720,
+                "vaddr": 536871024,
+                "paddr": 536871024,
+                "filesz": 0,
+                "memsz": 96,
+                "flags": 6
+              }
+            ],
+            "independent_structure_and_memory_review": "passed"
+          }
+        ],
+        "rendered_warnings": [],
+        "json_compiler_warning_count": 0,
+        "relevant_generated_cfgs": [
+          "lptim",
+          "lptim_cr0",
+          "adc_cw32l012_v1"
+        ],
+        "all_preserved_generated_hal_and_linker_inputs_hash_verified": true
+      },
+      {
+        "row": "main-09-cw32l052c8t6-polling",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "examples/low-power-timers/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l052c8t6",
+          "--bin",
+          "polling"
+        ],
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main/main-09-cw32l052c8t6-polling.log",
+          "sha256": "e8dd2fc93ba34f991e877a3a7c7d4d40c828f1262c007f27e6b99580a641af77"
+        },
+        "cargo_build_finished_success": true,
+        "compiler_artifacts": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "polling",
+            "fresh": false
+          }
+        ],
+        "artifacts": [
+          {
+            "kind": "elf",
+            "artifact": "external-evidence/verification/main/main-09-cw32l052c8t6-polling-polling.elf",
+            "sha256": "5a0f751e4b51f82fea75d7ec29aae748534e27329a7c1153363e5117a40420c2",
+            "bytes": 218648,
+            "class": 32,
+            "endian": "little",
+            "type": "EXEC",
+            "machine": "ARM",
+            "entry": 193,
+            "initial_stack": 536879104,
+            "vector_table_bytes": 188,
+            "text_bytes": 47028,
+            "memory": [
+              {
+                "address": 0,
+                "kind": "flash",
+                "name": "FLASH",
+                "size": 65536
+              },
+              {
+                "address": 536870912,
+                "kind": "ram",
+                "name": "RAM",
+                "size": 8192
+              }
+            ],
+            "load_segments": [
+              {
+                "offset": 65536,
+                "vaddr": 0,
+                "paddr": 0,
+                "filesz": 188,
+                "memsz": 188,
+                "flags": 4
+              },
+              {
+                "offset": 65728,
+                "vaddr": 192,
+                "paddr": 192,
+                "filesz": 47028,
+                "memsz": 47028,
+                "flags": 5
+              },
+              {
+                "offset": 112756,
+                "vaddr": 47220,
+                "paddr": 47220,
+                "filesz": 708,
+                "memsz": 708,
+                "flags": 4
+              },
+              {
+                "offset": 131072,
+                "vaddr": 536870912,
+                "paddr": 47928,
+                "filesz": 116,
+                "memsz": 116,
+                "flags": 6
+              },
+              {
+                "offset": 196728,
+                "vaddr": 536871032,
+                "paddr": 536871032,
+                "filesz": 0,
+                "memsz": 24,
+                "flags": 6
+              }
+            ],
+            "independent_structure_and_memory_review": "passed"
+          }
+        ],
+        "rendered_warnings": [],
+        "json_compiler_warning_count": 0,
+        "relevant_generated_cfgs": [
+          "lptim",
+          "adc_cw32l052_v1"
+        ],
+        "all_preserved_generated_hal_and_linker_inputs_hash_verified": true
+      },
+      {
+        "row": "main-10-cw32l083mct6-interrupt",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "examples/low-power-timers/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083mct6",
+          "--bin",
+          "interrupt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "artifact": "external-evidence/verification/main/main-10-cw32l083mct6-interrupt.log",
+          "sha256": "170101b4ebd1b35342bd987c9d9be45905d0edaaa1b9c2ed8fa697967c429649"
+        },
+        "cargo_build_finished_success": true,
+        "compiler_artifacts": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "interrupt",
+            "fresh": false
+          }
+        ],
+        "artifacts": [
+          {
+            "kind": "elf",
+            "artifact": "external-evidence/verification/main/main-10-cw32l083mct6-interrupt-interrupt.elf",
+            "sha256": "76d03d5a6fea21b8e64fb2601d505151b3f30afbcba00a638ce497ef28cef345",
+            "bytes": 228956,
+            "class": 32,
+            "endian": "little",
+            "type": "EXEC",
+            "machine": "ARM",
+            "entry": 193,
+            "initial_stack": 536895488,
+            "vector_table_bytes": 192,
+            "text_bytes": 69924,
+            "memory": [
+              {
+                "address": 0,
+                "kind": "flash",
+                "name": "FLASH",
+                "size": 262144
+              },
+              {
+                "address": 536870912,
+                "kind": "ram",
+                "name": "RAM",
+                "size": 24576
+              }
+            ],
+            "load_segments": [
+              {
+                "offset": 65536,
+                "vaddr": 0,
+                "paddr": 0,
+                "filesz": 192,
+                "memsz": 192,
+                "flags": 4
+              },
+              {
+                "offset": 65728,
+                "vaddr": 192,
+                "paddr": 192,
+                "filesz": 69924,
+                "memsz": 69924,
+                "flags": 5
+              },
+              {
+                "offset": 135652,
+                "vaddr": 70116,
+                "paddr": 70116,
+                "filesz": 1064,
+                "memsz": 1064,
+                "flags": 4
+              },
+              {
+                "offset": 196608,
+                "vaddr": 536870912,
+                "paddr": 71180,
+                "filesz": 220,
+                "memsz": 220,
+                "flags": 6
+              },
+              {
+                "offset": 196832,
+                "vaddr": 536871136,
+                "paddr": 536871136,
+                "filesz": 0,
+                "memsz": 116,
+                "flags": 6
+              }
+            ],
+            "independent_structure_and_memory_review": "passed"
+          }
+        ],
+        "rendered_warnings": [],
+        "json_compiler_warning_count": 0,
+        "relevant_generated_cfgs": [
+          "lptim",
+          "adc_cw32l083_v1"
+        ],
+        "all_preserved_generated_hal_and_linker_inputs_hash_verified": true
+      }
+    ],
+    "warnings": {
+      "rendered_warning_occurrences": 9,
+      "affected_rows": [
+        "main-01-cw32l010f8p6-dev",
+        "main-02-cw32l011k8t6-release",
+        "main-07-cw32l010f8p6-polling"
+      ],
+      "constants": [
+        "RCC_LSE_SYSCLK_LSE_EDGES",
+        "RCC_LSE_SYSCLK_LSI_CYCLES",
+        "RCC_LSE_SYSCLK_MARGIN_LSE_EDGES"
+      ],
+      "classification": "Existing generated RCC constants are reported unused, three per affected row. The corresponding source generator is unchanged from Stage72. Empty JSON compiler_warnings arrays do not mean warning-free logs; rendered warnings were independently inspected."
+    }
+  },
+  "limits": {
+    "reviewer_ran_builds": false,
+    "reviewer_ran_hal_tests": false,
+    "reviewer_ran_probes_or_register_models": false,
+    "executable_arithmetic_model_run": false,
+    "firmware_or_silicon_execution": false,
+    "clean_replay_reviewed_here": false,
+    "new_bounded_builds_are_compilation_and_link_evidence_only": true,
+    "low_speed_witness_runtime_executed": false,
+    "note": "The existing linked examples initialize their default HSI tree. The slow-LSE division-by-zero witness and replacement arithmetic are established by source and algebraic review, not by those example links. Main acceptance does not replace final-package clean replay."
+  },
+  "blocking_findings": []
+}
