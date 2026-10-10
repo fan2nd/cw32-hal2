@@ -110,6 +110,10 @@ fn monitor_ready(require_frozen: bool) -> bool {
     if !super::hsi_48mhz::lse_sysclk_monitor_ready() {
         return false;
     }
+    #[cfg(rcc_cw32l031_v1)]
+    if !super::l031_r031_w031::lse_sysclk_monitor_ready() {
+        return false;
+    }
     if !crate::RCC_LSE_CONFIGURABLE_CCS {
         return true;
     }

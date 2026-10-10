@@ -1158,15 +1158,18 @@ functions:
         anchor: config.rcc.sys = rcc::Sysclk::LSI
     - id: external_low_speed_sysclk
       status: partial
-      scope: Init-only nominal 32768 Hz LSE SYSCLK only on CW32F020C6U7, CW32F030C8T7 and CW32A030C8T7.
-      implemented_families: [CW32F020, CW32F030, CW32A030]
+      scope: Init-only nominal 32768 Hz LSE SYSCLK on the classic3 and exact5 L031/R031/W031 packages.
+      implemented_families: [CW32F020, CW32F030, CW32A030, CW32L031, CW32R031, CW32W031]
       limitations:
       - Family aliases and every other exact package are excluded. Config.lse is the single source declaration;
         the same board every-cycle tuple supplies SYSCLK, buses and RTC.
-      - Factory detector LSI is admitted before mandatory CCS and remains requested. The target-only 129/256
-        software count margin uses own-family LSI rate maxima; it proves no absolute jitter/window deadline.
-      - HSI and inherited PLL/reference remain enabled. Final buses and fallback-safe Flash are installed on
-        HSI before one LSE selection; no post-selection divider RMW. Whole GPIO-bank handover effects apply.
+      - Classic3 retains mandatory CCS and its own stopped-source proof. Exact5 L031/R031/W031 preserves
+        CLKCCS/HSECCS, classifies dual-status factory LSI, and enables only fresh LSECCS. Matching cold LSI
+        keeps TRIM/WAIT unchanged but can resume parked consumers; mismatched trim retains its own two-pass proof.
+      - Factory detector LSI stays requested. The target-only 129/256 software margin uses own rate maxima;
+        it proves no absolute jitter/window deadline and grants no new LSI SYSCLK capability to the exact5.
+      - HSI and any inherited classic PLL/reference remain enabled. Final buses and fallback-safe Flash are
+        installed on HSI before one LSE selection; no later divider RMW. Whole-bank handover effects apply.
       - Fixed 1 MHz time driver rejects before ownership. Old source targets and all 23 auxiliary-LSE paths
         retain admission/order. Loss or HSI fallback invalidates frozen LSE timing; no runtime or silicon guarantee.
       registers_any: [LSE]
@@ -1174,6 +1177,10 @@ functions:
       - path: cw32-data/lse-qualified.yaml
       - path: docs/classic-lse-sysclk-qualification.json
       - path: docs/classic-lse-sysclk.md
+      - path: docs/l031-r031-w031-lse-sysclk-qualification.json
+      - path: docs/l031-r031-w031-lse-sysclk.md
+      - path: embassy-cw32/src/rcc/l031_r031_w031.rs
+        anchor: LSE_SYSCLK_MONITOR
       - path: embassy-cw32/src/rcc/hsi_48mhz.rs
         anchor: LSE_SYSCLK_LSI
       - path: examples/lse-sysclk/src/lib.rs
@@ -1401,7 +1408,7 @@ functions:
         No raw PINLOCK reuse is admitted for these two families. Native RTC LSE uses SOURCE0,PSC1=0,PSC2=0x3fff,
         and bounded source transitions stage division before switching; attach never repairs or retunes inherited state.
       - Failure retains source enables, pad reservations and diagnostics. Ordinary reset may not clear retained LSE controls; POR may be required.
-      - LSE system clock is separately qualified only for the three classic exact packages above. No runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
+      - LSE system clock is separately qualified only for the classic3 and exact5 L031/R031/W031 packages above. No runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
       registers_any:
       - LSE
       evidence:

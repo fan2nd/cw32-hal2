@@ -104,6 +104,16 @@ pub struct Config {
 /// configuration and flags are preserved; gate restoration cannot undo events.
 /// This is an explicit functional handover under the entry model above.
 ///
+/// On the five qualified CW32L031/R031/W031 packages, LSE SYSCLK may also
+/// open GPIO banks for source/pad inspection. Sampling, filters and armed
+/// events can advance, including before an error. A previously disabled LSI
+/// whose factory TRIM already matches is requested without a parameter write
+/// or trim-owner proof. This can resume parked AWT SOURCE1, UART SOURCE3,
+/// GPIO FLTCLK5, MCO SOURCE4 and bonded PB11 AF1 consumers. The functional
+/// handover must permit that progress; restored gates do not undo it. Normal
+/// clock-sensitive peripheral/interrupt work remains excluded during init.
+/// Factory-mismatching LSI retains its separate two-pass consumer admission.
+///
 /// On CW32L010, starting a previously disabled LSE while RTC selects LSE
 /// additionally requires a handover with no dependent RTC_OUT or RTC_1Hz
 /// observer. Disconnect or leave inactive PB04/PB06 RTC digital output pads

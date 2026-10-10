@@ -76,8 +76,8 @@ example's build.rs derives exact memory bounds and links with -Tlink.x. Inspect
 the resulting ELF entry, vectors and PT_LOAD regions separately before flashing.
 
 
-`./d check-lse-sysclk` is a bounded local compile/link entry: four ordinary ARM
-libraries (the exact three classic packages plus excluded F020F6U7), six new
+`./d check-lse-sysclk` is a bounded local compile/link entry: nine ordinary ARM
+libraries for the classic3, exact5 L031/R031/W031 and excluded F020F6U7, sixteen
 crystal/bypass SYSCLK+RTC firmware links, and four existing HSI+aux-LSE, LSI, HSE
 and PLL firmware regressions. It runs no HAL tests or hardware and adds no hosted
 workflow. The new example build script derives exact FLASH/RAM from metadata and

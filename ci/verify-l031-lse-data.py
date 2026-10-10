@@ -8,7 +8,9 @@ import zipfile
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-PARTS = {"CW32A030C8T7", "CW32F030C8T7", "CW32F020C6U7", "CW32L031C8T6", "CW32L031C8U6", "CW32L031F8U6", "CW32R031C8U6", "CW32W031R8U6", "CW32L052C8T6", "CW32L052R8S6", "CW32L052R8T6", "CW32L083RBT6", "CW32L083RCT6", "CW32L083RCS6", "CW32L083MCT6", "CW32L083VCT6", "CW32L010F8P6", "CW32L010F8U6", "CW32L010Y8M6"}
+PARTS = {"CW32L031C8T6", "CW32L031C8U6", "CW32L031F8U6", "CW32R031C8U6", "CW32W031R8U6"}
+FAMILIES = {"CW32L031", "CW32R031", "CW32W031"}
+DETECTOR = {"lse_edges": 128, "lsi_cycles": 256, "margin_lse_edges": 1}
 
 
 def load(path):
@@ -31,7 +33,19 @@ def main():
     args = parser.parse_args()
     lock = {a["id"]: a for a in load(ROOT / "sources/evidence-sources.json")["artifacts"]}
     catalog = load(ROOT / "cw32-data/lse-qualified.yaml")
-    assert set(catalog["parts"]) == PARTS
+    # This audit owns exactly its five parts. Other families retain their own
+    # qualification; generated projection below still checks the full catalog.
+    assert {part for part, row in catalog["parts"].items() if row["family"] in FAMILIES} == PARTS
+    sysclk_path = "docs/l031-r031-w031-lse-sysclk-qualification.json"
+    sysclk = load(ROOT / sysclk_path)
+    assert catalog["policies"][sysclk_path] == sha((ROOT / sysclk_path).read_bytes())
+    assert len(sysclk["parts"]) == len(PARTS) and set(sysclk["parts"]) == PARTS
+    assert sysclk["sysclk_detector"] == DETECTOR and sysclk["sysclk_selector"] == 4
+    assert sysclk["factory_lsi_reference"]["metadata_source"] == "rtc_calendar"
+    assert sysclk["factory_lsi_reference"]["lsi_sysclk_qualification"] is False
+    sysclk_sources = {source["source_ref"]: source for source in sysclk["sources"]}
+    assert len(sysclk["sources"]) == len(sysclk_sources) == 6
+    checked_sysclk_sources = set()
     for path, digest in catalog["policies"].items():
         assert sha((ROOT / path).read_bytes()) == digest
     source_count = page_count = member_count = 0
@@ -48,6 +62,16 @@ def main():
             text = (args.sources / source["text"]["path"]).read_bytes()
             assert sha(text) == source["text"]["sha256"] == authority["text"]["sha256"]
             pages = text.decode().split("\f")
+            # Bind the new target proof to these same own locked originals,
+            # independently of the historical auxiliary profile projection.
+            target_source = sysclk_sources[source["source_ref"]]
+            assert target_source["sha256"] == source["sha256"]
+            assert target_source["family"] == "CW32" + family.upper()
+            target_pages = target_source["pdf_pages_1_based"]
+            assert target_pages and len(target_pages) == len(set(target_pages))
+            assert target_source["printed_pages"] == [page - 1 for page in target_pages]
+            assert all(1 <= page <= len(pages) for page in target_pages)
+            checked_sysclk_sources.add(source["source_ref"])
             for page in source["pages"]:
                 assert page["pdf_page_1_based"] == page["printed_page"] + 1
                 assert sha(pages[page["pdf_page_1_based"] - 1].encode()) == page["extracted_page_sha256"]
@@ -60,8 +84,12 @@ def main():
                 assert sha(archive.read(member["member"])) == member["member_sha256"]
                 member_count += 1
         for part, profile in proof["parts"].items():
-            assert catalog["parts"][part] == {**profile, "configuration": proof["configurations"][part]}
-            c = catalog["parts"][part]["configuration"]
+            assert part in PARTS
+            row = catalog["parts"][part]
+            c = row["configuration"]
+            auxiliary = dict(c)
+            assert auxiliary.pop("sysclk_detector") == DETECTOR
+            assert {**row, "configuration": auxiliary} == {**profile, "configuration": proof["configurations"][part]}
             assert c["configurable_ccs"] is True and c["gpio_speed_offset"] is None
             assert c["rtc_reset"] == rtc["rtc_reset"] and len(c["rtc_reset"]) == 13
             assert c["maximum_hz"] == 1_000_000 and c["nominal_hz"] == 32768
@@ -74,6 +102,7 @@ def main():
         assert monitor["factory_trim_halfword_address"] == 0x100A02
         assert monitor["selector_allowlists_before_disabled_LSI_trim_change"]["SYSCTRL.CR0.SYSCLK"] == [0, 1, 4]
         assert monitor["selector_allowlists_before_disabled_LSI_trim_change"]["SYSCTRL.MCO.SOURCE"] == [0, 1, 2, 3, 5, 6, 8, 9]
+    assert checked_sysclk_sources == set(sysclk_sources)
     ir = load(ROOT / "cw32-data/registers/sysctrl_cw32l031_v1.yaml")
     fields = {f["name"]: f for f in ir["fieldset/LSE"]["fields"]}
     for field, name in [("DRIVER", "LseDrive"), ("AMP", "LseAmplitude"), ("WAITCYCLE", "LseWait")]:
@@ -95,15 +124,15 @@ def main():
             if active is not None:
                 actual.add(chip["name"])
                 assert active == catalog["parts"][chip["name"]]["configuration"]
-            if chip["name"] in PARTS and chip["line"] in ["CW32L031", "CW32R031", "CW32W031"]:
+            if chip["name"] in PARTS:
                 proof = load(ROOT / f"docs/lse-active-{chip['line'][4:].lower()}.json")
                 pins = proof["package_pins"][chip["name"]]
                 assert chip["packages"][0]["package"] == catalog["parts"][chip["name"]]["package"]
                 for pin, position, signal in [("PC14", pins["input_position"], "OSC32_IN"), ("PC15", pins["output_position"], "OSC32_OUT")]:
                     assert any(p["position"] == position and pin in p["signals"] and signal in p["signals"] for p in chip["packages"][0]["pins"])
-        assert actual == PARTS
+        assert actual == set(catalog["parts"])
         generated_count = len(chips)
-    result = {"status": "passed", "source_originals": source_count, "page_hashes": page_count, "sdk_members": member_count, "qualified_parts": sorted(PARTS), "generated_selections_checked": generated_count, "native_enum_canonical_sha256": group["canonical_ir_sha256"], "hardware_execution": False}
+    result = {"status": "passed", "source_originals": source_count, "page_hashes": page_count, "sdk_members": member_count, "qualified_parts": sorted(PARTS), "sysclk_originals": len(checked_sysclk_sources), "generated_catalog_parts": len(catalog["parts"]), "generated_selections_checked": generated_count, "native_enum_canonical_sha256": group["canonical_ir_sha256"], "hardware_execution": False}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))

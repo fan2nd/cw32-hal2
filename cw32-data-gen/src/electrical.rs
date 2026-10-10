@@ -919,6 +919,13 @@ const LSE_PARTS: [(&str, &str, &str); 23] = [
     ("CW32L012C8T6", "CW32L012", "LQFP48"),
     ("CW32L012C8U6", "CW32L012", "QFN48"),
 ];
+const LSE_L031_SYSCLK_PARTS: [&str; 5] = [
+    "CW32L031C8T6",
+    "CW32L031C8U6",
+    "CW32L031F8U6",
+    "CW32R031C8U6",
+    "CW32W031R8U6",
+];
 // Re-read from x030 RM Rev2.5 PDF187–195 and own F020 RM Rev1.4 PDF184–192. Values
 // and masks are observations, not writes. KEY and ICR are never included.
 const LSE_RTC_RESET: [(&str, u32, u32, u32); 13] = [
@@ -1099,10 +1106,11 @@ fn validate_lse_configuration(
     part: &str,
     c: &cw32_data_serde::chip::core::peripheral::LseConfiguration,
 ) -> Result<()> {
-    let sysclk_qualified = matches!(part, "CW32F020C6U7" | "CW32F030C8T7" | "CW32A030C8T7");
+    let sysclk_qualified = matches!(part, "CW32F020C6U7" | "CW32F030C8T7" | "CW32A030C8T7")
+        || LSE_L031_SYSCLK_PARTS.contains(&part);
     ensure!(
         c.sysclk_detector.is_some() == sysclk_qualified,
-        "LSE SYSCLK detector facts require exactly the three classic packages"
+        "LSE SYSCLK detector facts require exactly classic3 plus the five reviewed L031/R031/W031 packages"
     );
     if let Some(detector) = &c.sysclk_detector {
         ensure!(
@@ -1867,6 +1875,36 @@ pub fn apply_lse(
                 == serde_json::json!({"lse_edges":128,"lsi_cycles":256,"margin_lse_edges":1}),
         "classic LSE SYSCLK qualification scope or detector facts changed"
     );
+    let l031_sysclk_proof = read_policy("docs/l031-r031-w031-lse-sysclk-qualification.json")?;
+    let factory_monitor = &l031_sysclk_proof["factory_lsi_reference"];
+    ensure!(
+        l031_sysclk_proof["schema_version"] == 1
+            && l031_sysclk_proof["parts"] == serde_json::to_value(LSE_L031_SYSCLK_PARTS)?
+            && l031_sysclk_proof["sysclk_detector"]
+                == serde_json::json!({"lse_edges":128,"lsi_cycles":256,"margin_lse_edges":1})
+            && l031_sysclk_proof["sysclk_selector"] == 4
+            && l031_sysclk_proof["ccs_policy"]["preserve"]
+                == serde_json::json!(["CLKCCS", "HSECCS"])
+            && l031_sysclk_proof["ccs_policy"]["fresh_lse_enable"]
+                == serde_json::json!(["LSECCS"])
+            && factory_monitor["metadata_source"] == "rtc_calendar"
+            && factory_monitor["source"] == "LSI"
+            && factory_monitor["source_encoding"] == 2
+            && factory_monitor["factory_trim_address"] == 0x0010_0a02
+            && factory_monitor["trim_bit_offset"] == 0
+            && factory_monitor["trim_bit_size"] == 10
+            && factory_monitor["wait_bit_offset"] == 10
+            && factory_monitor["wait_bit_size"] == 2
+            && factory_monitor["stable_bit"] == 15
+            && factory_monitor["nominal_hz"] == 32_800
+            && factory_monitor["minimum_hz"] == 31_816
+            && factory_monitor["maximum_hz"] == 33_784
+            && factory_monitor["temperature_c"] == serde_json::json!([-40, 85])
+            && factory_monitor["supply_mv_by_family"]
+                == serde_json::json!({"CW32L031":[1650,5500],"CW32R031":[2200,3600],"CW32W031":[2000,3600]})
+            && factory_monitor["lsi_sysclk_qualification"] == false,
+        "L031/R031/W031 LSE SYSCLK scope, detector or own factory monitor facts changed"
+    );
     let x030_proof = read_policy("docs/lse-active-first-cohort.json")?;
     let x030_rtc_proof = read_policy("docs/lse-active-rtc-admission.json")?;
     let f020_proof = read_policy("docs/lse-active-f020.json")?;
@@ -1938,8 +1976,13 @@ pub fn apply_lse(
             .unwrap()
             .remove("sysclk_detector")
         {
+            let own_sysclk_proof = if LSE_L031_SYSCLK_PARTS.contains(&part.as_str()) {
+                &l031_sysclk_proof
+            } else {
+                &sysclk_proof
+            };
             ensure!(
-                detector == sysclk_proof["sysclk_detector"],
+                detector == own_sysclk_proof["sysclk_detector"],
                 "LSE SYSCLK detector differs from its own qualification"
             );
         }
@@ -2013,7 +2056,108 @@ pub fn apply_lse(
     }
     let authority: Value =
         serde_json::from_slice(&fs::read(root.join(&catalog.source_authority))?)?;
-    if p.configuration.sysclk_detector.is_some() {
+    if LSE_L031_SYSCLK_PARTS.contains(&chip.name.as_str()) {
+        let sources = l031_sysclk_proof["sources"]
+            .as_array()
+            .context("missing L031/R031/W031 LSE SYSCLK own originals")?;
+        let expected_sources: [(&str, &str, &[u32]); 6] = [
+            (
+                "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+                "CW32L031",
+                &[
+                    51, 52, 53, 54, 55, 56, 57, 58, 59, 61, 62, 63, 67, 68, 69, 70, 71, 73, 75, 107,
+                    159, 170, 321,
+                ],
+            ),
+            (
+                "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+                "CW32R031",
+                &[
+                    53, 54, 55, 56, 57, 58, 59, 60, 61, 63, 64, 65, 69, 70, 71, 72, 73, 75, 77, 109,
+                    161, 172, 324,
+                ],
+            ),
+            (
+                "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+                "CW32W031",
+                &[
+                    52, 53, 54, 55, 56, 57, 58, 59, 60, 62, 63, 64, 68, 69, 70, 71, 72, 74, 76, 108,
+                    160, 171, 324,
+                ],
+            ),
+            (
+                "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+                "CW32L031",
+                &[26, 38, 45, 46, 47, 78],
+            ),
+            (
+                "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+                "CW32R031",
+                &[11, 29, 42, 52, 53, 54],
+            ),
+            (
+                "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+                "CW32W031",
+                &[9, 30, 41, 51, 52, 53],
+            ),
+        ];
+        ensure!(
+            sources.len() == expected_sources.len(),
+            "L031/R031/W031 LSE SYSCLK requires exactly six own originals"
+        );
+        for (source, (source_ref, family, pages)) in sources.iter().zip(expected_sources) {
+            let original = authority["artifacts"]
+                .as_array()
+                .context("missing source authority")?
+                .iter()
+                .find(|a| a["id"] == source_ref)
+                .context("L031/R031/W031 LSE SYSCLK source is not canonical")?;
+            let page_count = original["provenance"]["pdf_page_count"]
+                .as_u64()
+                .context("missing LSE SYSCLK source page count")?;
+            ensure!(
+                source["source_ref"] == source_ref
+                    && source["family"] == family
+                    && source["sha256"] == original["sha256"]
+                    && original["provenance"]["status"] == "selected"
+                    && original["provenance"]["chip_scope"]
+                        .as_array()
+                        .context("missing LSE SYSCLK source scope")?
+                        .iter()
+                        .any(|f| f == family)
+                    && source["pdf_pages_1_based"] == serde_json::to_value(pages)?
+                    && source["printed_pages"]
+                        == serde_json::to_value(pages.iter().map(|p| p - 1).collect::<Vec<_>>())?
+                    && pages.iter().all(|p| *p > 0 && u64::from(*p) <= page_count),
+                "L031/R031/W031 LSE SYSCLK source identity, own-family scope or reviewed pages changed"
+            );
+        }
+        let rtc = core
+            .peripherals
+            .iter()
+            .find(|p| p.name == "RTC")
+            .context("missing LSE SYSCLK factory monitor owner")?
+            .rtc_calendar
+            .as_ref()
+            .context("missing LSE SYSCLK own RTC factory monitor facts")?;
+        ensure!(
+            factory_monitor["source"] == rtc.source
+                && factory_monitor["source_encoding"] == rtc.source_encoding
+                && factory_monitor["factory_trim_address"] == rtc.factory_trim_address
+                && factory_monitor["nominal_hz"] == rtc.nominal_hz
+                && factory_monitor["minimum_hz"] == rtc.minimum_hz
+                && factory_monitor["maximum_hz"] == rtc.maximum_hz
+                && factory_monitor["temperature_c"] == serde_json::to_value(rtc.temperature_c)?
+                && factory_monitor["supply_mv_by_family"][line] == serde_json::to_value(rtc.supply_mv)?
+                && rtc.temperature_c == p.configuration.temperature_c
+                && rtc.supply_mv == p.configuration.supply_mv
+                && core.peripherals.iter().all(|p| p
+                    .clock_limits
+                    .as_ref()
+                    .is_none_or(|c| c.lsi_sysclk.is_none())),
+            "L031/R031/W031 LSE SYSCLK requires own RTC factory monitor facts without LSI SYSCLK qualification"
+        );
+    } else if p.configuration.sysclk_detector.is_some() {
         let sources = sysclk_proof["sources"]
             .as_array()
             .context("missing LSE SYSCLK own originals")?;

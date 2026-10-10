@@ -398,3 +398,11 @@ GPIOC检查允许整bank采样/滤波/事件推进；门恢复不撤销此前副
 x030 RM CN2.5 的 PDF51–52、57、59–60、62–64、70–71、74、76、79–80、112，以及 F020 RM CN1.4 的 PDF49–50、55、57–58、60–62、68–69、72、74、77–78、110 支持LSE启动、强制CCS、LSI依赖、合法PLL经HSI切换、selector4和Flash等待。书页均减一。F030 DS CN1.9 PDF44–46、A030 DS CN1.1 PDF41–43、选定 `current-datasheets/` F020 DS CN1.3 PDF42–44 分别支持自身波形/晶振和原厂LSI条件；F020最大34440Hz，x030两款33784Hz，不混用原件。
 
 新目标先完整准备/借用原厂LSI，保持请求，再在HSI上启动/借用LSE；最终分频与Flash完成后才选择LSE。相同LSE元组供给RTC，板级每周期界与LSI仅速率界分开。源码/链接不代替实板启动、检测窗口、源丢失恢复或RF验证；发布仍由独立审阅边界决定。
+
+### 五个 L031/R031/W031 精确封装的 init-only LSE SYSCLK
+
+CW32L031C8T6/C8U6/F8U6、CW32R031C8U6、CW32W031R8U6 单独新增同一 `Config.lse + Sysclk::LSE`。依据为 [自身六原件资格](../docs/l031-r031-w031-lse-sysclk-qualification.json) 与 [运行契约](../docs/l031-r031-w031-lse-sysclk.md)，不借用 classic 强制 CCS 或 L052/L083 回退规则。三个共享数据模型、来源锁身份及原23款辅助 LSE 资格不变；现有 `sysclk_detector` 仅增加这五个精确行。
+
+L031 RM CN1.6 PDF54–59、62–63、67–68、71、75、107、170；R031 RM CN1.3 PDF56–61、64–65、69–70、73、77、109、172；W031 RM CN1.4 PDF55–60、63–64、68–69、72、76、108、171 分别支持自身LSI启动/参数冻结、selector4、可配置CCS、128/256检测、Flash和RTC。L031 DS CN1.9 PDF26/38/45–47、R031 DS CN1.2 PDF29/42/52–54、W031 DS CN1.3 PDF30/41/51–53 独立绑定封装与电气范围。原厂LSI半字地址0x00100A02、32800/31816/33784Hz及供电/温度复用既有RTC事实，不新增LSI SYSCLK资格。
+
+新目标保留CLKCCS/HSECCS，仅新启动添加LSECCS。匹配冷LSI不写TRIM/WAIT、不套用重调所有权证明，但请求可恢复停驻AWT/UART/GPIO滤波/MCO/直出消费者；功能移交必须允许事件推进。失配冷源保留自身两遍证明。完整双稳定/原厂参数检查先于HSI校准桥或LSE启动；最终HSI分频、Flash完成后仅一次LSE选择。软件129/256裕量与LSI仅速率事实分开；RTC共享板级每周期LSE元组。无实板检测窗口、失钟恢复、低功耗或RF保证。

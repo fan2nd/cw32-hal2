@@ -35,7 +35,11 @@ for n,width in [("RESULT16",16),("RESULT32",32)]:
     assert regs[n]["access"] == "Read"
 report = json.loads((DATA / "reports/CW32F030.json").read_text())
 assert report["peripherals"] == 37 and report["register_blocks"] == 22
-# Four physical ADC results share one register/fieldset, and four SQR fields
-# share one field-array declaration. Full scalar parity is checked separately.
-assert report["registers"] == 268 - 3 and report["fields"] == 1403 - 6
+# Pinned F030 SVD: 268 scalar registers and 1404 scalar fields.
+# RTC.COMPEN.FREQ is removed (-1); own x030 CN V2.5 manual section 4.7.8
+# (PDF77/printed76) supplies PLL.RESERVED_DEBUG[19:16] (+1), omitted by SVD.
+# ADC RESULT[4] shares one register/fieldset (-3 registers, -3 fields),
+# and SQR[4] shares one field-array declaration (-3 fields).
+# tests/audit_generated_parity.py checks every expanded scalar against sources.
+assert report["registers"] == 268 - 3 and report["fields"] == 1404 - 1 + 1 - 3 - 3
 print("Validated source-derived addresses, IRQs, aliases, memory corrections and full F030 import counts")

@@ -4101,13 +4101,21 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         return;
     };
     println!("cargo:rustc-cfg=rcc_lse");
-    let sysclk_qualified = matches!(
+    let classic_sysclk_qualified = matches!(
         METADATA.name,
         "CW32F020C6U7" | "CW32F030C8T7" | "CW32A030C8T7"
     );
+    let l031_sysclk_qualified = matches!(
+        METADATA.name,
+        "CW32L031C8T6"
+            | "CW32L031C8U6"
+            | "CW32L031F8U6"
+            | "CW32R031C8U6"
+            | "CW32W031R8U6"
+    );
     assert_eq!(
         lse.sysclk_detector.is_some(),
-        sysclk_qualified,
+        classic_sysclk_qualified || l031_sysclk_qualified,
         "LSE SYSCLK detector qualification missing or unexpected"
     );
     if let Some(detector) = &lse.sysclk_detector {
@@ -4119,10 +4127,40 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             ),
             (128, 256, 1)
         );
-        assert!(
-            c.lsi_sysclk.is_some(),
-            "LSE SYSCLK requires own factory-LSI facts"
-        );
+        if classic_sysclk_qualified {
+            assert!(
+                c.lsi_sysclk.is_some(),
+                "classic LSE SYSCLK requires own factory-LSI facts"
+            );
+        } else {
+            assert!(l031_sysclk_qualified && lse.configurable_ccs);
+            assert!(
+                c.lsi_sysclk.is_none(),
+                "L031/R031/W031 LSE SYSCLK does not qualify LSI SYSCLK"
+            );
+            let rtc = METADATA
+                .peripherals
+                .iter()
+                .find(|p| p.name == "RTC")
+                .and_then(|p| p.rtc_calendar.as_ref())
+                .expect("LSE SYSCLK requires own RTC factory monitor facts");
+            let supply_mv = match METADATA.line {
+                "CW32L031" => (1650, 5500),
+                "CW32R031" => (2200, 3600),
+                "CW32W031" => (2000, 3600),
+                _ => panic!("unqualified LSE SYSCLK factory monitor family"),
+            };
+            assert_eq!((rtc.source, rtc.source_encoding), ("LSI", 2));
+            assert_eq!(rtc.factory_trim_address, 0x0010_0a02);
+            assert_eq!(
+                (rtc.nominal_hz, rtc.minimum_hz, rtc.maximum_hz),
+                (32_800, 31_816, 33_784)
+            );
+            assert_eq!(rtc.temperature_c, (-40, 85));
+            assert_eq!(rtc.supply_mv, supply_mv);
+            assert_eq!(lse.temperature_c, rtc.temperature_c);
+            assert_eq!(lse.supply_mv, rtc.supply_mv);
+        }
         for (name, value) in [
             ("LSE_EDGES", detector.lse_edges),
             ("LSI_CYCLES", detector.lsi_cycles),

@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "scope": "Init-only nominal 32768 Hz LSE SYSCLK qualification on exactly five packages using the existing Config.lse tuple. Historical auxiliary LSE and classic3 SYSCLK qualification remain unchanged. No LSI SYSCLK, family aliases, other packages, RF, runtime switching or low-power qualification is added.",
+  "parts": [
+    "CW32L031C8T6",
+    "CW32L031C8U6",
+    "CW32L031F8U6",
+    "CW32R031C8U6",
+    "CW32W031R8U6"
+  ],
+  "sysclk_detector": {
+    "lse_edges": 128,
+    "lsi_cycles": 256,
+    "margin_lse_edges": 1
+  },
+  "hardware_count_source": "Each own manual gives failure below 128 LSE edges in 256 LSI cycles and requires the LSI reference enabled.",
+  "margin_source": "Conservative software policy: strict extra-edge phase margin; 256 * minimum_LSE_hz > 129 * 33784. This is not a hardware threshold of 129 or a silicon timing guarantee.",
+  "factory_lsi_reference": {
+    "metadata_source": "rtc_calendar",
+    "source": "LSI",
+    "source_encoding": 2,
+    "factory_trim_address": 1051138,
+    "trim_bit_offset": 0,
+    "trim_bit_size": 10,
+    "wait_bit_offset": 10,
+    "wait_bit_size": 2,
+    "stable_bit": 15,
+    "nominal_hz": 32800,
+    "minimum_hz": 31816,
+    "maximum_hz": 33784,
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "supply_mv_by_family": {
+      "CW32L031": [
+        1650,
+        5500
+      ],
+      "CW32R031": [
+        2200,
+        3600
+      ],
+      "CW32W031": [
+        2000,
+        3600
+      ]
+    },
+    "raw_erased_halfword_rejected_before_masking": true,
+    "trim_and_wait_retained_after_admission": true,
+    "request_and_direct_and_mirrored_stable_required_at_use": true,
+    "lsi_sysclk_qualification": false
+  },
+  "sysclk_selector": 4,
+  "selected_source_rules": "Own CR0 encodes HSI=0, HSE=1, LSI=3, LSE=4. Encoding 2 is not a MCU PLL source. The selected source cannot be stopped by an ordinary enable-bit clear. LSE must be configured and ready before selection; STABLE is a startup latch, so it does not replace fault checks.",
+  "ccs_policy": {
+    "preserve": [
+      "CLKCCS",
+      "HSECCS"
+    ],
+    "fresh_lse_enable": [
+      "LSECCS"
+    ],
+    "running_lse_requires_existing_detector": true,
+    "preserve_lselock": true
+  },
+  "fallback": {
+    "documented_source": "HSI when SYSCLK=LSE and CLKCCS=1",
+    "modeled_source": "Configured HSIOSC/DIV, retained enabled and factory-qualified under final buses regardless of CLKCCS.",
+    "model_basis": "Own HSI source definition and no documented CCS divider override. This is manual-derived modeling, not an explicit CCS-preserves-DIV statement or silicon observation. The separate fixed 8 MHz DeepSleep wake rule is excluded.",
+    "final_order": "While explicitly executing HSI, acknowledge final AHB/APB, install Flash WAIT for max(LSE upper HCLK, configured HSI upper HCLK), verify, then select LSE once. No later source/divider write; verify the complete tree before freezing."
+  },
+  "monitor_admission": {
+    "matching_live": "Borrow unchanged only with LSIEN=1 and both direct and mirrored stability high; retain request, TRIM and WAIT.",
+    "matching_in_flight": "LSIEN=1 and both stability indications low may wait boundedly only when SYSCLK is not LSI and HSECCS=LSECCS=0. Do not write parameters.",
+    "matching_cold": "LSIEN=0 and both stability indications low may be requested only when SYSCLK is not LSI, HSECCS=LSECCS=0 and IER.LSIRDY=ISR.LSIRDY=0. Do not write matching parameters.",
+    "contradictions": "Reject direct/mirrored disagreement at admission, LSIEN=0 with either stability high or SYSCLK=LSI, and an enabled detector without an already requested dual-stable factory reference.",
+    "mismatched_trim": "Retain the existing own-family two-pass stopped/consumer/stopped proof; never stop or retrim live LSI. Only the admitted stopped branch may update TRIM while preserving WAIT and reserved fields.",
+    "use_edge": "Before HSI trim bridging or LSE startup/detector enable, require expected factory TRIM, unchanged WAIT, LSIEN, both stable indications and preserved CCS. Mixed readiness polls are not success.",
+    "functional_handover": "Requesting matching cold LSI can resume retained AWT, UART, GPIO filters, MCO and bonded direct outputs. Temporary GPIO gates can advance sampling, filters and events. Supported handover allows these effects and obeys existing quiescence and exclusion requirements."
+  },
+  "source_tuple": "The same board Config.lse tuple supplies SYSCLK, HCLK, PCLK, Clocks.lse, LseClock and CalendarClock::Lse; factory monitor facts are not used as the CPU source.",
+  "lsi_cycle_timing_qualified": false,
+  "lse_cycle_timing": "Separate board every-cycle bounds. Factory LSI nominal-rate accuracy does not prove each individual detector window.",
+  "limits": [
+    "No maximum crystal startup guarantee",
+    "No arbitrary asynchronous-loss CPU-progress or fault deadline guarantee",
+    "No frozen-clock republication or RTC continuity after fallback",
+    "No runtime switching, Sleep/DeepSleep, wake restoration or RF qualification"
+  ],
+  "sources": [
+    {
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "family": "CW32L031",
+      "pdf_pages_1_based": [
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        61,
+        62,
+        63,
+        67,
+        68,
+        69,
+        70,
+        71,
+        73,
+        75,
+        107,
+        159,
+        170,
+        321
+      ],
+      "printed_pages": [
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        60,
+        61,
+        62,
+        66,
+        67,
+        68,
+        69,
+        70,
+        72,
+        74,
+        106,
+        158,
+        169,
+        320
+      ]
+    },
+    {
+      "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+      "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+      "family": "CW32R031",
+      "pdf_pages_1_based": [
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        63,
+        64,
+        65,
+        69,
+        70,
+        71,
+        72,
+        73,
+        75,
+        77,
+        109,
+        161,
+        172,
+        324
+      ],
+      "printed_pages": [
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        62,
+        63,
+        64,
+        68,
+        69,
+        70,
+        71,
+        72,
+        74,
+        76,
+        108,
+        160,
+        171,
+        323
+      ]
+    },
+    {
+      "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+      "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "family": "CW32W031",
+      "pdf_pages_1_based": [
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        62,
+        63,
+        64,
+        68,
+        69,
+        70,
+        71,
+        72,
+        74,
+        76,
+        108,
+        160,
+        171,
+        324
+      ],
+      "printed_pages": [
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        61,
+        62,
+        63,
+        67,
+        68,
+        69,
+        70,
+        71,
+        73,
+        75,
+        107,
+        159,
+        170,
+        323
+      ]
+    },
+    {
+      "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+      "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+      "family": "CW32L031",
+      "pdf_pages_1_based": [
+        26,
+        38,
+        45,
+        46,
+        47,
+        78
+      ],
+      "printed_pages": [
+        25,
+        37,
+        44,
+        45,
+        46,
+        77
+      ]
+    },
+    {
+      "source_ref": "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+      "sha256": "88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805",
+      "family": "CW32R031",
+      "pdf_pages_1_based": [
+        11,
+        29,
+        42,
+        52,
+        53,
+        54
+      ],
+      "printed_pages": [
+        10,
+        28,
+        41,
+        51,
+        52,
+        53
+      ]
+    },
+    {
+      "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+      "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c",
+      "family": "CW32W031",
+      "pdf_pages_1_based": [
+        9,
+        30,
+        41,
+        51,
+        52,
+        53
+      ],
+      "printed_pages": [
+        8,
+        29,
+        40,
+        50,
+        51,
+        52
+      ]
+    }
+  ]
+}

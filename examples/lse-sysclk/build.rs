@@ -12,7 +12,14 @@ fn main() {
     }));
     assert!(matches!(
         metadata.name,
-        "CW32F020C6U7" | "CW32F030C8T7" | "CW32A030C8T7"
+        "CW32F020C6U7"
+            | "CW32F030C8T7"
+            | "CW32A030C8T7"
+            | "CW32L031C8T6"
+            | "CW32L031C8U6"
+            | "CW32L031F8U6"
+            | "CW32R031C8U6"
+            | "CW32W031R8U6"
     ));
     let mut memory = String::from("MEMORY {\n");
     for bank in metadata.memory[0] {
