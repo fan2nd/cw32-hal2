@@ -54,7 +54,7 @@ def main():
     assert {part for part, profile in catalog["parts"].items()
             if part.startswith("CW32L083") and "sysclk_detector" in profile["configuration"]} == PARTS
     assert len(catalog["parts"]) == 23
-    assert sum("sysclk_detector" in p["configuration"] for p in catalog["parts"].values()) == 19
+    assert sum("sysclk_detector" in p["configuration"] for p in catalog["parts"].values()) == 21
     fallback = sysclk["fallback"]
     assert fallback["policy"] == "conservative_undivided_factory_hsi_bound"
     assert fallback["metadata_source"] == "clock_limits.hsi_frequency_hz and clock_limits.hsi_error_percent"
@@ -172,7 +172,7 @@ def main():
                     assert owner["clock_limits"].get("lsi_sysclk") is None
                     assert owner["clock_limits"]["hse"].get("fixed_ccs_hsi_divisor") is None
             generated += 1
-    result = {"status": "passed", "originals_verified": len(originals), "sdk_members_verified": len(members), "qualified_parts": sorted(PARTS), "canonical_native_ir_sha256": canonical, "sysclk_policy_sha256": sha((ROOT / "docs/l083-lse-sysclk-qualification.json").read_bytes()), "auxiliary_profiles": 23, "sysclk_profiles": 19, "source_pages": page_receipts, "generated_selections_checked": generated, "hardware_execution": False}
+    result = {"status": "passed", "originals_verified": len(originals), "sdk_members_verified": len(members), "qualified_parts": sorted(PARTS), "canonical_native_ir_sha256": canonical, "sysclk_policy_sha256": sha((ROOT / "docs/l083-lse-sysclk-qualification.json").read_bytes()), "auxiliary_profiles": 23, "sysclk_profiles": 21, "source_pages": page_receipts, "generated_selections_checked": generated, "hardware_execution": False}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2) + "\n")
     print(f"PASS: {len(originals)} own originals, {len(members)} SDK members, {len(page_receipts)} page receipts, five exact parts, {generated} generated selections; no HAL execution")

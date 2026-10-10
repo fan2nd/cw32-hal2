@@ -219,6 +219,51 @@ pub struct Config {
 /// 1 MHz time driver rejects this 32768 Hz tree before tokens or RCC MMIO.
 /// See docs/l010-lse-sysclk.md for the complete own-source target contract.
 ///
+/// On CW32L011K8T6 and CW32L011K8U6, LSE SYSCLK retains enabled,
+/// factory-calibrated 96 MHz HSIOSC through the requested divider (default /24).
+/// Ordinary legal cold entry uses the existing guarded unchanged-LSI bridge
+/// when HSI trim needs preparation; StartupOnly does not require factory LSI.
+/// Incoming source/bus/Flash state, HSI trim and unchanged LSI must already be
+/// electrically legal. The own RM legal LSI adjustment condition and the
+/// 41000 Hz factory-monitor envelope remain separate prerequisites; the latter
+/// does not make arbitrary inherited rates below that ceiling legal.
+/// MonitoredExistingRoutes additionally requires stable, non-erased,
+/// factory-matching ten-bit LSI TRIM at 0x001007C2 before configuration-gate
+/// writes. Later bridge readiness cannot manufacture that entry fact. LSI
+/// TRIM/WAIT and the original software LSIEN request remain unchanged/restored.
+///
+/// An entry-nonstable first LSI request rejects RTC SOURCE = 2/reserved selections,
+/// UART1/2/3 SOURCE = 3 even with RX/TX disabled, enabled LPTIM LSI, MCO SOURCE = 4,
+/// enabled LSIRDY and enabled LSI-filtered VC/LVD even with zero filter count.
+/// Held reset rejects inspection; each configuration gate restores separately,
+/// preserving enable/restore failure distinctions. The same admission repeats
+/// immediately before LSIEN, using the entry classification despite later
+/// STABLE. Stable legal automatic LSI clients with LSIEN clear remain admitted.
+/// RTC SOURCE = 3 requires already factory-ready HSIOSC; necessary HSI start or
+/// retrim also checks raw-HSI MCO SOURCE = 3 and enabled HSIRDY. The handover must
+/// additionally permit or disconnect PB0 AF3 HSIOSC_OUT observers across HSI
+/// interruption, and residual GTIM/ATIM LSI_OUT selector 9, whole-bank GPIO LSI filters,
+/// IWDT and downstream timer/ADC/GPIO or external observers across the bridge.
+/// Dormant work gates are not opened to establish universal idleness.
+///
+/// The native PC14/PC15, whole-GPIOC, RTC_OUT/RTC_1Hz and raw PINLOCK rules
+/// below still apply, including exact source reuse and final pad inspection.
+/// StartupOnly loss can stop the CPU without a fault/error return. Monitored
+/// mode preserves existing IRQ/brake routes and CLKCCS; real faults can affect
+/// observers before an error. Documented effective HSI 4 MHz fallback receives
+/// its full 4.08 MHz bound without bus-divider credit, independently of configured
+/// HSI at final divisors. This promises no register retention or clock continuity.
+/// WAIT3 precedes guarded transitions. Final dividers are verified under factory
+/// HSI before the last CR0 write selects LSE; no later CR0 write occurs. Final
+/// WAIT0/1/2/3 covers LSE, configured HSI and fallback. Source/policy/monitor,
+/// mux/dividers, pads and authoritative Flash WAIT are checked before publication.
+/// Existing HSIOSC/LSE calendar capabilities remain; no RTC/AWT migration occurs.
+/// Errors publish no clocks, can leave partial state and require reset before
+/// retry; ordinary reset may retain LSE. Frozen timings are invalid after loss.
+/// Poll budgets require continuing CPU execution; the fixed 1 MHz time driver
+/// rejects this tree before tokens or RCC MMIO. Generic-family and L012 targets
+/// remain excluded. See docs/l011-lse-sysclk.md for the own-source contract.
+///
 /// CW32L011/L012 have the same functional requirement when a new LSE feeds
 /// RTC SOURCE0, and again when an RTC owner later activates or changes the
 /// calendar source: no independent RTC_OUT/RTC_1Hz recipient may depend on

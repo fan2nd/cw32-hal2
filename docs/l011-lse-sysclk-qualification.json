@@ -1,0 +1,357 @@
+{
+  "schema_version": 1,
+  "scope": "Init-only nominal 32768 Hz LSE SYSCLK on exactly CW32L011K8T6 and CW32L011K8U6, using Config.lse and unchanged native admission. Generic L011 and all L012 are excluded. Source qualification only; no hardware validation.",
+  "parts": [
+    "CW32L011K8T6",
+    "CW32L011K8U6"
+  ],
+  "sysclk_detector": {
+    "lse_edges": 128,
+    "lsi_cycles": 256,
+    "margin_lse_edges": 1
+  },
+  "sysclk_selector": 4,
+  "hardware_count_source": "Own RM PDF57/66: fewer than 128 LSE edges in 256 LSI cycles detects running failure when LSECCS is enabled.",
+  "margin_source": "Separate software margin: minimum_LSE_hz * 256 > 129 * 41000; smallest integral minimum is 20661 Hz. The extra edge is not the hardware threshold or measured LSI timing.",
+  "native_lsi_reference": {
+    "metadata_source": "lse_configuration.native_low_power",
+    "monitor_reference": "factory_trim",
+    "lsi_factory_trim_address": 1050562,
+    "maximum_hz": 41000,
+    "detector_lse_edges": 128,
+    "detector_lsi_cycles": 256,
+    "detector_margin_lse_edges": 1,
+    "stable_before_monitored_preflight": true,
+    "software_lsien_required": false,
+    "trim_and_wait_retained": true,
+    "cold_start_does_not_qualify_monitor": true,
+    "basis": "DS PDF51/printed48 Table7-19 factory -10/+25% over -40..85 C gives 29520..41000 Hz. RM PDF54/70 legal adjustment +/-10%, 30-36 kHz and approximate 0.4% steps are separate from DS 0.16% steps. Factory match and STABLE do not establish legality, actual frequency or cycle timing.",
+    "trim_bit_size": 10
+  },
+  "ccs_policy": {
+    "preserve": [
+      "CLKCCS",
+      "HSECCS",
+      "LSELOCK"
+    ],
+    "startup_only_requires_lseccs": false,
+    "monitored_existing_routes_requires_lseccs": true,
+    "automatic_monitor_preparation": false
+  },
+  "fallback": {
+    "metadata_source": "clock_limits.hse.fixed_ccs_hsi_divisor",
+    "fixed_ccs_hsi_divisor": 24,
+    "documented_nominal_hz": 4000000,
+    "modeled_minimum_hz": 3920000,
+    "modeled_maximum_hz": 4080000,
+    "hsi_oscillator_nominal_hz": 96000000,
+    "hsi_factory_error_percent": 2,
+    "conservative_bus_and_flash_maximum_hz": 4080000,
+    "hsi_divider_credit": false,
+    "ahb_divider_credit": false,
+    "apb_divider_credit": false,
+    "hardware_divisor_rewrite_claimed": false,
+    "divisor_retention_proven": false,
+    "applies_when_clkccs_disabled": true,
+    "basis": "RM PDF57/66 documents effective HSI4MHz fallback for detected selected-LSE failure with CLKCCS=1. Existing numerical /24 and DS PDF51 factory HSI +/-2% yield 3.92-4.08MHz after factory calibration. No HSI.DIV, HSIEN, CR0 or bus-divider post-fault state is proved. Admit full 4.08MHz on both buses even with CLKCCS=0; separately validate configured HSI at final divisors."
+  },
+  "hsi_register": {
+    "factory_trim_address": 1050560,
+    "trim_bit_offset": 0,
+    "trim_bit_size": 11,
+    "div_bit_offset": 11,
+    "div_bit_size": 4,
+    "stable_bit": 15,
+    "has_wait_field": false,
+    "hardware_reset_factory_match_assumed": false
+  },
+  "electrical_limits": {
+    "supply_mv": [
+      1700,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "low_voltage_threshold_mv": 1800,
+    "low_voltage_bus_max_hz": 24000000,
+    "high_voltage_bus_max_hz": 96000000,
+    "flash_wait_step_hz": 24000000,
+    "initial_flash_wait": 3
+  },
+  "flash_fields": {
+    "sysctrl_cr2_flashwait": [
+      8,
+      4,
+      3
+    ],
+    "flash_cr2_wait": [
+      4,
+      0,
+      3
+    ],
+    "sysctrl_ahben_flash": [
+      48,
+      1,
+      1
+    ],
+    "key": 23130,
+    "same_function_documented": true,
+    "alias_timing_measured": false
+  },
+  "transition_policy": "Retain guarded HSI-to-unchanged-LSI-to-factory-HSI bridge with latched entry-nonstable first-LSI-request admission. Do not write LSI TRIM/WAIT. Raise and verify Flash WAIT3. Check original non-WAIT CR2, IER, MCO, LSE and LSI TRIM/WAIT before and after refreshed admission. Install final divisors under factory HSI before the last LSE CR0 write; perform no later CR0 write. Final Flash planning covers LSE HCLK, configured-HSI HCLK and full 4.08MHz fallback. Publish only after final source/policy/mux/divider/pad/authoritative-WAIT checks.",
+  "cold_lsi_admission": "Latch target && (needs_trim || needs_lsi) && !entry_lsi.STABLE. After retained admission and again immediately before LSIEN, reject RTC SOURCE2 or reserved4..7, UART1/2/3 SOURCE3 regardless RXEN/TXEN, enabled LPTIM ICLKSRC3, MCO SOURCE4, LSIRDY enable and enabled analog LSI filters even with zero filter count. Preserve exact gates, reject held resets and retain gate-restoration failure precedence. Permit/disconnect uninspected GTIM/ATIM selector9, GPIO filters, IWDT, cascades and external observers.",
+  "hsi_ownership": "RTC SOURCE3 owns raw HSIOSC even when START=0 and requires enabled, stable, factory-matching HSI. HSI start/restart or initially-unready wait rejects MCO SOURCE3 and HSIRDY enable. Factory-ready DIV-only changes preserve raw HSIOSC. PB0 AF3 HSIOSC_OUT is a separate external observer.",
+  "inherited_own_proofs": [
+    "docs/lse-l011-qualification.json",
+    "docs/lse-l011-rtc-admission.json"
+  ],
+  "auxiliary_projection": "Remove only sysclk_detector. All prior native_low_power auxiliary facts and own proof bytes remain unchanged.",
+  "lsi_sysclk_qualification": false,
+  "lsi_cycle_timing_qualified": false,
+  "limits": [
+    "StartupOnly loss can stop the CPU with STABLE still set and no failure flag. Poll budgets are CPU iterations only while execution continues.",
+    "Preserved fault routes can affect IRQs, timer capture/brake and external observers before return.",
+    "No frozen-clock validity, RTC continuity, recovery or bounded loss-to-fallback guarantee after source loss.",
+    "No LSI trim write, borrowed-flag clearing, RTC migration, runtime switching, wake/resume or silicon validation."
+  ],
+  "sources": [
+    {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "family": "CW32L011",
+      "pdf_pages_1_based": [
+        49,
+        50,
+        51,
+        53,
+        54,
+        57,
+        60,
+        61,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        85,
+        102,
+        113,
+        122,
+        123,
+        126,
+        127,
+        128,
+        129,
+        130,
+        139,
+        140,
+        144,
+        151,
+        152,
+        153,
+        154,
+        182,
+        183,
+        200,
+        201,
+        202,
+        281,
+        282,
+        283,
+        325,
+        351,
+        353,
+        375,
+        376,
+        379,
+        380,
+        422,
+        423,
+        424,
+        425,
+        531,
+        539,
+        540,
+        541,
+        548,
+        549,
+        550
+      ],
+      "printed_pages": [
+        48,
+        49,
+        50,
+        52,
+        53,
+        56,
+        59,
+        60,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        84,
+        101,
+        112,
+        121,
+        122,
+        125,
+        126,
+        127,
+        128,
+        129,
+        138,
+        139,
+        143,
+        150,
+        151,
+        152,
+        153,
+        181,
+        182,
+        199,
+        200,
+        201,
+        280,
+        281,
+        282,
+        324,
+        350,
+        352,
+        374,
+        375,
+        378,
+        379,
+        421,
+        422,
+        423,
+        424,
+        530,
+        538,
+        539,
+        540,
+        547,
+        548,
+        549
+      ]
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+      "family": "CW32L011",
+      "pdf_pages_1_based": [
+        28,
+        29,
+        30,
+        31,
+        39,
+        48,
+        50,
+        51,
+        71
+      ],
+      "printed_pages": [
+        25,
+        26,
+        27,
+        28,
+        36,
+        45,
+        47,
+        48,
+        68
+      ]
+    }
+  ],
+  "sdk_corroboration": {
+    "evidence_kind": "external-evidence",
+    "source_ref": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+    "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+    "members": [
+      {
+        "archive_members": [
+          "IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1.pack",
+          "SVD/CW32L011.svd"
+        ],
+        "sha256": "b814843fcea7ed61b11f49ba3a8c00289b98c4dfb36b051ec87671446013ca47",
+        "bytes": 354399
+      },
+      {
+        "archive_members": [
+          "Libraries/inc/cw32l011_sysctrl.h"
+        ],
+        "sha256": "3c9927ef4eb1126500c4528e0892ebd90bb217c2bdd64935d6e52d252c54507e",
+        "bytes": 47296
+      },
+      {
+        "archive_members": [
+          "Libraries/src/system_cw32l011.c"
+        ],
+        "sha256": "61a6a8ac9b57e74b053bf1c486acf2707f9c379274d699dafda20c33ace61c4a",
+        "bytes": 2929
+      }
+    ],
+    "authority_limit": "Own selector/divider/startup and field corroboration only. SDK broad writes and erased-trim replacement values are not imported or treated as factory qualification."
+  },
+  "hsi_division": {
+    "default_numeric_divisor": 24,
+    "default_encoding": 14,
+    "encoding_zero_numeric_divisor": 32
+  },
+  "source_conflicts": [
+    "RM legal LSI +/-10% and30-36kHz are not replaced by DS factory -10/+25%.",
+    "RM LSI approximate0.4% trim step and DS0.16% are not silently reconciled.",
+    "RM permits1MHz LSE bypass; retain stricter DS100kHz ceiling."
+  ],
+  "uart3_fields": {
+    "configuration_gate": [
+      "APBEN1",
+      56,
+      8,
+      1
+    ],
+    "reset": [
+      "APBRST1",
+      72,
+      8,
+      1
+    ],
+    "source": [
+      "CR1",
+      0,
+      12,
+      2
+    ],
+    "lsi_source_encoding": 3
+  },
+  "entry_contract": "Unchanged LSI must already be electrically legal for the board, including real reset entry. StartupOnly requires neither factory LSI nor preconfigured LSE; bridge readiness cannot manufacture the first monitored-preflight factory fact. No hardware-reset factory matching is assumed."
+}

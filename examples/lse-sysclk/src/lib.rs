@@ -6,7 +6,9 @@ use embassy_cw32::{self as hal, rcc, time::Hertz};
 #[cfg(not(any(
     feature = "cw32l010f8p6",
     feature = "cw32l010f8u6",
-    feature = "cw32l010y8m6"
+    feature = "cw32l010y8m6",
+    feature = "cw32l011k8t6",
+    feature = "cw32l011k8u6"
 )))]
 pub fn config(mode: rcc::LseMode) -> hal::Config {
     let board = rcc::OperatingConditions {
@@ -50,13 +52,15 @@ pub fn config(mode: rcc::LseMode) -> hal::Config {
     config
 }
 
-/// Native L010 demonstration assertions; replace them with qualified board data.
+/// Native L010/L011 demonstration assertions; replace them with qualified board data.
 /// StartupOnly leaves running-loss detection off. Losing LSE can stop the CPU
 /// without reaching an error return, even when inherited CLKCCS is enabled.
 #[cfg(any(
     feature = "cw32l010f8p6",
     feature = "cw32l010f8u6",
-    feature = "cw32l010y8m6"
+    feature = "cw32l010y8m6",
+    feature = "cw32l011k8t6",
+    feature = "cw32l011k8u6"
 ))]
 pub fn config(mode: rcc::LseMode) -> hal::Config {
     let board = rcc::OperatingConditions {
@@ -82,9 +86,10 @@ pub fn config(mode: rcc::LseMode) -> hal::Config {
         poll_budget: 20_000_000,
     });
     config.rcc.sys = rcc::Sysclk::LSE;
-    // Native defaults are HSI /12, AHB /1 and APB /1. HSI is retained factory
-    // calibrated. The enclosing HSI-retrim path can temporarily request the
-    // unchanged, inherited-legal LSI; this does not prepare a factory monitor.
+    // Native defaults are HSI /12 on L010, HSI /24 on L011, and AHB/APB /1.
+    // HSI is retained factory calibrated. The enclosing HSI-retrim path can
+    // temporarily request unchanged, electrically legal LSI; this does not
+    // prepare a monitor or impose a factory-LSI requirement on StartupOnly.
     // See README.md for the incoming-clock and downstream-observer handover.
     config
 }

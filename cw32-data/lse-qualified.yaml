@@ -26,6 +26,7 @@ policies:
   docs/l052-lse-sysclk-qualification.json: de0e8c6391efbdd22abef032b2600d12545a1a41e997c55c8172dabcc5dce379
   docs/l083-lse-sysclk-qualification.json: 0adf0fae7dc105494b135b0981ce79c63633ca0b0e9d19b25f88abc3d9aa529d
   docs/l010-lse-sysclk-qualification.json: ca5d164c19ea1a50c0facaf691dd52142fc6d855135fbe664359e30ed360d182
+  docs/l011-lse-sysclk-qualification.json: 91641658261728a660e7f4b41c072c87af861c4cb53808409fb8c65da4b0a613
 parts:
   CW32A030C8T7:
     family: CW32A030
@@ -4401,6 +4402,10 @@ parts:
       - 48
       - 68
     configuration:
+      sysclk_detector:
+        lse_edges: 128
+        lsi_cycles: 256
+        margin_lse_edges: 1
       nominal_hz: 32768
       maximum_hz: 100000
       configurable_ccs: true
@@ -4621,6 +4626,10 @@ parts:
       - 48
       - 68
     configuration:
+      sysclk_detector:
+        lse_edges: 128
+        lsi_cycles: 256
+        margin_lse_edges: 1
       nominal_hz: 32768
       maximum_hz: 100000
       configurable_ccs: true

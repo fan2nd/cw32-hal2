@@ -3855,7 +3855,7 @@ fn generate_native_low_power_lse_configuration(
         assert_eq!(f.bit_size, width);
         assert!(matches!(&f.bit_offset, ir::BitOffset::Regular(p) if p.offset == bit));
     };
-    if l010 && lse.sysclk_detector.is_some() {
+    if (l010 || l011) && lse.sysclk_detector.is_some() {
         for (reg, offset, name, bit, width) in [
             ("CR0", 0, "SYSCLK", 0, 3),
             ("CR0", 0, "PCLKPRS", 3, 2),
@@ -3879,7 +3879,10 @@ fn generate_native_low_power_lse_configuration(
                 .find(|p| p.name == owner)
                 .and_then(|p| p.registers.as_ref())
                 .unwrap();
-            assert_eq!(regs.version, "cw32l010_v1");
+            assert_eq!(
+                regs.version,
+                if l011 { "cw32l011_v1" } else { "cw32l010_v1" }
+            );
             if owner == "SYSCTRL" {
                 let cr0 = regs
                     .ir
@@ -3913,9 +3916,45 @@ fn generate_native_low_power_lse_configuration(
                         .fields
                         .len(),
                     3,
-                    "L010 HSI has no programmable WAIT field"
+                    "L010/L011 HSI has no programmable WAIT field"
                 );
             }
+        }
+        if l011 {
+            field("SYSCTRL", "APBEN1", 56, "UART3", 8, 1);
+            field("SYSCTRL", "APBRST1", 72, "UART3", 8, 1);
+            field("UART3", "CR1", 0, "SOURCE", 12, 2);
+            let regs = METADATA
+                .peripherals
+                .iter()
+                .find(|p| p.name == "UART3")
+                .and_then(|p| p.registers.as_ref())
+                .unwrap();
+            let cr1 = regs
+                .ir
+                .fieldsets
+                .iter()
+                .find(|f| f.name.eq_ignore_ascii_case("CR1"))
+                .unwrap();
+            let source = cr1
+                .fields
+                .iter()
+                .find(|f| f.name.eq_ignore_ascii_case("SOURCE"))
+                .unwrap();
+            let enumeration = regs
+                .ir
+                .enums
+                .iter()
+                .find(|e| Some(e.name) == source.enumm)
+                .unwrap();
+            assert_eq!(
+                enumeration
+                    .variants
+                    .iter()
+                    .filter(|v| v.name.eq_ignore_ascii_case("LSI") && v.value == 3)
+                    .count(),
+                1
+            );
         }
     }
     for (reg, offset, name, bit, width) in [
@@ -4168,17 +4207,14 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         METADATA.name,
         "CW32L010F8P6" | "CW32L010F8U6" | "CW32L010Y8M6"
     );
+    let l011_sysclk_qualified = matches!(METADATA.name, "CW32L011K8T6" | "CW32L011K8U6");
     let classic_sysclk_qualified = matches!(
         METADATA.name,
         "CW32F020C6U7" | "CW32F030C8T7" | "CW32A030C8T7"
     );
     let l031_sysclk_qualified = matches!(
         METADATA.name,
-        "CW32L031C8T6"
-            | "CW32L031C8U6"
-            | "CW32L031F8U6"
-            | "CW32R031C8U6"
-            | "CW32W031R8U6"
+        "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" | "CW32R031C8U6" | "CW32W031R8U6"
     );
     let l052_sysclk_qualified = matches!(
         METADATA.name,
@@ -4194,7 +4230,8 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             || l031_sysclk_qualified
             || l052_sysclk_qualified
             || l083_sysclk_qualified
-            || l010_sysclk_qualified,
+            || l010_sysclk_qualified
+            || l011_sysclk_qualified,
         "LSE SYSCLK detector qualification missing or unexpected"
     );
     if let Some(detector) = &lse.sysclk_detector {
@@ -4248,6 +4285,52 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                 (c.flash_wait_step_hz, c.initial_flash_wait),
                 (24_000_000, 1)
             );
+            // Native helper below binds the own selector, HSI and Flash fields.
+            // No RTC factory-LSI facts or public LSI SYSCLK are implied.
+        } else if l011_sysclk_qualified {
+            assert_eq!(METADATA.line, "CW32L011");
+            assert!(lse.configurable_ccs && c.lsi_sysclk.is_none() && c.pll.is_none());
+            let native = lse
+                .native_low_power
+                .as_ref()
+                .expect("L011 own factory monitor facts");
+            assert_eq!(native.monitor_reference, "factory_trim");
+            assert_eq!(native.lsi_factory_trim_address, Some(0x0010_07c2));
+            assert_eq!(native.monitored_lsi_maximum_hz, 41_000);
+            assert_eq!(
+                (
+                    detector.lse_edges,
+                    detector.lsi_cycles,
+                    detector.margin_lse_edges
+                ),
+                (
+                    native.detector_lse_edges,
+                    native.detector_lsi_cycles,
+                    native.detector_margin_lse_edges
+                )
+            );
+            assert_eq!(
+                c.hse
+                    .as_ref()
+                    .expect("L011 fixed CCS facts")
+                    .fixed_ccs_hsi_divisor,
+                Some(24)
+            );
+            assert_eq!((c.hsi_frequency_hz, c.hsi_error_percent), (96_000_000, 2));
+            assert_eq!(c.factory_hsi_trim_address, 0x0010_07c0);
+            assert_eq!(c.hsi_supply_mv, (1700, 5500));
+            assert_eq!(c.hsi_temperature_c, (-40, 85));
+            assert_eq!(lse.supply_mv, c.hsi_supply_mv);
+            assert_eq!(lse.temperature_c, c.hsi_temperature_c);
+            assert_eq!(c.low_voltage_threshold_mv, 1800);
+            assert_eq!(c.low_voltage_bus_max_hz, 24_000_000);
+            assert_eq!(c.high_voltage_bus_max_hz, 96_000_000);
+            assert_eq!(
+                (c.flash_wait_step_hz, c.initial_flash_wait),
+                (24_000_000, 3)
+            );
+            assert_eq!(c.default_hsi_divisor, 24);
+            writeln!(out, "const _: () = {{ assert!(crate::rcc::HsiDiv::Div24 as u8 == 14); assert!(crate::rcc::HsiDiv::Div24.divisor() == 24); assert!(crate::rcc::HsiDiv::Div32 as u8 == 0); assert!(crate::rcc::HsiDiv::Div32.divisor() == 32); }};").unwrap();
             // Native helper below binds the own selector, HSI and Flash fields.
             // No RTC factory-LSI facts or public LSI SYSCLK are implied.
         } else if classic_sysclk_qualified {

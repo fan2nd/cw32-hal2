@@ -179,8 +179,9 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   can resume functional consumers. See [the exact-three contract](docs/l052-lse-sysclk.md).
 - CW32L083RBT6, CW32L083RCT6, CW32L083RCS6, CW32L083MCT6 and CW32L083VCT6:
   init-only LSE SYSCLK through the same `Config.lse` declaration and own
-  factory-LSI monitor. This brings LSE system targets from eleven to sixteen
-  exact packages; all twenty-three auxiliary-LSE qualifications stay unchanged.
+  factory-LSI monitor. The historical Stage60 addition brought LSE system targets
+  from eleven to sixteen exact packages; all twenty-three auxiliary-LSE
+  qualifications stay unchanged.
   The new target requires declared minimum VDD at least 1.8 V, conservative raw
   factory-HSI fallback coverage at 48.96 MHz with no HSI/AHB/APB divider credit,
   and retained Flash WAIT2. Inherited enabled PLL first escapes through legal
@@ -189,8 +190,8 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   over quiescent consumers. No runtime switching, independent PLL-output
   lifecycle or fault recovery is added. See [the exact-five contract](docs/l083-lse-sysclk.md).
 - CW32L010F8P6, CW32L010F8U6 and CW32L010Y8M6: init-only native LSE SYSCLK
-  through the existing `Config.lse` declaration, bringing system targets to
-  nineteen exact packages. StartupOnly leaves LSECCS clear and can halt the
+  through the existing `Config.lse` declaration. The historical Stage61 addition
+  brought system targets to nineteen exact packages. StartupOnly leaves LSECCS clear and can halt the
   CPU after source loss without an error return. MonitoredExistingRoutes
   requires already stable, legally operating, unchanged LSI; it does not
   prepare a factory monitor. The HSI-calibration path may temporarily request
@@ -200,8 +201,29 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   undivided 4.08 MHz without assuming divider retention or promising fallback.
   Final divisors precede LSE selection and no CR0 write follows it. The previous
   sixteen system paths and all twenty-three auxiliary qualifications remain
-  unchanged. L011/L012 and generic family aliases are excluded. See the
+  unchanged. Generic L010 aliases remain excluded. See the
   [L010 system contract](docs/l010-lse-sysclk.md) and
+  [crystal/bypass examples](examples/lse-sysclk/README.md).
+- CW32L011K8T6 and CW32L011K8U6: init-only native LSE SYSCLK brings the current
+  system roster to twenty-one exact packages; auxiliary LSE remains twenty-three.
+  The prior nineteen system paths are unchanged; L012 and generic aliases remain
+  excluded. PC14/PC15 are pins 2/3 on both packages, and the native example uses
+  StartupOnly, independent Level2/Level10 drives and 16384 startup cycles with
+  example 3.0–3.6 V, −20…70 °C and every-cycle 32766–32770 Hz declarations
+  that require board qualification.
+  Default HSI /24 is retained factory calibrated on success. StartupOnly needs
+  no factory LSI monitor; its guarded HSI-calibration bridge uses unchanged,
+  electrically legal LSI. MonitoredExistingRoutes instead requires stable,
+  non-erased factory-matching LSI at entry, with own 41000 Hz maximum and
+  `256 * LSE_min_hz > 129 * 41000`; there is no automatic monitor preparation.
+  First-nonstable-request guards include UART3. The functional handover covers
+  residual timer/GPIO/IWDT roots and dedicated PB0 AF3 HSIOSC_OUT observers.
+  Configured HSI and full 4.08 MHz effective fallback are checked independently;
+  no divider retention or execution continuity is promised. Final divisors
+  precede the last LSE selection, with no later CR0 write; final Flash WAIT uses
+  the maximum qualified HCLK bound (WAIT0 for the default HSI /24 configuration).
+  Loss can stop the CPU, and errors publish no clocks and require reset before
+  retry. See the [L011 system contract](docs/l011-lse-sysclk.md) and
   [crystal/bypass examples](examples/lse-sysclk/README.md).
 - F020/F030/A030: direct qualified HSE crystal/bypass system clocks with explicit
   board nominal/minimum/maximum bounds, preserved factory HSI, mandatory CCS/LSI,

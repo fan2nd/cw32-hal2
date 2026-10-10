@@ -4,8 +4,8 @@ Two ordinary bare-metal firmware examples for CW32F020C6U7, CW32F030C8T7,
 CW32A030C8T7, CW32L031C8T6, CW32L031C8U6, CW32L031F8U6, CW32R031C8U6,
 CW32W031R8U6, CW32L052C8T6, CW32L052R8S6, CW32L052R8T6, CW32L083RBT6,
 CW32L083RCT6, CW32L083RCS6, CW32L083MCT6, CW32L083VCT6, CW32L010F8P6,
-CW32L010F8U6 and CW32L010Y8M6: nineteen exact packages in total. Family aliases,
-L011/L012 and other packages are excluded. Build with one exact feature, for
+CW32L010F8U6, CW32L010Y8M6, CW32L011K8T6 and CW32L011K8U6: twenty-one exact
+packages in total. Family aliases, L012 and other packages are excluded. Build with one exact feature, for
 example:
 
 ```
@@ -16,6 +16,8 @@ cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml --
 cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32l010f8p6,defmt --bins
 cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32l010f8u6,defmt --bins
 cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32l010y8m6,defmt --bins
+cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32l011k8t6,defmt --bins
+cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32l011k8u6,defmt --bins
 ```
 
 These are board declarations, not measured qualification. Both examples assert
@@ -25,6 +27,8 @@ variation. Replace these with the actual qualified board data. On the previous
 sixteen packages, HSI /6 and AHB/APB /1 retain the existing defaults; HSI and
 factory detector LSI remain enabled. Their original configuration is unchanged.
 The three native L010 packages use HSI /12 and the distinct policy below.
+The two native L011 packages use HSI /24 and their own monitoring and handover
+contract below. All previous nineteen configurations and pin selections are unchanged.
 
 On the previous sixteen packages, `crystal` requires the board's 32768 Hz crystal, load capacitors and layout on
 PC14/PC15. Their physical positions are 3/4 on the classic and L031 48-pin
@@ -66,7 +70,7 @@ Both call only `Config.lse` plus `Sysclk::LSE`, then borrow the same source with
 `LseClock` for RTC. The example epoch is deliberate demonstration provisioning;
 replace it with intended wall time. A compatible running RTC is preserved by
 `initialize_if_unset`, but fresh LSE admission still requires its documented RTC
-reset image. Arbitrary warm handover is not supported.
+admission state. Arbitrary warm handover is not supported.
 
 No fixed 1 MHz time driver is selected. Poll budgets are iterations, not elapsed
 startup deadlines. After LSE loss/fallback, published LSE bounds and downstream
@@ -106,8 +110,8 @@ and [own source and package facts](../../docs/qualified-l083-lse.md).
 
 ## Native L010 SYSCLK examples
 
-Only CW32L010F8P6, CW32L010F8U6 and CW32L010Y8M6 select the native example
-branch. They use the existing single `Config.lse` declaration and native
+CW32L010F8P6, CW32L010F8U6 and CW32L010Y8M6 use the native example branch.
+They use the existing single `Config.lse` declaration and native
 `LseFaultDetection::StartupOnly`, with running drive `Level2`, independent
 startup drive `Level10`, 16384 startup cycles and a 20000000-iteration poll
 budget. There is no amplitude field. Both crystal and bypass keep these exact
@@ -178,15 +182,116 @@ reset may retain LSE and POR may be needed. See the
 [native LSE handover](../../docs/qualified-l010-lse.md) and the public
 `init`/`try_init` contract before adapting these examples.
 
-The local script `ci/check-lse-sysclk.sh` declares a future check matrix of
-twenty ordinary libraries and nineteen crystal/bypass package pairs (38
-system-clock firmware binaries), plus the existing auxiliary/other-source
-regression commands. These counts describe script scope, not executed results.
-Record the exact executed subset and its outcomes separately; no hosted CI or
-hardware run follows from adding these commands.
+## Native L011 SYSCLK examples
+
+CW32L011K8T6 (LQFP32) and CW32L011K8U6 (QFN32) share the native configuration
+branch, with running drive `Level2`, independent startup drive `Level10`,
+16384 startup cycles, `StartupOnly` and a 20000000-iteration poll budget.
+The board must qualify both drives, crystal/load/startup or bypass waveform,
+and every-cycle 32766–32770 Hz across the stated 3.0–3.6 V and −20…70 °C.
+These are demonstration declarations, not measurements or universal settings.
+The own source envelope remains 1.7–5.5 V and −40…85 °C. The 1.50 s crystal
+startup value is typical only; no maximum follows from the poll budget.
+
+Crystal uses PC14/OSC32_IN and PC15/OSC32_OUT, physical pins 2/3 on both parts.
+Bypass uses PC14 only; it does not acquire PC15, although inherited reservations
+still apply. Qualify high 0.7×VDDIO…VDDIO, low VSS…0.3×VDDIO, high/low pulses
+at least 450 ns, rise/fall at most 50 ns and 45–55% duty every cycle.
+The existing 100 kHz ceiling is the stricter DS bound; the RM permits up to
+1 MHz. That disagreement does not raise the accepted limit. L011 raw PINLOCK
+rejects a requested source, including reuse; do not infer fault-time pad safety.
+
+StartupOnly requires inherited LSECCS=0 and leaves it clear. LSE loss may leave
+STABLE set and stop the CPU with no error return or functioning timeout, even
+with CLKCCS enabled. The separate `MonitoredExistingRoutes` declaration requires
+stable LSI and a non-erased own factory-halfword match at the first native
+preflight, before configuration-gate writes. Its reference is the unchanged
+10-bit TRIM from 0x001007C2 with the inherited WAIT field; LSIEN may be 0 for an
+automatic hardware request. Its own DS factory range is 29520–41000 Hz, so
+`256 * LSE_min_hz > 129 * 41000` requires integral minimum 20661 Hz. Hardware
+counts 128 LSE edges in 256 LSI periods; 129 is the separate software margin.
+STABLE and factory matching do not measure frequency or per-window jitter.
+The initializer never auto-prepares or factory-calibrates this monitor.
+
+Ordinary legal cold entry remains supported with StartupOnly. Defaults retain
+HSI /24 (numeric divisor 24, encoding 14), AHB /1 and APB /1; successful init
+keeps factory-calibrated HSI enabled. The existing HSI calibration bridge may
+temporarily request unchanged, electrically legal LSI without writing its
+TRIM or WAIT. The RM legal-adjustment contract is separate from the DS factory
+monitor range: RM 32.8 kHz ±10%, its other 30–36 kHz/approximately 0.4% trim-step
+description, and the DS 0.16% trim-step/factory −10/+25% specification are not
+silently reconciled. Board/platform legality is an entry prerequisite, including
+after real reset. Neither reset trim nor a later STABLE read establishes the
+factory-monitored entry fact. StartupOnly does not require factory LSI. Rust
+startup is not the SDK SystemInit routine that explicitly loads both factory
+trims, and SDK erased-halfword replacements do not qualify factory trim.
+
+When the first LSI request was nonstable at entry, checks after retained-owner
+inspection and again immediately before LSIEN reject RTC SOURCE2 (including its
+AWT, regardless of START/AWTEN) and reserved SOURCE4…7; UART1/2/3 SOURCE3
+regardless of RXEN/TXEN; enabled LPTIM ICLKSRC3; MCO SOURCE4; enabled LSIRDY IRQ;
+and enabled LSI-filtered VC1/VC2/LVD even with zero filter count. Later STABLE
+does not skip that second admission. Held reset in an inspected domain rejects
+without release; each configuration gate is restored independently and a failed
+restore retains its specific error. Stable legal automatic LSI clients remain
+admissible with LSIEN=0.
+
+HSI ownership is separate. RTC SOURCE3 owns raw HSIOSC even with START=0 and
+requires already enabled, stable, factory-matching HSI. Necessary HSI start,
+restart or waiting for initially unready HSI also rejects MCO SOURCE3 and
+enabled HSIRDY IRQ. A factory-ready divider-only change preserves raw HSIOSC.
+Active ADC, SYSCLK-filtered LVD and PCLK-filtered or timer-blanked comparators
+retain their own vetoes. L011 also has dedicated PB0 AF3 HSIOSC_OUT: that
+observer can see HSI start/retrim interruptions even with MCO disabled.
+
+These checks do not prove universal inactivity. The functional handover must
+permit or disconnect GTIM/ATIM LSI_OUT selector9, whole-bank GPIO LSI filters,
+retained IWDT and cascaded timer/ADC/GPIO or external observers across the
+temporary LSI request and restoration. Dormant timer working gates are not
+opened merely to inspect them. Native source-zero RTC admission and RTC_OUT
+PA1/PA3 AF3 observers remain part of the handover; a quiet RTC image does not
+prove output-root disconnection. The native quiet record excludes H24 and does
+not interpret reserved CR1 bits1:0 as ACCESS/WINDOW; DATE/TIME/PSC/AWTARR and
+flags remain preserved without unlock, commands or reset. GPIOC inspection can advance whole-bank
+sampling/filter/events before an eventual error, and gate restoration cannot
+undo that progress. The pre-Rust bus-master/memory-ownership boundary remains
+the existing platform entry contract.
+
+The own documented effective fallback is HSI4MHz when selected LSE fails with
+CLKCCS enabled. The software independently budgets full 4.08 MHz for buses and
+Flash without divider credit, even when CLKCCS is clear, and checks configured
+HSI at final divisors separately. This does not establish hardware changes to
+HSI.DIV, enables or bus dividers, or promise execution continues. Initial WAIT3
+is conservative; final WAIT is 0/1/2/3 according to the maximum qualified LSE,
+configured-HSI and fallback HCLK bounds. The default HSI /24 path uses WAIT0.
+Final divisors precede LSE selection; no later CR0 write is permitted. Existing
+fault/brake/IRQ routes remain live. No automatic flag clearing, output repair,
+RTC migration, rollback or bounded fault-to-fallback time is promised. Loss or
+fallback invalidates frozen timing; errors publish no clocks, may retain changed
+hardware/gates/pads and require reset before retry. Ordinary reset may retain LSE.
+
+The existing raw-HSIOSC calendar remains SOURCE3 at nominal 96 MHz with bounds
+94.08–97.92 MHz and actual divisors 120 and 400000. Held LSE calendar capability
+continues to borrow this same physical source with first divisor 1 and second
+16384 (total 32768). SYSCLK selection does not reset or migrate a retained
+RTC/AWT owner. See the [L011 system contract](../../docs/l011-lse-sysclk.md),
+[native L011/L012 handover](../../docs/qualified-l011-l012-lse.md) and public
+`init`/`try_init` contract before adapting these examples.
+
+The Stage61 local script scope was twenty ordinary libraries and nineteen
+crystal/bypass package pairs (38 system-clock binaries). The proposed Stage62
+scope of `ci/check-lse-sysclk.sh` is twenty-two ordinary libraries and twenty-one
+crystal/bypass pairs (42 system-clock binaries), plus the existing four
+auxiliary/other-source regression commands. These are planned local command
+counts, not executed results. Preserve older actual validation receipts and
+record each new executed subset separately. No hosted CI, HAL test, hardware
+run or new probe follows from adding these commands. The unchanged
+`examples/l010-lse-clock` L011 features remain available for auxiliary crystal,
+bypass and HSIOSC-calendar preservation checks outside this local script.
 
 The build script obtains exact memory limits from generated metadata and supplies
 `-Tlink.x` explicitly. Each of the three L010 packages has 65536-byte Flash and
-4096-byte RAM; the examples do not substitute guessed linker sizes.
+4096-byte RAM; both L011 packages also use their own generated memory entries,
+with no guessed linker sizes. No crate or dependency upgrade is involved.
 Compilation/link/ELF inspection do not run this firmware or
 qualify physical startup, detection windows, board timing, fault recovery or RF.

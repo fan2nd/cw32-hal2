@@ -1,0 +1,366 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "scope": "Independent read-only exact-two CW32L011 init-only LSE SYSCLK metadata/source review",
+  "reviewed_on": "2026-10-10",
+  "approved_design_sha256": "207ebd2d4cf0e62856e2f82da5dab06436e6107ccece86cb0b4c83b6d13a21f3",
+  "baseline_commit": "cc3c63bdfe106c0425efe9ea100980e6786179b9",
+  "freeze_manifest_sha256": "9f5b028c85f275eb8a184596ee9f1a7d47ae565af113b2e54bc1d6d655551d9a",
+  "qualified_parts": [
+    "CW32L011K8T6",
+    "CW32L011K8U6"
+  ],
+  "reviewed_source_files": [
+    {
+      "path": "cw32-data/lse-qualified.yaml",
+      "sha256": "ff2fba9144453c4f934778a0fccd06e5185dd1bb054f72dd4aa7efcea1ef83d3",
+      "bytes": 90650,
+      "executable": false
+    },
+    {
+      "path": "cw32-data-gen/src/electrical.rs",
+      "sha256": "7478e5c73758abcc8db91f8139bba512997e918107c1903b66b37b955d7b60a8",
+      "bytes": 167557,
+      "executable": false
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "c4f405ee9c0c613ab169e47aa00bec5736bdbda6550d4527813e46b6376259f6",
+      "bytes": 184923,
+      "executable": false
+    },
+    {
+      "path": "ci/verify-l011-lse-data.py",
+      "sha256": "157104c10808821c5eba462b0d4a66f481f4aca1c1ec51cc36b2d973acf62db9",
+      "bytes": 18843,
+      "executable": true
+    },
+    {
+      "path": "docs/l011-lse-sysclk-qualification.json",
+      "sha256": "91641658261728a660e7f4b41c072c87af861c4cb53808409fb8c65da4b0a613",
+      "bytes": 10492,
+      "executable": false
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "sha256": "31f98f7249f7f46018b28d50a22404c8e0cfe8bcbad78d14f75423c3e10ca19c",
+      "bytes": 355116,
+      "executable": false
+    }
+  ],
+  "preservation": {
+    "auxiliary_profiles": 23,
+    "previous_sysclk_profiles": 19,
+    "current_sysclk_profiles": 21,
+    "exact_added_parts": [
+      "CW32L011K8T6",
+      "CW32L011K8U6"
+    ],
+    "complete_catalog_identical_after_removing_only_two_detectors_and_new_proof_binding": true,
+    "historical_policy_files_unchanged": 25,
+    "source_authority_delta_only_seven_own_evidence_references": true,
+    "source_authority_added_reference_json_pointers": [
+      "/artifacts/5/evidence",
+      "/artifacts/5/members/3/evidence",
+      "/artifacts/5/members/18/evidence",
+      "/artifacts/22/evidence",
+      "/artifacts/22/text/evidence",
+      "/artifacts/23/evidence",
+      "/artifacts/23/text/evidence"
+    ],
+    "schemas_pac_templates_register_models_and_native_leaf_unchanged": true,
+    "unchanged_file_count": 153,
+    "separate_current_source_checker_correction": "ci/verify-l010-lse-data.py drops its stale L011-wide SYSCLK exclusion while retaining own L010 checks and L012 exclusion; the new own L011 checker binds its exact-two target scope."
+  },
+  "own_facts": {
+    "hsi_nominal_hz": 96000000,
+    "hsi_factory_error_percent": 2,
+    "fallback_documented_nominal_hz": 4000000,
+    "fallback_numeric_divisor": 24,
+    "fallback_minimum_hz": 3920000,
+    "fallback_maximum_hz": 4080000,
+    "hsi_default_divisor_encoding": 14,
+    "hsi_no_wait_field": true,
+    "initial_flash_wait": 3,
+    "native_monitor_factory_halfword_address": 1050562,
+    "native_monitor_trim_bits": 10,
+    "native_monitor_factory_maximum_hz": 41000,
+    "rm_legal_lsi_adjustment_percent": 10,
+    "rm_legal_prerequisite_separate": true,
+    "detector_lse_edges": 128,
+    "detector_lsi_cycles": 256,
+    "software_margin_lse_edges": 1,
+    "minimum_integral_monitored_lse_hz": 20661,
+    "startup_only_factory_lsi_prerequisite": false,
+    "sdk_systeminit_explicitly_writes_both_factory_trims": true,
+    "sdk_erased_replacements_qualify_factory": false
+  },
+  "original_evidence_review": {
+    "source_identity_and_selected_fields": "External original-source-identities.json records three independently hashed own originals, selected locked SDK members and selected field correspondence.",
+    "pages": "Twenty RM and six DS pages independently read, including RM57/69/113 and DS51 rendered and visually inspected.",
+    "source_checker": "ci/verify-l011-lse-data.py independently executed against locked original cache; passed 77 page identity bindings, selected own-source semantic anchors, nested SDK SVD fields and exact-two current metadata. No HAL text or inverse historical-register reconstruction is used.",
+    "coverage_limit": "The 77 page receipt hashes establish identity and locators; they do not mean every sentence on every page was semantically reviewed."
+  },
+  "resolved_before_freeze": [
+    {
+      "issue": "Draft UART3 register offsets were 60/76.",
+      "resolution": "Frozen generator/build/checker/qualification use original L011 APBEN1 56 and APBRST1 72, bit8, with SOURCE12/2 and attached LSI enum3. The unchanged register model was correct."
+    },
+    {
+      "issue": "New UART3 typed LSI comparison needed its selected enum bound.",
+      "resolution": "Frozen generator, HAL build proof and current-source checker bind attached UART3 CR1 SOURCE LSI encoding3."
+    }
+  ],
+  "source_checker_results": {
+    "status": "passed",
+    "generated_selections_checked": 54,
+    "hal_execution": false,
+    "hardware_execution": false
+  },
+  "external_verification_records": [
+    {
+      "evidence_kind": "external-evidence",
+      "record": "original-source-identities.json",
+      "sha256": "4c4bd0c2869f623123ec6910c49977f270579b5fecd4b84cf1691f566ff51b59"
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "record": "frozen-source-comparison.json",
+      "sha256": "b42f4f2c9803201f271a5a8ad6ed236b45db5ddde57361981a0cbe00ea5fc6df"
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "record": "current-source-check.json",
+      "sha256": "9f2e8311d378a981b6855d3a55c27de955eeedab745d225dc72035711c982dc8"
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "record": "current-source-generated-check.json",
+      "sha256": "aa7b0ffd50e9495dfa3de64ba4a844f7b92714f300c4d131c3f5653dd184060e"
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "record": "generated-projection-review.json",
+      "sha256": "8e3ff7d75cc86981c8be6ba98f253347cf2dd2b997abe35b9839d468bc6a1d61"
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "record": "emitted-constants-review.json",
+      "sha256": "52a86b19e270774d899922e8271f18cdca1fb4340a65f77167ebc3493eaced18"
+    }
+  ],
+  "findings": [],
+  "limits": [
+    "Source and metadata qualification only; runtime sequencing is separately reviewed.",
+    "No production-source edits, HAL tests, probes, builds or hardware execution performed by this reviewer. Ordinary generated files and completed build records were inspected read-only; this review document is the sole new published-source file written by the reviewer.",
+    "Source inspection is not waveform, jitter, startup, source-loss, fallback-latency or RTC-continuity validation."
+  ],
+  "generated_projection": {
+    "generated_selections_compared": 54,
+    "complete_chip_json_identical_after_only_two_detector_removals": true,
+    "exact_two_changes": [
+      "CW32L011K8T6",
+      "CW32L011K8U6"
+    ],
+    "generic_l011_and_all_l012_excluded": true,
+    "all_generated_data_files_compared": 416,
+    "generated_data_changed_only_two_chip_json": [
+      "chips/CW32L011K8T6.json",
+      "chips/CW32L011K8U6.json"
+    ],
+    "all_generated_pac_files_compared": 486,
+    "generated_pac_changes": [
+      {
+        "path": "cw32-metapac/src/chips/metadata_0017.rs",
+        "sha256": "e28b7ed5cf52dee06213012c7c13ec7527036be2e1dd0f3c67a1a00d37c07d03"
+      }
+    ],
+    "generated_pac_difference_exactly_one_shared_metadata_detector_addition": true,
+    "shared_metadata_used_only_by": [
+      "cw32l011k8t6",
+      "cw32l011k8u6"
+    ],
+    "six_metadata_source_hashes_unchanged_after_generation": true,
+    "initial_projection_receipt_status_note": "The historical generated-projection-review.json pending emitted-constants item is closed by emitted_constants_check and successful_ordinary_build_binding in this final review."
+  },
+  "emitted_constants_check": [
+    {
+      "profile": "cw32l011k8t6,rt,defmt",
+      "generated_rs_record": "external-evidence:cw32l011k8t6-generated.rs",
+      "generated_rs_sha256": "c1894452eb0fdb9d202ae356b06d5ca31f4de69a35a7c81d1afcadd261204d30",
+      "build_output_record": "external-evidence:cw32l011k8t6-build-output.txt",
+      "build_output_sha256": "1d051ebc6ad9bccebc743e6d5542dded7c4faaed5bddd371703ca0867146813f",
+      "library_feature_fingerprint_sha256": "40aae3fb6f64edeaf2648fa96ae3c27e0eec2364f2c9a0469cae6d3d933cf4e1",
+      "dependency_file_sha256": "def6efd4588f35ebf12b19c0b0043d2c2f62a75fef569ac003ec9c0601779321",
+      "binding": "Library fingerprint has exact package,rt,defmt; matching dependency file names current source lib.rs and the inspected generated file.",
+      "rcc_lsi_sysclk_cfg_absent": true,
+      "default_hsi_divisor": 24,
+      "compiled_divisor_encoding_assertions_present": true,
+      "constants_checked": {
+        "RCC_HSI_FREQUENCY_HZ": 96000000,
+        "RCC_HSI_ERROR_PERCENT": 2,
+        "RCC_LOW_VOLTAGE_THRESHOLD_MV": 1800,
+        "RCC_LOW_VOLTAGE_BUS_MAX_HZ": 24000000,
+        "RCC_HIGH_VOLTAGE_BUS_MAX_HZ": 96000000,
+        "RCC_FACTORY_HSI_TRIM_ADDRESS": 1050560,
+        "RCC_INITIAL_FLASH_WAIT": 3,
+        "RCC_FLASH_WAIT_STEP_HZ": 24000000,
+        "RCC_LSE_SYSCLK_LSE_EDGES": 128,
+        "RCC_LSE_SYSCLK_LSI_CYCLES": 256,
+        "RCC_LSE_SYSCLK_MARGIN_LSE_EDGES": 1,
+        "RCC_LSE_MONITORED_LSI_MAXIMUM_HZ": 41000,
+        "RCC_LSE_DETECTOR_LSE_EDGES": 128,
+        "RCC_LSE_DETECTOR_LSI_CYCLES": 256,
+        "RCC_LSE_DETECTOR_MARGIN_LSE_EDGES": 1,
+        "RCC_LSE_LSI_FACTORY_TRIM_ADDRESS": 1050562,
+        "RCC_FIXED_CCS_HSI_DIVISOR": 24,
+        "RCC_LSE_NOMINAL_HZ": 32768,
+        "RCC_LSE_MAXIMUM_HZ": 100000
+      }
+    },
+    {
+      "profile": "cw32l011k8u6,rt,defmt",
+      "generated_rs_record": "external-evidence:cw32l011k8u6-generated.rs",
+      "generated_rs_sha256": "c1894452eb0fdb9d202ae356b06d5ca31f4de69a35a7c81d1afcadd261204d30",
+      "build_output_record": "external-evidence:cw32l011k8u6-build-output.txt",
+      "build_output_sha256": "1d051ebc6ad9bccebc743e6d5542dded7c4faaed5bddd371703ca0867146813f",
+      "library_feature_fingerprint_sha256": "d3650278342e9267329df9fd2a881f99bfb80af83b55ea3aa7c7c212af10e5f8",
+      "dependency_file_sha256": "71e0461806ac535038d3024be23f6ee2800c9475da995622c5d60a103cb9b90c",
+      "binding": "Library fingerprint has exact package,rt,defmt; matching dependency file names current source lib.rs and the inspected generated file.",
+      "rcc_lsi_sysclk_cfg_absent": true,
+      "default_hsi_divisor": 24,
+      "compiled_divisor_encoding_assertions_present": true,
+      "constants_checked": {
+        "RCC_HSI_FREQUENCY_HZ": 96000000,
+        "RCC_HSI_ERROR_PERCENT": 2,
+        "RCC_LOW_VOLTAGE_THRESHOLD_MV": 1800,
+        "RCC_LOW_VOLTAGE_BUS_MAX_HZ": 24000000,
+        "RCC_HIGH_VOLTAGE_BUS_MAX_HZ": 96000000,
+        "RCC_FACTORY_HSI_TRIM_ADDRESS": 1050560,
+        "RCC_INITIAL_FLASH_WAIT": 3,
+        "RCC_FLASH_WAIT_STEP_HZ": 24000000,
+        "RCC_LSE_SYSCLK_LSE_EDGES": 128,
+        "RCC_LSE_SYSCLK_LSI_CYCLES": 256,
+        "RCC_LSE_SYSCLK_MARGIN_LSE_EDGES": 1,
+        "RCC_LSE_MONITORED_LSI_MAXIMUM_HZ": 41000,
+        "RCC_LSE_DETECTOR_LSE_EDGES": 128,
+        "RCC_LSE_DETECTOR_LSI_CYCLES": 256,
+        "RCC_LSE_DETECTOR_MARGIN_LSE_EDGES": 1,
+        "RCC_LSE_LSI_FACTORY_TRIM_ADDRESS": 1050562,
+        "RCC_FIXED_CCS_HSI_DIVISOR": 24,
+        "RCC_LSE_NOMINAL_HZ": 32768,
+        "RCC_LSE_MAXIMUM_HZ": 100000
+      }
+    }
+  ],
+  "successful_ordinary_build_binding": {
+    "target": "thumbv6m-none-eabi",
+    "builds_executed_by_this_reviewer": false,
+    "source_before_sha256": "8419be877908623e52bdffd22f191f8a404cbedc3d8db665171297d334e19660",
+    "source_after_sha256": "8419be877908623e52bdffd22f191f8a404cbedc3d8db665171297d334e19660",
+    "source_before_equals_after": true,
+    "six_reviewed_metadata_hashes_match_build_source_snapshot": true,
+    "library_checks": [
+      {
+        "profile": "cw32l011k8t6,rt,defmt",
+        "exit": 0,
+        "record": "external-evidence:verification/main/lib-cw32l011k8t6.log",
+        "sha256": "75d91513e2d27e1793b6e9a6d6d3cb9d93b98d29cfe1d75b7a790af26cd6bb2b"
+      },
+      {
+        "profile": "cw32l011k8u6,rt,defmt",
+        "exit": 0,
+        "record": "external-evidence:verification/main/lib-cw32l011k8u6.log",
+        "sha256": "0a9eef981502a642153ea77f04476e80d54692c1cd9a4fcd595279911b4e0500"
+      },
+      {
+        "profile": "cw32l011,rt,defmt",
+        "exit": 0,
+        "record": "external-evidence:verification/main/lib-cw32l011.log",
+        "sha256": "86b334706f03839840504dfe33f11d39162a1fc30196bf9c04a58c8cb55e6a1b"
+      },
+      {
+        "profile": "cw32l010f8p6,rt,defmt",
+        "exit": 0,
+        "record": "external-evidence:verification/main/lib-cw32l010f8p6.log",
+        "sha256": "375bce8cef0a3ab182d684ee5630e236b328b66439ee178de38c5991948e7d0d"
+      },
+      {
+        "profile": "cw32l010,rt,defmt",
+        "exit": 0,
+        "record": "external-evidence:verification/main/lib-cw32l010.log",
+        "sha256": "77473bd1d9923459cd15198a8ed7d8677a4ad1ede4365df206b9fe1216492f78"
+      },
+      {
+        "profile": "cw32l012c8t6,rt,defmt",
+        "exit": 0,
+        "record": "external-evidence:verification/main/lib-cw32l012c8t6.log",
+        "sha256": "42e0568e41c17540b1ee40dc743d2df26f81a4141819a8660be14c59cc1f7135"
+      },
+      {
+        "profile": "cw32l083rct6,rt,defmt",
+        "exit": 0,
+        "record": "external-evidence:verification/main/lib-cw32l083rct6.log",
+        "sha256": "d6f16ad78da4112a29efd360df0a8103982e5c1daa4357328353d5557a7eb327"
+      },
+      {
+        "profile": "cw32f030c8t7,rt,defmt",
+        "exit": 0,
+        "record": "external-evidence:verification/main/lib-cw32f030c8t7.log",
+        "sha256": "82ff9ff619f4de55eda67b04939d464787c82513ad83fadaeb76fcfb7ffddcb8"
+      }
+    ],
+    "binding_scope": "Eight ordinary library commands/logs independently checked. ELF linkage is covered by the coordinator build receipt and was not independently reviewed here."
+  },
+  "warnings": "Both exact L011 library checks complete with three unused generated detector-constant warnings; no compilation failure. The analogous warnings were already present in previous L010 acceptance.",
+  "external_evidence": [
+    {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "path": "sources/vendor/CW32L011_UserManual_CN_V1.1.pdf",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "bytes": 15199549,
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+      "matches_authority": true,
+      "derived_text": {
+        "source_ref": "text:CW32L011_UserManual_CN_V1.1.txt",
+        "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3",
+        "bytes": 1667087,
+        "matches_authority": true
+      }
+    },
+    {
+      "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "path": "sources/vendor/CW32L011_DataSheet_CN_V1.1.pdf",
+      "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+      "bytes": 2687011,
+      "url": "https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf",
+      "matches_authority": true,
+      "derived_text": {
+        "source_ref": "text:CW32L011_DataSheet_CN_V1.1.txt",
+        "sha256": "f8429daa0082c24f2d191855d6405d38cc1994c8d468827cb402bc6effc1ea6c",
+        "bytes": 157393,
+        "matches_authority": true
+      }
+    },
+    {
+      "source_ref": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "path": "sources/vendor/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+      "bytes": 1808978,
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "matches_authority": true
+    }
+  ],
+  "initial_review": {
+    "evidence_kind": "external-evidence",
+    "record": "metadata-review-v1.json",
+    "sha256": "2a5c4e635224a4c4acba1ff4d3321f4db0880ce21caaa6647745854a24f6a0ef",
+    "preserved_unchanged": true
+  },
+  "freeze_status_correction": {
+    "evidence_kind": "external-evidence",
+    "record": "metadata-freeze/proposal-status-correction.json",
+    "sha256": "7bd2c27363a6e518df94c96900c9617b3d0b1060e8bf27783b529a10067ef957",
+    "note": "Original metadata manifest said the separate L010 checker proposal was unapplied; the correction records coordinator application before freeze. Neither the six frozen files nor original manifest was rewritten."
+  }
+}

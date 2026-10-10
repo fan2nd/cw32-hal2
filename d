@@ -180,6 +180,7 @@ case "${1:-help}" in
     python3 ci/verify-l052-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l052-lse.json
     python3 ci/verify-l083-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l083-lse.json
     python3 ci/verify-l010-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l010-lse.json
+    python3 ci/verify-l011-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l011-lse.json
     python3 tests/audit_generated_parity.py
     python3 tests/verify_dma_owned_evidence.py
     python3 tests/verify_remaining_serial_af.py --sources "$CW32_SOURCES"

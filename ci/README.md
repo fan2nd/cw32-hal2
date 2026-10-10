@@ -76,14 +76,17 @@ example's build.rs derives exact memory bounds and links with -Tlink.x. Inspect
 the resulting ELF entry, vectors and PT_LOAD regions separately before flashing.
 
 
-`./d check-lse-sysclk` is a bounded local compile/link entry: twenty ordinary ARM
-libraries for the classic3, exact5 L031/R031/W031, exact3 L052, exact5 L083, exact3 L010 and excluded
-F020F6U7, thirty-eight crystal/bypass SYSCLK+RTC firmware links, and four existing
+`./d check-lse-sysclk` declares a bounded local compile/link scope: twenty-two
+ordinary ARM libraries for classic3, exact5 L031/R031/W031, exact3 L052, exact5
+L083, exact3 L010, exact2 L011 and excluded F020F6U7; forty-two crystal/bypass
+SYSCLK+RTC firmware links; and four existing
 HSI+aux-LSE, LSI, HSE and PLL firmware regressions. It runs no HAL tests or hardware
 and adds no hosted workflow. The new example build script derives exact FLASH/RAM from metadata and
 passes `-Tlink.x`; inspect each actual ELF's vectors, reset entry and PT_LOAD
 regions separately. A compile pass does not execute cold/reuse/reject or fixed
-1 MHz time-driver rejection. See [the new example contract](../examples/lse-sysclk/README.md).
+1 MHz time-driver rejection. These numbers describe future local commands, not
+completed runs. Record each actual executed subset separately and preserve older
+validation receipts. See [the example contract](../examples/lse-sysclk/README.md).
 
 The L052 addition covers only CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6.
 The example's exact-feature cfg supplies both independent startup analog fields;
@@ -101,3 +104,21 @@ after an unchanged-ready-HSI bridge and both stop acknowledgments; its outputs
 are intentionally stopped. These are the local script's future command scope
 and reviewed API conditions, not a claim of completed builds or hardware
 qualification. See [the L083 system contract](../docs/l083-lse-sysclk.md).
+
+
+The Stage61 script scope of twenty libraries and thirty-eight SYSCLK firmware
+links is historical. Stage62 adds only CW32L011K8T6/K8U6, with PC14/PC15 on pins
+2/3, native Level2/Level10 drives, 16384 startup cycles and StartupOnly. The
+example retains HSI /24 and the existing generated-memory/link.x path. Its
+3.0–3.6 V, −20…70 °C and 32766–32770 Hz declarations require actual board
+qualification. The L011 41000 Hz factory-monitor contract is distinct from the
+unchanged legal-LSI HSI-calibration bridge; no monitor is auto-prepared.
+First-request checks include UART3; the residual handover explicitly includes
+PB0 AF3 HSIOSC_OUT. See [the L011 contract](../docs/l011-lse-sysclk.md).
+
+The existing L011 auxiliary crystal, bypass and HSIOSC-calendar examples in
+`examples/l010-lse-clock` remain separate preservation checks outside this
+script. Neither the matrix description nor these available commands claim a
+build, probe, test or hardware run. Current capability scope is twenty-one
+system packages and twenty-three auxiliary packages, with generic aliases and
+L012 excluded from LSE SYSCLK. No dependency upgrade or hosted workflow is added.

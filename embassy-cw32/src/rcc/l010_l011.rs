@@ -1,6 +1,6 @@
 //! CW32L010/CW32L011 one-time factory-HSI and qualified direct-HSE clocks.
-//! Exact qualified L010 packages also support native init-only LSE SYSCLK;
-//! see docs/l010-lse-sysclk.md and the functional handover on [`crate::init`].
+//! Exact qualified L010/L011 packages also support native init-only LSE SYSCLK;
+//! see docs/l010-lse-sysclk.md, docs/l011-lse-sysclk.md and [`crate::init`].
 //!
 //! Own source qualification, electrical limits and retained-owner rules:
 //! docs/qualified-l010-l011-hse.md. The incoming source, buses, Flash latency,
@@ -171,23 +171,27 @@ pub enum Sysclk {
     HSI,
     /// Qualified external high-speed oscillator or input.
     HSE,
-    /// Native LSE on CW32L010F8P6/F8U6/Y8M6; requires [`Config::lse`].
+    /// Native LSE on CW32L010F8P6/F8U6/Y8M6 and CW32L011K8T6/K8U6.
+    /// Requires [`Config::lse`]; generic-family and L012 targets are excluded.
     ///
     /// HSI remains factory calibrated and enabled. StartupOnly can stop the CPU
     /// on later source loss without a fault or error return. MonitoredExistingRoutes
-    /// requires an inherited stable, legal unchanged LSI and preserves existing
-    /// IRQ/brake routes, which may affect observers before an init error. Inherited
+    /// requires an inherited stable, legal unchanged LSI; L011 additionally
+    /// requires its own factory-matching TRIM at entry. Existing IRQ/brake routes
+    /// are preserved and may affect observers before an init error. Inherited
     /// CLKCCS is preserved; documented HSI4MHz fallback invalidates frozen timings
     /// and does not guarantee progress or register/divider preservation.
     ///
-    /// The existing HSI calibration path may temporarily request unchanged LSI.
-    /// The handover must permit residual timer/GPIO/IWDT/external observer progress;
-    /// concrete consumer vetoes do not establish universal idleness. See
-    /// [`crate::init`], [`crate::try_init`] and docs/l010-lse-sysclk.md. All waits
+    /// The existing HSI calibration path may temporarily request unchanged legal
+    /// LSI; StartupOnly does not require factory LSI. The handover must permit
+    /// residual timer/GPIO/IWDT/external progress and L011 PB0 AF3 raw-HSI output
+    /// interruptions; concrete vetoes do not establish universal idleness. See
+    /// [`crate::init`], [`crate::try_init`], docs/l010-lse-sysclk.md and
+    /// docs/l011-lse-sysclk.md. All waits
     /// count CPU iterations while execution continues. Errors publish no clocks,
     /// retain source/pad ownership and require reset before retry; ordinary reset
     /// may retain LSE. The fixed 1 MHz time driver cannot use this system tree.
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     LSE,
 }
 
@@ -285,8 +289,8 @@ pub struct Config {
     pub hsi: Hsi,
     /// Board-qualified HSE; its oscillator pads are reserved even with HSI SYSCLK.
     pub hse: Option<Hse>,
-    /// Native board-qualified L010/L011 LSE. Exact qualified L010 packages may
-    /// select it as SYSCLK; L011 retains auxiliary-only support.
+    /// Native board-qualified L010/L011 LSE. The exact qualified three L010 and
+    /// two L011 packages may select it as SYSCLK.
     /// See [`crate::init`] and [`crate::try_init`] for the required RTC_OUT/
     /// RTC_1Hz observer disconnection and whole-GPIOB (L010) or GPIOC (L011) handover.
     /// Genuine reset entry with untouched selectors meets those functional
@@ -368,7 +372,7 @@ impl Config {
         let source = match self.sys {
             Sysclk::HSI => crate::rcc::ClockBounds::hsi(self.hsi.div.divisor()),
             Sysclk::HSE => hse.ok_or(Error::HseNotConfigured)?,
-            #[cfg(all(cw32l010, rcc_lse))]
+            #[cfg(rcc_lse)]
             Sysclk::LSE => lse.ok_or(Error::LseNotConfigured)?.1,
         };
         let clocks = Clocks {
@@ -397,9 +401,9 @@ impl Config {
                 ..clocks
             },
         )?;
-        // Own L010 documents effective HSI4MHz fallback, without guaranteeing
+        // Both own families document effective HSI4MHz fallback, without guaranteeing
         // retained bus-divider fields. Give neither HCLK nor PCLK divisor credit.
-        #[cfg(all(cw32l010, rcc_lse))]
+        #[cfg(rcc_lse)]
         if self.sys == Sysclk::LSE {
             crate::rcc::operating::validate(
                 self.operating_conditions,
@@ -479,16 +483,16 @@ pub enum Error {
     #[cfg(rcc_lse)]
     LseNotReady,
     /// The LSE system target requires a board-qualified LSE declaration.
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     LseNotConfigured,
     /// A first request for entry-nonstable LSI has an inherited consumer/IRQ owner.
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     LsiClockInUse,
     /// Starting/restarting or awaiting HSI conflicts with raw-HSI MCO or HSIRDY.
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     HsiClockInUse,
     /// LSE selection did not acknowledge within the CPU-iteration budget.
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     LseClockSwitchTimeout,
     InvalidHseBounds,
     HseOutsideQualifiedRange,
@@ -647,7 +651,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     let old_hse = r.hse().read();
     let old_lsi = r.lsi().read();
     let old_lse = r.lse().read();
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     let lse_target = (config.sys == Sysclk::LSE).then(|| LseSysclkSnapshot {
         sources: old_sources,
         hsi: old_hsi,
@@ -704,7 +708,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
 
     // Inspect actual central gates, restore their incoming state, never reset.
     // SOURCE owns RTC/AWT's raw clock even when the calendar START bit is zero.
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     if lse_target.is_some()
         && <crate::peripherals::RTC as crate::rcc::SealedRccPeripheral>::RCC_INFO.reset_asserted()
     {
@@ -735,7 +739,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             return Err(Error::HseClockInUse);
         }
     }
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     if lse_target.is_some()
         && <crate::peripherals::ADC as crate::rcc::SealedRccPeripheral>::RCC_INFO.reset_asserted()
     {
@@ -749,7 +753,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     }
     // LVD and both comparators share the actual VC configuration gate. BGR
     // lives in ADC; none of these reads changes BGR, TSEN or reference selection.
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     if lse_target.is_some()
         && <crate::peripherals::VC1 as crate::rcc::SealedRccPeripheral>::RCC_INFO.reset_asserted()
     {
@@ -822,9 +826,9 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         || vc2_filtered;
     // Freeze the FIRST request classification from entry, including automatic
     // clients with LSIEN=0. Later STABLE progress must not erase these checks.
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     let first_lsi_request = lse_target.is_some() && (needs_trim || needs_lsi) && !old_lsi.stable();
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     if let Some(entry) = lse_target {
         entry.hsi_ownership(trim)?;
         if first_lsi_request {
@@ -887,7 +891,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     // view of the WAIT field we just changed. Prove all ORIGINAL non-WAIT bits,
     // IER, LSE and LSI parameters before recapturing only this owned difference.
     // A monitored source already passed stable-LSI admission before any gate.
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     let lse_admission = if let Some(entry) = lse_target {
         if u32::from(pac::FLASH.cr2().read().wait()) != MAX_FLASH_WAIT {
             return Err(Error::FlashLatencyTimeout);
@@ -929,7 +933,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     )?;
     barrier();
     if needs_trim || needs_lsi {
-        #[cfg(all(cw32l010, rcc_lse))]
+        #[cfg(rcc_lse)]
         if let Some(entry) = lse_target {
             check_external_faults(monitor_hse, monitor_lse)?;
             entry.before_lse_start(config)?;
@@ -937,7 +941,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
                 return Err(Error::LsiTimeout);
             }
         }
-        #[cfg(all(cw32l010, rcc_lse))]
+        #[cfg(rcc_lse)]
         if first_lsi_request {
             // Repeat selectors/resets/IRQ/analog ownership at the use edge;
             // use the latched entry classification even if LSI is now stable.
@@ -1097,7 +1101,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         config.timeout,
         Error::TemporaryClockRestoreTimeout,
     )?;
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     if let Some(entry) = lse_target {
         entry.before_lse_start(config)?;
     }
@@ -1105,14 +1109,14 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     if let (Some(lse), Some(admission)) = (config.lse, lse_admission) {
         super::lse::start(lse, admission, cs)?;
     }
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     if let Some(entry) = lse_target {
         return finish_lse_sysclk(config, clocks, entry, trim, needs_lsi, cs);
     }
     let sysclk = match config.sys {
         Sysclk::HSI => ClockSource::Hsi,
         Sysclk::HSE => ClockSource::Hse,
-        #[cfg(all(cw32l010, rcc_lse))]
+        #[cfg(rcc_lse)]
         Sysclk::LSE => unreachable!("LSE target completed above"),
     };
     // Keep guarded buses until the target source has acknowledged selection.
@@ -1233,7 +1237,7 @@ fn retained_inspection_error(
     config: Config,
     error: super::peripheral::ClockInspectionError,
 ) -> Error {
-    #[cfg(all(cw32l010, rcc_lse))]
+    #[cfg(rcc_lse)]
     if config.sys == Sysclk::LSE {
         return lse_target_inspection_error(error);
     }
@@ -1241,7 +1245,7 @@ fn retained_inspection_error(
     Error::RetainedClockInspectionTimeout
 }
 
-#[cfg(all(cw32l010, rcc_lse))]
+#[cfg(rcc_lse)]
 fn lse_target_inspection_error(error: super::peripheral::ClockInspectionError) -> Error {
     match error {
         super::peripheral::ClockInspectionError::EnableFailed { restore_failed } => {
@@ -1261,7 +1265,7 @@ fn lse_target_inspection_error(error: super::peripheral::ClockInspectionError) -
 
 /// Target-only identity from before the first configuration-gate write. Normal
 /// native Admission remains responsible for oscillator/pad/monitor ownership.
-#[cfg(all(cw32l010, rcc_lse))]
+#[cfg(rcc_lse)]
 #[derive(Clone, Copy)]
 struct LseSysclkSnapshot {
     sources: pac::sysctrl::regs::Cr1,
@@ -1274,7 +1278,7 @@ struct LseSysclkSnapshot {
     mco: pac::sysctrl::regs::Mco,
 }
 
-#[cfg(all(cw32l010, rcc_lse))]
+#[cfg(rcc_lse)]
 impl LseSysclkSnapshot {
     fn policy_unchanged(self) -> Result<(), Error> {
         let r = pac::SYSCTRL;
@@ -1370,6 +1374,8 @@ impl LseSysclkSnapshot {
         for (info, uart) in [
             (crate::peripherals::UART1::RCC_INFO, pac::UART1),
             (crate::peripherals::UART2::RCC_INFO, pac::UART2),
+            #[cfg(cw32l011)]
+            (crate::peripherals::UART3::RCC_INFO, pac::UART3),
         ] {
             if info.reset_asserted() {
                 return Err(Error::LsiClockInUse);
@@ -1460,10 +1466,10 @@ impl LseSysclkSnapshot {
     }
 }
 
-/// Own L010 target tail: final divisors under calibrated HSI, then the last CR0
+/// Own L010/L011 target tail: final divisors under calibrated HSI, then the last CR0
 /// write selects LSE. All fault, Flash and pad windows after it are read-only
 /// with respect to CR0, so fallback cannot be accidentally switched back.
-#[cfg(all(cw32l010, rcc_lse))]
+#[cfg(rcc_lse)]
 fn finish_lse_sysclk(
     config: Config,
     mut clocks: Clocks,
@@ -1567,8 +1573,8 @@ fn finish_lse_sysclk(
             return Err(Error::ClockConfigurationTimeout);
         }
     }
-    // GPIOB is a working gate, including during exact reuse. Native verify
-    // checks LSE pads and its tentative monitor marker; no clock is published.
+    // GPIOB (L010) or GPIOC (L011) is a working gate, also during exact reuse.
+    // Native verify checks pads and the monitor marker; no clock is published.
     super::lse::verify(lse, cs)?;
     verify(ClockSource::Lse)?;
     if u32::from(pac::FLASH.cr2().read().wait()) != final_wait {
