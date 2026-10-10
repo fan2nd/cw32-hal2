@@ -45,6 +45,8 @@ def required_evidence(root: Path) -> set[str]:
     lock = json.loads((root / SOURCE_LOCK).read_text())
     required = SOURCE_MANIFESTS | SOURCE_DECLARATIONS | set(approved_sdk_members(lock))
     required.add("docs/f020-x030-hsi-pll-independent-review.json")
+    required.add("docs/l083-lse-sysclk-metadata-review.json")
+    required.add("docs/l083-lse-sysclk-runtime-review.json")
     required.add("docs/lse-l010-independent-runtime-review.json")
     required.add("docs/lse-native-low-power-independent-runtime-review.json")
     required.add("docs/lse-native-low-power-final-correspondence.json")

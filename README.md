@@ -177,6 +177,17 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   bus dividers; fixed fallback coverage uses undivided 8.16 MHz without assuming
   divider retention. Whole-bank inspection and matching stopped-LSI startup
   can resume functional consumers. See [the exact-three contract](docs/l052-lse-sysclk.md).
+- CW32L083RBT6, CW32L083RCT6, CW32L083RCS6, CW32L083MCT6 and CW32L083VCT6:
+  init-only LSE SYSCLK through the same `Config.lse` declaration and own
+  factory-LSI monitor. This brings LSE system targets from eleven to sixteen
+  exact packages; all twenty-three auxiliary-LSE qualifications stay unchanged.
+  The new target requires declared minimum VDD at least 1.8 V, conservative raw
+  factory-HSI fallback coverage at 48.96 MHz with no HSI/AHB/APB divider credit,
+  and retained Flash WAIT2. Inherited enabled PLL first escapes through legal
+  unchanged ready HSI, then stops with both enable-clear and not-stable
+  acknowledgments; this intentionally stops its outputs. The caller must hand
+  over quiescent consumers. No runtime switching, independent PLL-output
+  lifecycle or fault recovery is added. See [the exact-five contract](docs/l083-lse-sysclk.md).
 - F020/F030/A030: direct qualified HSE crystal/bypass system clocks with explicit
   board nominal/minimum/maximum bounds, preserved factory HSI, mandatory CCS/LSI,
   retained-source protection and oscillator-pad reservation. See

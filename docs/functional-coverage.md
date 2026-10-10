@@ -159,16 +159,36 @@ still apply.
   Other ten families retain their previous qualification. Runtime switching and
   low-power restoration remain outside this slice. See the
   [complete factory-LSI contract](factory-lsi-sysclk.md).
-- Init-only LSE SYSCLK is qualified only on CW32F020C6U7, CW32F030C8T7 and
-  CW32A030C8T7 through the single Config.lse declaration. Factory detector LSI
-  is prepared before mandatory CCS; HSI and inherited PLL/reference are retained.
-  The target-only modeled 129/256 count margin uses each family's LSI maximum;
-  it is distinct from board-qualified LSE every-cycle timing and rate-only LSI.
-  Final buses/Flash are installed on HSI before one LSE selection. The same LSE
-  tuple supplies RTC. The fixed 1 MHz time driver rejects before ownership.
-  All old source targets and the 23 auxiliary-LSE packages retain their admission
-  and operation order. Frozen LSE timing is invalid after loss/fallback. See
-  [the exact-package contract](classic-lse-sysclk.md).
+- Init-only LSE SYSCLK is qualified on sixteen exact packages through the single
+  Config.lse declaration: classic3, five L031/R031/W031, three L052 and five L083.
+  Family aliases and other packages are excluded. Classic CW32F020C6U7,
+  CW32F030C8T7 and CW32A030C8T7 prepare factory detector LSI before mandatory
+  CCS and retain HSI plus inherited PLL/reference; see the
+  [classic contract](classic-lse-sysclk.md). L031/R031/W031 preserves configurable
+  CCS and its own consumer/monitor admission; see the
+  [five-package contract](l031-r031-w031-lse-sysclk.md). L052 retains separate
+  startup/run analog banks and its independent undivided 8.16 MHz fixed fallback
+  budget; see the [three-package contract](l052-lse-sysclk.md).
+  L083 adds only CW32L083RBT6/RCT6/RCS6/MCT6/VCT6, with one analog bank and
+  no L052 startup-drive/amplitude fields. This raises the system target count
+  from eleven to sixteen while all 23 auxiliary-LSE qualifications remain unchanged.
+  Its minimum declared VDD is at least 1.8 V; conservative raw factory-HSI
+  fallback uses 48.96 MHz without HSI/AHB/APB divider credit, even with CLKCCS
+  off. Configured HSI at final bus dividers is checked independently and Flash
+  WAIT2 remains after selection. Inherited enabled PLL first escapes through
+  independently legal unchanged ready HSI; both PLLEN=0 and PLL.STABLE=0
+  precede any reference change. PLL configuration is preserved, but stopping it
+  intentionally stops its outputs, which the caller must leave quiescent.
+  There is no independent PLL-output lifecycle; see the
+  [L083 system contract](l083-lse-sysclk.md).
+  The modeled 129/256 count margin uses each family's LSI maximum and is
+  distinct from board-qualified LSE every-cycle timing and rate-only LSI.
+  Final bus divisors are installed on HSI before one LSE selection; Flash follows
+  each family's qualified sequence. L083 permits no later CR0 write, even on
+  failure. The same LSE tuple supplies RTC.
+  The fixed 1 MHz time driver rejects before ownership. Old source targets and
+  auxiliary-LSE paths retain admission/order. Frozen LSE timing is invalid after
+  loss/fallback; no runtime switching, fault recovery or silicon guarantee follows.
 - Factory-HSI- and HSE-fed system PLL is qualified on F020/F030/A030/L083, the four
   documented system-PLL families. R031/W031 radio synthesis remains separate
   and user-deferred. The nine F020 and twelve F030/A030/L083 HSI pairs remain admitted

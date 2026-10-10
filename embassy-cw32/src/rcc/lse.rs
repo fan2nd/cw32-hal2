@@ -114,7 +114,7 @@ fn monitor_ready(require_frozen: bool) -> bool {
     if !super::l031_r031_w031::lse_sysclk_monitor_ready() {
         return false;
     }
-    #[cfg(rcc_cw32l052_v1)]
+    #[cfg(any(rcc_cw32l052_v1, rcc_cw32l083_v1))]
     if !super::l052_l083::lse_sysclk_monitor_ready() {
         return false;
     }
@@ -150,11 +150,13 @@ fn freeze_monitor(cs: critical_section::CriticalSection<'_>) -> Result<(), Error
     }
     Ok(())
 }
-// The L052 system target supplies its own stronger cold/start use-edge checks.
+// L052/L083 system targets supply their own stronger cold/start use-edge checks.
 // This target-only entry freezes the same common RTC monitor, without changing
 // the existing auxiliary startup path or publishing system-clock success.
-#[cfg(rcc_cw32l052_v1)]
-pub(super) fn freeze_sysclk_monitor(cs: critical_section::CriticalSection<'_>) -> Result<(), Error> {
+#[cfg(any(rcc_cw32l052_v1, rcc_cw32l083_v1))]
+pub(super) fn freeze_sysclk_monitor(
+    cs: critical_section::CriticalSection<'_>,
+) -> Result<(), Error> {
     freeze_monitor(cs)
 }
 

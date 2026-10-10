@@ -28,6 +28,8 @@ use crate::{pac, time::Hertz};
 use core::cell::Cell;
 use critical_section::Mutex;
 
+#[cfg(all(rcc_lse, rcc_cw32l083_v1))]
+mod l083_lse_sysclk;
 #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
 mod lse_sysclk;
 #[cfg(rcc_hse)]
@@ -261,7 +263,9 @@ pub enum Sysclk {
     /// Qualified external high-speed oscillator or input.
     HSE,
     /// Init-only board-qualified LSE, with retained factory LSI monitoring.
-    #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+    /// On the five qualified L083 packages, conservative fallback admission
+    /// requires VDD >= 1.8 V and retains Flash WAIT2 regardless of dividers.
+    #[cfg(rcc_lse)]
     LSE,
     /// L083 HSI/HSE-fed PLL, with independent electrical and analog-bin checks.
     #[cfg(rcc_pll)]
@@ -486,7 +490,7 @@ impl Config {
             let source = match self.sys {
                 Sysclk::HSI => crate::rcc::ClockBounds::hsi(self.hsi.div.divisor()),
                 Sysclk::HSE => hse.ok_or(Error::HseNotConfigured)?,
-                #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+                #[cfg(rcc_lse)]
                 Sysclk::LSE => {
                     use crate::rtc::sealed::Instance;
                     let (config, bounds) = lse.ok_or(Error::LseNotConfigured)?;
@@ -549,6 +553,29 @@ impl Config {
                     self.operating_conditions,
                     Clocks {
                         source: crate::rcc::ClockBounds::hsi(crate::RCC_FIXED_CCS_HSI_DIVISOR),
+                        dividers: [self.hsi.div.divisor(), 1, 1],
+                        ..clocks
+                    },
+                )?;
+            }
+            #[cfg(all(rcc_lse, rcc_cw32l083_v1))]
+            if self.sys == Sysclk::LSE {
+                // Requested final divisors are installed while still on HSI.
+                crate::rcc::operating::validate(
+                    self.operating_conditions,
+                    Clocks {
+                        source: crate::rcc::ClockBounds::hsi(self.hsi.div.divisor()),
+                        ..clocks
+                    },
+                )?;
+                // Own L083 manual specifies CCS selecting HSI, without an
+                // explicit post-fault divider contract. This target gives no
+                // HSI/AHB/APB divisor credit: 48.96 MHz requires VDD >= 1.8 V.
+                // It is a conservative bound, not a hardware divider rewrite.
+                crate::rcc::operating::validate(
+                    self.operating_conditions,
+                    Clocks {
+                        source: crate::rcc::ClockBounds::hsi(1),
                         dividers: [self.hsi.div.divisor(), 1, 1],
                         ..clocks
                     },
@@ -634,11 +661,11 @@ impl Clocks {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
-    #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+    #[cfg(rcc_lse)]
     LseNotConfigured,
-    #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+    #[cfg(rcc_lse)]
     InvalidLseDetector,
-    #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+    #[cfg(rcc_lse)]
     LseMonitorConditionsOutsideQualifiedRange,
     #[cfg(rcc_lse)]
     InvalidLseBounds,
@@ -1069,6 +1096,10 @@ fn configure_hse(
     if config.sys == Sysclk::LSE {
         return lse_sysclk::configure(config, cs);
     }
+    #[cfg(all(rcc_lse, rcc_cw32l083_v1))]
+    if config.sys == Sysclk::LSE {
+        return l083_lse_sysclk::configure(config, cs);
+    }
     let mut clocks = config.frequencies()?;
     let r = pac::SYSCTRL;
     #[cfg(rcc_lse)]
@@ -1430,7 +1461,7 @@ fn configure_hse(
         Sysclk::HSI => ClockSource::Hsi,
         Sysclk::HSE => ClockSource::Hse,
         // The explicit target branch above bypasses this old auxiliary path.
-        #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+        #[cfg(rcc_lse)]
         Sysclk::LSE => return Err(Error::InvalidClockSource),
         #[cfg(rcc_pll)]
         Sysclk::PLL => ClockSource::Pll,
@@ -1757,4 +1788,9 @@ fn prepare_lse_monitor(
 #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
 pub(super) fn lse_sysclk_monitor_ready() -> bool {
     lse_sysclk::monitor_ready()
+}
+
+#[cfg(all(rcc_lse, rcc_cw32l083_v1))]
+pub(super) fn lse_sysclk_monitor_ready() -> bool {
+    l083_lse_sysclk::monitor_ready()
 }

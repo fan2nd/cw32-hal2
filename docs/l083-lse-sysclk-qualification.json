@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "scope": "Init-only nominal 32768 Hz LSE SYSCLK on exactly five CW32L083 packages using the existing board-qualified Config.lse tuple. Preserve all 23 auxiliary-LSE and eleven earlier LSE SYSCLK qualifications; no family alias, LSI SYSCLK, runtime switching, wake or recovery qualification.",
+  "parts": [
+    "CW32L083RBT6",
+    "CW32L083RCT6",
+    "CW32L083RCS6",
+    "CW32L083MCT6",
+    "CW32L083VCT6"
+  ],
+  "sysclk_detector": {
+    "lse_edges": 128,
+    "lsi_cycles": 256,
+    "margin_lse_edges": 1
+  },
+  "hardware_count_source": "Own CN manual V2.0 PDF65/printed64 and PDF76/printed75: failure below 128 LSE edges during 256 LSI clocks; LSECCS requires LSIEN.",
+  "margin_source": "Sufficient software condition 256 * minimum_LSE_hz > (128 + 1) * 33784 with u64 products. 17023 Hz fails; 17024 Hz passes the inequality only. The complete board envelope must contain 32768 Hz. The extra edge is software margin, not a hardware threshold or a per-cycle LSI guarantee.",
+  "factory_lsi_reference": {
+    "metadata_source": "rtc_calendar",
+    "source": "LSI",
+    "source_encoding": 2,
+    "factory_trim_address": 1051138,
+    "trim_bit_offset": 0,
+    "trim_bit_size": 10,
+    "wait_bit_offset": 10,
+    "wait_bit_size": 2,
+    "stable_bit": 15,
+    "nominal_hz": 32800,
+    "minimum_hz": 31816,
+    "maximum_hz": 33784,
+    "supply_mv": [
+      1650,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "raw_erased_halfword_rejected_before_masking": true,
+    "trim_and_wait_retained_after_admission": true,
+    "request_and_direct_and_mirrored_stable_required_at_use": true,
+    "lsi_sysclk_qualification": false
+  },
+  "sysclk_selector": 4,
+  "ccs_policy": {
+    "preserve": [
+      "CLKCCS",
+      "HSECCS",
+      "LSELOCK"
+    ],
+    "fresh_lse_enable": [
+      "LSECCS"
+    ],
+    "running_lse_requires_existing_detector": true
+  },
+  "fallback": {
+    "metadata_source": "clock_limits.hsi_frequency_hz and clock_limits.hsi_error_percent",
+    "policy": "conservative_undivided_factory_hsi_bound",
+    "hsi_oscillator_nominal_hz": 48000000,
+    "hsi_factory_error_percent": 2,
+    "conservative_bus_and_flash_maximum_hz": 48960000,
+    "hsi_divider_credit": false,
+    "ahb_divider_credit": false,
+    "apb_divider_credit": false,
+    "hardware_divisor_rewrite_claimed": false,
+    "divisor_retention_proven": false,
+    "applies_when_clkccs_disabled": true,
+    "minimum_admitted_supply_mv": 1800,
+    "final_flash_wait": 2,
+    "basis": "Own manual PDF65/76 names a switch to HSI and PDF75/78 gives normal HSI DIV. These claims do not promise fault-side divisor retention or a divisor rewrite. New LSE SYSCLK admission therefore covers factory HSI48MHz +2% at effective HSI/AHB/APB divisors 1, without asserting hardware resets any divisor. Existing direct-HSE and L052 fixed-/6 policy are unchanged."
+  },
+  "hsi_register": {
+    "trim_bit_offset": 0,
+    "trim_bit_size": 11,
+    "div_bit_offset": 11,
+    "div_bit_size": 4,
+    "stable_bit": 15,
+    "has_wait_field": false,
+    "update_policy": "Stopped trim writes preserve DIV/reserved bits. Live divider-only changes preserve TRIM/reserved bits under the own section4.5.2 procedure."
+  },
+  "electrical_limits": {
+    "source_supply_mv": [
+      1650,
+      5500
+    ],
+    "sysclk_supply_mv": [
+      1800,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "low_voltage_threshold_mv": 1800,
+    "low_voltage_bus_max_hz": 24000000,
+    "high_voltage_bus_max_hz": 64000000,
+    "flash_wait_step_hz": 24000000,
+    "initial_flash_wait": 2,
+    "final_flash_wait": 2
+  },
+  "inherited_hsi_admission": {
+    "documented_calibration_range_hz": [
+      32000000,
+      48000000
+    ],
+    "factory_tolerance_separate_from_calibration_range": true,
+    "unchanged_hsi_independently_legal_before_escape": true,
+    "bus_limit_does_not_expand_oscillator_range": true,
+    "factory_bound_requires_factory_trim": true
+  },
+  "pll_handoff": {
+    "allowed_active_source_encodings": [
+      0,
+      1,
+      3
+    ],
+    "allowed_active_multiplier_range": [
+      2,
+      12
+    ],
+    "hsi_reference_is_post_div": true,
+    "direct_pll_to_lsi_or_lse_forbidden": true,
+    "unchanged_hsi_escape_before_pll_stop": true,
+    "reference_parameters_preserved_until_enable_and_stable_clear": true,
+    "pll_parameters_and_reserved_bits_preserved": true,
+    "stopped_lsi_mismatch_consumer_guard_deferred_until_pll_stopped": true
+  },
+  "transition_policy": "Before source mutation perform native AUTOTRIM, retained-owner and contradictory LSI/detector admission. Install WAIT2 with readback, enable independently legal unchanged HSI, then the first CR0 write selects ready unchanged HSI plus monotonic AHB/APB guards. Stop inherited PLL and observe PLLEN=0 and PLL.STABLE=0 while preserving its reference. Prepare factory LSI with the existing complete two-pass stopped-LSI guard on mismatch. Retrim HSI only on a private LSI bridge after PLL stop; live DIV-only writes preserve TRIM. Preserve enabled HSE parameters/pads. Start or exactly reuse LSE with factory LSI/LSECCS retained. Prove configured factory HSI at final AHB/APB, install final divisors explicitly under HSI, then select LSE once. No CR0 write after final selection; retain WAIT2 through final tree/pad/source acknowledgment and publication.",
+  "native_admission_policy": "Own L083 has one DRIVER/AMP bank, no PDRIVER/PAMP and a real PLL. Retain the own complete RTC reset roster and gate-preserving RTC/UART1..6/AUTOTRIM/LPTIM/LCD/LVD/output ownership mechanisms. Preserve native flags, reservations, enabled sources and policy on failure; do not reset, clear, unlock or sanitize an unadmitted tree.",
+  "inherited_own_proofs": [
+    "docs/lse-active-l083.json",
+    "docs/lse-active-l083-rtc-admission.json"
+  ],
+  "source_tuple": "The same board Config.lse tuple supplies intended LSE SYSCLK/HCLK/PCLK and later LseClock/RTC. Factory monitor and fallback headroom do not replace the board per-cycle bounds or establish peripheral timing after a source loss.",
+  "lsi_sysclk_qualification": false,
+  "lsi_cycle_timing_qualified": false,
+  "limits": [
+    "No guaranteed crystal startup completion time",
+    "No guarantee of CPU progress or bounded loss-to-fallback time",
+    "No frozen-clock validity or RTC continuity after source loss/fallback",
+    "No runtime switching, low-power wake, arbitrary handover sanitization or silicon validation"
+  ],
+  "design_evidence": {
+    "path": "external-evidence:l083-lse-sysclk-design.md",
+    "sha256": "2ea8b5758d01305e419fa3ed0fdf830e5d4c83b6cd7bf3f55341526ee53ed094"
+  },
+  "sources": [
+    {
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "family": "CW32L083",
+      "pdf_pages_1_based": [
+        59,
+        60,
+        62,
+        65,
+        67,
+        69,
+        72,
+        75,
+        76,
+        78,
+        79,
+        80,
+        81,
+        82,
+        121,
+        131
+      ],
+      "printed_pages": [
+        58,
+        59,
+        61,
+        64,
+        66,
+        68,
+        71,
+        74,
+        75,
+        77,
+        78,
+        79,
+        80,
+        81,
+        120,
+        130
+      ]
+    },
+    {
+      "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+      "family": "CW32L083",
+      "pdf_pages_1_based": [
+        47,
+        55
+      ],
+      "printed_pages": [
+        46,
+        54
+      ]
+    }
+  ]
+}

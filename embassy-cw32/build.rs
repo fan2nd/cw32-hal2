@@ -4117,9 +4117,16 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         METADATA.name,
         "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6"
     );
+    let l083_sysclk_qualified = matches!(
+        METADATA.name,
+        "CW32L083RBT6" | "CW32L083RCT6" | "CW32L083RCS6" | "CW32L083MCT6" | "CW32L083VCT6"
+    );
     assert_eq!(
         lse.sysclk_detector.is_some(),
-        classic_sysclk_qualified || l031_sysclk_qualified || l052_sysclk_qualified,
+        classic_sysclk_qualified
+            || l031_sysclk_qualified
+            || l052_sysclk_qualified
+            || l083_sysclk_qualified,
         "LSE SYSCLK detector qualification missing or unexpected"
     );
     if let Some(detector) = &lse.sysclk_detector {
@@ -4137,7 +4144,10 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                 "classic LSE SYSCLK requires own factory-LSI facts"
             );
         } else {
-            assert!((l031_sysclk_qualified || l052_sysclk_qualified) && lse.configurable_ccs);
+            assert!(
+                (l031_sysclk_qualified || l052_sysclk_qualified || l083_sysclk_qualified)
+                    && lse.configurable_ccs
+            );
             assert!(
                 c.lsi_sysclk.is_none(),
                 "Native LSE SYSCLK does not qualify LSI SYSCLK"
@@ -4149,7 +4159,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                 .and_then(|p| p.rtc_calendar.as_ref())
                 .expect("LSE SYSCLK requires own RTC factory monitor facts");
             let supply_mv = match METADATA.line {
-                "CW32L031" | "CW32L052" => (1650, 5500),
+                "CW32L031" | "CW32L052" | "CW32L083" => (1650, 5500),
                 "CW32R031" => (2200, 3600),
                 "CW32W031" => (2000, 3600),
                 _ => panic!("unqualified LSE SYSCLK factory monitor family"),
@@ -4178,6 +4188,35 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                 assert_eq!(c.hsi_temperature_c, rtc.temperature_c);
                 // The native field checks below independently bind LSI
                 // TRIM[9:0], WAITCYCLE[11:10] and STABLE[15].
+            }
+            if l083_sysclk_qualified {
+                assert_eq!(METADATA.line, "CW32L083");
+                assert_eq!(
+                    c.hse
+                        .as_ref()
+                        .expect("L083 own HSE facts")
+                        .fixed_ccs_hsi_divisor,
+                    None,
+                    "L083 conservative fallback is not a hardware fixed-divisor fact"
+                );
+                assert!(c.pll.is_some(), "L083 retains its own PLL metadata");
+                assert_eq!((c.hsi_frequency_hz, c.hsi_error_percent), (48_000_000, 2));
+                assert_eq!(c.factory_hsi_trim_address, 0x0010_0a00);
+                assert_eq!(c.hsi_supply_mv, rtc.supply_mv);
+                assert_eq!(c.hsi_temperature_c, rtc.temperature_c);
+                assert_eq!(c.low_voltage_threshold_mv, 1800);
+                assert_eq!(c.low_voltage_bus_max_hz, 24_000_000);
+                assert_eq!(c.high_voltage_bus_max_hz, 64_000_000);
+                assert_eq!(
+                    (c.flash_wait_step_hz, c.initial_flash_wait),
+                    (24_000_000, 2)
+                );
+                assert!(
+                    !lse.startup_consumers
+                        .as_ref()
+                        .expect("L083 native consumers")
+                        .startup_analog
+                );
             }
         }
         for (name, value) in [

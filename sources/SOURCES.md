@@ -1,6 +1,6 @@
 # YAML 数据与官方原始资料
 
-本页对应当前整合源码及二十三个精确料号/封装的主动 LSE/RTC 资格（2026-10-09），回答“这份 YAML 依据哪一本原厂手册、哪个 SDK、哪几页”。当前源码包附带 `approved-sdk-members/` 下的 11 份 Apache-2.0 芯片主头文件及其许可；完整 PDF、SDK ZIP、SVD 与 HTML 原件未附。下列文档链接直达官网，运行获取脚本后才会写入本地 `sources/vendor/`。
+本页对应当前整合源码、二十三个精确料号/封装的主动 LSE/RTC 资格及其中十六款的 LSE SYSCLK 资格（2026-10-10），回答“这份 YAML 依据哪一本原厂手册、哪个 SDK、哪几页”。当前源码包附带 `approved-sdk-members/` 下的 11 份 Apache-2.0 芯片主头文件及其许可；完整 PDF、SDK ZIP、SVD 与 HTML 原件未附。下列文档链接直达官网，运行获取脚本后才会写入本地 `sources/vendor/`。
 
 `evidence-sources.json` 是唯一 URL / SHA-256 / SDK 成员锁；本页是阅读入口，不再复制一份 JSON。原件版本是项目选定快照，不能据此声称已是厂商最新版。页码与章节从现有 YAML 及其明确引用的记录摘出，本次未重新逐页校读原件。
 
@@ -409,8 +409,18 @@ L031 RM CN1.6 PDF54–59、62–63、67–68、71、75、107、170；R031 RM CN1
 
 ### 三个 L052 精确封装的 init-only LSE SYSCLK
 
-仅 CW32L052C8T6、CW32L052R8S6、CW32L052R8T6 新增同一 `Config.lse + Sysclk::LSE`；自身依据及原件 ID/SHA 见 [双原件系统源资格](../docs/l052-lse-sysclk-qualification.json)，功能边界见 [运行契约](../docs/l052-lse-sysclk.md)。三个共享数据模型与既有辅助 LSE 资格不变；不新增 LSI SYSCLK 或 L083 系统源资格。
+仅 CW32L052C8T6、CW32L052R8S6、CW32L052R8T6 新增同一 `Config.lse + Sysclk::LSE`；自身依据及原件 ID/SHA 见 [双原件系统源资格](../docs/l052-lse-sysclk-qualification.json)，功能边界见 [运行契约](../docs/l052-lse-sysclk.md)。三个共享数据模型与既有辅助 LSE 资格不变；该 L052 路径不新增 LSI SYSCLK 或 L083 系统源资格。
 
 `CW32L052_UserManual_CN_V1.5.pdf` Rev1.5 的 PDF54、57、59、61–62、65–66、70–74、112（书页53、56、58、60–61、64–65、69–73、111）绑定自身切换流程、selector4、可配置 CCS、128/256 检测、原厂 LSI、HSI 字段及 Flash；`CW32L052_DataSheet_CN_V1.3.pdf` Rev1.3 的 PDF43、51（书页42、50）绑定供电/温度、24/48 MHz 总线上限和原厂 HSI/LSI 误差。以上两组与资格 JSON 的精确页码集合一致；不借用其他族规则，原有引脚/双模拟组/消费者依据仍见前述 L052 专节。
 
 保留 CLKCCS/HSECCS/LSELOCK；最终分频下的配置 HSI 独立校验，固定 HSI8MHz 回退按不分频的8.16MHz上界覆盖总线和Flash，不假定回退保留任何分频器。HSI无WAIT字段；LSI的TRIM/WAIT与板级LSE元组分别冻结，软件额外1沿不是厂商指标。源码/编译不建立实板启动、检测窗口、失钟恢复或日历连续性保证。
+
+### 五个 L083 精确封装的 init-only LSE SYSCLK
+
+CW32L083RBT6、CW32L083RCT6、CW32L083RCS6、CW32L083MCT6 与 CW32L083VCT6 单独新增同一 `Config.lse + Sysclk::LSE`；系统目标由原十一款增至十六款，原二十三款辅助 LSE/RTC 的资格、schema 与其他系统源路径保持不变。自身原件 ID/SHA、页码与保守策略见 [系统源资格](../docs/l083-lse-sysclk-qualification.json)，入场与失败边界见 [运行契约](../docs/l083-lse-sysclk.md)。`lse-qualified.yaml` 仅为这五款增加现有 `sysclk_detector` 事实；不扩展族别别名、LSI SYSCLK 或独立 PLL 输出生命周期。
+
+`CW32L083_UserManual_CN_V2.0.pdf` Rev2.0 的 PDF65/书页64、75–76/74–75 支持运行检测、selector4 与可配置 CLKCCS；PDF67/66 限定 PLL 切换经 HSI/HSE；PDF59–60/58–59、72/71、78/77、82/81 支持 PLL 来源、停稳握手、HSI DIV/TRIM 与保留参考；PDF62/61 给出 HSI 校准的32–48MHz安全范围，64MHz总线限值不扩大振荡器范围。PDF121/120、131/130 给出 Flash WAIT0/1/2 的实际 HCLK 上限24/48/72MHz。`CW32L083_DataSheet_CN_V1.9.pdf` Rev1.9 的 PDF47/书页46 与55/54 分别绑定供电/总线条件及原厂 HSI±2%、LSI±3%：HSI 上界48.96MHz，LSI 31816–33784Hz。原件身份沿用 `evidence-sources.json`；SDK V2.2 只佐证编码，不替代切换契约。原件和取回收据属于外部证据，不复制入源码包。
+
+该新系统目标要求声明最低 VDD≥1.8V、最高≤5.5V、VDDA=VDD 与环境−40…85°C。保守回退按原始48.96MHz覆盖，不计 HSI/AHB/APB 分频收益，即使 CLKCCS 为0也一样；这不是断言硬件重置分频器，也不回改既有直接 HSE 策略。最终分频下的配置 HSI 单独校验，Flash WAIT2保留；辅助 LSE 原1.65–5.5V源范围不变。继承 PLL 先经独立合法、未改参数且已就绪的 HSI 切换，再观察 PLLEN=0 与 PLL.STABLE=0 后才允许改参考。PLL配置保留，但停止会有意停止输出；调用方必须移交静止的输出与消费者。最终 LSE 选择后不再写 CR0，失败不重放选择、不恢复失钟或时间连续性。
+
+单模拟组、PC14/PC15、板级每周期界与保留消费者继续使用前述 L083 自身资料，不引入 L052 PDRIVER/PAMP。示例复用3.0–3.6V、−20…70°C与32766–32770Hz声明；必须由实际板级资格替换。`ci/check-lse-sysclk.sh` 只定义本地后续检查范围，所列17个库与16组晶振/旁路固件并非已执行数量；每次实际执行的子集、结果与未跑项目须分别记录，不据此宣称 hosted CI 或实板验证。

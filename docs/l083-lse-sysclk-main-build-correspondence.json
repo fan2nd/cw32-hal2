@@ -1,0 +1,4469 @@
+{
+  "schema_version": 1,
+  "status": "main_build_and_actual_elf_correspondence_accepted",
+  "runtime_revision": 2,
+  "runtime_patch_sha256": "64a8f565c8b3fcbe77a6c3afdd71dd5ae18bbe6a8da2c84354963c0a7c143c01",
+  "lib_rs_sha256": "c29ff6cd0ebfaf694c44cde915b6fa7e08cfa06a9e988f3d44ec7b7c56522798",
+  "source_manifest_file_count": 1261,
+  "source_manifests_equal": true,
+  "source_before_sha256": "20e174fd003d1e1ea7896e28ad1081c7022cd0bdffff63e20522c7a83f05d3ff",
+  "source_after_sha256": "20e174fd003d1e1ea7896e28ad1081c7022cd0bdffff63e20522c7a83f05d3ff",
+  "runtime_and_public_documentation_hashes_match_manifest_and_current_files": true,
+  "commands_receipt": "external-evidence:verification/main/commands.json",
+  "commands_receipt_sha256": "765d038b73d45d3faf7961495a83da32fa33b07dc103fc7f9e7fea5ba506fb40",
+  "all_command_log_hashes_verified": true,
+  "main_command_count": 20,
+  "main_library_checks": 9,
+  "initial_library_exit": 0,
+  "initial_library_exit_artifact": "external-evidence:initial-l083-library.exit",
+  "initial_library_log_sha256": "17262bd286318bede751625e5a2fd728fbc3b074525c34672e7d25d2584ea5fb",
+  "total_library_checks_including_initial": 10,
+  "retained_failed_commands": [
+    {
+      "name": "lse-clock-cw32l083rct6",
+      "exit": 101,
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "examples/lse-clock/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l083rct6,defmt",
+        "--bin",
+        "crystal_calendar"
+      ],
+      "log": "external-evidence:verification/main/lse-clock-cw32l083rct6.log",
+      "log_sha256": "100f9fb71055e82b9a0833db7348e5a2b025e8b3828495db8bbc2f4bf19df940"
+    }
+  ],
+  "failure_resolution": "Auxiliary example was invoked with an unsupported defmt feature. The recorded retry removed only that feature, exited zero and produced the inspected crystal_calendar ELF; runtime source hashes did not change.",
+  "elf_count": 16,
+  "elfs": [
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l083rbt6-crystal.elf",
+      "sha256": "4195b8057af068f3838529fa32c12418938d3ec66e01f0027bc99a6d196360e1",
+      "bytes": 215860,
+      "chip": "cw32l083rbt6",
+      "metadata_path": "cw32-data/data/chips/CW32L083RBT6.json",
+      "metadata_sha256": "643f82ae1ce85a88c4361037d3207121e09fe5c20d4476fb7f089e01a66ee3c1",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 131072
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 32592,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 32592,
+          "memsz": 32592,
+          "flags": 5
+        },
+        {
+          "offset": 98320,
+          "vaddr": 32784,
+          "paddr": 32784,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33612,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 164928,
+          "vaddr": 33856,
+          "paddr": 33856,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196832,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10987,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l083rbt6-bypass.elf",
+      "sha256": "3d916c8a40a9e9265721073057f478607030817bee062348bc4f21f12ee76a87",
+      "bytes": 215856,
+      "chip": "cw32l083rbt6",
+      "metadata_path": "cw32-data/data/chips/CW32L083RBT6.json",
+      "metadata_sha256": "643f82ae1ce85a88c4361037d3207121e09fe5c20d4476fb7f089e01a66ee3c1",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 131072
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 32600,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 32600,
+          "memsz": 32600,
+          "flags": 5
+        },
+        {
+          "offset": 98328,
+          "vaddr": 32792,
+          "paddr": 32792,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33620,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 164928,
+          "vaddr": 33856,
+          "paddr": 33856,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196832,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10995,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l083rct6-crystal.elf",
+      "sha256": "3bcf670c2d5605dff67344f734490a8b3cc82d5119fe0b4753296ec664f4595b",
+      "bytes": 215860,
+      "chip": "cw32l083rct6",
+      "metadata_path": "cw32-data/data/chips/CW32L083RCT6.json",
+      "metadata_sha256": "c058219872fef58aba3c24b459fa3251bdd214cfb2422986dcf14f8683037434",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 32592,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 32592,
+          "memsz": 32592,
+          "flags": 5
+        },
+        {
+          "offset": 98320,
+          "vaddr": 32784,
+          "paddr": 32784,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33612,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 164928,
+          "vaddr": 33856,
+          "paddr": 33856,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196832,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10987,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l083rct6-bypass.elf",
+      "sha256": "e220922f155eda8ed5290dbdf090251c8a77a924fedb9c8a3a6418e339b24c94",
+      "bytes": 215856,
+      "chip": "cw32l083rct6",
+      "metadata_path": "cw32-data/data/chips/CW32L083RCT6.json",
+      "metadata_sha256": "c058219872fef58aba3c24b459fa3251bdd214cfb2422986dcf14f8683037434",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 32600,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 32600,
+          "memsz": 32600,
+          "flags": 5
+        },
+        {
+          "offset": 98328,
+          "vaddr": 32792,
+          "paddr": 32792,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33620,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 164928,
+          "vaddr": 33856,
+          "paddr": 33856,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196832,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10995,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l083rcs6-crystal.elf",
+      "sha256": "11dc2fda071c66bfe0929dc0af02337bab3b2956aa63868bff472417e2146b0e",
+      "bytes": 215860,
+      "chip": "cw32l083rcs6",
+      "metadata_path": "cw32-data/data/chips/CW32L083RCS6.json",
+      "metadata_sha256": "8be420d1d0c994ede96148fde9673cd0ade65f3e816a72d3deeaa4f05be80afa",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 32592,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 32592,
+          "memsz": 32592,
+          "flags": 5
+        },
+        {
+          "offset": 98320,
+          "vaddr": 32784,
+          "paddr": 32784,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33612,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 164928,
+          "vaddr": 33856,
+          "paddr": 33856,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196832,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10987,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l083rcs6-bypass.elf",
+      "sha256": "464771ab9dcaa63b4bd0f2a8e356d29ec3c307e44f33ba96e4bafbec8ad2e7d0",
+      "bytes": 215856,
+      "chip": "cw32l083rcs6",
+      "metadata_path": "cw32-data/data/chips/CW32L083RCS6.json",
+      "metadata_sha256": "8be420d1d0c994ede96148fde9673cd0ade65f3e816a72d3deeaa4f05be80afa",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 32600,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 32600,
+          "memsz": 32600,
+          "flags": 5
+        },
+        {
+          "offset": 98328,
+          "vaddr": 32792,
+          "paddr": 32792,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33620,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 164928,
+          "vaddr": 33856,
+          "paddr": 33856,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196832,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10995,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l083mct6-crystal.elf",
+      "sha256": "9ad45afd7cf2e46d09f1ab91c88f9602fdf30252e920fb46375789a824a92450",
+      "bytes": 216180,
+      "chip": "cw32l083mct6",
+      "metadata_path": "cw32-data/data/chips/CW32L083MCT6.json",
+      "metadata_sha256": "6f89092657202d404cd730698c28aa816dc276dca9218ed5caf41192f92fa278",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 32780,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 32780,
+          "memsz": 32780,
+          "flags": 5
+        },
+        {
+          "offset": 98508,
+          "vaddr": 32972,
+          "paddr": 32972,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33800,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 165120,
+          "vaddr": 34048,
+          "paddr": 34048,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196832,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10987,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l083mct6-bypass.elf",
+      "sha256": "008362059233f94ac5955adb159446d43a7976641ac51fe5f9ea68bc297410cb",
+      "bytes": 216176,
+      "chip": "cw32l083mct6",
+      "metadata_path": "cw32-data/data/chips/CW32L083MCT6.json",
+      "metadata_sha256": "6f89092657202d404cd730698c28aa816dc276dca9218ed5caf41192f92fa278",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 32788,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 32788,
+          "memsz": 32788,
+          "flags": 5
+        },
+        {
+          "offset": 98516,
+          "vaddr": 32980,
+          "paddr": 32980,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33808,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 165120,
+          "vaddr": 34048,
+          "paddr": 34048,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196832,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10995,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l083vct6-crystal.elf",
+      "sha256": "ebf48c1003854ccabd8d736db0b57daacfda8c80a99046aeb35aefde35bd532c",
+      "bytes": 216360,
+      "chip": "cw32l083vct6",
+      "metadata_path": "cw32-data/data/chips/CW32L083VCT6.json",
+      "metadata_sha256": "f89a573eb9cc4faac353d61c79e63828dbb13edd4944dfeeb25e3c1a90f1fd6b",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 32928,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 32928,
+          "memsz": 32928,
+          "flags": 5
+        },
+        {
+          "offset": 98656,
+          "vaddr": 33120,
+          "paddr": 33120,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33948,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 165248,
+          "vaddr": 34176,
+          "paddr": 34176,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196832,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10987,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10987,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l083vct6-bypass.elf",
+      "sha256": "831d9f115cb0dc152c06b827d529d0166341848f54d5f21e2527478e571449a3",
+      "bytes": 216360,
+      "chip": "cw32l083vct6",
+      "metadata_path": "cw32-data/data/chips/CW32L083VCT6.json",
+      "metadata_sha256": "f89a573eb9cc4faac353d61c79e63828dbb13edd4944dfeeb25e3c1a90f1fd6b",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 32936,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 32936,
+          "memsz": 32936,
+          "flags": 5
+        },
+        {
+          "offset": 98664,
+          "vaddr": 33128,
+          "paddr": 33128,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33956,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 165248,
+          "vaddr": 34176,
+          "paddr": 34176,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196832,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10995,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10995,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l052c8t6-crystal.elf",
+      "sha256": "8710bfeb117a85c0c479cc43e659df4ee4659d6640e11d173abb6d5e092f6e55",
+      "bytes": 211956,
+      "chip": "cw32l052c8t6",
+      "metadata_path": "cw32-data/data/chips/CW32L052C8T6.json",
+      "metadata_sha256": "1928470ba7e15b5523934a8006a49b6ce65eaa903390b2001874dc618ed735c5",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 65536
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 8192
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 189,
+      "initial_sp": 536879104,
+      "reset": {
+        "value": 189,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 188,
+      "text_bytes": 25144,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 188,
+          "memsz": 188,
+          "flags": 4
+        },
+        {
+          "offset": 65724,
+          "vaddr": 188,
+          "paddr": 188,
+          "filesz": 25144,
+          "memsz": 25144,
+          "flags": 5
+        },
+        {
+          "offset": 90868,
+          "vaddr": 25332,
+          "paddr": 25332,
+          "filesz": 544,
+          "memsz": 544,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 25876,
+          "filesz": 108,
+          "memsz": 108,
+          "flags": 6
+        },
+        {
+          "offset": 157056,
+          "vaddr": 25984,
+          "paddr": 25984,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196720,
+          "vaddr": 536871024,
+          "paddr": 536871024,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASH_RAM",
+          "number": 3,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOF",
+          "number": 8,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH4",
+          "number": 11,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM",
+          "number": 21,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1",
+          "number": 27,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2",
+          "number": 28,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3",
+          "number": 29,
+          "vector": 7707,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 7707,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32l052c8t6-bypass.elf",
+      "sha256": "33598abb25b6fef4a3af4e46ee7068322a1b12394091d7481639341444518284",
+      "bytes": 212032,
+      "chip": "cw32l052c8t6",
+      "metadata_path": "cw32-data/data/chips/CW32L052C8T6.json",
+      "metadata_sha256": "1928470ba7e15b5523934a8006a49b6ce65eaa903390b2001874dc618ed735c5",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 65536
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 8192
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 189,
+      "initial_sp": 536879104,
+      "reset": {
+        "value": 189,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 188,
+      "text_bytes": 25392,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 188,
+          "memsz": 188,
+          "flags": 4
+        },
+        {
+          "offset": 65724,
+          "vaddr": 188,
+          "paddr": 188,
+          "filesz": 25392,
+          "memsz": 25392,
+          "flags": 5
+        },
+        {
+          "offset": 91116,
+          "vaddr": 25580,
+          "paddr": 25580,
+          "filesz": 544,
+          "memsz": 544,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 26124,
+          "filesz": 108,
+          "memsz": 108,
+          "flags": 6
+        },
+        {
+          "offset": 157312,
+          "vaddr": 26240,
+          "paddr": 26240,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196720,
+          "vaddr": 536871024,
+          "paddr": 536871024,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASH_RAM",
+          "number": 3,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOF",
+          "number": 8,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH4",
+          "number": 11,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM",
+          "number": 21,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1",
+          "number": 27,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2",
+          "number": 28,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3",
+          "number": 29,
+          "vector": 7955,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 7955,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-clock-cw32l083rct6-crystal_calendar.elf",
+      "sha256": "77c7beab34cc23eafd39389950be2d688b8286ed008d1ba1e58c157b5d658e88",
+      "bytes": 149976,
+      "chip": "cw32l083rct6",
+      "metadata_path": "cw32-data/data/chips/CW32L083RCT6.json",
+      "metadata_sha256": "c058219872fef58aba3c24b459fa3251bdd214cfb2422986dcf14f8683037434",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 31920,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 31920,
+          "memsz": 31920,
+          "flags": 5
+        },
+        {
+          "offset": 97648,
+          "vaddr": 32112,
+          "paddr": 32112,
+          "filesz": 828,
+          "memsz": 828,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 32940,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 131296,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 24,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 10309,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 10309,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/pll-clock-cw32l083rct6-pll-uart.elf",
+      "sha256": "508ed11f8ea948f8533eef95a438cfd3049bb4eb24f55dd7100acc7c5a753032",
+      "bytes": 149984,
+      "chip": "cw32l083rct6",
+      "metadata_path": "cw32-data/data/chips/CW32L083RCT6.json",
+      "metadata_sha256": "c058219872fef58aba3c24b459fa3251bdd214cfb2422986dcf14f8683037434",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 31956,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 31956,
+          "memsz": 31956,
+          "flags": 5
+        },
+        {
+          "offset": 97684,
+          "vaddr": 32148,
+          "paddr": 32148,
+          "filesz": 880,
+          "memsz": 880,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33028,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 131296,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 44,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 11023,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 11023,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/pll-clock-cw32l083rct6-hse-crystal-pll-uart.elf",
+      "sha256": "952e7b4c4468de17430a7498a76675d8c37e962fd788842a453ed294c1257cff",
+      "bytes": 149944,
+      "chip": "cw32l083rct6",
+      "metadata_path": "cw32-data/data/chips/CW32L083RCT6.json",
+      "metadata_sha256": "c058219872fef58aba3c24b459fa3251bdd214cfb2422986dcf14f8683037434",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536895488,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 31976,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 31976,
+          "memsz": 31976,
+          "flags": 5
+        },
+        {
+          "offset": 97704,
+          "vaddr": 32168,
+          "paddr": 32168,
+          "filesz": 880,
+          "memsz": 880,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 33048,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 131296,
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "filesz": 0,
+          "memsz": 44,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "SYSCTRL",
+          "number": 4,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC_GPIOD",
+          "number": 7,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOE_GPIOF",
+          "number": 8,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2_LPTIM1",
+          "number": 21,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1_UART4",
+          "number": 27,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2_UART5",
+          "number": 28,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3_UART6",
+          "number": 29,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "AUTOTRIM_LCD",
+          "number": 30,
+          "vector": 11043,
+          "symbol_matches": true
+        },
+        {
+          "name": "CLKFAULT",
+          "number": 31,
+          "vector": 11043,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    },
+    {
+      "artifact": "external-evidence:verification/main/lse-sysclk-cw32f030c8t7-crystal.elf",
+      "sha256": "21065f7e98a9ae9be0e41c67dd2fc46f045d28185d6f5b72255fa59c92e1e89c",
+      "bytes": 210644,
+      "chip": "cw32f030c8t7",
+      "metadata_path": "cw32-data/data/chips/CW32F030C8T7.json",
+      "metadata_sha256": "cb5afb73c024aaabd144217daea8a24f3ac328e9e2ec50ed471ce2bae33e607f",
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 65536
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 8192
+        }
+      ],
+      "elf32_little_endian_arm_eabi5_exec": true,
+      "thumb_entry": 193,
+      "initial_sp": 536879104,
+      "reset": {
+        "value": 193,
+        "size": 40,
+        "bind": 1,
+        "type": 2,
+        "section": 2
+      },
+      "vector_bytes": 192,
+      "text_bytes": 22784,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 192,
+          "memsz": 192,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 22784,
+          "memsz": 22784,
+          "flags": 5
+        },
+        {
+          "offset": 88512,
+          "vaddr": 22976,
+          "paddr": 22976,
+          "filesz": 668,
+          "memsz": 668,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 23644,
+          "filesz": 220,
+          "memsz": 220,
+          "flags": 6
+        },
+        {
+          "offset": 154944,
+          "vaddr": 23872,
+          "paddr": 23872,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196828,
+          "vaddr": 536871132,
+          "paddr": 536871132,
+          "filesz": 0,
+          "memsz": 12,
+          "flags": 6
+        }
+      ],
+      "declared_irq_vectors": [
+        {
+          "name": "WDT",
+          "number": 0,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "LVD",
+          "number": 1,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "RTC",
+          "number": 2,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "FLASHRAM",
+          "number": 3,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "RCC",
+          "number": 4,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOA",
+          "number": 5,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOB",
+          "number": 6,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOC",
+          "number": 7,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "GPIOF",
+          "number": 8,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH1",
+          "number": 9,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH23",
+          "number": 10,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "DMACH45",
+          "number": 11,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "ADC",
+          "number": 12,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "ATIM",
+          "number": 13,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC1",
+          "number": 14,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "VC2",
+          "number": 15,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM1",
+          "number": 16,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM2",
+          "number": 17,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM3",
+          "number": 18,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "GTIM4",
+          "number": 19,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM1",
+          "number": 20,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM2",
+          "number": 21,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "BTIM3",
+          "number": 22,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C1",
+          "number": 23,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "I2C2",
+          "number": 24,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI1",
+          "number": 25,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "SPI2",
+          "number": 26,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART1",
+          "number": 27,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART2",
+          "number": 28,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "UART3",
+          "number": 29,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "AWT",
+          "number": 30,
+          "vector": 6245,
+          "symbol_matches": true
+        },
+        {
+          "name": "FAULT",
+          "number": 31,
+          "vector": 6245,
+          "symbol_matches": true
+        }
+      ],
+      "all_checks_passed": true
+    }
+  ],
+  "method": "Independent parsing of existing ELF32 bytes, symbols, sections, vectors and PT_LOAD segments; readelf header/section/segment spot-check. No firmware instructions executed.",
+  "clean_build_correspondence": "pending_separate_receipts",
+  "hal_tests_probes_harnesses_or_simulation": false,
+  "reviewer_compilation": false,
+  "hardware_execution": false
+}

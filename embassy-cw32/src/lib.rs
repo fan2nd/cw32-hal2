@@ -135,6 +135,32 @@ pub struct Config {
 /// Frozen healthy LSE clocks are invalid after source loss/fallback. This adds
 /// no public LSI SYSCLK, recovery, continuity or silicon-validation guarantee.
 ///
+/// On the five qualified CW32L083 RBT6/RCT6/RCS6/MCT6/VCT6 packages,
+/// LSE SYSCLK uses a separate init-only transition. The unchanged HSI used to
+/// escape an inherited source must already be in its documented legal
+/// calibration regime, even when idle at entry; STABLE/DIV do not prove its
+/// rate. Factory bounds are applied only after factory trim is established.
+/// WAIT2 and ready unchanged HSI precede the first explicit HSI mux write,
+/// which also installs monotonic bus guards. An inherited PLL then stops
+/// before its post-DIV HSI or HSE reference can change. PLL/MCO/dedicated
+/// output recipients must permit the resulting interruption of those outputs.
+/// Source/pad inspection can run whole bonded GPIO banks. Starting matching
+/// stopped LSI can resume parked UART1..6 SOURCE3, permitted manual AUTOTRIM
+/// SRC1, GPIO FLTCLK5, MCO SOURCE4 and bonded PC4 AF6, PF2 AF4 or PD5 AF6
+/// outputs, plus already work-ungated LPTIM/LCD consumers. The handover must
+/// permit this progress; restored gates do not undo it. Cold-LSE RTC reset
+/// admission, existing ready-LSE reuse and closed work-gate preservation stay
+/// unchanged. The full stopped-mismatch LSI consumer check occurs after PLL
+/// stop; live detector contradictions are rejected before source mutation.
+/// Conservative fallback admission gives no HSI/AHB/APB divisor credit:
+/// raw factory HSI can reach 48.96 MHz, requiring VDD >= 1.8 V and retained
+/// WAIT2 regardless of dividers or CLKCCS. This is a bounded software policy,
+/// not a claim that hardware resets its dividers. No CR0 write follows final
+/// LSE selection. Source loss invalidates frozen timing; no recovery, public
+/// LSI SYSCLK, low-power restoration or RTC migration is added. The fixed
+/// 1 MHz time driver remains incompatible with this 32768 Hz system tree.
+/// See docs/l083-lse-sysclk.md for the complete own-source contract.
+///
 /// On CW32L010, starting a previously disabled LSE while RTC selects LSE
 /// additionally requires a handover with no dependent RTC_OUT or RTC_1Hz
 /// observer. Disconnect or leave inactive PB04/PB06 RTC digital output pads

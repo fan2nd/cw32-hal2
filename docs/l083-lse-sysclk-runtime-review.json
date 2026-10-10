@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "review_date_utc": "2026-10-10",
+  "status": "source_review_accepted_build_correspondence_pending",
+  "blocking_source_findings": [],
+  "scope": ["CW32L083RBT6", "CW32L083RCT6", "CW32L083RCS6", "CW32L083MCT6", "CW32L083VCT6"],
+  "design": {
+    "artifact": "external-evidence:l083-lse-sysclk-design.md",
+    "revision": 3,
+    "sha256": "2ea8b5758d01305e419fa3ed0fdf830e5d4c83b6cd7bf3f55341526ee53ed094"
+  },
+  "runtime_freeze": {
+    "revision": 2,
+    "receipt": "external-evidence:runtime-v2-receipt.json",
+    "patch": "external-evidence:runtime-v2.patch",
+    "patch_sha256": "64a8f565c8b3fcbe77a6c3afdd71dd5ae18bbe6a8da2c84354963c0a7c143c01",
+    "manifest_file_and_patch_hashes_independently_verified": true,
+    "files": [
+      {"path": "embassy-cw32/src/rcc/l052_l083.rs", "sha256": "033da0546ea4c080299ef4ac25a48f12e0a0dd35067afec2a2780f84a2b86dff"},
+      {"path": "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs", "sha256": "893572515d23954a85dadc26816ae4e09dbe53588f6bb125b8cf6d6b4db42f53"},
+      {"path": "embassy-cw32/src/rcc/lse.rs", "sha256": "a77bc8af5685310a1234106417d48fc953b7393f28a2d15f835d41f12b5a1797"},
+      {"path": "docs/l083-lse-sysclk.md", "sha256": "98491db47087a64c7e210035ba1028c4da8e7008750c0b9e5d1ca0f69185e6b6"}
+    ],
+    "revision_2_delta": "Inherited PLL multiplier admission uses existing generated RCC_PLL_MULTIPLIER_RANGE; independently compared with revision 1."
+  },
+  "public_entry_documentation": {
+    "path": "embassy-cw32/src/lib.rs",
+    "sha256": "c29ff6cd0ebfaf694c44cde915b6fa7e08cfa06a9e988f3d44ec7b7c56522798",
+    "patch": "external-evidence:lib-entry-doc.patch",
+    "patch_sha256": "367c6f12a62122e2462f426dd244e23e212becd3c989fcba4e57dbda0588d1b3",
+    "hashes_independently_verified": true,
+    "executable_delta": false,
+    "consumer_and_pin_claims_checked": true
+  },
+  "preservation": {
+    "old_l052_module": "embassy-cw32/src/rcc/l052_l083/lse_sysclk.rs",
+    "old_l052_module_sha256": "2ceefaa6eb7f597a8fc01ad3285d16de948bf0e8f45614ed78367c1c9a925ed9",
+    "old_l052_byte_identity_independently_verified": true,
+    "prepare_lse_monitor_body_unchanged": true,
+    "non_lse_target_dispatch_preserved_by_source_review": true,
+    "absent_new_success_record_contributes_true": true,
+    "legacy_hardware_behavior_certified": false
+  },
+  "source_review_conclusions": [
+    {
+      "topic": "PLL phases and references",
+      "locations": ["embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:98", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:189", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:625"],
+      "conclusion": "Inherited checks retain enable/stable and all PLL parameters; Stopping permits the acknowledgment transition while retaining the original active HSI or HSE reference; Stopped requires PLLEN=0 and STABLE=0 and still preserves parameters. HSI TRIM/DIV changes occur only afterward."
+    },
+    {
+      "topic": "Entry and first CR0 write",
+      "locations": ["embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:247", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:565", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:605"],
+      "conclusion": "WAIT2 and unchanged-HSI readiness precede the first CR0 write. before_escape verifies inherited source enables except the intentional HSI enable, CCS/lock/unrelated controls, entry divisors and source snapshots. First CR0 explicitly selects HSI and installs monotonic guards for every entry. Unmeasured inherited HSI electrical legality remains an explicit public handoff condition."
+    },
+    {
+      "topic": "Factory LSI monitor and deferred trim",
+      "locations": ["embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:48", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:105", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:648", "embassy-cw32/src/rcc/l052_l083.rs:1730"],
+      "conclusion": "Unconditional AUTOTRIM and contradictory inherited detector/readiness checks precede oscillator writes. The unchanged helper runs after HSI acknowledgment and PLL stop. Matching-trim semantics and both stopped/consumer/stopped passes are retained. Factory TRIM/WAIT and both current stable indications qualify the retained monitor."
+    },
+    {
+      "topic": "HSE and pads",
+      "locations": ["embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:231", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:364", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:456", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:951"],
+      "conclusion": "HSE-fed PLL requires source/mode agreement and an enabled stable unchanged reference. Inherited HSE pad mode is checked without rewriting live pads. Returned clocks preserve inherited HSE and crystal-output reservation even with Config.hse=None. Cold requested HSE is handled separately."
+    },
+    {
+      "topic": "Bounds, Flash and final publication",
+      "locations": ["embassy-cw32/src/rcc/l052_l083.rs:562", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:403", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:921", "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs:960"],
+      "conclusion": "Pure validation includes configured HSI and raw-HSI fallback without divider credit, enforcing minimum VDD of 1.8 V. WAIT2 remains installed. Final checks cover the source tree and pads before and after inspection. No CR0 write follows final LSE selection; target success is set only after the final fallible check, immediately before successful return to CLOCKS publication."
+    },
+    {
+      "topic": "Time driver",
+      "locations": ["embassy-cw32/src/lib.rs:247", "embassy-cw32/src/lib.rs:250", "embassy-cw32/src/lib.rs:253", "embassy-cw32/src/time_driver.rs:213"],
+      "conclusion": "The fixed-1MHz time-driver divisibility check remains before Peripherals::take. No tick-rate workaround, timing fallback or runtime recovery was introduced."
+    }
+  ],
+  "public_consumer_correspondence": {
+    "uart": "UART1 through UART6, SOURCE=3, configuration-only gates",
+    "autotrim": "Permitted manual timer with SRC=1; automatic/active calibration excluded",
+    "gpio_filter": "FLTCLK=5; inspecting configuration gates may run complete bonded banks",
+    "mco": "SOURCE=4 selects LSI",
+    "lsi_output_routes": {
+      "all_five_parts": ["PC4 AF6"],
+      "CW32L083MCT6": ["PF2 AF4"],
+      "CW32L083VCT6": ["PF2 AF4", "PD5 AF6"]
+    },
+    "lptim": "ICLKSRC=3, EN checked only with an already-open work gate",
+    "lcd": "CLKCS=0, EN checked only with an already-open work gate",
+    "rtc": "Cold-LSE reset-like SOURCE=0 admission remains; reused LSE already requires a running monitor, so matching stopped LSI does not newly resume RTC SOURCE=2 in admitted combinations"
+  },
+  "source_evidence": {
+    "manual": {
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "clock_basis": "Same independently reviewed originals as external-evidence:independent-review/review.json",
+      "additional_consumer_pdf_pages_1_based": [66, 87, 89, 103, 157, 158, 159, 169, 178, 187, 205, 247, 397, 530, 534, 535, 563]
+    },
+    "datasheet": {
+      "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+      "additional_bonding_and_af_pdf_pages_1_based": [28, 29, 32, 36, 37, 38]
+    }
+  },
+  "build_correspondence": {
+    "status": "pending",
+    "required": "Receive final normal-build commands with numeric exit statuses, exact source/package binding and genuine ELF-structure inspection receipts before claiming final build correspondence.",
+    "receipts": []
+  },
+  "reviewer_execution": {
+    "code_and_original_source_review": true,
+    "hash_and_byte_identity_checks": true,
+    "engineering_source_edits": false,
+    "hal_tests": false,
+    "probes_or_harnesses": false,
+    "simulation": false,
+    "generator_execution": false,
+    "builds": false,
+    "hardware_execution": false,
+    "remote_operations": false
+  }
+}
