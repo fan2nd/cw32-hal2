@@ -1,11 +1,15 @@
 //! Qualified HSI, direct HSE and exact-package LSE clocks on CW32L031/R031/W031.
+//! Factory-LSI SYSCLK is separately qualified for L031C8T6/C8U6/F8U6 and R031C8U6.
+//! Generic R031 and every W031 remain outside that qualification.
 //!
 //! Own sources: L031 RM CN1.6, R031 RM CN1.3 and W031 RM CN1.4
 //! §§4.3–4.7 and 7.4, plus each own datasheet electrical tables.
 //! See docs/qualified-l031-hse.md for source pages and board obligations.
 //! Existing CCS controls are preserved. A requested new LSE start enables only
 //! its detector; this monitored-source admission rule is a software policy.
-//! There is no PLL, FLASH prefetch or FLASH cache on this register version.
+//! There is no MCU system PLL, FLASH prefetch or FLASH cache on this register version.
+//! R031 RF has a separate 16 MHz clock and synthesizer; PCLK/GPIOA host activity
+//! remains within the existing functional handover. No RF state is read or written.
 //! The default remains factory HSI /6. HSIOSC stays alive for independent users.
 //! PLL configuration, runtime switching and low-power operation are unsupported.
 
@@ -131,7 +135,8 @@ pub enum Sysclk {
     HSI,
     /// Qualified external high-speed oscillator or input.
     HSE,
-    /// Factory-trimmed 32,800 Hz LSI on the exact qualified L031 packages.
+    /// Factory-trimmed 32,800 Hz LSI on L031C8T6/C8U6/F8U6 and R031C8U6.
+    /// R031 requires its own 2.2..3.6 V and -40..85 C board qualification.
     /// Rate bounds do not certify individual-cycle or jitter timing. Cold entry
     /// excludes every reviewed direct client and ready observer, even when the
     /// existing trim matches; live factory-matching clients remain untouched.

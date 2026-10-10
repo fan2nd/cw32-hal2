@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "title": "Independent Stage68 exact CW32R031C8U6 LSI metadata, data projection and HAL build-qualification review",
+  "status": "accepted_for_scoped_main_source_review",
+  "blocking_findings": [],
+  "scope": "Read-only own-source, policy, electrical digest, generator admission and HAL build qualification review. This is not full implementation/runtime, clean-replay, hardware, RF-continuity or publication acceptance.",
+  "baseline": {
+    "commit": "c8d8556f350259f26e4422a9cc56322f3e082ff3",
+    "path": "external-evidence/stage67/source"
+  },
+  "design": {
+    "path": "external-evidence/stage68-design/r031-lsi-sysclk-design.md",
+    "sha256": "458d3354e4f6bc610e58c4b6372124a5243b983ad43babe7f3d100da6f6eddf0",
+    "bytes": 46181
+  },
+  "design_evidence": {
+    "path": "external-evidence/stage68-design/r031-lsi-sysclk-design-evidence.json",
+    "sha256": "7d6571b9223312de8e1725d737a1919ff11c07df05dca7ff5317882a3dd3312b",
+    "bytes": 66693
+  },
+  "accepted_design_review": {
+    "path": "external-evidence/stage68-design/independent-review/r031-lsi-sysclk-independent-review.json",
+    "sha256": "0e7b77ba517a0ed75665819211e5e05b5540be855055f5a166b89c8ffe4b1c1b",
+    "bytes": 3522
+  },
+  "frozen_functional_files": [
+    {
+      "path": "cw32-data/lsi-sysclk-qualified.yaml",
+      "sha256": "bb038f858c19437e4190125f2b7b0ebf665e32d6e55efd883f8c2399f857b2f1",
+      "bytes": 81276
+    },
+    {
+      "path": "cw32-data/electrical.yaml",
+      "sha256": "175c2a7cd126fd2a883d9d1008e23f82e47d0ff5535293e5944f425d19f2c88d",
+      "bytes": 74239
+    },
+    {
+      "path": "cw32-data-gen/src/lsi.rs",
+      "sha256": "e9516931985a78b5cc939315888572b49dfe05a160b44c2198c74f46f5b319fd",
+      "bytes": 57477
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "f89e880ca19a705c07dd1835a46a9b9a0e37e0cdada13ad8a448270c4574f0b5",
+      "bytes": 206451
+    }
+  ],
+  "main_source_snapshot": {
+    "archive": {
+      "path": "external-evidence/stage68/stage68-main-source.zip",
+      "sha256": "3aece9b856d1621a468350e5e8140702d16129a18da3088ba8e3488f0196fa6c",
+      "bytes": 4707859
+    },
+    "manifest": {
+      "path": "external-evidence/stage68/verification/main-source-manifest.json",
+      "sha256": "cb072c9e980806e9261c766d5dfef9ee8f4e17c2060d56f26006faea9af95b3f",
+      "bytes": 318171
+    },
+    "independently_verified_files": 1291,
+    "executable_files": 27,
+    "bytes_and_modes_match": true
+  },
+  "own_source_review": {
+    "supporting_record": {
+      "path": "external-evidence/stage68/metadata-review/own-source-static-checks.json",
+      "sha256": "c015f5dd8d34845f022eca265c4e9c914971dffeafb55a2808907e042cb34385",
+      "bytes": 16809
+    },
+    "original_member_text_hash_comparisons": 39,
+    "all_match_canonical_lock": true,
+    "own_svd_field_position_width_scalar_and_effective_access_comparisons": 53,
+    "own_svd_gate_reset_layout_comparisons": 9,
+    "own_base_address_comparisons": 10,
+    "own_irq": {
+      "symbol": "SYSCTRL",
+      "number": 4,
+      "vector_index": 20,
+      "vector_address": 80
+    },
+    "native_factory_read": {
+      "address": 1051138,
+      "width_bits": 16,
+      "evidence": "Own RM PDF56/58/73 and SDK RCC_LSI_Enable native uint16_t load; raw erased-halfword refusal remains conservative software policy."
+    },
+    "electrical": {
+      "name": "CW32R031C8U6",
+      "package": "QFN48",
+      "flash_bytes": 65536,
+      "ram_bytes": 8192,
+      "flash_address": 0,
+      "ram_address": 536870912,
+      "nominal_hz": 32800,
+      "minimum_hz": 31816,
+      "maximum_hz": 33784,
+      "supply_mv": [
+        2200,
+        3600
+      ],
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "cycle_timing_qualified": false
+    },
+    "page_review": "Own DS PDF9/11/14/16/35/40/42/54, RM clock/calibration/gates/selectors/consumer pages and SDK/PDSC were reopened. The 25 C accuracy row, trim adjustability and RF 250 kbps temperature row do not replace the MCU LSI envelope.",
+    "visual_evidence": "Viewed retained renders of own RM PDF49 clock tree, PDF498 RF block diagram and PDF143 PB11 AF table.",
+    "rf_positive_graph": "Dedicated external 16 MHz crystal feeds RFCLK and separate RF synthesizer. MCU SYSCLK through divided PCLK and SYSCTRL.AHBEN.GPIOA reaches PA00=MISO, PA01=MOSI, PA02=SCK, PA03=CS. RF-owned XTAL_OCLK /1,/2,/4,/8 may feed MCU HSE bypass through a board connection. Whole-bank handover and continued inherited source availability remain visible functional conditions; no RF runtime probe or continuity claim is added."
+  },
+  "policy_and_generator_findings": [
+    "All six existing family YAML blocks are byte-identical. Only the introductory scope sentence and appended independently sourced R031 family policy change.",
+    "Electrical YAML changes only the LSI policy SHA-256. The digest matches. Existing RTC, HSI/LSE policies, parts, source lock and field-access inputs are byte-identical.",
+    "The exact family roster adds only CW32R031. Shared-IP identity is insufficient: R031 has its own literal exact1 package, memory, source/hash/page, calibration, voltage, temperature, RF, register/access, gate and base bindings.",
+    "Recursive duplicate-key rejection remains via serde_yaml::Value. R031 still starts with null family electrical capability; every qualification check precedes the sole exact-part SYSCTRL injection. Generic R031 receives structural validation but no injection, and W031 remains unqualified.",
+    "All 53 literal field identities and own position/width/access values match the independent SVD parse. Exact complete-set comparison rejects omissions/substitutions/duplicates; IR validation checks readable scalar 32-bit registers, unique names, fieldsets and scalar field shapes.",
+    "KEY WO and source STABLE RO evidence is independently bound because IR does not retain all field access. The existing four native STABLE overlay entries remain unique and unchanged; no PAC setter or access delta is introduced.",
+    "All nine native SYSCTRL enable/reset pairs, offsets, bits, single-bit shapes, active-high enables, active-low resets, unkeyed protocol and GPIO work-gate classification are bound. UART and GPIO ordered rosters remain complete.",
+    "Ten bases, SYSCTRL IRQ4, IER/ISR LSIRDY and separate LSI/ISR stable views are bound. PB11 AF1, conservative non-LSI AF set and exact QFN48 pin25 are retained, with PF0/PF1 pins4/5 and PC14/PC15 pins2/3 independently checked.",
+    "Dedicated RC10K watchdog, VC PCLK/RC150K and LVD HSIOSC/RC150K facts remain distinct. Absences refer to MCU system PLL/HEX/AUTOTRIM/LCD/LPTIM and explicitly preserve the separate RF PLL.",
+    "R031 qualification values equal existing own RTC facts. RTC metadata bytes are unchanged; the exact new capability makes factory-LSI aliases rate-only under every SYSCLK through the existing bound path.",
+    "The shared native validator preserves every prior L031 exact3 roster, voltage, source/hash/page, memory, PB11 unbonded exception, observer, consumer and conservative-policy comparison. The F002/F003 validator and tests tail is byte-identical. New R031-only checks are false for old branches."
+  ],
+  "hal_build_qualification": {
+    "diff": "Only three planned admission/coexistence edits: pair line/name for native LSI generation, pair line/name for LSE/LSI capability equivalence, and replace the inner L031 assertion with the exact paired predicate.",
+    "native_positive_pairs": [
+      [
+        "CW32L031",
+        "CW32L031C8T6"
+      ],
+      [
+        "CW32L031",
+        "CW32L031C8U6"
+      ],
+      [
+        "CW32L031",
+        "CW32L031F8U6"
+      ],
+      [
+        "CW32R031",
+        "CW32R031C8U6"
+      ]
+    ],
+    "emitter_body_from_parameter_sources_to_generate_pll": {
+      "byte_identical": true,
+      "sha256": "fe5d6e748e8b864819fa248a589c023e722b2d721224fb9e6cdf212bec8cd153"
+    },
+    "actual_generated_libraries": [
+      {
+        "name": "lib-cw32r031c8u6-release",
+        "recorded_exit": 0,
+        "rcc_lsi_sysclk_cfg": true,
+        "generated_files": [
+          {
+            "artifact": "lib-cw32r031c8u6-release-_generated.rs",
+            "sha256": "af2186d21db4c8c581ad214bc4d571d4bf18dc416a4ac565fc3509fcdc8db3c1",
+            "bytes": 63572
+          },
+          {
+            "artifact": "lib-cw32r031c8u6-release-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ]
+      },
+      {
+        "name": "lib-cw32r031c8u6-debug",
+        "recorded_exit": 0,
+        "rcc_lsi_sysclk_cfg": true,
+        "generated_files": [
+          {
+            "artifact": "lib-cw32r031c8u6-debug-_generated.rs",
+            "sha256": "af2186d21db4c8c581ad214bc4d571d4bf18dc416a4ac565fc3509fcdc8db3c1",
+            "bytes": 63572
+          },
+          {
+            "artifact": "lib-cw32r031c8u6-debug-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ]
+      },
+      {
+        "name": "lib-cw32r031-release",
+        "recorded_exit": 0,
+        "rcc_lsi_sysclk_cfg": false,
+        "generated_files": [
+          {
+            "artifact": "lib-cw32r031-release-_generated.rs",
+            "sha256": "50fb24d68508301603f7ac0e49354b923e76fa44f3af5b4cea9c5ff2e538c48a",
+            "bytes": 45022
+          },
+          {
+            "artifact": "lib-cw32r031-release-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ]
+      },
+      {
+        "name": "lib-cw32l031c8t6-release",
+        "recorded_exit": 0,
+        "rcc_lsi_sysclk_cfg": true,
+        "generated_files": [
+          {
+            "artifact": "lib-cw32l031c8t6-release-_generated.rs",
+            "sha256": "1bbb23754924cc0a4a62773411ded8ad3eb7c0601d6174ae80dcbbebfee27694",
+            "bytes": 67104
+          },
+          {
+            "artifact": "lib-cw32l031c8t6-release-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ]
+      },
+      {
+        "name": "lib-cw32l031f8u6-release",
+        "recorded_exit": 0,
+        "rcc_lsi_sysclk_cfg": true,
+        "generated_files": [
+          {
+            "artifact": "lib-cw32l031f8u6-release-_generated.rs",
+            "sha256": "f950463138ccb894576bbef64da461fd9d5313f88b0d63ed24b1aa52371f9cdc",
+            "bytes": 55103
+          },
+          {
+            "artifact": "lib-cw32l031f8u6-release-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ]
+      },
+      {
+        "name": "lib-cw32w031r8u6-release",
+        "recorded_exit": 0,
+        "rcc_lsi_sysclk_cfg": false,
+        "generated_files": [
+          {
+            "artifact": "lib-cw32w031r8u6-release-_generated.rs",
+            "sha256": "6286ebd8e8170f150511e18c2e91e891afca7fea06fec40ba36fff40a22b4765",
+            "bytes": 54987
+          },
+          {
+            "artifact": "lib-cw32w031r8u6-release-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ]
+      }
+    ],
+    "old_generated_files": [
+      {
+        "path": "external-evidence/stage68/verification/main/lib-cw32l031c8t6-release-_generated.rs",
+        "sha256": "1bbb23754924cc0a4a62773411ded8ad3eb7c0601d6174ae80dcbbebfee27694",
+        "bytes": 67104,
+        "baseline_path": "external-evidence/stage67/verification/main/lib-cw32l031c8t6-release-_generated.rs",
+        "byte_identical": true
+      },
+      {
+        "path": "external-evidence/stage68/verification/main/lib-cw32l031f8u6-release-_generated.rs",
+        "sha256": "f950463138ccb894576bbef64da461fd9d5313f88b0d63ed24b1aa52371f9cdc",
+        "bytes": 55103,
+        "baseline_path": "external-evidence/stage67/verification/main/lib-cw32l031f8u6-release-_generated.rs",
+        "byte_identical": true
+      },
+      {
+        "path": "external-evidence/stage68/verification/main/lib-cw32w031r8u6-release-_generated.rs",
+        "sha256": "6286ebd8e8170f150511e18c2e91e891afca7fea06fec40ba36fff40a22b4765",
+        "bytes": 54987,
+        "baseline_path": "external-evidence/stage67/verification/main/lib-cw32w031r8u6-release-_generated.rs",
+        "byte_identical": true
+      }
+    ],
+    "r031_helper": {
+      "path": "external-evidence/stage68/verification/main/lib-cw32r031c8u6-release-_generated.rs",
+      "span": "RCC_LSI_PARAMETERS_MASK through the end of rcc_factory_lsi_consumers, immediately before RCC_HSE_CRYSTAL_RANGE_HZ",
+      "sha256": "59beb45931a78c7a5bba7e80b17ca8bbe2bc6488a6bfcec65c5362d75cb6bb84",
+      "equals_accepted_l031_except_own_supply_tuple": true,
+      "release_debug_generated_files_identical": true,
+      "gate_count": 9,
+      "selector_count": 11,
+      "hse_bank_indices": [
+        8,
+        8
+      ],
+      "pb11_and_filter_share_gpio_b_window": true,
+      "strict_window_order_preserved": true
+    },
+    "negative_and_unchanged_sites": "Generic R031 and exact W031 actual cfg/helper outputs remain negative. Separate L010/L011/L012 null assertions, classic paths, L052/L083 coexistence, HEX emission and all other admission sites are unchanged."
+  },
+  "generated_projection": {
+    "supporting_record": {
+      "path": "external-evidence/stage68/metadata-review/generated-projection-comparison.json",
+      "sha256": "aac98db06f57b404a717691d8036189b399f82803eb03db75b60889c21a84f33",
+      "bytes": 2469
+    },
+    "all_chip_objects_compared": 54,
+    "unchanged_chip_objects": 53,
+    "sole_semantic_delta": {
+      "chip": "CW32R031C8U6",
+      "peripheral": "SYSCTRL",
+      "path": "/cores/0/peripherals/25/clock_limits/lsi_sysclk",
+      "before": null,
+      "after": "Exact own R031 factory-LSI qualification from policy"
+    },
+    "all_generated_data_files_compared": 416,
+    "sole_data_changed_path": "cw32-data/data/chips/CW32R031C8U6.json",
+    "all_metapac_files_compared": 488,
+    "sole_metapac_changed_path": "cw32-metapac/src/chips/metadata_0035.rs",
+    "sole_metapac_change": "None becomes the exact PeripheralLsiSysclk object; removing this insertion reconstructs the old file byte-for-byte.",
+    "unchanged_file_counts": {
+      "data_registers": 274,
+      "data_field_access": 16,
+      "data_register_writes": 59,
+      "pac_registers": 138,
+      "pac_peripherals": 138
+    },
+    "schema_sources": {
+      "cw32-data-serde_files": 4,
+      "cw32-metapac-gen_files": 14,
+      "all_byte_identical": true
+    }
+  },
+  "verification_limits": [
+    "Reviewer executed read-only text/XML/YAML/JSON/archive inspection, hashing and comparison, and wrote only review artifacts outside source.",
+    "Reviewer ran no Cargo, generation, HAL test, probe, executable runtime model, hardware action, network or source edit. Coordinator-owned generated outputs and six completed library records were inspected as evidence.",
+    "Full finite main ELF/build acceptance, frozen shared runtime acceptance, final source packaging and clean replay have separate receipts. This metadata acceptance does not assert those tasks are complete.",
+    "Any change to the four frozen functional files or reviewed generated projections requires rereview. Later review-document-only packaging does not alter this scoped disposition."
+  ]
+}

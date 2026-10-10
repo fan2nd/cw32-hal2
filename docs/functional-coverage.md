@@ -168,10 +168,26 @@ still apply.
   documented AWT-overflow FILTER7 is conservatively rejected. Configurable
   CCS and inherited HSE/LSE ownership remain distinct from classic policy.
   All RTC LSI aliases become rate-only under every SYSCLK on these exact
-  three parts. Generic/other L031 and R031/W031 stay unchanged; board LSE
+  three parts. Generic/other L031 stay unchanged; board LSE
   retains its independent qualification. ADC and the fixed 1 MHz time driver
   reject selected LSI. See the [L031 contract and separate implementation
   evidence](l031-factory-lsi-sysclk.md).
+- CW32R031C8U6 alone adds factory-LSI SYSCLK with own 31,816–33,784 Hz
+  bounds at 2.2–3.6 V and −40–85°C, QFN48, 64 KiB Flash and 8 KiB SRAM.
+  Its own-source admission reuses the unchanged nine-gate/eleven-selector
+  native runtime. RTC LSI source and calendar-tick bounds become rate-only
+  under every SYSCLK, retaining nominal 32800/32768. Generic R031 and every
+  W031 gain no LSI SYSCLK capability. Dedicated 16 MHz RFCLK is independent,
+  but PCLK/GPIOA and PA00..PA03 carry an indirect RF-host effect. Existing
+  functional handover permits the inspection interval, including before
+  failure, and keeps inherited RF-fed HSE bypass available. No RF registers
+  are read or written and safe init gains no hidden memory-safety precondition.
+  Fixed 1 MHz time-driver refusal stays before singleton acquisition and MMIO.
+  Main acceptance covers six actual libraries, seven linked ELFs and six
+  passed source/data checks; see the [own R031 contract](qualified-r031-lsi-sysclk.md),
+  [runtime/source review](r031-factory-lsi-runtime-review.json) and
+  [metadata review](r031-factory-lsi-metadata-review.json). Final-package clean
+  replay of one library and two ELFs is required and tracked separately.
 - Init-only factory-LSI SYSCLK is qualified on F020/F030/A030. Cold admission
   precedes the first source-enable write and checks every documented shared
   consumer, gate, reset and inherited source request; factory-matching running
@@ -182,7 +198,8 @@ still apply.
   timing guards remain enforced. A 1 MHz Embassy timebase rejects this rate
   before singleton acquisition. This is a static control-flow guarantee;
   compiling the time-driver feature does not execute that rejection.
-  Apart from the exact L031 change above, other RTC/LSI qualifications are unchanged. Runtime switching and
+  Apart from the exact L031/R031 changes above, other RTC/LSI qualifications
+  are unchanged. Runtime switching and
   low-power restoration remain outside this slice. See the
   [complete factory-LSI contract](factory-lsi-sysclk.md).
 - Init-only LSE SYSCLK is qualified on twenty-three exact packages through the single

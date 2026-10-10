@@ -2422,10 +2422,10 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
 
     let l031 = sysctrl.version == "cw32l031_v1";
     if l031 {
-        assert_eq!(METADATA.line, "CW32L031");
         assert!(matches!(
-            METADATA.name,
-            "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6"
+            (METADATA.line, METADATA.name),
+            ("CW32L031", "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6")
+                | ("CW32R031", "CW32R031C8U6")
         ));
     }
     let parameter_sources: &[(&str, u32, u32)] = match sysctrl.version {
@@ -4766,14 +4766,15 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                 (l031_sysclk_qualified || l052_sysclk_qualified || l083_sysclk_qualified)
                     && lse.configurable_ccs
             );
-            let l031_lsi_qualified = matches!(
-                METADATA.name,
-                "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6"
+            let native_lsi_qualified = matches!(
+                (METADATA.line, METADATA.name),
+                ("CW32L031", "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6")
+                    | ("CW32R031", "CW32R031C8U6")
             );
             assert_eq!(
                 c.lsi_sysclk.is_some(),
-                l031_lsi_qualified,
-                "Only the independent L031 exact3 policy qualifies native LSI SYSCLK"
+                native_lsi_qualified,
+                "Only the independent L031 exact3 and R031 exact1 policies qualify native LSI SYSCLK"
             );
             let rtc = METADATA
                 .peripherals
@@ -4798,7 +4799,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             assert_eq!(lse.temperature_c, rtc.temperature_c);
             assert_eq!(lse.supply_mv, rtc.supply_mv);
             if let Some(lsi) = &c.lsi_sysclk {
-                assert_eq!(METADATA.line, "CW32L031");
+                assert!(native_lsi_qualified);
                 assert!(l031_sysclk_qualified);
                 assert_eq!(lsi.factory_trim_address, rtc.factory_trim_address);
                 assert_eq!(

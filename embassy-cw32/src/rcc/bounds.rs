@@ -7,10 +7,11 @@
 //! HSE envelopes instead use the explicitly declared board-qualified source
 //! endpoints and conditions. Neither source accuracy is inferred from the other.
 //! F020/F030/A030, CW32F002F3P7/F3U7, CW32F003F4P7/F4U7/E4P7 and exactly
-//! CW32L031C8T6/C8U6/F8U6 have factory-LSI rate envelopes under their own source
+//! CW32L031C8T6/C8U6/F8U6 and CW32R031C8U6 have factory-LSI rate envelopes
+//! under their own source
 //! conditions, without strict cycle-duration bounds. Their RTC LSI aliases,
-//! where present, remain rate-only under every SYSCLK. Generic F002/F003/L031
-//! aliases and other L031 packages gain no factory-LSI SYSCLK qualification.
+//! where present, remain rate-only under every SYSCLK. Generic F002/F003/L031/R031
+//! aliases, other L031 packages and every W031 gain no factory-LSI SYSCLK qualification.
 use crate::time::Hertz;
 
 /// Qualified ambient-temperature interval for the factory HSI error bound.

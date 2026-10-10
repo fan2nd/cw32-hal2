@@ -68,3 +68,18 @@ cargo build --release --locked --manifest-path examples/lse-clock/Cargo.toml \
   --target thumbv6m-none-eabi --no-default-features --features cw32l031c8t6 --bin crystal_calendar
 cargo build --release --locked --manifest-path examples/hse-clock/Cargo.toml \
   --target thumbv6m-none-eabi --no-default-features --features cw32l031c8t6 --bin crystal
+
+# R031 exact1 additions to the future recipe. The R031 release library and
+# selected-LSE crystal ELF already appear above. These rows are not receipts.
+cargo build --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 \
+  --target thumbv6m-none-eabi --no-default-features --features cw32r031c8u6,defmt,time-driver-gtim1
+cargo build --release --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 \
+  --target thumbv6m-none-eabi --no-default-features --features cw32r031,defmt
+cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32r031c8u6,defmt --bin cw32-lsi-clock-example
+cargo build --release --locked --manifest-path examples/rtc-calendar/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32r031c8u6 --bin preserve_calendar
+cargo build --release --locked --manifest-path examples/lse-clock/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32r031c8u6 --bin crystal_calendar
+cargo build --release --locked --manifest-path examples/hse-clock/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32r031c8u6 --bin crystal

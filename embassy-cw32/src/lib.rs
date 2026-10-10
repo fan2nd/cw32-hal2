@@ -140,6 +140,20 @@ pub struct Config {
 /// SYSCLK on these three parts; ADC and the fixed 1 MHz time driver reject
 /// selected LSI. See docs/l031-factory-lsi-sysclk.md for the complete contract.
 ///
+/// On CW32R031C8U6 only, factory LSI SYSCLK reuses that native sequence with
+/// own 31,816..33,784 Hz bounds at 2.2..3.6 V and -40..85 C. Whole GPIOA
+/// inspection can affect PA00..PA03 RF host activity through PCLK despite the
+/// RFCLK root's independent dedicated 16 MHz oscillator. Finish/quiet host
+/// transfers and permit the complete inspection interval. Keep inherited RF
+/// XTAL_OCLK available if it supplies HSE bypass. Gate restoration or failure
+/// does not guarantee unchanged RF signals, packets or source continuity.
+/// These are existing functional handover limits, not hidden Rust memory-safety
+/// preconditions. Initialization neither reads nor writes RF state. Exact-part
+/// RTC LSI aliases become rate-only under every SYSCLK; generic R031 and all
+/// W031 remain excluded from LSI SYSCLK. The fixed 1 MHz time driver refuses
+/// selected LSI before singleton acquisition and any RCC MMIO. Reset before
+/// retrying a hardware failure. See docs/qualified-r031-lsi-sysclk.md.
+///
 /// On F020/F030/A030, selecting factory LSI SYSCLK (or LSE SYSCLK on the
 /// three qualified packages) may briefly open each
 /// entire GPIOA/B/C/F bank to inspect retained source selectors. Sampling,

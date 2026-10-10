@@ -58,6 +58,8 @@ def required_evidence(root: Path) -> set[str]:
     required.add("docs/f003-factory-lsi-runtime-review.json")
     required.add("docs/l031-factory-lsi-runtime-review.json")
     required.add("docs/l031-factory-lsi-metadata-review.json")
+    required.add("docs/r031-factory-lsi-runtime-review.json")
+    required.add("docs/r031-factory-lsi-metadata-review.json")
     required.add("docs/native-lse-flash-wait-review.json")
     required.add("docs/lse-l010-independent-runtime-review.json")
     required.add("docs/lse-native-low-power-independent-runtime-review.json")
