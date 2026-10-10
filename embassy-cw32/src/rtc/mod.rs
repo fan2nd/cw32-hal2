@@ -1,11 +1,14 @@
 //! Owned blocking whole-second calendars for all eleven RTC-bearing families.
 //!
-//! L010/L011/L012 use frozen HSIOSC and exact nominal prescalers. The eight
+//! L010 selects frozen HSIOSC or its owned LSE; L011/L012 use frozen HSIOSC.
+//! Prescalers and tick bounds follow the actual held source. The eight
 //! classic families support a verified factory-trim LSI capability; its
 //! nominal rate is 32800/32768 calendar ticks per SI second, with the own RC
 //! tolerance retained in ClockBounds. This is not a precision wall clock.
 //! Exact source-qualified packages also accept a held board-qualified LSE source.
 //! Bounds describe a healthy source, with no automatic LSI fallback after failure.
+//! L010 StartupOnly readiness cannot detect later source loss: STABLE may latch
+//! indefinitely with CCS clear. A successful read does not prove elapsed time.
 //! Attach and reads preserve retained calendar/event state. Drop never stops,
 //! resets or gates the RTC or its oscillator. Cold initialization is explicit.
 //! Weekly Alarm A and A/B event flags are supported; run-mode async waits are limited to L010/L011/L012.
@@ -24,7 +27,6 @@ pub use alarm::{Alarm, AlarmAConfig, AlarmDays, AlarmStatus};
 #[cfg(rtc_alarm_direct_access)]
 pub use alarm_interrupt::AlarmInterruptHandler;
 pub use datetime::{DateTime, DayOfWeek, Error as DateTimeError};
-use sealed::Instance;
 #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
 pub(crate) type Source = u8;
 #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
@@ -172,8 +174,9 @@ impl<'d> Rtc<'d> {
         pac::RTC.cr1().write(|w| w.set_source(clock.source()));
         #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
         pac::RTC.psc().write(|w| {
-            w.set_psc1((RTC::PRESCALER_FIRST - 1) as u8);
-            w.set_psc2(RTC::PRESCALER_SECOND - 1);
+            let (first, second) = clock.prescalers();
+            w.set_psc1((first - 1) as u8);
+            w.set_psc2(second - 1);
         });
         pac::RTC.cr0().write(|w| w.set_h24(true));
         check_clock(&clock)?;
@@ -212,7 +215,9 @@ impl<'d> Rtc<'d> {
     /// Healthy-source envelope of calendar second transitions. Whole-Hz getters round;
     /// duration methods retain the exact 32800/32768 classic LSI fraction.
     pub const fn calendar_tick_bounds(&self) -> ClockBounds {
-        self.clock.bounds().divided_by(RTC::CALENDAR_DIVISOR)
+        self.clock
+            .bounds()
+            .divided_by(self.clock.calendar_divisor())
     }
     /// Deliberate time jump preserving current 12/24-hour format and events.
     ///
@@ -375,10 +380,20 @@ fn check_clock_source(clock: &CalendarClock<'_>) -> Result<(), RtcError> {
         let p = pac::RTC.psc().read();
         let first = u32::from(p.psc1()) + 1;
         let second = p.psc2() + 1;
-        if ClockBounds::rtc_source()
-            .divided_by(first)
-            .maximum_exceeds(1_000_000)
-            || u64::from(first) * u64::from(second) * 2 != u64::from(RTC::SOURCE_NOMINAL_HZ)
+        if clock.bounds().divided_by(first).maximum_exceeds(1_000_000)
+            || u64::from(first) * u64::from(second) * 2 != u64::from(clock.frequency().0)
+        {
+            return Err(RtcError::IncompatibleClock);
+        }
+        // Native LSE qualification fixes PSC1=0, PSC2=0x3fff. Preserve the
+        // prior HSIOSC attach rule allowing any safe exact nominal factor pair.
+        #[cfg(all(rcc_lse, rtc_cw32l010_v1))]
+        if matches!(clock, CalendarClock::Lse(_))
+            && (first, second)
+                != (
+                    u32::from(crate::RCC_LSE_RTC_FIRST_DIVISOR),
+                    crate::RCC_LSE_RTC_SECOND_DIVISOR,
+                )
         {
             return Err(RtcError::IncompatibleClock);
         }

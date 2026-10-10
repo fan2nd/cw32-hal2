@@ -98,33 +98,41 @@ still apply.
   Continuous scans, hardware-triggered scans and safe ADC DMA remain absent.
 - UART blocking/async and qualified RTS/CTS constructors exist. Pin availability
   differs by instance and exact selection; no software FIFO or throughput claim.
-  F030/A030 additionally have safe staged TX DMA, finite-chunk RX and combined
+  F030/A030/L083 additionally have safe staged TX DMA, finite-chunk RX and combined
   split full-duplex DMA with ordinary caller slices and separate wire flush.
   Static staging/channel/UART ownership is retained across cancellation; clean
   completion permits reuse and retained RX tails, while DMA errors permanently
   quarantine resources. FE/PE reports promptly but recovery awaits the old count.
   RX gaps can lose frames without overrun detection. No DMA RTS/CTS, continuous
   RX, safe early abort, bounded liveness or zero-copy guarantee.
-- F030/A030 SPI additionally supports a safe staged byte async bus with private
+- F030/A030/L083 SPI additionally supports a safe staged byte async bus with private
   TX/RX SRAM and two admitted DMA channels. Both clean terminals plus wire idle
   precede success. Cancellation requires preserving the original CS selection
   through a successful flush; errors permanently retain the pair. No generic
   cancellation-safe device adapter or lossless-throughput claim follows.
-- GTIM polling capture/encoder exists across families. ATIM capture/encoder,
-  complementary pairs, constructor-only symmetric dead time and software BK1
-  are limited to L010/L011/L012. External BK1 is qualified on L011/L012 only.
-  Classic ATIM advanced modes remain open; no output-safety guarantee is made.
+- GTIM polling capture/encoder exists across families. Buffered ATIM on
+  L010/L011/L012 supports capture/encoder, complementary pairs, constructor-only
+  symmetric dead time and software BK1. ATIM capture/encoder remains limited to
+  those three families; external BK1 is qualified on L011/L012 only.
+  F030/A030 classic ATIM also supports optional complete A+B pairs, interior
+  comparison duty, fixed symmetric dead time and explicit global MOE. It excludes
+  duty endpoints, per-pair gating, brake/rearm, inversion and runtime timing
+  changes; other classic advanced modes remain unqualified. No pad-level or
+  shutdown safety guarantee is made. See [the classic contract](classic-atim-complementary-evidence.json).
 - RTC Alarm A and A/B event observation exist on all eleven RTC families.
   Async waits are limited to L010/L011/L012. Alarm B mask programming remains
   source-disputed; observing Alarm B flags does not resolve its polarity.
 - L012 IR attaches while preserving its disputed MOD selector. R031 IR has no
   qualified output pin because its only documented route is debug PA13.
-- Direct crystal/bypass HSE is qualified on F020/F030/A030/L031/R031/W031/L083
-  where exact-package oscillator routes are qualified. L031 QFN20 and its
-  package-less alias have no qualified HSE route; all five modeled exact L083
-  packages have PF0/PF1. Each family retains its own electrical, fallback,
-  peripheral-owner and initialization constraints; see the [L031/R031/W031](qualified-l031-hse.md)
-  and [L083](qualified-l083-hse.md) contracts. The same external-high-speed
+- Direct crystal/bypass HSE is qualified on F020/F030/A030/L010/L011/L012/L031/
+  R031/W031/L052/L083 where the selected package's oscillator routes are qualified.
+  L031 QFN20 and its package-less alias have no qualified HSE route. L010/L011
+  cover all five modeled exact packages; L012 covers both exact packages and their
+  common alias; L052 covers its three and L083 its five modeled exact packages.
+  Each family retains its own electrical, fallback, peripheral-owner and
+  initialization constraints; see [L010/L011](qualified-l010-l011-hse.md),
+  [L012](qualified-l012-hse.md), [L031/R031/W031](qualified-l031-hse.md),
+  [L052](qualified-l052-hse.md) and [L083](qualified-l083-hse.md). The same external-high-speed
   inventory mode has a separate F002/F003 family override
   for direct digital HEX on qualified PB0/PB1. Its board-guaranteed actual
   4..32 MHz interval, 1.65..5.5 V supply, -40..105 C ambient, waveform/level
@@ -136,25 +144,42 @@ still apply.
   switching, sleep/resume or fault recovery. STABLE is a startup latch; clock
   loss can stop the CPU, so no automatic fallback or wall-clock timeout is
   guaranteed. See [the complete HEX contract](qualified-hex.md).
-  Other external clock backends remain separate gaps. HEX, LSE and PLL register
-  availability is read from each family's register YAML and does not establish
-  implementation support.
+  These are bounded one-time source modes; runtime switching, low-power
+  restoration and source-loss recovery remain outside their contracts.
+- Factory-HSI-fed system PLL is qualified on F020/F030/A030/L083, the four
+  documented system-PLL families. R031/W031 radio synthesis remains separate
+  and user-deferred. Nine F020 pairs and twelve F030/A030/L083 pairs are admitted
+  with entire actual input/output envelopes inside one qualified analog bin;
+  F020 output is capped at48MHz and the other three at64MHz. HSE-fed references,
+  independent outputs, runtime retuning and low-power restoration remain gaps
+  within these existing families. PLL bounds are rate-only: ADC and F030/A030
+  complementary dead-time admission retain their strict cycle-timing rejection.
+  See [F020/x030](f020-x030-hsi-pll.md) and [L083](l083-hsi-pll.md).
 - Inherited LSE pad ownership is protected on all eleven LSE-bearing families,
   independent of HSE qualification. Crystal, bypass, family-specific pad locks
   and package bond-outs determine the boot-retained reservation before safe pin
   construction. Active LSE crystal/bypass setup and an owned calendar source
-  are qualified only for sixteen exact x030/F020/L031/R031/W031/L052/L083 packages. The
+  are qualified for nineteen exact packages: the previous sixteen
+  x030/F020/L031/R031/W031/L052/L083 packages and three native L010 packages. The
   three L052 parts have separate pre-start/run analog settings, native AUTOTRIM
   admission, and LPTIM/LCD work-gate preservation; see their
   [own-source contract](qualified-l052-lse.md). The five L083 parts have one analog
   bank, six native UART consumers, GPIO LCKR and exact-package LSI routes. Their
   [own-source contract](qualified-l083-lse.md) requires the sufficient detector
   margin `256 * LSE_min_hz > 129 * 33784` before peripheral acquisition or RCC writes.
-  The previous eleven qualifications and the HSI/HSE/PLL backend are unchanged. All require
-  explicit board electrical and every-cycle frequency bounds around nominal
-  32768 Hz. Cold startup rejects retained RTC state, including compensation
-  consumers independent of RTC.SOURCE; exact already-enabled reuse preserves
-  configuration. Poll-budget exhaustion retains the source and reservations
+  The previous sixteen retain their own monitoring and consumer contracts.
+  Native L010 uses independent four-bit running/startup drive without amplitude.
+  `StartupOnly` leaves CCS clear and may retain STABLE after loss;
+  `MonitoredExistingRoutes` requires legal stable unchanged LSI at most36080Hz,
+  checks `256 * LSE_min_hz > 129 * 36080`, and retains deliberate fault routes.
+  Its source-zero startup also requires the public RTC observer and whole-GPIOB
+  functional handover; dormant timer work gates are not probed. See the
+  [native L010 contract](qualified-l010-lse.md). L010 HSI and L011/L012 calendar
+  sources remain available as before. The shared gate-inspection helper now
+  attempts bounded restoration after initial enable-readback failure; successful
+  HSI/HSE/PLL paths are unchanged. All nineteen require board electrical and
+  every-cycle frequency bounds around nominal32768Hz. Each family applies its
+  own retained-consumer admission; exact enabled reuse preserves configuration. Poll-budget exhaustion retains the source and reservations
   and requires reset; ordinary reset need not clear retained LSE controls, so
   POR may be required. There is no automatic calendar fallback, low-power
   restoration or post-fault elapsed-time guarantee. See the
@@ -186,15 +211,17 @@ still apply.
   [reference ownership and evidence](comparator-reference.md).
 - DMA on F030/A030/L083 has unsafe borrowed software copies, unsafe-entry
   owned static SRAM copies and safe init-admitted CopyChannel copies.
-  L083 requires selected-part SRAM metadata and adds
-  software copies only; hardware-request constructors and routes remain x030-only.
+  L083 requires selected-part SRAM metadata. Unsafe borrowed hardware-request
+  constructors remain x030-only; L083 UART/SPI RX/TX routes are exposed through
+  the separately declared safe staged integration. L083 ADC/LCD/timer requests
+  remain outside that integration.
   Entry requires hardware exclusivity, including error and forgotten transfers.
   Only clean recorded TC without TE, STATUS=5 and SOFTSRC=0 returns owners.
   Errors permanently reserve resources, forgetting leaks them, and Drop may block
   forever. Safe init-admitted copies require normal reset/clean-runtime entry;
   dirty startup rejection cannot repair an arbitrary active bootloader handover.
-  Safe peripheral integration covers staged x030 UART TX/RX and paired SPI
-  master. RX gaps can lose frames; safe early abort, circular operation and
+  Safe peripheral integration covers staged F030/A030/L083 UART TX/RX and paired
+  SPI master with qualified SRAM and normal reset/clean-runtime entry. RX gaps can lose frames; safe early abort, circular operation and
   lossless reception remain unavailable. Other DMA-bearing families
   remain PAC-only. See [the DMA ownership contract](dma-owned-copy-evidence.md),
   [safe copies](dma-safe-owned-copy.md), [UART TX DMA](uart-dma-tx.md),

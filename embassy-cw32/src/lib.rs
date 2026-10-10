@@ -97,6 +97,31 @@ pub struct Config {
 /// runs. Runtime integration and direct PAC access must preserve HAL ownership.
 /// This is the platform entry model, not a per-driver unsafe caller obligation.
 ///
+/// On CW32L010, starting a previously disabled LSE while RTC selects LSE
+/// additionally requires a handover with no dependent RTC_OUT or RTC_1Hz
+/// observer. Disconnect or leave inactive PB04/PB06 RTC digital output pads
+/// and their external users, BTIM RTC trigger/reset paths, and GTIM/ATIM RTC
+/// input capture or trigger paths. LPTIM and directly visible RTC output
+/// conflicts are also checked. Dormant timer clocks are not enabled to prove
+/// this condition. Ordinary reset entry with no intervening setup satisfies
+/// the reset-route condition; register similarity is not proof of reset and
+/// a firmware jump must establish it independently. Root disconnection also
+/// excludes downstream timer/ADC-trigger and GPIO-filter cascades; interrupt
+/// masking alone does not disconnect these observers.
+///
+/// L010 LSE pad admission may temporarily run the whole GPIOB bank. Input
+/// sampling, filtering and armed edge capture may advance, including before
+/// a later initialization error. The handover must not depend on the bank
+/// remaining paused or on absence of those effects, including retained
+/// LSI/LPTIM-filtered or asynchronous alternate-function participants.
+/// Unrelated controls and flags are preserved; reopening the gate is not a
+/// side-effect-free read. No particular unrelated output-level change is
+/// implied by gate opening.
+///
+/// These are functional limits on supported hardware handovers. They do not
+/// replace the existing pre-Rust bus-master/memory-ownership boundary or give
+/// safe Rust callers a hidden memory-safety obligation.
+///
 /// On x030/L083, safe static-copy admission is recorded once after clock init.
 /// An already enabled/reset-held or non-default DMA controller is rejected for
 /// safe copies without resetting it, clearing flags or treating EN=0 as a drain
@@ -115,7 +140,8 @@ pub fn init(config: Config) -> Peripherals {
     try_init(config).unwrap_or_else(|error| panic!("CW32 clock initialization failed: {:?}", error))
 }
 
-/// Fallible initialization with the same one-time ownership boundary as [`init`].
+/// Fallible initialization with the same one-time ownership boundary and public
+/// L010 RTC-observer/GPIOB functional handover requirements as [`init`].
 ///
 /// Invalid configuration is rejected before taking ownership. A hardware timeout
 /// can leave clocks partially changed and consumes the singleton set; reset the

@@ -1088,7 +1088,7 @@ groups:
       reset0x00053483 supersedes inherited SVD zero.
   post_import_curation: Reapply the own-source LSE native enums from docs/lse-active-f020.json and PLL typed fields/reserved-debug name from sources/x030-f020-hsi-pll-source-receipt.json after reviewing raw SVD import candidates. The IR has no reset slot; the receipt retains the manual reset authority.
 - canonical: sysctrl_cw32l010_v1.yaml
-  canonical_ir_sha256: a362263b3c6abbc7c47ec231dd3c3bdfbfe8c432fcbfcba93a9de9c297863ee9
+  canonical_ir_sha256: 01ff146b28b3d7b0bc22b5de6562b58c285ea20a8043af91d99bb0edb6c026df
   source_versions:
   - sysctrl_cw32l010_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1100,6 +1100,26 @@ groups:
     evidence: docs/qualified-l010-l011-hse-source-receipt.json
     reason: Own L010/L011 SYSCLK and HSE drive/wait enum definitions and associations; all pre-existing
       register offsets, widths and access unchanged. HSE.STABLE RO is recorded separately in field-access.yaml.
+  - canonical: sysctrl_cw32l010_v1.yaml
+    before_sha256: a362263b3c6abbc7c47ec231dd3c3bdfbfe8c432fcbfcba93a9de9c297863ee9
+    after_sha256: 01ff146b28b3d7b0bc22b5de6562b58c285ea20a8043af91d99bb0edb6c026df
+    added_enums:
+    - enum/LseDrive
+    - enum/LseWait
+    field_associations:
+    - - fieldset/LSE
+      - DRIVER
+      - LseDrive
+    - - fieldset/LSE
+      - WAITCYCLE
+      - LseWait
+    - - fieldset/LSE
+      - PDRIVER
+      - LseDrive
+    register_layout_and_access_unchanged: true
+    source_policy: docs/lse-l010-qualification.json
+    basis: Own CW32L010 RM CN Rev1.2 section4.7.7 PDF74/printed73. Four-bit independent running/startup drive, two-bit
+      wait; no amplitude. Existing layout, access overlay and single-family reuse membership unchanged.
 
 - canonical: sysctrl_cw32l011_v1.yaml
   canonical_ir_sha256: 8911717d51c3290b099ea715a66f0fe913d4c6673fb3dad92af2ff8a307f3702

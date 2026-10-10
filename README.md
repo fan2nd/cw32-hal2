@@ -130,13 +130,18 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - All eleven LSE-bearing families: read-only inherited LSE pad reservation before
   token return, with source-specific pad locks and exact package routes. GPIO and
   peripheral pin construction reject reserved pads before GPIO writes.
-  Sixteen exact x030/F020/L031/R031/W031/L052/L083 packages support explicitly requested,
-  board-qualified nominal 32768 Hz crystal/bypass setup and an owned RTC source.
-  Each family retains its own electrical and consumer limits. The five L083 parts
+  Nineteen exact packages support explicitly requested, board-qualified nominal
+  32768 Hz crystal/bypass setup and an owned RTC source. The previous sixteen
+  x030/F020/L031/R031/W031/L052/L083 packages retain their own monitoring,
+  electrical and consumer limits. The five L083 parts
   additionally require `256 * LSE_min_hz > 129 * 33784` before peripheral acquisition
   or RCC writes; this sufficient detector margin does not establish board accuracy.
-  Startup preserves retained consumers, accepts only a pristine RTC before
-  enabling a disabled source, and has a bounded poll budget. Failure requires
+  Those sixteen use their own conservative RTC admission and bounded polling.
+  The three native L010 packages use a separate source-zero observer/handover
+  contract. `StartupOnly` leaves CCS clear and can retain STABLE after clock loss;
+  `MonitoredExistingRoutes` requires legal stable unchanged LSI and retains
+  deliberate hardware fault routes. Neither promises continuing timekeeping.
+  See the [native L010 contract](docs/qualified-l010-lse.md). Failure requires
   reset (POR may be needed for retained LSE controls); no automatic RTC fallback, low-power recovery or elapsed-time accuracy
   after a clock fault is promised. Other parts retain read-only inherited-pad
   protection. See [the ownership contract](docs/inherited-lse-pads.md) and
@@ -228,11 +233,13 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   limits. See [Hall capture evidence](docs/halltim-evidence.md) and the
   [firmware example](examples/halltim/README.md).
 - All eleven RTC-bearing families: bounded whole-second calendar with preserving
-  attachment and explicit initialization. L010/L011/L012 use frozen HSIOSC;
-  classic families normally retain preconfigured factory-trim LSI and its exact
-  32800/32768 rate and tolerance. The sixteen qualified LSE packages can instead
-  hold an explicitly initialized LSE source with health checks around calendar
-  operations. Typed weekly Alarm A programming and A/B
+  attachment and explicit initialization. L010 retains frozen HSIOSC and adds
+  held LSE on its three qualified exact packages; L011/L012 use frozen HSIOSC.
+  Classic families normally retain preconfigured factory-trim LSI and its exact
+  32800/32768 rate and tolerance. Nineteen qualified LSE packages can hold an
+  explicitly initialized LSE source. The previous sixteen retain their monitor
+  checks; native L010 checks its selected fault-detection contract around
+  calendar operations, with no progression guarantee under `StartupOnly`. Typed weekly Alarm A programming and A/B
   event status/acknowledgement are supported; L010/L011/L012 also have scoped
   run-mode async waits. Alarm B mask programming remains contradictory in the
   own manuals/SDKs. No low-power wake or precision wall-clock promise.
@@ -392,3 +399,5 @@ Stage19 integrates the optional run-mode Embassy time driver and bounded L010 ti
 Stage20 adds qualified UART RTS/CTS constructors and buffered timer capture/encoder APIs. See [verification and limits](docs/hal-stage20-verification.md).
 
 Stage21 adds source-qualified Alarm A programming, A/B event handling and scoped async waits on the direct-access RTC variants. See [verification and limits](docs/hal-stage21-verification.md).
+
+Native CW32L010 LSE/calendar qualification and functional handover limits: [qualified-l010-lse.md](docs/qualified-l010-lse.md). Normal crystal, bypass and preserved HSI calendar examples are in [examples/l010-lse-clock](examples/l010-lse-clock).

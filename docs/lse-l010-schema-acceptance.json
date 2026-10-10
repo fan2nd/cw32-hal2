@@ -1,0 +1,253 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-09T19:23:20.115076+00:00",
+  "decision": "accept_frozen_additive_schema_delta_with_explicit_compatibility_limits",
+  "independent_review_passed": true,
+  "legal_clearance": false,
+  "scope": "Three frozen shared models only: exact identity, additive source delta, static Serde and projection contract. No runtime, whole-project, build or legal clearance.",
+  "baseline_zip": "external-evidence/stage53/baseline-archives/embassy-cw32-stage51-source-final-2026-10-09.zip",
+  "baseline_zip_sha256": "2a550b72fd7919fce499034edfb3d1e67e45f2b37d813e6acf83b854eab8c82e",
+  "freeze_record": "external-evidence/stage53/l010-lse-candidate/evidence/l010-model-freeze.json",
+  "freeze_record_sha256": "a8af233cef15918eddf62d4b2163bc39838dbf8508417fd371381adbfcf11564",
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "54a4de94f232c208ab22ac03c177d7f12ea5eba967ac17d023a147f26a60e761",
+      "after_sha256": "c7c59622c69f77894f838cb0737a1dcf5b802a17b63fef01099417c06c781998",
+      "before_bytes": 31802,
+      "after_bytes": 32816,
+      "exact_reverse_sha256": "54a4de94f232c208ab22ac03c177d7f12ea5eba967ac17d023a147f26a60e761",
+      "exact_reverse_equals_baseline": true,
+      "full_file_diff_insertion_runs": [
+        [
+          "insert",
+          352,
+          352,
+          352,
+          369
+        ],
+        [
+          "insert",
+          367,
+          367,
+          384,
+          386
+        ]
+      ],
+      "explicit_independent_removals": [
+        {
+          "candidate_byte_offset": 13503,
+          "candidate_line_1based": 352,
+          "bytes": 859,
+          "sha256": "d155eb35013e559006891f2d927374cbf6e0484c903558c276f1169dc218df43",
+          "text": "            record! {\n                /// CW32L010 native drive, detector and RTC clock facts. No amplitude field exists.\n                #[serde(deny_unknown_fields)]\n                LseNativeL010 {\n                    pub drive_bits: u8,\n                    pub startup_drive_bits: u8,\n                    /// Legal unchanged LSI upper bound; STABLE alone does not prove this bound.\n                    pub monitored_lsi_maximum_hz: u32,\n                    pub detector_lse_edges: u16,\n                    pub detector_lsi_cycles: u16,\n                    /// Actual divisors; PSC stores each divisor minus one.\n                    pub rtc_first_divisor: u16,\n                    pub rtc_second_divisor: u16,\n                    pub rtc_calendar_divisor: u32,\n                    pub rtc_output_routes: Vec<LseOutputRoute>,\n                }\n            }\n"
+        },
+        {
+          "candidate_byte_offset": 15268,
+          "candidate_line_1based": 385,
+          "bytes": 155,
+          "sha256": "7bfc35dbbd209ee7163252aec1338ccfdc97dba6254788f6b7bc411c5ca685c8",
+          "text": "                            #[serde(default, skip_serializing_if = \"Option::is_none\")]\n                            pub native_l010: Option<LseNativeL010>,\n"
+        }
+      ]
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "e6aadf79d41eb015276ed9c523a41213939184581989609707f9c8407e6b55ff",
+      "after_sha256": "a261aa1a741b10adf591ef8d32ac1f27b83877363414ae5e1b2a2cc53d82ec68",
+      "before_bytes": 32614,
+      "after_bytes": 33335,
+      "exact_reverse_sha256": "e6aadf79d41eb015276ed9c523a41213939184581989609707f9c8407e6b55ff",
+      "exact_reverse_equals_baseline": true,
+      "full_file_diff_insertion_runs": [
+        [
+          "insert",
+          731,
+          731,
+          731,
+          748
+        ],
+        [
+          "insert",
+          743,
+          743,
+          760,
+          761
+        ]
+      ],
+      "explicit_independent_removals": [
+        {
+          "candidate_byte_offset": 24091,
+          "candidate_line_1based": 730,
+          "bytes": 667,
+          "sha256": "be30ed32d6d37b0bc2cf8e508f8119dc72f07d0487434f8c712d2dd18fe2988b",
+          "text": "#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]\n#[serde(deny_unknown_fields)]\n/// CW32L010 native drive, detector and RTC clock facts. No amplitude field exists.\npub struct PeripheralLseNativeL010 {\n    pub drive_bits: u8,\n    pub startup_drive_bits: u8,\n    /// Legal unchanged LSI upper bound; STABLE alone does not prove this bound.\n    pub monitored_lsi_maximum_hz: u32,\n    pub detector_lse_edges: u16,\n    pub detector_lsi_cycles: u16,\n    /// Actual divisors; PSC stores each divisor minus one.\n    pub rtc_first_divisor: u16,\n    pub rtc_second_divisor: u16,\n    pub rtc_calendar_divisor: u32,\n    pub rtc_output_routes: Vec<PeripheralLseOutputRoute>,\n}\n\n"
+        },
+        {
+          "candidate_byte_offset": 25284,
+          "candidate_line_1based": 761,
+          "bytes": 54,
+          "sha256": "87679b8a5be2ef4cb10ce66f99fecebf5c72e5a830b488e5b9057ef174ba7bd8",
+          "text": "    pub native_l010: Option<PeripheralLseNativeL010>,\n"
+        }
+      ]
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "102cde69650c1d28b3c2a6ff5f2578b777c063925a0d692da6e33577f3771d6d",
+      "after_sha256": "0ad4ca521646fed418b80c526d6c9d5f0403a88ecdf3e596c4f36cb9865ef081",
+      "before_bytes": 20725,
+      "after_bytes": 21409,
+      "exact_reverse_sha256": "102cde69650c1d28b3c2a6ff5f2578b777c063925a0d692da6e33577f3771d6d",
+      "exact_reverse_equals_baseline": true,
+      "full_file_diff_insertion_runs": [
+        [
+          "insert",
+          449,
+          449,
+          449,
+          465
+        ],
+        [
+          "insert",
+          461,
+          461,
+          477,
+          478
+        ]
+      ],
+      "explicit_independent_removals": [
+        {
+          "candidate_byte_offset": 12506,
+          "candidate_line_1based": 449,
+          "bytes": 630,
+          "sha256": "fbe1f2f3bd4d2cae346f8180f9fce76bcf8cc2a2315c382157c87f177b70cd28",
+          "text": "#[derive(Debug, Eq, PartialEq, Clone)]\n/// CW32L010 native drive, detector and RTC clock facts. No amplitude field exists.\npub struct PeripheralLseNativeL010 {\n    pub drive_bits: u8,\n    pub startup_drive_bits: u8,\n    /// Legal unchanged LSI upper bound; STABLE alone does not prove this bound.\n    pub monitored_lsi_maximum_hz: u32,\n    pub detector_lse_edges: u16,\n    pub detector_lsi_cycles: u16,\n    /// Actual divisors; PSC stores each divisor minus one.\n    pub rtc_first_divisor: u16,\n    pub rtc_second_divisor: u16,\n    pub rtc_calendar_divisor: u32,\n    pub rtc_output_routes: &'static [PeripheralLseOutputRoute],\n}\n\n"
+        },
+        {
+          "candidate_byte_offset": 13628,
+          "candidate_line_1based": 478,
+          "bytes": 54,
+          "sha256": "87679b8a5be2ef4cb10ce66f99fecebf5c72e5a830b488e5b9057ef174ba7bd8",
+          "text": "    pub native_l010: Option<PeripheralLseNativeL010>,\n"
+        }
+      ]
+    }
+  ],
+  "native_fields_in_declaration_order": [
+    [
+      "drive_bits",
+      "u8"
+    ],
+    [
+      "startup_drive_bits",
+      "u8"
+    ],
+    [
+      "monitored_lsi_maximum_hz",
+      "u32"
+    ],
+    [
+      "detector_lse_edges",
+      "u16"
+    ],
+    [
+      "detector_lsi_cycles",
+      "u16"
+    ],
+    [
+      "rtc_first_divisor",
+      "u16"
+    ],
+    [
+      "rtc_second_divisor",
+      "u16"
+    ],
+    [
+      "rtc_calendar_divisor",
+      "u32"
+    ],
+    [
+      "rtc_output_routes",
+      "Vec<LseOutputRoute>"
+    ]
+  ],
+  "all_three_models_normalized_field_order_and_types_match": true,
+  "wire_contract": {
+    "absence": "Both input models deserialize a missing native_l010 as None; serde model has explicit default, generator model uses standard Option missing-field behavior.",
+    "explicit_null": "Both input models deserialize native_l010:null as None.",
+    "none_serialization": "cw32-data-serde omits native_l010 when None. Explicit input null normalizes to omission. Generator and static models do not implement Serialize.",
+    "present_object": "All nine native fields are required and nonnullable; numeric widths/types and route element types match. Empty rtc_output_routes is syntactically valid; missing/null is not.",
+    "unknown_fields": "Both input models deny unknown native-object fields and unknown route fields. Their enclosing LseConfiguration deny_unknown_fields remains intact.",
+    "old_inputs": "Old mapping/JSON documents without native_l010 retain their prior field types, relative declaration order, defaults and None output omission; this is static proof, not an executed roundtrip.",
+    "old_readers": "Stage51 LseConfiguration readers reject native_l010 when present, including null, because the old models deny unknown fields.",
+    "non_json": "No guarantee is made for positional/binary Serde formats or Rust memory layout."
+  },
+  "rust_api": {
+    "literal_change": "Existing explicit LseConfiguration literals and exhaustive patterns need native_l010:None or the appropriate Some value / wildcard; generated source must be regenerated alongside its static template.",
+    "derived_traits": "Debug output includes the new field and can change generated Rust bytes; derived Hash in cw32-data-serde now includes an additional Option discriminant even for None. No stable Debug, Hash, ABI or source-compatibility claim.",
+    "projection": "Owned String/Vec input types correspond to static str/static slice metadata. Option wraps the native record by value. Static normalized names, widths and order match; generator execution and Rust compilation are not performed here."
+  },
+  "source_qualification_boundary": {
+    "representable_expected_facts": {
+      "drive_bits": 4,
+      "startup_drive_bits": 4,
+      "monitored_lsi_maximum_hz": 36080,
+      "detector_lse_edges": 128,
+      "detector_lsi_cycles": 256,
+      "rtc_first_divisor": 1,
+      "rtc_second_divisor": 16384,
+      "rtc_calendar_divisor": 32768
+    },
+    "amplitude_field_added": false,
+    "schema_is_not_validation": "Serde widths do not enforce 4-bit drive widths, the 36080 Hz bound, detector ratios, positive/correct divisors, part applicability, pad bonding or exact source-qualified routes. Generator/source qualification must enforce those facts.",
+    "routes": "rtc_output_routes encodes direct RTC output pad pin/AF facts. It does not by itself encode or prove disconnection of all internal BTIM/GTIM/ATIM/LPTIM routes or external recipients.",
+    "runtime": "No proof of STABLE frequency legality, active monitoring, RTC observer isolation, GPIOB noninterference, entry safety, RTC timing or preservation of the existing 16 active-LSE parts is supplied by these type declarations."
+  },
+  "lineage": {
+    "inventory_path": "docs/upstream-file-provenance.json",
+    "baseline_inventory_sha256": "dd2b6cd4d864faa5ff9dffe562930a09aa34fa69973ca6982c69b10ed4c0b02e",
+    "observed_candidate_inventory_sha256": "dd2b6cd4d864faa5ff9dffe562930a09aa34fa69973ca6982c69b10ed4c0b02e",
+    "candidate_inventory_byte_identical_to_baseline_at_review": true,
+    "prior_entire_replacement_review_canonical_sha256": "919b2fa9b9f30a90bad289a8e4ca54c57cc48352cd5974a417ee30c4f0d84990",
+    "prior_review_canonicalization": "JSON UTF-8, sort_keys=True, separators=(comma,colon), ensure_ascii=True",
+    "baseline_selected_entries_canonical_sha256": {
+      "cw32-data-serde/src/lib.rs": "fed8b216cd4588eddb39de0c3a4a140d913c39e2d40400c4075e2d2eeb4f3b31",
+      "cw32-metapac-gen/src/data.rs": "fa6872d0a5ac62e8e7e128dc13d0a2273c1809cf5522ec725172a345304c62a9",
+      "cw32-metapac-gen/res/src/metadata.rs": "d15dda63c608ee2f627245e2dec25d88587680cead1c35e190ce91a6e51f3e17"
+    },
+    "required_update": "Wrap the entire prior replacement_review object as previous_review. Preserve every nested object, accepted extension, accepted component review, identity, compatibility note and referenced evidence; do not flatten or reconstruct only a hash list.",
+    "required_classification": "Keep serde reviewed_independent_replacement and its original ancestry. Keep both metapac models explicit_upstream_package_declaration with adapted upstream ancestry and historical observations unchanged.",
+    "legal_clearance": false,
+    "full_source_release_identity_review": "Required separately against final integration freeze; not established by this frozen three-file receipt."
+  },
+  "verification": {
+    "static_full_file_review": true,
+    "explicit_reverse_byte_equality": true,
+    "cargo_run": false,
+    "hal_tests_run": false,
+    "serde_runtime_probe_run": false,
+    "project_edits": false,
+    "historical_reverse_ci_chain_added": false,
+    "legal_clearance": false
+  },
+  "context_sources": [
+    {
+      "path": "external-evidence/stage53/l010-lse-candidate/evidence/l010-model-freeze.json",
+      "sha256": "a8af233cef15918eddf62d4b2163bc39838dbf8508417fd371381adbfcf11564"
+    },
+    {
+      "path": "external-evidence/stage53/l010-lse-admission-design/design.md",
+      "sha256": "95eeb6ba6ce109e401cb5344a179a3cdfbca82aefba6355ae539c3071acf6f9e"
+    },
+    {
+      "path": "external-evidence/stage53/l010-entry-admission-review/conclusion.json",
+      "sha256": "df61aa3a5b4bb229c4cde467aae8e24caa2ef286e8d564c3d80f8da657d39776"
+    }
+  ],
+  "evidence_artifacts": {
+    "exact-model-delta.patch": "f674a59329035052536739d1c8f304ef6ad52e29e6acbea4f93f2b4171021319",
+    "stage51-lineage-snapshot.json": "e37dd9c41f0aff85b966a50b8508b6f8f300c8c5f6d7bd1b74b0c9880822eaab",
+    "verify_schema.py": "26fba13b3288b128d63feec3195a84d16fa1c5705fce970eb15bbcd739a9d3e4"
+  }
+}

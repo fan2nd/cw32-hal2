@@ -3605,6 +3605,209 @@ fn generate_time_driver(out: &mut String, selected: Option<&str>) {
     ));
 }
 
+// Native L010 is a different oscillator/RTC hardware contract, not an amplitude
+// translation. Authored exact-part facts feed these constants; IR checks bind
+// every handwritten MMIO field to its own selected PAC layout.
+fn generate_l010_lse_configuration(
+    out: &mut String,
+    lse: &cw32_metapac::metadata::PeripheralLseConfiguration,
+) {
+    use cw32_metapac::metadata::{METADATA, ir};
+    use std::fmt::Write;
+    let native = lse
+        .native_l010
+        .as_ref()
+        .expect("missing native L010 LSE facts");
+    assert_eq!((native.drive_bits, native.startup_drive_bits), (4, 4));
+    assert_eq!(native.monitored_lsi_maximum_hz, 36080);
+    assert_eq!(
+        (native.detector_lse_edges, native.detector_lsi_cycles),
+        (128, 256)
+    );
+    assert_eq!(
+        (
+            native.rtc_first_divisor,
+            native.rtc_second_divisor,
+            native.rtc_calendar_divisor
+        ),
+        (1, 16384, 32768)
+    );
+    assert!(lse.configurable_ccs && lse.startup_consumers.is_none() && lse.awt_source.is_none());
+    assert_eq!((lse.nominal_hz, lse.maximum_hz), (32768, 100000));
+    assert_eq!(*lse.startup_cycles, [256, 1024, 4096, 16384]);
+    assert_eq!((lse.rtc_source, lse.uart_source, lse.mco_source), (0, 2, 6));
+    let field = |name: &str, reg: &str, offset: u32, field: &str, bit: u32, width: u32| {
+        let peripheral = METADATA
+            .peripherals
+            .iter()
+            .find(|p| p.name == name)
+            .unwrap();
+        let regs = peripheral.registers.as_ref().unwrap();
+        let block = regs
+            .ir
+            .blocks
+            .iter()
+            .find(|b| b.name == regs.block)
+            .unwrap();
+        let item = block
+            .items
+            .iter()
+            .find(|r| r.name.eq_ignore_ascii_case(reg))
+            .unwrap();
+        assert!(item.array.is_none());
+        assert_eq!(item.byte_offset, offset);
+        let ir::BlockItemInner::Register(r) = &item.inner else {
+            panic!("native field is not a register")
+        };
+        assert_eq!(r.bit_size, 32);
+        assert!(matches!(r.access, ir::Access::Read | ir::Access::ReadWrite));
+        let fs = regs
+            .ir
+            .fieldsets
+            .iter()
+            .find(|f| Some(f.name) == r.fieldset)
+            .unwrap();
+        let f = fs
+            .fields
+            .iter()
+            .find(|f| f.name.eq_ignore_ascii_case(field))
+            .unwrap();
+        assert!(f.array.is_none());
+        assert_eq!(f.bit_size, width);
+        assert!(matches!(&f.bit_offset, ir::BitOffset::Regular(p) if p.offset == bit));
+    };
+    for (reg, offset, name, bit, width) in [
+        ("CR1", 4, "LSEEN", 4, 1),
+        ("CR1", 4, "LSELOCK", 5, 1),
+        ("CR1", 4, "LSECCS", 6, 1),
+        ("CR1", 4, "KEY", 16, 16),
+        ("LSE", 36, "DRIVER", 0, 4),
+        ("LSE", 36, "WAITCYCLE", 4, 2),
+        ("LSE", 36, "MODE", 6, 1),
+        ("LSE", 36, "PDRIVER", 8, 4),
+        ("LSE", 36, "PINLOCK", 17, 1),
+        ("LSE", 36, "STABLE", 18, 1),
+        ("LSI", 32, "TRIM", 0, 10),
+        ("LSI", 32, "WAITCYCLE", 10, 2),
+        ("LSI", 32, "STABLE", 15, 1),
+        ("AHBEN", 48, "GPIOB", 5, 1),
+        ("AHBEN", 48, "KEY", 16, 16),
+        ("AHBRST", 64, "GPIOB", 5, 1),
+    ] {
+        field("SYSCTRL", reg, offset, name, bit, width);
+    }
+    for reg in ["IER", "ISR"] {
+        let offset = if reg == "IER" { 12 } else { 16 };
+        for (name, bit) in [("LSERDY", 4), ("LSEFAIL", 5), ("LSEFAULT", 7)] {
+            field("SYSCTRL", reg, offset, name, bit, 1);
+        }
+    }
+    field("SYSCTRL", "ISR", 16, "LSESTABLE", 15, 1);
+    field("RTC", "CR0", 4, "H24", 3, 1);
+    for (name, bit, width) in [("ACCESS", 0, 1), ("WAIT", 2, 1), ("SOURCE", 8, 3)] {
+        field("RTC", "CR1", 8, name, bit, width);
+    }
+    field("RTC", "PSC", 64, "PSC1", 20, 8);
+    field("RTC", "PSC", 64, "PSC2", 0, 20);
+    for name in ["UART1", "UART2"] {
+        field(name, "CR1", 0, "SOURCE", 12, 2);
+    }
+    field("LPTIM", "CR", 16, "EN", 0, 1);
+    for (name, bit, width) in [("ICLKSRC", 25, 2), ("TRIGEN", 17, 2), ("TRIGSEL", 13, 3)] {
+        field("LPTIM", "CFGR", 12, name, bit, width);
+    }
+    for bit in [0, 1, 4, 6] {
+        for (reg, offset) in [("DIR", 0), ("ANALOG", 28)] {
+            field("GPIOB", reg, offset, &format!("PIN{bit}"), bit, 1);
+        }
+        field("GPIOB", "AFRL", 24, &format!("AFR{bit}"), bit * 4, 3);
+    }
+    for bit in [0, 1] {
+        for (reg, offset) in [
+            ("OPENDRAIN", 4),
+            ("PUR", 16),
+            ("RISEIE", 36),
+            ("FALLIE", 40),
+            ("FILTER", 64),
+        ] {
+            field("GPIOB", reg, offset, &format!("PIN{bit}"), bit, 1);
+        }
+    }
+    assert_eq!(
+        native
+            .rtc_output_routes
+            .iter()
+            .map(|r| (r.pin, r.af))
+            .collect::<Vec<_>>(),
+        [("PB4", 2), ("PB6", 2)]
+    );
+    let sysctrl = METADATA
+        .peripherals
+        .iter()
+        .find(|p| p.name == "SYSCTRL")
+        .unwrap();
+    assert!(
+        sysctrl
+            .pins
+            .iter()
+            .any(|p| p.signal == "LSE_IN" && p.pin == "PB1" && p.af.is_none())
+    );
+    assert!(
+        sysctrl
+            .pins
+            .iter()
+            .any(|p| p.signal == "LSE_OUT" && p.pin == "PB0" && p.af.is_none())
+    );
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSE_NOMINAL_HZ: u32 = {};",
+        lse.nominal_hz
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSE_MAXIMUM_HZ: u32 = {};",
+        lse.maximum_hz
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSE_SUPPLY_MV: (u16,u16) = {:?};",
+        lse.supply_mv
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSE_TEMPERATURE_C: (i16,i16) = {:?};",
+        lse.temperature_c
+    )
+    .unwrap();
+    for (name, value) in [
+        ("MONITORED_LSI_MAXIMUM_HZ", native.monitored_lsi_maximum_hz),
+        ("DETECTOR_LSE_EDGES", u32::from(native.detector_lse_edges)),
+        ("DETECTOR_LSI_CYCLES", u32::from(native.detector_lsi_cycles)),
+        ("RTC_SECOND_DIVISOR", u32::from(native.rtc_second_divisor)),
+        ("RTC_CALENDAR_DIVISOR", native.rtc_calendar_divisor),
+    ] {
+        writeln!(out, "pub(crate) const RCC_LSE_{name}: u32 = {value};").unwrap();
+    }
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSE_RTC_FIRST_DIVISOR: u16 = {};",
+        native.rtc_first_divisor
+    )
+    .unwrap();
+    for (name, value) in [
+        ("RTC_SOURCE", lse.rtc_source),
+        ("UART_SOURCE", lse.uart_source),
+        ("MCO_SOURCE", lse.mco_source),
+    ] {
+        writeln!(out, "pub(crate) const RCC_LSE_{name}: u8 = {value};").unwrap();
+    }
+    // Field locations above are the source-reviewed native PAC contract.
+    out.push_str("pub(crate) const RCC_LSE_CHANGE_MASK: u32 = 0x00040f7f;\n");
+}
+
 fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLimits) {
     use cw32_metapac::metadata::{METADATA, ir};
     use std::fmt::Write;
@@ -3626,6 +3829,9 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             | "CW32L083RCS6"
             | "CW32L083MCT6"
             | "CW32L083VCT6"
+            | "CW32L010F8P6"
+            | "CW32L010F8U6"
+            | "CW32L010Y8M6"
     );
     assert_eq!(
         c.lse_configuration.is_some(),
@@ -3636,6 +3842,14 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         return;
     };
     println!("cargo:rustc-cfg=rcc_lse");
+    if METADATA.line == "CW32L010" {
+        generate_l010_lse_configuration(out, lse);
+        return;
+    }
+    assert!(
+        lse.native_l010.is_none(),
+        "native L010 facts leaked to another line"
+    );
     let peripheral = |name: &str| {
         METADATA
             .peripherals

@@ -27,6 +27,18 @@ pub trait RccPeripheral: SealedRccPeripheral + 'static {}
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct ClockError;
 
+/// Failure phase of retained-state inspection; ordinary gate errors stay unchanged.
+#[cfg(rcc_external_clock)]
+#[derive(Clone, Copy, Debug)]
+pub(crate) enum ClockInspectionError {
+    EnableFailed {
+        // Legacy callers deliberately retain their generic error classification.
+        #[cfg_attr(not(all(rcc_lse, rcc_cw32l010_v1)), allow(dead_code))]
+        restore_failed: bool,
+    },
+    RestoreFailed,
+}
+
 #[derive(Clone, Copy)]
 pub(crate) enum Readback {
     None,
@@ -149,27 +161,36 @@ impl RccInfo {
     }
 
     /// Read retained state before RCC initialization without resetting its owner.
-    /// The temporary APB configuration gate is restored even when the read
-    /// reports an incompatible oscillator. This does not gate the independent
-    /// AWT/RTC working source. Only the one-time RCC initializer may call this.
+    /// Restoration is bounded even when initial gate-enable readback fails.
+    /// The error distinguishes enable failure (including failed restoration)
+    /// from restoration failure after a successful read. Configuration-only
+    /// gates preserve independent RTC/AWT operation. Working gates (including
+    /// GPIO) require the caller's functional handover to permit their whole
+    /// operational interval; restoration does not undo sampling or events.
+    /// Only the RCC initialization/verification boundary may call this.
     #[cfg(rcc_external_clock)]
     pub(crate) fn inspect_for_init<R>(
         self,
         _cs: CriticalSection<'_>,
         attempts: u32,
         read: impl FnOnce() -> R,
-    ) -> Result<R, ClockError> {
+    ) -> Result<R, ClockInspectionError> {
         let enabled = self.is_enabled();
         let readback = Readback::Poll {
             attempts,
             spin: true,
         };
         if !enabled {
-            self.set_clock(true, readback)?;
+            if self.set_clock(true, readback).is_err() {
+                return Err(ClockInspectionError::EnableFailed {
+                    restore_failed: self.set_clock(false, readback).is_err(),
+                });
+            }
         }
         let result = read();
         if !enabled {
-            self.set_clock(false, readback)?;
+            self.set_clock(false, readback)
+                .map_err(|_| ClockInspectionError::RestoreFailed)?;
         }
         Ok(result)
     }

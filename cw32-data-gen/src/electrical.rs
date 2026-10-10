@@ -834,7 +834,7 @@ fn parse_lse_catalog(bytes: &[u8]) -> Result<LseCatalog> {
     let unique: serde_yaml::Value = serde_yaml::from_slice(bytes)?;
     Ok(serde_yaml::from_value(unique)?)
 }
-const LSE_PARTS: [(&str, &str, &str); 16] = [
+const LSE_PARTS: [(&str, &str, &str); 19] = [
     ("CW32A030C8T7", "CW32A030", "LQFP48"),
     ("CW32F030C8T7", "CW32F030", "LQFP48"),
     ("CW32F020C6U7", "CW32F020", "QFN48"),
@@ -851,6 +851,9 @@ const LSE_PARTS: [(&str, &str, &str); 16] = [
     ("CW32L083RCS6", "CW32L083", "LQFP64（7×7mm）"),
     ("CW32L083MCT6", "CW32L083", "LQFP80"),
     ("CW32L083VCT6", "CW32L083", "LQFP100"),
+    ("CW32L010F8P6", "CW32L010", "TSSOP20"),
+    ("CW32L010F8U6", "CW32L010", "QFN20"),
+    ("CW32L010Y8M6", "CW32L010", "SOP16"),
 ];
 // Re-read from x030 RM Rev2.5 PDF187–195 and own F020 RM Rev1.4 PDF184–192. Values
 // and masks are observations, not writes. KEY and ICR are never included.
@@ -877,9 +880,70 @@ fn validate_lse_parts(catalog: &LseCatalog) -> Result<()> {
                 .get(*part)
                 .is_some_and(|p| p.family == *family
                     && p.package == *package
-                    && p.input_pin == "PC14"
-                    && p.output_pin == "PC15")),
+                    && p.input_pin == if *family == "CW32L010" { "PB1" } else { "PC14" }
+                    && p.output_pin == if *family == "CW32L010" { "PB0" } else { "PC15" })),
         "active LSE qualification must be present for exactly the reviewed exact parts"
+    );
+    Ok(())
+}
+// Native L010 source-zero admission masks. These are observations, not proof of
+// power-on reset; H24, WINDOW and stored calendar/prescaler values are excluded.
+const LSE_L010_RTC_ADMISSION: [(&str, u32, u32, u32); 6] = [
+    ("CR0", 4, 0, 0xe7),
+    ("CR1", 8, 0, 0x705),
+    ("CR2", 12, 0, 0x6ff),
+    ("COMPCFR1", 16, 0, 0xffff),
+    ("IER", 48, 0, 0x5f),
+    ("ISR", 52, 0, 0x5f),
+];
+fn validate_l010_lse_configuration(
+    part: &str,
+    c: &cw32_data_serde::chip::core::peripheral::LseConfiguration,
+) -> Result<()> {
+    let n = c
+        .native_l010
+        .as_ref()
+        .context("L010 requires own native LSE facts")?;
+    ensure!(
+        matches!(part, "CW32L010F8P6" | "CW32L010F8U6" | "CW32L010Y8M6")
+            && c.nominal_hz == 32_768
+            && c.maximum_hz == 100_000
+            && c.configurable_ccs
+            && c.supply_mv == (1620, 5500)
+            && c.temperature_c == (-40, 85)
+            && c.startup_cycles == [256, 1024, 4096, 16384]
+            && (c.rtc_source, c.uart_source, c.mco_source) == (0, 2, 6)
+            && c.awt_source.is_none()
+            && c.startup_consumers.is_none()
+            && c.gpio_dir_offset == 0
+            && c.gpio_speed_offset.is_none()
+            && c.output_routes.is_empty()
+            && n.drive_bits == 4
+            && n.startup_drive_bits == 4
+            && n.monitored_lsi_maximum_hz == 36_080
+            && n.detector_lse_edges == 128
+            && n.detector_lsi_cycles == 256
+            && (
+                n.rtc_first_divisor,
+                n.rtc_second_divisor,
+                n.rtc_calendar_divisor
+            ) == (1, 16384, 32768)
+            && n.rtc_output_routes
+                .iter()
+                .map(|r| (r.pin.as_str(), r.af))
+                .collect::<Vec<_>>()
+                == [("PB4", 2), ("PB6", 2)],
+        "L010 native electrical, monitor, drive, selector or calendar facts differ from own source"
+    );
+    ensure!(
+        c.rtc_reset.len() == LSE_L010_RTC_ADMISSION.len()
+            && LSE_L010_RTC_ADMISSION.iter().zip(&c.rtc_reset).all(
+                |((name, offset, value, mask), r)| r.register == *name
+                    && r.byte_offset == *offset
+                    && r.value == *value
+                    && r.mask == *mask
+            ),
+        "L010 requires the exact six-row source-zero admission image including ISR"
     );
     Ok(())
 }
@@ -887,6 +951,13 @@ fn validate_lse_configuration(
     part: &str,
     c: &cw32_data_serde::chip::core::peripheral::LseConfiguration,
 ) -> Result<()> {
+    if part.starts_with("CW32L010") {
+        return validate_l010_lse_configuration(part, c);
+    }
+    ensure!(
+        c.native_l010.is_none(),
+        "native L010 facts cannot qualify another family"
+    );
     ensure!(
         c.nominal_hz == 32_768
             && c.maximum_hz == 1_000_000
@@ -1100,6 +1171,256 @@ fn lse_lsi_af_routes(
     Ok(actual)
 }
 
+/// Check the own L010 layout without importing another family's admission or
+/// factory-LSI policy. The complete source/package checks run before this branch.
+fn validate_l010_lse_registers(
+    root: &Path,
+    chip: &crate::ChipInput,
+    core: &cw32_data_serde::chip::Core,
+    registers: &BTreeMap<String, chiptool::ir::IR>,
+    c: &cw32_data_serde::chip::core::peripheral::LseConfiguration,
+    proof: &Value,
+) -> Result<()> {
+    let n = c
+        .native_l010
+        .as_ref()
+        .context("missing L010 native facts")?;
+    let (sysctrl, lse) = lse_register(registers, core, "SYSCTRL", "LSE", 36)?;
+    let expected_fields = [
+        ("DRIVER", 0, 4),
+        ("WAITCYCLE", 4, 2),
+        ("MODE", 6, 1),
+        ("PDRIVER", 8, 4),
+        ("PINLOCK", 17, 1),
+        ("STABLE", 18, 1),
+    ];
+    ensure!(
+        lse.fields.len() == expected_fields.len(),
+        "L010 has no amplitude or undocumented analog fields"
+    );
+    for (name, bit, width) in expected_fields {
+        lse_field(lse, name, bit, width)?;
+    }
+    for (field, enumeration, bits, count) in [
+        ("DRIVER", "LseDrive", 4, 16),
+        ("PDRIVER", "LseDrive", 4, 16),
+        ("WAITCYCLE", "LseWait", 2, 4),
+    ] {
+        ensure!(
+            lse.fields
+                .iter()
+                .find(|f| f.name == field)
+                .and_then(|f| f.enumm.as_deref())
+                == Some(enumeration),
+            "L010 LSE field requires own native enum"
+        );
+        let e = sysctrl
+            .enums
+            .get(enumeration)
+            .context("missing L010 LSE enum")?;
+        ensure!(
+            e.bit_size == bits && e.variants.len() == count,
+            "L010 native enum width or count differs from manual"
+        );
+        for (i, v) in e.variants.iter().enumerate() {
+            let name = if enumeration == "LseDrive" {
+                format!("LEVEL{i}")
+            } else {
+                format!("CYCLES{}", c.startup_cycles[i])
+            };
+            ensure!(
+                v.value == i as u64 && v.name == name,
+                "L010 native enum must exactly preserve source encodings"
+            );
+        }
+    }
+    for (register, offset, field, bit, width) in [
+        ("CR0", 0, "SYSCLK", 0, 3),
+        ("CR1", 4, "LSEEN", 4, 1),
+        ("CR1", 4, "LSELOCK", 5, 1),
+        ("CR1", 4, "LSECCS", 6, 1),
+        ("CR1", 4, "KEY", 16, 16),
+        ("CR2", 8, "LSEBRKEN", 11, 1),
+        ("LSI", 32, "TRIM", 0, 10),
+        ("LSI", 32, "WAITCYCLE", 10, 2),
+        ("LSI", 32, "STABLE", 15, 1),
+        ("MCO", 112, "SOURCE", 0, 4),
+        ("ISR", 16, "LSERDY", 4, 1),
+        ("ISR", 16, "LSEFAIL", 5, 1),
+        ("ISR", 16, "LSEFAULT", 7, 1),
+        ("ISR", 16, "LSESTABLE", 15, 1),
+        ("IER", 12, "LSERDY", 4, 1),
+        ("IER", 12, "LSEFAIL", 5, 1),
+        ("IER", 12, "LSEFAULT", 7, 1),
+    ] {
+        let (_, fields) = lse_register(registers, core, "SYSCTRL", register, offset)?;
+        lse_field(fields, field, bit, width)?;
+    }
+    for (name, gate, gate_offset, bit, reset, reset_offset) in [
+        ("RTC", "APBEN2", 52, 1, "APBRST2", 68),
+        ("UART1", "APBEN1", 56, 3, "APBRST1", 72),
+        ("UART2", "APBEN1", 56, 4, "APBRST1", 72),
+        ("LPTIM", "APBEN2", 52, 7, "APBRST2", 68),
+        ("GPIOB", "AHBEN", 48, 5, "AHBRST", 64),
+    ] {
+        for (register, offset) in [(gate, gate_offset), (reset, reset_offset)] {
+            let (_, fields) = lse_register(registers, core, "SYSCTRL", register, offset)?;
+            lse_field(fields, name, bit, 1)?;
+        }
+        ensure!(
+            proof["consumer_gates"][name]
+                == serde_json::json!([gate, gate_offset, bit, reset, reset_offset])
+                && proof["consumer_gate_policy"][name]
+                    == if name == "GPIOB" {
+                        "configuration_and_work"
+                    } else {
+                        "configuration_only"
+                    },
+            "native L010 gate facts cannot inherit work-gate assumptions"
+        );
+    }
+    let actual_uarts: Vec<_> = core
+        .peripherals
+        .iter()
+        .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == "uart"))
+        .map(|p| p.name.as_str())
+        .collect();
+    ensure!(
+        actual_uarts == ["UART1", "UART2"],
+        "native L010 UART roster changed"
+    );
+    for name in actual_uarts {
+        let (ir, fields) = lse_register(registers, core, name, "CR1", 0)?;
+        lse_field(fields, "SOURCE", 12, 2)?;
+        lse_source_enum(ir, fields, "SOURCE", c.uart_source)?;
+    }
+    for (register, offset, field, bit, width) in [
+        ("CR", 16, "EN", 0, 1),
+        ("CFGR", 12, "ICLKSRC", 25, 2),
+        ("CFGR", 12, "TRIGSEL", 13, 3),
+        ("CFGR", 12, "TRIGEN", 17, 2),
+    ] {
+        let (_, fields) = lse_register(registers, core, "LPTIM", register, offset)?;
+        lse_field(fields, field, bit, width)?;
+    }
+    let (lptim_ir, cfgr) = lse_register(registers, core, "LPTIM", "CFGR", 12)?;
+    lse_source_enum(lptim_ir, cfgr, "ICLKSRC", 2)?;
+    for (register, offset, field, bit, width) in [
+        ("CR0", 4, "H24", 3, 1),
+        ("CR1", 8, "SOURCE", 8, 3),
+        ("CR1", 8, "ACCESS", 0, 1),
+        ("CR1", 8, "WINDOW", 1, 1),
+        ("CR1", 8, "WAIT", 2, 1),
+        ("PSC", 64, "PSC1", 20, 8),
+        ("PSC", 64, "PSC2", 0, 20),
+    ] {
+        let (_, fields) = lse_register(registers, core, "RTC", register, offset)?;
+        lse_field(fields, field, bit, width)?;
+    }
+    for entry in &c.rtc_reset {
+        let (_, fields) = lse_register(registers, core, "RTC", &entry.register, entry.byte_offset)?;
+        let mut mask = 0u32;
+        for field in &fields.fields {
+            let chiptool::ir::BitOffset::Regular(bit) = field.bit_offset else {
+                anyhow::bail!("nonregular native RTC admission field")
+            };
+            ensure!(
+                field.array.is_none()
+                    && field.bit_size > 0
+                    && field.bit_size < 32
+                    && bit + field.bit_size <= 32,
+                "unsupported native RTC admission field"
+            );
+            if (entry.register == "CR0" && field.name == "H24")
+                || (entry.register == "CR1" && field.name == "WINDOW")
+            {
+                continue;
+            }
+            mask |= ((1u32 << field.bit_size) - 1) << bit;
+        }
+        ensure!(mask == entry.mask, "L010 native RTC admission mask changed");
+    }
+    for (register, offset) in [
+        ("DIR", 0),
+        ("OPENDRAIN", 4),
+        ("PUR", 16),
+        ("AFRL", 24),
+        ("ANALOG", 28),
+        ("RISEIE", 36),
+        ("FALLIE", 40),
+        ("ISR", 52),
+        ("FILTER", 64),
+    ] {
+        lse_register(registers, core, "GPIOB", register, offset)?;
+    }
+    let (_, afrl) = lse_register(registers, core, "GPIOB", "AFRL", 24)?;
+    for (field, bit) in [("AFR0", 0), ("AFR1", 4), ("AFR4", 16), ("AFR6", 24)] {
+        lse_field(afrl, field, bit, 3)?;
+    }
+    // Keep hardware RTC routes distinct from direct LSE routes and bonding.
+    let af: serde_yaml::Value =
+        serde_yaml::from_slice(&fs::read(root.join("cw32-data/af/cw32l010.yaml"))?)?;
+    let mut rtc_routes = Vec::new();
+    for (_, value) in af.as_mapping().context("missing L010 AF catalog")? {
+        if let Some(entries) = value.as_sequence() {
+            for entry in entries {
+                if entry["function"].as_str() == Some("RTCOUT") {
+                    let pin = entry["pin"].as_str().context("missing RTC output pin")?;
+                    let value = entry["af"].as_u64().context("missing RTC output AF")?;
+                    rtc_routes.push((pin, value));
+                }
+            }
+        }
+    }
+    ensure!(
+        rtc_routes == [("PB4", 2), ("PB6", 2)],
+        "L010 own RTC output AF roster changed"
+    );
+    let bonded: Vec<_> = n
+        .rtc_output_routes
+        .iter()
+        .filter(|r| core.pins.iter().any(|p| p.name == r.pin))
+        .collect();
+    let evidence = proof["package_pins"][&chip.name]["rtc_output_routes"]
+        .as_array()
+        .context("missing L010 package RTC routes")?;
+    ensure!(
+        evidence.len() == bonded.len(),
+        "L010 package RTC route omission"
+    );
+    for (r, source) in bonded.iter().zip(evidence) {
+        ensure!(
+            source["pin"] == r.pin
+                && source["af"] == r.af
+                && chip.packages[0]
+                    .pins
+                    .iter()
+                    .any(|p| source["position"] == p.position
+                        && p.signals.iter().any(|s| s == &r.pin)),
+            "L010 RTC output bonding changed"
+        );
+    }
+    let access: serde_yaml::Value =
+        serde_yaml::from_slice(&fs::read(root.join("cw32-data/field-access.yaml"))?)?;
+    ensure!(
+        access["registers"]["sysctrl_cw32l010_v1"]
+            .as_sequence()
+            .context("missing native L010 access overlay")?
+            .iter()
+            .any(|f| f["register"].as_str() == Some("LSE")
+                && f["field"].as_str() == Some("STABLE")
+                && f["bit_offset"].as_u64() == Some(18)
+                && f["bit_size"].as_u64() == Some(1)),
+        "L010 LSE.STABLE must retain the own-source RO overlay"
+    );
+    ensure!(
+        proof["lsi_monitor_prerequisite"]["maximum_hz"] == n.monitored_lsi_maximum_hz
+            && proof["lsi_monitor_prerequisite"]["cold_lsi_startup_supported"] == false,
+        "native L010 monitor requires unchanged legal LSI; no imported calibration policy"
+    );
+    Ok(())
+}
+
 /// Project exact-part LSE capabilities only after verifying package, own sources,
 /// selected register fields and the complete conservative consumer snapshot.
 pub fn apply_lse(
@@ -1144,6 +1465,8 @@ pub fn apply_lse(
     let l052_rtc_proof = read_policy("docs/lse-active-l052-rtc-admission.json")?;
     let l083_proof = read_policy("docs/lse-active-l083.json")?;
     let l083_rtc_proof = read_policy("docs/lse-active-l083-rtc-admission.json")?;
+    let l010_proof = read_policy("docs/lse-l010-qualification.json")?;
+    let l010_rtc_proof = read_policy("docs/lse-l010-rtc-admission.json")?;
     let own_proof = |family: &str| -> Result<(&Value, &Value)> {
         Ok(match family {
             "CW32A030" | "CW32F030" => (&x030_proof, &x030_rtc_proof),
@@ -1153,6 +1476,7 @@ pub fn apply_lse(
             "CW32W031" => (&w031_proof, &w031_rtc_proof),
             "CW32L052" => (&l052_proof, &l052_rtc_proof),
             "CW32L083" => (&l083_proof, &l083_rtc_proof),
+            "CW32L010" => (&l010_proof, &l010_rtc_proof),
             _ => anyhow::bail!("unreviewed active LSE family"),
         })
     };
@@ -1168,7 +1492,7 @@ pub fn apply_lse(
             p.configuration.configurable_ccs
                 == matches!(
                     p.family.as_str(),
-                    "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052" | "CW32L083"
+                    "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052" | "CW32L083" | "CW32L010"
                 ),
             "LSE CCS hardware facts differ from bounded own-family cohort"
         );
@@ -1194,8 +1518,8 @@ pub fn apply_lse(
                 .any(|(part, family, package)| chip.name == *part
                     && line == *family
                     && p.package == *package)
-            && p.input_pin == "PC14"
-            && p.output_pin == "PC15",
+            && p.input_pin == if line == "CW32L010" { "PB1" } else { "PC14" }
+            && p.output_pin == if line == "CW32L010" { "PB0" } else { "PC15" },
         "LSE cannot derive exact-part qualification from a family alias"
     );
     ensure!(
@@ -1214,8 +1538,8 @@ pub fn apply_lse(
         );
     }
     for (pin, position, alias) in [
-        ("PC14", input_position, "OSC32_IN"),
-        ("PC15", output_position, "OSC32_OUT"),
+        (p.input_pin.as_str(), input_position, "OSC32_IN"),
+        (p.output_pin.as_str(), output_position, "OSC32_OUT"),
     ] {
         ensure!(
             core.pins.iter().any(|p| p.name == pin)
@@ -1264,6 +1588,10 @@ pub fn apply_lse(
             "vendor:CW32L083_UserManual_CN_V2.0.pdf",
             "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
         ),
+        "CW32L010" => (
+            "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+            "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+        ),
         _ => anyhow::bail!("unreviewed active LSE family"),
     };
     for (source, expected) in p.sources.iter().zip([expected_manual, expected_datasheet]) {
@@ -1301,6 +1629,18 @@ pub fn apply_lse(
         );
     }
     let c = &p.configuration;
+    if line == "CW32L010" {
+        validate_l010_lse_registers(root, chip, core, registers, c, proof)?;
+        core.peripherals
+            .iter_mut()
+            .find(|p| p.name == "SYSCTRL")
+            .context("native LSE has no SYSCTRL owner")?
+            .clock_limits
+            .as_mut()
+            .context("native LSE has no clock limits")?
+            .lse_configuration = Some(c.clone());
+        return Ok(());
+    }
     if c.configurable_ccs {
         let monitor = &proof["lsi_monitor_prerequisite"];
         let selectors = &monitor["selector_allowlists_before_disabled_LSI_trim_change"];
@@ -1688,6 +2028,53 @@ mod lse_tests {
     use super::*;
     fn catalog() -> LseCatalog {
         parse_lse_catalog(include_bytes!("../../cw32-data/lse-qualified.yaml")).unwrap()
+    }
+    #[test]
+    fn l010_lse_rejects_cross_family_and_native_fact_drift() {
+        let catalog = catalog();
+        for part in ["CW32L010F8P6", "CW32L010F8U6", "CW32L010Y8M6"] {
+            let original = catalog.parts[part].configuration.clone();
+            validate_lse_configuration(part, &original).unwrap();
+            for mutation in 0..15 {
+                let mut c = original.clone();
+                match mutation {
+                    0 => c.native_l010 = None,
+                    1 => c.maximum_hz = 1_000_000,
+                    2 => c.native_l010.as_mut().unwrap().drive_bits = 2,
+                    3 => c.native_l010.as_mut().unwrap().startup_drive_bits = 2,
+                    4 => c.native_l010.as_mut().unwrap().monitored_lsi_maximum_hz = 33_784,
+                    5 => c.native_l010.as_mut().unwrap().detector_lse_edges = 129,
+                    6 => c.native_l010.as_mut().unwrap().detector_lsi_cycles = 128,
+                    7 => c.native_l010.as_mut().unwrap().rtc_first_divisor = 0,
+                    8 => c.native_l010.as_mut().unwrap().rtc_second_divisor = 32768,
+                    9 => c.native_l010.as_mut().unwrap().rtc_calendar_divisor = 16384,
+                    10 => c.native_l010.as_mut().unwrap().rtc_output_routes[0].af = 3,
+                    11 => c.rtc_reset.pop().map(|_| ()).unwrap(),
+                    12 => c.rtc_reset[1].mask = 0x703,
+                    13 => c.awt_source = Some(3),
+                    _ => c.configurable_ccs = false,
+                }
+                assert!(
+                    validate_lse_configuration(part, &c).is_err(),
+                    "{part} mutation{mutation}"
+                );
+            }
+            for unqualified in ["CW32L010", "CW32L011F8P6", "CW32L012F8P6"] {
+                assert!(validate_lse_configuration(unqualified, &original).is_err());
+            }
+        }
+        for (part, profile) in &catalog.parts {
+            if profile.family != "CW32L010" {
+                assert!(profile.configuration.native_l010.is_none());
+                validate_lse_configuration(part, &profile.configuration).unwrap();
+                let mut c = profile.configuration.clone();
+                c.native_l010 = catalog.parts["CW32L010F8P6"]
+                    .configuration
+                    .native_l010
+                    .clone();
+                assert!(validate_lse_configuration(part, &c).is_err());
+            }
+        }
     }
     #[test]
     fn lse_rejects_duplicate_catalog_keys() {

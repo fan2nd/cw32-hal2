@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "status": "accepted_final_v3_runtime_with_verified_v2_matrix_and_v3_diagnostics_only_supplement",
+  "authored_freeze": {
+    "path": "external-evidence/stage53/l010-lse-candidate/evidence/authored-source-freeze-v3.json",
+    "sha256": "79505fee16004ff375d83aeb90db9b18c455fab0f17670588410fa3a4dca99c3",
+    "file_count": 1176,
+    "live_match_verified": true
+  },
+  "v1_to_v2_delta": {
+    "path": "external-evidence/stage53/l010-lse-candidate/evidence/v1-to-v2-delta.json",
+    "sha256": "7b88997fbc33cd3ec5c3aba3fad18bbfa984f9a7b952089bf30bd45d5d9cb287",
+    "changed_paths": [
+      "cw32-data-gen/src/electrical.rs",
+      "docs/qualified-l010-lse.md",
+      "embassy-cw32/build.rs",
+      "embassy-cw32/src/rcc/l010_l011.rs",
+      "embassy-cw32/src/rcc/lse_l010.rs",
+      "embassy-cw32/src/rcc/peripheral.rs",
+      "embassy-cw32/src/rtc/mod.rs"
+    ]
+  },
+  "checks": [
+    {
+      "id": "native_modes",
+      "result": "pass",
+      "detail": "L010 native four-bit independent drive/startup, no amplitude; StartupOnly CCS0 semantics and MonitoredExistingRoutes legal stable unchanged LSI."
+    },
+    {
+      "id": "read_only_central_admission",
+      "result": "pass",
+      "detail": "Pure validation and central source/flags/locks/reset checks precede configuration/pad writes."
+    },
+    {
+      "id": "configuration_domains",
+      "result": "pass",
+      "detail": "RTC/UART1/UART2/LPTIM configuration-only gate sequence with mandatory RTC ISR0 and quiet controls, no status/control/reset writes."
+    },
+    {
+      "id": "inspection_error_restoration",
+      "result": "pass_after_v2_correction",
+      "detail": "One bounded restore request on opening failure, native enable/restore flags; old mappings remain generic. Explicit shared error-path delta."
+    },
+    {
+      "id": "gpiob_window",
+      "result": "pass_with_public_functional_handover",
+      "detail": "Whole-bank operation effects disclosed; incoming gate bounded restoration; PB04/PB06 veto only in allowed new-source0 window, no observer pad write."
+    },
+    {
+      "id": "timer_observers",
+      "result": "explicit_uninspected_functional_precondition",
+      "detail": "BTIM/GTIM/ATIM routes not probed or claimed verified; no dormant work-gate opening."
+    },
+    {
+      "id": "monitor_margin",
+      "result": "pass",
+      "detail": "256*minimum_LSE > 129*36080, u64 metadata-derived sufficient margin, no factory calibration inferred from STABLE."
+    },
+    {
+      "id": "monitored_fault_routes",
+      "result": "pass_with_deliberate_effects",
+      "detail": "Protection and IRQ routes retained; SBIF independent of BKE, asynchronous output effects disclosed."
+    },
+    {
+      "id": "pad_source_lifetime",
+      "result": "pass",
+      "detail": "Monotonic requested/inherited reservations; reuse readback only; failures and Drop retain source/pads; no ICR/reset/retune writes."
+    },
+    {
+      "id": "actual_rtc_source",
+      "result": "pass",
+      "detail": "HSIOSC/LSE source determines PSC, readback factors, first-stage upper bound and calendar divisor; HSI default and attach factor policy preserved."
+    },
+    {
+      "id": "rtc_health",
+      "result": "pass_with_startup_only_limit",
+      "detail": "Health/source checked again after waits and before completion; CCS0 cannot prove later availability or wall-time progression."
+    },
+    {
+      "id": "clock_flash_bounds",
+      "result": "pass",
+      "detail": "Existing clock/operating/Flash and HSI fallback constraints remain; LSE not a new SYSCLK path."
+    },
+    {
+      "id": "old_16_lse",
+      "result": "pass_source_equivalence",
+      "detail": "Old rcc/lse.rs exact bytes, old16 catalog records exact semantic equality; native branch separate."
+    },
+    {
+      "id": "none_l011",
+      "result": "pass_success_semantics_with_shared_error_delta",
+      "detail": "None preserves inherited LSE comparison; L011 has no active LSE cfg. Shared gate-enable timeout restoration is the deliberate exception."
+    },
+    {
+      "id": "safe_rust_memory_safety",
+      "result": "no_concrete_counterexample_established",
+      "detail": "No concrete valid safe API UB path found under existing platform ownership/quiescence boundary; no whole-HAL soundness or arbitrary handover proof."
+    },
+    {
+      "id": "hardware",
+      "result": "not_run",
+      "detail": "No oscillator/electrical/fault timing or board validation."
+    },
+    {
+      "id": "build_correspondence",
+      "result": "pass_with_explicit_version_boundary",
+      "detail": "29-command/33-ELF focused matrix binds v2. V3 exact reverse proof is field-only lint/comment/format; 3 supplemental commands and 2 byte-identical F030 ELFs bind v3. No full v3 rerun claimed."
+    }
+  ],
+  "rcc_lse_bytes_sha256": "864170c06d3b1bff8d53fd84a8131e85d32cb013c9b33c727609567ad3b4425e",
+  "reviewer_ran_cargo": false,
+  "reviewer_ran_hal_tests": false,
+  "reviewer_changed_candidate": false,
+  "hardware_validated": false,
+  "legal_clearance": false,
+  "reviewed_at_utc": "2026-10-09T19:43:58.650832+00:00",
+  "decision": "accept",
+  "independent_runtime_review_passed": true,
+  "open_runtime_blockers": [],
+  "source_only_identity_reviewed_file_count": 1176,
+  "generated_manifest": {
+    "path": "external-evidence/stage53/l010-lse-candidate/evidence/generated-manifest-final.json",
+    "sha256": "f15ae58fd0e0a1feddcfe56a060d15cfe1f52e9c0daa46a2de1be1634db64da6",
+    "file_count": 900,
+    "live_match_verified": true
+  },
+  "findings_resolved": [
+    "R1: shared bounded gate restoration with native dual-phase public error",
+    "R2: native 3-bit AFR assertion",
+    "R3: remove new unsupported PDR qualification assertion; no observed generation failure"
+  ],
+  "nonblocking_separate_source_note": "Pre-existing gpiob_cw32l010_v1 PDR entry is unchanged; own RM GPIOx table does not document it. No native LSE runtime access. Separate original-source qualification is needed before changing it.",
+  "version_boundary": {
+    "v2_source_sha256": "0cad8a92be0605efeeab5ac2007fd02f76d661c0752443d53a028d0debd72152",
+    "v2_matrix_commands": 29,
+    "v2_actual_elf_files": 33,
+    "v3_only_changed_file": "embassy-cw32/src/rcc/peripheral.rs",
+    "v3_exact_reverse_to_v2_verified": true,
+    "v3_no_type_api_mmio_runtime_change": true,
+    "v3_supplement_commands": 3,
+    "v3_supplement_actual_elf_files": 2,
+    "v3_full_matrix_rerun": false,
+    "v3_supplement_warning_free": true
+  },
+  "evidence": [
+    {
+      "path": "external-evidence/stage53/l010-lse-runtime-review/initial-review-record.json",
+      "sha256": "d265fceca5cf406fe05ec3ab0490ad8d30460274624add7d2dd54d65ddbb6771"
+    },
+    {
+      "path": "external-evidence/stage53/l010-lse-runtime-review/initial-compatibility-checks.json",
+      "sha256": "c271803a0b0de803f415be18bf539c9b40995175f60124fb0bae4d172223a496"
+    },
+    {
+      "path": "external-evidence/stage53/l010-lse-runtime-review/source-review-v2.json",
+      "sha256": "5b2bc0022acb6e901fc293c8293650e08cbdda49cbf15935f53a25d12bbbc5fa"
+    },
+    {
+      "path": "external-evidence/stage53/l010-lse-runtime-review/build-correspondence.json",
+      "sha256": "1960b2cb25e166a5f152bb305617e5151c5920a4be82c0a4b54e763ec92616b7"
+    },
+    {
+      "path": "external-evidence/stage53/l010-lse-runtime-review/audit_receipts.py",
+      "sha256": "13178feb7905cfdee2807914b21360f16033ae58c5251d8b858213616daee40a"
+    },
+    {
+      "path": "external-evidence/stage53/l010-lse-runtime-review/review.md",
+      "sha256": "54709d985a43e274ea6438563059b3349da6e8d37be8bdb6e8ecf0edea44a879"
+    },
+    {
+      "path": "external-evidence/stage53/l010-lse-candidate/evidence/focused-matrix-receipt.json",
+      "sha256": "2f3405bca6f7f37da826ee487f4016e6680986009d0d05ca5d1a387824617ab5"
+    },
+    {
+      "path": "external-evidence/stage53/l010-lse-candidate/evidence/elf-layout.json",
+      "sha256": "5fd6510c98af9da9f15207516f573dd2b08313d9bf55d2b3e311206f754285b6"
+    },
+    {
+      "path": "external-evidence/stage53/l010-lse-candidate/evidence/v3-cargo-supplement.json",
+      "sha256": "b21a02cdca1bc48ae67a535d043a71ef1773f8a19f0613c36073f751b305405c"
+    },
+    {
+      "path": "external-evidence/stage53/l010-lse-candidate/evidence/v2-to-v3-diagnostic.json",
+      "sha256": "68be20aa43b1a21a19215496d4c14f6c6ff0999f0cda65768f678678c9183a99"
+    }
+  ]
+}

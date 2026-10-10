@@ -729,6 +729,23 @@ pub struct PeripheralLseStartupConsumers {
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
+/// CW32L010 native drive, detector and RTC clock facts. No amplitude field exists.
+pub struct PeripheralLseNativeL010 {
+    pub drive_bits: u8,
+    pub startup_drive_bits: u8,
+    /// Legal unchanged LSI upper bound; STABLE alone does not prove this bound.
+    pub monitored_lsi_maximum_hz: u32,
+    pub detector_lse_edges: u16,
+    pub detector_lsi_cycles: u16,
+    /// Actual divisors; PSC stores each divisor minus one.
+    pub rtc_first_divisor: u16,
+    pub rtc_second_divisor: u16,
+    pub rtc_calendar_divisor: u32,
+    pub rtc_output_routes: Vec<PeripheralLseOutputRoute>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct PeripheralLseConfiguration {
     pub nominal_hz: u32,
     pub maximum_hz: u32,
@@ -741,6 +758,7 @@ pub struct PeripheralLseConfiguration {
     pub uart_source: u8,
     pub awt_source: Option<u8>,
     pub startup_consumers: Option<PeripheralLseStartupConsumers>,
+    pub native_l010: Option<PeripheralLseNativeL010>,
     pub mco_source: u8,
     pub gpio_dir_offset: u32,
     pub gpio_speed_offset: Option<u32>,

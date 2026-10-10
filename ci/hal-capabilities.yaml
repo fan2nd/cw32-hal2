@@ -644,8 +644,11 @@ functions:
       status: partial
       scope: Blocking calendar with preserved-state attach and explicit cold initialization.
       limitations:
-      - L010/L011/L012 use qualified HSIOSC; classic RTCs use pretrimmed LSI, with held LSE also available on the sixteen exact x030/F020/L031/R031/W031/L052/L083 packages in lse-qualified.yaml. No UTC precision, compensation,
-        subseconds or retention guarantee.
+      - L010 retains qualified HSIOSC and adds held LSE on its three exact packages; L011/L012 use HSIOSC.
+        Classic RTCs use pretrimmed LSI, with held LSE on the previous sixteen exact x030/F020/L031/R031/W031/L052/L083 packages.
+        All nineteen are listed in lse-qualified.yaml. Native L010 StartupOnly can retain STABLE after loss;
+        MonitoredExistingRoutes requires legal stable unchanged LSI and retains configured fault routes.
+        No UTC precision, compensation, subseconds, continuous progression or retention guarantee.
     - id: alarm_a
       status: partial
       scope: Typed recurring weekly Alarm A configuration and enable.
@@ -1318,15 +1321,23 @@ functions:
       - path: cw32-data/lse-ownership.yaml
     - id: external_low_speed
       status: partial
-      scope: Init-only nominal 32768 Hz crystal/bypass LSE and held RTC source on sixteen exact source-qualified x030/F020/L031/R031/W031/L052/L083 packages.
-      implemented_families: [CW32F030, CW32A030, CW32F020, CW32L031, CW32R031, CW32W031, CW32L052, CW32L083]
+      scope: Init-only nominal 32768 Hz crystal/bypass LSE and held RTC source on nineteen exact source-qualified packages; previous sixteen x030/F020/L031/R031/W031/L052/L083 plus three native L010 packages with distinct monitoring contracts.
+      implemented_families: [CW32F030, CW32A030, CW32F020, CW32L031, CW32R031, CW32W031, CW32L052, CW32L083, CW32L010]
       limitations:
       - Other packages retain inherited-pad protection only. Every-cycle board bounds, waveform, drive and load qualification are required.
-      - None preserves LSE parameters and pads. Existing mandatory CCS behavior remains; configurable CCS changes only LSECCS for a requested new start. Exact enabled reuse never restarts.
+      - None preserves LSE parameters and pads. The previous sixteen retain their existing CCS/monitor policies.
+        Exact enabled reuse never restarts or changes the selected monitoring policy.
       - L031/R031/W031/L052/L083 preserve calibrated LSI; only a repeatedly verified stopped unused source can load factory trim for a requested monitored LSE start. No live trim, source reset or IRQ acknowledgement.
       - L052 independently configures pre-start and run analog banks while disabled, rejects active/automatic AUTOTRIM calibration, preserves off LPTIM/LCD work gates, and checks its own RTC reset roster.
       - L083 has one analog bank, six native UART consumers, GPIO LCKR and exact-package LSI routes. It preserves off LPTIM/LCD work gates and rejects active/automatic AUTOTRIM calibration.
-      - L083 alone requires 256 * LSE_min_hz > 129 * 33784 before peripheral acquisition or RCC writes. Its own 1.65..5.5 V and -40..85 C envelope, nominal 32768 Hz, per-cycle bounds and full board electrical qualification all apply. Earlier eleven qualifications and HSI/HSE/PLL behavior are unchanged.
+      - L083 requires 256 * LSE_min_hz > 129 * 33784 before peripheral acquisition or RCC writes. Its own 1.65..5.5 V and -40..85 C envelope, nominal 32768 Hz, per-cycle bounds and full board electrical qualification all apply. The previous sixteen qualifications and HSI/HSE/PLL successful paths are unchanged.
+      - Native L010 has independent four-bit running/startup drive and no amplitude. StartupOnly requires inherited
+        LSECCS clear and supplies no running-loss guarantee; MonitoredExistingRoutes requires legally stable unchanged
+        LSI at most36080Hz and 256 * LSE_min_hz > 129 * 36080. Native CCS may request LSI with LSIEN clear.
+        Existing protection/IRQ/timer routes remain deliberately active; no cold LSI startup or calibration.
+      - Native L010 source-zero startup requires the public RTC_OUT/RTC_1Hz observer handover and whole-GPIOB
+        operational-window contract. Configuration gates attempt bounded restoration and report failed restoration; dormant timer work gates are
+        not probed. The shared inspection helper also attempts restoration after initial enable-readback failure.
       - Failure retains source enables, pad reservations and diagnostics. Ordinary reset may not clear retained LSE controls; POR may be required.
       - No LSE system clock, runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
       registers_any:
@@ -1336,6 +1347,10 @@ functions:
         anchor: pub struct Lse
       - path: embassy-cw32/src/rcc/rtc.rs
         anchor: pub struct LseClock
+      - path: embassy-cw32/src/rcc/lse_l010.rs
+        anchor: pub enum LseFaultDetection
+      - path: docs/qualified-l010-lse.md
+      - path: docs/lse-l010-qualification.json
       - path: docs/qualified-lse.md
       - path: docs/qualified-l052-lse.md
       - path: docs/qualified-l083-lse.md

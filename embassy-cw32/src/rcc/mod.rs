@@ -69,10 +69,18 @@ pub(crate) use l052_l083::init as init_backend;
 #[cfg(any(rcc_cw32l052_v1, rcc_cw32l083_v1))]
 pub use l052_l083::*;
 
-#[cfg(rcc_lse)]
+#[cfg(all(rcc_lse, not(rcc_cw32l010_v1)))]
 mod lse;
+#[cfg(all(rcc_lse, rcc_cw32l010_v1))]
+mod lse_l010;
+#[cfg(all(rcc_lse, not(rcc_cw32l010_v1)))]
+pub use lse::LseAmplitude;
+#[cfg(all(rcc_lse, rcc_cw32l010_v1))]
+pub use lse::LseFaultDetection;
 #[cfg(rcc_lse)]
-pub use lse::{Lse, LseAmplitude, LseDrive, LseMode, LseWait};
+pub use lse::{Lse, LseDrive, LseMode, LseWait};
+#[cfg(all(rcc_lse, rcc_cw32l010_v1))]
+use lse_l010 as lse;
 #[cfg(rcc_lse)]
 pub use rtc::LseClock;
 

@@ -1,6 +1,6 @@
 # YAML 数据与官方原始资料
 
-本页对应当前整合源码及十六个精确料号/封装的主动 LSE/RTC 资格（2026-10-09），回答“这份 YAML 依据哪一本原厂手册、哪个 SDK、哪几页”。当前源码包附带 `approved-sdk-members/` 下的 11 份 Apache-2.0 芯片主头文件及其许可；完整 PDF、SDK ZIP、SVD 与 HTML 原件未附。下列文档链接直达官网，运行获取脚本后才会写入本地 `sources/vendor/`。
+本页对应当前整合源码及十九个精确料号/封装的主动 LSE/RTC 资格（2026-10-09），回答“这份 YAML 依据哪一本原厂手册、哪个 SDK、哪几页”。当前源码包附带 `approved-sdk-members/` 下的 11 份 Apache-2.0 芯片主头文件及其许可；完整 PDF、SDK ZIP、SVD 与 HTML 原件未附。下列文档链接直达官网，运行获取脚本后才会写入本地 `sources/vendor/`。
 
 `evidence-sources.json` 是唯一 URL / SHA-256 / SDK 成员锁；本页是阅读入口，不再复制一份 JSON。原件版本是项目选定快照，不能据此声称已是厂商最新版。页码与章节从现有 YAML 及其明确引用的记录摘出，本次未重新逐页校读原件。
 
@@ -13,7 +13,7 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 
 ## 当前文件级来源覆盖
 
-只统计 `cw32-data/` 内的 294 份 authored YAML：137 份寄存器定义 + 157 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；主动 LSE 的 `lse-qualified.yaml` 直接记录十六个精确料号/封装的原厂文档 ID、SHA、PDF 页码与书页；完整清单及各族来源见末节。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
+只统计 `cw32-data/` 内的 294 份 authored YAML：137 份寄存器定义 + 157 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；主动 LSE 的 `lse-qualified.yaml` 直接记录十九个精确料号/封装的原厂文档 ID、SHA、PDF 页码与书页；完整清单及各族来源见末节。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
 
 | 归类 | 文件数 | 边界 |
 | --- | ---: | --- |
@@ -40,7 +40,7 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 | `ram-parity.yaml`、`field-access.yaml`、`register-writes.yaml` | 同族 RM 读写属性、状态/清零语义；后两项是字段/命令覆盖，若只写审计文件名，仍欠直接原件定位。 |
 | `electrical.yaml`、`spi.yaml` | 同族 DS 电气表和 RM 分频/时序；`electrical.yaml` 大部分旧策略只间接引用审计文件，不能把这些 JSON 当成原厂来源。 |
 | `hse-qualified.yaml` | F020/F030/A030/L010/L011/L031/L052/L083/R031/W031 HSE 的各自 RM/DS；L010/L011/L031/L052/L083/R031/W031 的实际版本、章节与页码见下表。保留 RM/DS 外部输入下限冲突的交集，不跨族继承电气限值或 CCS 策略。 |
-| `lse-qualified.yaml` | 仅末节十六个精确料号/封装；x030、F020、L031、R031、W031、L052、L083 各自 RM/DS 与原件对应收据给出原件 ID/SHA、PDF/书页和 SDK 成员定位，其他料号不自动继承主动配置资格。 |
+| `lse-qualified.yaml` | 仅末节十九个精确料号/封装；x030、F020、L031、R031、W031、L052、L083、L010 各自 RM/DS 与原件对应收据给出原件 ID/SHA、PDF/书页和 SDK 成员定位，其他料号不自动继承主动配置资格。 |
 | `pll-qualified.yaml`、`electrical.yaml` 的 PLL、对应 SYSCTRL 模板与 `field-access.yaml` 的 PLL 字段 | CW32L083/F020/F030/A030 的一次性 factory-HSI-fed 系统 PLL；各族自己的 RM/DS、原件 SHA 与 PDF/书页见末节。F020 采用 current-datasheets 中 printed Rev1.3，输出交集12–48MHz；L083/F030/A030为12–64MHz。保留模拟档位与电气上限区别、reserved-debug默认0x5、STABLE只读及rate-only时序限制；不外推其他族。 |
 | `hex-qualified.yaml` | F002/F003 各自 RM/DS 的直接 HEX 输入、PB0/PB1 与 AWT 来源；精确 PDF/书页见下表。保留 RM 4–32 MHz 与 DS 1–32 MHz 的交集及全部波形条件，不据此推定晶振、PLL 或失钟恢复能力。 |
 | `gpio-interrupt.yaml` | 各族 RM GPIO ICR 和中断表；CMSIS IRQ 枚举。 |
@@ -312,9 +312,9 @@ no default/configured fallback inference. `hsi_operating_range_hz` records L012'
 own legal incoming 90–100 MHz HSIOSC requirement (RM §4.4.2 PDF59), not a bound
 for arbitrary TRIM. Generated L012 startup protection requires that fact.
 
-## 十六个精确料号/封装的主动 LSE 与 RTC 来源
+## 十九个精确料号/封装的主动 LSE 与 RTC 来源
 
-当前资格以 [lse-qualified.yaml](../cw32-data/lse-qualified.yaml) 的十六个条目为准：CW32F030C8T7、CW32A030C8T7（均为 LQFP48），CW32F020C6U7（QFN48），CW32L031C8T6（LQFP48）、CW32L031C8U6（QFN48）、CW32L031F8U6（QFN20），CW32R031C8U6（QFN48）、CW32W031R8U6（QFN64），以及 CW32L052C8T6（LQFP48）、CW32L052R8S6（LQFP64 7×7 mm）、CW32L052R8T6（LQFP64 10×10 mm）；新增 CW32L083RBT6、CW32L083RCT6（LQFP64 10×10 mm）、CW32L083RCS6（LQFP64 7×7 mm）、CW32L083MCT6（LQFP80）、CW32L083VCT6（LQFP100）。原有十一个条目的独立资格保持不变；其他料号、封装和族别不自动继承主动配置资格。板级契约及运行边界见 [qualified-lse.md](../docs/qualified-lse.md)。
+当前资格以 [lse-qualified.yaml](../cw32-data/lse-qualified.yaml) 的十九个条目为准：CW32F030C8T7、CW32A030C8T7（均为 LQFP48），CW32F020C6U7（QFN48），CW32L031C8T6（LQFP48）、CW32L031C8U6（QFN48）、CW32L031F8U6（QFN20），CW32R031C8U6（QFN48）、CW32W031R8U6（QFN64），以及 CW32L052C8T6（LQFP48）、CW32L052R8S6（LQFP64 7×7 mm）、CW32L052R8T6（LQFP64 10×10 mm）；另有 CW32L083RBT6、CW32L083RCT6（LQFP64 10×10 mm）、CW32L083RCS6（LQFP64 7×7 mm）、CW32L083MCT6（LQFP80）、CW32L083VCT6（LQFP100）；另有 CW32L010F8P6（TSSOP20）、CW32L010F8U6（QFN20）、CW32L010Y8M6（SOP16）。原有十六个条目的独立监测/入场资格保持不变；L010 使用下节单列的原生契约，其他料号、封装和族别不自动继承主动配置资格。板级契约及运行边界见 [qualified-lse.md](../docs/qualified-lse.md)。
 
 ### x030 两款 LQFP48 的专属引文
 
@@ -356,4 +356,12 @@ DS PDF 10、27–32、35–38、53–55、86（书页各减一）支持封装、
 
 五款 L083 仅按标称32768 Hz、板级每周期边界、供电1.65–5.5 V和环境−40…85 °C资格化。DS表7-18（PDF55/书页54）的原厂LSI范围31816–33784 Hz用于检测器；软件在获取外设或执行RCC写入前要求 `256 × LSE_min_hz > 129 × 33784`，最小整数下界为17024 Hz，声明区间仍须包含标称32768 Hz。额外一沿是保守计数相位裕量，不是新的厂商指标。晶体负载/驱动或旁路电平、45–55%占空比、≥450 ns高低脉宽及≤50 ns边沿仍须独立满足；1.5 s启动值仅为典型值。
 
-原有十一个资格JSON、schema身份、HSI/HSE/PLL后端与电气资格保持不变。默认None不增加LSE检查或源/引脚写入。活跃源不停止或重调，关闭的LPTIM/LCD工作门不为检查而打开；失败保留使能、预留与诊断状态，普通复位未必清除LSE控制。源码审查与ARM编译/链接不构成实板启动、频率精度、自动RTC回退或失钟连续性保证。来源锁仅追加这些项目证据的关联，不更换原件、SDK成员或许可范围。
+此前L083扩展时，原有十一个资格JSON、schema身份、HSI/HSE/PLL后端与电气资格保持不变。默认None不增加LSE检查或源/引脚写入。活跃源不停止或重调，关闭的LPTIM/LCD工作门不为检查而打开；失败保留使能、预留与诊断状态，普通复位未必清除LSE控制。源码审查与ARM编译/链接不构成实板启动、频率精度、自动RTC回退或失钟连续性保证。来源锁仅追加这些项目证据的关联，不更换原件、SDK成员或许可范围。
+
+### L010 三个精确封装的自身原件与原生契约
+
+CW32L010F8P6、CW32L010F8U6、CW32L010Y8M6 使用自身 `CW32L010_UserManual_CN_V1.2.pdf` Rev1.2 与 `CW32L010_DataSheet_CN_V1.3.pdf` Rev1.3。当前原件 ID/SHA、PDF/书页及逐项寄存器/观察者事实见 [L010资格记录](../docs/lse-l010-qualification.json)、[RTC入场记录](../docs/lse-l010-rtc-admission.json) 与 [运行契约](../docs/qualified-l010-lse.md)。RM PDF74/书页73给出四位独立 DRIVER/PDRIVER、WAITCYCLE、PINLOCK与STABLE，没有AMP；DS PDF24–25、27、32、40、42（书页各减一）支持封装、AF、供电及振荡器条件。PB1/PB0 在 TSSOP20 为12/11、QFN20为9/8、SOP16为10/9；没有直接LSE输出路由，PB4/PB6的AF2是独立RTC输出路由，按实际封装裁剪。
+
+三款只按标称32768Hz、每周期板级边界、1.62–5.5V及−40…85°C资格化。StartupOnly 要求继承LSECCS为0且保持0，失钟后STABLE可能仍为1；MonitoredExistingRoutes 要求合法、已稳定且trim/wait不变的LSI，上界36080Hz，满足 `256 × LSE_min_hz > 129 × 36080`。原生CCS可自动请求LSI，因此LSIEN=0不等于没有运行监测；该路径不冷启动或校准LSI。既有保护、IRQ及定时器故障路由刻意保留，不承诺隔离或经过时间连续性。
+
+RTC source0的新源启动另需公开的RTC_OUT/RTC_1Hz观察者移交与整个GPIOB工作窗口契约；配置门尝试有界恢复，恢复失败明确报错；休眠定时器工作门不为检查打开。三款原生LSE/HSI日历例程位于 `examples/l010-lse-clock`。三份共享模型采用已接受的可选原生事实扩展；11份许可头文件、43个硬件原件加2个discovery-only条目与发布边界均不变。

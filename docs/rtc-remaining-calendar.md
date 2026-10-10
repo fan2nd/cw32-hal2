@@ -1,5 +1,15 @@
 # RTC calendar breadth
 
+The RC-source description and historical batch evidence below remain the baseline.
+Current held LSE support covers nineteen exact packages: the previous sixteen
+use their [own monitor contracts](qualified-lse.md), while three native L010
+packages follow [StartupOnly/MonitoredExistingRoutes and functional handover](qualified-l010-lse.md).
+L010 retains HSIOSC and adds LSE source0 with PSC1=0/PSC2=0x3fff; StartupOnly
+checks configuration/startup state without proving continued calendar progression.
+L011/L012 HSIOSC behavior is unchanged. Later alarm/async scope is in
+[the current alarm contract](rtc-alarms.md); the unsupported-work list below
+records the original batch rather than current capability declarations.
+
 The shared blocking calendar now covers all eleven RTC-bearing families. F002
 and F003 have no RTC. All operation paths use the selected direct typed PAC;
 there is one calendar/BCD engine, three genuine access protocols, and generated

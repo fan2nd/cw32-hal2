@@ -562,10 +562,12 @@ fieldset/LSE:
     description: desc DRIVER.
     bit_offset: 0
     bit_size: 4
+    enum: LseDrive
   - name: WAITCYCLE
     description: desc WAITCYCLE.
     bit_offset: 4
     bit_size: 2
+    enum: LseWait
   - name: MODE
     description: desc MODE.
     bit_offset: 6
@@ -574,6 +576,7 @@ fieldset/LSE:
     description: desc PDRIVER.
     bit_offset: 8
     bit_size: 4
+    enum: LseDrive
   - name: PINLOCK
     description: desc PINLOCK.
     bit_offset: 17
@@ -696,3 +699,71 @@ enum/Sysclk:
   - name: LSE
     description: LSE system clock.
     value: 4
+enum/LseDrive:
+  description: Own CW32L010 RM CN Rev1.2 section4.7.7 PDF74/printed73.
+  bit_size: 4
+  variants:
+  - name: LEVEL0
+    description: Board-qualified LSE drive code 0.
+    value: 0
+  - name: LEVEL1
+    description: Board-qualified LSE drive code 1.
+    value: 1
+  - name: LEVEL2
+    description: Board-qualified LSE drive code 2.
+    value: 2
+  - name: LEVEL3
+    description: Board-qualified LSE drive code 3.
+    value: 3
+  - name: LEVEL4
+    description: Board-qualified LSE drive code 4.
+    value: 4
+  - name: LEVEL5
+    description: Board-qualified LSE drive code 5.
+    value: 5
+  - name: LEVEL6
+    description: Board-qualified LSE drive code 6.
+    value: 6
+  - name: LEVEL7
+    description: Board-qualified LSE drive code 7.
+    value: 7
+  - name: LEVEL8
+    description: Board-qualified LSE drive code 8.
+    value: 8
+  - name: LEVEL9
+    description: Board-qualified LSE drive code 9.
+    value: 9
+  - name: LEVEL10
+    description: Board-qualified LSE drive code 10.
+    value: 10
+  - name: LEVEL11
+    description: Board-qualified LSE drive code 11.
+    value: 11
+  - name: LEVEL12
+    description: Board-qualified LSE drive code 12.
+    value: 12
+  - name: LEVEL13
+    description: Board-qualified LSE drive code 13.
+    value: 13
+  - name: LEVEL14
+    description: Board-qualified LSE drive code 14.
+    value: 14
+  - name: LEVEL15
+    description: Board-qualified LSE drive code 15.
+    value: 15
+enum/LseWait:
+  description: Own CW32L010 RM CN Rev1.2 section4.7.7 PDF74/printed73.
+  bit_size: 2
+  variants:
+  - name: CYCLES256
+    description: Wait 256 LSE cycles.
+    value: 0
+  - name: CYCLES1024
+    description: Wait 1024 LSE cycles.
+    value: 1
+  - name: CYCLES4096
+    description: Wait 4096 LSE cycles.
+    value: 2
+  - name: CYCLES16384
+    description: Wait 16384 LSE cycles.
+    value: 3

@@ -265,6 +265,14 @@ pub struct Config {
     pub hsi: Hsi,
     /// Board-qualified HSE; its oscillator pads are reserved even with HSI SYSCLK.
     pub hse: Option<Hse>,
+    /// Native board-qualified L010 LSE; no LSE system-clock selection is added.
+    /// See [`crate::init`] and [`crate::try_init`] for the required RTC_OUT/
+    /// RTC_1Hz observer disconnection and whole-GPIOB operational handover.
+    /// Genuine reset entry with untouched selectors meets those functional
+    /// conditions; a register image does not prove reset. Failure permanently
+    /// reserves requested pads and may leave the oscillator/gates enabled.
+    #[cfg(rcc_lse)]
+    pub lse: Option<super::Lse>,
     /// Requested system source. Factory HSI remains enabled.
     pub sys: Sysclk,
     /// HCLK prescaler.
@@ -284,6 +292,8 @@ impl Config {
             operating_conditions: crate::rcc::OperatingConditions::new(),
             hsi: Hsi { div: DEFAULT_DIV },
             hse: None,
+            #[cfg(rcc_lse)]
+            lse: None,
             sys: Sysclk::HSI,
             ahb_pre: AHBPrescaler::Div1,
             apb_pre: APBPrescaler::Div1,
@@ -326,6 +336,14 @@ impl Config {
         } else {
             None
         };
+        #[cfg(rcc_lse)]
+        let lse = self
+            .lse
+            .map(|c| {
+                c.bounds(self.operating_conditions)
+                    .map(|bounds| (c, bounds))
+            })
+            .transpose()?;
         let source = match self.sys {
             Sysclk::HSI => crate::rcc::ClockBounds::hsi(self.hsi.div.divisor()),
             Sysclk::HSE => hse.ok_or(Error::HseNotConfigured)?,
@@ -344,6 +362,8 @@ impl Config {
             ],
             source,
             hse: self.hse.map(|hse| hse.mode),
+            #[cfg(rcc_lse)]
+            lse,
         };
         crate::rcc::operating::validate(self.operating_conditions, clocks)?;
         // Validate the requested retained HSI as a possible system source too.
@@ -387,6 +407,9 @@ pub struct Clocks {
     pub(crate) dividers: [u32; 3],
     pub(crate) source: crate::rcc::ClockBounds,
     hse: Option<HseMode>,
+    /// Frozen source declaration and policy, conditional on continuing health.
+    #[cfg(rcc_lse)]
+    pub lse: Option<(super::Lse, super::ClockBounds)>,
 }
 
 /// A clock initialization failure.
@@ -399,6 +422,25 @@ pub struct Clocks {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
+    #[cfg(rcc_lse)]
+    InvalidLseBounds,
+    #[cfg(rcc_lse)]
+    LseClockInUse,
+    #[cfg(rcc_lse)]
+    LsePinConflict,
+    #[cfg(rcc_lse)]
+    LseGpioGateTimeout,
+    /// A configuration gate failed to open and/or return to its entry state.
+    /// Both fields may be true; no successful restoration is then promised.
+    #[cfg(rcc_lse)]
+    LseConfigurationGateTimeout {
+        enable_failed: bool,
+        restore_failed: bool,
+    },
+    #[cfg(rcc_lse)]
+    LseMonitorNotReady,
+    #[cfg(rcc_lse)]
+    LseNotReady,
     InvalidHseBounds,
     HseOutsideQualifiedRange,
     HseConditionsOutsideQualifiedRange,
@@ -558,6 +600,8 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     let old_lse = r.lse().read();
     let monitor_hse = config.hse.is_some() || old_sources.hseen() || old_sources.hseccs();
     let monitor_lse = old_sources.lseen() || old_sources.lseccs();
+    #[cfg(rcc_lse)]
+    let monitor_lse = monitor_lse || config.lse.is_some();
     check_external_faults(monitor_hse, monitor_lse)?;
     // Frequency legality is an entry precondition; STABLE only proves startup.
     // Every HSI divider encoding is legal on these own register versions.
@@ -589,6 +633,14 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     calibrated.set_trim(factory);
     let trim = calibrated.trim();
     let needs_trim = old_hsi.trim() != trim;
+
+    // Native central rejection precedes the first configuration-gate write.
+    // This phase inspects only configuration domains, never GPIO/timer work.
+    #[cfg(rcc_lse)]
+    let lse_admission = config
+        .lse
+        .map(|c| super::lse::preflight(c, cs))
+        .transpose()?;
 
     // Inspect actual central gates, restore their incoming state, never reset.
     // SOURCE owns RTC/AWT's raw clock even when the calendar START bit is zero.
@@ -690,13 +742,25 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         || lvd_filtered
         || vc1_filtered
         || vc2_filtered;
-    let ccs_unchanged = || {
+    let ccs_unchanged = |after_lse: bool| {
+        #[cfg(rcc_lse)]
+        let expected_lse = if after_lse { config.lse } else { None };
+        #[cfg(rcc_lse)]
+        let (lseen, lseccs) = expected_lse
+            .map_or((old_sources.lseen(), old_sources.lseccs()), |c| {
+                (true, c.monitored())
+            });
+        #[cfg(not(rcc_lse))]
+        let (lseen, lseccs) = {
+            let _ = after_lse;
+            (old_sources.lseen(), old_sources.lseccs())
+        };
         let v = r.cr1().read();
         v.clkccs() == old_sources.clkccs()
             && v.hseccs() == old_sources.hseccs()
-            && v.lseccs() == old_sources.lseccs()
+            && v.lseccs() == lseccs
             && v.lselock() == old_sources.lselock()
-            && v.lseen() == old_sources.lseen()
+            && v.lseen() == lseen
     };
     <crate::peripherals::FLASH as crate::rcc::SealedRccPeripheral>::RCC_INFO
         .enable_with_cs_readback(
@@ -855,7 +919,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
                 && v.div() == config.hsi.div as u8
                 && v.stable()
                 && r.cr1().read().hsien()
-                && ccs_unchanged()
+                && ccs_unchanged(false)
                 && r.cr0().read().sysclk() == ClockSource::Hsi
         },
     )?;
@@ -909,6 +973,10 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         config.timeout,
         Error::TemporaryClockRestoreTimeout,
     )?;
+    #[cfg(rcc_lse)]
+    if let (Some(lse), Some(admission)) = (config.lse, lse_admission) {
+        super::lse::start(lse, admission, cs)?;
+    }
     let sysclk = match config.sys {
         Sysclk::HSI => ClockSource::Hsi,
         Sysclk::HSE => ClockSource::Hse,
@@ -970,8 +1038,15 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     let final_hsi = r.hsi().read();
     let final_hse = r.hse().read();
     let final_lsi = r.lsi().read();
+    let lse_preserved = r.lse().read().0 == old_lse.0;
+    #[cfg(rcc_lse)]
+    let lse_preserved = if config.lse.is_some() {
+        super::lse::preserved_register(old_lse.0)
+    } else {
+        lse_preserved
+    };
     if final_clock.sysclk() != sysclk
-        || !ccs_unchanged()
+        || !ccs_unchanged(true)
         || final_clock.hclkprs() != config.ahb_pre as u8
         || final_clock.pclkprs() != config.apb_pre as u8
         || !final_sources.hsien()
@@ -983,7 +1058,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         || final_lsi.trim() != old_lsi.trim()
         || final_lsi.waitcycle() != old_lsi.waitcycle()
         || ((needs_lsi || old_lsi.stable()) && !final_lsi.stable())
-        || r.lse().read().0 != old_lse.0
+        || !lse_preserved
         || final_hse.hexenpol() != old_hse.hexenpol()
     {
         return Err(Error::ClockConfigurationTimeout);
@@ -1006,6 +1081,10 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         } else if clocks.hse.is_none() {
             clocks.hse = Some(HseMode::Bypass);
         }
+    }
+    #[cfg(rcc_lse)]
+    if let Some(lse) = config.lse {
+        super::lse::verify(lse, cs)?;
     }
     // Pad inspection may have opened/restored a gate; recheck fault/mux at freeze.
     check_external_faults(monitor_hse, monitor_lse)?;

@@ -45,6 +45,7 @@ def required_evidence(root: Path) -> set[str]:
     lock = json.loads((root / SOURCE_LOCK).read_text())
     required = SOURCE_MANIFESTS | SOURCE_DECLARATIONS | set(approved_sdk_members(lock))
     required.add("docs/f020-x030-hsi-pll-independent-review.json")
+    required.add("docs/lse-l010-independent-runtime-review.json")
     for audit in lock.get("project_audit_inputs", []):
         path = root / audit["path"]
         if path.stat().st_size != audit["bytes"] or hashlib.sha256(path.read_bytes()).hexdigest() != audit["sha256"]:

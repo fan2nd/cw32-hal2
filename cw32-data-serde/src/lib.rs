@@ -350,6 +350,23 @@ pub mod chip {
                 }
             }
             record! {
+                /// CW32L010 native drive, detector and RTC clock facts. No amplitude field exists.
+                #[serde(deny_unknown_fields)]
+                LseNativeL010 {
+                    pub drive_bits: u8,
+                    pub startup_drive_bits: u8,
+                    /// Legal unchanged LSI upper bound; STABLE alone does not prove this bound.
+                    pub monitored_lsi_maximum_hz: u32,
+                    pub detector_lse_edges: u16,
+                    pub detector_lsi_cycles: u16,
+                    /// Actual divisors; PSC stores each divisor minus one.
+                    pub rtc_first_divisor: u16,
+                    pub rtc_second_divisor: u16,
+                    pub rtc_calendar_divisor: u32,
+                    pub rtc_output_routes: Vec<LseOutputRoute>,
+                }
+            }
+            record! {
                         /// Exact-part active LSE qualification. Board frequency bounds remain mandatory.
                         #[serde(deny_unknown_fields)]
                         LseConfiguration {
@@ -365,6 +382,8 @@ pub mod chip {
                             pub awt_source: Option<u8>,
                             #[serde(default, skip_serializing_if = "Option::is_none")]
                             pub startup_consumers: Option<LseStartupConsumers>,
+                            #[serde(default, skip_serializing_if = "Option::is_none")]
+                            pub native_l010: Option<LseNativeL010>,
                             pub mco_source: u8,
                             pub gpio_dir_offset: u32,
                             pub gpio_speed_offset: Option<u32>,

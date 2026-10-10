@@ -1,6 +1,8 @@
 # Bounded active LSE qualification
 
-Active LSE configuration is qualified on the sixteen exact parts below. Every family alias and all other parts retain only previously established pad-ownership facts.
+Active LSE configuration is qualified on nineteen exact parts: the sixteen x030/F020/L031/R031/W031/L052/L083 parts in the table below, plus CW32L010F8P6 (TSSOP20), CW32L010F8U6 (QFN20) and CW32L010Y8M6 (SOP16). Every family alias and all other parts retain only previously established pad-ownership facts.
+
+The native L010 parts use PB1/PB0 and a separate [own-source contract](qualified-l010-lse.md): four-bit independent running/startup drive, no amplitude, and explicit `StartupOnly` or `MonitoredExistingRoutes`. StartupOnly can retain STABLE after clock loss; monitored mode requires legally stable unchanged LSI, a native detector margin and acceptance of inherited fault routes. Its RTC observer and GPIOB functional handover also differ. The remaining sections and table describe the previous sixteen parts and do not extend their monitor or reset-image guarantees to L010.
 
 | Part | Package | PC14 / PC15 physical pins | Direct LSE output |
 |---|---|---|---|
