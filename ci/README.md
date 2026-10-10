@@ -88,14 +88,38 @@ R031C8U6 uses the existing RTC branch with explicit 2.2–3.6 V and −40–85°
 board declarations; W031R8U6 declares 2.0–3.6 V and −40–85°C. These declarations
 require actual board qualification.
 
-The current reusable future recipe adds six library builds (exact L052 three
+The historical L052 extension to the reusable future recipe adds six library builds (exact L052 three
 release, C8T6 debug, generic L052 release and L083RCT6 release) and seven ELFs
 (three L052 LSI, L052 HSE, LSE SYSCLK and preserved calendar, plus L083 PLL UART).
-It therefore declares thirty library commands: twenty-five builds and the five
+It then declared thirty library commands: twenty-five builds and the five
 historical checks, plus thirty-nine linked ELFs. The existing L031C8U6 LSI ELF
 is reused in the recipe; no duplicate row is added. The historical F030 recipe
 row remains a check; the focused L052 matrix separately requires a real F030
 library build. Recipe totals do not assert execution. Keep the script executable.
+
+The exact-five L083 extension adds six missing library builds (RBT6/RCS6/MCT6/
+VCT6 release, RCT6 dev and generic L083 release), reusing the existing RCT6
+release row. Eight added ELFs cover five LSI, RCS6 HSE-fed PLL, MCT6 LSE SYSCLK
+and VCT6 HSI-calendar; the RCT6 HSI-fed PLL ELF already exists. Future recipe
+totals are therefore 36 library commands (31 builds and five historical checks)
+and 47 linked ELFs. These are declarations, not executed counts.
+
+The separate finite L083 acceptance scope is ten actual library builds and ten
+ELFs in main, followed by two libraries and three LSI ELFs from an independent
+final-source clean reconstruction. Main generation, seven finite source/data
+commands, ten actual libraries, ten ELFs and independent implementation reviews
+passed. Eleven bounded invalid-data cases were rejected at the specific layers
+recorded in the metadata review. At main acceptance clean had not run; final
+completion requires its separate final-package receipt. In particular the finite scope includes
+actual native L010F8P6 and F030C8T7 release libraries; the accumulated recipe's
+historical F030 check is not a build receipt. Preserve exact features, binaries,
+source hashes, cfg, OUT_DIR files, actual artifacts and linked memory maps per
+row. The [L083 contract](../docs/l083-factory-lsi-sysclk.md) lists the rows and
+explicit main/clean limits. The all-54 comparison permits five new LSI objects
+(29→34 positives) and exact bonded PLL_OUT projections, preserving old profiles,
+RTC numeric facts and historical LSE-specific qualification flags. No hosted CI,
+HAL tests, probes, executable transition models, hardware or RF work follows
+from this plan. Do not run the aggregate recipe to satisfy this finite scope.
 
 Final focused exact-L052 main verification passed all sixteen Cargo commands:
 eight actual library builds and eight ELF links, with zero warnings and the
@@ -178,6 +202,7 @@ review must trace those guards through the actual generated exact-part cfg.
 Each example's build.rs derives memory bounds and links with `-Tlink.x`:
 F002 has 16 KiB Flash / 2 KiB RAM, F003 has 20 KiB Flash / 3 KiB RAM, and
 exact L031, R031C8U6, W031R8U6 and exact L052 have 64 KiB Flash / 8 KiB RAM.
+L083RBT6 has 128 KiB Flash, RCT6/RCS6/MCT6/VCT6 have 256 KiB, all with 24 KiB RAM.
 Inspect each linked ELF's entry, vectors, PT_LOAD regions, Flash use and static
 RAM/stack headroom before claiming it fits or flashing it; never expand
 memory.x to hide overflow. Startup, error paths and electrical behavior remain
@@ -186,7 +211,8 @@ unvalidated. See the [F002 contract](../docs/f002-factory-lsi-sysclk.md) and
 [L031 contract](../docs/l031-factory-lsi-sysclk.md) and
 [R031 contract](../docs/qualified-r031-lsi-sysclk.md) and
 [W031 contract](../docs/qualified-w031-lsi-sysclk.md) and
-[L052 contract](../docs/l052-factory-lsi-sysclk.md). No hosted workflow is added.
+[L052 contract](../docs/l052-factory-lsi-sysclk.md) and
+[L083 contract](../docs/l083-factory-lsi-sysclk.md). No hosted workflow is added.
 
 
 `./d check-lse-sysclk` declares a bounded local compile/link scope: twenty-four

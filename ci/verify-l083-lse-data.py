@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify L083 own originals and exact native LSE facts; no HAL execution."""
+"""Verify L083 own originals and exact native LSE/current LSI facts; no HAL execution."""
 import argparse
 import hashlib
 import json
@@ -11,8 +11,24 @@ ROOT = Path(__file__).resolve().parents[1]
 PARTS = {"CW32L083RBT6", "CW32L083RCT6", "CW32L083RCS6", "CW32L083MCT6", "CW32L083VCT6"}
 
 
+class UniqueLoader(yaml.SafeLoader):
+    pass
+
+
+def unique_mapping(loader, node, deep=False):
+    mapping = {}
+    for key_node, value_node in node.value:
+        key = loader.construct_object(key_node, deep=deep)
+        assert key not in mapping, f"duplicate policy/source key: {key}"
+        mapping[key] = loader.construct_object(value_node, deep=deep)
+    return mapping
+
+
+UniqueLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, unique_mapping)
+
+
 def load(path):
-    return yaml.safe_load(path.read_text())
+    return yaml.load(path.read_text(), Loader=UniqueLoader)
 
 
 def sha(data):
@@ -25,7 +41,8 @@ def main():
     parser.add_argument("--data", type=Path)
     parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-    authority = {a["id"]: a for a in load(ROOT / "sources/evidence-sources.json")["artifacts"]}
+    locked_artifacts = load(ROOT / "sources/evidence-sources.json")["artifacts"]
+    authority = {a["id"]: a for a in locked_artifacts}
     originals = load(ROOT / "docs/lse-l083-source-receipt.json")
     for source in originals:
         locked = authority[source["id"]]
@@ -71,14 +88,55 @@ def main():
     }
     for path, digest in catalog["policies"].items():
         assert sha((ROOT / path).read_bytes()) == digest
+    # The historical LSE qualification remains unchanged. Independently bind
+    # the current exact-five LSI addition before allowing it in generated data.
+    lsi_policy_path = ROOT / "cw32-data/lsi-sysclk-qualified.yaml"
+    own_lsi_policy = load(lsi_policy_path)["families"]["CW32L083"]
+    assert sha(json.dumps(own_lsi_policy, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()) == "883667fa2049acd273c285808a71bb6eb19bb7035807a99d75eb7eb95f7e990c"
+    assert load(ROOT / "cw32-data/electrical.yaml")["policies"]["cw32-data/lsi-sysclk-qualified.yaml"] == sha(lsi_policy_path.read_bytes())
+    expected_parts = [
+        {"name": "CW32L083RBT6", "package": "LQFP64（10×10mm）"},
+        {"name": "CW32L083RCT6", "package": "LQFP64（10×10mm）"},
+        {"name": "CW32L083RCS6", "package": "LQFP64（7×7mm）"},
+        {"name": "CW32L083MCT6", "package": "LQFP80"},
+        {"name": "CW32L083VCT6", "package": "LQFP100"},
+    ]
+    assert len(own_lsi_policy["exact_parts"]) == 5
+    assert own_lsi_policy["exact_parts"] == expected_parts
+    assert {p["name"] for p in expected_parts} == PARTS
+    assert [(s["source_ref"], s["sha256"], s["text_sha256"]) for s in own_lsi_policy["sources"]] == [
+        ("vendor:CW32L083_UserManual_CN_V2.0.pdf", "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3", "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564"),
+        ("vendor:CW32L083_DataSheet_CN_V1.9.pdf", "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e", "2124f5c492e1d58b51674805b2d8a58f82b2ce462c8b73beaba63c6d93780220"),
+    ]
+    expected_current_lsi = {
+        "nominal_hz": 32800, "minimum_hz": 31816, "maximum_hz": 33784,
+        "supply_mv": [1650, 5500], "temperature_c": [-40, 85],
+        "factory_trim_address": 0x00100a02,
+        "rtc_allowed_sources": [0, 4, 5, 6, 7], "awt_allowed_sources": [],
+        "uart_allowed_sources": [0, 1, 2],
+        "uarts": [f"UART{i}" for i in range(1, 7)],
+        "gpio_banks": [f"GPIO{bank}" for bank in "ABCDEF"],
+        "gpio_filter_allowed_sources": [0, 1, 2, 3, 4, 6, 7],
+        "mco_allowed_sources": [0, 1, 2, 3, 5, 6, 7, 8, 9],
+        "lsi_output_pin": "PC4", "lsi_output_allowed_af": [0, 1, 2, 3],
+        "rcc_irq": 4,
+    }
+    assert own_lsi_policy["lsi_sysclk"] == expected_current_lsi
     page_receipts = []
-    for source in proof["sources"] + sysclk["sources"]:
+    for source in proof["sources"] + sysclk["sources"] + own_lsi_policy["sources"]:
         locked = authority[source["source_ref"]]
         assert source["sha256"] == locked["sha256"]
         assert locked["provenance"]["chip_scope"] == ["CW32L083"]
         if source in sysclk["sources"]:
             assert source["family"] == "CW32L083" and locked["provenance"]["status"] == "selected"
             assert "docs/l083-lse-sysclk-qualification.json" in locked["evidence"]
+        if source in own_lsi_policy["sources"]:
+            assert sum(a["id"] == source["source_ref"] for a in locked_artifacts) == 1
+            assert locked["provenance"]["status"] == "selected"
+            assert source["text_sha256"] == locked["text"]["sha256"]
+            ordered_pages = source["pdf_pages_1_based"]
+            assert ordered_pages and all(a < b for a, b in zip(ordered_pages, ordered_pages[1:]))
+            assert all(0 < page <= locked["provenance"]["pdf_page_count"] for page in ordered_pages)
         text = (args.sources / locked["text"]["path"]).read_bytes()
         assert sha(text) == locked["text"]["sha256"]
         pages = text.decode().split("\f")
@@ -166,13 +224,15 @@ def main():
             owner = next(p for p in chip["cores"][0]["peripherals"] if p["name"] == "SYSCTRL")
             config = owner["clock_limits"].get("lse_configuration")
             if chip["line"] == "CW32L083":
+                assert owner["clock_limits"].get("lsi_sysclk") == (
+                    expected_current_lsi if chip["name"] in PARTS else None
+                )
                 assert (config is not None) == (chip["name"] in PARTS)
                 if config:
                     assert config == catalog["parts"][chip["name"]]["configuration"]
-                    assert owner["clock_limits"].get("lsi_sysclk") is None
                     assert owner["clock_limits"]["hse"].get("fixed_ccs_hsi_divisor") is None
             generated += 1
-    result = {"status": "passed", "originals_verified": len(originals), "sdk_members_verified": len(members), "qualified_parts": sorted(PARTS), "canonical_native_ir_sha256": canonical, "sysclk_policy_sha256": sha((ROOT / "docs/l083-lse-sysclk-qualification.json").read_bytes()), "auxiliary_profiles": 23, "sysclk_profiles": 23, "source_pages": page_receipts, "generated_selections_checked": generated, "hardware_execution": False}
+    result = {"status": "passed", "originals_verified": len(originals), "sdk_members_verified": len(members), "qualified_parts": sorted(PARTS), "canonical_native_ir_sha256": canonical, "sysclk_policy_sha256": sha((ROOT / "docs/l083-lse-sysclk-qualification.json").read_bytes()), "auxiliary_profiles": 23, "sysclk_profiles": 23, "source_pages": page_receipts, "generated_selections_checked": generated, "current_lsi_policy_sha256": sha(lsi_policy_path.read_bytes()), "current_lsi_exact_parts": sorted(PARTS), "hardware_execution": False}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2) + "\n")
     print(f"PASS: {len(originals)} own originals, {len(members)} SDK members, {len(page_receipts)} page receipts, five exact parts, {generated} generated selections; no HAL execution")

@@ -206,7 +206,8 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   Whole-GPIOA/B/C/D/F inspection may advance events even before failure;
   off LCD/LPTIM work gates remain off. Live factory-matching LSI is retained
   without stop/retrim. Every exact-L052 RTC LSI alias becomes rate-only under
-  HSI, HSE, LSE and LSI SYSCLK. Generic L052 and every L083 remain excluded.
+  HSI, HSE, LSE and LSI SYSCLK. Generic L052 remains excluded; the separate
+  exact-five L083 contract follows below.
   Final main verification passed eight actual library builds and eight ELF
   links with zero warnings, plus generation and six finite Python source/data
   checks. At main acceptance, clean replay had not run; final-package completion
@@ -215,6 +216,22 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   [L052 contract](docs/l052-factory-lsi-sysclk.md),
   [runtime/source review](docs/l052-factory-lsi-runtime-review.json) and
   [metadata review](docs/l052-factory-lsi-metadata-review.json).
+- CW32L083RBT6/RCT6/RCS6/MCT6/VCT6: init-only factory LSI SYSCLK with own
+  31,816–33,784 Hz rate bounds at 1.65–5.5 V, VDDA=VDD and −40–85°C. RBT6
+  retains 128 KiB Flash, the other four 256 KiB, and all five 24 KiB SRAM.
+  Generic L083 and native L010/L011/L012 remain excluded. Full six-UART,
+  six-GPIO-bank and complete bonded LSI/PLL route admission preserves off
+  LCD/LPTIM work gates; inspection can advance unrelated pins and events.
+  The inherited PLL must depart through a proven HSI/HSE bridge and reach
+  coherent stopped state before reference changes. Flash WAIT2 is retained;
+  potential external-source fallback requires raw 48.96 MHz factory-HSI
+  coverage without divider credit. Configured HSI must fit final bus divisors.
+  Exact-L083 RTC LSI aliases become rate-only under every SYSCLK, including
+  HSI/HSE/PLL/LSE. Failure requires reset and provides no source-loss recovery.
+  Main 10-library/10-ELF verification and independent implementation reviews
+  passed within the finite source scope. At main acceptance clean had not run;
+  final-package completion requires a separate clean 2-library/3-ELF receipt. See the
+  [L083 source contract and finite scope](docs/l083-factory-lsi-sysclk.md).
 - F020/F030/A030: init-only factory LSI SYSCLK with complete cold-start admission,
   explicit whole-GPIO-bank inspection effects, permanent target request and
   rate-only bounds. The same families' LsiClock/RTC aliases are also rate-only;

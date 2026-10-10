@@ -12,7 +12,12 @@
     feature = "cw32w031r8u6",
     feature = "cw32l052c8t6",
     feature = "cw32l052r8s6",
-    feature = "cw32l052r8t6"
+    feature = "cw32l052r8t6",
+    feature = "cw32l083rbt6",
+    feature = "cw32l083rct6",
+    feature = "cw32l083rcs6",
+    feature = "cw32l083mct6",
+    feature = "cw32l083vct6"
 ))]
 use embassy_cw32::rtc::{DateTime, DayOfWeek, Rtc};
 use embassy_cw32::{self as hal, rcc};
@@ -20,7 +25,7 @@ use embassy_cw32::{self as hal, rcc};
 #[cortex_m_rt::entry]
 fn main() -> ! {
     // W031 requires 2.0..3.6 V; R031 retains 2.2..3.6 V, both at -40..85 C.
-    // L031 and exact L052 declare 1.65..5.5 V and -40..85 C.
+    // L031 and exact L052/L083 declare 1.65..5.5 V and -40..85 C.
     // Other prior example parts retain 1.65..5.5 V and -40..105 C.
     // These board declarations are not measurements. Qualify the actual board
     // across its complete operating envelope. No external crystal or pin is used.
@@ -47,7 +52,12 @@ fn main() -> ! {
             feature = "cw32w031r8u6",
             feature = "cw32l052c8t6",
             feature = "cw32l052r8s6",
-            feature = "cw32l052r8t6"
+            feature = "cw32l052r8t6",
+            feature = "cw32l083rbt6",
+            feature = "cw32l083rct6",
+            feature = "cw32l083rcs6",
+            feature = "cw32l083mct6",
+            feature = "cw32l083vct6"
         )) {
             85
         } else {
@@ -91,7 +101,12 @@ fn run(_p: hal::Peripherals) -> ! {
     feature = "cw32w031r8u6",
     feature = "cw32l052c8t6",
     feature = "cw32l052r8s6",
-    feature = "cw32l052r8t6"
+    feature = "cw32l052r8t6",
+    feature = "cw32l083rbt6",
+    feature = "cw32l083rct6",
+    feature = "cw32l083rcs6",
+    feature = "cw32l083mct6",
+    feature = "cw32l083vct6"
 ))]
 fn run(p: hal::Peripherals) -> ! {
     let lsi = rcc::LsiClock::new(p.SYSCTRL, 100_000).unwrap_or_else(|error| stop(error));

@@ -28,7 +28,8 @@ pub fn apply(
     let native_family = l031 || r031 || w031;
     let has_rtc = classic || native_family;
     let l052 = line == "CW32L052";
-    let qualified = classic || exact_family || native_family || l052;
+    let l083 = line == "CW32L083";
+    let qualified = classic || exact_family || native_family || l052 || l083;
     let Some(clock) = core
         .peripherals
         .iter()
@@ -62,7 +63,7 @@ pub fn apply(
         families.keys().map(String::as_str).collect::<Vec<_>>()
             == [
                 "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L031", "CW32L052",
-                "CW32R031", "CW32W031"
+                "CW32L083", "CW32R031", "CW32W031"
             ],
         "factory-LSI family scope changed"
     );
@@ -84,6 +85,9 @@ pub fn apply(
     }
     if l052 {
         return apply_l052(root, chip, own, core, registers);
+    }
+    if l083 {
+        return apply_l083(root, chip, own, core, registers);
     }
     // Option deserialization accepts a missing field. Qualification does not:
     // explicit null requires independently proved own-family hardware absence.
@@ -1890,5 +1894,825 @@ fn apply_l052(
             .and_then(|p| p.clock_limits.as_mut()).context("missing L052 SYSCTRL clocks")?
             .lsi_sysclk = Some(lsi);
     }
+    Ok(())
+}
+
+
+fn l083_text(value: &Value) -> Result<&str> {
+    value.as_str().context("missing L083 source text")
+}
+
+// L083 is independently source-qualified. The policy digest binds the reviewed
+// expectation, while the checks below compare the current selected IR, source
+// authority, catalog, physical packages and route projections before injection.
+// This never dispatches through the classic/AWT or L052 hardware assumptions.
+fn apply_l083(
+    root: &Path,
+    chip: &crate::ChipInput,
+    own: &Value,
+    core: &mut Core,
+    registers: &BTreeMap<String, ir::IR>,
+) -> Result<()> {
+    use serde_json::json;
+    use std::collections::BTreeSet;
+    ensure!(
+        l052_policy_digest(own)?
+            == "883667fa2049acd273c285808a71bb6eb19bb7035807a99d75eb7eb95f7e990c",
+        "L083 reviewed own-source policy changed; omitted, extra or reordered facts require review"
+    );
+    let text = l083_text;
+    let number = |v: &Value| {
+        v.as_u64()
+            .and_then(|n| u32::try_from(n).ok())
+            .context("missing L083 source integer")
+    };
+    let parts = json!([
+        {"name":"CW32L083RBT6", "package":"LQFP64（10×10mm）"},
+        {"name":"CW32L083RCT6", "package":"LQFP64（10×10mm）"},
+        {"name":"CW32L083RCS6", "package":"LQFP64（7×7mm）"},
+        {"name":"CW32L083MCT6", "package":"LQFP80"},
+        {"name":"CW32L083VCT6", "package":"LQFP100"}
+    ]);
+    ensure!(
+        own["exact_parts"] == parts && own["sysctrl_version"] == "cw32l083_v1",
+        "L083 exact-five package/IP scope changed"
+    );
+    let selected = parts
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|p| p["name"] == chip.name);
+    ensure!(
+        selected.is_some() || chip.name == "CW32L083",
+        "unreviewed L083 chip alias"
+    );
+    let expected_lsi = json!({
+        "nominal_hz":32800, "minimum_hz":31816, "maximum_hz":33784,
+        "supply_mv":[1650,5500], "temperature_c":[-40,85], "factory_trim_address":0x0010_0a02,
+        "rtc_allowed_sources":[0,4,5,6,7], "awt_allowed_sources":[], "uart_allowed_sources":[0,1,2],
+        "uarts":["UART1","UART2","UART3","UART4","UART5","UART6"],
+        "gpio_banks":["GPIOA","GPIOB","GPIOC","GPIOD","GPIOE","GPIOF"],
+        "gpio_filter_allowed_sources":[0,1,2,3,4,6,7], "mco_allowed_sources":[0,1,2,3,5,6,7,8,9],
+        "lsi_output_pin":"PC4", "lsi_output_allowed_af":[0,1,2,3], "rcc_irq":4
+    });
+    ensure!(
+        own["lsi_sysclk"] == expected_lsi,
+        "L083 complete LSI bounds/selector contract changed"
+    );
+    let lsi: cw32_data_serde::chip::core::peripheral::LsiSysclk =
+        serde_json::from_value(expected_lsi)?;
+    ensure!(
+        own["factory_read_width_bits"] == 16
+            && own["factory_erased_raw_halfword"] == 65535
+            && own["factory_zero_is_erased"] == false
+            && own["factory_hsi_trim_address"] == 0x0010_0a00
+            && own["factory_lsi_trim_address"] == lsi.factory_trim_address
+            && lsi.factory_trim_address % 2 == 0
+            && own["watchdog_source"] == "independent_rc10k"
+            && own["cycle_timing_qualified"] == false
+            && own["vdda_equals_vdd"] == true
+            && own["trim_write"] == "stopped_field_only"
+            && own["waitcycle_preserved"] == true,
+        "L083 factory halfword/rate-only/trim contract changed"
+    );
+    let authority: Value =
+        serde_json::from_slice(&fs::read(root.join("sources/evidence-sources.json"))?)?;
+    let artifacts = authority["artifacts"]
+        .as_array()
+        .context("missing L083 source authority")?;
+    let sources = own["sources"]
+        .as_array()
+        .context("missing L083 RM/DS sources")?;
+    ensure!(sources.len() == 2, "L083 requires its own RM and DS");
+    for (source, id) in sources.iter().zip([
+        "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+        "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+    ]) {
+        let matches: Vec<_> = artifacts.iter().filter(|a| a["id"] == id).collect();
+        ensure!(
+            source["source_ref"] == id && matches.len() == 1,
+            "L083 own source must be unique"
+        );
+        let original = matches[0];
+        ensure!(
+            original["sha256"] == source["sha256"]
+                && original["text"]["sha256"] == source["text_sha256"]
+                && original["provenance"]["status"] == "selected"
+                && original["provenance"]["chip_scope"] == json!(["CW32L083"]),
+            "L083 requires selected own RM/DS and locked text"
+        );
+        let pages = source["pdf_pages_1_based"]
+            .as_array()
+            .context("missing L083 PDF pages")?;
+        let printed = source["printed_pages"]
+            .as_array()
+            .context("missing L083 printed pages")?;
+        let count = original["provenance"]["pdf_page_count"]
+            .as_u64()
+            .context("missing L083 PDF length")?;
+        ensure!(
+            !pages.is_empty()
+                && pages.len() == printed.len()
+                && pages.windows(2).all(|p| p[0].as_u64() < p[1].as_u64())
+                && pages.iter().zip(printed).all(|(p, q)| p
+                    .as_u64()
+                    .is_some_and(|p| p > 0 && p <= count && q.as_u64() == Some(p - 1))),
+            "L083 ordered source page correspondence changed"
+        );
+    }
+    let sdk_matches: Vec<_> = artifacts
+        .iter()
+        .filter(|a| a["id"] == own["sdk_source"]["source_ref"])
+        .collect();
+    ensure!(sdk_matches.len() == 1, "L083 SDK must be unique");
+    let sdk = sdk_matches[0];
+    ensure!(
+        sdk["sha256"] == own["sdk_source"]["sha256"]
+            && sdk["provenance"]["status"] == "selected"
+            && sdk["provenance"]["chip_scope"] == json!(["CW32L083"])
+            && sdk["provenance"]["generator_svd_path"] == own["sdk_source"]["generator_svd_path"]
+            && sdk["provenance"]["generator_header_path"]
+                == own["sdk_source"]["generator_header_path"],
+        "L083 own SDK source/input provenance changed"
+    );
+    let members = sdk["members"]
+        .as_array()
+        .context("missing L083 SDK members")?;
+    let facts = own["sdk_members"]
+        .as_array()
+        .context("missing L083 selected member roster")?;
+    ensure!(facts.len() == 11, "L083 selected SDK member roster changed");
+    for fact in facts {
+        let path = text(&fact["source_ref"])?
+            .strip_prefix("member:")
+            .context("invalid L083 SDK member")?;
+        let matches: Vec<_> = members.iter().filter(|m| m["path"] == path).collect();
+        ensure!(
+            matches.len() == 1
+                && matches[0]["sha256"] == fact["sha256"]
+                && matches[0]["members"] == fact["member_chain"],
+            "L083 selected SDK member hash/chain changed: {path}"
+        );
+    }
+    let input = parse_policy(&fs::read(root.join("cw32-data/inputs/cw32l083.yaml"))?)?;
+    let svd_path = text(&own["sdk_source"]["generator_svd_path"])?;
+    let svd = facts
+        .iter()
+        .find(|m| m["source_ref"] == format!("member:{svd_path}"))
+        .context("missing L083 selected native SVD")?;
+    ensure!(
+        input["line"] == "CW32L083"
+            && input["expected_svd_name"] == "CW32L083"
+            && input["source"]["source_ref"] == svd["source_ref"]
+            && input["source"]["sha256"] == svd["sha256"],
+        "L083 generator input differs from own selected SVD"
+    );
+    ensure!(
+        input["field_removals"].as_array().is_some_and(|a| a
+            .iter()
+            .filter(|f| f["fieldset"] == "COMPEN"
+                && f["field"] == "FREQ"
+                && f["expected_bit_offset"] == 16
+                && f["expected_bit_size"] == 4)
+            .count()
+            == 1),
+        "L083 manual RTC COMPEN reserved-field correction changed"
+    );
+    let peripheral = |name: &str| -> Result<&cw32_data_serde::chip::core::Peripheral> {
+        let matches: Vec<_> = core.peripherals.iter().filter(|p| p.name == name).collect();
+        ensure!(
+            matches.len() == 1,
+            "L083 native peripheral must be unique: {name}"
+        );
+        Ok(matches[0])
+    };
+    let mut inventory: Vec<_> = core.peripherals.iter().map(|p| p.name.as_str()).collect();
+    inventory.sort();
+    ensure!(
+        serde_json::to_value(inventory)? == own["peripheral_inventory"]
+            && core.peripherals.iter().all(|p| p.name != "AWT"),
+        "L083 complete native peripheral/positive-root inventory changed"
+    );
+    let register = |name: &str, reg: &str, offset: u32| -> Result<&ir::FieldSet> {
+        let p = peripheral(name)?
+            .registers
+            .as_ref()
+            .context("missing L083 native block")?;
+        let ir = registers.get(&p.kind).context("missing L083 selected IR")?;
+        let block = ir.blocks.get(&p.block).context("missing L083 IR block")?;
+        let items: Vec<_> = block.items.iter().filter(|r| r.name == reg).collect();
+        ensure!(
+            items.len() == 1 && items[0].byte_offset == offset && items[0].array.is_none(),
+            "L083 register must be unique/scalar at its own offset: {name}.{reg}"
+        );
+        let ir::BlockItemInner::Register(r) = &items[0].inner else {
+            anyhow::bail!("L083 control is not a register: {name}.{reg}")
+        };
+        ensure!(
+            r.bit_size == 32
+                && r.fieldset.as_deref() == Some(reg)
+                && r.access
+                    == if name == "SYSCTRL" && reg == "ISR" {
+                        ir::Access::Read
+                    } else {
+                        ir::Access::ReadWrite
+                    },
+            "L083 readable control width/access/fieldset changed: {name}.{reg}"
+        );
+        ir.fieldsets
+            .get(reg)
+            .context("missing L083 control fieldset")
+    };
+    let controls = own["native_controls"]
+        .as_array()
+        .context("missing L083 complete control images")?;
+    ensure!(
+        controls.len() == 119,
+        "L083 requires all 119 native controls"
+    );
+    let mut identities = BTreeSet::new();
+    for fact in controls {
+        let name = text(&fact["peripheral"])?;
+        let reg = text(&fact["register"])?;
+        ensure!(
+            identities.insert((name, reg)),
+            "duplicate L083 native control"
+        );
+        let p = peripheral(name)?;
+        let r = p
+            .registers
+            .as_ref()
+            .context("missing L083 register identity")?;
+        let expected_block = if name.starts_with("GPIO") {
+            "GPIO"
+        } else if name.starts_with("UART") {
+            "UART"
+        } else {
+            name
+        };
+        ensure!(
+            p.address == number(&fact["address"])?
+                && r.block == expected_block
+                && fact["ir_path"] == format!("cw32-data/registers/{}_{}.yaml", r.kind, r.version)
+                && fact["register_bits"] == 32,
+            "L083 actual base/block/version changed: {name}.{reg}"
+        );
+        let fields = register(name, reg, number(&fact["byte_offset"])?)?;
+        let expected = fact["fields"]
+            .as_array()
+            .context("missing L083 complete fieldset")?;
+        ensure!(
+            fields.fields.len() == expected.len(),
+            "L083 complete fieldset differs: {name}.{reg}"
+        );
+        let mut field_names = BTreeSet::new();
+        for f in expected {
+            let field_name = text(&f["name"])?;
+            let matches: Vec<_> = fields
+                .fields
+                .iter()
+                .filter(|v| v.name == field_name)
+                .collect();
+            ensure!(
+                field_names.insert(field_name)
+                    && matches.len() == 1
+                    && matches[0].bit_offset == ir::BitOffset::Regular(number(&f["bit_offset"])?)
+                    && matches[0].bit_size == number(&f["bit_size"])?
+                    && matches[0].array.is_none()
+                    && matches[0].enumm.as_deref() == f["enum"].as_str(),
+                "L083 complete native field/enum changed: {name}.{reg}.{field_name}"
+            );
+        }
+    }
+    // Compare every referenced typed enum's complete name/value roster and width.
+    // The policy is own-source bound; a mutually consistent edited IR is not authority.
+    for (identity, enums) in own["native_enums"]
+        .as_object()
+        .context("missing L083 enums")?
+    {
+        let matching: Vec<_> = core
+            .peripherals
+            .iter()
+            .filter_map(|p| p.registers.as_ref())
+            .filter(|p| format!("{}_{}", p.kind, p.version) == *identity)
+            .collect();
+        let p = matching.first().context("missing L083 enum owner")?;
+        let ir = registers.get(&p.kind).context("missing L083 enum IR")?;
+        for (name, expected) in enums.as_object().context("missing L083 enum roster")? {
+            let e = ir
+                .enums
+                .get(name)
+                .with_context(|| format!("missing L083 enum {identity}.{name}"))?;
+            let variants: Vec<_> = e
+                .variants
+                .iter()
+                .map(|v| json!({"name":v.name,"value":v.value}))
+                .collect();
+            ensure!(
+                e.bit_size == number(&expected["bit_size"])?
+                    && json!(variants) == expected["variants"],
+                "L083 complete typed enum changed: {identity}.{name}"
+            );
+        }
+    }
+    let access = parse_policy(&fs::read(root.join("cw32-data/field-access.yaml"))?)?;
+    let overlays = access["registers"]["sysctrl_cw32l083_v1"]
+        .as_array()
+        .context("missing L083 source access")?;
+    ensure!(
+        overlays.len() == 5,
+        "L083 requires exactly five native STABLE RO overlays"
+    );
+    for (name, bit) in [
+        ("HSI", 15),
+        ("HSE", 19),
+        ("LSI", 15),
+        ("LSE", 15),
+        ("PLL", 15),
+    ] {
+        ensure!(
+            overlays
+                .iter()
+                .filter(|f| f["block"] == "SYSCTRL"
+                    && f["register"] == name
+                    && f["fieldset"] == name
+                    && f["field"] == "STABLE"
+                    && f["bit_offset"] == bit
+                    && f["bit_size"] == 1)
+                .count()
+                == 1,
+            "L083 source STABLE must retain its read-only overlay: {name}"
+        );
+    }
+    for (name, irq) in [("SYSCTRL", 4), ("CLKFAULT", 31)] {
+        ensure!(
+            core.interrupts
+                .iter()
+                .filter(|i| i.name == name && i.number == irq)
+                .count()
+                == 1
+                && core.interrupts.iter().filter(|i| i.number == irq).count() == 1
+                && core.interrupts.iter().filter(|i| i.name == name).count() == 1,
+            "L083 distinct ready/start-failure and external-fault observers changed: {name}"
+        );
+    }
+    for (kind, expected) in [("uart", &lsi.uarts), ("gpio", &lsi.gpio_banks)] {
+        let actual: Vec<_> = core
+            .peripherals
+            .iter()
+            .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == kind))
+            .map(|p| p.name.as_str())
+            .collect();
+        ensure!(
+            actual == expected.iter().map(String::as_str).collect::<Vec<_>>(),
+            "L083 complete six-{kind} roster changed"
+        );
+    }
+    let gates = own["consumer_gates"]
+        .as_array()
+        .context("missing L083 native gate facts")?;
+    let gate_order = [
+        "RTC", "AUTOTRIM", "UART1", "UART2", "UART3", "UART4", "UART5", "UART6", "GPIOA", "GPIOB",
+        "GPIOC", "GPIOD", "GPIOE", "GPIOF", "LPTIM", "LCD",
+    ];
+    ensure!(
+        gates.len() == 16,
+        "L083 requires all sixteen native gate/reset pairs"
+    );
+    for (fact, name) in gates.iter().zip(gate_order) {
+        ensure!(
+            fact["peripheral"] == name,
+            "L083 fixed gate/reset order changed"
+        );
+        let gate = peripheral(name)?
+            .rcc_control
+            .as_ref()
+            .context("missing L083 central gate")?;
+        let reset = gate.reset.as_ref().context("missing L083 central reset")?;
+        let gpio = name.starts_with("GPIO");
+        let work_gate = matches!(name, "LCD" | "LPTIM");
+        ensure!(
+            gate.controller == "SYSCTRL"
+                && gate.enable.register == text(&fact["gate_register"])?
+                && gate.enable.field == name
+                && reset.register == text(&fact["reset_register"])?
+                && reset.field == name
+                && gate.enable_active_value
+                && gate.reset_asserted_value == Some(false)
+                && gate.enable_write_key.is_none()
+                && gate.shared_enable_group.is_none()
+                && gate.shared_reset_group.is_none()
+                && gate.bus_clock == (if gpio { "HCLK" } else { "PCLK" })
+                && fact["keyed"] == false
+                && fact["enable_active_value"] == true
+                && fact["reset_asserted_value"] == false
+                && fact["gate_controls_work"] == (gpio || work_gate)
+                && fact["temporary_enable_for_inspection"] == !work_gate
+                && fact["functional_whole_bank_handover"] == gpio,
+            "L083 native gate/reset/work/non-opening semantics changed: {name}"
+        );
+        for (reg, offset) in [
+            (&gate.enable.register, "gate_byte_offset"),
+            (&reset.register, "reset_byte_offset"),
+        ] {
+            let fields = register("SYSCTRL", reg, number(&fact[offset])?)?;
+            ensure!(
+                fields
+                    .fields
+                    .iter()
+                    .filter(|f| f.name == name
+                        && f.bit_offset
+                            == ir::BitOffset::Regular(number(&fact["bit_offset"]).unwrap())
+                        && f.bit_size == 1
+                        && f.array.is_none())
+                    .count()
+                    == 1
+                    && fields.fields.iter().all(|f| f.name != "KEY"),
+                "L083 unkeyed central gate/reset field changed: {name}"
+            );
+        }
+    }
+    let sysctrl = peripheral("SYSCTRL")?;
+    let clock = sysctrl
+        .clock_limits
+        .as_ref()
+        .context("missing L083 clocks")?;
+    let clock_value = serde_json::to_value(clock)?;
+    for (key, value) in own["electrical_profile"]
+        .as_object()
+        .context("missing L083 electrical facts")?
+    {
+        ensure!(
+            clock_value[key] == *value,
+            "L083 own HSI/HSE/PLL/electrical profile changed: {key}"
+        );
+    }
+    let rtc = peripheral("RTC")?
+        .rtc_calendar
+        .as_ref()
+        .context("missing L083 RTC LSI facts")?;
+    ensure!(
+        rtc.source == "LSI"
+            && rtc.source_encoding == 2
+            && rtc.calendar_divisor == 32768
+            && rtc.nominal_hz == lsi.nominal_hz
+            && rtc.minimum_hz == lsi.minimum_hz
+            && rtc.maximum_hz == lsi.maximum_hz
+            && rtc.supply_mv == lsi.supply_mv
+            && rtc.temperature_c == lsi.temperature_c
+            && rtc.factory_trim_address == lsi.factory_trim_address
+            && clock
+                .hse
+                .as_ref()
+                .context("missing L083 HSE")?
+                .fixed_ccs_hsi_divisor
+                .is_none()
+            && clock.pll.is_some()
+            && clock.hex.is_none()
+            && clock.lsi_sysclk.is_none(),
+        "L083 independent RTC/LSI rate and native PLL/fallback facts disagree"
+    );
+    let catalog = parse_policy(&fs::read(root.join("cw32-data/parts.yaml"))?)?;
+    let pinouts = parse_policy(&fs::read(root.join("cw32-data/pinouts/cw32l083.yaml"))?)?;
+    ensure!(
+        catalog["sources"]["CW32L083_datasheet"]["source_ref"] == sources[1]["source_ref"]
+            && catalog["sources"]["CW32L083_datasheet"]["sha256"] == sources[1]["sha256"]
+            && pinouts["family"] == "CW32L083"
+            && pinouts["source"]["source_ref"] == sources[1]["source_ref"]
+            && pinouts["source"]["sha256"] == sources[1]["sha256"],
+        "L083 package authority changed"
+    );
+    let catalog_parts = catalog["parts"]
+        .as_array()
+        .context("missing L083 catalog")?;
+    let packages = pinouts["packages"]
+        .as_array()
+        .context("missing L083 packages")?;
+    ensure!(
+        packages.len() == 5
+            && catalog_parts
+                .iter()
+                .filter(|p| p["family"] == "CW32L083")
+                .count()
+                == 5,
+        "L083 exact package catalog scope changed"
+    );
+    let af = parse_policy(&fs::read(root.join("cw32-data/af/cw32l083.yaml"))?)?;
+    let gpio_header = facts
+        .iter()
+        .find(|m| m["source_ref"] == "member:cw32l083/Libraries/inc/cw32l083_gpio.h")
+        .context("missing L083 own GPIO header")?;
+    ensure!(
+        af["profile"] == "CW32L083"
+            && af["source"]["sdk_sha256"] == sdk["sha256"]
+            && af["source"]["header_sha256"] == gpio_header["sha256"],
+        "L083 raw AF provenance changed"
+    );
+    let raw = ["routes", "gpio_selection", "unresolved"]
+        .iter()
+        .map(|s| {
+            af[*s]
+                .as_array()
+                .context("missing L083 complete raw AF section")
+        })
+        .collect::<Result<Vec<_>>>()?
+        .into_iter()
+        .flatten()
+        .collect::<Vec<_>>();
+    let proofs = own["clock_output_proof"]
+        .as_array()
+        .context("missing L083 independent output facts")?;
+    ensure!(
+        proofs.len() == 6
+            && raw
+                .iter()
+                .filter(|p| matches!(p["function"].as_str(), Some("LSIOUT" | "PLLOUT")))
+                .count()
+                == 6,
+        "L083 complete LSI/PLL raw output roster changed"
+    );
+    for proof in proofs {
+        let pin = text(&proof["pin"])?;
+        let function = text(&proof["function"])?;
+        let pin_number: u32 = pin[2..].parse()?;
+        let reg = if pin_number < 8 { "AFRL" } else { "AFRH" };
+        let field = format!("AFR{pin_number}");
+        let records: Vec<_> = raw
+            .iter()
+            .filter(|p| p["pin"] == pin && p["function"] == function)
+            .collect();
+        ensure!(
+            records.len() == 1
+                && records[0]["af"] == proof["af"]
+                && records[0]["gpio_register"] == reg
+                && records[0]["gpio_field"] == field
+                && records[0]["source_line"] == proof["own_sdk_gpio_header_line"]
+                && records[0]["source_macro"]
+                    == format!("{}{:02}_AFx_{function}", &pin[..2], pin_number),
+            "L083 own RM/DS/SDK output route differs from complete raw AF: {pin}"
+        );
+        let mut valid: Vec<_> = raw
+            .iter()
+            .filter(|p| p["pin"] == pin)
+            .map(|p| number(&p["af"]))
+            .collect::<Result<_>>()?;
+        valid.sort();
+        ensure!(
+            json!(valid) == proof["documented_valid_afs"],
+            "L083 complete documented AF alternatives changed: {pin}"
+        );
+        let fields = register(
+            &format!("GPIO{}", &pin[1..2]),
+            reg,
+            if pin_number < 8 { 24 } else { 20 },
+        )?;
+        ensure!(
+            fields
+                .fields
+                .iter()
+                .filter(|f| f.name == field
+                    && f.bit_offset == ir::BitOffset::Regular((pin_number % 8) * 4)
+                    && f.bit_size == 4
+                    && f.array.is_none())
+                .count()
+                == 1,
+            "L083 output field differs from native IR: {pin}"
+        );
+    }
+    let mut pll_projection = Vec::new();
+    for (index, part) in parts.as_array().unwrap().iter().enumerate() {
+        let name = text(&part["name"])?;
+        let fact = &own["packages"][index];
+        let matched: Vec<_> = catalog_parts.iter().filter(|p| p["name"] == name).collect();
+        let physical: Vec<_> = packages.iter().filter(|p| p["name"] == name).collect();
+        ensure!(
+            matched.len() == 1 && physical.len() == 1 && fact["name"] == name,
+            "L083 exact package must be unique"
+        );
+        let package = physical[0];
+        let memory = json!([
+            {"name":"FLASH","kind":"flash","address":0,"size":if index == 0 {131072} else {262144}},
+            {"name":"RAM","kind":"ram","address":0x2000_0000,"size":24576}
+        ]);
+        ensure!(
+            matched[0]["family"] == "CW32L083"
+                && matched[0]["feature"] == name.to_ascii_lowercase()
+                && matched[0]["package"] == part["package"]
+                && matched[0]["memory"] == memory
+                && matched[0]["datasheet_source_id"] == "CW32L083_datasheet"
+                && package["package"] == part["package"]
+                && package["flash_bytes"] == fact["flash_bytes"]
+                && package["ram_bytes"] == 24576
+                && package["gpio_pins"] == fact["gpio_pins"]
+                && package["input_only_pins"] == fact["input_only_pins"]
+                && l052_policy_digest(&package["pins"])? == fact["physical_pins_sha256"],
+            "L083 full physical package/memory/token facts changed: {name}"
+        );
+        let physical_pins = package["pins"]
+            .as_array()
+            .context("missing L083 physical pin array")?;
+        let bonded: BTreeSet<_> = physical_pins
+            .iter()
+            .flat_map(|p| p["signals"].as_array().into_iter().flatten())
+            .filter_map(Value::as_str)
+            .collect();
+        for (signal, key, count) in [
+            ("LSIOUT", "lsi_output_routes", [1, 1, 1, 2, 3][index]),
+            ("PLLOUT", "pll_output_routes", [2, 2, 2, 3, 3][index]),
+        ] {
+            let routes = fact[key]
+                .as_array()
+                .context("missing L083 full bonded route roster")?;
+            ensure!(
+                routes.len() == count,
+                "L083 bonded route count changed: {name}.{signal}"
+            );
+            let mut actual: Vec<_> = raw
+                .iter()
+                .filter(|p| {
+                    p["function"] == signal && p["pin"].as_str().is_some_and(|p| bonded.contains(p))
+                })
+                .map(|p| json!({"pin":p["pin"],"af":p["af"]}))
+                .collect();
+            actual.sort_by_key(|p| (p["pin"].as_str().unwrap().to_owned(), p["af"].as_u64()));
+            let expected: Vec<_> = routes
+                .iter()
+                .map(|p| json!({"pin":p["pin"],"af":p["af"]}))
+                .collect();
+            ensure!(
+                actual == expected,
+                "L083 combined raw AF/bonded output roster changed: {name}.{signal}"
+            );
+            for route in routes {
+                let pin = text(&route["pin"])?;
+                ensure!(
+                    physical_pins
+                        .iter()
+                        .filter(|p| p["position"] == route["position"]
+                            && p["signals"].as_array().unwrap().iter().any(|s| s == pin))
+                        .count()
+                        == 1,
+                    "L083 exact output physical lead changed: {name}.{pin}"
+                );
+            }
+        }
+        // These policy guards qualify native register fields, never physical pins.
+        for (key, guards) in [
+            ("LSI", &fact["lsi_unbonded_register_guards"]),
+            (
+                "PLL",
+                &fact["pll_stop_guard_policy"]["unbonded_register_guards"],
+            ),
+        ] {
+            let guards = guards
+                .as_array()
+                .context("missing L083 unbonded-register policy")?;
+            ensure!(
+                guards.len()
+                    == (if key == "LSI" {
+                        [2, 2, 2, 1, 0][index]
+                    } else {
+                        [1, 1, 1, 0, 0][index]
+                    }),
+                "L083 unbonded native guard roster changed: {name}.{key}"
+            );
+            for guard in guards {
+                let bank = text(&guard["bank"])?;
+                let reg = text(&guard["register"])?;
+                let field_name = text(&guard["field"])?;
+                let pin = format!(
+                    "P{}{}",
+                    &bank[4..],
+                    field_name
+                        .strip_prefix("AFR")
+                        .context("invalid L083 guard field")?
+                );
+                ensure!(
+                    !bonded.contains(pin.as_str())
+                        && guard["require_af"] == 0
+                        && guard["physical_token_or_route_projection"] == false,
+                    "L083 conservative unbonded guard became a physical output: {name}.{pin}"
+                );
+                let fields = register(bank, reg, if reg == "AFRL" { 24 } else { 20 })?;
+                ensure!(
+                    fields
+                        .fields
+                        .iter()
+                        .filter(|f| f.name == field_name
+                            && f.bit_offset
+                                == ir::BitOffset::Regular(number(&guard["bit_offset"]).unwrap())
+                            && f.bit_size == 4
+                            && f.array.is_none())
+                        .count()
+                        == 1,
+                    "L083 unbonded native field differs: {name}.{pin}"
+                );
+            }
+        }
+        if chip.name != name {
+            continue;
+        }
+        ensure!(
+            chip.packages.len() == 1
+                && chip.packages[0].name == name
+                && chip.packages[0].package == text(&part["package"])?
+                && serde_json::to_value(&chip.memory)? == json!([memory])
+                && serde_json::to_value(&chip.packages[0].pins)? == package["pins"],
+            "L083 selected exact physical package projection changed"
+        );
+        let mut expected_pins: Vec<_> = fact["gpio_pins"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .chain(fact["input_only_pins"].as_array().unwrap())
+            .map(|p| text(p))
+            .collect::<Result<_>>()?;
+        expected_pins.sort();
+        let mut actual_pins: Vec<_> = core.pins.iter().map(|p| p.name.as_str()).collect();
+        actual_pins.sort();
+        ensure!(
+            actual_pins == expected_pins,
+            "L083 exact physical GPIO token projection changed"
+        );
+        for (signal, pin) in [
+            ("HSE_IN", "PF0"),
+            ("HSE_OUT", "PF1"),
+            ("LSE_IN", "PC14"),
+            ("LSE_OUT", "PC15"),
+        ] {
+            let pads: Vec<_> = sysctrl.pins.iter().filter(|p| p.signal == signal).collect();
+            ensure!(
+                pads.len() == 1
+                    && pads[0].pin == pin
+                    && pads[0].af.is_none()
+                    && pads[0].adc_mux.is_none()
+                    && pads[0].comparator_mux.is_none()
+                    && physical_pins
+                        .iter()
+                        .filter(|p| p["position"] == fact["oscillator_pins"][pin]
+                            && p["signals"].as_array().unwrap().iter().any(|s| s == pin))
+                        .count()
+                        == 1,
+                "L083 own oscillator pad and physical lead changed: {name}.{signal}"
+            );
+        }
+        let lse = clock
+            .lse_configuration
+            .as_ref()
+            .context("missing L083 exact native LSE hardware")?;
+        ensure!(
+            serde_json::to_value(lse)? == own["lse_hardware"][name],
+            "L083 independently reviewed complete LSE startup/RTC/output hardware changed"
+        );
+        let startup = lse
+            .startup_consumers
+            .as_ref()
+            .context("missing L083 full startup hardware")?;
+        let expected: Vec<_> = fact["lsi_output_routes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|p| json!({"pin":p["pin"],"af":p["af"]}))
+            .collect();
+        ensure!(
+            serde_json::to_value(&startup.lsi_output_routes)? == json!(expected),
+            "L083 startup LSI roster must include every independently bonded route"
+        );
+        pll_projection = fact["pll_output_routes"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|p| {
+                json!({
+                    "signal":"PLL_OUT", "pin":p["pin"], "af":p["af"]
+                })
+            })
+            .collect();
+    }
+    ensure!(
+        sysctrl.pins.iter().all(|p| p.signal != "PLL_OUT"),
+        "L083 PLL output projection must follow independent own-source admission"
+    );
+    if selected.is_none() {
+        ensure!(
+            clock.lse_configuration.is_none(),
+            "generic L083 must not inherit exact startup hardware"
+        );
+        return Ok(());
+    }
+    // Only exact-five injection follows every independent structural/source check.
+    let sysctrl = core
+        .peripherals
+        .iter_mut()
+        .find(|p| p.name == "SYSCTRL")
+        .context("missing L083 SYSCTRL")?;
+    sysctrl.pins.extend(serde_json::from_value::<
+        Vec<cw32_data_serde::chip::core::peripheral::Pin>,
+    >(json!(pll_projection))?);
+    sysctrl
+        .clock_limits
+        .as_mut()
+        .context("missing L083 clocks")?
+        .lsi_sysclk = Some(lsi);
     Ok(())
 }

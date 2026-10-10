@@ -195,6 +195,38 @@ pub struct Config {
 /// rollback, source-loss recovery, sleep/wake or hardware-validation guarantee.
 /// See docs/l052-factory-lsi-sysclk.md for the complete contract.
 ///
+/// On CW32L083RBT6/RCT6/RCS6/MCT6/VCT6 only, factory LSI SYSCLK has own
+/// 31,816..33,784 Hz rate bounds at 1.65..5.5 V, VDDA=VDD and -40..85 C.
+/// Admission can run each entire GPIOA/B/C/D/E/F bank, including unrelated
+/// pins, filters, armed edge/level events and external pin feedback before
+/// failure. Functional handover permits every such window and quiesces all
+/// clock-dependent clients; restoring a gate cannot undo elapsed activity.
+/// Full snapshots cover six UARTs, RTC/AUTOTRIM/LVD, tagged LCD/LPTIM, MCO,
+/// all bonded LSI/PLL output routes and conservative unbonded AF0 guards.
+/// Off LCD/LPTIM work gates remain unread and off. Matching cold trim never
+/// skips full ownership/observer proof; live factory-matching LSI is retained
+/// without stop/retrim. No consumer reset/stop or IRQ/event clear gains admission.
+/// An inherited enabled PLL requires actual-reference bounds and full output
+/// ownership. If selected, first use a proven HSI/HSE bridge; direct PLL-to-LSI
+/// is forbidden. PLL enable and both ready observations must reach zero before
+/// reference-affecting HSI changes. Flash WAIT2 remains on success. Configured
+/// factory HSI must fit at final bus divisors. Potential HSE/LSE fallback uses
+/// the undivided 48.96 MHz HSI bound without HSI/AHB/APB divider credit, requiring
+/// VDD at least 1.8 V; no L052 fixed-/6 escape or 48 MHz limit is imported.
+/// Once established, LSI readiness remains invariant after permanent request. Final source-only
+/// LSI selection is the last source, divider, Flash, pad or policy write; temporary
+/// read-only gate inspection/restoration may follow. The final CR0 observation
+/// precedes publication. Failed RCC initialization publishes no clocks/tokens and
+/// can leave partial state; reset, or power reset for retained LSE, before retry.
+/// Poll budgets are attempts, and loss of an execution clock can prevent return.
+/// Exact-L083 RTC LSI aliases become rate-only under HSI/HSE/PLL/LSE/LSI, with
+/// unchanged numeric bounds and 32800/32768 nominal calendar fraction. Strict
+/// duration assertions and ADC timing refusal retain their existing order;
+/// the fixed 1 MHz time driver refuses selected LSI before singleton/RCC work.
+/// These functional limits add no hidden Rust memory-safety precondition,
+/// rollback, source-loss recovery, sleep/wake or hardware-validation guarantee.
+/// See docs/l083-factory-lsi-sysclk.md for the complete source contract.
+///
 /// On F020/F030/A030, selecting factory LSI SYSCLK (or LSE SYSCLK on the
 /// three qualified packages) may briefly open each
 /// entire GPIOA/B/C/F bank to inspect retained source selectors. Sampling,

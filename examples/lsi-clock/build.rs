@@ -21,6 +21,11 @@ fn main() {
             | "CW32L052C8T6"
             | "CW32L052R8S6"
             | "CW32L052R8T6"
+            | "CW32L083RBT6"
+            | "CW32L083RCT6"
+            | "CW32L083RCS6"
+            | "CW32L083MCT6"
+            | "CW32L083VCT6"
     ));
     assert!(metadata.peripherals.iter().any(|p| {
         p.clock_limits
@@ -43,6 +48,11 @@ fn main() {
         // Own L052 DS CN V1.3: exact LQFP48 and both LQFP64 packages.
         "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6" => {
             Some((64 * 1024, 8 * 1024, true))
+        }
+        // Own L083 DS CN V1.9 tables 3-1/9-1: RBT6 differs from the C-density parts.
+        "CW32L083RBT6" => Some((128 * 1024, 24 * 1024, true)),
+        "CW32L083RCT6" | "CW32L083RCS6" | "CW32L083MCT6" | "CW32L083VCT6" => {
+            Some((256 * 1024, 24 * 1024, true))
         }
         _ => None,
     };

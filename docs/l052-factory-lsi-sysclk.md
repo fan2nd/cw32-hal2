@@ -3,8 +3,9 @@
 This contract covers init-only `Sysclk::LSI` on CW32L052C8T6 (LQFP48),
 CW32L052R8S6 (LQFP64 7×7 mm) and CW32L052R8T6 (LQFP64 10×10 mm).
 All three have 64 KiB Flash at 0x00000000 and 8 KiB SRAM at 0x20000000.
-Generic CW32L052, every CW32L083 and native L010/L011/L012 gain no LSI
-SYSCLK capability. L052 has no system PLL. No RF, new driver, runtime clock
+Generic CW32L052 and native L010/L011/L012 gain no LSI SYSCLK capability.
+This L052 addition did not qualify L083; the later exact-five L083 capability
+has its [own contract](l083-factory-lsi-sysclk.md). L052 has no system PLL. No RF, new driver, runtime clock
 switching, sleep/wake restoration or hardware qualification is included.
 
 Final main verification passed eight actual library builds and eight linked

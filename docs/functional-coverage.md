@@ -206,7 +206,8 @@ still apply.
   [W031 contract](qualified-w031-lsi-sysclk.md).
 - CW32L052C8T6/R8S6/R8T6 add a separate native factory-LSI SYSCLK path:
   nominal 32,800 Hz, 31,816–33,784 Hz at 1.65–5.5 V, VDDA=VDD and −40–85°C,
-  with 64 KiB Flash / 8 KiB SRAM. Generic L052 and every L083 stay excluded.
+  with 64 KiB Flash / 8 KiB SRAM. Generic L052 stays excluded; the separately
+  qualified exact L083 parts are described below.
   Full native snapshots cover RTC, AUTOTRIM, UART1/2/3, GPIOA/B/C/D/F,
   MCO and PC4 AF, plus tagged LCD/LPTIM work gates. Off work gates stay off
   without local register reads; cold gate-on LCD requires both EN=0 and BUMP=0.
@@ -229,6 +230,32 @@ still apply.
   [L052 contract](l052-factory-lsi-sysclk.md),
   [runtime/source review](l052-factory-lsi-runtime-review.json) and
   [metadata review](l052-factory-lsi-metadata-review.json).
+- CW32L083RBT6/RCT6/RCS6/MCT6/VCT6 add a separate exact-five factory-LSI
+  SYSCLK capability, with 31,816–33,784 Hz at 1.65–5.5 V, VDDA=VDD and
+  −40–85°C. RBT6 has 128 KiB Flash, the others 256 KiB, all with 24 KiB SRAM.
+  Generic L083 and native L010/L011/L012 stay excluded. Admission covers six
+  UARTs, all six GPIO banks, full RTC/AUTOTRIM/LVD controls, tagged off/on
+  LCD/LPTIM work and complete bonded LSI/PLL output rosters. Conservative
+  unbonded AF0 guards create no pin tokens. Whole-bank inspection can advance
+  unrelated pins, filters, armed events and external loopbacks before failure.
+  Cold matching trim still requires full proof; live matching LSI is retained.
+  Inherited PLL departure uses a proven HSI/HSE bridge and requires PLLEN0 plus
+  both ready0 before reference changes. WAIT2 remains on success; potential
+  HSE/LSE fallback uses the undivided 48.96 MHz HSI bound without divider credit.
+  Configured factory HSI is checked at final bus divisors before the final
+  source-only LSI commit. No later source/Flash/pad/policy write precedes publication.
+  Every exact-L083 RTC LSI alias is rate-only under HSI/HSE/PLL/LSE/LSI, with
+  its prior numeric bounds and nominal 32800/32768 calendar fraction unchanged.
+  Strict duration assertions, ADC ordering and fixed 1 MHz time-driver refusal
+  remain distinct source-review obligations; library compilation does not
+  execute them. RCC failure publishes no clocks, requires reset and promises
+  no rollback or clock-loss/sleep recovery. Main ten-library/ten-ELF verification
+  and independent implementation reviews passed. At main acceptance clean had
+  not run; final-package completion requires a separate two-library/three-ELF
+  clean receipt. The all-54 comparison
+  permits five new LSI capability objects and exact bonded PLL_OUT projections,
+  keeping old source profiles and RTC numeric facts unchanged. See the
+  [L083 contract](l083-factory-lsi-sysclk.md); no hardware result is claimed.
 - Init-only factory-LSI SYSCLK is qualified on F020/F030/A030. Cold admission
   precedes the first source-enable write and checks every documented shared
   consumer, gate, reset and inherited source request; factory-matching running
@@ -239,7 +266,7 @@ still apply.
   timing guards remain enforced. A 1 MHz Embassy timebase rejects this rate
   before singleton acquisition. This is a static control-flow guarantee;
   compiling the time-driver feature does not execute that rejection.
-  Apart from the exact L031/R031/W031/L052 changes above, other RTC/LSI qualifications
+  Apart from the exact L031/R031/W031/L052/L083 changes above, other RTC/LSI qualifications
   are unchanged. Runtime switching and
   low-power restoration remain outside this slice. See the
   [complete factory-LSI contract](factory-lsi-sysclk.md).

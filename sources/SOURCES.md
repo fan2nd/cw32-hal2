@@ -532,7 +532,8 @@ ADC共享门自身CN84/58及EN89/63明确为配置兼工作门：开启后ADC1/A
 
 Only CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6 receive the independent
 factory-LSI SYSCLK capability in `cw32-data/lsi-sysclk-qualified.yaml`.
-Generic L052, every L083 and native L010/L011/L012 are excluded. The earlier
+Generic L052 and native L010/L011/L012 are excluded. That L052 addition did
+not qualify L083; the later exact-five L083 contract is recorded below. The earlier
 L052 LSE-specific qualification remains historical; its statement that it did
 not qualify LSI is unchanged. See the [separate L052 factory-LSI contract](../docs/l052-factory-lsi-sysclk.md).
 
@@ -575,3 +576,55 @@ At main acceptance, clean replay had not run; final-package completion requires
 a separate final-source two-library/three-ELF clean receipt. Earlier failed
 attempts remain historical records as described in the contract, not successful
 checks or hardware tests.
+
+
+## Exact CW32L083 factory-LSI SYSCLK
+
+Only CW32L083RBT6/RCT6/RCS6/MCT6/VCT6 gain the independent init-only
+factory-LSI capability; generic L083 and native L010/L011/L012 remain excluded.
+See the [source contract and finite verification scope](../docs/l083-factory-lsi-sysclk.md).
+Earlier LSE-only qualification records keep their historical meaning.
+
+Authority remains the selected own RM CN V2.0, DS CN V1.9 and SDK V2.2 in
+[`evidence-sources.json`](evidence-sources.json). RM SHA-256 is
+`9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3`, DS is
+`852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e`, and SDK is
+`2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73`. The selected
+SDK member `IdeSupport/MDK/WHXY.CW32L083_DFP.1.0.9.pack` → `SVD/CW32L083.svd`
+has SHA-256 `ddc840e2c52840ca3687fb78edeffff8ef7a41d6acd33cba32f44ec1b606a334`.
+Originals and derived text remain external evidence; no vendor bytes or source
+locks change for this addition. PDF pages below are one-based, with printed
+page numbers one less.
+
+- RM PDF58/62/79 and DS PDF47/55 establish factory halfword 0x00100A02,
+  native ten-bit TRIM, preserved WAIT[11:10], nominal32800/min31816/max33784 Hz,
+  1.65–5.5 V, VDDA=VDD and −40–85°C. Neither conditional +105°C nor adjustable
+  trim range expands factory tolerance. HSI uses its separate 0x00100A00
+  halfword, eleven-bit trim and 47.04–48.96 MHz factory envelope.
+- RM PDF59–60/67/72/82 establishes actual PLL reference/bin/stop identity and
+  requires departure through HSI/HSE. PDF63–65/75–85 separates startup status,
+  sticky history, SYSCTRL IRQ4 and CLKFAULT IRQ31. Its direct HSE/LSE fallback
+  text promises neither retained dividers nor HSE-fed PLL recovery. New LSI
+  policy uses raw 48.96 MHz no-divider-credit coverage and retains Flash WAIT2;
+  DS PDF47 and RM PDF67/77 keep voltage/bus limits independent of latency.
+- RM PDF86–89/103/157–170/181/187/195–207/236/247–249/370/377/397/544/562–563
+  binds sixteen gate/reset pairs, all six UART source fields, whole GPIOA…F,
+  MCO, RTC, AUTOTRIM, LPTIM and LCD. Off work gates remain unread/off. The
+  source graph does not import L052 UART timeout/timer or internal MCO-to-timer
+  selectors; external clock feedback remains part of functional handover.
+- DS PDF10/27–33/36–38/86 and RM PDF157–159 bind exact memory/bonds and all
+  PC4/PF2/PD5 LSI and PC12/PC13/PF8 PLL alternatives. RBT6 is 128 KiB Flash,
+  the other four 256 KiB, all 24 KiB SRAM. Complete bonded route counts are
+  LSI1/1/1/2/3 and PLL2/2/2/3/3. Unbonded LSI PF2/PD5 and PLL PF8 AF0 guards
+  are conservative register policy, not newly bonded output tokens.
+
+Full cold ownership applies even with matching stopped trim; live matching LSI
+is preserved. Six-bank inspection can advance unrelated activity before failure.
+RTC LSI aliases on exactly these five parts become rate-only under every SYSCLK;
+their numeric facts and exact nominal calendar fraction remain unchanged.
+The all-54 comparison intentionally admits both new exact-five LSI metadata and
+bonded PLL_OUT projections. Main generation, seven finite source/data commands,
+ten actual libraries, ten ELFs and independent implementation reviews passed.
+At main acceptance clean had not run; final-package completion requires a
+separate two-library/three-ELF clean receipt. None of
+these software obligations is a hardware timing, recovery, RF or sleep/wake claim.

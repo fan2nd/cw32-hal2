@@ -122,3 +122,29 @@ cargo build --release --locked --manifest-path examples/rtc-calendar/Cargo.toml 
   --target thumbv6m-none-eabi --no-default-features --features cw32l052r8t6 --bin preserve_calendar
 cargo build --release --locked --manifest-path examples/pll-clock/Cargo.toml \
   --target thumbv6m-none-eabi --no-default-features --features cw32l083rct6 --bin pll-uart
+
+
+# Exact L083 additions to the future recipe, not finite acceptance receipts.
+# Reuse the existing RCT6 release library and HSI-fed PLL ELF above.
+# Six additional library builds and eight ELFs bring the future totals to
+# 36 library commands (31 builds, five historical checks) and 47 linked ELFs.
+# The finite main 10-library/10-ELF and clean 2-library/3-ELF matrix is separate;
+# it includes actual L010/F030 release builds not supplied by these additions.
+for chip in cw32l083rbt6 cw32l083rcs6 cw32l083mct6 cw32l083vct6; do
+  cargo build --release --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 --lib \
+    --target thumbv6m-none-eabi --no-default-features --features "$chip,defmt,time-driver-gtim1"
+done
+cargo build --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 --lib \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l083rct6,defmt,time-driver-gtim1
+cargo build --release --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 --lib \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l083,defmt
+for chip in cw32l083rbt6 cw32l083rct6 cw32l083rcs6 cw32l083mct6 cw32l083vct6; do
+  cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
+    --target thumbv6m-none-eabi --no-default-features --features "$chip,defmt" --bin cw32-lsi-clock-example
+done
+cargo build --release --locked --manifest-path examples/pll-clock/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l083rcs6,hse-crystal --bin pll-uart
+cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l083mct6,defmt --bin crystal
+cargo build --release --locked --manifest-path examples/rtc-calendar/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l083vct6 --bin preserve_calendar

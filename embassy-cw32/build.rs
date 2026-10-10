@@ -2368,23 +2368,39 @@ fn generate_lse(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLim
     out.push_str("(cr1.lseen() || pad_lock, (cr1.lseen() && !lse.mode()) || pad_lock)\n}\n");
 }
 
-// This branch consumes only independently validated exact L052 metadata. The
-// emitted records are full configuration images, not selector-only admission.
-fn generate_l052_factory_lsi(
-    out: &mut String,
+// Shared buffered inspection emission for independently qualified L052/L083.
+// Family branches bind native facts; the existing L052 output stays byte-identical.
+fn generate_l052_l083_factory_lsi(
+    output: &mut String,
     c: &cw32_metapac::metadata::PeripheralClockLimits,
 ) {
     use cw32_metapac::metadata::{METADATA, ir};
     use std::fmt::Write;
-    assert_eq!(METADATA.line, "CW32L052");
-    assert!(matches!(METADATA.name, "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6"));
+    let l083 = METADATA.line == "CW32L083";
+    assert!(matches!(METADATA.line, "CW32L052" | "CW32L083"));
+    assert!(if l083 {
+        matches!(METADATA.name, "CW32L083RBT6" | "CW32L083RCT6" | "CW32L083RCS6" | "CW32L083MCT6" | "CW32L083VCT6")
+    } else { matches!(METADATA.name, "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6") });
+    // The shared template retains the old internal names for L052. Only the
+    // qualified L083 instantiation receives its own generated symbol prefix.
+    let mut generated = String::new();
+    let out = &mut generated;
     let lsi = c.lsi_sysclk.as_ref().unwrap();
     let lse = c.lse_configuration.as_ref().expect("L052 hardware startup facts");
     let native = lse.startup_consumers.as_ref().expect("L052 native consumers");
-    assert!(native.startup_analog && native.lptim.gate_controls_work && native.lcd.gate_controls_work);
+    assert_eq!(native.startup_analog, !l083);
+    assert!(native.lptim.gate_controls_work && native.lcd.gate_controls_work);
     assert_eq!((native.autotrim_source, native.lptim.source, native.lcd.source), (3, 2, 1));
-    assert_eq!(lsi.uarts, ["UART1", "UART2", "UART3"]);
-    assert_eq!(lsi.gpio_banks, ["GPIOA", "GPIOB", "GPIOC", "GPIOD", "GPIOF"]);
+    assert_eq!(lsi.uarts, if l083 { &["UART1", "UART2", "UART3", "UART4", "UART5", "UART6"][..] } else { &["UART1", "UART2", "UART3"][..] });
+    assert_eq!(lsi.gpio_banks, if l083 { &["GPIOA", "GPIOB", "GPIOC", "GPIOD", "GPIOE", "GPIOF"][..] } else { &["GPIOA", "GPIOB", "GPIOC", "GPIOD", "GPIOF"][..] });
+    let gpio_start = 2 + lsi.uarts.len();
+    let work_start = gpio_start + lsi.gpio_banks.len();
+    let gate_count = work_start + 2;
+    let hse_bank_index = lsi.gpio_banks.iter().position(|p| *p == "GPIOF").unwrap();
+    let lse_bank_index = lsi.gpio_banks.iter().position(|p| *p == "GPIOC").unwrap();
+    let gate_names: Vec<_> = ["RTC", "AUTOTRIM"].into_iter().chain(lsi.uarts.iter().copied())
+        .chain(lsi.gpio_banks.iter().copied()).chain(["LPTIM", "LCD"]).collect();
+    assert_eq!(gate_names.len(), gate_count);
     assert!(lsi.awt_allowed_sources.is_empty());
     assert!(!METADATA.peripherals.iter().any(|p| p.name == "AWT"));
     let peripheral = |name: &str| METADATA.peripherals.iter().find(|p| p.name == name).unwrap();
@@ -2410,7 +2426,7 @@ fn generate_l052_factory_lsi(
         assert_eq!(bit.offset, expected_bit);
         ((1u32 << f.bit_size) - 1) << bit.offset
     };
-    for name in ["CR0", "CR1", "IER"] {
+    for name in if l083 { &["CR0", "CR1", "CR2", "IER"][..] } else { &["CR0", "CR1", "IER"][..] } {
         let bits = mask("SYSCTRL", name, "KEY", 16, 16);
         writeln!(out, "pub(crate) const RCC_L052_LSI_{name}_KEY_MASK: u32 = {bits};").unwrap();
     }
@@ -2419,9 +2435,48 @@ fn generate_l052_factory_lsi(
     }
     let rtc_mask = !mask("RTC", "CR1", "WINDOW", 1, 1);
     let lcd_mask = !mask("LCD", "CR1", "INTF", 12, 1);
-    let gpio_key_mask = mask("GPIOF", "LOCK", "KEY", 16, 16);
-    assert_eq!(gpio_key_mask, mask("GPIOC", "LOCK", "KEY", 16, 16));
-    let faults = "let flags = crate::pac::SYSCTRL.isr().read();\nif (monitor_hse && (flags.hsefail() || flags.hsefault())) || (monitor_lse && (flags.lsefail() || flags.lsefault())) { return Err(crate::rcc::Error::ExternalClockFault); }\n";
+    let lock_register = if l083 { "LCKR" } else { "LOCK" };
+    let gpio_key_mask = mask("GPIOF", lock_register, "KEY", 16, 16);
+    assert_eq!(gpio_key_mask, mask("GPIOC", lock_register, "KEY", 16, 16));
+    if l083 {
+        for name in lsi.gpio_banks { assert_eq!(gpio_key_mask, mask(name, lock_register, "KEY", 16, 16)); }
+        let flash_key = mask("FLASH", "CR2", "KEY", 16, 16);
+        mask("SYSCTRL", "CR2", "FLASHWAIT", 4, 3);
+        let mut ready = 0; let mut events = 0;
+        for (name, bit) in [("HSISTABLE", 11), ("HSESTABLE", 12), ("PLLSTABLE", 13), ("LSISTABLE", 14), ("LSESTABLE", 15)] {
+            ready |= mask("SYSCTRL", "ISR", name, bit, 1);
+        }
+        for (name, bit) in [("HSIRDY", 0), ("HSERDY", 1), ("PLLRDY", 2), ("LSIRDY", 3), ("LSERDY", 4)] {
+            events |= mask("SYSCTRL", "ISR", name, bit, 1);
+        }
+        mask("SYSCTRL", "CR1", "PLLEN", 2, 1);
+        writeln!(out, "pub(crate) const RCC_L052_LSI_FLASH_CR2_KEY_MASK: u32 = {flash_key};\npub(crate) const RCC_L052_LSI_ISR_READY_MASK: u32 = {ready};\npub(crate) const RCC_L052_LSI_ISR_EVENT_MASK: u32 = {events};\npub(crate) const RCC_L052_LSI_HSE_PIN_STEPS: u8 = 12;").unwrap();
+        assert_eq!(METADATA.interrupts.iter().filter(|i| i.name == "CLKFAULT" && i.number == 31).count(), 1);
+        assert_eq!(METADATA.interrupts.iter().filter(|i| i.number == 31).count(), 1);
+    }
+    let lsi_routes: Vec<_> = if l083 { native.lsi_output_routes.iter().map(|r| (r.pin, r.af)).collect() } else { Vec::new() };
+    let pll_routes: Vec<_> = if l083 { peripheral("SYSCTRL").pins.iter().filter(|r| r.signal == "PLL_OUT")
+        .map(|r| { assert!(r.adc_mux.is_none() && r.comparator_mux.is_none()); (r.pin, r.af.unwrap()) }).collect() } else { Vec::new() };
+    let unbonded_lsi: Vec<_> = if l083 { [("PD5", 6), ("PF2", 4)].into_iter()
+        .filter(|(name, _)| !METADATA.pins.iter().any(|p| p.name == *name)).collect() } else { Vec::new() };
+    let unbonded_pll: Vec<_> = if l083 && !METADATA.pins.iter().any(|p| p.name == "PF8") { vec![("PF8", 3)] } else { Vec::new() };
+    if l083 {
+        let expected_lsi = match METADATA.name { "CW32L083VCT6" => vec![("PC4",6),("PD5",6),("PF2",4)], "CW32L083MCT6" => vec![("PC4",6),("PF2",4)], _ => vec![("PC4",6)] };
+        let expected_pll = if matches!(METADATA.name, "CW32L083MCT6" | "CW32L083VCT6") { vec![("PC12",5),("PC13",1),("PF8",3)] } else { vec![("PC12",5),("PC13",1)] };
+        assert_eq!(lsi_routes, expected_lsi);
+        assert_eq!(pll_routes, expected_pll);
+        assert_eq!(lsi_routes.len() + unbonded_lsi.len(), 3);
+        assert_eq!(pll_routes.len() + unbonded_pll.len(), 3);
+    }
+    // These source-qualified AF sets are independently checked against the
+    // complete own raw AF table in lsi::apply_l083 before projection. Metadata
+    // owns the bonded roster; native IR owns every emitted field and mask.
+    let valid_afs = |pin: &str| -> &'static [u8] { match pin {
+        "PC4" => &[0,1,2,3,6], "PD5" | "PC13" => &[0,1,2,3,4,5,6,7],
+        "PF2" => &[0,1,3,4,5,6], "PC12" => &[0,1,2,3,4,5,6], "PF8" => &[0,1,3,4,5],
+        _ => panic!("unqualified native clock output"),
+    }};
+    let faults = if l083 { "let flags = crate::pac::SYSCTRL.isr().read();\nif (monitor_hse && (flags.hsefail() || flags.hsefault())) || (monitor_lse && (flags.lsefail() || flags.lsefault())) || ((monitor_hse || monitor_lse) && cortex_m::peripheral::NVIC::is_pending(crate::pac::Interrupt::CLKFAULT)) { return Err(crate::rcc::Error::ExternalClockFault); }\n" } else { "let flags = crate::pac::SYSCTRL.isr().read();\nif (monitor_hse && (flags.hsefail() || flags.hsefault())) || (monitor_lse && (flags.lsefail() || flags.lsefault())) { return Err(crate::rcc::Error::ExternalClockFault); }\n" };
     // This is a code emitter, not a runtime gate adapter: each emitted window
     // names its actual RCC_INFO, register reads, and ownership predicate.
     let window = |out: &mut String, name: &str, result: &str, body: &str| {
@@ -2433,7 +2488,7 @@ fn generate_l052_factory_lsi(
         out.push_str(faults);
         writeln!(out, "if info.reset_asserted() != original_reset {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nlet {result} = buffered.ok_or(crate::rcc::Error::LsiClockInUse)?;").unwrap();
     };
-    out.push_str(r#"
+    let consumer_header = r#"
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct RccL052LsiConsumers {
     pub(crate) rtc_cr0: u32, pub(crate) rtc_cr1: u32,
@@ -2449,15 +2504,61 @@ pub(crate) struct RccL052LsiConsumers {
 pub(crate) fn rcc_l052_lsi_consumers(timeout: u32, cs: critical_section::CriticalSection<'_>, cold: bool, monitor_hse: bool, monitor_lse: bool) -> Result<RccL052LsiConsumers, crate::rcc::Error> {
     use crate::rcc::SealedRccPeripheral;
     let mut gates = [false; 12]; let mut resets = [false; 12];
-"#);
+"#;
+    if l083 {
+        let mut header = consumer_header.replace("[u32; 3]", "[u32; 6]").replace("[u32; 5]", "[u32; 6]")
+            .replace("[bool; 12]", "[bool; 16]").replace("[false; 12]", "[false; 16]")
+            .replace("cold: bool, monitor_hse", "cold: bool, stop_pll: bool, monitor_hse")
+            .replace("// RTC, AUTOTRIM, UART1/2/3, GPIOA/B/C/D/F, LPTIM, LCD.", "// RTC, AUTOTRIM, UART1..6, GPIOA..F, LPTIM, LCD.");
+        let extra = format!("pub(crate) gpio_banks: [RccL052LsiPadBank; 6],\n    pub(crate) lsi_routes: [u32; {}], pub(crate) pll_routes: [u32; {}],\n    pub(crate) unbonded_lsi_routes: [u32; {}], pub(crate) unbonded_pll_routes: [u32; {}],\n    ", lsi_routes.len(), pll_routes.len(), unbonded_lsi.len(), unbonded_pll.len());
+        header = header.replace("pub(crate) gpioc_afrl", &(extra + "pub(crate) gpioc_afrl"));
+        out.push_str(&header);
+    } else { out.push_str(consumer_header); }
     window(out, "RTC", "rtc", &format!("let cr0 = crate::pac::RTC.cr0().read();\nlet cr1 = crate::pac::RTC.cr1().read();\nlet cr2 = crate::pac::RTC.cr2().read();\nlet compen = crate::pac::RTC.compen().read();\nlet source = u8::from(cr1.source());\nlet allowed = if cold {{ {:?}.contains(&source) }} else {{ matches!(source, 0 | 2 | 4 | 5 | 6 | 7) }};\nlet value = ((cr0.0, cr1.0 & {rtc_mask}, cr2.0, compen.0), allowed);", lsi.rtc_allowed_sources));
     out.push_str("gates[0] = original_gate; resets[0] = original_reset;\nif !rtc.1 { return Err(crate::rcc::Error::LsiClockInUse); }\n");
-    window(out, "AUTOTRIM", "autotrim", "let cr = crate::pac::AUTOTRIM.cr().read();\nlet source = u8::from(cr.src());\nlet mode = u8::from(cr.md());\nlet allowed = !cr.auto() && matches!(mode, 0 | 1 | 3) && source <= 4 && (!cr.en() || (mode == 3 && cr.prs().to_bits() != 0)) && (!cold || source != 1);\nlet value = (cr.0, allowed);");
-    out.push_str("gates[1] = original_gate; resets[1] = original_reset;\nif !autotrim.1 { return Err(crate::rcc::Error::LsiClockInUse); }\nlet mut uart_cr2 = [0; 3];\n");
+    window(out, "AUTOTRIM", "autotrim", &format!("let cr = crate::pac::AUTOTRIM.cr().read();\nlet source = u8::from(cr.src());\nlet mode = u8::from(cr.md());\nlet allowed = !cr.auto() && matches!(mode, 0 | 1 | 3) && source <= 4 && (!cr.en() || (mode == 3 && cr.prs().to_bits() != 0)) && (!cold || {});\nlet value = (cr.0, allowed);", if l083 { "(source != 1 && mode != 1)" } else { "source != 1" }));
+    writeln!(out, "gates[1] = original_gate; resets[1] = original_reset;\nif !autotrim.1 {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nlet mut uart_cr2 = [0; {}];", lsi.uarts.len()).unwrap();
     for (i, name) in lsi.uarts.iter().enumerate() {
-        window(out, name, "uart", &format!("let cr2 = crate::pac::{name}.cr2().read();\nlet source = u8::from(cr2.sorce());\nlet value = (cr2.0, !cold || {:?}.contains(&source));", lsi.uart_allowed_sources));
+        window(out, name, "uart", &format!("let cr2 = crate::pac::{name}.cr2().read();\nlet source = u8::from(cr2.{}());\nlet value = (cr2.0, !cold || {:?}.contains(&source));", if l083 { "source" } else { "sorce" }, lsi.uart_allowed_sources));
         writeln!(out, "gates[{}] = original_gate; resets[{}] = original_reset;\nif !uart.1 {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nuart_cr2[{i}] = uart.0;", i + 2, i + 2).unwrap();
     }
+    if l083 {
+        out.push_str("let mut gpio_filter = [0; 6];\nlet mut gpio_banks = [RccL052LsiPadBank::EMPTY; 6];\nlet gpioc_afrl;\n");
+        for (label, routes) in [("lsi_routes", &lsi_routes), ("pll_routes", &pll_routes), ("unbonded_lsi_routes", &unbonded_lsi), ("unbonded_pll_routes", &unbonded_pll)] {
+            let mutable = if routes.is_empty() { "" } else { "mut " };
+            writeln!(out, "let {mutable}{label} = [0; {}];", routes.len()).unwrap();
+        }
+        for (i, name) in lsi.gpio_banks.iter().enumerate() {
+            let mutable = if [&lsi_routes, &pll_routes, &unbonded_lsi, &unbonded_pll]
+                .into_iter().flatten().any(|(pin, _)| pin.as_bytes()[1] == name.as_bytes()[4]) { "mut " } else { "" };
+            let mut body = format!("let r = crate::pac::{name};\nlet filter = r.filter().read();\nlet source = filter.fltclk();\nlet {mutable}allowed = !cold || {:?}.contains(&source);\nlet afrl = r.afrl().read(); let afrh = r.afrh().read();\n", lsi.gpio_filter_allowed_sources);
+            for (label, routes) in [("lsi_routes", &lsi_routes), ("pll_routes", &pll_routes), ("unbonded_lsi_routes", &unbonded_lsi), ("unbonded_pll_routes", &unbonded_pll)] {
+                for (j, (pin, af)) in routes.iter().enumerate() {
+                    if pin.as_bytes()[1] != name.as_bytes()[4] { continue; }
+                    let bit: u8 = pin[2..].parse().unwrap(); let reg = if bit < 8 { "afrl" } else { "afrh" };
+                    mask(name, reg, &format!("AFR{bit}"), u32::from(bit % 8) * 4, 4);
+                    let predicate = match label {
+                        "lsi_routes" => format!("{:?}.contains(&af) && (!cold || af != {af})", valid_afs(pin)),
+                        "pll_routes" => format!("{:?}.contains(&af) && (!stop_pll || af != {af})", valid_afs(pin)),
+                        "unbonded_lsi_routes" => "af == 0".into(),
+                        "unbonded_pll_routes" => "!stop_pll || af == 0".into(),
+                        _ => unreachable!(),
+                    };
+                    writeln!(body, "let af = {reg}.afr{bit}(); allowed &= {predicate};\n{label}[{j}] = {reg}.0;").unwrap();
+                }
+            }
+            body.push_str("let bank = RccL052LsiPadBank { gate: original_gate, reset: original_reset,\n");
+            for reg in ["lock", "dir", "pur", "pdr", "riseie", "fallie", "highie", "lowie", "opendrain", "filter", "afrl", "afrh", "analog"] {
+                let accessor = if reg == "lock" { "lckr" } else { reg };
+                register(name, accessor);
+                writeln!(body, "{reg}: r.{accessor}().read().0{},", if reg == "lock" { format!(" & {}", !gpio_key_mask) } else { String::new() }).unwrap();
+            }
+            body.push_str("};\nlet value = (filter.0, afrl.0, afrh.0, bank, allowed && filter.0 == bank.filter && afrl.0 == bank.afrl && afrh.0 == bank.afrh);");
+            window(out, name, "gpio", &body);
+            writeln!(out, "gates[{}] = original_gate; resets[{}] = original_reset;\nif !gpio.4 {{ return Err(crate::rcc::Error::LsiClockInUse); }}\ngpio_filter[{i}] = gpio.0; gpio_banks[{i}] = gpio.3;", i + gpio_start, i + gpio_start).unwrap();
+            if *name == "GPIOC" { out.push_str("gpioc_afrl = gpio.1;\n"); }
+        }
+    } else {
     out.push_str("let mut gpio_filter = [0; 5]; let gpioc_afrl;\n");
     for (i, name) in lsi.gpio_banks.iter().enumerate() {
         let direct = if *name == "GPIOC" {
@@ -2467,9 +2568,10 @@ pub(crate) fn rcc_l052_lsi_consumers(timeout: u32, cs: critical_section::Critica
         writeln!(out, "gates[{}] = original_gate; resets[{}] = original_reset;\nif !gpio.2 {{ return Err(crate::rcc::Error::LsiClockInUse); }}\ngpio_filter[{i}] = gpio.0;", i + 5, i + 5).unwrap();
         if *name == "GPIOC" { out.push_str("gpioc_afrl = gpio.1;\n"); }
     }
+    }
     for (i, name, body) in [
-        (10, "LPTIM", "let cr = crate::pac::LPTIM.cr().read(); let cfgr = crate::pac::LPTIM.cfgr().read();\nlet allowed = !cold || (!cr.en() && cr.arst() && cr.srst());\n(Some((cr.0, cfgr.0)), allowed)".to_string()),
-        (11, "LCD", format!("let cr0 = crate::pac::LCD.cr0().read(); let cr1 = crate::pac::LCD.cr1().read();\nlet allowed = !cold || (!cr0.en() && !cr0.bump());\n(Some((cr0.0, cr1.0 & {lcd_mask})), allowed)")),
+        (work_start, "LPTIM", "let cr = crate::pac::LPTIM.cr().read(); let cfgr = crate::pac::LPTIM.cfgr().read();\nlet allowed = !cold || (!cr.en() && cr.arst() && cr.srst());\n(Some((cr.0, cfgr.0)), allowed)".to_string()),
+        (work_start + 1, "LCD", format!("let cr0 = crate::pac::LCD.cr0().read(); let cr1 = crate::pac::LCD.cr1().read();\nlet allowed = !cold || (!cr0.en() && !cr0.bump());\n(Some((cr0.0, cr1.0 & {lcd_mask})), allowed)")),
     ] {
         writeln!(out, "let info = crate::peripherals::{name}::RCC_INFO;\nlet gate = info.is_enabled(); let reset = info.reset_asserted();\nlet buffered = if !gate {{ (None, true) }} else if reset {{ (None, false) }} else {{ {body} }};\nlet gate_changed = info.is_enabled() != gate; let reset_changed = info.reset_asserted() != reset;").unwrap();
         out.push_str(faults);
@@ -2478,16 +2580,19 @@ pub(crate) fn rcc_l052_lsi_consumers(timeout: u32, cs: critical_section::Critica
     out.push_str("let mco = crate::pac::SYSCTRL.mco().read();\nlet source = mco.source();\n");
     out.push_str(faults);
     writeln!(out, "if !({:?}.contains(&source) || (!cold && source == 4)) {{ return Err(crate::rcc::Error::LsiClockInUse); }}", lsi.mco_allowed_sources).unwrap();
+    if l083 { out.push_str("if stop_pll && source == 7 { return Err(crate::rcc::Error::LsiClockInUse); }\n"); }
     out.push_str("let lvd_cr0 = crate::pac::LVD.cr0().read().0; let lvd_cr1 = crate::pac::LVD.cr1().read().0;\n");
     out.push_str(faults);
-    for (i, name) in ["RTC", "AUTOTRIM", "UART1", "UART2", "UART3", "GPIOA", "GPIOB", "GPIOC", "GPIOD", "GPIOF", "LPTIM", "LCD"].into_iter().enumerate() {
+    for (i, name) in gate_names.iter().enumerate() {
         writeln!(out, "let info = crate::peripherals::{name}::RCC_INFO;\nlet gate_changed = info.is_enabled() != gates[{i}];\nlet reset_changed = info.reset_asserted() != resets[{i}];").unwrap();
-        if i < 10 { out.push_str("if gate_changed { return Err(crate::rcc::Error::LsiGateRestoreTimeout); }\n"); }
+        if i < work_start { out.push_str("if gate_changed { return Err(crate::rcc::Error::LsiGateRestoreTimeout); }\n"); }
         out.push_str(faults);
         out.push_str("if gate_changed || reset_changed { return Err(crate::rcc::Error::LsiClockInUse); }\n");
     }
+    if l083 { out.push_str("Ok(RccL052LsiConsumers { gpio_banks, lsi_routes, pll_routes, unbonded_lsi_routes, unbonded_pll_routes, rtc_cr0: rtc.0.0, rtc_cr1: rtc.0.1, rtc_cr2: rtc.0.2, rtc_compen: rtc.0.3, autotrim_cr: autotrim.0, lvd_cr0, lvd_cr1, uart_cr2, gpio_filter, gpioc_afrl, mco: mco.0, gates, resets, lptim, lcd })\n}\n"); } else {
     out.push_str("Ok(RccL052LsiConsumers { rtc_cr0: rtc.0.0, rtc_cr1: rtc.0.1, rtc_cr2: rtc.0.2, rtc_compen: rtc.0.3, autotrim_cr: autotrim.0, lvd_cr0, lvd_cr1, uart_cr2, gpio_filter, gpioc_afrl, mco: mco.0, gates, resets, lptim, lcd })\n}\n");
 
+    }
     let sysctrl = peripheral("SYSCTRL");
     let pins: Vec<_> = ["HSE_IN", "HSE_OUT", "LSE_IN", "LSE_OUT"].into_iter().map(|signal| {
         let pins: Vec<_> = sysctrl.pins.iter().filter(|p| p.signal == signal && p.af.is_none()).collect();
@@ -2498,11 +2603,12 @@ pub(crate) fn rcc_l052_lsi_consumers(timeout: u32, cs: critical_section::Critica
     assert_eq!(pins, [(5, 0), (5, 1), (2, 14), (2, 15)]);
     let hse_bank = format!("GPIO{}", char::from(b'A' + pins[0].0));
     let lse_bank = format!("GPIO{}", char::from(b'A' + pins[2].0));
-    assert_eq!(peripheral(&hse_bank).gpio.as_ref().unwrap().pull_down_mask, 243);
+    if !l083 { assert_eq!(peripheral(&hse_bank).gpio.as_ref().unwrap().pull_down_mask, 243); }
     let pad_fields = ["lock", "dir", "pur", "pdr", "riseie", "fallie", "highie", "lowie", "opendrain", "filter", "afrl", "afrh", "analog"];
     for (port, bit) in &pins {
         let name = format!("GPIO{}", char::from(b'A' + port));
         for reg in pad_fields {
+            let reg = if l083 && reg == "lock" { "lckr" } else { reg };
             register(&name, reg);
             if !matches!(reg, "afrl" | "afrh") { mask(&name, reg, &format!("PIN{bit}"), u32::from(*bit), 1); }
         }
@@ -2525,23 +2631,36 @@ use crate::rcc::SealedRccPeripheral;
     for (name, local) in [(&hse_bank, "hse"), (&lse_bank, "lse")] {
         let mut body = format!("let r = crate::pac::{name};\nlet value = RccL052LsiPadBank {{ gate: original_gate, reset: original_reset,\n");
         for reg in pad_fields {
-            writeln!(body, "{reg}: r.{reg}().read().0{},", if reg == "lock" { format!(" & {}", !gpio_key_mask) } else { String::new() }).unwrap();
+            let accessor = if l083 && reg == "lock" { "lckr" } else { reg };
+            writeln!(body, "{reg}: r.{accessor}().read().0{},", if reg == "lock" { format!(" & {}", !gpio_key_mask) } else { String::new() }).unwrap();
         }
         body.push_str("};");
         window(out, name, local, &body);
     }
+    if l083 {
+        for (name, local) in [(&hse_bank, "hse"), (&lse_bank, "lse")] {
+            writeln!(out, "let info = crate::peripherals::{name}::RCC_INFO;\nif info.is_enabled() != {local}.gate {{ return Err(crate::rcc::Error::LsiGateRestoreTimeout); }}").unwrap();
+            out.push_str(faults);
+            writeln!(out, "if info.reset_asserted() != {local}.reset {{ return Err(crate::rcc::Error::LsiClockInUse); }}").unwrap();
+        }
+        // Full bank records also cover direct outputs outside oscillator banks.
+        out.push_str("Ok(RccL052LsiPads { hse, lse })\n}\nimpl RccL052LsiPadBank {\nconst EMPTY: Self = Self { gate: false, reset: false, lock: 0, dir: 0, pur: 0, pdr: 0, riseie: 0, fallie: 0, highie: 0, lowie: 0, opendrain: 0, filter: 0, afrl: 0, afrh: 0, analog: 0 };\n}\nimpl RccL052LsiPads {\npub(crate) fn hse_gate_enabled(mut self) -> Self { self.hse.gate = true; self }\n");
+    } else {
     out.push_str("Ok(RccL052LsiPads { hse, lse })\n}\nimpl RccL052LsiPads {\npub(crate) fn hse_gate_enabled(mut self) -> Self { self.hse.gate = true; self }\n");
-    let hse_input = 1u32 << pins[0].1;
-    let hse_output = 1u32 << pins[1].1;
-    let lse_input = 1u32 << pins[2].1;
-    let lse_output = 1u32 << pins[3].1;
+    }
+    let hse_input = mask(&hse_bank, "DIR", &format!("PIN{}", pins[0].1), u32::from(pins[0].1), 1);
+    let hse_output = mask(&hse_bank, "DIR", &format!("PIN{}", pins[1].1), u32::from(pins[1].1), 1);
+    let lse_input = mask(&lse_bank, "DIR", &format!("PIN{}", pins[2].1), u32::from(pins[2].1), 1);
+    let lse_output = mask(&lse_bank, "DIR", &format!("PIN{}", pins[3].1), u32::from(pins[3].1), 1);
+    let hse_af_input = mask(&hse_bank, "AFRL", &format!("AFR{}", pins[0].1), u32::from(pins[0].1) * 4, 4);
+    let hse_af_output = mask(&hse_bank, "AFRL", &format!("AFR{}", pins[1].1), u32::from(pins[1].1) * 4, 4);
+    if !l083 {
     writeln!(out, "pub(crate) fn hse_configured(mut self, bypass: bool) -> Self {{\nlet mask = if bypass {{ {hse_input} }} else {{ {} }};\nself.hse.gate = true; self.hse.dir |= mask;", hse_input | hse_output).unwrap();
     for reg in ["lock", "pur", "pdr", "riseie", "fallie", "highie", "lowie", "opendrain", "filter"] {
         writeln!(out, "self.hse.{reg} &= !mask;").unwrap();
     }
-    let hse_af_input = mask(&hse_bank, "AFRL", &format!("AFR{}", pins[0].1), u32::from(pins[0].1) * 4, 4);
-    let hse_af_output = mask(&hse_bank, "AFRL", &format!("AFR{}", pins[1].1), u32::from(pins[1].1) * 4, 4);
     writeln!(out, "self.hse.afrl &= !(if bypass {{ {hse_af_input} }} else {{ {} }});\nself.hse.analog = (self.hse.analog & !mask) | if bypass {{ 0 }} else {{ mask }};\nself\n}}", hse_af_input | hse_af_output).unwrap();
+    }
     writeln!(out, "pub(crate) fn lse_configured(mut self, bypass: bool) -> Self {{ if bypass {{ self.lse.analog &= !{lse_input}; }} self }}").unwrap();
     for (source, input, output, afinput, afoutput) in [
         ("hse", hse_input, hse_output, hse_af_input, hse_af_output),
@@ -2553,9 +2672,42 @@ use crate::rcc::SealedRccPeripheral;
         for reg in ["lock", "pur", "pdr", "riseie", "fallie", "highie", "lowie", "opendrain", "filter"] { writeln!(out, "&& r.{reg} & mask == 0").unwrap(); }
         out.push_str("\n}\n");
     }
+    if l083 {
+        out.push_str("pub(crate) fn hse_startup_allowed(self, bypass: bool) -> bool {\n!self.hse.reset\n");
+        for route in lse.output_routes {
+            let port = route.pin.as_bytes()[1] - b'A';
+            let bit: u8 = route.pin[2..].parse().unwrap();
+            for (i, pad) in pins[..2].iter().enumerate() {
+                if (port, bit) != *pad { continue; }
+                let reg = if bit < 8 { "afrl" } else { "afrh" };
+                let position = u32::from(bit % 8) * 4;
+                let bits = mask(&hse_bank, reg, &format!("AFR{bit}"), position, 4);
+                let selected = u32::from(route.af) << position;
+                writeln!(out, "&& ({}self.hse.{reg} & {bits} != {selected})", if i == 1 { "bypass || " } else { "" }).unwrap();
+            }
+        }
+        out.push_str("\n}\n}\n");
+        // L083 applies exactly one native pad-register delta per acknowledged
+        // phase. Arrays contain whole words, so every overlapping route moves
+        // with its shared bank's exact expected word.
+        writeln!(out, "impl RccL052LsiPadBank {{\npub(crate) fn hse_configured_step(mut self, bypass: bool, step: u8) -> Self {{\nassert!(step < if bypass {{ 12 }} else {{ 24 }});\nlet (mask, af_mask) = if step < 12 {{ ({hse_input}, {hse_af_input}) }} else {{ ({hse_output}, {hse_af_output}) }};").unwrap();
+        out.push_str("match step % 12 {\n0 => self.lock &= !mask, 1 => self.dir |= mask, 2 => self.pur &= !mask, 3 => self.pdr &= !mask,\n4 => self.riseie &= !mask, 5 => self.fallie &= !mask, 6 => self.highie &= !mask, 7 => self.lowie &= !mask,\n8 => self.opendrain &= !mask, 9 => self.filter &= !mask, 10 => self.afrl &= !af_mask,\n11 => self.analog = (self.analog & !mask) | if bypass { 0 } else { mask }, _ => unreachable!(),\n}\nself\n}\n}\nimpl RccL052LsiPads {\npub(crate) fn hse_configured_step(mut self, bypass: bool, step: u8) -> Self { self.hse = self.hse.hse_configured_step(bypass, step); self }\n}\nimpl RccL052LsiConsumers {\n");
+        writeln!(out, "pub(crate) fn hse_gate_enabled(mut self) -> Self {{ self.gates[{}] = true; self.gpio_banks[{hse_bank_index}].gate = true; self }}", gpio_start + hse_bank_index).unwrap();
+        writeln!(out, "pub(crate) fn hse_configured_step(mut self, bypass: bool, step: u8) -> Self {{\nself.gpio_banks[{hse_bank_index}] = self.gpio_banks[{hse_bank_index}].hse_configured_step(bypass, step);\nself.gpio_filter[{hse_bank_index}] = self.gpio_banks[{hse_bank_index}].filter;").unwrap();
+        for (label, routes) in [("lsi_routes", &lsi_routes), ("pll_routes", &pll_routes), ("unbonded_lsi_routes", &unbonded_lsi), ("unbonded_pll_routes", &unbonded_pll)] {
+            for (i, (pin, _)) in routes.iter().enumerate() {
+                if pin.as_bytes()[1] != b'F' { continue; }
+                let bit: u8 = pin[2..].parse().unwrap(); let reg = if bit < 8 { "afrl" } else { "afrh" };
+                writeln!(out, "self.{label}[{i}] = self.gpio_banks[{hse_bank_index}].{reg};").unwrap();
+            }
+        }
+        out.push_str("self\n}\n");
+        writeln!(out, "pub(crate) fn lse_configured(mut self, bypass: bool) -> Self {{ if bypass {{ self.gpio_banks[{lse_bank_index}].analog &= !{lse_input}; }} self }}\n}}").unwrap();
+    } else {
     out.push_str("}\nimpl RccL052LsiConsumers {\npub(crate) fn hse_gate_enabled(mut self) -> Self { self.gates[9] = true; self }\n");
     writeln!(out, "pub(crate) fn hse_configured(mut self, bypass: bool) -> Self {{ self.gates[9] = true; self.gpio_filter[4] &= !(if bypass {{ {hse_input} }} else {{ {} }}); self }}\n}}", hse_input | hse_output).unwrap();
 
+    }
     // HSE owns this permanent gate enable. It is deliberately not restored;
     // every read-only pad window above still uses central temporary ownership.
     out.push_str("pub(crate) fn rcc_l052_lsi_enable_hse_pins(timeout: u32, cs: critical_section::CriticalSection<'_>, monitor_hse: bool, monitor_lse: bool) -> Result<(), crate::rcc::Error> {\nuse crate::rcc::SealedRccPeripheral;\n");
@@ -2564,7 +2716,26 @@ use crate::rcc::SealedRccPeripheral;
     out.push_str("if info.reset_asserted() { return Err(crate::rcc::Error::LsiClockInUse); }\ninfo.enable_with_cs_readback(cs, crate::rcc::Readback::Poll { attempts: timeout, spin: true }).map_err(|_| crate::rcc::Error::LsiGateEnableTimeout)?;\n");
     out.push_str(faults);
     out.push_str("if !info.is_enabled() || info.reset_asserted() { return Err(crate::rcc::Error::LsiClockInUse); }\n");
-    out.push_str("Ok(())\n}\npub(crate) fn rcc_l052_lsi_configure_hse_pins(bypass: bool, _timeout: u32, _cs: critical_section::CriticalSection<'_>, monitor_hse: bool, monitor_lse: bool) -> Result<(), crate::rcc::Error> {\nuse crate::rcc::SealedRccPeripheral;\n");
+    out.push_str("Ok(())\n}\n");
+    if l083 {
+        out.push_str("pub(crate) fn rcc_l052_lsi_configure_hse_pin_step(bypass: bool, step: u8, _timeout: u32, _cs: critical_section::CriticalSection<'_>, monitor_hse: bool, monitor_lse: bool) -> Result<(), crate::rcc::Error> {\nuse crate::rcc::SealedRccPeripheral;\nif step >= if bypass { 12 } else { 24 } { return Err(crate::rcc::Error::LsiClockInUse); }\nlet info = crate::peripherals::GPIOF::RCC_INFO;\n");
+        out.push_str(faults);
+        out.push_str("if !info.is_enabled() || info.reset_asserted() { return Err(crate::rcc::Error::LsiClockInUse); }\nlet r = crate::pac::GPIOF;\nmatch step {\n");
+        for (i, (_, bit)) in pins[..2].iter().enumerate() {
+            for (j, reg) in pad_fields.iter().filter(|r| **r != "afrh").enumerate() {
+                let reg = if *reg == "lock" { "lckr" } else { *reg };
+                let field = if reg == "afrl" { format!("afr{bit}") } else { format!("pin{bit}") };
+                let value = match reg { "dir" => "true", "afrl" => "0", "analog" if i == 0 => "!bypass", "analog" => "true", _ => "false" };
+                let normalize = if reg == "lckr" { !gpio_key_mask } else { u32::MAX };
+                let keyed = if reg == "lckr" { "target.set_key(0x5a5a);" } else { "" };
+                writeln!(out, "{} => {{ let before = r.{reg}().read(); let mut target = before; {keyed} target.set_{field}({value});\nlet old = before.0 & {normalize}; let expected = target.0 & {normalize};\nr.{reg}().write(|w| *w = target);\nlet observed = r.{reg}().read().0 & {normalize};\nlet gate_or_reset_changed = !info.is_enabled() || info.reset_asserted();", i * 12 + j).unwrap();
+                out.push_str(faults);
+                out.push_str("if gate_or_reset_changed || (observed != old && observed != expected) { return Err(crate::rcc::Error::LsiClockInUse); }\n},\n");
+            }
+        }
+        out.push_str("_ => return Err(crate::rcc::Error::LsiClockInUse),\n}\nOk(())\n}\n");
+    } else {
+    out.push_str("pub(crate) fn rcc_l052_lsi_configure_hse_pins(bypass: bool, _timeout: u32, _cs: critical_section::CriticalSection<'_>, monitor_hse: bool, monitor_lse: bool) -> Result<(), crate::rcc::Error> {\nuse crate::rcc::SealedRccPeripheral;\n");
     writeln!(out, "let info = crate::peripherals::{hse_bank}::RCC_INFO;").unwrap();
     out.push_str(faults);
     out.push_str("if !info.is_enabled() || info.reset_asserted() { return Err(crate::rcc::Error::LsiClockInUse); }\n");
@@ -2578,11 +2749,12 @@ use crate::rcc::SealedRccPeripheral;
     }
     out.push_str(faults);
     out.push_str("if !info.is_enabled() || info.reset_asserted() { return Err(crate::rcc::Error::LsiClockInUse); }\nOk(())\n}\n");
+    }
     out.push_str("pub(crate) fn rcc_l052_lsi_configure_lse_pins(bypass: bool, timeout: u32, cs: critical_section::CriticalSection<'_>, monitor_hse: bool, monitor_lse: bool) -> Result<(), crate::rcc::Error> {\nuse crate::rcc::SealedRccPeripheral;\nif bypass {\n");
     window(out, &lse_bank, "()", &format!("crate::pac::{lse_bank}.analog().modify(|w| w.set_pin{}(false));\nlet value = ();", pins[2].1));
     out.push_str("}\nOk(())\n}\n");
 
-    out.push_str(r#"
+    let lse_header = r#"
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct RccL052LsiLseSnapshot {
     consumers: RccL052LsiConsumers, pads: RccL052LsiPads,
@@ -2592,7 +2764,10 @@ pub(crate) fn rcc_l052_lsi_lse_preflight(bypass: bool, unused: bool, timeout: u3
 use crate::rcc::SealedRccPeripheral;
 let consumers = rcc_l052_lsi_consumers(timeout, cs, false, monitor_hse, monitor_lse)?;
 let pads = rcc_l052_lsi_pads(timeout, cs, monitor_hse, monitor_lse)?;
-"#);
+"#;
+    if l083 { out.push_str(&lse_header.replace("unused: bool, timeout", "unused: bool, stop_pll: bool, timeout")
+        .replace("timeout, cs, false, monitor_hse", "timeout, cs, false, stop_pll, monitor_hse")); }
+    else { out.push_str(lse_header); }
     out.push_str(faults);
     out.push_str("if !pads.lse_matches(bypass, unused) { return Err(crate::rcc::Error::LsePinConflict); }\n");
     let order = ["CR0", "CR1", "CR2", "IER", "ISR", "COMPEN", "DATE", "TIME", "ALARMA", "ALARMB", "TAMPDATE", "TAMPTIME", "AWTARR"];
@@ -2615,7 +2790,7 @@ let pads = rcc_l052_lsi_pads(timeout, cs, monitor_hse, monitor_lse)?;
     writeln!(out, "if u8::from(auto.src()) == {} {{ return Err(crate::rcc::Error::LseClockInUse); }}", native.autotrim_source).unwrap();
     writeln!(out, "if let Some((cr, cfgr)) = consumers.lptim {{ if crate::pac::lptim::regs::Cr(cr).en() && u8::from(crate::pac::lptim::regs::Cfgr(cfgr).iclksrc()) == {} {{ return Err(crate::rcc::Error::LseClockInUse); }} }}", native.lptim.source).unwrap();
     out.push_str("if let Some((cr, _)) = consumers.lcd { let cr = crate::pac::lcd::regs::Cr0(cr); if cr.en() || cr.bump() { return Err(crate::rcc::Error::LseClockInUse); } }\n");
-    writeln!(out, "if consumers.uart_cr2.iter().any(|cr| u8::from(crate::pac::uart::regs::Cr2(*cr).sorce()) == {}) || crate::pac::sysctrl::regs::Mco(consumers.mco).source() == {} {{ return Err(crate::rcc::Error::LseClockInUse); }}", lse.uart_source, lse.mco_source).unwrap();
+    writeln!(out, "if consumers.uart_cr2.iter().any(|cr| u8::from(crate::pac::uart::regs::Cr2(*cr).{}()) == {}) || crate::pac::sysctrl::regs::Mco(consumers.mco).source() == {} {{ return Err(crate::rcc::Error::LseClockInUse); }}", if l083 { "source" } else { "sorce" }, lse.uart_source, lse.mco_source).unwrap();
     assert_eq!(lse.output_routes.len(), 2);
     out.push_str("let mut routes = [0; 2]; let mut route_gates = [false; 2]; let mut route_resets = [false; 2];\n");
     for (i, route) in lse.output_routes.iter().enumerate() {
@@ -2626,8 +2801,18 @@ let pads = rcc_l052_lsi_pads(timeout, cs, monitor_hse, monitor_lse)?;
         window(out, &name, "route", &format!("let af = crate::pac::{name}.{reg}().read(); let value = (af.0, af.afr{bit}() != {});", route.af));
         writeln!(out, "if !route.1 {{ return Err(crate::rcc::Error::LseClockInUse); }}\nroutes[{i}] = route.0; route_gates[{i}] = original_gate; route_resets[{i}] = original_reset;").unwrap();
     }
+    if l083 {
+        for (i, route) in lse.output_routes.iter().enumerate() {
+            let name = format!("GPIO{}", char::from(route.pin.as_bytes()[1]));
+            writeln!(out, "let info = crate::peripherals::{name}::RCC_INFO;\nif info.is_enabled() != route_gates[{i}] {{ return Err(crate::rcc::Error::LsiGateRestoreTimeout); }}").unwrap();
+            out.push_str(faults);
+            writeln!(out, "if info.reset_asserted() != route_resets[{i}] {{ return Err(crate::rcc::Error::LsiClockInUse); }}").unwrap();
+        }
+    }
     out.push_str(faults);
-    out.push_str("Ok(RccL052LsiLseSnapshot { consumers, pads, rtc_reset, routes, route_gates, route_resets })\n}\nimpl RccL052LsiLseSnapshot {\npub(crate) fn hse_configured(mut self, bypass: bool) -> Self { self.consumers = self.consumers.hse_configured(bypass); self.pads = self.pads.hse_configured(bypass);\n");
+    out.push_str("Ok(RccL052LsiLseSnapshot { consumers, pads, rtc_reset, routes, route_gates, route_resets })\n}\nimpl RccL052LsiLseSnapshot {\n");
+    if l083 { out.push_str("pub(crate) fn hse_configured_step(mut self, bypass: bool, step: u8) -> Self { self.consumers = self.consumers.hse_configured_step(bypass, step); self.pads = self.pads.hse_configured_step(bypass, step);\n"); }
+    else { out.push_str("pub(crate) fn hse_configured(mut self, bypass: bool) -> Self { self.consumers = self.consumers.hse_configured(bypass); self.pads = self.pads.hse_configured(bypass);\n"); }
     for (i, route) in lse.output_routes.iter().enumerate() {
         if route.pin.as_bytes()[1] - b'A' == pins[0].0 {
             let bit: u8 = route.pin[2..].parse().unwrap();
@@ -2640,7 +2825,10 @@ let pads = rcc_l052_lsi_pads(timeout, cs, monitor_hse, monitor_lse)?;
             writeln!(out, "self.route_gates[{i}] = true;").unwrap();
         }
     }
-    out.push_str("self\n}\npub(crate) fn lse_configured(mut self, bypass: bool) -> Self { self.pads = self.pads.lse_configured(bypass); self }\n}\n");
+    if l083 { out.push_str("self\n}\npub(crate) fn lse_configured(mut self, bypass: bool) -> Self { self.pads = self.pads.lse_configured(bypass); self.consumers = self.consumers.lse_configured(bypass); self }\n}\n"); }
+    else { out.push_str("self\n}\npub(crate) fn lse_configured(mut self, bypass: bool) -> Self { self.pads = self.pads.lse_configured(bypass); self }\n}\n"); }
+    if l083 { output.push_str(&generated.replace("L052", "L083").replace("l052", "l083")); }
+    else { output.push_str(&generated); }
 }
 
 fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLimits) {
@@ -2707,6 +2895,7 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     let parameter_sources: &[(&str, u32, u32)] = match sysctrl.version {
         "cw32f002_v1" | "cw32f003_v1" => &[("HSI", 24, 15), ("HEX", 28, 19)],
         "cw32l031_v1" | "cw32l052_v1" => &[("HSI", 24, 15), ("HSE", 28, 19), ("LSE", 36, 15)],
+        "cw32l083_v1" => &[("HSI", 24, 15), ("HSE", 28, 19), ("LSE", 36, 15), ("PLL", 40, 15)],
         _ => &[],
     };
     {
@@ -2772,7 +2961,7 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
         lsi.temperature_c
     )
     .unwrap();
-    let observer_irq = if l031 || sysctrl.version == "cw32l052_v1" { "SYSCTRL" } else { "RCC" };
+    let observer_irq = if l031 || matches!(sysctrl.version, "cw32l052_v1" | "cw32l083_v1") { "SYSCTRL" } else { "RCC" };
     assert!(
         METADATA
             .interrupts
@@ -2802,8 +2991,8 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     // existing central gate-inspection protocol; no local I/O abstraction.
     let has_rtc = METADATA.peripherals.iter().any(|p| p.name == "RTC");
     assert_eq!(has_rtc, !lsi.rtc_allowed_sources.is_empty());
-    if sysctrl.version == "cw32l052_v1" {
-        generate_l052_factory_lsi(out, c);
+    if matches!(sysctrl.version, "cw32l052_v1" | "cw32l083_v1") {
+        generate_l052_l083_factory_lsi(out, c);
         return;
     }
     let mut roots = Vec::new();
@@ -5052,11 +5241,12 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                     | ("CW32R031", "CW32R031C8U6")
                     | ("CW32W031", "CW32W031R8U6")
                     | ("CW32L052", "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6")
+                    | ("CW32L083", "CW32L083RBT6" | "CW32L083RCT6" | "CW32L083RCS6" | "CW32L083MCT6" | "CW32L083VCT6")
             );
             assert_eq!(
                 c.lsi_sysclk.is_some(),
                 native_lsi_qualified,
-                "Only the independent L031 exact3, R031 exact1, W031 exact1 and L052 exact3 policies qualify native LSI SYSCLK"
+                "Only the independent L031 exact3, R031 exact1, W031 exact1, L052 exact3 and L083 exact5 policies qualify native LSI SYSCLK"
             );
             let rtc = METADATA
                 .peripherals
@@ -5082,7 +5272,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             assert_eq!(lse.supply_mv, rtc.supply_mv);
             if let Some(lsi) = &c.lsi_sysclk {
                 assert!(native_lsi_qualified);
-                assert!(l031_sysclk_qualified || l052_sysclk_qualified);
+                assert!(l031_sysclk_qualified || l052_sysclk_qualified || l083_sysclk_qualified);
                 assert_eq!(lsi.factory_trim_address, rtc.factory_trim_address);
                 assert_eq!(
                     (lsi.nominal_hz, lsi.minimum_hz, lsi.maximum_hz),

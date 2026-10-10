@@ -23,10 +23,10 @@
 //! Both datasheets require HCLK/PCLK <=24 MHz below 1.8 V (minimum 1.65 V);
 //! above 24 MHz the board must supply at least 1.8 V. Init does not measure VDD.
 //! Conservative temporary bus dividers prevent an intermediate overspeed.
-//! Exact L052 factory-LSI SYSCLK has a separate init-only transition: LSIEN
+//! Exact qualified L052/L083 factory-LSI SYSCLK uses an init-only transition: LSIEN
 //! remains set, live LSI is never retuned, and failed partial changes have no
 //! rollback or safe-retry guarantee. Reset, and power reset for POR-retained
-//! LSE controls when required, before retrying. Its full GPIOA/B/C/D/F inspection
+//! LSE controls when required, before retrying. GPIOA/B/C/D/F (and L083 GPIOE) inspection
 //! temporarily resumes whole-bank input sampling, filters, interrupts and
 //! events even on a later refusal. The caller hands over those functional
 //! effects and external pin feedback before initialization. Restoring a gate
@@ -272,14 +272,16 @@ pub enum Sysclk {
     /// Qualified external high-speed oscillator or input.
     HSE,
     /// Init-only factory-calibrated LSI. Its bounds describe rates only.
-    /// CW32L052C8T6/R8S6/R8T6 only: 1.65..5.5 V, VDDA = VDD, -40..85 C.
+    /// Exact qualified L052 and L083 parts: 1.65..5.5 V, VDDA = VDD, -40..85 C.
     /// Factory nominal 32800 Hz, rate envelope 31816..33784 Hz. No startup
     /// duration, per-cycle timing, continuing operation or recovery is promised.
     /// Admission temporarily resumes whole GPIOA/B/C/D/F banks, including
     /// unrelated pins and their armed filter/interrupt/event paths. Hand over
     /// these functional effects and external pin feedback before initialization.
-    /// All exact-L052 RTC LSI aliases are rate-only under every SYSCLK choice.
-    #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+    /// All qualified L052/L083 RTC LSI aliases are rate-only under every SYSCLK.
+    /// L083 additionally inspects GPIOE, stops any admitted inherited PLL, and
+    /// retains Flash WAIT2. External declarations require VDD >= 1.8 V.
+    #[cfg(rcc_lsi_sysclk)]
     LSI,
     /// Init-only board-qualified LSE, with retained factory LSI monitoring.
     /// On the five qualified L083 packages, conservative fallback admission
@@ -509,7 +511,7 @@ impl Config {
             let source = match self.sys {
                 Sysclk::HSI => crate::rcc::ClockBounds::hsi(self.hsi.div.divisor()),
                 Sysclk::HSE => hse.ok_or(Error::HseNotConfigured)?,
-                #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+                #[cfg(rcc_lsi_sysclk)]
                 Sysclk::LSI => crate::rcc::ClockBounds::lsi(),
                 #[cfg(rcc_lse)]
                 Sysclk::LSE => {
@@ -557,7 +559,7 @@ impl Config {
                 pll,
             };
             crate::rcc::operating::validate(self.operating_conditions, clocks)?;
-            #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+            #[cfg(rcc_lsi_sysclk)]
             if self.sys == Sysclk::LSI {
                 let board = self.operating_conditions;
                 if board.min_supply_mv < crate::RCC_LSI_SUPPLY_MV.0
@@ -578,11 +580,25 @@ impl Config {
                         ..clocks
                     },
                 )?;
-                // Own CCS escape is HSI /6. No post-fault bus-divider credit.
+                // Own L052 CCS escape is HSI /6. No post-fault divider credit.
+                #[cfg(rcc_cw32l052_v1)]
                 crate::rcc::operating::validate(
                     board,
                     Clocks {
                         source: crate::rcc::ClockBounds::hsi(crate::RCC_FIXED_CCS_HSI_DIVISOR),
+                        dividers: [self.hsi.div.divisor(), 1, 1],
+                        ..clocks
+                    },
+                )?;
+            }
+            #[cfg(all(rcc_lsi_sysclk, rcc_cw32l083_v1))]
+            if self.sys == Sysclk::LSI && (self.hse.is_some() || self.lse.is_some()) {
+                // New LSI-target admission only: own L083 fallback has no
+                // divider contract, so bound raw factory HSI with no credit.
+                crate::rcc::operating::validate(
+                    self.operating_conditions,
+                    Clocks {
+                        source: crate::rcc::ClockBounds::hsi(1),
                         dividers: [self.hsi.div.divisor(), 1, 1],
                         ..clocks
                     },
@@ -714,25 +730,25 @@ impl Clocks {
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
     /// The incoming selected source has inconsistent request/readiness.
-    #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+    #[cfg(rcc_lsi_sysclk)]
     InvalidEntryClock,
     /// The raw factory LSI calibration halfword is erased.
-    #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+    #[cfg(rcc_lsi_sysclk)]
     InvalidLsiCalibration,
     /// A live LSI does not carry the single-read factory calibration.
-    #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+    #[cfg(rcc_lsi_sysclk)]
     LsiCalibrationInUse,
     /// Retained consumers, observers or immutable configuration changed.
-    #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+    #[cfg(rcc_lsi_sysclk)]
     LsiClockInUse,
     /// An owned LSI request or native parameter write did not acknowledge.
-    #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+    #[cfg(rcc_lsi_sysclk)]
     LsiConfigurationTimeout,
     /// A temporary inspection gate could not be enabled; restoration succeeded.
-    #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+    #[cfg(rcc_lsi_sysclk)]
     LsiGateEnableTimeout,
     /// An inspection gate did not return to its captured state.
-    #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+    #[cfg(rcc_lsi_sysclk)]
     LsiGateRestoreTimeout,
     #[cfg(rcc_lse)]
     LseNotConfigured,
@@ -1165,7 +1181,7 @@ fn configure_hse(
     config: Config,
     cs: critical_section::CriticalSection<'_>,
 ) -> Result<Clocks, Error> {
-    #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+    #[cfg(rcc_lsi_sysclk)]
     if config.sys == Sysclk::LSI {
         return configure_lsi(config, cs);
     }
@@ -1537,7 +1553,7 @@ fn configure_hse(
     let sysclk = match config.sys {
         Sysclk::HSI => ClockSource::Hsi,
         Sysclk::HSE => ClockSource::Hse,
-        #[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+        #[cfg(rcc_lsi_sysclk)]
         Sysclk::LSI => return Err(Error::InvalidClockSource),
         // The explicit target branch above bypasses this old auxiliary path.
         #[cfg(rcc_lse)]
@@ -1716,9 +1732,33 @@ fn configure_hse(
     Ok(clocks)
 }
 
-// Exact L052 factory-LSI target. Keep this path separate from the established
+// Exact factory-LSI targets share this bounded state machine. Each family's
+// generated collectors retain its own native controls and ownership graph.
+#[cfg(all(rcc_lsi_sysclk, rcc_cw32l052_v1))]
+use crate::{
+    rcc_l052_lsi_configure_hse_pins as rcc_lsi_configure_hse_pins,
+    rcc_l052_lsi_configure_lse_pins as rcc_lsi_configure_lse_pins,
+    rcc_l052_lsi_consumers as rcc_lsi_consumers,
+    rcc_l052_lsi_enable_hse_pins as rcc_lsi_enable_hse_pins,
+    rcc_l052_lsi_lse_preflight as rcc_lsi_lse_preflight, rcc_l052_lsi_pads as rcc_lsi_pads,
+    RccL052LsiConsumers as RccLsiConsumers, RccL052LsiLseSnapshot as RccLsiLseSnapshot,
+    RccL052LsiPads as RccLsiPads, RCC_L052_LSI_CR0_KEY_MASK as LSI_CR0_KEY_MASK,
+    RCC_L052_LSI_CR1_KEY_MASK as LSI_CR1_KEY_MASK, RCC_L052_LSI_IER_KEY_MASK as LSI_IER_KEY_MASK,
+};
+#[cfg(all(rcc_lsi_sysclk, rcc_cw32l083_v1))]
+use crate::{
+    rcc_l083_lsi_configure_lse_pins as rcc_lsi_configure_lse_pins,
+    rcc_l083_lsi_consumers as rcc_lsi_consumers,
+    rcc_l083_lsi_enable_hse_pins as rcc_lsi_enable_hse_pins,
+    rcc_l083_lsi_lse_preflight as rcc_lsi_lse_preflight, rcc_l083_lsi_pads as rcc_lsi_pads,
+    RccL083LsiConsumers as RccLsiConsumers, RccL083LsiLseSnapshot as RccLsiLseSnapshot,
+    RccL083LsiPads as RccLsiPads, RCC_L083_LSI_CR0_KEY_MASK as LSI_CR0_KEY_MASK,
+    RCC_L083_LSI_CR1_KEY_MASK as LSI_CR1_KEY_MASK, RCC_L083_LSI_IER_KEY_MASK as LSI_IER_KEY_MASK,
+};
+
+// Exact L052/L083 factory-LSI target. Keep this path separate from the established
 // HSI/HSE and auxiliary/system-LSE paths: admission and owned edges differ.
-#[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+#[cfg(rcc_lsi_sysclk)]
 #[derive(Clone, Copy, Eq, PartialEq)]
 enum LsiEntryClass {
     Cold,
@@ -1726,7 +1766,7 @@ enum LsiEntryClass {
     LiveStarting,
 }
 
-#[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+#[cfg(rcc_lsi_sysclk)]
 #[derive(Clone, Copy)]
 struct LsiIdentity {
     clock: pac::sysctrl::regs::Cr0,
@@ -1738,18 +1778,40 @@ struct LsiIdentity {
     lsi: pac::sysctrl::regs::Lsi,
     flags: pac::sysctrl::regs::Isr,
     pending: bool,
+    #[cfg(rcc_cw32l083_v1)]
+    cr2: pac::sysctrl::regs::Cr2,
+    #[cfg(rcc_cw32l083_v1)]
+    pll: pac::sysctrl::regs::Pll,
+    #[cfg(rcc_cw32l083_v1)]
+    irq_enabled: bool,
+    #[cfg(rcc_cw32l083_v1)]
+    fault_irq_enabled: bool,
+    #[cfg(rcc_cw32l083_v1)]
+    fault_pending: bool,
+    #[cfg(rcc_cw32l083_v1)]
+    flash_gate: bool,
+    #[cfg(rcc_cw32l083_v1)]
+    flash_reset: bool,
 }
 
-#[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+#[cfg(rcc_lsi_sysclk)]
 impl LsiIdentity {
     fn read() -> Self {
         let r = pac::SYSCTRL;
         let mut clock = r.cr0().read();
         let mut sources = r.cr1().read();
         let mut ier = r.ier().read();
-        clock.0 &= !crate::RCC_L052_LSI_CR0_KEY_MASK;
-        sources.0 &= !crate::RCC_L052_LSI_CR1_KEY_MASK;
-        ier.0 &= !crate::RCC_L052_LSI_IER_KEY_MASK;
+        clock.0 &= !LSI_CR0_KEY_MASK;
+        sources.0 &= !LSI_CR1_KEY_MASK;
+        ier.0 &= !LSI_IER_KEY_MASK;
+        #[cfg(rcc_cw32l083_v1)]
+        let mut cr2 = r.cr2().read();
+        #[cfg(rcc_cw32l083_v1)]
+        {
+            cr2.0 &= !crate::RCC_L083_LSI_CR2_KEY_MASK;
+        }
+        #[cfg(rcc_cw32l083_v1)]
+        let flash = <crate::peripherals::FLASH as crate::rcc::SealedRccPeripheral>::RCC_INFO;
         Self {
             clock,
             sources,
@@ -1760,10 +1822,28 @@ impl LsiIdentity {
             lsi: r.lsi().read(),
             flags: r.isr().read(),
             pending: cortex_m::peripheral::NVIC::is_pending(pac::Interrupt::SYSCTRL),
+            #[cfg(rcc_cw32l083_v1)]
+            cr2,
+            #[cfg(rcc_cw32l083_v1)]
+            pll: r.pll().read(),
+            #[cfg(rcc_cw32l083_v1)]
+            irq_enabled: cortex_m::peripheral::NVIC::is_enabled(pac::Interrupt::SYSCTRL),
+            #[cfg(rcc_cw32l083_v1)]
+            fault_irq_enabled: cortex_m::peripheral::NVIC::is_enabled(pac::Interrupt::CLKFAULT),
+            #[cfg(rcc_cw32l083_v1)]
+            fault_pending: cortex_m::peripheral::NVIC::is_pending(pac::Interrupt::CLKFAULT),
+            #[cfg(rcc_cw32l083_v1)]
+            flash_gate: flash.is_enabled(),
+            #[cfg(rcc_cw32l083_v1)]
+            flash_reset: flash.reset_asserted(),
         }
     }
 
     fn external_faults(self, hse: bool, lse: bool) -> Result<(), Error> {
+        #[cfg(rcc_cw32l083_v1)]
+        if (hse || lse) && self.fault_pending {
+            return Err(Error::ExternalClockFault);
+        }
         if (hse && (self.flags.hsefail() || self.flags.hsefault()))
             || (lse && (self.flags.lsefail() || self.flags.lsefault()))
         {
@@ -1779,6 +1859,8 @@ impl LsiIdentity {
             ClockSource::Hse => self.sources.hseen() && self.hse.stable() && self.flags.hsestable(),
             ClockSource::Lsi => self.sources.lsien() && self.lsi.stable() && self.flags.lsistable(),
             ClockSource::Lse => self.sources.lseen() && self.lse.stable() && self.flags.lsestable(),
+            #[cfg(rcc_cw32l083_v1)]
+            ClockSource::Pll => self.sources.pllen() && self.pll.stable() && self.flags.pllstable(),
             _ => false,
         }
     }
@@ -1787,10 +1869,16 @@ impl LsiIdentity {
 // Each pending value is one explicit owned write. Equality permits its exact
 // old or target word until acknowledgment, never an arbitrary field encoding.
 // Readiness permissions are phase-local; none relax the permanent LSI latch.
-#[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+#[cfg(rcc_lsi_sysclk)]
 #[derive(Clone, Copy)]
 enum LsiTransition {
     Steady,
+    #[cfg(rcc_cw32l083_v1)]
+    PllStopping(pac::sysctrl::regs::Cr1),
+    #[cfg(rcc_cw32l083_v1)]
+    FlashWait(pac::sysctrl::regs::Cr2, pac::flash::regs::Cr2),
+    #[cfg(rcc_cw32l083_v1)]
+    HsePad(bool, u8),
     Clock(pac::sysctrl::regs::Cr0),
     LsiTrim(pac::sysctrl::regs::Lsi),
     LsiRequest(pac::sysctrl::regs::Cr1),
@@ -1809,7 +1897,7 @@ enum LsiTransition {
     LseReady,
 }
 
-#[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+#[cfg(rcc_lsi_sysclk)]
 struct LsiSysclkState {
     // This record and class are immutable, including through owned pad changes.
     entry: LsiIdentity,
@@ -1835,12 +1923,28 @@ struct LsiSysclkState {
     monitor_hse: bool,
     monitor_lse: bool,
     timeout: u32,
-    consumers: Option<crate::RccL052LsiConsumers>,
-    pads: Option<crate::RccL052LsiPads>,
-    lse_preflight: Option<crate::RccL052LsiLseSnapshot>,
+    consumers: Option<RccLsiConsumers>,
+    pads: Option<RccLsiPads>,
+    lse_preflight: Option<RccLsiLseSnapshot>,
+    #[cfg(rcc_cw32l083_v1)]
+    pll_stopped: bool,
+    #[cfg(rcc_cw32l083_v1)]
+    pll_ready: bool,
+    #[cfg(rcc_cw32l083_v1)]
+    pll_bridge: Option<ClockSource>,
+    #[cfg(rcc_cw32l083_v1)]
+    cr2: pac::sysctrl::regs::Cr2,
+    #[cfg(rcc_cw32l083_v1)]
+    flash_gate: bool,
+    #[cfg(rcc_cw32l083_v1)]
+    flash_cr2: Option<pac::flash::regs::Cr2>,
+    #[cfg(rcc_cw32l083_v1)]
+    events: [bool; 4],
+    #[cfg(rcc_cw32l083_v1)]
+    event_owned: [bool; 4],
 }
 
-#[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+#[cfg(rcc_lsi_sysclk)]
 pub(crate) fn lsi_inspection_error(error: super::peripheral::ClockInspectionError) -> Error {
     match error {
         super::peripheral::ClockInspectionError::EnableFailed {
@@ -1853,7 +1957,7 @@ pub(crate) fn lsi_inspection_error(error: super::peripheral::ClockInspectionErro
     }
 }
 
-#[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+#[cfg(rcc_lsi_sysclk)]
 impl LsiSysclkState {
     fn capture(config: Config) -> Result<Self, Error> {
         // No inspection gate or source/pad/Flash write precedes this record.
@@ -1866,6 +1970,14 @@ impl LsiSysclkState {
             || entry.sources.hseen()
             || entry.sources.hseccs()
             || entry.clock.sysclk() == ClockSource::Hse;
+        #[cfg(rcc_cw32l083_v1)]
+        let monitor_hse = monitor_hse
+            || (entry.sources.pllen()
+                && matches!(
+                    entry.pll.source(),
+                    pac::sysctrl::vals::PllSource::HseCrystal
+                        | pac::sysctrl::vals::PllSource::HseBypass
+                ));
         let monitor_lse = config.lse.is_some()
             || entry.sources.lseen()
             || entry.sources.lseccs()
@@ -1885,7 +1997,16 @@ impl LsiSysclkState {
         if !matches!(
             entry.clock.sysclk(),
             ClockSource::Hsi | ClockSource::Hse | ClockSource::Lsi | ClockSource::Lse
-        ) {
+        ) && {
+            #[cfg(rcc_cw32l083_v1)]
+            {
+                entry.clock.sysclk() != ClockSource::Pll
+            }
+            #[cfg(rcc_cw32l052_v1)]
+            {
+                true
+            }
+        } {
             return Err(Error::InvalidClockSource);
         }
         if !matches!(entry.hsi.div(), 5 | 6 | 8 | 9 | 11..=15) {
@@ -1898,6 +2019,14 @@ impl LsiSysclkState {
             || entry.sources.hseen() != entry.hse.stable()
             || entry.sources.lseen() != entry.lse.stable()
             || !entry.selected_ready()
+        {
+            return Err(Error::InvalidEntryClock);
+        }
+        #[cfg(rcc_cw32l083_v1)]
+        if entry.sources.pllen() != entry.pll.stable()
+            || entry.pll.stable() != entry.flags.pllstable()
+            || entry.cr2.flashwait() > 2
+            || entry.flash_reset
         {
             return Err(Error::InvalidEntryClock);
         }
@@ -1964,6 +2093,27 @@ impl LsiSysclkState {
             consumers: None,
             pads: None,
             lse_preflight: None,
+            #[cfg(rcc_cw32l083_v1)]
+            pll_stopped: !entry.sources.pllen(),
+            #[cfg(rcc_cw32l083_v1)]
+            pll_ready: entry.pll.stable(),
+            #[cfg(rcc_cw32l083_v1)]
+            pll_bridge: None,
+            #[cfg(rcc_cw32l083_v1)]
+            cr2: entry.cr2,
+            #[cfg(rcc_cw32l083_v1)]
+            flash_gate: entry.flash_gate,
+            #[cfg(rcc_cw32l083_v1)]
+            flash_cr2: None,
+            #[cfg(rcc_cw32l083_v1)]
+            events: [
+                entry.flags.hsirdy(),
+                entry.flags.hserdy(),
+                entry.flags.lserdy(),
+                entry.flags.lsirdy(),
+            ],
+            #[cfg(rcc_cw32l083_v1)]
+            event_owned: [false; 4],
         })
     }
 
@@ -1975,6 +2125,8 @@ impl LsiSysclkState {
             _ => self.clock,
         };
         let sources_target = match phase {
+            #[cfg(rcc_cw32l083_v1)]
+            LsiTransition::PllStopping(target) => target,
             LsiTransition::LsiRequest(target)
             | LsiTransition::HsiStopRequest(target)
             | LsiTransition::HsiRequest(target)
@@ -2016,6 +2168,8 @@ impl LsiSysclkState {
         {
             return Err(Error::LsiClockInUse);
         }
+        #[cfg(rcc_cw32l083_v1)]
+        self.check_l083_identity(actual, phase)?;
         let observed = [
             actual.hsi.stable(),
             actual.hse.stable(),
@@ -2078,6 +2232,7 @@ impl LsiSysclkState {
         if !actual.selected_ready() {
             return Err(Error::InvalidEntryClock);
         }
+        #[cfg(rcc_cw32l052_v1)]
         if !self.requested {
             // Live-starting may not be resampled as live-ready during admission.
             if actual.lsi.stable() != self.entry.lsi.stable()
@@ -2125,25 +2280,495 @@ impl LsiSysclkState {
         Ok(actual)
     }
 
+    #[cfg(rcc_cw32l083_v1)]
+    fn check_l083_identity(
+        &mut self,
+        actual: LsiIdentity,
+        phase: LsiTransition,
+    ) -> Result<(), Error> {
+        let (system_target, flash_target) = match phase {
+            LsiTransition::FlashWait(system, flash) => (system, Some(flash)),
+            _ => (self.cr2, self.flash_cr2),
+        };
+        if (actual.cr2.0 != self.cr2.0 && actual.cr2.0 != system_target.0)
+            || actual.irq_enabled != self.entry.irq_enabled
+            || actual.fault_irq_enabled != self.entry.fault_irq_enabled
+            || actual.fault_pending != self.entry.fault_pending
+            || actual.flash_gate != self.flash_gate
+            || actual.flash_reset != self.entry.flash_reset
+        {
+            return Err(Error::LsiClockInUse);
+        }
+        if let Some(expected) = self.flash_cr2 {
+            // The central gate and reset were checked before this local read.
+            let mut flash = pac::FLASH.cr2().read();
+            flash.0 &= !crate::RCC_L083_LSI_FLASH_CR2_KEY_MASK;
+            let target = flash_target.ok_or(Error::FlashLatencyTimeout)?;
+            if flash.0 != expected.0 && flash.0 != target.0 {
+                return Err(Error::FlashLatencyTimeout);
+            }
+            if !matches!(phase, LsiTransition::FlashWait(_, _))
+                && flash.wait() != actual.cr2.flashwait()
+            {
+                return Err(Error::FlashLatencyTimeout);
+            }
+            if actual.cr2.0 == system_target.0 && flash.0 == target.0 {
+                self.cr2 = system_target;
+                self.flash_cr2 = Some(target);
+            }
+        }
+        if actual.pll.0 & crate::RCC_LSI_PLL_PARAMETERS_MASK
+            != self.entry.pll.0 & crate::RCC_LSI_PLL_PARAMETERS_MASK
+            || actual.pll.stable() != actual.flags.pllstable()
+        {
+            return Err(Error::PllConfigurationTimeout);
+        }
+        // SYSCLK departure alone never releases the original reference.
+        if self.entry.sources.pllen() && !self.pll_stopped {
+            if matches!(
+                phase,
+                LsiTransition::HsiStopRequest(_)
+                    | LsiTransition::HsiStopped
+                    | LsiTransition::HsiTrim(_)
+                    | LsiTransition::HsiDivider(_)
+                    | LsiTransition::LsiTrim(_)
+                    | LsiTransition::LsiRequest(_)
+            ) {
+                return Err(Error::PllStopTimeout);
+            }
+            match self.entry.pll.source() {
+                pac::sysctrl::vals::PllSource::Hsi => {
+                    if !actual.sources.hsien()
+                        || !actual.hsi.stable()
+                        || !actual.flags.hsistable()
+                        || actual.hsi.0 != self.entry.hsi.0
+                    {
+                        return Err(Error::PllConfigurationTimeout);
+                    }
+                }
+                pac::sysctrl::vals::PllSource::HseCrystal
+                | pac::sysctrl::vals::PllSource::HseBypass => {
+                    if !actual.sources.hseen()
+                        || !actual.hse.stable()
+                        || !actual.flags.hsestable()
+                        || actual.hse.0 != self.entry.hse.0
+                    {
+                        return Err(Error::PllConfigurationTimeout);
+                    }
+                }
+                _ => return Err(Error::PllConfigurationTimeout),
+            }
+        }
+        if self.pll_stopped {
+            if actual.sources.pllen() || actual.pll.stable() {
+                return Err(Error::PllStopTimeout);
+            }
+        } else if matches!(phase, LsiTransition::PllStopping(_)) {
+            if !self.pll_ready && actual.pll.stable() {
+                return Err(Error::PllStopTimeout);
+            }
+            self.pll_ready = actual.pll.stable();
+            if !actual.sources.pllen() && !actual.pll.stable() {
+                self.pll_stopped = true;
+            }
+        } else if !actual.sources.pllen() || !actual.pll.stable() {
+            return Err(Error::PllConfigurationTimeout);
+        }
+        let enabled = [
+            actual.sources.hsien(),
+            actual.sources.hseen(),
+            actual.sources.lseen(),
+            actual.sources.lsien(),
+        ];
+        let ready = [
+            actual.hsi.stable(),
+            actual.hse.stable(),
+            actual.lse.stable(),
+            actual.lsi.stable(),
+        ];
+        let stopping_hsi = matches!(
+            phase,
+            LsiTransition::HsiStopRequest(_) | LsiTransition::HsiStopped
+        );
+        for index in 0..4 {
+            if ready[index] && !enabled[index] && !(index == 0 && stopping_hsi) {
+                return Err(Error::LsiClockInUse);
+            }
+        }
+        if self.requested
+            && !actual.sources.lsien()
+            && !matches!(phase, LsiTransition::LsiRequest(_))
+        {
+            return Err(Error::LsiClockInUse);
+        }
+        let events = [
+            actual.flags.hsirdy(),
+            actual.flags.hserdy(),
+            actual.flags.lserdy(),
+            actual.flags.lsirdy(),
+        ];
+        let entry_events = [
+            self.entry.flags.hsirdy(),
+            self.entry.flags.hserdy(),
+            self.entry.flags.lserdy(),
+            self.entry.flags.lsirdy(),
+        ];
+        let event_enabled = [
+            actual.ier.hsirdy(),
+            actual.ier.hserdy(),
+            actual.ier.lserdy(),
+            actual.ier.lsirdy(),
+        ];
+        for index in 0..4 {
+            if (!self.event_owned[index] && events[index] != entry_events[index])
+                || (self.events[index] && !events[index])
+            {
+                return Err(Error::LsiClockInUse);
+            }
+        }
+        if actual.flags.pllrdy() != self.entry.flags.pllrdy()
+            || (actual.flags.0
+                & !(crate::RCC_L083_LSI_ISR_READY_MASK | crate::RCC_L083_LSI_ISR_EVENT_MASK))
+                != (self.entry.flags.0
+                    & !(crate::RCC_L083_LSI_ISR_READY_MASK | crate::RCC_L083_LSI_ISR_EVENT_MASK))
+        {
+            return Err(Error::LsiClockInUse);
+        }
+        if !self.requested && self.class != LsiEntryClass::LiveReady {
+            // A prior owned HSI request cannot erase a cold SYSCTRL observer.
+            if actual.pending != self.entry.pending
+                || actual.lsi.stable() != self.entry.lsi.stable()
+            {
+                return Err(Error::LsiClockInUse);
+            }
+        } else if (self.pending_seen && !actual.pending)
+            || (!self.pending_seen
+                && actual.pending
+                && !(0..4).any(|index| {
+                    self.event_owned[index]
+                        && events[index]
+                        && !entry_events[index]
+                        && event_enabled[index]
+                }))
+        {
+            return Err(Error::LsiClockInUse);
+        }
+        self.events = events;
+        Ok(())
+    }
+
+    #[cfg(rcc_cw32l083_v1)]
+    fn hsi_divisor(&self) -> Result<u32, Error> {
+        match self.entry.hsi.div() {
+            5 => Ok(6),
+            6 => Ok(1),
+            8 => Ok(2),
+            9 => Ok(4),
+            11 => Ok(8),
+            12 => Ok(10),
+            13 => Ok(12),
+            14 => Ok(14),
+            15 => Ok(16),
+            _ => Err(Error::InvalidHsiDivider),
+        }
+    }
+
+    #[cfg(rcc_cw32l083_v1)]
+    fn validate_edge(
+        config: Config,
+        clocks: Clocks,
+        source: crate::rcc::ClockBounds,
+        clock: pac::sysctrl::regs::Cr0,
+        wait: u8,
+    ) -> Result<(), Error> {
+        let ahb = 1u32 << clock.hclkprs();
+        let apb = 1u32 << clock.pclkprs();
+        crate::rcc::operating::validate(
+            config.operating_conditions,
+            Clocks {
+                source,
+                dividers: [config.hsi.div.divisor(), ahb, ahb * apb],
+                ..clocks
+            },
+        )?;
+        if wait > 2
+            || source
+                .divided_by(ahb)
+                .maximum_exceeds((u32::from(wait) + 1) * crate::RCC_FLASH_WAIT_STEP_HZ)
+        {
+            return Err(Error::FlashLatencyTimeout);
+        }
+        Ok(())
+    }
+
+    #[cfg(rcc_cw32l083_v1)]
+    fn fallback_bound(config: Config, clocks: Clocks) -> Result<(), Error> {
+        crate::rcc::operating::validate(
+            config.operating_conditions,
+            Clocks {
+                source: crate::rcc::ClockBounds::hsi(1),
+                dividers: [config.hsi.div.divisor(), 1, 1],
+                ..clocks
+            },
+        )
+    }
+
+    #[cfg(rcc_cw32l083_v1)]
+    fn admit_l083(&mut self, config: Config, clocks: Clocks) -> Result<(), Error> {
+        use pac::sysctrl::vals::PllSource as Reference;
+        let entry = self.entry;
+        let pll = entry.pll;
+        if pll.reserved_debug().to_bits() != crate::RCC_PLL_RESERVED_DEBUG_DEFAULT {
+            return Err(Error::PllReservedConfiguration);
+        }
+        // Reconstruct only documented fields in a local value. All unnamed
+        // RFU bits must retain their own documented reset default of zero;
+        // no PLL register write occurs, and STABLE is checked separately.
+        let mut defined = pac::sysctrl::regs::Pll::default();
+        defined.set_source(pll.source());
+        defined.set_freqin(pll.freqin());
+        defined.set_mul(pll.mul());
+        defined.set_freqout(pll.freqout());
+        defined.set_waitcycle(pll.waitcycle());
+        defined.set_reserved_debug(pll.reserved_debug());
+        if pll.0 & crate::RCC_LSI_PLL_PARAMETERS_MASK != defined.0 {
+            return Err(Error::PllReservedConfiguration);
+        }
+        let multiplier = pll.mul().to_bits();
+        if !(crate::RCC_PLL_MULTIPLIER_RANGE.0..=crate::RCC_PLL_MULTIPLIER_RANGE.1)
+            .contains(&multiplier)
+        {
+            return Err(Error::InvalidPllMultiplier);
+        }
+        if !matches!(
+            pll.source(),
+            Reference::Hsi | Reference::HseCrystal | Reference::HseBypass
+        ) {
+            return Err(Error::PllConfigurationTimeout);
+        }
+        if matches!(pll.source(), Reference::HseCrystal | Reference::HseBypass)
+            && entry.hse.mode() != (pll.source() == Reference::HseBypass)
+        {
+            return Err(Error::PllConfigurationTimeout);
+        }
+        // Every encoded WAIT/input/output bin is documented. Inactive PLL
+        // parameters remain defined without claiming they describe a live rate.
+        let pll_bounds = if entry.sources.pllen() {
+            let c = config.operating_conditions;
+            if c.min_supply_mv < crate::RCC_PLL_SUPPLY_MV.0
+                || c.max_supply_mv > crate::RCC_PLL_SUPPLY_MV.1
+                || c.min_temperature_c < crate::RCC_PLL_TEMPERATURE_C.0
+                || c.max_temperature_c > crate::RCC_PLL_TEMPERATURE_C.1
+            {
+                return Err(Error::PllConditionsOutsideQualifiedRange);
+            }
+            let input = match pll.source() {
+                Reference::Hsi => {
+                    if !entry.sources.hsien()
+                        || !entry.hsi.stable()
+                        || entry.hsi.trim() != self.factory_hsi
+                    {
+                        return Err(Error::HsiClockInUse);
+                    }
+                    crate::rcc::ClockBounds::hsi(self.hsi_divisor()?)
+                }
+                Reference::HseCrystal | Reference::HseBypass => {
+                    let hse = config.hse.ok_or(Error::HseNotConfigured)?;
+                    if !entry.sources.hseen()
+                        || !entry.hse.stable()
+                        || entry.hse.mode() != (pll.source() == Reference::HseBypass)
+                        || entry.hse.mode() != (hse.mode == HseMode::Bypass)
+                    {
+                        return Err(Error::PllConfigurationTimeout);
+                    }
+                    hse.bounds()?
+                }
+                _ => return Err(Error::PllConfigurationTimeout),
+            };
+            if input.minimum_below(crate::RCC_PLL_INPUT_RANGE_HZ.0)
+                || input.maximum_exceeds(crate::RCC_PLL_INPUT_RANGE_HZ.1)
+            {
+                return Err(Error::PllInputOutsideQualifiedRange);
+            }
+            let input_bin = crate::RCC_PLL_INPUT_BINS_HZ[usize::from(pll.freqin().to_bits())];
+            if input.minimum_below(input_bin.0) || input.maximum_exceeds(input_bin.1) {
+                return Err(Error::PllInputCrossesBin);
+            }
+            let output = input
+                .multiplied_by(u32::from(multiplier))
+                .ok_or(Error::PllArithmeticOverflow)?;
+            if output.minimum_below(crate::RCC_PLL_OUTPUT_RANGE_HZ.0)
+                || output.maximum_exceeds(crate::RCC_PLL_OUTPUT_RANGE_HZ.1)
+            {
+                return Err(Error::PllOutputOutsideQualifiedRange);
+            }
+            // Native 1xx encodings all denote the documented 48..72 MHz bin.
+            let output_index = match pll.freqout().to_bits() {
+                0..=3 => pll.freqout().to_bits(),
+                4..=7 => 4,
+                _ => return Err(Error::PllOutputCrossesBin),
+            };
+            let output_bin = crate::RCC_PLL_OUTPUT_BINS_HZ[usize::from(output_index)];
+            if output.minimum_below(output_bin.0) || output.maximum_exceeds(output_bin.1) {
+                return Err(Error::PllOutputCrossesBin);
+            }
+            Some(output)
+        } else {
+            None
+        };
+        let source = match entry.clock.sysclk() {
+            ClockSource::Hsi if entry.hsi.trim() == self.factory_hsi => {
+                Some(crate::rcc::ClockBounds::hsi(self.hsi_divisor()?))
+            }
+            // Preserve the caller's safe, unchanged non-factory HSI interval;
+            // it receives no invented absolute factory-rate bound.
+            ClockSource::Hsi => None,
+            ClockSource::Hse => Some(config.hse.ok_or(Error::HseNotConfigured)?.bounds()?),
+            ClockSource::Lse => Some(
+                config
+                    .lse
+                    .ok_or(Error::LseNotConfigured)?
+                    .bounds(config.operating_conditions)?,
+            ),
+            ClockSource::Lsi => Some(crate::rcc::ClockBounds::lsi()),
+            ClockSource::Pll => Some(pll_bounds.ok_or(Error::PllConfigurationTimeout)?),
+            _ => return Err(Error::InvalidClockSource),
+        };
+        if let Some(source) = source {
+            Self::validate_edge(config, clocks, source, entry.clock, entry.cr2.flashwait())?;
+        }
+        let fallback = entry.sources.clkccs()
+            && matches!(entry.clock.sysclk(), ClockSource::Hse | ClockSource::Lse);
+        if fallback {
+            Self::fallback_bound(config, clocks)?;
+            if !entry.sources.hsien() || !entry.hsi.stable() || entry.hsi.trim() != self.factory_hsi
+            {
+                return Err(Error::HsiClockInUse);
+            }
+            if entry.cr2.flashwait() != 2 {
+                return Err(Error::FlashLatencyTimeout);
+            }
+        }
+        if entry.clock.sysclk() == ClockSource::Pll {
+            let mut guard = entry.clock;
+            guard.set_hclkprs(entry.clock.hclkprs().max(AHBPrescaler::Div4 as u8));
+            guard.set_pclkprs(entry.clock.pclkprs().max(APBPrescaler::Div8 as u8));
+            self.pll_bridge = if entry.hsi.trim() == self.factory_hsi {
+                Self::validate_edge(
+                    config,
+                    clocks,
+                    crate::rcc::ClockBounds::hsi(self.hsi_divisor()?),
+                    guard,
+                    2,
+                )?;
+                Some(ClockSource::Hsi)
+            } else if matches!(pll.source(), Reference::HseCrystal | Reference::HseBypass) {
+                let hse = config.hse.ok_or(Error::HseNotConfigured)?;
+                Self::validate_edge(config, clocks, hse.bounds()?, guard, 2)?;
+                if entry.sources.clkccs() {
+                    Self::fallback_bound(config, clocks)?;
+                    // An HSE escape cannot bypass unprovable HSI fallback.
+                    return Err(Error::HsiClockInUse);
+                }
+                Some(ClockSource::Hse)
+            } else {
+                return Err(Error::HsiClockInUse);
+            };
+        }
+        Ok(())
+    }
+
+    #[cfg(rcc_cw32l083_v1)]
+    fn stop_l083_pll(
+        &mut self,
+        config: Config,
+        cs: critical_section::CriticalSection<'_>,
+    ) -> Result<(), Error> {
+        if self.pll_stopped {
+            return self.check_all(LsiTransition::Steady, cs);
+        }
+        if let Some(bridge) = self.pll_bridge {
+            if bridge == ClockSource::Hsi && !self.sources.hsien() {
+                self.check_all(LsiTransition::Steady, cs)?;
+                let mut enabled = self.sources;
+                enabled.set_hsien(true);
+                self.event_owned[0] = true;
+                pac::SYSCTRL.cr1().modify(|w| {
+                    w.set_key(0x5a5a);
+                    w.set_hsien(true);
+                });
+                self.wait(
+                    LsiTransition::HsiRequest(enabled),
+                    config.timeout,
+                    Error::ClockConfigurationTimeout,
+                    cs,
+                )?;
+                self.wait(
+                    LsiTransition::HsiReady,
+                    config.timeout,
+                    Error::HsiTimeout,
+                    cs,
+                )?;
+            }
+            self.check_all(LsiTransition::Steady, cs)?;
+            let mut target = self.clock;
+            target.set_sysclk(bridge);
+            pac::SYSCTRL.cr0().modify(|w| {
+                w.set_key(0x5a5a);
+                w.set_sysclk(bridge);
+            });
+            self.wait(
+                LsiTransition::Clock(target),
+                config.timeout,
+                Error::TemporaryClockSwitchTimeout,
+                cs,
+            )?;
+            barrier();
+        }
+        // Immutable entry PLLEN makes every collection repeat all bonded and
+        // unbonded PLL-output owner checks right up to the stop use edge.
+        self.check_all(LsiTransition::Steady, cs)?;
+        if self.clock.sysclk() == ClockSource::Pll {
+            return Err(Error::PllStopTimeout);
+        }
+        let mut stopped = self.sources;
+        stopped.set_pllen(false);
+        pac::SYSCTRL.cr1().modify(|w| {
+            w.set_key(0x5a5a);
+            w.set_pllen(false);
+        });
+        self.wait(
+            LsiTransition::PllStopping(stopped),
+            config.timeout,
+            Error::PllStopTimeout,
+            cs,
+        )?;
+        self.check_all(LsiTransition::Steady, cs)
+    }
+
     fn collect(
         &mut self,
         phase: LsiTransition,
         cs: critical_section::CriticalSection<'_>,
-    ) -> Result<(crate::RccL052LsiConsumers, crate::RccL052LsiPads), Error> {
+    ) -> Result<(RccLsiConsumers, RccLsiPads), Error> {
         self.check_identity(phase)?;
-        let consumers = crate::rcc_l052_lsi_consumers(
+        let consumers = rcc_lsi_consumers(
             self.timeout,
             cs,
             self.class == LsiEntryClass::Cold,
+            #[cfg(rcc_cw32l083_v1)]
+            self.entry.sources.pllen(),
             self.monitor_hse,
             self.monitor_lse,
         )?;
-        let pads = crate::rcc_l052_lsi_pads(self.timeout, cs, self.monitor_hse, self.monitor_lse)?;
+        let pads = rcc_lsi_pads(self.timeout, cs, self.monitor_hse, self.monitor_lse)?;
         let lse_snapshot = if self.lse_preflight.is_some() {
             let config = self.lse_config.ok_or(Error::LseClockInUse)?;
-            Some(crate::rcc_l052_lsi_lse_preflight(
+            Some(rcc_lsi_lse_preflight(
                 config.mode == super::LseMode::Bypass,
                 !self.lse_pads_configured,
+                #[cfg(rcc_cw32l083_v1)]
+                self.entry.sources.pllen(),
                 config.poll_budget,
                 cs,
                 self.monitor_hse,
@@ -2155,6 +2780,34 @@ impl LsiSysclkState {
         self.check_identity(phase)?;
         // Each collector already resolved restore/enable/readback before faults
         // and its buffered semantics. Compare only after their full restoration.
+        #[cfg(rcc_cw32l083_v1)]
+        if let LsiTransition::HsePad(bypass, step) = phase {
+            let target_consumers = self
+                .consumers
+                .map(|saved| saved.hse_configured_step(bypass, step));
+            let target_pads = self
+                .pads
+                .map(|saved| saved.hse_configured_step(bypass, step));
+            let target_lse = self
+                .lse_preflight
+                .map(|saved| saved.hse_configured_step(bypass, step));
+            if (Some(consumers) != self.consumers && Some(consumers) != target_consumers)
+                || (Some(pads) != self.pads && Some(pads) != target_pads)
+                || (lse_snapshot != self.lse_preflight && lse_snapshot != target_lse)
+            {
+                return Err(Error::LsiClockInUse);
+            }
+            // These are computed one-register deltas, never arbitrary samples.
+            if Some(consumers) == target_consumers
+                && Some(pads) == target_pads
+                && lse_snapshot == target_lse
+            {
+                self.consumers = target_consumers;
+                self.pads = target_pads;
+                self.lse_preflight = target_lse;
+            }
+            return Ok((consumers, pads));
+        }
         if self.consumers.is_some_and(|saved| saved != consumers)
             || self.pads.is_some_and(|saved| saved != pads)
             || lse_snapshot != self.lse_preflight
@@ -2183,6 +2836,30 @@ impl LsiSysclkState {
             self.check_all(phase, cs)?;
             let acknowledged = match phase {
                 LsiTransition::Steady => true,
+                #[cfg(rcc_cw32l083_v1)]
+                LsiTransition::PllStopping(target) => {
+                    self.sources.0 == target.0 && self.pll_stopped
+                }
+                #[cfg(rcc_cw32l083_v1)]
+                LsiTransition::FlashWait(system, flash) => {
+                    self.cr2.0 == system.0
+                        && self.flash_cr2.is_some_and(|actual| actual.0 == flash.0)
+                }
+                #[cfg(rcc_cw32l083_v1)]
+                LsiTransition::HsePad(bypass, step) => {
+                    self.consumers
+                        == self
+                            .consumers
+                            .map(|saved| saved.hse_configured_step(bypass, step))
+                        && self.pads
+                            == self
+                                .pads
+                                .map(|saved| saved.hse_configured_step(bypass, step))
+                        && self.lse_preflight
+                            == self
+                                .lse_preflight
+                                .map(|saved| saved.hse_configured_step(bypass, step))
+                }
                 LsiTransition::Clock(target) => self.clock.0 == target.0,
                 LsiTransition::LsiTrim(target) => {
                     self.lsi.0 & crate::RCC_LSI_PARAMETERS_MASK
@@ -2264,8 +2941,14 @@ impl LsiSysclkState {
                 {
                     return Err(Error::HseClockInUse);
                 }
-            } else if autotrim.en() && autotrim.src() == pac::autotrim::vals::Source::Etr {
-                return Err(Error::HsePinInUse);
+            } else {
+                if autotrim.en() && autotrim.src() == pac::autotrim::vals::Source::Etr {
+                    return Err(Error::HsePinInUse);
+                }
+                #[cfg(rcc_cw32l083_v1)]
+                if !pads.hse_startup_allowed(hse.mode == HseMode::Bypass) {
+                    return Err(Error::HsePinInUse);
+                }
             }
         }
         Ok(())
@@ -2275,8 +2958,10 @@ impl LsiSysclkState {
         let mut target = self.hse;
         target.set_mode(config.mode == HseMode::Bypass);
         target.set_driver(config.drive);
+        #[cfg(rcc_cw32l052_v1)]
         target.set_pdriver(config.drive);
         target.set_freqrange(config.range());
+        #[cfg(rcc_cw32l052_v1)]
         target.set_pfreqrange(config.range());
         target.set_waitcycle(pac::sysctrl::vals::HseWait::Cycles262144);
         target.set_flt(false);
@@ -2289,8 +2974,11 @@ impl LsiSysclkState {
         target.set_mode(config.mode == super::LseMode::Bypass);
         target.set_driver(config.drive);
         target.set_amp(config.amplitude);
-        target.set_pdriver(config.startup_drive);
-        target.set_pamp(config.startup_amplitude);
+        #[cfg(rcc_cw32l052_v1)]
+        {
+            target.set_pdriver(config.startup_drive);
+            target.set_pamp(config.startup_amplitude);
+        }
         target.set_waitcycle(config.wait);
         target
     }
@@ -2314,9 +3002,18 @@ impl LsiSysclkState {
         {
             return Err(Error::LseClockInUse);
         }
-        let snapshot = crate::rcc_l052_lsi_lse_preflight(
+        #[cfg(rcc_cw32l083_v1)]
+        {
+            let observed = self.check_identity(LsiTransition::Steady)?;
+            if observed.pending || observed.fault_pending {
+                return Err(Error::LseClockInUse);
+            }
+        }
+        let snapshot = rcc_lsi_lse_preflight(
             config.mode == super::LseMode::Bypass,
             unused,
+            #[cfg(rcc_cw32l083_v1)]
+            self.entry.sources.pllen(),
             config.poll_budget,
             cs,
             self.monitor_hse,
@@ -2342,6 +3039,10 @@ impl LsiSysclkState {
     ) -> Result<(), Error> {
         self.check_all(LsiTransition::Steady, cs)?;
         let pads = self.pads.ok_or(Error::LsiClockInUse)?;
+        #[cfg(rcc_cw32l083_v1)]
+        if !self.pll_stopped || self.sources.pllen() || self.pll_ready {
+            return Err(Error::PllStopTimeout);
+        }
         if !self.sources.lsien() || !self.ready[3] || self.lsi.trim() != self.factory_lsi {
             return Err(Error::LsiTimeout);
         }
@@ -2382,6 +3083,7 @@ impl LsiSysclkState {
         self.check_all(LsiTransition::Steady, cs)
     }
 
+    #[cfg(rcc_cw32l052_v1)]
     fn flash_latency(
         &mut self,
         wait: u32,
@@ -2402,9 +3104,33 @@ impl LsiSysclkState {
         }
         Err(Error::FlashLatencyTimeout)
     }
+    #[cfg(rcc_cw32l083_v1)]
+    fn flash_latency(
+        &mut self,
+        wait: u32,
+        cs: critical_section::CriticalSection<'_>,
+    ) -> Result<(), Error> {
+        self.check_all(LsiTransition::Steady, cs)?;
+        let mut system = self.cr2;
+        system.set_flashwait(wait as u8);
+        let mut target = self.flash_cr2.ok_or(Error::FlashLatencyTimeout)?;
+        target.set_wait(wait as u8);
+        pac::FLASH.cr2().modify(|w| {
+            w.set_key(0x5a5a);
+            w.set_wait(wait as u8);
+        });
+        self.wait(
+            LsiTransition::FlashWait(system, target),
+            self.timeout,
+            Error::FlashLatencyTimeout,
+            cs,
+        )?;
+        barrier();
+        self.check_all(LsiTransition::Steady, cs)
+    }
 }
 
-#[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+#[cfg(rcc_lsi_sysclk)]
 fn configure_lsi(
     config: Config,
     cs: critical_section::CriticalSection<'_>,
@@ -2418,6 +3144,8 @@ fn configure_lsi(
     state.pads = Some(pads);
     state.check_all(LsiTransition::Steady, cs)?;
     state.external_owners(config)?;
+    #[cfg(rcc_cw32l083_v1)]
+    state.admit_l083(config, clocks)?;
     let needs_hsi_trim = state.entry.hsi.trim() != state.factory_hsi;
     if needs_hsi_trim {
         state.hsi_owners(cs)?;
@@ -2451,17 +3179,44 @@ fn configure_lsi(
             },
         )
         .map_err(|_| Error::FlashClockTimeout)?;
+    #[cfg(rcc_cw32l083_v1)]
+    {
+        state.flash_gate = true;
+    }
     state.check_all(LsiTransition::Steady, cs)?;
     if !flash.is_enabled() || flash.reset_asserted() {
         return Err(Error::FlashClockTimeout);
+    }
+    #[cfg(rcc_cw32l083_v1)]
+    {
+        let mut local = pac::FLASH.cr2().read();
+        local.0 &= !crate::RCC_L083_LSI_FLASH_CR2_KEY_MASK;
+        if local.wait() != state.entry.cr2.flashwait() {
+            return Err(Error::FlashLatencyTimeout);
+        }
+        state.flash_cr2 = Some(local);
+        state.check_all(LsiTransition::Steady, cs)?;
     }
     state.flash_latency(crate::RCC_INITIAL_FLASH_WAIT, cs)?;
     let mut guarded = state.clock;
     guarded.set_hclkprs(state.entry.clock.hclkprs().max(AHBPrescaler::Div4 as u8));
     guarded.set_pclkprs(state.entry.clock.pclkprs().max(APBPrescaler::Div8 as u8));
+    #[cfg(rcc_cw32l083_v1)]
+    if state.entry.sources.clkccs()
+        && matches!(
+            state.entry.clock.sysclk(),
+            ClockSource::Hse | ClockSource::Lse
+        )
+    {
+        // Admission proved unchanged factory HSI at the entry divisors and
+        // raw fallback envelope. Never replay the external selector.
+        guarded.set_sysclk(ClockSource::Hsi);
+    }
     state.check_all(LsiTransition::Steady, cs)?;
     r.cr0().modify(|w| {
         w.set_key(0x5a5a);
+        #[cfg(rcc_cw32l083_v1)]
+        w.set_sysclk(guarded.sysclk());
         w.set_hclkprs(guarded.hclkprs());
         w.set_pclkprs(guarded.pclkprs());
     });
@@ -2472,6 +3227,9 @@ fn configure_lsi(
         cs,
     )?;
     barrier();
+
+    #[cfg(rcc_cw32l083_v1)]
+    state.stop_l083_pll(config, cs)?;
 
     // P3: even matching cold TRIM takes the final stopped use-edge proof.
     if state.class == LsiEntryClass::Cold {
@@ -2496,6 +3254,10 @@ fn configure_lsi(
     let mut requested = state.sources;
     requested.set_lsien(true);
     state.requested = true;
+    #[cfg(rcc_cw32l083_v1)]
+    {
+        state.event_owned[3] = true;
+    }
     r.cr1().modify(|w| {
         w.set_key(0x5a5a);
         w.set_lsien(true);
@@ -2516,8 +3278,10 @@ fn configure_lsi(
 
     // P5: directly select established factory LSI before stopping a mismatching
     // HSI. No inherited, unqualified HSI trim is enabled or selected as a bridge.
-    if needs_hsi_trim {
-        state.hsi_owners(cs)?;
+    if needs_hsi_trim || cfg!(rcc_cw32l083_v1) {
+        if needs_hsi_trim {
+            state.hsi_owners(cs)?;
+        }
         let mut target_clock = state.clock;
         target_clock.set_sysclk(ClockSource::Lsi);
         r.cr0().modify(|w| {
@@ -2531,28 +3295,32 @@ fn configure_lsi(
             cs,
         )?;
         barrier();
+    }
+    if needs_hsi_trim {
         // Repeat frozen HSI-owner equality at the actual stop use edge.
         state.hsi_owners(cs)?;
-        let mut stopped = state.sources;
-        stopped.set_hsien(false);
-        r.cr1().modify(|w| {
-            w.set_key(0x5a5a);
-            w.set_hsien(false);
-        });
-        state.wait(
-            LsiTransition::HsiStopRequest(stopped),
-            config.timeout,
-            Error::HsiStopTimeout,
-            cs,
-        )?;
-        // HSIEN can acknowledge before either STABLE latch falls. This is its
-        // own bounded stop phase, with LSI and every non-owned bit still fixed.
-        state.wait(
-            LsiTransition::HsiStopped,
-            config.timeout,
-            Error::HsiStopTimeout,
-            cs,
-        )?;
+        if state.sources.hsien() || cfg!(rcc_cw32l052_v1) {
+            let mut stopped = state.sources;
+            stopped.set_hsien(false);
+            r.cr1().modify(|w| {
+                w.set_key(0x5a5a);
+                w.set_hsien(false);
+            });
+            state.wait(
+                LsiTransition::HsiStopRequest(stopped),
+                config.timeout,
+                Error::HsiStopTimeout,
+                cs,
+            )?;
+            // HSIEN can acknowledge before either STABLE latch falls. This is its
+            // own bounded stop phase, with LSI and every non-owned bit still fixed.
+            state.wait(
+                LsiTransition::HsiStopped,
+                config.timeout,
+                Error::HsiStopTimeout,
+                cs,
+            )?;
+        }
         state.check_all(LsiTransition::Steady, cs)?;
         let mut calibrated = state.hsi;
         calibrated.set_trim(state.factory_hsi);
@@ -2572,6 +3340,10 @@ fn configure_lsi(
         let mut enabled = state.sources;
         enabled.set_hsien(true);
         state.check_all(LsiTransition::Steady, cs)?;
+        #[cfg(rcc_cw32l083_v1)]
+        {
+            state.event_owned[0] = true;
+        }
         r.cr1().modify(|w| {
             w.set_key(0x5a5a);
             w.set_hsien(true);
@@ -2590,19 +3362,22 @@ fn configure_lsi(
         )?;
     }
     state.check_all(LsiTransition::Steady, cs)?;
-    let mut hsi_clock = state.clock;
-    hsi_clock.set_sysclk(ClockSource::Hsi);
-    r.cr0().modify(|w| {
-        w.set_key(0x5a5a);
-        w.set_sysclk(ClockSource::Hsi);
-    });
-    state.wait(
-        LsiTransition::Clock(hsi_clock),
-        config.timeout,
-        Error::ClockSwitchTimeout,
-        cs,
-    )?;
-    barrier();
+    #[cfg(rcc_cw32l052_v1)]
+    {
+        let mut hsi_clock = state.clock;
+        hsi_clock.set_sysclk(ClockSource::Hsi);
+        r.cr0().modify(|w| {
+            w.set_key(0x5a5a);
+            w.set_sysclk(ClockSource::Hsi);
+        });
+        state.wait(
+            LsiTransition::Clock(hsi_clock),
+            config.timeout,
+            Error::ClockSwitchTimeout,
+            cs,
+        )?;
+        barrier();
+    }
     let mut divided = state.hsi;
     divided.set_div(config.hsi.div as u8);
     state.check_all(LsiTransition::Steady, cs)?;
@@ -2614,6 +3389,33 @@ fn configure_lsi(
         cs,
     )?;
 
+    #[cfg(rcc_cw32l083_v1)]
+    {
+        // Native L083 changes DIV while still on qualified LSI, with PLL
+        // permanently stopped, then proves the actual factory-HSI use edge.
+        state.check_all(LsiTransition::Steady, cs)?;
+        LsiSysclkState::validate_edge(
+            config,
+            clocks,
+            crate::rcc::ClockBounds::hsi(config.hsi.div.divisor()),
+            state.clock,
+            2,
+        )?;
+        let mut hsi_clock = state.clock;
+        hsi_clock.set_sysclk(ClockSource::Hsi);
+        r.cr0().modify(|w| {
+            w.set_key(0x5a5a);
+            w.set_sysclk(ClockSource::Hsi);
+        });
+        state.wait(
+            LsiTransition::Clock(hsi_clock),
+            config.timeout,
+            Error::ClockSwitchTimeout,
+            cs,
+        )?;
+        barrier();
+    }
+
     // P6: an enabled inherited HSE is preserved, never stopped for reuse.
     if let Some(hse) = config.hse {
         state.check_all(LsiTransition::Steady, cs)?;
@@ -2624,37 +3426,55 @@ fn configure_lsi(
             let old_consumers = state.consumers.ok_or(Error::LsiClockInUse)?;
             // The exact projected GPIOF gate delta is verified before any pad
             // programming. No fresh peripheral sample supplies expectations.
-            crate::rcc_l052_lsi_enable_hse_pins(
-                config.timeout,
-                cs,
-                state.monitor_hse,
-                state.monitor_lse,
-            )?;
+            rcc_lsi_enable_hse_pins(config.timeout, cs, state.monitor_hse, state.monitor_lse)?;
             state.pads = Some(old_pads.hse_gate_enabled());
             state.consumers = Some(old_consumers.hse_gate_enabled());
             state.lse_preflight = state
                 .lse_preflight
                 .map(|snapshot| snapshot.hse_gate_enabled());
             state.check_all(LsiTransition::Steady, cs)?;
-            crate::rcc_l052_lsi_configure_hse_pins(
-                bypass,
-                config.timeout,
-                cs,
-                state.monitor_hse,
-                state.monitor_lse,
-            )?;
-            state.pads = state.pads.map(|saved| saved.hse_configured(bypass));
-            state.consumers = state.consumers.map(|saved| saved.hse_configured(bypass));
-            state.lse_preflight = state
-                .lse_preflight
-                .map(|saved| saved.hse_configured(bypass));
-            state.check_all(LsiTransition::Steady, cs)?;
+            #[cfg(rcc_cw32l052_v1)]
+            {
+                rcc_lsi_configure_hse_pins(
+                    bypass,
+                    config.timeout,
+                    cs,
+                    state.monitor_hse,
+                    state.monitor_lse,
+                )?;
+                state.pads = state.pads.map(|saved| saved.hse_configured(bypass));
+                state.consumers = state.consumers.map(|saved| saved.hse_configured(bypass));
+                state.lse_preflight = state
+                    .lse_preflight
+                    .map(|saved| saved.hse_configured(bypass));
+                state.check_all(LsiTransition::Steady, cs)?;
+            }
+            #[cfg(rcc_cw32l083_v1)]
+            for step in 0..crate::RCC_L083_LSI_HSE_PIN_STEPS * if bypass { 1 } else { 2 } {
+                state.check_all(LsiTransition::Steady, cs)?;
+                crate::rcc_l083_lsi_configure_hse_pin_step(
+                    bypass,
+                    step,
+                    config.timeout,
+                    cs,
+                    state.monitor_hse,
+                    state.monitor_lse,
+                )?;
+                state.wait(
+                    LsiTransition::HsePad(bypass, step),
+                    config.timeout,
+                    Error::HsePinConfigurationTimeout,
+                    cs,
+                )?;
+            }
             let target = state.hse_parameters(hse)?;
             r.hse().modify(|w| {
                 w.set_mode(target.mode());
                 w.set_driver(target.driver());
+                #[cfg(rcc_cw32l052_v1)]
                 w.set_pdriver(target.pdriver());
                 w.set_freqrange(target.freqrange());
+                #[cfg(rcc_cw32l052_v1)]
                 w.set_pfreqrange(target.pfreqrange());
                 w.set_waitcycle(target.waitcycle());
                 w.set_flt(target.flt());
@@ -2669,9 +3489,16 @@ fn configure_lsi(
             state.check_all(LsiTransition::Steady, cs)?;
             let mut enabled = state.sources;
             enabled.set_hseen(true);
+            #[cfg(rcc_cw32l083_v1)]
+            {
+                enabled.set_hseccs(true);
+                state.event_owned[1] = true;
+            }
             r.cr1().modify(|w| {
                 w.set_key(0x5a5a);
                 w.set_hseen(true);
+                #[cfg(rcc_cw32l083_v1)]
+                w.set_hseccs(true);
             });
             state.wait(
                 LsiTransition::HseRequest(enabled),
@@ -2699,7 +3526,7 @@ fn configure_lsi(
         } else {
             state.cold_lse_preflight(lse, true, cs)?;
             let bypass = lse.mode == super::LseMode::Bypass;
-            crate::rcc_l052_lsi_configure_lse_pins(
+            rcc_lsi_configure_lse_pins(
                 bypass,
                 lse.poll_budget,
                 cs,
@@ -2707,6 +3534,10 @@ fn configure_lsi(
                 state.monitor_lse,
             )?;
             state.pads = state.pads.map(|saved| saved.lse_configured(bypass));
+            #[cfg(rcc_cw32l083_v1)]
+            {
+                state.consumers = state.consumers.map(|saved| saved.lse_configured(bypass));
+            }
             state.lse_preflight = state
                 .lse_preflight
                 .map(|saved| saved.lse_configured(bypass));
@@ -2717,7 +3548,9 @@ fn configure_lsi(
                 w.set_mode(target.mode());
                 w.set_driver(target.driver());
                 w.set_amp(target.amp());
+                #[cfg(rcc_cw32l052_v1)]
                 w.set_pdriver(target.pdriver());
+                #[cfg(rcc_cw32l052_v1)]
                 w.set_pamp(target.pamp());
                 w.set_waitcycle(target.waitcycle());
             });
@@ -2736,6 +3569,10 @@ fn configure_lsi(
             enabled.set_lseen(true);
             enabled.set_lseccs(true);
             state.lse_requested = true;
+            #[cfg(rcc_cw32l083_v1)]
+            {
+                state.event_owned[2] = true;
+            }
             r.cr1().modify(|w| {
                 w.set_key(0x5a5a);
                 w.set_lseen(true);
@@ -2780,6 +3617,7 @@ fn configure_lsi(
 
     // P9: latency is finalized before the final source-only CR0 commit. Fixed
     // HSI /6 escape gets no post-fault AHB divisor credit.
+    #[cfg(rcc_cw32l052_v1)]
     let upper_hclk = clocks
         .hclk_bounds()
         .maximum()
@@ -2795,8 +3633,12 @@ fn configure_lsi(
                 .maximum()
                 .0,
         );
+    #[cfg(rcc_cw32l052_v1)]
     let final_wait = (upper_hclk - 1) / crate::RCC_FLASH_WAIT_STEP_HZ;
+    #[cfg(rcc_cw32l052_v1)]
     state.flash_latency(final_wait, cs)?;
+    #[cfg(rcc_cw32l083_v1)]
+    let final_wait = crate::RCC_INITIAL_FLASH_WAIT;
     state.verify_sources(config, cs)?;
     let mut final_lsi = state.clock;
     final_lsi.set_sysclk(ClockSource::Lsi);
@@ -2831,7 +3673,7 @@ fn configure_lsi(
     }
     // This normalized CR0 read is deliberately the very last hardware
     // observation. Publication happens only in the existing successful caller.
-    let last_clock = r.cr0().read().0 & !crate::RCC_L052_LSI_CR0_KEY_MASK;
+    let last_clock = r.cr0().read().0 & !LSI_CR0_KEY_MASK;
     if last_clock != final_lsi.0 {
         return Err(Error::ClockSwitchTimeout);
     }
