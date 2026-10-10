@@ -2,11 +2,13 @@
 
 Two ordinary bare-metal firmware examples for CW32F020C6U7, CW32F030C8T7,
 CW32A030C8T7, CW32L031C8T6, CW32L031C8U6, CW32L031F8U6, CW32R031C8U6 and
-CW32W031R8U6. Build with one exact feature, for example:
+CW32W031R8U6, CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6. Build with one
+exact feature, for example:
 
 ```
 cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f020c6u7,defmt --bin crystal
 cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f030c8t7,defmt --bin bypass
+cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32l052r8s6,defmt --bins
 ```
 
 These are board declarations, not measured qualification. Both examples assert
@@ -17,15 +19,30 @@ variation. Replace these with the actual qualified board data. HSI /6 and AHB/AP
 
 `crystal` requires the board's 32768 Hz crystal, load capacitors and layout on
 PC14/PC15. Their physical positions are 3/4 on the classic and L031 48-pin
-packages, 1/2 on L031 QFN20, 2/3 on R031 QFN48 and 61/62 on W031 QFN64. The actual crystal
+packages, 1/2 on L031 QFN20, 2/3 on R031 QFN48 and 61/62 on W031 QFN64. On
+all three L052 packages, including both 64-pin R8 packages, PC14/PC15 are
+physical pins 3/4. The actual crystal
 and board must qualify Strong drive, Normal amplitude and the selected startup
-count. `bypass` requires an external digital clock on PC14. On the classic
+count. L052 additionally declares independent startup drive Normal and startup
+amplitude Large, deliberately distinct from run drive Strong and run amplitude
+Normal. Both pairs and the 16384-cycle startup count require board-specific
+qualification; these values are demonstration assertions, not a recommended
+universal preset. All four analog fields are installed before enable, never
+rewritten at STABLE; the precise hardware phase-switch instant is not promised.
+Bypass keeps the same explicit fields for exact-source reuse.
+
+`bypass` requires an external digital clock on PC14. On the classic
 three parts the reviewed input limits are: high level
 0.7×VDDIO…VDDIO, low level VSS…0.3×VDDIO, high and low pulse widths at least
 450 ns and rise/fall times at most 50 ns, plus the device's full I/O requirements.
 The classic source must retain 45–55% duty and satisfy those limits every cycle.
 For the five L031/R031/W031 parts, qualify the corresponding own-datasheet
 waveform and operating-condition rows bound by their source contract.
+For L052, qualify VDD 1.65–5.5 V with VDDA=VDD and ambient −40…85 °C; the
+example asserts the narrower interval above. Its own bypass limits are high
+0.7×VDDIOx…VDDIOx, low VSS…0.3×VDDIOx, high/low pulses at least 450 ns,
+rise/fall at most 50 ns and 45–55% duty, throughout every declared condition.
+The 1 MHz input ceiling does not change this example's nominal 32768 Hz source.
 PC15 is not consumed by bypass; inherited reservations still apply.
 
 Both call only `Config.lse` plus `Sysclk::LSE`, then borrow the same source with
@@ -42,6 +59,17 @@ can advance sampling/filter/events. Matching cold LSI on L031/R031/W031 can
 also resume parked direct consumers without a TRIM/WAIT write. See the
 [classic contract](../../docs/classic-lse-sysclk.md) and the separate
 [five-package contract](../../docs/l031-r031-w031-lse-sysclk.md).
+
+On L052, admission can run the whole GPIOA/B/C/D/F banks. Matching stopped LSI
+can resume UART1..3 SOURCE3 (native SORCE), an admitted manual AUTOTRIM timer
+SRC1, GPIO FLTCLK5, MCO SOURCE4, PC4/AF6 on R8S6/R8T6 only, and enabled,
+already work-ungated LPTIM ICLKSRC3 or LCD CLKCS0. Closed LCD/LPTIM work gates
+stay closed. Newly resumed RTC SOURCE2 is excluded by the accepted state
+combinations: cold LSE needs pristine RTC SOURCE0, while reused LSE already
+needs ready LSI. The existing pre-Rust quiescent bus-master entry model remains
+in force. Configured HSI must be legal at final bus dividers; the separate fixed
+fallback budget uses undivided 8.16 MHz and assumes no retained divider values.
+See [the exact-three L052 contract](../../docs/l052-lse-sysclk.md).
 
 The build script obtains exact memory limits from generated metadata and supplies
 `-Tlink.x` explicitly. Compilation/link/ELF inspection do not run this firmware or

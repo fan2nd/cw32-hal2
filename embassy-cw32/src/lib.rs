@@ -114,6 +114,27 @@ pub struct Config {
 /// clock-sensitive peripheral/interrupt work remains excluded during init.
 /// Factory-mismatching LSI retains its separate two-pass consumer admission.
 ///
+/// On CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6, LSE SYSCLK admission
+/// can briefly run each entire GPIOA/B/C/D/F bank. Sampling, filters and armed
+/// events can advance even before an error; preserving registers and restoring
+/// gates cannot undo that progress. Starting factory-matching stopped LSI
+/// leaves TRIM/WAIT unchanged but can resume parked UART1..3 SOURCE3 (native
+/// SORCE), permitted manual AUTOTRIM timer SRC1, GPIO FLTCLK5, MCO SOURCE4,
+/// and PC4 AF6 on the two R8 packages only. Enabled, already work-ungated
+/// LPTIM ICLKSRC3 and LCD CLKCS0 can also resume; closed work gates stay closed.
+/// The admitted LSI/LSE combinations do not newly resume RTC SOURCE2: cold
+/// LSE requires the full RTC reset record with SOURCE0, and reused LSE already
+/// requires a ready monitor. AUTOTRIM admission precedes any factory-match
+/// shortcut and rejects automatic/active calibration. The functional handover
+/// must permit this progress and initialization's changes to bus/output timing;
+/// normal clock-sensitive peripheral/interrupt work remains excluded. This
+/// does not change the pre-Rust bus-master/memory-ownership boundary above.
+/// Configured HSI must be legal at the final AHB/APB dividers even without HSE
+/// or enabled CLKCCS. Separately, fallback electrical coverage uses undivided
+/// fixed-output HSI's 8.16 MHz upper bound without assuming divider retention.
+/// Frozen healthy LSE clocks are invalid after source loss/fallback. This adds
+/// no public LSI SYSCLK, recovery, continuity or silicon-validation guarantee.
+///
 /// On CW32L010, starting a previously disabled LSE while RTC selects LSE
 /// additionally requires a handover with no dependent RTC_OUT or RTC_1Hz
 /// observer. Disconnect or leave inactive PB04/PB06 RTC digital output pads

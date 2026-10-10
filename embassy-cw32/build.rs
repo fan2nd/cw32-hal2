@@ -4113,9 +4113,13 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             | "CW32R031C8U6"
             | "CW32W031R8U6"
     );
+    let l052_sysclk_qualified = matches!(
+        METADATA.name,
+        "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6"
+    );
     assert_eq!(
         lse.sysclk_detector.is_some(),
-        classic_sysclk_qualified || l031_sysclk_qualified,
+        classic_sysclk_qualified || l031_sysclk_qualified || l052_sysclk_qualified,
         "LSE SYSCLK detector qualification missing or unexpected"
     );
     if let Some(detector) = &lse.sysclk_detector {
@@ -4133,10 +4137,10 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                 "classic LSE SYSCLK requires own factory-LSI facts"
             );
         } else {
-            assert!(l031_sysclk_qualified && lse.configurable_ccs);
+            assert!((l031_sysclk_qualified || l052_sysclk_qualified) && lse.configurable_ccs);
             assert!(
                 c.lsi_sysclk.is_none(),
-                "L031/R031/W031 LSE SYSCLK does not qualify LSI SYSCLK"
+                "Native LSE SYSCLK does not qualify LSI SYSCLK"
             );
             let rtc = METADATA
                 .peripherals
@@ -4145,7 +4149,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                 .and_then(|p| p.rtc_calendar.as_ref())
                 .expect("LSE SYSCLK requires own RTC factory monitor facts");
             let supply_mv = match METADATA.line {
-                "CW32L031" => (1650, 5500),
+                "CW32L031" | "CW32L052" => (1650, 5500),
                 "CW32R031" => (2200, 3600),
                 "CW32W031" => (2000, 3600),
                 _ => panic!("unqualified LSE SYSCLK factory monitor family"),
@@ -4160,6 +4164,21 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             assert_eq!(rtc.supply_mv, supply_mv);
             assert_eq!(lse.temperature_c, rtc.temperature_c);
             assert_eq!(lse.supply_mv, rtc.supply_mv);
+            if l052_sysclk_qualified {
+                assert_eq!(METADATA.line, "CW32L052");
+                assert_eq!(
+                    c.hse
+                        .as_ref()
+                        .expect("L052 fixed CCS facts")
+                        .fixed_ccs_hsi_divisor,
+                    Some(6)
+                );
+                assert_eq!((c.hsi_frequency_hz, c.hsi_error_percent), (48_000_000, 2));
+                assert_eq!(c.hsi_supply_mv, rtc.supply_mv);
+                assert_eq!(c.hsi_temperature_c, rtc.temperature_c);
+                // The native field checks below independently bind LSI
+                // TRIM[9:0], WAITCYCLE[11:10] and STABLE[15].
+            }
         }
         for (name, value) in [
             ("LSE_EDGES", detector.lse_edges),

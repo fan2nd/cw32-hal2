@@ -406,3 +406,11 @@ CW32L031C8T6/C8U6/F8U6、CW32R031C8U6、CW32W031R8U6 单独新增同一 `Config.
 L031 RM CN1.6 PDF54–59、62–63、67–68、71、75、107、170；R031 RM CN1.3 PDF56–61、64–65、69–70、73、77、109、172；W031 RM CN1.4 PDF55–60、63–64、68–69、72、76、108、171 分别支持自身LSI启动/参数冻结、selector4、可配置CCS、128/256检测、Flash和RTC。L031 DS CN1.9 PDF26/38/45–47、R031 DS CN1.2 PDF29/42/52–54、W031 DS CN1.3 PDF30/41/51–53 独立绑定封装与电气范围。原厂LSI半字地址0x00100A02、32800/31816/33784Hz及供电/温度复用既有RTC事实，不新增LSI SYSCLK资格。
 
 新目标保留CLKCCS/HSECCS，仅新启动添加LSECCS。匹配冷LSI不写TRIM/WAIT、不套用重调所有权证明，但请求可恢复停驻AWT/UART/GPIO滤波/MCO/直出消费者；功能移交必须允许事件推进。失配冷源保留自身两遍证明。完整双稳定/原厂参数检查先于HSI校准桥或LSE启动；最终HSI分频、Flash完成后仅一次LSE选择。软件129/256裕量与LSI仅速率事实分开；RTC共享板级每周期LSE元组。无实板检测窗口、失钟恢复、低功耗或RF保证。
+
+### 三个 L052 精确封装的 init-only LSE SYSCLK
+
+仅 CW32L052C8T6、CW32L052R8S6、CW32L052R8T6 新增同一 `Config.lse + Sysclk::LSE`；自身依据及原件 ID/SHA 见 [双原件系统源资格](../docs/l052-lse-sysclk-qualification.json)，功能边界见 [运行契约](../docs/l052-lse-sysclk.md)。三个共享数据模型与既有辅助 LSE 资格不变；不新增 LSI SYSCLK 或 L083 系统源资格。
+
+`CW32L052_UserManual_CN_V1.5.pdf` Rev1.5 的 PDF54、57、59、61–62、65–66、70–74、112（书页53、56、58、60–61、64–65、69–73、111）绑定自身切换流程、selector4、可配置 CCS、128/256 检测、原厂 LSI、HSI 字段及 Flash；`CW32L052_DataSheet_CN_V1.3.pdf` Rev1.3 的 PDF43、51（书页42、50）绑定供电/温度、24/48 MHz 总线上限和原厂 HSI/LSI 误差。以上两组与资格 JSON 的精确页码集合一致；不借用其他族规则，原有引脚/双模拟组/消费者依据仍见前述 L052 专节。
+
+保留 CLKCCS/HSECCS/LSELOCK；最终分频下的配置 HSI 独立校验，固定 HSI8MHz 回退按不分频的8.16MHz上界覆盖总线和Flash，不假定回退保留任何分频器。HSI无WAIT字段；LSI的TRIM/WAIT与板级LSE元组分别冻结，软件额外1沿不是厂商指标。源码/编译不建立实板启动、检测窗口、失钟恢复或日历连续性保证。

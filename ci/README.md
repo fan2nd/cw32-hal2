@@ -76,11 +76,20 @@ example's build.rs derives exact memory bounds and links with -Tlink.x. Inspect
 the resulting ELF entry, vectors and PT_LOAD regions separately before flashing.
 
 
-`./d check-lse-sysclk` is a bounded local compile/link entry: nine ordinary ARM
-libraries for the classic3, exact5 L031/R031/W031 and excluded F020F6U7, sixteen
-crystal/bypass SYSCLK+RTC firmware links, and four existing HSI+aux-LSE, LSI, HSE
-and PLL firmware regressions. It runs no HAL tests or hardware and adds no hosted
-workflow. The new example build script derives exact FLASH/RAM from metadata and
+`./d check-lse-sysclk` is a bounded local compile/link entry: twelve ordinary ARM
+libraries for the classic3, exact5 L031/R031/W031, exact3 L052 and excluded
+F020F6U7, twenty-two crystal/bypass SYSCLK+RTC firmware links, and four existing
+HSI+aux-LSE, LSI, HSE and PLL firmware regressions. It runs no HAL tests or hardware
+and adds no hosted workflow. The new example build script derives exact FLASH/RAM from metadata and
 passes `-Tlink.x`; inspect each actual ELF's vectors, reset entry and PT_LOAD
 regions separately. A compile pass does not execute cold/reuse/reject or fixed
 1 MHz time-driver rejection. See [the new example contract](../examples/lse-sysclk/README.md).
+
+The L052 addition covers only CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6.
+The example's exact-feature cfg supplies both independent startup analog fields;
+the two firmware modes reuse the same declared source for SYSCLK and RTC. This
+is the script's declared local command scope, not evidence that any command ran
+or that excluded aliases/L083 were exhaustively checked. It adds no runtime
+probe, synthetic harness, hosted CI, or physical startup/recovery qualification.
+Generated PAC, chip JSON, build reports and compiler outputs remain excluded
+from source deliverables. See [the L052 contract](../docs/l052-lse-sysclk.md).

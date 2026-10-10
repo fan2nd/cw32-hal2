@@ -40,10 +40,21 @@ def main():
     rtc = load(ROOT / "docs/lse-active-l052-rtc-admission.json")
     catalog = load(ROOT / "cw32-data/lse-qualified.yaml")
     assert set(proof["parts"]) == PARTS
+    sysclk = load(ROOT / "docs/l052-lse-sysclk-qualification.json")
+    assert sysclk["schema_version"] == 1
+    assert sysclk["parts"] == sorted(PARTS)
+    assert sysclk["sysclk_detector"] == {"lse_edges": 128, "lsi_cycles": 256, "margin_lse_edges": 1}
+    assert sysclk["sysclk_selector"] == 4 and sysclk["lsi_sysclk_qualification"] is False
+    assert [(s["source_ref"], s["pdf_pages_1_based"]) for s in sysclk["sources"]] == [
+        ("vendor:CW32L052_UserManual_CN_V1.5.pdf", [54, 57, 59, 61, 62, 65, 66, 70, 71, 72, 73, 74, 112]),
+        ("vendor:CW32L052_DataSheet_CN_V1.3.pdf", [43, 51]),
+    ]
+    assert {part for part, profile in catalog["parts"].items()
+            if part.startswith("CW32L052") and "sysclk_detector" in profile["configuration"]} == PARTS
     for path, digest in catalog["policies"].items():
         assert sha((ROOT / path).read_bytes()) == digest
     page_receipts = []
-    for source in proof["sources"]:
+    for source in proof["sources"] + sysclk["sources"]:
         locked = authority[source["source_ref"]]
         assert source["sha256"] == locked["sha256"]
         assert locked["provenance"]["chip_scope"] == ["CW32L052"]
@@ -72,8 +83,11 @@ def main():
     assert group["source_versions"] == ["sysctrl_cw32l052_v1.yaml"]
     pins = {p["name"]: p for p in load(ROOT / "cw32-data/pinouts/cw32l052.yaml")["packages"]}
     for part in PARTS:
-        config = proof["configurations"][part]
-        assert catalog["parts"][part] == {**proof["parts"][part], "configuration": config}
+        current = catalog["parts"][part]
+        assert current["configuration"]["sysclk_detector"] == sysclk["sysclk_detector"]
+        config = {key: value for key, value in current["configuration"].items() if key != "sysclk_detector"}
+        assert config == proof["configurations"][part]
+        assert {**current, "configuration": config} == {**proof["parts"][part], "configuration": config}
         assert config["rtc_reset"] == rtc["rtc_reset"]
         assert next(r for r in config["rtc_reset"] if r["register"] == "ALARMA")["value"] == 0x04120000
         assert config["awt_source"] is None and config["configurable_ccs"] is True
@@ -100,7 +114,7 @@ def main():
             if chip["line"] == "CW32L052":
                 assert (config is not None) == (chip["name"] in PARTS)
                 if config:
-                    assert config == proof["configurations"][chip["name"]]
+                    assert config == catalog["parts"][chip["name"]]["configuration"]
             generated += 1
     result = {"status": "passed", "originals_verified": len(originals), "sdk_members_verified": len(members), "qualified_parts": sorted(PARTS), "canonical_native_ir_sha256": canonical, "source_pages": page_receipts, "generated_selections_checked": generated, "hardware_execution": False}
     args.out.parent.mkdir(parents=True, exist_ok=True)

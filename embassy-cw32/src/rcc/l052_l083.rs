@@ -27,6 +27,9 @@
 use crate::{pac, time::Hertz};
 use core::cell::Cell;
 use critical_section::Mutex;
+
+#[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+mod lse_sysclk;
 #[cfg(rcc_hse)]
 use pac::sysctrl::vals::Sysclk as ClockSource;
 
@@ -257,6 +260,9 @@ pub enum Sysclk {
     HSI,
     /// Qualified external high-speed oscillator or input.
     HSE,
+    /// Init-only board-qualified LSE, with retained factory LSI monitoring.
+    #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+    LSE,
     /// L083 HSI/HSE-fed PLL, with independent electrical and analog-bin checks.
     #[cfg(rcc_pll)]
     PLL,
@@ -480,6 +486,29 @@ impl Config {
             let source = match self.sys {
                 Sysclk::HSI => crate::rcc::ClockBounds::hsi(self.hsi.div.divisor()),
                 Sysclk::HSE => hse.ok_or(Error::HseNotConfigured)?,
+                #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+                Sysclk::LSE => {
+                    use crate::rtc::sealed::Instance;
+                    let (config, bounds) = lse.ok_or(Error::LseNotConfigured)?;
+                    // Hardware counts and a distinct software phase margin;
+                    // factory LSI rate facts are not per-cycle jitter bounds.
+                    if u64::from(config.min_freq.0) * u64::from(crate::RCC_LSE_SYSCLK_LSI_CYCLES)
+                        <= (u64::from(crate::RCC_LSE_SYSCLK_LSE_EDGES)
+                            + u64::from(crate::RCC_LSE_SYSCLK_MARGIN_LSE_EDGES))
+                            * u64::from(crate::peripherals::RTC::SOURCE_MAXIMUM_HZ)
+                    {
+                        return Err(Error::InvalidLseDetector);
+                    }
+                    let c = self.operating_conditions;
+                    if c.min_supply_mv < crate::peripherals::RTC::SUPPLY_MV.0
+                        || c.max_supply_mv > crate::peripherals::RTC::SUPPLY_MV.1
+                        || c.min_temperature_c < crate::peripherals::RTC::TEMPERATURE_C.0
+                        || c.max_temperature_c > crate::peripherals::RTC::TEMPERATURE_C.1
+                    {
+                        return Err(Error::LseMonitorConditionsOutsideQualifiedRange);
+                    }
+                    bounds
+                }
                 #[cfg(rcc_pll)]
                 Sysclk::PLL => pll.ok_or(Error::PllNotConfigured)?,
             };
@@ -503,6 +532,28 @@ impl Config {
                 pll,
             };
             crate::rcc::operating::validate(self.operating_conditions, clocks)?;
+            #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+            if self.sys == Sysclk::LSE {
+                // Final dividers are installed while executing configured HSI.
+                // This use edge is independent of an HSE declaration or CLKCCS.
+                crate::rcc::operating::validate(
+                    self.operating_conditions,
+                    Clocks {
+                        source: crate::rcc::ClockBounds::hsi(self.hsi.div.divisor()),
+                        ..clocks
+                    },
+                )?;
+                // Own fallback output is fixed HSI /6. Post-fault bus-divider
+                // retention is unspecified, so cover its undivided upper rate.
+                crate::rcc::operating::validate(
+                    self.operating_conditions,
+                    Clocks {
+                        source: crate::rcc::ClockBounds::hsi(crate::RCC_FIXED_CCS_HSI_DIVISOR),
+                        dividers: [self.hsi.div.divisor(), 1, 1],
+                        ..clocks
+                    },
+                )?;
+            }
             // Qualify requested HSI and the own-family CCS fallback for every
             // HSE declaration, even when the incoming switching policy is off.
             // L052 hardware forces HSI /6; L083 retains the configured divider.
@@ -583,6 +634,12 @@ impl Clocks {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
+    #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+    LseNotConfigured,
+    #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+    InvalidLseDetector,
+    #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+    LseMonitorConditionsOutsideQualifiedRange,
     #[cfg(rcc_lse)]
     InvalidLseBounds,
     #[cfg(rcc_lse)]
@@ -1008,6 +1065,10 @@ fn configure_hse(
     config: Config,
     cs: critical_section::CriticalSection<'_>,
 ) -> Result<Clocks, Error> {
+    #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+    if config.sys == Sysclk::LSE {
+        return lse_sysclk::configure(config, cs);
+    }
     let mut clocks = config.frequencies()?;
     let r = pac::SYSCTRL;
     #[cfg(rcc_lse)]
@@ -1368,6 +1429,9 @@ fn configure_hse(
     let sysclk = match config.sys {
         Sysclk::HSI => ClockSource::Hsi,
         Sysclk::HSE => ClockSource::Hse,
+        // The explicit target branch above bypasses this old auxiliary path.
+        #[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+        Sysclk::LSE => return Err(Error::InvalidClockSource),
         #[cfg(rcc_pll)]
         Sysclk::PLL => ClockSource::Pll,
     };
@@ -1688,4 +1752,9 @@ fn prepare_lse_monitor(
         let lsi = r.lsi().read();
         lsi.trim() == calibration.trim() && lsi.waitcycle() == before.waitcycle()
     })
+}
+
+#[cfg(all(rcc_lse, rcc_cw32l052_v1))]
+pub(super) fn lse_sysclk_monitor_ready() -> bool {
+    lse_sysclk::monitor_ready()
 }

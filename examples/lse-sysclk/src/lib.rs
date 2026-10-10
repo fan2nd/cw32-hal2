@@ -21,6 +21,21 @@ pub fn config(mode: rcc::LseMode) -> hal::Config {
         // parameters too, so later exact-source reuse checks the same tuple.
         drive: rcc::LseDrive::Strong,
         amplitude: rcc::LseAmplitude::Normal,
+        // L052 has independent startup banks. These deliberately distinct
+        // demonstration values require board qualification in both modes;
+        // they are not a universal crystal/startup preset.
+        #[cfg(any(
+            feature = "cw32l052c8t6",
+            feature = "cw32l052r8s6",
+            feature = "cw32l052r8t6"
+        ))]
+        startup_drive: rcc::LseDrive::Normal,
+        #[cfg(any(
+            feature = "cw32l052c8t6",
+            feature = "cw32l052r8s6",
+            feature = "cw32l052r8t6"
+        ))]
+        startup_amplitude: rcc::LseAmplitude::Large,
         wait: rcc::LseWait::Cycles16384,
         poll_budget: 20_000_000,
     });

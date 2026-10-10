@@ -23,6 +23,7 @@ policies:
   docs/lse-l012-rtc-admission.json: 82a983157a27504450cc708b40885fcca7f51af189b0103ac235dedaf432a4b4
   docs/classic-lse-sysclk-qualification.json: e0c2b4adc503a26115bf6aa2cbaa0e786d7257c12577f7c1f471f431a93fda17
   docs/l031-r031-w031-lse-sysclk-qualification.json: 53a603d5dde8f8a479928c29ca3517dbc425e7fd7203b510d07ff85332490d7a
+  docs/l052-lse-sysclk-qualification.json: de0e8c6391efbdd22abef032b2600d12545a1a41e997c55c8172dabcc5dce379
 parts:
   CW32A030C8T7:
     family: CW32A030
@@ -2007,6 +2008,10 @@ parts:
         - UART2
         - UART3
         lsi_output_routes: []
+      sysclk_detector:
+        lse_edges: 128
+        lsi_cycles: 256
+        margin_lse_edges: 1
   CW32L052R8S6:
     family: CW32L052
     package: "LQFP64\uFF087\xD77mm\uFF09"
@@ -2108,6 +2113,10 @@ parts:
         lsi_output_routes:
         - pin: PC4
           af: 6
+      sysclk_detector:
+        lse_edges: 128
+        lsi_cycles: 256
+        margin_lse_edges: 1
   CW32L052R8T6:
     family: CW32L052
     package: "LQFP64\uFF0810\xD710mm\uFF09"
@@ -2209,6 +2218,10 @@ parts:
         lsi_output_routes:
         - pin: PC4
           af: 6
+      sysclk_detector:
+        lse_edges: 128
+        lsi_cycles: 256
+        margin_lse_edges: 1
   CW32L083RBT6:
     family: CW32L083
     package: "LQFP64\uFF0810\xD710mm\uFF09"

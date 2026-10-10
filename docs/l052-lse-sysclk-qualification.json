@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "scope": "Init-only nominal 32768 Hz LSE SYSCLK on exactly three CW32L052 packages using the existing board-qualified Config.lse tuple. Existing auxiliary LSE and other parts retain their qualifications. No public LSI SYSCLK, runtime switching, wake or recovery qualification is added.",
+  "parts": [
+    "CW32L052C8T6",
+    "CW32L052R8S6",
+    "CW32L052R8T6"
+  ],
+  "sysclk_detector": {
+    "lse_edges": 128,
+    "lsi_cycles": 256,
+    "margin_lse_edges": 1
+  },
+  "hardware_count_source": "Own CN manual Rev1.5 PDF62/71: failure below 128 LSE edges during 256 LSI cycles; LSECCS and software LSIEN are required.",
+  "margin_source": "Conservative software policy: 256 * minimum_LSE_hz > (128 + 1) * 33784. The extra edge is a software margin, not a hardware threshold or a per-cycle LSI guarantee.",
+  "factory_lsi_reference": {
+    "metadata_source": "rtc_calendar",
+    "source": "LSI",
+    "source_encoding": 2,
+    "factory_trim_address": 1051138,
+    "trim_bit_offset": 0,
+    "trim_bit_size": 10,
+    "wait_bit_offset": 10,
+    "wait_bit_size": 2,
+    "stable_bit": 15,
+    "nominal_hz": 32800,
+    "minimum_hz": 31816,
+    "maximum_hz": 33784,
+    "supply_mv": [
+      1650,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "raw_erased_halfword_rejected_before_masking": true,
+    "trim_and_wait_retained_after_admission": true,
+    "request_and_direct_and_mirrored_stable_required_at_use": true,
+    "lsi_sysclk_qualification": false
+  },
+  "sysclk_selector": 4,
+  "ccs_policy": {
+    "preserve": [
+      "CLKCCS",
+      "HSECCS",
+      "LSELOCK"
+    ],
+    "fresh_lse_enable": [
+      "LSECCS"
+    ],
+    "running_lse_requires_existing_detector": true
+  },
+  "fallback": {
+    "metadata_source": "clock_limits.hse.fixed_ccs_hsi_divisor",
+    "fixed_ccs_hsi_divisor": 6,
+    "documented_nominal_hz": 8000000,
+    "modeled_minimum_hz": 7840000,
+    "modeled_maximum_hz": 8160000,
+    "hsi_oscillator_nominal_hz": 48000000,
+    "hsi_factory_error_percent": 2,
+    "conservative_bus_and_flash_maximum_hz": 8160000,
+    "divisor_retention_proven": false,
+    "basis": "CR1.CLKCCS names automatic HSI8MHz. Existing own fixed-/6 numerical model uses factory HSI +/-2%. The manual does not specify post-fault HSI.DIV or bus-prescaler register updates; electrical coverage therefore uses the undivided 8.16MHz upper bound independently of configured HSI, AHB and APB divisors."
+  },
+  "hsi_register": {
+    "trim_bit_offset": 0,
+    "trim_bit_size": 11,
+    "div_bit_offset": 11,
+    "div_bit_size": 4,
+    "stable_bit": 15,
+    "has_wait_field": false,
+    "update_policy": "Stopped trim writes preserve DIV/reserved bits. Live divider-only changes preserve TRIM/reserved bits under the own section4.5.2 procedure."
+  },
+  "electrical_limits": {
+    "supply_mv": [
+      1650,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "low_voltage_threshold_mv": 1800,
+    "low_voltage_bus_max_hz": 24000000,
+    "high_voltage_bus_max_hz": 48000000,
+    "flash_wait_step_hz": 24000000
+  },
+  "transition_policy": "Validate configured factory HSI at final AHB/APB even without HSE and with CLKCCS=0. Keep Flash WAIT2 through guarded HSI escape, any stopped-HSI trim bridge and final-divider installation. Select ready LSE once, then perform no CR0 write. Reduce Flash only after the complete tree is acknowledged, using the maximum of LSE upper HCLK, configured HSI upper HCLK and undivided fixed-fallback upper.",
+  "native_admission_policy": "Retain the own native startup/consumer and RTC reset proofs. AUTOTRIM admission precedes every factory-LSI match shortcut. Preserve admitted live sources, source parameters, observer flags, native UART SORCE, both LSE analog banks and reserved L052 CR1 bit2; L052 has no PLL. The target marker is stored only after complete success.",
+  "inherited_own_proofs": [
+    "docs/lse-active-l052.json",
+    "docs/lse-active-l052-rtc-admission.json"
+  ],
+  "source_tuple": "The same board Config.lse tuple supplies healthy SYSCLK, HCLK, PCLK and later LseClock/RTC; neither factory monitor bounds nor fallback bounds replace it.",
+  "lsi_sysclk_qualification": false,
+  "lsi_cycle_timing_qualified": false,
+  "limits": [
+    "No guaranteed crystal startup completion time",
+    "No guarantee of CPU progress or bounded loss-to-fallback time",
+    "No frozen-clock validity or RTC continuity after source loss/fallback",
+    "No runtime switching, low-power wake, arbitrary handover sanitization or silicon validation"
+  ],
+  "sources": [
+    {
+      "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "family": "CW32L052",
+      "pdf_pages_1_based": [
+        54,
+        57,
+        59,
+        61,
+        62,
+        65,
+        66,
+        70,
+        71,
+        72,
+        73,
+        74,
+        112
+      ],
+      "printed_pages": [
+        53,
+        56,
+        58,
+        60,
+        61,
+        64,
+        65,
+        69,
+        70,
+        71,
+        72,
+        73,
+        111
+      ]
+    },
+    {
+      "source_ref": "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+      "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+      "family": "CW32L052",
+      "pdf_pages_1_based": [
+        43,
+        51
+      ],
+      "printed_pages": [
+        42,
+        50
+      ]
+    }
+  ]
+}

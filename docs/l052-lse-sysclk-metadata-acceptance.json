@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-10",
+  "status": "passed",
+  "scope": "Independent exact-three L052 LSE SYSCLK metadata, own-source and generated-projection review; no runtime/HAL certification",
+  "baseline_source_zip_sha256": "808b64c7900984825709794d9ccef497cb79eb4693f30a6c58fd4c37802a1332",
+  "submitted_delta_receipt_sha256": "24b0103879d49c554bf4a34da3918e1bc661d38408e626d63bf2a315afe95305",
+  "reviewed_source_files": [
+    {
+      "path": "cw32-data/lse-qualified.yaml",
+      "sha256": "c7d5b10c34de02129e48f1f7aa509066f629cbb69940941e57a7bba63553aaf9"
+    },
+    {
+      "path": "cw32-data-gen/src/electrical.rs",
+      "sha256": "beeff6b7b5db3981801ae382c763b3a5889e0e464650fbb7af69435d3de4ba55"
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "7d7a7a9a5af335bebe970ad499b33b5c674f309d8f4247f48a92b366ceb842b5"
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "sha256": "3e839cc20ed2c79ae5b5ea7e74d36696ef048d04b45517e6a44662c64d534ad0"
+    },
+    {
+      "path": "docs/l052-lse-sysclk-qualification.json",
+      "sha256": "de0e8c6391efbdd22abef032b2600d12545a1a41e997c55c8172dabcc5dce379"
+    }
+  ],
+  "unchanged_models": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "sha256": "f36ce5da85172080d963347d8c9e25985b02d92e1a1227df78850cf7dd1ea9b1",
+      "matches_accepted_stage58": true
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "sha256": "227095b7b073825f26e34d2fbfe745c0938b8861dd53f68f00cf788668f6fc3c",
+      "matches_accepted_stage58": true
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "sha256": "d5a1ab60f97e6a097e1970bd3c32667828563035442fb8fa299c8270147d516c",
+      "matches_accepted_stage58": true
+    }
+  ],
+  "own_sources": [
+    {
+      "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "pdf_pages_1_based": [
+        54,
+        57,
+        59,
+        61,
+        62,
+        65,
+        66,
+        70,
+        71,
+        72,
+        73,
+        74,
+        112
+      ],
+      "printed_pages": [
+        53,
+        56,
+        58,
+        60,
+        61,
+        64,
+        65,
+        69,
+        70,
+        71,
+        72,
+        73,
+        111
+      ]
+    },
+    {
+      "source_ref": "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+      "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+      "pdf_pages_1_based": [
+        43,
+        51
+      ],
+      "printed_pages": [
+        42,
+        50
+      ]
+    }
+  ],
+  "source_lock_delta": "Exactly two new policy evidence links; all existing source identities and provenance unchanged",
+  "qualified_parts": [
+    "CW32L052C8T6",
+    "CW32L052R8S6",
+    "CW32L052R8T6"
+  ],
+  "detector": {
+    "lse_edges": 128,
+    "lsi_cycles": 256,
+    "margin_lse_edges": 1
+  },
+  "generated": {
+    "selections_checked": 54,
+    "auxiliary_profiles_retained": 23,
+    "detector_profiles": 11,
+    "full_current_catalog_equality": true,
+    "delta_exact_three": true,
+    "no_l052_lsi_sysclk": true,
+    "metapac_changed_files": [
+      {
+        "path": "cw32-metapac/src/chips/metadata_0026.rs",
+        "sha256": "7d8fbe6bf01ab5e6ee1154857a77a51bf5a0902d201f334a9cd57ba8e8593cff"
+      },
+      {
+        "path": "cw32-metapac/src/chips/metadata_0027.rs",
+        "sha256": "e7818f7d77ee6f05c55be45cab1f6a25aa3778fb688929c1d7a74e76bd2e28bc"
+      }
+    ]
+  },
+  "audit_patch": {
+    "path": "proposed-verify-l052-lse-data.patch",
+    "sha256": "b60b6a65ad5f24f06c27e03c3ff12034575afc144954970e900819287833137c",
+    "base_script_path": "ci/verify-l052-lse-data.py",
+    "base_script_sha256": "6e1cfaf5b8c920bcbaf60f2a9158eccebb46046379dc7d607843f491878c70a4",
+    "resulting_script_sha256": "6e774af57cad68a58c3b0190aa9e09c9b919f24347a68a41838b47f6909d5779",
+    "installation_conclusion": "Approved for the exact reviewed patch bytes",
+    "execution": "Applied only in memory by reviewer",
+    "originals_verified": 4,
+    "sdk_members_verified": 4,
+    "page_receipts_verified": 80,
+    "negative_data_cases_rejected": 15,
+    "generated_selections_checked": 54
+  },
+  "report": {
+    "path": "REVIEW.md",
+    "sha256": "054990e76441b1bc2b67948f3a289aee1bba2309d06234f827737496cb8f21cd"
+  },
+  "limits": [
+    "No candidate edits",
+    "No Cargo or HAL execution",
+    "No probe or behavior harness",
+    "No hardware execution",
+    "No publication or cleanup"
+  ]
+}

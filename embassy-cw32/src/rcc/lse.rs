@@ -114,6 +114,10 @@ fn monitor_ready(require_frozen: bool) -> bool {
     if !super::l031_r031_w031::lse_sysclk_monitor_ready() {
         return false;
     }
+    #[cfg(rcc_cw32l052_v1)]
+    if !super::l052_l083::lse_sysclk_monitor_ready() {
+        return false;
+    }
     if !crate::RCC_LSE_CONFIGURABLE_CCS {
         return true;
     }
@@ -146,6 +150,14 @@ fn freeze_monitor(cs: critical_section::CriticalSection<'_>) -> Result<(), Error
     }
     Ok(())
 }
+// The L052 system target supplies its own stronger cold/start use-edge checks.
+// This target-only entry freezes the same common RTC monitor, without changing
+// the existing auxiliary startup path or publishing system-clock success.
+#[cfg(rcc_cw32l052_v1)]
+pub(super) fn freeze_sysclk_monitor(cs: critical_section::CriticalSection<'_>) -> Result<(), Error> {
+    freeze_monitor(cs)
+}
+
 fn ready(config: Lse, require_frozen: bool) -> bool {
     pac::SYSCTRL.cr1().read().lseen()
         && pac::SYSCTRL.lse().read().stable()

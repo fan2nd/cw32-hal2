@@ -1158,8 +1158,8 @@ functions:
         anchor: config.rcc.sys = rcc::Sysclk::LSI
     - id: external_low_speed_sysclk
       status: partial
-      scope: Init-only nominal 32768 Hz LSE SYSCLK on the classic3 and exact5 L031/R031/W031 packages.
-      implemented_families: [CW32F020, CW32F030, CW32A030, CW32L031, CW32R031, CW32W031]
+      scope: Init-only nominal 32768 Hz LSE SYSCLK on the classic3, exact5 L031/R031/W031 and exact3 L052 packages.
+      implemented_families: [CW32F020, CW32F030, CW32A030, CW32L031, CW32R031, CW32W031, CW32L052]
       limitations:
       - Family aliases and every other exact package are excluded. Config.lse is the single source declaration;
         the same board every-cycle tuple supplies SYSCLK, buses and RTC.
@@ -1167,9 +1167,15 @@ functions:
         CLKCCS/HSECCS, classifies dual-status factory LSI, and enables only fresh LSECCS. Matching cold LSI
         keeps TRIM/WAIT unchanged but can resume parked consumers; mismatched trim retains its own two-pass proof.
       - Factory detector LSI stays requested. The target-only 129/256 software margin uses own rate maxima;
-        it proves no absolute jitter/window deadline and grants no new LSI SYSCLK capability to the exact5.
-      - HSI and any inherited classic PLL/reference remain enabled. Final buses and fallback-safe Flash are
-        installed on HSI before one LSE selection; no later divider RMW. Whole-bank handover effects apply.
+        it proves no absolute jitter/window deadline and grants no new LSI SYSCLK capability to the exact5 or exact3 L052.
+      - Exact3 L052 means CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6 only. Independent startup/run analog
+        banks, unconditional native AUTOTRIM admission and preserved CLKCCS/HSECCS/LSELOCK apply; no L083 target is added.
+      - L052 checks configured HSI at final dividers even without HSE or enabled CLKCCS, and separately covers
+        fixed fallback with undivided 8.16 MHz without assuming divider retention. WAIT2 remains through LSE
+        acknowledgment before final Flash reduction. Matching stopped LSI can resume parked consumers;
+        whole GPIOA/B/C/D/F banks can advance events. Newly resumed RTC SOURCE2 is outside accepted combinations.
+      - HSI and any inherited classic PLL/reference remain enabled. Final buses are installed on HSI before
+        one LSE selection; no later divider RMW. Own Flash order/budgets and whole-bank handover limits apply.
       - Fixed 1 MHz time driver rejects before ownership. Old source targets and all 23 auxiliary-LSE paths
         retain admission/order. Loss or HSI fallback invalidates frozen LSE timing; no runtime or silicon guarantee.
       registers_any: [LSE]
@@ -1179,6 +1185,10 @@ functions:
       - path: docs/classic-lse-sysclk.md
       - path: docs/l031-r031-w031-lse-sysclk-qualification.json
       - path: docs/l031-r031-w031-lse-sysclk.md
+      - path: docs/l052-lse-sysclk-qualification.json
+      - path: docs/l052-lse-sysclk.md
+      - path: embassy-cw32/src/rcc/l052_l083/lse_sysclk.rs
+        anchor: static SUCCESS
       - path: embassy-cw32/src/rcc/l031_r031_w031.rs
         anchor: LSE_SYSCLK_MONITOR
       - path: embassy-cw32/src/rcc/hsi_48mhz.rs
@@ -1408,7 +1418,7 @@ functions:
         No raw PINLOCK reuse is admitted for these two families. Native RTC LSE uses SOURCE0,PSC1=0,PSC2=0x3fff,
         and bounded source transitions stage division before switching; attach never repairs or retunes inherited state.
       - Failure retains source enables, pad reservations and diagnostics. Ordinary reset may not clear retained LSE controls; POR may be required.
-      - LSE system clock is separately qualified only for the classic3 and exact5 L031/R031/W031 packages above. No runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
+      - LSE system clock is separately qualified only for the classic3, exact5 L031/R031/W031 and exact3 L052 packages above. No runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
       registers_any:
       - LSE
       evidence:

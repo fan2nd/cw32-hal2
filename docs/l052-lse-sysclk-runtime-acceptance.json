@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-10T01:35:04.568300+00:00",
+  "verdict": "accepted_exact_runtime_freeze_v1_and_installed_public_boundary_supplement",
+  "scope": "Independent actual operational source review against full accepted design and own L052 originals. No Cargo, generator, HAL probe, HAL harness, HAL tests or hardware execution by reviewer. Not complete package or silicon acceptance.",
+  "exact_parts": [
+    "CW32L052C8T6",
+    "CW32L052R8S6",
+    "CW32L052R8T6"
+  ],
+  "runtime_manifest_sha256": "7a5296c2f8f609b3a6d89690f05c6de06ba485c06d2f987b87fee2ee12e4ba14",
+  "runtime_files": [
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083.rs",
+      "sha256": "ec3cd625d8d942b2a8600f74cd3643828471b8e58f99e69a6f3184f67fb12eda",
+      "bytes": 66649
+    },
+    {
+      "path": "embassy-cw32/src/rcc/lse.rs",
+      "sha256": "e8c6dfdd3c7c3884fff9e95c8988b636878778dd1f30e79b08377db88cb36110",
+      "bytes": 10196
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/lse_sysclk.rs",
+      "sha256": "2ceefaa6eb7f597a8fc01ad3285d16de948bf0e8f45614ed78367c1c9a925ed9",
+      "bytes": 26114
+    }
+  ],
+  "public_boundary_supplement": {
+    "path": "embassy-cw32/src/lib.rs",
+    "sha256": "0fc14926200abaa22e15d6f79c16ec796644d4bcebc35f148c39eab38bfb354d",
+    "bytes": 11832,
+    "mode": "0644",
+    "installed_and_proposal_match": true,
+    "baseline_sha256": "3d3bec74d639ca2765782a609959aec42aa1145d62e6147d19d61f8f5d946ad5",
+    "only_change": "one insertion of 21 rustdoc comment lines; executable source unchanged",
+    "added_lines": 21
+  },
+  "accepted_design_sha256": "32b83e1d11198662bb4f1a1769f2109c2a1b788f8e2edfe34efc1ec9bfd9b59d",
+  "accepted_hsi_register_supplement_sha256": "add6e09df4cab0fbe44d2bd46d63f2db616fbd980f7963d3b2b4ecb6049a4147",
+  "accepted_design_review_receipt_sha256": "f000568235531795ba6d3ff3f60e417860249f2e028d45f5615095af6ef98564",
+  "baseline_source_zip_sha256": "808b64c7900984825709794d9ccef497cb79eb4693f30a6c58fd4c37802a1332",
+  "original_authorities": [
+    {
+      "artifact": "CW32L052_UserManual_CN_V1.5.pdf",
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "role": "controlling own source"
+    },
+    {
+      "artifact": "CW32L052_DataSheet_CN_V1.3.pdf",
+      "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+      "role": "controlling own source"
+    },
+    {
+      "artifact": "CW32L052_UserManual_EN_V1.0.pdf",
+      "sha256": "20a7b6fcbdb1b6075c45ddc904a2acf75d92e1491e3186e1d604970e600bc088",
+      "role": "identity verified; not controlling"
+    },
+    {
+      "artifact": "CW32L052_StandardPeripheralLib_V1.4.zip",
+      "sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+      "role": "SDK corroboration"
+    }
+  ],
+  "full_external_report_sha256": "cdb511f2748cf1d1f6d7ea0014948de342244bd9655fbcbbda8984ff402e2ad3",
+  "findings": [],
+  "established": [
+    "Unconditional native AUTOTRIM admission before factory LSI match shortcut",
+    "Own LSI/LSE state cross-products and disabled-ready-observer preservation",
+    "Stopped-HSI trim-only operation; HSI has no WAIT field",
+    "Retained/declared HSE source and pad preservation",
+    "Ready-before-use guarded HSI/LSI sequence and configured-HSI final dividers under WAIT2",
+    "One intentional final LSE mux with no subsequent CR0 mutation",
+    "Complete tree checks before and after Flash reduction and pad inspection",
+    "Success-only target marker and CLOCKS publication; target-local later RTC monitor health",
+    "Old runtime projection unchanged; L083 excluded",
+    "Own-source rate/count, bus, Flash and pre-token time-driver arithmetic"
+  ],
+  "pre_documentation_library_receipts": "Earlier ordinary library builds were performed against the baseline lib.rs hash, not the installed supplemental hash. Independent source comparison proves the only change is 21 rustdoc comment lines; executable source is unchanged. This review does not relabel old build bytes as new ones.",
+  "remaining_package_gates": [
+    "Review any later runtime fix on a supplemental freeze",
+    "Complete separately authorized final build/link/acceptance evidence",
+    "Complete full metadata/provenance review",
+    "Verify final archive bytes match accepted source identities"
+  ],
+  "evidence_boundary": "Full working artifacts remain external. This minimal publishable receipt intentionally lists only original vendor source identities, never derived page extracts as originals."
+}

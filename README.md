@@ -171,6 +171,12 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   Incoming CLKCCS/HSECCS stay unchanged; matching cold LSI can resume parked
   consumers without TRIM/WAIT writes. Final HSI/buses/Flash precede one LSE mux
   write. See [the separate five-package contract](docs/l031-r031-w031-lse-sysclk.md).
+- CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6: init-only board-qualified
+  LSE SYSCLK from the same `Config.lse` tuple, with separate startup/run analog
+  settings and the own factory-LSI monitor. Configured HSI is checked at final
+  bus dividers; fixed fallback coverage uses undivided 8.16 MHz without assuming
+  divider retention. Whole-bank inspection and matching stopped-LSI startup
+  can resume functional consumers. See [the exact-three contract](docs/l052-lse-sysclk.md).
 - F020/F030/A030: direct qualified HSE crystal/bypass system clocks with explicit
   board nominal/minimum/maximum bounds, preserved factory HSI, mandatory CCS/LSI,
   retained-source protection and oscillator-pad reservation. See

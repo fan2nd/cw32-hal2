@@ -926,6 +926,7 @@ const LSE_L031_SYSCLK_PARTS: [&str; 5] = [
     "CW32R031C8U6",
     "CW32W031R8U6",
 ];
+const LSE_L052_SYSCLK_PARTS: [&str; 3] = ["CW32L052C8T6", "CW32L052R8S6", "CW32L052R8T6"];
 // Re-read from x030 RM Rev2.5 PDF187–195 and own F020 RM Rev1.4 PDF184–192. Values
 // and masks are observations, not writes. KEY and ICR are never included.
 const LSE_RTC_RESET: [(&str, u32, u32, u32); 13] = [
@@ -1107,10 +1108,11 @@ fn validate_lse_configuration(
     c: &cw32_data_serde::chip::core::peripheral::LseConfiguration,
 ) -> Result<()> {
     let sysclk_qualified = matches!(part, "CW32F020C6U7" | "CW32F030C8T7" | "CW32A030C8T7")
-        || LSE_L031_SYSCLK_PARTS.contains(&part);
+        || LSE_L031_SYSCLK_PARTS.contains(&part)
+        || LSE_L052_SYSCLK_PARTS.contains(&part);
     ensure!(
         c.sysclk_detector.is_some() == sysclk_qualified,
-        "LSE SYSCLK detector facts require exactly classic3 plus the five reviewed L031/R031/W031 packages"
+        "LSE SYSCLK detector facts require exactly classic3, the five reviewed L031/R031/W031 packages and the three reviewed L052 packages"
     );
     if let Some(detector) = &c.sysclk_detector {
         ensure!(
@@ -1905,6 +1907,62 @@ pub fn apply_lse(
             && factory_monitor["lsi_sysclk_qualification"] == false,
         "L031/R031/W031 LSE SYSCLK scope, detector or own factory monitor facts changed"
     );
+    let l052_sysclk_proof = read_policy("docs/l052-lse-sysclk-qualification.json")?;
+    let l052_factory_monitor = &l052_sysclk_proof["factory_lsi_reference"];
+    let l052_fallback = &l052_sysclk_proof["fallback"];
+    ensure!(
+        l052_sysclk_proof["schema_version"] == 1
+            && l052_sysclk_proof["parts"] == serde_json::to_value(LSE_L052_SYSCLK_PARTS)?
+            && l052_sysclk_proof["sysclk_detector"]
+                == serde_json::json!({"lse_edges":128,"lsi_cycles":256,"margin_lse_edges":1})
+            && l052_sysclk_proof["sysclk_selector"] == 4
+            && l052_sysclk_proof["ccs_policy"]["preserve"]
+                == serde_json::json!(["CLKCCS", "HSECCS", "LSELOCK"])
+            && l052_sysclk_proof["ccs_policy"]["fresh_lse_enable"]
+                == serde_json::json!(["LSECCS"])
+            && l052_sysclk_proof["ccs_policy"]["running_lse_requires_existing_detector"] == true
+            && l052_factory_monitor["metadata_source"] == "rtc_calendar"
+            && l052_factory_monitor["source"] == "LSI"
+            && l052_factory_monitor["source_encoding"] == 2
+            && l052_factory_monitor["factory_trim_address"] == 0x0010_0a02
+            && l052_factory_monitor["trim_bit_offset"] == 0
+            && l052_factory_monitor["trim_bit_size"] == 10
+            && l052_factory_monitor["wait_bit_offset"] == 10
+            && l052_factory_monitor["wait_bit_size"] == 2
+            && l052_factory_monitor["stable_bit"] == 15
+            && l052_factory_monitor["nominal_hz"] == 32_800
+            && l052_factory_monitor["minimum_hz"] == 31_816
+            && l052_factory_monitor["maximum_hz"] == 33_784
+            && l052_factory_monitor["temperature_c"] == serde_json::json!([-40, 85])
+            && l052_factory_monitor["supply_mv"] == serde_json::json!([1650, 5500])
+            && l052_factory_monitor["raw_erased_halfword_rejected_before_masking"] == true
+            && l052_factory_monitor["trim_and_wait_retained_after_admission"] == true
+            && l052_factory_monitor["request_and_direct_and_mirrored_stable_required_at_use"] == true
+            && l052_factory_monitor["lsi_sysclk_qualification"] == false
+            && l052_sysclk_proof["lsi_sysclk_qualification"] == false
+            && l052_sysclk_proof["lsi_cycle_timing_qualified"] == false
+            && l052_fallback["metadata_source"] == "clock_limits.hse.fixed_ccs_hsi_divisor"
+            && l052_fallback["fixed_ccs_hsi_divisor"] == 6
+            && l052_fallback["documented_nominal_hz"] == 8_000_000
+            && l052_fallback["modeled_minimum_hz"] == 7_840_000
+            && l052_fallback["modeled_maximum_hz"] == 8_160_000
+            && l052_fallback["hsi_oscillator_nominal_hz"] == 48_000_000
+            && l052_fallback["hsi_factory_error_percent"] == 2
+            && l052_fallback["conservative_bus_and_flash_maximum_hz"] == 8_160_000
+            && l052_fallback["divisor_retention_proven"] == false
+            && l052_sysclk_proof["hsi_register"]["trim_bit_offset"] == 0
+            && l052_sysclk_proof["hsi_register"]["trim_bit_size"] == 11
+            && l052_sysclk_proof["hsi_register"]["div_bit_offset"] == 11
+            && l052_sysclk_proof["hsi_register"]["div_bit_size"] == 4
+            && l052_sysclk_proof["hsi_register"]["stable_bit"] == 15
+            && l052_sysclk_proof["hsi_register"]["has_wait_field"] == false
+            && l052_sysclk_proof["electrical_limits"] == serde_json::json!({
+                "supply_mv":[1650,5500], "temperature_c":[-40,85],
+                "low_voltage_threshold_mv":1800, "low_voltage_bus_max_hz":24000000,
+                "high_voltage_bus_max_hz":48000000, "flash_wait_step_hz":24000000
+            }),
+        "L052 LSE SYSCLK scope, detector, own factory monitor or fixed fallback facts changed"
+    );
     let x030_proof = read_policy("docs/lse-active-first-cohort.json")?;
     let x030_rtc_proof = read_policy("docs/lse-active-rtc-admission.json")?;
     let f020_proof = read_policy("docs/lse-active-f020.json")?;
@@ -1978,6 +2036,8 @@ pub fn apply_lse(
         {
             let own_sysclk_proof = if LSE_L031_SYSCLK_PARTS.contains(&part.as_str()) {
                 &l031_sysclk_proof
+            } else if LSE_L052_SYSCLK_PARTS.contains(&part.as_str()) {
+                &l052_sysclk_proof
             } else {
                 &sysclk_proof
             };
@@ -2156,6 +2216,98 @@ pub fn apply_lse(
                     .as_ref()
                     .is_none_or(|c| c.lsi_sysclk.is_none())),
             "L031/R031/W031 LSE SYSCLK requires own RTC factory monitor facts without LSI SYSCLK qualification"
+        );
+    } else if LSE_L052_SYSCLK_PARTS.contains(&chip.name.as_str()) {
+        let sources = l052_sysclk_proof["sources"]
+            .as_array()
+            .context("missing L052 LSE SYSCLK own originals")?;
+        let expected_sources: [(&str, &[u32]); 2] = [
+            (
+                "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+                &[54, 57, 59, 61, 62, 65, 66, 70, 71, 72, 73, 74, 112],
+            ),
+            ("vendor:CW32L052_DataSheet_CN_V1.3.pdf", &[43, 51]),
+        ];
+        ensure!(
+            sources.len() == expected_sources.len(),
+            "L052 LSE SYSCLK requires exactly two own originals"
+        );
+        for (source, (source_ref, pages)) in sources.iter().zip(expected_sources) {
+            let original = authority["artifacts"]
+                .as_array()
+                .context("missing source authority")?
+                .iter()
+                .find(|a| a["id"] == source_ref)
+                .context("L052 LSE SYSCLK source is not canonical")?;
+            let page_count = original["provenance"]["pdf_page_count"]
+                .as_u64()
+                .context("missing L052 source page count")?;
+            ensure!(
+                source["source_ref"] == source_ref
+                    && source["family"] == "CW32L052"
+                    && source["sha256"] == original["sha256"]
+                    && original["provenance"]["status"] == "selected"
+                    && original["provenance"]["chip_scope"] == serde_json::json!(["CW32L052"])
+                    && source["pdf_pages_1_based"] == serde_json::to_value(pages)?
+                    && source["printed_pages"]
+                        == serde_json::to_value(pages.iter().map(|p| p - 1).collect::<Vec<_>>())?
+                    && pages.iter().all(|p| *p > 0 && u64::from(*p) <= page_count),
+                "L052 LSE SYSCLK own source identity, scope or reviewed pages changed"
+            );
+        }
+        let rtc = core
+            .peripherals
+            .iter()
+            .find(|p| p.name == "RTC")
+            .and_then(|p| p.rtc_calendar.as_ref())
+            .context("missing L052 own RTC factory monitor facts")?;
+        let clocks = core
+            .peripherals
+            .iter()
+            .find(|p| p.name == "SYSCTRL")
+            .and_then(|p| p.clock_limits.as_ref())
+            .context("missing L052 own clock limits")?;
+        let hse = clocks.hse.as_ref().context("missing L052 fixed CCS facts")?;
+        ensure!(
+            l052_factory_monitor["source"] == rtc.source
+                && l052_factory_monitor["source_encoding"] == rtc.source_encoding
+                && l052_factory_monitor["factory_trim_address"] == rtc.factory_trim_address
+                && l052_factory_monitor["nominal_hz"] == rtc.nominal_hz
+                && l052_factory_monitor["minimum_hz"] == rtc.minimum_hz
+                && l052_factory_monitor["maximum_hz"] == rtc.maximum_hz
+                && l052_factory_monitor["temperature_c"] == serde_json::to_value(rtc.temperature_c)?
+                && l052_factory_monitor["supply_mv"] == serde_json::to_value(rtc.supply_mv)?
+                && rtc.temperature_c == p.configuration.temperature_c
+                && rtc.supply_mv == p.configuration.supply_mv
+                && hse.fixed_ccs_hsi_divisor == Some(6)
+                && l052_fallback["hsi_oscillator_nominal_hz"] == clocks.hsi_frequency_hz
+                && l052_fallback["hsi_factory_error_percent"] == clocks.hsi_error_percent
+                && clocks.hsi_supply_mv == rtc.supply_mv
+                && clocks.hsi_temperature_c == rtc.temperature_c
+                && clocks.low_voltage_threshold_mv == 1800
+                && clocks.low_voltage_bus_max_hz == 24_000_000
+                && clocks.high_voltage_bus_max_hz == 48_000_000
+                && clocks.flash_wait_step_hz == 24_000_000
+                && clocks.initial_flash_wait == 2
+                && core.peripherals.iter().all(|p| p
+                    .clock_limits
+                    .as_ref()
+                    .is_none_or(|c| c.lsi_sysclk.is_none())),
+            "L052 LSE SYSCLK requires own RTC/HSI/fixed-CCS facts without LSI SYSCLK qualification"
+        );
+        let (_, lsi) = lse_register(registers, core, "SYSCTRL", "LSI", 32)?;
+        lse_field(lsi, "TRIM", 0, 10)?;
+        lse_field(lsi, "WAITCYCLE", 10, 2)?;
+        lse_field(lsi, "STABLE", 15, 1)?;
+        let (_, hsi) = lse_register(registers, core, "SYSCTRL", "HSI", 24)?;
+        lse_field(hsi, "TRIM", 0, 11)?;
+        lse_field(hsi, "DIV", 11, 4)?;
+        lse_field(hsi, "STABLE", 15, 1)?;
+        ensure!(
+            hsi.fields
+                .iter()
+                .all(|f| f.name != "WAIT" && f.name != "WAITCYCLE"),
+            "L052 HSI has no programmable WAIT field"
         );
     } else if p.configuration.sysclk_detector.is_some() {
         let sources = sysclk_proof["sources"]
