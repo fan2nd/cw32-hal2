@@ -55,8 +55,6 @@ def main():
     assert proof["lsi_cycle_timing_qualified"] is False
     assert {p for p, v in catalog["parts"].items()
             if v["family"] == "CW32L010" and "sysclk_detector" in v["configuration"]} == PARTS
-    assert all("sysclk_detector" not in v["configuration"] for v in catalog["parts"].values()
-               if v["family"] == "CW32L012")
     assert "CW32L010" not in catalog["parts"]
     for path, digest in catalog["policies"].items():
         assert sha((ROOT / path).read_bytes()) == digest, path
@@ -239,8 +237,6 @@ def main():
                         assert clock[key] == limits[key]
                     assert clock["hse"]["fixed_ccs_hsi_divisor"] == divisor
                     assert clock.get("lsi_sysclk") is None
-            if chip["line"] == "CW32L012":
-                assert not config or config.get("sysclk_detector") is None
             generated += 1
         assert generated_parts == PARTS, "complete generated exact-three projection is required"
     result = {"status": "passed", "scope": "current own-L010 source and metadata qualification",

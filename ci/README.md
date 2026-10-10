@@ -76,9 +76,9 @@ example's build.rs derives exact memory bounds and links with -Tlink.x. Inspect
 the resulting ELF entry, vectors and PT_LOAD regions separately before flashing.
 
 
-`./d check-lse-sysclk` declares a bounded local compile/link scope: twenty-two
+`./d check-lse-sysclk` declares a bounded local compile/link scope: twenty-four
 ordinary ARM libraries for classic3, exact5 L031/R031/W031, exact3 L052, exact5
-L083, exact3 L010, exact2 L011 and excluded F020F6U7; forty-two crystal/bypass
+L083, exact3 L010, exact2 L011, exact2 L012 and excluded F020F6U7; forty-six crystal/bypass
 SYSCLK+RTC firmware links; and four existing
 HSI+aux-LSE, LSI, HSE and PLL firmware regressions. It runs no HAL tests or hardware
 and adds no hosted workflow. The new example build script derives exact FLASH/RAM from metadata and
@@ -116,9 +116,24 @@ unchanged legal-LSI HSI-calibration bridge; no monitor is auto-prepared.
 First-request checks include UART3; the residual handover explicitly includes
 PB0 AF3 HSIOSC_OUT. See [the L011 contract](../docs/l011-lse-sysclk.md).
 
-The existing L011 auxiliary crystal, bypass and HSIOSC-calendar examples in
+The existing L011/L012 auxiliary crystal, bypass and HSIOSC-calendar examples in
 `examples/l010-lse-clock` remain separate preservation checks outside this
 script. Neither the matrix description nor these available commands claim a
-build, probe, test or hardware run. Current capability scope is twenty-one
-system packages and twenty-three auxiliary packages, with generic aliases and
-L012 excluded from LSE SYSCLK. No dependency upgrade or hosted workflow is added.
+build, probe, test or hardware run. Current capability scope is twenty-three
+system packages and twenty-three auxiliary packages; generic aliases and other
+packages remain excluded. No dependency upgrade or hosted workflow is added.
+
+
+The L012 addition admits only CW32L012C8T6/C8U6, with PC14/PC15 on pins 3/4.
+The native example keeps configured HSI /12 (distinct from reset/fallback /24),
+StartupOnly, independent Level2/Level10 drives and 16384 cycles. Every-cycle
+frequency, operating conditions, waveform and startup settings are explicit
+board declarations requiring qualification, not measured validation. The own
+36080 Hz factory monitor is distinct from the unchanged-legal-LSI HSI bridge.
+Shared ADC1/ADC2 inspection can resume work, and whole GPIOC, dedicated source
+outputs, disputed closed UART3 and downstream timer/cascade observers retain
+explicit functional handover limits. The final LSE selection permits no later
+CR0 or FLASH write. See [the L012 contract](../docs/l012-lse-sysclk.md).
+Stage62's 22-library/42-binary count remains historical; the current local
+script plans 24 ordinary libraries and 46 SYSCLK binaries. Each executed subset
+and its actual ELF inspection must be recorded independently.

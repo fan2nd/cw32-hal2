@@ -2911,13 +2911,29 @@ fn generate_hse(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLim
         )
     )
     .unwrap();
+    let l012 = regs.version == "cw32l012_v1";
+    let l012_target = l012
+        && c.lse_configuration
+            .as_ref()
+            .is_some_and(|lse| lse.sysclk_detector.is_some());
+    let argument = if l012 { ", l012_sysclk: bool" } else { "" };
+    let matcher_argument = if l012 && !l012_target {
+        ", _l012_sysclk: bool"
+    } else {
+        argument
+    };
+    let forwarded = if l012 { ", l012_sysclk" } else { "" };
+    // Keep actual gate failures ahead of faults, and faults ahead of buffered
+    // reset/pad refusals. Only exact-qualified L012 can emit these target checks.
+    let target_faults = "if l012_sysclk { let flags = crate::pac::SYSCTRL.isr().read(); if flags.hsefail() || flags.hsefault() || flags.lsefail() || flags.lsefault() { return Err(crate::rcc::Error::ExternalClockFault); } }\n";
     // Without a bonded input, neither crystal nor bypass is available.
     if pins[0].is_none() {
-        out.push_str("pub(crate) fn rcc_configure_hse_pins(_bypass: bool, _timeout: u32, _cs: critical_section::CriticalSection<'_>) -> Result<(), crate::rcc::Error> {\nErr(crate::rcc::Error::HsePinsUnavailable)\n}\n");
-        out.push_str("pub(crate) fn rcc_hse_pins_match(_bypass: bool, _timeout: u32, _cs: critical_section::CriticalSection<'_>) -> Result<bool, crate::rcc::Error> {\nOk(false)\n}\n");
+        let unused_argument = if l012 { ", _l012_sysclk: bool" } else { "" };
+        writeln!(out, "pub(crate) fn rcc_configure_hse_pins(_bypass: bool, _timeout: u32, _cs: critical_section::CriticalSection<'_>{unused_argument}) -> Result<(), crate::rcc::Error> {{\nErr(crate::rcc::Error::HsePinsUnavailable)\n}}").unwrap();
+        writeln!(out, "pub(crate) fn rcc_hse_pins_match(_bypass: bool, _timeout: u32, _cs: critical_section::CriticalSection<'_>{unused_argument}) -> Result<bool, crate::rcc::Error> {{\nOk(false)\n}}").unwrap();
         return;
     }
-    out.push_str("pub(crate) fn rcc_configure_hse_pins(bypass: bool, timeout: u32, cs: critical_section::CriticalSection<'_>) -> Result<(), crate::rcc::Error> {\n");
+    writeln!(out, "pub(crate) fn rcc_configure_hse_pins(bypass: bool, timeout: u32, cs: critical_section::CriticalSection<'_>{argument}) -> Result<(), crate::rcc::Error> {{").unwrap();
     for (index, pin) in pins.iter().enumerate() {
         if index == 1 {
             out.push_str("if !bypass {\n");
@@ -2925,7 +2941,15 @@ fn generate_hse(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLim
         if let Some((port, bit)) = pin {
             let p = char::from(b'A' + port);
             let (lock, registers, af_field) = pad_registers[index].as_ref().unwrap();
+            if l012_target {
+                out.push_str(target_faults);
+                writeln!(out, "if l012_sysclk && gpio_rcc({port}).reset_asserted() {{ return Err(crate::rcc::Error::LseClockInUse); }}").unwrap();
+            }
             writeln!(out, "gpio_rcc({port}).enable_with_cs_readback(cs, crate::rcc::Readback::Poll {{ attempts: timeout, spin: true }}).map_err(|_| crate::rcc::Error::HsePinConfigurationTimeout)?;\nlet r = crate::pac::GPIO{p};").unwrap();
+            if l012_target {
+                out.push_str(target_faults);
+                writeln!(out, "if l012_sysclk && (gpio_rcc({port}).reset_asserted() || !gpio_rcc({port}).is_enabled()) {{ return Err(crate::rcc::Error::LseClockInUse); }}").unwrap();
+            }
             if let Some(lock) = lock {
                 writeln!(
                     out,
@@ -2948,6 +2972,10 @@ fn generate_hse(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLim
                 if index == 0 { "!bypass" } else { "true" }
             )
             .unwrap();
+            if l012_target {
+                out.push_str(target_faults);
+                writeln!(out, "if l012_sysclk && (gpio_rcc({port}).reset_asserted() || !gpio_rcc({port}).is_enabled()) {{ return Err(crate::rcc::Error::LseClockInUse); }}").unwrap();
+            }
         } else {
             out.push_str("return Err(crate::rcc::Error::HsePinsUnavailable);\n");
         }
@@ -2955,8 +2983,8 @@ fn generate_hse(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLim
             out.push_str("}\n");
         }
     }
-    out.push_str("if !rcc_hse_pins_match(bypass, timeout, cs)? { return Err(crate::rcc::Error::HsePinConfigurationTimeout); }\nOk(())\n}\n");
-    out.push_str("pub(crate) fn rcc_hse_pins_match(bypass: bool, timeout: u32, cs: critical_section::CriticalSection<'_>) -> Result<bool, crate::rcc::Error> {\nlet mut matches = true;\n");
+    writeln!(out, "if !rcc_hse_pins_match(bypass, timeout, cs{forwarded})? {{ return Err(crate::rcc::Error::HsePinConfigurationTimeout); }}\nOk(())\n}}").unwrap();
+    writeln!(out, "pub(crate) fn rcc_hse_pins_match(bypass: bool, timeout: u32, cs: critical_section::CriticalSection<'_>{matcher_argument}) -> Result<bool, crate::rcc::Error> {{\nlet mut matches = true;").unwrap();
     for (index, pin) in pins.iter().enumerate() {
         if index == 1 {
             out.push_str("if !bypass {\n");
@@ -2964,13 +2992,25 @@ fn generate_hse(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLim
         if let Some((port, bit)) = pin {
             let p = char::from(b'A' + port);
             let (_, registers, af_field) = pad_registers[index].as_ref().unwrap();
-            writeln!(out, "matches &= gpio_rcc({port}).inspect_for_init(cs, timeout, || {{\nlet r = crate::pac::GPIO{p};").unwrap();
+            if l012_target {
+                out.push_str(target_faults);
+                writeln!(out, "if l012_sysclk && gpio_rcc({port}).reset_asserted() {{ return Err(crate::rcc::Error::LseClockInUse); }}").unwrap();
+                writeln!(out, "let result = gpio_rcc({port}).inspect_for_init(cs, timeout, || {{\nif l012_sysclk && (gpio_rcc({port}).reset_asserted() || !gpio_rcc({port}).is_enabled()) {{ return None; }}\nlet r = crate::pac::GPIO{p};\nlet pad_matches =").unwrap();
+            } else {
+                writeln!(out, "matches &= gpio_rcc({port}).inspect_for_init(cs, timeout, || {{\nlet r = crate::pac::GPIO{p};").unwrap();
+            }
             let afreg = if *bit < 8 { "afrl" } else { "afrh" };
             writeln!(out, "r.dir().read().pin{bit}() && r.analog().read().pin{bit}() == {} && r.{afreg}().read().{af_field}() == 0", if index == 0 { "!bypass" } else { "true" }).unwrap();
             for reg in registers {
                 writeln!(out, "&& !r.{reg}().read().pin{bit}()").unwrap();
             }
-            out.push_str("}).map_err(|_| crate::rcc::Error::HsePinConfigurationTimeout)?;\n");
+            if l012_target {
+                writeln!(out, ";\nif l012_sysclk && (gpio_rcc({port}).reset_asserted() || !gpio_rcc({port}).is_enabled()) {{ return None; }}\nSome(pad_matches)\n}}).map_err(|error| if l012_sysclk {{ crate::rcc::lse_target_inspection_error(error) }} else {{ crate::rcc::Error::HsePinConfigurationTimeout }})?;").unwrap();
+                out.push_str(target_faults);
+                writeln!(out, "if l012_sysclk && gpio_rcc({port}).reset_asserted() {{ return Err(crate::rcc::Error::LseClockInUse); }}\nmatches &= result.ok_or(crate::rcc::Error::LseClockInUse)?;").unwrap();
+            } else {
+                out.push_str("}).map_err(|_| crate::rcc::Error::HsePinConfigurationTimeout)?;\n");
+            }
         } else {
             out.push_str("return Ok(false);\n");
         }
@@ -3854,8 +3894,9 @@ fn generate_native_low_power_lse_configuration(
         assert!(f.array.is_none());
         assert_eq!(f.bit_size, width);
         assert!(matches!(&f.bit_offset, ir::BitOffset::Regular(p) if p.offset == bit));
+        f
     };
-    if (l010 || l011) && lse.sysclk_detector.is_some() {
+    if (l010 || l011 || l012) && lse.sysclk_detector.is_some() {
         for (reg, offset, name, bit, width) in [
             ("CR0", 0, "SYSCLK", 0, 3),
             ("CR0", 0, "PCLKPRS", 3, 2),
@@ -3881,7 +3922,13 @@ fn generate_native_low_power_lse_configuration(
                 .unwrap();
             assert_eq!(
                 regs.version,
-                if l011 { "cw32l011_v1" } else { "cw32l010_v1" }
+                if l012 {
+                    "cw32l012_v1"
+                } else if l011 {
+                    "cw32l011_v1"
+                } else {
+                    "cw32l010_v1"
+                }
             );
             if owner == "SYSCTRL" {
                 let cr0 = regs
@@ -3916,11 +3963,11 @@ fn generate_native_low_power_lse_configuration(
                         .fields
                         .len(),
                     3,
-                    "L010/L011 HSI has no programmable WAIT field"
+                    "L010/L011/L012 HSI has no programmable WAIT field"
                 );
             }
         }
-        if l011 {
+        if l011 || l012 {
             field("SYSCTRL", "APBEN1", 56, "UART3", 8, 1);
             field("SYSCTRL", "APBRST1", 72, "UART3", 8, 1);
             field("UART3", "CR1", 0, "SOURCE", 12, 2);
@@ -3955,6 +4002,133 @@ fn generate_native_low_power_lse_configuration(
                     .count(),
                 1
             );
+        }
+    }
+    if l012 && lse.sysclk_detector.is_some() {
+        // Normalize only the selected IR's read-only startup status; runtime
+        // checks STABLE separately while preserving all other source bits.
+        for (register, offset, bit) in [("HSI", 24, 15), ("HSE", 28, 19)] {
+            let stable = field("SYSCTRL", register, offset, "STABLE", bit, 1);
+            let ir::BitOffset::Regular(position) = &stable.bit_offset else {
+                unreachable!("validated scalar stability field")
+            };
+            let mask = 1u32.checked_shl(position.offset).unwrap();
+            writeln!(
+                out,
+                "pub(crate) const RCC_{register}_STABLE_MASK: u32 = {mask};"
+            )
+            .unwrap();
+        }
+        // These checks bind the own L012 work-gate and retained consumer fields.
+        for (owner, reg, offset, name, bit, width) in [
+            ("FLASH", "CR2", 4, "FETCH", 3, 1),
+            ("FLASH", "CR2", 4, "CACHE", 4, 1),
+            ("FLASH", "CR2", 4, "CACHEINVALID", 5, 1),
+            ("SYSCTRL", "CR1", 4, "HSIEN", 0, 1),
+            ("SYSCTRL", "CR1", 4, "HSEEN", 1, 1),
+            ("SYSCTRL", "CR1", 4, "LSIEN", 3, 1),
+            ("SYSCTRL", "CR1", 4, "HSECCS", 7, 1),
+            ("SYSCTRL", "CR1", 4, "LSECCS", 6, 1),
+            ("SYSCTRL", "CR1", 4, "LSELOCK", 5, 1),
+            ("SYSCTRL", "IER", 12, "HSIRDY", 0, 1),
+            ("SYSCTRL", "IER", 12, "LSIRDY", 3, 1),
+            ("SYSCTRL", "MCO", 112, "SOURCE", 0, 4),
+            ("SYSCTRL", "LSI", 32, "TRIM", 0, 9),
+            ("SYSCTRL", "LSI", 32, "WAITCYCLE", 10, 2),
+            ("SYSCTRL", "LSI", 32, "STABLE", 15, 1),
+            ("SYSCTRL", "APBEN1", 56, "ADC", 0, 1),
+            ("SYSCTRL", "APBEN1", 56, "VC", 1, 1),
+            ("SYSCTRL", "APBEN1", 56, "UART1", 3, 1),
+            ("SYSCTRL", "APBEN1", 56, "UART2", 4, 1),
+            ("SYSCTRL", "APBEN1", 56, "UART3", 8, 1),
+            ("SYSCTRL", "APBRST1", 72, "ADC", 0, 1),
+            ("SYSCTRL", "APBRST1", 72, "VC", 1, 1),
+            ("SYSCTRL", "APBRST1", 72, "UART1", 3, 1),
+            ("SYSCTRL", "APBRST1", 72, "UART2", 4, 1),
+            ("SYSCTRL", "APBRST1", 72, "UART3", 8, 1),
+            ("SYSCTRL", "APBEN2", 52, "RTC", 1, 1),
+            ("SYSCTRL", "APBEN2", 52, "I2C1", 6, 1),
+            ("SYSCTRL", "APBEN2", 52, "LPTIM", 7, 1),
+            ("SYSCTRL", "APBEN2", 52, "OPA", 9, 1),
+            ("SYSCTRL", "APBEN2", 52, "DAC", 10, 1),
+            ("SYSCTRL", "APBEN2", 52, "I2C2", 11, 1),
+            ("SYSCTRL", "APBRST2", 68, "RTC", 1, 1),
+            ("SYSCTRL", "APBRST2", 68, "I2C1", 6, 1),
+            ("SYSCTRL", "APBRST2", 68, "LPTIM", 7, 1),
+            ("SYSCTRL", "APBRST2", 68, "OPA", 9, 1),
+            ("SYSCTRL", "APBRST2", 68, "DAC", 10, 1),
+            ("SYSCTRL", "APBRST2", 68, "I2C2", 11, 1),
+            ("SYSCTRL", "APBEN1", 56, "KEY", 16, 16),
+            ("SYSCTRL", "APBEN2", 52, "KEY", 16, 16),
+            ("RTC", "CR1", 8, "SOURCE", 8, 3),
+            ("RTC", "PSC", 64, "PSC1", 20, 8),
+            ("RTC", "PSC", 64, "PSC2", 0, 20),
+            ("UART1", "CR1", 0, "SOURCE", 12, 2),
+            ("UART2", "CR1", 0, "SOURCE", 12, 2),
+            ("UART3", "CR1", 0, "SOURCE", 12, 2),
+            ("I2C1", "MCR0", 16, "CLKSRC", 6, 2),
+            ("I2C1", "SCR0", 272, "CLKSRC", 6, 2),
+            ("I2C2", "MCR0", 16, "CLKSRC", 6, 2),
+            ("I2C2", "SCR0", 272, "CLKSRC", 6, 2),
+            ("LPTIM", "CR0", 16, "EN", 0, 1),
+            ("LPTIM", "CFGR", 12, "ICLKSRC", 25, 2),
+            ("LPTIM", "CFGR", 12, "TRIGSEL", 12, 4),
+            ("LPTIM", "CFGR", 12, "TRIGEN", 17, 2),
+            ("ADC1", "CR", 0, "EN", 0, 1),
+            ("ADC1", "CR", 0, "CLK", 2, 2),
+            ("ADC2", "CR", 0, "EN", 0, 1),
+            ("ADC2", "CR", 0, "CLK", 2, 2),
+            ("LVD", "CR0", 0, "EN", 0, 1),
+            ("LVD", "CR0", 0, "FLTCLK", 8, 1),
+            ("LVD", "CR1", 4, "FLTTIME", 4, 4),
+            ("VC1", "CR0", 0, "EN", 0, 1),
+            ("VC1", "CR1", 4, "FLTTIME", 0, 4),
+            ("VC1", "CR1", 4, "FLTCLK", 4, 1),
+            ("VC1", "CR1", 4, "BLANKTIME", 8, 3),
+            ("VC2", "CR0", 0, "EN", 0, 1),
+            ("VC2", "CR1", 4, "FLTTIME", 0, 4),
+            ("VC2", "CR1", 4, "FLTCLK", 4, 1),
+            ("VC2", "CR1", 4, "BLANKTIME", 8, 3),
+            ("VC3", "CR0", 0, "EN", 0, 1),
+            ("VC3", "CR1", 4, "FLTTIME", 0, 4),
+            ("VC3", "CR1", 4, "FLTCLK", 4, 1),
+            ("VC3", "CR1", 4, "BLANKTIME", 8, 3),
+            ("VC4", "CR0", 0, "EN", 0, 1),
+            ("VC4", "CR1", 4, "FLTTIME", 0, 4),
+            ("VC4", "CR1", 4, "FLTCLK", 4, 1),
+            ("VC4", "CR1", 4, "BLANKTIME", 8, 3),
+            ("OPA1", "CAL", 4, "CALEN", 0, 1),
+            ("OPA1", "CAL", 4, "START", 2, 1),
+            ("OPA1", "CAL", 4, "AZRUN", 10, 1),
+            ("OPA2", "CAL", 4, "CALEN", 0, 1),
+            ("OPA2", "CAL", 4, "START", 2, 1),
+            ("OPA2", "CAL", 4, "AZRUN", 10, 1),
+            ("DAC", "CR0", 0, "EN1", 0, 1),
+            ("DAC", "CR0", 0, "TEN1", 1, 1),
+            ("DAC", "CR0", 0, "WAVE1", 6, 2),
+            ("DAC", "CR0", 0, "DMAEN1", 12, 1),
+            ("DAC", "CR0", 0, "EN2", 16, 1),
+            ("DAC", "CR0", 0, "TEN2", 17, 1),
+            ("DAC", "CR0", 0, "WAVE2", 22, 2),
+            ("DAC", "CR0", 0, "DMAEN2", 28, 1),
+        ] {
+            field(owner, reg, offset, name, bit, width);
+        }
+        for owner in ["VC1", "VC2", "VC3", "VC4"] {
+            let regs = METADATA
+                .peripherals
+                .iter()
+                .find(|p| p.name == owner)
+                .and_then(|p| p.registers.as_ref())
+                .unwrap();
+            let blank = regs
+                .ir
+                .fieldsets
+                .iter()
+                .find(|f| f.name.eq_ignore_ascii_case("CR2"))
+                .unwrap();
+            assert_eq!(blank.fields.len(), 32);
+            assert!(blank.fields.iter().all(|f| f.bit_size == 1));
         }
     }
     for (reg, offset, name, bit, width) in [
@@ -4208,6 +4382,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         "CW32L010F8P6" | "CW32L010F8U6" | "CW32L010Y8M6"
     );
     let l011_sysclk_qualified = matches!(METADATA.name, "CW32L011K8T6" | "CW32L011K8U6");
+    let l012_sysclk_qualified = matches!(METADATA.name, "CW32L012C8T6" | "CW32L012C8U6");
     let classic_sysclk_qualified = matches!(
         METADATA.name,
         "CW32F020C6U7" | "CW32F030C8T7" | "CW32A030C8T7"
@@ -4231,7 +4406,8 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             || l052_sysclk_qualified
             || l083_sysclk_qualified
             || l010_sysclk_qualified
-            || l011_sysclk_qualified,
+            || l011_sysclk_qualified
+            || l012_sysclk_qualified,
         "LSE SYSCLK detector qualification missing or unexpected"
     );
     if let Some(detector) = &lse.sysclk_detector {
@@ -4331,6 +4507,52 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             );
             assert_eq!(c.default_hsi_divisor, 24);
             writeln!(out, "const _: () = {{ assert!(crate::rcc::HsiDiv::Div24 as u8 == 14); assert!(crate::rcc::HsiDiv::Div24.divisor() == 24); assert!(crate::rcc::HsiDiv::Div32 as u8 == 0); assert!(crate::rcc::HsiDiv::Div32.divisor() == 32); }};").unwrap();
+            // Native helper below binds the own selector, HSI and Flash fields.
+            // No RTC factory-LSI facts or public LSI SYSCLK are implied.
+        } else if l012_sysclk_qualified {
+            assert_eq!(METADATA.line, "CW32L012");
+            assert!(lse.configurable_ccs && c.lsi_sysclk.is_none() && c.pll.is_none());
+            let native = lse
+                .native_low_power
+                .as_ref()
+                .expect("L012 own factory monitor facts");
+            assert_eq!(native.monitor_reference, "factory_trim");
+            assert_eq!(native.lsi_factory_trim_address, Some(0x0010_07c2));
+            assert_eq!(native.monitored_lsi_maximum_hz, 36_080);
+            assert_eq!(
+                (
+                    detector.lse_edges,
+                    detector.lsi_cycles,
+                    detector.margin_lse_edges
+                ),
+                (
+                    native.detector_lse_edges,
+                    native.detector_lsi_cycles,
+                    native.detector_margin_lse_edges
+                )
+            );
+            assert_eq!(
+                c.hse
+                    .as_ref()
+                    .expect("L012 fixed CCS facts")
+                    .fixed_ccs_hsi_divisor,
+                Some(24)
+            );
+            assert_eq!((c.hsi_frequency_hz, c.hsi_error_percent), (96_000_000, 2));
+            assert_eq!(c.factory_hsi_trim_address, 0x0010_07c0);
+            assert_eq!(c.hsi_supply_mv, (1700, 5500));
+            assert_eq!(c.hsi_temperature_c, (-40, 85));
+            assert_eq!(lse.supply_mv, c.hsi_supply_mv);
+            assert_eq!(lse.temperature_c, c.hsi_temperature_c);
+            assert_eq!(c.low_voltage_threshold_mv, 1800);
+            assert_eq!(c.low_voltage_bus_max_hz, 24_000_000);
+            assert_eq!(c.high_voltage_bus_max_hz, 96_000_000);
+            assert_eq!(
+                (c.flash_wait_step_hz, c.initial_flash_wait),
+                (24_000_000, 3)
+            );
+            assert_eq!(c.default_hsi_divisor, 12);
+            writeln!(out, "const _: () = {{ assert!(crate::rcc::HsiDiv::Div12 as u8 == 11); assert!(crate::rcc::HsiDiv::Div12.divisor() == 12); assert!(crate::rcc::HsiDiv::Div24 as u8 == 14); assert!(crate::rcc::HsiDiv::Div24.divisor() == 24); assert!(crate::rcc::HsiDiv::Div32 as u8 == 0); assert!(crate::rcc::HsiDiv::Div32.divisor() == 32); }};").unwrap();
             // Native helper below binds the own selector, HSI and Flash fields.
             // No RTC factory-LSI facts or public LSI SYSCLK are implied.
         } else if classic_sysclk_qualified {

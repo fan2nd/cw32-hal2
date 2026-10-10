@@ -919,6 +919,7 @@ const LSE_PARTS: [(&str, &str, &str); 23] = [
     ("CW32L012C8T6", "CW32L012", "LQFP48"),
     ("CW32L012C8U6", "CW32L012", "QFN48"),
 ];
+const LSE_L012_SYSCLK_PARTS: [&str; 2] = ["CW32L012C8T6", "CW32L012C8U6"];
 const LSE_L011_SYSCLK_PARTS: [&str; 2] = ["CW32L011K8T6", "CW32L011K8U6"];
 const LSE_L010_SYSCLK_PARTS: [&str; 3] = ["CW32L010F8P6", "CW32L010F8U6", "CW32L010Y8M6"];
 const LSE_L031_SYSCLK_PARTS: [&str; 5] = [
@@ -1121,10 +1122,11 @@ fn validate_lse_configuration(
         || LSE_L052_SYSCLK_PARTS.contains(&part)
         || LSE_L083_SYSCLK_PARTS.contains(&part)
         || LSE_L010_SYSCLK_PARTS.contains(&part)
-        || LSE_L011_SYSCLK_PARTS.contains(&part);
+        || LSE_L011_SYSCLK_PARTS.contains(&part)
+        || LSE_L012_SYSCLK_PARTS.contains(&part);
     ensure!(
         c.sysclk_detector.is_some() == sysclk_qualified,
-        "LSE SYSCLK detector facts require exactly classic3, five reviewed L031/R031/W031, three L052, five L083, three L010 and two L011 packages"
+        "LSE SYSCLK detector facts require exactly classic3, five reviewed L031/R031/W031, three L052, five L083, three L010, two L011 and two L012 packages"
     );
     if let Some(detector) = &c.sysclk_detector {
         ensure!(
@@ -2179,6 +2181,97 @@ pub fn apply_lse(
             && l011_sysclk_proof["lsi_cycle_timing_qualified"] == false,
         "L011 LSE SYSCLK exact scope, factory monitor, fixed fallback or native clock facts changed"
     );
+    let l012_sysclk_proof = read_policy("docs/l012-lse-sysclk-qualification.json")?;
+    let l012_monitor = &l012_sysclk_proof["native_lsi_reference"];
+    let l012_fallback = &l012_sysclk_proof["fallback"];
+    ensure!(
+        l012_sysclk_proof["schema_version"] == 1
+            && l012_sysclk_proof["parts"] == serde_json::to_value(LSE_L012_SYSCLK_PARTS)?
+            && l012_sysclk_proof["sysclk_detector"]
+                == serde_json::json!({"lse_edges":128,"lsi_cycles":256,"margin_lse_edges":1})
+            && l012_sysclk_proof["sysclk_selector"] == 4
+            && l012_sysclk_proof["ccs_policy"]
+                == serde_json::json!({
+                    "preserve":["CLKCCS","HSECCS","LSELOCK"],
+                    "startup_only_requires_lseccs":false,
+                    "monitored_existing_routes_requires_lseccs":true,
+                    "automatic_monitor_preparation":false
+                })
+            && l012_monitor["metadata_source"] == "lse_configuration.native_low_power"
+            && l012_monitor["monitor_reference"] == "factory_trim"
+            && l012_monitor["lsi_factory_trim_address"] == 0x0010_07c2
+            && l012_monitor["trim_bit_size"] == 9
+            && l012_monitor["maximum_hz"] == 36_080
+            && l012_monitor["detector_lse_edges"] == 128
+            && l012_monitor["detector_lsi_cycles"] == 256
+            && l012_monitor["detector_margin_lse_edges"] == 1
+            && l012_monitor["stable_before_monitored_preflight"] == true
+            && l012_monitor["software_lsien_required"] == false
+            && l012_monitor["trim_and_wait_retained"] == true
+            && l012_monitor["cold_start_does_not_qualify_monitor"] == true
+            && l012_fallback["metadata_source"] == "clock_limits.hse.fixed_ccs_hsi_divisor"
+            && l012_fallback["fixed_ccs_hsi_divisor"] == 24
+            && l012_fallback["documented_nominal_hz"] == 4_000_000
+            && l012_fallback["modeled_minimum_hz"] == 3_920_000
+            && l012_fallback["modeled_maximum_hz"] == 4_080_000
+            && l012_fallback["hsi_oscillator_nominal_hz"] == 96_000_000
+            && l012_fallback["hsi_factory_error_percent"] == 2
+            && l012_fallback["conservative_bus_and_flash_maximum_hz"] == 4_080_000
+            && [
+                "hsi_divider_credit",
+                "ahb_divider_credit",
+                "apb_divider_credit",
+                "hardware_divisor_rewrite_claimed",
+                "divisor_retention_proven"
+            ]
+            .iter()
+            .all(|key| l012_fallback[*key] == false)
+            && l012_fallback["applies_when_clkccs_disabled"] == true
+            && l012_sysclk_proof["hsi_register"]
+                == serde_json::json!({
+                    "factory_trim_address":0x0010_07c0,"trim_bit_offset":0,"trim_bit_size":11,
+                    "div_bit_offset":11,"div_bit_size":4,"stable_bit":15,
+                    "has_wait_field":false,"hardware_reset_factory_match_assumed":false
+                })
+            && l012_sysclk_proof["electrical_limits"]
+                == serde_json::json!({
+                    "supply_mv":[1700,5500],"temperature_c":[-40,85],
+                    "low_voltage_threshold_mv":1800,"low_voltage_bus_max_hz":24_000_000,
+                    "high_voltage_bus_max_hz":96_000_000,"flash_wait_step_hz":24_000_000,
+                    "initial_flash_wait":3
+                })
+            && l012_sysclk_proof["flash_fields"]
+                == serde_json::json!({
+                    "sysctrl_cr2_flashwait":[8,4,3],"flash_cr2_wait":[4,0,3],
+                    "sysctrl_ahben_flash":[48,1,1],"key":0x5a5a,
+                    "same_function_documented":true,"alias_timing_measured":false
+                })
+            && l012_sysclk_proof["hsi_division"]
+                == serde_json::json!({
+                    "default_numeric_divisor":12,"default_encoding":11,
+                    "reset_fallback_numeric_divisor":24,"reset_fallback_encoding":14,
+                    "encoding_zero_numeric_divisor":32
+                })
+            && l012_sysclk_proof["uart3_fields"]
+                == serde_json::json!({
+                    "configuration_gate":["APBEN1",56,8,1],"reset":["APBRST1",72,8,1],
+                    "source":["CR1",0,12,2],"lsi_source_encoding":3,
+                    "gate_policy":"conflicting_configuration_only_or_work; inspect only already-open gate"
+                })
+            && l012_sysclk_proof["flash_preserved_fields"]
+                == serde_json::json!({"FETCH":3,"CACHE":4,"CACHEINVALID":5})
+            && l012_sysclk_proof["consumer_policy"]["adc_shared_gate"] == "configuration_and_work"
+            && l012_sysclk_proof["consumer_policy"]["adc_gate_handover_required"] == true
+            && l012_sysclk_proof["consumer_policy"]["vc_instances"]
+                == serde_json::json!(["VC1", "VC2", "VC3", "VC4"])
+            && l012_sysclk_proof["consumer_policy"]["i2c_sources_refused_on_hsi_or_first_lsi_disturbance"]
+                == serde_json::json!([1, 3])
+            && l012_sysclk_proof["consumer_policy"]["uart3_open_gate_only"] == true
+            && l012_sysclk_proof["pll_qualification"] == false
+            && l012_sysclk_proof["lsi_sysclk_qualification"] == false
+            && l012_sysclk_proof["lsi_cycle_timing_qualified"] == false,
+        "L012 LSE SYSCLK exact scope, factory monitor, fixed fallback or native clock facts changed"
+    );
     let x030_proof = read_policy("docs/lse-active-first-cohort.json")?;
     let x030_rtc_proof = read_policy("docs/lse-active-rtc-admission.json")?;
     let f020_proof = read_policy("docs/lse-active-f020.json")?;
@@ -2254,6 +2347,8 @@ pub fn apply_lse(
                 &l010_sysclk_proof
             } else if LSE_L011_SYSCLK_PARTS.contains(&part.as_str()) {
                 &l011_sysclk_proof
+            } else if LSE_L012_SYSCLK_PARTS.contains(&part.as_str()) {
+                &l012_sysclk_proof
             } else if LSE_L031_SYSCLK_PARTS.contains(&part.as_str()) {
                 &l031_sysclk_proof
             } else if LSE_L052_SYSCLK_PARTS.contains(&part.as_str()) {
@@ -2950,6 +3045,297 @@ pub fn apply_lse(
                 == 1,
             "L011 UART3 SOURCE LSI must retain own encoding 3"
         );
+    } else if LSE_L012_SYSCLK_PARTS.contains(&chip.name.as_str()) {
+        let sources = l012_sysclk_proof["sources"]
+            .as_array()
+            .context("missing L012 LSE SYSCLK own originals")?;
+        let expected_sources: [(&str, &[u32]); 3] = [
+            (
+                "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+                &[
+                    53, 57, 59, 61, 62, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 81, 82, 83, 84, 85,
+                    86, 87, 88, 115, 127, 154, 155, 190, 201, 202, 203, 204, 231, 232, 238, 253,
+                    366, 432, 433, 573, 583,
+                ],
+            ),
+            (
+                "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+                &[
+                    53, 59, 60, 63, 65, 66, 68, 70, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 86, 87,
+                    88, 89, 90, 91, 92, 93, 135, 167, 168, 207, 208, 218, 219, 220, 221, 251, 252,
+                    258, 259, 260, 272, 273, 403, 474, 475, 552, 626, 636, 655, 669,
+                ],
+            ),
+            (
+                "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+                &[14, 15, 16, 17, 35, 36, 37, 38, 39, 40, 47, 55, 57, 58],
+            ),
+        ];
+        ensure!(
+            sources.len() == expected_sources.len(),
+            "L012 requires exactly three own originals"
+        );
+        for (source, (source_ref, pages)) in sources.iter().zip(expected_sources) {
+            let original = authority["artifacts"]
+                .as_array()
+                .context("missing source authority")?
+                .iter()
+                .find(|a| a["id"] == source_ref)
+                .context("L012 source is not canonical")?;
+            let page_count = original["provenance"]["pdf_page_count"]
+                .as_u64()
+                .context("missing L012 source page count")?;
+            ensure!(
+                source["source_ref"] == source_ref
+                    && source["family"] == "CW32L012"
+                    && source["evidence_kind"] == "external-evidence"
+                    && source["sha256"] == original["sha256"]
+                    && original["provenance"]["status"]
+                        == if source_ref.contains("_EN_") {
+                            "corroborating-language-edition"
+                        } else {
+                            "selected"
+                        }
+                    && original["provenance"]["chip_scope"] == serde_json::json!(["CW32L012"])
+                    && original["evidence"].as_array().is_some_and(|paths| paths
+                        .iter()
+                        .any(|p| p == "docs/l012-lse-sysclk-qualification.json"))
+                    && source["pdf_pages_1_based"] == serde_json::to_value(pages)?
+                    && source["printed_pages"]
+                        == serde_json::to_value(
+                            pages
+                                .iter()
+                                .map(|p| p - if source_ref.contains("DataSheet") {
+                                    3
+                                } else {
+                                    26
+                                })
+                                .collect::<Vec<_>>()
+                        )?
+                    && pages.iter().all(|p| *p > 0 && u64::from(*p) <= page_count),
+                "L012 LSE SYSCLK own source identity, scope or reviewed pages changed"
+            );
+        }
+        let clocks = core
+            .peripherals
+            .iter()
+            .find(|p| p.name == "SYSCTRL")
+            .and_then(|p| p.clock_limits.as_ref())
+            .context("missing L012 clock limits")?;
+        let native = p
+            .configuration
+            .native_low_power
+            .as_ref()
+            .context("missing L012 factory monitor")?;
+        let detector = p
+            .configuration
+            .sysclk_detector
+            .as_ref()
+            .context("missing L012 SYSCLK detector facts")?;
+        ensure!(
+            line == "CW32L012"
+                && l012_monitor["monitor_reference"] == native.monitor_reference
+                && native.lsi_factory_trim_address == Some(0x0010_07c2)
+                && l012_monitor["maximum_hz"] == native.monitored_lsi_maximum_hz
+                && (
+                    detector.lse_edges,
+                    detector.lsi_cycles,
+                    detector.margin_lse_edges
+                ) == (
+                    native.detector_lse_edges,
+                    native.detector_lsi_cycles,
+                    native.detector_margin_lse_edges
+                )
+                && clocks
+                    .hse
+                    .as_ref()
+                    .is_some_and(|hse| hse.fixed_ccs_hsi_divisor == Some(24))
+                && l012_fallback["hsi_oscillator_nominal_hz"] == clocks.hsi_frequency_hz
+                && l012_fallback["hsi_factory_error_percent"] == clocks.hsi_error_percent
+                && clocks.factory_hsi_trim_address == 0x0010_07c0
+                && clocks.hsi_supply_mv == (1700, 5500)
+                && clocks.hsi_temperature_c == (-40, 85)
+                && clocks.hsi_supply_mv == p.configuration.supply_mv
+                && clocks.hsi_temperature_c == p.configuration.temperature_c
+                && clocks.low_voltage_threshold_mv == 1800
+                && clocks.low_voltage_bus_max_hz == 24_000_000
+                && clocks.high_voltage_bus_max_hz == 96_000_000
+                && clocks.flash_wait_step_hz == 24_000_000
+                && clocks.initial_flash_wait == 3
+                && clocks.default_hsi_divisor == 12
+                && clocks.pll.is_none()
+                && clocks.lsi_sysclk.is_none(),
+            "L012 target requires own factory monitor and HSI/fixed fallback limits without LSI SYSCLK"
+        );
+        for owner in ["SYSCTRL", "FLASH"] {
+            ensure!(
+                core.peripherals
+                    .iter()
+                    .find(|p| p.name == owner)
+                    .and_then(|p| p.registers.as_ref())
+                    .is_some_and(|r| r.version == "cw32l012_v1"),
+                "L012 target requires its own SYSCTRL and FLASH models"
+            );
+        }
+        let (ir, cr0) = lse_register(registers, core, "SYSCTRL", "CR0", 0)?;
+        for (name, bit, width) in [
+            ("SYSCLK", 0, 3),
+            ("PCLKPRS", 3, 2),
+            ("HCLKPRS", 5, 3),
+            ("KEY", 16, 16),
+        ] {
+            lse_field(cr0, name, bit, width)?;
+        }
+        lse_source_enum(ir, cr0, "SYSCLK", 4)?;
+        for (owner, reg, offset, name, bit, width) in [
+            ("SYSCTRL", "CR1", 4, "CLKCCS", 8, 1),
+            ("SYSCTRL", "CR2", 8, "FLASHWAIT", 4, 3),
+            ("SYSCTRL", "AHBEN", 48, "FLASH", 1, 1),
+            ("SYSCTRL", "AHBEN", 48, "KEY", 16, 16),
+            ("FLASH", "CR2", 4, "WAIT", 0, 3),
+            ("FLASH", "CR2", 4, "KEY", 16, 16),
+        ] {
+            let (_, fields) = lse_register(registers, core, owner, reg, offset)?;
+            lse_field(fields, name, bit, width)?;
+        }
+        let (_, hsi) = lse_register(registers, core, "SYSCTRL", "HSI", 24)?;
+        lse_field(hsi, "TRIM", 0, 11)?;
+        lse_field(hsi, "DIV", 11, 4)?;
+        lse_field(hsi, "STABLE", 15, 1)?;
+        ensure!(
+            hsi.fields.len() == 3,
+            "L012 HSI has no programmable WAIT field"
+        );
+
+        for (reg, offset) in [("APBEN1", 56), ("APBRST1", 72)] {
+            let (_, fields) = lse_register(registers, core, "SYSCTRL", reg, offset)?;
+            lse_field(fields, "UART3", 8, 1)?;
+        }
+        let (uart_ir, uart3) = lse_register(registers, core, "UART3", "CR1", 0)?;
+        lse_field(uart3, "SOURCE", 12, 2)?;
+        let source = uart3.fields.iter().find(|f| f.name == "SOURCE").unwrap();
+        let source_enum = uart_ir
+            .enums
+            .get(
+                source
+                    .enumm
+                    .as_ref()
+                    .context("UART3 SOURCE requires native enum")?,
+            )
+            .context("missing UART3 SOURCE enum")?;
+        ensure!(
+            source_enum
+                .variants
+                .iter()
+                .filter(|v| v.name == "LSI" && v.value == 3)
+                .count()
+                == 1,
+            "L012 UART3 SOURCE LSI must retain own encoding 3"
+        );
+        // Own ADC work gate, ungated LVD and four-VC/dual-OPA/dual-DAC
+        // consumers are not inferred from a neighboring native family.
+        for (owner, reg, offset, name, bit, width) in [
+            ("FLASH", "CR2", 4, "FETCH", 3, 1),
+            ("FLASH", "CR2", 4, "CACHE", 4, 1),
+            ("FLASH", "CR2", 4, "CACHEINVALID", 5, 1),
+            ("SYSCTRL", "CR1", 4, "HSIEN", 0, 1),
+            ("SYSCTRL", "CR1", 4, "HSEEN", 1, 1),
+            ("SYSCTRL", "CR1", 4, "LSIEN", 3, 1),
+            ("SYSCTRL", "CR1", 4, "HSECCS", 7, 1),
+            ("SYSCTRL", "CR1", 4, "LSECCS", 6, 1),
+            ("SYSCTRL", "CR1", 4, "LSELOCK", 5, 1),
+            ("SYSCTRL", "IER", 12, "HSIRDY", 0, 1),
+            ("SYSCTRL", "IER", 12, "LSIRDY", 3, 1),
+            ("SYSCTRL", "MCO", 112, "SOURCE", 0, 4),
+            ("SYSCTRL", "LSI", 32, "TRIM", 0, 9),
+            ("SYSCTRL", "LSI", 32, "WAITCYCLE", 10, 2),
+            ("SYSCTRL", "LSI", 32, "STABLE", 15, 1),
+            ("SYSCTRL", "APBEN1", 56, "ADC", 0, 1),
+            ("SYSCTRL", "APBEN1", 56, "VC", 1, 1),
+            ("SYSCTRL", "APBEN1", 56, "UART1", 3, 1),
+            ("SYSCTRL", "APBEN1", 56, "UART2", 4, 1),
+            ("SYSCTRL", "APBEN1", 56, "UART3", 8, 1),
+            ("SYSCTRL", "APBRST1", 72, "ADC", 0, 1),
+            ("SYSCTRL", "APBRST1", 72, "VC", 1, 1),
+            ("SYSCTRL", "APBRST1", 72, "UART1", 3, 1),
+            ("SYSCTRL", "APBRST1", 72, "UART2", 4, 1),
+            ("SYSCTRL", "APBRST1", 72, "UART3", 8, 1),
+            ("SYSCTRL", "APBEN2", 52, "RTC", 1, 1),
+            ("SYSCTRL", "APBEN2", 52, "I2C1", 6, 1),
+            ("SYSCTRL", "APBEN2", 52, "LPTIM", 7, 1),
+            ("SYSCTRL", "APBEN2", 52, "OPA", 9, 1),
+            ("SYSCTRL", "APBEN2", 52, "DAC", 10, 1),
+            ("SYSCTRL", "APBEN2", 52, "I2C2", 11, 1),
+            ("SYSCTRL", "APBRST2", 68, "RTC", 1, 1),
+            ("SYSCTRL", "APBRST2", 68, "I2C1", 6, 1),
+            ("SYSCTRL", "APBRST2", 68, "LPTIM", 7, 1),
+            ("SYSCTRL", "APBRST2", 68, "OPA", 9, 1),
+            ("SYSCTRL", "APBRST2", 68, "DAC", 10, 1),
+            ("SYSCTRL", "APBRST2", 68, "I2C2", 11, 1),
+            ("SYSCTRL", "APBEN1", 56, "KEY", 16, 16),
+            ("SYSCTRL", "APBEN2", 52, "KEY", 16, 16),
+            ("RTC", "CR1", 8, "SOURCE", 8, 3),
+            ("RTC", "PSC", 64, "PSC1", 20, 8),
+            ("RTC", "PSC", 64, "PSC2", 0, 20),
+            ("UART1", "CR1", 0, "SOURCE", 12, 2),
+            ("UART2", "CR1", 0, "SOURCE", 12, 2),
+            ("UART3", "CR1", 0, "SOURCE", 12, 2),
+            ("I2C1", "MCR0", 16, "CLKSRC", 6, 2),
+            ("I2C1", "SCR0", 272, "CLKSRC", 6, 2),
+            ("I2C2", "MCR0", 16, "CLKSRC", 6, 2),
+            ("I2C2", "SCR0", 272, "CLKSRC", 6, 2),
+            ("LPTIM", "CR0", 16, "EN", 0, 1),
+            ("LPTIM", "CFGR", 12, "ICLKSRC", 25, 2),
+            ("LPTIM", "CFGR", 12, "TRIGSEL", 12, 4),
+            ("LPTIM", "CFGR", 12, "TRIGEN", 17, 2),
+            ("ADC1", "CR", 0, "EN", 0, 1),
+            ("ADC1", "CR", 0, "CLK", 2, 2),
+            ("ADC2", "CR", 0, "EN", 0, 1),
+            ("ADC2", "CR", 0, "CLK", 2, 2),
+            ("LVD", "CR0", 0, "EN", 0, 1),
+            ("LVD", "CR0", 0, "FLTCLK", 8, 1),
+            ("LVD", "CR1", 4, "FLTTIME", 4, 4),
+            ("VC1", "CR0", 0, "EN", 0, 1),
+            ("VC1", "CR1", 4, "FLTTIME", 0, 4),
+            ("VC1", "CR1", 4, "FLTCLK", 4, 1),
+            ("VC1", "CR1", 4, "BLANKTIME", 8, 3),
+            ("VC2", "CR0", 0, "EN", 0, 1),
+            ("VC2", "CR1", 4, "FLTTIME", 0, 4),
+            ("VC2", "CR1", 4, "FLTCLK", 4, 1),
+            ("VC2", "CR1", 4, "BLANKTIME", 8, 3),
+            ("VC3", "CR0", 0, "EN", 0, 1),
+            ("VC3", "CR1", 4, "FLTTIME", 0, 4),
+            ("VC3", "CR1", 4, "FLTCLK", 4, 1),
+            ("VC3", "CR1", 4, "BLANKTIME", 8, 3),
+            ("VC4", "CR0", 0, "EN", 0, 1),
+            ("VC4", "CR1", 4, "FLTTIME", 0, 4),
+            ("VC4", "CR1", 4, "FLTCLK", 4, 1),
+            ("VC4", "CR1", 4, "BLANKTIME", 8, 3),
+            ("OPA1", "CAL", 4, "CALEN", 0, 1),
+            ("OPA1", "CAL", 4, "START", 2, 1),
+            ("OPA1", "CAL", 4, "AZRUN", 10, 1),
+            ("OPA2", "CAL", 4, "CALEN", 0, 1),
+            ("OPA2", "CAL", 4, "START", 2, 1),
+            ("OPA2", "CAL", 4, "AZRUN", 10, 1),
+            ("DAC", "CR0", 0, "EN1", 0, 1),
+            ("DAC", "CR0", 0, "TEN1", 1, 1),
+            ("DAC", "CR0", 0, "WAVE1", 6, 2),
+            ("DAC", "CR0", 0, "DMAEN1", 12, 1),
+            ("DAC", "CR0", 0, "EN2", 16, 1),
+            ("DAC", "CR0", 0, "TEN2", 17, 1),
+            ("DAC", "CR0", 0, "WAVE2", 22, 2),
+            ("DAC", "CR0", 0, "DMAEN2", 28, 1),
+        ] {
+            let (_, fields) = lse_register(registers, core, owner, reg, offset)?;
+            lse_field(fields, name, bit, width)?;
+        }
+        for owner in ["VC1", "VC2", "VC3", "VC4"] {
+            let (_, blank) = lse_register(registers, core, owner, "CR2", 8)?;
+            ensure!(
+                blank.fields.len() == 32 && blank.fields.iter().all(|f| f.bit_size == 1),
+                "L012 comparator blanking uses every native CR2 bit"
+            );
+        }
     } else if p.configuration.sysclk_detector.is_some() {
         let sources = sysclk_proof["sources"]
             .as_array()

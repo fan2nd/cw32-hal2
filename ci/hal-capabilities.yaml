@@ -1158,8 +1158,8 @@ functions:
         anchor: config.rcc.sys = rcc::Sysclk::LSI
     - id: external_low_speed_sysclk
       status: partial
-      scope: Init-only nominal 32768 Hz LSE SYSCLK on twenty-one exact packages; classic3, exact5 L031/R031/W031, exact3 L052, exact5 L083, exact3 L010 and exact2 L011.
-      implemented_families: [CW32F020, CW32F030, CW32A030, CW32L031, CW32R031, CW32W031, CW32L052, CW32L083, CW32L010, CW32L011]
+      scope: Init-only nominal 32768 Hz LSE SYSCLK on twenty-three exact packages; classic3, exact5 L031/R031/W031, exact3 L052, exact5 L083, exact3 L010, exact2 L011 and exact2 L012.
+      implemented_families: [CW32F020, CW32F030, CW32A030, CW32L031, CW32R031, CW32W031, CW32L052, CW32L083, CW32L010, CW32L011, CW32L012]
       limitations:
       - Family aliases and every other exact package are excluded. Config.lse is the single source declaration;
         the same board every-cycle tuple supplies SYSCLK, buses and RTC.
@@ -1200,7 +1200,7 @@ functions:
         CLKCCS; electrical headroom does not promise detection or continuity. Owned Flash WAIT changes alone
         can refresh native admission after original non-WAIT routes are reverified. No CR0 write follows final LSE selection.
       - Exact2 L011 means CW32L011K8T6 and CW32L011K8U6 only, with PC14/PC15 on pins 2/3.
-        L012 and generic aliases remain excluded. Prior nineteen system and all twenty-three auxiliary projections are unchanged.
+        Generic aliases remain excluded. The historical L011 addition preserved the prior nineteen system and all auxiliary projections.
         Native examples keep StartupOnly, Level2/Level10 drives and 16384 cycles; their example declarations require board qualification.
       - L011 StartupOnly has no factory-LSI prerequisite; the guarded HSI-calibration bridge may request
         unchanged electrically legal LSI. MonitoredExistingRoutes instead requires stable non-erased own
@@ -1220,6 +1220,26 @@ functions:
         initial only; final WAIT0/1/2/3 follows maximum qualified HCLK, with default HSI/24 yielding WAIT0.
         Final divisors precede the last LSE selection; no later CR0 write. No runtime switching, automatic
         RTC migration, rollback, fault recovery, elapsed-time or continued-execution guarantee is added.
+      - Exact2 L012 means CW32L012C8T6 and CW32L012C8U6 only, with PC14/PC15 on pins 3/4.
+        Prior twenty-one system and all twenty-three auxiliary projections are unchanged. Native examples use
+        StartupOnly, independent Level2/Level10 drives and 16384 cycles with explicit declarations requiring board qualification.
+      - L012 defaults to HSI/12, nominal 8 MHz; reset and effective fallback HSI/24 are separate facts.
+        Factory HSI remains enabled. StartupOnly has no factory-LSI prerequisite and can halt execution on loss.
+        MonitoredExistingRoutes requires stable non-erased factory-matching 9-bit LSI at 0x001007C2, unchanged
+        TRIM/WAIT and 256 * LSE_min_hz > 129 * 36080; no monitor preparation or rate/jitter measurement.
+      - L012 first-LSI admission stays latched from entry across repeated consumer checks; both I2C1/2
+        master/slave raw source1/3 are refused, including before required HSI start/retrim. Own RTC/UART/LPTIM,
+        MCO/IRQ, ungated LVD and all four VC controls apply. Closed disputed UART3 work gates are not opened.
+        Held resets reject; restoration failures preserve the detailed gate error.
+      - L012 ADC1/ADC2 share a configuration-and-work gate. The supported handover permits their inspection
+        interval's conversion/trigger/downstream progress before an enabled-ADC refusal. Gate restoration
+        cannot undo it. Whole-GPIOC, dedicated HSI/LSI outputs, inaccessible UART3, timer/cascade/IWDT and
+        external observers remain explicit functional handover limits; the platform bus-master boundary is unchanged.
+      - L012 independently qualifies configured HSI at final divisors and full 4.08 MHz fallback without
+        fallback divider credit. Final WAIT is set under verified calibrated HSI/final divisors before LSE
+        selection; default HSI/12 yields WAIT0. Both WAIT interfaces must agree, mixed readbacks fail closed,
+        and FETCH/CACHE/CACHEINVALID are preserved. No CR0 or FLASH write follows final selection, even on error.
+        RTC/AWT is not reset or migrated; no rollback, source-loss recovery or continued-execution guarantee.
       registers_any: [LSE]
       evidence:
       - path: cw32-data/lse-qualified.yaml
@@ -1235,6 +1255,9 @@ functions:
       - path: docs/l010-lse-sysclk.md
       - path: docs/l011-lse-sysclk-qualification.json
       - path: docs/l011-lse-sysclk.md
+      - path: docs/l012-lse-sysclk-qualification.json
+      - path: docs/l012-lse-sysclk.md
+      - path: embassy-cw32/src/rcc/l012.rs
       - path: embassy-cw32/src/rcc/l010_l011.rs
       - path: embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs
       - path: embassy-cw32/src/rcc/l052_l083/lse_sysclk.rs
@@ -1468,8 +1491,8 @@ functions:
         No raw PINLOCK reuse is admitted for these two families. Native RTC LSE uses SOURCE0,PSC1=0,PSC2=0x3fff,
         and bounded source transitions stage division before switching; attach never repairs or retunes inherited state.
       - Failure retains source enables, pad reservations and diagnostics. Ordinary reset may not clear retained LSE controls; POR may be required.
-      - LSE system clock is separately qualified for twenty-one exact packages; classic3, exact5 L031/R031/W031,
-        exact3 L052, exact5 L083, exact3 L010 and exact2 L011 above. The twenty-three auxiliary source qualifications remain unchanged.
+      - LSE system clock is separately qualified for twenty-three exact packages; classic3, exact5 L031/R031/W031,
+        exact3 L052, exact5 L083, exact3 L010, exact2 L011 and exact2 L012 above. The twenty-three auxiliary source qualifications remain unchanged.
         No runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
       registers_any:
       - LSE

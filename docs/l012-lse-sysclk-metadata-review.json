@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "disposition": "accepted_source_metadata_and_generated_projection_only",
+  "reviewed_on": "2026-10-10",
+  "scope": "Independent read-only exact-two CW32L012C8T6/C8U6 init-only LSE SYSCLK source, generator, HAL build-script and generated metadata review. Runtime implementation and proposed reset-guard changes are outside this acceptance.",
+  "approved_design_sha256": "9ce3be05e5d57fc4206c06ab0b2472ef1bf1875c94a22162f1fbf51ba743fe7b",
+  "baseline_source_lock_sha256": "31f98f7249f7f46018b28d50a22404c8e0cfe8bcbad78d14f75423c3e10ca19c",
+  "freeze_manifest_sha256": "46592bf51f62a4b75dc8e5d6b3105572a02a3e53c2ea2537b7b9e1bcea4e5806",
+  "frozen_data_diff_sha256": "6f6dee960a42fb90ba4d66c12eb92d79f3f0e57e249bf76d1c1ef50c23b518fc",
+  "qualified_parts": [
+    "CW32L012C8T6",
+    "CW32L012C8U6"
+  ],
+  "reviewed_source_files": [
+    {
+      "path": "cw32-data/lse-qualified.yaml",
+      "sha256": "afeb8bcbda67b96545db1d4baf4ca0763f819754cacd13823a441087c54c9dcc",
+      "bytes": 90954,
+      "baseline_sha256": "ff2fba9144453c4f934778a0fccd06e5185dd1bb054f72dd4aa7efcea1ef83d3"
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "sha256": "ca5fa04337464797466d7fa90a9b4b5e43cf0d1aa913eef27b743732c024e6d8",
+      "bytes": 355320,
+      "baseline_sha256": "31f98f7249f7f46018b28d50a22404c8e0cfe8bcbad78d14f75423c3e10ca19c"
+    },
+    {
+      "path": "cw32-data-gen/src/electrical.rs",
+      "sha256": "7ff0c6ac37e7cb1d44632277e975028c8f0966e01e0e7a5cbaf80399dea4c2f9",
+      "bytes": 186753,
+      "baseline_sha256": "7478e5c73758abcc8db91f8139bba512997e918107c1903b66b37b955d7b60a8"
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "9891839a697ff45b2e10d086a80c9f9b29b36d09f2abfaab64081b60ebd37365",
+      "bytes": 193629,
+      "baseline_sha256": "c4f405ee9c0c613ab169e47aa00bec5736bdbda6550d4527813e46b6376259f6"
+    },
+    {
+      "path": "docs/l012-lse-sysclk-qualification.json",
+      "sha256": "3cee406969c9c15b0d6261ef3cce426ad89ffccda64bdff8cc281bebbe475a2c",
+      "bytes": 14296,
+      "baseline_sha256": null
+    },
+    {
+      "path": "ci/verify-l012-lse-data.py",
+      "sha256": "9c8b164806189c8f71c4df1f274d3037a57999d81cbba757043cc04da7c8be88",
+      "bytes": 20374,
+      "baseline_sha256": null
+    },
+    {
+      "path": "ci/verify-l010-lse-data.py",
+      "sha256": "01651ebbf5fad3a472d9e4294d83b9cd6208f8f12adcc8a9bee6b7fc8b43407e",
+      "bytes": 16615,
+      "baseline_sha256": "93d2df93520d2fab5ec1cc443ddb54b83ab7c1f6697d1b8caf2b84741e7cbcc8"
+    },
+    {
+      "path": "ci/verify-l011-lse-data.py",
+      "sha256": "3f363d1e2896e5fffe3a7df432566b893cbd8f46af0cbb3e73f7058f366faf8a",
+      "bytes": 18586,
+      "baseline_sha256": "157104c10808821c5eba462b0d4a66f481f4aca1c1ec51cc36b2d973acf62db9"
+    },
+    {
+      "path": "ci/verify-l083-lse-data.py",
+      "sha256": "1995ca6b8a16ab07f840740b63520cef25dc4f8a43f561366d3f8706e19e9060",
+      "bytes": 12188,
+      "baseline_sha256": "242b63bb1fa78811394009b14006536b5940e73c1f49001d6a99a472c4b3b972"
+    }
+  ],
+  "preservation": {
+    "complete_catalog_identical_after_two_detector_and_new_proof_binding_removals": true,
+    "historical_policy_files_unchanged": 26,
+    "old_21_sysclk_and_23_auxiliary_profiles_preserved": true,
+    "source_authority_delta_only_four_own_evidence_references": true,
+    "source_authority_added_reference_json_pointers": [
+      "/artifacts/6/evidence",
+      "/artifacts/24/evidence",
+      "/artifacts/25/evidence",
+      "/artifacts/42/evidence"
+    ],
+    "all_original_hashes_urls_revisions_and_sdk_member_records_unchanged": true,
+    "schemas_register_models_access_overlays_and_pac_generator_unchanged": true,
+    "unchanged_schema_generator_and_register_file_count": 155,
+    "old_checker_delta": "L010 and L011 each remove only four lines of obsolete L012-wide exclusion. L083 changes only its two global SYSCLK count facts from 21 to 23. Own-family assertions remain unchanged."
+  },
+  "own_facts": {
+    "hsi_nominal_hz": 96000000,
+    "hsi_factory_error_percent": 2,
+    "hsi_default_numeric_divisor": 12,
+    "hsi_default_encoding": 11,
+    "hsi_reset_fallback_numeric_divisor": 24,
+    "hsi_reset_fallback_encoding": 14,
+    "hsi_encoding_zero_numeric_divisor": 32,
+    "hsi_has_wait_field": false,
+    "fallback_nominal_hz": 4000000,
+    "fallback_minimum_hz": 3920000,
+    "fallback_maximum_hz": 4080000,
+    "fallback_bus_divider_credit": false,
+    "native_monitor_factory_halfword_address": 1050562,
+    "native_monitor_trim_bits": 9,
+    "native_monitor_maximum_hz": 36080,
+    "detector_lse_edges": 128,
+    "detector_lsi_cycles": 256,
+    "software_margin_lse_edges": 1,
+    "minimum_integral_monitored_lse_hz": 18181,
+    "flash_wait_step_hz": 24000000,
+    "initial_flash_wait": 3,
+    "flash_wait_alias_function_documented": true,
+    "flash_alias_timing_measured": false,
+    "pll_qualification": false,
+    "lsi_sysclk_qualification": false
+  },
+  "original_evidence_review": {
+    "available_locked_originals_independently_rehashed": 43,
+    "own_originals_independently_rehashed": 4,
+    "own_derived_texts_regenerated_and_compared": 3,
+    "own_selected_nested_sdk_members_independently_rehashed": 71,
+    "source_checker_page_identity_bindings": 105,
+    "own_selected_register_fields_independently_compared": 103,
+    "register_access": "Selected 32-bit scalar registers match own SVD read-write access; HSI, HSE and LSI STABLE typed PAC getters remain read-only. No register model or field-access overlay changed.",
+    "semantic_read_pages": {
+      "CW32L012_UserManual_CN_V1.4.pdf": [
+        59,
+        62,
+        70,
+        73,
+        74,
+        75,
+        84,
+        127
+      ],
+      "CW32L012_UserManual_EN_V1.0.pdf": [
+        89,
+        90
+      ],
+      "CW32L012_DataSheet_CN_V1.0.pdf": [
+        47,
+        57,
+        58
+      ]
+    },
+    "coverage_limit": "The 105 page receipt hashes identify cited pages; they are not a claim to have semantically reviewed every sentence on all 105 pages. Own SVD field correspondence and selected manual/electrical pages were independently inspected."
+  },
+  "checker_results": {
+    "new_l012_checker": "passed; own originals, four SDK members, 105 page receipts, 102 fields, 54 generated selections, exact-two presence and generic absence",
+    "preserved_l010_l011_l083_checkers": "passed independently on the same 54 generated selections",
+    "hal_execution": false,
+    "hardware_execution": false
+  },
+  "generated_projection": {
+    "generated_selections_compared": 54,
+    "complete_chip_json_identical_after_only_two_detector_removals": true,
+    "generic_l012_and_unqualified_packages_excluded": true,
+    "data_files_compared": 416,
+    "data_changed_files": [
+      "chips/CW32L012C8T6.json",
+      "chips/CW32L012C8U6.json"
+    ],
+    "previous_sysclk_profiles": 21,
+    "current_sysclk_profiles": 23,
+    "auxiliary_profiles": 23,
+    "exact_added_parts": [
+      "CW32L012C8T6",
+      "CW32L012C8U6"
+    ],
+    "generic_l012_present": true,
+    "pac_files_compared": 486,
+    "pac_changed_files": [
+      "src/chips/metadata_0019.rs"
+    ],
+    "changed_pac_metadata_used_only_by": [
+      "cw32l012c8t6",
+      "cw32l012c8u6"
+    ],
+    "pac_difference_exactly_one_shared_detector_addition": true
+  },
+  "reviewed_generated_changes": [
+    {
+      "path": "cw32-data/data/chips/CW32L012C8T6.json",
+      "sha256": "669afb117738d56db7950fed62c39376609d7c05035d4e09d93ed6b43bfec636",
+      "bytes": 121711
+    },
+    {
+      "path": "cw32-data/data/chips/CW32L012C8U6.json",
+      "sha256": "fd8b15e1931fcc9614739d0494ed8fb347d4fcd1374c0523d69ed968d23b7bc4",
+      "bytes": 121710
+    },
+    {
+      "path": "cw32-metapac/src/chips/metadata_0019.rs",
+      "sha256": "bdfe0b4529ec6f799b8016bd2de42ab73bf00fab51d1bf8957b8645c87f09ab2",
+      "bytes": 193776
+    }
+  ],
+  "build_script_review": {
+    "exact_two_sysclk_detector_selection": true,
+    "generic_and_other_packages_not_qualified": true,
+    "own_sysctrl_and_flash_versions_checked": "cw32l012_v1",
+    "typed_selector4_divisors_flash_keyed_gates_and_native_consumer_fields_checked": true,
+    "numeric_divisor_and_encoding_compile_time_assertions_present": true,
+    "emitted_build_output_inspected": false,
+    "ordinary_builds_performed_by_reviewer": false
+  },
+  "external_verification_records": [
+    {
+      "path": "metadata-review/current-source-generated-check.json",
+      "sha256": "804c42abbd091b0969effea947273d65737a797a4c5c06f6b125766da6c281bd",
+      "bytes": 23128,
+      "evidence_kind": "external-evidence"
+    },
+    {
+      "path": "metadata-review/l010-current-source-generated-check.json",
+      "sha256": "df9e7bd321c4de5d9c53c89765d24882b3d2330cb4bbb6107bcbc1603028bb7d",
+      "bytes": 10119,
+      "evidence_kind": "external-evidence"
+    },
+    {
+      "path": "metadata-review/l011-current-source-generated-check.json",
+      "sha256": "7f6b3e41bb00e4e0649da355cf41f6af6abdf2bbe4551d30776d05ad1317559a",
+      "bytes": 17055,
+      "evidence_kind": "external-evidence"
+    },
+    {
+      "path": "metadata-review/l083-current-source-generated-check.json",
+      "sha256": "82b4fef6cbebb579e38291462492a05aab2a9ce6fba7a84ce7c85bc3d9c77c5c",
+      "bytes": 18909,
+      "evidence_kind": "external-evidence"
+    },
+    {
+      "path": "metadata-review/independent-selected-fields.json",
+      "sha256": "384e69dbaf6ec9eda589e53fffea52744e9672e402d2b15dda5ad6a6347f1983",
+      "bytes": 24539,
+      "evidence_kind": "external-evidence"
+    },
+    {
+      "path": "metadata-review/independent-source-and-projection.json",
+      "sha256": "7664ca7a77c008d1ca16428c9a5d4d812310b4f8f728733a7613137475b9eae5",
+      "bytes": 20404,
+      "evidence_kind": "external-evidence"
+    }
+  ],
+  "bounded_build_mask_delta": {
+    "patch_sha256": "3f02e763191b32586dc6e7e50c3b909d2f92d60ac5764f2a7f30b68a84f4abc8",
+    "original_manifest_sha256": "bd45db89531a5e1033ec5e4f9213aff5a964200ccde1568183d233b8a62b6923",
+    "description": "Exact-L012 HSI/HSE comparison masks derive from selected scalar STABLE IR fields; original read-only getters and independent readiness remain authoritative. Static mask values are 32768 and 524288. No data/PAC/schema change."
+  },
+  "findings": [],
+  "limits": [
+    "Source, static build-script and completed generated data/PAC acceptance only. Runtime sequencing, reset-guard proposals, emitted HAL build output and behavioral preservation require separate review and validation.",
+    "No Cargo commands, generation, HAL execution, tests, models, probes, harnesses, remote actions, electrical measurements or silicon validation were performed by this reviewer. Existing completed generation output was inspected read-only.",
+    "No fault-time divisor retention, alias propagation timing, execution progress, source-loss recovery, fallback latency or RTC continuity is established by this metadata review.",
+    "The review document is the sole published-source file written by this reviewer; working receipts stay outside the source tree."
+  ],
+  "supplements": [
+    {
+      "reviewed_on": "2026-10-10",
+      "status": "passed_static_generation_boundary_only",
+      "prior_public_receipt_sha256": "ee755394973777377b23beb694ba4cc4324dc3001e00b9f68098b29bd83936eb",
+      "scope": "Incremental selected-L012 HSE helper generation only. The original v2 review fields above retain their original scope and hashes; they do not claim review of the later helper implementation.",
+      "source_path": "embassy-cw32/build.rs",
+      "before_sha256": "9891839a697ff45b2e10d086a80c9f9b29b36d09f2abfaab64081b60ebd37365",
+      "after_sha256": "0e1ceda358439685af1cdc71b883c241b9259ef05d059a3779e46316f40bc179",
+      "incremental_patch_sha256": "ae11094e3d2b33ef07c663e0db705a79bb5acf4540a1e9f672985de6e478deef",
+      "external_review": {
+        "evidence_kind": "external-evidence",
+        "record": "metadata-review/l012-hse-generator-boundary-review.json",
+        "sha256": "f551dfee78acf4bd9e687c13f6e6770dccf943e0a536bdccfb02cb6e291e8e7f"
+      },
+      "verified": "All 54 selected metadata profiles preserve exact-two target guard generation, generic L012 target absence and non-L012 signatures/output expressions. The other eight v2 authored metadata files, 416 data files, 486 PAC files and native STABLE-mask sections are unchanged.",
+      "limits": "Static inspection only. Runtime guard sequencing and emitted-code/build acceptance are separate; no original-source checks, Cargo, generation, HAL tests, models, probes or adapters were rerun."
+    }
+  ]
+}

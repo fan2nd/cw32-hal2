@@ -204,10 +204,11 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   unchanged. Generic L010 aliases remain excluded. See the
   [L010 system contract](docs/l010-lse-sysclk.md) and
   [crystal/bypass examples](examples/lse-sysclk/README.md).
-- CW32L011K8T6 and CW32L011K8U6: init-only native LSE SYSCLK brings the current
-  system roster to twenty-one exact packages; auxiliary LSE remains twenty-three.
-  The prior nineteen system paths are unchanged; L012 and generic aliases remain
-  excluded. PC14/PC15 are pins 2/3 on both packages, and the native example uses
+- CW32L011K8T6 and CW32L011K8U6: their init-only native LSE SYSCLK addition
+  brought the historical Stage62 roster to twenty-one exact system packages.
+  The prior nineteen system paths and all twenty-three auxiliary qualifications
+  were unchanged; generic aliases remain excluded. PC14/PC15 are pins 2/3 on
+  both packages, and the native example uses
   StartupOnly, independent Level2/Level10 drives and 16384 startup cycles with
   example 3.0–3.6 V, −20…70 °C and every-cycle 32766–32770 Hz declarations
   that require board qualification.
@@ -224,6 +225,27 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   the maximum qualified HCLK bound (WAIT0 for the default HSI /24 configuration).
   Loss can stop the CPU, and errors publish no clocks and require reset before
   retry. See the [L011 system contract](docs/l011-lse-sysclk.md) and
+  [crystal/bypass examples](examples/lse-sysclk/README.md).
+- CW32L012C8T6 (LQFP48) and CW32L012C8U6 (QFN48): init-only native LSE SYSCLK
+  brings the current exact system and auxiliary rosters to twenty-three each.
+  The prior twenty-one system paths and all auxiliary qualifications remain
+  unchanged; generic aliases and other packages stay excluded. Crystal owns
+  PC14/PC15 pins 3/4; bypass owns PC14 only. Native examples reuse StartupOnly,
+  independent Level2/Level10 drives and 16384 cycles, with explicit board
+  declarations requiring qualification rather than measured validation.
+  Configured HSI defaults to /12 (8 MHz); reset and effective fallback /24
+  (4 MHz) are separate facts. Successful init retains factory HSI. StartupOnly
+  can halt the CPU on loss; its unchanged-legal-LSI bridge does not prepare a
+  monitor. MonitoredExistingRoutes needs stable factory-matching 9-bit LSI
+  at entry and `256 * LSE_min_hz > 129 * 36080`. First-request checks cover
+  own RTC/UART/I2C/LPTIM/analog consumers; UART3's closed disputed work gate stays
+  closed. Functional handover includes shared ADC1/ADC2 work-gate progress,
+  whole GPIOC, dedicated source outputs and timer/cascade/external observers.
+  Configured HSI and full 4.08 MHz fallback are separately qualified without
+  fallback divider credit. Final WAIT is established under verified HSI/final
+  divisors before LSE selection; no CR0 or FLASH write follows that selection,
+  even on error. Loss invalidates timing; errors publish no clocks and require
+  reset. See the [L012 system contract](docs/l012-lse-sysclk.md) and
   [crystal/bypass examples](examples/lse-sysclk/README.md).
 - F020/F030/A030: direct qualified HSE crystal/bypass system clocks with explicit
   board nominal/minimum/maximum bounds, preserved factory HSI, mandatory CCS/LSI,

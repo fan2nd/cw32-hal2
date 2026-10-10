@@ -1,0 +1,172 @@
+{
+  "title": "CW32L012 LSE SYSCLK independent runtime source review",
+  "review_date": "2026-10-10",
+  "disposition": "accepted_source_review",
+  "targets": ["CW32L012C8T6", "CW32L012C8U6"],
+  "scope": "Independent read-only inspection of the frozen initialization runtime, native per-domain guards, generated HSE guard implementation, legacy native call-site preservation, calendar integration and public initialization contract. This is source acceptance only.",
+  "unresolved_source_findings": [],
+  "accepted_specification": {
+    "design_v2_sha256": "9ce3be05e5d57fc4206c06ab0b2472ef1bf1875c94a22162f1fbf51ba743fe7b",
+    "independent_design_review_sha256": "3f7fe7c648d5b51f891cca4336249b5e881ff1057ec9cd3ad67c9f3fb6638d36",
+    "reset_window_supplement_sha256": "bdb5c2104a3ba05f9b80a78054ea97c758d42ec9a7de76ec61edcc00c49375fe",
+    "reset_error_mapping_sha256": "a62735a47f2e762ebb55da5707cc186eea3f14e602dfd921d37e24b758f38f96"
+  },
+  "reviewed_sources": [
+    {
+      "path": "embassy-cw32/src/rcc/l012.rs",
+      "sha256": "354b74796b05a5e0dc1e19fce3a19c5e6501de352ccb1f4c4357d080623979fa",
+      "baseline_sha256": "2aadcdb1d6e8ef7517c465f03c006d9a07960a4f779fa4ff5de3263737a4a037"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/lse_native_low_power.rs",
+      "sha256": "d60a0884eaf07d63237750750d69b65450be3349817f84ff86f35977db32b6d5",
+      "baseline_sha256": "0483e7494b68e660cab3187b0b28cb8c4d2a73ab05379e86b2cbbe5f290cf620"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l010_l011.rs",
+      "sha256": "8c00e894bd9ae41800f75e92cd661d1c18623857b5d91a0587d0f436ff02969c",
+      "baseline_sha256": "9f8dfede63e2a5c17220caf2287e8feae016095e89bb3cddf3c0c6a6c8dc5590"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/rtc.rs",
+      "sha256": "6eb38ad677f203af5f641ce4ed0cc9a38f42f807161f4db2a3eacc46e868a44a",
+      "baseline_sha256": "5e8b91933041ec85789f5fb6ab32848c49dbd6738b66e9465d29c8d87604980e"
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "0e1ceda358439685af1cdc71b883c241b9259ef05d059a3779e46316f40bc179",
+      "reviewed_increment": "Selected-L012 generated HSE reset, gate and fault guards, and the HSI/HSE read-only STABLE mask use. This runtime review does not substitute for the separate complete metadata review."
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "d089924c25931d38f199394b9f9a854a8ffa77d4bd6d92a440eed7400f46d55c",
+      "reviewed_increment": "Exact-two L012 public initialization contract, including explicit shared ADC working-gate handover and failure ownership."
+    }
+  ],
+  "contract_document": "docs/l012-lse-sysclk.md",
+  "reviewed_properties": [
+    {
+      "property": "Pure admission and detector arithmetic",
+      "result": "The LSE arm uses the existing native declaration and exact bounds. It separately validates configured factory HSI and full HSI/24 fallback without bus-divider credit. Monitored target detector operands are widened to u64 before addition and multiplication; the locked 128-edge, 256-cycle, one-edge-margin and 36080 Hz facts require an integral minimum of 18181 Hz. StartupOnly and auxiliary qualification remain unchanged. This is a sufficient board-qualified window condition, not a frequency or jitter measurement. Existing exact 1 MHz time-driver validation precedes singleton acquisition and RCC MMIO."
+    },
+    {
+      "property": "Immutable entry and source ownership",
+      "result": "Typed source, policy, route, interrupt, MCO and clock state is captured before native preflight or gate writes. Enabled undeclared HSE retains its early refusal; declared enabled HSE is exact reuse. HSI factory trim, raw-HSI RTC ownership and retained RTC PSC1 limits remain. No public LSI SYSCLK or PLL path is introduced."
+    },
+    {
+      "property": "First temporary LSI request",
+      "result": "Need follows the trim bridge and actual retained automatic clients, including LVD and four VCs independent of filter count. Entry-nonstable classification is immutable. Additional consumer refusals repeat when that latch requires them. Every needed temporary LSIEN assertion, including entry-already-stable cases, has adjacent fault, original IER/MCO/LSE/LSI, phase-derived CR1, guarded original-trim/divider HSI, inherited HSE and exact WAIT3 checks after gate restoration. No gate or source write intervenes before the assertion. LSI TRIM/WAIT are never programmed."
+    },
+    {
+      "property": "Actual per-domain reset windows",
+      "result": "RTC, UART1/2, I2C1/2, LPTIM, shared ADC1/2, shared VC1..4, OPA1/2 and DAC receive their own before-gate, in-read-before, in-read-after and after-restoration observations. GPIOC guards surround actual configuration, reuse and final verification windows. Operational UART3 and GPIOA/B/F reads retain closed gates and guard each actual read. The grouped outer-reset workaround is removed. No reset is asserted or released."
+    },
+    {
+      "property": "FLASH reset and access ownership",
+      "result": "FLASH reset is refused before enabling its gate. Authoritative CR2 capture, every WAIT observation and each owned FLASH RMW have same-domain reset/gate guards before and after the access. The unchanged native Admission helper's single authoritative FLASH read is bracketed at its target call and its result is buffered until post-read checks complete. FLASH intentionally remains enabled. Lost required gate returns FlashClockTimeout; held reset returns LseClockInUse; no access failure is treated as WAIT lag."
+    },
+    {
+      "property": "Gate restoration and error precedence",
+      "result": "Actual enable/restoration failure retains precedence over buffered semantic refusal. Consumer and target HSE matcher failures retain both LseConfigurationGateTimeout fields; native GPIOC retains LseGpioGateTimeout. Relevant external faults precede semantic, reset, source-readiness and WAIT acceptance. Held consumer/HSE/FLASH reset returns LseClockInUse; GPIOC pad reset remains LsePinConflict; true first-HSI/LSI source-owner conflicts remain HsiClockInUse/LsiClockInUse. Native results are deferred so LseNotReady does not hide an external fault."
+    },
+    {
+      "property": "Generated HSE guard behavior",
+      "result": "The existing generated helpers receive a bool argument only for L012. Target checks and target-only error variants are emitted only for detector-qualified L012. Fresh GPIOF configuration preserves the original per-pad writes and leave-enabled gate ownership; no new restoration is introduced. Read-only matching performs each real per-pad inspection and independent restoration before fault/reset/pad-result selection. A fresh enable failure is distinguished by its operation context from a later false-pad HsePinConfigurationTimeout. Non-L012 emitted helper strings/signatures and L012 false-path MMIO/error behavior are preserved by source inspection."
+    },
+    {
+      "property": "Strict owned WAIT phases",
+      "result": "Initial WAIT requires complete entry policy and authoritative/mirror agreement on W0 in 0..3. Final WAIT requires both interfaces at 3 under verified calibrated HSI and final divisors. Each owned transition accepts new/new first, permits only old/old bounded waiting when old differs, and immediately rejects mixed or other pairs. Every observation checks phase source/monitor/policy/mux/divider and non-WAIT control identity before success or waiting. FLASH FETCH/CACHE/CACHEINVALID/RFU and non-WAIT SYSCTRL controls remain tied to their original images."
+    },
+    {
+      "property": "Admission and post-start identity",
+      "result": "The opaque native Admission and after_owned_flash_wait implementation remain byte-identical to the baseline. Its single pre-start call remains after software LSIEN restoration; None does not enter it and it is not reused after start. Final CR1/HSI/HSE/LSE expectations derive from entry plus the request. HSI/HSE STABLE masks exclude only the separately checked read-only status; LSE preservation combines the original-word mask, every requested typed field, STABLE and native frozen health. Entry/factory-qualified native monitor identity remains authoritative."
+    },
+    {
+      "property": "Final selection is the last clock write",
+      "result": "Final WAIT is computed from LSE HCLK, configured factory HSI HCLK and full 4.08 MHz fallback and established under verified HSI. The final LSE selector is the last CR0 write. All subsequent poll, source/policy/monitor, authoritative WAIT and HSE/native-LSE pad paths contain no CR0 or FLASH write, including errors and gate cleanup. There is no rollback, retry write, divider repair or stale LSE reselection. Publication remains after configure succeeds."
+    },
+    {
+      "property": "ADC and residual functional handover",
+      "result": "Public initialization documentation explicitly permits the shared ADC working interval, including conversion/trigger progress before enabled-ADC refusal, and states that restoring the gate cannot undo progress. It keeps the separate platform bus-master/memory-ownership boundary. Whole-GPIOC, source-output, disputed UART3, timer/cascade, GPIO-filter, IWDT and external-observer limits remain explicit; closed gates or reset-looking selectors do not prove inactivity."
+    },
+    {
+      "property": "Preservation and failure ownership",
+      "result": "Removing only five literal-false native arguments reconstructs l010_l011.rs baseline bytes exactly. Calendar integration adds the native false argument/cfg split plus import formatting without changing source/divisor/capability logic. Native false paths retain prior register reads, gate operations and errors. L012 auxiliary/None use the original latency and final-source path. No RTC/AWT state migration, flag clearing, IRQ acquisition or source rollback is added. Monotonic pad reservation and native monitor marker remain on failure; failed initialization publishes no new clocks and requires reset before retry."
+    }
+  ],
+  "closed_findings": [
+    "Whole-call reset checks replaced by actual per-domain windows, including HSE GPIOF and FLASH.",
+    "Native semantic/readiness results no longer hide target external faults.",
+    "The proposed fresh-HSE GPIOF restoration was withdrawn; original gate ownership is preserved.",
+    "Read-only STABLE fields are compared without adding PAC setters or weakening remaining source identity.",
+    "Held-reset errors are separated from actual HSI/LSI source-owner refusals.",
+    "The public shared ADC work-gate handover is explicit."
+  ],
+  "verification_performed_by_reviewer": [
+    "Read accepted design, independent design acceptance, reset supplement and error mapping.",
+    "Read runtime and generator code and manually traced success, refusal, timeout, restoration and post-final-selection paths.",
+    "Recomputed reviewed source SHA-256 values and compared relevant baseline bytes and mechanical-call-site projections.",
+    "Rehashed the four locked own L012 vendor originals and reread relevant own manual text for source selectors, automatic LSI requests, ADC working gate, peripheral gates and FLASH reset. Vendor material remains external evidence."
+  ],
+  "not_performed_or_claimed_by_this_receipt": [
+    "No Cargo build, generated-code execution, HAL test, model, probe, harness, hosted CI, remote operation or silicon experiment was run by this reviewer.",
+    "The ordinary final library/linked-ELF matrix and exact build correspondence are separate evidence, not a result of this receipt.",
+    "Complete old-21 SYSCLK and auxiliary-23 metadata/generated-output projections remain the separate preservation review's scope.",
+    "No oscillator waveform, per-cycle jitter, alias propagation time, fault-to-fallback timing, continuing execution, rollback, RTC continuity or silicon guarantee is established."
+  ],
+  "supplements": [
+    {
+      "review_date": "2026-10-10",
+      "disposition": "accepted_warning_name_only_supplement",
+      "original_receipt_sha256": "f17abb820a4bddf45f87cf070bbbc8b685886b648e9227dec14d3a904f4d827c",
+      "preservation": "All original fields, six reviewed source identities and original review scope are retained above. This supplement adds only the separately reviewed generator parameter-name correction and its bounded correspondence.",
+      "source_path": "embassy-cw32/build.rs",
+      "previous_sha256": "0e1ceda358439685af1cdc71b883c241b9259ef05d059a3779e46316f40bc179",
+      "supplemented_sha256": "cb2a48ca5675ba7b2f850276e196ddc4e1ceaa107f395e8fd370938272ab1436",
+      "reviewed_patch_sha256": "4628f4db08c91f134e68e4cc3a32bef8c7233c64dc18a009478fb583f1df90f5",
+      "source_review": "Only non-detector L012 generated rcc_hse_pins_match names its unused bool parameter _l012_sysclk. Its signature type and body do not change. Detector-qualified exact L012 targets retain l012_sysclk; non-L012 emission is unchanged. No runtime, ownership, reset, gate, source, WAIT or error behavior changes.",
+      "bounded_build_correspondence": {
+        "performed_by": "Coordinator; the independent reviewer read and verified existing receipts and generated bytes without invoking Cargo.",
+        "commands_sha256": "0a22113c9f80faf54c367c1447d6006065b19fea321713f788b4ef0993e18677",
+        "target": "thumbv6m-none-eabi",
+        "features": "rt,defmt with each named chip; locked no-default-features library checks",
+        "association": "Each Cargo JSON build-script-executed package/out_dir is paired with the corresponding compiler-artifact exact chip feature; broad family labels are not used as target identity.",
+        "checks": [
+          {
+            "chip": "cw32l012",
+            "exit": 0,
+            "warnings": 0,
+            "generated_before_sha256": "3324af128dd9eab995df842e6f21f95f73875cf5237e9e0ddb8a4db872d3de24",
+            "generated_after_sha256": "cec34590cf4704cc7e0ca08966ee02018736ffb55fb9283eb0c1c5540eaef1b4",
+            "byte_identity": "Only the one unused matcher parameter name differs",
+            "cargo_json_sha256": "321a2bf9434752b1c9cc76441178d6df3abd19785b683c96925f51e781a69e60",
+            "log_sha256": "b4473c80303208a08e05e55291070efc2e00587e07312f44707e74e9ae9c1509"
+          },
+          {
+            "chip": "cw32l012c8t6",
+            "exit": 0,
+            "warnings": 0,
+            "generated_before_sha256": "6ece681bf0da438002980cd63c93052521394bd6f10cf759098343992eb8a393",
+            "generated_after_sha256": "6ece681bf0da438002980cd63c93052521394bd6f10cf759098343992eb8a393",
+            "byte_identity": "Complete generated file unchanged",
+            "cargo_json_sha256": "1b951cc1eb6cdd8b9ee6e0d1974910e32495b85f5bd8a4be94ff948501e3f911",
+            "log_sha256": "7ab2f4e39ce69d17a4c3776aab75c062efcfeff992623a1d7498d2924aa710a8"
+          },
+          {
+            "chip": "cw32l012c8u6",
+            "exit": 0,
+            "warnings": 0,
+            "generated_before_sha256": "6ece681bf0da438002980cd63c93052521394bd6f10cf759098343992eb8a393",
+            "generated_after_sha256": "6ece681bf0da438002980cd63c93052521394bd6f10cf759098343992eb8a393",
+            "byte_identity": "Complete generated file unchanged",
+            "cargo_json_sha256": "c21cc9d2675497eb63f906628bbba8fac83cf700278d968666bd5a9f42ca23e9",
+            "log_sha256": "b2be6161d1d6c4af654bc593fc92d7b40f59af27e727f6196f7ebf6739d68b0d"
+          }
+        ]
+      },
+      "matrix_boundary": "The earlier main seven-library/ten-ELF matrix remains bound to build.rs 0e1ceda358439685af1cdc71b883c241b9259ef05d059a3779e46316f40bc179. It is not claimed to have been rerun wholesale on the supplemented generator. Only the three named final library checks are new. The exact-two generated files are independently byte-identical; original main ELF structure/source-snapshot correspondence and later clean checks are separate external receipts.",
+      "unresolved_source_findings": [],
+      "limits": "No executable was run by this reviewer. No HAL test, model, probe, harness, hardware, electrical or silicon validation is established."
+    }
+  ]
+}

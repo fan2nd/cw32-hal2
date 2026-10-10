@@ -159,10 +159,10 @@ still apply.
   Other ten families retain their previous qualification. Runtime switching and
   low-power restoration remain outside this slice. See the
   [complete factory-LSI contract](factory-lsi-sysclk.md).
-- Init-only LSE SYSCLK is qualified on twenty-one exact packages through the single
+- Init-only LSE SYSCLK is qualified on twenty-three exact packages through the single
   Config.lse declaration: classic3, five L031/R031/W031, three L052, five L083,
-  three L010 and two L011.
-  Family aliases, L012 and other packages are excluded. Classic CW32F020C6U7,
+  three L010, two L011 and two L012.
+  Family aliases and other packages are excluded. Classic CW32F020C6U7,
   CW32F030C8T7 and CW32A030C8T7 prepare factory detector LSI before mandatory
   CCS and retain HSI plus inherited PLL/reference; see the
   [classic contract](classic-lse-sysclk.md). L031/R031/W031 preserves configurable
@@ -195,8 +195,8 @@ still apply.
   HSI is independently checked at final divisors; fixed fallback headroom uses
   full 4.08 MHz without divider credit regardless of CLKCCS, and promises no
   detection, fallback or continuity. See the [L010 system contract](l010-lse-sysclk.md).
-  Native L011 adds only CW32L011K8T6/K8U6, bringing the current total to
-  twenty-one. Their PC14/PC15 are physical pins 2/3; bypass owns PC14 only.
+  Native L011 adds only CW32L011K8T6/K8U6; the historical Stage62 total
+  was twenty-one. Their PC14/PC15 are physical pins 2/3; bypass owns PC14 only.
   The example uses native Level2/Level10, 16384 startup cycles and StartupOnly
   with example 3.0–3.6 V, −20…70 °C and 32766–32770 Hz bounds
   that require board qualification.
@@ -223,12 +223,44 @@ still apply.
   Retained RTC/AWT owners are not reset or migrated. See the
   [L011 system contract](l011-lse-sysclk.md). All previous nineteen system
   projections and twenty-three auxiliary qualifications remain unchanged.
-  The local script's planned scope of 22 libraries and 42 SYSCLK binaries is not an executed
+  Native L012 adds only CW32L012C8T6/C8U6, bringing the current system total
+  to twenty-three. Crystal owns PC14/PC15 pins 3/4; bypass owns PC14 only.
+  Native examples keep StartupOnly, Level2/Level10 drives, 16384 cycles and
+  explicit declarations of 3.0–3.6 V, −20…70 °C and every-cycle 32766–32770 Hz
+  requiring board qualification; these are not measured validation.
+  Configured HSI /12 (8 MHz, 7.84–8.16 MHz factory bounds) remains distinct
+  from reset and effective fallback /24. StartupOnly leaves LSECCS clear and
+  can halt the CPU after loss. The unchanged-legal-LSI HSI bridge does not
+  prepare a monitor. MonitoredExistingRoutes requires already stable,
+  non-erased factory-matching 9-bit LSI TRIM at 0x001007C2, unchanged WAIT and
+  `256 * LSE_min_hz > 129 * 36080`; 18181 Hz is the least integral minimum.
+  Entry-nonstable first-LSI admission remains latched for repeated checks,
+  including both I2C master/slave raw source1/3 and all four VC instances.
+  HSI start/retrim checks also refuse disputed I2C source1/3. No ambiguous
+  selector or closed gate supplies a positive absence proof. Held resets
+  reject, and failed gate restoration keeps its specific error.
+  Functional handover permits shared ADC1/ADC2 work when their configuration-
+  and-work gate opens, along with whole-GPIOC events, dedicated HSI/LSI
+  outputs, inaccessible UART3 and retained timer/cascade/external observers.
+  An enabled-ADC refusal after opening does not undo earlier progress. Dormant
+  timer/output/UART3 work gates stay closed. The existing platform bus-master
+  and memory-ownership entry boundary remains in force.
+  Own configured HSI at final divisors and full 4.08 MHz fallback are qualified
+  independently, without fallback AHB/APB divider credit. Initial WAIT3 is
+  followed by final WAIT under verified calibrated HSI/final divisors; default
+  HSI/12 uses WAIT0. FLASH.WAIT and SYSCTRL.FLASHWAIT must agree, mixed readbacks
+  fail closed, and FETCH/CACHE/CACHEINVALID are preserved. No CR0 or FLASH write
+  follows the last LSE selection, including on error. Raw-HSIOSC and LSE
+  calendars retain their existing sources/divisors; no RTC/AWT migration,
+  rollback, fault recovery or execution continuity is promised. See the
+  [L012 system contract](l012-lse-sysclk.md). All previous twenty-one system
+  projections and all twenty-three auxiliary qualifications remain unchanged.
+  The local script's planned scope of 24 libraries and 46 SYSCLK binaries is not an executed
   result; older actual verification receipts keep their original scope.
   For monitored operation, the modeled 129/256 count margin uses each family's LSI maximum and is
   distinct from board-qualified LSE every-cycle timing and rate-only LSI.
   Final bus divisors are installed on HSI before one LSE selection; Flash follows
-  each family's qualified sequence. L083, L010 and L011 permit no later CR0 write, even on
+  each family's qualified sequence. L083, L010, L011 and L012 permit no later CR0 write, even on
   failure. The same LSE tuple supplies RTC.
   The fixed 1 MHz time driver rejects before ownership. Old source targets and
   auxiliary-LSE paths retain admission/order. Frozen LSE timing is invalid after

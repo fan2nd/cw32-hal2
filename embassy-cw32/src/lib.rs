@@ -261,8 +261,69 @@ pub struct Config {
 /// Errors publish no clocks, can leave partial state and require reset before
 /// retry; ordinary reset may retain LSE. Frozen timings are invalid after loss.
 /// Poll budgets require continuing CPU execution; the fixed 1 MHz time driver
-/// rejects this tree before tokens or RCC MMIO. Generic-family and L012 targets
+/// rejects this tree before tokens or RCC MMIO. Generic-family targets
 /// remain excluded. See docs/l011-lse-sysclk.md for the own-source contract.
+///
+/// On CW32L012C8T6/C8U6, direct LSE SYSCLK uses the existing native LSE
+/// declaration. Factory HSIOSC stays enabled: configured HSI defaults to /12
+/// (8 MHz, 7.84–8.16 MHz), distinct from reset/effective failure fallback /24
+/// (4 MHz, 3.92–4.08 MHz after factory trim). There is no PLL or public LSI
+/// SYSCLK. LSE and configured HSI at the final dividers, plus the full fallback
+/// without bus-divider credit, must independently fit the declared bus limits.
+/// LSE bounds cover every cycle and the complete declared board envelope;
+/// average ppm is insufficient. No frequency or board condition is measured.
+///
+/// MonitoredExistingRoutes requires entry-stable, non-erased, factory-matching
+/// native nine-bit LSI TRIM at 0x001007C2, with unchanged TRIM/WAIT. The own
+/// factory maximum is 36,080 Hz. The detector's extra edge is an engineering
+/// margin, not a measured jitter or continuity guarantee. Later bridge startup
+/// cannot manufacture entry monitoring. StartupOnly STABLE is a startup latch:
+/// later LSE loss can halt the CPU without an error return. Existing fault,
+/// IRQ, brake, CLKCCS and output-recovery policy remain in effect.
+///
+/// A needed entry-nonstable first LSI request rejects RTC/AWT SOURCE2 or
+/// reserved sources, UART1/2 SOURCE3 even when RX/TX is disabled, operational
+/// UART3 SOURCE3, enabled LPTIM ICLKSRC3, MCO SOURCE4, enabled LSIRDY, and
+/// enabled LSI-filtered LVD or any of the four VCs even at zero filter count.
+/// Both I2Cs' master and slave raw CLKSRC1/3 are conservatively refused for
+/// first LSI request or necessary HSI start/retrim; the source3 conflict is
+/// unresolved. HSI start/retrim also rejects MCO SOURCE3 and enabled HSIRDY.
+/// Factory-ready divider-only changes leave raw HSIOSC unchanged. RTC/AWT
+/// source3 requires already factory-ready HSIOSC; source1 requires declared,
+/// exactly reused enabled HSE. Retained RTC PSC1 must satisfy its 1 MHz ceiling
+/// even when START is clear. Enabled inherited HSE is never stopped or retuned.
+///
+/// The shared ADC1/ADC2 configuration-and-work gate may be opened to read EN.
+/// That can resume conversion, triggering or other ADC-domain progress before
+/// an enabled-ADC refusal. The supported functional handover must already
+/// permit this progress; restoring the gate cannot undo it. The separate
+/// platform bus-master/memory-ownership boundary above still applies. This is
+/// not a new hidden memory-safety obligation on safe Rust callers. The same
+/// whole-GPIOC operational handover and native LSE/RTC/pad rules below apply.
+///
+/// The functional handover must permit or disconnect PB0 AF3 HSIOSC_OUT,
+/// PB11 AF4/PF3 AF2 LSI_OUT, inaccessible UART3, direct timer inputs and
+/// cascades, whole-bank GPIO LSI filters, IWDT and downstream timer/ADC/GPIO
+/// or external observers across temporary oscillator requests and restoration.
+/// Dormant timer, output/GPIO or disputed UART3 work gates are not opened to
+/// prove universal idleness. Native timer/source mapping disagreements remain
+/// unresolved; all documented alternatives must be inactive or disconnected.
+///
+/// WAIT3 precedes guarded HSI handover. Final dividers and WAIT0/1/2/3 are
+/// established while factory HSI is verified, covering LSE, configured HSI and
+/// the full fallback. Owned Flash readback completes only when both interfaces
+/// show the target WAIT. Matching old values may only continue bounded polling;
+/// mixed observations fail even if caused by a benign read race. The final LSE mux write is the last CR0 write; no CR0 or
+/// FLASH write follows it, including every failure and pad/gate cleanup path.
+/// No rollback, retry write or stale LSE reselection overrides a fallback.
+///
+/// HSIOSC/LSE calendar capabilities remain; no RTC/AWT source, time, prescaler,
+/// flag or alarm migration occurs. Frozen clocks are published only after all
+/// source, fault, route, monitor, divider, pad and authoritative WAIT checks.
+/// Failure consumes initialization ownership, publishes no clocks and requires
+/// reset before retry; ordinary reset may retain LSE. CPU poll budgets require
+/// continuing execution. The fixed 1 MHz time driver rejects this tree before
+/// tokens or RCC MMIO. See docs/l012-lse-sysclk.md for the own-source contract.
 ///
 /// CW32L011/L012 have the same functional requirement when a new LSE feeds
 /// RTC SOURCE0, and again when an RTC owner later activates or changes the

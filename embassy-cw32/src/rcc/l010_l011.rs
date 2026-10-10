@@ -703,7 +703,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     #[cfg(rcc_lse)]
     let lse_admission = config
         .lse
-        .map(|c| super::lse::preflight(c, cs))
+        .map(|c| super::lse::preflight(c, cs, false))
         .transpose()?;
 
     // Inspect actual central gates, restore their incoming state, never reset.
@@ -900,7 +900,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         entry.hsi_ownership(trim)?;
         let refreshed = config
             .lse
-            .map(|c| super::lse::preflight(c, cs))
+            .map(|c| super::lse::preflight(c, cs, false))
             .transpose()?;
         entry.before_lse_start(config)?;
         refreshed
@@ -1112,7 +1112,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         } else {
             admission
         };
-        super::lse::start(lse, admission, cs)?;
+        super::lse::start(lse, admission, cs, false)?;
     }
     #[cfg(rcc_lse)]
     if let Some(entry) = lse_target {
@@ -1227,7 +1227,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     }
     #[cfg(rcc_lse)]
     if let Some(lse) = config.lse {
-        super::lse::verify(lse, cs)?;
+        super::lse::verify(lse, cs, false)?;
     }
     // Pad inspection may have opened/restored a gate; recheck fault/mux at freeze.
     check_external_faults(monitor_hse, monitor_lse)?;
@@ -1580,7 +1580,7 @@ fn finish_lse_sysclk(
     }
     // GPIOB (L010) or GPIOC (L011) is a working gate, also during exact reuse.
     // Native verify checks pads and the monitor marker; no clock is published.
-    super::lse::verify(lse, cs)?;
+    super::lse::verify(lse, cs, false)?;
     verify(ClockSource::Lse)?;
     if u32::from(pac::FLASH.cr2().read().wait()) != final_wait {
         return Err(Error::FlashLatencyTimeout);

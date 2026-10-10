@@ -1,10 +1,11 @@
 //! Lifetime-held calendar sources. Acquisition never changes oscillator trim.
 use super::ClockBounds;
 use crate::{
-    Peri, pac,
+    pac,
     peripherals::{RTC, SYSCTRL},
     rtc::sealed::Instance,
     time::Hertz,
+    Peri,
 };
 
 #[non_exhaustive]
@@ -308,8 +309,17 @@ impl<'d> LseClock<'d> {
         {
             return Err(RtcClockError::IncompatibleConfiguration);
         }
-        critical_section::with(|cs| super::lse::verify(config, cs))
-            .map_err(|_| RtcClockError::IncompatibleConfiguration)?;
+        critical_section::with(|cs| {
+            #[cfg(any(rcc_cw32l010_v1, rcc_cw32l011_v1, rcc_cw32l012_v1))]
+            {
+                super::lse::verify(config, cs, false)
+            }
+            #[cfg(not(any(rcc_cw32l010_v1, rcc_cw32l011_v1, rcc_cw32l012_v1)))]
+            {
+                super::lse::verify(config, cs)
+            }
+        })
+        .map_err(|_| RtcClockError::IncompatibleConfiguration)?;
         Ok(Self {
             _sysctrl: sysctrl,
             _input: input,

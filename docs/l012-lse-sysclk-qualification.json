@@ -1,0 +1,487 @@
+{
+  "schema_version": 1,
+  "scope": "Init-only nominal 32768 Hz LSE SYSCLK on exactly CW32L012C8T6 and CW32L012C8U6, using Config.lse and the native L012 admission. Generic L012 and other package selections are excluded. Own-L012 source qualification only; no runtime or hardware validation.",
+  "parts": [
+    "CW32L012C8T6",
+    "CW32L012C8U6"
+  ],
+  "sysclk_detector": {
+    "lse_edges": 128,
+    "lsi_cycles": 256,
+    "margin_lse_edges": 1
+  },
+  "sysclk_selector": 4,
+  "hardware_count_source": "Own CN RM PDF62/printed36 and EN RM PDF66/printed40: fewer than 128 LSE edges in 256 LSI cycles detects running failure when LSECCS is enabled.",
+  "margin_source": "Separate software margin: minimum_LSE_hz * 256 > 129 * 36080; smallest integral minimum is 18181 Hz. The extra edge is not the hardware threshold or measured cycle timing.",
+  "native_lsi_reference": {
+    "metadata_source": "lse_configuration.native_low_power",
+    "monitor_reference": "factory_trim",
+    "lsi_factory_trim_address": 1050562,
+    "maximum_hz": 36080,
+    "detector_lse_edges": 128,
+    "detector_lsi_cycles": 256,
+    "detector_margin_lse_edges": 1,
+    "stable_before_monitored_preflight": true,
+    "software_lsien_required": false,
+    "trim_and_wait_retained": true,
+    "cold_start_does_not_qualify_monitor": true,
+    "basis": "Own DS PDF58/printed55 gives factory 32.8kHz +/-10% over -40..85 C, hence 29520..36080 Hz. Own CN RM PDF59/printed33 separately describes legal +/-10%; approximate 0.4% trim-step and 30-36kHz prose differ from DS 0.16%. Factory match and STABLE do not measure live frequency or cycle timing.",
+    "trim_bit_size": 9
+  },
+  "ccs_policy": {
+    "preserve": [
+      "CLKCCS",
+      "HSECCS",
+      "LSELOCK"
+    ],
+    "startup_only_requires_lseccs": false,
+    "monitored_existing_routes_requires_lseccs": true,
+    "automatic_monitor_preparation": false
+  },
+  "fallback": {
+    "metadata_source": "clock_limits.hse.fixed_ccs_hsi_divisor",
+    "fixed_ccs_hsi_divisor": 24,
+    "documented_nominal_hz": 4000000,
+    "modeled_minimum_hz": 3920000,
+    "modeled_maximum_hz": 4080000,
+    "hsi_oscillator_nominal_hz": 96000000,
+    "hsi_factory_error_percent": 2,
+    "conservative_bus_and_flash_maximum_hz": 4080000,
+    "hsi_divider_credit": false,
+    "ahb_divider_credit": false,
+    "apb_divider_credit": false,
+    "hardware_divisor_rewrite_claimed": false,
+    "divisor_retention_proven": false,
+    "applies_when_clkccs_disabled": true,
+    "basis": "Own CN RM PDF62/printed36 and EN RM PDF66/printed40 plus CR1 CLKCCS EN75/49 document effective HSI4MHz fallback when enabled. Factory 96MHz +/-2% and /24 yield 3.92-4.08MHz. Software admits full4.08MHz without bus-divider credit even when CLKCCS=0. No fault-time register retention or divider reset is claimed."
+  },
+  "hsi_register": {
+    "factory_trim_address": 1050560,
+    "trim_bit_offset": 0,
+    "trim_bit_size": 11,
+    "div_bit_offset": 11,
+    "div_bit_size": 4,
+    "stable_bit": 15,
+    "has_wait_field": false,
+    "hardware_reset_factory_match_assumed": false
+  },
+  "electrical_limits": {
+    "supply_mv": [
+      1700,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "low_voltage_threshold_mv": 1800,
+    "low_voltage_bus_max_hz": 24000000,
+    "high_voltage_bus_max_hz": 96000000,
+    "flash_wait_step_hz": 24000000,
+    "initial_flash_wait": 3
+  },
+  "flash_fields": {
+    "sysctrl_cr2_flashwait": [
+      8,
+      4,
+      3
+    ],
+    "flash_cr2_wait": [
+      4,
+      0,
+      3
+    ],
+    "sysctrl_ahben_flash": [
+      48,
+      1,
+      1
+    ],
+    "key": 23130,
+    "same_function_documented": true,
+    "alias_timing_measured": false
+  },
+  "transition_policy": "Raise authoritative FLASH.WAIT to3 after original full CR2 and WAIT-alias agreement. Every owned readback validates faults and phase-derived immutable policy/source identity before accepting new/new, bounded old/old waiting, or rejecting all other pairs. Install final divisors and fallback-safe final WAIT under calibrated HSI before the last LSE CR0 write. No CR0 or FLASH write follows final selection. Preserve the single accepted pre-start Admission refresh and publish only after all final checks.",
+  "cold_lsi_admission": "Latch temporary-LSI-needed && !entry-LSI.STABLE from original entry. Temporary need includes trim bridge, retained HSECCS/LSECCS, and enabled LSI-selected LVD or VC1..4 regardless filter count. Before first oscillator change and again before first request reject RTC SOURCE2/reserved, UART1/2 SOURCE3, operational UART3 SOURCE3, I2C1/2 master/slave raw1/3, enabled LPTIM ICLKSRC3 regardless mode, MCO4, LSIRDY, and enabled LSI filters. Every needed LSIEN assertion has an adjacent full original-policy/source/fault commit check, including entry-already-stable cases. Restore each gate independently; restoration failure wins. Closed disputed UART3 and uninspected observers require explicit functional handover.",
+  "hsi_ownership": "RTC SOURCE3 owns raw HSIOSC even with START0 and requires enabled, stable, factory-matching HSI. Start/restart/retrim or initially-unready wait rejects MCO3, HSIRDY and I2C1/2 master/slave raw1/3. Factory-ready DIV-only changes preserve raw HSIOSC. External HSIOSC output and other uninspected observers require functional handover.",
+  "inherited_own_proofs": [
+    "docs/lse-l012-qualification.json",
+    "docs/lse-l012-rtc-admission.json"
+  ],
+  "auxiliary_projection": "Remove only sysclk_detector. All prior native_low_power auxiliary facts and own proof bytes remain unchanged.",
+  "lsi_sysclk_qualification": false,
+  "lsi_cycle_timing_qualified": false,
+  "limits": [
+    "StartupOnly loss can stop the CPU with STABLE latched and no returned error; poll budgets count CPU iterations only while execution continues.",
+    "ADC work-gate and whole-GPIOC windows can advance functional work before refusal; restoration cannot undo it. Existing bus-master/memory ownership and explicit functional handover remain required.",
+    "Fault routes may affect IRQs, captures, brakes and PWM before error; no flags are cleared.",
+    "No fault-time register retention, execution-progress, bounded fallback time, RTC continuity, rollback or recovery guarantee.",
+    "No LSI TRIM/WAIT writes, runtime retuning, RTC migration, wake/resume, silicon validation or 1MHz time-driver support."
+  ],
+  "sources": [
+    {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "family": "CW32L012",
+      "pdf_pages_1_based": [
+        53,
+        57,
+        59,
+        61,
+        62,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        115,
+        127,
+        154,
+        155,
+        190,
+        201,
+        202,
+        203,
+        204,
+        231,
+        232,
+        238,
+        253,
+        366,
+        432,
+        433,
+        573,
+        583
+      ],
+      "printed_pages": [
+        27,
+        31,
+        33,
+        35,
+        36,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        89,
+        101,
+        128,
+        129,
+        164,
+        175,
+        176,
+        177,
+        178,
+        205,
+        206,
+        212,
+        227,
+        340,
+        406,
+        407,
+        547,
+        557
+      ]
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "sha256": "f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088",
+      "family": "CW32L012",
+      "pdf_pages_1_based": [
+        53,
+        59,
+        60,
+        63,
+        65,
+        66,
+        68,
+        70,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        135,
+        167,
+        168,
+        207,
+        208,
+        218,
+        219,
+        220,
+        221,
+        251,
+        252,
+        258,
+        259,
+        260,
+        272,
+        273,
+        403,
+        474,
+        475,
+        552,
+        626,
+        636,
+        655,
+        669
+      ],
+      "printed_pages": [
+        27,
+        33,
+        34,
+        37,
+        39,
+        40,
+        42,
+        44,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        109,
+        141,
+        142,
+        181,
+        182,
+        192,
+        193,
+        194,
+        195,
+        225,
+        226,
+        232,
+        233,
+        234,
+        246,
+        247,
+        377,
+        448,
+        449,
+        526,
+        600,
+        610,
+        629,
+        643
+      ]
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+      "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+      "family": "CW32L012",
+      "pdf_pages_1_based": [
+        14,
+        15,
+        16,
+        17,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        47,
+        55,
+        57,
+        58
+      ],
+      "printed_pages": [
+        11,
+        12,
+        13,
+        14,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        44,
+        52,
+        54,
+        55
+      ]
+    }
+  ],
+  "sdk_corroboration": {
+    "evidence_kind": "external-evidence",
+    "source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+    "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+    "members": [
+      {
+        "archive_members": [
+          "IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2.pack",
+          "SVD/CW32L012.svd"
+        ],
+        "sha256": "fda08355c30ed60204cd53b2c1ca33e6ee2233530e6cb2448522158dfc302942",
+        "bytes": 505809
+      },
+      {
+        "archive_members": [
+          "Libraries/inc/cw32l012_sysctrl.h"
+        ],
+        "sha256": "3746c16b7a3fa72d1b43d42c080111e64faa36e8beb4b1f19c13daf3c71b993c",
+        "bytes": 53947
+      },
+      {
+        "archive_members": [
+          "Libraries/src/cw32l012_sysctrl.c"
+        ],
+        "sha256": "6c1764be4a47f37f052fe6abed87b6bf54df87385e0c4072b7db819bcb8926cf",
+        "bytes": 28330
+      },
+      {
+        "archive_members": [
+          "Libraries/inc/cw32l012_btim.h"
+        ],
+        "sha256": "b3bf357bf668bccfca8881b8880135c5d1b81b030a668d17fcc6734d48dda7f9",
+        "bytes": 24411
+      }
+    ],
+    "authority_limit": "Own original field/selector corroboration only. SDK enum/comment conflicts do not resolve manual disputes. No broad SDK writes or erased-trim replacement values are imported."
+  },
+  "hsi_division": {
+    "default_numeric_divisor": 12,
+    "default_encoding": 11,
+    "reset_fallback_numeric_divisor": 24,
+    "reset_fallback_encoding": 14,
+    "encoding_zero_numeric_divisor": 32
+  },
+  "source_conflicts": [
+    "RM LSE bypass1MHz is not adopted over DS100kHz.",
+    "RCC WAIT4 narrative does not widen the qualified96MHz envelope or Flash WAIT0..3 table.",
+    "UART3 gate: CN configuration-only versus EN configuration-and-work; do not open a closed gate.",
+    "I2C master source3: EN HSI versus SDK LSI; slave source3 EN LSI. Raw1/3 are conservatively refused without resolving the conflict.",
+    "BTIM native raw0 no signal and instance-specific raw3 BTIM1 RTC_OUT, BTIM2 LPTIM_OV, BTIM3 VC4_OUT versus SDK AWT0/RTC6; native SPI5/UART6 versus SDK SPI3/UART5; native reset4 I2Cx_TRGO versus SDK I2C_SCL. No positive timer absence proof uses either disputed table.",
+    "ATIM native TI2/TI5 RTC6 versus generic/SDK8; generic LSI9/MCO15 and native tables are not interchangeable absence proofs.",
+    "LPTIM block trigger5 PC13 versus native table RTC_1Hz; conservatively preserve all1..5 RTC dependencies.",
+    "PINLOCK fault behavior remains unresolved; never clear or adopt raw PINLOCK.",
+    "LSI approximate0.4% and30-36kHz prose does not replace DS0.16% steps or its factory +/-10% envelope.",
+    "Stray SDK PLL parameter comment conflicts with the own four-source selector set; no PLL is qualified."
+  ],
+  "uart3_fields": {
+    "configuration_gate": [
+      "APBEN1",
+      56,
+      8,
+      1
+    ],
+    "reset": [
+      "APBRST1",
+      72,
+      8,
+      1
+    ],
+    "source": [
+      "CR1",
+      0,
+      12,
+      2
+    ],
+    "lsi_source_encoding": 3,
+    "gate_policy": "conflicting_configuration_only_or_work; inspect only already-open gate"
+  },
+  "entry_contract": "Unchanged LSI and the active incoming clocks/latency must already be electrically legal. StartupOnly does not require factory LSI. Entry monitored readiness is immutable and later bridge startup cannot qualify it. A failure consumes initialization ownership and requires reset before retry; ordinary reset may retain LSE.",
+  "flash_preserved_fields": {
+    "FETCH": 3,
+    "CACHE": 4,
+    "CACHEINVALID": 5
+  },
+  "pll_qualification": false,
+  "consumer_policy": {
+    "adc_instances": [
+      "ADC1",
+      "ADC2"
+    ],
+    "adc_shared_gate": "configuration_and_work",
+    "adc_gate_handover_required": true,
+    "vc_instances": [
+      "VC1",
+      "VC2",
+      "VC3",
+      "VC4"
+    ],
+    "vc_shared_gate": "configuration_only",
+    "lvd": "ungated; EN and FLTCLK0 request LSI without filter-count condition",
+    "opa_instances": [
+      "OPA1",
+      "OPA2"
+    ],
+    "dac_channels": [
+      1,
+      2
+    ],
+    "i2c_sources_refused_on_hsi_or_first_lsi_disturbance": [
+      1,
+      3
+    ],
+    "uart3_open_gate_only": true,
+    "lptim_lsi_source": 3,
+    "lptim_lse_rtc_triggers": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "reset_polarity": "active_low",
+    "held_reset_refused_before_read_after": true,
+    "restoration_failure_precedence": true
+  }
+}
