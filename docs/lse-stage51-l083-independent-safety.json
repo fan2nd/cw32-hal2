@@ -1,0 +1,1236 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-09T18:30:26.013461+00:00",
+  "status": "accepted",
+  "blocking_findings": [],
+  "acceptance_boundary": "Independent source safety review plus read-only final build, generated-input, receipt, log and ELF correspondence. This does not establish silicon behavior or board qualification.",
+  "reviewer_actions": {
+    "cargo_invocations": 0,
+    "hal_tests_run": 0,
+    "hardware_execution": false,
+    "candidate_edits": false,
+    "cleanup": false,
+    "external_publication": false,
+    "writes": [
+      "This independent safety review receipt only."
+    ],
+    "method": "Read original source text and selected page pixels; trace generated helper templates and shared runtime paths; independently parse, compare and hash data, manifests, receipts, build logs and ARM ELF structures. Producer-run validation is identified separately."
+  },
+  "source_manifest": {
+    "path": "external-evidence/l083-lse/review/frozen-source-manifest.json",
+    "sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+    "bytes": 190045,
+    "files_verified": 1162,
+    "modes_verified": true,
+    "mismatches": []
+  },
+  "source_delta": {
+    "changed_count": 10,
+    "added_count": 6,
+    "removed_count": 0,
+    "changed_paths": [
+      "cw32-data-gen/src/electrical.rs",
+      "cw32-data/lse-qualified.yaml",
+      "cw32-data/register-reuse.yaml",
+      "cw32-data/registers/sysctrl_cw32l083_v1.yaml",
+      "docs/qualified-lse.md",
+      "embassy-cw32/build.rs",
+      "embassy-cw32/src/rcc/lse.rs",
+      "examples/lse-clock/Cargo.toml",
+      "examples/lse-clock/README.md",
+      "examples/lse-clock/build.rs"
+    ],
+    "added_paths": [
+      "ci/verify-l083-lse-data.py",
+      "docs/lse-active-l083-rtc-admission.json",
+      "docs/lse-active-l083.json",
+      "docs/lse-l083-sdk-member-receipt.json",
+      "docs/lse-l083-source-receipt.json",
+      "docs/qualified-l083-lse.md"
+    ],
+    "receipt": {
+      "path": "external-evidence/l083-lse/review/delta-manifest.json",
+      "sha256": "ba611adabe3781a8509c7adc4e44d58113012046e25c446c2156e60f3a362a2f",
+      "bytes": 5504
+    }
+  },
+  "own_sources": {
+    "originals_independently_hashed_against_authority": [
+      {
+        "id": "vendor:CW32L083_StandardPeripheralLib_V2.2.zip",
+        "path": "CW32L083_StandardPeripheralLib_V2.2.zip",
+        "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip",
+        "sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+        "actual_sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+        "matches": true,
+        "bytes": 2307769
+      },
+      {
+        "id": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+        "path": "CW32L083_DataSheet_CN_V1.9.pdf",
+        "url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+        "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+        "actual_sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+        "matches": true,
+        "bytes": 2900110
+      },
+      {
+        "id": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+        "path": "CW32L083_UserManual_CN_V2.0.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+        "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+        "actual_sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+        "matches": true,
+        "bytes": 11981462
+      },
+      {
+        "id": "vendor:CW32L083_UserManual_EN_V1.0.pdf",
+        "path": "CW32L083_UserManual_EN_V1.0.pdf",
+        "url": "https://www.whxy.com/uploads/files/20240923/CW32L083_UserManual_EN_V1.0.pdf",
+        "sha256": "720c37dfe4d67e70f74f08135bf712915631edd286667e64987ffbf7878583b7",
+        "actual_sha256": "720c37dfe4d67e70f74f08135bf712915631edd286667e64987ffbf7878583b7",
+        "matches": true,
+        "bytes": 13633896
+      }
+    ],
+    "sdk_members_independently_hashed_from_locked_archive": [
+      {
+        "member": "Libraries/inc/cw32l083.h",
+        "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5",
+        "bytes": 884832
+      },
+      {
+        "member": "Libraries/inc/cw32l083_rcc.h",
+        "sha256": "f2229ea4528f2c3d8d5d59db036cfa2aa248a312c6cf94d5fbe58e4798f04ebf",
+        "bytes": 37433
+      },
+      {
+        "member": "Libraries/src/cw32l083_rcc.c",
+        "sha256": "ac56c4b3cbf24e709d53f26ba255dd9442d3cd27b1e0aca4e297e7941d73edad",
+        "bytes": 32843
+      },
+      {
+        "member": "Libraries/src/system_cw32l083.c",
+        "sha256": "0a7b7106e110885388c6ec81f60ab9f575929afa1e4dc49203e0bfce68913462",
+        "bytes": 1759
+      },
+      {
+        "member": "Libraries/src/cw32l083_autotrim.c",
+        "sha256": "994bdad50a253fb603921f4bd6bced1069df6ca538b73c559afab34a6f0e8e31",
+        "bytes": 7622
+      }
+    ],
+    "locked_texts_independently_hashed": [
+      {
+        "path": "external-evidence/l083-lse/source-extractions/CW32L083_UserManual_CN_V2.0.txt",
+        "sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564",
+        "bytes": 1673767
+      },
+      {
+        "path": "external-evidence/l083-lse/source-extractions/CW32L083_DataSheet_CN_V1.9.txt",
+        "sha256": "2124f5c492e1d58b51674805b2d8a58f82b2ce462c8b73beaba63c6d93780220",
+        "bytes": 262150
+      }
+    ],
+    "source_authority": {
+      "path": "sources/evidence-sources.json",
+      "sha256": "4dbcd6355d2fb20e352b6e9e819966f308b2c4bc28415e9641d960f65f363374",
+      "bytes": 352317
+    },
+    "source_qualification": {
+      "path": "external-evidence/l083-lse/source-qualification/qualification.md",
+      "sha256": "9face0d72abd8ff91d7668d15c441402d569e0b23c06557777afbd4e3b885bbc",
+      "bytes": 17811
+    },
+    "visually_inspected_pages": [
+      "CN UM PDF208/printed207: TIME/ALARMA reset and fields",
+      "CN UM PDF87/printed86: configuration-only versus working APBEN1 gates"
+    ],
+    "page_receipt_scope": "Producer source check records 77 own pages; this reviewer directly read the consequential original-source pages for detector/factory LSI, LSE fields/status/IRQs, native gates/AUTOTRIM, RTC reset/compensation, LCKR, parts/routes and electrical constraints, rather than claiming an independent render of all 77 pages."
+  },
+  "scope_reviews": [
+    {
+      "topic": "Exact part and electrical scope",
+      "status": "accepted",
+      "finding": "Only CW32L083RBT6, RCT6, RCS6, MCT6 and VCT6. Init-only board-qualified nominal 32768 Hz crystal or bypass; 1.65–5.5 V and -40–85 C. No family aliases, arbitrary nominal frequency or measured crystal-startup claim. Own datasheet part/pad/electrical rows match the policy."
+    },
+    {
+      "topic": "Native single analog bank",
+      "status": "accepted",
+      "finding": "Own CN UM PDF81/printed80 defines DRIVER, AMP, WAITCYCLE, MODE and STABLE only. rcc_lse_native_consumers applies to L052/L083; rcc_lse_startup_analog stays L052-only. L083 preserves reserved bits and has no PDRIVER/PAMP or inferred phase switch."
+    },
+    {
+      "topic": "Factory detector and calibration exclusion",
+      "status": "accepted",
+      "finding": "Own factory LSI bounds 31816–33784 Hz agree with RTC source metadata and DS PDF55/table7-18 under general operating conditions. Actual LSI trim is compared with factory halfword 0x00100A02; erased storage or a live mismatch rejects. A stopped mismatch requires repeated unchanged disabled/nonstable states, no selected native consumer/detector/ready owner, before a masked trim-only write. Active, automatic and reserved AUTOTRIM states reject; no active calibration is performed. Factory-valid live trim and WAIT are preserved, then trim/WAIT/enable/stability are frozen and checked."
+    },
+    {
+      "topic": "RTC retention and independent compensation",
+      "status": "accepted",
+      "finding": "All 13 own reset/mask tuples match CN UM PDF204–212, including L083 ALARMA 0x00120000. Controls-first double reset-like snapshots cover COMPEN independently of SOURCE and raw-clock wake independently of START. No KEY, ACCESS or ICR write, reset, flag clear or WINDOW wait occurs in source admission."
+    },
+    {
+      "topic": "Native consumers and gate semantics",
+      "status": "accepted",
+      "finding": "All six UARTs use native SOURCE; L052 SORCE remains untouched. AUTOTRIM configuration gate inspection preserves its state. LPTIM/LCD off working gates remain off; enabled gates are inspected without local writes and gate stability is checked. SYSCLK/MCO/direct routes/GPIO filters and package-specific LSI routes are covered. Reserved L083 MCO selectors reject."
+    },
+    {
+      "topic": "Pads, locks and IRQ/status history",
+      "status": "accepted",
+      "finding": "PC14/PC15 ownership matches exact package bonds. Crystal keeps both analog input pads; bypass only changes PC14 digital-input admission and leaves PC15 free. Native LCKR, AF, pulls, open drain, filters and interrupt enables are checked without unlocking pads. Current STABLE is distinguished from LSERDY history; ready/fault IRQ ownership and sticky failures are preserved. CLKCCS is not repurposed as RTC recovery."
+    },
+    {
+      "topic": "Reuse, failure and ownership",
+      "status": "accepted",
+      "finding": "Enabled LSE reuse requires matching parameters/pads and a healthy factory LSI detector; CCS-off retained LSE rejects. Timeout/fault retains enable, detector, reservations and diagnostics, with no capability publication, teardown rollback, RTC fallback or migration. Supported initialization excludes concurrent raw-PAC/DMA/NMI mutation. Config.lse=None skips the new requested-source admission/start path."
+    },
+    {
+      "topic": "Old eleven and frozen backend/schema",
+      "status": "accepted",
+      "finding": "All prior profiles and policy hashes are unchanged. Old eight nonnative parts retain false/false cfg values; old three L052 parts retain true/true values and prior writes/branches. UART spelling and L052 AF input remain equivalent. New margin and MCO-range rejection are L083-only. Shared HSI/HSE/PLL backend, electrical facts, RTC facts, schemas and authority lock are byte-identical. Native IR differs only by three LSE enums/associations; the reuse ledger differs only by the bounded history entry."
+    }
+  ],
+  "margin_review": {
+    "status": "accepted",
+    "manufacturer_detector": "128 LSE events during 256 LSI cycles, own CN UM PDF65/printed64 and PDF76/printed75",
+    "software_condition": "256 * u64(declared_LSE_min_hz) > 129 * u64(own_factory_LSI_max_hz)",
+    "factory_lsi_max_hz": 33784,
+    "right_product": 4358136,
+    "minimum_rejected_example": {
+      "hz": 17023,
+      "left_product": 4357888
+    },
+    "smallest_accepted_integer_hz": 17024,
+    "accepted_left_product": 4358144,
+    "overflow_proof": "u32 values widen to u64 before multiplication; each product is less than 2^40.",
+    "ordering": "Lse::bounds is called by Config::frequencies, and try_init invokes frequencies before Peripherals::take and RCC MMIO.",
+    "rationale": "The additional edge is an explicit conservative software counting-phase margin. It is not a manufacturer-specified threshold, measured timing bound, continuous-health guarantee or proof that an oscillator with a rejected loose declaration fails."
+  },
+  "old_cohort": {
+    "parts": [
+      "CW32A030C8T7",
+      "CW32F020C6U7",
+      "CW32F030C8T7",
+      "CW32L031C8T6",
+      "CW32L031C8U6",
+      "CW32L031F8U6",
+      "CW32L052C8T6",
+      "CW32L052R8S6",
+      "CW32L052R8T6",
+      "CW32R031C8U6",
+      "CW32W031R8U6"
+    ],
+    "profiles_and_policy_hashes_independently_equal": true,
+    "generated_chip_records_independently_byte_equal": true,
+    "unchanged_source_files": [
+      {
+        "path": "embassy-cw32/src/rcc/l052_l083.rs",
+        "sha256": "6308498094315bcd6163c8bba6c43e8955e2898cbe0fe216598701d251d3cb7f",
+        "bytes": 58659
+      },
+      {
+        "path": "cw32-data/electrical.yaml",
+        "sha256": "889c1add89dda23d6f61759c11a7b529beba130eda2644bfcae14daaf3a3f6f1",
+        "bytes": 65730
+      },
+      {
+        "path": "cw32-data/rtc-calendar.yaml",
+        "sha256": "1b1476229ccd55d0e9940f4192aed994ae562b8dd6e58f8c590c774d641f9904",
+        "bytes": 3444
+      },
+      {
+        "path": "cw32-data-serde/src/lib.rs",
+        "sha256": "54a4de94f232c208ab22ac03c177d7f12ea5eba967ac17d023a147f26a60e761",
+        "bytes": 31802
+      },
+      {
+        "path": "cw32-metapac-gen/src/data.rs",
+        "sha256": "e6aadf79d41eb015276ed9c523a41213939184581989609707f9c8407e6b55ff",
+        "bytes": 32614
+      },
+      {
+        "path": "sources/evidence-sources.json",
+        "sha256": "4dbcd6355d2fb20e352b6e9e819966f308b2c4bc28415e9641d960f65f363374",
+        "bytes": 352317
+      }
+    ],
+    "native_ir_enum_only_delta_independently_equal": true,
+    "reuse_ledger_single_bounded_entry_independently_equal": true,
+    "receipt": {
+      "path": "external-evidence/l083-lse/review/old-cohort-equivalence.json",
+      "sha256": "099887e40487efe992011d71372b5c04d0c74db0f5293c903dcc2dba08443bb8",
+      "bytes": 1255
+    }
+  },
+  "generated_correspondence": {
+    "manifest": {
+      "path": "external-evidence/l083-lse/review/generated-input-manifest.json",
+      "sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+      "bytes": 156505
+    },
+    "files_verified": 899,
+    "modes_verified": true,
+    "mismatches": [],
+    "unchanged_paths": 887,
+    "changed_paths": [
+      "cw32-data/data/chips/CW32L083MCT6.json",
+      "cw32-data/data/chips/CW32L083RBT6.json",
+      "cw32-data/data/chips/CW32L083RCS6.json",
+      "cw32-data/data/chips/CW32L083RCT6.json",
+      "cw32-data/data/chips/CW32L083VCT6.json",
+      "cw32-data/data/registers/sysctrl_cw32l083_v1.json",
+      "cw32-data/data/registers/sysctrl_cw32l083_v1.yaml",
+      "cw32-metapac/src/chips/metadata_0026.rs",
+      "cw32-metapac/src/chips/metadata_0027.rs",
+      "cw32-metapac/src/chips/metadata_0028.rs",
+      "cw32-metapac/src/peripherals/sysctrl_cw32l083_v1.rs",
+      "cw32-metapac/src/registers/sysctrl_cw32l083_v1.rs"
+    ],
+    "added_paths": [],
+    "removed_paths": [],
+    "comparison_receipt": {
+      "path": "external-evidence/l083-lse/review/generated-comparison.json",
+      "sha256": "49039ea51e31d4a5538f36b895d7536c9736cc33196e9a925ce6e537bb3400ed",
+      "bytes": 6685
+    }
+  },
+  "producer_build_validation_reviewed": {
+    "receipt": {
+      "path": "external-evidence/l083-lse/review/build-receipt.json",
+      "sha256": "a4d61e8efe1c246fbc446bb93e9de447d7512f4c238e80b40484dc5b9d81c67d",
+      "bytes": 47741
+    },
+    "status": "passed",
+    "library_builds": 7,
+    "real_arm_elfs": 14,
+    "warning_count_independently_checked": 0,
+    "all_log_hashes_and_source_generated_bindings_independently_verified": true,
+    "rows": [
+      {
+        "id": "cw32l083rbt6-library",
+        "chip": "cw32l083rbt6",
+        "kind": "library",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--release",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083rbt6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rbt6-library.log",
+          "sha256": "f9c41069eb23bd9230cf4ccd6d59f7774a5e627e9e18a66fd0eb9e53232cef91",
+          "bytes": 276
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l083rbt6-library-generated-binding.json",
+          "sha256": "2a010c52abfbb6e7388f6dee9c093a4e3b7fca7d0b797d0a2f178ad737dfaaab",
+          "bytes": 1276
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l083rbt6-examples",
+        "chip": "cw32l083rbt6",
+        "kind": "examples",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "examples/lse-clock/Cargo.toml",
+          "--release",
+          "--bins",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083rbt6"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rbt6-examples.log",
+          "sha256": "096ff526ddae61a03632c2a8ace3e6dfd705c4bad6baebd58f8551b2fe1cb4e3",
+          "bytes": 400
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l083rbt6-examples-generated-binding.json",
+          "sha256": "424da2fccfde2f5d2c41675df55e70275e74e1078890b4f65ccbd931b86c4f5a",
+          "bytes": 1262
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l083rct6-library",
+        "chip": "cw32l083rct6",
+        "kind": "library",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--release",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rct6-library.log",
+          "sha256": "c4f994a097b2b668c34f6e81e3db9772a4e244004a7799358edae281484ba035",
+          "bytes": 276
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l083rct6-library-generated-binding.json",
+          "sha256": "b02e69d5b2203d6238a9baa334d7a82cbaf8c0f9ef4d4c00aa258fa636d0bbe0",
+          "bytes": 1276
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l083rct6-examples",
+        "chip": "cw32l083rct6",
+        "kind": "examples",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "examples/lse-clock/Cargo.toml",
+          "--release",
+          "--bins",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rct6-examples.log",
+          "sha256": "0249717f3dac3d07734e7dcba1727f65ce198162af3515140fed3c0d6318a7a8",
+          "bytes": 400
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l083rct6-examples-generated-binding.json",
+          "sha256": "7d54ef790ba086f7c89fe2ff9bc60ba62f915426372b46699a94ef566518de8d",
+          "bytes": 1262
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l083rcs6-library",
+        "chip": "cw32l083rcs6",
+        "kind": "library",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--release",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083rcs6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rcs6-library.log",
+          "sha256": "d25036ec7c56105c44ebe31ad2fbb09e76a0fbbe5724510406a04ad0dbdf6f68",
+          "bytes": 276
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l083rcs6-library-generated-binding.json",
+          "sha256": "a68dca530dddad53f22ecc2dc8dec56f4f36d1d41528d47e729ecf7e9466dffc",
+          "bytes": 1276
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l083rcs6-examples",
+        "chip": "cw32l083rcs6",
+        "kind": "examples",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "examples/lse-clock/Cargo.toml",
+          "--release",
+          "--bins",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083rcs6"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rcs6-examples.log",
+          "sha256": "523b4588531b8def11298b55dc0946e808286e79f1f656cc06ffd30b386184a8",
+          "bytes": 400
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l083rcs6-examples-generated-binding.json",
+          "sha256": "b84446fe6f973c69c172e01e714d4f15efbd35f07f770851e1e51344981219aa",
+          "bytes": 1262
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l083mct6-library",
+        "chip": "cw32l083mct6",
+        "kind": "library",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--release",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083mct6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l083mct6-library.log",
+          "sha256": "cfd6563fec6d3ee00b02e94d2a5ebbf5f8e8def7ba6e384de01a985c3f4f118e",
+          "bytes": 276
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l083mct6-library-generated-binding.json",
+          "sha256": "0bb222cd5213c1f25126626f293e36c9aaf0d9495d5e95384ca8c423cc647eed",
+          "bytes": 1276
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l083mct6-examples",
+        "chip": "cw32l083mct6",
+        "kind": "examples",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "examples/lse-clock/Cargo.toml",
+          "--release",
+          "--bins",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083mct6"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l083mct6-examples.log",
+          "sha256": "b944271a42fad86a61315f88877fd07c789db541f04175fa877ffba7db8cf020",
+          "bytes": 400
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l083mct6-examples-generated-binding.json",
+          "sha256": "d86da9938d9193524d7646584ea23271296bec2afbdfdf0f117be630cbdad367",
+          "bytes": 1262
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l083vct6-library",
+        "chip": "cw32l083vct6",
+        "kind": "library",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--release",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083vct6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l083vct6-library.log",
+          "sha256": "cfd6563fec6d3ee00b02e94d2a5ebbf5f8e8def7ba6e384de01a985c3f4f118e",
+          "bytes": 276
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l083vct6-library-generated-binding.json",
+          "sha256": "7620c71e4da94f2c0a62e182b8cf2ae9a43b34125742b632f2308b2b64eb99a1",
+          "bytes": 1276
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l083vct6-examples",
+        "chip": "cw32l083vct6",
+        "kind": "examples",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "examples/lse-clock/Cargo.toml",
+          "--release",
+          "--bins",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083vct6"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l083vct6-examples.log",
+          "sha256": "c80b7b873d2849ab432f15c3043c5f50bb004378abc9cb0800f064658af71382",
+          "bytes": 400
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l083vct6-examples-generated-binding.json",
+          "sha256": "1d38ea31dff64f40bcc29dcb924a69e7defbf443ced357356227b6033814e8ce",
+          "bytes": 1262
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l052c8t6-library",
+        "chip": "cw32l052c8t6",
+        "kind": "library",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--release",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l052c8t6,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l052c8t6-library.log",
+          "sha256": "98efbf0fc1e796b3ea1889c89eab476897ee10ba8cf40da0879077c50f044966",
+          "bytes": 276
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l052c8t6-library-generated-binding.json",
+          "sha256": "114f7f84d479cf23db93c57258ccd9827be9d04c31cc3645c95d38cb98dc4d7f",
+          "bytes": 1276
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32l052c8t6-examples",
+        "chip": "cw32l052c8t6",
+        "kind": "examples",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "examples/lse-clock/Cargo.toml",
+          "--release",
+          "--bins",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l052c8t6"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32l052c8t6-examples.log",
+          "sha256": "9a581a4d087851e9a61fb21e7bc6bd1ba748053f1d0de433624b69379655878e",
+          "bytes": 400
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32l052c8t6-examples-generated-binding.json",
+          "sha256": "968dd2d281b45a7beaccebd25532d9f68403d21f3ab1f1ae268683a65f0f0567",
+          "bytes": 1262
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32f030c8t7-library",
+        "chip": "cw32f030c8t7",
+        "kind": "library",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--release",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7,rt,defmt"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32f030c8t7-library.log",
+          "sha256": "ed0d5a58234b72e2829776665443a2c725bbd2f445e7b52bf81117478c5c5373",
+          "bytes": 276
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32f030c8t7-library-generated-binding.json",
+          "sha256": "5584777d56617d4bbd21df17609699a67bf0bdbaad151ca849aa0ecf750305fe",
+          "bytes": 1276
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      },
+      {
+        "id": "cw32f030c8t7-examples",
+        "chip": "cw32f030c8t7",
+        "kind": "examples",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--jobs",
+          "1",
+          "--manifest-path",
+          "examples/lse-clock/Cargo.toml",
+          "--release",
+          "--bins",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7"
+        ],
+        "exit_code": 0,
+        "log": {
+          "path": "external-evidence/l083-lse/review/cw32f030c8t7-examples.log",
+          "sha256": "bd70d286f9fe9e07c8e1afd960bbfbcc2086c664b974b95897a9162651ec9424",
+          "bytes": 400
+        },
+        "generated_binding": {
+          "path": "external-evidence/l083-lse/review/cw32f030c8t7-examples-generated-binding.json",
+          "sha256": "5bacccb0a746ad6065fb211c305359c37a01bf256d048b9baba502b5d619f736",
+          "bytes": 1262
+        },
+        "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c",
+        "generated_before_after_sha256": "b84546c05c54026d243ce99c5e99804c81ec6452a756e2bad0d3799ee6d9defe",
+        "candidate_path_present_in_log": true,
+        "warning_count": 0
+      }
+    ],
+    "executables": [
+      {
+        "chip": "cw32l083rbt6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l083rbt6-crystal_calendar.elf",
+          "sha256": "fd7058c07a8f87b65e4933c23762344300a18ba40e18a54ae911464ea4353c1a",
+          "bytes": 210948
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rbt6-crystal_calendar-readelf.log",
+          "sha256": "41a2b5ba18d22d986e5655c52c0fbf5235ac85e43cff2fd2c03ee7646eae6555",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L083RBT6.json",
+          "sha256": "60c1b8a7f198b7e8688b3f99afcbd8f6f796fa67a6cdc326e45a3ae2e39f3398",
+          "bytes": 122505
+        }
+      },
+      {
+        "chip": "cw32l083rbt6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l083rbt6-bypass_calendar.elf",
+          "sha256": "21b230ec27ac5633624148052ba620c896339b2468ffa307040a2736344dfdfa",
+          "bytes": 210980
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rbt6-bypass_calendar-readelf.log",
+          "sha256": "6358a50c4aa1b43695cd065897e8fe4497adc6f6ad11681b48181d668d2ba175",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L083RBT6.json",
+          "sha256": "60c1b8a7f198b7e8688b3f99afcbd8f6f796fa67a6cdc326e45a3ae2e39f3398",
+          "bytes": 122505
+        }
+      },
+      {
+        "chip": "cw32l083rct6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l083rct6-crystal_calendar.elf",
+          "sha256": "e00cfad32bbbf08a01cc6a163a90cc35e073903579f5848d4a8e0fb08d200290",
+          "bytes": 210884
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rct6-crystal_calendar-readelf.log",
+          "sha256": "7fe2a4d8cc82d885e56ee6fae406bc8493a8183516183b5610da269e6e59549f",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L083RCT6.json",
+          "sha256": "1547439cec05fb4365d9f7aaad4a53eaf295b456a5bfcca924e9fc342a2834f6",
+          "bytes": 122505
+        }
+      },
+      {
+        "chip": "cw32l083rct6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l083rct6-bypass_calendar.elf",
+          "sha256": "dcae44255d6990f5c312aa95f076fa7aac29b1c17773c86b80dcfa57d3a808d6",
+          "bytes": 210920
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rct6-bypass_calendar-readelf.log",
+          "sha256": "439d3b4b49831a7c3335c701f1b36ce9af3de53b7e6395288c2fb6670709256d",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L083RCT6.json",
+          "sha256": "1547439cec05fb4365d9f7aaad4a53eaf295b456a5bfcca924e9fc342a2834f6",
+          "bytes": 122505
+        }
+      },
+      {
+        "chip": "cw32l083rcs6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l083rcs6-crystal_calendar.elf",
+          "sha256": "bf6b0c95cadf2a5c6ed91b20e721bd4b463c9b309c2ff3ef309aabca21b56efa",
+          "bytes": 210948
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rcs6-crystal_calendar-readelf.log",
+          "sha256": "41a2b5ba18d22d986e5655c52c0fbf5235ac85e43cff2fd2c03ee7646eae6555",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L083RCS6.json",
+          "sha256": "b40203400731168459782b32cc494b998cef4ff2b43f478b4248c52e2fc34775",
+          "bytes": 122503
+        }
+      },
+      {
+        "chip": "cw32l083rcs6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l083rcs6-bypass_calendar.elf",
+          "sha256": "0a2b76113a0a40e0a1552ee061f22e62d84dac895011d81555dfbe6d7e5bd51a",
+          "bytes": 210984
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l083rcs6-bypass_calendar-readelf.log",
+          "sha256": "1805bc4cf84348d18057ec962a654944275f26f3868fb0db1f48fc59790696df",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L083RCS6.json",
+          "sha256": "b40203400731168459782b32cc494b998cef4ff2b43f478b4248c52e2fc34775",
+          "bytes": 122503
+        }
+      },
+      {
+        "chip": "cw32l083mct6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l083mct6-crystal_calendar.elf",
+          "sha256": "92d6eb07ffb346042b279c59d06019ece09a8c9b55a0a9f89aebb46d64a31551",
+          "bytes": 211128
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l083mct6-crystal_calendar-readelf.log",
+          "sha256": "7742b4c48ffc3fbb0f246c50a16ee60c025660530bf83e8b83b0926ba1832351",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L083MCT6.json",
+          "sha256": "78081bb844a574bc014e7c0e2578532c7d737a7139fd18f9c4bc8f960b72b35f",
+          "bytes": 134404
+        }
+      },
+      {
+        "chip": "cw32l083mct6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l083mct6-bypass_calendar.elf",
+          "sha256": "6de1a2e3ecf82e9cafaf419274a5608fcd5ee4eef648648322ce0a4f34802670",
+          "bytes": 211164
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l083mct6-bypass_calendar-readelf.log",
+          "sha256": "85f55995d47a626cca4139f04eb765c12c82b376558e468d17bfc84893eb1e55",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L083MCT6.json",
+          "sha256": "78081bb844a574bc014e7c0e2578532c7d737a7139fd18f9c4bc8f960b72b35f",
+          "bytes": 134404
+        }
+      },
+      {
+        "chip": "cw32l083vct6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l083vct6-crystal_calendar.elf",
+          "sha256": "3afc04ae09b45f373249e1f278106d84e063d7474cfa0cd7afc6fb6bc636d769",
+          "bytes": 211308
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l083vct6-crystal_calendar-readelf.log",
+          "sha256": "6874b90debff39585c6f6ed73813b2018d1252a0dab8bae9cf0fd5e260ee1b8a",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L083VCT6.json",
+          "sha256": "c8f3b015bcdffb72dc4365bc458c291b7276b63073a39e40cb2dde590b9d8dc8",
+          "bytes": 146981
+        }
+      },
+      {
+        "chip": "cw32l083vct6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l083vct6-bypass_calendar.elf",
+          "sha256": "47ae14bdce60285754419f4f584ff5583dc47743c95faf2d744073e705349d48",
+          "bytes": 211304
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l083vct6-bypass_calendar-readelf.log",
+          "sha256": "e06b01e3546aa5680726899d157ace008432d8815d34193abc38c3303d98762a",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L083VCT6.json",
+          "sha256": "c8f3b015bcdffb72dc4365bc458c291b7276b63073a39e40cb2dde590b9d8dc8",
+          "bytes": 146981
+        }
+      },
+      {
+        "chip": "cw32l052c8t6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l052c8t6-crystal_calendar.elf",
+          "sha256": "5abda71939cd5bc0b8b41a7bce76b5cb7d857b0ee6a6097bbe04f0dabbd5c503",
+          "bytes": 208456
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l052c8t6-crystal_calendar-readelf.log",
+          "sha256": "71a9ca1442840b340c46822621744ff6244fa612ad8aec4df5d5e1abb8de7173",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 189,
+        "initial_sp": 536879104,
+        "reset_vector": 189,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L052C8T6.json",
+          "sha256": "e9240e1bff3d13a5c9b5ed6e5042cfcee9d2cfbe64a0fdddadce766062bd74c3",
+          "bytes": 98935
+        }
+      },
+      {
+        "chip": "cw32l052c8t6",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32l052c8t6-bypass_calendar.elf",
+          "sha256": "e4a0331d1a53964f8124549d59cd2f490997f393a4f5bce51e396f2cc2ceff64",
+          "bytes": 208416
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32l052c8t6-bypass_calendar-readelf.log",
+          "sha256": "e8b4fd251b1328d8fe8a9b3d33a148228c44015aa5b5e4b418420ecc788df06f",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 189,
+        "initial_sp": 536879104,
+        "reset_vector": 189,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32L052C8T6.json",
+          "sha256": "e9240e1bff3d13a5c9b5ed6e5042cfcee9d2cfbe64a0fdddadce766062bd74c3",
+          "bytes": 98935
+        }
+      },
+      {
+        "chip": "cw32f030c8t7",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32f030c8t7-crystal_calendar.elf",
+          "sha256": "c75cfcf2b6428ceba32e1f4d2d3acfe5988ca349a037551c7cad61f19db160c9",
+          "bytes": 205756
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32f030c8t7-crystal_calendar-readelf.log",
+          "sha256": "8327ac424b5a47a7a9b03f7849cba5c166dd21091f63a597e2525216794b4631",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32F030C8T7.json",
+          "sha256": "e53fb1acfefdedbbd34b3aa22f12168bc43e8b356c374f0eb7f91688777816bb",
+          "bytes": 105242
+        }
+      },
+      {
+        "chip": "cw32f030c8t7",
+        "elf": {
+          "path": "external-evidence/l083-lse/review/elf/cw32f030c8t7-bypass_calendar.elf",
+          "sha256": "1a3c132f86df13837eb3e3014f18964622df9d075133c38dc54e063aa79e453c",
+          "bytes": 205756
+        },
+        "readelf_log": {
+          "path": "external-evidence/l083-lse/review/cw32f030c8t7-bypass_calendar-readelf.log",
+          "sha256": "87a7a8ff59c9d1f317d8b4135a7ce04d826c16a832c3e2cc415b9e2b938b0f0c",
+          "bytes": 3087
+        },
+        "readelf_exit_code": 0,
+        "independently_parsed_header": "ELF32 little-endian ARM EXEC",
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "pt_load_matches_receipt_and_selected_memory": true,
+        "memory_metadata": {
+          "path": "external-evidence/l083-lse/generated/cw32-data/data/chips/CW32F030C8T7.json",
+          "sha256": "e53fb1acfefdedbbd34b3aa22f12168bc43e8b356c374f0eb7f91688777816bb",
+          "bytes": 105242
+        }
+      }
+    ],
+    "elf_layout_receipt": {
+      "path": "external-evidence/l083-lse/review/elf-layout.json",
+      "sha256": "a791af13aa2b1a6dae2713f7160c926d90cc0ac0f9a32a190a10212ce151f598",
+      "bytes": 30824
+    }
+  },
+  "separate_producer_data_test_evidence": {
+    "reviewer_ran_test": false,
+    "kind": "One exact cw32-data-gen negative-data test; not a HAL test",
+    "receipt": {
+      "path": "external-evidence/l083-lse/review/native-data-negative-exit.json",
+      "sha256": "22d8227be0761f472cde5e9375da881912cea26ffb85fa0206dbaaf269de9929",
+      "bytes": 1907
+    },
+    "command": [
+      "cargo",
+      "test",
+      "--offline",
+      "--locked",
+      "--jobs",
+      "1",
+      "-p",
+      "cw32-data-gen",
+      "electrical::lse_tests::l083_requires_own_bank_uart_routes_and_reset",
+      "--",
+      "--exact"
+    ],
+    "exit_code": 0,
+    "log": {
+      "path": "external-evidence/l083-lse/review/native-data-negative.log",
+      "sha256": "037e712077c6045efff258e8f0be83f08f686b1a14b81613cec9ab315f78cf71",
+      "bytes": 959
+    },
+    "source_before_after_sha256": "6dd2f9884df1e3b109279440d8300cfae5cc7595cbc5881fd3eac487adde011c"
+  },
+  "supporting_receipts": [
+    {
+      "path": "external-evidence/l083-lse/review/source-check.json",
+      "sha256": "e8b9c4a4b489f84de6c1207ff0e752c5aa084a074f4950fb6823b4d80371f396",
+      "bytes": 15287
+    },
+    {
+      "path": "external-evidence/l083-lse/review/generated-source-check.json",
+      "sha256": "d921237fa7d3570ff029810bf308a7df6958ef4c42c637f2ad53ab75e465475a",
+      "bytes": 15288
+    },
+    {
+      "path": "external-evidence/l083-lse/review/gen-all-exit.json",
+      "sha256": "b48f20b66e98ede026841cdf861e674f4eccd6ee550468434df825b0f1a9bf0b",
+      "bytes": 1695
+    },
+    {
+      "path": "external-evidence/l083-lse/review/validation-summary.json",
+      "sha256": "89a78e4fbc1b066d9c32189423ee83a53852b9e8a081dd58f218c06c93e6b891",
+      "bytes": 10794
+    }
+  ],
+  "limitations": [
+    "No silicon or board execution.",
+    "No assertion of board crystal/load/electrical qualification, oscillator accuracy, bounded physical startup or continuous source availability.",
+    "Reviewer ran no Cargo commands or HAL tests. Producer-run build/data-test results were inspected and bound to hashes.",
+    "Acceptance applies to this exact source and generated manifest pair."
+  ]
+}

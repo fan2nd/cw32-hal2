@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-09",
+  "source": {
+    "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+    "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+    "pdf_pages_1_based": [
+      204,
+      205,
+      206,
+      207,
+      208,
+      209,
+      210,
+      211,
+      212
+    ],
+    "printed_pages": [
+      203,
+      204,
+      205,
+      206,
+      207,
+      208,
+      209,
+      210,
+      211
+    ]
+  },
+  "rtc_reset": [
+    {
+      "register": "CR0",
+      "byte_offset": 4,
+      "value": 0,
+      "mask": 239
+    },
+    {
+      "register": "CR1",
+      "byte_offset": 8,
+      "value": 0,
+      "mask": 1795
+    },
+    {
+      "register": "CR2",
+      "byte_offset": 12,
+      "value": 0,
+      "mask": 1791
+    },
+    {
+      "register": "COMPEN",
+      "byte_offset": 16,
+      "value": 0,
+      "mask": 65535
+    },
+    {
+      "register": "DATE",
+      "byte_offset": 20,
+      "value": 0,
+      "mask": 134217727
+    },
+    {
+      "register": "TIME",
+      "byte_offset": 24,
+      "value": 1179648,
+      "mask": 4161407
+    },
+    {
+      "register": "ALARMA",
+      "byte_offset": 28,
+      "value": 1179648,
+      "mask": 2143289343
+    },
+    {
+      "register": "ALARMB",
+      "byte_offset": 32,
+      "value": 1179648,
+      "mask": 2143289343
+    },
+    {
+      "register": "TAMPDATE",
+      "byte_offset": 36,
+      "value": 0,
+      "mask": 65343
+    },
+    {
+      "register": "TAMPTIME",
+      "byte_offset": 40,
+      "value": 0,
+      "mask": 4161407
+    },
+    {
+      "register": "AWTARR",
+      "byte_offset": 44,
+      "value": 65535,
+      "mask": 65535
+    },
+    {
+      "register": "IER",
+      "byte_offset": 48,
+      "value": 0,
+      "mask": 95
+    },
+    {
+      "register": "ISR",
+      "byte_offset": 52,
+      "value": 0,
+      "mask": 95
+    }
+  ],
+  "important_difference": "Own CN UM PDF208/printed207 explicitly gives ALARMA reset0x00120000. L052 reset0x04120000 is not imported. No write-only KEY or W0C ICR in snapshot.",
+  "policy": "Check CR0/CR1/CR2/IER/ISR first, then COMPEN and calendar/alarm/wake/timestamp rows twice; do not touch KEY, ACCESS or ICR. No START-only or SOURCE-only admission."
+}

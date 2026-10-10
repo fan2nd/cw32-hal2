@@ -48,6 +48,17 @@ impl Lse {
         if self.max_freq.0 > crate::RCC_LSE_MAXIMUM_HZ {
             return Err(Error::InvalidLseBounds);
         }
+        // Own L083 detector counts 128 LSE edges per 256 factory-trim LSI
+        // clocks. Demand one extra edge of board-qualified phase margin.
+        #[cfg(rcc_cw32l083_v1)]
+        if u64::from(self.min_freq.0) * 256
+            <= 129
+                * u64::from(
+                    <crate::peripherals::RTC as crate::rtc::sealed::Instance>::SOURCE_MAXIMUM_HZ,
+                )
+        {
+            return Err(Error::InvalidLseBounds);
+        }
         let c = self.operating_conditions;
         let bounds = ClockBounds::external(
             Hertz(crate::RCC_LSE_NOMINAL_HZ),
@@ -168,7 +179,7 @@ pub(crate) fn preflight(
         verify_state(config, false, cs)?;
         return Ok(true);
     }
-    #[cfg(rcc_lse_startup_analog)]
+    #[cfg(rcc_lse_native_consumers)]
     {
         let flags = pac::SYSCTRL.isr().read();
         if flags.lserdy() || flags.lsestable() {
@@ -216,9 +227,9 @@ pub(crate) fn start(
     }
     freeze_monitor(cs)?;
     crate::rcc_configure_lse_pins(config.bypass(), config.poll_budget, cs)?;
-    // Program every source-defined analog bank while disabled. The native
-    // startup-bank path preserves reserved bits and never depends on a precise
-    // hardware bank-switch instant. Older cohorts retain their original write.
+    // Program only actual source-defined fields while disabled. Native
+    // AUTOTRIM-equipped parts preserve reserved bits; L052 alone has a second
+    // analog bank. Older cohorts retain their original write.
     let configure = |w: &mut pac::sysctrl::regs::Lse| {
         w.set_mode(config.bypass());
         w.set_driver(config.drive);
@@ -230,9 +241,9 @@ pub(crate) fn start(
         }
         w.set_waitcycle(config.wait);
     };
-    #[cfg(rcc_lse_startup_analog)]
+    #[cfg(rcc_lse_native_consumers)]
     pac::SYSCTRL.lse().modify(configure);
-    #[cfg(not(rcc_lse_startup_analog))]
+    #[cfg(not(rcc_lse_native_consumers))]
     pac::SYSCTRL.lse().write(configure);
     if !parameters_match(config) {
         return Err(Error::LseNotReady);

@@ -57,7 +57,7 @@ def main():
 
     catalog = load(ROOT / "cw32-data/lse-qualified.yaml")
     expected = {"CW32A030C8T7", "CW32F030C8T7", "CW32F020C6U7",
-                "CW32L031C8T6", "CW32L031C8U6", "CW32L031F8U6", "CW32R031C8U6", "CW32W031R8U6", "CW32L052C8T6", "CW32L052R8S6", "CW32L052R8T6"}
+                "CW32L031C8T6", "CW32L031C8U6", "CW32L031F8U6", "CW32R031C8U6", "CW32W031R8U6", "CW32L052C8T6", "CW32L052R8S6", "CW32L052R8T6", "CW32L083RBT6", "CW32L083RCT6", "CW32L083RCS6", "CW32L083MCT6", "CW32L083VCT6"}
     assert set(catalog["parts"]) == expected
     profile = catalog["parts"]["CW32F020C6U7"]
     proof = load(ROOT / "docs/lse-active-f020.json")

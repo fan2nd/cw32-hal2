@@ -1,6 +1,6 @@
 # Bounded active LSE qualification
 
-Active LSE configuration is qualified on the eleven exact parts below. Every family alias and all other parts retain only previously established pad-ownership facts.
+Active LSE configuration is qualified on the sixteen exact parts below. Every family alias and all other parts retain only previously established pad-ownership facts.
 
 | Part | Package | PC14 / PC15 physical pins | Direct LSE output |
 |---|---|---|---|
@@ -12,12 +12,18 @@ Active LSE configuration is qualified on the eleven exact parts below. Every fam
 | CW32W031R8U6 | QFN64 | 61 / 62 | PB12 AF3; PF1 AF1 |
 | CW32L052C8T6 | LQFP48 | 3 / 4 | PB12 AF3; PF1 AF1 |
 | CW32L052R8S6 / CW32L052R8T6 | LQFP64 7×7 / 10×10 mm | 3 / 4 | PB12 AF3; PF1 AF1 |
+| CW32L083RBT6 / CW32L083RCT6 | LQFP64 10×10 mm | 3 / 4 | PB12 AF3; PF1 AF1 |
+| CW32L083RCS6 | LQFP64 7×7 mm | 3 / 4 | PB12 AF3; PF1 AF1 |
+| CW32L083MCT6 | LQFP80 | 3 / 4 | PB12 AF3; PF1 AF1 |
+| CW32L083VCT6 | LQFP100 | 8 / 9 | PB12 AF3; PF1 AF1 |
 
- Qualification is projected after exact-package expansion through `ClockLimits.lse_configuration`, not placed in family electrical profiles.
+The original eleven qualifications retain their own source/electrical bounds; the five L083 additions use the separate own-source contract below. Family aliases do not inherit any of these exact-package admissions.
+
+Qualification is projected after exact-package expansion through `ClockLimits.lse_configuration`, not placed in family electrical profiles.
 
 The source facts were checked on 2026-10-09 against the exact originals identified below. This is source qualification, not silicon testing.
 
-## Own-source evidence
+## x030 / F020 own-source evidence
 
 The canonical authority is `sources/evidence-sources.json`. New citations use canonical `vendor:` IDs in `source_ref`; local labels are in `citation_ref`.
 
@@ -37,7 +43,7 @@ F020 Table5-2 was visually inspected: PC14/PC15 are QFN48 pins3/4; QFN20 and QFN
 
 ## Board contract
 
-Both crystal and bypass use nominal **32,768 Hz** in this cohort. The board must supply a positive minimum and maximum frequency that bracket the nominal value and cover **every individual cycle**, including tolerance, temperature, supply, aging and jitter. A nominal frequency does not establish an accuracy bound. The own-source ceiling for both crystal/ceramic and bypass is **1 MHz**; this does not expand the cohort to other nominal frequencies.
+All sixteen parts use nominal **32,768 Hz** for crystal and bypass. The board must supply a positive minimum and maximum frequency that bracket the nominal value and cover **every individual cycle**, including tolerance, temperature, supply, aging and jitter. A nominal frequency does not establish an accuracy bound. Each family retains its own source/electrical conditions in the sections below. For x030/F020, the own-source ceiling for both crystal/ceramic and bypass is **1 MHz**; this does not expand those parts to other nominal frequencies.
 
 The x030/F020 qualified operating conditions are **1,650–5,500 mV** and **−40 to +105 °C**, with VDDA equal to VDD and the device's remaining electrical conditions satisfied. The datasheets' conditional low-power extension to +125 °C is deliberately not projected.
 
@@ -45,7 +51,7 @@ Crystal mode requires PC14 and PC15 configured as analog. Crystal manufacturer c
 
 Bypass requires PC14 as a digital input. PC15 can be general-purpose GPIO under the documented mode, subject to ownership retained by the HAL. The input must satisfy **45–55% duty cycle**, **at least 450 ns high and low**, **at most 50 ns rise and fall**, high level **70–100% of VDDIO**, and low level **0–30% of VDDIO**. The waveform and voltage obligations cannot be established by software frequency bounds alone.
 
-## Native oscillator and consumer facts
+## x030 / F020 native oscillator and consumer facts
 
 `LseDrive` and `LseAmplitude` expose all four documented encodings 0–3. `LseWait` exposes 256, 1,024, 4,096 and 16,384 LSE cycles at encodings 0–3. These enums are authored in `sysctrl_v1.yaml` and own F020 `sysctrl_cw32f020_v1.yaml`; metadata stores the cycle counts, not an alternate register-access abstraction.
 
@@ -64,7 +70,7 @@ Consumers whose inherited configuration matters:
 
 Configuration bus gates do not establish that RTC, AWT or UART working clocks are unused. Admission conservatively rejects a selected direct LSE output AF even while its pad driver is disabled. Parked AWT and UART LSE selectors likewise block a new start. GPIO **DIR is offset 0**, while **SPEED is offset 8**. The analog selector is offset 28. The route list is exact and unique, not an arbitrary caller-selected subset.
 
-## RTC admission
+## x030 / F020 RTC admission
 
 RTC `START=0` is insufficient. When `CR2.AWTEN=1`, wake sources 0–3 use RTCCLK divided by 2, 4, 8 or 16 independently of START; sources 4–7 use RTC1Hz and require START. Existing wake, alarms, timestamp capture, output selection, compensation, calendar contents or pending status must therefore be preserved.
 
@@ -127,3 +133,7 @@ AUTOTRIM can consume or mutate LSI independently of its reference selector. Ever
 LPTIM and LCD RCC gates stop work as well as configuration. An off gate stays off and is not temporarily enabled for inspection. An already-on gate is read without writes and must remain unchanged; native EN and source determine whether the peripheral consumes the source. RTC, UART and AUTOTRIM have configuration-only gates, so their retained state is inspected even when their gates start off. RTC compensation remains an LSE consumer independently of RTC SOURCE, and a new start requires all thirteen own reset observations with controls first. No KEY, ACCESS, reset or flag-clear write manufactures admission.
 
 `None` adds no inspection, source, analog or pad writes. Failures retain enables, reservations, detector LSI and diagnostic flags and publish no healthy capability. LSE parameters and enable are retained across ordinary reset; only POR clears the documented controls. Software cannot promise that a CPU reset makes retry possible. No automatic RTC failover or elapsed-time continuity is established.
+
+## CW32L083 native consumers
+
+The five exact L083 packages use their own [source qualification](qualified-l083-lse.md), [native facts](lse-active-l083.json), [RTC reset record](lse-active-l083-rtc-admission.json) and [original receipts](lse-l083-source-receipt.json). They have one LSE analog bank, six UARTs with native SOURCE spelling, GPIO LCKR and package-specific PC4/PD5/PF2 LSI routes. Their native-consumer admission is independent of L052-only startup analog fields. The L083-only sufficient detector margin is `256 * declared_LSE_min_hz > 129 * 33784`, using its own factory LSI maximum of 33784 Hz. It is checked before peripheral acquisition or RCC writes. The minimum accepted integer lower bound is 17024 Hz; the declared interval must still contain nominal 32768 Hz. Supply 1.65–5.5 V, ambient −40–85 °C, every-cycle bounds and complete crystal/load/drive or bypass waveform qualification all apply together. The earlier eleven qualifications and HSI/HSE/PLL behavior are unchanged. Default None preserves the existing clock path. No power-mode or hardware-startup guarantee is added.

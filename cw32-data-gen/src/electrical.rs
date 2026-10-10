@@ -788,7 +788,7 @@ fn parse_lse_catalog(bytes: &[u8]) -> Result<LseCatalog> {
     let unique: serde_yaml::Value = serde_yaml::from_slice(bytes)?;
     Ok(serde_yaml::from_value(unique)?)
 }
-const LSE_PARTS: [(&str, &str, &str); 11] = [
+const LSE_PARTS: [(&str, &str, &str); 16] = [
     ("CW32A030C8T7", "CW32A030", "LQFP48"),
     ("CW32F030C8T7", "CW32F030", "LQFP48"),
     ("CW32F020C6U7", "CW32F020", "QFN48"),
@@ -800,6 +800,11 @@ const LSE_PARTS: [(&str, &str, &str); 11] = [
     ("CW32L052C8T6", "CW32L052", "LQFP48"),
     ("CW32L052R8S6", "CW32L052", "LQFP64（7×7mm）"),
     ("CW32L052R8T6", "CW32L052", "LQFP64（10×10mm）"),
+    ("CW32L083RBT6", "CW32L083", "LQFP64（10×10mm）"),
+    ("CW32L083RCT6", "CW32L083", "LQFP64（10×10mm）"),
+    ("CW32L083RCS6", "CW32L083", "LQFP64（7×7mm）"),
+    ("CW32L083MCT6", "CW32L083", "LQFP80"),
+    ("CW32L083VCT6", "CW32L083", "LQFP100"),
 ];
 // Re-read from x030 RM Rev2.5 PDF187–195 and own F020 RM Rev1.4 PDF184–192. Values
 // and masks are observations, not writes. KEY and ICR are never included.
@@ -845,7 +850,7 @@ fn validate_lse_configuration(
             && c.startup_cycles == [256, 1024, 4096, 16384]
             && (c.rtc_source, c.uart_source, c.mco_source) == (0, 2, 6)
             && c.awt_source
-                == if part.starts_with("CW32L052") {
+                == if part.starts_with("CW32L052") || part.starts_with("CW32L083") {
                     None
                 } else {
                     Some(3)
@@ -879,6 +884,33 @@ fn validate_lse_configuration(
                     .collect::<Vec<_>>()
                     == expected_routes,
             "L052 native startup/consumer facts differ from the own-source exact-package roster"
+        );
+    } else if part.starts_with("CW32L083") {
+        let native = c
+            .startup_consumers
+            .as_ref()
+            .context("L083 requires own native consumer facts")?;
+        let expected_routes = match part {
+            "CW32L083RBT6" | "CW32L083RCT6" | "CW32L083RCS6" => vec![("PC4", 6)],
+            "CW32L083MCT6" => vec![("PC4", 6), ("PF2", 4)],
+            "CW32L083VCT6" => vec![("PC4", 6), ("PD5", 6), ("PF2", 4)],
+            _ => anyhow::bail!("unqualified L083 part"),
+        };
+        ensure!(
+            !native.startup_analog
+                && native.autotrim_source == 3
+                && native.lptim.source == 2
+                && native.lptim.gate_controls_work
+                && native.lcd.source == 1
+                && native.lcd.gate_controls_work
+                && native.uarts == ["UART1", "UART2", "UART3", "UART4", "UART5", "UART6"]
+                && native
+                    .lsi_output_routes
+                    .iter()
+                    .map(|r| (r.pin.as_str(), r.af))
+                    .collect::<Vec<_>>()
+                    == expected_routes,
+            "L083 native consumer facts differ from the own-source exact-package roster"
         );
     } else {
         ensure!(
@@ -1064,6 +1096,8 @@ pub fn apply_lse(
     let w031_rtc_proof = read_policy("docs/lse-active-w031-rtc-admission.json")?;
     let l052_proof = read_policy("docs/lse-active-l052.json")?;
     let l052_rtc_proof = read_policy("docs/lse-active-l052-rtc-admission.json")?;
+    let l083_proof = read_policy("docs/lse-active-l083.json")?;
+    let l083_rtc_proof = read_policy("docs/lse-active-l083-rtc-admission.json")?;
     let own_proof = |family: &str| -> Result<(&Value, &Value)> {
         Ok(match family {
             "CW32A030" | "CW32F030" => (&x030_proof, &x030_rtc_proof),
@@ -1072,6 +1106,7 @@ pub fn apply_lse(
             "CW32R031" => (&r031_proof, &r031_rtc_proof),
             "CW32W031" => (&w031_proof, &w031_rtc_proof),
             "CW32L052" => (&l052_proof, &l052_rtc_proof),
+            "CW32L083" => (&l083_proof, &l083_rtc_proof),
             _ => anyhow::bail!("unreviewed active LSE family"),
         })
     };
@@ -1087,7 +1122,7 @@ pub fn apply_lse(
             p.configuration.configurable_ccs
                 == matches!(
                     p.family.as_str(),
-                    "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052"
+                    "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052" | "CW32L083"
                 ),
             "LSE CCS hardware facts differ from bounded own-family cohort"
         );
@@ -1178,6 +1213,10 @@ pub fn apply_lse(
         "CW32L052" => (
             "vendor:CW32L052_UserManual_CN_V1.5.pdf",
             "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+        ),
+        "CW32L083" => (
+            "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+            "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
         ),
         _ => anyhow::bail!("unreviewed active LSE family"),
     };
@@ -1289,8 +1328,9 @@ pub fn apply_lse(
             // LSIOUT is explicitly left unmerged in the existing AF catalog.
             // Compare the own qualified allowlist against its complete raw AF
             // roster filtered by the already verified exact package bonding.
-            let af: serde_yaml::Value =
-                serde_yaml::from_slice(&fs::read(root.join("cw32-data/af/cw32l052.yaml"))?)?;
+            let af: serde_yaml::Value = serde_yaml::from_slice(&fs::read(
+                root.join(format!("cw32-data/af/{}.yaml", line.to_ascii_lowercase())),
+            )?)?;
             let bonded = core.pins.iter().map(|p| p.name.as_str()).collect();
             let actual = lse_lsi_af_routes(&af, &bonded)?;
             let expected: Vec<_> = native
@@ -1303,6 +1343,42 @@ pub fn apply_lse(
                 "native LSI qualification differs from complete bonded own AF roster"
             );
         }
+    }
+    if line == "CW32L083" {
+        for (name, register, offset, bit) in [
+            ("RTC", "APBEN1", 56, 3),
+            ("UART1", "APBEN2", 52, 9),
+            ("UART2", "APBEN1", 56, 7),
+            ("UART3", "APBEN1", 56, 8),
+            ("UART4", "APBEN1", 56, 9),
+            ("UART5", "APBEN1", 56, 10),
+            ("UART6", "APBEN2", 52, 1),
+            ("AUTOTRIM", "APBEN2", 52, 13),
+        ] {
+            let (_, gate) = lse_register(registers, core, "SYSCTRL", register, offset)?;
+            lse_field(gate, name, bit, 1)?;
+            ensure!(
+                proof["consumer_gate_policy"][name] == "configuration_only"
+                    && proof["consumer_gate_sources"]["registers"][name]
+                        == serde_json::json!([register, offset, bit]),
+                "L083 configuration gate differs from own source"
+            );
+        }
+        let rtc = core
+            .peripherals
+            .iter()
+            .find(|p| p.name == "RTC")
+            .unwrap()
+            .rtc_calendar
+            .as_ref()
+            .unwrap();
+        let monitor = &proof["lsi_monitor_prerequisite"];
+        ensure!(
+            monitor["factory_frequency_hz"] == serde_json::json!([rtc.minimum_hz, rtc.maximum_hz])
+                && monitor["factory_temperature_c"] == serde_json::to_value(rtc.temperature_c)?
+                && monitor["factory_supply_mv"] == serde_json::to_value(rtc.supply_mv)?,
+            "L083 detector envelope differs from own factory LSI qualification"
+        );
     }
     let (_, cr1) = lse_register(registers, core, "SYSCTRL", "CR1", 4)?;
     for (name, offset, size) in [
@@ -1337,6 +1413,14 @@ pub fn apply_lse(
         lse_field(lse, "PDRIVER", 8, 2)?;
         lse_field(lse, "PAMP", 10, 2)?;
         analog_fields.extend([("PDRIVER", "LseDrive"), ("PAMP", "LseAmplitude")]);
+    }
+    if line == "CW32L083" {
+        ensure!(
+            !lse.fields
+                .iter()
+                .any(|f| matches!(f.name.as_str(), "PDRIVER" | "PAMP")),
+            "L083 has no startup analog bank"
+        );
     }
     for (field, name) in analog_fields {
         ensure!(
@@ -1413,7 +1497,7 @@ pub fn apply_lse(
         "qualified UART roster must equal all selected native UART instances"
     );
     // Own L052 PAC retains the vendor SORCE spelling; no register rename.
-    let uart_source_field = if c.startup_consumers.is_some() {
+    let uart_source_field = if line == "CW32L052" {
         "SORCE"
     } else {
         "SOURCE"
@@ -1698,6 +1782,73 @@ mod lse_tests {
         let compact = &c.parts["CW32L052C8T6"].configuration;
         validate_lse_configuration("CW32L052C8T6", compact).unwrap();
         assert!(validate_lse_configuration("CW32L052R8T6", compact).is_err());
+    }
+
+    #[test]
+    fn l083_requires_own_bank_uart_routes_and_reset() {
+        let catalog = catalog();
+        for part in [
+            "CW32L083RBT6",
+            "CW32L083RCT6",
+            "CW32L083RCS6",
+            "CW32L083MCT6",
+            "CW32L083VCT6",
+        ] {
+            let original = &catalog.parts[part].configuration;
+            validate_lse_configuration(part, original).unwrap();
+            for which in 0..8 {
+                let mut invalid = original.clone();
+                match which {
+                    0 => invalid.startup_consumers = None,
+                    1 => invalid.startup_consumers.as_mut().unwrap().startup_analog = true,
+                    2 => {
+                        invalid.startup_consumers.as_mut().unwrap().uarts.pop();
+                    }
+                    3 => {
+                        invalid
+                            .startup_consumers
+                            .as_mut()
+                            .unwrap()
+                            .lptim
+                            .gate_controls_work = false
+                    }
+                    4 => {
+                        invalid
+                            .startup_consumers
+                            .as_mut()
+                            .unwrap()
+                            .lcd
+                            .gate_controls_work = false
+                    }
+                    5 => {
+                        invalid
+                            .startup_consumers
+                            .as_mut()
+                            .unwrap()
+                            .lsi_output_routes
+                            .pop();
+                    }
+                    6 => {
+                        invalid
+                            .rtc_reset
+                            .iter_mut()
+                            .find(|r| r.register == "ALARMA")
+                            .unwrap()
+                            .value = 0x0412_0000
+                    }
+                    _ => invalid.awt_source = Some(3),
+                }
+                assert!(validate_lse_configuration(part, &invalid).is_err());
+            }
+        }
+        // Larger packages are not a source for another package's output roster.
+        let large = &catalog.parts["CW32L083VCT6"].configuration;
+        assert!(validate_lse_configuration("CW32L083MCT6", large).is_err());
+        assert!(validate_lse_configuration("CW32L083RBT6", large).is_err());
+        let mut invalid = catalog;
+        let profile = invalid.parts.remove("CW32L083RBT6").unwrap();
+        invalid.parts.insert("CW32L083".into(), profile);
+        assert!(validate_lse_parts(&invalid).is_err());
     }
 
     #[test]

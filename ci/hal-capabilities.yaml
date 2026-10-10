@@ -644,7 +644,7 @@ functions:
       status: partial
       scope: Blocking calendar with preserved-state attach and explicit cold initialization.
       limitations:
-      - L010/L011/L012 use qualified HSIOSC; classic RTCs use pretrimmed LSI, with held LSE also available on the eleven exact x030/F020/L031/R031/W031/L052 packages in lse-qualified.yaml. No UTC precision, compensation,
+      - L010/L011/L012 use qualified HSIOSC; classic RTCs use pretrimmed LSI, with held LSE also available on the sixteen exact x030/F020/L031/R031/W031/L052/L083 packages in lse-qualified.yaml. No UTC precision, compensation,
         subseconds or retention guarantee.
     - id: alarm_a
       status: partial
@@ -1244,7 +1244,7 @@ functions:
           Raw-HSI AUTOTRIM/LVD consumers block required retrim; divider-only changes preserve HSIOSC.
         - Inherited PLL entry first escapes through unchanged HSI; stop and observe PLL not stable before
           source oscillator/divider changes. Relevant HSE/LSE sticky faults are rejected, never cleared.
-        - No HSE-fed PLL, LSE setup, runtime switching, sleep/resume or source-loss recovery.
+        - Active LSE is separately qualified below. No HSE-fed PLL, runtime switching, sleep/resume or source-loss recovery.
           STABLE is a startup latch and frozen HSE rates become invalid after loss or HSI fallback.
       registers_any:
       - HSE
@@ -1312,13 +1312,15 @@ functions:
       - path: cw32-data/lse-ownership.yaml
     - id: external_low_speed
       status: partial
-      scope: Init-only nominal 32768 Hz crystal/bypass LSE and held RTC source on eleven exact source-qualified x030/F020/L031/R031/W031/L052 packages.
-      implemented_families: [CW32F030, CW32A030, CW32F020, CW32L031, CW32R031, CW32W031, CW32L052]
+      scope: Init-only nominal 32768 Hz crystal/bypass LSE and held RTC source on sixteen exact source-qualified x030/F020/L031/R031/W031/L052/L083 packages.
+      implemented_families: [CW32F030, CW32A030, CW32F020, CW32L031, CW32R031, CW32W031, CW32L052, CW32L083]
       limitations:
       - Other packages retain inherited-pad protection only. Every-cycle board bounds, waveform, drive and load qualification are required.
       - None preserves LSE parameters and pads. Existing mandatory CCS behavior remains; configurable CCS changes only LSECCS for a requested new start. Exact enabled reuse never restarts.
-      - L031/R031/W031/L052 preserve calibrated LSI; only a repeatedly verified stopped unused source can load factory trim for a requested monitored LSE start. No live trim, source reset or IRQ acknowledgement.
+      - L031/R031/W031/L052/L083 preserve calibrated LSI; only a repeatedly verified stopped unused source can load factory trim for a requested monitored LSE start. No live trim, source reset or IRQ acknowledgement.
       - L052 independently configures pre-start and run analog banks while disabled, rejects active/automatic AUTOTRIM calibration, preserves off LPTIM/LCD work gates, and checks its own RTC reset roster.
+      - L083 has one analog bank, six native UART consumers, GPIO LCKR and exact-package LSI routes. It preserves off LPTIM/LCD work gates and rejects active/automatic AUTOTRIM calibration.
+      - L083 alone requires 256 * LSE_min_hz > 129 * 33784 before peripheral acquisition or RCC writes. Its own 1.65..5.5 V and -40..85 C envelope, nominal 32768 Hz, per-cycle bounds and full board electrical qualification all apply. Earlier eleven qualifications and HSI/HSE/PLL behavior are unchanged.
       - Failure retains source enables, pad reservations and diagnostics. Ordinary reset may not clear retained LSE controls; POR may be required.
       - No LSE system clock, runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
       registers_any:
@@ -1330,6 +1332,7 @@ functions:
         anchor: pub struct LseClock
       - path: docs/qualified-lse.md
       - path: docs/qualified-l052-lse.md
+      - path: docs/qualified-l083-lse.md
       - path: cw32-data/lse-qualified.yaml
     - id: power_sleep_wakeup
       status: unimplemented

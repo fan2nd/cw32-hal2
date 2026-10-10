@@ -143,10 +143,14 @@ still apply.
   independent of HSE qualification. Crystal, bypass, family-specific pad locks
   and package bond-outs determine the boot-retained reservation before safe pin
   construction. Active LSE crystal/bypass setup and an owned calendar source
-  are qualified only for eleven exact x030/F020/L031/R031/W031/L052 packages. The
+  are qualified only for sixteen exact x030/F020/L031/R031/W031/L052/L083 packages. The
   three L052 parts have separate pre-start/run analog settings, native AUTOTRIM
   admission, and LPTIM/LCD work-gate preservation; see their
-  [own-source contract](qualified-l052-lse.md). All require
+  [own-source contract](qualified-l052-lse.md). The five L083 parts have one analog
+  bank, six native UART consumers, GPIO LCKR and exact-package LSI routes. Their
+  [own-source contract](qualified-l083-lse.md) requires the sufficient detector
+  margin `256 * LSE_min_hz > 129 * 33784` before peripheral acquisition or RCC writes.
+  The previous eleven qualifications and the HSI/HSE/PLL backend are unchanged. All require
   explicit board electrical and every-cycle frequency bounds around nominal
   32768 Hz. Cold startup rejects retained RTC state, including compensation
   consumers independent of RTC.SOURCE; exact already-enabled reuse preserves

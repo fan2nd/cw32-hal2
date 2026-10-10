@@ -1202,7 +1202,7 @@ groups:
     basis: Own CW32L052 manual Rev1.5 PDF76-77 defines all four analog fields and all encodings. Layout, access and reuse membership are unchanged.
 
 - canonical: sysctrl_cw32l083_v1.yaml
-  canonical_ir_sha256: baa2222d244ca2c94f58608b4e5e9662f860bbd8fc5fb8a502b5e26566471234
+  canonical_ir_sha256: 238063c44d357656759ebbe73038723738ddd37da4592e7d08d4e358ca5996d9
   source_versions:
   - sysctrl_cw32l083_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1222,6 +1222,28 @@ groups:
     reason: 'Own L083 RM Rev2.0 section4.7.8 PDF82: typed PLL source/input/output/MUL/wait fields, documented
       reserved-debug19:16 default0x5, STABLE RO overlay. Existing field offsets/widths unchanged and no
       reuse membership change.'
+  - canonical: sysctrl_cw32l083_v1.yaml
+    before_sha256: baa2222d244ca2c94f58608b4e5e9662f860bbd8fc5fb8a502b5e26566471234
+    after_sha256: 238063c44d357656759ebbe73038723738ddd37da4592e7d08d4e358ca5996d9
+    added_enums:
+    - enum/LseDrive
+    - enum/LseAmplitude
+    - enum/LseWait
+    field_associations:
+    - - fieldset/LSE
+      - DRIVER
+      - LseDrive
+    - - fieldset/LSE
+      - AMP
+      - LseAmplitude
+    - - fieldset/LSE
+      - WAITCYCLE
+      - LseWait
+    register_layout_and_access_unchanged: true
+    source_policy: docs/lse-active-l083.json
+    basis: 'Own CW32L083 CN UM Rev2.0 PDF81/printed80: single-bank LSE typed parameters
+      only. No PAMP/PDRIVER, no access/layout change, no reuse membership change.'
+
 - canonical: sysctrl_v1.yaml
   canonical_ir_sha256: ca3b906d365794baca78ee7d88097bb4d8d0e53602b520f7a8139b0c730757aa
   source_versions:

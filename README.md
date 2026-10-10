@@ -130,8 +130,11 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - All eleven LSE-bearing families: read-only inherited LSE pad reservation before
   token return, with source-specific pad locks and exact package routes. GPIO and
   peripheral pin construction reject reserved pads before GPIO writes.
-  Eleven exact x030/F020/L031/R031/W031/L052 packages support explicitly requested,
+  Sixteen exact x030/F020/L031/R031/W031/L052/L083 packages support explicitly requested,
   board-qualified nominal 32768 Hz crystal/bypass setup and an owned RTC source.
+  Each family retains its own electrical and consumer limits. The five L083 parts
+  additionally require `256 * LSE_min_hz > 129 * 33784` before peripheral acquisition
+  or RCC writes; this sufficient detector margin does not establish board accuracy.
   Startup preserves retained consumers, accepts only a pristine RTC before
   enabling a disabled source, and has a bounded poll budget. Failure requires
   reset (POR may be needed for retained LSE controls); no automatic RTC fallback, low-power recovery or elapsed-time accuracy
@@ -171,7 +174,8 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - L083: direct qualified HSE crystal/bypass on all five modeled exact packages,
   with configurable CCS preserved, retained RTC/AUTOTRIM/LVD owners checked,
   and bounded entry from an inherited PLL through unchanged HSI. HSI remains
-  the default; LSE setup remains unavailable. See
+  the default. Active LSE has a separate [exact-package contract](docs/qualified-l083-lse.md);
+  the HSI/HSE/PLL backend and qualifications are unchanged. See
   [own-source limits and initialization contract](docs/qualified-l083-hse.md).
 - L083 additionally: one-time factory-HSI-fed PLL for qualified SYSCLK and bus
   rates. Actual input/output envelopes must fit their independent electrical
@@ -219,7 +223,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - All eleven RTC-bearing families: bounded whole-second calendar with preserving
   attachment and explicit initialization. L010/L011/L012 use frozen HSIOSC;
   classic families normally retain preconfigured factory-trim LSI and its exact
-  32800/32768 rate and tolerance. The eleven qualified LSE packages can instead
+  32800/32768 rate and tolerance. The sixteen qualified LSE packages can instead
   hold an explicitly initialized LSE source with health checks around calendar
   operations. Typed weekly Alarm A programming and A/B
   event status/acknowledgement are supported; L010/L011/L012 also have scoped

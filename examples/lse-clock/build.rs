@@ -32,6 +32,11 @@ fn main() {
             | "CW32L052C8T6"
             | "CW32L052R8S6"
             | "CW32L052R8T6"
+            | "CW32L083RBT6"
+            | "CW32L083RCT6"
+            | "CW32L083RCS6"
+            | "CW32L083MCT6"
+            | "CW32L083VCT6"
     ));
     println!("cargo:rustc-check-cfg=cfg(gpio_has_speed)");
     let lse = metadata

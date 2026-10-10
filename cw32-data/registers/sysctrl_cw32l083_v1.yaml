@@ -852,14 +852,17 @@ fieldset/LSE:
     description: desc DRIVER.
     bit_offset: 0
     bit_size: 2
+    enum: LseDrive
   - name: AMP
     description: desc AMP.
     bit_offset: 2
     bit_size: 2
+    enum: LseAmplitude
   - name: WAITCYCLE
     description: desc WAITCYCLE.
     bit_offset: 4
     bit_size: 2
+    enum: LseWait
   - name: MODE
     description: desc MODE.
     bit_offset: 6
@@ -1241,3 +1244,45 @@ enum/PllDebug:
   - name: Default
     description: Documented default; do not alter reserved debug controls.
     value: 5
+
+enum/LseDrive:
+  description: Own CW32L083 CN UM Rev2.0 PDF81 / printed80; docs/lse-active-l083.json.
+    One analog bank only.
+  bit_size: 2
+  variants:
+  - name: Least
+    value: 0
+  - name: Small
+    value: 1
+  - name: Normal
+    value: 2
+  - name: Strong
+    value: 3
+
+enum/LseAmplitude:
+  description: Own CW32L083 CN UM Rev2.0 PDF81 / printed80; docs/lse-active-l083.json.
+    One analog bank only.
+  bit_size: 2
+  variants:
+  - name: Least
+    value: 0
+  - name: Small
+    value: 1
+  - name: Normal
+    value: 2
+  - name: Large
+    value: 3
+
+enum/LseWait:
+  description: Own CW32L083 CN UM Rev2.0 PDF81 / printed80; docs/lse-active-l083.json.
+    One analog bank only.
+  bit_size: 2
+  variants:
+  - name: Cycles256
+    value: 0
+  - name: Cycles1024
+    value: 1
+  - name: Cycles4096
+    value: 2
+  - name: Cycles16384
+    value: 3

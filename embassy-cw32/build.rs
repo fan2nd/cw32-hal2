@@ -32,6 +32,7 @@ fn main() {
         "rcc_hse",
         "rcc_lse",
         "rcc_lse_startup_analog",
+        "rcc_lse_native_consumers",
         "rcc_pll",
         "rcc_external_clock",
         "aes_cw32l083_v1",
@@ -3620,6 +3621,11 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             | "CW32L052C8T6"
             | "CW32L052R8S6"
             | "CW32L052R8T6"
+            | "CW32L083RBT6"
+            | "CW32L083RCT6"
+            | "CW32L083RCS6"
+            | "CW32L083MCT6"
+            | "CW32L083VCT6"
     );
     assert_eq!(
         c.lse_configuration.is_some(),
@@ -3690,7 +3696,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         lse.configurable_ccs,
         matches!(
             METADATA.line,
-            "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052"
+            "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052" | "CW32L083"
         )
     );
     writeln!(
@@ -3699,12 +3705,19 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         lse.configurable_ccs
     )
     .unwrap();
-    assert_eq!(lse.startup_consumers.is_some(), METADATA.line == "CW32L052");
+    assert_eq!(
+        lse.startup_consumers.is_some(),
+        matches!(METADATA.line, "CW32L052" | "CW32L083")
+    );
     if let Some(native) = &lse.startup_consumers {
-        assert!(native.startup_analog);
-        field("SYSCTRL", "LSE", "PDRIVER", 8, 2);
-        field("SYSCTRL", "LSE", "PAMP", 10, 2);
-        println!("cargo:rustc-cfg=rcc_lse_startup_analog");
+        // Native AUTOTRIM/LPTIM/LCD consumers do not imply a second analog bank.
+        println!("cargo:rustc-cfg=rcc_lse_native_consumers");
+        assert_eq!(native.startup_analog, METADATA.line == "CW32L052");
+        if native.startup_analog {
+            field("SYSCTRL", "LSE", "PDRIVER", 8, 2);
+            field("SYSCTRL", "LSE", "PAMP", 10, 2);
+            println!("cargo:rustc-cfg=rcc_lse_startup_analog");
+        }
     }
     assert_eq!(lse.nominal_hz, 32768);
     assert_eq!(*lse.startup_cycles, [256, 1024, 4096, 16384]);
@@ -3910,7 +3923,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             writeln!(out, "let info = crate::peripherals::{name}::RCC_INFO;\nlet enabled = info.is_enabled();\nif enabled && (info.reset_asserted() || ({expression})) {{ return Ok(false); }}\nif info.is_enabled() != enabled {{ return Err(crate::rcc::Error::LseClockInUse); }}").unwrap();
         }
     }
-    let uart_source_field = if lse.startup_consumers.is_some() {
+    let uart_source_field = if METADATA.line == "CW32L052" {
         "sorce"
     } else {
         "source"
@@ -3933,6 +3946,10 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         writeln!(out,"let info = crate::peripherals::{}::RCC_INFO;\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LseClockInUse); }}\nif info.inspect_for_init(cs, timeout, || u8::from(crate::pac::{}.cr2().read().{uart_source_field}()) == {}).map_err(|_| crate::rcc::Error::RetainedClockInspectionTimeout)? {{ return Ok(false); }}",uart.name,uart.name,lse.uart_source).unwrap();
     }
     field("SYSCTRL", "MCO", "SOURCE", 0, 4);
+    if METADATA.line == "CW32L083" {
+        // Own MCO table has defined source encodings 0 through 9 only.
+        out.push_str("if crate::pac::SYSCTRL.mco().read().source() > 9 { return Ok(false); }\n");
+    }
     writeln!(
         out,
         "if crate::pac::SYSCTRL.mco().read().source() == {} {{ return Ok(false); }}",

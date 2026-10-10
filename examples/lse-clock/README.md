@@ -1,7 +1,8 @@
 # Qualified LSE calendar examples
 
 These two firmware examples target CW32F030C8T7/CW32A030C8T7 LQFP48
-CW32F020C6U7 QFN48, the five exact L031/R031/W031 parts and three exact L052 parts listed below.
+CW32F020C6U7 QFN48, the five exact L031/R031/W031 parts, three exact L052 parts
+and five exact L083 parts listed below, for sixteen qualified selections in total.
 Other F020 packages lack the oscillator pair.
 Crystal uses PC14/PC15; bypass consumes PC14 and leaves PC15 available.
 RCC init requests the source before peripheral tokens are exposed. LseClock
@@ -41,3 +42,9 @@ the example settings are declarations only. Both banks are programmed before
 enable, with no assumed precise bank-switch timing. Its separate AUTOTRIM,
 LPTIM and LCD consumers and the own ALARMA reset value are admitted through
 the native source facts. No power-mode behavior or live calibration is offered.
+
+The same crystal/bypass calendar examples also select the five exact L083 parts:
+`cw32l083rbt6`, `cw32l083rct6`, `cw32l083rcs6`, `cw32l083mct6`,
+`cw32l083vct6`. L083 has only one analog bank and therefore no startup-drive
+fields. The example's frequency and board declarations require replacement
+with qualified board data; linked firmware has not been executed on silicon.
