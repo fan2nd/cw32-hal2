@@ -18,8 +18,10 @@ oscillator accuracy, RF continuity or recovery.
 Only **CW32R031C8U6, QFN48, 64 KiB Flash and 8 KiB SRAM** gains the existing
 `rcc::Sysclk::LSI` selection. Flash is `[0x00000000, 0x00010000)` and SRAM is
 `[0x20000000, 0x20002000)`. HSI remains the default. Generic R031 and every
-W031 remain outside this qualification; exclusion makes no claim of a silicon
-blocker. W031 RF supply modes are not reconsidered. Existing qualified
+W031 remained outside the original R031 qualification; exclusion made no claim
+of a silicon blocker. That historical acceptance did not reconsider W031 RF
+supply modes. CW32W031R8U6 now has a separate [own-source W031 contract](qualified-w031-lsi-sysclk.md);
+generic W031 stays excluded. Existing qualified
 L031/classic/F002/F003 paths retain their independent boundaries.
 
 The authority is [evidence-sources.json](../sources/evidence-sources.json).
@@ -63,8 +65,10 @@ compatibility change makes `has_cycle_timing_bounds()` false and retains the
 strict duration helpers' existing refusal/assertion behavior. The nominal
 calendar ratio remains **32800/32768 Hz**. There is no certified one-second
 period, compensation, RTC migration or elapsed-time continuity guarantee.
-Generic R031, every W031, excluded L031 and board-qualified LSE retain their
-previous timing qualification.
+Generic R031, every W031, excluded L031 and board-qualified LSE retained their
+previous timing qualification in the original R031 change. The separate exact
+W031 qualification now changes only that part's LSI aliases; it does not rewrite
+the historical R031 review or alter R031's envelope.
 
 Retained factory HSI is checked independently at the final AHB/APB dividers:
 48 MHz ±2% and a 48 MHz bus ceiling throughout this R031 supply envelope.

@@ -24,7 +24,8 @@ pub fn apply(
     let exact_family = matches!(line, "CW32F002" | "CW32F003");
     let l031 = line == "CW32L031";
     let r031 = line == "CW32R031";
-    let native_family = l031 || r031;
+    let w031 = line == "CW32W031";
+    let native_family = l031 || r031 || w031;
     let has_rtc = classic || native_family;
     let qualified = classic || exact_family || native_family;
     let Some(clock) = core
@@ -59,7 +60,8 @@ pub fn apply(
     ensure!(
         families.keys().map(String::as_str).collect::<Vec<_>>()
             == [
-                "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L031", "CW32R031"
+                "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L031", "CW32R031",
+                "CW32W031"
             ],
         "factory-LSI family scope changed"
     );
@@ -121,8 +123,8 @@ pub fn apply(
     );
     let lock: Value =
         serde_json::from_slice(&fs::read(root.join("sources/evidence-sources.json"))?)?;
-    if r031 {
-        validate_r031_source_facts(own, &lock)?;
+    if r031 || w031 {
+        validate_native_source_facts(line, own, &lock)?;
     }
     let sources = own["sources"]
         .as_array()
@@ -156,6 +158,10 @@ pub fn apply(
             "vendor:CW32R031_UserManual_CN_V1.3.pdf",
             "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
         ],
+        "CW32W031" => [
+            "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+            "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+        ],
         _ => anyhow::bail!("unqualified factory-LSI family"),
     };
     ensure!(
@@ -170,6 +176,19 @@ pub fn apply(
             .iter()
             .find(|a| a["id"] == id)
             .context("LSI source is not canonical")?;
+        if w031 {
+            ensure!(
+                lock["artifacts"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .filter(|a| a["id"] == id)
+                    .count()
+                    == 1
+                    && original["provenance"]["chip_scope"] == serde_json::json!(["CW32W031"]),
+                "W031 requires unique selected own-family RM/DS evidence"
+            );
+        }
         ensure!(
             source["sha256"] == original["sha256"]
                 && original["provenance"]["status"] == "selected"
@@ -217,10 +236,10 @@ pub fn apply(
             .find(|r| r.name == reg && r.byte_offset == offset)
             .with_context(|| format!("wrong LSI register {name}.{reg}"))?;
         ensure!(item.array.is_none(), "unexpected LSI register array");
-        if r031 {
+        if r031 || w031 {
             ensure!(
                 block.items.iter().filter(|r| r.name == reg).count() == 1,
-                "R031 register identity must be unique: {name}.{reg}"
+                "{line} register identity must be unique: {name}.{reg}"
             );
         }
         let ir::BlockItemInner::Register(register) = &item.inner else {
@@ -242,10 +261,10 @@ pub fn apply(
                 "{line} own register access changed: {name}.{reg}"
             );
         }
-        if r031 {
+        if r031 || w031 {
             ensure!(
                 register.fieldset.as_deref() == Some(reg),
-                "R031 register fieldset identity changed: {name}.{reg}"
+                "{line} register fieldset identity changed: {name}.{reg}"
             );
         }
         ir.fieldsets
@@ -260,10 +279,10 @@ pub fn apply(
                 && f.array.is_none()),
             "LSI field mismatch: {name}"
         );
-        if r031 {
+        if r031 || w031 {
             ensure!(
                 fields.fields.iter().filter(|f| f.name == name).count() == 1,
-                "R031 field identity must be unique: {name}"
+                "{line} field identity must be unique: {name}"
             );
         }
         Ok(())
@@ -504,7 +523,7 @@ pub fn apply(
         field(rst, &name, number(&fact["bit_offset"])?, 1)?;
         ensure!(
             !en.fields.iter().any(|f| f.name == "KEY")
-                && (!r031 || !rst.fields.iter().any(|f| f.name == "KEY")),
+                && (!(r031 || w031) || !rst.fields.iter().any(|f| f.name == "KEY")),
             "qualified LSI gate must be unkeyed"
         );
     }
@@ -580,10 +599,10 @@ pub fn apply(
                 "{line} source STABLE must retain its reviewed read-only overlay"
             );
         }
-        if r031 {
+        if r031 || w031 {
             ensure!(
                 access.len() == 4,
-                "R031 requires exactly four native STABLE overlays"
+                "{line} requires exactly four native STABLE overlays"
             );
         }
         if exact_part {
@@ -597,14 +616,42 @@ pub fn apply(
                         == bonded,
                 "{line} PB11 physical bonding differs from own package evidence"
             );
-            if r031 {
-                for (pin, position) in [
-                    ("PB11", "25"),
-                    ("PF0", "4"),
-                    ("PF1", "5"),
-                    ("PC14", "2"),
-                    ("PC15", "3"),
-                ] {
+            if r031 || w031 {
+                let pins = if w031 {
+                    [
+                        ("PB11", "16"),
+                        ("PF0", "63"),
+                        ("PF1", "64"),
+                        ("PC14", "61"),
+                        ("PC15", "62"),
+                    ]
+                } else {
+                    [
+                        ("PB11", "25"),
+                        ("PF0", "4"),
+                        ("PF1", "5"),
+                        ("PC14", "2"),
+                        ("PC15", "3"),
+                    ]
+                };
+                for (pin, position) in pins {
+                    if w031 {
+                        ensure!(
+                            chip.packages[0]
+                                .pins
+                                .iter()
+                                .filter(|p| p.signals.iter().any(|s| s == pin))
+                                .count()
+                                == 1
+                                && chip.packages[0]
+                                    .pins
+                                    .iter()
+                                    .filter(|p| p.position == position)
+                                    .count()
+                                    == 1,
+                            "W031 exact oscillator/output package pin must be unique: {pin}"
+                        );
+                    }
                     ensure!(
                         core.pins.iter().filter(|p| p.name == pin).count() == 1
                             && chip.packages[0]
@@ -614,7 +661,7 @@ pub fn apply(
                                     && p.signals.iter().any(|s| s == pin))
                                 .count()
                                 == 1,
-                        "R031 exact oscillator/output bonding changed: {pin}"
+                        "{line} exact oscillator/output bonding changed: {pin}"
                     );
                 }
             }
@@ -770,7 +817,7 @@ pub fn apply(
     Ok(())
 }
 
-// Independently bound L031 and R031 facts share their RTC/external-detector,
+// Independently bound L031, R031 and W031 facts share their RTC/external-detector,
 // PB11 and nine-gate structural validator. IP reuse never admits another family.
 fn validate_native_family(
     root: &Path,
@@ -829,6 +876,30 @@ fn validate_native_family(
             "pb11_bonded": {
                 "CW32R031C8U6": true
             },
+            "conservative_policy": {
+                "gpio_filter_7": "reject_documented_awt_overflow",
+                "mco_7": "reject_undocumented",
+                "pb11_blank_af_2_4": "reject_undocumented",
+                "cold_external_detectors": "reject_either_enabled",
+                "ccs_and_lselock": "preserve_configurable",
+                "rtc_lsi_bounds": "rate_only_all_sysclk"
+            }
+        }),
+        "CW32W031" => json!({
+            "parts": [{"name": "CW32W031R8U6", "package": "QFN64"}],
+            "supply_mv": [2000, 3600],
+            "rm_sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+            "ds_sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c",
+            "rm_pages": [
+                48, 49, 55, 56, 57, 58, 59, 60, 61, 65, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76,
+                77, 78, 79, 80, 81, 82, 83, 90, 92, 93, 108, 109, 118, 142, 143, 151, 159, 160,
+                166, 169, 170, 171, 172, 173, 174, 175, 176, 177, 178, 180, 181, 306, 307, 308,
+                309, 322, 323, 356, 363, 366, 478, 486, 491, 496, 498, 499, 500, 501, 502, 503,
+                504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518, 519,
+                520, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533
+            ],
+            "ds_pages": [9, 14, 16, 26, 27, 28, 29, 30, 32, 33, 34, 41, 42, 52, 53, 71],
+            "pb11_bonded": {"CW32W031R8U6": true},
             "conservative_policy": {
                 "gpio_filter_7": "reject_documented_awt_overflow",
                 "mco_7": "reject_undocumented",
@@ -929,11 +1000,152 @@ fn validate_native_family(
     Ok(selected.is_some())
 }
 
-// R031's own selected SVD/manual facts are literal bindings, not values inferred
-// from shared IP or accepted merely because the policy and IR agree. Per-field
-// WO/RO evidence is retained separately because chiptool IR loses that access.
-fn validate_r031_source_facts(own: &Value, lock: &Value) -> Result<()> {
+// R031 and W031 independently bind the same 53 positions and nine gate pairs.
+// W031's selected SVD is 7b3f7cd1e1e9b311f8bf6da711b9af0a144040883a231dfcc93b9cd2bafe84d0;
+// the separate literal bindings below prevent shared IP from granting admission.
+// Per-field WO/RO evidence is retained because chiptool IR loses that access.
+fn validate_native_source_facts(line: &str, own: &Value, lock: &Value) -> Result<()> {
     use serde_json::json;
+    let binding = match line {
+        "CW32R031" => json!({
+            "sdk_source": {
+                "source_ref": "vendor:CW32R031_StandardPeripheralLib_V1.1.zip",
+                "sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082"
+            },
+            "sdk_members": [
+                {
+                    "source_ref": "member:cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/SVD/CW32R031.svd",
+                    "sha256": "0d9273507521d7f63e7614e9ddd445a315ea3206689c86fad9f45b60a44e656a",
+                    "member_chain": ["IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2.pack", "SVD/CW32R031.svd"]
+                },
+                {
+                    "source_ref": "member:cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/WHXY.CW32R031_DFP.pdsc",
+                    "sha256": "efdd38b9ecf017f74d8ae86682588d772503fe0fe07b3af56964133327c35c9f",
+                    "member_chain": ["IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2.pack", "WHXY.CW32R031_DFP.pdsc"]
+                },
+                {
+                    "source_ref": "member:cw32r031/Libraries/inc/cw32r031.h",
+                    "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385",
+                    "member_chain": ["Libraries/inc/cw32r031.h"]
+                },
+                {
+                    "source_ref": "member:cw32r031/Libraries/inc/cw32r031_rcc.h",
+                    "sha256": "117d7e1c37dd6670dff3ec04f3bb619e6e6e9d252491b942316a815f8bd94137",
+                    "member_chain": ["Libraries/inc/cw32r031_rcc.h"]
+                },
+                {
+                    "source_ref": "member:cw32r031/Libraries/src/cw32r031_rcc.c",
+                    "sha256": "31e4d708aa220e2c247c50b55b2166dd03e33c6c91b06246b548c2d3e8c7a4f2",
+                    "member_chain": ["Libraries/src/cw32r031_rcc.c"]
+                }
+            ],
+            "package_pins": {"PB11": "25", "PF0": "4", "PF1": "5", "PC14": "2", "PC15": "3"},
+            "supply_contract": {
+                "vdda_equals_vdd": true,
+                "vddrf_and_grounds": "own_board_requirements",
+                "rf_temperature_row": "does_not_redefine_mcu_lsi",
+                "firmware_rf_power_probe": false
+            },
+            "rf_boundary": {
+                "rfclk_source": "dedicated_external_16mhz_crystal",
+                "rf_pll": "separate_from_mcu_sysclk",
+                "direct_lsi_rfclk_root": false,
+                "indirect_host_path": ["SYSCLK", "PCLK", "SYSCTRL.AHBEN.GPIOA", "PA00..PA03", "RF_SPI"],
+                "host_pins": {"PA00": "MISO", "PA01": "MOSI", "PA02": "SCK", "PA03": "CS"},
+                "xtal_oclk_divisors": [1, 2, 4, 8],
+                "xtal_oclk_hse_bypass": "board_connection_owner_preserves_availability",
+                "gpio_gate_handover": "finish_quiet_host_transfers_and_allow_whole_bank_activity",
+                "waveform_or_packet_continuity_qualified": false,
+                "rf_runtime_admission": false
+            },
+            "generator_svd_path": "cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/SVD/CW32R031.svd",
+            "generator_header_path": "cw32r031/Libraries/inc/cw32r031.h"
+        }),
+        "CW32W031" => json!({
+            "sdk_source": {
+                "source_ref": "vendor:CW32W031_StandardPeripheralLib_V1.3.zip",
+                "sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337"
+            },
+            "sdk_members": [
+                {
+                    "source_ref": "member:cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/SVD/CW32W031.svd",
+                    "sha256": "7b3f7cd1e1e9b311f8bf6da711b9af0a144040883a231dfcc93b9cd2bafe84d0",
+                    "member_chain": ["IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2.pack", "SVD/CW32W031.svd"]
+                },
+                {
+                    "source_ref": "member:cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/WHXY.CW32W031_DFP.pdsc",
+                    "sha256": "932cf4107a4a543cb92de4a80bf3e286f49dec9f5ea36659b682eff26f7d5b36",
+                    "member_chain": ["IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2.pack", "WHXY.CW32W031_DFP.pdsc"]
+                },
+                {
+                    "source_ref": "member:cw32w031/Libraries/inc/cw32w031.h",
+                    "sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69",
+                    "member_chain": ["Libraries/inc/cw32w031.h"]
+                },
+                {
+                    "source_ref": "member:cw32w031/Libraries/inc/cw32w031_rcc.h",
+                    "sha256": "29bbaacf4cad7cd57fd1165773a36b6afc9d4a6ec36a06eb9615f790370dcdd6",
+                    "member_chain": ["Libraries/inc/cw32w031_rcc.h"]
+                },
+                {
+                    "source_ref": "member:cw32w031/Libraries/src/cw32w031_rcc.c",
+                    "sha256": "75f0f05280ee97c685ae97e5a89bf2a8fa03dfcc263c300ca6bed6c0ef62605b",
+                    "member_chain": ["Libraries/src/cw32w031_rcc.c"]
+                }
+            ],
+            "package_pins": {"PB11": "16", "PF0": "63", "PF1": "64", "PC14": "61", "PC15": "62"},
+            "supply_contract": {
+                "ldo_supply_mv": [1800, 3600],
+                "dcdc_supply_mv": [2000, 3600],
+                "qualified_intersection_mv": [2000, 3600],
+                "vdda_equals_vdd": true,
+                "vddrf_same_supply_as_vdd_when_rf_used": true,
+                "vddrf_and_grounds": "own_board_requirements",
+                "rf_temperature_row": "does_not_redefine_mcu_lsi",
+                "firmware_rf_power_probe": false
+            },
+            "rf_boundary": {
+                "rfclk_source": "dedicated_external_32mhz_crystal",
+                "rf_pll": "separate_from_mcu_sysclk",
+                "direct_lsi_rfclk_root": false,
+                "indirect_host_path": [
+                    "SYSCLK", "HCLK", "PCLK", "SYSCTRL.APBEN2.SPI", "internal_SPI1",
+                    "RF_register_FIFO_interface"
+                ],
+                "host_gate": {"register": "APBEN2", "byte_offset": 52, "field": "SPI", "bit_offset": 8},
+                "internal_host_pins": {"PB05": "MOSI", "PB04": "MISO", "PB03": "CS", "PB13": "SCK", "PB06": "RF_IRQ"},
+                "internal_host_pin_source": {
+                    "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+                    "pdf_page_1_based": 14,
+                    "printed_page": 13,
+                    "table": "4-2"
+                },
+                "internal_pins_are_not_extra_external_tokens": true,
+                "host_bit_rate_exclusive_maximum": 10000000,
+                "external_spi_unavailable_when_rf_used": true,
+                "gpio_gate_handover": "finish_quiet_host_transfers_and_allow_whole_bank_activity",
+                "gpiob_inspection_can_resume_host_irq_events": true,
+                "gate_restoration_does_not_undo_work": true,
+                "waveform_or_packet_continuity_qualified": false,
+                "rf_runtime_admission": false
+            },
+            "interrupt_contract": {
+                "ready_irq": "SYSCTRL",
+                "ready_irq_number": 4,
+                "ready_vector_number": 20,
+                "external_running_fault_irq": "CLKFAULT",
+                "external_running_fault_irq_number": 31,
+                "external_running_fault_vector_number": 47,
+                "ready_irq_in_svd": true,
+                "fault_irq_in_svd": false,
+                "fault_irq_in_header_and_startup": true,
+                "fault_irq_pending_observer": false
+            },
+            "generator_svd_path": "cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/SVD/CW32W031.svd",
+            "generator_header_path": "cw32w031/Libraries/inc/cw32w031.h"
+        }),
+        _ => anyhow::bail!("unreviewed native own-source binding"),
+    };
     ensure!(
         own["peripheral_addresses"]
             == json!({
@@ -942,11 +1154,11 @@ fn validate_r031_source_facts(own: &Value, lock: &Value) -> Result<()> {
                 "GPIOA": 0x4800_0000, "GPIOB": 0x4800_0400,
                 "GPIOC": 0x4800_0800, "GPIOF": 0x4800_1400
             }),
-        "R031 own peripheral base addresses changed"
+        "{line} own peripheral base addresses changed"
     );
     let fields = own["register_fields"]
         .as_array()
-        .context("missing R031 field evidence")?;
+        .context("missing native field evidence")?;
     let expected_fields = [
         ("SYSCTRL", "CR0", "SYSCLK", 0, 0, 3),
         ("SYSCTRL", "CR0", "PCLKPRS", 0, 3, 2),
@@ -1004,7 +1216,7 @@ fn validate_r031_source_facts(own: &Value, lock: &Value) -> Result<()> {
     ];
     ensure!(
         fields.len() == expected_fields.len(),
-        "R031 own field count changed"
+        "{line} own field count changed"
     );
     for (fact, (peripheral, register, field, offset, bit, width)) in
         fields.iter().zip(expected_fields)
@@ -1031,12 +1243,12 @@ fn validate_r031_source_facts(own: &Value, lock: &Value) -> Result<()> {
                 && fact["register_width_bits"] == 32
                 && fact["register_access"] == register_access
                 && fact["field_access"] == field_access,
-            "R031 own field/access evidence changed: {peripheral}.{register}.{field}"
+            "{line} own field/access evidence changed: {peripheral}.{register}.{field}"
         );
     }
     let gates = own["consumer_gates"]
         .as_array()
-        .context("missing R031 gate evidence")?;
+        .context("missing native gate evidence")?;
     let expected_gates = [
         ("RTC", "APBEN1", 56, "APBRST1", 72, 3),
         ("AWT", "APBEN2", 52, "APBRST2", 68, 13),
@@ -1050,7 +1262,7 @@ fn validate_r031_source_facts(own: &Value, lock: &Value) -> Result<()> {
     ];
     ensure!(
         gates.len() == expected_gates.len(),
-        "R031 own gate count changed"
+        "{line} own gate count changed"
     );
     for (fact, (peripheral, register, offset, reset, reset_offset, bit)) in
         gates.iter().zip(expected_gates)
@@ -1068,56 +1280,12 @@ fn validate_r031_source_facts(own: &Value, lock: &Value) -> Result<()> {
                 && fact["enable_active_value"] == true
                 && fact["reset_asserted_value"] == false
                 && fact["keyed"] == false,
-            "R031 own gate/reset evidence changed: {peripheral}"
+            "{line} own gate/reset evidence changed: {peripheral}"
         );
     }
     ensure!(
-        own["sdk_source"]
-            == json!({
-                "source_ref": "vendor:CW32R031_StandardPeripheralLib_V1.1.zip",
-                "sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082"
-            })
-            && own["sdk_members"]
-                == json!([
-                    {
-                        "source_ref": "member:cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/SVD/CW32R031.svd",
-                        "sha256": "0d9273507521d7f63e7614e9ddd445a315ea3206689c86fad9f45b60a44e656a",
-                        "member_chain": [
-                            "IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2.pack",
-                            "SVD/CW32R031.svd"
-                        ]
-                    },
-                    {
-                        "source_ref": "member:cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/WHXY.CW32R031_DFP.pdsc",
-                        "sha256": "efdd38b9ecf017f74d8ae86682588d772503fe0fe07b3af56964133327c35c9f",
-                        "member_chain": [
-                            "IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2.pack",
-                            "WHXY.CW32R031_DFP.pdsc"
-                        ]
-                    },
-                    {
-                        "source_ref": "member:cw32r031/Libraries/inc/cw32r031.h",
-                        "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385",
-                        "member_chain": [
-                            "Libraries/inc/cw32r031.h"
-                        ]
-                    },
-                    {
-                        "source_ref": "member:cw32r031/Libraries/inc/cw32r031_rcc.h",
-                        "sha256": "117d7e1c37dd6670dff3ec04f3bb619e6e6e9d252491b942316a815f8bd94137",
-                        "member_chain": [
-                            "Libraries/inc/cw32r031_rcc.h"
-                        ]
-                    },
-                    {
-                        "source_ref": "member:cw32r031/Libraries/src/cw32r031_rcc.c",
-                        "sha256": "31e4d708aa220e2c247c50b55b2166dd03e33c6c91b06246b548c2d3e8c7a4f2",
-                        "member_chain": [
-                            "Libraries/src/cw32r031_rcc.c"
-                        ]
-                    }
-                ]),
-        "R031 selected SDK/member identities changed"
+        own["sdk_source"] == binding["sdk_source"] && own["sdk_members"] == binding["sdk_members"],
+        "{line} selected SDK/member identities changed"
     );
     let selected = lock["artifacts"]
         .as_array()
@@ -1125,25 +1293,24 @@ fn validate_r031_source_facts(own: &Value, lock: &Value) -> Result<()> {
         .iter()
         .filter(|a| a["id"] == own["sdk_source"]["source_ref"])
         .collect::<Vec<_>>();
-    ensure!(selected.len() == 1, "R031 SDK source must be unique");
+    ensure!(selected.len() == 1, "{line} SDK source must be unique");
     let sdk = selected[0];
     ensure!(
         sdk["sha256"] == own["sdk_source"]["sha256"]
             && sdk["provenance"]["status"] == "selected"
-            && sdk["provenance"]["chip_scope"] == json!(["CW32R031"])
-            && sdk["provenance"]["generator_svd_path"]
-                == "cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/SVD/CW32R031.svd"
-            && sdk["provenance"]["generator_header_path"] == "cw32r031/Libraries/inc/cw32r031.h",
-        "R031 SDK must remain selected own-family register/IRQ evidence"
+            && sdk["provenance"]["chip_scope"] == json!([line])
+            && sdk["provenance"]["generator_svd_path"] == binding["generator_svd_path"]
+            && sdk["provenance"]["generator_header_path"] == binding["generator_header_path"],
+        "{line} SDK must remain selected own-family register/IRQ evidence"
     );
     let members = sdk["members"]
         .as_array()
-        .context("missing R031 SDK members")?;
+        .context("missing native SDK members")?;
     for fact in own["sdk_members"].as_array().unwrap() {
         let path = fact["source_ref"]
             .as_str()
             .and_then(|s| s.strip_prefix("member:"))
-            .context("invalid R031 member source")?;
+            .context("invalid native member source")?;
         let selected = members
             .iter()
             .filter(|m| m["path"] == path)
@@ -1152,51 +1319,22 @@ fn validate_r031_source_facts(own: &Value, lock: &Value) -> Result<()> {
             selected.len() == 1
                 && selected[0]["sha256"] == fact["sha256"]
                 && selected[0]["members"] == fact["member_chain"],
-            "R031 selected SDK member/provenance changed: {path}"
+            "{line} selected SDK member/provenance changed: {path}"
         );
     }
     ensure!(
         own["pb11_output_af"] == 1
-            && own["package_pins"]
-                == json!({"PB11": "25", "PF0": "4", "PF1": "5", "PC14": "2", "PC15": "3"})
-            && own["supply_contract"]
-                == json!({
-                    "vdda_equals_vdd": true,
-                    "vddrf_and_grounds": "own_board_requirements",
-                    "rf_temperature_row": "does_not_redefine_mcu_lsi",
-                    "firmware_rf_power_probe": false
-                })
-            && own["rf_boundary"]
-                == json!({
-                    "rfclk_source": "dedicated_external_16mhz_crystal",
-                    "rf_pll": "separate_from_mcu_sysclk",
-                    "direct_lsi_rfclk_root": false,
-                    "indirect_host_path": [
-                        "SYSCLK",
-                        "PCLK",
-                        "SYSCTRL.AHBEN.GPIOA",
-                        "PA00..PA03",
-                        "RF_SPI"
-                    ],
-                    "host_pins": {
-                        "PA00": "MISO",
-                        "PA01": "MOSI",
-                        "PA02": "SCK",
-                        "PA03": "CS"
-                    },
-                    "xtal_oclk_divisors": [
-                        1,
-                        2,
-                        4,
-                        8
-                    ],
-                    "xtal_oclk_hse_bypass": "board_connection_owner_preserves_availability",
-                    "gpio_gate_handover": "finish_quiet_host_transfers_and_allow_whole_bank_activity",
-                    "waveform_or_packet_continuity_qualified": false,
-                    "rf_runtime_admission": false
-                }),
-        "R031 own supply, output or RF functional boundary changed"
+            && own["package_pins"] == binding["package_pins"]
+            && own["supply_contract"] == binding["supply_contract"]
+            && own["rf_boundary"] == binding["rf_boundary"],
+        "{line} own supply, output or RF functional boundary changed"
     );
+    if line == "CW32W031" {
+        ensure!(
+            own["interrupt_contract"] == binding["interrupt_contract"],
+            "W031 SYSCTRL4 readiness and CLKFAULT31 running-fault identities differ"
+        );
+    }
     Ok(())
 }
 

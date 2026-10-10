@@ -1,0 +1,1317 @@
+{
+  "schema_version": 1,
+  "title": "CW32W031R8U6 factory-LSI SYSCLK independent runtime integration review",
+  "reviewed_on": "2026-10-10",
+  "status": "accepted_for_frozen_main_runtime_integration",
+  "blocking_findings": [],
+  "scope": {
+    "part": "CW32W031R8U6",
+    "package": "QFN64",
+    "flash_bytes": 65536,
+    "sram_bytes": 8192,
+    "main_library_builds": 5,
+    "main_linked_elfs": 6,
+    "clean_status": "pending_separate_addendum",
+    "clean_authorized_library_builds": 1,
+    "clean_authorized_linked_elfs": 1,
+    "hardware_execution": false,
+    "aggregate_repository_pass_claimed": false
+  },
+  "design": [
+    {
+      "path": "external-evidence/stage69-design/w031-lsi-sysclk-design.md",
+      "sha256": "4988ff35cfa5bbddc30844917049b55824c8d48688d98d92290a6944bfe229ab",
+      "bytes": 47971
+    },
+    {
+      "path": "external-evidence/stage69-design/w031-lsi-sysclk-design-evidence.json",
+      "sha256": "e530dc0ef47cc7846add6e423b51cac3435b35430cb010f8a5296fd202bd66eb",
+      "bytes": 94841
+    }
+  ],
+  "source_freeze": {
+    "baseline_commit": "8980f2ff616811718f3cb11c5f8d7dcfb6823eb9",
+    "main_archive": {
+      "path": "external-evidence/stage69/stage69-main-source.zip",
+      "sha256": "8cfa98debb536a1c314e2781d066a8bc6ebcc8446bcfa771f329f011c9c47729",
+      "bytes": 4742505
+    },
+    "main_manifest": {
+      "path": "external-evidence/stage69/verification/main-source-manifest.json",
+      "sha256": "b46c681a6df1384b4aee3056fda43792bb2fcdbc63dda413652b1d0777c62add",
+      "bytes": 209806
+    },
+    "files": 1294,
+    "executable_files": 27,
+    "current_source_mismatches": []
+  },
+  "own_sources_reopened": [
+    {
+      "path": "external-evidence/locked-w031/CW32W031_UserManual_CN_V1.4.pdf",
+      "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "bytes": 11750733
+    },
+    {
+      "path": "external-evidence/locked-w031/CW32W031_DataSheet_CN_V1.3.pdf",
+      "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c",
+      "bytes": 3301754
+    },
+    {
+      "path": "external-evidence/locked-w031/CW32W031_StandardPeripheralLib_V1.3.zip",
+      "sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+      "bytes": 2091903
+    },
+    {
+      "path": "external-evidence/locked-w031/cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/SVD/CW32W031.svd",
+      "sha256": "7b3f7cd1e1e9b311f8bf6da711b9af0a144040883a231dfcc93b9cd2bafe84d0",
+      "bytes": 353017
+    },
+    {
+      "path": "external-evidence/locked-w031/cw32w031/Libraries/inc/cw32w031_rcc.h",
+      "sha256": "29bbaacf4cad7cd57fd1165773a36b6afc9d4a6ec36a06eb9615f790370dcdd6",
+      "bytes": 23412
+    },
+    {
+      "path": "external-evidence/locked-w031/cw32w031/Libraries/src/cw32w031_rcc.c",
+      "sha256": "75f0f05280ee97c685ae97e5a89bf2a8fa03dfcc263c300ca6bed6c0ef62605b",
+      "bytes": 27230
+    }
+  ],
+  "nested_native_svd_chain": {
+    "outer_sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+    "archive_chain": [
+      "IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2.pack",
+      "SVD/CW32W031.svd"
+    ],
+    "member_sha256": "7b3f7cd1e1e9b311f8bf6da711b9af0a144040883a231dfcc93b9cd2bafe84d0",
+    "matches_reopened_native_svd": true
+  },
+  "visually_reviewed_own_pages": [
+    {
+      "source": "W031 RM CN V1.4",
+      "pdf_page": 48,
+      "subject": "clock tree including independent RFCLK and PCLK/SPI host"
+    },
+    {
+      "source": "W031 RM CN V1.4",
+      "pdf_page": 499,
+      "subject": "radio subsystem and PLL graph"
+    },
+    {
+      "source": "W031 DS CN V1.3",
+      "pdf_page": 14,
+      "subject": "internal GPIOB host/IRQ mapping and below-10-Mbps limit"
+    }
+  ],
+  "changed_hal_files": [
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "baseline_sha256": "ea86cf284d30ab61a77d6506446ceec0094fdf1ddd57f4225a5f01a3f05c1776",
+      "candidate_sha256": "af955d97df425d4503e280172cb2eb9a323c50fd450353934b27371bb539c842",
+      "changed_lines_are_full_line_comments": true,
+      "noncomment_lines_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/bounds.rs",
+      "baseline_sha256": "e4d93185b17042b1a0c5231e45593780fc8e2b2ae810710bf7e9faa835b436fd",
+      "candidate_sha256": "34517603915035deb9eceac8a1f11afaccdc8fe0e75b45c4723ff42e206cfec8",
+      "changed_lines_are_full_line_comments": true,
+      "noncomment_lines_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l031_r031_w031.rs",
+      "baseline_sha256": "1d0586d9e18ad7c8114695b946cfa38fb28e0b846bc9651f623f3de64b9f1ba0",
+      "candidate_sha256": "ed5cf400b830a470ee163dd96d983e26f9d1b308c427c9e35cfca860d9b5cec6",
+      "changed_lines_are_full_line_comments": true,
+      "noncomment_lines_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/mod.rs",
+      "baseline_sha256": "2b32708ab0eeeae60bca9d715100ce52c30e063bdce4b3862874ff137b159ba0",
+      "candidate_sha256": "d9dc21148fdc2e5a3062e3dc038e83d4949e0c377b3368b16677f827c3847779",
+      "changed_lines_are_full_line_comments": true,
+      "noncomment_lines_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/rtc.rs",
+      "baseline_sha256": "bd330709c0609f22cbccbe6a4f8c26e4e0939f3e1b02ca9e51935befb9b045b3",
+      "candidate_sha256": "aff261b804b046572cc4a29768ef5b8a4d3da4497c9fb5f01526ddd7fc33b020",
+      "changed_lines_are_full_line_comments": true,
+      "noncomment_lines_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/rtc/mod.rs",
+      "baseline_sha256": "ad030b9ad65e4f4e3c4883ede74977a5b1cb4b719463e3ea495087cc69c610b6",
+      "candidate_sha256": "73d70194166215e9c4c1461d59a4727320810a325c8d3f5c7e696c6f54a43498",
+      "changed_lines_are_full_line_comments": true,
+      "noncomment_lines_byte_identical": true
+    }
+  ],
+  "unchanged_reviewed_runtime_files": [
+    {
+      "path": "embassy-cw32/src/rcc/peripheral.rs",
+      "sha256": "92fce92a5ad9f68106dfa400ecea2e0798e3dd4204baa300e00bd8b224351284",
+      "bytes": 9435
+    },
+    {
+      "path": "embassy-cw32/src/rcc/lse.rs",
+      "sha256": "a77bc8af5685310a1234106417d48fc953b7393f28a2d15f835d41f12b5a1797",
+      "bytes": 10249
+    },
+    {
+      "path": "embassy-cw32/src/rcc/operating.rs",
+      "sha256": "1807ed96557149d78e3a256d64f036fadf16511fec7ec58eb2a636ac26477519",
+      "bytes": 2646
+    },
+    {
+      "path": "embassy-cw32/src/time_driver.rs",
+      "sha256": "f23f754fa62f62664cee5d30d7fb37c6964e4b58c788b726325bf99674991924",
+      "bytes": 10877
+    },
+    {
+      "path": "embassy-cw32/src/adc/classic.rs",
+      "sha256": "f08973c004ba5bb5b9efca7b17354fece22bf58642959eaff671e4a5502048e9",
+      "bytes": 65075
+    },
+    {
+      "path": "embassy-cw32/src/timer/complementary_pwm/classic.rs",
+      "sha256": "8492bf1e9db3d97e38526309e67cc0d4193eae3a320369d7b9ae3937ebc98902",
+      "bytes": 14937
+    }
+  ],
+  "critical_spans": [
+    {
+      "path": "embassy-cw32/src/rcc/l031_r031_w031.rs",
+      "role": "P0 pure frequencies",
+      "sha256": "ba50eaa54ef19289d24296724c6451204186ddfb00262213afde88a521aec282",
+      "approved_sha256_matches": true,
+      "candidate_identical_occurrences": 1,
+      "candidate_lines_1_based_inclusive": [
+        293,
+        405
+      ],
+      "bytes": 5012
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l031_r031_w031.rs",
+      "role": "LsiSysclkState classification/identity/strict AWT",
+      "sha256": "fc25a8a887f711776c7b9b0ae486e8c3f0f9822679374ffc2ba23e3964f542c2",
+      "approved_sha256_matches": true,
+      "candidate_identical_occurrences": 1,
+      "candidate_lines_1_based_inclusive": [
+        626,
+        989
+      ],
+      "bytes": 13267
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l031_r031_w031.rs",
+      "role": "P1-P9 integration and final tail",
+      "sha256": "6f149e9c435e0015d30cb8ebfe13e6016df26d4ddda20925215d9dc52def7d23",
+      "approved_sha256_matches": true,
+      "candidate_identical_occurrences": 1,
+      "candidate_lines_1_based_inclusive": [
+        991,
+        1655
+      ],
+      "bytes": 26272
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "role": "P0 before singleton and RCC",
+      "sha256": "39cfa839237bfa89c78ba6e8de3dfdd19ebb24265ee3075b2775f4be8d08e2f1",
+      "approved_sha256_matches": true,
+      "candidate_identical_occurrences": 1,
+      "candidate_lines_1_based_inclusive": [
+        461,
+        476
+      ],
+      "bytes": 534
+    },
+    {
+      "path": "embassy-cw32/src/time_driver.rs",
+      "role": "fixed1MHz pure preflight",
+      "sha256": "0f732c44c27e0adc15b301a1e0be41b15c94d8542d67354ed31b9c4b31907dbb",
+      "approved_sha256_matches": true,
+      "candidate_identical_occurrences": 1,
+      "candidate_lines_1_based_inclusive": [
+        213,
+        225
+      ],
+      "bytes": 521
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "role": "strict window emitter frozen",
+      "sha256": "861edd624d1160a08f6db0d2f6db98eb4bb87d4c97e2c55b11d1058238cdeab9",
+      "approved_sha256_matches": true,
+      "candidate_identical_occurrences": 1,
+      "candidate_lines_1_based_inclusive": [
+        2634,
+        2668
+      ],
+      "bytes": 2321
+    },
+    {
+      "path": "embassy-cw32/src/rcc/peripheral.rs",
+      "role": "central inspection gate owner",
+      "sha256": "de5301d4dd4c81a8c2a123f34017f865dd012eceda843e7456d825a2a7addc21",
+      "approved_sha256_matches": true,
+      "candidate_identical_occurrences": 1,
+      "candidate_lines_1_based_inclusive": [
+        175,
+        198
+      ],
+      "bytes": 782
+    }
+  ],
+  "exact_build_guards": {
+    "path": "embassy-cw32/build.rs",
+    "sha256": "e999752c86a82fb41555fa23c0618e20d50fae0618862aab3b13b74404b71386",
+    "bytes": 206562
+  },
+  "public_contract": {
+    "path": "docs/qualified-w031-lsi-sysclk.md",
+    "sha256": "85aa892507121114e1bbdc606526760bc0da71a61816d15cf939b05c66fe3c49",
+    "bytes": 14456
+  },
+  "findings": {
+    "p0_pure_before_singleton_and_rcc": true,
+    "fixed_1mhz_lsi_rejection_before_singleton": true,
+    "cold_live_classification_immutable": true,
+    "single_native_lsi_halfword_erased_before_masking": true,
+    "matching_cold_trim_still_full_admission": true,
+    "cold_two_passes_and_request_edge": true,
+    "first_joint_hsi_lsi_request_fully_acknowledged": true,
+    "readiness_sticky_and_dual_view": true,
+    "original_cold_observers_allowed_to_advance_only_after_owned_request": true,
+    "expected_state_advances_only_intended_verified_fields": true,
+    "strict_gate_restore_and_external_fault_priority_preserved": true,
+    "complete_awt_strict_snapshot_preserved": true,
+    "older_pad_and_retained_hse_helpers_keep_bounded_contract": true,
+    "retained_sources_and_real_pad_ownership_preserved": true,
+    "p9_no_source_oscillator_divider_or_flash_write_after_final_lsi": true,
+    "configured_retained_hsi_final_buses_and_flash_legality_preserved": true,
+    "w_gpio_b_internal_rf_effects_visible_in_safe_init_contract": true,
+    "no_rf_state_access_or_spi_command_added": true,
+    "no_hidden_rust_memory_safety_precondition_added": true,
+    "rtc_aliases_rate_only_under_every_sysclk": true,
+    "rtc_numerical_bounds_and_calendar_fraction_unchanged": true,
+    "old_non_lsi_auxiliary_monitor_and_restore_off_logic_preserved": true,
+    "generic_w_generated_admission_absent": true
+  },
+  "generated_correspondence": {
+    "old_actual_generated_files": [
+      {
+        "name": "lib-cw32r031c8u6-release-_generated.rs",
+        "baseline_ref": "external-evidence/stage68/verification/main/lib-cw32r031c8u6-release-_generated.rs",
+        "candidate_ref": "external-evidence/stage69/verification/main/lib-cw32r031c8u6-release-_generated.rs",
+        "byte_identical": true,
+        "sha256": "af2186d21db4c8c581ad214bc4d571d4bf18dc416a4ac565fc3509fcdc8db3c1"
+      },
+      {
+        "name": "lib-cw32l031c8t6-release-_generated.rs",
+        "baseline_ref": "external-evidence/stage68/verification/main/lib-cw32l031c8t6-release-_generated.rs",
+        "candidate_ref": "external-evidence/stage69/verification/main/lib-cw32l031c8t6-release-_generated.rs",
+        "byte_identical": true,
+        "sha256": "1bbb23754924cc0a4a62773411ded8ad3eb7c0601d6174ae80dcbbebfee27694"
+      },
+      {
+        "name": "lsi-clock-cw32l031c8t6-cw32-lsi-clock-example-_generated.rs",
+        "baseline_ref": "external-evidence/stage68/verification/main/lsi-clock-cw32l031c8t6-cw32-lsi-clock-example-_generated.rs",
+        "candidate_ref": "external-evidence/stage69/verification/main/lsi-clock-cw32l031c8t6-cw32-lsi-clock-example-_generated.rs",
+        "byte_identical": true,
+        "sha256": "5902e6362ed62f9932543542afc5ffd42fae30739431ba36bddd9ebc2a51f90c"
+      },
+      {
+        "name": "lse-sysclk-cw32r031c8u6-crystal-_generated.rs",
+        "baseline_ref": "external-evidence/stage68/verification/main/lse-sysclk-cw32r031c8u6-crystal-_generated.rs",
+        "candidate_ref": "external-evidence/stage69/verification/main/lse-sysclk-cw32r031c8u6-crystal-_generated.rs",
+        "byte_identical": true,
+        "sha256": "ff81893e17031e13e700a643fc463dff3559d310c2c552b484f6d659ec5947ad"
+      }
+    ],
+    "w_lse_generated_delta": [
+      {
+        "operation": "insert",
+        "baseline_removed_lines": 0,
+        "candidate_inserted_lines": 150,
+        "candidate_lines_1_based_inclusive": [
+          521,
+          670
+        ],
+        "inserted_bytes_sha256": "60ee5cf375f99c282104ff5d8c1411bc7373d48778250c39582c769680cecc9c"
+      }
+    ],
+    "native_masks_hex": {
+      "lsi": "0xffff7fff",
+      "hsi": "0xffff7fff",
+      "hse": "0xfff7ffff",
+      "lse": "0xffff7fff"
+    },
+    "w_rate_hz": [
+      32800,
+      31816,
+      33784
+    ],
+    "w_supply_mv": [
+      2000,
+      3600
+    ],
+    "w_temperature_c": [
+      -40,
+      85
+    ],
+    "gate_count": 9,
+    "selector_count": 11,
+    "hse_gpio_gate_indices": [
+      8,
+      8
+    ],
+    "ready_observer_irq": "SYSCTRL4",
+    "strict_fault_check_before_buffered_semantics_all_nine_windows": true,
+    "rf_access_added": false
+  },
+  "main_receipt": {
+    "path": "external-evidence/stage69/verification/main/commands.json",
+    "sha256": "00baa4d8b7bb52fac87ed67a3e27e4dd42683ebbd84492a4f45f87a1d94391d6",
+    "bytes": 32320
+  },
+  "main_summary": {
+    "path": "external-evidence/stage69/verification/main/summary.json",
+    "sha256": "c5532984f682004d7bcf5a3041fc038acdd6e1333ad296b3245871c59cc85c73",
+    "bytes": 290
+  },
+  "main_builds": [
+    {
+      "name": "lib-cw32w031r8u6-release",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32w031r8u6,defmt,time-driver-gtim1",
+        "--release"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/lib-cw32w031r8u6-release.log",
+        "sha256": "aaa18274b2aec12521c3ca2e9661ea12caeaf09d3309147a8e3171cf5e2a57bb",
+        "bytes": 99819
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": true,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32w031r8u6-release.rlib",
+          "sha256": "893efe4291c13b725e34c1d3b4ef9299c3eacff883298b451d8f5aabcd51b6d6",
+          "bytes": 5665318,
+          "kind": "rlibs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "archive_magic_matches": true
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32w031r8u6-release-_generated.rs",
+          "sha256": "79f0e0977f0a8c42ecac091d39302d20433c4d2cde7d724677f20ae10d262215",
+          "bytes": 65029,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32w031r8u6-release-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    },
+    {
+      "name": "lib-cw32w031r8u6-debug",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32w031r8u6,defmt,time-driver-gtim1"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/lib-cw32w031r8u6-debug.log",
+        "sha256": "529f2b72ab12c45cd69c68f8f6acb36e0f7e5b093296a0e4b00cf60d2e5db754",
+        "bytes": 99249
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": true,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32w031r8u6-debug.rlib",
+          "sha256": "32e478e228bc92c343f84e28e0047eae2c8e1a135b030a45b8ebd0eb8951d595",
+          "bytes": 6897840,
+          "kind": "rlibs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "archive_magic_matches": true
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32w031r8u6-debug-_generated.rs",
+          "sha256": "79f0e0977f0a8c42ecac091d39302d20433c4d2cde7d724677f20ae10d262215",
+          "bytes": 65029,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32w031r8u6-debug-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    },
+    {
+      "name": "lib-cw32w031-release",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32w031,defmt",
+        "--release"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/lib-cw32w031-release.log",
+        "sha256": "2aca47cfeb48c4799c2f33edba1868a6adb3efec92131bcbab58cc813c5a1338",
+        "bytes": 85145
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": false,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32w031-release.rlib",
+          "sha256": "b814c8d39271e4cbd834da083b3f87241fb09ec94674c6442b138d61d30944a9",
+          "bytes": 5401730,
+          "kind": "rlibs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "archive_magic_matches": true
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32w031-release-_generated.rs",
+          "sha256": "7578a6812ca313f66e5a7ea7dbea2fb51921d59c08e23cb0aa7031788966c526",
+          "bytes": 46479,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32w031-release-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    },
+    {
+      "name": "lib-cw32r031c8u6-release",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32r031c8u6,defmt,time-driver-gtim1",
+        "--release"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/lib-cw32r031c8u6-release.log",
+        "sha256": "3c5d66dd6ab045e89af7bff72277ad5e6d6408f6611bdfe9836714d9d472e44e",
+        "bytes": 99819
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": true,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32r031c8u6-release.rlib",
+          "sha256": "2eda9bbd5b327af2a4e80d6feb9d0c2e927a2a59232ca08a8d23dd653eb9e3e7",
+          "bytes": 5600954,
+          "kind": "rlibs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "archive_magic_matches": true
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32r031c8u6-release-_generated.rs",
+          "sha256": "af2186d21db4c8c581ad214bc4d571d4bf18dc416a4ac565fc3509fcdc8db3c1",
+          "bytes": 63572,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32r031c8u6-release-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    },
+    {
+      "name": "lib-cw32l031c8t6-release",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l031c8t6,defmt,time-driver-gtim1",
+        "--release"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/lib-cw32l031c8t6-release.log",
+        "sha256": "a919a115e73b4fbb9dbe94691676f94242a7e77033b8b732770c5ac820c62e0b",
+        "bytes": 99819
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": true,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32l031c8t6-release.rlib",
+          "sha256": "17f3c3f560d7cd8be62a2c2537de7f2b5750bedcb3d1a5ebfdad3e540fdaeeb6",
+          "bytes": 5772004,
+          "kind": "rlibs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "archive_magic_matches": true
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32l031c8t6-release-_generated.rs",
+          "sha256": "1bbb23754924cc0a4a62773411ded8ad3eb7c0601d6174ae80dcbbebfee27694",
+          "bytes": 67104,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/lib-cw32l031c8t6-release-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    },
+    {
+      "name": "lsi-clock-cw32w031r8u6-cw32-lsi-clock-example",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "examples/lsi-clock/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32w031r8u6,defmt",
+        "--bin",
+        "cw32-lsi-clock-example"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/lsi-clock-cw32w031r8u6-cw32-lsi-clock-example.log",
+        "sha256": "4010897c2aaf19121d7f32c5536e6f55a5dddcb8089e8861303bc048cac5b6ed",
+        "bytes": 93568
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": true,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/lsi-clock-cw32w031r8u6-cw32-lsi-clock-example-cw32-lsi-clock-example.elf",
+          "sha256": "b787cf8e51fd2d0b1f690a5a8fda3c99a5a9fd9dadbd7a9564d5120e631dfd71",
+          "bytes": 213116,
+          "kind": "elfs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "elf32_little_endian_arm": true,
+          "entry": 193,
+          "initial_sp": 536879104,
+          "reset_vector": 193,
+          "pt_load": [
+            {
+              "offset": 65536,
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4
+            },
+            {
+              "offset": 65728,
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 26852,
+              "memsz": 26852,
+              "flags": 5
+            },
+            {
+              "offset": 92580,
+              "vaddr": 27044,
+              "paddr": 27044,
+              "filesz": 524,
+              "memsz": 524,
+              "flags": 4
+            },
+            {
+              "offset": 131072,
+              "vaddr": 536870912,
+              "paddr": 27568,
+              "filesz": 112,
+              "memsz": 112,
+              "flags": 6
+            },
+            {
+              "offset": 158752,
+              "vaddr": 27680,
+              "paddr": 27680,
+              "filesz": 2,
+              "memsz": 2,
+              "flags": 4
+            },
+            {
+              "offset": 196720,
+              "vaddr": 536871024,
+              "paddr": 536871024,
+              "filesz": 0,
+              "memsz": 32,
+              "flags": 6
+            }
+          ]
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/lsi-clock-cw32w031r8u6-cw32-lsi-clock-example-_generated.rs",
+          "sha256": "937628e12482f5a96a2f785308e68850b1f567d01b8a776d71f16c69ee76e457",
+          "bytes": 65328,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/lsi-clock-cw32w031r8u6-cw32-lsi-clock-example-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    },
+    {
+      "name": "lse-sysclk-cw32w031r8u6-crystal",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "examples/lse-sysclk/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32w031r8u6",
+        "--bin",
+        "crystal"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/lse-sysclk-cw32w031r8u6-crystal.log",
+        "sha256": "148ba39ccf1004a4bbff78b3c0aafb44da5293d198d0b9f5d515b6b62b5f3d10",
+        "bytes": 83043
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": true,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/lse-sysclk-cw32w031r8u6-crystal-crystal.elf",
+          "sha256": "59ec1003bbe486b61da2fdbeaf97deae5814e69b2bb28edcfc75eccf8d0dab15",
+          "bytes": 212760,
+          "kind": "elfs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "elf32_little_endian_arm": true,
+          "entry": 193,
+          "initial_sp": 536879104,
+          "reset_vector": 193,
+          "pt_load": [
+            {
+              "offset": 65536,
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4
+            },
+            {
+              "offset": 65728,
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 27156,
+              "memsz": 27156,
+              "flags": 5
+            },
+            {
+              "offset": 92884,
+              "vaddr": 27348,
+              "paddr": 27348,
+              "filesz": 524,
+              "memsz": 524,
+              "flags": 4
+            },
+            {
+              "offset": 131072,
+              "vaddr": 536870912,
+              "paddr": 27872,
+              "filesz": 112,
+              "memsz": 112,
+              "flags": 6
+            },
+            {
+              "offset": 196720,
+              "vaddr": 536871024,
+              "paddr": 536871024,
+              "filesz": 0,
+              "memsz": 32,
+              "flags": 6
+            }
+          ]
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/lse-sysclk-cw32w031r8u6-crystal-_generated.rs",
+          "sha256": "937628e12482f5a96a2f785308e68850b1f567d01b8a776d71f16c69ee76e457",
+          "bytes": 65328,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/lse-sysclk-cw32w031r8u6-crystal-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    },
+    {
+      "name": "rtc-calendar-cw32w031r8u6-preserve_calendar",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "examples/rtc-calendar/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32w031r8u6",
+        "--bin",
+        "preserve_calendar"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/rtc-calendar-cw32w031r8u6-preserve_calendar.log",
+        "sha256": "407b8373179f7dde37e66a7279a02016b5db03e78a7ea7d284e798ef93e9fbfb",
+        "bytes": 81853
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": true,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/rtc-calendar-cw32w031r8u6-preserve_calendar-preserve_calendar.elf",
+          "sha256": "dc3746655346932297ed1598a8fa77fad2acfb3e93ee3715f79e77db70b7bf3d",
+          "bytes": 212576,
+          "kind": "elfs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "elf32_little_endian_arm": true,
+          "entry": 193,
+          "initial_sp": 536879104,
+          "reset_vector": 193,
+          "pt_load": [
+            {
+              "offset": 65536,
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4
+            },
+            {
+              "offset": 65728,
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 26400,
+              "memsz": 26400,
+              "flags": 5
+            },
+            {
+              "offset": 92128,
+              "vaddr": 26592,
+              "paddr": 26592,
+              "filesz": 524,
+              "memsz": 524,
+              "flags": 4
+            },
+            {
+              "offset": 131072,
+              "vaddr": 536870912,
+              "paddr": 27116,
+              "filesz": 112,
+              "memsz": 112,
+              "flags": 6
+            },
+            {
+              "offset": 196720,
+              "vaddr": 536871024,
+              "paddr": 536871024,
+              "filesz": 0,
+              "memsz": 32,
+              "flags": 6
+            }
+          ]
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/rtc-calendar-cw32w031r8u6-preserve_calendar-_generated.rs",
+          "sha256": "937628e12482f5a96a2f785308e68850b1f567d01b8a776d71f16c69ee76e457",
+          "bytes": 65328,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/rtc-calendar-cw32w031r8u6-preserve_calendar-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    },
+    {
+      "name": "hse-clock-cw32w031r8u6-crystal",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "examples/hse-clock/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32w031r8u6",
+        "--bin",
+        "crystal"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/hse-clock-cw32w031r8u6-crystal.log",
+        "sha256": "668adfb37c8da03d8f0d6c14ced9270d7f6ef1c598738632dc6a4b09944778e7",
+        "bytes": 82783
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": true,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/hse-clock-cw32w031r8u6-crystal-crystal.elf",
+          "sha256": "c4c8b36d37f8e782b4f994edbddc6174febba7597719b7f3f15adb82302c1a17",
+          "bytes": 212256,
+          "kind": "elfs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "elf32_little_endian_arm": true,
+          "entry": 193,
+          "initial_sp": 536879104,
+          "reset_vector": 193,
+          "pt_load": [
+            {
+              "offset": 65536,
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4
+            },
+            {
+              "offset": 65728,
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 25444,
+              "memsz": 25444,
+              "flags": 5
+            },
+            {
+              "offset": 91172,
+              "vaddr": 25636,
+              "paddr": 25636,
+              "filesz": 576,
+              "memsz": 576,
+              "flags": 4
+            },
+            {
+              "offset": 131072,
+              "vaddr": 536870912,
+              "paddr": 26212,
+              "filesz": 112,
+              "memsz": 112,
+              "flags": 6
+            },
+            {
+              "offset": 196720,
+              "vaddr": 536871024,
+              "paddr": 536871024,
+              "filesz": 0,
+              "memsz": 36,
+              "flags": 6
+            }
+          ]
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/hse-clock-cw32w031r8u6-crystal-_generated.rs",
+          "sha256": "937628e12482f5a96a2f785308e68850b1f567d01b8a776d71f16c69ee76e457",
+          "bytes": 65328,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/hse-clock-cw32w031r8u6-crystal-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    },
+    {
+      "name": "lsi-clock-cw32l031c8t6-cw32-lsi-clock-example",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "examples/lsi-clock/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l031c8t6,defmt",
+        "--bin",
+        "cw32-lsi-clock-example"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/lsi-clock-cw32l031c8t6-cw32-lsi-clock-example.log",
+        "sha256": "c4fe2bc8f6237372eaa1b2c7f1a3b38b5aeea11e377c4c407d6d39dc09f64e5d",
+        "bytes": 93568
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": true,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/lsi-clock-cw32l031c8t6-cw32-lsi-clock-example-cw32-lsi-clock-example.elf",
+          "sha256": "0e828feb77132890dcef00e415df0ff8c6e6c15e44fc56b5ec043fd0c796419e",
+          "bytes": 213152,
+          "kind": "elfs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "elf32_little_endian_arm": true,
+          "entry": 193,
+          "initial_sp": 536879104,
+          "reset_vector": 193,
+          "pt_load": [
+            {
+              "offset": 65536,
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4
+            },
+            {
+              "offset": 65728,
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 26840,
+              "memsz": 26840,
+              "flags": 5
+            },
+            {
+              "offset": 92568,
+              "vaddr": 27032,
+              "paddr": 27032,
+              "filesz": 524,
+              "memsz": 524,
+              "flags": 4
+            },
+            {
+              "offset": 131072,
+              "vaddr": 536870912,
+              "paddr": 27556,
+              "filesz": 112,
+              "memsz": 112,
+              "flags": 6
+            },
+            {
+              "offset": 158752,
+              "vaddr": 27680,
+              "paddr": 27680,
+              "filesz": 2,
+              "memsz": 2,
+              "flags": 4
+            },
+            {
+              "offset": 196720,
+              "vaddr": 536871024,
+              "paddr": 536871024,
+              "filesz": 0,
+              "memsz": 32,
+              "flags": 6
+            }
+          ]
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/lsi-clock-cw32l031c8t6-cw32-lsi-clock-example-_generated.rs",
+          "sha256": "5902e6362ed62f9932543542afc5ffd42fae30739431ba36bddd9ebc2a51f90c",
+          "bytes": 67611,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/lsi-clock-cw32l031c8t6-cw32-lsi-clock-example-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    },
+    {
+      "name": "lse-sysclk-cw32r031c8u6-crystal",
+      "command": [
+        "cargo",
+        "build",
+        "--message-format=json-render-diagnostics",
+        "--release",
+        "--locked",
+        "--manifest-path",
+        "examples/lse-sysclk/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32r031c8u6",
+        "--bin",
+        "crystal"
+      ],
+      "exit": 0,
+      "log": {
+        "path": "external-evidence/stage69/verification/main/lse-sysclk-cw32r031c8u6-crystal.log",
+        "sha256": "ac8e7f344b570299f07dd2d6c5c236524efda3733b8f68fd77c0ad477240f00e",
+        "bytes": 83043
+      },
+      "log_hash_matches": true,
+      "build_finished_success": [
+        true
+      ],
+      "compiler_warning_count": 0,
+      "rcc_lsi_sysclk": true,
+      "artifacts": [
+        {
+          "path": "external-evidence/stage69/verification/main/lse-sysclk-cw32r031c8u6-crystal-crystal.elf",
+          "sha256": "ccab481d1a6e4cd2febb585ba362a94c8cc639e532cb17a925f18121aae8257b",
+          "bytes": 212760,
+          "kind": "elfs",
+          "receipt_hash_matches": true,
+          "receipt_size_matches": true,
+          "elf32_little_endian_arm": true,
+          "entry": 193,
+          "initial_sp": 536879104,
+          "reset_vector": 193,
+          "pt_load": [
+            {
+              "offset": 65536,
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4
+            },
+            {
+              "offset": 65728,
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 27204,
+              "memsz": 27204,
+              "flags": 5
+            },
+            {
+              "offset": 92932,
+              "vaddr": 27396,
+              "paddr": 27396,
+              "filesz": 524,
+              "memsz": 524,
+              "flags": 4
+            },
+            {
+              "offset": 131072,
+              "vaddr": 536870912,
+              "paddr": 27920,
+              "filesz": 112,
+              "memsz": 112,
+              "flags": 6
+            },
+            {
+              "offset": 196720,
+              "vaddr": 536871024,
+              "paddr": 536871024,
+              "filesz": 0,
+              "memsz": 32,
+              "flags": 6
+            }
+          ]
+        }
+      ],
+      "generated_files": [
+        {
+          "path": "external-evidence/stage69/verification/main/lse-sysclk-cw32r031c8u6-crystal-_generated.rs",
+          "sha256": "ff81893e17031e13e700a643fc463dff3559d310c2c552b484f6d659ec5947ad",
+          "bytes": 63871,
+          "receipt_hash_matches": true
+        },
+        {
+          "path": "external-evidence/stage69/verification/main/lse-sysclk-cw32r031c8u6-crystal-_generated_exti.rs",
+          "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+          "bytes": 837,
+          "receipt_hash_matches": true
+        }
+      ]
+    }
+  ],
+  "narrative": {
+    "path": "external-evidence/stage69/runtime-review/w031-factory-lsi-runtime-review.md",
+    "sha256": "3a8ae195bcc2e75bdf5d4682d0bca5ba8742c397831e13277469a8d5924a1893",
+    "bytes": 12939
+  },
+  "reviewer_work": [
+    "source reads",
+    "locked-source hash and archive inspection",
+    "own diagrams/tables visual inspection",
+    "static source and generated-file byte correspondence",
+    "retained compiler-log and artifact inspection",
+    "review-artifact writing"
+  ],
+  "reviewer_not_performed": [
+    "Cargo",
+    "generation",
+    "HAL tests",
+    "probes",
+    "executable runtime models",
+    "hardware operations",
+    "network reads or writes",
+    "source edits"
+  ],
+  "limitations": [
+    "No silicon, timing, RF continuity or cold/live/error execution proof.",
+    "Actual library time-driver builds establish compilation, while source establishes selected-LSI pure rejection.",
+    "Clean one-library/one-ELF replay and final deterministic packaging remain separate acceptance gates.",
+    "Metadata/data-wide acceptance is independently recorded; this receipt focuses on runtime integration."
+  ]
+}

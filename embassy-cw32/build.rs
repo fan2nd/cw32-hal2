@@ -2426,6 +2426,7 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
             (METADATA.line, METADATA.name),
             ("CW32L031", "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6")
                 | ("CW32R031", "CW32R031C8U6")
+                | ("CW32W031", "CW32W031R8U6")
         ));
     }
     let parameter_sources: &[(&str, u32, u32)] = match sysctrl.version {
@@ -4770,11 +4771,12 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                 (METADATA.line, METADATA.name),
                 ("CW32L031", "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6")
                     | ("CW32R031", "CW32R031C8U6")
+                    | ("CW32W031", "CW32W031R8U6")
             );
             assert_eq!(
                 c.lsi_sysclk.is_some(),
                 native_lsi_qualified,
-                "Only the independent L031 exact3 and R031 exact1 policies qualify native LSI SYSCLK"
+                "Only the independent L031 exact3, R031 exact1 and W031 exact1 policies qualify native LSI SYSCLK"
             );
             let rtc = METADATA
                 .peripherals

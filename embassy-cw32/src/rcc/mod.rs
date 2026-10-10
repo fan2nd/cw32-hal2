@@ -8,6 +8,9 @@
 //! qualified factory-HSI-fed PLL with rate-only bounds. See each family
 //! Config
 //! types and the selected package's bonded external-clock pads.
+//! Factory-LSI SYSCLK separately admits exact W031R8U6 at 2.0..3.6 V and
+//! -40..85 C; its LSI/RTC aliases are rate-only under every SYSCLK.
+//! See docs/qualified-w031-lsi-sysclk.md for the whole-GPIOB RF-host handover.
 //!
 //! Initialization requires a valid incoming clock/voltage state and an entry
 //! clock source that remains available during the transition. The HAL does not

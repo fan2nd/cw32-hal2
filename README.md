@@ -176,8 +176,8 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - CW32R031C8U6 (QFN48, 64 KiB Flash / 8 KiB SRAM): init-only factory LSI
   SYSCLK with own 31,816–33,784 Hz rate bounds at 2.2–3.6 V and −40–85°C.
   The shared native runtime sequence is unchanged. This exact part's RTC LSI
-  aliases become rate-only under every SYSCLK; generic R031 and every W031
-  remain excluded from LSI SYSCLK. RFCLK has its own 16 MHz oscillator, while
+  aliases become rate-only under every SYSCLK; generic R031
+  remains excluded from LSI SYSCLK. RFCLK has its own 16 MHz oscillator, while
   PCLK/GPIOA inspection can affect RF host activity. The existing functional
   handover and retained external-source availability apply without a hidden
   Rust memory-safety precondition or RF register access. Main acceptance covers
@@ -186,6 +186,20 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   [runtime/source review](docs/r031-factory-lsi-runtime-review.json) and
   [metadata review](docs/r031-factory-lsi-metadata-review.json).
   Final-package clean replay is required and tracked separately.
+- CW32W031R8U6 (QFN64, 64 KiB Flash / 8 KiB SRAM): separate init-only
+  factory LSI SYSCLK qualification at 31,816–33,784 Hz, 2.0–3.6 V and −40–85°C.
+  The shared native runtime is unchanged; RTC LSI aliases become rate-only
+  under every SYSCLK. Generic W031 remains excluded. Dedicated 32 MHz RFCLK
+  is separate, while PCLK/SPI1 and GPIOB inspection can affect internal
+  PB03/04/05/13 host and PB06 IRQ activity. Functional whole-bank handover
+  applies without a hidden Rust memory-safety precondition or RF operation.
+  Fixed 1 MHz time-driver refusal precedes singleton acquisition and RCC MMIO.
+  Main verification passed five actual library builds, six ELF links, generation
+  and six focused source/data commands. Independent runtime/source and metadata
+  reviews accept the frozen main implementation. At main acceptance, clean
+  replay had not run; final-package completion requires a separate clean receipt.
+  See the
+  [own W031 contract and evidence status](docs/qualified-w031-lsi-sysclk.md).
 - F020/F030/A030: init-only factory LSI SYSCLK with complete cold-start admission,
   explicit whole-GPIO-bank inspection effects, permanent target request and
   rate-only bounds. The same families' LsiClock/RTC aliases are also rate-only;

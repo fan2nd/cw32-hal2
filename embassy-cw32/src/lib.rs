@@ -149,10 +149,24 @@ pub struct Config {
 /// does not guarantee unchanged RF signals, packets or source continuity.
 /// These are existing functional handover limits, not hidden Rust memory-safety
 /// preconditions. Initialization neither reads nor writes RF state. Exact-part
-/// RTC LSI aliases become rate-only under every SYSCLK; generic R031 and all
-/// W031 remain excluded from LSI SYSCLK. The fixed 1 MHz time driver refuses
+/// RTC LSI aliases become rate-only under every SYSCLK; generic R031 remains
+/// excluded from LSI SYSCLK. The fixed 1 MHz time driver refuses
 /// selected LSI before singleton acquisition and any RCC MMIO. Reset before
 /// retrying a hardware failure. See docs/qualified-r031-lsi-sysclk.md.
+///
+/// On CW32W031R8U6 only (QFN64, 64 KiB Flash / 8 KiB SRAM), the same native
+/// sequence uses own 31,816..33,784 Hz bounds at 2.0..3.6 V and -40..85 C.
+/// Dedicated 32 MHz RFCLK does not remove the PCLK/SPI1 host dependency.
+/// Whole GPIOB inspection may advance internal PB03/04/05/13 host and PB06
+/// RF IRQ sampling/events, including before failure. Finish/quiet host transfers
+/// and permit this whole-bank interval; restoring gates cannot undo progress
+/// or guarantee RF signal/packet continuity. This is a functional handover
+/// limit of safe init, not a hidden Rust memory-safety precondition. No RF
+/// register, page, power, reset, command or interrupt-state operation is added.
+/// Exact W031 RTC LSI aliases become rate-only under every SYSCLK; generic
+/// W031 remains excluded. Fixed 1 MHz time-driver refusal precedes singleton
+/// acquisition and RCC MMIO. Reset before retrying hardware failure.
+/// See docs/qualified-w031-lsi-sysclk.md for source and verification status.
 ///
 /// On F020/F030/A030, selecting factory LSI SYSCLK (or LSE SYSCLK on the
 /// three qualified packages) may briefly open each

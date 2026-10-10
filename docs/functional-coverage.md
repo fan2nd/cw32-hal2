@@ -176,8 +176,8 @@ still apply.
   bounds at 2.2–3.6 V and −40–85°C, QFN48, 64 KiB Flash and 8 KiB SRAM.
   Its own-source admission reuses the unchanged nine-gate/eleven-selector
   native runtime. RTC LSI source and calendar-tick bounds become rate-only
-  under every SYSCLK, retaining nominal 32800/32768. Generic R031 and every
-  W031 gain no LSI SYSCLK capability. Dedicated 16 MHz RFCLK is independent,
+  under every SYSCLK, retaining nominal 32800/32768. Generic R031
+  gains no LSI SYSCLK capability. Dedicated 16 MHz RFCLK is independent,
   but PCLK/GPIOA and PA00..PA03 carry an indirect RF-host effect. Existing
   functional handover permits the inspection interval, including before
   failure, and keeps inherited RF-fed HSE bypass available. No RF registers
@@ -188,6 +188,22 @@ still apply.
   [runtime/source review](r031-factory-lsi-runtime-review.json) and
   [metadata review](r031-factory-lsi-metadata-review.json). Final-package clean
   replay of one library and two ELFs is required and tracked separately.
+- CW32W031R8U6 alone adds the separate own-source factory-LSI qualification:
+  QFN64, 64 KiB Flash / 8 KiB SRAM, 31,816–33,784 Hz at 2.0–3.6 V and −40–85°C.
+  Shared native executable code, nine-gate/eleven-selector admission and old
+  exact-package envelopes remain unchanged. RTC LSI aliases become rate-only
+  under every SYSCLK; generic W031 stays excluded. RFCLK uses a dedicated
+  32 MHz oscillator, while PCLK/SPI1 and whole-GPIOB inspection can affect
+  PB03/04/05/13 internal host traffic and PB06 IRQ events. Functional handover
+  permits that interval, even before failure; no hidden Rust memory-safety
+  precondition or RF access is added. Fixed 1 MHz time-driver refusal remains
+  before singleton acquisition and RCC MMIO. Main verification passed five
+  actual library builds, six ELF links, generation and six focused source/data
+  commands with the 1,294-file input snapshot unchanged. Independent runtime/
+  source and metadata/projection reviews accept the frozen main implementation.
+  At main acceptance, clean replay had not run; final-package completion
+  requires a separate one-library/one-ELF clean receipt. See the
+  [W031 contract](qualified-w031-lsi-sysclk.md).
 - Init-only factory-LSI SYSCLK is qualified on F020/F030/A030. Cold admission
   precedes the first source-enable write and checks every documented shared
   consumer, gate, reset and inherited source request; factory-matching running
@@ -198,7 +214,7 @@ still apply.
   timing guards remain enforced. A 1 MHz Embassy timebase rejects this rate
   before singleton acquisition. This is a static control-flow guarantee;
   compiling the time-driver feature does not execute that rejection.
-  Apart from the exact L031/R031 changes above, other RTC/LSI qualifications
+  Apart from the exact L031/R031/W031 changes above, other RTC/LSI qualifications
   are unchanged. Runtime switching and
   low-power restoration remain outside this slice. See the
   [complete factory-LSI contract](factory-lsi-sysclk.md).

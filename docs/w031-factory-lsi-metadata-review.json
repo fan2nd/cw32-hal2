@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "title": "Stage69 independent CW32W031R8U6 factory-LSI metadata and projection review",
+  "review_date_utc": "2026-10-10",
+  "status": "accepted_for_frozen_main_source_metadata_and_projection",
+  "findings": [],
+  "blocking_findings": 0,
+  "scope": "Independent read-only own-source, policy, generator, build-admission, RTC qualification and emitted-projection review. This report accepts the frozen main source at this scope; final clean replay and final publication packaging remain separately recorded acceptance work.",
+  "baseline": {
+    "label": "external-evidence/stage68/source",
+    "commit": "8980f2ff616811718f3cb11c5f8d7dcfb6823eb9"
+  },
+  "approved_design": {
+    "path": "external-evidence/stage69-design/w031-lsi-sysclk-design.md",
+    "sha256": "4988ff35cfa5bbddc30844917049b55824c8d48688d98d92290a6944bfe229ab",
+    "evidence_path": "external-evidence/stage69-design/w031-lsi-sysclk-design-evidence.json",
+    "evidence_sha256": "e530dc0ef47cc7846add6e423b51cac3435b35430cb010f8a5296fd202bd66eb"
+  },
+  "reviewed_freeze": {
+    "archive": "external-evidence/stage69/stage69-main-source.zip",
+    "archive_sha256": "8cfa98debb536a1c314e2781d066a8bc6ebcc8446bcfa771f329f011c9c47729",
+    "source_manifest": "external-evidence/stage69/verification/main-source-manifest.json",
+    "source_manifest_sha256": "b46c681a6df1384b4aee3056fda43792bb2fcdbc63dda413652b1d0777c62add",
+    "files": 1294,
+    "executable_files": 27,
+    "manifest_bytes_and_modes_verified_against_source": true,
+    "functional_files": {
+      "cw32-data/lsi-sysclk-qualified.yaml": "c759743c6f130cf25820e36c8114bbb27f4a3d47ad39faa71ef880873893aaac",
+      "cw32-data/electrical.yaml": "7a56ac3a33aa3a69f76d308991735ca6d3855b9fc643b21dd237461198c998d5",
+      "cw32-data-gen/src/lsi.rs": "0db0c2e8a42a0eb4e36c1b121eb3eb6c59e018362244f7cc8870c36ea2c60f5b",
+      "embassy-cw32/build.rs": "e999752c86a82fb41555fa23c0618e20d50fae0618862aab3b13b74404b71386"
+    }
+  },
+  "own_authority": {
+    "lock": "sources/evidence-sources.json",
+    "lock_unchanged_from_stage68": true,
+    "original_member_text_hashes_matched": 39,
+    "archive_member_chains_matched": 34,
+    "selected_cached_page_hashes_matched": 116,
+    "selected_sources": [
+      {
+        "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+        "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9"
+      },
+      {
+        "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+        "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c"
+      },
+      {
+        "source_ref": "vendor:CW32W031_StandardPeripheralLib_V1.3.zip",
+        "sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337"
+      },
+      {
+        "source_ref": "member:cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/SVD/CW32W031.svd",
+        "sha256": "7b3f7cd1e1e9b311f8bf6da711b9af0a144040883a231dfcc93b9cd2bafe84d0"
+      }
+    ],
+    "visual_source_inspection": [
+      "W031 RM PDF48 clock tree",
+      "W031 RM PDF499 RF block diagram",
+      "W031 DS PDF41 operating conditions",
+      "W031 DS PDF28 PB11 QFN64 pin table"
+    ],
+    "literal_svd_field_access_records": 53,
+    "literal_svd_gate_reset_pairs": 9,
+    "literal_svd_peripheral_bases": 10,
+    "irq_conclusion": "The selected SVD has SYSCTRL IRQ4. Both original SDK startup variants and CMSIS header separately establish CLKFAULT IRQ31. LSIRDY observes SYSCTRL; no CLKFAULT pending check, invented RCC alias or extra RF root is introduced."
+  },
+  "qualification": {
+    "part": "CW32W031R8U6",
+    "package": "QFN64",
+    "flash": {
+      "start": 0,
+      "bytes": 65536
+    },
+    "ram": {
+      "start": 536870912,
+      "bytes": 8192
+    },
+    "frequency_hz": {
+      "nominal": 32800,
+      "minimum": 31816,
+      "maximum": 33784
+    },
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "supply_mv": [
+      2000,
+      3600
+    ],
+    "supply_reason": "Own DS PDF 9, 16, 41 and 53 support the conservative intersection of RF LDO 1.8..3.6 V and RF DCDC 2.0..3.6 V. VDDA equals VDD under table 7-4; when RF is used, VDDRF shares VDD supply under PDF 16. No LDO/DCDC runtime probe or widening to 1.8 V is present. The old HSI electrical profile is unchanged.",
+    "rate_only": true,
+    "factory_address": "0x00100a02",
+    "factory_read_width_bits": 16,
+    "trim_contract": "Stopped TRIM-field-only write, WAIT and reserved-bit preservation, conservative raw 0xffff refusal before masking, zero allowed.",
+    "pins": {
+      "PB11": "16",
+      "PF0": "63",
+      "PF1": "64",
+      "PC14": "61",
+      "PC15": "62"
+    },
+    "generic_w031_excluded": true,
+    "schema_and_pac_layout_unchanged": true
+  },
+  "rf_boundary": {
+    "conclusion": "Positive own clock-tree and RF diagrams establish dedicated external 32 MHz RFCLK and a separate RF PLL. MCU SYSCLK affects the internal RF host through HCLK/PCLK/APBEN2.SPI bit 8/SPI1, not a tenth direct cold-LSI root.",
+    "own_ds_pdf14_host_pins": {
+      "PB05": "MOSI",
+      "PB04": "MISO",
+      "PB03": "CS",
+      "PB13": "SCK",
+      "PB06": "IRQ"
+    },
+    "interface_rate_exclusive_maximum_bps": 10000000,
+    "handover": "Whole GPIOB inspection can resume internal host/IRQ sampling and events on the complete bank. Gate restoration cannot undo peripheral progress. Quiet host transfers and permit the bounded inspection interval, including failure. This is the visible functional limit of safe initialization, not a hidden Rust memory-safety precondition.",
+    "limits": "No RF register, page, power, mode, reset, event, state probe, SPI command, runtime driver, arbitration or waveform/packet continuity qualification is added. Internal pads do not create extra QFN64 external tokens. External SPI functions remain unavailable when using RF."
+  },
+  "admission_review": [
+    "The W role is explicit. Generic W undergoes complete own structural validation, but only the exact part predicate can inject lsi_sysclk after all checks.",
+    "Literal own RM/DS identities and pages, SDK and five member chains, exact package/memory, numeric envelope, supply/RF/IRQ contracts, 53 fields, ten bases, nine pairs, pins, observers and complete cold roster are bound before injection.",
+    "The R uniqueness, fieldset, reset-key and four-STABLE-overlay exactness checks are preserved and explicitly extended to W. Own W RM/DS and physical pin identities are also required unique. No policy/IR agreement substitutes for the literal own bindings.",
+    "The two native build predicates gain exactly (CW32W031,CW32W031R8U6). Their shared native emitter, strict windows, masks, SYSCTRL observer and source-gate derivation are unchanged.",
+    "The emitted W cold structure remains nine gate windows and eleven selectors: RTC, AWT, UART1/2/3, GPIOA/B/C/F, MCO and PB11. GPIOB FILTER and AFR11 share the one GPIOB window. Restored-gate/error/fault/post-reset/buffered-semantic order is preserved.",
+    "Emitted masks remain 0xffff7fff for LSI/HSI/LSE and 0xfff7ffff for HSE. W HSE pad-bank indices are exactly (Some(8),Some(8)); no unbonded-PB11 exception is granted.",
+    "Cold selector allowlists match the own manual. FILTER 7 is refused as documented AWT overflow; RTC 1/3, MCO 7 and PB11 AF2/4 remain undocumented refusals. Root selection is not excused by gate state, RTC START or UART disables."
+  ],
+  "rtc_and_compatibility": {
+    "trace": [
+      "embassy-cw32/src/rcc/bounds.rs::ClockBounds::rtc_source",
+      "embassy-cw32/src/rcc/bounds.rs::ClockBounds::lsi",
+      "embassy-cw32/src/rcc/rtc.rs::LsiClock::bounds",
+      "embassy-cw32/src/rcc/rtc.rs::CalendarClock::bounds",
+      "embassy-cw32/src/rtc/mod.rs::source_clock_bounds",
+      "embassy-cw32/src/rtc/mod.rs::calendar_tick_bounds"
+    ],
+    "conclusion": "Capability cfg selects the rate-only factory source independently of requested SYSCLK. All exact-W LSI aliases and RTC source/calendar bounds therefore become rate-only under HSI, HSE, LSE or LSI. Division preserves the qualification and exact 32800/32768 calendar fraction. Strict duration helpers continue to refuse uncertified timing. Board LSE and generic/excluded alias behavior retain their prior qualifications.",
+    "numeric_rtc_facts_unchanged": true,
+    "actual_non_lsi_compatibility_link": "external-evidence/stage69/verification/main/rtc-calendar-cw32w031r8u6-preserve_calendar-preserve_calendar.elf"
+  },
+  "preservation": {
+    "all_seven_old_family_policy_objects_unchanged": true,
+    "electrical_only_policy_digest_changed": true,
+    "parts_catalog_source_lock_and_field_access_unchanged": true,
+    "generated_data_files": 416,
+    "generated_chip_objects": 54,
+    "changed_chip_objects": [
+      "CW32W031R8U6"
+    ],
+    "only_chip_delta": "SYSCTRL.clock_limits.lsi_sysclk added; all other properties identical.",
+    "generated_pac_files": 488,
+    "changed_pac_files": [
+      "cw32-metapac/src/chips/metadata_0037.rs"
+    ],
+    "only_pac_delta": "PeripheralLsiSysclk metadata added for the exact W part. Every register/peripheral file is byte-identical.",
+    "generic_w_r_and_excluded_l_unqualified": true,
+    "old_l_r_emitted_library_and_regression_example_helpers_byte_identical": true,
+    "w_prior_emitted_source_byte_identical_after_removing_added_lsi_section": true,
+    "w_debug_release_emitted_source_identical": true
+  },
+  "coordinator_receipts_reviewed": {
+    "generation": {
+      "path": "external-evidence/stage69/verification/generation-v1.log",
+      "sha256": "7a66d86a91fb40be3741df1d2d96fb1be8993c757f7da4bb364bb98c9cbdd640",
+      "exit": 0
+    },
+    "main_commands": {
+      "path": "external-evidence/stage69/verification/main/commands.json",
+      "sha256": "00baa4d8b7bb52fac87ed67a3e27e4dd42683ebbd84492a4f45f87a1d94391d6",
+      "ordinary_builds": 11,
+      "release_and_debug_libraries": 5,
+      "linked_examples": 6,
+      "all_exit_zero": true,
+      "source_unchanged": true
+    },
+    "finite_source_data_commands": {
+      "path": "external-evidence/stage69/verification/data/commands.json",
+      "sha256": "c87ca95aca7bd4cbae725137981c5aca61bad77868815861828d2dfffab6945f",
+      "commands": 6,
+      "all_exit_zero": true
+    },
+    "not_claimed": "This is not a full repository audit, HAL runtime test, hardware validation, RF continuity proof, clock measurement or silicon timing certification. The fixed 1 MHz time-driver library compilation does not qualify selected-LSI time-driver initialization."
+  },
+  "supporting_records": [
+    {
+      "path": "external-evidence/stage69/metadata-review/w031-emitted-source-review.json",
+      "sha256": "871c5e3ee253c4c7dc67dae94f9f8c268880601dac39456367b478c97f6d2f43"
+    },
+    {
+      "path": "external-evidence/stage69/metadata-review/w031-own-source-review.json",
+      "sha256": "6ac69fa1b8715dba4253dc4a2cf4260d4ab728a52dae322c2e8487b69b6f2969"
+    },
+    {
+      "path": "external-evidence/stage69/metadata-review/w031-projection-review.json",
+      "sha256": "823040e9f8dda97c1e499d841d2f9c31af08c9cda76957ff7d56267d7a3f4baf"
+    },
+    {
+      "path": "external-evidence/stage69/metadata-review/w031-static-source-review.json",
+      "sha256": "dc6bf076381b1178682aadeabc254de69f51902bb0ad92fd3afe0e34a9d0c84f"
+    }
+  ],
+  "reviewer_actions": [
+    "Source reads",
+    "Original and member hashing",
+    "Nested archive inspection",
+    "Own SVD field/access/base extraction",
+    "Locked-text and rendered-page inspection",
+    "Frozen source/data/PAC comparison",
+    "Inspection of coordinator actual build receipts and emitted source",
+    "External review-record writes"
+  ],
+  "reviewer_not_run": [
+    "Cargo",
+    "generation",
+    "HAL tests",
+    "probes",
+    "executable runtime models",
+    "hardware",
+    "network",
+    "source edits"
+  ],
+  "remaining_separate_acceptance": [
+    "Coordinator final clean-source generation and 1-library/1-ELF replay",
+    "Coordinator ELF range and load-content acceptance",
+    "Final source package receipts and publication verification"
+  ]
+}

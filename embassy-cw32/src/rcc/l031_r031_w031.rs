@@ -1,6 +1,6 @@
 //! Qualified HSI, direct HSE and exact-package LSE clocks on CW32L031/R031/W031.
-//! Factory-LSI SYSCLK is separately qualified for L031C8T6/C8U6/F8U6 and R031C8U6.
-//! Generic R031 and every W031 remain outside that qualification.
+//! Factory-LSI SYSCLK is separately qualified for L031C8T6/C8U6/F8U6, R031C8U6
+//! and W031R8U6. Generic aliases and other packages remain outside that qualification.
 //!
 //! Own sources: L031 RM CN1.6, R031 RM CN1.3 and W031 RM CN1.4
 //! §§4.3–4.7 and 7.4, plus each own datasheet electrical tables.
@@ -135,8 +135,8 @@ pub enum Sysclk {
     HSI,
     /// Qualified external high-speed oscillator or input.
     HSE,
-    /// Factory-trimmed 32,800 Hz LSI on L031C8T6/C8U6/F8U6 and R031C8U6.
-    /// R031 requires its own 2.2..3.6 V and -40..85 C board qualification.
+    /// Factory-trimmed 32,800 Hz LSI on L031C8T6/C8U6/F8U6, R031C8U6 and W031R8U6.
+    /// R031 requires 2.2..3.6 V; W031 requires 2.0..3.6 V, both at -40..85 C.
     /// Rate bounds do not certify individual-cycle or jitter timing. Cold entry
     /// excludes every reviewed direct client and ready observer, even when the
     /// existing trim matches; live factory-matching clients remain untouched.

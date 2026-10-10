@@ -1136,8 +1136,8 @@ functions:
         measurement or complete oscillator calibration.
     - id: factory_lsi_sysclk
       status: partial
-      scope: Init-only factory-qualified nominal 32800 Hz LSI SYSCLK on F020/F030/A030, exactly CW32F002F3P7/F3U7, CW32F003F4P7/F4U7/E4P7, CW32L031C8T6/C8U6/F8U6 and CW32R031C8U6.
-      implemented_families: [CW32F002, CW32F003, CW32F020, CW32F030, CW32A030, CW32L031, CW32R031]
+      scope: Init-only factory-qualified nominal 32800 Hz LSI SYSCLK on F020/F030/A030, exactly CW32F002F3P7/F3U7, CW32F003F4P7/F4U7/E4P7, CW32L031C8T6/C8U6/F8U6, CW32R031C8U6 and CW32W031R8U6.
+      implemented_families: [CW32F002, CW32F003, CW32F020, CW32F030, CW32A030, CW32L031, CW32R031, CW32W031]
       limitations:
       - F002 means CW32F002F3P7 and CW32F002F3U7 only; own bounds remain 31160..34440 Hz.
         F003 means CW32F003F4P7, CW32F003F4U7 and CW32F003E4P7 only; own bounds are
@@ -1149,7 +1149,7 @@ functions:
         gain no LSI SYSCLK capability. The dedicated contract links the separate
         main runtime/source and metadata reviews; this declaration is not an execution receipt.
       - R031 means CW32R031C8U6 only, QFN48, 64 KiB Flash / 8 KiB SRAM, with own
-        31816..33784 Hz at 2.2..3.6 V and -40..85 C. Generic R031 and every W031 stay
+        31816..33784 Hz at 2.2..3.6 V and -40..85 C. Generic R031 stays
         excluded. The native runtime is unchanged. Main source/metadata acceptance covers six
         actual library builds, seven linked ELFs and six passed source/data checks. Package
         completion requires a separate final-source clean replay of one library and two ELFs;
@@ -1158,7 +1158,18 @@ functions:
         an indirect RF-host effect. Existing functional handover permits whole-bank progress
         and keeps inherited RF XTAL_OCLK-fed HSE available. No RF access or hidden safe-Rust
         memory-safety precondition is added; restored gates do not prove RF continuity.
-      - Exact L031/R031 cold admission checks RTC, AWT, UART1/2/3, GPIOA/B/C/F, MCO, PB11 AF and ready/NVIC
+      - W031 means CW32W031R8U6 only, QFN64, 64 KiB Flash / 8 KiB SRAM, with own
+        31816..33784 Hz at 2.0..3.6 V and -40..85 C. Generic W031 stays excluded.
+        The shared native executable sequence is unchanged. Main verification passed five
+        actual library builds, six ELF links, generation and six focused source/data commands.
+        Independent runtime/source and metadata/projection reviews accept the frozen main
+        implementation. At main acceptance, clean replay had not run; final-package completion
+        requires a separate clean one-library/one-ELF receipt. These results do not establish hardware behavior.
+      - W031 dedicated 32 MHz RFCLK is separate from its PCLK/SPI1 host path. Whole GPIOB
+        inspection can advance internal PB03/04/05/13 host and PB06 IRQ sampling/events,
+        including before failure. Functional handover permits this interval without a hidden
+        Rust memory-safety precondition or RF-state operation; restored gates cannot undo work.
+      - Exact L031/R031/W031 cold admission checks RTC, AWT, UART1/2/3, GPIOA/B/C/F, MCO, PB11 AF and ready/NVIC
         observers even for matching TRIM. PB11 is conservatively inspected on unbonded F8U6;
         FILTER7 means documented AWT overflow and is conservatively rejected. Native configurable
         CCS/LSELOCK and external ownership are retained, with no classic mandatory-CCS rule.
@@ -1166,7 +1177,7 @@ functions:
         checks retain their existing roster. F002/F003 check AWT, UART1/2, GPIOA/B/C, MCO and ready
         observers in two passes plus a post-trim use-edge pass, even if cold TRIM already matches.
         Running factory-matching LSI is reused without retrim or WAIT writes.
-      - Whole GPIOA/B/C on F002/F003, or GPIOA/B/C/F on classic and exact L031/R031, inspection windows may advance sampling,
+      - Whole GPIOA/B/C on F002/F003, or GPIOA/B/C/F on classic and exact L031/R031/W031, inspection windows may advance sampling,
         filters and armed events, even before failure. Software does not clear flags; they may change
         naturally. Restoring gates cannot undo progress; failed restore may leave a gate active.
       - F002/F003 cold preparation uses each family's own 0x001007BA factory halfword and typed ten-bit TRIM-only
@@ -1177,9 +1188,9 @@ functions:
         bits including ATIM bit7 are preserved. Existing API qualifications are unchanged.
       - Target LSIEN remains requested after enable attempts. HSI calibration can fail with HSI stopped
         while executing on LSI. No automatic rollback, runtime switching, source-loss or low-power recovery.
-      - Selected LSI SYSCLK/bus bounds are rate-only. Classic and exact L031/R031 LsiClock/CalendarClock/RTC
+      - Selected LSI SYSCLK/bus bounds are rate-only. Classic and exact L031/R031/W031 LsiClock/CalendarClock/RTC
         aliases remain rate-only under every SYSCLK, with nominal 32800/32768 calendar ticks unchanged;
-        excluded L031, generic R031, every W031 and board LSE retain qualification.
+        excluded L031, generic R031/W031 and board LSE retain qualification.
         F002/F003 gain none of those RTC APIs. Strict duration helpers
         and ADC reject this qualification; classic complementary PWM does too. Fixed 1 MHz time-driver
         selection fails before singleton acquisition and RCC MMIO. F002/F003 AWT retains independent HSIOSC timing.
@@ -1192,6 +1203,7 @@ functions:
       - path: docs/factory-lsi-sysclk.md
       - path: docs/f002-factory-lsi-sysclk.md
       - path: docs/f003-factory-lsi-sysclk.md
+      - path: docs/qualified-w031-lsi-sysclk.md
       - path: docs/qualified-r031-lsi-sysclk.md
       - path: docs/r031-factory-lsi-runtime-review.json
       - path: docs/r031-factory-lsi-metadata-review.json

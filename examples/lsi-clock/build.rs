@@ -17,6 +17,7 @@ fn main() {
             | "CW32L031C8U6"
             | "CW32L031F8U6"
             | "CW32R031C8U6"
+            | "CW32W031R8U6"
     ));
     assert!(metadata.peripherals.iter().any(|p| {
         p.clock_limits
@@ -34,6 +35,8 @@ fn main() {
         }
         // Own R031 DS CN V1.2 PDF pages 11 and 35, and own PDSC.
         "CW32R031C8U6" => Some((64 * 1024, 8 * 1024, true)),
+        // Own W031 DS CN V1.3 PDF pages 9, 33-34 and 71, and own PDSC: QFN64.
+        "CW32W031R8U6" => Some((64 * 1024, 8 * 1024, true)),
         _ => None,
     };
     if let Some((flash_size, ram_size, has_rtc)) = exact_memory {
