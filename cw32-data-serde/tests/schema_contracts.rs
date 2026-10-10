@@ -393,3 +393,30 @@ fn optional_hardware_facts_keep_independent_domains_and_signed_bounds() {
     );
     assert_eq!(encoded(explicit_nulls), json!({"name": "X", "address": 0}));
 }
+
+#[test]
+fn lse_hardware_policy_distinguishes_configurable_ccs_and_absent_speed() {
+    let catalog: Value =
+        serde_yaml::from_str(include_str!("../../cw32-data/lse-qualified.yaml")).unwrap();
+    for part in ["CW32F020C6U7", "CW32L031F8U6"] {
+        let value = catalog["parts"][part]["configuration"].clone();
+        let parsed: peripheral::LseConfiguration = read(value.clone());
+        assert_eq!(encoded(parsed), value);
+        let mut missing = value.clone();
+        missing.as_object_mut().unwrap().remove("configurable_ccs");
+        assert!(serde_json::from_value::<peripheral::LseConfiguration>(missing).is_err());
+        let mut invalid = value;
+        invalid["configurable_ccs"] = json!(1);
+        assert!(serde_json::from_value::<peripheral::LseConfiguration>(invalid).is_err());
+    }
+    let compact: peripheral::LseConfiguration =
+        read(catalog["parts"]["CW32L031F8U6"]["configuration"].clone());
+    assert!(
+        compact.configurable_ccs
+            && compact.gpio_speed_offset.is_none()
+            && compact.output_routes.is_empty()
+    );
+    let classic: peripheral::LseConfiguration =
+        read(catalog["parts"]["CW32F020C6U7"]["configuration"].clone());
+    assert!(!classic.configurable_ccs && classic.gpio_speed_offset == Some(8));
+}

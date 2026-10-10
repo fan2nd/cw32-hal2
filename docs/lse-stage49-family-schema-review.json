@@ -1,0 +1,38 @@
+{
+  "status": "accepted_narrow_technical_schema_delta",
+  "scope": "Three metadata models only. Hardware/runtime/ELF acceptance is separately recorded in REVIEW.md and review-receipt.json. No source-licensing conclusion is made.",
+  "final_manifest_sha256": "bb704614275fb5127e4e9b1df5f400ddd7534d222de6ba7ac7640198113e8690",
+  "models": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "dd26f0aeebed0b2e64a81db5d8d067e2234fb7f1f04a784de5e8787cc5e43a7a",
+      "after_sha256": "aceb8fc88f3dab0c405fe86da2ccbdc800f81a433b77bf93bcb7ef1a2d24ac50"
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "3103f5a7129389d50852a3d559c50a04f6a9d10132d29eec35d6d042637ec079",
+      "after_sha256": "97d71c22e624b2d1a0626f7f7ed2961e1cd8c3f618104b9a7f800209502c2471"
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "6ea8b173bd6d8a6478f98db898f9075496acb87ae3a4c7092397dcd9907ba522",
+      "after_sha256": "a6cf5ff62afc12639bd3332970e589da7d66303504ba409f39862c10a38cc534"
+    }
+  ],
+  "compatibility": {
+    "configurable_ccs": "New required bool without serde(default). Active LSE inputs lacking it fail deserialization in both input models. Does not default unknowable hardware facts. Existing no-LSE chips remain unaffected.",
+    "gpio_speed_offset": "u32 becomes Option<u32> in all three models. JSON number 8 remains number 8. Missing/null deserialize to None and serialize as explicit null because no skip_serializing_if is present. Rust literals/accessors must change to Some(8)/None.",
+    "output_routes": "Existing Vec and static slice remain unchanged; empty list is representable. Exact F8U6 absence is source/package validation, not a new default.",
+    "field_order": "configurable_ccs is consistently inserted after maximum_hz. All other LseConfiguration fields remain in the same relative order and retain their types except gpio_speed_offset.",
+    "unknown_fields": "deny_unknown_fields remains on both deserializing LSE configuration records.",
+    "static_generation": "Derived Debug/stringify has no hand-written LSE field projection; bool and Option<u32> expressions match the static model. This is code inspection only, not compiled validation."
+  },
+  "evidence": [
+    "Original development schema review preserved in three-model-schema-review.json.",
+    "All three exact schema files are unchanged between initial and final reviewed source freezes.",
+    "Retained schema-contract run passes 17 tests, including required configurable_ccs, invalid integer bool rejection, old numeric SPEED and new null SPEED, empty compact-package routes, and all 54 generated chip roundtrips.",
+    "Full retained data and PAC generation pass and static metadata has matching bool/Some(8)/None shapes.",
+    "All 17 retained ARM library configurations compile the generated static model; this reviewer did not run Cargo."
+  ],
+  "lineage": "Keep prior model ancestry/provenance; this is a required bool plus optional offset change, not an insertion-only backward-compatible wire delta."
+}

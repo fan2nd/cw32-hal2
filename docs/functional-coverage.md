@@ -143,14 +143,14 @@ still apply.
   independent of HSE qualification. Crystal, bypass, family-specific pad locks
   and package bond-outs determine the boot-retained reservation before safe pin
   construction. Active LSE crystal/bypass setup and an owned calendar source
-  are qualified only for CW32F030C8T7 and CW32A030C8T7 LQFP48. Both require
+  are qualified only for eight exact x030/F020/L031/R031/W031 packages. All require
   explicit board electrical and every-cycle frequency bounds around nominal
   32768 Hz. Cold startup rejects retained RTC state, including compensation
   consumers independent of RTC.SOURCE; exact already-enabled reuse preserves
   configuration. Poll-budget exhaustion retains the source and reservations
   and requires reset. There is no automatic calendar fallback, low-power
   restoration or post-fault elapsed-time guarantee. See the
-  [ownership contract](inherited-lse-pads.md) and
+  [active LSE contract](qualified-lse.md), [ownership contract](inherited-lse-pads.md) and
   [qualified LSE examples](../examples/lse-clock/README.md).
 - L010 and L011 each implement exactly two authored BTIM1 UPDATE routes:
   BTIM2 TRGI cascading and ADC START_CONVERSION through a separate one-shot

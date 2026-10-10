@@ -788,8 +788,17 @@ fn parse_lse_catalog(bytes: &[u8]) -> Result<LseCatalog> {
     let unique: serde_yaml::Value = serde_yaml::from_slice(bytes)?;
     Ok(serde_yaml::from_value(unique)?)
 }
-const LSE_PARTS: [(&str, &str); 2] = [("CW32A030C8T7", "CW32A030"), ("CW32F030C8T7", "CW32F030")];
-// Each tuple was re-read from x030 RM Rev2.5 PDF pages187–195. Values
+const LSE_PARTS: [(&str, &str, &str); 8] = [
+    ("CW32A030C8T7", "CW32A030", "LQFP48"),
+    ("CW32F030C8T7", "CW32F030", "LQFP48"),
+    ("CW32F020C6U7", "CW32F020", "QFN48"),
+    ("CW32L031C8T6", "CW32L031", "LQFP48"),
+    ("CW32L031C8U6", "CW32L031", "QFN48"),
+    ("CW32L031F8U6", "CW32L031", "QFN20"),
+    ("CW32R031C8U6", "CW32R031", "QFN48"),
+    ("CW32W031R8U6", "CW32W031", "QFN64"),
+];
+// Re-read from x030 RM Rev2.5 PDF187–195 and own F020 RM Rev1.4 PDF184–192. Values
 // and masks are observations, not writes. KEY and ICR are never included.
 const LSE_RTC_RESET: [(&str, u32, u32, u32); 13] = [
     ("CR0", 4, 0, 0xef),
@@ -809,30 +818,31 @@ const LSE_RTC_RESET: [(&str, u32, u32, u32); 13] = [
 fn validate_lse_parts(catalog: &LseCatalog) -> Result<()> {
     ensure!(
         catalog.parts.len() == LSE_PARTS.len()
-            && LSE_PARTS
-                .iter()
-                .all(
-                    |(part, family)| catalog.parts.get(*part).is_some_and(|p| p.family == *family
-                        && p.package == "LQFP48"
-                        && p.input_pin == "PC14"
-                        && p.output_pin == "PC15")
-                ),
-        "active LSE qualification must be present for exactly the two reviewed exact parts"
+            && LSE_PARTS.iter().all(|(part, family, package)| catalog
+                .parts
+                .get(*part)
+                .is_some_and(|p| p.family == *family
+                    && p.package == *package
+                    && p.input_pin == "PC14"
+                    && p.output_pin == "PC15")),
+        "active LSE qualification must be present for exactly the eight reviewed exact parts"
     );
     Ok(())
 }
 fn validate_lse_configuration(
+    part: &str,
     c: &cw32_data_serde::chip::core::peripheral::LseConfiguration,
 ) -> Result<()> {
     ensure!(
         c.nominal_hz == 32_768
             && c.maximum_hz == 1_000_000
-            && c.supply_mv == (1650, 5500)
-            && c.temperature_c == (-40, 105)
+            && c.supply_mv.0 > 0
+            && c.supply_mv.0 <= c.supply_mv.1
+            && c.temperature_c.0 <= c.temperature_c.1
             && c.startup_cycles == [256, 1024, 4096, 16384]
             && (c.rtc_source, c.uart_source, c.awt_source, c.mco_source) == (0, 2, 3, 6)
             && c.gpio_dir_offset == 0
-            && c.gpio_speed_offset == 8,
+            && c.gpio_speed_offset == if c.configurable_ccs { None } else { Some(8) },
         "LSE electrical/source/GPIO facts exceed the bounded own-source cohort"
     );
     ensure!(
@@ -849,11 +859,15 @@ fn validate_lse_configuration(
         );
     }
     ensure!(
-        c.output_routes.len() == 2
-            && c.output_routes[0].pin == "PB12"
-            && c.output_routes[0].af == 3
-            && c.output_routes[1].pin == "PF1"
-            && c.output_routes[1].af == 1,
+        if part == "CW32L031F8U6" {
+            c.output_routes.is_empty()
+        } else {
+            c.output_routes.len() == 2
+                && c.output_routes[0].pin == "PB12"
+                && c.output_routes[0].af == 3
+                && c.output_routes[1].pin == "PF1"
+                && c.output_routes[1].af == 1
+        },
         "LSE direct-output routes must be the exact unique own-package pair"
     );
     Ok(())
@@ -967,19 +981,47 @@ pub fn apply_lse(
         );
         Ok(serde_json::from_slice(&bytes)?)
     };
-    let proof = read_policy("docs/lse-active-first-cohort.json")?;
-    let rtc_proof = read_policy("docs/lse-active-rtc-admission.json")?;
-    ensure!(
-        proof["schema_version"] == 1 && rtc_proof["schema_version"] == 1,
-        "unknown LSE review schema"
-    );
+    let x030_proof = read_policy("docs/lse-active-first-cohort.json")?;
+    let x030_rtc_proof = read_policy("docs/lse-active-rtc-admission.json")?;
+    let f020_proof = read_policy("docs/lse-active-f020.json")?;
+    let f020_rtc_proof = read_policy("docs/lse-active-f020-rtc-admission.json")?;
+    let l031_proof = read_policy("docs/lse-active-l031.json")?;
+    let l031_rtc_proof = read_policy("docs/lse-active-l031-rtc-admission.json")?;
+    let r031_proof = read_policy("docs/lse-active-r031.json")?;
+    let r031_rtc_proof = read_policy("docs/lse-active-r031-rtc-admission.json")?;
+    let w031_proof = read_policy("docs/lse-active-w031.json")?;
+    let w031_rtc_proof = read_policy("docs/lse-active-w031-rtc-admission.json")?;
+    let own_proof = |family: &str| -> Result<(&Value, &Value)> {
+        Ok(match family {
+            "CW32A030" | "CW32F030" => (&x030_proof, &x030_rtc_proof),
+            "CW32F020" => (&f020_proof, &f020_rtc_proof),
+            "CW32L031" => (&l031_proof, &l031_rtc_proof),
+            "CW32R031" => (&r031_proof, &r031_rtc_proof),
+            "CW32W031" => (&w031_proof, &w031_rtc_proof),
+            _ => anyhow::bail!("unreviewed active LSE family"),
+        })
+    };
     for (part, p) in &catalog.parts {
-        validate_lse_configuration(&p.configuration)?;
+        // Equal layouts do not extend another family's source authority.
+        let (proof, rtc_proof) = own_proof(&p.family)?;
+        ensure!(
+            proof["schema_version"] == 1 && rtc_proof["schema_version"] == 1,
+            "unknown LSE review schema"
+        );
+        validate_lse_configuration(part, &p.configuration)?;
+        ensure!(
+            p.configuration.configurable_ccs
+                == matches!(p.family.as_str(), "CW32L031" | "CW32R031" | "CW32W031"),
+            "LSE CCS hardware facts differ from bounded own-family cohort"
+        );
+        let expected_configuration = proof["configurations"]
+            .get(part)
+            .unwrap_or(&proof["configuration"]);
         let mut profile = serde_json::to_value(p)?;
         profile.as_object_mut().unwrap().remove("configuration");
         ensure!(
             profile == proof["parts"][part]
-                && serde_json::to_value(&p.configuration)? == proof["configuration"]
+                && serde_json::to_value(&p.configuration)? == *expected_configuration
                 && serde_json::to_value(&p.configuration.rtc_reset)? == rtc_proof["rtc_reset"],
             "active LSE facts differ from new own-source review"
         );
@@ -989,16 +1031,34 @@ pub fn apply_lse(
     };
     ensure!(
         p.family == line
-            && p.package == "LQFP48"
+            && LSE_PARTS
+                .iter()
+                .any(|(part, family, package)| chip.name == *part
+                    && line == *family
+                    && p.package == *package)
             && p.input_pin == "PC14"
             && p.output_pin == "PC15",
         "LSE cannot derive exact-part qualification from a family alias"
     );
     ensure!(
         chip.packages.len() == 1 && chip.packages[0].package == p.package,
-        "LSE qualification requires the exact LQFP48 package"
+        "LSE qualification requires its reviewed exact package"
     );
-    for (pin, position, alias) in [("PC14", "3", "OSC32_IN"), ("PC15", "4", "OSC32_OUT")] {
+    let (proof, _) = own_proof(line)?;
+    let package_pins = &proof["package_pins"][&chip.name];
+    let input_position = package_pins["input_position"].as_str().unwrap_or("3");
+    let output_position = package_pins["output_position"].as_str().unwrap_or("4");
+    if p.configuration.configurable_ccs {
+        ensure!(
+            package_pins["input_position"].is_string()
+                && package_pins["output_position"].is_string(),
+            "missing own exact-package oscillator positions"
+        );
+    }
+    for (pin, position, alias) in [
+        ("PC14", input_position, "OSC32_IN"),
+        ("PC15", output_position, "OSC32_OUT"),
+    ] {
         ensure!(
             core.pins.iter().any(|p| p.name == pin)
                 && chip.packages[0].pins.iter().any(|p| p.position == position
@@ -1013,16 +1073,34 @@ pub fn apply_lse(
         p.sources.len() == 2,
         "LSE requires own manual and own datasheet"
     );
-    let expected_datasheet = if line == "CW32A030" {
-        "vendor:CW32A030_DataSheet_CN_V1.1.pdf"
-    } else {
-        "vendor:CW32F030_DataSheet_CN_V1.9.pdf"
+    let (expected_manual, expected_datasheet) = match line {
+        "CW32A030" => (
+            "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+            "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+        ),
+        "CW32F030" => (
+            "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+            "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+        ),
+        "CW32F020" => (
+            "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+            "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+        ),
+        "CW32L031" => (
+            "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+            "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+        ),
+        "CW32R031" => (
+            "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+            "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+        ),
+        "CW32W031" => (
+            "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+            "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+        ),
+        _ => anyhow::bail!("unreviewed active LSE family"),
     };
-    for (source, expected) in p
-        .sources
-        .iter()
-        .zip(["vendor:CW32x030_UserManual_CN_V2.5.pdf", expected_datasheet])
-    {
+    for (source, expected) in p.sources.iter().zip([expected_manual, expected_datasheet]) {
         ensure!(
             source.source_ref == expected,
             "LSE requires canonical own-source IDs"
@@ -1057,6 +1135,62 @@ pub fn apply_lse(
         );
     }
     let c = &p.configuration;
+    if c.configurable_ccs {
+        let monitor = &proof["lsi_monitor_prerequisite"];
+        let selectors = &monitor["selector_allowlists_before_disabled_LSI_trim_change"];
+        ensure!(
+            selectors["SYSCTRL.CR0.SYSCLK"] == serde_json::json!([0, 1, 4])
+                && selectors["SYSCTRL.MCO.SOURCE"] == serde_json::json!([0, 1, 2, 3, 5, 6, 8, 9])
+                && selectors["AWT.CR.SRC"] == serde_json::json!([0, 2, 3, 4])
+                && selectors["UARTx.CR2.SOURCE"] == serde_json::json!([0, 1, 2])
+                && selectors["GPIOx.FILTER.FLTCLK"] == serde_json::json!([0, 1, 2, 3, 4, 6, 7]),
+            "cold LSI admission selectors differ from own-source record"
+        );
+        let rtc = core
+            .peripherals
+            .iter()
+            .find(|p| p.name == "RTC")
+            .unwrap()
+            .rtc_calendar
+            .as_ref()
+            .context("missing own RTC calibration metadata")?;
+        ensure!(
+            monitor["factory_trim_halfword_address"] == rtc.factory_trim_address
+                && monitor["trim_bit_offset"] == 0
+                && monitor["trim_bit_size"] == 10
+                && monitor["wait_bit_offset"] == 10
+                && monitor["wait_bit_size"] == 2
+                && monitor["stable_bit"] == 15,
+            "LSI calibration source facts differ from the selected native clock"
+        );
+        let (_, lsi) = lse_register(registers, core, "SYSCTRL", "LSI", 32)?;
+        lse_field(lsi, "TRIM", 0, 10)?;
+        lse_field(lsi, "WAITCYCLE", 10, 2)?;
+        lse_field(lsi, "STABLE", 15, 1)?;
+        let routes = proof["lsi_output_routes_by_part"][&chip.name]
+            .as_array()
+            .context("missing exact-package LSI output roster")?;
+        let bonded = core.pins.iter().any(|p| p.name == "PB11");
+        ensure!(
+            routes.len() == usize::from(bonded),
+            "missing or extraneous bonded LSI route"
+        );
+        if bonded {
+            let route = &routes[0];
+            let position = route["position"]
+                .as_str()
+                .context("missing direct LSI position")?;
+            ensure!(
+                route["pin"] == "PB11"
+                    && route["af"] == 1
+                    && chip.packages[0]
+                        .pins
+                        .iter()
+                        .any(|p| p.position == position && p.signals.iter().any(|s| s == "PB11")),
+                "changed exact-package LSI route"
+            );
+        }
+    }
     let (_, cr1) = lse_register(registers, core, "SYSCTRL", "CR1", 4)?;
     for (name, offset, size) in [
         ("LSEEN", 4, 1),
@@ -1145,7 +1279,23 @@ pub fn apply_lse(
     }
     for gpio in ["GPIOB", "GPIOC", "GPIOF"] {
         lse_register(registers, core, gpio, "DIR", c.gpio_dir_offset)?;
-        lse_register(registers, core, gpio, "SPEED", c.gpio_speed_offset)?;
+        if let Some(offset) = c.gpio_speed_offset {
+            lse_register(registers, core, gpio, "SPEED", offset)?;
+        }
+        if c.configurable_ccs {
+            let peripheral = core.peripherals.iter().find(|p| p.name == gpio).unwrap();
+            let selected = peripheral.registers.as_ref().unwrap();
+            let block = &registers[&selected.kind].blocks[&selected.block];
+            let actual: Vec<_> = block
+                .items
+                .iter()
+                .map(|r| serde_json::json!({"register": r.name, "byte_offset": r.byte_offset}))
+                .collect();
+            ensure!(
+                serde_json::to_value(actual)? == proof["gpio_registers"],
+                "GPIO native register roster differs from own-source evidence"
+            );
+        }
         lse_register(registers, core, gpio, "ANALOG", 28)?;
     }
     for (gpio, register, offset, field, bit) in [
@@ -1154,6 +1304,38 @@ pub fn apply_lse(
     ] {
         let (_, fields) = lse_register(registers, core, gpio, register, offset)?;
         lse_field(fields, field, bit, 4)?;
+    }
+    if c.configurable_ccs {
+        let bonded_routes = package_pins["output_routes"]
+            .as_array()
+            .context("missing own-package direct routes")?;
+        ensure!(
+            bonded_routes.len() == c.output_routes.len(),
+            "incomplete package LSE output roster"
+        );
+        for route in bonded_routes {
+            let pin = route["pin"].as_str().context("missing route pin")?;
+            let position = route["position"]
+                .as_str()
+                .context("missing route position")?;
+            ensure!(
+                c.output_routes
+                    .iter()
+                    .any(|r| r.pin == pin && Some(u64::from(r.af)) == route["af"].as_u64())
+                    && chip.packages[0]
+                        .pins
+                        .iter()
+                        .any(|p| p.position == position && p.signals.iter().any(|s| s == pin)),
+                "unbonded or changed own-package direct route"
+            );
+        }
+        for pin in ["PB12", "PF1"] {
+            ensure!(
+                core.pins.iter().any(|p| p.name == pin)
+                    == c.output_routes.iter().any(|r| r.pin == pin),
+                "exact package output route omission"
+            );
+        }
     }
     for route in &c.output_routes {
         ensure!(
@@ -1217,6 +1399,15 @@ mod lse_tests {
         let mut c = catalog();
         c.parts.get_mut("CW32F030C8T7").unwrap().package = "QFN32".into();
         assert!(validate_lse_parts(&c).is_err());
+        for unqualified in ["CW32F020", "CW32F020F6U7", "CW32F020K6U7"] {
+            let mut c = catalog();
+            let p = c.parts.remove("CW32F020C6U7").unwrap();
+            c.parts.insert(unqualified.into(), p);
+            assert!(validate_lse_parts(&c).is_err());
+        }
+        let mut c = catalog();
+        c.parts.get_mut("CW32F020C6U7").unwrap().input_pin = "PC13".into();
+        assert!(validate_lse_parts(&c).is_err());
     }
     #[test]
     fn lse_rejects_malformed_reset_routes_and_sources() {
@@ -1225,28 +1416,55 @@ mod lse_tests {
             .remove("CW32F030C8T7")
             .unwrap()
             .configuration;
-        validate_lse_configuration(&original).unwrap();
+        validate_lse_configuration("CW32F030C8T7", &original).unwrap();
         let mut c = original.clone();
         c.rtc_reset.pop();
-        assert!(validate_lse_configuration(&c).is_err());
+        assert!(validate_lse_configuration("CW32F030C8T7", &c).is_err());
         let mut c = original.clone();
         c.rtc_reset[12] = c.rtc_reset[11].clone();
-        assert!(validate_lse_configuration(&c).is_err());
+        assert!(validate_lse_configuration("CW32F030C8T7", &c).is_err());
         let mut c = original.clone();
         c.rtc_reset[1].mask &= !1;
-        assert!(validate_lse_configuration(&c).is_err());
+        assert!(validate_lse_configuration("CW32F030C8T7", &c).is_err());
         let mut c = original.clone();
         c.output_routes[1] = c.output_routes[0].clone();
-        assert!(validate_lse_configuration(&c).is_err());
+        assert!(validate_lse_configuration("CW32F030C8T7", &c).is_err());
         let mut c = original.clone();
         c.awt_source = 2;
-        assert!(validate_lse_configuration(&c).is_err());
+        assert!(validate_lse_configuration("CW32F030C8T7", &c).is_err());
         let mut c = original.clone();
         c.mco_source = 5;
-        assert!(validate_lse_configuration(&c).is_err());
+        assert!(validate_lse_configuration("CW32F030C8T7", &c).is_err());
         let mut c = original.clone();
         c.gpio_dir_offset = 8;
-        assert!(validate_lse_configuration(&c).is_err());
+        assert!(validate_lse_configuration("CW32F030C8T7", &c).is_err());
+    }
+    #[test]
+    fn lse_compact_package_requires_its_complete_empty_output_roster() {
+        let mut catalog = catalog();
+        let compact = &catalog.parts["CW32L031F8U6"].configuration;
+        validate_lse_configuration("CW32L031F8U6", compact).unwrap();
+        let mut wrong = compact.clone();
+        wrong.output_routes = catalog.parts["CW32L031C8U6"]
+            .configuration
+            .output_routes
+            .clone();
+        assert!(validate_lse_configuration("CW32L031F8U6", &wrong).is_err());
+        assert!(validate_lse_configuration("CW32L031C8U6", compact).is_err());
+        for unqualified in [
+            "CW32L031",
+            "CW32L031F8P6",
+            "CW32L031K8V6",
+            "CW32L031K8U6",
+            "CW32R031",
+            "CW32W031",
+        ] {
+            let p = catalog.parts.remove("CW32L031F8U6").unwrap();
+            catalog.parts.insert(unqualified.into(), p);
+            assert!(validate_lse_parts(&catalog).is_err());
+            let p = catalog.parts.remove(unqualified).unwrap();
+            catalog.parts.insert("CW32L031F8U6".into(), p);
+        }
     }
     #[test]
     fn lse_rejects_preseed_before_package_admission() {

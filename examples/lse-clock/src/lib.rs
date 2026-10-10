@@ -31,7 +31,11 @@ pub fn initial_time() -> hal::rtc::DateTime {
     hal::rtc::DateTime::from(2026, 10, 9, hal::rtc::DayOfWeek::Friday, 12, 0, 0, 0).unwrap()
 }
 pub fn display(rtc: hal::rtc::Rtc<'_>, pin: hal::Peri<'_, hal::peripherals::PA4>) -> ! {
-    let mut indicator = hal::gpio::Output::new(pin, hal::gpio::Level::Low, hal::gpio::Speed::Low);
+    #[cfg(gpio_has_speed)]
+    let speed = hal::gpio::Speed::Low;
+    #[cfg(not(gpio_has_speed))]
+    let speed = hal::gpio::Speed::Default;
+    let mut indicator = hal::gpio::Output::new(pin, hal::gpio::Level::Low, speed);
     let mut previous = None;
     loop {
         let now = rtc.now().unwrap();

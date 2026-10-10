@@ -1,0 +1,60 @@
+--- baseline/cw32-data-serde/src/lib.rs
++++ observed-candidate/cw32-data-serde/src/lib.rs
+@@ -335,6 +335,8 @@
+                         LseConfiguration {
+                             pub nominal_hz: u32,
+             pub maximum_hz: u32,
++    /// True when CLKCCS/HSECCS/LSECCS are configurable hardware controls.
++    pub configurable_ccs: bool,
+                             pub supply_mv: (u16, u16),
+                             pub temperature_c: (i16, i16),
+                             pub startup_cycles: [u32; 4],
+@@ -343,7 +345,7 @@
+                             pub awt_source: u8,
+                             pub mco_source: u8,
+                             pub gpio_dir_offset: u32,
+-                            pub gpio_speed_offset: u32,
++                            pub gpio_speed_offset: Option<u32>,
+                             pub rtc_reset: Vec<LseRtcReset>,
+                             pub output_routes: Vec<LseOutputRoute>,
+                         }
+--- baseline/cw32-metapac-gen/src/data.rs
++++ observed-candidate/cw32-metapac-gen/src/data.rs
+@@ -714,6 +714,8 @@
+ pub struct PeripheralLseConfiguration {
+     pub nominal_hz: u32,
+     pub maximum_hz: u32,
++    /// True when CLKCCS/HSECCS/LSECCS are configurable hardware controls.
++    pub configurable_ccs: bool,
+     pub supply_mv: (u16, u16),
+     pub temperature_c: (i16, i16),
+     pub startup_cycles: [u32; 4],
+@@ -722,7 +724,7 @@
+     pub awt_source: u8,
+     pub mco_source: u8,
+     pub gpio_dir_offset: u32,
+-    pub gpio_speed_offset: u32,
++    pub gpio_speed_offset: Option<u32>,
+     pub rtc_reset: Vec<PeripheralLseRtcReset>,
+     pub output_routes: Vec<PeripheralLseOutputRoute>,
+ }
+--- baseline/cw32-metapac-gen/res/src/metadata.rs
++++ observed-candidate/cw32-metapac-gen/res/src/metadata.rs
+@@ -434,6 +434,8 @@
+ pub struct PeripheralLseConfiguration {
+     pub nominal_hz: u32,
+     pub maximum_hz: u32,
++    /// True when CLKCCS/HSECCS/LSECCS are configurable hardware controls.
++    pub configurable_ccs: bool,
+     pub supply_mv: (u16, u16),
+     pub temperature_c: (i16, i16),
+     pub startup_cycles: &'static [u32; 4],
+@@ -442,7 +444,7 @@
+     pub awt_source: u8,
+     pub mco_source: u8,
+     pub gpio_dir_offset: u32,
+-    pub gpio_speed_offset: u32,
++    pub gpio_speed_offset: Option<u32>,
+     pub rtc_reset: &'static [PeripheralLseRtcReset],
+     pub output_routes: &'static [PeripheralLseOutputRoute],
+ }

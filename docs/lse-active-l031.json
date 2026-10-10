@@ -1,0 +1,1967 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-09",
+  "status": "Own CW32L031 exact-package source qualification; integration and independent software review recorded separately; no silicon claim.",
+  "scope": "Only CW32L031C8T6, CW32L031C8U6, CW32L031F8U6. Nominal 32768 Hz crystal or bypass. Family aliases and every unlisted package are excluded.",
+  "sources": [
+    {
+      "citation_ref": "l031_lse_and_retained_consumers",
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "pdf_pages_1_based": [
+        47,
+        48,
+        52,
+        53,
+        54,
+        56,
+        58,
+        59,
+        64,
+        67,
+        68,
+        71,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        89,
+        91,
+        92,
+        93,
+        142,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153,
+        154,
+        165,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        188,
+        303,
+        304,
+        353,
+        433,
+        459
+      ],
+      "printed_pages": [
+        46,
+        47,
+        51,
+        52,
+        53,
+        55,
+        57,
+        58,
+        63,
+        66,
+        67,
+        70,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        88,
+        90,
+        91,
+        92,
+        141,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153,
+        164,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186,
+        187,
+        302,
+        303,
+        352,
+        432,
+        458
+      ]
+    },
+    {
+      "citation_ref": "l031_exact_packages_pads_routes_electrical",
+      "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+      "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+      "pdf_pages_1_based": [
+        5,
+        8,
+        10,
+        26,
+        27,
+        30,
+        38,
+        45,
+        46,
+        64,
+        66,
+        68,
+        71,
+        73,
+        75,
+        77,
+        78
+      ],
+      "printed_pages": [
+        4,
+        7,
+        9,
+        25,
+        26,
+        29,
+        37,
+        44,
+        45,
+        63,
+        65,
+        67,
+        70,
+        72,
+        74,
+        76,
+        77
+      ]
+    }
+  ],
+  "configuration": {
+    "nominal_hz": 32768,
+    "supply_mv": [
+      1650,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "startup_cycles": [
+      256,
+      1024,
+      4096,
+      16384
+    ],
+    "rtc_source": 0,
+    "uart_source": 2,
+    "awt_source": 3,
+    "mco_source": 6,
+    "gpio_dir_offset": 0,
+    "gpio_speed_offset": null,
+    "rtc_reset": [
+      {
+        "register": "CR0",
+        "byte_offset": 4,
+        "value": 0,
+        "mask": 239
+      },
+      {
+        "register": "CR1",
+        "byte_offset": 8,
+        "value": 0,
+        "mask": 1795
+      },
+      {
+        "register": "CR2",
+        "byte_offset": 12,
+        "value": 0,
+        "mask": 1791
+      },
+      {
+        "register": "COMPEN",
+        "byte_offset": 16,
+        "value": 0,
+        "mask": 65535
+      },
+      {
+        "register": "DATE",
+        "byte_offset": 20,
+        "value": 0,
+        "mask": 134217727
+      },
+      {
+        "register": "TIME",
+        "byte_offset": 24,
+        "value": 1179648,
+        "mask": 4161407
+      },
+      {
+        "register": "ALARMA",
+        "byte_offset": 28,
+        "value": 1179648,
+        "mask": 2143289343
+      },
+      {
+        "register": "ALARMB",
+        "byte_offset": 32,
+        "value": 1179648,
+        "mask": 2143289343
+      },
+      {
+        "register": "TAMPDATE",
+        "byte_offset": 36,
+        "value": 0,
+        "mask": 65343
+      },
+      {
+        "register": "TAMPTIME",
+        "byte_offset": 40,
+        "value": 0,
+        "mask": 4161407
+      },
+      {
+        "register": "AWTARR",
+        "byte_offset": 44,
+        "value": 65535,
+        "mask": 65535
+      },
+      {
+        "register": "IER",
+        "byte_offset": 48,
+        "value": 0,
+        "mask": 95
+      },
+      {
+        "register": "ISR",
+        "byte_offset": 52,
+        "value": 0,
+        "mask": 95
+      }
+    ],
+    "output_routes": [
+      {
+        "pin": "PB12",
+        "af": 3
+      },
+      {
+        "pin": "PF1",
+        "af": 1
+      }
+    ],
+    "maximum_hz": 1000000,
+    "configurable_ccs": true
+  },
+  "configurations": {
+    "CW32L031C8T6": {
+      "nominal_hz": 32768,
+      "supply_mv": [
+        1650,
+        5500
+      ],
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "startup_cycles": [
+        256,
+        1024,
+        4096,
+        16384
+      ],
+      "rtc_source": 0,
+      "uart_source": 2,
+      "awt_source": 3,
+      "mco_source": 6,
+      "gpio_dir_offset": 0,
+      "gpio_speed_offset": null,
+      "rtc_reset": [
+        {
+          "register": "CR0",
+          "byte_offset": 4,
+          "value": 0,
+          "mask": 239
+        },
+        {
+          "register": "CR1",
+          "byte_offset": 8,
+          "value": 0,
+          "mask": 1795
+        },
+        {
+          "register": "CR2",
+          "byte_offset": 12,
+          "value": 0,
+          "mask": 1791
+        },
+        {
+          "register": "COMPEN",
+          "byte_offset": 16,
+          "value": 0,
+          "mask": 65535
+        },
+        {
+          "register": "DATE",
+          "byte_offset": 20,
+          "value": 0,
+          "mask": 134217727
+        },
+        {
+          "register": "TIME",
+          "byte_offset": 24,
+          "value": 1179648,
+          "mask": 4161407
+        },
+        {
+          "register": "ALARMA",
+          "byte_offset": 28,
+          "value": 1179648,
+          "mask": 2143289343
+        },
+        {
+          "register": "ALARMB",
+          "byte_offset": 32,
+          "value": 1179648,
+          "mask": 2143289343
+        },
+        {
+          "register": "TAMPDATE",
+          "byte_offset": 36,
+          "value": 0,
+          "mask": 65343
+        },
+        {
+          "register": "TAMPTIME",
+          "byte_offset": 40,
+          "value": 0,
+          "mask": 4161407
+        },
+        {
+          "register": "AWTARR",
+          "byte_offset": 44,
+          "value": 65535,
+          "mask": 65535
+        },
+        {
+          "register": "IER",
+          "byte_offset": 48,
+          "value": 0,
+          "mask": 95
+        },
+        {
+          "register": "ISR",
+          "byte_offset": 52,
+          "value": 0,
+          "mask": 95
+        }
+      ],
+      "output_routes": [
+        {
+          "pin": "PB12",
+          "af": 3
+        },
+        {
+          "pin": "PF1",
+          "af": 1
+        }
+      ],
+      "maximum_hz": 1000000,
+      "configurable_ccs": true
+    },
+    "CW32L031C8U6": {
+      "nominal_hz": 32768,
+      "supply_mv": [
+        1650,
+        5500
+      ],
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "startup_cycles": [
+        256,
+        1024,
+        4096,
+        16384
+      ],
+      "rtc_source": 0,
+      "uart_source": 2,
+      "awt_source": 3,
+      "mco_source": 6,
+      "gpio_dir_offset": 0,
+      "gpio_speed_offset": null,
+      "rtc_reset": [
+        {
+          "register": "CR0",
+          "byte_offset": 4,
+          "value": 0,
+          "mask": 239
+        },
+        {
+          "register": "CR1",
+          "byte_offset": 8,
+          "value": 0,
+          "mask": 1795
+        },
+        {
+          "register": "CR2",
+          "byte_offset": 12,
+          "value": 0,
+          "mask": 1791
+        },
+        {
+          "register": "COMPEN",
+          "byte_offset": 16,
+          "value": 0,
+          "mask": 65535
+        },
+        {
+          "register": "DATE",
+          "byte_offset": 20,
+          "value": 0,
+          "mask": 134217727
+        },
+        {
+          "register": "TIME",
+          "byte_offset": 24,
+          "value": 1179648,
+          "mask": 4161407
+        },
+        {
+          "register": "ALARMA",
+          "byte_offset": 28,
+          "value": 1179648,
+          "mask": 2143289343
+        },
+        {
+          "register": "ALARMB",
+          "byte_offset": 32,
+          "value": 1179648,
+          "mask": 2143289343
+        },
+        {
+          "register": "TAMPDATE",
+          "byte_offset": 36,
+          "value": 0,
+          "mask": 65343
+        },
+        {
+          "register": "TAMPTIME",
+          "byte_offset": 40,
+          "value": 0,
+          "mask": 4161407
+        },
+        {
+          "register": "AWTARR",
+          "byte_offset": 44,
+          "value": 65535,
+          "mask": 65535
+        },
+        {
+          "register": "IER",
+          "byte_offset": 48,
+          "value": 0,
+          "mask": 95
+        },
+        {
+          "register": "ISR",
+          "byte_offset": 52,
+          "value": 0,
+          "mask": 95
+        }
+      ],
+      "output_routes": [
+        {
+          "pin": "PB12",
+          "af": 3
+        },
+        {
+          "pin": "PF1",
+          "af": 1
+        }
+      ],
+      "maximum_hz": 1000000,
+      "configurable_ccs": true
+    },
+    "CW32L031F8U6": {
+      "nominal_hz": 32768,
+      "supply_mv": [
+        1650,
+        5500
+      ],
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "startup_cycles": [
+        256,
+        1024,
+        4096,
+        16384
+      ],
+      "rtc_source": 0,
+      "uart_source": 2,
+      "awt_source": 3,
+      "mco_source": 6,
+      "gpio_dir_offset": 0,
+      "gpio_speed_offset": null,
+      "rtc_reset": [
+        {
+          "register": "CR0",
+          "byte_offset": 4,
+          "value": 0,
+          "mask": 239
+        },
+        {
+          "register": "CR1",
+          "byte_offset": 8,
+          "value": 0,
+          "mask": 1795
+        },
+        {
+          "register": "CR2",
+          "byte_offset": 12,
+          "value": 0,
+          "mask": 1791
+        },
+        {
+          "register": "COMPEN",
+          "byte_offset": 16,
+          "value": 0,
+          "mask": 65535
+        },
+        {
+          "register": "DATE",
+          "byte_offset": 20,
+          "value": 0,
+          "mask": 134217727
+        },
+        {
+          "register": "TIME",
+          "byte_offset": 24,
+          "value": 1179648,
+          "mask": 4161407
+        },
+        {
+          "register": "ALARMA",
+          "byte_offset": 28,
+          "value": 1179648,
+          "mask": 2143289343
+        },
+        {
+          "register": "ALARMB",
+          "byte_offset": 32,
+          "value": 1179648,
+          "mask": 2143289343
+        },
+        {
+          "register": "TAMPDATE",
+          "byte_offset": 36,
+          "value": 0,
+          "mask": 65343
+        },
+        {
+          "register": "TAMPTIME",
+          "byte_offset": 40,
+          "value": 0,
+          "mask": 4161407
+        },
+        {
+          "register": "AWTARR",
+          "byte_offset": 44,
+          "value": 65535,
+          "mask": 65535
+        },
+        {
+          "register": "IER",
+          "byte_offset": 48,
+          "value": 0,
+          "mask": 95
+        },
+        {
+          "register": "ISR",
+          "byte_offset": 52,
+          "value": 0,
+          "mask": 95
+        }
+      ],
+      "output_routes": [],
+      "maximum_hz": 1000000,
+      "configurable_ccs": true
+    }
+  },
+  "parts": {
+    "CW32L031C8T6": {
+      "family": "CW32L031",
+      "package": "LQFP48",
+      "input_pin": "PC14",
+      "output_pin": "PC15",
+      "sources": [
+        {
+          "citation_ref": "l031_lse_and_retained_consumers",
+          "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+          "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+          "pdf_pages_1_based": [
+            47,
+            48,
+            52,
+            53,
+            54,
+            56,
+            58,
+            59,
+            64,
+            67,
+            68,
+            71,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            89,
+            91,
+            92,
+            93,
+            142,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            165,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            303,
+            304,
+            353,
+            433,
+            459
+          ],
+          "printed_pages": [
+            46,
+            47,
+            51,
+            52,
+            53,
+            55,
+            57,
+            58,
+            63,
+            66,
+            67,
+            70,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            88,
+            90,
+            91,
+            92,
+            141,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            164,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            302,
+            303,
+            352,
+            432,
+            458
+          ]
+        },
+        {
+          "citation_ref": "l031_exact_packages_pads_routes_electrical",
+          "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+          "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+          "pdf_pages_1_based": [
+            5,
+            8,
+            10,
+            26,
+            27,
+            30,
+            38,
+            45,
+            46,
+            64,
+            66,
+            68,
+            71,
+            73,
+            75,
+            77,
+            78
+          ],
+          "printed_pages": [
+            4,
+            7,
+            9,
+            25,
+            26,
+            29,
+            37,
+            44,
+            45,
+            63,
+            65,
+            67,
+            70,
+            72,
+            74,
+            76,
+            77
+          ]
+        }
+      ]
+    },
+    "CW32L031C8U6": {
+      "family": "CW32L031",
+      "package": "QFN48",
+      "input_pin": "PC14",
+      "output_pin": "PC15",
+      "sources": [
+        {
+          "citation_ref": "l031_lse_and_retained_consumers",
+          "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+          "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+          "pdf_pages_1_based": [
+            47,
+            48,
+            52,
+            53,
+            54,
+            56,
+            58,
+            59,
+            64,
+            67,
+            68,
+            71,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            89,
+            91,
+            92,
+            93,
+            142,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            165,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            303,
+            304,
+            353,
+            433,
+            459
+          ],
+          "printed_pages": [
+            46,
+            47,
+            51,
+            52,
+            53,
+            55,
+            57,
+            58,
+            63,
+            66,
+            67,
+            70,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            88,
+            90,
+            91,
+            92,
+            141,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            164,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            302,
+            303,
+            352,
+            432,
+            458
+          ]
+        },
+        {
+          "citation_ref": "l031_exact_packages_pads_routes_electrical",
+          "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+          "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+          "pdf_pages_1_based": [
+            5,
+            8,
+            10,
+            26,
+            27,
+            30,
+            38,
+            45,
+            46,
+            64,
+            66,
+            68,
+            71,
+            73,
+            75,
+            77,
+            78
+          ],
+          "printed_pages": [
+            4,
+            7,
+            9,
+            25,
+            26,
+            29,
+            37,
+            44,
+            45,
+            63,
+            65,
+            67,
+            70,
+            72,
+            74,
+            76,
+            77
+          ]
+        }
+      ]
+    },
+    "CW32L031F8U6": {
+      "family": "CW32L031",
+      "package": "QFN20",
+      "input_pin": "PC14",
+      "output_pin": "PC15",
+      "sources": [
+        {
+          "citation_ref": "l031_lse_and_retained_consumers",
+          "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+          "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+          "pdf_pages_1_based": [
+            47,
+            48,
+            52,
+            53,
+            54,
+            56,
+            58,
+            59,
+            64,
+            67,
+            68,
+            71,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            82,
+            89,
+            91,
+            92,
+            93,
+            142,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            154,
+            165,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            188,
+            303,
+            304,
+            353,
+            433,
+            459
+          ],
+          "printed_pages": [
+            46,
+            47,
+            51,
+            52,
+            53,
+            55,
+            57,
+            58,
+            63,
+            66,
+            67,
+            70,
+            72,
+            73,
+            74,
+            75,
+            76,
+            77,
+            78,
+            79,
+            80,
+            81,
+            88,
+            90,
+            91,
+            92,
+            141,
+            144,
+            145,
+            146,
+            147,
+            148,
+            149,
+            150,
+            151,
+            152,
+            153,
+            164,
+            167,
+            168,
+            169,
+            170,
+            171,
+            172,
+            173,
+            174,
+            175,
+            176,
+            177,
+            178,
+            179,
+            180,
+            181,
+            182,
+            183,
+            184,
+            185,
+            186,
+            187,
+            302,
+            303,
+            352,
+            432,
+            458
+          ]
+        },
+        {
+          "citation_ref": "l031_exact_packages_pads_routes_electrical",
+          "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+          "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+          "pdf_pages_1_based": [
+            5,
+            8,
+            10,
+            26,
+            27,
+            30,
+            38,
+            45,
+            46,
+            64,
+            66,
+            68,
+            71,
+            73,
+            75,
+            77,
+            78
+          ],
+          "printed_pages": [
+            4,
+            7,
+            9,
+            25,
+            26,
+            29,
+            37,
+            44,
+            45,
+            63,
+            65,
+            67,
+            70,
+            72,
+            74,
+            76,
+            77
+          ]
+        }
+      ]
+    }
+  },
+  "package_pins": {
+    "CW32L031C8T6": {
+      "input_position": "3",
+      "output_position": "4",
+      "output_routes": [
+        {
+          "pin": "PB12",
+          "af": 3,
+          "position": "25"
+        },
+        {
+          "pin": "PF1",
+          "af": 1,
+          "position": "6"
+        }
+      ]
+    },
+    "CW32L031C8U6": {
+      "input_position": "3",
+      "output_position": "4",
+      "output_routes": [
+        {
+          "pin": "PB12",
+          "af": 3,
+          "position": "25"
+        },
+        {
+          "pin": "PF1",
+          "af": 1,
+          "position": "6"
+        }
+      ]
+    },
+    "CW32L031F8U6": {
+      "input_position": "1",
+      "output_position": "2",
+      "output_routes": []
+    }
+  },
+  "rejected_parts": {
+    "CW32L031": "Family alias is not an exact package.",
+    "CW32L031F8P6": "TSSOP20 lacks PC14/PC15 OSC32 pads.",
+    "CW32L031K8U6": "QFN32 5x5 lacks PC14/PC15 OSC32 pads.",
+    "CW32L031K8V6": "QFN32 4x4 lacks PC14/PC15 OSC32 pads."
+  },
+  "configuration_selection_policy": "Use configurations[exact_part] only after exact-package admission. Family-level configuration records common defaults, not family-wide authorization.",
+  "electrical": {
+    "maximum_oscillator_hz": 1000000,
+    "bypass_duty_percent": [
+      45,
+      55
+    ],
+    "bypass_minimum_high_low_ns": 450,
+    "bypass_maximum_rise_fall_ns": 50,
+    "bypass_high_level_vddio_percent": [
+      70,
+      100
+    ],
+    "bypass_low_level_vddio_percent": [
+      0,
+      30
+    ],
+    "crystal_startup_typical_ms": 1500,
+    "crystal_startup_maximum_ms": null,
+    "board_per_cycle_bounds_required": true,
+    "conditions": "1650..5500 mV, -40..85 C, VDDA=VDD. Crystal loading, parasitics, drive, amplitude, supply, aging and every-cycle frequency bounds remain board qualifications; no RF operation qualification."
+  },
+  "gpio_registers": [
+    {
+      "register": "DIR",
+      "byte_offset": 0
+    },
+    {
+      "register": "OPENDRAIN",
+      "byte_offset": 4
+    },
+    {
+      "register": "PDR",
+      "byte_offset": 12
+    },
+    {
+      "register": "PUR",
+      "byte_offset": 16
+    },
+    {
+      "register": "AFRH",
+      "byte_offset": 20
+    },
+    {
+      "register": "AFRL",
+      "byte_offset": 24
+    },
+    {
+      "register": "ANALOG",
+      "byte_offset": 28
+    },
+    {
+      "register": "RISEIE",
+      "byte_offset": 36
+    },
+    {
+      "register": "FALLIE",
+      "byte_offset": 40
+    },
+    {
+      "register": "ISR",
+      "byte_offset": 52
+    },
+    {
+      "register": "ICR",
+      "byte_offset": 56
+    },
+    {
+      "register": "FILTER",
+      "byte_offset": 64
+    },
+    {
+      "register": "IDR",
+      "byte_offset": 80
+    },
+    {
+      "register": "ODR",
+      "byte_offset": 84
+    },
+    {
+      "register": "BRR",
+      "byte_offset": 88
+    },
+    {
+      "register": "BSRR",
+      "byte_offset": 92
+    },
+    {
+      "register": "TOG",
+      "byte_offset": 96
+    }
+  ],
+  "gpio_register_source": {
+    "citation_ref": "l031_complete_native_gpio_roster",
+    "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+    "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+    "pdf_pages_1_based": [
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153,
+      154
+    ],
+    "printed_pages": [
+      144,
+      145,
+      146,
+      147,
+      148,
+      149,
+      150,
+      151,
+      152,
+      153
+    ]
+  },
+  "gpio_absent_registers": [
+    "SPEED",
+    "LOCK",
+    "HIGHIE",
+    "LOWIE"
+  ],
+  "gpio_access_policy": "Project checks only for the documented native roster; never read/write reserved SPEED/LOCK/HIGHIE/LOWIE addresses. The source GPIO map and own device header independently confirm absence. DIR=1 input, ANALOG=1 analog, AFRH/L hold retained routes. Inspect documented pull, open-drain, filter and edge-interrupt controls.",
+  "gate_reset_registers": [
+    {
+      "register": "AHBEN",
+      "byte_offset": 48,
+      "active_high": true,
+      "bits": {
+        "GPIOA": 4,
+        "GPIOB": 5,
+        "GPIOC": 6,
+        "GPIOF": 9
+      }
+    },
+    {
+      "register": "APBEN1",
+      "byte_offset": 56,
+      "active_high": true,
+      "bits": {
+        "RTC": 3,
+        "UART2": 7,
+        "UART3": 8
+      }
+    },
+    {
+      "register": "APBEN2",
+      "byte_offset": 52,
+      "active_high": true,
+      "bits": {
+        "AWT": 13,
+        "UART1": 9
+      }
+    },
+    {
+      "register": "AHBRST",
+      "byte_offset": 64,
+      "reset_asserted_value": 0,
+      "bits": {
+        "GPIOA": 4,
+        "GPIOB": 5,
+        "GPIOC": 6,
+        "GPIOF": 9
+      }
+    },
+    {
+      "register": "APBRST1",
+      "byte_offset": 72,
+      "reset_asserted_value": 0,
+      "bits": {
+        "RTC": 3,
+        "UART2": 7,
+        "UART3": 8
+      }
+    },
+    {
+      "register": "APBRST2",
+      "byte_offset": 68,
+      "reset_asserted_value": 0,
+      "bits": {
+        "AWT": 13,
+        "UART1": 9
+      }
+    }
+  ],
+  "consumer_selectors": [
+    {
+      "peripheral": "RTC",
+      "register": "CR1",
+      "byte_offset": 8,
+      "field": "SOURCE",
+      "bit_offset": 8,
+      "bit_size": 3,
+      "lse_value": 0,
+      "reserved_values": [
+        1,
+        3
+      ],
+      "admission": "Full pristine RTC snapshot required for every SOURCE due independent compensation."
+    },
+    {
+      "peripheral": "AWT",
+      "register": "CR",
+      "byte_offset": 0,
+      "field": "SRC",
+      "bit_offset": 8,
+      "bit_size": 3,
+      "lse_value": 3,
+      "admission": "Reject retained selection regardless of EN."
+    },
+    {
+      "peripherals": [
+        "UART1",
+        "UART2",
+        "UART3"
+      ],
+      "register": "CR2",
+      "byte_offset": 4,
+      "field": "SOURCE",
+      "bit_offset": 8,
+      "bit_size": 2,
+      "lse_value": 2,
+      "admission": "Reject retained selection regardless of transmission state."
+    },
+    {
+      "peripheral": "SYSCTRL",
+      "register": "MCO",
+      "byte_offset": 112,
+      "field": "SOURCE",
+      "bit_offset": 0,
+      "bit_size": 4,
+      "lse_value": 6,
+      "admission": "Reject retained selection regardless of output pad state."
+    }
+  ],
+  "semantics": {
+    "mode": "Own RM PDF52-53: MODE=0 crystal requires OSC32_IN/OUT analog; MODE=1 bypass requires OSC32_IN digital input and permits OSC32_OUT GPIO. Both <=1 MHz; this cohort retains nominal 32768 Hz.",
+    "enable_lock": "CR1 PDF68: KEY=0x5A5A in bits31:16; LSEEN bit4, LSELOCK bit5, LSECCS bit6. LSELOCK only blocks software clearing LSEEN. It is not a pad or parameter lock; do not claim the lock itself is a POR-only irreversible latch.",
+    "configurable_ccs": "Own CR1 PDF68 defines CLKCCS bit8, HSECCS bit7 and LSECCS bit6 as configurable 0/1 controls. Unlike x030/F020 mandatory-write-one evidence, unrelated CLKCCS/HSECCS must be preserved by this bounded LSE operation.",
+    "monitor_policy": "On a new admitted source start, enable only its LSECCS while preserving CLKCCS/HSECCS and unrelated CR1 controls. Exact enabled reuse must already have LSECCS and stable unchanged LSI; reject incompatible inherited monitor policy without repairing it. This is the proposed software health contract.",
+    "failure": "Own PDF58-59: startup windows 1/1/1/2 seconds count 256/1024/4096/16384 LSE edges. Running detector needs software-enabled LSI: 128 LSE edges per 256 LSI cycles. STABLE is not a frequency measurement; SYSCLK fallback to HSI establishes no RTC fallback or elapsed-time continuity.",
+    "gpio": "Own RM PDF145-154: DIR+0, ANALOG+0x1C; no SPEED, LOCK, HIGHIE, LOWIE. No LSE PINLOCK field. Never manufacture those registers from another family.",
+    "gate_reset": "Own SYSCTRL PDF77-82: gates active-high, reset active-low. APBEN1/APBEN2 offsets are 0x38/0x34; APBRST1/APBRST2 are 0x48/0x44. Gate inspection needs open/readback/restore without reset or retained-user writes.",
+    "consumers": "RTC full pristine snapshot regardless of SOURCE; standalone AWT SRC3 irrespective EN; all UART SOURCE2; MCO SOURCE6; only exact bonded direct routes PB12 AF3/PF1 AF1. L031F8U6 has neither direct output pad. No reset, flag clear or retained-consumer reconfiguration during admission."
+  },
+  "independent_rtc_compensation_consumer": {
+    "citation_ref": "l031_compensated_1hz",
+    "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+    "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+    "pdf_pages_1_based": [
+      172
+    ],
+    "printed_pages": [
+      171
+    ],
+    "condition": "Table12-3: COMPEN.EN=1 and CR0.RTC1HZ=01 outputs compensated LSE 1Hz independently of CR1.SOURCE. Controls-first pristine RTC required for every SOURCE before starting a disabled LSE."
+  },
+  "lsi_monitor_prerequisite": {
+    "source": {
+      "citation_ref": "l031_lsi_cold_start_and_calibration",
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "pdf_pages_1_based": [
+        54,
+        56,
+        59,
+        64,
+        68,
+        71
+      ],
+      "printed_pages": [
+        53,
+        55,
+        58,
+        63,
+        67,
+        70
+      ]
+    },
+    "cr1_reset": 1,
+    "lsi_enabled_after_por": false,
+    "lsi_register_offset": 32,
+    "lsi_register_reset": null,
+    "trim_bit_offset": 0,
+    "trim_bit_size": 10,
+    "wait_bit_offset": 10,
+    "wait_bit_size": 2,
+    "stable_bit": 15,
+    "wait_encoding_cycles": [
+      6,
+      18,
+      66,
+      258
+    ],
+    "factory_trim_halfword_address": 1051138,
+    "factory_trim_address_hex": "0x00100A02",
+    "nominal_hz": 32800,
+    "documented_operating_range_percent": [
+      -10,
+      10
+    ],
+    "facts": "The own manual leaves the full LSI reset value unspecified, requires parameters before enable, forbids parameter changes after enable, and specifies reading the factory flash calibration value into LSI.TRIM. Own SystemInit performs that load; own RCC_LSI_Enable repeats it and sets WAITCYCLE=3 before enable.",
+    "bounded_admission_recommendation": "Preserve inherited enabled LSI without any trim/wait write. For disabled LSI whose TRIM already equals the masked factory halfword, preserve all parameters and permit software enable after rejecting LSIRDY enable/pending state; retained consumers are not reconfigured. Only when TRIM differs, require repeated unchanged disabled/nonstable state and no selected retained user, then write only factory TRIM while preserving WAIT and every other bit; read back before enable. Then enable and poll STABLE with a bounded attempt count. This is a conservative software admission policy inferred from documented enable/calibration/consumer controls, not a separate hardware STOP guarantee.",
+    "stop_observability": {
+      "dedicated_stopped_bit": false,
+      "LSIEN_zero": "Documented disabled control state; never sufficient by itself for ownership release.",
+      "STABLE_zero": "Not stable; it does not independently prove physical stopping.",
+      "software_guard": "Before changing mismatched TRIM, require CR1.LSIEN=0, LSI.STABLE=0 and ISR.LSISTABLE=0 in repeated unchanged snapshots, with all documented retained selectors and detector users absent. Do not clear sticky LSIRDY or use it as the live status."
+    },
+    "lsi_consumer_source": {
+      "citation_ref": "l031_lsi_consumers_and_nonconsumers",
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "pdf_pages_1_based": [
+        47,
+        48,
+        54,
+        59,
+        67,
+        68,
+        71,
+        75,
+        89,
+        142,
+        150,
+        165,
+        172,
+        180,
+        303,
+        304,
+        353,
+        433,
+        459
+      ],
+      "printed_pages": [
+        46,
+        47,
+        53,
+        58,
+        66,
+        67,
+        70,
+        74,
+        88,
+        141,
+        149,
+        164,
+        171,
+        179,
+        302,
+        303,
+        352,
+        432,
+        458
+      ]
+    },
+    "retained_users_to_reject_before_disabled_LSI_trim_change": [
+      {
+        "block": "SYSCTRL",
+        "register": "CR0",
+        "byte_offset": 0,
+        "field": "SYSCLK",
+        "bit_offset": 0,
+        "bit_size": 3,
+        "value": 3
+      },
+      {
+        "block": "SYSCTRL",
+        "register": "CR1",
+        "byte_offset": 4,
+        "fields": [
+          "HSECCS",
+          "LSECCS"
+        ],
+        "bit_offsets": [
+          7,
+          6
+        ],
+        "reject_if_any_set": true
+      },
+      {
+        "block": "SYSCTRL",
+        "register": "MCO",
+        "byte_offset": 112,
+        "field": "SOURCE",
+        "bit_offset": 0,
+        "bit_size": 4,
+        "value": 4
+      },
+      {
+        "block": "RTC",
+        "register": "CR1",
+        "byte_offset": 8,
+        "field": "SOURCE",
+        "bit_offset": 8,
+        "bit_size": 3,
+        "value": 2,
+        "policy": "The existing full pristine RTC requirement already rejects this; no START-only shortcut."
+      },
+      {
+        "block": "AWT",
+        "register": "CR",
+        "byte_offset": 0,
+        "field": "SRC",
+        "bit_offset": 8,
+        "bit_size": 3,
+        "value": 1,
+        "policy": "Reject selected LSI regardless of EN."
+      },
+      {
+        "blocks": [
+          "UART1",
+          "UART2",
+          "UART3"
+        ],
+        "register": "CR2",
+        "byte_offset": 4,
+        "field": "SOURCE",
+        "bit_offset": 8,
+        "bit_size": 2,
+        "value": 3
+      },
+      {
+        "blocks": [
+          "GPIOA",
+          "GPIOB",
+          "GPIOC",
+          "GPIOF"
+        ],
+        "register": "FILTER",
+        "byte_offset": 64,
+        "field": "FLTCLK",
+        "bit_offset": 16,
+        "bit_size": 3,
+        "value": 5,
+        "policy": "Conservatively reject the selected LSI clock even if no filter-enable bit is set."
+      },
+      {
+        "block": "GPIOB",
+        "pin": "PB11",
+        "af": 1,
+        "signal": "LSI_OUT",
+        "policy": "Inspect only if bonded on exact package; conservatively reject retained AF1 regardless of pad enable."
+      }
+    ],
+    "selector_allowlists_before_disabled_LSI_trim_change": {
+      "SYSCTRL.CR0.SYSCLK": [
+        0,
+        1,
+        4
+      ],
+      "SYSCTRL.MCO.SOURCE": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        8,
+        9
+      ],
+      "AWT.CR.SRC": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "UARTx.CR2.SOURCE": [
+        0,
+        1,
+        2
+      ],
+      "GPIOx.FILTER.FLTCLK": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7
+      ],
+      "RTC": "Complete pristine 13-register snapshot, not only SOURCE exclusion."
+    },
+    "reserved_selector_policy": "On the mismatched-trim branch, reject raw reserved values before comparing against documented LSI selectors; do not allow enum normalization or a !=LSI-only predicate to admit unknown encodings.",
+    "irq_source": {
+      "citation_ref": "l031_lsi_ready_irq_and_nmi",
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "pdf_pages_1_based": [
+        74,
+        75,
+        91,
+        92,
+        93
+      ],
+      "printed_pages": [
+        73,
+        74,
+        90,
+        91,
+        92
+      ]
+    },
+    "interrupt_policy": {
+      "SYSCTRL_IER_byte_offset": 12,
+      "SYSCTRL_ISR_byte_offset": 16,
+      "LSIRDY_bit": 3,
+      "reject_before_disabled_LSI_start": [
+        "IER.LSIRDY=1",
+        "ISR.LSIRDY=1"
+      ],
+      "no_acknowledgement": "Never clear an inherited LSIRDY flag or alter IRQ enables to manufacture admission.",
+      "RCC_external_irq": 4,
+      "RCC_vector": 20,
+      "FAULT_external_irq": 31,
+      "FAULT_vector": 47,
+      "NMI": "Each own manual explicitly says NMI is unused.",
+      "concurrency": "Hold maskable-IRQ exclusion across repeated inspection, trim write, enable and readback. PRIMASK does not mask NMI/HardFault; this evidence does not justify arbitrary concurrent external writers. Reset flags remain untouched."
+    },
+    "nonconsumers": {
+      "IWDT": "Own IWDT uses dedicated RC10K, not LSI; do not require IWDT.RUN=0 to establish LSI idleness.",
+      "ADC": "ADC clock is PCLK divided by 1..128; no LSI selector. SYSCLK!=LSI removes the indirect dependency.",
+      "VC_LVD": "Dedicated RC150K filters; no additional direct LSI selector found in the complete own-manual LSI scan."
+    },
+    "cold_start_sequence": [
+      "Finish ordinary LSE preflight, exact package checks, pristine RTC and gate/reset inspection before LSI or oscillator/pad mutation.",
+      "For enabled LSI, preserve all parameters; reject unstable state or incompatible inherited monitor conditions. Never stop or retune it.",
+      "For disabled LSI with factory-matching TRIM, do not write TRIM/WAIT or inspect/reconfigure otherwise retained users; reject existing LSIRDY enable/pending, then enable and verify unchanged parameters. Starting previously disabled LSI can resume selected consumers and does not establish earlier elapsed-time continuity.",
+      "For disabled LSI with mismatched TRIM, inspect the complete listed retained-user set through checked temporary configuration gates; reject asserted reset or readback failure and restore gates. Reject reserved source encodings and existing IER.LSIRDY/ISR.LSIRDY without clearing them. Hold maskable-IRQ exclusion. Capture CR0/CR1/LSI/live ISR state twice, require unchanged disabled/nonstable source and absent users. GPIOA also needs AHBEN/AHBRST bit4.",
+      "Read the immutable factory halfword at 0x00100A02; its low ten bits are TRIM. Recheck the disabled state immediately before mutation. Preserve matching trim and WAIT; otherwise update only TRIM and verify exact low-ten-bit readback while still disabled.",
+      "Enable only LSIEN using CR1 KEY while preserving CCS, other enables and lock state. Bounded-poll LSI.STABLE and verify preserved trim/wait plus LSIEN. Do not use attempt counts as milliseconds.",
+      "After stable monitored prerequisites exist, configure/start LSE under its separate no-retained-user guard and enable only LSECCS, preserving CLKCCS/HSECCS. Freeze/readback the LSI parameters for later source-health checks.",
+      "Failure is bounded and does not stop/reset/reconfigure any inherited source or clear flags. Revalidation and any concurrency exclusion must be enforced by the implementation."
+    ],
+    "health_policy": "The monitored held source requires LSECCS=1, LSIEN=1, LSI.STABLE=1, and unchanged LSI TRIM/WAIT; STABLE alone is not a measured LSI frequency."
+  },
+  "lsi_output_routes_by_part": {
+    "CW32L031C8T6": [
+      {
+        "pin": "PB11",
+        "af": 1,
+        "position": "22"
+      }
+    ],
+    "CW32L031C8U6": [
+      {
+        "pin": "PB11",
+        "af": 1,
+        "position": "22"
+      }
+    ],
+    "CW32L031F8U6": []
+  },
+  "native_enum_curation": {
+    "canonical": "sysctrl_cw32l031_v1.yaml",
+    "source_versions_unchanged": [
+      "sysctrl_cw32l031_v1.yaml"
+    ],
+    "shared_family_applicability": [
+      "CW32L031",
+      "CW32R031",
+      "CW32W031"
+    ],
+    "own_source": {
+      "citation_ref": "l031_lse_parameters",
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "pdf_pages_1_based": [
+        53,
+        73
+      ],
+      "printed_pages": [
+        52,
+        72
+      ]
+    },
+    "fields": [
+      [
+        "LSE",
+        "DRIVER",
+        "LseDrive",
+        0,
+        2
+      ],
+      [
+        "LSE",
+        "AMP",
+        "LseAmplitude",
+        2,
+        2
+      ],
+      [
+        "LSE",
+        "WAITCYCLE",
+        "LseWait",
+        4,
+        2
+      ]
+    ],
+    "encodings": {
+      "LseDrive": [
+        "LEAST",
+        "SMALL",
+        "NORMAL",
+        "STRONG"
+      ],
+      "LseAmplitude": [
+        "LEAST",
+        "SMALL",
+        "NORMAL",
+        "LARGE"
+      ],
+      "LseWait": [
+        "CYCLES256",
+        "CYCLES1024",
+        "CYCLES4096",
+        "CYCLES16384"
+      ]
+    },
+    "values": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "import_policy": "Own-family citations authorize only matching native enum declarations/associations. Preserve field positions, widths, access and existing canonical source-sharing membership; SVD reimports remain review-only raw candidates."
+  },
+  "awt_native_enum": {
+    "canonical": "awt_cw32l031_v1.yaml",
+    "source": {
+      "citation_ref": "l031_awt_lse_selector",
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "pdf_pages_1_based": [
+        165
+      ],
+      "printed_pages": [
+        164
+      ]
+    },
+    "register": "CR",
+    "field": "SRC",
+    "bit_offset": 8,
+    "bit_size": 3,
+    "enum": "Source",
+    "variants": {
+      "HSIOSC": 0,
+      "LSI": 1,
+      "HSE": 2,
+      "LSE": 3,
+      "ETR": 4
+    },
+    "accepted_base_status": "Native Source enum already includes LSE=3; no new AWT public API is required for retained-consumer inspection."
+  },
+  "sdk_corroboration": {
+    "source_ref": "vendor:CW32L031_StandardPeripheralLib_V1.4.zip",
+    "path": "CW32L031_StandardPeripheralLib_V1.4.zip",
+    "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+    "sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d",
+    "bytes": 1822564,
+    "members": [
+      {
+        "member": "Libraries/inc/cw32l031_gpio.h",
+        "member_sha256": "3fd23de982d603dcfc4516dd6ef2202014934164aac351053f79b0aef5b575b7",
+        "bytes": 79188,
+        "matches_restored_member": true,
+        "matches_prior_lock": true
+      },
+      {
+        "member": "Libraries/src/cw32l031_rcc.c",
+        "member_sha256": "05a151cc42c89f9bc6b16e3254b26ff5185be9c6cf5cf034ce42e78bda907dee",
+        "bytes": 27914,
+        "matches_restored_member": true,
+        "matches_prior_lock": true,
+        "function_locator": {
+          "function": "RCC_LSE_Enable",
+          "start_line": 423,
+          "end_line": 458
+        }
+      },
+      {
+        "member": "Libraries/src/cw32l031_rtc.c",
+        "member_sha256": "78916f8531c05b2d4573a997a182f50fb9cae39ea0fe3b98b300fd791e6f9096",
+        "bytes": 19087,
+        "matches_restored_member": true,
+        "matches_prior_lock": true,
+        "function_locator": {
+          "function": "RTC_Init",
+          "start_line": 80,
+          "end_line": 101
+        }
+      },
+      {
+        "member": "Libraries/inc/cw32l031.h",
+        "member_sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27",
+        "bytes": 573927,
+        "provenance": "Read directly from freshly hash-verified official SDK archive; no separate restored-file identity assumed.",
+        "finding": "Own device header confirms GPIO lacks SPEED, LOCK, HIGHIE and LOWIE."
+      },
+      {
+        "member": "Libraries/src/system_cw32l031.c",
+        "member_sha256": "fdcedf0d2fa65e9d42d241d823dd748132b15f737eee8de3f3498bd657542003",
+        "bytes": 1734,
+        "provenance": "Read directly from freshly hash-verified official SDK archive; no separate restored-file identity assumed.",
+        "SystemInit_start_line": 26,
+        "lsi_trim_load_line": 32,
+        "finding": "SystemInit loads the factory calibration halfword at 0x00100A02 into LSI.TRIM. This does not establish that a non-vendor runtime called it."
+      }
+    ]
+  }
+}

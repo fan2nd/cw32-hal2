@@ -3606,7 +3606,17 @@ fn generate_time_driver(out: &mut String, selected: Option<&str>) {
 fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLimits) {
     use cw32_metapac::metadata::{METADATA, ir};
     use std::fmt::Write;
-    let expected = matches!(METADATA.name, "CW32F030C8T7" | "CW32A030C8T7");
+    let expected = matches!(
+        METADATA.name,
+        "CW32F030C8T7"
+            | "CW32A030C8T7"
+            | "CW32F020C6U7"
+            | "CW32L031C8T6"
+            | "CW32L031C8U6"
+            | "CW32L031F8U6"
+            | "CW32R031C8U6"
+            | "CW32W031R8U6"
+    );
     assert_eq!(
         c.lse_configuration.is_some(),
         expected,
@@ -3651,6 +3661,17 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             .find(|f| Some(f.name) == r.fieldset)
             .unwrap()
     };
+    let has_register = |name: &str, reg: &str| {
+        let regs = peripheral(name).registers.as_ref().unwrap();
+        regs.ir
+            .blocks
+            .iter()
+            .find(|b| b.name == regs.block)
+            .unwrap()
+            .items
+            .iter()
+            .any(|r| r.name.eq_ignore_ascii_case(reg))
+    };
     let field = |name: &str, reg: &str, field: &str, bit: u32, width: u32| {
         let f = register(name, reg, None)
             .fields
@@ -3661,6 +3682,16 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         assert_eq!(f.bit_size, width);
         assert!(matches!(&f.bit_offset, ir::BitOffset::Regular(p) if p.offset == bit));
     };
+    assert_eq!(
+        lse.configurable_ccs,
+        matches!(METADATA.line, "CW32L031" | "CW32R031" | "CW32W031")
+    );
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSE_CONFIGURABLE_CCS: bool = {};",
+        lse.configurable_ccs
+    )
+    .unwrap();
     assert_eq!(lse.nominal_hz, 32768);
     assert_eq!(*lse.startup_cycles, [256, 1024, 4096, 16384]);
     writeln!(
@@ -3699,6 +3730,11 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
     }
     field("SYSCTRL", "CR1", "LSEEN", 4, 1);
     field("SYSCTRL", "CR1", "LSELOCK", 5, 1);
+    field("SYSCTRL", "CR1", "LSECCS", 6, 1);
+    field("SYSCTRL", "CR1", "LSIEN", 3, 1);
+    field("SYSCTRL", "LSI", "TRIM", 0, 10);
+    field("SYSCTRL", "LSI", "WAITCYCLE", 10, 2);
+    field("SYSCTRL", "LSI", "STABLE", 15, 1);
     let sysctrl = peripheral("SYSCTRL");
     let pins: Vec<_> = ["LSE_IN", "LSE_OUT"]
         .into_iter()
@@ -3718,7 +3754,11 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
     for (port, bit) in &pins {
         let gpio = format!("GPIO{}", char::from(b'A' + port));
         register(&gpio, "DIR", Some(lse.gpio_dir_offset));
-        register(&gpio, "SPEED", Some(lse.gpio_speed_offset));
+        if let Some(offset) = lse.gpio_speed_offset {
+            register(&gpio, "SPEED", Some(offset));
+        } else {
+            assert!(!has_register(&gpio, "SPEED"));
+        }
         for reg in [
             "DIR",
             "ANALOG",
@@ -3732,6 +3772,10 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             "LOWIE",
             "LOCK",
         ] {
+            if matches!(reg, "LOCK" | "HIGHIE" | "LOWIE") && !has_register(&gpio, reg) {
+                assert!(lse.configurable_ccs);
+                continue;
+            }
             field(&gpio, reg, &format!("PIN{bit}"), u32::from(*bit), 1);
         }
         field(
@@ -3759,7 +3803,10 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             "lowie",
             "lock",
         ] {
-            writeln!(out, "&& !r.{reg}().read().pin{bit}()").unwrap();
+            let gpio = format!("GPIO{}", char::from(b'A' + port));
+            if has_register(&gpio, reg) {
+                writeln!(out, "&& !r.{reg}().read().pin{bit}()").unwrap();
+            }
         }
         out.push_str("}).map_err(|_| crate::rcc::Error::LsePinConflict)?;\n");
         if i == 1 {
@@ -3833,4 +3880,35 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         writeln!(out,"let info = gpio_rcc({port});\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LseClockInUse); }}\nif info.inspect_for_init(cs, timeout, || crate::pac::{gpio}.{afreg}().read().afr{bit}() == {}).map_err(|_| crate::rcc::Error::RetainedClockInspectionTimeout)? {{ return Ok(false); }}",route.af).unwrap();
     }
     out.push_str("Ok(true)\n}\n");
+
+    if lse.configurable_ccs {
+        // Native source fields and full GPIO register rosters are checked by
+        // the own-source qualification before this direct PAC projection.
+        field("SYSCTRL", "CR0", "SYSCLK", 0, 3);
+        field("SYSCTRL", "ISR", "LSISTABLE", 14, 1);
+        field("SYSCTRL", "IER", "LSIRDY", 3, 1);
+        field("SYSCTRL", "ISR", "LSIRDY", 3, 1);
+        out.push_str("pub(crate) fn rcc_lsi_consumers_idle(timeout: u32, cs: critical_section::CriticalSection<'_>) -> Result<bool, crate::rcc::Error> {\nuse crate::rcc::SealedRccPeripheral;\nif !rcc_lse_consumers_idle(timeout, cs)? { return Ok(false); }\nif !matches!(crate::pac::SYSCTRL.cr0().read().sysclk(), crate::pac::sysctrl::vals::Sysclk::Hsi | crate::pac::sysctrl::vals::Sysclk::Hse | crate::pac::sysctrl::vals::Sysclk::Lse) { return Ok(false); }\nif !matches!(crate::pac::SYSCTRL.mco().read().source(), 0..=3 | 5 | 6 | 8 | 9) { return Ok(false); }\n");
+        out.push_str("let info = crate::peripherals::AWT::RCC_INFO;\nif info.reset_asserted() { return Err(crate::rcc::Error::LseClockInUse); }\nif !info.inspect_for_init(cs, timeout, || matches!(crate::pac::AWT.cr().read().src(), crate::pac::awt::vals::Source::Hsiosc | crate::pac::awt::vals::Source::Hse | crate::pac::awt::vals::Source::Lse | crate::pac::awt::vals::Source::Etr)).map_err(|_| crate::rcc::Error::RetainedClockInspectionTimeout)? { return Ok(false); }\n");
+        for uart in METADATA
+            .peripherals
+            .iter()
+            .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == "uart"))
+        {
+            writeln!(out, "let info = crate::peripherals::{}::RCC_INFO;\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LseClockInUse); }}\nif info.inspect_for_init(cs, timeout, || crate::pac::{}.cr2().read().source() == crate::pac::uart::vals::Source::Lsi).map_err(|_| crate::rcc::Error::RetainedClockInspectionTimeout)? {{ return Ok(false); }}", uart.name, uart.name).unwrap();
+        }
+        for gpio in METADATA
+            .peripherals
+            .iter()
+            .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == "gpio"))
+        {
+            field(gpio.name, "FILTER", "FLTCLK", 16, 3);
+            writeln!(out, "let info = crate::peripherals::{}::RCC_INFO;\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LseClockInUse); }}\nif info.inspect_for_init(cs, timeout, || crate::pac::{}.filter().read().fltclk() == 5).map_err(|_| crate::rcc::Error::RetainedClockInspectionTimeout)? {{ return Ok(false); }}", gpio.name, gpio.name).unwrap();
+        }
+        if METADATA.pins.iter().any(|p| p.name == "PB11") {
+            field("GPIOB", "AFRH", "AFR11", 12, 4);
+            out.push_str("let info = crate::peripherals::GPIOB::RCC_INFO;\nif info.reset_asserted() { return Err(crate::rcc::Error::LseClockInUse); }\nif info.inspect_for_init(cs, timeout, || crate::pac::GPIOB.afrh().read().afr11() == 1).map_err(|_| crate::rcc::Error::RetainedClockInspectionTimeout)? { return Ok(false); }\n");
+        }
+        out.push_str("Ok(true)\n}\n");
+    }
 }

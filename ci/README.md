@@ -61,4 +61,4 @@ The new classic API is limited to optional complete pairs, interior duty, fixed
 dead time and global MOE. Its own-PDF/data audit is
 `ci/verify-classic-atim-complementary-data.py`; it runs under `./d audit-current`.
 
-`./ci/check-lse-rtc.sh` builds the ordinary ARM libraries for thirteen family representatives, the F030 alias/unbonded exclusions, both qualified packages with defmt, four LSE firmware links, and fifteen retained calendar firmware links. It does not execute firmware or add HAL tests.
+`./ci/check-lse-rtc.sh` builds the ordinary ARM libraries for thirteen family representatives, the F030 and F020 alias/unbonded exclusions, all eight qualified packages with defmt, sixteen LSE firmware links, and fifteen retained calendar firmware links. It does not execute firmware or add HAL tests.

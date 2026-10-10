@@ -1,8 +1,16 @@
 schema_version: 1
 source_authority: sources/evidence-sources.json
 policies:
-  docs/lse-active-first-cohort.json: 5663730111bf7966331f5e50b58e8e8a24de7d7ab5afc403f1f6290929e0f1e4
+  docs/lse-active-first-cohort.json: 496d687a42124dc86829709738c02d5e4c7424cf6b4637ad73fd977391c18695
   docs/lse-active-rtc-admission.json: 14bab43ef2684c8740aab468fd00145639fe01e8a638ab5eb543e13737ab22b4
+  docs/lse-active-f020.json: 75f3a2854abfcd3ccaca7f2008414826209c743224c07e134dfabc41261b248e
+  docs/lse-active-f020-rtc-admission.json: d82e275bfdb7aef4a00d731020ca124954116a5dd97e1df6ed5b15cefb008f19
+  docs/lse-active-l031.json: 44682eaae85fa70cd68a2341216d249b1ace02e57bea2ceb66a188b32b9bd0cd
+  docs/lse-active-l031-rtc-admission.json: e77dc0c63ca90f31c1aa146c40c9514a5e1b9c341862f0f172bae4629040fe58
+  docs/lse-active-r031.json: d5917be783489ae05b68e5f153a556853c2ddf67c0f60f1ff399bb9e510df0e1
+  docs/lse-active-r031-rtc-admission.json: dd7922ac166e0a0a25d5e7c097b674974de58b171a975856578400b96a2b8c9b
+  docs/lse-active-w031.json: b3a483c5ea1c39b80a59066a6df4ab26da0977d2ae5996ee15f45269555e3f0c
+  docs/lse-active-w031-rtc-admission.json: 7a31fc31eb5b38f31eac64a42f9658b27846e0914c9377362891ff0651d858c2
 parts:
   CW32A030C8T7:
     family: CW32A030
@@ -144,6 +152,7 @@ parts:
       - pin: PF1
         af: 1
       maximum_hz: 1000000
+      configurable_ccs: false
   CW32F030C8T7:
     family: CW32F030
     package: LQFP48
@@ -284,3 +293,1434 @@ parts:
       - pin: PF1
         af: 1
       maximum_hz: 1000000
+      configurable_ccs: false
+  CW32F020C6U7:
+    family: CW32F020
+    package: QFN48
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: f020_lse_and_retained_consumers
+      source_ref: vendor:CW32F020_UserManual_CN_V1.4.pdf
+      sha256: 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed
+      pdf_pages_1_based:
+      - 49
+      - 50
+      - 57
+      - 58
+      - 69
+      - 74
+      - 76
+      - 77
+      - 80
+      - 81
+      - 82
+      - 83
+      - 84
+      - 85
+      - 92
+      - 149
+      - 150
+      - 151
+      - 170
+      - 175
+      - 176
+      - 177
+      - 181
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 189
+      - 190
+      - 191
+      - 192
+      - 295
+      printed_pages:
+      - 48
+      - 49
+      - 56
+      - 57
+      - 68
+      - 73
+      - 75
+      - 76
+      - 79
+      - 80
+      - 81
+      - 82
+      - 83
+      - 84
+      - 91
+      - 148
+      - 149
+      - 150
+      - 169
+      - 174
+      - 175
+      - 176
+      - 180
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 189
+      - 190
+      - 191
+      - 294
+    - citation_ref: f020_qfn48_pads_routes_electrical
+      source_ref: vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf
+      sha256: 1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0
+      pdf_pages_1_based:
+      - 23
+      - 24
+      - 28
+      - 36
+      - 42
+      - 43
+      printed_pages:
+      - 22
+      - 23
+      - 27
+      - 35
+      - 41
+      - 42
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 1650
+      - 5500
+      temperature_c:
+      - -40
+      - 105
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: 3
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: 8
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 1179648
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 3
+      - pin: PF1
+        af: 1
+      maximum_hz: 1000000
+      configurable_ccs: false
+  CW32L031C8T6:
+    family: CW32L031
+    package: LQFP48
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: l031_lse_and_retained_consumers
+      source_ref: vendor:CW32L031_UserManual_CN_V1.6.pdf
+      sha256: 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760
+      pdf_pages_1_based:
+      - 47
+      - 48
+      - 52
+      - 53
+      - 54
+      - 56
+      - 58
+      - 59
+      - 64
+      - 67
+      - 68
+      - 71
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 89
+      - 91
+      - 92
+      - 93
+      - 142
+      - 145
+      - 146
+      - 147
+      - 148
+      - 149
+      - 150
+      - 151
+      - 152
+      - 153
+      - 154
+      - 165
+      - 168
+      - 169
+      - 170
+      - 171
+      - 172
+      - 173
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 180
+      - 181
+      - 182
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 303
+      - 304
+      - 353
+      - 433
+      - 459
+      printed_pages:
+      - 46
+      - 47
+      - 51
+      - 52
+      - 53
+      - 55
+      - 57
+      - 58
+      - 63
+      - 66
+      - 67
+      - 70
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 88
+      - 90
+      - 91
+      - 92
+      - 141
+      - 144
+      - 145
+      - 146
+      - 147
+      - 148
+      - 149
+      - 150
+      - 151
+      - 152
+      - 153
+      - 164
+      - 167
+      - 168
+      - 169
+      - 170
+      - 171
+      - 172
+      - 173
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 180
+      - 181
+      - 182
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 302
+      - 303
+      - 352
+      - 432
+      - 458
+    - citation_ref: l031_exact_packages_pads_routes_electrical
+      source_ref: vendor:CW32L031_DataSheet_CN_V1.9.pdf
+      sha256: 90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855
+      pdf_pages_1_based:
+      - 5
+      - 8
+      - 10
+      - 26
+      - 27
+      - 30
+      - 38
+      - 45
+      - 46
+      - 64
+      - 66
+      - 68
+      - 71
+      - 73
+      - 75
+      - 77
+      - 78
+      printed_pages:
+      - 4
+      - 7
+      - 9
+      - 25
+      - 26
+      - 29
+      - 37
+      - 44
+      - 45
+      - 63
+      - 65
+      - 67
+      - 70
+      - 72
+      - 74
+      - 76
+      - 77
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 1650
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: 3
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 1179648
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 3
+      - pin: PF1
+        af: 1
+      maximum_hz: 1000000
+      configurable_ccs: true
+  CW32L031C8U6:
+    family: CW32L031
+    package: QFN48
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: l031_lse_and_retained_consumers
+      source_ref: vendor:CW32L031_UserManual_CN_V1.6.pdf
+      sha256: 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760
+      pdf_pages_1_based:
+      - 47
+      - 48
+      - 52
+      - 53
+      - 54
+      - 56
+      - 58
+      - 59
+      - 64
+      - 67
+      - 68
+      - 71
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 89
+      - 91
+      - 92
+      - 93
+      - 142
+      - 145
+      - 146
+      - 147
+      - 148
+      - 149
+      - 150
+      - 151
+      - 152
+      - 153
+      - 154
+      - 165
+      - 168
+      - 169
+      - 170
+      - 171
+      - 172
+      - 173
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 180
+      - 181
+      - 182
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 303
+      - 304
+      - 353
+      - 433
+      - 459
+      printed_pages:
+      - 46
+      - 47
+      - 51
+      - 52
+      - 53
+      - 55
+      - 57
+      - 58
+      - 63
+      - 66
+      - 67
+      - 70
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 88
+      - 90
+      - 91
+      - 92
+      - 141
+      - 144
+      - 145
+      - 146
+      - 147
+      - 148
+      - 149
+      - 150
+      - 151
+      - 152
+      - 153
+      - 164
+      - 167
+      - 168
+      - 169
+      - 170
+      - 171
+      - 172
+      - 173
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 180
+      - 181
+      - 182
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 302
+      - 303
+      - 352
+      - 432
+      - 458
+    - citation_ref: l031_exact_packages_pads_routes_electrical
+      source_ref: vendor:CW32L031_DataSheet_CN_V1.9.pdf
+      sha256: 90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855
+      pdf_pages_1_based:
+      - 5
+      - 8
+      - 10
+      - 26
+      - 27
+      - 30
+      - 38
+      - 45
+      - 46
+      - 64
+      - 66
+      - 68
+      - 71
+      - 73
+      - 75
+      - 77
+      - 78
+      printed_pages:
+      - 4
+      - 7
+      - 9
+      - 25
+      - 26
+      - 29
+      - 37
+      - 44
+      - 45
+      - 63
+      - 65
+      - 67
+      - 70
+      - 72
+      - 74
+      - 76
+      - 77
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 1650
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: 3
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 1179648
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 3
+      - pin: PF1
+        af: 1
+      maximum_hz: 1000000
+      configurable_ccs: true
+  CW32L031F8U6:
+    family: CW32L031
+    package: QFN20
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: l031_lse_and_retained_consumers
+      source_ref: vendor:CW32L031_UserManual_CN_V1.6.pdf
+      sha256: 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760
+      pdf_pages_1_based:
+      - 47
+      - 48
+      - 52
+      - 53
+      - 54
+      - 56
+      - 58
+      - 59
+      - 64
+      - 67
+      - 68
+      - 71
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 89
+      - 91
+      - 92
+      - 93
+      - 142
+      - 145
+      - 146
+      - 147
+      - 148
+      - 149
+      - 150
+      - 151
+      - 152
+      - 153
+      - 154
+      - 165
+      - 168
+      - 169
+      - 170
+      - 171
+      - 172
+      - 173
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 180
+      - 181
+      - 182
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 303
+      - 304
+      - 353
+      - 433
+      - 459
+      printed_pages:
+      - 46
+      - 47
+      - 51
+      - 52
+      - 53
+      - 55
+      - 57
+      - 58
+      - 63
+      - 66
+      - 67
+      - 70
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 88
+      - 90
+      - 91
+      - 92
+      - 141
+      - 144
+      - 145
+      - 146
+      - 147
+      - 148
+      - 149
+      - 150
+      - 151
+      - 152
+      - 153
+      - 164
+      - 167
+      - 168
+      - 169
+      - 170
+      - 171
+      - 172
+      - 173
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 180
+      - 181
+      - 182
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 302
+      - 303
+      - 352
+      - 432
+      - 458
+    - citation_ref: l031_exact_packages_pads_routes_electrical
+      source_ref: vendor:CW32L031_DataSheet_CN_V1.9.pdf
+      sha256: 90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855
+      pdf_pages_1_based:
+      - 5
+      - 8
+      - 10
+      - 26
+      - 27
+      - 30
+      - 38
+      - 45
+      - 46
+      - 64
+      - 66
+      - 68
+      - 71
+      - 73
+      - 75
+      - 77
+      - 78
+      printed_pages:
+      - 4
+      - 7
+      - 9
+      - 25
+      - 26
+      - 29
+      - 37
+      - 44
+      - 45
+      - 63
+      - 65
+      - 67
+      - 70
+      - 72
+      - 74
+      - 76
+      - 77
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 1650
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: 3
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 1179648
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes: []
+      maximum_hz: 1000000
+      configurable_ccs: true
+  CW32R031C8U6:
+    family: CW32R031
+    package: QFN48
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: r031_lse_and_retained_consumers
+      source_ref: vendor:CW32R031_UserManual_CN_V1.3.pdf
+      sha256: fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb
+      pdf_pages_1_based:
+      - 49
+      - 50
+      - 54
+      - 55
+      - 56
+      - 58
+      - 60
+      - 61
+      - 66
+      - 69
+      - 70
+      - 73
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 83
+      - 84
+      - 91
+      - 93
+      - 94
+      - 95
+      - 144
+      - 147
+      - 148
+      - 149
+      - 150
+      - 151
+      - 152
+      - 153
+      - 154
+      - 155
+      - 156
+      - 167
+      - 170
+      - 171
+      - 172
+      - 173
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 180
+      - 181
+      - 182
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 189
+      - 190
+      - 306
+      - 307
+      - 356
+      - 436
+      - 461
+      printed_pages:
+      - 48
+      - 49
+      - 53
+      - 54
+      - 55
+      - 57
+      - 59
+      - 60
+      - 65
+      - 68
+      - 69
+      - 72
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 83
+      - 90
+      - 92
+      - 93
+      - 94
+      - 143
+      - 146
+      - 147
+      - 148
+      - 149
+      - 150
+      - 151
+      - 152
+      - 153
+      - 154
+      - 155
+      - 166
+      - 169
+      - 170
+      - 171
+      - 172
+      - 173
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 180
+      - 181
+      - 182
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 189
+      - 305
+      - 306
+      - 355
+      - 435
+      - 460
+    - citation_ref: r031_exact_packages_pads_routes_electrical
+      source_ref: vendor:CW32R031_DataSheet_CN_V1.2.pdf
+      sha256: 88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805
+      pdf_pages_1_based:
+      - 5
+      - 9
+      - 11
+      - 29
+      - 30
+      - 33
+      - 42
+      - 52
+      - 53
+      - 71
+      - 73
+      printed_pages:
+      - 4
+      - 8
+      - 10
+      - 28
+      - 29
+      - 32
+      - 41
+      - 51
+      - 52
+      - 70
+      - 72
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 2200
+      - 3600
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: 3
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 1179648
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 3
+      - pin: PF1
+        af: 1
+      maximum_hz: 1000000
+      configurable_ccs: true
+  CW32W031R8U6:
+    family: CW32W031
+    package: QFN64
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: w031_lse_and_retained_consumers
+      source_ref: vendor:CW32W031_UserManual_CN_V1.4.pdf
+      sha256: b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9
+      pdf_pages_1_based:
+      - 48
+      - 49
+      - 53
+      - 54
+      - 55
+      - 57
+      - 59
+      - 60
+      - 65
+      - 68
+      - 69
+      - 72
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 83
+      - 90
+      - 92
+      - 93
+      - 94
+      - 143
+      - 146
+      - 147
+      - 148
+      - 149
+      - 150
+      - 151
+      - 152
+      - 153
+      - 154
+      - 155
+      - 166
+      - 169
+      - 170
+      - 171
+      - 172
+      - 173
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 180
+      - 181
+      - 182
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 189
+      - 306
+      - 307
+      - 356
+      - 436
+      - 462
+      printed_pages:
+      - 47
+      - 48
+      - 52
+      - 53
+      - 54
+      - 56
+      - 58
+      - 59
+      - 64
+      - 67
+      - 68
+      - 71
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 89
+      - 91
+      - 92
+      - 93
+      - 142
+      - 145
+      - 146
+      - 147
+      - 148
+      - 149
+      - 150
+      - 151
+      - 152
+      - 153
+      - 154
+      - 165
+      - 168
+      - 169
+      - 170
+      - 171
+      - 172
+      - 173
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 180
+      - 181
+      - 182
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 305
+      - 306
+      - 355
+      - 435
+      - 461
+    - citation_ref: w031_exact_packages_pads_routes_electrical
+      source_ref: vendor:CW32W031_DataSheet_CN_V1.3.pdf
+      sha256: 45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c
+      pdf_pages_1_based:
+      - 4
+      - 7
+      - 9
+      - 28
+      - 30
+      - 32
+      - 41
+      - 51
+      - 52
+      - 70
+      - 71
+      printed_pages:
+      - 3
+      - 6
+      - 8
+      - 27
+      - 29
+      - 31
+      - 40
+      - 50
+      - 51
+      - 69
+      - 70
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 2000
+      - 3600
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: 3
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 1179648
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 3
+      - pin: PF1
+        af: 1
+      maximum_hz: 1000000
+      configurable_ccs: true

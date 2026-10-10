@@ -77,20 +77,69 @@ fn faults() -> bool {
     let flags = pac::SYSCTRL.isr().read();
     flags.lsefail() || flags.lsefault()
 }
-pub(crate) fn healthy(config: Lse) -> bool {
+// A successful configurable-CCS start freezes the detector clock parameters.
+// No code here calibrates LSI or clears a retained fault.
+static MONITOR_LSI: critical_section::Mutex<core::cell::Cell<Option<(u16, u8)>>> =
+    critical_section::Mutex::new(core::cell::Cell::new(None));
+
+fn monitor_ready(require_frozen: bool) -> bool {
+    if !crate::RCC_LSE_CONFIGURABLE_CCS {
+        return true;
+    }
+    let cr1 = pac::SYSCTRL.cr1().read();
+    let lsi = pac::SYSCTRL.lsi().read();
+    cr1.lseccs()
+        && cr1.lsien()
+        && lsi.stable()
+        && critical_section::with(|cs| match MONITOR_LSI.borrow(cs).get() {
+            Some((trim, wait)) => lsi.trim() == trim && lsi.waitcycle() == wait,
+            None => !require_frozen,
+        })
+}
+fn freeze_monitor(cs: critical_section::CriticalSection<'_>) -> Result<(), Error> {
+    if crate::RCC_LSE_CONFIGURABLE_CCS {
+        let cr1 = pac::SYSCTRL.cr1().read();
+        let lsi = pac::SYSCTRL.lsi().read();
+        if !cr1.lsien() || !lsi.stable() {
+            return Err(Error::LseNotReady);
+        }
+        let parameters = (lsi.trim(), lsi.waitcycle());
+        if MONITOR_LSI
+            .borrow(cs)
+            .get()
+            .is_some_and(|old| old != parameters)
+        {
+            return Err(Error::LseNotReady);
+        }
+        MONITOR_LSI.borrow(cs).set(Some(parameters));
+    }
+    Ok(())
+}
+fn ready(config: Lse, require_frozen: bool) -> bool {
     pac::SYSCTRL.cr1().read().lseen()
         && pac::SYSCTRL.lse().read().stable()
         && !faults()
         && parameters_match(config)
+        && monitor_ready(require_frozen)
+}
+pub(crate) fn healthy(config: Lse) -> bool {
+    ready(config, true)
 }
 pub(crate) fn verify(config: Lse, cs: critical_section::CriticalSection<'_>) -> Result<(), Error> {
-    if !healthy(config) {
+    verify_state(config, true, cs)
+}
+fn verify_state(
+    config: Lse,
+    require_frozen: bool,
+    cs: critical_section::CriticalSection<'_>,
+) -> Result<(), Error> {
+    if !ready(config, require_frozen) {
         return Err(Error::LseNotReady);
     }
     if !crate::rcc_lse_pins_match(config.bypass(), false, config.poll_budget, cs)? {
         return Err(Error::LsePinConflict);
     }
-    if !healthy(config) {
+    if !ready(config, require_frozen) {
         return Err(Error::LseNotReady);
     }
     Ok(())
@@ -104,7 +153,7 @@ pub(crate) fn preflight(
 ) -> Result<bool, Error> {
     let control = pac::SYSCTRL.cr1().read();
     if control.lseen() {
-        verify(config, cs)?;
+        verify_state(config, false, cs)?;
         return Ok(true);
     }
     let interrupts = pac::SYSCTRL.ier().read();
@@ -138,6 +187,7 @@ pub(crate) fn start(
     cs: critical_section::CriticalSection<'_>,
 ) -> Result<(), Error> {
     if reused {
+        freeze_monitor(cs)?;
         return verify(config, cs);
     }
     // Other RCC setup may have waited. Recheck admission immediately before
@@ -145,6 +195,7 @@ pub(crate) fn start(
     if preflight(config, cs)? {
         return Err(Error::LseClockInUse);
     }
+    freeze_monitor(cs)?;
     crate::rcc_configure_lse_pins(config.bypass(), config.poll_budget, cs)?;
     // Fresh typed value contains only documented writable configuration fields.
     pac::SYSCTRL.lse().write(|w| {
@@ -158,6 +209,9 @@ pub(crate) fn start(
     }
     pac::SYSCTRL.cr1().modify(|w| {
         w.set_key(0x5a5a);
+        if crate::RCC_LSE_CONFIGURABLE_CCS {
+            w.set_lseccs(true);
+        }
         w.set_lseen(true);
     });
     for _ in 0..config.poll_budget {

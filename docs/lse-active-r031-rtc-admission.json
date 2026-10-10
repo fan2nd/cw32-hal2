@@ -1,0 +1,581 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-09",
+  "source": {
+    "citation_ref": "r031_rtc_reset_and_retained_admission",
+    "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+    "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+    "pdf_pages_1_based": [
+      170,
+      171,
+      172,
+      173,
+      174,
+      175,
+      176,
+      177,
+      178,
+      179,
+      180,
+      181,
+      182,
+      183,
+      184,
+      185,
+      186,
+      187,
+      188,
+      189,
+      190
+    ],
+    "printed_pages": [
+      169,
+      170,
+      171,
+      172,
+      173,
+      174,
+      175,
+      176,
+      177,
+      178,
+      179,
+      180,
+      181,
+      182,
+      183,
+      184,
+      185,
+      186,
+      187,
+      188,
+      189
+    ]
+  },
+  "rtc_reset": [
+    {
+      "register": "CR0",
+      "byte_offset": 4,
+      "value": 0,
+      "mask": 239
+    },
+    {
+      "register": "CR1",
+      "byte_offset": 8,
+      "value": 0,
+      "mask": 1795
+    },
+    {
+      "register": "CR2",
+      "byte_offset": 12,
+      "value": 0,
+      "mask": 1791
+    },
+    {
+      "register": "COMPEN",
+      "byte_offset": 16,
+      "value": 0,
+      "mask": 65535
+    },
+    {
+      "register": "DATE",
+      "byte_offset": 20,
+      "value": 0,
+      "mask": 134217727
+    },
+    {
+      "register": "TIME",
+      "byte_offset": 24,
+      "value": 1179648,
+      "mask": 4161407
+    },
+    {
+      "register": "ALARMA",
+      "byte_offset": 28,
+      "value": 1179648,
+      "mask": 2143289343
+    },
+    {
+      "register": "ALARMB",
+      "byte_offset": 32,
+      "value": 1179648,
+      "mask": 2143289343
+    },
+    {
+      "register": "TAMPDATE",
+      "byte_offset": 36,
+      "value": 0,
+      "mask": 65343
+    },
+    {
+      "register": "TAMPTIME",
+      "byte_offset": 40,
+      "value": 0,
+      "mask": 4161407
+    },
+    {
+      "register": "AWTARR",
+      "byte_offset": 44,
+      "value": 65535,
+      "mask": 65535
+    },
+    {
+      "register": "IER",
+      "byte_offset": 48,
+      "value": 0,
+      "mask": 95
+    },
+    {
+      "register": "ISR",
+      "byte_offset": 52,
+      "value": 0,
+      "mask": 95
+    }
+  ],
+  "controls_first": [
+    "CR0",
+    "CR1",
+    "CR2",
+    "IER",
+    "ISR"
+  ],
+  "reset_roster_policy": "Exactly13 unique readable non-command registers; all defined bits including CR1.ACCESS/WINDOW compared with own reset. No KEY or ICR reads. TIME/ALARMA/ALARMB reset0x00120000; AWTARR0xFFFF. This is a deliberately conservative software contract.",
+  "read_policy": "Controls first and reject on mismatch before COMPEN/calendar reads; repeat entire snapshot. No WINDOW wait, ACCESS, KEY, reset, flag clear or RTC write during RCC admission.",
+  "wake_policy": "Own PDF178: raw RTCCLK wake sources0..3 need not have START; sources4..7 require RTC1Hz and START. START=0 alone is insufficient.",
+  "compensation_policy": "Own PDF174 Table12-3 allows compensated LSE 1Hz with SOURCE ignored; any nonreset snapshot across every SOURCE blocks disabled-source startup.",
+  "retention_policy": "Own PDF172 explicitly preserves RTC counting/registers over non-POR resets. Enabled exact source reuse bypasses new-source consumer admission and never rewrites retained RTC; a new source start requires pristine state and never manufactures it.",
+  "calendar_policy": "Own PDF173 §12.3.5 permits matching consecutive TIME or DATE reads. Bounded T-D-T-D-T is a software snapshot strategy, not an atomic rollover or post-fault continuity guarantee. Held-source health checks before and after attach/now remain.",
+  "no_claims": [
+    "No automatic LSE request inferred from SDK silence.",
+    "No RTC migration, reset, compensation setup, low-power support or clock-fault recovery.",
+    "No silicon execution or crystal waveform/accuracy guarantee."
+  ],
+  "reset_bitfield_derivation": [
+    {
+      "register": "CR0",
+      "byte_offset": 4,
+      "fields": [
+        {
+          "field": "START",
+          "bit_offset": 7,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "RTC1HZ",
+          "bit_offset": 5,
+          "bit_size": 2,
+          "access": "RW"
+        },
+        {
+          "field": "H24",
+          "bit_offset": 3,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "INTERVAL",
+          "bit_offset": 0,
+          "bit_size": 3,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "register": "CR1",
+      "byte_offset": 8,
+      "fields": [
+        {
+          "field": "SOURCE",
+          "bit_offset": 8,
+          "bit_size": 3,
+          "access": "RW"
+        },
+        {
+          "field": "WINDOW",
+          "bit_offset": 1,
+          "bit_size": 1,
+          "access": "RO"
+        },
+        {
+          "field": "ACCESS",
+          "bit_offset": 0,
+          "bit_size": 1,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "register": "CR2",
+      "byte_offset": 12,
+      "fields": [
+        {
+          "field": "ALARMBEN",
+          "bit_offset": 10,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "ALARMAEN",
+          "bit_offset": 9,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "AWTEN",
+          "bit_offset": 7,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "TAMPEN",
+          "bit_offset": 6,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "RTCOUT",
+          "bit_offset": 4,
+          "bit_size": 2,
+          "access": "RW"
+        },
+        {
+          "field": "TAMPEDGE",
+          "bit_offset": 3,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "AWTSRC",
+          "bit_offset": 0,
+          "bit_size": 3,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "register": "COMPEN",
+      "byte_offset": 16,
+      "fields": [
+        {
+          "field": "EN",
+          "bit_offset": 15,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "SIGN",
+          "bit_offset": 14,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "STEP",
+          "bit_offset": 12,
+          "bit_size": 2,
+          "access": "RW"
+        },
+        {
+          "field": "COMP",
+          "bit_offset": 0,
+          "bit_size": 12,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "register": "DATE",
+      "byte_offset": 20,
+      "fields": [
+        {
+          "field": "WEEK",
+          "bit_offset": 24,
+          "bit_size": 3,
+          "access": "RW"
+        },
+        {
+          "field": "YEAR",
+          "bit_offset": 16,
+          "bit_size": 8,
+          "access": "RW"
+        },
+        {
+          "field": "MONTH",
+          "bit_offset": 8,
+          "bit_size": 8,
+          "access": "RW"
+        },
+        {
+          "field": "DAY",
+          "bit_offset": 0,
+          "bit_size": 8,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "register": "TIME",
+      "byte_offset": 24,
+      "fields": [
+        {
+          "field": "HOUR",
+          "bit_offset": 16,
+          "bit_size": 6,
+          "access": "RW"
+        },
+        {
+          "field": "MINUTE",
+          "bit_offset": 8,
+          "bit_size": 7,
+          "access": "RW"
+        },
+        {
+          "field": "SECOND",
+          "bit_offset": 0,
+          "bit_size": 7,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "register": "ALARMA",
+      "byte_offset": 28,
+      "fields": [
+        {
+          "field": "WEEKMASK",
+          "bit_offset": 24,
+          "bit_size": 7,
+          "access": "RW"
+        },
+        {
+          "field": "HOUREN",
+          "bit_offset": 23,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "HOUR",
+          "bit_offset": 16,
+          "bit_size": 6,
+          "access": "RW"
+        },
+        {
+          "field": "MINUTEEN",
+          "bit_offset": 15,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "MINUTE",
+          "bit_offset": 8,
+          "bit_size": 7,
+          "access": "RW"
+        },
+        {
+          "field": "SECONDEN",
+          "bit_offset": 7,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "SECOND",
+          "bit_offset": 0,
+          "bit_size": 7,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "register": "ALARMB",
+      "byte_offset": 32,
+      "fields": [
+        {
+          "field": "WEEKMASK",
+          "bit_offset": 24,
+          "bit_size": 7,
+          "access": "RW"
+        },
+        {
+          "field": "HOUREN",
+          "bit_offset": 23,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "HOUR",
+          "bit_offset": 16,
+          "bit_size": 6,
+          "access": "RW"
+        },
+        {
+          "field": "MINUTEEN",
+          "bit_offset": 15,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "MINUTE",
+          "bit_offset": 8,
+          "bit_size": 7,
+          "access": "RW"
+        },
+        {
+          "field": "SECONDEN",
+          "bit_offset": 7,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "SECOND",
+          "bit_offset": 0,
+          "bit_size": 7,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "register": "TAMPDATE",
+      "byte_offset": 36,
+      "fields": [
+        {
+          "field": "WEEK",
+          "bit_offset": 13,
+          "bit_size": 3,
+          "access": "RO"
+        },
+        {
+          "field": "MONTH",
+          "bit_offset": 8,
+          "bit_size": 5,
+          "access": "RO"
+        },
+        {
+          "field": "DAY",
+          "bit_offset": 0,
+          "bit_size": 6,
+          "access": "RO"
+        }
+      ]
+    },
+    {
+      "register": "TAMPTIME",
+      "byte_offset": 40,
+      "fields": [
+        {
+          "field": "HOUR",
+          "bit_offset": 16,
+          "bit_size": 6,
+          "access": "RO"
+        },
+        {
+          "field": "MINUTE",
+          "bit_offset": 8,
+          "bit_size": 7,
+          "access": "RO"
+        },
+        {
+          "field": "SECOND",
+          "bit_offset": 0,
+          "bit_size": 7,
+          "access": "RO"
+        }
+      ]
+    },
+    {
+      "register": "AWTARR",
+      "byte_offset": 44,
+      "fields": [
+        {
+          "field": "ARR",
+          "bit_offset": 0,
+          "bit_size": 16,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "register": "IER",
+      "byte_offset": 48,
+      "fields": [
+        {
+          "field": "INTERVAL",
+          "bit_offset": 6,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "TAMPOV",
+          "bit_offset": 4,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "TAMP",
+          "bit_offset": 3,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "AWTIMER",
+          "bit_offset": 2,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "ALARMB",
+          "bit_offset": 1,
+          "bit_size": 1,
+          "access": "RW"
+        },
+        {
+          "field": "ALARMA",
+          "bit_offset": 0,
+          "bit_size": 1,
+          "access": "RW"
+        }
+      ]
+    },
+    {
+      "register": "ISR",
+      "byte_offset": 52,
+      "fields": [
+        {
+          "field": "INTERVAL",
+          "bit_offset": 6,
+          "bit_size": 1,
+          "access": "RO"
+        },
+        {
+          "field": "TAMPOV",
+          "bit_offset": 4,
+          "bit_size": 1,
+          "access": "RO"
+        },
+        {
+          "field": "TAMP",
+          "bit_offset": 3,
+          "bit_size": 1,
+          "access": "RO"
+        },
+        {
+          "field": "AWTIMER",
+          "bit_offset": 2,
+          "bit_size": 1,
+          "access": "RO"
+        },
+        {
+          "field": "ALARMB",
+          "bit_offset": 1,
+          "bit_size": 1,
+          "access": "RO"
+        },
+        {
+          "field": "ALARMA",
+          "bit_offset": 0,
+          "bit_size": 1,
+          "access": "RO"
+        }
+      ]
+    }
+  ]
+}

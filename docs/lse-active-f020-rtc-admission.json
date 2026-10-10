@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-09",
+  "source": {
+    "citation_ref": "f020_rtc_reset_and_retained_admission",
+    "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+    "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+    "pdf_pages_1_based": [
+      173,
+      174,
+      175,
+      176,
+      177,
+      178,
+      179,
+      180,
+      181,
+      182,
+      183,
+      184,
+      185,
+      186,
+      187,
+      188,
+      189,
+      190,
+      191,
+      192,
+      193
+    ],
+    "printed_pages": [
+      172,
+      173,
+      174,
+      175,
+      176,
+      177,
+      178,
+      179,
+      180,
+      181,
+      182,
+      183,
+      184,
+      185,
+      186,
+      187,
+      188,
+      189,
+      190,
+      191,
+      192
+    ]
+  },
+  "rtc_reset": [
+    {
+      "register": "CR0",
+      "byte_offset": 4,
+      "value": 0,
+      "mask": 239
+    },
+    {
+      "register": "CR1",
+      "byte_offset": 8,
+      "value": 0,
+      "mask": 1795
+    },
+    {
+      "register": "CR2",
+      "byte_offset": 12,
+      "value": 0,
+      "mask": 1791
+    },
+    {
+      "register": "COMPEN",
+      "byte_offset": 16,
+      "value": 0,
+      "mask": 65535
+    },
+    {
+      "register": "DATE",
+      "byte_offset": 20,
+      "value": 0,
+      "mask": 134217727
+    },
+    {
+      "register": "TIME",
+      "byte_offset": 24,
+      "value": 1179648,
+      "mask": 4161407
+    },
+    {
+      "register": "ALARMA",
+      "byte_offset": 28,
+      "value": 1179648,
+      "mask": 2143289343
+    },
+    {
+      "register": "ALARMB",
+      "byte_offset": 32,
+      "value": 1179648,
+      "mask": 2143289343
+    },
+    {
+      "register": "TAMPDATE",
+      "byte_offset": 36,
+      "value": 0,
+      "mask": 65343
+    },
+    {
+      "register": "TAMPTIME",
+      "byte_offset": 40,
+      "value": 0,
+      "mask": 4161407
+    },
+    {
+      "register": "AWTARR",
+      "byte_offset": 44,
+      "value": 65535,
+      "mask": 65535
+    },
+    {
+      "register": "IER",
+      "byte_offset": 48,
+      "value": 0,
+      "mask": 95
+    },
+    {
+      "register": "ISR",
+      "byte_offset": 52,
+      "value": 0,
+      "mask": 95
+    }
+  ],
+  "controls_first": [
+    "CR0",
+    "CR1",
+    "CR2",
+    "IER",
+    "ISR"
+  ],
+  "reset_roster_policy": "Exactly13 unique readable non-command registers; all defined bits including CR1.ACCESS/WINDOW compared with own reset. No KEY or ICR reads. TIME/ALARMA/ALARMB reset0x00120000; AWTARR0xFFFF. This is a deliberately conservative software contract.",
+  "read_policy": "Controls first and reject on mismatch before COMPEN/calendar reads; repeat entire snapshot. No WINDOW wait, ACCESS, KEY, reset, flag clear or RTC write during RCC admission.",
+  "wake_policy": "Own PDF181 rawRTCCLK wake sources0..3 operate withoutSTART; only sources4..7 requireRTC1Hz andSTART. START0 alone is insufficient.",
+  "compensation_policy": "Own PDF177 Table12-3 allows compensatedLSE1Hz withSOURCEignored; any nonreset snapshot across everySOURCE blocks disabled-source startup.",
+  "retention_policy": "Enabled exact source reuse bypasses new-source consumer admission and never rewrites retained RTC. New source start requires pristine snapshot and never manufactures it.",
+  "calendar_policy": "Own PDF176 §12.3.5 explicitly permits consecutive matching TIME or DATE reads. Bounded T-D-T-D-T verifies a snapshot but does not promise atomic rollover or post-fault continuity. Held-source health checks before and after attach/now remain.",
+  "no_claims": [
+    "No automatic LSE request inferred from SDK silence.",
+    "No RTC migration, reset, compensation setup, low-power support or clock-fault recovery.",
+    "No silicon execution or crystal waveform/accuracy guarantee."
+  ]
+}

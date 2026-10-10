@@ -1,6 +1,6 @@
 # YAML 数据与官方原始资料
 
-本页对应当前整合源码及两款 x030 LQFP48 的主动 LSE/RTC 资格（2026-10-09），回答“这份 YAML 依据哪一本原厂手册、哪个 SDK、哪几页”。当前源码包附带 `approved-sdk-members/` 下的 11 份 Apache-2.0 芯片主头文件及其许可；完整 PDF、SDK ZIP、SVD 与 HTML 原件未附。下列文档链接直达官网，运行获取脚本后才会写入本地 `sources/vendor/`。
+本页对应当前整合源码及八个精确料号/封装的主动 LSE/RTC 资格（2026-10-09），回答“这份 YAML 依据哪一本原厂手册、哪个 SDK、哪几页”。当前源码包附带 `approved-sdk-members/` 下的 11 份 Apache-2.0 芯片主头文件及其许可；完整 PDF、SDK ZIP、SVD 与 HTML 原件未附。下列文档链接直达官网，运行获取脚本后才会写入本地 `sources/vendor/`。
 
 `evidence-sources.json` 是唯一 URL / SHA-256 / SDK 成员锁；本页是阅读入口，不再复制一份 JSON。原件版本是项目选定快照，不能据此声称已是厂商最新版。页码与章节从现有 YAML 及其明确引用的记录摘出，本次未重新逐页校读原件。
 
@@ -13,7 +13,7 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 
 ## 当前文件级来源覆盖
 
-只统计 `cw32-data/` 内的 294 份 authored YAML：137 份寄存器定义 + 157 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；本次主动 LSE 新增 `lse-qualified.yaml`，直接记录两款器件的原厂文档 ID、SHA、PDF 页码与书页。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
+只统计 `cw32-data/` 内的 294 份 authored YAML：137 份寄存器定义 + 157 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；主动 LSE 的 `lse-qualified.yaml` 直接记录八个精确料号/封装的原厂文档 ID、SHA、PDF 页码与书页；完整清单及各族来源见末节。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
 
 | 归类 | 文件数 | 边界 |
 | --- | ---: | --- |
@@ -40,6 +40,7 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 | `ram-parity.yaml`、`field-access.yaml`、`register-writes.yaml` | 同族 RM 读写属性、状态/清零语义；后两项是字段/命令覆盖，若只写审计文件名，仍欠直接原件定位。 |
 | `electrical.yaml`、`spi.yaml` | 同族 DS 电气表和 RM 分频/时序；`electrical.yaml` 大部分旧策略只间接引用审计文件，不能把这些 JSON 当成原厂来源。 |
 | `hse-qualified.yaml` | F020/F030/A030/L010/L011/L031/L052/L083/R031/W031 HSE 的各自 RM/DS；L010/L011/L031/L052/L083/R031/W031 的实际版本、章节与页码见下表。保留 RM/DS 外部输入下限冲突的交集，不跨族继承电气限值或 CCS 策略。 |
+| `lse-qualified.yaml` | 仅末节八个精确料号/封装；x030、F020、L031、R031、W031 各自 RM/DS 与原件对应收据给出原件 ID/SHA、PDF/书页和 SDK 成员定位，其他料号不自动继承主动配置资格。 |
 | `pll-qualified.yaml`、`electrical.yaml` 的 L083 PLL、`registers/sysctrl_cw32l083_v1.yaml` 与 `field-access.yaml` 的 PLL 字段 | 仅 CW32L083 HSI-fed PLL：CW32L083_UserManual_CN_V2.0.pdf Rev2.0 §4.3.7 PDF59–60/书页58–59、§4.7.8 PDF82/81；CW32L083_DataSheet_CN_V1.9.pdf Rev1.9 表7-4/7-17/7-21 PDF47/55/56、书页46/54/55。保留模拟档位与电气上限区别、12–64MHz交集、RW reserved-debug默认0x5、STABLE只读及rate-only时序限制；不是L052或其他族PLL资格。 |
 | `hex-qualified.yaml` | F002/F003 各自 RM/DS 的直接 HEX 输入、PB0/PB1 与 AWT 来源；精确 PDF/书页见下表。保留 RM 4–32 MHz 与 DS 1–32 MHz 的交集及全部波形条件，不据此推定晶振、PLL 或失钟恢复能力。 |
 | `gpio-interrupt.yaml` | 各族 RM GPIO ICR 和中断表；CMSIS IRQ 枚举。 |
@@ -277,7 +278,7 @@ against originals without HAL tests or hardware execution.
 - retained AUTOTRIM/RTC/LVD与输出：同一RM PDF87、89、103、157、159、187、205–206、530、534–535；书页各减一。Flash WAIT/KEY：PDF121、131/书页120、130。
 - 工作电压、factory HSI误差和PLL输入/输出/周期间抖动：L083 DS Rev1.9表7-4、7-17、7-21，PDF47、55、56/书页46、54、55。300ps周期间抖动不等于绝对周期误差，rate-only标记保持到严格时序调用点。
 
-源码包原件清单仍为45项；11份已批准头文件与许可证边界不变。新增的来源说明和审阅记录均为项目撰写，不重新分发完整PDF、SDK、SVD或其全文抽取。
+来源锁的目录总数仍为45项：硬件出处验证要求43个原件，另2项A030 HTML发现页面按既有 discovery-only 策略单列；11份已批准头文件与许可证边界不变。新增的来源说明和审阅记录均为项目撰写，不重新分发完整PDF、SDK、SVD或其全文抽取。
 
 ## Oscillator status access preservation
 
@@ -300,10 +301,30 @@ no default/configured fallback inference. `hsi_operating_range_hz` records L012'
 own legal incoming 90–100 MHz HSIOSC requirement (RM §4.4.2 PDF59), not a bound
 for arbitrary TRIM. Generated L012 startup protection requires that fact.
 
-## 两款 x030 的主动 LSE 与 RTC 来源
+## 八个精确料号/封装的主动 LSE 与 RTC 来源
 
-`cw32-data/lse-qualified.yaml` 仅资格 CW32F030C8T7 与 CW32A030C8T7 的 LQFP48，其他封装和族别不继承主动配置资格。共享 RM 为 `CW32x030_UserManual_CN_V2.5.pdf` Rev 2.5：LSE 控制、电气流程、保留源及 RTC 寄存器相关 PDF 页为 51–52、71、76、94、173、184、187–195、357，书页各减一；RTC 补偿独立消费 LSE 的补充依据见 `docs/lse-active-rtc-admission.json`，不因 RTC.SOURCE 选择 LSI/HSE 而忽略。
+当前资格以 [lse-qualified.yaml](../cw32-data/lse-qualified.yaml) 的八个条目为准：CW32F030C8T7、CW32A030C8T7（均为 LQFP48），CW32F020C6U7（QFN48），CW32L031C8T6（LQFP48）、CW32L031C8U6（QFN48）、CW32L031F8U6（QFN20），CW32R031C8U6（QFN48）及 CW32W031R8U6（QFN64）。其他料号、封装和族别不自动继承主动配置资格。板级契约及运行边界见 [qualified-lse.md](../docs/qualified-lse.md)。
 
-各自 DS 为 F030 Rev 1.9（PDF 24、26、30、38、44–45）与 A030 Rev 1.1（PDF 22–23、27、35、41–42），书页各减一。PC14/PC15 引脚、供电/温度、晶体与旁路条件分别取自身表格。标称 32768 Hz、仅两精确料号、板级每周期边界和保守的全 RTC 复位态入场属于软件资格策略；典型启动时间不作为最长等待保证。
+### x030 两款 LQFP48 的专属引文
 
-共享 AWT 的 `Source::LSE=3` 还核对了 F020 自身 RM Rev 1.4 §11.8.1（PDF 170、书页169）；这只补齐共有寄存器枚举，不开放 F020 主动 LSE。上述数据、源码及编译检查均不替代实板验证。
+本小节只覆盖 CW32F030C8T7 与 CW32A030C8T7。共享 RM 为 `CW32x030_UserManual_CN_V2.5.pdf` Rev 2.5：LSE 控制、电气流程、保留源及 RTC 寄存器相关 PDF 页为 51–52、71、76、94、173、184、187–195、357，书页各减一；RTC 补偿独立消费 LSE 的补充依据见 [lse-active-rtc-admission.json](../docs/lse-active-rtc-admission.json)，不因 RTC.SOURCE 选择 LSI/HSE 而忽略。这些 x030 页码不作为其他族的依据。
+
+各自 DS 为 F030 Rev 1.9（PDF 24、26、30、38、44–45）与 A030 Rev 1.1（PDF 22–23、27、35、41–42），书页各减一。PC14/PC15 引脚、供电/温度、晶体与旁路条件分别取自身表格。这两款 x030 的标称 32768 Hz、精确料号范围、板级每周期边界和保守的全 RTC 复位态入场属于软件资格策略；典型启动时间不作为最长等待保证。
+
+共享 AWT 的 `Source::LSE=3` 还核对了 F020 自身 RM Rev 1.4 §11.8.1（PDF 170、书页169）；F020 的主动配置资格另由下节自身原件审核支持。
+
+### F020 C6U7 QFN48 的自身原件
+
+CW32F020C6U7 使用 `CW32F020_UserManual_CN_V1.4.pdf` 与选定的 `current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf`。原件 ID/SHA、PDF/书页和 SDK 成员定位见 [F020原件对应收据](../docs/lse-f020-source-receipt.json)，逐项事实及 RTC 入场依据见 [F020主动LSE记录](../docs/lse-active-f020.json) 和 [F020 RTC记录](../docs/lse-active-f020-rtc-admission.json)。它不借用 x030 的页码或封装依据。
+
+该精确 QFN48 的 PC14/PC15 为引脚3/4；SDK 的 PC13/PC14 配方不采纳，以自身 DS 为准。F020 的 CLKCCS/HSECCS/LSECCS 必须写1，晶体及旁路均保留自身文档的1 MHz上限。F020F6U7、F020K6U7及族别别名仍无主动LSE资格。
+
+### L031 / R031 / W031 的自身原件与差异
+
+- L031 的 C8T6 LQFP48、C8U6 QFN48、F8U6 QFN20：`CW32L031_UserManual_CN_V1.6.pdf` 与 `CW32L031_DataSheet_CN_V1.9.pdf`；[原件对应收据](../docs/lse-l031-source-receipt.json)、[主动LSE记录](../docs/lse-active-l031.json)、[RTC入场依据](../docs/lse-active-l031-rtc-admission.json)。
+- R031 的 C8U6 QFN48：`CW32R031_UserManual_CN_V1.3.pdf` 与 `CW32R031_DataSheet_CN_V1.2.pdf`；[原件对应收据](../docs/lse-r031-source-receipt.json)、[主动LSE记录](../docs/lse-active-r031.json)、[RTC入场依据](../docs/lse-active-r031-rtc-admission.json)。
+- W031 的 R8U6 QFN64：`CW32W031_UserManual_CN_V1.4.pdf` 与 `CW32W031_DataSheet_CN_V1.3.pdf`；[原件对应收据](../docs/lse-w031-source-receipt.json)、[主动LSE记录](../docs/lse-active-w031.json)、[RTC入场依据](../docs/lse-active-w031-rtc-admission.json)。
+
+这些收据分别给出自身原件 ID/SHA、PDF/书页与 SDK 成员定位；供电、温度、引脚和寄存器要求按各族记录，不能沿用 x030 的电气条件。三族 CCS 控制可配置，GPIO 均无 SPEED、LOCK、HIGHIE、LOWIE 寄存器；L031F8U6 QFN20 没有直接 LSE 输出 AF 路由，其空路由表是精确封装结论。
+
+三族持有源能力的软件策略要求 LSE 监测。仅在重复确认 LSI 停止且无文档所列使用者时，才允许载入原厂 trim；正在使用的 LSI 不停机、不重调。精确已启用 LSE 的复用不重启或更改 CCS。所有八个条目仍以标称32768 Hz和板级每周期边界资格化；没有自动RTC回退、失钟后的日历连续性或低功耗恢复保证。上述原件、数据、源码及编译检查均不替代实板验证。

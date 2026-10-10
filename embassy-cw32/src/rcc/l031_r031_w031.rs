@@ -3,7 +3,8 @@
 //! Own sources: L031 RM CN1.6, R031 RM CN1.3 and W031 RM CN1.4
 //! §§4.3–4.7 and 7.4, plus each own datasheet electrical tables.
 //! See docs/qualified-l031-hse.md for source pages and board obligations.
-//! All configurable CCS controls and unrelated gates are preserved exactly.
+//! Existing CCS controls are preserved. A requested new LSE start enables only
+//! its detector; this monitored-source admission rule is a software policy.
 //! There is no PLL, FLASH prefetch or FLASH cache on this register version.
 //! The default remains factory HSI /6. HSIOSC stays alive for independent users.
 //! PLL configuration, runtime switching and low-power operation are unsupported.
@@ -232,6 +233,9 @@ pub struct Config {
     pub hsi: Hsi,
     /// Optional external source, configured and reserved even when SYSCLK is HSI.
     pub hse: Option<Hse>,
+    /// Init-only board-qualified LSE. None preserves its inherited setup.
+    #[cfg(rcc_lse)]
+    pub lse: Option<super::Lse>,
     /// System clock source. HSE requires `hse: Some(...)`.
     pub sys: Sysclk,
     /// HCLK prescaler.
@@ -253,6 +257,8 @@ impl Config {
                 div: crate::RCC_DEFAULT_HSI_DIV,
             },
             hse: None,
+            #[cfg(rcc_lse)]
+            lse: None,
             sys: Sysclk::HSI,
             ahb_pre: AHBPrescaler::Div1,
             apb_pre: APBPrescaler::Div1,
@@ -273,6 +279,11 @@ impl Config {
         if self.timeout == 0 {
             return Err(Error::InvalidTimeout);
         }
+        #[cfg(rcc_lse)]
+        let lse = self
+            .lse
+            .map(|c| c.bounds(self.operating_conditions).map(|b| (c, b)))
+            .transpose()?;
         let hsi = HSI_FREQ / self.hsi.div.divisor();
         let hse = if let Some(hse) = self.hse {
             let bounds = hse.bounds()?;
@@ -313,6 +324,8 @@ impl Config {
             ],
             source,
             hse: self.hse.map(|hse| hse.mode),
+            #[cfg(rcc_lse)]
+            lse,
         };
         crate::rcc::operating::validate(self.operating_conditions, clocks)?;
         // A retained CCS policy may select HSI. Conservatively qualify HSI for
@@ -352,6 +365,8 @@ pub struct Clocks {
     pub(crate) dividers: [u32; 3],
     pub(crate) source: crate::rcc::ClockBounds,
     hse: Option<HseMode>,
+    #[cfg(rcc_lse)]
+    pub(crate) lse: Option<(super::Lse, crate::rcc::ClockBounds)>,
 }
 
 /// A clock initialization failure.
@@ -365,6 +380,14 @@ pub struct Clocks {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
+    #[cfg(rcc_lse)]
+    InvalidLseBounds,
+    #[cfg(rcc_lse)]
+    LseNotReady,
+    #[cfg(rcc_lse)]
+    LsePinConflict,
+    #[cfg(rcc_lse)]
+    LseClockInUse,
     InvalidHseBounds,
     HseOutsideQualifiedRange,
     HseConditionsOutsideQualifiedRange,
@@ -512,12 +535,28 @@ fn set_flash_latency(wait: u32, timeout: u32) -> Result<(), Error> {
 fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Result<Clocks, Error> {
     let mut clocks = config.frequencies()?;
     let r = pac::SYSCTRL;
+    #[cfg(rcc_lse)]
+    let reuse_lse = config
+        .lse
+        .map(|c| super::lse::preflight(c, cs))
+        .transpose()?;
+    #[cfg(rcc_lse)]
+    if let Some(lse) = config.lse {
+        prepare_lse_monitor(lse.poll_budget, cs)?;
+    }
     let old_clock = r.cr0().read();
     let old_sources = r.cr1().read();
     let monitor_hse = config.hse.is_some() || old_sources.hseen();
     let monitor_lse = old_sources.lseen();
+    #[cfg(rcc_lse)]
+    let monitor_lse = monitor_lse || config.lse.is_some();
+    #[cfg(rcc_lse)]
+    let old_lsi = config.lse.map(|_| r.lsi().read());
     let needs_lsi = (monitor_hse && old_sources.hseccs()) || (monitor_lse && old_sources.lseccs());
-    // HSE/LSE CCS controls are configurable here, not reserved mandatory ones.
+    #[cfg(rcc_lse)]
+    let needs_lsi = needs_lsi || config.lse.is_some();
+    // Before LSE startup every inherited CCS bit must remain identical.
+    // New-start policy changes only LSECCS at the final LSE start step.
     let ccs_unchanged = || {
         let v = r.cr1().read();
         v.clkccs() == old_sources.clkccs()
@@ -823,6 +862,29 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     if !ccs_unchanged() {
         return Err(Error::ClockConfigurationTimeout);
     }
+    #[cfg(rcc_lse)]
+    if let Some(old_lsi) = old_lsi {
+        let lsi = r.lsi().read();
+        if !r.cr1().read().lsien()
+            || !lsi.stable()
+            || lsi.trim() != old_lsi.trim()
+            || lsi.waitcycle() != old_lsi.waitcycle()
+        {
+            return Err(Error::LsiTimeout);
+        }
+    }
+    #[cfg(rcc_lse)]
+    if let Some(lse) = config.lse {
+        super::lse::start(lse, reuse_lse.unwrap(), cs)?;
+        let final_sources = r.cr1().read();
+        if final_sources.clkccs() != old_sources.clkccs()
+            || final_sources.hseccs() != old_sources.hseccs()
+            || !final_sources.lseccs()
+        {
+            return Err(Error::ClockConfigurationTimeout);
+        }
+        super::lse::verify(lse, cs)?;
+    }
     // Freeze inherited ownership too, so safe GPIO remains blocked for the
     // entire boot even if later unsupported raw PAC writes disable HSE.
     if clocks.hse.is_none() && old_sources.hseen() {
@@ -856,4 +918,60 @@ fn hse_parameters_match(hse: Hse) -> Result<bool, Error> {
         && v.waitcycle() == pac::sysctrl::vals::HseWait::Cycles262144
         && !v.flt()
         && v.detcnt() == hse.detector_count()?)
+}
+
+// Only a requested LSE source needs this monitored-source policy. Default None
+// retains the original RCC path. Factory-valid live LSI is never retuned.
+#[cfg(rcc_lse)]
+fn prepare_lse_monitor(
+    timeout: u32,
+    cs: critical_section::CriticalSection<'_>,
+) -> Result<(), Error> {
+    use crate::rtc::sealed::Instance;
+    let r = pac::SYSCTRL;
+    let factory = unsafe {
+        core::ptr::read_volatile(crate::peripherals::RTC::FACTORY_TRIM_ADDRESS as *const u16)
+    };
+    if factory == u16::MAX {
+        return Err(Error::LseNotReady);
+    }
+    let mut calibration = pac::sysctrl::regs::Lsi::default();
+    calibration.set_trim(factory);
+    let before = r.lsi().read();
+    // An enabled or pending ready interrupt is a retained observer when this
+    // request would start LSI. Never clear it or mask the peripheral's owner.
+    if !r.cr1().read().lsien() && (r.ier().read().lsirdy() || r.isr().read().lsirdy()) {
+        return Err(Error::LseClockInUse);
+    }
+    if before.trim() == calibration.trim() {
+        return Ok(());
+    }
+    // LSIEN alone is not used as ownership proof. The generated gate-preserving
+    // checks cover every reviewed direct selector and detector, twice, with
+    // unchanged native trim/wait and both hardware stable indications low.
+    let stopped = || {
+        let control = r.cr1().read();
+        let lsi = r.lsi().read();
+        !control.lsien()
+            && !lsi.stable()
+            && !r.isr().read().lsistable()
+            && !control.hseccs()
+            && !control.lseccs()
+            && !r.ier().read().lsirdy()
+            && !r.isr().read().lsirdy()
+            && lsi.trim() == before.trim()
+            && lsi.waitcycle() == before.waitcycle()
+    };
+    for _ in 0..2 {
+        if !stopped() || !crate::rcc_lsi_consumers_idle(timeout, cs)? || !stopped() {
+            return Err(Error::LseClockInUse);
+        }
+    }
+    // Own manuals require parameters before enable. LSI has no write key.
+    // Keep WAIT and every unrelated/reserved field; never stop a live source.
+    r.lsi().modify(|w| w.set_trim(calibration.trim()));
+    wait_until(timeout, Error::LseNotReady, || {
+        let lsi = r.lsi().read();
+        lsi.trim() == calibration.trim() && lsi.waitcycle() == before.waitcycle()
+    })
 }

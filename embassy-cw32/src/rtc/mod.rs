@@ -4,7 +4,7 @@
 //! classic families support a verified factory-trim LSI capability; its
 //! nominal rate is 32800/32768 calendar ticks per SI second, with the own RC
 //! tolerance retained in ClockBounds. This is not a precision wall clock.
-//! The two qualified x030 packages also accept a held board-qualified LSE source.
+//! Exact source-qualified packages also accept a held board-qualified LSE source.
 //! Bounds describe a healthy source, with no automatic LSI fallback after failure.
 //! Attach and reads preserve retained calendar/event state. Drop never stops,
 //! resets or gates the RTC or its oscillator. Cold initialization is explicit.

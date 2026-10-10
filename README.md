@@ -130,13 +130,14 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - All eleven LSE-bearing families: read-only inherited LSE pad reservation before
   token return, with source-specific pad locks and exact package routes. GPIO and
   peripheral pin construction reject reserved pads before GPIO writes.
-  CW32F030C8T7 and CW32A030C8T7 additionally support explicitly requested,
+  Eight exact x030/F020/L031/R031/W031 packages support explicitly requested,
   board-qualified nominal 32768 Hz crystal/bypass setup and an owned RTC source.
   Startup preserves retained consumers, accepts only a pristine RTC before
   enabling a disabled source, and has a bounded poll budget. Failure requires
   reset; no automatic RTC fallback, low-power recovery or elapsed-time accuracy
   after a clock fault is promised. Other parts retain read-only inherited-pad
   protection. See [the ownership contract](docs/inherited-lse-pads.md) and
+  [active LSE contract](docs/qualified-lse.md) and
   [qualified LSE examples](examples/lse-clock/README.md).
 - All 13 families: GPIO and typed async GPIO interrupts, HSI clocks, independent
   watchdog, documented CRC16 presets, blocking/interrupt-driven UART, blocking
@@ -218,7 +219,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - All eleven RTC-bearing families: bounded whole-second calendar with preserving
   attachment and explicit initialization. L010/L011/L012 use frozen HSIOSC;
   classic families normally retain preconfigured factory-trim LSI and its exact
-  32800/32768 rate and tolerance. The two qualified x030 LQFP48 parts can instead
+  32800/32768 rate and tolerance. The eight qualified LSE packages can instead
   hold an explicitly initialized LSE source with health checks around calendar
   operations. Typed weekly Alarm A programming and A/B
   event status/acknowledgement are supported; L010/L011/L012 also have scoped

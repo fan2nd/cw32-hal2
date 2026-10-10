@@ -749,14 +749,17 @@ fieldset/LSE:
     description: desc DRIVER.
     bit_offset: 0
     bit_size: 2
+    enum: LseDrive
   - name: AMP
     description: desc AMP.
     bit_offset: 2
     bit_size: 2
+    enum: LseAmplitude
   - name: WAITCYCLE
     description: desc WAITCYCLE.
     bit_offset: 4
     bit_size: 2
+    enum: LseWait
   - name: MODE
     description: desc MODE.
     bit_offset: 6
@@ -1004,3 +1007,51 @@ enum/Sysclk:
   - name: LSE
     description: LSE system clock.
     value: 4
+enum/LseDrive:
+  description: Own F020 RM Rev1.4 PDF page74; docs/lse-active-f020.json.
+  bit_size: 2
+  variants:
+  - name: LEAST
+    description: Minimum crystal drive.
+    value: 0
+  - name: SMALL
+    description: Lower crystal drive.
+    value: 1
+  - name: NORMAL
+    description: Normal crystal drive.
+    value: 2
+  - name: STRONG
+    description: Strong crystal drive; manual recommended value.
+    value: 3
+enum/LseAmplitude:
+  description: Own F020 RM Rev1.4 PDF page74; docs/lse-active-f020.json.
+  bit_size: 2
+  variants:
+  - name: LEAST
+    description: Minimum amplitude.
+    value: 0
+  - name: SMALL
+    description: Lower amplitude.
+    value: 1
+  - name: NORMAL
+    description: Normal amplitude; manual recommended value.
+    value: 2
+  - name: LARGE
+    description: Higher amplitude.
+    value: 3
+enum/LseWait:
+  description: Own F020 RM Rev1.4 PDF page74; docs/lse-active-f020.json.
+  bit_size: 2
+  variants:
+  - name: CYCLES256
+    description: Wait for 256 LSE cycles.
+    value: 0
+  - name: CYCLES1024
+    description: Wait for 1024 LSE cycles.
+    value: 1
+  - name: CYCLES4096
+    description: Wait for 4096 LSE cycles.
+    value: 2
+  - name: CYCLES16384
+    description: Wait for 16384 LSE cycles.
+    value: 3

@@ -1061,7 +1061,7 @@ groups:
     reason: Own-source typed SYSCLK and HEX input selectors; register layout/access unchanged.
 
 - canonical: sysctrl_cw32f020_v1.yaml
-  canonical_ir_sha256: eab2f2da4a259738522c9e292fc36e746c078905b8580d74f826a68b9fbcc341
+  canonical_ir_sha256: a12fd58344960e827f0e656b8fae005641df488cf1a3a82b25ad1e83f1e75d0c
   source_versions:
   - sysctrl_cw32f020_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1073,6 +1073,13 @@ groups:
     evidence: cw32-data/hse-qualified.yaml
     reason: Own-manual typed HSE/system/RTC selectors added without changing register offsets, field widths
       or source reuse groups; no hardware execution.
+  - canonical: sysctrl_cw32f020_v1.yaml
+    before_sha256: eab2f2da4a259738522c9e292fc36e746c078905b8580d74f826a68b9fbcc341
+    after_sha256: a12fd58344960e827f0e656b8fae005641df488cf1a3a82b25ad1e83f1e75d0c
+    evidence: docs/lse-active-f020.json
+    reason: Own F020 RM Rev1.4 PDF74 native LSE drive/amplitude/wait enums only; register layout, access, command semantics and source reuse membership unchanged.
+  post_import_curation: Reapply only the three own-source LSE native enum declarations and field associations documented in docs/lse-active-f020.json after reviewing raw SVD import candidates.
+
 - canonical: sysctrl_cw32l010_v1.yaml
   canonical_ir_sha256: a362263b3c6abbc7c47ec231dd3c3bdfbfe8c432fcbfcba93a9de9c297863ee9
   source_versions:
@@ -1117,7 +1124,7 @@ groups:
       are already RO; their independent mixed-register lowering fix is in field-access.yaml.
 
 - canonical: sysctrl_cw32l031_v1.yaml
-  canonical_ir_sha256: 5699a593469a2d3f5940f74b70089ec49a1becd6b14d99c40717291e79f53ea1
+  canonical_ir_sha256: 0d68b6e56ccc7dd5d294f3af99a53f835eb4fc6d2701603ee8b7b2ff9c85feab
   source_versions:
   - sysctrl_cw32l031_v1.yaml
   - sysctrl_cw32r031_v1.yaml
@@ -1132,6 +1139,17 @@ groups:
     reason: Own L031/R031/W031 manuals independently qualify typed SYSCLK and HSE drive/range/wait enums.
       SYSCLK=2 remains reserved with no PLL; register offsets, field widths and source reuse groups are
       unchanged.
+  - canonical: sysctrl_cw32l031_v1.yaml
+    before_sha256: 5699a593469a2d3f5940f74b70089ec49a1becd6b14d99c40717291e79f53ea1
+    after_sha256: 0d68b6e56ccc7dd5d294f3af99a53f835eb4fc6d2701603ee8b7b2ff9c85feab
+    evidence: docs/lse-active-l031.json
+    reason: Own L031, R031 and W031 LSE parameter enum encodings independently verified in
+      docs/lse-active-l031.json, docs/lse-active-r031.json and docs/lse-active-w031.json.
+      Only enum associations and declarations change; layout, access and source reuse
+      membership stay unchanged.
+  post_import_curation: Reapply the three LSE native enums and field associations only after
+    checking all three own-family evidence records against raw SVD import candidates.
+
 - canonical: sysctrl_cw32l052_v1.yaml
   canonical_ir_sha256: 1530959ce8ab6da13c6f75e747c3e4fa74c21d823bea10c3e8d4481518d1828d
   source_versions:

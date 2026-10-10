@@ -131,7 +131,7 @@ impl<'d> LsiClock<'d> {
 }
 
 #[cfg(rcc_lse)]
-/// Source ownership for the two explicitly qualified x030 packages.
+/// Source ownership for the explicitly qualified exact LSE packages.
 /// Selecting LSE keeps its board-qualified envelope conditional on source health.
 /// No RTC fallback to LSI, elapsed-time continuity or fault recovery is promised.
 pub enum CalendarClock<'d> {

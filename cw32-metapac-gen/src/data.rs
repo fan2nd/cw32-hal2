@@ -714,6 +714,8 @@ pub struct PeripheralLseOutputRoute {
 pub struct PeripheralLseConfiguration {
     pub nominal_hz: u32,
     pub maximum_hz: u32,
+    /// True when CLKCCS/HSECCS/LSECCS are configurable hardware controls.
+    pub configurable_ccs: bool,
     pub supply_mv: (u16, u16),
     pub temperature_c: (i16, i16),
     pub startup_cycles: [u32; 4],
@@ -722,7 +724,7 @@ pub struct PeripheralLseConfiguration {
     pub awt_source: u8,
     pub mco_source: u8,
     pub gpio_dir_offset: u32,
-    pub gpio_speed_offset: u32,
+    pub gpio_speed_offset: Option<u32>,
     pub rtc_reset: Vec<PeripheralLseRtcReset>,
     pub output_routes: Vec<PeripheralLseOutputRoute>,
 }

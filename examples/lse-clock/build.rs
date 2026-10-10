@@ -19,6 +19,31 @@ fn main() {
     fs::write(out.join("memory.x"), memory).unwrap();
     println!("cargo:rustc-link-search={}", out.display());
     println!("cargo:rustc-link-arg=-Tlink.x");
-    assert!(matches!(metadata.name, "CW32F030C8T7" | "CW32A030C8T7"));
+    assert!(matches!(
+        metadata.name,
+        "CW32F030C8T7"
+            | "CW32A030C8T7"
+            | "CW32F020C6U7"
+            | "CW32L031C8T6"
+            | "CW32L031C8U6"
+            | "CW32L031F8U6"
+            | "CW32R031C8U6"
+            | "CW32W031R8U6"
+    ));
+    println!("cargo:rustc-check-cfg=cfg(gpio_has_speed)");
+    let lse = metadata
+        .peripherals
+        .iter()
+        .find(|p| p.name == "SYSCTRL")
+        .unwrap()
+        .clock_limits
+        .as_ref()
+        .unwrap()
+        .lse_configuration
+        .as_ref()
+        .unwrap();
+    if lse.gpio_speed_offset.is_some() {
+        println!("cargo:rustc-cfg=gpio_has_speed");
+    }
     println!("cargo:rerun-if-changed=build.rs");
 }

@@ -1,6 +1,17 @@
 # Bounded active LSE qualification
 
-This candidate qualifies active LSE configuration only for **CW32F030C8T7** and **CW32A030C8T7**, both **LQFP48**. Their oscillator pads are **PC14 / OSC32_IN at pin 3** and **PC15 / OSC32_OUT at pin 4**. Family aliases and every other part retain only previously established pad-ownership facts. Qualification is projected after exact-package expansion through `ClockLimits.lse_configuration`, not placed in family electrical profiles.
+Active LSE configuration is qualified on the eight exact parts below. Every family alias and all other parts retain only previously established pad-ownership facts.
+
+| Part | Package | PC14 / PC15 physical pins | Direct LSE output |
+|---|---|---|---|
+| CW32F030C8T7 / CW32A030C8T7 | LQFP48 | 3 / 4 | PB12 AF3; PF1 AF1 |
+| CW32F020C6U7 | QFN48 | 3 / 4 | PB12 AF3; PF1 AF1 |
+| CW32L031C8T6 / CW32L031C8U6 | LQFP48 / QFN48 | 3 / 4 | PB12 AF3; PF1 AF1 |
+| CW32L031F8U6 | QFN20 | 1 / 2 | Neither route bonded |
+| CW32R031C8U6 | QFN48 | 2 / 3 | PB12 AF3; PF1 AF1 |
+| CW32W031R8U6 | QFN64 | 61 / 62 | PB12 AF3; PF1 AF1 |
+
+ Qualification is projected after exact-package expansion through `ClockLimits.lse_configuration`, not placed in family electrical profiles.
 
 The source facts were checked on 2026-10-09 against the exact originals identified below. This is source qualification, not silicon testing.
 
@@ -16,13 +27,17 @@ The canonical authority is `sources/evidence-sources.json`. New citations use ca
 
 PDF page number is the printed page plus one for these originals. The common manual explicitly covers both F030 and A030. F030 SDK V2.2 headers independently corroborate field locations and encodings; SDK absence is never evidence of an absent consumer or automatic request.
 
-The machine-readable review is in [lse-active-first-cohort.json](lse-active-first-cohort.json) and [lse-active-rtc-admission.json](lse-active-rtc-admission.json). Their exact digests are locked by [lse-qualified.yaml](../cw32-data/lse-qualified.yaml).
+The machine-readable review is in [lse-active-first-cohort.json](lse-active-first-cohort.json) and [lse-active-rtc-admission.json](lse-active-rtc-admission.json). Their exact digests are locked by [lse-qualified.yaml](../cw32-data/lse-qualified.yaml). F020 uses its separate [own-source review](lse-active-f020.json), [RTC admission](lse-active-f020-rtc-admission.json) and [current-original correspondence](lse-f020-source-receipt.json). It does not inherit x030 citation authority.
+
+F020 RM CN Rev1.4 SHA-256 `279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed` covers mode/start at PDF49–50, mandatory CCS at69, LSE at74, detectors at57–58, gate/reset at80–85, MCO at92, AWT at170, RTC compensation at177, wake at181, reset roster at184–192 and UART at295. Its selected own datasheet CN Rev1.3 SHA-256 `1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0` covers QFN48 bonding at PDF23–24, output routes at28, supply/temperature at36 and external-input/crystal conditions at42–43.
+
+F020 Table5-2 was visually inspected: PC14/PC15 are QFN48 pins3/4; QFN20 and QFN32 have neither oscillator pad. Thus F020F6U7, F020K6U7 and family aliases remain unqualified. The official F020 SDK LSE enable function incorrectly names PC13/PC14; the own datasheet governs the implementation. The obsolete same-basename PDF actually printed Rev1.2 is not used.
 
 ## Board contract
 
 Both crystal and bypass use nominal **32,768 Hz** in this cohort. The board must supply a positive minimum and maximum frequency that bracket the nominal value and cover **every individual cycle**, including tolerance, temperature, supply, aging and jitter. A nominal frequency does not establish an accuracy bound. The own-source ceiling for both crystal/ceramic and bypass is **1 MHz**; this does not expand the cohort to other nominal frequencies.
 
-The qualified operating conditions are **1,650–5,500 mV** and **−40 to +105 °C**, with VDDA equal to VDD and the device's remaining electrical conditions satisfied. The datasheets' conditional low-power extension to +125 °C is deliberately not projected.
+The x030/F020 qualified operating conditions are **1,650–5,500 mV** and **−40 to +105 °C**, with VDDA equal to VDD and the device's remaining electrical conditions satisfied. The datasheets' conditional low-power extension to +125 °C is deliberately not projected.
 
 Crystal mode requires PC14 and PC15 configured as analog. Crystal manufacturer characteristics, load capacitance, layout parasitics, drive and amplitude remain board responsibilities. The datasheets give **1.5 s typical** startup, with no maximum; it must not become a guaranteed timeout.
 
@@ -30,17 +45,17 @@ Bypass requires PC14 as a digital input. PC15 can be general-purpose GPIO under 
 
 ## Native oscillator and consumer facts
 
-`LseDrive` and `LseAmplitude` expose all four documented encodings 0–3. `LseWait` exposes 256, 1,024, 4,096 and 16,384 LSE cycles at encodings 0–3. These enums are authored in `sysctrl_v1.yaml`; metadata stores the cycle counts, not an alternate register-access abstraction.
+`LseDrive` and `LseAmplitude` expose all four documented encodings 0–3. `LseWait` exposes 256, 1,024, 4,096 and 16,384 LSE cycles at encodings 0–3. These enums are authored in `sysctrl_v1.yaml` and own F020 `sysctrl_cw32f020_v1.yaml`; metadata stores the cycle counts, not an alternate register-access abstraction.
 
 `CR1.LSEEN` is the software enable; `LSE.STABLE` is a separate read-only observation. The configuration must be completed before enable and remain unchanged while enabled. `LSELOCK` only prohibits clearing LSEEN; it is not a lock on the other oscillator parameters. Only power-on reset resets the documented LSE register and LSEEN state.
 
-CR1 writes require **KEY=0x5A5A** in bits 31:16. The own CR1 table explicitly requires **CLKCCS, HSECCS and LSECCS to be written as 1**. This cohort must retain that requirement. Startup failure is `ISR.LSEFAIL` bit 5; running failure is `ISR.LSEFAULT` bit 7. Running detection requires LSI and compares 128 LSE cycles in 256 LSI cycles. These status flags are not enables; ICR uses write-zero-to-clear semantics and does not justify clearing unrelated flags.
+CR1 writes require **KEY=0x5A5A** in bits 31:16. The x030/F020 own CR1 tables explicitly require **CLKCCS, HSECCS and LSECCS to be written as 1**. Those existing backends retain that requirement. L031/R031/W031 instead have configurable CCS controls as detailed below. Startup failure is `ISR.LSEFAIL` bit 5; running failure is `ISR.LSEFAULT` bit 7. Running detection requires LSI and compares 128 LSE cycles in 256 LSI cycles. These status flags are not enables; ICR uses write-zero-to-clear semantics and does not justify clearing unrelated flags.
 
 Consumers whose inherited configuration matters:
 
 - RTC `CR1.SOURCE=0`, with the full reset admission rule below
-- RTC `COMPEN.EN=1`, conservatively rejected even with another SOURCE: table12-3 (PDF180/printed179) permits LSE-compensated1Hz output independently of SOURCE
-- Standalone AWT `CR.SRC=3` and local `CR.EN`; the x030 AWT native enum has its own source-backed LSE variant
+- RTC `COMPEN.EN=1`, conservatively rejected even with another SOURCE: table12-3 (x030 PDF180/printed179; F020 PDF177/printed176) permits LSE-compensated1Hz output independently of SOURCE
+- Standalone AWT `CR.SRC=3` and local `CR.EN`; the shared x030/F020 AWT native enum has independently sourced LSE=3 in each manual
 - UART1, UART2 and UART3 `CR2.SOURCE=2`
 - SYSCTRL MCO `SOURCE=6`
 - Direct digital LSE outputs **PB12 AF3** and **PF1 AF1**
@@ -82,3 +97,17 @@ The focused `electrical::lse_tests` cases exercise malformed qualification, inco
 `Config.lse=None` adds no LSE enable/parameter/pad writes. Existing mandatory CLKCCS/HSECCS/LSECCS setup remains. Enabled-source reuse requires exact parameters, pads, EN/STABLE and no LSEFAIL/LSEFAULT; it never stops or rewrites the oscillator. New startup reserves requested pads before writes and rejects retained consumers before touching pads. Inspection enables configuration gates with readback and restores their incoming state on success. A gate failure may leave a gate enabled, but aborts before source/pad mutation. No shared reset or fault-clear write is used.
 
 `LseClock` retains SYSCTRL and the actual oscillator pins, and verifies the frozen init record. RTC operations check the selected source before/after bounded waits and transactions. Bounds are a declared healthy-source envelope. The manual documents SYSCLK fallback to HSI, not automatic RTC fallback to LSI; calendar continuity or elapsed time after a fault is unqualified.
+
+## L031 / R031 / W031 monitored-source qualification
+
+Each family has an independent [L031](lse-active-l031.json), [R031](lse-active-r031.json), or [W031](lse-active-w031.json) record, its own RTC admission record, and its own original/page/SDK correspondence receipt. No equal-layout inference extends another family's citation authority. L031 ambient/supply is −40…85 °C / 1.65…5.5 V; R031 is −40…85 °C / 2.2…3.6 V; W031 uses the conservative LDO/DCDC intersection −40…85 °C / 2.0…3.6 V. RF operation is unqualified. Both modes retain the common 1 MHz ceiling and nominal 32,768 Hz contract.
+
+These native GPIO blocks have no SPEED, LOCK, HIGHIE or LOWIE registers. The data generator checks the complete own-source native register roster, and the build generator emits only present typed PAC accesses. Every available pad control, peripheral reset/gate, and bonded output route remains checked. QFN20 L031F8U6's empty direct-output list is independently proven package absence, not missing metadata.
+
+The CR1 CCS bits are configurable hardware. Requiring monitoring is the software policy for this held-source capability: a fresh requested start enables only LSECCS; CLKCCS/HSECCS remain exactly inherited. None leaves all three unchanged. Exact enabled reuse requires LSECCS, software-enabled stable LSI and exact LSE/pad configuration, and never changes CCS or restarts LSE.
+
+LSI reset trim is unspecified. Before requested LSE initialization, the immutable factory halfword is read and masked to the native ten-bit trim. Factory-matching trim and WAIT are preserved for existing users. An incompatible live source is rejected. Only a source repeatedly observed disabled/nonstable, with no documented consumer/detector or pending/enabled ready event, may receive a trim-only factory load. Checked, gate-restoring inspections cover SYSCLK, MCO, pristine RTC including independent LSE compensation, AWT, UART1/2/3, GPIOA/B/C/F filter selectors and exact-package bonded PB11 AF1. Reserved selectors reject admission. IWDT uses RC10K and ADC uses PCLK; neither adds a direct LSI selector. Completeness is a conservative software inference from the complete own-manual clock and consumer review, not a silicon STOP guarantee.
+
+No live source is stopped or trimmed, and no pending event is cleared. LSI startup has bounded polling and preserves WAIT, gates and unrelated CR1 controls. A successful LSE start freezes the detector's LSI trim/wait; subsequent held-source health checks require unchanged parameters, LSIEN/STABLE, LSECCS, LSEEN/STABLE and no LSE faults. Failure never publishes Clocks or attempts rollback. No automatic RTC fallback, clock-loss recovery, low-power service or frequency/accuracy measurement is implied.
+
+The authored schema intentionally adds required configurable_ccs and changes gpio_speed_offset to Option<u32>. Existing profiles explicitly carry false and numeric 8; these three families carry true and null. Older active-LSE JSON without the required field needs regeneration. This is an explicit source/wire contract update.
