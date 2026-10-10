@@ -499,6 +499,8 @@ pub struct PeripheralPllLimits {
     pub supply_mv: (u16, u16),
     pub temperature_c: (i16, i16),
     pub hsi_supported: bool,
+    /// Vendor-documented functional HSE oscillator and bypass references; rate bounds only.
+    pub hse_supported: bool,
     pub startup_cycles: u32,
     pub startup_encoding: u8,
     pub reserved_debug_default: u8,

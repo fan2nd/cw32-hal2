@@ -2,9 +2,11 @@
 
 This batch adds direct HSE crystal/ceramic and digital bypass initialization for
 CW32F020, CW32F030 and CW32A030 only. Default factory-HSI behavior and its public
-Hsi/HsiDiv/AHBPrescaler/APBPrescaler APIs remain available. PLL configuration,
-other families' external source initialization, runtime switching, low-power
-entry/recovery and runtime clock-loss recovery remain unimplemented.
+Hsi/HsiDiv/AHBPrescaler/APBPrescaler APIs remain available. One-time HSI- or
+HSE-fed SYSCLK PLL has a separate [qualified contract](f020-x030-hsi-pll.md),
+including crystal and bypass HSE references. Independent PLL outputs, runtime
+switching, low-power entry/recovery and runtime clock-loss recovery remain
+unimplemented. Other families have their own external-source contracts.
 
 ## API and architecture
 
@@ -16,7 +18,8 @@ flat backend files. No STM32 clock limits or Stop-mode behavior are imported.
 
 Intentional additions/divergences:
 
-- Config.hse: Option<Hse> and Config.sys: Sysclk (HSI/HSE only). HSE selected
+- Config.hse: Option<Hse> and Config.sys: Sysclk (direct HSI/HSE; PLL follows
+  the separate contract above). HSE selected
   without a declaration fails before writes. A declared HSE is started and its
   pads reserved even when SysClk remains HSI, as an explicitly requested source.
 - Hse carries required nominal/minimum/maximum Hertz, explicit board operating

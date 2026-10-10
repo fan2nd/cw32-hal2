@@ -12,6 +12,8 @@ use embassy_time::{Instant, Timer};
 async fn main(_spawner: Spawner) {
     // Defaults: classic /6 x4 = 32 MHz, L083 /6 x7 = 56 MHz. Each
     // is an exact 1 MHz division supported by its own GTIM prescaler.
+    // Both HSE modes use 8 MHz x4 = nominal 32 MHz, divided by 32 for
+    // nominal 1 MHz ticks (or divided by 8 with low-voltage AHB /4).
     // Fractional-MHz PLL choices are not necessarily admitted by this driver.
     let p = hal::init(cw32_pll_clock_examples::config());
     #[cfg(gpio_speed)]

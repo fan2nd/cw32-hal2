@@ -146,13 +146,19 @@ still apply.
   guaranteed. See [the complete HEX contract](qualified-hex.md).
   These are bounded one-time source modes; runtime switching, low-power
   restoration and source-loss recovery remain outside their contracts.
-- Factory-HSI-fed system PLL is qualified on F020/F030/A030/L083, the four
+- Factory-HSI- and HSE-fed system PLL is qualified on F020/F030/A030/L083, the four
   documented system-PLL families. R031/W031 radio synthesis remains separate
-  and user-deferred. Nine F020 pairs and twelve F030/A030/L083 pairs are admitted
+  and user-deferred. The nine F020 and twelve F030/A030/L083 HSI pairs remain admitted
   with entire actual input/output envelopes inside one qualified analog bin;
-  F020 output is capped at48MHz and the other three at64MHz. HSE-fed references,
-  independent outputs, runtime retuning and low-power restoration remain gaps
-  within these existing families. PLL bounds are rate-only: ADC and F030/A030
+  F020 output is capped at48MHz and the other three at64MHz. `PllSource::HSE`
+  takes the undivided source from `Config.hse` in crystal or bypass mode.
+  Crystal admission relies on the vendor-documented internal composition and
+  the existing board contract; hidden reference duty is not independently
+  certified. Bypass requires the OSC_IN waveform limits, including 40–60% duty.
+  Every HSE reference must fit 4–24 MHz and one analog input bin, and its
+  multiplied output must fit one output bin and the independent raw cap.
+  Independent outputs, runtime retuning, low-power restoration and guaranteed
+  reference-loss recovery remain gaps. All PLL bounds are rate-only: ADC and F030/A030
   complementary dead-time admission retain their strict cycle-timing rejection.
   See [F020/x030](f020-x030-hsi-pll.md) and [L083](l083-hsi-pll.md).
 - Inherited LSE pad ownership is protected on all eleven LSE-bearing families,

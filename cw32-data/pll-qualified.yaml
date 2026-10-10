@@ -1,6 +1,7 @@
 schema_version: 1
-scope: CW32L083/CW32F020/CW32F030/CW32A030 factory-HSI-fed system PLL at one-time initialization. Other
-  PLL hardware/source combinations are not qualified by this policy, not asserted absent.
+scope: CW32L083/CW32F020/CW32F030/CW32A030 factory-HSI- or HSE-fed system PLL at one-time initialization.
+  HSE oscillator and bypass use the existing board contract. Other PLL hardware/source combinations
+  are not qualified by this policy, not asserted absent.
 families:
   CW32L083:
     pll:
@@ -40,6 +41,7 @@ families:
       - -40
       - 85
       hsi_supported: true
+      hse_supported: true
       startup_cycles: 16384
       startup_encoding: 7
       reserved_debug_default: 5
@@ -246,6 +248,7 @@ families:
       - -40
       - 105
       hsi_supported: true
+      hse_supported: true
       startup_cycles: 16384
       startup_encoding: 7
       reserved_debug_default: 5
@@ -408,6 +411,7 @@ families:
       - -40
       - 105
       hsi_supported: true
+      hse_supported: true
       startup_cycles: 16384
       startup_encoding: 7
       reserved_debug_default: 5
@@ -591,6 +595,7 @@ families:
       - -40
       - 105
       hsi_supported: true
+      hse_supported: true
       startup_cycles: 16384
       startup_encoding: 7
       reserved_debug_default: 5
@@ -744,7 +749,9 @@ qualification_policy: Entire actual input envelope and entire multiplied output 
 limitations:
 - Cycle-to-cycle jitter is not an absolute period or phase bound. The multiplied source envelope is a
   rate qualification only.
-- No HSE-fed PLL, runtime retuning, DeepSleep restore or guaranteed fault recovery.
+- No runtime retuning, independent PLL, DeepSleep restore or guaranteed fault recovery.
+- Crystal admission follows the vendor-documented functional composition; hidden-node numeric duty is not independently certified.
+- Bypass OSC_IN must meet the existing waveform limits including 40-60% duty; all PLL outputs remain rate-only.
 - Ordinary peripheral, DMA, IRQ/NMI, MCO and dedicated PLL_OUT users must be quiescent at entry.
 discrepancies:
 - Datasheet output8-48MHz (F020) or8-64MHz (L083/F030/A030) and manual12-72MHz analog bins are intersected
@@ -756,3 +763,11 @@ discrepancies:
   not to make reserved controls configurable.
 source_evidence: sources/x030-f020-hsi-pll-source-receipt.json
 source_evidence_sha256: 6c2e1948300a46f2bfed9bd4aa916cbeed665b09858115b6d9bea57c19ba7ea7
+hse_support_contract:
+  source_evidence: docs/hse-pll-source-receipt.json
+  source_evidence_sha256: 529e467a907d138f19f2f44e5332928f03a5ad3ca7c781f7154c562fe5da3708
+  crystal_basis: vendor_documented_functional_composition
+  input_duty_percent: [40, 60]
+  numeric_internal_duty_independently_certified: false
+  source_encodings: {oscillator: 0, bypass: 1, hsi: 3}
+  cycle_duration_qualified: false

@@ -28,7 +28,10 @@ low-power operation does not widen it. Actual HCLK/PCLK must stay at or below
 HSI fallback are checked against final bus/Flash limits, including when CCS is
 disabled. Retained HSIOSC is 48 MHz ±2% before its divider. HSI/1 may reach
 48.96 MHz; HSI/2 may reach 24.48 MHz and is not a legal AHB/1 fallback below
-1.8 V. No PLL output configuration is provided.
+1.8 V. One-time HSI- or HSE-fed SYSCLK PLL, including crystal and bypass
+references, has a separate [qualified contract](l083-hsi-pll.md). Independent
+PLL outputs, runtime retuning and guaranteed reference-loss recovery are not
+provided.
 
 FLASH WAIT0/1/2 cover actual HCLK ≤24/48/72 MHz (RM PDF121/131). The maximum of
 selected-source and retained-HSI HCLK bounds determines the wait state. WAIT2

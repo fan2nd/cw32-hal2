@@ -2369,6 +2369,12 @@ fn generate_pll(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLim
     println!("cargo:rustc-cfg=rcc_pll");
     writeln!(
         out,
+        "pub(crate) const RCC_PLL_HSE_SUPPORTED: bool = {};",
+        pll.hse_supported
+    )
+    .unwrap();
+    writeln!(
+        out,
         "pub(crate) const RCC_PLL_INPUT_RANGE_HZ: (u32, u32) = {:?};",
         pll.input_range_hz
     )

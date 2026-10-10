@@ -49,6 +49,10 @@ def required_evidence(root: Path) -> set[str]:
     required.add("docs/lse-native-low-power-independent-runtime-review.json")
     required.add("docs/lse-native-low-power-final-correspondence.json")
     required.add("docs/lse-native-low-power-independent-runtime-review.md")
+    required.add("docs/hse-pll-runtime-acceptance.json")
+    required.add("docs/hse-pll-runtime-acceptance.md")
+    required.add("docs/hse-pll-final-correspondence.json")
+    required.add("docs/hse-pll-final-correspondence.md")
     for audit in lock.get("project_audit_inputs", []):
         path = root / audit["path"]
         if path.stat().st_size != audit["bytes"] or hashlib.sha256(path.read_bytes()).hexdigest() != audit["sha256"]:

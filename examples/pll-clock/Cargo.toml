@@ -11,6 +11,9 @@ default = ["cw32l083rct6"]
 # The alternate clock choices demonstrate a fractional-MHz source and a low-VDD bus.
 fractional = []
 low-voltage = []
+# Choose at most one board-qualified HSE mode; fractional is HSI-only.
+hse-crystal = []
+hse-bypass = []
 embassy-time = ["dep:embassy-executor", "dep:embassy-time", "embassy-cw32/time-driver-gtim1"]
 cw32f020c6u7 = ["embassy-cw32/cw32f020c6u7", "cw32-metapac/cw32f020c6u7"]
 cw32f030c8t7 = ["embassy-cw32/cw32f030c8t7", "cw32-metapac/cw32f030c8t7"]

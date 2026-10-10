@@ -1,0 +1,399 @@
+{
+  "review_date": "2026-10-09",
+  "scope": "Independent crystal-PLL functional contract review; no implementation.",
+  "verdict": "YES, limited functional admission for vendor-conforming crystal HSE to init-only SYSCLK PLL on CW32F020/F030/A030/L083.",
+  "decision_basis": "Explicit own-source composition plus board/HSE/PLL operating and configuration preconditions; not independently certified internal numeric duty.",
+  "public_api": "One PllSource::HSE requiring Config.hse; Hse.mode selects PAC HseCrystal=0 or HseBypass=1.",
+  "metadata": "One hse_supported bool. Preserve numeric input duty [40,60] in source policy/receipt; no new runtime duty field or caller assertion.",
+  "input_duty_percent_device_condition": [
+    40,
+    60
+  ],
+  "independent_internal_duty_guarantee": false,
+  "individual_cycle_timing_guarantee": false,
+  "pll_reference_loss_recovery_guarantee": false,
+  "inputs": [
+    {
+      "path": "external-evidence/stage55/hse-pll-design/design.md",
+      "sha256": "42a505b20efe137855b4e5a581d1be9908866d859199e1a1d3c2046cb5b306dd"
+    },
+    {
+      "path": "external-evidence/stage55/hse-pll-qualification/report.md",
+      "sha256": "49784323cfb3a7eef8ed5684c47fc2ee75cf5728f3d24beffc348c74e6bf6e23"
+    },
+    {
+      "path": "external-evidence/stage55/hse-pll-qualification/qualification.json",
+      "sha256": "e0bdb98513733d484c11fe41a55c0ef20e8d77e0a4fc9b1abf507fba505f294c"
+    },
+    {
+      "path": "external-evidence/stage55/hse-pll-qualification/source-receipt.json",
+      "sha256": "e3722619cca13715df75171a6453716eb017c326ed4897c4af71049a8162d552"
+    },
+    {
+      "path": "external-evidence/stage54/original-source-snapshot/embassy-cw32/src/rcc/hsi_48mhz.rs",
+      "sha256": "51c1f7ec3e3a74c33738838a6bceb424f88b119f3748cd62da22e9d21c9377c0"
+    }
+  ],
+  "sources": [
+    {
+      "id": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+      "path": "external-evidence/stage55/vendor-sources/CW32A030_DataSheet_CN_V1.1.pdf",
+      "url": "https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf",
+      "printed_revision": "1.1",
+      "publication_date": "2025-12-30",
+      "chip_scope": [
+        "CW32A030"
+      ],
+      "text_path": "external-evidence/stage55/vendor-sources/CW32A030_DataSheet_CN_V1.1.txt",
+      "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+      "text_sha256": "87c782da759a6893bca9f773a474a7b0445f77cd51d86d9cb2d2d8b8de8d05b9",
+      "pdf_and_text_hashes_independently_verified": true,
+      "directly_extracted_pdf_pages_1_based": [
+        35,
+        41,
+        42,
+        44
+      ],
+      "printed_pages": [
+        34,
+        40,
+        41,
+        43
+      ],
+      "page_extraction_sha256": {
+        "35": "ef6ad1fac94131d051275e65ea1142bee6fcb65fa49831a135da14a8f08274a5",
+        "41": "0548800b8401ca641efb79180b33092d7e14508722bf7a2e08a3b5c8e2fd1f3e",
+        "42": "d1b3643e94667d9480e4bd206253d2c50b3cff5ec66633a9e1513ffc3552c088",
+        "44": "fc06f09c50ccd0952ecd26fccb51c1ae59aaacf15ba07f05575fc3bef244d23f"
+      }
+    },
+    {
+      "id": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+      "path": "external-evidence/stage55/vendor-sources/CW32F020_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+      "printed_revision": "1.4",
+      "publication_date": "2024-09",
+      "chip_scope": [
+        "CW32F020"
+      ],
+      "text_path": "external-evidence/stage55/vendor-sources/CW32F020_UserManual_CN_V1.4.txt",
+      "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+      "text_sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db",
+      "pdf_and_text_hashes_independently_verified": true,
+      "directly_extracted_pdf_pages_1_based": [
+        46,
+        47,
+        52,
+        53,
+        55,
+        58,
+        66
+      ],
+      "printed_pages": [
+        45,
+        46,
+        51,
+        52,
+        54,
+        57,
+        65
+      ],
+      "page_extraction_sha256": {
+        "46": "9892019aa4ba60859f0f265f959ea536f0e111ffc47e1d300db4beda64fee05c",
+        "47": "bc3df07ef3e861ab9557765e69a462d1745617c73aa32543a52df83cdb4672d7",
+        "52": "f802ee6e38f0c66097b25c970356e555306395fed560b371579fd52deb349102",
+        "53": "0cb7bdd08cd1fa26a7684c6728da24269e5e13b607ab50d33a27e530400c214b",
+        "55": "9495326d9f7abc9c3f368e61250b0dfcdcc7113558884fa43cbf2651fb6a4f3b",
+        "58": "b72c284782936f08acddf330a2d9677ca9392f5d18687b839184f76a5a5eb66b",
+        "66": "4aac4f5a5fe677ceb2b46f054373c7ce002a7d7242576a23c0578fca869db28c"
+      }
+    },
+    {
+      "id": "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+      "path": "external-evidence/stage55/vendor-sources/CW32F030_DataSheet_CN_V1.9.pdf",
+      "url": "https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf",
+      "printed_revision": "1.9",
+      "publication_date": "2025-12-29",
+      "chip_scope": [
+        "CW32F030"
+      ],
+      "text_path": "external-evidence/stage55/vendor-sources/CW32F030_DataSheet_CN_V1.9.txt",
+      "sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2",
+      "text_sha256": "7c4d70098481fb58e0924901dbbe24cb88cf445689efaf718410617b37f4e5bf",
+      "pdf_and_text_hashes_independently_verified": true,
+      "directly_extracted_pdf_pages_1_based": [
+        38,
+        44,
+        45,
+        47
+      ],
+      "printed_pages": [
+        37,
+        43,
+        44,
+        46
+      ],
+      "page_extraction_sha256": {
+        "38": "fd678406165f24205ac12676722865a320145cfbde8c517a844ee3c2ede9dd62",
+        "44": "34030b8380a3bbed965c4486cbd28042894d2e6ba1bc62f7fbff5b88f552fdc3",
+        "45": "4dda1d7db52db1fb5070754392694383041b30f4f9a29fd396dd5ef0e6a8920c",
+        "47": "c0792dec0f954afc600628abe32292f7dc6892dfeb57e41f3d778d7a9f1e78fb"
+      }
+    },
+    {
+      "id": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "path": "external-evidence/stage55/vendor-sources/CW32L083_DataSheet_CN_V1.9.pdf",
+      "url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+      "printed_revision": "1.9",
+      "publication_date": "2025-12-29",
+      "chip_scope": [
+        "CW32L083"
+      ],
+      "text_path": "external-evidence/stage55/vendor-sources/CW32L083_DataSheet_CN_V1.9.txt",
+      "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+      "text_sha256": "2124f5c492e1d58b51674805b2d8a58f82b2ce462c8b73beaba63c6d93780220",
+      "pdf_and_text_hashes_independently_verified": true,
+      "directly_extracted_pdf_pages_1_based": [
+        47,
+        53,
+        54,
+        56
+      ],
+      "printed_pages": [
+        46,
+        52,
+        53,
+        55
+      ],
+      "page_extraction_sha256": {
+        "47": "644910d9153f8519b50d2da6e7467e6cd858035754b62ca7272cd4c85fafa57d",
+        "53": "b87ebdc53427cecb78be00ca04f5b1c9a355b484d3b3e8dd2369457d4280c1e3",
+        "54": "913f75930adee6e398169c266cee78e1ceaf2210448df1727a4a2c700f5e6ba3",
+        "56": "1acea3af87ef05c2d358ffa02901124e35b92daadd92583474b780b0c84b8666"
+      }
+    },
+    {
+      "id": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "path": "external-evidence/stage55/vendor-sources/CW32L083_UserManual_CN_V2.0.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+      "printed_revision": "2.0",
+      "publication_date": "2024-09",
+      "chip_scope": [
+        "CW32L083"
+      ],
+      "text_path": "external-evidence/stage55/vendor-sources/CW32L083_UserManual_CN_V2.0.txt",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "text_sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564",
+      "pdf_and_text_hashes_independently_verified": true,
+      "directly_extracted_pdf_pages_1_based": [
+        53,
+        54,
+        59,
+        60,
+        61,
+        62,
+        65,
+        73
+      ],
+      "printed_pages": [
+        52,
+        53,
+        58,
+        59,
+        60,
+        61,
+        64,
+        72
+      ],
+      "page_extraction_sha256": {
+        "53": "67b64e9102a9c3a558e4b2c4c664e7b22944413735c01c1c2a701477ba4598e7",
+        "54": "417fe402e76efcb46ea400439c5c8807f8280e542ad406127453c6be68db756a",
+        "59": "53650e1a552abb107693d8f433e1eac239c93e99b20f26b75ca99524faf4ed8f",
+        "60": "5e8497323c0931aa0f1d1d6d75fc5c213acc60fc731ebb30a3bfc6220cffb487",
+        "61": "2f063645d8840805c2c73b504b9a703ec77f7d0f5fd6d4e55250bb34a54ab868",
+        "62": "3d48e7052e0692d01667381f28c135ef24c5498c800760dd956a4cd4f892a68d",
+        "65": "28c03257292913b1786f9aac32475e41f984a19c54250bedb42676978c4d4c27",
+        "73": "2bdec290697036f2455994fa2db3dd5fd0df4f4a84076c90243e1291cf9bea3c"
+      }
+    },
+    {
+      "id": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+      "path": "external-evidence/stage55/vendor-sources/CW32x030_UserManual_CN_V2.5.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "printed_revision": "2.5",
+      "publication_date": "2024-09",
+      "chip_scope": [
+        "CW32F030",
+        "CW32A030"
+      ],
+      "text_path": "external-evidence/stage55/vendor-sources/CW32x030_UserManual_CN_V2.5.txt",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "text_sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe",
+      "pdf_and_text_hashes_independently_verified": true,
+      "directly_extracted_pdf_pages_1_based": [
+        48,
+        49,
+        54,
+        55,
+        57,
+        60,
+        68
+      ],
+      "printed_pages": [
+        47,
+        48,
+        53,
+        54,
+        56,
+        59,
+        67
+      ],
+      "page_extraction_sha256": {
+        "48": "67a13f176f28ea955f63dc445cf4f6af958b8b465db01b74e27efdd466410a20",
+        "49": "af00b4ae478a84ce7aa343287266a693462e3f472eaef0494b8ad4ac8f9e2457",
+        "54": "5020e01b7d492bed3e591ac70e370f6efb7252b154485ebc37ff80c6a554d7ea",
+        "55": "40c11a99c0e4e3f2fd2edc71ffe8916963551b87695747b7b5c9aed63fed6459",
+        "57": "78dd1774aa4159071dd089d4877e26c6d7cb8596c1908db860e476099cec4cbb",
+        "60": "6558575f242e0a1d5e54fa9511bb9805032070afb34f7b1c8e266cd145ddc558",
+        "68": "b5a0ba0fb202aec0c63750947aa8d53c0baf8d0644af6b22855c35c9598b7d96"
+      }
+    },
+    {
+      "id": "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+      "path": "external-evidence/stage55/vendor-sources/current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+      "url": "https://www.whxy.com/uploads/files/20251230/CW32F020_DataSheet_CN_V1.3.pdf",
+      "printed_revision": "1.3",
+      "publication_date": "2025-12-30",
+      "chip_scope": [
+        "CW32F020"
+      ],
+      "text_path": "external-evidence/stage55/vendor-sources/current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+      "sha256": "1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0",
+      "text_sha256": "c561aa8acbafc12cd6ac39fc0595f58a168b02dfda301b90df4fdd067a69d233",
+      "pdf_and_text_hashes_independently_verified": true,
+      "directly_extracted_pdf_pages_1_based": [
+        36,
+        42,
+        43,
+        45
+      ],
+      "printed_pages": [
+        35,
+        41,
+        42,
+        44
+      ],
+      "page_extraction_sha256": {
+        "36": "c19fd0e8e2fb8f2079f0d7e1555096ff248ce0dc04bbb5a1ac42742a3dece9be",
+        "42": "19725f09a0bc804fce3203649ff6c628f9e5e85d1984995ce362a42ea0e7715f",
+        "43": "a9a0cffa5a8d31a9cfab4fa7283000781b4dae2949a3f02ea51ae9fccd54ba09",
+        "45": "7b7045c43b687f032f654d682c00543d1b26683101d78bc802a9d37e0f8edcc2"
+      }
+    }
+  ],
+  "visual_checks": [
+    {
+      "path": "external-evidence/stage55/crystal-pll-review-renders/f020-sequence.png",
+      "sha256": "10d5674c0b05ed6457cfa372bdbf120093559b773c24fd20bea13946e0e92d7e",
+      "source_filename": "CW32F020_UserManual_CN_V1.4.pdf",
+      "pdf_page_1_based": 66,
+      "newly_rendered_in_review": true,
+      "visually_inspected": true,
+      "redistribute": false
+    },
+    {
+      "path": "external-evidence/stage55/crystal-pll-review-renders/x030-sequence.png",
+      "sha256": "19ada6b4b2058b3e4fe0ae61a92acbd7f4f2a20ccb1ed10fef63e44bfd043013",
+      "source_filename": "CW32x030_UserManual_CN_V2.5.pdf",
+      "pdf_page_1_based": 68,
+      "newly_rendered_in_review": true,
+      "visually_inspected": true,
+      "redistribute": false
+    },
+    {
+      "path": "external-evidence/stage55/crystal-pll-review-renders/l083-sequence.png",
+      "sha256": "17196dfda2c3d04f70cee9f2ebdeed3b7322a0ee8c0ce65286851143e158bba5",
+      "source_filename": "CW32L083_UserManual_CN_V2.0.pdf",
+      "pdf_page_1_based": 73,
+      "newly_rendered_in_review": true,
+      "visually_inspected": true,
+      "redistribute": false
+    },
+    {
+      "path": "external-evidence/stage55/crystal-pll-review-renders/f020-startup.png",
+      "sha256": "f0128174671973aae179ca5626fc14e3638a8ef6a0ecd68471259196777f19ee",
+      "source_filename": "CW32F020_UserManual_CN_V1.4.pdf",
+      "pdf_page_1_based": 55,
+      "newly_rendered_in_review": true,
+      "visually_inspected": true,
+      "redistribute": false
+    },
+    {
+      "path": "external-evidence/stage55/crystal-pll-review-renders/x030-startup.png",
+      "sha256": "baf186027155e2b00252dd1ab8f4037d6a0baaeb97c2bca8d4292ef03c30c5fc",
+      "source_filename": "CW32x030_UserManual_CN_V2.5.pdf",
+      "pdf_page_1_based": 57,
+      "newly_rendered_in_review": true,
+      "visually_inspected": true,
+      "redistribute": false
+    },
+    {
+      "path": "external-evidence/stage55/crystal-pll-review-renders/l083-startup.png",
+      "sha256": "e370166d16cc0f3db48a029f8f3c0b5585af2d9a49e47c7e685c6c04ce65b3ca",
+      "source_filename": "CW32L083_UserManual_CN_V2.0.pdf",
+      "pdf_page_1_based": 62,
+      "newly_rendered_in_review": true,
+      "visually_inspected": true,
+      "redistribute": false
+    },
+    {
+      "path": "external-evidence/stage55/hse-pll-qualification/renders/f020-pll-electrical.png",
+      "sha256": "580961a8d05d0170f913e6a714096664d9eb4d98269cb046804bb88763be91e1",
+      "source_filename": "current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+      "pdf_page_1_based": 45,
+      "newly_rendered_in_review": false,
+      "visually_inspected": true,
+      "redistribute": false
+    },
+    {
+      "path": "external-evidence/stage55/hse-pll-qualification/renders/f030-pll-electrical.png",
+      "sha256": "c5100f0e62a09c186f673f078f7443e8e313b5de5ed203773c5d9cf47165e0fe",
+      "source_filename": "CW32F030_DataSheet_CN_V1.9.pdf",
+      "pdf_page_1_based": 47,
+      "newly_rendered_in_review": false,
+      "visually_inspected": true,
+      "redistribute": false
+    },
+    {
+      "path": "external-evidence/stage55/hse-pll-qualification/renders/a030-pll-electrical.png",
+      "sha256": "8959f564c8ff7f81cb5b84b59670957958991cf3e5a2ed629cedeba39c988b92",
+      "source_filename": "CW32A030_DataSheet_CN_V1.1.pdf",
+      "pdf_page_1_based": 44,
+      "newly_rendered_in_review": false,
+      "visually_inspected": true,
+      "redistribute": false
+    },
+    {
+      "path": "external-evidence/stage55/hse-pll-qualification/renders/l083-pll-electrical.png",
+      "sha256": "0d53c3195559fe91442d5de7fce557c725b575af64545666f23ec3fa686569a6",
+      "source_filename": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "pdf_page_1_based": 56,
+      "newly_rendered_in_review": false,
+      "visually_inspected": true,
+      "redistribute": false
+    }
+  ],
+  "output": {
+    "path": "docs/hse-pll-crystal-contract.md",
+    "sha256": "e25b633335abb3a1f30da41ff9b2da292b3197b14c004f3d74b70c10296b83a2",
+    "original_sha256": "e4a8bef4664867fa92ca30e6c73993733a6948cf20d785dfed6fe65e2f7da90c"
+  },
+  "verification": {
+    "reviewed_design_unchanged": true,
+    "candidate_edited": false,
+    "implementation_run": false,
+    "cargo_run": false,
+    "hal_tests_run": false,
+    "hardware_tested": false
+  }
+}

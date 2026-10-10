@@ -1249,7 +1249,7 @@ functions:
           Raw-HSI AUTOTRIM/LVD consumers block required retrim; divider-only changes preserve HSIOSC.
         - Inherited PLL entry first escapes through unchanged HSI; stop and observe PLL not stable before
           source oscillator/divider changes. Relevant HSE/LSE sticky faults are rejected, never cleared.
-        - Active LSE is separately qualified below. No HSE-fed PLL, runtime switching, sleep/resume or source-loss recovery.
+        - Active LSE and HSE-fed PLL are separately qualified below. No runtime switching, sleep/resume or source-loss recovery.
           STABLE is a startup latch and frozen HSE rates become invalid after loss or HSI fallback.
       registers_any:
       - HSE
@@ -1277,16 +1277,21 @@ functions:
       - path: docs/qualified-hex.md
     - id: pll
       status: partial
-      scope: CW32F020/CW32F030/CW32A030/CW32L083 factory-HSI-fed PLL as the one-time system source, with exact qualified rate bounds.
+      scope: CW32F020/CW32F030/CW32A030/CW32L083 factory-HSI- or HSE-fed PLL as the one-time system source, with exact qualified rate bounds.
       implemented_families: [CW32F020, CW32F030, CW32A030, CW32L083]
       limitations:
       - Entire actual input/output envelopes must each fit one source-qualified analog bin and independent
-        electrical limits. Nine F020 pairs and twelve F030/A030/L083 pairs are admitted; other documented
+        electrical limits. Nine F020 HSI pairs and twelve F030/A030/L083 HSI pairs remain admitted; other documented
         hardware settings are not asserted absent or invalid. F020 raw output is capped at48MHz, the
         other three at64MHz. L052 has no system PLL.
-      - Default is disabled. No HSE-fed PLL, independent output, runtime retuning, sleep/resume or fault-recovery
+      - PllSource::HSE uses the undivided Config.hse source in crystal or bypass mode, with actual input
+        4..24MHz and literal multiplier 2..12. Crystal follows the vendor-documented internal composition;
+        no hidden reference-duty certificate or runtime measurement is claimed. Bypass requires the
+        OSC_IN waveform contract, including 40..60 percent duty. Existing board, pad and owner limits apply.
+      - Default is disabled. No independent output, runtime retuning, sleep/resume or reference-loss recovery
         guarantee. Stable legal entry, quiescent clock consumers and reset-before-retry apply.
       - Typed configuration preserves reserved-debug default0x5 and uses real PLL.STABLE startup/stop acknowledgment.
+        HSE must be ready before PLL enable; its mode, pads and source selector are checked through finalization.
         Retained RTC/AUTOTRIM/LVD/CCS owners, guarded Flash/buses and final readback remain mandatory.
       - ClockBounds preserves a rate-only qualification through multiplication and division. Strict duration
         getters require has_cycle_timing_bounds; ADC constructors reject this PLL source before ADC/RCC writes.
@@ -1297,6 +1302,8 @@ functions:
       - PLL
       evidence:
       - path: cw32-data/pll-qualified.yaml
+      - path: docs/hse-pll-source-receipt.json
+      - path: docs/hse-pll-crystal-contract.md
       - path: docs/l083-hsi-pll.md
       - path: docs/f020-x030-hsi-pll.md
       - path: embassy-cw32/src/rcc/hsi_48mhz.rs

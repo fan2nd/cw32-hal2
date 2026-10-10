@@ -39,6 +39,58 @@ def main():
         assert source['status'] == original['provenance']['status'] == 'selected'
         assert source['printed_revision'] == original['provenance']['printed_revision']
         assert source['chip_scope'] == original['provenance']['chip_scope']
+    contract = policy['hse_support_contract']
+    hse_receipt = load(ROOT / contract['source_evidence'])
+    assert sha(ROOT / contract['source_evidence']) == contract['source_evidence_sha256']
+    assert contract['crystal_basis'] == 'vendor_documented_functional_composition'
+    assert contract['input_duty_percent'] == [40, 60]
+    assert contract['source_encodings'] == {'oscillator': 0, 'bypass': 1, 'hsi': 3}
+    assert contract['numeric_internal_duty_independently_certified'] is False
+    assert contract['cycle_duration_qualified'] is False
+    assert set(hse_receipt['families']) == set(policy['families'])
+    acceptance = hse_receipt['crystal_acceptance']
+    assert sha(ROOT / acceptance['path']) == acceptance['sha256']
+    assert sha(ROOT / acceptance['receipt']) == acceptance['receipt_sha256']
+    for source in hse_receipt['sources']:
+        original = lock[source['id']]
+        assert sha(args.sources / source['path']) == source['sha256'] == original['sha256']
+        assert sha(args.sources / source['text_path']) == source['text_sha256']
+        assert source['url'] == original['url'] and source['path'] == original['path']
+        assert original['provenance']['status'] == 'selected'
+        assert source['chip_scope'] == original['provenance']['chip_scope']
+        assert source['pdf_pages_1_based'] == [p + 1 for p in source['printed_pages']]
+    for family, own in policy['families'].items():
+        projection = electrical['profiles'][family]['clock_limits']
+        assert own['pll'] == projection['pll'] and own['pll']['hse_supported'] is True
+        facts = hse_receipt['families'][family]
+        for record_key, fact_key in [('input_range_hz', 'reference_hz'),
+                                     ('output_range_hz', 'admitted_output_hz'),
+                                     ('multiplier_range', 'multiplier'),
+                                     ('supply_mv', 'supply_mv'), ('temperature_c', 'temperature_c')]:
+            assert own['pll'][record_key] == facts[fact_key]
+        assert projection['hse']['bypass_duty_percent'] == facts['input_duty_percent'] == [40, 60]
+        variant = {'CW32L083': 'sysctrl_cw32l083_v1', 'CW32F020': 'sysctrl_cw32f020_v1'}.get(family, 'sysctrl_v1')
+        ir = load(ROOT / f'cw32-data/registers/{variant}.yaml')
+        assert [(v['name'], v['value']) for v in ir['enum/PllSource']['variants']] == [
+            ('HseCrystal', 0), ('HseBypass', 1), ('Hsi', 3)]
+    # These are authored-policy boundary checks, not execution of HAL code.
+    # Closed bins share endpoints; a nonzero-width straddling interval has no bin.
+    for own in policy['families'].values():
+        for key in ('input_ranges_hz', 'output_ranges_hz'):
+            bins = own['pll'][key]
+            for index, (lo, hi) in enumerate(bins):
+                fitting = [i for i, (a, b) in enumerate(bins) if a <= hi <= b]
+                assert fitting[0] == index
+                if index + 1 < len(bins):
+                    assert hi == bins[index + 1][0]
+                    assert not any(a <= hi - 1 and hi + 1 <= b for a, b in bins)
+        assert own['pll']['input_range_hz'] == [4_000_000, 24_000_000]
+        cap = 48_000_000 if own is policy['families']['CW32F020'] else 64_000_000
+        assert own['pll']['output_range_hz'] == [12_000_000, cap]
+        assert 31_998_400 >= 12_000_000 and 32_001_600 <= cap
+        assert not 64_003_200 <= cap  # Nominal 64MHz +50ppm cannot be saved by bus division.
+    assert 7_999_600 * 4 == 31_998_400 and 8_000_400 * 4 == 32_001_600
+    assert (8_000_000_000 + 7_999_600 - 1) // 7_999_600 == 1001
     access = load(ROOT / 'cw32-data/field-access.yaml')['registers']
     groups = load(ROOT / 'cw32-data/register-reuse.yaml')['groups']
     for family, variant, page_number, pair_count in [
@@ -94,8 +146,8 @@ def main():
         group, = (g for g in groups if g['canonical'] == variant + '.yaml')
         digest = hashlib.sha256(json.dumps(ir, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
         assert digest == group['canonical_ir_sha256'] == group['canonical_ir_history'][-1]['after_sha256']
-        assert group['canonical_ir_history'][-1]['evidence'] == policy['source_evidence']
-    print('Verified F020/F030/A030 own originals, PLL facts, typed fields, reset authority, RO access and reuse ledger; no hardware execution.')
+        assert group['canonical_ir_history'][-1]['evidence'] == contract['source_evidence']
+    print('Verified F020/F030/A030/L083 HSE source policy, seven own PDF/text pairs, mode selectors, closed bins/caps and unchanged HSI facts; no HAL or hardware execution.')
 
 
 if __name__ == '__main__':

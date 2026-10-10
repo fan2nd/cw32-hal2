@@ -41,7 +41,7 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 | `electrical.yaml`、`spi.yaml` | 同族 DS 电气表和 RM 分频/时序；`electrical.yaml` 大部分旧策略只间接引用审计文件，不能把这些 JSON 当成原厂来源。 |
 | `hse-qualified.yaml` | F020/F030/A030/L010/L011/L031/L052/L083/R031/W031 HSE 的各自 RM/DS；L010/L011/L031/L052/L083/R031/W031 的实际版本、章节与页码见下表。保留 RM/DS 外部输入下限冲突的交集，不跨族继承电气限值或 CCS 策略。 |
 | `lse-qualified.yaml` | 仅末节二十三个精确料号/封装；x030、F020、L031、R031、W031、L052、L083、L010、L011、L012 各自 RM/DS 与原件对应收据给出原件 ID/SHA、PDF/书页和 SDK 成员定位，其他料号不自动继承主动配置资格。 |
-| `pll-qualified.yaml`、`electrical.yaml` 的 PLL、对应 SYSCTRL 模板与 `field-access.yaml` 的 PLL 字段 | CW32L083/F020/F030/A030 的一次性 factory-HSI-fed 系统 PLL；各族自己的 RM/DS、原件 SHA 与 PDF/书页见末节。F020 采用 current-datasheets 中 printed Rev1.3，输出交集12–48MHz；L083/F030/A030为12–64MHz。保留模拟档位与电气上限区别、reserved-debug默认0x5、STABLE只读及rate-only时序限制；不外推其他族。 |
+| `pll-qualified.yaml`、`electrical.yaml` 的 PLL、对应 SYSCTRL 模板与 `field-access.yaml` 的 PLL 字段 | CW32L083/F020/F030/A030 的一次性 factory-HSI- 或 HSE-fed 系统 PLL；晶振/旁路共用既有HSE板级契约，各族自己的 RM/DS、原件 SHA 与 PDF/书页见末节。F020 采用 current-datasheets 中 printed Rev1.3，输出交集12–48MHz；L083/F030/A030为12–64MHz。保留模拟档位与电气上限区别、reserved-debug默认0x5、STABLE只读及rate-only时序限制；不外推其他族。 |
 | `hex-qualified.yaml` | F002/F003 各自 RM/DS 的直接 HEX 输入、PB0/PB1 与 AWT 来源；精确 PDF/书页见下表。保留 RM 4–32 MHz 与 DS 1–32 MHz 的交集及全部波形条件，不据此推定晶振、PLL 或失钟恢复能力。 |
 | `gpio-interrupt.yaml` | 各族 RM GPIO ICR 和中断表；CMSIS IRQ 枚举。 |
 | `reference-dividers.yaml` | L010/L011/L012 RM VC 分压器及 DS 电气范围，SDK VC 头/实现作佐证。 |
@@ -199,7 +199,7 @@ L012 使用 `CW32L012_UserManual_CN_V1.4.pdf` Rev 1.4：§5.4 IRQ 表 PDF 96–9
 | `hse-qualified.yaml` / CW32R031 | RM `CW32R031_UserManual_CN_V1.3.pdf` Rev 1.3：§4.3.3、§4.4.3、§4.7、§11.8.1；PDF 51–52、58–61、69–70、73–74、167，书页 50–51、57–60、68–69、72–73、166。DS `CW32R031_DataSheet_CN_V1.2.pdf` Rev 1.2：§7.3.1、§7.3.8（外部时钟）、§7.3.9（保留 HSI）；PDF 29、42、51、53–54，书页 28、41、50、52–53。HSE 供电范围 2.2–3.6 V，不据此配置 RF。 |
 | `hse-qualified.yaml` / CW32W031 | RM `CW32W031_UserManual_CN_V1.4.pdf` Rev 1.4：§4.3.3、§4.4.3、§4.7、§11.8.1；PDF 50–51、57–60、68–69、72–73、166，书页 49–50、56–59、67–68、71–72、165。DS `CW32W031_DataSheet_CN_V1.3.pdf` Rev 1.3：§7.3.1、§7.3.8（外部时钟）、§7.3.9（保留 HSI）；PDF 30、41、50、52–53，书页 29、40、49、51–52。HSE 保守取 LDO/DCDC 交集 2.0–3.6 V，未扩大 RF 范围，也未缩窄既有 HSI-only 条件。 |
 | `hse-qualified.yaml` / CW32L052 | RM `CW32L052_UserManual_CN_V1.5.pdf` Rev 1.5：HSE/预启动参数书页 51–52、74–75（PDF 52–53、75–76），CCS/选择器书页 61、69–70（PDF 62、70–71），Flash 书页 111（PDF 112），AUTOTRIM/RTC/LVD 保留来源书页 174、192、532（PDF 175、193、533）。DS `CW32L052_DataSheet_CN_V1.3.pdf` Rev 1.3：引脚表书页 25（PDF 26），运行条件书页 42（PDF 43），外部时钟/波形/HSI 书页 47、49–50、53（PDF 48、50–51、54）。三种已建模精确封装均有 PF0/PF1。保留旁路 RM 4–32 MHz 与 DS 1–32 MHz 的交集；CLKCCS 固定 HSI/6（标称 8 MHz），不继承 L083 的配置分频回退。自身 SOURCE 枚举、原始锁和完整限制见 [L052 HSE](../docs/qualified-l052-hse.md) 及其[来源记录](../docs/qualified-l052-hse-source-receipt.json)。 |
-| `hse-qualified.yaml` / CW32L083 | RM `CW32L083_UserManual_CN_V2.0.pdf` Rev 2.0：HSE/启动 PDF 53–54、62–63、65、70、80 / 书页 52–53、61–62、64、69、79；选择器/CCS/切换 PDF 63、67–69、75–76、79–80、84–86 / 书页 62、66–68、74–75、78–79、83–85；Flash PDF 121、131 / 书页 120、130；GPIO PDF 162–169 / 书页 161–168；RTC/AUTOTRIM/LVD 依赖 PDF 87、89、178、187、205–206、530、534–535 / 书页 86、88、177、186、204–205、529、533–534。DS `CW32L083_DataSheet_CN_V1.9.pdf` Rev 1.9：PF0/PF1 封装表 PDF 27 / 书页 26，电气 PDF 47、52、54–55、58 / 书页 46、51、53–54、57。保留 4–32 MHz 的 RM/DS 交集与独立波形条件；不外推 L052 HSE 或 PLL 输出配置。 |
+| `hse-qualified.yaml` / CW32L083 | RM `CW32L083_UserManual_CN_V2.0.pdf` Rev 2.0：HSE/启动 PDF 53–54、62–63、65、70、80 / 书页 52–53、61–62、64、69、79；选择器/CCS/切换 PDF 63、67–69、75–76、79–80、84–86 / 书页 62、66–68、74–75、78–79、83–85；Flash PDF 121、131 / 书页 120、130；GPIO PDF 162–169 / 书页 161–168；RTC/AUTOTRIM/LVD 依赖 PDF 87、89、178、187、205–206、530、534–535 / 书页 86、88、177、186、204–205、529、533–534。DS `CW32L083_DataSheet_CN_V1.9.pdf` Rev 1.9：PF0/PF1 封装表 PDF 27 / 书页 26，电气 PDF 47、52、54–55、58 / 书页 46、51、53–54、57。保留 4–32 MHz 的 RM/DS 交集与独立波形条件；不外推 L052 HSE 或独立 PLL_OUT；本族当前有界系统 PLL 见末节。 |
 | `registers/rtc_cw32l031_v1.yaml` / SOURCE 枚举 | 既有完整布局复用组恰为 L031/L083/R031/W031。各自 RM §12.5.3 分别是 Rev 1.6 PDF 180 / 书页 179、Rev 2.0 PDF 205 / 书页 204、Rev 1.3 PDF 182 / 书页 181、Rev 1.4 PDF 181 / 书页 180；均给出 LSE=0、LSI=2、HSE/128,/256,/512,/1024=4,5,6,7。只补类型名，未改变布局、访问属性或复用成员。 |
 
 其他直接引文：`af/*` 的 `datasheet_cell`、`manual_cell`、`manual_pin_cell` 等记录逐路由页码/表格；`triggers/*` 保留逐触发关系的原件记录；`gpio-interrupt.yaml` 有每族 ICR 的手册章节/页码；`hse-qualified.yaml` 有 F020/F030/A030/L031/L052/L083/R031/W031 自己的 RM/DS 页码。它们均对应上表同族原件，原 SDK GPIO/外设头文件由同族 ZIP 提供。
@@ -271,7 +271,7 @@ against originals without HAL tests or hardware execution.
 
 ## 当前有界 PLL 候选的逐项来源
 
-当前 PLL 初始化资格为 CW32L083/CW32F020/CW32F030/CW32A030 的一次性 factory-HSI-fed 系统模式：`pll-qualified.yaml` 与 `electrical.yaml` 分族记录自己的原件 SHA/页码，并投影为 `ClockLimits.pll`。独立 PLL_OUT、HSE-fed PLL、运行时重调、DeepSleep 恢复和保证失钟恢复均不在此范围。L052没有系统PLL，不沿共用HAL文件开放API。
+当前 PLL 初始化资格为 CW32L083/CW32F020/CW32F030/CW32A030 的一次性 factory-HSI- 或 HSE-fed 系统模式：`pll-qualified.yaml` 与 `electrical.yaml` 分族记录自己的原件 SHA/页码，并投影为 `ClockLimits.pll`。HSE使用既有Config.hse的晶振或旁路声明，来源码由模式派生为0或1。独立 PLL_OUT、运行时重调、DeepSleep 恢复和保证失钟恢复均不在此范围。L052没有系统PLL，不沿共用HAL文件开放API。
 
 L083 原有资格与来源保持不变：
 
@@ -286,8 +286,15 @@ F020/F030/A030 的独立新增来源见 [原件对应收据](x030-f020-hsi-pll-s
 - F030/A030 共用的 `CW32x030_UserManual_CN_V2.5.pdf` Rev2.5 明确覆盖两族：PLL PDF54–55/53–54，寄存器 PDF77/76；HSI factory trim PDF57、73/56、72；Flash PDF112、122/111、121。F030 SDK仅佐证共用布局，不冒充独立A030 SDK。
 - F020 采用 `vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf`，printed Rev1.3，SHA-256 `1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0`：运行条件/HSI/PLL为PDF36、44、45/书页35、43、44；原始输出8–48MHz，factory HSI±5%。同名根目录历史文件实为printed Rev1.2，不用作本项选定来源。
 - F030 DS Rev1.9对应PDF38、46、47/书页37、45、46；A030自身DS Rev1.1对应PDF35、43、44/书页34、42、43。两者原始PLL输出8–64MHz、factory HSI±2%。三族采用−40…105°C、1.65–5.5V；低于1.8V时HCLK/PCLK≤24MHz，最终总线仍独立检查。
-- 自身手册要求输入为HSI分频后的时钟，MUL字面值2–12，输入4–24MHz，WAITCYCLE=7。整段实际输入和倍频输出必须各自落在单一模拟档位，最高输出码取4。F020九组、F030/A030各十二组资格组合逐族列于YAML，未接纳的组合不因此被断言为硬件无效。
+- 既有HSI路径使用HSI分频后的时钟；新增HSE路径使用未分频的HSE。MUL字面值2–12，输入4–24MHz，WAITCYCLE=7。整段实际输入和倍频输出必须各自落在单一模拟档位，最高输出码取4。F020九组、F030/A030各十二组资格组合逐族列于YAML，未接纳的组合不因此被断言为硬件无效。
 - 两个自身手册均给出PLL复位值`0x00053483`、debug[19:16]默认0x5和STABLE只读；SVD继承零复位，F020 SVD称debug字段为RFU，x030 SVD遗漏它。保留/检查默认值的类型化修订、访问旁表和复用账本原子对应；当前IR没有reset槽，手册复位权威记入收据并由来源核验检查，不添加PAC reset API。SDK整寄存器写入清掉debug默认值的做法不采用。
+
+HSE新增功能依据见[七份原件对应收据](../docs/hse-pll-source-receipt.json)及[独立晶振组合审阅](../docs/hse-pll-crystal-contract.md)，旧HSI收据保留其历史范围：
+
+- F020 RM Rev1.4：HSE电路/模式PDF46–47、PLL来源/档位52–53、启动握手55、§4.5.8晶振来源例程66；书页各减一。选定current-datasheets的F020 DS printed Rev1.3：供电36、旁路波形41、晶振说明/电气42–43、PLL表7-21为45；书页各减一。
+- x030 RM Rev2.5明确覆盖F030/A030：HSE电路/模式PDF48–49、PLL来源/档位54–55、启动握手57、§4.5.8晶振来源例程68；书页各减一。F030 DS Rev1.9对应供电38、旁路43、晶振44–45、PLL表7-21为47；A030 DS Rev1.1对应35、40、41–42、PLL表7-20为44；书页各减一。
+- L083 RM Rev2.0：HSE电路/模式PDF53–54、PLL来源/档位59–60、启动握手62、§4.5.8晶振来源例程73；书页各减一。DS Rev1.9对应供电47、旁路52、晶振53–54、PLL表7-21为56；书页各减一。
+- 四族PLL输入条件均为4–24MHz、40–60%占空比。晶振功能接纳依赖厂商明确推荐的内部组合和既有谐振器/负载/驱动/布局契约，不独立证明隐藏节点的数值占空比。旁路须在OSC_IN同时满足40–60%占空比、电平、每高低脉冲≥15ns与边沿≤20ns；STABLE不测量这些条件。全部实际频率端点仍各落单一模拟档位并独立服从raw上限，输出始终rate-only；不保证参考丢失后的PLL频率、回退或CPU继续运行。
 
 来源锁的目录总数仍为45项：硬件出处验证要求43个原件，另2项A030 HTML发现页面按既有 discovery-only 策略单列；11份已批准头文件与许可证边界不变。新增的来源说明和审阅记录均为项目撰写，不重新分发完整PDF、SDK、SVD或其全文抽取。
 

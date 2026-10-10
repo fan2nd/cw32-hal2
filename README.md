@@ -182,22 +182,27 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - L083: direct qualified HSE crystal/bypass on all five modeled exact packages,
   with configurable CCS preserved, retained RTC/AUTOTRIM/LVD owners checked,
   and bounded entry from an inherited PLL through unchanged HSI. HSI remains
-  the default. Active LSE has a separate [exact-package contract](docs/qualified-l083-lse.md);
-  the HSI/HSE/PLL backend and qualifications are unchanged. See
+  the default. HSE source and retained-owner requirements also apply to HSE-fed
+  PLL. Active LSE has a separate [exact-package contract](docs/qualified-l083-lse.md). See
   [own-source limits and initialization contract](docs/qualified-l083-hse.md).
-- L083 additionally: one-time factory-HSI-fed PLL for qualified SYSCLK and bus
-  rates. Actual input/output envelopes must fit their independent electrical
+- L083 additionally: one-time factory-HSI- or HSE-fed PLL for qualified SYSCLK and bus
+  rates. `PllSource::HSE` uses the undivided crystal/bypass source in `Config.hse`.
+  Actual input/output envelopes must fit their independent electrical
   limits and analog bins. Strict ADC cycle-duration APIs reject this new rate-only
   source; existing HSI/HSE ADC is unchanged. See [PLL qualification](docs/l083-hsi-pll.md)
-  and [UART and Embassy timer firmware](examples/pll-clock/README.md). The current
-  [Stage42 combination receipt](docs/l083-pll-stage42.md) distinguishes fresh verification from historical PLL evidence.
-- F020/F030/A030 additionally: one-time factory-HSI-fed system PLL with each
+  and [UART and Embassy timer firmware](examples/pll-clock/README.md). The
+  [Stage42 combination receipt](docs/l083-pll-stage42.md) records historical HSI-PLL verification.
+- F020/F030/A030 additionally: one-time factory-HSI- or HSE-fed system PLL with each
   family's actual tolerance envelope, analog bins and raw output ceiling.
   F020 is limited to 48 MHz raw output, F030/A030 to 64 MHz; full-envelope
   qualification is stricter than nominal-only selection. ADC and x030
   complementary PWM reject rate-only cycle timing before peripheral startup.
   See [own-source scope](docs/f020-x030-hsi-pll.md) and the
   [ordinary PLL firmware](examples/pll-clock/README.md).
+  On all four PLL families, crystal admission follows the vendor-documented
+  oscillator-to-PLL path without independently certifying hidden reference duty;
+  bypass requires the OSC_IN waveform contract, including 40–60% duty. Both
+  modes remain rate-only, with no runtime retuning or reference-loss recovery guarantee.
 - F002/F003: direct digital HEX on PB0 or PB1 with explicit actual bounds,
   independent retained-AWT pad reservation and conservative exact-reuse admission.
   See [clock contracts and own-source conflicts](docs/qualified-hex.md) and

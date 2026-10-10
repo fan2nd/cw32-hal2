@@ -1,0 +1,349 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-09T21:27:04.862368+00:00",
+  "result": "accepted_frozen_hse_supported_schema_delta_conditional_on_coordinated_integration_and_lineage_update",
+  "scope": "Independent static review of three model files and two authored YAML schema deltas. No integrated generator, HAL, runtime, hardware or legal acceptance.",
+  "baseline_zip": "external-evidence/stage55/baseline-archives/embassy-cw32-stage54-source-reviewed-2026-10-09.zip",
+  "baseline_zip_sha256": "e376ff9b217e3b7dcade9c0367f3fee83e366525541898f9170961a178ac7015",
+  "freeze_path": "external-evidence/stage55/hse-pll-candidate/evidence/stage55-schema-freeze.json",
+  "freeze_sha256": "c643d3b8f6fd92d641bd1ff24892a31bb149a4c1919a826efad676c294a798a5",
+  "patch_path": "external-evidence/stage55/hse-pll-candidate/evidence/stage55-schema-delta.patch",
+  "patch_sha256": "bccfcbda64846d10382da453dc82467f2005c5c9fac946de57bf31abc0a989f0",
+  "exact_patch_matches_reconstructed_unified_diff": true,
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "42345e5143a6dded05aafec1fa5d83521a6a6e3eb0d359cd22beff637b0a6d63",
+      "after_sha256": "3300723d4ae9b0e7d00051f6d158c9d72569ade9350d8f32a093cc505c8195bb",
+      "before_bytes": 33306,
+      "after_bytes": 33428,
+      "before_matches_archive": true,
+      "frozen_after_matches_independent_initial_candidate_read": true,
+      "explicit_reverse_equals_stage54": true,
+      "new_field_instances": 1,
+      "current_sha256": "3300723d4ae9b0e7d00051f6d158c9d72569ade9350d8f32a093cc505c8195bb",
+      "current_equals_freeze": true
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "026cb57571d20dced19a7c735ed370f6a1866d5a3f864dde701bf7de3ca04f76",
+      "after_sha256": "9806f170fa4873896a7bc193c6e0dd4a492918304210a6664005cd278df325e6",
+      "before_bytes": 33729,
+      "after_bytes": 33851,
+      "before_matches_archive": true,
+      "frozen_after_matches_independent_initial_candidate_read": true,
+      "explicit_reverse_equals_stage54": true,
+      "new_field_instances": 1,
+      "current_sha256": "9806f170fa4873896a7bc193c6e0dd4a492918304210a6664005cd278df325e6",
+      "current_equals_freeze": true
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "180797a4cf5451f29d413a0f206d590c14da3a81cc4f27ecd3a29d89c1cc1869",
+      "after_sha256": "e0d3d918eefa896932d86434fa5461572883eeb4c1f3ee9ec1a6f28e3178ea46",
+      "before_bytes": 21809,
+      "after_bytes": 21931,
+      "before_matches_archive": true,
+      "frozen_after_matches_independent_initial_candidate_read": true,
+      "explicit_reverse_equals_stage54": true,
+      "new_field_instances": 1,
+      "current_sha256": "e0d3d918eefa896932d86434fa5461572883eeb4c1f3ee9ec1a6f28e3178ea46",
+      "current_equals_freeze": true
+    },
+    {
+      "path": "cw32-data/electrical.yaml",
+      "before_sha256": "6adb9fbd41c4b3640c4eef30e1885db961fee8a0dfd178832c396e73754e51b0",
+      "after_sha256": "ecaa2f03ea09f5a593208d9a4e199ed0fa4ca9bf74a249bd46394085ee08a54a",
+      "before_bytes": 70963,
+      "after_bytes": 71075,
+      "before_matches_archive": true,
+      "frozen_after_matches_independent_initial_candidate_read": true,
+      "explicit_reverse_equals_stage54": true,
+      "new_field_instances": 4,
+      "current_sha256": "c21f8c6e636a6d2823aaf28a4bca0afcf0d6bc6c68625793c89b4099036378f0",
+      "current_equals_freeze": false
+    },
+    {
+      "path": "cw32-data/pll-qualified.yaml",
+      "before_sha256": "0d56589685d9a2d17f931e387b4e55a5e57f48d8590764713a8b456060283b54",
+      "after_sha256": "2dde64821b984a8a36e35870545501d7666096aa1914ebb1d14921ea7369c67a",
+      "before_bytes": 16674,
+      "after_bytes": 16778,
+      "before_matches_archive": true,
+      "frozen_after_matches_independent_initial_candidate_read": true,
+      "explicit_reverse_equals_stage54": true,
+      "new_field_instances": 4,
+      "current_sha256": "29deb387784b9153995fd3df10b30f66e8135c0085dce37ae95238b5b2ea7b7c",
+      "current_equals_freeze": false
+    }
+  ],
+  "model_preservation": {
+    "cw32-data-serde/src/lib.rs": {
+      "pll_record": "PllLimits",
+      "retained_fields_and_types": {
+        "input_range_hz": "(u32, u32)",
+        "output_range_hz": "(u32, u32)",
+        "input_ranges_hz": "[(u32, u32); 4]",
+        "output_ranges_hz": "[(u32, u32); 5]",
+        "multiplier_range": "(u8, u8)",
+        "supply_mv": "(u16, u16)",
+        "temperature_c": "(i16, i16)",
+        "hsi_supported": "bool",
+        "startup_cycles": "u32",
+        "startup_encoding": "u8",
+        "reserved_debug_default": "u8",
+        "cycle_to_cycle_jitter_ps": "u32"
+      },
+      "native_low_power_record": "LseNativeLowPower",
+      "native_low_power_body_unchanged": true,
+      "native_low_power_body_sha256": "4eb8c384658ab9a5de1f4a29e4d7da96e786005622bdb7659c2f8099f083f3d8"
+    },
+    "cw32-metapac-gen/src/data.rs": {
+      "pll_record": "PeripheralPllLimits",
+      "retained_fields_and_types": {
+        "input_range_hz": "(u32, u32)",
+        "output_range_hz": "(u32, u32)",
+        "input_ranges_hz": "[(u32, u32); 4]",
+        "output_ranges_hz": "[(u32, u32); 5]",
+        "multiplier_range": "(u8, u8)",
+        "supply_mv": "(u16, u16)",
+        "temperature_c": "(i16, i16)",
+        "hsi_supported": "bool",
+        "startup_cycles": "u32",
+        "startup_encoding": "u8",
+        "reserved_debug_default": "u8",
+        "cycle_to_cycle_jitter_ps": "u32"
+      },
+      "native_low_power_record": "PeripheralLseNativeLowPower",
+      "native_low_power_body_unchanged": true,
+      "native_low_power_body_sha256": "90b30c9404f5ed8cab0d78ba4b34035f0298bf43ae440001f79f05b55c083e78"
+    },
+    "cw32-metapac-gen/res/src/metadata.rs": {
+      "pll_record": "PeripheralPllLimits",
+      "retained_fields_and_types": {
+        "input_range_hz": "(u32, u32)",
+        "output_range_hz": "(u32, u32)",
+        "input_ranges_hz": "&'static [(u32, u32); 4]",
+        "output_ranges_hz": "&'static [(u32, u32); 5]",
+        "multiplier_range": "(u8, u8)",
+        "supply_mv": "(u16, u16)",
+        "temperature_c": "(i16, i16)",
+        "hsi_supported": "bool",
+        "startup_cycles": "u32",
+        "startup_encoding": "u8",
+        "reserved_debug_default": "u8",
+        "cycle_to_cycle_jitter_ps": "u32"
+      },
+      "native_low_power_record": "PeripheralLseNativeLowPower",
+      "native_low_power_body_unchanged": true,
+      "native_low_power_body_sha256": "eeda8bcda4dee69dc9e10603e2a252fef2291a6866829d21e867ad9de2974d80"
+    }
+  },
+  "authored_data": {
+    "cw32-data/electrical.yaml": {
+      "exact_true_families": [
+        "CW32A030",
+        "CW32F020",
+        "CW32F030",
+        "CW32L083"
+      ],
+      "old_parsed_document_unchanged_after_new_key_removal": true
+    },
+    "cw32-data/pll-qualified.yaml": {
+      "exact_true_families": [
+        "CW32A030",
+        "CW32F020",
+        "CW32F030",
+        "CW32L083"
+      ],
+      "old_parsed_document_unchanged_after_new_key_removal": true
+    }
+  },
+  "schema_findings": {
+    "new_field": "Exactly hse_supported: bool immediately after hsi_supported in existing PllLimits/PeripheralPllLimits; one identical comment admits oscillator and bypass functional references with rate bounds only. No duty field, certificate, separate mode branch, width change or new record.",
+    "required_behavior": "For a present PLL object, hse_supported is required and nonnullable in both Deserialize input models. No field/struct default, alias, custom deserializer or Option was added. true and false are representable; semantic family qualification belongs to validation. Omitted field, null and nonboolean JSON values are rejected by the ordinary derived bool contract. Static conclusion; no new serialization probe was run.",
+    "serialization": "cw32-data-serde derives Serialize and Deserialize through record!, with no skip rule on either support bool: false remains explicit and the new field follows hsi_supported in declaration/derived serialization order. Generator input derives Deserialize only. Static template has no serialization derives and requires the new bool in struct construction.",
+    "outer_option": "Unchanged pll:Option in both owned input models with #[serde(default)]. Missing or null pll remains None; project serde still omits None on serialization. Static metadata retains Option<PeripheralPllLimits>. No unqualified family gains a PLL record.",
+    "unknown_fields": "PLL records do not deny unknown fields; unchanged. New readers reject old present-PLL objects lacking the required bool. Older permissive readers may ignore the added key; this does not prove qualification or compatibility of new behavior.",
+    "old_fields": "All 12 old PLL field names, relative order, widths and representations are unchanged. Input/output bins remain four/five tuple arrays in owned models and static references in generated metadata. Exact insertion reversal preserves every other byte in all three complete model files, including native LSE.",
+    "api_compatibility": "Public Rust struct literals and exhaustive destructuring require coordinated adjustment. Derived Serialize/Debug/Hash contents change. No source, ABI, binary or serialized-byte compatibility is claimed.",
+    "functional_meaning": "A family qualification fact for the approved documented crystal/bypass composition, not a numeric internal-duty certificate, new pulse guarantee, board certification or post-loss recovery guarantee."
+  },
+  "source_basis": {
+    "path": "docs/hse-pll-crystal-contract.md",
+    "sha256": "e25b633335abb3a1f30da41ff9b2da292b3197b14c004f3d74b70c10296b83a2",
+    "new_vendor_source_review_performed": false,
+    "original_sha256": "e4a8bef4664867fa92ca30e6c73993733a6948cf20d785dfed6fe65e2f7da90c",
+    "reused_accepted_independent_review": true
+  },
+  "lineage": {
+    "preserved_files": {
+      "docs/upstream-file-provenance.json": {
+        "sha256": "f673d2ad8a18164e4c1c57a505bd71d11e14e2e3800dee76f6a492a3435a655a",
+        "byte_identical_to_stage54": true
+      },
+      "docs/lse-native-low-power-schema-acceptance.json": {
+        "sha256": "77f9a3637576fb8bc667aeae335df5eed3bee0d4f1df601ff94be8f8267d59e7",
+        "byte_identical_to_stage54": true
+      },
+      "cw32-data/lse-qualified.yaml": {
+        "sha256": "bfb9675ec9239252d25e59c344f6ca4b8afa3b63af28f872907a18104a81d14c",
+        "byte_identical_to_stage54": true
+      },
+      "cw32-data/hse-qualified.yaml": {
+        "sha256": "01eaae77773c37777d7e64ae54ee597cd72d7dacb3b9cb23a899e5c4806336d5",
+        "byte_identical_to_stage54": true
+      },
+      "cw32-data/lse-ownership.yaml": {
+        "sha256": "1108d430581567e0dc6cffafc7155791be1ab0be33b630bf595d0eaadd8ecdd4",
+        "byte_identical_to_stage54": true
+      },
+      "NOTICE.md": {
+        "sha256": "5eddad2a601e86e476b0cf3cacc45153e42ec0bb1b7caae676c6bc334cbd3538",
+        "byte_identical_to_stage54": true
+      },
+      "LICENSE-MIT": {
+        "sha256": "83d04e56c5beb631d65d6bd7b78c9350083084acc19753a3e6e1b68806a607f5",
+        "byte_identical_to_stage54": true
+      },
+      "LICENSE-APACHE": {
+        "sha256": "64853d2f346cf20ad5a133c441e792d4b99b45adb2ef3acfa2b890d713e4ed0b",
+        "byte_identical_to_stage54": true
+      },
+      "cw32-metapac-gen/Cargo.toml": {
+        "sha256": "dcfda429044bfd739e7af75ad6564242b38afefb542431e53358f44eb4b0d9e1",
+        "byte_identical_to_stage54": true
+      }
+    },
+    "current_serde_identity_tip": "42345e5143a6dded05aafec1fa5d83521a6a6e3eb0d359cd22beff637b0a6d63",
+    "identity_tip_not_advanced": true,
+    "entire_current_replacement_review_canonical_sha256": "5b3332f402ffcdc2f37bdcccebf0a981e586208e848198d6640c520b7a00a795",
+    "current_replacement_review_chain": [
+      {
+        "replacement_sha256": "42345e5143a6dded05aafec1fa5d83521a6a6e3eb0d359cd22beff637b0a6d63",
+        "review_reference": "docs/lse-native-low-power-schema-acceptance.json"
+      },
+      {
+        "replacement_sha256": "c7c59622c69f77894f838cb0737a1dcf5b802a17b63fef01099417c06c781998",
+        "review_reference": "docs/lse-l010-schema-acceptance.json"
+      },
+      {
+        "replacement_sha256": "54a4de94f232c208ab22ac03c177d7f12ea5eba967ac17d023a147f26a60e761",
+        "review_reference": "docs/lse-stage50-l052-schema-review.json"
+      },
+      {
+        "replacement_sha256": "aceb8fc88f3dab0c405fe86da2ccbdc800f81a433b77bf93bcb7ef1a2d24ac50",
+        "review_reference": "docs/lse-stage49-family-schema-review.json"
+      },
+      {
+        "replacement_sha256": "dd26f0aeebed0b2e64a81db5d8d067e2234fb7f1f04a784de5e8787cc5e43a7a",
+        "review_reference": "docs/lse-stage48-rebuild-schema-review.json"
+      },
+      {
+        "replacement_sha256": "0b06a84ce26dc25558ec52f4b0d23e8690dfdc521f9798d71f27c4b50b9a907c",
+        "review_reference": "docs/l012-hse-stage44-schema-review.json"
+      },
+      {
+        "replacement_sha256": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
+        "review_reference": "docs/pll-stage42-schema-review.json"
+      },
+      {
+        "replacement_sha256": "c183923bcb189ea2d6617d6ff13963070d64e06d8308c856b8d1b45cef78c810",
+        "review_reference": "docs/lse-schema-review.json"
+      },
+      {
+        "replacement_sha256": "3dfa050491fe73aa16bd1d5f96e5ae01beb76affc5253222faeba073e2b0759c",
+        "review_reference": "docs/optional-hse-schema-note.json"
+      },
+      {
+        "replacement_sha256": "e70e0c81debc6484b2949b12590fe54670001188d5caf23f3d432a61c24de133",
+        "review_reference": "docs/classic-complementary-schema-note.json"
+      },
+      {
+        "replacement_sha256": "1240bf168f847297ede62b2423d8376d2c260d2eace27e74c726623859e0707f",
+        "review_reference": "docs/hex-stage28-schema-review.json"
+      },
+      {
+        "replacement_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
+        "review_reference": "docs/vref-schema-review.json"
+      },
+      {
+        "replacement_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+        "review_reference": "docs/hse-schema-review.json"
+      },
+      {
+        "replacement_sha256": "adc50cb1275be65b6451f1d283426ec3ec842460ee95d724600922f733c1081f",
+        "review_reference": "docs/stage24-schema-review.json"
+      },
+      {
+        "replacement_sha256": "0ed2f1ebbe890dca06de3c2bf78c3c45776ab7fe5a519b1c6f00ac19fd08aa6f",
+        "review_reference": "docs/dac-opa-schema-delta.json"
+      },
+      {
+        "replacement_sha256": "2b53b5486a2a1f208922367fb36a9ced580fad7af3b815634cb75eb73e1fd160",
+        "review_reference": "docs/stage14-schema-review.md"
+      },
+      {
+        "replacement_sha256": "7c1c569ee508dba0e77ce8f9f9eb3f049ad48f99aeb1813ec76bc9edf4ed8416",
+        "review_reference": "docs/combined-schema-extension-review.md"
+      },
+      {
+        "replacement_sha256": "aff3d62a4f1513f9573072ba8d0e1c397b5965c6e9039fe4f20d3eed1fa14108",
+        "review_reference": "docs/spi-metadata-refactor.md#schema-extension-review"
+      }
+    ],
+    "selected_entries_canonical_sha256": {
+      "cw32-data-serde/src/lib.rs": "28b33421453f96fd35c711c8b44957ca0eaf17d8295374182b24c5e3d42a19b7",
+      "cw32-metapac-gen/src/data.rs": "fa6872d0a5ac62e8e7e128dc13d0a2273c1809cf5522ec725172a345304c62a9",
+      "cw32-metapac-gen/res/src/metadata.rs": "d15dda63c608ee2f627245e2dec25d88587680cead1c35e190ce91a6e51f3e17"
+    },
+    "combined_metapac_adapted_entries_canonical_sha256": "f7fc163cc233f16322a31222e2f3899b69435c5ad3150b80082b51fc1363e91f",
+    "canonicalization": "JSON UTF-8, sort_keys=True, separators=(comma,colon), ensure_ascii=True",
+    "adapted_metapac_ancestry_and_historical_observed_hashes_unchanged": true,
+    "legal_clearance": false
+  },
+  "concurrent_integration_observation": {
+    "note": "Initial independent reads verified all five frozen hashes. Subsequent integration changed only policy prose/source-contract and its binding in the two YAML files while retaining exact three model hashes. Frozen YAML was reconstructed from Stage54, rehashed and used for narrow reversal acceptance. Current policy additions are recorded here, not treated as a new vendor-source review.",
+    "electrical_yaml_sha256": "c21f8c6e636a6d2823aaf28a4bca0afcf0d6bc6c68625793c89b4099036378f0",
+    "pll_qualified_yaml_sha256": "29deb387784b9153995fd3df10b30f66e8135c0085dce37ae95238b5b2ea7b7c",
+    "all_frozen_family_profiles_unchanged": true,
+    "pll_policy_hash_binding_updated_and_correct": true,
+    "hse_support_contract": {
+      "source_evidence": "docs/hse-pll-source-receipt.json",
+      "source_evidence_sha256": "b41c4b7227c611a38462b863087efa0f952ff4f3f3a9f1039b7f84cb158b01c4",
+      "crystal_basis": "vendor_documented_functional_composition",
+      "input_duty_percent": [
+        40,
+        60
+      ],
+      "numeric_internal_duty_independently_certified": false,
+      "source_encodings": {
+        "oscillator": 0,
+        "bypass": 1,
+        "hsi": 3
+      },
+      "cycle_duration_qualified": false
+    },
+    "referenced_hse_source_receipt_hash_verified": true
+  },
+  "integration_conditions": [
+    "Keep the three exact accepted model hashes. If any model bytes change, obtain a new or incremental review before advancing its accepted identity.",
+    "Carry the required bool through authored profiles, data generator output, owned metapac input, static emission and build.rs::generate_pll. Emit and validate explicit RCC_PLL_HSE_SUPPORTED; never infer it from rcc_hse, register layout or HSI support.",
+    "Retain true only for existing CW32F020/F030/A030/L083 qualified PLL families, preserving entire existing HSI qualification, old bounds/widths and native-LSE records and behavior.",
+    "Maintain matching final pll-qualified policy hash and the approved crystal/bypass rate-only functional wording. Frozen hash/prose needed refresh; concurrent integration now supplies that refresh without changing family profiles. Preserve the 40-60% PLL input condition, documented composition basis, own-source identities and bypass waveform obligations without an unsupported internal-duty certificate.",
+    "Perform separately authorized coordinated generator parity, metadata/source validation and representative build/lifecycle acceptance before any integrated implementation claim. This static receipt does not establish those outcomes.",
+    "To advance identity, wrap the ENTIRE existing serde replacement_review as previous_review unchanged, set reviewed current serde hash to 3300723d4ae9b0e7d00051f6d158c9d72569ade9350d8f32a093cc505c8195bb, and bind accepted receipt hash and project review reference.",
+    "Record both metapac model before/after hashes from this receipt while retaining adapted ancestry, upstream package declaration, notices, original observed hashes and all prior reviews. Keep legal_clearance false."
+  ],
+  "verification": {
+    "static_source_review": true,
+    "yaml_parsing_and_exact_reversal_checks": true,
+    "new_serialization_probes_run": false,
+    "cargo_run": false,
+    "hal_tests_run": false,
+    "project_source_edits": false,
+    "identity_tip_edited": false,
+    "new_default_historical_inverse_checker_added": false
+  },
+  "out_of_scope": "Concurrent implementation changes outside the frozen schema delta were not reviewed or accepted by this receipt."
+}

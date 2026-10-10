@@ -1061,7 +1061,7 @@ groups:
     reason: Own-source typed SYSCLK and HEX input selectors; register layout/access unchanged.
 
 - canonical: sysctrl_cw32f020_v1.yaml
-  canonical_ir_sha256: 3228b5952760206bed09055153d795da550aac5fb05f9db04781cb03f2454343
+  canonical_ir_sha256: 757ec12dee7ee593103bdb78d73fa0187444d1a5147ed6eafd2f20d58eff16ba
   source_versions:
   - sysctrl_cw32f020_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1086,6 +1086,12 @@ groups:
       default0x5. F020 RFU19:16 is renamed RESERVED_DEBUG; x030 adds this manual-documented field missing
       from its SVD. Existing offsets/widths, STABLE RO overlay and reuse membership are unchanged; manual
       reset0x00053483 supersedes inherited SVD zero.
+  - canonical: sysctrl_cw32f020_v1.yaml
+    before_sha256: 3228b5952760206bed09055153d795da550aac5fb05f9db04781cb03f2454343
+    after_sha256: 757ec12dee7ee593103bdb78d73fa0187444d1a5147ed6eafd2f20d58eff16ba
+    evidence: docs/hse-pll-source-receipt.json
+    reason: PLL source descriptions now state only documented hardware source meaning. No enum value,
+      register layout, access or reuse membership changed; HAL qualification remains in its own policy.
   post_import_curation: Reapply the own-source LSE native enums from docs/lse-active-f020.json and PLL typed fields/reserved-debug name from sources/x030-f020-hsi-pll-source-receipt.json after reviewing raw SVD import candidates. The IR has no reset slot; the receipt retains the manual reset authority.
 - canonical: sysctrl_cw32l010_v1.yaml
   canonical_ir_sha256: 01ff146b28b3d7b0bc22b5de6562b58c285ea20a8043af91d99bb0edb6c026df
@@ -1122,7 +1128,7 @@ groups:
       wait; no amplitude. Existing layout, access overlay and single-family reuse membership unchanged.
 
 - canonical: sysctrl_cw32l011_v1.yaml
-  canonical_ir_sha256: 8911717d51c3290b099ea715a66f0fe913d4c6673fb3dad92af2ff8a307f3702
+  canonical_ir_sha256: 57ffe5c4981db9bb5ac1961369330792a376d4987ceeeab3c998a2a9be086cfe
   source_versions:
   - sysctrl_cw32l011_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1134,9 +1140,17 @@ groups:
     evidence: docs/qualified-l010-l011-hse-source-receipt.json
     reason: Own L010/L011 SYSCLK and HSE drive/wait enum definitions and associations; all pre-existing
       register offsets, widths and access unchanged. HSE.STABLE RO is recorded separately in field-access.yaml.
+  - canonical: sysctrl_cw32l011_v1.yaml
+    before_sha256: 8911717d51c3290b099ea715a66f0fe913d4c6673fb3dad92af2ff8a307f3702
+    after_sha256: 57ffe5c4981db9bb5ac1961369330792a376d4987ceeeab3c998a2a9be086cfe
+    evidence: docs/lse-l011-qualification.json
+    reason: Reconcile a ledger omission from the accepted Stage54 native LSE extension. Existing
+      LseDrive and LseWait enums and DRIVER/PDRIVER/WAITCYCLE associations were already present
+      in the frozen Stage54 source ZIP. This updates only their current canonical identity;
+      register source bytes, hardware facts, access and reuse membership are unchanged.
 
 - canonical: sysctrl_cw32l012_v1.yaml
-  canonical_ir_sha256: 0b88d2a17cf459965103f1bdf366d9ae20e529ebd555622bc4e6acff538298be
+  canonical_ir_sha256: f238630885ebec2d11c86a261c3ae11b369f7a9ba04d878e5c0cbd743d54e772
   source_versions:
   - sysctrl_cw32l012_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1149,6 +1163,14 @@ groups:
     reason: Own L012 SYSCLK and HSE drive/wait enum definitions and associations only; register
       offsets, field widths and register access unchanged. Original SVD oscillator STABLE fields
       are already RO; their independent mixed-register lowering fix is in field-access.yaml.
+  - canonical: sysctrl_cw32l012_v1.yaml
+    before_sha256: 0b88d2a17cf459965103f1bdf366d9ae20e529ebd555622bc4e6acff538298be
+    after_sha256: f238630885ebec2d11c86a261c3ae11b369f7a9ba04d878e5c0cbd743d54e772
+    evidence: docs/lse-l012-qualification.json
+    reason: Reconcile a ledger omission from the accepted Stage54 native LSE extension. Existing
+      LseDrive and LseWait enums and DRIVER/PDRIVER/WAITCYCLE associations were already present
+      in the frozen Stage54 source ZIP. This updates only their current canonical identity;
+      register source bytes, hardware facts, access and reuse membership are unchanged.
 
 - canonical: sysctrl_cw32l031_v1.yaml
   canonical_ir_sha256: 0d68b6e56ccc7dd5d294f3af99a53f835eb4fc6d2701603ee8b7b2ff9c85feab
@@ -1229,7 +1251,7 @@ groups:
     basis: Own CW32L052 manual Rev1.5 PDF76-77 defines all four analog fields and all encodings. Layout, access and reuse membership are unchanged.
 
 - canonical: sysctrl_cw32l083_v1.yaml
-  canonical_ir_sha256: 238063c44d357656759ebbe73038723738ddd37da4592e7d08d4e358ca5996d9
+  canonical_ir_sha256: 02173891d09f492dc691fdaf97faed419dd15f1fc131760da3806a93a51acbe7
   source_versions:
   - sysctrl_cw32l083_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1270,9 +1292,15 @@ groups:
     source_policy: docs/lse-active-l083.json
     basis: 'Own CW32L083 CN UM Rev2.0 PDF81/printed80: single-bank LSE typed parameters
       only. No PAMP/PDRIVER, no access/layout change, no reuse membership change.'
+  - canonical: sysctrl_cw32l083_v1.yaml
+    before_sha256: 238063c44d357656759ebbe73038723738ddd37da4592e7d08d4e358ca5996d9
+    after_sha256: 02173891d09f492dc691fdaf97faed419dd15f1fc131760da3806a93a51acbe7
+    evidence: docs/hse-pll-source-receipt.json
+    reason: PLL source descriptions now state only documented hardware source meaning. No enum value,
+      register layout, access or reuse membership changed; HAL qualification remains in its own policy.
 
 - canonical: sysctrl_v1.yaml
-  canonical_ir_sha256: 8e3c7bdc3153c7172283427feb32ba0c4603da2b0b534aa13f64c904604e1edf
+  canonical_ir_sha256: d8a608d17fad5d6ab626bbacdff5bfd48b1501b77c70b8c28d03f0cb65950cf7
   source_versions:
   - sysctrl_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1298,6 +1326,13 @@ groups:
       default0x5. F020 RFU19:16 is renamed RESERVED_DEBUG; x030 adds this manual-documented field missing
       from its SVD. Existing offsets/widths, STABLE RO overlay and reuse membership are unchanged; manual
       reset0x00053483 supersedes inherited SVD zero.
+  - canonical: sysctrl_v1.yaml
+    before_sha256: 8e3c7bdc3153c7172283427feb32ba0c4603da2b0b534aa13f64c904604e1edf
+    after_sha256: d8a608d17fad5d6ab626bbacdff5bfd48b1501b77c70b8c28d03f0cb65950cf7
+    evidence: docs/hse-pll-source-receipt.json
+    reason: PLL source descriptions now state only documented hardware source meaning. No enum value,
+      register layout, access or reuse membership changed; HAL qualification remains in its own policy.
+
 - canonical: trng_cw32l083_v1.yaml
   canonical_ir_sha256: cef6187b3759e07b97ccb48fa097227dbb040e7f671258dd58d1880ddb03be77
   source_versions:

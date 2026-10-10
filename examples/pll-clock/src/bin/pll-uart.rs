@@ -18,7 +18,7 @@ fn main() -> ! {
     // Exact bounds remain available separately from rounded nominal Hertz.
     core::hint::black_box(rcc::clocks().pll_bounds());
     loop {
-        uart.blocking_write(b"CW32 qualified HSI-fed PLL: UART1 115200 8N1\r\n")
+        uart.blocking_write(b"CW32 qualified PLL: UART1 115200 8N1\r\n")
             .unwrap();
         uart.blocking_flush().unwrap();
         led.toggle();

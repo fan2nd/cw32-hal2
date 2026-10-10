@@ -1,4 +1,4 @@
-//! Qualified HSI, direct HSE and factory-HSI-fed PLL on F020/F030/A030.
+//! Qualified HSI, direct HSE and HSI- or HSE-fed PLL on F020/F030/A030.
 //!
 //! Own sources: F020 RM CN1.4 and x030 RM CN2.5 §§4.3–4.7, own datasheet
 //! external-clock/electrical tables. See docs/qualified-hse.md for conflicts,
@@ -130,16 +130,24 @@ impl APBPrescaler {
 #[cfg(rcc_pll)]
 pub use pac::sysctrl::vals::PllMul;
 
-/// Qualified PLL reference. The divider belongs to `Config.hsi`, not the PLL.
+/// Qualified PLL reference. Only HSI uses the divider in `Config.hsi`.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 #[cfg(rcc_pll)]
 pub enum PllSource {
     /// Factory-trimmed HSI after its configured divider.
     HSI,
+    /// Undivided HSE from `Config.hse`, in oscillator or bypass mode. The existing
+    /// HSE board and operating-condition contract and all PLL input/output limits
+    /// apply. Oscillator mode follows the vendor-documented crystal-to-PLL path;
+    /// admission does not independently certify internal reference duty. Bypass
+    /// requires the specified OSC_IN waveform, including 40–60% duty. PLL bounds
+    /// describe rates only; individual-cycle timing and recovery after reference
+    /// loss are not guaranteed.
+    HSE,
 }
 
-/// One-time factory-HSI-fed PLL configuration. It must be selected as `Sysclk::PLL`.
+/// One-time HSI- or HSE-fed PLL configuration, selected as `Sysclk::PLL`.
 ///
 /// Both actual input endpoints must fit one documented input bin, and both
 /// actual multiplied output endpoints must fit one output bin and the separate
@@ -156,6 +164,7 @@ pub struct Pll {
 }
 #[cfg(rcc_pll)]
 struct PllParameters {
+    source: pac::sysctrl::vals::PllSource,
     bounds: crate::rcc::ClockBounds,
     input_range: pac::sysctrl::vals::PllInputRange,
     output_range: pac::sysctrl::vals::PllOutputRange,
@@ -177,8 +186,23 @@ impl Pll {
         {
             return Err(Error::InvalidPllMultiplier);
         }
-        let input = match self.src {
-            PllSource::HSI => crate::rcc::ClockBounds::hsi(config.hsi.div.divisor()),
+        let (input, source) = match self.src {
+            PllSource::HSI => (
+                crate::rcc::ClockBounds::hsi(config.hsi.div.divisor()),
+                pac::sysctrl::vals::PllSource::Hsi,
+            ),
+            PllSource::HSE => {
+                let hse = config.hse.ok_or(Error::HseNotConfigured)?;
+                let bounds = hse.bounds()?;
+                if !crate::RCC_PLL_HSE_SUPPORTED {
+                    return Err(Error::PllInputOutsideQualifiedRange);
+                }
+                let source = match hse.mode {
+                    HseMode::Oscillator => pac::sysctrl::vals::PllSource::HseCrystal,
+                    HseMode::Bypass => pac::sysctrl::vals::PllSource::HseBypass,
+                };
+                (bounds, source)
+            }
         };
         if input.minimum_below(crate::RCC_PLL_INPUT_RANGE_HZ.0)
             || input.maximum_exceeds(crate::RCC_PLL_INPUT_RANGE_HZ.1)
@@ -194,7 +218,7 @@ impl Pll {
             return Err(Error::PllOutputOutsideQualifiedRange);
         }
         // Choose the first fitting closed bin at a shared exact endpoint.
-        // Factory-HSI envelopes have nonzero width and must never straddle.
+        // The complete source envelope must never straddle a bin boundary.
         let input_index = crate::RCC_PLL_INPUT_BINS_HZ
             .iter()
             .position(|(lo, hi)| !input.minimum_below(*lo) && !input.maximum_exceeds(*hi))
@@ -204,6 +228,7 @@ impl Pll {
             .position(|(lo, hi)| !bounds.minimum_below(*lo) && !bounds.maximum_exceeds(*hi))
             .ok_or(Error::PllOutputCrossesBin)?;
         Ok(PllParameters {
+            source,
             bounds,
             input_range: pac::sysctrl::vals::PllInputRange::from_bits(input_index as u8),
             output_range: pac::sysctrl::vals::PllOutputRange::from_bits(output_index as u8),
@@ -219,7 +244,7 @@ pub enum Sysclk {
     HSI,
     /// Qualified external high-speed oscillator or input.
     HSE,
-    /// Factory-HSI-fed PLL, with qualified rate bounds only.
+    /// HSI- or HSE-fed PLL, with qualified rate bounds only.
     #[cfg(rcc_pll)]
     PLL,
 }
@@ -988,12 +1013,36 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         })?;
     }
     #[cfg(rcc_pll)]
+    let verify_pll_reference = |pll: Pll| -> Result<(), Error> {
+        let sources = r.cr1().read();
+        if !sources.hsien()
+            || !ccs_enabled()
+            || r.hsi().read().div() != config.hsi.div as u8
+            || r.hsi().read().trim() != trim
+        {
+            return Err(Error::ClockConfigurationTimeout);
+        }
+        if !r.hsi().read().stable() {
+            return Err(Error::HsiTimeout);
+        }
+        if pll.src == PllSource::HSE {
+            let hse = config.hse.ok_or(Error::HseNotConfigured)?;
+            if !sources.hseen() || !r.hse().read().stable() || !hse_parameters_match(hse)? {
+                return Err(Error::HseTimeout);
+            }
+            if !crate::rcc_hse_pins_match(hse.mode == HseMode::Bypass, config.timeout, cs)? {
+                return Err(Error::HsePinConfigurationTimeout);
+            }
+        }
+        check_external_faults(sources.hseen(), sources.lseen())
+    };
+    #[cfg(rcc_pll)]
     if let Some(pll) = config.pll {
         let parameters = pll.parameters(&config)?;
         // Both PLLEN and the real STABLE latch were observed clear before any
         // HSI/divider changes above. Modify preserves reserved/debug defaults.
         r.pll().modify(|w| {
-            w.set_source(pac::sysctrl::vals::PllSource::Hsi);
+            w.set_source(parameters.source);
             w.set_freqin(parameters.input_range);
             w.set_mul(pll.mul);
             w.set_freqout(parameters.output_range);
@@ -1006,6 +1055,9 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
                 && !r.cr1().read().pllen()
                 && !r.pll().read().stable()
         })?;
+        // Recheck the selected reference and its physical pads immediately
+        // before enabling the dependent PLL; STABLE alone is insufficient.
+        verify_pll_reference(pll)?;
         r.cr1().modify(|w| {
             w.set_key(0x5a5a);
             w.set_pllen(true);
@@ -1019,11 +1071,14 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         })?;
     }
     #[cfg(rcc_pll)]
-    if config.pll.is_some() {
-        check_external_faults(
-            old_sources.hseen() || config.hse.is_some(),
-            old_sources.lseen(),
-        )?;
+    if let Some(pll) = config.pll {
+        verify_pll_reference(pll)?;
+        if !r.cr1().read().pllen() || !pll_parameters_match(pll, &pll.parameters(&config)?) {
+            return Err(Error::PllConfigurationTimeout);
+        }
+        if !r.pll().read().stable() {
+            return Err(Error::PllTimeout);
+        }
     }
     let sysclk = match config.sys {
         Sysclk::HSI => ClockSource::Hsi,
@@ -1136,6 +1191,8 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     verify_pll_tree(old_sources.lseen())?;
     let flash_wait = (upper_hclk - 1) / crate::RCC_FLASH_WAIT_STEP_HZ;
     set_flash_latency(flash_wait, config.timeout, preserve_flash_features)?;
+    #[cfg(rcc_pll)]
+    verify_pll_tree(old_sources.lseen())?;
     #[cfg(rcc_lse)]
     if let Some(lse) = config.lse {
         super::lse::start(lse, reuse_lse.unwrap(), cs)?;
@@ -1194,7 +1251,7 @@ fn hse_parameters_match(hse: Hse) -> Result<bool, Error> {
 #[cfg(rcc_pll)]
 fn pll_parameters_match(pll: Pll, parameters: &PllParameters) -> bool {
     let v = pac::SYSCTRL.pll().read();
-    v.source() == pac::sysctrl::vals::PllSource::Hsi
+    v.source() == parameters.source
         && v.freqin() == parameters.input_range
         && v.mul() == pll.mul
         && v.freqout() == parameters.output_range

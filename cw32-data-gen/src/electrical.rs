@@ -268,6 +268,66 @@ pub fn apply(root: &Path, path: &str, line: &str, peripherals: &mut [Peripheral]
                 "invalid PLL evidence pages"
             );
         }
+        if pll.hse_supported {
+            let hse = c
+                .hse
+                .as_ref()
+                .context("HSE PLL needs qualified HSE metadata")?;
+            let contract = &review["hse_support_contract"];
+            ensure!(
+                contract["crystal_basis"] == "vendor_documented_functional_composition"
+                    && contract["input_duty_percent"] == serde_json::json!([40, 60])
+                    && contract["numeric_internal_duty_independently_certified"] == false
+                    && contract["cycle_duration_qualified"] == false
+                    && contract["source_encodings"]
+                        == serde_json::json!({"oscillator": 0, "bypass": 1, "hsi": 3}),
+                "HSE PLL functional contract changed"
+            );
+            ensure!(
+                hse.bypass_duty_percent.0 >= 40 && hse.bypass_duty_percent.1 <= 60,
+                "HSE bypass duty does not satisfy PLL input condition"
+            );
+            let receipt_path = contract["source_evidence"]
+                .as_str()
+                .context("missing HSE PLL own-source receipt")?;
+            let bytes = fs::read(root.join(receipt_path))?;
+            ensure!(
+                contract["source_evidence_sha256"] == format!("{:x}", Sha256::digest(&bytes)),
+                "HSE PLL source receipt changed"
+            );
+            let receipt: Value = serde_json::from_slice(&bytes)?;
+            let facts = family(&receipt, line)?;
+            ensure!(
+                facts["reference_hz"] == serde_json::to_value(pll.input_range_hz)?
+                    && facts["admitted_output_hz"] == serde_json::to_value(pll.output_range_hz)?
+                    && facts["multiplier"] == serde_json::to_value(pll.multiplier_range)?
+                    && facts["supply_mv"] == serde_json::to_value(pll.supply_mv)?
+                    && facts["temperature_c"] == serde_json::to_value(pll.temperature_c)?
+                    && facts["input_duty_percent"] == contract["input_duty_percent"],
+                "HSE PLL electrical facts differ from own-source receipt"
+            );
+            for source in &p.pll_sources {
+                ensure!(
+                    receipt["sources"]
+                        .as_array()
+                        .context("missing HSE PLL sources")?
+                        .iter()
+                        .any(|s| s["id"] == source.source_ref && s["sha256"] == source.sha256),
+                    "HSE PLL receipt does not identify the selected own sources"
+                );
+            }
+            let acceptance = &receipt["crystal_acceptance"];
+            for (path_key, hash_key) in [("path", "sha256"), ("receipt", "receipt_sha256")] {
+                let path = acceptance[path_key]
+                    .as_str()
+                    .context("missing crystal acceptance")?;
+                ensure!(
+                    acceptance[hash_key]
+                        == format!("{:x}", Sha256::digest(fs::read(root.join(path))?)),
+                    "crystal functional acceptance changed"
+                );
+            }
+        }
         ensure!(
             pll.input_range_hz.0 > 0
                 && pll.input_range_hz.0 < pll.input_range_hz.1
