@@ -57,7 +57,8 @@ def main():
 
     catalog = load(ROOT / "cw32-data/lse-qualified.yaml")
     expected = {"CW32A030C8T7", "CW32F030C8T7", "CW32F020C6U7",
-                "CW32L031C8T6", "CW32L031C8U6", "CW32L031F8U6", "CW32R031C8U6", "CW32W031R8U6", "CW32L052C8T6", "CW32L052R8S6", "CW32L052R8T6", "CW32L083RBT6", "CW32L083RCT6", "CW32L083RCS6", "CW32L083MCT6", "CW32L083VCT6", "CW32L010F8P6", "CW32L010F8U6", "CW32L010Y8M6"}
+                "CW32L031C8T6", "CW32L031C8U6", "CW32L031F8U6", "CW32R031C8U6", "CW32W031R8U6", "CW32L052C8T6", "CW32L052R8S6", "CW32L052R8T6", "CW32L083RBT6", "CW32L083RCT6", "CW32L083RCS6", "CW32L083MCT6", "CW32L083VCT6", "CW32L010F8P6", "CW32L010F8U6", "CW32L010Y8M6",
+                "CW32L011K8T6", "CW32L011K8U6", "CW32L012C8T6", "CW32L012C8U6"}
     assert set(catalog["parts"]) == expected
     profile = catalog["parts"]["CW32F020C6U7"]
     proof = load(ROOT / "docs/lse-active-f020.json")
@@ -66,7 +67,16 @@ def main():
     assert (profile["input_pin"], profile["output_pin"]) == ("PC14", "PC15")
     assert profile["sources"][0]["source_ref"] == "vendor:CW32F020_UserManual_CN_V1.4.pdf"
     assert profile["sources"][1]["source_ref"] == "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf"
-    assert profile["configuration"] == proof["configuration"]
+    sysclk_path = "docs/classic-lse-sysclk-qualification.json"
+    sysclk = load(ROOT / sysclk_path)
+    assert sha((ROOT / sysclk_path).read_bytes()) == catalog["policies"][sysclk_path]
+    assert set(sysclk["parts"]) == {"CW32A030C8T7", "CW32F020C6U7", "CW32F030C8T7"}
+    # Own RM: 128 LSE edges / 256 LSI cycles; the extra edge is software policy.
+    assert sysclk["sysclk_detector"] == {"lse_edges": 128, "lsi_cycles": 256, "margin_lse_edges": 1}
+    assert "sysclk_detector" not in proof["configuration"]
+    assert profile["configuration"] == {
+        **proof["configuration"], "sysclk_detector": sysclk["sysclk_detector"]
+    }
     assert {k: v for k, v in profile.items() if k != "configuration"} == proof["parts"]["CW32F020C6U7"]
     assert profile["configuration"]["rtc_reset"] == rtc["rtc_reset"]
     assert rtc["source"]["source_ref"] == profile["sources"][0]["source_ref"]
