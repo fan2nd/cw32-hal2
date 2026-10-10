@@ -81,6 +81,8 @@ pub enum ConfigError {
     Timer(TimerConfigError),
     /// At least one complete A+B pair must be supplied.
     NoPairs,
+    /// This source qualifies clock rate but not strict cycle or dead-time duration.
+    UnqualifiedCycleTiming,
     /// The requested minimum exceeds code 255 at the fastest qualified clock.
     DeadTimeTooLong,
 }
@@ -147,7 +149,8 @@ impl<'d, T: ComplementaryInstance> ComplementaryPwm<'d, T> {
             .unwrap_or_else(|_| panic!("unsupported classic complementary PWM configuration"))
     }
     /// Validate before changing ATIM/RCC. Pin wrappers have already disconnected
-    /// their pads; use reborrowed tokens to retain ownership on error.
+    /// their pads; use reborrowed tokens to retain ownership on error. PLL-derived
+    /// rate-only clocks are rejected even when zero dead time is requested.
     pub fn try_new3(
         tim: Peri<'d, T>,
         ch1: Option<ComplementaryPwmPair<'d, T, Ch1>>,
@@ -163,6 +166,9 @@ impl<'d, T: ComplementaryInstance> ComplementaryPwm<'d, T> {
         }
         let bounds =
             crate::rcc::bus_clock_bounds::<T>().ok_or(TimerConfigError::ClockNotInitialized)?;
+        if !bounds.has_cycle_timing_bounds() {
+            return Err(ConfigError::UnqualifiedCycleTiming);
+        }
         let timing = select_timing_for::<T::CounterRegisters>(bounds.maximum(), frequency)?;
         let dead_time = select_dead_time(
             bounds.divided_by(timing.prescaler.divisor()),

@@ -21,7 +21,8 @@ SOURCE_LOCK = "sources/evidence-sources.json"
 # Authored scope survives packaging; generated coverage under build/ does not.
 SOURCE_DECLARATIONS = {"ci/hal-capabilities.yaml"}
 SOURCE_MANIFESTS = {SOURCE_LOCK, "sources/catalog.json", "sources/layout-history.json", "sources/README.md",
-                    "sources/SOURCES.md", "sources/REFERENCE-PACKAGE.md"} | APPROVED_SDK_DOCS
+                    "sources/SOURCES.md", "sources/REFERENCE-PACKAGE.md",
+                    "sources/x030-f020-hsi-pll-source-receipt.json"} | APPROVED_SDK_DOCS
 EXCLUDED_ROOTS = {".cargo", ".rustup", "build", ".git", "target", "cw32-metapac"}
 EXCLUDED_DIRECTORIES = {"target", "__pycache__", ".git", ".venv", "verification-logs"}
 EXCLUDED_FILES = {
@@ -43,6 +44,7 @@ def required_evidence(root: Path) -> set[str]:
     """Assert the source lock's evidence references survive source-only packaging."""
     lock = json.loads((root / SOURCE_LOCK).read_text())
     required = SOURCE_MANIFESTS | SOURCE_DECLARATIONS | set(approved_sdk_members(lock))
+    required.add("docs/f020-x030-hsi-pll-independent-review.json")
     for audit in lock.get("project_audit_inputs", []):
         path = root / audit["path"]
         if path.stat().st_size != audit["bytes"] or hashlib.sha256(path.read_bytes()).hexdigest() != audit["sha256"]:

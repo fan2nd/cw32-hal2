@@ -818,32 +818,43 @@ fieldset/MCO:
     bit_offset: 4
     bit_size: 3
 fieldset/PLL:
-  description: PLL Control Reg.
+  description: F030/A030 PLL control. Own CW32x030_UserManual_CN_V2.5.pdf section4.7.8 PDF77/printed76;
+    reset0x00053483. Preserve reserved debug default0x5 at19:16 and upper reserved bits.
   fields:
   - name: SOURCE
-    description: desc SOURCE.
+    description: F030/A030 PLL SOURCE; UM section4.7.8.
     bit_offset: 0
     bit_size: 2
+    enum: PllSource
   - name: FREQIN
-    description: desc FREQIN.
+    description: F030/A030 PLL FREQIN; UM section4.7.8.
     bit_offset: 2
     bit_size: 2
+    enum: PllInputRange
   - name: MUL
-    description: desc MUL.
+    description: F030/A030 PLL MUL; UM section4.7.8.
     bit_offset: 4
     bit_size: 5
+    enum: PllMul
   - name: FREQOUT
-    description: desc FREQOUT.
+    description: F030/A030 PLL FREQOUT; UM section4.7.8.
     bit_offset: 9
     bit_size: 3
+    enum: PllOutputRange
   - name: WAITCYCLE
-    description: desc WAITCYCLE.
+    description: F030/A030 PLL WAITCYCLE; UM section4.7.8.
     bit_offset: 12
     bit_size: 3
+    enum: PllWait
   - name: STABLE
-    description: desc STABLE.
+    description: Startup stable latch; not continuous lock-loss detection.
     bit_offset: 15
     bit_size: 1
+  - name: RESERVED_DEBUG
+    description: Documented reserved debug value; keep default.
+    bit_offset: 16
+    bit_size: 4
+    enum: PllDebug
 fieldset/RESETFLAG:
   description: Reset Status Reg.
   fields:
@@ -1078,3 +1089,133 @@ enum/LseWait:
   - name: CYCLES16384
     description: Wait for 16384 LSE cycles.
     value: 3
+
+enum/PllSource:
+  bit_size: 2
+  variants:
+  - name: HseCrystal
+    description: HSE crystal source; not yet qualified by HAL.
+    value: 0
+  - name: HseBypass
+    description: HSE digital source; not yet qualified by HAL.
+    value: 1
+  - name: Hsi
+    description: HSI after its existing divider.
+    value: 3
+  description: Own CW32x030_UserManual_CN_V2.5.pdf section4.7.8 PDF77/printed76; sources/x030-f020-hsi-pll-source-receipt.json.
+enum/PllInputRange:
+  bit_size: 2
+  variants:
+  - name: Mhz4To6
+    description: Input analog bin 4 to 6 MHz.
+    value: 0
+  - name: Mhz6To12
+    description: Input analog bin 6 to 12 MHz.
+    value: 1
+  - name: Mhz12To20
+    description: Input analog bin 12 to 20 MHz.
+    value: 2
+  - name: Mhz20To24
+    description: Input analog bin 20 to 24 MHz.
+    value: 3
+  description: Own CW32x030_UserManual_CN_V2.5.pdf section4.7.8 PDF77/printed76; sources/x030-f020-hsi-pll-source-receipt.json.
+enum/PllOutputRange:
+  bit_size: 3
+  variants:
+  - name: Mhz12To18
+    description: Output analog bin 12 to 18 MHz; independent datasheet cap still applies.
+    value: 0
+  - name: Mhz18To24
+    description: Output analog bin 18 to 24 MHz; independent datasheet cap still applies.
+    value: 1
+  - name: Mhz24To36
+    description: Output analog bin 24 to 36 MHz; independent datasheet cap still applies.
+    value: 2
+  - name: Mhz36To48
+    description: Output analog bin 36 to 48 MHz; independent datasheet cap still applies.
+    value: 3
+  - name: Mhz48To72
+    description: Output analog bin 48 to 72 MHz; independent datasheet cap still applies.
+    value: 4
+  - name: Mhz48To72Alt5
+    description: Documented 1xx alias for the 48 to 72 MHz analog bin; HAL uses canonical code4.
+    value: 5
+  - name: Mhz48To72Alt6
+    description: Documented 1xx alias for the 48 to 72 MHz analog bin; HAL uses canonical code4.
+    value: 6
+  - name: Mhz48To72Alt7
+    description: Documented 1xx alias for the 48 to 72 MHz analog bin; HAL uses canonical code4.
+    value: 7
+  description: Own CW32x030_UserManual_CN_V2.5.pdf section4.7.8 PDF77/printed76; sources/x030-f020-hsi-pll-source-receipt.json.
+enum/PllMul:
+  bit_size: 5
+  variants:
+  - name: Mul2
+    description: Multiply PLL input by 2.
+    value: 2
+  - name: Mul3
+    description: Multiply PLL input by 3.
+    value: 3
+  - name: Mul4
+    description: Multiply PLL input by 4.
+    value: 4
+  - name: Mul5
+    description: Multiply PLL input by 5.
+    value: 5
+  - name: Mul6
+    description: Multiply PLL input by 6.
+    value: 6
+  - name: Mul7
+    description: Multiply PLL input by 7.
+    value: 7
+  - name: Mul8
+    description: Multiply PLL input by 8.
+    value: 8
+  - name: Mul9
+    description: Multiply PLL input by 9.
+    value: 9
+  - name: Mul10
+    description: Multiply PLL input by 10.
+    value: 10
+  - name: Mul11
+    description: Multiply PLL input by 11.
+    value: 11
+  - name: Mul12
+    description: Multiply PLL input by 12.
+    value: 12
+  description: Own CW32x030_UserManual_CN_V2.5.pdf section4.7.8 PDF77/printed76; sources/x030-f020-hsi-pll-source-receipt.json.
+enum/PllWait:
+  bit_size: 3
+  variants:
+  - name: Cycles128
+    description: Wait 128 PLL cycles.
+    value: 0
+  - name: Cycles256
+    description: Wait 256 PLL cycles.
+    value: 1
+  - name: Cycles512
+    description: Wait 512 PLL cycles.
+    value: 2
+  - name: Cycles1024
+    description: Wait 1024 PLL cycles.
+    value: 3
+  - name: Cycles2048
+    description: Wait 2048 PLL cycles.
+    value: 4
+  - name: Cycles4096
+    description: Wait 4096 PLL cycles.
+    value: 5
+  - name: Cycles8192
+    description: Wait 8192 PLL cycles.
+    value: 6
+  - name: Cycles16384
+    description: Wait 16384 PLL cycles.
+    value: 7
+  description: Own CW32x030_UserManual_CN_V2.5.pdf section4.7.8 PDF77/printed76; sources/x030-f020-hsi-pll-source-receipt.json.
+enum/PllDebug:
+  bit_size: 4
+  variants:
+  - name: Default
+    description: Documented default; do not alter reserved debug controls.
+    value: 5
+  description: Own CW32x030_UserManual_CN_V2.5.pdf section4.7.8 PDF77/printed76; sources/x030-f020-hsi-pll-source-receipt.json.

@@ -108,6 +108,29 @@ class ProvenanceTests(unittest.TestCase):
         self.assertNotEqual(a['sha256'], current['sha256'])
         self.assertEqual(current['provenance']['printed_revision'], '1.3')
 
+    def test_pll_receipt_uses_selected_own_sources_and_survives_packaging(self):
+        receipt_path = 'sources/x030-f020-hsi-pll-source-receipt.json'
+        receipt = json.loads((ROOT / receipt_path).read_text())
+        authority = {a['id']: a for a in self.lock['artifacts']}
+        for source in receipt['source_identities']:
+            original = authority[source['id']]
+            self.assertEqual(source['sha256'], original['sha256'])
+            self.assertEqual(source['path'], original['path'])
+            self.assertEqual(source['printed_revision'], original['provenance']['printed_revision'])
+            self.assertEqual(source['chip_scope'], original['provenance']['chip_scope'])
+            self.assertEqual(original['provenance']['status'], 'selected')
+            self.assertIn(receipt_path, original['evidence'])
+        f020 = receipt['profiles']['CW32F020']
+        self.assertEqual(f020['datasheet_source'], 'vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf')
+        self.assertEqual(f020['pll_datasheet_output_hz'], [8000000, 48000000])
+        package_spec = importlib.util.spec_from_file_location('package_source', ROOT / 'ci/package-source.py')
+        package = importlib.util.module_from_spec(package_spec)
+        package_spec.loader.exec_module(package)
+        required = package.required_evidence(ROOT)
+        self.assertIn(receipt_path, required)
+        self.assertTrue(package.include_file(Path(receipt_path), required))
+        self.assertFalse(package.include_file(Path('sources/unreviewed-receipt.json'), required))
+
     def test_cover_history_and_acquisition_are_distinct(self):
         a = next(a for a in self.lock['artifacts'] if a['path'] == 'CW32L011_UserManual_CN_V1.1.pdf')
         self.assertEqual(a['provenance']['cover_date'], '2026-06')

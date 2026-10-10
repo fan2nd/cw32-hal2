@@ -9,12 +9,16 @@ use embassy_cw32::{
 #[cortex_m_rt::entry]
 fn main() -> ! {
     let p = hal::init(cw32_pll_clock_examples::config());
-    let mut led = Output::new(p.PB0, Level::Low, Speed::Default);
+    #[cfg(gpio_speed)]
+    let speed = Speed::Low;
+    #[cfg(not(gpio_speed))]
+    let speed = Speed::Default;
+    let mut led = Output::new(p.PB0, Level::Low, speed);
     let mut uart = usart::UartTx::new_blocking(p.UART1, p.PA8, usart::Config::default()).unwrap();
     // Exact bounds remain available separately from rounded nominal Hertz.
     core::hint::black_box(rcc::clocks().pll_bounds());
     loop {
-        uart.blocking_write(b"CW32L083 qualified HSI-fed PLL: UART1 115200 8N1\r\n")
+        uart.blocking_write(b"CW32 qualified HSI-fed PLL: UART1 115200 8N1\r\n")
             .unwrap();
         uart.blocking_flush().unwrap();
         led.toggle();

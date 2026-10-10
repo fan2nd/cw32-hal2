@@ -87,6 +87,38 @@ fn equal(value: u32, source: &Value) -> Result<()> {
     );
     Ok(())
 }
+fn validate_pll_source_selection(line: &str, sources: &[HseSource]) -> Result<()> {
+    // Exact selected identities matter: the historical F020 file has the same filename
+    // but a different printed revision. The common x030 manual explicitly covers A030.
+    let expected = match line {
+        "CW32L083" => [
+            "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+            "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+        ],
+        "CW32F020" => [
+            "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+            "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+        ],
+        "CW32F030" => [
+            "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+            "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+        ],
+        "CW32A030" => [
+            "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+            "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+        ],
+        _ => anyhow::bail!("unqualified PLL family/source"),
+    };
+    ensure!(
+        sources.len() == expected.len()
+            && sources
+                .iter()
+                .zip(expected)
+                .all(|(source, expected)| source.source_ref == expected),
+        "PLL requires the exact selected own manual and datasheet"
+    );
+    Ok(())
+}
 pub fn apply(root: &Path, path: &str, line: &str, peripherals: &mut [Peripheral]) -> Result<()> {
     let catalog: Catalog = crate::read_yaml(root.join(path))?;
     ensure!(
@@ -170,10 +202,8 @@ pub fn apply(root: &Path, path: &str, line: &str, peripherals: &mut [Peripheral]
     }
     if let Some(pll) = &c.pll {
         // Qualification is explicit and own-family; shared register layout is insufficient.
-        ensure!(
-            line == "CW32L083" && pll.hsi_supported,
-            "unqualified PLL family/source"
-        );
+        validate_pll_source_selection(line, &p.pll_sources)?;
+        ensure!(pll.hsi_supported, "unqualified PLL source");
         let review_path = "cw32-data/pll-qualified.yaml";
         let review_bytes = fs::read(root.join(review_path))?;
         ensure!(
@@ -183,6 +213,22 @@ pub fn apply(root: &Path, path: &str, line: &str, peripherals: &mut [Peripheral]
         );
         let review: Value = crate::read_yaml(root.join(review_path))?;
         let own = family(&review, line)?;
+        if line != "CW32L083" {
+            let receipt_path = "sources/x030-f020-hsi-pll-source-receipt.json";
+            let receipt_bytes = fs::read(root.join(receipt_path))?;
+            ensure!(
+                review["source_evidence"] == receipt_path
+                    && review["source_evidence_sha256"]
+                        == format!("{:x}", Sha256::digest(&receipt_bytes)),
+                "PLL own-source receipt changed"
+            );
+            let receipt: Value = serde_json::from_slice(&receipt_bytes)?;
+            ensure!(
+                receipt["profiles"][line]["manual_source"] == p.pll_sources[0].source_ref
+                    && receipt["profiles"][line]["datasheet_source"] == p.pll_sources[1].source_ref,
+                "PLL receipt does not identify the selected own sources"
+            );
+        }
         ensure!(
             serde_json::to_value(pll)? == own["pll"]
                 && serde_json::to_value(&p.pll_sources)? == own["sources"],
@@ -1609,6 +1655,32 @@ pub fn apply_lse(
         .context("LSE requires source-qualified clock limits")?
         .lse_configuration = Some(c.clone());
     Ok(())
+}
+
+#[cfg(test)]
+mod pll_source_tests {
+    use super::*;
+
+    #[test]
+    fn pll_rejects_historical_foreign_missing_and_unqualified_sources() {
+        let mut catalog: Catalog =
+            serde_yaml::from_str(include_str!("../../cw32-data/electrical.yaml")).unwrap();
+        for line in ["CW32L083", "CW32F020", "CW32F030", "CW32A030"] {
+            validate_pll_source_selection(line, &catalog.profiles[line].pll_sources).unwrap();
+        }
+        let f020 = &mut catalog.profiles.get_mut("CW32F020").unwrap().pll_sources;
+        f020[1].source_ref = "vendor:CW32F020_DataSheet_CN_V1.3.pdf".into();
+        assert!(validate_pll_source_selection("CW32F020", f020).is_err());
+        let a030 = &mut catalog.profiles.get_mut("CW32A030").unwrap().pll_sources;
+        a030[1].source_ref = "vendor:CW32F030_DataSheet_CN_V1.9.pdf".into();
+        assert!(validate_pll_source_selection("CW32A030", a030).is_err());
+        a030.pop();
+        assert!(validate_pll_source_selection("CW32A030", a030).is_err());
+        assert!(
+            validate_pll_source_selection("CW32L052", &catalog.profiles["CW32L083"].pll_sources)
+                .is_err()
+        );
+    }
 }
 
 #[cfg(test)]

@@ -178,19 +178,39 @@ def audit(manifest_path, data):
                 assert correction["expected_bit_offset"] + correction["bit_size"] <= size, context + " corrected field exceeds register"
                 expected_fields[field_name] = (correction["expected_bit_offset"], correction["bit_size"])
                 seen_field_width_overrides.add((block_name, fieldset_name, field_name))
-            if context == "CW32L083:SYSCTRL.PLL":
-                # The own manual documents a reserved debug default absent from SVD.
-                # The reviewed PLL API models it only to preserve/check that default.
-                policy = yaml.safe_load((ROOT / "cw32-data/pll-qualified.yaml").read_text())["families"]["CW32L083"]
-                source, = (s for s in policy["sources"] if s["source_ref"] == "vendor:CW32L083_UserManual_CN_V2.0.pdf")
+            pll_manuals = {
+                "CW32L083": ("CW32L083_UserManual_CN_V2.0.pdf", 82),
+                "CW32F020": ("CW32F020_UserManual_CN_V1.4.pdf", 75),
+                "CW32F030": ("CW32x030_UserManual_CN_V2.5.pdf", 77),
+                "CW32A030": ("CW32x030_UserManual_CN_V2.5.pdf", 77),
+            }
+            if manifest["line"] in pll_manuals and block == "SYSCTRL" and reg_name == "PLL":
+                # Own manuals require debug-default preservation. F020 calls this RFU;
+                # the L083/x030 SVDs omit it. Neither difference grants a tunable control.
+                family = manifest["line"]
+                filename, page_number = pll_manuals[family]
+                review = yaml.safe_load((ROOT / "cw32-data/pll-qualified.yaml").read_text())
+                policy = review["families"][family]
+                source, = (s for s in policy["sources"] if s["source_ref"] == "vendor:" + filename)
                 sources = Path(os.environ.get("CW32_SOURCES", ROOT.parent / "cw32-sources"))
-                pdf = sources / "CW32L083_UserManual_CN_V2.0.pdf"
+                pdf = sources / filename
                 assert hashlib.sha256(pdf.read_bytes()).hexdigest() == source["sha256"]
-                assert 82 in source["pdf_pages_1_based"]
-                page = subprocess.check_output(["pdftotext", "-f", "82", "-l", "82", "-layout", str(pdf), "-"], text=True)
+                assert page_number in source["pdf_pages_1_based"]
+                page = subprocess.check_output(["pdftotext", "-f", str(page_number), "-l", str(page_number), "-layout", str(pdf), "-"], text=True)
                 assert "4.7.8" in page and re.search(r"19:16\s+RFU\s+RW\s+调试控制位，请保持默认值", page)
                 assert re.search(r"Reset value:\s*0x0005\s+3483", page)
+                assert re.search(r"15\s+STABLE\s+RO", page)
+                if family != "CW32L083":
+                    # Current chiptool IR has no register reset slot. Keep the verified
+                    # manual authority in the receipt, without inventing a PAC reset API.
+                    receipt_bytes = (ROOT / review["source_evidence"]).read_bytes()
+                    assert hashlib.sha256(receipt_bytes).hexdigest() == review["source_evidence_sha256"]
+                    receipt = json.loads(receipt_bytes)
+                    assert receipt["common_pll_facts"]["pll_register"]["reset"] == "0x00053483"
+                    assert number(inherited([source_reg, base, device], "resetValue", "0")) == 0
                 assert policy["pll"]["reserved_debug_default"] == 5
+                if family == "CW32F020":
+                    assert expected_fields.pop("RFU") == (16, 4)
                 assert "RESERVED_DEBUG" not in expected_fields
                 assert all(offset + width <= 16 or offset >= 20 for offset, width in expected_fields.values())
                 expected_fields["RESERVED_DEBUG"] = (16, 4)

@@ -4,7 +4,7 @@
 //! Factory HSI is supported on all backends. F020/F030/A030 and L031/R031/W031
 //! L010/L011, L052 and L083 admit direct source-qualified HSE crystal and bypass
 //! clocks. F002/F003
-//! admit direct digital HEX inputs on PB0/PB1. L083 also admits a separately
+//! admit direct digital HEX inputs on PB0/PB1. F020/F030/A030 and L083 admit a separately
 //! qualified factory-HSI-fed PLL with rate-only bounds. See each family
 //! Config
 //! types and the selected package's bonded external-clock pads.

@@ -25,7 +25,13 @@ pub fn config() -> hal::Config {
     };
     config.rcc.pll = Some(rcc::Pll {
         src: rcc::PllSource::HSI,
-        mul: if cfg!(feature = "fractional") {
+        mul: if cfg!(classic_pll) {
+            if cfg!(feature = "fractional") {
+                rcc::PllMul::Mul9
+            } else {
+                rcc::PllMul::Mul4
+            }
+        } else if cfg!(feature = "fractional") {
             rcc::PllMul::Mul12
         } else {
             rcc::PllMul::Mul7

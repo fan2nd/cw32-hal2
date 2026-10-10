@@ -1,10 +1,16 @@
-//! Qualified HSI and direct HSE clocks on F020/F030/A030.
+//! Qualified HSI, direct HSE and factory-HSI-fed PLL on F020/F030/A030.
 //!
 //! Own sources: F020 RM CN1.4 and x030 RM CN2.5 §§4.3–4.7, own datasheet
 //! external-clock/electrical tables. See docs/qualified-hse.md for conflicts,
 //! board obligations, operation correspondence and verification limits.
 //! The default remains factory HSI /6. HSIOSC stays alive for independent users.
-//! PLL configuration, runtime switching and low-power operation are unsupported.
+//! PLL is admitted only as the one-time system source, with rate-only bounds.
+//! Runtime switching, low-power restore and guaranteed fault recovery are
+//! unsupported. See docs/f020-x030-hsi-pll.md for own-source limits.
+//! Entry clocks/Flash must already be legal and stable. DMA, peripheral,
+//! IRQ/NMI, MCO and dedicated PLL_OUT consumers must be quiescent. A failure
+//! can leave partial state, including temporary LSI or a stopped PLL; reset
+//! before retrying. Poll budgets are not wall-time guarantees.
 
 use crate::{pac, time::Hertz};
 use core::cell::Cell;
@@ -120,7 +126,92 @@ impl APBPrescaler {
     }
 }
 
-/// Direct system-clock sources implemented by this backend.
+/// Source-qualified PLL multipliers, using the literal hardware field.
+#[cfg(rcc_pll)]
+pub use pac::sysctrl::vals::PllMul;
+
+/// Qualified PLL reference. The divider belongs to `Config.hsi`, not the PLL.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+#[cfg(rcc_pll)]
+pub enum PllSource {
+    /// Factory-trimmed HSI after its configured divider.
+    HSI,
+}
+
+/// One-time factory-HSI-fed PLL configuration. It must be selected as `Sysclk::PLL`.
+///
+/// Both actual input endpoints must fit one documented input bin, and both
+/// actual multiplied output endpoints must fit one output bin and the separate
+/// electrical limits of the selected family. See docs/f020-x030-hsi-pll.md
+/// for admitted pairs, including the separate F020 output ceiling.
+/// Other documented hardware settings are not qualified by this API.
+/// The PLL supplies qualified clock-rate bounds, not absolute period/jitter bounds.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+#[cfg(rcc_pll)]
+pub struct Pll {
+    pub src: PllSource,
+    pub mul: PllMul,
+}
+#[cfg(rcc_pll)]
+struct PllParameters {
+    bounds: crate::rcc::ClockBounds,
+    input_range: pac::sysctrl::vals::PllInputRange,
+    output_range: pac::sysctrl::vals::PllOutputRange,
+}
+#[cfg(rcc_pll)]
+impl Pll {
+    fn parameters(self, config: &Config) -> Result<PllParameters, Error> {
+        let c = config.operating_conditions;
+        if c.min_supply_mv < crate::RCC_PLL_SUPPLY_MV.0
+            || c.max_supply_mv > crate::RCC_PLL_SUPPLY_MV.1
+            || c.min_temperature_c < crate::RCC_PLL_TEMPERATURE_C.0
+            || c.max_temperature_c > crate::RCC_PLL_TEMPERATURE_C.1
+        {
+            return Err(Error::PllConditionsOutsideQualifiedRange);
+        }
+        let multiplier = self.mul.to_bits();
+        if !(crate::RCC_PLL_MULTIPLIER_RANGE.0..=crate::RCC_PLL_MULTIPLIER_RANGE.1)
+            .contains(&multiplier)
+        {
+            return Err(Error::InvalidPllMultiplier);
+        }
+        let input = match self.src {
+            PllSource::HSI => crate::rcc::ClockBounds::hsi(config.hsi.div.divisor()),
+        };
+        if input.minimum_below(crate::RCC_PLL_INPUT_RANGE_HZ.0)
+            || input.maximum_exceeds(crate::RCC_PLL_INPUT_RANGE_HZ.1)
+        {
+            return Err(Error::PllInputOutsideQualifiedRange);
+        }
+        let bounds = input
+            .multiplied_by(u32::from(multiplier))
+            .ok_or(Error::PllArithmeticOverflow)?;
+        if bounds.minimum_below(crate::RCC_PLL_OUTPUT_RANGE_HZ.0)
+            || bounds.maximum_exceeds(crate::RCC_PLL_OUTPUT_RANGE_HZ.1)
+        {
+            return Err(Error::PllOutputOutsideQualifiedRange);
+        }
+        // Choose the first fitting closed bin at a shared exact endpoint.
+        // Factory-HSI envelopes have nonzero width and must never straddle.
+        let input_index = crate::RCC_PLL_INPUT_BINS_HZ
+            .iter()
+            .position(|(lo, hi)| !input.minimum_below(*lo) && !input.maximum_exceeds(*hi))
+            .ok_or(Error::PllInputCrossesBin)?;
+        let output_index = crate::RCC_PLL_OUTPUT_BINS_HZ
+            .iter()
+            .position(|(lo, hi)| !bounds.minimum_below(*lo) && !bounds.maximum_exceeds(*hi))
+            .ok_or(Error::PllOutputCrossesBin)?;
+        Ok(PllParameters {
+            bounds,
+            input_range: pac::sysctrl::vals::PllInputRange::from_bits(input_index as u8),
+            output_range: pac::sysctrl::vals::PllOutputRange::from_bits(output_index as u8),
+        })
+    }
+}
+
+/// System-clock sources implemented by this backend.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Sysclk {
@@ -128,6 +219,9 @@ pub enum Sysclk {
     HSI,
     /// Qualified external high-speed oscillator or input.
     HSE,
+    /// Factory-HSI-fed PLL, with qualified rate bounds only.
+    #[cfg(rcc_pll)]
+    PLL,
 }
 
 /// HSE electrical mode. The board must reserve the actual oscillator pads.
@@ -230,11 +324,14 @@ pub struct Config {
     pub hsi: Hsi,
     /// Optional external source, configured and reserved even when SYSCLK is HSI.
     pub hse: Option<Hse>,
+    /// Init-only PLL, permitted only when selected as the system source.
+    #[cfg(rcc_pll)]
+    pub pll: Option<Pll>,
     /// Init-only board-qualified LSE. None preserves LSE parameters and pads;
     /// the existing mandatory CLKCCS/HSECCS/LSECCS setup still applies.
     #[cfg(rcc_lse)]
     pub lse: Option<super::Lse>,
-    /// System clock source. HSE requires `hse: Some(...)`.
+    /// System clock source. HSE/PLL require their corresponding configuration.
     pub sys: Sysclk,
     /// HCLK prescaler.
     pub ahb_pre: AHBPrescaler,
@@ -255,6 +352,8 @@ impl Config {
                 div: crate::RCC_DEFAULT_HSI_DIV,
             },
             hse: None,
+            #[cfg(rcc_pll)]
+            pll: None,
             #[cfg(rcc_lse)]
             lse: None,
             sys: Sysclk::HSI,
@@ -304,9 +403,18 @@ impl Config {
         } else {
             None
         };
+        #[cfg(rcc_pll)]
+        let pll = match (self.pll, self.sys) {
+            (Some(pll), Sysclk::PLL) => Some(pll.parameters(self)?.bounds),
+            (None, Sysclk::PLL) => return Err(Error::PllNotConfigured),
+            (Some(_), _) => return Err(Error::PllNotSelected),
+            (None, _) => None,
+        };
         let source = match self.sys {
             Sysclk::HSI => crate::rcc::ClockBounds::hsi(self.hsi.div.divisor()),
             Sysclk::HSE => hse.ok_or(Error::HseNotConfigured)?,
+            #[cfg(rcc_pll)]
+            Sysclk::PLL => pll.ok_or(Error::PllNotConfigured)?,
         };
         let clocks = Clocks {
             hsi,
@@ -322,13 +430,16 @@ impl Config {
             ],
             source,
             hse: self.hse.map(|hse| hse.mode),
+            #[cfg(rcc_pll)]
+            pll,
             #[cfg(rcc_lse)]
             lse,
         };
         crate::rcc::operating::validate(self.operating_conditions, clocks)?;
-        // Mandatory CCS can select HSI. Its actual envelope must fit the final
-        // buses too; HSE admission cannot legalize an unsafe fallback divider.
-        if self.hse.is_some() {
+        // HSI remains available during the transition and after it. Qualify its
+        // actual envelope under the final buses too; this does not promise PLL
+        // fault recovery or a continuous lock-loss indication.
+        if self.sys != Sysclk::HSI || self.hse.is_some() {
             crate::rcc::operating::validate(
                 self.operating_conditions,
                 Clocks {
@@ -362,8 +473,23 @@ pub struct Clocks {
     pub(crate) dividers: [u32; 3],
     pub(crate) source: crate::rcc::ClockBounds,
     hse: Option<HseMode>,
+    #[cfg(rcc_pll)]
+    pll: Option<crate::rcc::ClockBounds>,
     #[cfg(rcc_lse)]
     pub(crate) lse: Option<(super::Lse, crate::rcc::ClockBounds)>,
+}
+
+#[cfg(rcc_pll)]
+impl Clocks {
+    /// Raw PLL clock-rate bounds after successful initialization, before AHB/APB.
+    /// A `Config::frequencies()` result is a prospective calculation only.
+    pub fn pll_bounds(self) -> Option<crate::rcc::ClockBounds> {
+        self.pll
+    }
+    /// Nominal raw PLL rate, rounded down. No independent PLL output is enabled.
+    pub fn pll_frequency(self) -> Option<Hertz> {
+        self.pll.map(|b| b.nominal())
+    }
 }
 
 /// A clock initialization failure.
@@ -377,6 +503,33 @@ pub struct Clocks {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
+    #[cfg(rcc_pll)]
+    PllNotConfigured,
+    #[cfg(rcc_pll)]
+    PllNotSelected,
+    #[cfg(rcc_pll)]
+    InvalidPllMultiplier,
+    #[cfg(rcc_pll)]
+    PllArithmeticOverflow,
+    #[cfg(rcc_pll)]
+    PllConditionsOutsideQualifiedRange,
+    #[cfg(rcc_pll)]
+    PllInputOutsideQualifiedRange,
+    #[cfg(rcc_pll)]
+    PllOutputOutsideQualifiedRange,
+    #[cfg(rcc_pll)]
+    PllInputCrossesBin,
+    #[cfg(rcc_pll)]
+    PllOutputCrossesBin,
+    /// A nondefault inherited reserved/debug value is not qualified for PLL use.
+    #[cfg(rcc_pll)]
+    PllReservedConfiguration,
+    #[cfg(rcc_pll)]
+    PllConfigurationTimeout,
+    #[cfg(rcc_pll)]
+    PllTimeout,
+    /// A retained or requested external source has a relevant sticky fault.
+    ExternalClockFault,
     #[cfg(rcc_lse)]
     InvalidLseBounds,
     #[cfg(rcc_lse)]
@@ -521,16 +674,21 @@ fn wait_until(timeout: u32, error: Error, mut ready: impl FnMut() -> bool) -> Re
     Err(error)
 }
 
-fn set_flash_latency(wait: u32, timeout: u32) -> Result<(), Error> {
+fn set_flash_latency(wait: u32, timeout: u32, preserve_features: bool) -> Result<(), Error> {
+    let before = pac::FLASH.cr2().read();
+    let fetch = preserve_features && before.fetch() || !preserve_features;
+    let cache = preserve_features && before.cache() || !preserve_features;
     pac::FLASH.cr2().modify(|w| {
         w.set_key(0x5a5a);
         w.set_wait(wait as u8);
-        w.set_fetch(true);
-        w.set_cache(true);
+        // The new PLL path retains the inherited cache/prefetch settings.
+        // Direct HSI/HSE keeps its existing enable-both initialization policy.
+        w.set_fetch(fetch);
+        w.set_cache(cache);
     });
     wait_until(timeout, Error::FlashLatencyTimeout, || {
         let r = pac::FLASH.cr2().read();
-        u32::from(r.wait()) == wait && r.fetch() && r.cache()
+        u32::from(r.wait()) == wait && r.fetch() == fetch && r.cache() == cache
     })?;
     barrier();
     Ok(())
@@ -546,6 +704,25 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     let r = pac::SYSCTRL;
     let old_clock = r.cr0().read();
     let old_sources = r.cr1().read();
+    #[cfg(rcc_pll)]
+    let old_lsi = r.lsi().read();
+    #[cfg(rcc_pll)]
+    let old_hse = r.hse().read();
+    #[cfg(rcc_pll)]
+    let old_lse = r.lse().read();
+    #[cfg(rcc_pll)]
+    if config.pll.is_some() {
+        if r.pll().read().reserved_debug().to_bits() != crate::RCC_PLL_RESERVED_DEBUG_DEFAULT {
+            return Err(Error::PllReservedConfiguration);
+        }
+        check_external_faults(old_sources.hseen(), old_sources.lseen())?;
+        if old_sources.hseen() && !old_hse.stable() {
+            return Err(Error::HseTimeout);
+        }
+        if old_sources.lseen() && !old_lse.stable() {
+            return Err(Error::ClockConfigurationTimeout);
+        }
+    }
     let needs_lsi = config.hse.is_some() || old_sources.hseen() || old_sources.lseen();
     #[cfg(rcc_lse)]
     let needs_lsi = needs_lsi || config.lse.is_some();
@@ -628,7 +805,16 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             },
         )
         .map_err(|_| Error::FlashClockTimeout)?;
-    set_flash_latency(crate::RCC_INITIAL_FLASH_WAIT, config.timeout)?;
+    #[cfg(rcc_pll)]
+    let preserve_flash_features = config.pll.is_some();
+    #[cfg(not(rcc_pll))]
+    let preserve_flash_features = false;
+    set_flash_latency(
+        crate::RCC_INITIAL_FLASH_WAIT,
+        config.timeout,
+        preserve_flash_features,
+    )?;
+    let flash_features = pac::FLASH.cr2().read();
     let guard_hclk = old_clock.hclkprs().max(AHBPrescaler::Div4 as u8);
     let guard_pclk = old_clock.pclkprs().max(APBPrescaler::Div8 as u8);
     r.cr0().modify(|w| {
@@ -801,14 +987,54 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             r.hse().read().stable()
         })?;
     }
+    #[cfg(rcc_pll)]
+    if let Some(pll) = config.pll {
+        let parameters = pll.parameters(&config)?;
+        // Both PLLEN and the real STABLE latch were observed clear before any
+        // HSI/divider changes above. Modify preserves reserved/debug defaults.
+        r.pll().modify(|w| {
+            w.set_source(pac::sysctrl::vals::PllSource::Hsi);
+            w.set_freqin(parameters.input_range);
+            w.set_mul(pll.mul);
+            w.set_freqout(parameters.output_range);
+            w.set_waitcycle(pac::sysctrl::vals::PllWait::from_bits(
+                crate::RCC_PLL_STARTUP_ENCODING,
+            ));
+        });
+        wait_until(config.timeout, Error::PllConfigurationTimeout, || {
+            pll_parameters_match(pll, &parameters)
+                && !r.cr1().read().pllen()
+                && !r.pll().read().stable()
+        })?;
+        r.cr1().modify(|w| {
+            w.set_key(0x5a5a);
+            w.set_pllen(true);
+        });
+        wait_until(config.timeout, Error::PllConfigurationTimeout, || {
+            r.cr1().read().pllen() && ccs_enabled() && pll_parameters_match(pll, &parameters)
+        })?;
+        // PLLRDY is a clearable event; only PLL.STABLE is the startup handshake.
+        wait_until(config.timeout, Error::PllTimeout, || {
+            r.pll().read().stable()
+        })?;
+    }
+    #[cfg(rcc_pll)]
+    if config.pll.is_some() {
+        check_external_faults(
+            old_sources.hseen() || config.hse.is_some(),
+            old_sources.lseen(),
+        )?;
+    }
     let sysclk = match config.sys {
         Sysclk::HSI => ClockSource::Hsi,
         Sysclk::HSE => ClockSource::Hse,
+        #[cfg(rcc_pll)]
+        Sysclk::PLL => ClockSource::Pll,
     };
     // Keep restrictive buses while selecting the source. Install final dividers
     // only after mux acknowledgment, so a slower target never exposes old HSI
     // through newly weakened final buses.
-    if config.sys == Sysclk::HSE {
+    if config.sys != Sysclk::HSI {
         r.cr0().modify(|w| {
             w.set_key(0x5a5a);
             w.set_sysclk(sysclk);
@@ -844,7 +1070,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         })?;
     }
     let mut upper_hclk = clocks.hclk_bounds().maximum().0;
-    if config.hse.is_some() {
+    if config.sys != Sysclk::HSI || config.hse.is_some() {
         upper_hclk = upper_hclk.max(
             crate::rcc::ClockBounds::hsi(config.hsi.div.divisor())
                 .divided_by(config.ahb_pre.divisor())
@@ -852,10 +1078,64 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
                 .0,
         );
     }
-    set_flash_latency(
-        (upper_hclk - 1) / crate::RCC_FLASH_WAIT_STEP_HZ,
-        config.timeout,
-    )?;
+    #[cfg(rcc_pll)]
+    let verify_pll_tree = |expected_lse: bool| -> Result<(), Error> {
+        let Some(pll) = config.pll else { return Ok(()) };
+        let cr0 = r.cr0().read();
+        let sources = r.cr1().read();
+        let hsi = r.hsi().read();
+        if cr0.sysclk() != sysclk
+            || cr0.hclkprs() != config.ahb_pre as u8
+            || cr0.pclkprs() != config.apb_pre as u8
+            || !sources.hsien()
+            || !ccs_enabled()
+            || sources.lselock() != old_sources.lselock()
+            || sources.lseen() != expected_lse
+            || sources.lsien() != (lsi_was_enabled || needs_lsi)
+            || sources.hseen() != (old_sources.hseen() || config.hse.is_some())
+            || hsi.div() != config.hsi.div as u8
+            || hsi.trim() != trim
+        {
+            return Err(Error::ClockConfigurationTimeout);
+        }
+        if !hsi.stable() {
+            return Err(Error::HsiTimeout);
+        }
+        if !sources.pllen() || !pll_parameters_match(pll, &pll.parameters(&config)?) {
+            return Err(Error::PllConfigurationTimeout);
+        }
+        if !r.pll().read().stable() {
+            return Err(Error::PllTimeout);
+        }
+        if sources.lsien() {
+            let lsi = r.lsi().read();
+            if !lsi.stable()
+                || lsi.trim() != old_lsi.trim()
+                || lsi.waitcycle() != old_lsi.waitcycle()
+            {
+                return Err(Error::LsiTimeout);
+            }
+        }
+        if let Some(hse) = config.hse {
+            if !r.hse().read().stable() || !hse_parameters_match(hse)? {
+                return Err(Error::HseTimeout);
+            }
+            if !crate::rcc_hse_pins_match(hse.mode == HseMode::Bypass, config.timeout, cs)? {
+                return Err(Error::HsePinConfigurationTimeout);
+            }
+        } else if old_sources.hseen() && r.hse().read().0 != old_hse.0 {
+            return Err(Error::HseClockInUse);
+        }
+        // An inherited LSE is never stopped, retuned or unlocked by this path.
+        if old_sources.lseen() && (!sources.lseen() || r.lse().read().0 != old_lse.0) {
+            return Err(Error::ClockConfigurationTimeout);
+        }
+        check_external_faults(sources.hseen(), sources.lseen())
+    };
+    #[cfg(rcc_pll)]
+    verify_pll_tree(old_sources.lseen())?;
+    let flash_wait = (upper_hclk - 1) / crate::RCC_FLASH_WAIT_STEP_HZ;
+    set_flash_latency(flash_wait, config.timeout, preserve_flash_features)?;
     #[cfg(rcc_lse)]
     if let Some(lse) = config.lse {
         super::lse::start(lse, reuse_lse.unwrap(), cs)?;
@@ -864,7 +1144,37 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     if r.cr0().read().sysclk() != sysclk {
         return Err(Error::ClockSwitchTimeout);
     }
+    #[cfg(rcc_pll)]
+    {
+        let expected_lse = old_sources.lseen();
+        #[cfg(rcc_lse)]
+        let expected_lse = expected_lse || config.lse.is_some();
+        verify_pll_tree(expected_lse)?;
+    }
+    let final_flash = pac::FLASH.cr2().read();
+    if u32::from(final_flash.wait()) != flash_wait
+        || final_flash.fetch() != flash_features.fetch()
+        || final_flash.cache() != flash_features.cache()
+    {
+        return Err(Error::FlashLatencyTimeout);
+    }
     Ok(clocks)
+}
+
+#[cfg(rcc_pll)]
+fn ccs_enabled() -> bool {
+    let v = pac::SYSCTRL.cr1().read();
+    v.clkccs() && v.hseccs() && v.lseccs()
+}
+
+#[cfg(rcc_pll)]
+fn check_external_faults(hse: bool, lse: bool) -> Result<(), Error> {
+    let v = pac::SYSCTRL.isr().read();
+    if (hse && (v.hsefail() || v.hsefault())) || (lse && (v.lsefail() || v.lsefault())) {
+        Err(Error::ExternalClockFault)
+    } else {
+        Ok(())
+    }
 }
 
 fn hse_parameters_match(hse: Hse) -> Result<bool, Error> {
@@ -879,4 +1189,15 @@ fn hse_parameters_match(hse: Hse) -> Result<bool, Error> {
         && v.waitcycle() == pac::sysctrl::vals::HseWait::Cycles262144
         && !v.flt()
         && v.detcnt() == hse.detector_count()?)
+}
+
+#[cfg(rcc_pll)]
+fn pll_parameters_match(pll: Pll, parameters: &PllParameters) -> bool {
+    let v = pac::SYSCTRL.pll().read();
+    v.source() == pac::sysctrl::vals::PllSource::Hsi
+        && v.freqin() == parameters.input_range
+        && v.mul() == pll.mul
+        && v.freqout() == parameters.output_range
+        && v.waitcycle().to_bits() == crate::RCC_PLL_STARTUP_ENCODING
+        && v.reserved_debug().to_bits() == crate::RCC_PLL_RESERVED_DEBUG_DEFAULT
 }

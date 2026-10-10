@@ -18,7 +18,7 @@ policies:
   cw32-data/hse-qualified.yaml: 01eaae77773c37777d7e64ae54ee597cd72d7dacb3b9cb23a899e5c4806336d5
   cw32-data/hex-qualified.yaml: cc7b6f5da58f76ad76a32ba71ce894bc4fb62158ebf1a19bc3330421c9c04126
   cw32-data/lse-ownership.yaml: 1108d430581567e0dc6cffafc7155791be1ab0be33b630bf595d0eaadd8ecdd4
-  cw32-data/pll-qualified.yaml: ea3f14a0d01357e1a90f116616c0f18b79d7aa2b02f289fe83979b5501958494
+  cw32-data/pll-qualified.yaml: 0d56589685d9a2d17f931e387b4e55a5e57f48d8590764713a8b456060283b54
 profiles:
   CW32A030:
     policy_family: CW32A030
@@ -91,6 +91,47 @@ profiles:
         - 60
         bypass_minimum_high_low_ns: 15
         bypass_maximum_rise_fall_ns: 20
+      pll:
+        input_range_hz:
+        - 4000000
+        - 24000000
+        output_range_hz:
+        - 12000000
+        - 64000000
+        input_ranges_hz:
+        - - 4000000
+          - 6000000
+        - - 6000000
+          - 12000000
+        - - 12000000
+          - 20000000
+        - - 20000000
+          - 24000000
+        output_ranges_hz:
+        - - 12000000
+          - 18000000
+        - - 18000000
+          - 24000000
+        - - 24000000
+          - 36000000
+        - - 36000000
+          - 48000000
+        - - 48000000
+          - 72000000
+        multiplier_range:
+        - 2
+        - 12
+        supply_mv:
+        - 1650
+        - 5500
+        temperature_c:
+        - -40
+        - 105
+        hsi_supported: true
+        startup_cycles: 16384
+        startup_encoding: 7
+        reserved_debug_default: 5
+        cycle_to_cycle_jitter_ps: 300
     adc_limits:
       supply_mv:
       - 1650
@@ -203,6 +244,59 @@ profiles:
       - 39
       - 41
       - 42
+    pll_sources:
+    - source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+      sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+      pdf_pages_1_based:
+      - 50
+      - 54
+      - 55
+      - 57
+      - 58
+      - 60
+      - 62
+      - 63
+      - 67
+      - 68
+      - 70
+      - 71
+      - 73
+      - 75
+      - 77
+      - 112
+      - 122
+      printed_pages:
+      - 49
+      - 53
+      - 54
+      - 56
+      - 57
+      - 59
+      - 61
+      - 62
+      - 66
+      - 67
+      - 69
+      - 70
+      - 72
+      - 74
+      - 76
+      - 111
+      - 121
+    - source_ref: vendor:CW32A030_DataSheet_CN_V1.1.pdf
+      sha256: 690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9
+      pdf_pages_1_based:
+      - 35
+      - 40
+      - 42
+      - 43
+      - 44
+      printed_pages:
+      - 34
+      - 39
+      - 41
+      - 42
+      - 43
   CW32F002:
     policy_family: CW32F002
     clock_limits:
@@ -558,6 +652,47 @@ profiles:
         - 60
         bypass_minimum_high_low_ns: 15
         bypass_maximum_rise_fall_ns: 20
+      pll:
+        input_range_hz:
+        - 4000000
+        - 24000000
+        output_range_hz:
+        - 12000000
+        - 48000000
+        input_ranges_hz:
+        - - 4000000
+          - 6000000
+        - - 6000000
+          - 12000000
+        - - 12000000
+          - 20000000
+        - - 20000000
+          - 24000000
+        output_ranges_hz:
+        - - 12000000
+          - 18000000
+        - - 18000000
+          - 24000000
+        - - 24000000
+          - 36000000
+        - - 36000000
+          - 48000000
+        - - 48000000
+          - 72000000
+        multiplier_range:
+        - 2
+        - 12
+        supply_mv:
+        - 1650
+        - 5500
+        temperature_c:
+        - -40
+        - 105
+        hsi_supported: true
+        startup_cycles: 16384
+        startup_encoding: 7
+        reserved_debug_default: 5
+        cycle_to_cycle_jitter_ps: 300
     adc_limits:
       supply_mv:
       - 1650
@@ -669,6 +804,59 @@ profiles:
       - 40
       - 42
       - 43
+    pll_sources:
+    - source_ref: vendor:CW32F020_UserManual_CN_V1.4.pdf
+      sha256: 279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed
+      pdf_pages_1_based:
+      - 48
+      - 52
+      - 53
+      - 55
+      - 56
+      - 58
+      - 60
+      - 61
+      - 65
+      - 66
+      - 68
+      - 69
+      - 71
+      - 73
+      - 75
+      - 110
+      - 120
+      printed_pages:
+      - 47
+      - 51
+      - 52
+      - 54
+      - 55
+      - 57
+      - 59
+      - 60
+      - 64
+      - 65
+      - 67
+      - 68
+      - 70
+      - 72
+      - 74
+      - 109
+      - 119
+    - source_ref: vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf
+      sha256: 1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0
+      pdf_pages_1_based:
+      - 36
+      - 41
+      - 43
+      - 44
+      - 45
+      printed_pages:
+      - 35
+      - 40
+      - 42
+      - 43
+      - 44
   CW32F030:
     policy_family: CW32F030
     clock_limits:
@@ -740,6 +928,47 @@ profiles:
         - 60
         bypass_minimum_high_low_ns: 15
         bypass_maximum_rise_fall_ns: 20
+      pll:
+        input_range_hz:
+        - 4000000
+        - 24000000
+        output_range_hz:
+        - 12000000
+        - 64000000
+        input_ranges_hz:
+        - - 4000000
+          - 6000000
+        - - 6000000
+          - 12000000
+        - - 12000000
+          - 20000000
+        - - 20000000
+          - 24000000
+        output_ranges_hz:
+        - - 12000000
+          - 18000000
+        - - 18000000
+          - 24000000
+        - - 24000000
+          - 36000000
+        - - 36000000
+          - 48000000
+        - - 48000000
+          - 72000000
+        multiplier_range:
+        - 2
+        - 12
+        supply_mv:
+        - 1650
+        - 5500
+        temperature_c:
+        - -40
+        - 105
+        hsi_supported: true
+        startup_cycles: 16384
+        startup_encoding: 7
+        reserved_debug_default: 5
+        cycle_to_cycle_jitter_ps: 300
     adc_limits:
       supply_mv:
       - 1650
@@ -851,6 +1080,59 @@ profiles:
       - 42
       - 44
       - 45
+    pll_sources:
+    - source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+      sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+      pdf_pages_1_based:
+      - 50
+      - 54
+      - 55
+      - 57
+      - 58
+      - 60
+      - 62
+      - 63
+      - 67
+      - 68
+      - 70
+      - 71
+      - 73
+      - 75
+      - 77
+      - 112
+      - 122
+      printed_pages:
+      - 49
+      - 53
+      - 54
+      - 56
+      - 57
+      - 59
+      - 61
+      - 62
+      - 66
+      - 67
+      - 69
+      - 70
+      - 72
+      - 74
+      - 76
+      - 111
+      - 121
+    - source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+      sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+      pdf_pages_1_based:
+      - 38
+      - 43
+      - 45
+      - 46
+      - 47
+      printed_pages:
+      - 37
+      - 42
+      - 44
+      - 45
+      - 46
   CW32L010:
     policy_family: CW32L010
     clock_limits:

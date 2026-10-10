@@ -41,7 +41,7 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 | `electrical.yaml`、`spi.yaml` | 同族 DS 电气表和 RM 分频/时序；`electrical.yaml` 大部分旧策略只间接引用审计文件，不能把这些 JSON 当成原厂来源。 |
 | `hse-qualified.yaml` | F020/F030/A030/L010/L011/L031/L052/L083/R031/W031 HSE 的各自 RM/DS；L010/L011/L031/L052/L083/R031/W031 的实际版本、章节与页码见下表。保留 RM/DS 外部输入下限冲突的交集，不跨族继承电气限值或 CCS 策略。 |
 | `lse-qualified.yaml` | 仅末节十六个精确料号/封装；x030、F020、L031、R031、W031、L052、L083 各自 RM/DS 与原件对应收据给出原件 ID/SHA、PDF/书页和 SDK 成员定位，其他料号不自动继承主动配置资格。 |
-| `pll-qualified.yaml`、`electrical.yaml` 的 L083 PLL、`registers/sysctrl_cw32l083_v1.yaml` 与 `field-access.yaml` 的 PLL 字段 | 仅 CW32L083 HSI-fed PLL：CW32L083_UserManual_CN_V2.0.pdf Rev2.0 §4.3.7 PDF59–60/书页58–59、§4.7.8 PDF82/81；CW32L083_DataSheet_CN_V1.9.pdf Rev1.9 表7-4/7-17/7-21 PDF47/55/56、书页46/54/55。保留模拟档位与电气上限区别、12–64MHz交集、RW reserved-debug默认0x5、STABLE只读及rate-only时序限制；不是L052或其他族PLL资格。 |
+| `pll-qualified.yaml`、`electrical.yaml` 的 PLL、对应 SYSCTRL 模板与 `field-access.yaml` 的 PLL 字段 | CW32L083/F020/F030/A030 的一次性 factory-HSI-fed 系统 PLL；各族自己的 RM/DS、原件 SHA 与 PDF/书页见末节。F020 采用 current-datasheets 中 printed Rev1.3，输出交集12–48MHz；L083/F030/A030为12–64MHz。保留模拟档位与电气上限区别、reserved-debug默认0x5、STABLE只读及rate-only时序限制；不外推其他族。 |
 | `hex-qualified.yaml` | F002/F003 各自 RM/DS 的直接 HEX 输入、PB0/PB1 与 AWT 来源；精确 PDF/书页见下表。保留 RM 4–32 MHz 与 DS 1–32 MHz 的交集及全部波形条件，不据此推定晶振、PLL 或失钟恢复能力。 |
 | `gpio-interrupt.yaml` | 各族 RM GPIO ICR 和中断表；CMSIS IRQ 枚举。 |
 | `reference-dividers.yaml` | L010/L011/L012 RM VC 分压器及 DS 电气范围，SDK VC 头/实现作佐证。 |
@@ -271,12 +271,23 @@ against originals without HAL tests or hardware execution.
 
 ## 当前有界 PLL 候选的逐项来源
 
-当前 PLL 初始化资格仅为 CW32L083 的 factory-HSI-fed 模式：`pll-qualified.yaml` 与 `electrical.yaml` 精确记录上述原件 SHA/页码，并投影为 `ClockLimits.pll`；F020/F030/A030 的 PLL 硬件不因此变为“不存在”，尚未由此模式资格化。L052没有系统PLL，不沿共用HAL文件开放API。
+当前 PLL 初始化资格为 CW32L083/CW32F020/CW32F030/CW32A030 的一次性 factory-HSI-fed 系统模式：`pll-qualified.yaml` 与 `electrical.yaml` 分族记录自己的原件 SHA/页码，并投影为 `ClockLimits.pll`。独立 PLL_OUT、HSE-fed PLL、运行时重调、DeepSleep 恢复和保证失钟恢复均不在此范围。L052没有系统PLL，不沿共用HAL文件开放API。
+
+L083 原有资格与来源保持不变：
 
 - 启停、来源、MUL、模拟档位、WAITCYCLE和保留位：L083 RM Rev2.0 §4.3.7、§4.7.8，PDF59–60、82/书页58–59、81。
 - 过渡、HSI校准、CCS/状态：同一RM PDF63–65、67、69、71–73、75–78/书页62–64、66、68、70–72、74–77；原始HSI trim地址保持既有权威。
 - retained AUTOTRIM/RTC/LVD与输出：同一RM PDF87、89、103、157、159、187、205–206、530、534–535；书页各减一。Flash WAIT/KEY：PDF121、131/书页120、130。
 - 工作电压、factory HSI误差和PLL输入/输出/周期间抖动：L083 DS Rev1.9表7-4、7-17、7-21，PDF47、55、56/书页46、54、55。300ps周期间抖动不等于绝对周期误差，rate-only标记保持到严格时序调用点。
+
+F020/F030/A030 的独立新增来源见 [原件对应收据](x030-f020-hsi-pll-source-receipt.json)：
+
+- F020 RM `CW32F020_UserManual_CN_V1.4.pdf` Rev1.4：PLL §4.3.7 PDF52–53/书页51–52，寄存器 §4.7.8 PDF75/74；HSI factory trim PDF55、71/54、70；Flash PDF110、120/109、119。
+- F030/A030 共用的 `CW32x030_UserManual_CN_V2.5.pdf` Rev2.5 明确覆盖两族：PLL PDF54–55/53–54，寄存器 PDF77/76；HSI factory trim PDF57、73/56、72；Flash PDF112、122/111、121。F030 SDK仅佐证共用布局，不冒充独立A030 SDK。
+- F020 采用 `vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf`，printed Rev1.3，SHA-256 `1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0`：运行条件/HSI/PLL为PDF36、44、45/书页35、43、44；原始输出8–48MHz，factory HSI±5%。同名根目录历史文件实为printed Rev1.2，不用作本项选定来源。
+- F030 DS Rev1.9对应PDF38、46、47/书页37、45、46；A030自身DS Rev1.1对应PDF35、43、44/书页34、42、43。两者原始PLL输出8–64MHz、factory HSI±2%。三族采用−40…105°C、1.65–5.5V；低于1.8V时HCLK/PCLK≤24MHz，最终总线仍独立检查。
+- 自身手册要求输入为HSI分频后的时钟，MUL字面值2–12，输入4–24MHz，WAITCYCLE=7。整段实际输入和倍频输出必须各自落在单一模拟档位，最高输出码取4。F020九组、F030/A030各十二组资格组合逐族列于YAML，未接纳的组合不因此被断言为硬件无效。
+- 两个自身手册均给出PLL复位值`0x00053483`、debug[19:16]默认0x5和STABLE只读；SVD继承零复位，F020 SVD称debug字段为RFU，x030 SVD遗漏它。保留/检查默认值的类型化修订、访问旁表和复用账本原子对应；当前IR没有reset槽，手册复位权威记入收据并由来源核验检查，不添加PAC reset API。SDK整寄存器写入清掉debug默认值的做法不采用。
 
 来源锁的目录总数仍为45项：硬件出处验证要求43个原件，另2项A030 HTML发现页面按既有 discovery-only 策略单列；11份已批准头文件与许可证边界不变。新增的来源说明和审阅记录均为项目撰写，不重新分发完整PDF、SDK、SVD或其全文抽取。
 

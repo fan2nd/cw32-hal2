@@ -1061,7 +1061,7 @@ groups:
     reason: Own-source typed SYSCLK and HEX input selectors; register layout/access unchanged.
 
 - canonical: sysctrl_cw32f020_v1.yaml
-  canonical_ir_sha256: a12fd58344960e827f0e656b8fae005641df488cf1a3a82b25ad1e83f1e75d0c
+  canonical_ir_sha256: 3228b5952760206bed09055153d795da550aac5fb05f9db04781cb03f2454343
   source_versions:
   - sysctrl_cw32f020_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1078,8 +1078,15 @@ groups:
     after_sha256: a12fd58344960e827f0e656b8fae005641df488cf1a3a82b25ad1e83f1e75d0c
     evidence: docs/lse-active-f020.json
     reason: Own F020 RM Rev1.4 PDF74 native LSE drive/amplitude/wait enums only; register layout, access, command semantics and source reuse membership unchanged.
-  post_import_curation: Reapply only the three own-source LSE native enum declarations and field associations documented in docs/lse-active-f020.json after reviewing raw SVD import candidates.
-
+  - canonical: sysctrl_cw32f020_v1.yaml
+    before_sha256: a12fd58344960e827f0e656b8fae005641df488cf1a3a82b25ad1e83f1e75d0c
+    after_sha256: 3228b5952760206bed09055153d795da550aac5fb05f9db04781cb03f2454343
+    evidence: sources/x030-f020-hsi-pll-source-receipt.json
+    reason: Own F020/x030 manuals section4.7.8 type PLL source, bins, literal MUL2-12, WAITCYCLE and reserved-debug
+      default0x5. F020 RFU19:16 is renamed RESERVED_DEBUG; x030 adds this manual-documented field missing
+      from its SVD. Existing offsets/widths, STABLE RO overlay and reuse membership are unchanged; manual
+      reset0x00053483 supersedes inherited SVD zero.
+  post_import_curation: Reapply the own-source LSE native enums from docs/lse-active-f020.json and PLL typed fields/reserved-debug name from sources/x030-f020-hsi-pll-source-receipt.json after reviewing raw SVD import candidates. The IR has no reset slot; the receipt retains the manual reset authority.
 - canonical: sysctrl_cw32l010_v1.yaml
   canonical_ir_sha256: a362263b3c6abbc7c47ec231dd3c3bdfbfe8c432fcbfcba93a9de9c297863ee9
   source_versions:
@@ -1245,7 +1252,7 @@ groups:
       only. No PAMP/PDRIVER, no access/layout change, no reuse membership change.'
 
 - canonical: sysctrl_v1.yaml
-  canonical_ir_sha256: ca3b906d365794baca78ee7d88097bb4d8d0e53602b520f7a8139b0c730757aa
+  canonical_ir_sha256: 8e3c7bdc3153c7172283427feb32ba0c4603da2b0b534aa13f64c904604e1edf
   source_versions:
   - sysctrl_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1263,6 +1270,14 @@ groups:
     evidence: docs/lse-active-first-cohort.json
     reason: 'Own x030 RM Rev2.5 PDF76: typed LSE drive, amplitude and wait-cycle fields. Register offsets,
       widths, access and source reuse membership unchanged.'
+  - canonical: sysctrl_v1.yaml
+    before_sha256: ca3b906d365794baca78ee7d88097bb4d8d0e53602b520f7a8139b0c730757aa
+    after_sha256: 8e3c7bdc3153c7172283427feb32ba0c4603da2b0b534aa13f64c904604e1edf
+    evidence: sources/x030-f020-hsi-pll-source-receipt.json
+    reason: Own F020/x030 manuals section4.7.8 type PLL source, bins, literal MUL2-12, WAITCYCLE and reserved-debug
+      default0x5. F020 RFU19:16 is renamed RESERVED_DEBUG; x030 adds this manual-documented field missing
+      from its SVD. Existing offsets/widths, STABLE RO overlay and reuse membership are unchanged; manual
+      reset0x00053483 supersedes inherited SVD zero.
 - canonical: trng_cw32l083_v1.yaml
   canonical_ir_sha256: cef6187b3759e07b97ccb48fa097227dbb040e7f671258dd58d1880ddb03be77
   source_versions:

@@ -183,6 +183,13 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   source; existing HSI/HSE ADC is unchanged. See [PLL qualification](docs/l083-hsi-pll.md)
   and [UART and Embassy timer firmware](examples/pll-clock/README.md). The current
   [Stage42 combination receipt](docs/l083-pll-stage42.md) distinguishes fresh verification from historical PLL evidence.
+- F020/F030/A030 additionally: one-time factory-HSI-fed system PLL with each
+  family's actual tolerance envelope, analog bins and raw output ceiling.
+  F020 is limited to 48 MHz raw output, F030/A030 to 64 MHz; full-envelope
+  qualification is stricter than nominal-only selection. ADC and x030
+  complementary PWM reject rate-only cycle timing before peripheral startup.
+  See [own-source scope](docs/f020-x030-hsi-pll.md) and the
+  [ordinary PLL firmware](examples/pll-clock/README.md).
 - F002/F003: direct digital HEX on PB0 or PB1 with explicit actual bounds,
   independent retained-AWT pad reservation and conservative exact-reuse admission.
   See [clock contracts and own-source conflicts](docs/qualified-hex.md) and

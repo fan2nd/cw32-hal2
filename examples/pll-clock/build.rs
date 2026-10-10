@@ -16,6 +16,10 @@ fn main() {
     println!("cargo:rustc-link-search={}", out.display());
     println!("cargo:rustc-link-arg=-Tlink.x");
     println!("cargo:rustc-check-cfg=cfg(gpio_speed)");
+    println!("cargo:rustc-check-cfg=cfg(classic_pll)");
+    if matches!(metadata.line, "CW32F020" | "CW32F030" | "CW32A030") {
+        println!("cargo:rustc-cfg=classic_pll");
+    }
     let gpio = metadata
         .peripherals
         .iter()

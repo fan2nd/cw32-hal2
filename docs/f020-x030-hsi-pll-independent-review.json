@@ -1,0 +1,235 @@
+{
+  "schema_version": 1,
+  "review_id": "f020-f030-a030-factory-hsi-sysclk-pll-runtime-consumers",
+  "completed_at_utc": "2026-10-09T19:35:24.860236+00:00",
+  "decision": "accepted within independent runtime/consumer source-and-static-software-evidence scope",
+  "unresolved_findings": [],
+  "scope": [
+    "F020/F030/A030 factory-HSI-fed PLL only when selected as SYSCLK",
+    "exact admission and typed register metadata",
+    "bounded transition and retained clock owners",
+    "Flash behavior and mandatory CCS/readback",
+    "rate-only propagation and strict ADC/complementary-PWM rejection",
+    "final source/generated/build/ELF correspondence"
+  ],
+  "source": {
+    "freeze_manifest": {
+      "reference": "source-freeze-v1.json",
+      "sha256": "f78b27e7272f2a4454ac4d0b71d726b5a1e0fe265884fee2450f898dc3dd3ab4",
+      "files": 1166
+    },
+    "source_zip": {
+      "reference": "cw32-f020-x030-hsi-pll-source-v1.zip",
+      "sha256": "afa0cf7945f566bcb6fda281e95b82a763880aa6915d72057d90e5cfd2011678",
+      "verified": "all 1166 bytes and modes; source collection has no additional package-eligible files"
+    },
+    "baseline_zip": {
+      "reference": "embassy-cw32-stage51-source-final-2026-10-09.zip",
+      "sha256": "2a550b72fd7919fce499034edfb3d1e67e45f2b37d813e6acf83b854eab8c82e"
+    },
+    "source_delta_files": 26,
+    "post_freeze_source_drift": false
+  },
+  "generated": {
+    "manifest": {
+      "reference": "generated-after-v1.json",
+      "sha256": "e3ffc0fda38e3ad9c55fd0c7bd93998f4c739fba5900104e1c1ce6c3091656cd"
+    },
+    "delta_manifest": {
+      "reference": "generated-delta-v1.json",
+      "sha256": "23779120dc914d320d0baaf4ea20bade74cc1314c960ea8b105bdb71246a31d4"
+    },
+    "files_verified": 899,
+    "changed_files": 38,
+    "unchanged_files": 861,
+    "semantic_check": "All 16 affected chip JSONs differ only by SYSCTRL clock_limits.pll; typed PAC STABLE is getter-only."
+  },
+  "five_builds": [
+    {
+      "name": "hal-cw32a030c8t7",
+      "build_receipt_reference": "logs/hal-cw32a030c8t7.json",
+      "build_receipt_sha256": "9c78c1307ee46e16f23a224f9545db4a0d48ea657d4457b93113d867fa2eab41",
+      "log_sha256": "9cc48c1bee1f1372da1dc159630a8a666f514d1ba8767154617c479354ba4cc4",
+      "cfg_output_sha256": "bc7c09ea926dd179809b1ff03d233b60fdc8f4cab2270d8444547a30cabe0f14",
+      "rcc_pll": true,
+      "rcc_external_clock": true,
+      "rcc_lse": true,
+      "verified_exit_code": 0
+    },
+    {
+      "name": "hal-cw32f020c6u7",
+      "build_receipt_reference": "logs/hal-cw32f020c6u7.json",
+      "build_receipt_sha256": "73362fc50baa6b9fb46725e30e8791b0b0074516b0d1b8b1a9676007e36cc40a",
+      "log_sha256": "15b6786424cc16ac5bab2665efbb26a632c8b13cb038f394eea3f5c1f5d025f9",
+      "cfg_output_sha256": "0ffc4c1ce417cfee8375ad442afe596a3a1bc2c992d87a5a31ed339c9a8decbe",
+      "rcc_pll": true,
+      "rcc_external_clock": true,
+      "rcc_lse": true,
+      "verified_exit_code": 0
+    },
+    {
+      "name": "hal-cw32f030c8t7",
+      "build_receipt_reference": "logs/hal-cw32f030c8t7.json",
+      "build_receipt_sha256": "6d3060216195d2b7949913129fa1a9cab75b958faf2c9d2309c1f2e021a05d0d",
+      "log_sha256": "e114329670c02c33aa1efb2626351b8872813f7b173324e8ac278ae677047cb0",
+      "cfg_output_sha256": "bc7c09ea926dd179809b1ff03d233b60fdc8f4cab2270d8444547a30cabe0f14",
+      "rcc_pll": true,
+      "rcc_external_clock": true,
+      "rcc_lse": true,
+      "verified_exit_code": 0
+    },
+    {
+      "name": "hal-f020-without-lse",
+      "build_receipt_reference": "logs/hal-f020-without-lse.json",
+      "build_receipt_sha256": "a8fe2c51eb82597ca6141c1006fe9eafc62010c689f349aae33bad6e0f670a48",
+      "log_sha256": "d1f7663f22f9b64055ccf7082771c783ac3be6aa53d47c2bb6885aa40953e608",
+      "cfg_output_sha256": "d0802fd709b90de18f65504d61c6229fe499401e4650b1ecdfa7f30c8fc0c866",
+      "rcc_pll": true,
+      "rcc_external_clock": true,
+      "rcc_lse": false,
+      "verified_exit_code": 0
+    },
+    {
+      "name": "hal-f030-without-lse",
+      "build_receipt_reference": "logs/hal-f030-without-lse.json",
+      "build_receipt_sha256": "d79caefd8793f4b11c94d4da3b4d6e3c19371ce2b38f4531f50541396b96e531",
+      "log_sha256": "f0e69ed49bc2f2e094c07636ae71f913dcbcbc768710ccdee3c0bed37c00a3e9",
+      "cfg_output_sha256": "25c7c2b21f1270f509bf564c7235b101530f1b367920afc75f40de25f2a75021",
+      "rcc_pll": true,
+      "rcc_external_clock": true,
+      "rcc_lse": false,
+      "verified_exit_code": 0
+    }
+  ],
+  "eight_elfs": [
+    {
+      "name": "cw32f020c6u7-pll-uart",
+      "elf_reference": "elfs/cw32f020c6u7-pll-uart.elf",
+      "elf_sha256": "204305df3a2846dcc2380877e5b43935e83d1da6e6ff1582e255585771ff513d",
+      "build_receipt_reference": "logs/cw32f020c6u7-pll-uart-locked-deps.json",
+      "build_receipt_sha256": "d82095a1901413d5fc90765050590bd1f5263f4ec41840a0e091eaa6305c932f",
+      "verified_exit_code": 0,
+      "independent_static_structure_check": "passed"
+    },
+    {
+      "name": "cw32f020c6u7-pll-time",
+      "elf_reference": "elfs/cw32f020c6u7-pll-time.elf",
+      "elf_sha256": "78d8ad425e6138e92effa5447f4847cd1a4d6fbc4eb0c51c6a5892d7fa42e3f5",
+      "build_receipt_reference": "logs/cw32f020c6u7-pll-time-locked-deps.json",
+      "build_receipt_sha256": "793d396e4e8122bc981950864a446a26ede74db697b67e575cc546277d93bafc",
+      "verified_exit_code": 0,
+      "independent_static_structure_check": "passed"
+    },
+    {
+      "name": "cw32f030c8t7-pll-uart",
+      "elf_reference": "elfs/cw32f030c8t7-pll-uart.elf",
+      "elf_sha256": "a8a7b0806f844f8789112c6ad2b8db85a6cdb40c2328530963cacdbe26d25dad",
+      "build_receipt_reference": "logs/cw32f030c8t7-pll-uart-locked-deps.json",
+      "build_receipt_sha256": "536b1706272789741dd1405b62133ce8545e9f6a467f7d661e52c1846a155578",
+      "verified_exit_code": 0,
+      "independent_static_structure_check": "passed"
+    },
+    {
+      "name": "cw32f030c8t7-pll-time",
+      "elf_reference": "elfs/cw32f030c8t7-pll-time.elf",
+      "elf_sha256": "24d90a3c04a8b80e9c897aa5e262e75193ab2d2a8016b4af8926f4e41cd6b3fc",
+      "build_receipt_reference": "logs/cw32f030c8t7-pll-time-locked-deps.json",
+      "build_receipt_sha256": "3eebddacef4346fcab57e74b2a1ea4571c715efec1b2514d0774b09625eb4937",
+      "verified_exit_code": 0,
+      "independent_static_structure_check": "passed"
+    },
+    {
+      "name": "cw32a030c8t7-pll-uart",
+      "elf_reference": "elfs/cw32a030c8t7-pll-uart.elf",
+      "elf_sha256": "79bbf1ddc93a0832a61aebfe5930f4bb4f020d177cfd3a41004394eb5be51fb4",
+      "build_receipt_reference": "logs/cw32a030c8t7-pll-uart-locked-deps.json",
+      "build_receipt_sha256": "af0fa51c9fd2bca155074fc2d8824456215c1eca37b995cfdfc4f1642ca43664",
+      "verified_exit_code": 0,
+      "independent_static_structure_check": "passed"
+    },
+    {
+      "name": "cw32a030c8t7-pll-time",
+      "elf_reference": "elfs/cw32a030c8t7-pll-time.elf",
+      "elf_sha256": "52cf1318efefb1fc69d52ca91ef84d2218080ed090ab07374fd3f062d1cb809e",
+      "build_receipt_reference": "logs/cw32a030c8t7-pll-time-locked-deps.json",
+      "build_receipt_sha256": "b4bceee26294431a7dbff65e99fd84a1f96d7ea8a195503a7535c0db10f494e2",
+      "verified_exit_code": 0,
+      "independent_static_structure_check": "passed"
+    },
+    {
+      "name": "cw32l083rct6-pll-uart",
+      "elf_reference": "elfs/cw32l083rct6-pll-uart.elf",
+      "elf_sha256": "091f7460e0957394d115c9c2f840159de4bb6975d9dadf2c860f525354d000b2",
+      "build_receipt_reference": "logs/cw32l083rct6-pll-uart-locked-deps.json",
+      "build_receipt_sha256": "4f2895ffefa735b1cb1534a80474e464840f1a104df5f0a824725313477d5e97",
+      "verified_exit_code": 0,
+      "independent_static_structure_check": "passed"
+    },
+    {
+      "name": "cw32l083rct6-pll-time",
+      "elf_reference": "elfs/cw32l083rct6-pll-time.elf",
+      "elf_sha256": "2460addca1ada08d9586f2f9de315fc344d690be7132d13f81e0dda6d3f613d2",
+      "build_receipt_reference": "logs/cw32l083rct6-pll-time-locked-deps.json",
+      "build_receipt_sha256": "930685febc1f20ea6dc798a92382fc9e329e30ef43476f94341bea8eebc692d9",
+      "verified_exit_code": 0,
+      "independent_static_structure_check": "passed"
+    }
+  ],
+  "proof_manifests": {
+    "check-results.json": {
+      "reference": "check-results.json",
+      "sha256": "94ad5a1d86dce882d22ecc203a1cb90e2ef57af6f669aead4fb345340e54bd67"
+    },
+    "hal-cfg-receipts.json": {
+      "reference": "hal-cfg-receipts.json",
+      "sha256": "4c7e9e234bdce8b2a10a50e64f1992235b9313a00fe06ca547126ac7ea7889f0"
+    },
+    "elf-manifest.json": {
+      "reference": "elf-manifest.json",
+      "sha256": "aecf916947962e9212d31007b7ff1761e81c9ae0c0bd69c8a6352f9bb962567e"
+    },
+    "elf-layout.json": {
+      "reference": "elf-layout.json",
+      "sha256": "6944eb9ee9ad23c1a265b77475032197e44cb537b4f4627172870ddda2197b32"
+    }
+  },
+  "correction": {
+    "status": "closed; all 32 refreshed consumer-audit hashes independently verified",
+    "reference": "report-corrections.json",
+    "sha256": "a35e97b2290d5cc27ca2f985bd611faaec870adb55a17c11b1c640f0300d9f43",
+    "consumer_audit_sha256": "9b71a735e34f2bb21cb2884e4c0a3c5429f446d1fe449290826b5b44f80c3c31",
+    "affected_source": "cw32-data-gen/src/electrical.rs",
+    "stale_recorded_sha256": "748442dfef4af46578042d76872bc5b7609b39451f27953ab43348abe5c58eed",
+    "correct_frozen_sha256": "7323d53567e9cd79fd7302c7002b0ba9d05cf69901b3e8a6ba4c8ee086d0c0f3",
+    "reason": "Pre-formatting audit snapshot; corrected report only. No post-freeze source edit. Full old report hash was not retained or reconstructed."
+  },
+  "independent_review_artifacts": {
+    "review.md": {
+      "reference": "review.md",
+      "sha256": "1fc928bab6add1dc7eee836a5dc53d5cf5a56dbd5cef93d0a9b6dddb44181663"
+    },
+    "independent-audit.json": {
+      "reference": "independent-audit.json",
+      "sha256": "bdeab70d9da817ff37e5777eedc1c0119cca52f9b948a3aa321e3e44c3f6f29f"
+    },
+    "build-evidence-check.json": {
+      "reference": "build-evidence-check.json",
+      "sha256": "5a4ef0d04f57e10931927785add74f25b4ab72a7d370a799c0dc3071ccf1a46d"
+    }
+  },
+  "verification_boundaries": {
+    "reviewer_ran_cargo": false,
+    "reviewer_created_or_ran_hal_harness": false,
+    "hardware_executed": false,
+    "build_execution": "Implementer ran normal Cargo generation/tests/builds; reviewer inspected commands, logs, cfgs and final bytes.",
+    "elf_inspection": "Reviewer independently parsed all 8 ELF headers/program headers and used readelf symbols; exact-part memory bounds, aligned SP, Thumb entry/reset-vector/strong-Reset equality and strong main checked; four time ELFs include GTIM1/time-schedule symbols.",
+    "not_established": [
+      "on-silicon startup/frequency/timing/recovery",
+      "absolute cycle duration from rate-only bounds",
+      "wall-time guarantee for bounded polling"
+    ],
+    "no_candidate_edits": true,
+    "no_publication_authorization": true,
+    "other_review_scope": "Overall schema/identity acceptance and release/publication remain coordinator-controlled."
+  }
+}

@@ -1272,24 +1272,30 @@ functions:
       - path: docs/qualified-hex.md
     - id: pll
       status: partial
-      scope: CW32L083 factory-HSI-fed PLL as the one-time system source, with exact qualified rate bounds.
-      implemented_families: [CW32L083]
+      scope: CW32F020/CW32F030/CW32A030/CW32L083 factory-HSI-fed PLL as the one-time system source, with exact qualified rate bounds.
+      implemented_families: [CW32F020, CW32F030, CW32A030, CW32L083]
       limitations:
       - Entire actual input/output envelopes must each fit one source-qualified analog bin and independent
-        electrical limits. Twelve nominal HSI-divider/multiplier pairs are admitted; other documented
-        hardware settings are not asserted absent or invalid. L052 has no system PLL.
+        electrical limits. Nine F020 pairs and twelve F030/A030/L083 pairs are admitted; other documented
+        hardware settings are not asserted absent or invalid. F020 raw output is capped at48MHz, the
+        other three at64MHz. L052 has no system PLL.
       - Default is disabled. No HSE-fed PLL, independent output, runtime retuning, sleep/resume or fault-recovery
         guarantee. Stable legal entry, quiescent clock consumers and reset-before-retry apply.
       - Typed configuration preserves reserved-debug default0x5 and uses real PLL.STABLE startup/stop acknowledgment.
         Retained RTC/AUTOTRIM/LVD/CCS owners, guarded Flash/buses and final readback remain mandatory.
       - ClockBounds preserves a rate-only qualification through multiplication and division. Strict duration
-        getters require has_cycle_timing_bounds; ADC constructors reject this PLL source before MMIO.
+        getters require has_cycle_timing_bounds; ADC constructors reject this PLL source before ADC/RCC writes.
+        F030/A030 complementary PWM rejects before synthesis or ATIM/RCC enable even with zero dead time;
+        its pin wrappers retain their prior GPIO initialization and drop contract.
         Existing direct HSI/HSE timing qualification is unchanged. Cycle-to-cycle300ps is not an absolute-period bound.
       registers_any:
       - PLL
       evidence:
       - path: cw32-data/pll-qualified.yaml
       - path: docs/l083-hsi-pll.md
+      - path: docs/f020-x030-hsi-pll.md
+      - path: embassy-cw32/src/rcc/hsi_48mhz.rs
+        anchor: pub struct Pll
       - path: embassy-cw32/src/rcc/l052_l083.rs
         anchor: pub struct Pll
       - path: embassy-cw32/src/rcc/bounds.rs
