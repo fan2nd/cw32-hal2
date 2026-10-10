@@ -26,158 +26,217 @@
       "project_claim": "SPDX-License-Identifier: MIT OR Apache-2.0",
       "required_resolution": "Obtain explicit permission for exact originating package or replace with independently authored, compatibility-tested code; removing an unsupported label alone does not establish permission.",
       "replacement_review": {
-        "replacement_sha256": "30d9f8fd473d5c3fe41e84d016821cf07282c196131c76030fa7511a67ab0e18",
+        "replacement_sha256": "f36ce5da85172080d963347d8c9e25985b02d92e1a1227df78850cf7dd1ea9b1",
         "independent_review_passed": true,
-        "review_reference": "docs/factory-lsi-schema-acceptance.json",
-        "verification_reference": "docs/factory-lsi-schema-acceptance.json",
+        "review_reference": "docs/classic-lse-sysclk-schema-acceptance.json",
+        "verification_reference": "docs/classic-lse-sysclk-schema-acceptance.json",
         "legal_clearance": false,
-        "scope": "Accepted optional factory-LSI SYSCLK fact record in three corresponding models. Static schema only; integrated generation, runtime protocol, builds and silicon validation remain separate. Complete prior review and adapted metapac ancestry retained.",
-        "accepted_schema_receipt_sha256": "3b0459e1ed52d4ac8dd55835a2d55018ae3eeadd262ff04f1efcfc3c8d2f3213",
+        "scope": "Accepted optional init-only LSE SYSCLK detector fact record in three corresponding models. Two own hardware counts and one separately named software margin; no second oscillator configuration. Static schema only; exact-package projection, runtime operation, builds and physical qualification remain separate. Full prior review chain and ancestry retained.",
+        "accepted_schema_receipt_sha256": "937eccdc6579de3f4c04a451bbbdd4478856928800c73247ea9a600876b658dc",
         "metapac_model_identities": [
           {
             "path": "cw32-metapac-gen/src/data.rs",
-            "before_sha256": "9806f170fa4873896a7bc193c6e0dd4a492918304210a6664005cd278df325e6",
-            "after_sha256": "22679779e7a536d31b6fd18e72fa35258e67ed4a2a1c6b4129704e9a4be2ee02"
+            "before_sha256": "22679779e7a536d31b6fd18e72fa35258e67ed4a2a1c6b4129704e9a4be2ee02",
+            "after_sha256": "227095b7b073825f26e34d2fbfe745c0938b8861dd53f68f00cf788668f6fc3c"
           },
           {
             "path": "cw32-metapac-gen/res/src/metadata.rs",
-            "before_sha256": "e0d3d918eefa896932d86434fa5461572883eeb4c1f3ee9ec1a6f28e3178ea46",
-            "after_sha256": "1039884416d72e27fced89046ee1eba647339b59b24e31994232ef317f3903c5"
+            "before_sha256": "1039884416d72e27fced89046ee1eba647339b59b24e31994232ef317f3903c5",
+            "after_sha256": "d5a1ab60f97e6a097e1970bd3c32667828563035442fb8fa299c8270147d516c"
           }
         ],
         "previous_review": {
-          "replacement_sha256": "3300723d4ae9b0e7d00051f6d158c9d72569ade9350d8f32a093cc505c8195bb",
+          "replacement_sha256": "30d9f8fd473d5c3fe41e84d016821cf07282c196131c76030fa7511a67ab0e18",
           "independent_review_passed": true,
-          "review_reference": "docs/hse-pll-schema-acceptance.json",
-          "verification_reference": "docs/hse-pll-schema-acceptance.json",
+          "review_reference": "docs/factory-lsi-schema-acceptance.json",
+          "verification_reference": "docs/factory-lsi-schema-acceptance.json",
           "legal_clearance": false,
-          "scope": "Accepted required hse_supported bool in existing PLL records for the documented bounded oscillator/bypass functional composition. Static schema/data review only; integrated generator/runtime, builds and hardware acceptance remain separate. Preserve complete prior review and adapted metapac ancestry.",
-          "accepted_schema_receipt_sha256": "7be296557686b64b22d8d0c576eba8fe4c37e70d712cdcd89169b2f12b04dbba",
+          "scope": "Accepted optional factory-LSI SYSCLK fact record in three corresponding models. Static schema only; integrated generation, runtime protocol, builds and silicon validation remain separate. Complete prior review and adapted metapac ancestry retained.",
+          "accepted_schema_receipt_sha256": "3b0459e1ed52d4ac8dd55835a2d55018ae3eeadd262ff04f1efcfc3c8d2f3213",
           "metapac_model_identities": [
             {
               "path": "cw32-metapac-gen/src/data.rs",
-              "before_sha256": "026cb57571d20dced19a7c735ed370f6a1866d5a3f864dde701bf7de3ca04f76",
-              "after_sha256": "9806f170fa4873896a7bc193c6e0dd4a492918304210a6664005cd278df325e6"
+              "before_sha256": "9806f170fa4873896a7bc193c6e0dd4a492918304210a6664005cd278df325e6",
+              "after_sha256": "22679779e7a536d31b6fd18e72fa35258e67ed4a2a1c6b4129704e9a4be2ee02"
             },
             {
               "path": "cw32-metapac-gen/res/src/metadata.rs",
-              "before_sha256": "180797a4cf5451f29d413a0f206d590c14da3a81cc4f27ecd3a29d89c1cc1869",
-              "after_sha256": "e0d3d918eefa896932d86434fa5461572883eeb4c1f3ee9ec1a6f28e3178ea46"
+              "before_sha256": "e0d3d918eefa896932d86434fa5461572883eeb4c1f3ee9ec1a6f28e3178ea46",
+              "after_sha256": "1039884416d72e27fced89046ee1eba647339b59b24e31994232ef317f3903c5"
             }
           ],
-          "compatibility": {
-            "serialized_api": "A present PLL object now requires nonnull hse_supported:bool with no default. Missing/null outer pll remains None, omitted on project-serde serialization. false is explicit. Older permissive readers may ignore the new field; no serialized-byte compatibility is claimed.",
-            "preservation": "Exact reversal reconstructs all three Stage54 model files; all 12 old PLL fields and native-LSE records are unchanged. The schema delta adds no duty field or certificate.",
-            "rust_api": "New required public metadata bool affects struct literals and exhaustive patterns. Derived Debug/Hash/Serialize contents may change; no source or ABI compatibility claim."
-          },
           "previous_review": {
-            "replacement_sha256": "42345e5143a6dded05aafec1fa5d83521a6a6e3eb0d359cd22beff637b0a6d63",
+            "replacement_sha256": "3300723d4ae9b0e7d00051f6d158c9d72569ade9350d8f32a093cc505c8195bb",
             "independent_review_passed": true,
-            "review_reference": "docs/lse-native-low-power-schema-acceptance.json",
-            "verification_reference": "docs/lse-native-low-power-schema-acceptance.json",
+            "review_reference": "docs/hse-pll-schema-acceptance.json",
+            "verification_reference": "docs/hse-pll-schema-acceptance.json",
             "legal_clearance": false,
+            "scope": "Accepted required hse_supported bool in existing PLL records for the documented bounded oscillator/bypass functional composition. Static schema/data review only; integrated generator/runtime, builds and hardware acceptance remain separate. Preserve complete prior review and adapted metapac ancestry.",
+            "accepted_schema_receipt_sha256": "7be296557686b64b22d8d0c576eba8fe4c37e70d712cdcd89169b2f12b04dbba",
+            "metapac_model_identities": [
+              {
+                "path": "cw32-metapac-gen/src/data.rs",
+                "before_sha256": "026cb57571d20dced19a7c735ed370f6a1866d5a3f864dde701bf7de3ca04f76",
+                "after_sha256": "9806f170fa4873896a7bc193c6e0dd4a492918304210a6664005cd278df325e6"
+              },
+              {
+                "path": "cw32-metapac-gen/res/src/metadata.rs",
+                "before_sha256": "180797a4cf5451f29d413a0f206d590c14da3a81cc4f27ecd3a29d89c1cc1869",
+                "after_sha256": "e0d3d918eefa896932d86434fa5461572883eeb4c1f3ee9ec1a6f28e3178ea46"
+              }
+            ],
+            "compatibility": {
+              "serialized_api": "A present PLL object now requires nonnull hse_supported:bool with no default. Missing/null outer pll remains None, omitted on project-serde serialization. false is explicit. Older permissive readers may ignore the new field; no serialized-byte compatibility is claimed.",
+              "preservation": "Exact reversal reconstructs all three Stage54 model files; all 12 old PLL fields and native-LSE records are unchanged. The schema delta adds no duty field or certificate.",
+              "rust_api": "New required public metadata bool affects struct literals and exhaustive patterns. Derived Debug/Hash/Serialize contents may change; no source or ABI compatibility claim."
+            },
             "previous_review": {
-              "replacement_sha256": "c7c59622c69f77894f838cb0737a1dcf5b802a17b63fef01099417c06c781998",
+              "replacement_sha256": "42345e5143a6dded05aafec1fa5d83521a6a6e3eb0d359cd22beff637b0a6d63",
               "independent_review_passed": true,
-              "review_reference": "docs/lse-l010-schema-acceptance.json",
-              "verification_reference": "docs/lse-l010-schema-acceptance.json",
+              "review_reference": "docs/lse-native-low-power-schema-acceptance.json",
+              "verification_reference": "docs/lse-native-low-power-schema-acceptance.json",
               "legal_clearance": false,
               "previous_review": {
-                "replacement_sha256": "54a4de94f232c208ab22ac03c177d7f12ea5eba967ac17d023a147f26a60e761",
+                "replacement_sha256": "c7c59622c69f77894f838cb0737a1dcf5b802a17b63fef01099417c06c781998",
                 "independent_review_passed": true,
-                "review_reference": "docs/lse-stage50-l052-schema-review.json",
-                "verification_reference": "docs/lse-stage50-l052-independent-review.json",
+                "review_reference": "docs/lse-l010-schema-acceptance.json",
+                "verification_reference": "docs/lse-l010-schema-acceptance.json",
                 "legal_clearance": false,
                 "previous_review": {
-                  "replacement_sha256": "aceb8fc88f3dab0c405fe86da2ccbdc800f81a433b77bf93bcb7ef1a2d24ac50",
+                  "replacement_sha256": "54a4de94f232c208ab22ac03c177d7f12ea5eba967ac17d023a147f26a60e761",
                   "independent_review_passed": true,
-                  "review_reference": "docs/lse-stage49-family-schema-review.json",
-                  "verification_reference": "docs/lse-stage49-family-independent-review.json",
+                  "review_reference": "docs/lse-stage50-l052-schema-review.json",
+                  "verification_reference": "docs/lse-stage50-l052-independent-review.json",
                   "legal_clearance": false,
                   "previous_review": {
-                    "replacement_sha256": "dd26f0aeebed0b2e64a81db5d8d067e2234fb7f1f04a784de5e8787cc5e43a7a",
+                    "replacement_sha256": "aceb8fc88f3dab0c405fe86da2ccbdc800f81a433b77bf93bcb7ef1a2d24ac50",
                     "independent_review_passed": true,
-                    "review_reference": "docs/lse-stage48-rebuild-schema-review.json",
-                    "verification_reference": "docs/lse-stage48-rebuild-schema-review.json",
+                    "review_reference": "docs/lse-stage49-family-schema-review.json",
+                    "verification_reference": "docs/lse-stage49-family-independent-review.json",
                     "legal_clearance": false,
                     "previous_review": {
-                      "replacement_sha256": "0b06a84ce26dc25558ec52f4b0d23e8690dfdc521f9798d71f27c4b50b9a907c",
+                      "replacement_sha256": "dd26f0aeebed0b2e64a81db5d8d067e2234fb7f1f04a784de5e8787cc5e43a7a",
                       "independent_review_passed": true,
-                      "review_reference": "docs/l012-hse-stage44-schema-review.json",
-                      "verification_reference": "docs/l012-hse-stage44-schema-review.json",
+                      "review_reference": "docs/lse-stage48-rebuild-schema-review.json",
+                      "verification_reference": "docs/lse-stage48-rebuild-schema-review.json",
                       "legal_clearance": false,
                       "previous_review": {
-                        "replacement_sha256": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
+                        "replacement_sha256": "0b06a84ce26dc25558ec52f4b0d23e8690dfdc521f9798d71f27c4b50b9a907c",
                         "independent_review_passed": true,
-                        "review_reference": "docs/pll-stage42-schema-review.json",
-                        "verification_reference": "docs/pll-stage42-schema-review.json",
+                        "review_reference": "docs/l012-hse-stage44-schema-review.json",
+                        "verification_reference": "docs/l012-hse-stage44-schema-review.json",
                         "legal_clearance": false,
                         "previous_review": {
-                          "replacement_sha256": "c183923bcb189ea2d6617d6ff13963070d64e06d8308c856b8d1b45cef78c810",
+                          "replacement_sha256": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
                           "independent_review_passed": true,
-                          "review_reference": "docs/lse-schema-review.json",
-                          "verification_reference": "docs/lse-schema-review.json",
+                          "review_reference": "docs/pll-stage42-schema-review.json",
+                          "verification_reference": "docs/pll-stage42-schema-review.json",
                           "legal_clearance": false,
                           "previous_review": {
-                            "replacement_sha256": "3dfa050491fe73aa16bd1d5f96e5ae01beb76affc5253222faeba073e2b0759c",
+                            "replacement_sha256": "c183923bcb189ea2d6617d6ff13963070d64e06d8308c856b8d1b45cef78c810",
                             "independent_review_passed": true,
-                            "review_reference": "docs/optional-hse-schema-note.json",
-                            "verification_reference": "docs/optional-hse-schema-note.json",
+                            "review_reference": "docs/lse-schema-review.json",
+                            "verification_reference": "docs/lse-schema-review.json",
                             "legal_clearance": false,
                             "previous_review": {
-                              "replacement_sha256": "e70e0c81debc6484b2949b12590fe54670001188d5caf23f3d432a61c24de133",
+                              "replacement_sha256": "3dfa050491fe73aa16bd1d5f96e5ae01beb76affc5253222faeba073e2b0759c",
                               "independent_review_passed": true,
-                              "review_reference": "docs/classic-complementary-schema-note.json",
-                              "verification_reference": "docs/classic-complementary-schema-note.json",
+                              "review_reference": "docs/optional-hse-schema-note.json",
+                              "verification_reference": "docs/optional-hse-schema-note.json",
+                              "legal_clearance": false,
                               "previous_review": {
-                                "replacement_sha256": "1240bf168f847297ede62b2423d8376d2c260d2eace27e74c726623859e0707f",
+                                "replacement_sha256": "e70e0c81debc6484b2949b12590fe54670001188d5caf23f3d432a61c24de133",
                                 "independent_review_passed": true,
-                                "review_reference": "docs/hex-stage28-schema-review.json",
-                                "verification_reference": "docs/hex-stage28-schema-additions.json",
+                                "review_reference": "docs/classic-complementary-schema-note.json",
+                                "verification_reference": "docs/classic-complementary-schema-note.json",
                                 "previous_review": {
-                                  "replacement_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
+                                  "replacement_sha256": "1240bf168f847297ede62b2423d8376d2c260d2eace27e74c726623859e0707f",
                                   "independent_review_passed": true,
-                                  "review_reference": "docs/vref-schema-review.json",
-                                  "verification_reference": "docs/vref-schema-additions.json",
+                                  "review_reference": "docs/hex-stage28-schema-review.json",
+                                  "verification_reference": "docs/hex-stage28-schema-additions.json",
                                   "previous_review": {
-                                    "replacement_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+                                    "replacement_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
                                     "independent_review_passed": true,
-                                    "review_reference": "docs/hse-schema-review.json",
-                                    "verification_reference": "docs/hse-schema-review.json",
+                                    "review_reference": "docs/vref-schema-review.json",
+                                    "verification_reference": "docs/vref-schema-additions.json",
                                     "previous_review": {
-                                      "replacement_sha256": "adc50cb1275be65b6451f1d283426ec3ec842460ee95d724600922f733c1081f",
+                                      "replacement_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
                                       "independent_review_passed": true,
-                                      "review_reference": "docs/stage24-schema-review.json",
-                                      "verification_reference": "docs/stage16-schema-review.json",
+                                      "review_reference": "docs/hse-schema-review.json",
+                                      "verification_reference": "docs/hse-schema-review.json",
                                       "previous_review": {
-                                        "replacement_sha256": "0ed2f1ebbe890dca06de3c2bf78c3c45776ab7fe5a519b1c6f00ac19fd08aa6f",
+                                        "replacement_sha256": "adc50cb1275be65b6451f1d283426ec3ec842460ee95d724600922f733c1081f",
                                         "independent_review_passed": true,
-                                        "review_reference": "docs/dac-opa-schema-delta.json",
-                                        "verification_reference": "docs/dac-opa-schema-delta.json",
+                                        "review_reference": "docs/stage24-schema-review.json",
+                                        "verification_reference": "docs/stage16-schema-review.json",
                                         "previous_review": {
-                                          "replacement_sha256": "2b53b5486a2a1f208922367fb36a9ced580fad7af3b815634cb75eb73e1fd160",
+                                          "replacement_sha256": "0ed2f1ebbe890dca06de3c2bf78c3c45776ab7fe5a519b1c6f00ac19fd08aa6f",
                                           "independent_review_passed": true,
-                                          "review_reference": "docs/stage14-schema-review.md",
-                                          "verification_reference": "docs/stage14-schema-review.json",
+                                          "review_reference": "docs/dac-opa-schema-delta.json",
+                                          "verification_reference": "docs/dac-opa-schema-delta.json",
                                           "previous_review": {
-                                            "replacement_sha256": "7c1c569ee508dba0e77ce8f9f9eb3f049ad48f99aeb1813ec76bc9edf4ed8416",
+                                            "replacement_sha256": "2b53b5486a2a1f208922367fb36a9ced580fad7af3b815634cb75eb73e1fd160",
                                             "independent_review_passed": true,
-                                            "review_reference": "docs/combined-schema-extension-review.md",
-                                            "verification_reference": "docs/combined-schema-extension-review.json",
+                                            "review_reference": "docs/stage14-schema-review.md",
+                                            "verification_reference": "docs/stage14-schema-review.json",
                                             "previous_review": {
-                                              "replacement_sha256": "aff3d62a4f1513f9573072ba8d0e1c397b5965c6e9039fe4f20d3eed1fa14108",
+                                              "replacement_sha256": "7c1c569ee508dba0e77ce8f9f9eb3f049ad48f99aeb1813ec76bc9edf4ed8416",
                                               "independent_review_passed": true,
-                                              "review_reference": "docs/spi-metadata-refactor.md#schema-extension-review",
-                                              "verification_reference": "docs/spi-metadata-refactor.json",
-                                              "baseline_review": {
-                                                "replacement_sha256": "234455fedd3606505df6eeb5cc0ccddb3fec01d4e1d68bf10ee0ad6a8a06e812",
+                                              "review_reference": "docs/combined-schema-extension-review.md",
+                                              "verification_reference": "docs/combined-schema-extension-review.json",
+                                              "previous_review": {
+                                                "replacement_sha256": "aff3d62a4f1513f9573072ba8d0e1c397b5965c6e9039fe4f20d3eed1fa14108",
                                                 "independent_review_passed": true,
-                                                "review_reference": "docs/schema-reimplementation-review.md",
-                                                "verification_reference": "docs/schema-reimplementation-verification.json"
+                                                "review_reference": "docs/spi-metadata-refactor.md#schema-extension-review",
+                                                "verification_reference": "docs/spi-metadata-refactor.json",
+                                                "baseline_review": {
+                                                  "replacement_sha256": "234455fedd3606505df6eeb5cc0ccddb3fec01d4e1d68bf10ee0ad6a8a06e812",
+                                                  "independent_review_passed": true,
+                                                  "review_reference": "docs/schema-reimplementation-review.md",
+                                                  "verification_reference": "docs/schema-reimplementation-verification.json"
+                                                }
                                               }
                                             }
                                           }
-                                        }
+                                        },
+                                        "accepted_extensions": [
+                                          {
+                                            "date": "2026-10-08",
+                                            "stage": "Stage18",
+                                            "previous_sha256": "72a4b739ee3e9cd50ae5767da5c1d378f83d6a76de88640f0ec4f095c69231e3",
+                                            "review_reference": "docs/stage18-schema-review.json"
+                                          },
+                                          {
+                                            "date": "2026-10-08",
+                                            "stage": "Stage19",
+                                            "previous_sha256": "de7423c78817b6fb897074bee7d12701ef1e491265cabba45d7dbcfdae554d46",
+                                            "review_reference": "docs/stage19-schema-review.json"
+                                          },
+                                          {
+                                            "date": "2026-10-08",
+                                            "stage": "Stage21",
+                                            "previous_sha256": "e4f59148652e90c0c4a1d16b1e10807670d2d24df11813334e692f83d6cd723a",
+                                            "review_reference": "docs/stage21-schema-review.json"
+                                          },
+                                          {
+                                            "date": "2026-10-08",
+                                            "stage": "Stage22",
+                                            "previous_sha256": "bd7b26379ec5840929805253a07159f86a178d4079dc960eca3ae739cade9e20",
+                                            "review_reference": "docs/stage22-schema-review.json"
+                                          },
+                                          {
+                                            "date": "2026-10-08",
+                                            "stage": "Stage23",
+                                            "previous_sha256": "87c98a99d6b21a80a7cefe8965f4d34009166d8e07b004f7da5298d6e98fed91",
+                                            "review_reference": "docs/stage23-schema-review.json"
+                                          },
+                                          {
+                                            "date": "2026-10-09",
+                                            "stage": "Stage24",
+                                            "previous_sha256": "1f0557aebb5fc759a69e6dd88a2242752b37634d0831677a2275ffae61490a8b",
+                                            "review_reference": "docs/stage24-schema-review.json"
+                                          }
+                                        ]
                                       },
                                       "accepted_extensions": [
                                         {
@@ -215,6 +274,12 @@
                                           "stage": "Stage24",
                                           "previous_sha256": "1f0557aebb5fc759a69e6dd88a2242752b37634d0831677a2275ffae61490a8b",
                                           "review_reference": "docs/stage24-schema-review.json"
+                                        },
+                                        {
+                                          "date": "2026-10-09",
+                                          "stage": "Qualified HSE",
+                                          "previous_sha256": "adc50cb1275be65b6451f1d283426ec3ec842460ee95d724600922f733c1081f",
+                                          "review_reference": "docs/hse-schema-review.json"
                                         }
                                       ]
                                     },
@@ -260,8 +325,15 @@
                                         "stage": "Qualified HSE",
                                         "previous_sha256": "adc50cb1275be65b6451f1d283426ec3ec842460ee95d724600922f733c1081f",
                                         "review_reference": "docs/hse-schema-review.json"
+                                      },
+                                      {
+                                        "date": "2026-10-09",
+                                        "stage": "Comparator reference dividers",
+                                        "previous_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+                                        "review_reference": "docs/vref-schema-review.json"
                                       }
-                                    ]
+                                    ],
+                                    "legal_clearance": false
                                   },
                                   "accepted_extensions": [
                                     {
@@ -311,6 +383,33 @@
                                       "stage": "Comparator reference dividers",
                                       "previous_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
                                       "review_reference": "docs/vref-schema-review.json"
+                                    },
+                                    {
+                                      "date": "2026-10-09",
+                                      "stage": "Qualified HEX rebased onto Stage28 VREF",
+                                      "previous_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
+                                      "review_reference": "docs/hex-stage28-schema-review.json"
+                                    }
+                                  ],
+                                  "accepted_component_reviews": [
+                                    {
+                                      "scope": "Previously independently accepted Stage27 HEX delta; exact insertion runs preserved during Stage28 rebase",
+                                      "review_reference": "docs/hex-schema-review.json",
+                                      "review_sha256": "a39002ed2109ac413c39e7163b38a4a197ef5e7e4eadfc5ff3c40cadb0f833f6"
+                                    }
+                                  ],
+                                  "metapac_model_identities": [
+                                    {
+                                      "path": "cw32-metapac-gen/src/data.rs",
+                                      "before_sha256": "85f6f65033ab8454861f9d6b0b7552cbd4aafdd3dea0179c84a9d5c56fdc3e21",
+                                      "after_sha256": "c53354b75e9b50c72714f3476a3da9ecfc32dcaa29342968bf604bc32f10e6d0",
+                                      "adapted_ancestry_retained": true
+                                    },
+                                    {
+                                      "path": "cw32-metapac-gen/res/src/metadata.rs",
+                                      "before_sha256": "ec74116b6393bd764ede2f0c06f6a50bd883ebe6e01fb887d9c2d8cd8914a4c1",
+                                      "after_sha256": "2b1fa6d62be812e01ee2dbf9e90626cc6f1b658960fcbd99cf9fa221455ba4e8",
+                                      "adapted_ancestry_retained": true
                                     }
                                   ],
                                   "legal_clearance": false
@@ -393,250 +492,173 @@
                                   }
                                 ],
                                 "legal_clearance": false
-                              },
-                              "accepted_extensions": [
-                                {
-                                  "date": "2026-10-08",
-                                  "stage": "Stage18",
-                                  "previous_sha256": "72a4b739ee3e9cd50ae5767da5c1d378f83d6a76de88640f0ec4f095c69231e3",
-                                  "review_reference": "docs/stage18-schema-review.json"
-                                },
-                                {
-                                  "date": "2026-10-08",
-                                  "stage": "Stage19",
-                                  "previous_sha256": "de7423c78817b6fb897074bee7d12701ef1e491265cabba45d7dbcfdae554d46",
-                                  "review_reference": "docs/stage19-schema-review.json"
-                                },
-                                {
-                                  "date": "2026-10-08",
-                                  "stage": "Stage21",
-                                  "previous_sha256": "e4f59148652e90c0c4a1d16b1e10807670d2d24df11813334e692f83d6cd723a",
-                                  "review_reference": "docs/stage21-schema-review.json"
-                                },
-                                {
-                                  "date": "2026-10-08",
-                                  "stage": "Stage22",
-                                  "previous_sha256": "bd7b26379ec5840929805253a07159f86a178d4079dc960eca3ae739cade9e20",
-                                  "review_reference": "docs/stage22-schema-review.json"
-                                },
-                                {
-                                  "date": "2026-10-08",
-                                  "stage": "Stage23",
-                                  "previous_sha256": "87c98a99d6b21a80a7cefe8965f4d34009166d8e07b004f7da5298d6e98fed91",
-                                  "review_reference": "docs/stage23-schema-review.json"
-                                },
-                                {
-                                  "date": "2026-10-09",
-                                  "stage": "Stage24",
-                                  "previous_sha256": "1f0557aebb5fc759a69e6dd88a2242752b37634d0831677a2275ffae61490a8b",
-                                  "review_reference": "docs/stage24-schema-review.json"
-                                },
-                                {
-                                  "date": "2026-10-09",
-                                  "stage": "Qualified HSE",
-                                  "previous_sha256": "adc50cb1275be65b6451f1d283426ec3ec842460ee95d724600922f733c1081f",
-                                  "review_reference": "docs/hse-schema-review.json"
-                                },
-                                {
-                                  "date": "2026-10-09",
-                                  "stage": "Comparator reference dividers",
-                                  "previous_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
-                                  "review_reference": "docs/vref-schema-review.json"
-                                },
-                                {
-                                  "date": "2026-10-09",
-                                  "stage": "Qualified HEX rebased onto Stage28 VREF",
-                                  "previous_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
-                                  "review_reference": "docs/hex-stage28-schema-review.json"
-                                }
-                              ],
-                              "accepted_component_reviews": [
-                                {
-                                  "scope": "Previously independently accepted Stage27 HEX delta; exact insertion runs preserved during Stage28 rebase",
-                                  "review_reference": "docs/hex-schema-review.json",
-                                  "review_sha256": "a39002ed2109ac413c39e7163b38a4a197ef5e7e4eadfc5ff3c40cadb0f833f6"
-                                }
-                              ],
-                              "metapac_model_identities": [
-                                {
-                                  "path": "cw32-metapac-gen/src/data.rs",
-                                  "before_sha256": "85f6f65033ab8454861f9d6b0b7552cbd4aafdd3dea0179c84a9d5c56fdc3e21",
-                                  "after_sha256": "c53354b75e9b50c72714f3476a3da9ecfc32dcaa29342968bf604bc32f10e6d0",
-                                  "adapted_ancestry_retained": true
-                                },
-                                {
-                                  "path": "cw32-metapac-gen/res/src/metadata.rs",
-                                  "before_sha256": "ec74116b6393bd764ede2f0c06f6a50bd883ebe6e01fb887d9c2d8cd8914a4c1",
-                                  "after_sha256": "2b1fa6d62be812e01ee2dbf9e90626cc6f1b658960fcbd99cf9fa221455ba4e8",
-                                  "adapted_ancestry_retained": true
-                                }
-                              ],
-                              "legal_clearance": false
+                              }
                             }
-                          }
+                          },
+                          "accepted_component_reviews": [
+                            {
+                              "scope": "Historical accepted Stage39 L083 HSI-fed PLL schema insertion runs retained byte-for-byte; combined review owns new Stage42 identity",
+                              "review_reference": "docs/pll-schema-review.json"
+                            }
+                          ],
+                          "metapac_model_identities": [
+                            {
+                              "path": "cw32-metapac-gen/src/data.rs",
+                              "before_sha256": "e5a47e53e92f4b0c2853fb4e5925e369c4575627ff287f712a878e9c110d2ae9",
+                              "after_sha256": "d72f44ee7602c515e8638a2662612f82d1420f67a7e70c9473619401f38f8925",
+                              "adapted_ancestry_retained": true
+                            },
+                            {
+                              "path": "cw32-metapac-gen/res/src/metadata.rs",
+                              "before_sha256": "b2670e75d4a042579a50217a93efec343d0dba80aa823ed22eeb0bbecdade210",
+                              "after_sha256": "7a41a47e4564d60527228f385021f0f4a801fb33afe675b4af92ec4e9874a926",
+                              "adapted_ancestry_retained": true
+                            }
+                          ]
                         },
-                        "accepted_component_reviews": [
+                        "accepted_extensions": [
                           {
-                            "scope": "Historical accepted Stage39 L083 HSI-fed PLL schema insertion runs retained byte-for-byte; combined review owns new Stage42 identity",
-                            "review_reference": "docs/pll-schema-review.json"
+                            "date": "2026-10-09",
+                            "stage": "Qualified L012 HSE rebased onto Stage44",
+                            "previous_sha256": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
+                            "review_reference": "docs/l012-hse-stage44-schema-review.json"
                           }
                         ],
                         "metapac_model_identities": [
                           {
                             "path": "cw32-metapac-gen/src/data.rs",
-                            "before_sha256": "e5a47e53e92f4b0c2853fb4e5925e369c4575627ff287f712a878e9c110d2ae9",
-                            "after_sha256": "d72f44ee7602c515e8638a2662612f82d1420f67a7e70c9473619401f38f8925",
+                            "before_sha256": "d72f44ee7602c515e8638a2662612f82d1420f67a7e70c9473619401f38f8925",
+                            "after_sha256": "fc0cb79c104613fd44c7bde631123e0c78fa51f598b1b9dd878c201a62842a7f",
                             "adapted_ancestry_retained": true
                           },
                           {
                             "path": "cw32-metapac-gen/res/src/metadata.rs",
-                            "before_sha256": "b2670e75d4a042579a50217a93efec343d0dba80aa823ed22eeb0bbecdade210",
-                            "after_sha256": "7a41a47e4564d60527228f385021f0f4a801fb33afe675b4af92ec4e9874a926",
+                            "before_sha256": "7a41a47e4564d60527228f385021f0f4a801fb33afe675b4af92ec4e9874a926",
+                            "after_sha256": "4b6d8c3e83766a3f1f652bd4751cbbe37251bc90cd73c1f94beccb97de4596ac",
                             "adapted_ancestry_retained": true
                           }
                         ]
                       },
-                      "accepted_extensions": [
-                        {
-                          "date": "2026-10-09",
-                          "stage": "Qualified L012 HSE rebased onto Stage44",
-                          "previous_sha256": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
-                          "review_reference": "docs/l012-hse-stage44-schema-review.json"
-                        }
-                      ],
                       "metapac_model_identities": [
                         {
                           "path": "cw32-metapac-gen/src/data.rs",
-                          "before_sha256": "d72f44ee7602c515e8638a2662612f82d1420f67a7e70c9473619401f38f8925",
-                          "after_sha256": "fc0cb79c104613fd44c7bde631123e0c78fa51f598b1b9dd878c201a62842a7f",
-                          "adapted_ancestry_retained": true
+                          "before_sha256": "fc0cb79c104613fd44c7bde631123e0c78fa51f598b1b9dd878c201a62842a7f",
+                          "after_sha256": "3103f5a7129389d50852a3d559c50a04f6a9d10132d29eec35d6d042637ec079"
                         },
                         {
                           "path": "cw32-metapac-gen/res/src/metadata.rs",
-                          "before_sha256": "7a41a47e4564d60527228f385021f0f4a801fb33afe675b4af92ec4e9874a926",
-                          "after_sha256": "4b6d8c3e83766a3f1f652bd4751cbbe37251bc90cd73c1f94beccb97de4596ac",
-                          "adapted_ancestry_retained": true
+                          "before_sha256": "4b6d8c3e83766a3f1f652bd4751cbbe37251bc90cd73c1f94beccb97de4596ac",
+                          "after_sha256": "6ea8b173bd6d8a6478f98db898f9075496acb87ae3a4c7092397dcd9907ba522"
                         }
-                      ]
+                      ],
+                      "scope": "Rebuilt Stage48 v2 active x030 LSE/RTC optional schema and qualification projection; metapac adapted ancestry retained."
                     },
                     "metapac_model_identities": [
                       {
                         "path": "cw32-metapac-gen/src/data.rs",
-                        "before_sha256": "fc0cb79c104613fd44c7bde631123e0c78fa51f598b1b9dd878c201a62842a7f",
-                        "after_sha256": "3103f5a7129389d50852a3d559c50a04f6a9d10132d29eec35d6d042637ec079"
+                        "before_sha256": "3103f5a7129389d50852a3d559c50a04f6a9d10132d29eec35d6d042637ec079",
+                        "after_sha256": "97d71c22e624b2d1a0626f7f7ed2961e1cd8c3f618104b9a7f800209502c2471"
                       },
                       {
                         "path": "cw32-metapac-gen/res/src/metadata.rs",
-                        "before_sha256": "4b6d8c3e83766a3f1f652bd4751cbbe37251bc90cd73c1f94beccb97de4596ac",
-                        "after_sha256": "6ea8b173bd6d8a6478f98db898f9075496acb87ae3a4c7092397dcd9907ba522"
+                        "before_sha256": "6ea8b173bd6d8a6478f98db898f9075496acb87ae3a4c7092397dcd9907ba522",
+                        "after_sha256": "a6cf5ff62afc12639bd3332970e589da7d66303504ba409f39862c10a38cc534"
                       }
                     ],
-                    "scope": "Rebuilt Stage48 v2 active x030 LSE/RTC optional schema and qualification projection; metapac adapted ancestry retained."
+                    "scope": "Reviewed L031/R031/W031 LSE schema: required configurable_ccs bool and gpio_speed_offset Option<u32>; input/Rust compatibility changes are explicit. Full Stage48 and earlier review history plus adapted metapac ancestry retained.",
+                    "accepted_source_manifest_sha256": "bb704614275fb5127e4e9b1df5f400ddd7534d222de6ba7ac7640198113e8690",
+                    "accepted_schema_review_sha256": "b5e4f71e59ed2f9211e0a67de1965221cbe43ab073e1a04a1f1f6ecb9f7528db",
+                    "accepted_independent_receipt_sha256": "149e1cbadde10772d37ae5ebb6072da359ee3b54bcf787c553a69ff008e0cc92",
+                    "exact_three_model_delta_sha256": "221fc751d2cfaaacf4d2dfa19726dc2d3d028909500e6b600cf7b63a6fbec1d5",
+                    "compatibility": {
+                      "configurable_ccs": "New required bool without serde(default). Active LSE inputs lacking it fail deserialization in both input models. Does not default unknowable hardware facts. Existing no-LSE chips remain unaffected.",
+                      "gpio_speed_offset": "u32 becomes Option<u32> in all three models. JSON number 8 remains number 8. Missing/null deserialize to None and serialize as explicit null because no skip_serializing_if is present. Rust literals/accessors must change to Some(8)/None.",
+                      "output_routes": "Existing Vec and static slice remain unchanged; empty list is representable. Exact F8U6 absence is source/package validation, not a new default.",
+                      "field_order": "configurable_ccs is consistently inserted after maximum_hz. All other LseConfiguration fields remain in the same relative order and retain their types except gpio_speed_offset.",
+                      "unknown_fields": "deny_unknown_fields remains on both deserializing LSE configuration records.",
+                      "static_generation": "Derived Debug/stringify has no hand-written LSE field projection; bool and Option<u32> expressions match the static model. This is code inspection only, not compiled validation."
+                    }
                   },
                   "metapac_model_identities": [
                     {
                       "path": "cw32-metapac-gen/src/data.rs",
-                      "before_sha256": "3103f5a7129389d50852a3d559c50a04f6a9d10132d29eec35d6d042637ec079",
-                      "after_sha256": "97d71c22e624b2d1a0626f7f7ed2961e1cd8c3f618104b9a7f800209502c2471"
+                      "before_sha256": "97d71c22e624b2d1a0626f7f7ed2961e1cd8c3f618104b9a7f800209502c2471",
+                      "after_sha256": "e6aadf79d41eb015276ed9c523a41213939184581989609707f9c8407e6b55ff"
                     },
                     {
                       "path": "cw32-metapac-gen/res/src/metadata.rs",
-                      "before_sha256": "6ea8b173bd6d8a6478f98db898f9075496acb87ae3a4c7092397dcd9907ba522",
-                      "after_sha256": "a6cf5ff62afc12639bd3332970e589da7d66303504ba409f39862c10a38cc534"
+                      "before_sha256": "a6cf5ff62afc12639bd3332970e589da7d66303504ba409f39862c10a38cc534",
+                      "after_sha256": "102cde69650c1d28b3c2a6ff5f2578b777c063925a0d692da6e33577f3771d6d"
                     }
                   ],
-                  "scope": "Reviewed L031/R031/W031 LSE schema: required configurable_ccs bool and gpio_speed_offset Option<u32>; input/Rust compatibility changes are explicit. Full Stage48 and earlier review history plus adapted metapac ancestry retained.",
-                  "accepted_source_manifest_sha256": "bb704614275fb5127e4e9b1df5f400ddd7534d222de6ba7ac7640198113e8690",
-                  "accepted_schema_review_sha256": "b5e4f71e59ed2f9211e0a67de1965221cbe43ab073e1a04a1f1f6ecb9f7528db",
-                  "accepted_independent_receipt_sha256": "149e1cbadde10772d37ae5ebb6072da359ee3b54bcf787c553a69ff008e0cc92",
-                  "exact_three_model_delta_sha256": "221fc751d2cfaaacf4d2dfa19726dc2d3d028909500e6b600cf7b63a6fbec1d5",
+                  "scope": "Accepted narrow L052 schema delta: awt_source becomes Option<u8>; optional startup_consumers carries explicit native startup analog, AUTOTRIM, work-gated LPTIM/LCD, UART and package LSI-output facts. Existing eight JSON profile values remain unchanged, while Rust/API and generated Rust shape changes are explicit. Complete Stage49 and earlier replacement-review history and adapted metapac ancestry are retained.",
+                  "accepted_source_manifest_sha256": "585a405b9d9897b2ae3b72cbd3c61de6e4960847cdd6d43c5b82f86062357d45",
+                  "accepted_schema_review_sha256": "90cf678c96f9597d29e66991718d76f013d7df0110975c9dc30b73f8fa55ca4b",
+                  "accepted_independent_receipt_sha256": "f754a812774c348251c5d70652e661f0d482c72ee11077da091f65cd2cbc6ca7",
+                  "exact_three_model_delta_reference": "docs/lse-stage50-l052-schema-delta.patch",
+                  "exact_three_model_delta_sha256": "c9511b593fb8af4708cf586b5c1b062f2cd3a5d6e199f5e3dbfd67ff64506503",
+                  "schema_review_source_manifest_sha256": "5c1cf547450616301c1239ce5bfbadbb5563f2a78f1b87d125d4d749150c0db8",
+                  "scope_correspondence": "The schema receipt covers the unchanged exact three model hashes and its earlier generator boundary. The separate independent runtime receipt binds the final 1,153-file L052 source freeze, final electrical.rs, 899 generated inputs, nine resumed numeric exit-0 commands, retained prior C8T6 library Finished/PASS evidence without a numeric exit, and ten actual ELF files. Shared integration hook/docs changes are outside those historical build receipts.",
                   "compatibility": {
-                    "configurable_ccs": "New required bool without serde(default). Active LSE inputs lacking it fail deserialization in both input models. Does not default unknowable hardware facts. Existing no-LSE chips remain unaffected.",
-                    "gpio_speed_offset": "u32 becomes Option<u32> in all three models. JSON number 8 remains number 8. Missing/null deserialize to None and serialize as explicit null because no skip_serializing_if is present. Rust literals/accessors must change to Some(8)/None.",
-                    "output_routes": "Existing Vec and static slice remain unchanged; empty list is representable. Exact F8U6 absence is source/package validation, not a new default.",
-                    "field_order": "configurable_ccs is consistently inserted after maximum_hz. All other LseConfiguration fields remain in the same relative order and retain their types except gpio_speed_offset.",
-                    "unknown_fields": "deny_unknown_fields remains on both deserializing LSE configuration records.",
-                    "static_generation": "Derived Debug/stringify has no hand-written LSE field projection; bool and Option<u32> expressions match the static model. This is code inspection only, not compiled validation."
-                  }
+                    "legacy_json": "All eight old authored active profiles retain exact serde_json serialization values and field order; all 54 existing full-chip JSON documents roundtrip with no Value changes.",
+                    "rust_api": "awt_source changes u8 to Option<u8> in all three models; Some(3) is required for legacy Rust callers. Addition of startup_consumers also changes struct literal construction. This is not insertion-only Rust/API compatibility.",
+                    "awt_source": "A JSON number remains that number through Some. Missing and explicit null now both deserialize None in the two input models. Unlike the old required u8, those forms are accepted syntactically; None serializes as explicit null.",
+                    "startup_consumers": "Missing and explicit null both deserialize None in the two input models; the serde model omits None when serializing. A present object has six required nonnullable fields, including both vectors even if empty. Inner work-gate source and boolean are required.",
+                    "required_existing_facts": "configurable_ccs remains a required bool. All other nonoptional top-level fields remain required. Existing gpio_speed_offset remains nullable/omittable and emits explicit null.",
+                    "rejection": "Both deserializing models reject unknown fields in LseConfiguration, LseStartupConsumers, LseWorkGatedConsumer and route/reset records; source u8 widths, bool types and roster string element types are enforced.",
+                    "static_projection": "Names, declaration order, widths and nested types match exactly after Peripheral prefix/container substitutions. Vec<String> maps to static slice of static str, Vec<LseOutputRoute> to static slice, Option<native struct> stays a value Option. Actual generator Debug/stringify function compiled all 11 profile expressions against exact extracted static definitions and every projected field was compared.",
+                    "generated_rust": "Legacy JSON value compatibility does not preserve generated Rust bytes: awt_source now renders Some(3), startup_consumers renders None, and derived Debug/Hash shape changes with the explicit Rust/API change."
+                  },
+                  "original_accepted_schema_review_sha256": "742cb61a1cc4db8231af5110f2b3fa2b3260398bd69bf32bf9ea3ca775f6cae4",
+                  "original_accepted_independent_receipt_sha256": "939566b66fa939c0ce7e39ff49ca4094660051715d62e9edcb27524b4daa5820"
                 },
+                "scope": "Accepted native L010 optional fact schema only. Three-model static identity/projection review; runtime, generator execution and hardware qualification are separate. Preserve all prior review history and adapted metapac ancestry.",
+                "accepted_schema_receipt_sha256": "065db42fde7f0b210dc640583d07dd6de72d39ee833503896349c4cf3c5c70a5",
                 "metapac_model_identities": [
                   {
                     "path": "cw32-metapac-gen/src/data.rs",
-                    "before_sha256": "97d71c22e624b2d1a0626f7f7ed2961e1cd8c3f618104b9a7f800209502c2471",
-                    "after_sha256": "e6aadf79d41eb015276ed9c523a41213939184581989609707f9c8407e6b55ff"
+                    "before_sha256": "e6aadf79d41eb015276ed9c523a41213939184581989609707f9c8407e6b55ff",
+                    "after_sha256": "a261aa1a741b10adf591ef8d32ac1f27b83877363414ae5e1b2a2cc53d82ec68"
                   },
                   {
                     "path": "cw32-metapac-gen/res/src/metadata.rs",
-                    "before_sha256": "a6cf5ff62afc12639bd3332970e589da7d66303504ba409f39862c10a38cc534",
-                    "after_sha256": "102cde69650c1d28b3c2a6ff5f2578b777c063925a0d692da6e33577f3771d6d"
+                    "before_sha256": "102cde69650c1d28b3c2a6ff5f2578b777c063925a0d692da6e33577f3771d6d",
+                    "after_sha256": "0ad4ca521646fed418b80c526d6c9d5f0403a88ecdf3e596c4f36cb9865ef081"
                   }
                 ],
-                "scope": "Accepted narrow L052 schema delta: awt_source becomes Option<u8>; optional startup_consumers carries explicit native startup analog, AUTOTRIM, work-gated LPTIM/LCD, UART and package LSI-output facts. Existing eight JSON profile values remain unchanged, while Rust/API and generated Rust shape changes are explicit. Complete Stage49 and earlier replacement-review history and adapted metapac ancestry are retained.",
-                "accepted_source_manifest_sha256": "585a405b9d9897b2ae3b72cbd3c61de6e4960847cdd6d43c5b82f86062357d45",
-                "accepted_schema_review_sha256": "90cf678c96f9597d29e66991718d76f013d7df0110975c9dc30b73f8fa55ca4b",
-                "accepted_independent_receipt_sha256": "f754a812774c348251c5d70652e661f0d482c72ee11077da091f65cd2cbc6ca7",
-                "exact_three_model_delta_reference": "docs/lse-stage50-l052-schema-delta.patch",
-                "exact_three_model_delta_sha256": "c9511b593fb8af4708cf586b5c1b062f2cd3a5d6e199f5e3dbfd67ff64506503",
-                "schema_review_source_manifest_sha256": "5c1cf547450616301c1239ce5bfbadbb5563f2a78f1b87d125d4d749150c0db8",
-                "scope_correspondence": "The schema receipt covers the unchanged exact three model hashes and its earlier generator boundary. The separate independent runtime receipt binds the final 1,153-file L052 source freeze, final electrical.rs, 899 generated inputs, nine resumed numeric exit-0 commands, retained prior C8T6 library Finished/PASS evidence without a numeric exit, and ten actual ELF files. Shared integration hook/docs changes are outside those historical build receipts.",
                 "compatibility": {
-                  "legacy_json": "All eight old authored active profiles retain exact serde_json serialization values and field order; all 54 existing full-chip JSON documents roundtrip with no Value changes.",
-                  "rust_api": "awt_source changes u8 to Option<u8> in all three models; Some(3) is required for legacy Rust callers. Addition of startup_consumers also changes struct literal construction. This is not insertion-only Rust/API compatibility.",
-                  "awt_source": "A JSON number remains that number through Some. Missing and explicit null now both deserialize None in the two input models. Unlike the old required u8, those forms are accepted syntactically; None serializes as explicit null.",
-                  "startup_consumers": "Missing and explicit null both deserialize None in the two input models; the serde model omits None when serializing. A present object has six required nonnullable fields, including both vectors even if empty. Inner work-gate source and boolean are required.",
-                  "required_existing_facts": "configurable_ccs remains a required bool. All other nonoptional top-level fields remain required. Existing gpio_speed_offset remains nullable/omittable and emits explicit null.",
-                  "rejection": "Both deserializing models reject unknown fields in LseConfiguration, LseStartupConsumers, LseWorkGatedConsumer and route/reset records; source u8 widths, bool types and roster string element types are enforced.",
-                  "static_projection": "Names, declaration order, widths and nested types match exactly after Peripheral prefix/container substitutions. Vec<String> maps to static slice of static str, Vec<LseOutputRoute> to static slice, Option<native struct> stays a value Option. Actual generator Debug/stringify function compiled all 11 profile expressions against exact extracted static definitions and every projected field was compared.",
-                  "generated_rust": "Legacy JSON value compatibility does not preserve generated Rust bytes: awt_source now renders Some(3), startup_consumers renders None, and derived Debug/Hash shape changes with the explicit Rust/API change."
+                  "legacy_json": "Absent or null native_l010 deserializes None; serde omits None. Existing fields are unchanged. The old deny_unknown_fields reader rejects new objects containing the added field.",
+                  "rust_api": "New optional native_l010 field affects struct literals and derived Debug/Hash/static projection; no Rust source/byte compatibility is claimed.",
+                  "native_object": "All nine native fields are required/nonnullable and unknown fields are rejected; static projection preserves order and widths."
                 },
-                "original_accepted_schema_review_sha256": "742cb61a1cc4db8231af5110f2b3fa2b3260398bd69bf32bf9ea3ca775f6cae4",
-                "original_accepted_independent_receipt_sha256": "939566b66fa939c0ce7e39ff49ca4094660051715d62e9edcb27524b4daa5820"
+                "original_accepted_schema_receipt_sha256": "06debbd10df2783c3aa34b9760f07eb1ddb77918c710527229ecd534d51b477e"
               },
-              "scope": "Accepted native L010 optional fact schema only. Three-model static identity/projection review; runtime, generator execution and hardware qualification are separate. Preserve all prior review history and adapted metapac ancestry.",
-              "accepted_schema_receipt_sha256": "065db42fde7f0b210dc640583d07dd6de72d39ee833503896349c4cf3c5c70a5",
+              "scope": "Accepted breaking native_low_power name migration and explicit monitor qualification fields only. Integrated generator/runtime, builds and hardware acceptance remain separate. Preserve complete prior review and adapted metapac ancestry.",
+              "accepted_schema_receipt_sha256": "ac678e06976509d6b180975e8d93d8cf032917aae1eb53e7335b6ad1bda8127a",
               "metapac_model_identities": [
                 {
                   "path": "cw32-metapac-gen/src/data.rs",
-                  "before_sha256": "e6aadf79d41eb015276ed9c523a41213939184581989609707f9c8407e6b55ff",
-                  "after_sha256": "a261aa1a741b10adf591ef8d32ac1f27b83877363414ae5e1b2a2cc53d82ec68"
+                  "before_sha256": "a261aa1a741b10adf591ef8d32ac1f27b83877363414ae5e1b2a2cc53d82ec68",
+                  "after_sha256": "026cb57571d20dced19a7c735ed370f6a1866d5a3f864dde701bf7de3ca04f76"
                 },
                 {
                   "path": "cw32-metapac-gen/res/src/metadata.rs",
-                  "before_sha256": "102cde69650c1d28b3c2a6ff5f2578b777c063925a0d692da6e33577f3771d6d",
-                  "after_sha256": "0ad4ca521646fed418b80c526d6c9d5f0403a88ecdf3e596c4f36cb9865ef081"
+                  "before_sha256": "0ad4ca521646fed418b80c526d6c9d5f0403a88ecdf3e596c4f36cb9865ef081",
+                  "after_sha256": "180797a4cf5451f29d413a0f206d590c14da3a81cc4f27ecd3a29d89c1cc1869"
                 }
               ],
               "compatibility": {
-                "legacy_json": "Absent or null native_l010 deserializes None; serde omits None. Existing fields are unchanged. The old deny_unknown_fields reader rejects new objects containing the added field.",
-                "rust_api": "New optional native_l010 field affects struct literals and derived Debug/Hash/static projection; no Rust source/byte compatibility is claimed.",
-                "native_object": "All nine native fields are required/nonnullable and unknown fields are rejected; static projection preserves order and widths."
+                "serialized_api": "Explicit native_l010 to native_low_power rename; no alias. Old deny_unknown_fields readers reject the new property; new readers reject the old property. Prior16 profile None remains omitted.",
+                "native_object": "Existing nine facts retained; monitor_reference and detector_margin_lse_edges required without defaults. lsi_factory_trim_address serializes None as null; omission/null deserialize None and exact factory profiles reject None via semantic validation.",
+                "rust_api": "Public metadata struct/name/field change; no source or Debug/Hash identity compatibility claimed."
               },
-              "original_accepted_schema_receipt_sha256": "06debbd10df2783c3aa34b9760f07eb1ddb77918c710527229ecd534d51b477e"
+              "original_accepted_schema_receipt_sha256": "77f9a3637576fb8bc667aeae335df5eed3bee0d4f1df601ff94be8f8267d59e7"
             },
-            "scope": "Accepted breaking native_low_power name migration and explicit monitor qualification fields only. Integrated generator/runtime, builds and hardware acceptance remain separate. Preserve complete prior review and adapted metapac ancestry.",
-            "accepted_schema_receipt_sha256": "ac678e06976509d6b180975e8d93d8cf032917aae1eb53e7335b6ad1bda8127a",
-            "metapac_model_identities": [
-              {
-                "path": "cw32-metapac-gen/src/data.rs",
-                "before_sha256": "a261aa1a741b10adf591ef8d32ac1f27b83877363414ae5e1b2a2cc53d82ec68",
-                "after_sha256": "026cb57571d20dced19a7c735ed370f6a1866d5a3f864dde701bf7de3ca04f76"
-              },
-              {
-                "path": "cw32-metapac-gen/res/src/metadata.rs",
-                "before_sha256": "0ad4ca521646fed418b80c526d6c9d5f0403a88ecdf3e596c4f36cb9865ef081",
-                "after_sha256": "180797a4cf5451f29d413a0f206d590c14da3a81cc4f27ecd3a29d89c1cc1869"
-              }
-            ],
-            "compatibility": {
-              "serialized_api": "Explicit native_l010 to native_low_power rename; no alias. Old deny_unknown_fields readers reject the new property; new readers reject the old property. Prior16 profile None remains omitted.",
-              "native_object": "Existing nine facts retained; monitor_reference and detector_margin_lse_edges required without defaults. lsi_factory_trim_address serializes None as null; omission/null deserialize None and exact factory profiles reject None via semantic validation.",
-              "rust_api": "Public metadata struct/name/field change; no source or Debug/Hash identity compatibility claimed."
-            },
-            "original_accepted_schema_receipt_sha256": "77f9a3637576fb8bc667aeae335df5eed3bee0d4f1df601ff94be8f8267d59e7"
+            "original_accepted_schema_receipt_sha256": "73485e9c0db6e0ef8f23e8120c0214ba4a8c8eafcd6c22f6a3aa00ca6bed23f1"
           },
-          "original_accepted_schema_receipt_sha256": "73485e9c0db6e0ef8f23e8120c0214ba4a8c8eafcd6c22f6a3aa00ca6bed23f1"
+          "original_accepted_schema_receipt_sha256": "72bd75cfd5a6112c0bb005cd097f9317eb08ac43beb9b005685ddc14dd65c711"
         },
-        "original_accepted_schema_receipt_sha256": "72bd75cfd5a6112c0bb005cd097f9317eb08ac43beb9b005685ddc14dd65c711"
+        "original_accepted_schema_receipt_sha256": "ed8860674c2f15eb0dad455a4904bb3ed8c3d1c4f8e228c3fac8dcba9d1484e5"
       }
     },
     {

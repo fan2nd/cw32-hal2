@@ -752,6 +752,18 @@ pub struct PeripheralLseNativeLowPower {
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
+/// Optional init-only SYSCLK detector qualification. Not a second oscillator configuration.
+pub struct PeripheralLseSysclkDetector {
+    /// Own-manual hardware edge count in one detector window.
+    pub lse_edges: u16,
+    /// Own-manual LSI cycles in one detector window.
+    pub lsi_cycles: u16,
+    /// Software phase margin, additional to the hardware edge count.
+    pub margin_lse_edges: u16,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct PeripheralLseConfiguration {
     pub nominal_hz: u32,
     pub maximum_hz: u32,
@@ -765,6 +777,7 @@ pub struct PeripheralLseConfiguration {
     pub awt_source: Option<u8>,
     pub startup_consumers: Option<PeripheralLseStartupConsumers>,
     pub native_low_power: Option<PeripheralLseNativeLowPower>,
+    pub sysclk_detector: Option<PeripheralLseSysclkDetector>,
     pub mco_source: u8,
     pub gpio_dir_offset: u32,
     pub gpio_speed_offset: Option<u32>,

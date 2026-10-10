@@ -3,9 +3,10 @@
 `rcc::Sysclk::LSI` selects the factory-qualified nominal 32,800 Hz oscillator at
 one-time HAL initialization. HSI remains the default, and successful initialization
 keeps factory-qualified HSI available. This capability is generated only from the
-three families' own qualified metadata. It does not add LSE SYSCLK, a runtime
-clock switch, arbitrary user trim/frequency, sleep/resume support or clock-loss
-recovery. No silicon validation is claimed.
+three families' own qualified metadata. The separate [exact-three-package LSE
+SYSCLK contract](classic-lse-sysclk.md) reuses its factory preparation internally.
+Neither capability adds runtime switching, arbitrary user trim/frequency,
+sleep/resume support or clock-loss recovery. No silicon validation is claimed.
 
 Set `config.rcc.sys = rcc::Sysclk::LSI` before `try_init(config)`. The existing
 board supply/ambient declaration and AHB/APB prescalers apply. A configured HSE

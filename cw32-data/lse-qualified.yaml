@@ -21,6 +21,7 @@ policies:
   docs/lse-l011-rtc-admission.json: fc840657ee671b20d3b10b397f2571cd81e70a031c374ec50d8a5a2e670d39a9
   docs/lse-l012-qualification.json: b3b681c57fe5107b2ae2098f4ddfad12af8cf249f2e0c58ce98cc03f4f18da56
   docs/lse-l012-rtc-admission.json: 82a983157a27504450cc708b40885fcca7f51af189b0103ac235dedaf432a4b4
+  docs/classic-lse-sysclk-qualification.json: e0c2b4adc503a26115bf6aa2cbaa0e786d7257c12577f7c1f471f431a93fda17
 parts:
   CW32A030C8T7:
     family: CW32A030
@@ -163,6 +164,10 @@ parts:
         af: 1
       maximum_hz: 1000000
       configurable_ccs: false
+      sysclk_detector:
+        lse_edges: 128
+        lsi_cycles: 256
+        margin_lse_edges: 1
   CW32F030C8T7:
     family: CW32F030
     package: LQFP48
@@ -304,6 +309,10 @@ parts:
         af: 1
       maximum_hz: 1000000
       configurable_ccs: false
+      sysclk_detector:
+        lse_edges: 128
+        lsi_cycles: 256
+        margin_lse_edges: 1
   CW32F020C6U7:
     family: CW32F020
     package: QFN48
@@ -477,6 +486,10 @@ parts:
         af: 1
       maximum_hz: 1000000
       configurable_ccs: false
+      sysclk_detector:
+        lse_edges: 128
+        lsi_cycles: 256
+        margin_lse_edges: 1
   CW32L031C8T6:
     family: CW32L031
     package: LQFP48
@@ -1975,7 +1988,7 @@ parts:
         lsi_output_routes: []
   CW32L052R8S6:
     family: CW32L052
-    package: LQFP64（7×7mm）
+    package: "LQFP64\uFF087\xD77mm\uFF09"
     input_pin: PC14
     output_pin: PC15
     sources: *id001
@@ -2076,7 +2089,7 @@ parts:
           af: 6
   CW32L052R8T6:
     family: CW32L052
-    package: LQFP64（10×10mm）
+    package: "LQFP64\uFF0810\xD710mm\uFF09"
     input_pin: PC14
     output_pin: PC15
     sources: *id001
@@ -2177,7 +2190,7 @@ parts:
           af: 6
   CW32L083RBT6:
     family: CW32L083
-    package: LQFP64（10×10mm）
+    package: "LQFP64\uFF0810\xD710mm\uFF09"
     input_pin: PC14
     output_pin: PC15
     sources:
@@ -2445,7 +2458,7 @@ parts:
           af: 6
   CW32L083RCT6:
     family: CW32L083
-    package: LQFP64（10×10mm）
+    package: "LQFP64\uFF0810\xD710mm\uFF09"
     input_pin: PC14
     output_pin: PC15
     sources:
@@ -2713,7 +2726,7 @@ parts:
           af: 6
   CW32L083RCS6:
     family: CW32L083
-    package: LQFP64（7×7mm）
+    package: "LQFP64\uFF087\xD77mm\uFF09"
     input_pin: PC14
     output_pin: PC15
     sources:

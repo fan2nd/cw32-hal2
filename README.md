@@ -160,6 +160,12 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   strict duration helpers, ADC and complementary PWM reject those bounds, and
   the 1 MHz time driver rejects selected LSI before singleton acquisition. See
   [the contract and compatibility change](docs/factory-lsi-sysclk.md).
+- CW32F020C6U7, CW32F030C8T7 and CW32A030C8T7: init-only board-qualified
+  LSE SYSCLK using the single `Config.lse` declaration, internal factory-LSI
+  detector preparation, retained HSI and inherited PLL/reference. The new target
+  alone requires the modeled 129/256 detector margin; the fixed 1 MHz time driver
+  rejects it before ownership. See [the contract and exhaustive-match compatibility
+  change](docs/classic-lse-sysclk.md).
 - F020/F030/A030: direct qualified HSE crystal/bypass system clocks with explicit
   board nominal/minimum/maximum bounds, preserved factory HSI, mandatory CCS/LSI,
   retained-source protection and oscillator-pad reservation. See

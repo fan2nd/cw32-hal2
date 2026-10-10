@@ -373,6 +373,18 @@ pub mod chip {
                 }
             }
             record! {
+                /// Optional init-only SYSCLK detector qualification. Not a second oscillator configuration.
+                #[serde(deny_unknown_fields)]
+                LseSysclkDetector {
+                    /// Own-manual hardware edge count in one detector window.
+                    pub lse_edges: u16,
+                    /// Own-manual LSI cycles in one detector window.
+                    pub lsi_cycles: u16,
+                    /// Software phase margin, additional to the hardware edge count.
+                    pub margin_lse_edges: u16,
+                }
+            }
+            record! {
                         /// Exact-part active LSE qualification. Board frequency bounds remain mandatory.
                         #[serde(deny_unknown_fields)]
                         LseConfiguration {
@@ -390,6 +402,8 @@ pub mod chip {
                             pub startup_consumers: Option<LseStartupConsumers>,
                             #[serde(default, skip_serializing_if = "Option::is_none")]
                             pub native_low_power: Option<LseNativeLowPower>,
+                            #[serde(default, skip_serializing_if = "Option::is_none")]
+                            pub sysclk_detector: Option<LseSysclkDetector>,
                             pub mco_source: u8,
                             pub gpio_dir_offset: u32,
                             pub gpio_speed_offset: Option<u32>,

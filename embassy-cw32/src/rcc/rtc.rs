@@ -78,7 +78,8 @@ impl<'d> HsiOscClock<'d> {
 /// Shared LSI with verified, unchanged factory trim and bounded startup polling.
 ///
 /// This capability requires factory trim already loaded. On F020/F030/A030,
-/// selecting `Sysclk::LSI` during RCC initialization can establish it; otherwise
+/// selecting `Sysclk::LSI` during RCC initialization can establish it, as can
+/// `Sysclk::LSE` on its three qualified packages; otherwise
 /// board startup or a bootloader must do so. This constructor never loads trim:
 /// LSIEN=0 does not prove no shared hardware user is starting the oscillator.
 /// A mismatch is rejected before any write. Existing WAITCYCLE, consumers and

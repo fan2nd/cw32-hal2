@@ -1,0 +1,26 @@
+#![no_std]
+#![no_main]
+use cw32_lse_sysclk_examples as board;
+use embassy_cw32::{
+    self as hal,
+    rcc::{LseClock, LseMode},
+    rtc::Rtc,
+};
+
+#[cortex_m_rt::entry]
+fn main() -> ! {
+    let p = hal::init(board::config(LseMode::Oscillator));
+    // Borrow the already configured physical SYSCLK oscillator for RTC.
+    let clock = LseClock::new(p.SYSCTRL, p.PC14, p.PC15).unwrap();
+    core::hint::black_box((hal::rcc::clocks().sys_bounds(), clock.bounds()));
+    let rtc =
+        Rtc::initialize_if_unset(p.RTC, clock, Default::default(), board::initial_time()).unwrap();
+    board::run(rtc)
+}
+
+#[panic_handler]
+fn panic(_: &core::panic::PanicInfo<'_>) -> ! {
+    loop {
+        cortex_m::asm::bkpt();
+    }
+}

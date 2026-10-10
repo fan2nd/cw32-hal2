@@ -1,0 +1,131 @@
+{
+  "review": "Stage57 classic LSE SYSCLK independent static runtime review",
+  "completed_at_utc": "2026-10-09T23:47:20.474315+00:00",
+  "verdict": "ACCEPT_SCOPED_STATIC_RUNTIME_NO_BLOCKING_FINDING",
+  "parts": [
+    "CW32F020C6U7",
+    "CW32F030C8T7",
+    "CW32A030C8T7"
+  ],
+  "baseline_zip_sha256": "70da33f3e984a7691daeb196da7cc9a0d50dc6055a0f73d5ea74d7f22230f20e",
+  "author_freeze_sha256": "9332a42312c838d451d1dd8880e7552ca7308f0176d56cac1a5a023cd7f26234",
+  "final_file_matches": [
+    {
+      "path": "embassy-cw32/src/rcc/hsi_48mhz.rs",
+      "sha256": "793e9e5e0bb1040728da36167c43b6cf24e10f0b695b3cec6dd777daf953e4cf",
+      "bytes": 67313,
+      "matches_author": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/lse.rs",
+      "sha256": "1895ddcfd3de631fc376e6424770ced2bd5b9f42168d3db2e8d5043e391ae846",
+      "bytes": 9582,
+      "matches_author": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/rtc.rs",
+      "sha256": "5e8b91933041ec85789f5fb6ab32848c49dbd6738b66e9465d29c8d87604980e",
+      "bytes": 13936,
+      "matches_author": true
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "a73e1899bc8a994524091e5e82619abb92d8faffea01ebbdc7a1985b0bcc22e9",
+      "bytes": 9572,
+      "matches_author": true
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "934b06f9cc6ce5563464931e3a608e4ac789f64d5ad74c8357a17095b7832cb5",
+      "bytes": 172668,
+      "matches_author": true
+    },
+    {
+      "path": "cw32-data-gen/src/electrical.rs",
+      "sha256": "df23ef62157ed8e32d2f6ad0d7564d06df2e8a40f7d6275899b88411b6d56c7c",
+      "bytes": 118331,
+      "matches_author": true
+    },
+    {
+      "path": "cw32-data/lse-qualified.yaml",
+      "sha256": "cba5262ed3abfb5fafec6db03ba2a858fdfff5b15634f437f27e2d582161a91a",
+      "bytes": 88336,
+      "matches_author": true
+    },
+    {
+      "path": "docs/classic-lse-sysclk.md",
+      "sha256": "5351c3704485bf5bad4786c702b8dbbea8c503ed7a301432b99615a019f37a07",
+      "bytes": 7034,
+      "matches_author": true
+    },
+    {
+      "path": "docs/classic-lse-sysclk-qualification.json",
+      "sha256": "e0c2b4adc503a26115bf6aa2cbaa0e786d7257c12577f7c1f471f431a93fda17",
+      "bytes": 3495,
+      "matches_author": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "edde911b4e3d42730f9b4dcfb3bf23641215265dd8c2c84354f446d24058fa73",
+      "bytes": 29104,
+      "matches_author": true
+    }
+  ],
+  "blocking_findings": [],
+  "verification": [
+    "independent original manual hashes and 30 original-page extracts",
+    "independent baseline ZIP identity",
+    "actual static cold/reuse/reject/retained-source sequence tracing",
+    "unchanged Stage56 factory-LSI helper bodies",
+    "final runtime delta and ten-file freeze correspondence",
+    "public handover and source-loss documentation"
+  ],
+  "not_performed": [
+    "Cargo",
+    "build execution",
+    "HAL tests",
+    "MMIO simulation",
+    "hardware or silicon tests",
+    "candidate edits"
+  ],
+  "separate_review_scopes": [
+    "schema/data/source identity",
+    "full timing/RTC/cfg compatibility and old-path projection",
+    "bounded build validation"
+  ],
+  "publication": "HOLD",
+  "artifacts": [
+    {
+      "path": "docs/classic-lse-sysclk-runtime-acceptance.md",
+      "sha256": "c1408729297b7bf064a3caba5b92189ac7beed67d676d3feb66bd88b028f74a4",
+      "bytes": 9920,
+      "original_sha256": "358ce7eb229fc6b147bbb6379028d9fd39f3dccf3d8124459ecdca39f742590a",
+      "original_bytes": 9808
+    },
+    {
+      "path": "external-evidence/stage57/lse-runtime-review/final-freeze-check.json",
+      "sha256": "805f7e1bd14a460ed0b187cada9199491957d9aea871e99c6bbd225890d94022",
+      "bytes": 1808
+    },
+    {
+      "path": "external-evidence/stage57/lse-runtime-review/final-runtime-delta.patch",
+      "sha256": "07594d58fb7dafcfeaff685c3340417ca984ffcb4575c4987254f4ade9e23f94",
+      "bytes": 818
+    },
+    {
+      "path": "external-evidence/stage57/lse-runtime-review/draft1-baseline-check.json",
+      "sha256": "9dd579d014085a2b084041c794ec97631bfcf6ccb37f60da23e695ecd2405d97",
+      "bytes": 2077
+    },
+    {
+      "path": "external-evidence/stage57/lse-runtime-review/own-source-manifest.json",
+      "sha256": "7f81720c20fa522074127d72522197e58b8f45c1c262c242048008adb83b5fe9",
+      "bytes": 683
+    },
+    {
+      "path": "external-evidence/stage57/lse-runtime-review/author-final-freeze.json",
+      "sha256": "9332a42312c838d451d1dd8880e7552ca7308f0176d56cac1a5a023cd7f26234",
+      "bytes": 1784
+    }
+  ]
+}

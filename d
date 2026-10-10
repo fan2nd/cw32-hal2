@@ -220,6 +220,7 @@ case "${1:-help}" in
     python3 tests/verify_trigger_routes.py --sources "$CW32_SOURCES"
     ;;
   check-lsi-clock) bash ci/check-lsi-clock.sh ;;
+  check-lse-sysclk) bash ci/check-lse-sysclk.sh ;;
   lint)
     python3 tests/test_module_layout.py
     ;;
@@ -248,5 +249,5 @@ case "${1:-help}" in
       cargo test --locked --manifest-path firmware/Cargo.toml -p cw32-metapac --no-default-features --features "$chip,metadata" --test metadata
     done < <(sed -n 's/^\(cw32[a-z0-9-]*\) = \[\]/\1/p' cw32-metapac/Cargo.toml)
     ;;
-  *) echo 'Usage: ./d {fetch-sources|fetch-evidence|refresh-discovery|provenance|audit-sources|import-registers|gen|gen-all|test|audit-current|check|check-lsi-clock|lint}' ;;
+  *) echo 'Usage: ./d {fetch-sources|fetch-evidence|refresh-discovery|provenance|audit-sources|import-registers|gen|gen-all|test|audit-current|check|check-lsi-clock|check-lse-sysclk|lint}' ;;
 esac

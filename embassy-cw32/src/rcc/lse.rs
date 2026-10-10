@@ -106,6 +106,10 @@ static MONITOR_LSI: critical_section::Mutex<core::cell::Cell<Option<(u16, u8)>>>
     critical_section::Mutex::new(core::cell::Cell::new(None));
 
 fn monitor_ready(require_frozen: bool) -> bool {
+    #[cfg(any(rcc_v1, rcc_cw32f020_v1))]
+    if !super::hsi_48mhz::lse_sysclk_monitor_ready() {
+        return false;
+    }
     if !crate::RCC_LSE_CONFIGURABLE_CCS {
         return true;
     }

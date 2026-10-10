@@ -74,3 +74,13 @@ each. These commands compile production sources and examples; they do not run
 HAL tests, prove a runtime time-driver rejection, or execute hardware. Each
 example's build.rs derives exact memory bounds and links with -Tlink.x. Inspect
 the resulting ELF entry, vectors and PT_LOAD regions separately before flashing.
+
+
+`./d check-lse-sysclk` is a bounded local compile/link entry: four ordinary ARM
+libraries (the exact three classic packages plus excluded F020F6U7), six new
+crystal/bypass SYSCLK+RTC firmware links, and four existing HSI+aux-LSE, LSI, HSE
+and PLL firmware regressions. It runs no HAL tests or hardware and adds no hosted
+workflow. The new example build script derives exact FLASH/RAM from metadata and
+passes `-Tlink.x`; inspect each actual ELF's vectors, reset entry and PT_LOAD
+regions separately. A compile pass does not execute cold/reuse/reject or fixed
+1 MHz time-driver rejection. See [the new example contract](../examples/lse-sysclk/README.md).

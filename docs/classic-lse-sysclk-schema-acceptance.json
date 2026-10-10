@@ -1,0 +1,548 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-09T23:44:05.518911+00:00",
+  "result": "accepted_frozen_v2_three_model_schema_delta_subject_to_separate_integration_and_lineage_gates",
+  "scope": "Static representation and lineage review of the exact three frozen model files only. No implemented generator enforcement, generation, runtime, build, hardware or legal acceptance.",
+  "baseline_zip": "external-evidence/stage56/source-archive/embassy-cw32-stage56-source-reviewed-2026-10-09.zip",
+  "baseline_zip_sha256": "70da33f3e984a7691daeb196da7cc9a0d50dc6055a0f73d5ea74d7f22230f20e",
+  "freeze_path": "external-evidence/stage57/lse-sysclk-candidate/evidence/stage57-schema-freeze-v2.json",
+  "freeze_sha256": "d2ceb6b644bce88164bd60cb2ff901b254c935c3ae9eb5f4008655183d1c2271",
+  "patch_path": "external-evidence/stage57/lse-sysclk-candidate/evidence/stage57-schema-delta-v2.patch",
+  "patch_sha256": "1862cac002c74ff6dc2f1abf5a433d921ea419ffa582d117f1b8d670774b1893",
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "30d9f8fd473d5c3fe41e84d016821cf07282c196131c76030fa7511a67ab0e18",
+      "after_sha256": "f36ce5da85172080d963347d8c9e25985b02d92e1a1227df78850cf7dd1ea9b1",
+      "before_bytes": 34590,
+      "after_bytes": 35361,
+      "before_matches_stage56_archive": true,
+      "live_file_matches_frozen_postimage": true,
+      "all_changes_insertions": true,
+      "insertion_runs": 2,
+      "explicit_record_and_field_removal_reconstructs_baseline": true,
+      "field_order_and_widths_match": true,
+      "fields": [
+        {
+          "name": "lse_edges",
+          "type": "u16"
+        },
+        {
+          "name": "lsi_cycles",
+          "type": "u16"
+        },
+        {
+          "name": "margin_lse_edges",
+          "type": "u16"
+        }
+      ],
+      "parent_field_placement": [
+        "native_low_power",
+        "sysclk_detector",
+        "mco_source"
+      ],
+      "other_parent_fields_unchanged_in_order_and_type": true,
+      "existing_native_records": {
+        "Lse": {
+          "body_sha256": "c4c69bf4cee8bbd22b7d268a90050de992cab4812740b31df8011427231a8bf8",
+          "unchanged": true
+        },
+        "LseRtcReset": {
+          "body_sha256": "221a22a23bc3ed057808c7c6d4792515fc21ded95a2598d24110b6e08fa20c25",
+          "unchanged": true
+        },
+        "LseOutputRoute": {
+          "body_sha256": "d1561e34c4211118a73507c6d3143aa0a4c02fb4b7a2a801fbf9ab86252ad518",
+          "unchanged": true
+        },
+        "LseWorkGatedConsumer": {
+          "body_sha256": "045d2ff74e9bc1b132632b8c5e710aed6aad7b2a61ed1d618bef1ae1f60bcdeb",
+          "unchanged": true
+        },
+        "LseStartupConsumers": {
+          "body_sha256": "f46053582655898d783997571205e46e14513238f1d4b45657e2d30fab851d66",
+          "unchanged": true
+        },
+        "LseNativeLowPower": {
+          "body_sha256": "bae675368053c901632538d66464c1bef300734413ca36dd3907c62d99b3cf11",
+          "unchanged": true
+        },
+        "LsiSysclk": {
+          "body_sha256": "a113a89193154dfc277428e68e57ec66dec164ae6adab7c38e459eaed6bcc51b",
+          "unchanged": true
+        }
+      }
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "22679779e7a536d31b6fd18e72fa35258e67ed4a2a1c6b4129704e9a4be2ee02",
+      "after_sha256": "227095b7b073825f26e34d2fbfe745c0938b8861dd53f68f00cf788668f6fc3c",
+      "before_bytes": 34668,
+      "after_bytes": 35216,
+      "before_matches_stage56_archive": true,
+      "live_file_matches_frozen_postimage": true,
+      "all_changes_insertions": true,
+      "insertion_runs": 2,
+      "explicit_record_and_field_removal_reconstructs_baseline": true,
+      "field_order_and_widths_match": true,
+      "fields": [
+        {
+          "name": "lse_edges",
+          "type": "u16"
+        },
+        {
+          "name": "lsi_cycles",
+          "type": "u16"
+        },
+        {
+          "name": "margin_lse_edges",
+          "type": "u16"
+        }
+      ],
+      "parent_field_placement": [
+        "native_low_power",
+        "sysclk_detector",
+        "mco_source"
+      ],
+      "other_parent_fields_unchanged_in_order_and_type": true,
+      "existing_native_records": {
+        "PeripheralLse": {
+          "body_sha256": "5356dec4e523411447e56547bd8d3216193b38dbba155fef5336a5450086bcb1",
+          "unchanged": true
+        },
+        "PeripheralLseRtcReset": {
+          "body_sha256": "3ce854ce7a9a58644fb0d96aa811205e1bd6dee75f6b56776a47d45a677f7a75",
+          "unchanged": true
+        },
+        "PeripheralLseOutputRoute": {
+          "body_sha256": "f70975e16cadd3afc3fb206fbf214564848524c5e50d3e999c80d516692dd834",
+          "unchanged": true
+        },
+        "PeripheralLseWorkGatedConsumer": {
+          "body_sha256": "87e6f7ab3d81732d9648d87313312da005c0ae8bb34af8bb944594b02d645bc8",
+          "unchanged": true
+        },
+        "PeripheralLseStartupConsumers": {
+          "body_sha256": "17025dce1ad03b81bc0bf5ec67655c90acae9ac4b7f96efeff89af99ec0b6164",
+          "unchanged": true
+        },
+        "PeripheralLseNativeLowPower": {
+          "body_sha256": "0986ac7625ae14638fc5b2f83bfe46b28cdb5836dc7cf568403b9950ffd6db9a",
+          "unchanged": true
+        },
+        "PeripheralLsiSysclk": {
+          "body_sha256": "01d86e73fb0c93eaf971215cb67894bb1ff81a1082f09bf234d61261c27d8fce",
+          "unchanged": true
+        }
+      }
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "1039884416d72e27fced89046ee1eba647339b59b24e31994232ef317f3903c5",
+      "after_sha256": "d5a1ab60f97e6a097e1970bd3c32667828563035442fb8fa299c8270147d516c",
+      "before_bytes": 22749,
+      "after_bytes": 23254,
+      "before_matches_stage56_archive": true,
+      "live_file_matches_frozen_postimage": true,
+      "all_changes_insertions": true,
+      "insertion_runs": 2,
+      "explicit_record_and_field_removal_reconstructs_baseline": true,
+      "field_order_and_widths_match": true,
+      "fields": [
+        {
+          "name": "lse_edges",
+          "type": "u16"
+        },
+        {
+          "name": "lsi_cycles",
+          "type": "u16"
+        },
+        {
+          "name": "margin_lse_edges",
+          "type": "u16"
+        }
+      ],
+      "parent_field_placement": [
+        "native_low_power",
+        "sysclk_detector",
+        "mco_source"
+      ],
+      "other_parent_fields_unchanged_in_order_and_type": true,
+      "existing_native_records": {
+        "PeripheralLse": {
+          "body_sha256": "5356dec4e523411447e56547bd8d3216193b38dbba155fef5336a5450086bcb1",
+          "unchanged": true
+        },
+        "PeripheralLseRtcReset": {
+          "body_sha256": "892b5dabff6b674f27e48a72e52c98b28ed9c7076425fd9efed868f6a2b7c862",
+          "unchanged": true
+        },
+        "PeripheralLseOutputRoute": {
+          "body_sha256": "3b58d449f63fe37a6f5bcd6514e5eb8d541aed8dfc69ff7510123f37f3ad10f0",
+          "unchanged": true
+        },
+        "PeripheralLseWorkGatedConsumer": {
+          "body_sha256": "87e6f7ab3d81732d9648d87313312da005c0ae8bb34af8bb944594b02d645bc8",
+          "unchanged": true
+        },
+        "PeripheralLseStartupConsumers": {
+          "body_sha256": "bda029be1dc571c5ef2ed5b43fefef9ca537c28f3682fa2f6997e723a11af8aa",
+          "unchanged": true
+        },
+        "PeripheralLseNativeLowPower": {
+          "body_sha256": "3c4d7bca99f08d24e6cfbfdab22dfbedc779f7a5d731da9c6ce47058137f1cca",
+          "unchanged": true
+        },
+        "PeripheralLsiSysclk": {
+          "body_sha256": "d9755fbd750a4d4b7fbb7502f68798991d29703bd845b0d67703cbe67e59ab3f",
+          "unchanged": true
+        }
+      }
+    }
+  ],
+  "exact_patch_matches_independently_reconstructed_unified_diff": true,
+  "lineage": {
+    "preserved_files": {
+      "docs/upstream-file-provenance.json": {
+        "sha256": "d8a92fb2e97087bc8ce54ce582234d60aee4f613e796b8e84cef5abe2d7e0bfa",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/factory-lsi-schema-acceptance.json": {
+        "sha256": "72bd75cfd5a6112c0bb005cd097f9317eb08ac43beb9b005685ddc14dd65c711",
+        "byte_identical_to_stage56_archive": true
+      },
+      "NOTICE.md": {
+        "sha256": "5eddad2a601e86e476b0cf3cacc45153e42ec0bb1b7caae676c6bc334cbd3538",
+        "byte_identical_to_stage56_archive": true
+      },
+      "LICENSE-MIT": {
+        "sha256": "83d04e56c5beb631d65d6bd7b78c9350083084acc19753a3e6e1b68806a607f5",
+        "byte_identical_to_stage56_archive": true
+      },
+      "LICENSE-APACHE": {
+        "sha256": "64853d2f346cf20ad5a133c441e792d4b99b45adb2ef3acfa2b890d713e4ed0b",
+        "byte_identical_to_stage56_archive": true
+      },
+      "cw32-metapac-gen/Cargo.toml": {
+        "sha256": "dcfda429044bfd739e7af75ad6564242b38afefb542431e53358f44eb4b0d9e1",
+        "byte_identical_to_stage56_archive": true
+      },
+      "cw32-metapac-gen/res/Cargo.toml": {
+        "sha256": "f1643f2c96c15337e14a3ef00c2d5f7092c015e6319c47629262396d65955b12",
+        "byte_identical_to_stage56_archive": true
+      }
+    },
+    "identity_tip_not_advanced": true,
+    "current_serde_identity_tip": "30d9f8fd473d5c3fe41e84d016821cf07282c196131c76030fa7511a67ab0e18",
+    "recommended_exact_serde_tip": "f36ce5da85172080d963347d8c9e25985b02d92e1a1227df78850cf7dd1ea9b1",
+    "entire_current_replacement_review_canonical_sha256": "6f37fcd1eaccab4c9c9cc25dc797b9c68c207f3b4bdb9f9f0fe01104b8699987",
+    "canonicalization": "JSON UTF-8, sort_keys=True, separators=(comma,colon), ensure_ascii=True",
+    "retained_review_chain": [
+      {
+        "replacement_sha256": "30d9f8fd473d5c3fe41e84d016821cf07282c196131c76030fa7511a67ab0e18",
+        "review_reference": "docs/factory-lsi-schema-acceptance.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "3300723d4ae9b0e7d00051f6d158c9d72569ade9350d8f32a093cc505c8195bb",
+        "review_reference": "docs/hse-pll-schema-acceptance.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "42345e5143a6dded05aafec1fa5d83521a6a6e3eb0d359cd22beff637b0a6d63",
+        "review_reference": "docs/lse-native-low-power-schema-acceptance.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "c7c59622c69f77894f838cb0737a1dcf5b802a17b63fef01099417c06c781998",
+        "review_reference": "docs/lse-l010-schema-acceptance.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "54a4de94f232c208ab22ac03c177d7f12ea5eba967ac17d023a147f26a60e761",
+        "review_reference": "docs/lse-stage50-l052-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "aceb8fc88f3dab0c405fe86da2ccbdc800f81a433b77bf93bcb7ef1a2d24ac50",
+        "review_reference": "docs/lse-stage49-family-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "dd26f0aeebed0b2e64a81db5d8d067e2234fb7f1f04a784de5e8787cc5e43a7a",
+        "review_reference": "docs/lse-stage48-rebuild-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "0b06a84ce26dc25558ec52f4b0d23e8690dfdc521f9798d71f27c4b50b9a907c",
+        "review_reference": "docs/l012-hse-stage44-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
+        "review_reference": "docs/pll-stage42-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "c183923bcb189ea2d6617d6ff13963070d64e06d8308c856b8d1b45cef78c810",
+        "review_reference": "docs/lse-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "3dfa050491fe73aa16bd1d5f96e5ae01beb76affc5253222faeba073e2b0759c",
+        "review_reference": "docs/optional-hse-schema-note.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "e70e0c81debc6484b2949b12590fe54670001188d5caf23f3d432a61c24de133",
+        "review_reference": "docs/classic-complementary-schema-note.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "1240bf168f847297ede62b2423d8376d2c260d2eace27e74c726623859e0707f",
+        "review_reference": "docs/hex-stage28-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
+        "review_reference": "docs/vref-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+        "review_reference": "docs/hse-schema-review.json"
+      },
+      {
+        "replacement_sha256": "adc50cb1275be65b6451f1d283426ec3ec842460ee95d724600922f733c1081f",
+        "review_reference": "docs/stage24-schema-review.json"
+      },
+      {
+        "replacement_sha256": "0ed2f1ebbe890dca06de3c2bf78c3c45776ab7fe5a519b1c6f00ac19fd08aa6f",
+        "review_reference": "docs/dac-opa-schema-delta.json"
+      },
+      {
+        "replacement_sha256": "2b53b5486a2a1f208922367fb36a9ced580fad7af3b815634cb75eb73e1fd160",
+        "review_reference": "docs/stage14-schema-review.md"
+      },
+      {
+        "replacement_sha256": "7c1c569ee508dba0e77ce8f9f9eb3f049ad48f99aeb1813ec76bc9edf4ed8416",
+        "review_reference": "docs/combined-schema-extension-review.md"
+      },
+      {
+        "replacement_sha256": "aff3d62a4f1513f9573072ba8d0e1c397b5965c6e9039fe4f20d3eed1fa14108",
+        "review_reference": "docs/spi-metadata-refactor.md#schema-extension-review"
+      }
+    ],
+    "retained_review_chain_node_count": 20,
+    "prior_review_reference_files": {
+      "docs/factory-lsi-schema-acceptance.json": {
+        "sha256": "72bd75cfd5a6112c0bb005cd097f9317eb08ac43beb9b005685ddc14dd65c711",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/hse-pll-schema-acceptance.json": {
+        "sha256": "73485e9c0db6e0ef8f23e8120c0214ba4a8c8eafcd6c22f6a3aa00ca6bed23f1",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/lse-native-low-power-schema-acceptance.json": {
+        "sha256": "77f9a3637576fb8bc667aeae335df5eed3bee0d4f1df601ff94be8f8267d59e7",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/lse-l010-schema-acceptance.json": {
+        "sha256": "06debbd10df2783c3aa34b9760f07eb1ddb77918c710527229ecd534d51b477e",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/lse-stage50-l052-schema-review.json": {
+        "sha256": "742cb61a1cc4db8231af5110f2b3fa2b3260398bd69bf32bf9ea3ca775f6cae4",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/lse-stage49-family-schema-review.json": {
+        "sha256": "b5e4f71e59ed2f9211e0a67de1965221cbe43ab073e1a04a1f1f6ecb9f7528db",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/lse-stage48-rebuild-schema-review.json": {
+        "sha256": "0395f099993cdb54a028f51a35a264d85f49d565f6d1501faea206a702686904",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/l012-hse-stage44-schema-review.json": {
+        "sha256": "38d94c18c8201425c34d2d2852f9038becd231ec3c78f90333c46290c6368bd0",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/pll-stage42-schema-review.json": {
+        "sha256": "852607b8222cada17559b198f7b020002107367dd2677c9757b587e8d1949581",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/lse-schema-review.json": {
+        "sha256": "85c21c2d2f88df7fe349210f632b04971e4e9ceb1eecb9b1854d8aee59cad071",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/optional-hse-schema-note.json": {
+        "sha256": "88ef801cbdf7f3ee6e19c1727b40e84a7e1ea33c9ceebd6583bb481ddfedfa4e",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/classic-complementary-schema-note.json": {
+        "sha256": "98edcd4c7e8ee46ba92481fa91aa2e9a03e0d70560b868f48700040a67c40bb5",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/hex-stage28-schema-review.json": {
+        "sha256": "b0578d84dbe279b5e8bf806953c3223a2e7078757aed181bcde91db6fa3c1a74",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/vref-schema-review.json": {
+        "sha256": "b2b0bd303004a904153759644a5dedcf412f8e0af33e98170a855021a45059fb",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/hse-schema-review.json": {
+        "sha256": "628e3ca5174dcb51e64e74d839acd9fd504cbc65dfdf1d298f391f96f2129b52",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/stage24-schema-review.json": {
+        "sha256": "82c9d457bc534fc1391bd1d23b7016a521778a513ea766ebb400ad51edbf35e2",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/dac-opa-schema-delta.json": {
+        "sha256": "3a497229cec66b1c31f3e887985b549dd11529728cad4ef9d35c31a7adda2194",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/stage14-schema-review.md": {
+        "sha256": "9b644a2511369b81897c202a3239b9f686fb0c8c672d58ee890e7edee4781ab1",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/combined-schema-extension-review.md": {
+        "sha256": "bfca84519ab897db2ccd9dc552eb67c696c44fe609e3688befa4e87e92f3ee3f",
+        "byte_identical_to_stage56_archive": true
+      },
+      "docs/spi-metadata-refactor.md": {
+        "sha256": "99512aeb590b61b92b7a16d310c26f83c8189f39250a35ef52f79bd1c6bf6617",
+        "byte_identical_to_stage56_archive": true
+      }
+    },
+    "selected_entries_canonical_sha256": {
+      "cw32-data-serde/src/lib.rs": "df85edc175eb0f50c489be403cc1fa1013f43597e00b00d116c507d43087bb92",
+      "cw32-metapac-gen/src/data.rs": "fa6872d0a5ac62e8e7e128dc13d0a2273c1809cf5522ec725172a345304c62a9",
+      "cw32-metapac-gen/res/src/metadata.rs": "d15dda63c608ee2f627245e2dec25d88587680cead1c35e190ce91a6e51f3e17"
+    },
+    "combined_metapac_adapted_entries_canonical_sha256": "f7fc163cc233f16322a31222e2f3899b69435c5ad3150b80082b51fc1363e91f",
+    "legal_clearance": false,
+    "metapac_model_transitions": [
+      {
+        "path": "cw32-metapac-gen/src/data.rs",
+        "before_sha256": "22679779e7a536d31b6fd18e72fa35258e67ed4a2a1c6b4129704e9a4be2ee02",
+        "after_sha256": "227095b7b073825f26e34d2fbfe745c0938b8861dd53f68f00cf788668f6fc3c"
+      },
+      {
+        "path": "cw32-metapac-gen/res/src/metadata.rs",
+        "before_sha256": "1039884416d72e27fced89046ee1eba647339b59b24e31994232ef317f3903c5",
+        "after_sha256": "d5a1ab60f97e6a097e1970bd3c32667828563035442fb8fa299c8270147d516c"
+      }
+    ]
+  },
+  "superseded_v1": {
+    "patch_sha256": "8eabd1a038859c99042f803c9c52773618928730ac4edcf729c6a42f5506ea75",
+    "accepted": false,
+    "reason": "Unintended Deserialize derive and serde helper attribute on static metadata template; corrected in v2 without changing the fields."
+  },
+  "source_design_context": {
+    "design": {
+      "path": "external-evidence/stage57/lse-sysclk-design/design.md",
+      "sha256": "067d720452c7d9105f86ca74ed53cd354b78e256241d1db5d992f250cced4822",
+      "bytes": 27114
+    },
+    "independent_design_review": {
+      "path": "external-evidence/stage57/lse-sysclk-independent-review/report.md",
+      "sha256": "9d7b44eee07acb5d45f4c1a99676d64b2fce2c511a7963eea16587cfc59fee85",
+      "bytes": 12664
+    }
+  },
+  "context_files_at_review": {
+    "cw32-metapac-gen/src/lib.rs": {
+      "sha256": "2fa92927fef3b1f6d0deb40b25c370e669e0b7d62ee1c127e714369ab9d058e9",
+      "bytes": 21809
+    },
+    "cw32-data-gen/src/electrical.rs": {
+      "sha256": "df23ef62157ed8e32d2f6ad0d7564d06df2e8a40f7d6275899b88411b6d56c7c",
+      "bytes": 118331
+    }
+  },
+  "representation": {
+    "new_record_only_three_required_u16_scalars": true,
+    "hardware_fields": [
+      "lse_edges",
+      "lsi_cycles"
+    ],
+    "software_phase_margin_field": "margin_lse_edges",
+    "both_owned_records_deny_unknown_fields": true,
+    "project_serde_outer_option_explicit_default_and_skip_none": true,
+    "metapac_owned_outer_option_uses_derived_serde_missing_option_none": true,
+    "static_template_retains_no_serde_surface": true,
+    "static_projection_requires_no_owned_to_borrowed_field_conversion": true,
+    "debug_emitter_compatibility_inspected_not_executed": true,
+    "old_omitted_or_null_outer_field_deserializes_none_by_static_serde_review": true,
+    "new_record_null_or_missing_inner_scalar_is_not_defaulted": true,
+    "old_reader_with_deny_unknown_fields_can_reject_new_present_field": true,
+    "rust_struct_literals_and_exhaustive_patterns_need_adjustment": true,
+    "rust_abi_binary_or_positional_serialization_compatibility_not_claimed": true
+  },
+  "separate_generator_enforcement_requirements": {
+    "reviewed_as_implemented_here": false,
+    "required_some_exact_parts": [
+      "CW32F020C6U7",
+      "CW32F030C8T7",
+      "CW32A030C8T7"
+    ],
+    "required_none_every_other_part_and_family_alias": true,
+    "required_values": {
+      "lse_edges": 128,
+      "lsi_cycles": 256,
+      "margin_lse_edges": 1
+    },
+    "legacy_none_is_not_current_qualified_generator_admission": true,
+    "native_early_return_validation_must_not_bypass_foreign_record_rejection": true,
+    "source_binding": "Use the previously reviewed F020 own manual and explicitly joint F030/A030 manual; preserve their hardware-count versus software-margin distinction. This review does not requalify those sources.",
+    "must_reject": [
+      "missing required record",
+      "null required record",
+      "foreign package or family injection",
+      "incorrect hardware counts",
+      "incorrect software margin",
+      "unknown inner field",
+      "incomplete inner record"
+    ],
+    "runtime_scope": "Target-only margin arithmetic and package cfg, factory LSI admission/retention, init sequencing, fallback, old target behavior, RTC bounds and hardware validation remain separate."
+  },
+  "integration_conditions": [
+    "Keep the three exact accepted v2 model hashes. Any schema-byte change needs incremental or renewed review before identity advancement.",
+    "Generator enforcement must require Some with 128,256,1 only on CW32F020C6U7, CW32F030C8T7 and CW32A030C8T7, reject it everywhere else, and cover native-family early-return paths. This receipt does not accept that implementation.",
+    "Coordinate authored data, source validator, JSON generation, owned metapac input, static emission, HAL build constants/cfg and all Rust constructors. Execute separate source/generation parity and representative builds/runtime review on the integrated result.",
+    "Advance serde only from 30d9f8fd473d5c3fe41e84d016821cf07282c196131c76030fa7511a67ab0e18 to f36ce5da85172080d963347d8c9e25985b02d92e1a1227df78850cf7dd1ea9b1 and bind this exact receipt and project acceptance reference after this review.",
+    "Wrap the ENTIRE current replacement_review object unchanged under previous_review; verify its canonical hash from this receipt. Retain all 20 historical nodes, every accepted extension/component/compatibility record, and historical source identity/reference, rather than reconstructing a hash-only list.",
+    "Record both metapac before/after hashes without relabeling their adapted ancestry. Preserve observed/upstream identities, original package/license declarations, notices and unresolved permission finding. Keep legal_clearance false."
+  ],
+  "verification": {
+    "static_model_review": true,
+    "baseline_zip_hash_verified": true,
+    "exact_additive_reversal_checks": true,
+    "field_order_width_projection_checks": true,
+    "new_serde_probes_run": false,
+    "generator_run": false,
+    "cargo_run": false,
+    "shared_target_used": false,
+    "hal_tests_run": false,
+    "project_source_edits": false,
+    "identity_tip_edited": false,
+    "new_default_historical_inverse_checker_added": false
+  },
+  "final_model_recheck": {
+    "cw32-data-serde/src/lib.rs": {
+      "sha256": "f36ce5da85172080d963347d8c9e25985b02d92e1a1227df78850cf7dd1ea9b1",
+      "equals_frozen_postimage": true
+    },
+    "cw32-metapac-gen/src/data.rs": {
+      "sha256": "227095b7b073825f26e34d2fbfe745c0938b8861dd53f68f00cf788668f6fc3c",
+      "equals_frozen_postimage": true
+    },
+    "cw32-metapac-gen/res/src/metadata.rs": {
+      "sha256": "d5a1ab60f97e6a097e1970bd3c32667828563035442fb8fa299c8270147d516c",
+      "equals_frozen_postimage": true
+    }
+  }
+}

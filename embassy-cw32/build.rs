@@ -4101,6 +4101,40 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         return;
     };
     println!("cargo:rustc-cfg=rcc_lse");
+    let sysclk_qualified = matches!(
+        METADATA.name,
+        "CW32F020C6U7" | "CW32F030C8T7" | "CW32A030C8T7"
+    );
+    assert_eq!(
+        lse.sysclk_detector.is_some(),
+        sysclk_qualified,
+        "LSE SYSCLK detector qualification missing or unexpected"
+    );
+    if let Some(detector) = &lse.sysclk_detector {
+        assert_eq!(
+            (
+                detector.lse_edges,
+                detector.lsi_cycles,
+                detector.margin_lse_edges
+            ),
+            (128, 256, 1)
+        );
+        assert!(
+            c.lsi_sysclk.is_some(),
+            "LSE SYSCLK requires own factory-LSI facts"
+        );
+        for (name, value) in [
+            ("LSE_EDGES", detector.lse_edges),
+            ("LSI_CYCLES", detector.lsi_cycles),
+            ("MARGIN_LSE_EDGES", detector.margin_lse_edges),
+        ] {
+            writeln!(
+                out,
+                "pub(crate) const RCC_LSE_SYSCLK_{name}: u16 = {value};"
+            )
+            .unwrap();
+        }
+    }
     if matches!(METADATA.line, "CW32L010" | "CW32L011" | "CW32L012") {
         generate_native_low_power_lse_configuration(out, lse);
         return;

@@ -390,3 +390,11 @@ L011 PC14/PC15 为封装脚2/3，L012为3/4。两族各自支持四位 DRIVER/PD
 L011 RM PDF152/书页151及L012 CN PDF202/书页176、EN PDF219/书页193确认 RTC无ACCESS字段。LSE SOURCE0、PSC1=0、PSC2=0x3fff保持实际RTCCLKD≤1MHz；HSIOSC仍96MHz。切源先把第一分频数设置为当前与目标的较大值，验证后切SOURCE，再写入目标分频，避免转换期间提高输入一级频率。保留式attach不通过复位、解锁、停源或重调制造兼容。
 
 GPIOC检查允许整bank采样/滤波/事件推进；门恢复不撤销此前副作用。未开启输出bank、外部RTC/LSE接收者、保留定时器根与不可访问L012 UART3属于未完全运行验证的功能移交条件。L012 UART3中英文门语义以及BTIM/ATIM映射冲突仍明确保留。无额外safe-Rust内存安全义务、自动RTC回退、低功耗恢复或失钟后连续性保证。
+
+### 三个 classic 精确封装的 init-only LSE SYSCLK
+
+仅 CW32F020C6U7、CW32F030C8T7、CW32A030C8T7 新增 `Config.lse + Sysclk::LSE`；主动 LSE/RTC 原有23款与其他系统源路径不扩大。新增自身依据见 [独立系统源资格](../docs/classic-lse-sysclk-qualification.json) 与 [运行契约](../docs/classic-lse-sysclk.md)。硬件128沿/256个LSI周期和软件额外1沿分开记录在原 `lse-qualified.yaml` 的这三个精确配置内，经三模型和 metadata/build 正式投影；原厂LSI上界/条件/半字地址复用自身Stage56事实。
+
+x030 RM CN2.5 的 PDF51–52、57、59–60、62–64、70–71、74、76、79–80、112，以及 F020 RM CN1.4 的 PDF49–50、55、57–58、60–62、68–69、72、74、77–78、110 支持LSE启动、强制CCS、LSI依赖、合法PLL经HSI切换、selector4和Flash等待。书页均减一。F030 DS CN1.9 PDF44–46、A030 DS CN1.1 PDF41–43、选定 `current-datasheets/` F020 DS CN1.3 PDF42–44 分别支持自身波形/晶振和原厂LSI条件；F020最大34440Hz，x030两款33784Hz，不混用原件。
+
+新目标先完整准备/借用原厂LSI，保持请求，再在HSI上启动/借用LSE；最终分频与Flash完成后才选择LSE。相同LSE元组供给RTC，板级每周期界与LSI仅速率界分开。源码/链接不代替实板启动、检测窗口、源丢失恢复或RF验证；发布仍由独立审阅边界决定。

@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "completed_at_utc": "2026-10-09T23:49:32.999177+00:00",
+  "verdict": "ACCEPT_TIMING_CFG_COMPATIBILITY_SCOPE",
+  "blocking_findings": [],
+  "exact_scope": [
+    "CW32F020C6U7",
+    "CW32F030C8T7",
+    "CW32A030C8T7"
+  ],
+  "reviewed_freeze": {
+    "path": "external-evidence/stage57/lse-sysclk-candidate/evidence/stage57-runtime-final-freeze.json",
+    "sha256": "9332a42312c838d451d1dd8880e7552ca7308f0176d56cac1a5a023cd7f26234",
+    "verified_entries": 10
+  },
+  "candidate_code_files": [
+    {
+      "path": "embassy-cw32/src/rcc/hsi_48mhz.rs",
+      "sha256": "793e9e5e0bb1040728da36167c43b6cf24e10f0b695b3cec6dd777daf953e4cf",
+      "bytes": 67313
+    },
+    {
+      "path": "embassy-cw32/src/rcc/lse.rs",
+      "sha256": "1895ddcfd3de631fc376e6424770ced2bd5b9f42168d3db2e8d5043e391ae846",
+      "bytes": 9582
+    },
+    {
+      "path": "embassy-cw32/src/rcc/rtc.rs",
+      "sha256": "5e8b91933041ec85789f5fb6ab32848c49dbd6738b66e9465d29c8d87604980e",
+      "bytes": 13936
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "a73e1899bc8a994524091e5e82619abb92d8faffea01ebbdc7a1985b0bcc22e9",
+      "bytes": 9572
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "934b06f9cc6ce5563464931e3a608e4ac789f64d5ad74c8357a17095b7832cb5",
+      "bytes": 172668
+    },
+    {
+      "path": "cw32-data-gen/src/electrical.rs",
+      "sha256": "df23ef62157ed8e32d2f6ad0d7564d06df2e8a40f7d6275899b88411b6d56c7c",
+      "bytes": 118331
+    },
+    {
+      "path": "cw32-data/lse-qualified.yaml",
+      "sha256": "cba5262ed3abfb5fafec6db03ba2a858fdfff5b15634f437f27e2d582161a91a",
+      "bytes": 88336
+    },
+    {
+      "path": "docs/classic-lse-sysclk.md",
+      "sha256": "5351c3704485bf5bad4786c702b8dbbea8c503ed7a301432b99615a019f37a07",
+      "bytes": 7034
+    },
+    {
+      "path": "docs/classic-lse-sysclk-qualification.json",
+      "sha256": "e0c2b4adc503a26115bf6aa2cbaa0e786d7257c12577f7c1f471f431a93fda17",
+      "bytes": 3495
+    },
+    {
+      "path": "README.md",
+      "sha256": "edde911b4e3d42730f9b4dcfb3bf23641215265dd8c2c84354f446d24058fa73",
+      "bytes": 29104
+    }
+  ],
+  "accepted_design_receipt_sha256": "93b11601db5e06d0ab606409261f9872f5c975bf847d27756021a97d8c7a7e7c",
+  "checks": {
+    "single_lse_source_bus_rtc_tuple": "confirmed",
+    "board_cycle_vs_detector_lsi_rate_only": "preserved",
+    "time_driver_before_tokens_all32": "rejects",
+    "detector_target_only_wide_arithmetic": "confirmed",
+    "old_general_lse_bounds": "unchanged",
+    "old_rtc_executable_code": "unchanged",
+    "adc_pwm_guards": "unchanged",
+    "old_configure_projection": "byte_identical",
+    "old_pure_frequencies_projection": "byte_identical",
+    "old_default_config": "byte_identical",
+    "other_backend_code": "byte_identical",
+    "old_active_lse_packages": 23,
+    "generated_features_reviewed": 54,
+    "new_sysclk_positive_features": 3,
+    "new_sysclk_negative_features": 51,
+    "exhaustive_enum_compatibility": "documented",
+    "schema_identity_review": "separate",
+    "runtime_operation_review": "separate"
+  },
+  "final_static_comparison": {
+    "path": "external-evidence/stage57/lse-timing-review/final-static-comparison.json",
+    "sha256": "077f88931e70a3c00fe49c915327e7f8c4c2d7af0155318b37769b7428535368"
+  },
+  "report": {
+    "path": "external-evidence/stage57/lse-timing-review/report.md",
+    "sha256": "238c27f4403f34d32645089df8e963ab0e3a506c94eba30d7345e3b00b9ffda3"
+  },
+  "evidence_manifest": {
+    "path": "external-evidence/stage57/lse-timing-review/manifest.json",
+    "sha256": "2fdbdf986168f0b221bfbdc3139abe7962a8b369dd152531f419e7b604d8275b",
+    "files": 21
+  },
+  "verification_not_run": [
+    "Cargo",
+    "HAL tests",
+    "generator",
+    "build",
+    "silicon tests",
+    "RF tests"
+  ],
+  "reviewer_mutations": {
+    "candidate": false,
+    "baseline": false,
+    "source_locks": false,
+    "schema": false
+  },
+  "overall_stage57_acceptance": false,
+  "publication_status": "HOLD",
+  "silicon_or_rf_qualified": false
+}

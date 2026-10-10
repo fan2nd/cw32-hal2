@@ -1156,6 +1156,28 @@ functions:
         anchor: fn prepare_factory_lsi
       - path: examples/lsi-clock/src/main.rs
         anchor: config.rcc.sys = rcc::Sysclk::LSI
+    - id: external_low_speed_sysclk
+      status: partial
+      scope: Init-only nominal 32768 Hz LSE SYSCLK only on CW32F020C6U7, CW32F030C8T7 and CW32A030C8T7.
+      implemented_families: [CW32F020, CW32F030, CW32A030]
+      limitations:
+      - Family aliases and every other exact package are excluded. Config.lse is the single source declaration;
+        the same board every-cycle tuple supplies SYSCLK, buses and RTC.
+      - Factory detector LSI is admitted before mandatory CCS and remains requested. The target-only 129/256
+        software count margin uses own-family LSI rate maxima; it proves no absolute jitter/window deadline.
+      - HSI and inherited PLL/reference remain enabled. Final buses and fallback-safe Flash are installed on
+        HSI before one LSE selection; no post-selection divider RMW. Whole GPIO-bank handover effects apply.
+      - Fixed 1 MHz time driver rejects before ownership. Old source targets and all 23 auxiliary-LSE paths
+        retain admission/order. Loss or HSI fallback invalidates frozen LSE timing; no runtime or silicon guarantee.
+      registers_any: [LSE]
+      evidence:
+      - path: cw32-data/lse-qualified.yaml
+      - path: docs/classic-lse-sysclk-qualification.json
+      - path: docs/classic-lse-sysclk.md
+      - path: embassy-cw32/src/rcc/hsi_48mhz.rs
+        anchor: LSE_SYSCLK_LSI
+      - path: examples/lse-sysclk/src/lib.rs
+        anchor: config.rcc.sys = rcc::Sysclk::LSE
     - id: external_high_speed
       status: partial
       scope: Direct HSE oscillator/crystal or bypass on F020/F030/A030/L010/L011/L012/L031/R031/W031/L052/L083 and digital HEX on F002/F003.
@@ -1379,7 +1401,7 @@ functions:
         No raw PINLOCK reuse is admitted for these two families. Native RTC LSE uses SOURCE0,PSC1=0,PSC2=0x3fff,
         and bounded source transitions stage division before switching; attach never repairs or retunes inherited state.
       - Failure retains source enables, pad reservations and diagnostics. Ordinary reset may not clear retained LSE controls; POR may be required.
-      - No LSE system clock, runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
+      - LSE system clock is separately qualified only for the three classic exact packages above. No runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
       registers_any:
       - LSE
       evidence:

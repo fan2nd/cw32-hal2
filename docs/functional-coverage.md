@@ -156,9 +156,19 @@ still apply.
   timing guards remain enforced. A 1 MHz Embassy timebase rejects this rate
   before singleton acquisition. This is a static control-flow guarantee;
   compiling the time-driver feature does not execute that rejection.
-  Other ten families retain their previous qualification. LSE SYSCLK, runtime
-  switching and low-power restoration remain outside this slice. See the
+  Other ten families retain their previous qualification. Runtime switching and
+  low-power restoration remain outside this slice. See the
   [complete factory-LSI contract](factory-lsi-sysclk.md).
+- Init-only LSE SYSCLK is qualified only on CW32F020C6U7, CW32F030C8T7 and
+  CW32A030C8T7 through the single Config.lse declaration. Factory detector LSI
+  is prepared before mandatory CCS; HSI and inherited PLL/reference are retained.
+  The target-only modeled 129/256 count margin uses each family's LSI maximum;
+  it is distinct from board-qualified LSE every-cycle timing and rate-only LSI.
+  Final buses/Flash are installed on HSI before one LSE selection. The same LSE
+  tuple supplies RTC. The fixed 1 MHz time driver rejects before ownership.
+  All old source targets and the 23 auxiliary-LSE packages retain their admission
+  and operation order. Frozen LSE timing is invalid after loss/fallback. See
+  [the exact-package contract](classic-lse-sysclk.md).
 - Factory-HSI- and HSE-fed system PLL is qualified on F020/F030/A030/L083, the four
   documented system-PLL families. R031/W031 radio synthesis remains separate
   and user-deferred. The nine F020 and twelve F030/A030/L083 HSI pairs remain admitted

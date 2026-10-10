@@ -1099,6 +1099,21 @@ fn validate_lse_configuration(
     part: &str,
     c: &cw32_data_serde::chip::core::peripheral::LseConfiguration,
 ) -> Result<()> {
+    let sysclk_qualified = matches!(part, "CW32F020C6U7" | "CW32F030C8T7" | "CW32A030C8T7");
+    ensure!(
+        c.sysclk_detector.is_some() == sysclk_qualified,
+        "LSE SYSCLK detector facts require exactly the three classic packages"
+    );
+    if let Some(detector) = &c.sysclk_detector {
+        ensure!(
+            (
+                detector.lse_edges,
+                detector.lsi_cycles,
+                detector.margin_lse_edges
+            ) == (128, 256, 1),
+            "LSE SYSCLK own hardware counts or separate software margin changed"
+        );
+    }
     if part.starts_with("CW32L010") {
         return validate_l010_lse_configuration(part, c);
     }
@@ -1843,6 +1858,15 @@ pub fn apply_lse(
         );
         Ok(serde_json::from_slice(&bytes)?)
     };
+    let sysclk_proof = read_policy("docs/classic-lse-sysclk-qualification.json")?;
+    ensure!(
+        sysclk_proof["schema_version"] == 1
+            && sysclk_proof["parts"]
+                == serde_json::json!(["CW32A030C8T7", "CW32F020C6U7", "CW32F030C8T7"])
+            && sysclk_proof["sysclk_detector"]
+                == serde_json::json!({"lse_edges":128,"lsi_cycles":256,"margin_lse_edges":1}),
+        "classic LSE SYSCLK qualification scope or detector facts changed"
+    );
     let x030_proof = read_policy("docs/lse-active-first-cohort.json")?;
     let x030_rtc_proof = read_policy("docs/lse-active-rtc-admission.json")?;
     let f020_proof = read_policy("docs/lse-active-f020.json")?;
@@ -1907,6 +1931,18 @@ pub fn apply_lse(
         let mut profile = serde_json::to_value(p)?;
         profile.as_object_mut().unwrap().remove("configuration");
         let mut configuration = serde_json::to_value(&p.configuration)?;
+        // Compare the unchanged auxiliary-LSE facts to their historical proof;
+        // the new target-only detector record has its own independently bound proof.
+        if let Some(detector) = configuration
+            .as_object_mut()
+            .unwrap()
+            .remove("sysclk_detector")
+        {
+            ensure!(
+                detector == sysclk_proof["sysclk_detector"],
+                "LSE SYSCLK detector differs from its own qualification"
+            );
+        }
         if p.family == "CW32L010" {
             // Explicit schema migration projection only. The validator above has
             // already required inherited_legal, no factory address and margin 1.
@@ -1977,6 +2013,35 @@ pub fn apply_lse(
     }
     let authority: Value =
         serde_json::from_slice(&fs::read(root.join(&catalog.source_authority))?)?;
+    if p.configuration.sysclk_detector.is_some() {
+        let sources = sysclk_proof["sources"]
+            .as_array()
+            .context("missing LSE SYSCLK own originals")?;
+        ensure!(
+            sources
+                .iter()
+                .map(|s| s["source_ref"].as_str())
+                .collect::<Vec<_>>()
+                == [
+                    Some("vendor:CW32x030_UserManual_CN_V2.5.pdf"),
+                    Some("vendor:CW32F020_UserManual_CN_V1.4.pdf"),
+                    Some("vendor:CW32F030_DataSheet_CN_V1.9.pdf"),
+                    Some("vendor:CW32A030_DataSheet_CN_V1.1.pdf"),
+                    Some("vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf"),
+                ],
+            "LSE SYSCLK own-original roster changed"
+        );
+        for source in sources {
+            ensure!(
+                authority["artifacts"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|a| a["id"] == source["source_ref"] && a["sha256"] == source["sha256"]),
+                "LSE SYSCLK source is not a locked own original"
+            );
+        }
+    }
     ensure!(
         p.sources.len() == if line == "CW32L012" { 3 } else { 2 },
         "LSE requires the exact own manual/datasheet roster, including current L012 EN"

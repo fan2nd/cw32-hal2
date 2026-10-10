@@ -97,7 +97,8 @@ pub struct Config {
 /// runs. Runtime integration and direct PAC access must preserve HAL ownership.
 /// This is the platform entry model, not a per-driver unsafe caller obligation.
 ///
-/// On F020/F030/A030, selecting factory LSI SYSCLK may briefly open each
+/// On F020/F030/A030, selecting factory LSI SYSCLK (or LSE SYSCLK on the
+/// three qualified packages) may briefly open each
 /// entire GPIOA/B/C/F bank to inspect retained source selectors. Sampling,
 /// filters and armed events can advance, including before a failure. GPIO
 /// configuration and flags are preserved; gate restoration cannot undo events.
