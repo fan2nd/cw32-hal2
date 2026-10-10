@@ -148,3 +148,25 @@ cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml \
   --target thumbv6m-none-eabi --no-default-features --features cw32l083mct6,defmt --bin crystal
 cargo build --release --locked --manifest-path examples/rtc-calendar/Cargo.toml \
   --target thumbv6m-none-eabi --no-default-features --features cw32l083vct6 --bin preserve_calendar
+
+# Exact L010 live-only additions to the future recipe; not executed receipts.
+# Eight library builds and six new ELF rows bring aggregate totals to
+# 44 library commands (39 builds, five historical checks) and 53 ELF links.
+# Reuse the existing F030 preserve_calendar ELF. Finite acceptance is separate:
+# 8 libraries/7 ELFs in main and exactly 2 libraries/2 ELFs in clean.
+for chip in cw32l010f8p6 cw32l010f8u6 cw32l010y8m6 cw32l010 cw32l011k8t6 cw32l012c8t6 cw32f030c8t7; do
+  cargo build --release --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 --lib \
+    --target thumbv6m-none-eabi --no-default-features --features "$chip,rt,defmt"
+done
+cargo build --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 --lib \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l010f8p6,rt,defmt,time-driver-gtim1
+for chip in cw32l010f8p6 cw32l010f8u6 cw32l010y8m6; do
+  cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
+    --target thumbv6m-none-eabi --no-default-features --features "$chip,defmt" --bin cw32-lsi-clock-example
+done
+cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l010f8p6 --bin crystal
+cargo build --release --locked --manifest-path examples/rtc-calendar/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l010f8p6 --bin preserve_calendar
+cargo build --release --locked --manifest-path examples/hse-clock/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l011k8t6 --bin crystal

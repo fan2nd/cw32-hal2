@@ -1,0 +1,394 @@
+{
+  "schema_version": 1,
+  "title": "Stage74 exact L010 live factory-LSI independent source and metadata implementation review",
+  "date": "2026-10-10",
+  "verdict": "accepted_bounded_source_metadata_implementation",
+  "blocking_findings": [],
+  "scope": "Own sources, strict L010 live-only policy and checker, full54 data projection, unchanged schema/old facts, actual generated HAL metadata and RTC semantic identity. Separate runtime sequence and final package/clean verification are outside this receipt.",
+  "baseline": {
+    "published_commit": "b23546340a0c56c58fb6ddc0307d40235a1dbd08",
+    "identity_basis": "Published association supplied; source comparisons use the established Stage73 tree."
+  },
+  "design_bindings": [
+    {
+      "external_artifact": "design-review/runtime-sequence-design.md",
+      "sha256": "2869819f8b879ce27def4d909db1908e3c16d9f704951de8b1630b094c1645a7"
+    },
+    {
+      "external_artifact": "design-review/metadata-rtc-consumer-appendix.md",
+      "sha256": "7b479dfda4f5af473a14a1fff6f974d17f4d614466060288edb7732c61b880bb"
+    },
+    {
+      "external_artifact": "design-review/independent-design-review.json",
+      "sha256": "44f024797fcea80a8466a2d9efefc9ab4d729f7e78c79011fd6148b6c7ae8b10"
+    },
+    {
+      "external_artifact": "design-review/independent-visibility-supplement.json",
+      "sha256": "94d92fde1a928f505235d8d894eb303021d1167d7cf928dd5ba899ccfc8c352b"
+    }
+  ],
+  "reviewed_source_inputs": [
+    {
+      "project_path": "cw32-data/lsi-sysclk-qualified.yaml",
+      "sha256": "f7f2a71a4bdde0a6a70ee452ed3198e7ef5f56a6cde0417ab26081754b982056",
+      "bytes": 606028
+    },
+    {
+      "project_path": "cw32-data/electrical.yaml",
+      "sha256": "7d73425ed9264f666fccc2572887689a3d9d089cb63e126e9d176216cc5fe354",
+      "bytes": 74239
+    },
+    {
+      "project_path": "cw32-data-gen/src/lsi.rs",
+      "sha256": "177d09f0057d4013fbed12f4c5cb4296fbc87805b16945dc48d339bd12f0c298",
+      "bytes": 146971
+    },
+    {
+      "project_path": "ci/verify-l010-lse-data.py",
+      "sha256": "418f1e42b40e926a3dbc8302244718e981a1327500824c0797968623e3abbd82",
+      "bytes": 45586
+    },
+    {
+      "project_path": "sources/evidence-sources.json",
+      "sha256": "e8344d75dfb0708258e418fab8136d9b26e75b80f2a80a575bc9f827647d9ba1",
+      "bytes": 355979
+    },
+    {
+      "project_path": "cw32-data-serde/src/lib.rs",
+      "sha256": "b4d875955a51d7e8061e2459b975362ac45a1723819ba9256bd62949d45feefc",
+      "bytes": 35369
+    },
+    {
+      "project_path": "cw32-data-gen/src/electrical.rs",
+      "sha256": "7ff0c6ac37e7cb1d44632277e975028c8f0966e01e0e7a5cbaf80399dea4c2f9",
+      "bytes": 186753
+    },
+    {
+      "project_path": "cw32-data-gen/src/rtc.rs",
+      "sha256": "047a7d7a823833116f29e867a8ad6aa46dfc1b15c27033c994f47a1d229e5c85",
+      "bytes": 7005
+    },
+    {
+      "project_path": "cw32-data/rtc-calendar.yaml",
+      "sha256": "1b1476229ccd55d0e9940f4192aed994ae562b8dd6e58f8c590c774d641f9904",
+      "bytes": 3444
+    },
+    {
+      "project_path": "cw32-data-gen/src/lib.rs",
+      "sha256": "5c7c7b4d4566e5096d7e60777628300658d17d4aa87d9d8b6b480685689f22fd",
+      "bytes": 62455
+    },
+    {
+      "project_path": "cw32-data/parts.yaml",
+      "sha256": "6e8194c84122d440e5476ba527cc04ff6c0e5c196bc413fa02dbbba41458f899",
+      "bytes": 35217
+    },
+    {
+      "project_path": "cw32-data/pinouts/cw32l010.yaml",
+      "sha256": "f7906510f8cc9f6e33cac628645c228b7ef76a6e0b8266e93a0431917efdaa13",
+      "bytes": 9824
+    },
+    {
+      "project_path": "embassy-cw32/build.rs",
+      "sha256": "c06b9278fab8a4547c36dcae43d4f76a2409cc7e92c01f55fde8623c9e01cd9f",
+      "bytes": 256344
+    },
+    {
+      "project_path": "embassy-cw32/src/rcc/bounds.rs",
+      "sha256": "309b6ace74998e9f2f444b6a8744a3359aca3b96452807d85ee9fae69ea5f494",
+      "bytes": 13098
+    },
+    {
+      "project_path": "embassy-cw32/src/rtc/mod.rs",
+      "sha256": "98ba82044ffe6624b42101cb91cd5cdd003ff71a1b541ce6325a934af2d0c4b8",
+      "bytes": 26391
+    }
+  ],
+  "reviewed_qualification_draft": {
+    "project_path": "docs/l010-live-factory-lsi-qualification.json",
+    "sha256": "cd0c05674fde23271098e64b64133962465780c894d86fb11d35491f73d2d0d2",
+    "bytes": 21363,
+    "status_when_reviewed": "source_bound_implementation_pending_independent_review",
+    "binding_boundary": "This is the reviewed pre-acceptance qualification record. Installation of reviewed acceptance references and final packaging are separate, so this receipt does not require a cyclic final qualification hash."
+  },
+  "source_originals_independently_rehashed": [
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "bytes": 15074519,
+      "text_sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938"
+    },
+    {
+      "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+      "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+      "bytes": 3467805,
+      "text_sha256": "ba32a6838b5375c7a4d0225d9aeed6ebcad964e5668080ee87c8ddac1036595f"
+    },
+    {
+      "source_ref": "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+      "bytes": 2442266
+    }
+  ],
+  "sdk_members_independently_rehashed": [
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP.1.0.2/WHXY.CW32L010_DFP/SVD/CW32L010.svd",
+      "sha256": "733cc8ff3e186a128342134aee71db1d155e5e2b95ab1c8c8a77054391cb8c66",
+      "bytes": 349237
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP/WHXY.CW32L010_DFP.pdsc",
+      "sha256": "3d4adb6e098dfa9190a85bf5c05a2adcc7599435b19ef16f1a1ebf29c6c3cf3d",
+      "bytes": 2666
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+      "bytes": 540100
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+      "sha256": "1ec5958352e78cfdb050b4e648373ed25f2befc01d6724602b0e69c4d098969e",
+      "bytes": 28798
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_iwdt.h",
+      "sha256": "17cbdad76c6d9490b058dc1fa56b3771d9a3dd4eba1ac8a9ea2595ccd7b831db",
+      "bytes": 7156
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h",
+      "sha256": "81d6c37b3920465595b702bdf102e5710c22490efa422207e5148852d719e91f",
+      "bytes": 35109
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_iwdt.c",
+      "sha256": "8ae8e5bd5c654316200dda8d613783cc5e98f37f0376aaa750b18d27a860ea35",
+      "bytes": 6541
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_sysctrl.c",
+      "sha256": "5b90bab195a6308aab9194451c862553cb14d11b23ef3d128d05e443ffc6ad92",
+      "bytes": 24957
+    }
+  ],
+  "source_correspondence": {
+    "native_peripherals": 24,
+    "selected_registers": 72,
+    "complete_fields": 462,
+    "gate_reset_records": 16,
+    "read_only_source_status_overlays": 4,
+    "requester_observer_categories": 9,
+    "unique_requester_observer_members": 27,
+    "physical_packages": [
+      "CW32L010F8P6",
+      "CW32L010F8U6",
+      "CW32L010Y8M6"
+    ],
+    "y8m6_authority": "Own datasheet only; no invented DFP match.",
+    "own_policy_canonical_sha256": "25dff68088cdab41b33ecf4a7e77392b5e7d62eae825fd730a6149ab42db6609",
+    "source_lock_appended_references": 11,
+    "source_lock_inverse_original_bytes_equal": true
+  },
+  "accepted_policy_facts": [
+    "Only exact F8P6/F8U6/Y8M6 gain the full reviewed 32800/31816/33784 Hz,1620..5500 mV,-40..85 C profile.",
+    "Admission is live factory reuse only: software LSIEN and STABLE at immutable original entry, typed ten-bit factory TRIM equality, raw 0xffff erased and zero valid, no LSI trim/WAIT writes or IWDT manipulation.",
+    "The complete own policy pin and duplicate-rejecting policy loader enforce missing, unknown, type, null and empty facts; native generation returns before cold consumer assumptions.",
+    "Native RTC.CR2.AWTSRC and UART.CR1 source facts, positive MCO/internal-timer routes and complete preserved requester/observer membership remain distinct from cold admission.",
+    "The full54 checker validates named selections, unique identities, mandatory SYSCTRL and every clock-limits owner, full LSE/LSI values, exactly three qualified owners and generic L010 plus L011/L012 exclusion.",
+    "Historical preprojection None, old LSE proof=false and inherited-legal 36080 Hz monitoring without a factory address remain unchanged.",
+    "No shared schema, metapac transport/template, source provenance validator, RTC source policy/generator, part/pin binding, old LSE runtime or Stage73 LPTIM change.",
+    "RTC private semantic identity comes from LSI versus HSIOSC; RTC-owned constants retain raw native HSI and old LSI values independently of selected SYSCLK or HSI.DIV."
+  ],
+  "generated_projection": {
+    "complete_named_selections": 54,
+    "exact_new_lsi_owners": [
+      "CW32L010F8P6",
+      "CW32L010F8U6",
+      "CW32L010Y8M6"
+    ],
+    "complete_other_chip_json_equal": true,
+    "generated_files": 904,
+    "changed_generated_files": [
+      {
+        "path": "cw32-data/data/chips/CW32L010F8P6.json",
+        "before_sha256": "1b454d60d166a1fea4bb8816e67922d4e03b221b721a96a54759e36e1065b136",
+        "after_sha256": "aa82339fe640e3c94701672950eb954f4c6b79b451f1c28b6478cb883e68fa0e"
+      },
+      {
+        "path": "cw32-data/data/chips/CW32L010F8U6.json",
+        "before_sha256": "6810d2891db1e98c3ac5cd627262676fa4d836c2e14fa9f98dad67ec530a9fc4",
+        "after_sha256": "4e11561dcb56a857b1138b8c15f2cd783eed44d591e94be4b27df12688153ef0"
+      },
+      {
+        "path": "cw32-data/data/chips/CW32L010Y8M6.json",
+        "before_sha256": "9038838494a2e172db233befe054083e09c5cdf7018ec07d962c50036f29d67e",
+        "after_sha256": "f842287dfd6bafa313864abce0b1dda311c27f19b3bdfff8565580c785e79246"
+      },
+      {
+        "path": "cw32-metapac/src/chips/metadata_0016.rs",
+        "before_sha256": "05d438a38288230c45d9b1f1bd8762d1d899b2519fac9bf1a9ec213f371ec51b",
+        "after_sha256": "8e4a17c3c231c5c7e4b99779ac87a4f78c8e6660a766546114ba9a5080e626d8"
+      },
+      {
+        "path": "cw32-metapac/src/chips/metadata_0017.rs",
+        "before_sha256": "2b5a4690777369f69319907a168c90dfbf549b9382173cab1c704bbea48aa2ae",
+        "after_sha256": "2152f2d9a9588fce633e84ea934a95376846697b848575aafe77183361944020"
+      }
+    ],
+    "changed_rust_files_contain_only_lsi_record_replacement": true,
+    "all_recorded_current_generated_hashes_rehashed": true,
+    "byte_identical_generated_files": 899
+  },
+  "unchanged_rtc_profile_count": 47,
+  "actual_main_hal_outputs": {
+    "rows": 15,
+    "libraries": 8,
+    "elfs": 7,
+    "all_exit_zero": true,
+    "all_recorded_hal_output_hashes_rehashed": true,
+    "all_generated_cfgs_and_rtc_constants_match_selected_data": true,
+    "exact_l010_masks_from_ir": [
+      4294934527,
+      4294934527,
+      4294443007
+    ],
+    "exact_l010_cold_consumers_absent": true,
+    "generic_l010_l011_l012_lsi_cfg_absent": true,
+    "main_source_snapshot_files": 1305,
+    "main_source_snapshot_before_after_current_bytes_match": true,
+    "detail": {
+      "external_artifact": "implementation/metadata-review/main-hal-output-review.json",
+      "sha256": "ead0938faecebed7c82ea496e52dddc516d57db056ecfa0f2021d9da520d5473"
+    }
+  },
+  "observed_validation": {
+    "l010_own_sources_full54": "passed after reviewed strict checker correction",
+    "l011_own_sources_full54": "passed",
+    "l012_own_sources_full54": "passed",
+    "current_data_validation": "passed",
+    "source_provenance_hardware_originals": {
+      "required_originals": 43,
+      "catalogued_originals": 45,
+      "required_source_files_at_run": 551,
+      "complete_hardware": true,
+      "complete_manifest": false,
+      "omitted_scope": "Two discovery HTML artifacts, outside the hardware-original gate."
+    },
+    "module_layout": {
+      "status": "passed",
+      "rust_source_files": 571
+    },
+    "reuse_boundary": "The five unaffected source gates ran on unchanged relevant inputs. The later edit changes only the own L010 checker; generation/data/original-source checks are not represented as rerun."
+  },
+  "resolved_findings": [
+    {
+      "finding": "RM page89 was attached to an SDK header member lacking a PDF page count.",
+      "resolution": "Reviewed five-file correction binds physical/printed pages to own RM and preserves a separate native header reference; strict digests updated without changing source authority or validator.",
+      "patch_sha256": "d310708e02654e0a4416a4723f46d989f9aa0a45ffbe34c47e289bf8903e000c",
+      "accepted_review": {
+        "external_artifact": "implementation/metadata-review/provenance-fix-review.json",
+        "sha256": "0943f1b75b3241c63fbf1672002d8281c4b854271a943871ea722457b45289ae"
+      }
+    },
+    {
+      "finding": "Blanket KEY write-only source assertion contradicted the selected SVD AHBEN.KEY read-write annotation.",
+      "resolution": "Reviewed checker pins exactly AHBEN read-write and APBEN1/APBEN2 write-only raw SVD values, independently asserts own RM WO and 0x5a5a write semantics, and preserves full field/gate equality.",
+      "patch_sha256": "4eb356d781b0c8e78130323df3d9b4e46f342e673a90bde1208da3653a2d543e",
+      "accepted_review": {
+        "external_artifact": "implementation/metadata-review/key-access-fix-review.json",
+        "sha256": "6ef11955f5d141fb460015a996c7ff88151bdab936f4c497c20fd2c8ccff826b"
+      }
+    }
+  ],
+  "retained_failed_checker_logs": [
+    {
+      "external_artifact": "verification/source-checks/l010-own-source.log",
+      "sha256": "6b505e8012fce5e1dfbe12ed58c06f4fb3d2314a1a2cf965062d2df30dbb7840"
+    },
+    {
+      "external_artifact": "verification/source-checks/l010-own-source-corrected.log",
+      "sha256": "6b505e8012fce5e1dfbe12ed58c06f4fb3d2314a1a2cf965062d2df30dbb7840"
+    }
+  ],
+  "successful_checker_log": {
+    "external_artifact": "verification/source-checks/l010-own-source-corrected-final.log",
+    "sha256": "1a9485f1f8cbc4ea761fbf210bb8341e51915bc7f6bfe74b162e9726e5d69ea5"
+  },
+  "main_input_package": {
+    "source_zip": {
+      "external_artifact": "stage74-main-source.zip",
+      "sha256": "e23264782199fd58684b1a49de655736ba5941c8bf102a45f88d3e42dbbbe882"
+    },
+    "source_manifest": {
+      "external_artifact": "source-manifest.json",
+      "sha256": "57d741c545b02a8660a2e306969bf2e9b0208616f7b12d00fd8c8c356dd23375"
+    },
+    "authored_files": 1305,
+    "executable_files": 27,
+    "final_delivery_package": false
+  },
+  "evidence_receipts": [
+    {
+      "external_artifact": "implementation/metadata-review/static-source-correspondence.json",
+      "sha256": "4f7131a7fccc446ef21cba1260a4b80b87ef7e5edf189a14381dc5ef4161ca10"
+    },
+    {
+      "external_artifact": "implementation/metadata-review/preserved-source-inputs.json",
+      "sha256": "bf804d6485ab2b0226cbb6694cbb5774b03e0ffa3091059d2ab887a7560196cd"
+    },
+    {
+      "external_artifact": "implementation/metadata-review/provenance-fix-review.json",
+      "sha256": "0943f1b75b3241c63fbf1672002d8281c4b854271a943871ea722457b45289ae"
+    },
+    {
+      "external_artifact": "implementation/metadata-review/key-access-fix-review.json",
+      "sha256": "6ef11955f5d141fb460015a996c7ff88151bdab936f4c497c20fd2c8ccff826b"
+    },
+    {
+      "external_artifact": "implementation/metadata-review/generated-output-review.json",
+      "sha256": "b50fbf2dcd7652893c79ee2d687541001582b56225b0d9c81d6dd41c7f5d5602"
+    },
+    {
+      "external_artifact": "implementation/metadata-review/main-hal-output-review.json",
+      "sha256": "ead0938faecebed7c82ea496e52dddc516d57db056ecfa0f2021d9da520d5473"
+    },
+    {
+      "external_artifact": "verification/generated-comparison.json",
+      "sha256": "678d6a4839a6c8a5b60f22f3225979efa1b7a3fc837fb562f53bba5eeb11d48d"
+    },
+    {
+      "external_artifact": "verification/source-checks/l010-corrected-final.json",
+      "sha256": "1d5d72af9bc89ca3a6a374b2bf23a24b18719ede2218054f7a45fb7ec79667b3"
+    },
+    {
+      "external_artifact": "verification/source-checks/unaffected-commands.json",
+      "sha256": "fee6bac360c1fbc4beda4b74e19821185205b19850b14001c4229d5491474603"
+    },
+    {
+      "external_artifact": "verification/main/summary.json",
+      "sha256": "a06a2607f505488b5c25318af558eb2da51a7416e3c5bf0e482bcb06c8e264fb"
+    },
+    {
+      "external_artifact": "verification/main/commands.json",
+      "sha256": "d09ed73d13a6779f081d6e7bc10a446cf4e6a2f0371a01b690df119848d5ce0d"
+    }
+  ],
+  "execution": {
+    "reviewer_static_reads_hashes_and_artifact_comparisons": true,
+    "reviewer_project_source_edits": false,
+    "reviewer_generation": false,
+    "reviewer_checker_execution": false,
+    "reviewer_build_or_link": false,
+    "reviewer_hal_tests": false,
+    "reviewer_probes": false,
+    "reviewer_register_models": false,
+    "hardware_execution": false,
+    "coordinator_generation_and_finite_main_build_receipts_inspected": true
+  },
+  "limits": [
+    "This acceptance is bounded to reviewed source/metadata implementation and the observed finite main outputs. Final receipt installation, deterministic source-only packaging and final-package clean verification are separate.",
+    "Compilation and metadata equality do not establish analog continuity, oscillator progress, watchdog survival, ordinary POR success, cycle-duration bounds or electrical performance.",
+    "A running IWDT and other preserved requesters/observers may progress during initialization; matching source observations do not prove continuous physical behavior."
+  ]
+}

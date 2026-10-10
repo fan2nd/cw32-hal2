@@ -109,6 +109,8 @@ mod operating;
 pub use operating::OperatingConditions;
 
 mod peripheral;
+#[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+pub(crate) use peripheral::ClockInspectionError;
 pub use peripheral::{
     ClockError, RccPeripheral, bus_clock_bounds, bus_frequency, frequency, kernel_clock_bounds,
 };

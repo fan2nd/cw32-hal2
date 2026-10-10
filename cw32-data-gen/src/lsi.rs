@@ -29,7 +29,8 @@ pub fn apply(
     let has_rtc = classic || native_family;
     let l052 = line == "CW32L052";
     let l083 = line == "CW32L083";
-    let qualified = classic || exact_family || native_family || l052 || l083;
+    let l010 = line == "CW32L010";
+    let qualified = classic || exact_family || native_family || l052 || l083 || l010;
     let Some(clock) = core
         .peripherals
         .iter()
@@ -62,7 +63,7 @@ pub fn apply(
     ensure!(
         families.keys().map(String::as_str).collect::<Vec<_>>()
             == [
-                "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L031", "CW32L052",
+                "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L010", "CW32L031", "CW32L052",
                 "CW32L083", "CW32R031", "CW32W031"
             ],
         "factory-LSI family scope changed"
@@ -82,6 +83,9 @@ pub fn apply(
     );
     if !qualified {
         return Ok(());
+    }
+    if l010 {
+        return apply_l010(root, chip, own, core, registers);
     }
     if l052 {
         return apply_l052(root, chip, own, core, registers);
@@ -2714,5 +2718,371 @@ fn apply_l083(
         .as_mut()
         .context("missing L083 clocks")?
         .lsi_sysclk = Some(lsi);
+    Ok(())
+}
+
+
+
+fn l010_text(value: &Value) -> Result<&str> {
+    value.as_str().context("missing L010 live-LSI source text")
+}
+
+// L010 reuses an already continuously requested factory-matching source. Its
+// native policy is validated before any classic cold-start consumer assumption.
+fn apply_l010(
+    root: &Path,
+    chip: &crate::ChipInput,
+    own: &Value,
+    core: &mut Core,
+    registers: &BTreeMap<String, ir::IR>,
+) -> Result<()> {
+    use serde_json::json;
+    use std::collections::BTreeSet;
+    ensure!(
+        l052_policy_digest(own)?
+            == "25dff68088cdab41b33ecf4a7e77392b5e7d62eae825fd730a6149ab42db6609",
+        "L010 complete own live-LSI policy changed; missing, extra or reordered facts require review"
+    );
+    let text = l010_text;
+    let number = |v: &Value| {
+        v.as_u64().and_then(|n| u32::try_from(n).ok())
+            .context("missing L010 live-LSI source integer")
+    };
+    let parts = json!([
+        {"name":"CW32L010F8P6", "package":"TSSOP20"},
+        {"name":"CW32L010F8U6", "package":"QFN20"},
+        {"name":"CW32L010Y8M6", "package":"SOP16"}
+    ]);
+    ensure!(own["exact_parts"] == parts && own["sysctrl_version"] == "cw32l010_v1",
+        "L010 live-LSI exact3/IP scope changed");
+    let selected = parts.as_array().unwrap().iter().any(|p| p["name"] == chip.name);
+    ensure!(selected || chip.name == "CW32L010", "unreviewed L010 chip alias");
+    let expected_lsi = json!({
+        "nominal_hz":32800, "minimum_hz":31816, "maximum_hz":33784,
+        "supply_mv":[1620,5500], "temperature_c":[-40,85], "factory_trim_address":0x0010_07c2,
+        "rtc_allowed_sources":[0,1,2,3], "awt_allowed_sources":[0,1],
+        "uart_allowed_sources":[0,1,2,3], "uarts":["UART1","UART2"],
+        "gpio_banks":["GPIOA","GPIOB"], "gpio_filter_allowed_sources":[0,1,2,3,5,7],
+        "mco_allowed_sources":[0,1,2,3,4,5,6], "lsi_output_pin":null,
+        "lsi_output_allowed_af":[], "rcc_irq":4
+    });
+    ensure!(own["lsi_sysclk"] == expected_lsi,
+        "L010 complete live-LSI rate/selector profile changed");
+    let lsi: cw32_data_serde::chip::core::peripheral::LsiSysclk =
+        serde_json::from_value(expected_lsi)?;
+    ensure!(
+        own["admission"] == "live_factory_reuse_only" && own["watchdog_source"] == "lsi"
+            && own["trim_write"] == "forbidden" && own["waitcycle_preserved"] == true
+            && own["factory_read_width_bits"] == 16 && own["factory_erased_raw_halfword"] == 65535
+            && own["factory_zero_is_erased"] == false && own["software_lsien_required"] == true
+            && own["entry_stable_required"] == true && own["factory_trim_match_required"] == true
+            && own["ordinary_por_supported"] == false && own["cycle_timing_qualified"] == false
+            && own["config_lse_on_lsi_target"] == "refuse_some"
+            && own["gpio_inspection"] == "whole_bank_functional_handover"
+            && own["inspection_scope"] == "existing_owner_windows_only"
+            && own["selector_inventory_semantics"] == "documented_encodings_preserved_by_live_reuse"
+            && own["awt_register"] == "RTC.CR2.AWTSRC",
+        "L010 live-only factory/entry/observer operating contract changed"
+    );
+    let authority: Value = serde_json::from_slice(&fs::read(root.join("sources/evidence-sources.json"))?)?;
+    let artifacts = authority["artifacts"].as_array().context("missing L010 source authority")?;
+    let sources = own["sources"].as_array().context("missing L010 RM/DS sources")?;
+    ensure!(sources.len() == 2, "L010 requires its own RM and DS");
+    for (source, id) in sources.iter().zip([
+        "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+        "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+    ]) {
+        let matches: Vec<_> = artifacts.iter().filter(|a| a["id"] == id).collect();
+        ensure!(source["source_ref"] == id && matches.len() == 1,
+            "L010 own source identity must be unique");
+        let original = matches[0];
+        ensure!(source["evidence_kind"] == "external-evidence"
+            && original["sha256"] == source["sha256"]
+            && original["text"]["sha256"] == source["text_sha256"]
+            && original["provenance"]["status"] == "selected"
+            && original["provenance"]["chip_scope"] == json!(["CW32L010"]),
+            "L010 live-LSI requires selected own RM/DS and locked text");
+        let pages = source["pdf_pages_1_based"].as_array().context("missing L010 PDF pages")?;
+        let printed = source["printed_pages"].as_array().context("missing L010 printed pages")?;
+        let count = original["provenance"]["pdf_page_count"].as_u64().context("missing L010 PDF length")?;
+        ensure!(!pages.is_empty() && pages.len() == printed.len()
+            && pages.windows(2).all(|p| p[0].as_u64() < p[1].as_u64())
+            && pages.iter().zip(printed).all(|(p,q)| p.as_u64()
+                .is_some_and(|p| p > 0 && p <= count && q.as_u64() == Some(p - 1))),
+            "L010 ordered physical/printed page correspondence changed");
+    }
+    let sdk_matches: Vec<_> = artifacts.iter().filter(|a| a["id"] == own["sdk_source"]["source_ref"]).collect();
+    ensure!(sdk_matches.len() == 1, "L010 native SDK must be unique");
+    let sdk = sdk_matches[0];
+    ensure!(sdk["sha256"] == own["sdk_source"]["sha256"]
+        && sdk["provenance"]["status"] == "selected"
+        && sdk["provenance"]["chip_scope"] == json!(["CW32L010"])
+        && sdk["provenance"]["generator_svd_path"] == own["sdk_source"]["generator_svd_path"]
+        && sdk["provenance"]["generator_header_path"] == own["sdk_source"]["generator_header_path"],
+        "L010 selected SDK/native input identity changed");
+    let members = sdk["members"].as_array().context("missing L010 SDK member authority")?;
+    let facts = own["sdk_members"].as_array().context("missing L010 selected member roster")?;
+    ensure!(facts.len() == 8, "L010 SVD/PDSC/header/sysctrl/IWDT/GPIO member roster changed");
+    let mut seen_members = BTreeSet::new();
+    for fact in facts {
+        let path = text(&fact["source_ref"])?.strip_prefix("member:").context("invalid L010 SDK member")?;
+        ensure!(seen_members.insert(path), "duplicate L010 SDK member");
+        let matches: Vec<_> = members.iter().filter(|m| m["path"] == path).collect();
+        ensure!(matches.len() == 1 && matches[0]["sha256"] == fact["sha256"]
+            && matches[0]["bytes"] == fact["bytes"] && matches[0]["members"] == fact["member_chain"],
+            "L010 selected SDK member hash/size/chain changed: {path}");
+    }
+    let input = parse_policy(&fs::read(root.join("cw32-data/inputs/cw32l010.yaml"))?)?;
+    let svd_path = text(&own["sdk_source"]["generator_svd_path"])?;
+    let svd = facts.iter().find(|m| m["source_ref"] == format!("member:{svd_path}"))
+        .context("missing L010 selected native SVD")?;
+    ensure!(input["line"] == "CW32L010" && input["expected_svd_name"] == "CW32L010"
+        && input["source"]["source_ref"] == svd["source_ref"] && input["source"]["sha256"] == svd["sha256"]
+        && own["native_controls_source_ref"] == svd["source_ref"],
+        "L010 generator and register facts require the selected native SVD");
+    let peripheral = |name: &str| -> Result<&cw32_data_serde::chip::core::Peripheral> {
+        let matches: Vec<_> = core.peripherals.iter().filter(|p| p.name == name).collect();
+        ensure!(matches.len() == 1, "L010 native peripheral must be unique: {name}");
+        Ok(matches[0])
+    };
+    let mut inventory: Vec<_> = core.peripherals.iter().map(|p| p.name.as_str()).collect();
+    inventory.sort();
+    ensure!(serde_json::to_value(&inventory)? == own["peripheral_inventory"],
+        "L010 complete native peripheral inventory changed");
+    let native = own["native_peripherals"].as_object().context("missing L010 native identity roster")?;
+    ensure!(native.len() == inventory.len() && native.len() == 24,
+        "L010 complete native peripheral binding changed");
+    for (name, fact) in native {
+        let p = peripheral(name)?;
+        let r = p.registers.as_ref().context("missing L010 native register identity")?;
+        ensure!(p.address == number(&fact["address"])? && r.kind == text(&fact["kind"])?
+            && r.version == text(&fact["version"])? && r.block == text(&fact["block"])?
+            && input["register_versions"][&r.kind] == r.version,
+            "L010 selected native address/kind/version/block changed: {name}");
+    }
+    let register = |name: &str, reg: &str, offset: u32| -> Result<(&ir::FieldSet, &ir::Access)> {
+        let p = peripheral(name)?.registers.as_ref().context("missing L010 register block")?;
+        let ir = registers.get(&p.kind).context("missing L010 selected register IR")?;
+        let block = ir.blocks.get(&p.block).context("missing L010 selected IR block")?;
+        let items: Vec<_> = block.items.iter().filter(|r| r.name == reg).collect();
+        ensure!(items.len() == 1 && items[0].byte_offset == offset && items[0].array.is_none(),
+            "L010 native register identity/offset/shape changed: {name}.{reg}");
+        let ir::BlockItemInner::Register(r) = &items[0].inner else {
+            anyhow::bail!("L010 native control is not a register")
+        };
+        ensure!(r.bit_size == 32 && r.fieldset.as_deref() == Some(reg),
+            "L010 native register width/fieldset changed: {name}.{reg}");
+        Ok((ir.fieldsets.get(reg).context("missing L010 native fields")?, &r.access))
+    };
+    let controls = own["native_controls"].as_array().context("missing L010 native controls")?;
+    ensure!(controls.len() == 72, "L010 complete native control roster changed");
+    let mut seen_controls = BTreeSet::new();
+    for fact in controls {
+        let name = text(&fact["peripheral"])?;
+        let reg = text(&fact["register"])?;
+        ensure!(seen_controls.insert((name, reg)), "duplicate L010 native control");
+        let (fields, access) = register(name, reg, number(&fact["byte_offset"])?)?;
+        let expected_access = match text(&fact["access"])? {
+            "Read" => ir::Access::Read, "Write" => ir::Access::Write,
+            "ReadWrite" => ir::Access::ReadWrite, _ => anyhow::bail!("unknown L010 register access"),
+        };
+        ensure!(fact["bit_size"] == 32 && *access == expected_access,
+            "L010 native control access/width changed: {name}.{reg}");
+        let expected = fact["fields"].as_array().context("missing L010 complete fieldset")?;
+        ensure!(fields.fields.len() == expected.len(), "L010 full fieldset changed: {name}.{reg}");
+        let mut seen_fields = BTreeSet::new();
+        for f in expected {
+            let field_name = text(&f["field"])?;
+            let matches: Vec<_> = fields.fields.iter().filter(|v| v.name == field_name).collect();
+            ensure!(seen_fields.insert(field_name) && matches.len() == 1
+                && matches[0].bit_offset == ir::BitOffset::Regular(number(&f["bit_offset"])?)
+                && matches[0].bit_size == number(&f["bit_size"])? && matches[0].array.is_none(),
+                "L010 complete native field changed: {name}.{reg}.{field_name}");
+        }
+    }
+    let access = parse_policy(&fs::read(root.join("cw32-data/field-access.yaml"))?)?;
+    let overlays = access["registers"]["sysctrl_cw32l010_v1"].as_array()
+        .context("missing L010 source-status access overlays")?;
+    let expected_overlays = own["source_status_overlays"].as_array().context("missing L010 own source-status facts")?;
+    ensure!(overlays.len() == 4 && expected_overlays.len() == 4,
+        "L010 four native oscillator status overlays must remain complete");
+    for expected in expected_overlays {
+        ensure!(overlays.iter().filter(|a| expected.as_object().unwrap().iter()
+            .all(|(k,v)| a[k] == *v)).count() == 1,
+            "L010 native source STABLE must remain read-only");
+    }
+    let gates = own["consumer_gates"].as_array().context("missing L010 native gate roster")?;
+    ensure!(gates.len() == 16, "L010 complete relevant gate/reset roster changed");
+    let mut seen_gates = BTreeSet::new();
+    for fact in gates {
+        let name = text(&fact["peripheral"])?;
+        ensure!(seen_gates.insert(name), "duplicate L010 gate owner");
+        let gate = peripheral(name)?.rcc_control.as_ref().context("missing L010 central gate")?;
+        let reset = gate.reset.as_ref().context("missing L010 central reset")?;
+        let key = gate.enable_write_key.as_ref().context("missing L010 gate write key")?;
+        ensure!(gate.controller == "SYSCTRL" && gate.enable.register == text(&fact["gate_register"])?
+            && gate.enable.field == text(&fact["gate_field"])?
+            && reset.register == text(&fact["reset_register"])? && reset.field == text(&fact["reset_field"])?
+            && gate.enable_active_value && gate.reset_asserted_value == Some(false)
+            && fact["enable_active_value"] == true && fact["reset_asserted_value"] == false
+            && key.field.register == gate.enable.register && key.field.field == "KEY"
+            && key.value == 0x5a5a && fact["key_value"] == key.value
+            && gate.bus_clock == text(&fact["bus_clock"])?
+            && serde_json::to_value(&gate.shared_enable_group)? == fact["shared_enable_group"]
+            && serde_json::to_value(&gate.shared_reset_group)? == fact["shared_reset_group"],
+            "L010 gate/reset/key/shared-domain facts changed: {name}");
+        for (reg, field, offset) in [
+            (&gate.enable.register, &gate.enable.field, "gate_byte_offset"),
+            (&reset.register, &reset.field, "reset_byte_offset"),
+        ] {
+            let (fields, _) = register("SYSCTRL", reg, number(&fact[offset])?)?;
+            ensure!(fields.fields.iter().filter(|f| f.name == *field
+                && f.bit_offset == ir::BitOffset::Regular(number(&fact["bit_offset"]).unwrap())
+                && f.bit_size == 1 && f.array.is_none()).count() == 1,
+                "L010 central gate/reset native bit changed: {name}");
+        }
+        let (fields, _) = register("SYSCTRL", &gate.enable.register, number(&fact["gate_byte_offset"])?)?;
+        ensure!(fields.fields.iter().filter(|f| f.name == "KEY"
+            && f.bit_offset == ir::BitOffset::Regular(16) && f.bit_size == 16).count() == 1,
+            "L010 central gate key field changed: {name}");
+    }
+    let observers = own["requester_observers"].as_array().context("missing L010 requester/observer roster")?;
+    let expected_ids = ["iwdt", "rtc_awt_calendar_output", "uart", "lptim", "ready_and_output", "gpio", "analog", "clock_policy", "downstream"];
+    ensure!(observers.len() == expected_ids.len(), "L010 requester/observer categories must be complete");
+    let mut seen_observers = BTreeSet::new();
+    for (fact, id) in observers.iter().zip(expected_ids) {
+        ensure!(fact["id"] == id && fact["source_ref"] == sources[0]["source_ref"]
+            && !text(&fact["disposition"])?.is_empty(), "L010 source-bound observer category changed");
+        for member in fact["members"].as_array().context("missing L010 observer members")? {
+            ensure!(seen_observers.insert(text(member)?), "duplicate L010 requester/observer membership");
+        }
+        let pages = fact["pdf_pages_1_based"].as_array().context("missing L010 observer pages")?;
+        let printed = fact["printed_pages"].as_array().context("missing L010 observer printed pages")?;
+        ensure!(!pages.is_empty() && pages.len() == printed.len()
+            && pages.iter().zip(printed).all(|(p,q)| sources[0]["pdf_pages_1_based"].as_array().unwrap().contains(p)
+                && p.as_u64().is_some_and(|p| q.as_u64() == Some(p-1))),
+            "L010 requester/observer own-page binding changed");
+    }
+    let expected_observers: BTreeSet<_> = ["IWDT", "RTC", "AWT", "calendar", "RTC_OUT", "UART1", "UART2",
+        "LPTIM", "MCO", "LSIRDY", "SYSCTRL_IRQ4", "NVIC_SYSCTRL_PENDING", "GPIOA", "GPIOB", "VC1", "VC2",
+        "LVD", "HSECCS", "LSECCS", "clock_policy", "GTIM1", "ATIM", "BTIM1", "BTIM2", "BTIM3", "ADC",
+        "external_recipients"].into_iter().collect();
+    ensure!(seen_observers == expected_observers, "L010 complete unique requester/observer membership changed");
+    let sysctrl = peripheral("SYSCTRL")?;
+    let sysctrl_regs = sysctrl.registers.as_ref().context("missing L010 SYSCTRL")?;
+    let sysctrl_ir = registers.get(&sysctrl_regs.kind).context("missing L010 SYSCTRL IR")?;
+    ensure!(core.peripherals.iter().all(|p| p.name != "AWT")
+        && core.interrupts.iter().filter(|i| i.name == "SYSCTRL" && i.number == 4).count() == 1
+        && core.interrupts.iter().filter(|i| i.number == 4).count() == 1
+        && own["observer_irq"]["name"] == "SYSCTRL" && own["observer_irq"]["number"] == 4
+        && sysctrl_ir.blocks[&sysctrl_regs.block].items.iter().all(|r| !matches!(r.name.as_str(), "PLL" | "HEX")),
+        "L010 integrated AWT/native SYSCTRL4/no-PLL identity changed");
+    let sources_enum = sysctrl_ir.enums.get("Sysclk").context("missing L010 SYSCLK enum")?;
+    ensure!(sources_enum.bit_size == 3
+        && sources_enum.variants.iter().map(|v| (v.name.as_str(),v.value)).collect::<Vec<_>>()
+            == [("HSI",0),("HSE",1),("LSI",3),("LSE",4)],
+        "L010 native SYSCLK encoding changed");
+    // GPIOB has its own register kind. Do not use the classic gpio-kind roster.
+    for (name, kind, block) in [("GPIOA", "gpio", "GPIO"), ("GPIOB", "gpiob", "GPIOB")] {
+        let p = peripheral(name)?.registers.as_ref().unwrap();
+        ensure!(p.kind == kind && p.block == block && p.version == "cw32l010_v1",
+            "L010 native GPIO bank identity changed");
+    }
+    let clock = sysctrl.clock_limits.as_ref().context("missing L010 independent electrical facts")?;
+    let rtc = peripheral("RTC")?.rtc_calendar.as_ref().context("missing L010 independent RTC facts")?;
+    ensure!(rtc.source == "HSIOSC" && rtc.source_encoding == 3
+        && rtc.nominal_hz == 48_000_000 && rtc.minimum_hz == 47_040_000 && rtc.maximum_hz == 48_960_000
+        && rtc.supply_mv == (1620,5500) && rtc.temperature_c == (-40,85)
+        && rtc.factory_trim_address == 0x0010_07c0
+        && clock.hsi_frequency_hz == 48_000_000 && clock.hsi_error_percent == 2
+        && clock.factory_hsi_trim_address == rtc.factory_trim_address
+        && clock.hsi_supply_mv == rtc.supply_mv && clock.hsi_temperature_c == rtc.temperature_c
+        && clock.low_voltage_threshold_mv == 1800 && clock.low_voltage_bus_max_hz == 24_000_000
+        && clock.high_voltage_bus_max_hz == 48_000_000 && clock.flash_wait_step_hz == 24_000_000
+        && clock.initial_flash_wait == 1 && clock.hse.as_ref().is_some_and(|h| h.fixed_ccs_hsi_divisor == Some(12))
+        && clock.pll.is_none() && clock.hex.is_none() && clock.lsi_sysclk.is_none(),
+        "L010 raw-HSI RTC/electrical/fixed-4MHz facts must remain independent of live LSI");
+    if selected {
+        let lse = clock.lse_configuration.as_ref().context("missing independently qualified L010 LSE")?;
+        let native = lse.native_low_power.as_ref().context("missing L010 inherited-legal monitor")?;
+        ensure!(native.monitor_reference == "inherited_legal" && native.lsi_factory_trim_address.is_none()
+            && native.monitored_lsi_maximum_hz == 36_080,
+            "L010 old inherited-legal LSE monitor must not acquire factory-LSI bounds");
+    } else {
+        ensure!(clock.lse_configuration.is_none(), "generic L010 must retain exact LSE exclusion");
+    }
+    let catalog = parse_policy(&fs::read(root.join("cw32-data/parts.yaml"))?)?;
+    let pinouts = parse_policy(&fs::read(root.join("cw32-data/pinouts/cw32l010.yaml"))?)?;
+    ensure!(catalog["sources"]["CW32L010_datasheet"]["source_ref"] == sources[1]["source_ref"]
+        && catalog["sources"]["CW32L010_datasheet"]["sha256"] == sources[1]["sha256"]
+        && pinouts["family"] == "CW32L010" && pinouts["source"]["source_ref"] == sources[1]["source_ref"]
+        && pinouts["source"]["sha256"] == sources[1]["sha256"], "L010 own physical package authority changed");
+    let catalog_parts = catalog["parts"].as_array().context("missing L010 part catalog")?;
+    let packages = pinouts["packages"].as_array().context("missing L010 physical packages")?;
+    ensure!(packages.len() == 3 && catalog_parts.iter().filter(|p| p["family"] == "CW32L010").count() == 3,
+        "L010 exact physical package roster changed");
+    let memory = json!([
+        {"name":"FLASH","kind":"flash","address":0,"size":65536},
+        {"name":"RAM","kind":"ram","address":0x2000_0000,"size":4096}
+    ]);
+    for part in parts.as_array().unwrap() {
+        let name = text(&part["name"])?;
+        let fact = &own["packages"][name];
+        let matched: Vec<_> = catalog_parts.iter().filter(|p| p["name"] == name).collect();
+        let physical: Vec<_> = packages.iter().filter(|p| p["name"] == name).collect();
+        ensure!(matched.len() == 1 && physical.len() == 1, "L010 exact part/package must be unique");
+        let package = physical[0];
+        ensure!(matched[0]["family"] == "CW32L010" && matched[0]["feature"] == name.to_ascii_lowercase()
+            && matched[0]["package"] == part["package"] && fact["package"] == part["package"]
+            && matched[0]["memory"] == memory && fact["memory"] == memory
+            && matched[0]["datasheet_source_id"] == "CW32L010_datasheet"
+            && matched[0]["dfp_device"] == fact["dfp_device"] && matched[0]["source_ids"] == fact["source_ids"]
+            && fact["dfp_device"] == if name == "CW32L010Y8M6" { Value::Null } else { json!("CW32L010F8") }
+            && package["package"] == part["package"] && package["flash_bytes"] == 65536 && package["ram_bytes"] == 4096
+            && package["pins"] == fact["pins"] && package["gpio_pins"] == fact["gpio_pins"]
+            && package["input_only_pins"] == fact["input_only_pins"],
+            "L010 exact memory/physical pins/DS-versus-DFP binding changed: {name}");
+        if chip.name != name { continue; }
+        ensure!(chip.packages.len() == 1 && chip.packages[0].name == name
+            && chip.packages[0].package == text(&part["package"])?
+            && serde_json::to_value(&chip.memory)? == json!([memory])
+            && serde_json::to_value(&chip.packages[0].pins)? == fact["pins"],
+            "L010 selected exact memory/physical package projection changed");
+        let mut expected_pins: Vec<_> = fact["gpio_pins"].as_array().unwrap().iter()
+            .chain(fact["input_only_pins"].as_array().unwrap()).map(text).collect::<Result<_>>()?;
+        expected_pins.sort();
+        let mut actual_pins: Vec<_> = core.pins.iter().map(|p| p.name.as_str()).collect();
+        actual_pins.sort();
+        ensure!(actual_pins == expected_pins, "L010 exact bonded GPIO subset changed");
+        for (signal, pin) in [("HSE_IN","PA0"),("HSE_OUT","PA1"),("LSE_IN","PB1"),("LSE_OUT","PB0")] {
+            let pads: Vec<_> = sysctrl.pins.iter().filter(|p| p.signal == signal).collect();
+            ensure!(pads.len() == 1 && pads[0].pin == pin && pads[0].af.is_none()
+                && pads[0].adc_mux.is_none() && pads[0].comparator_mux.is_none()
+                && chip.packages[0].pins.iter().filter(|p| p.signals.iter().any(|s| s == pin)).count() == 1,
+                "L010 inherited oscillator pad projection changed: {name}.{signal}");
+        }
+    }
+    // Null means no dedicated GPIO AF named LSI_OUT. It does not erase MCO4 or
+    // native timer input9. Their existence never authorizes dormant-gate scans.
+    let routes = &own["positive_lsi_routes"];
+    ensure!(routes["dedicated_lsi_gpio_af"].is_null() && routes["mco_source"] == 4
+        && routes["mco_pads"] == json!([{"pin":"PA4","af":4},{"pin":"PA8","af":3},{"pin":"PB3","af":4}]),
+        "L010 positive MCO output routes and dedicated-output absence changed");
+    for route in routes["timer_inputs"].as_array().context("missing L010 internal LSI routes")? {
+        let name = text(&route["peripheral"])?;
+        let reg = text(&route["register"])?;
+        let offset = if reg == "TISEL2" {108} else {92};
+        let (fields, _) = register(name, reg, offset)?;
+        ensure!(route["encoding"] == 9, "L010 internal LSI_OUT encoding changed");
+        for field in route["fields"].as_array().context("missing L010 native input roster")? {
+            ensure!(fields.fields.iter().filter(|f| f.name == text(field).unwrap() && f.bit_size == 4).count() == 1,
+                "L010 positive timer LSI_OUT input changed");
+        }
+    }
+    if selected {
+        core.peripherals.iter_mut().find(|p| p.name == "SYSCTRL")
+            .and_then(|p| p.clock_limits.as_mut()).context("missing L010 SYSCTRL clocks")?
+            .lsi_sysclk = Some(lsi);
+    }
     Ok(())
 }

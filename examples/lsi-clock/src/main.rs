@@ -24,6 +24,7 @@ use embassy_cw32::{self as hal, rcc};
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
+    // Exact L010 declares 1.62..5.5 V and -40..85 C for live factory-LSI reuse.
     // W031 requires 2.0..3.6 V; R031 retains 2.2..3.6 V, both at -40..85 C.
     // L031 and exact L052/L083 declare 1.65..5.5 V and -40..85 C.
     // Other prior example parts retain 1.65..5.5 V and -40..105 C.
@@ -31,7 +32,13 @@ fn main() -> ! {
     // across its complete operating envelope. No external crystal or pin is used.
     let mut config = hal::Config::default();
     config.rcc.operating_conditions = rcc::OperatingConditions {
-        min_supply_mv: if cfg!(feature = "cw32r031c8u6") {
+        min_supply_mv: if cfg!(any(
+            feature = "cw32l010f8p6",
+            feature = "cw32l010f8u6",
+            feature = "cw32l010y8m6"
+        )) {
+            1_620
+        } else if cfg!(feature = "cw32r031c8u6") {
             2_200
         } else if cfg!(feature = "cw32w031r8u6") {
             2_000
@@ -45,6 +52,9 @@ fn main() -> ! {
         },
         min_temperature_c: -40,
         max_temperature_c: if cfg!(any(
+            feature = "cw32l010f8p6",
+            feature = "cw32l010f8u6",
+            feature = "cw32l010y8m6",
             feature = "cw32l031c8t6",
             feature = "cw32l031c8u6",
             feature = "cw32l031f8u6",
@@ -65,6 +75,17 @@ fn main() -> ! {
         },
     };
     config.rcc.sys = rcc::Sysclk::LSI;
+    #[cfg(any(
+        feature = "cw32l010f8p6",
+        feature = "cw32l010f8u6",
+        feature = "cw32l010y8m6"
+    ))]
+    {
+        // This does not prepare LSI. Ordinary POR is expected to return an error.
+        // Only an already software-requested, stable, factory-matching source
+        // qualifies; its existing TRIM and WAIT remain unchanged.
+        config.rcc.lse = None;
+    }
     let p = hal::try_init(config).unwrap_or_else(|error| stop(error));
     run(p)
 }
@@ -126,6 +147,27 @@ fn run(p: hal::Peripherals) -> ! {
             rtc.now().unwrap_or_else(|error| stop(error)),
             rtc.source_clock_bounds(),
             rtc.calendar_tick_bounds(),
+        ));
+    }
+}
+
+#[cfg(any(
+    feature = "cw32l010f8p6",
+    feature = "cw32l010f8u6",
+    feature = "cw32l010y8m6"
+))]
+fn run(p: hal::Peripherals) -> ! {
+    // HSIOSC keeps its independent strict 48 MHz source envelope. Acquiring
+    // this existing capability only reads readiness; it does not alter RTC.
+    let hsi = rcc::HsiOscClock::new(p.SYSCTRL).unwrap_or_else(|error| stop(error));
+    let clocks = rcc::clocks();
+    loop {
+        core::hint::black_box((
+            clocks.sys_bounds(),
+            clocks.hclk_bounds(),
+            clocks.pclk_bounds(),
+            clocks.hsi_bounds(),
+            hsi.bounds(),
         ));
     }
 }

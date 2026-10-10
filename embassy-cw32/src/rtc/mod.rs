@@ -41,6 +41,7 @@ pub(crate) type Source = pac::rtc::vals::Source;
 pub(crate) mod sealed {
     pub trait Instance: crate::rcc::RccPeripheral {
         const SOURCE: u8;
+        const SOURCE_IS_LSI: bool;
         const SOURCE_NOMINAL_HZ: u32;
         const SOURCE_MINIMUM_HZ: u32;
         const SOURCE_MAXIMUM_HZ: u32;

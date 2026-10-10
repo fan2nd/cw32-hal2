@@ -1,0 +1,177 @@
+{
+  "title": "Stage74 independent runtime main-integration acceptance",
+  "date": "2026-10-10",
+  "status": "accepted_main_integration",
+  "verdict": "Frozen runtime and HAL build-generator implementation accepted against actual completed main outputs. Final-package independent clean phase remains a separate pending acceptance requirement.",
+  "source_binding": {
+    "manifest": {
+      "external_artifact": "source-manifest.json",
+      "sha256": "57d741c545b02a8660a2e306969bf2e9b0208616f7b12d00fd8c8c356dd23375"
+    },
+    "source_archive": {
+      "external_artifact": "stage74-main-source.zip",
+      "sha256": "e23264782199fd58684b1a49de655736ba5941c8bf102a45f88d3e42dbbbe882"
+    },
+    "files": 1305,
+    "executables": 27,
+    "all_source_and_zip_entries_hash_size_mode_verified": true,
+    "all_source_before_after_hashes_equal_manifest": true
+  },
+  "runtime_source_unchanged_since_static_review": true,
+  "evidence": [
+    {
+      "external_artifact": "implementation/runtime-review/independent-runtime-review.json",
+      "sha256": "202db32030fa39867c4a8c828a4e07dd547b56766c550a30b54b0314eab0fb05"
+    },
+    {
+      "external_artifact": "implementation/runtime-review/actual-generated-runtime-review.json",
+      "sha256": "700fb71a6d7305b5703318b3efa86b935ba5458574b80bd02418388851208612"
+    },
+    {
+      "external_artifact": "verification/main/commands.json",
+      "sha256": "d09ed73d13a6779f081d6e7bc10a446cf4e6a2f0371a01b690df119848d5ce0d"
+    },
+    {
+      "external_artifact": "verification/main/summary.json",
+      "sha256": "a06a2607f505488b5c25318af558eb2da51a7416e3c5bf0e482bcb06c8e264fb"
+    },
+    {
+      "external_artifact": "verification/main/source-before.json",
+      "sha256": "85d1bf2bc27d52efb9a15358215ae38c3ec349520dd567eab277effd677297df"
+    },
+    {
+      "external_artifact": "verification/main/source-after.json",
+      "sha256": "85d1bf2bc27d52efb9a15358215ae38c3ec349520dd567eab277effd677297df"
+    },
+    {
+      "external_artifact": "verification/generated-comparison.json",
+      "sha256": "678d6a4839a6c8a5b60f22f3225979efa1b7a3fc837fb562f53bba5eeb11d48d"
+    }
+  ],
+  "main_verification": {
+    "planned_rows": 15,
+    "successful_rows": 15,
+    "library_rlibs": 8,
+    "linked_elfs": 7,
+    "hash_size_verified_saved_generated_library_elf_and_link_input_artifacts": 129,
+    "log_hashes_and_success_markers_verified": 15,
+    "command_vectors_match_finite_plan_except_json_diagnostic_switch": true,
+    "terminal_summary_verified": true
+  },
+  "actual_generated_code": {
+    "all_eight_library_rows_reviewed": true,
+    "complete_true_and_false_helper_functions_identical_across_exact_three_and_feature_row": true,
+    "false_configure_pad_body_and_false_matcher_body_equal_baseline": true,
+    "false_configure_forwarding_and_mismatch_semantics_preserved": true,
+    "l010_f8p6_entire_generated_file_has_only_approved_lsi_runtime_rtc_delta": true,
+    "l011_l012_f030_entire_generated_file_only_rtc_identity_boolean_added": true,
+    "generic_l010_lsi_capability_absent": true,
+    "rtc_native_hsi_constants_and_old_fixed_lsi_constants_preserved": true,
+    "old_l010_lse_hse_monitor_36080_preserved": true
+  },
+  "warnings": {
+    "distinct_warning_headers": [
+      "warning: constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+      "warning: constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+      "warning: constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+    ],
+    "new_distinct_warning_headers": [],
+    "same_warning_set_as_stage73": true,
+    "note": "Three existing unused RCC_LSE_SYSCLK constants recur in applicable native exact rows; this is not a warning-free build claim."
+  },
+  "elf_inspection": [
+    {
+      "row": "main-09-cw32l010f8p6-cw32-lsi-clock-example",
+      "artifact": "verification/main/main-09-cw32l010f8p6-cw32-lsi-clock-example-cw32-lsi-clock-example.elf",
+      "sha256": "95ff0ad48b59fecc81707be1be42fd8aa84edb2f1f74f73842c248baa6fed4af",
+      "entry": 193,
+      "stack": 536875008,
+      "text_bytes": 33808,
+      "load_segments_match_receipt": true,
+      "load_ranges_fit_selected_memory": true,
+      "vector_stack_and_reset_match": true
+    },
+    {
+      "row": "main-10-cw32l010f8u6-cw32-lsi-clock-example",
+      "artifact": "verification/main/main-10-cw32l010f8u6-cw32-lsi-clock-example-cw32-lsi-clock-example.elf",
+      "sha256": "55e2855cdeaae7f4d00b29981ebb30d18f32158f32b405935b1bad0d9ccfd874",
+      "entry": 193,
+      "stack": 536875008,
+      "text_bytes": 33808,
+      "load_segments_match_receipt": true,
+      "load_ranges_fit_selected_memory": true,
+      "vector_stack_and_reset_match": true
+    },
+    {
+      "row": "main-11-cw32l010y8m6-cw32-lsi-clock-example",
+      "artifact": "verification/main/main-11-cw32l010y8m6-cw32-lsi-clock-example-cw32-lsi-clock-example.elf",
+      "sha256": "020cf9f1727df5f2c63c137fdea5b83db8247b287c0be24f50689cd783c6c3eb",
+      "entry": 193,
+      "stack": 536875008,
+      "text_bytes": 33808,
+      "load_segments_match_receipt": true,
+      "load_ranges_fit_selected_memory": true,
+      "vector_stack_and_reset_match": true
+    },
+    {
+      "row": "main-12-cw32l010f8p6-crystal",
+      "artifact": "verification/main/main-12-cw32l010f8p6-crystal-crystal.elf",
+      "sha256": "8c789db2180bde16fe126fc507f686949e7666b4937c850165248e478956a058",
+      "entry": 193,
+      "stack": 536875008,
+      "text_bytes": 36208,
+      "load_segments_match_receipt": true,
+      "load_ranges_fit_selected_memory": true,
+      "vector_stack_and_reset_match": true
+    },
+    {
+      "row": "main-13-cw32l010f8p6-preserve_calendar",
+      "artifact": "verification/main/main-13-cw32l010f8p6-preserve_calendar-preserve_calendar.elf",
+      "sha256": "ec249ecfd225402ee79c7e0fa024fe2a814f202d7df8efaac92fa3b7cdac44b1",
+      "entry": 193,
+      "stack": 536875008,
+      "text_bytes": 35272,
+      "load_segments_match_receipt": true,
+      "load_ranges_fit_selected_memory": true,
+      "vector_stack_and_reset_match": true
+    },
+    {
+      "row": "main-14-cw32l011k8t6-crystal",
+      "artifact": "verification/main/main-14-cw32l011k8t6-crystal-crystal.elf",
+      "sha256": "23d0538719a440f462b017e7c7d9d71fb53efd1018300c7338432018d329715e",
+      "entry": 193,
+      "stack": 536877056,
+      "text_bytes": 19248,
+      "load_segments_match_receipt": true,
+      "load_ranges_fit_selected_memory": true,
+      "vector_stack_and_reset_match": true
+    },
+    {
+      "row": "main-15-cw32f030c8t7-preserve_calendar",
+      "artifact": "verification/main/main-15-cw32f030c8t7-preserve_calendar-preserve_calendar.elf",
+      "sha256": "bd16c25d5aa233ec0a8431b2d24475084480cdffd98c2d751ea3406d75c744ea",
+      "entry": 193,
+      "stack": 536879104,
+      "text_bytes": 21964,
+      "load_segments_match_receipt": true,
+      "load_ranges_fit_selected_memory": true,
+      "vector_stack_and_reset_match": true
+    }
+  ],
+  "execution": {
+    "source_edits": false,
+    "compilation_or_generation_by_reviewer": false,
+    "hal_tests": false,
+    "probes": false,
+    "register_models": false,
+    "hardware": false,
+    "existing_artifact_reads_and_static_comparisons": true
+  },
+  "pending": [
+    "Independent final-package clean generation plus the approved two-library/two-ELF subset and its final source binding."
+  ],
+  "limits": [
+    "Build/link and byte correspondence do not execute live clock handover, demonstrate ordinary POR success, prove analog continuity or watchdog survival, or qualify LSI cycle timing.",
+    "Metadata/source-evidence acceptance remains covered by the separate independent metadata review."
+  ]
+}

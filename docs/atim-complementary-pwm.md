@@ -20,6 +20,15 @@ limit; generated pin traits accept only qualified, bonded AF cells.
 
 ## Configuration and updates
 
+`ConfigError::UnqualifiedCycleTiming` rejects rate-only PCLK before frequency
+selection, strict dead-time selection or timer initialization, including a
+zero-nanosecond request. This includes exact-L010 live LSI. Rejection does not
+enable/reset ATIM, change BDTR/AF1, connect outputs or start the counter. Earlier
+`PwmPin`, `ComplementaryPwmPin` and `BreakInput` construction may already have
+used `Flex::new` to disconnect GPIO pads; the error consumes those wrappers and
+does not restore their prior state. The infallible `new` wrapper still panics
+when construction is rejected.
+
 Construction validates the requested frequency/dead time before touching ATIM.
 The existing timer initialization resets/stops the timer and clears CCER/MOE,
 selects forced-low main references, enables compare/ARR preloads, commits one

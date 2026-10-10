@@ -13,6 +13,9 @@ fn main() {
             | "CW32F020C6U7"
             | "CW32F030C8T7"
             | "CW32A030C8T7"
+            | "CW32L010F8P6"
+            | "CW32L010F8U6"
+            | "CW32L010Y8M6"
             | "CW32L031C8T6"
             | "CW32L031C8U6"
             | "CW32L031F8U6"
@@ -37,6 +40,14 @@ fn main() {
         "CW32F002F3P7" | "CW32F002F3U7" => Some((16 * 1024, 2 * 1024, false)),
         // Own F003 DS Rev1.9 PDF pages 5, 8, 27 and 62, including E4P7.
         "CW32F003F4P7" | "CW32F003F4U7" | "CW32F003E4P7" => Some((20 * 1024, 3 * 1024, false)),
+        // Own L010 DS CN V1.3 PDF pages 8 and 24-25.
+        "CW32L010F8P6" | "CW32L010F8U6" | "CW32L010Y8M6" => {
+            let rtc = metadata.peripherals.iter().find(|p| p.name == "RTC").unwrap();
+            let calendar = rtc.rtc_calendar.as_ref().unwrap();
+            assert_eq!(calendar.source, "HSIOSC");
+            assert_eq!(calendar.nominal_hz, 48_000_000);
+            Some((64 * 1024, 4 * 1024, true))
+        }
         // Own L031 DS Rev1.9 PDF pages 10, 32 and 77-78.
         "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" => {
             Some((64 * 1024, 8 * 1024, true))

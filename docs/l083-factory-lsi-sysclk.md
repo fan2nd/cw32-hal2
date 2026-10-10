@@ -2,7 +2,8 @@
 
 This contract covers init-only `Sysclk::LSI` on CW32L083RBT6, CW32L083RCT6,
 CW32L083RCS6, CW32L083MCT6 and CW32L083VCT6. Generic CW32L083 and native
-L010/L011/L012 gain no LSI SYSCLK capability. Leave `Config.pll=None` for this
+L011/L012 and generic L010 gain no LSI SYSCLK capability. The later
+[exact L010 live-only mode](l010-live-factory-lsi-sysclk.md) has its own contract. Leave `Config.pll=None` for this
 system source; inherited hardware PLL state is admitted independently.
 Existing HSI/HSE/PLL/LSE targets keep their separate contracts.
 

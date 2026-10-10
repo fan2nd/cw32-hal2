@@ -628,3 +628,38 @@ ten actual libraries, ten ELFs and independent implementation reviews passed.
 At main acceptance clean had not run; final-package completion requires a
 separate two-library/three-ELF clean receipt. None of
 these software obligations is a hardware timing, recovery, RF or sleep/wake claim.
+
+## Exact CW32L010 live factory-LSI SYSCLK
+
+CW32L010F8P6/F8U6/Y8M6 gain only init-time reuse of an already software-requested,
+stable, factory-matching LSI. Generic L010 and all L011/L012 remain excluded;
+ordinary POR, stopped startup and automatic-only requests are not admitted.
+The [live-only contract](../docs/l010-live-factory-lsi-sysclk.md) and its
+[source qualification record](../docs/l010-live-factory-lsi-qualification.json)
+bind the own RM CN1.2, DS CN1.3 and SDK1.0.9 inputs already retained in the
+existing source lock. No vendor bytes or historical source hashes are changed.
+
+Own RM PDF54/printed53 forbids changes to running LSI parameters; PDF56/55
+and 72/71 bind the factory halfword and ten-bit TRIM, while PDF69/68 distinguishes
+automatic requests from software LSIEN. Own DS CN1.3 supplies the exact memory,
+package and factory-rate envelope. RM PDF89/printed88 binds IRQ4, named RCC by
+the RM; the separately cited device header and native SVD name it SYSCTRL.
+Manual page numbers belong to the RM, not to the header member. F8P6/F8U6 keep
+their DFP corroboration; Y8M6 remains DS-only without an invented DFP device.
+
+The selected native SVD explicitly records SYSCTRL.AHBEN.KEY as read-write;
+own RM PDF79/printed78 gives WO and the 0x5a5a write-key semantics. The policy
+preserves that raw-SVD access fact separately from the operational RM rule.
+APBEN1.KEY and APBEN2.KEY remain write-only in the selected SVD. The corrected
+source checker uses exact per-register access expectations without weakening
+field, gate, source-member or historical qualification equality.
+
+Independent main runtime and source/metadata reviews accepted the frozen
+implementation. Main verification passed eight actual libraries and seven
+ELF links. Six finite source/data/layout gates passed in separate receipts,
+including the corrected L010 source gate and all 43 locked hardware originals;
+the aggregate future recipe was not executed. Three existing unused LSE-constant
+warnings remain in L010/L011 main rows. At main acceptance clean had not run;
+final-package completion requires a separate final-source two-library/two-ELF
+clean receipt. No hardware, watchdog-survival or oscillator-continuity result
+follows from these software receipts.

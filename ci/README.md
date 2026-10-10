@@ -276,3 +276,35 @@ CR0 or FLASH write. See [the L012 contract](../docs/l012-lse-sysclk.md).
 Stage62's 22-library/42-binary count remains historical; the current local
 script plans 24 ordinary libraries and 46 SYSCLK binaries. Each executed subset
 and its actual ELF inspection must be recorded independently.
+
+## Exact L010 live factory-LSI acceptance
+
+Finite main verification passed all fifteen commands with exit zero: eight actual
+library builds and seven linked ELFs, with all 1,305 source files unchanged. Six
+finite source/data/layout gates passed in separate receipts; independent runtime
+and metadata reviews accept the frozen main implementation. The logs retain three
+existing unused LSE-constant warnings in L010/L011 rows, as listed in
+[the live-only contract](../docs/l010-live-factory-lsi-sysclk.md). At main acceptance
+clean had not run; final-package completion requires a separate final-source
+two-library/two-ELF clean receipt. Exact features, binaries and rows are in that
+contract. Historical `cargo check` results do not replace these builds. Record
+statuses, warnings, source hashes, fresh outputs and actual ELF memory bounds
+separately for main and final-package clean. Compilation does not execute live
+handover or establish hardware behavior.
+
+The future `check-lsi-clock.sh` extension adds eight library builds and six ELF
+rows, reusing the existing F030 preserved-calendar ELF. Aggregate totals become
+44 library commands (39 builds and five historical checks) and 53 ELF links.
+These describe the script, not the accepted finite 8-library/7-ELF receipt. Do not run
+the aggregate recipe to satisfy the finite scope. The clean ceiling is 2/2.
+
+Separate full-54 source/metadata review accepts exactly three new L010 LSI
+records; preserved native RTC and old fixed-LSI facts/strictness; historical
+LSE proofs and the inherited-legal 36,080 Hz L010 monitor; exact source/native
+field/package/member bindings; and actual generated-output differences. The
+six finite gates comprise own L010/L011/L012 source verification, current data
+validation, all 43 locked hardware originals and module layout. The L010 gate
+passed after its reviewed checker correction; split receipts retain that
+history. Deterministic final source-only packaging remains a separate completion
+obligation. No aggregate recipe, HAL tests, probes, register models, hosted CI
+or hardware work was executed to establish this finite acceptance.

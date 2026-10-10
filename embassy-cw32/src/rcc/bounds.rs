@@ -8,12 +8,14 @@
 //! endpoints and conditions. Neither source accuracy is inferred from the other.
 //! F020/F030/A030, CW32F002F3P7/F3U7, CW32F003F4P7/F4U7/E4P7 and exactly
 //! CW32L031C8T6/C8U6/F8U6, CW32R031C8U6, CW32W031R8U6 and
-//! CW32L052C8T6/R8S6/R8T6 and CW32L083RBT6/RCT6/RCS6/MCT6/VCT6 have
+//! CW32L052C8T6/R8S6/R8T6, CW32L083RBT6/RCT6/RCS6/MCT6/VCT6 and
+//! CW32L010F8P6/F8U6/Y8M6 have
 //! factory-LSI rate envelopes under their own source
 //! conditions, without strict cycle-duration bounds. Their RTC LSI aliases,
 //! where present, remain rate-only under every SYSCLK. Generic
-//! F002/F003/L031/R031/W031/L052/L083 aliases and other unlisted packages
-//! gain no factory-LSI SYSCLK qualification.
+//! F002/F003/L010/L031/R031/W031/L052/L083 aliases and other unlisted packages
+//! gain no factory-LSI SYSCLK qualification. Exact L010 admits only an already
+//! live factory-matching LSI; its independent raw-HSI RTC remains cycle-qualified.
 use crate::time::Hertz;
 
 /// Qualified ambient-temperature interval for the factory HSI error bound.
@@ -22,18 +24,34 @@ pub const HSI_BOUND_TEMPERATURE_C: (i16, i16) = crate::RCC_HSI_TEMPERATURE_RANGE
 pub const HSI_BOUND_SUPPLY_MV: (u16, u16) = crate::RCC_HSI_SUPPLY_RANGE_MV;
 const HSI_ERROR_PERCENT: u32 = crate::RCC_HSI_ERROR_PERCENT;
 
-// The RTC and SYSCLK capabilities describe the same factory-qualified LSI.
-// Keep their independently generated source facts identical on these families.
-#[cfg(all(rtc, rcc_lsi_sysclk))]
+// RTC identity comes from its own semantic source, independently of SYSCLK.
+// Compare independently generated facts only when they describe the same root.
+#[cfg(rtc)]
 const _: () = {
     use crate::{peripherals::RTC, rtc::sealed::Instance};
-    assert!(RTC::SOURCE_NOMINAL_HZ == crate::RCC_LSI_NOMINAL_HZ);
-    assert!(RTC::SOURCE_MINIMUM_HZ == crate::RCC_LSI_MINIMUM_HZ);
-    assert!(RTC::SOURCE_MAXIMUM_HZ == crate::RCC_LSI_MAXIMUM_HZ);
-    assert!(RTC::TEMPERATURE_C.0 == crate::RCC_LSI_TEMPERATURE_C.0);
-    assert!(RTC::TEMPERATURE_C.1 == crate::RCC_LSI_TEMPERATURE_C.1);
-    assert!(RTC::SUPPLY_MV.0 == crate::RCC_LSI_SUPPLY_MV.0);
-    assert!(RTC::SUPPLY_MV.1 == crate::RCC_LSI_SUPPLY_MV.1);
+    if RTC::SOURCE_IS_LSI {
+        assert!(RTC::SOURCE == 2);
+        #[cfg(rcc_lsi_sysclk)]
+        {
+            assert!(RTC::SOURCE_NOMINAL_HZ == crate::RCC_LSI_NOMINAL_HZ);
+            assert!(RTC::SOURCE_MINIMUM_HZ == crate::RCC_LSI_MINIMUM_HZ);
+            assert!(RTC::SOURCE_MAXIMUM_HZ == crate::RCC_LSI_MAXIMUM_HZ);
+            assert!(RTC::TEMPERATURE_C.0 == crate::RCC_LSI_TEMPERATURE_C.0);
+            assert!(RTC::TEMPERATURE_C.1 == crate::RCC_LSI_TEMPERATURE_C.1);
+            assert!(RTC::SUPPLY_MV.0 == crate::RCC_LSI_SUPPLY_MV.0);
+            assert!(RTC::SUPPLY_MV.1 == crate::RCC_LSI_SUPPLY_MV.1);
+        }
+    } else {
+        let hsi = ClockBounds::hsi(1);
+        assert!(RTC::SOURCE == 3);
+        assert!(RTC::SOURCE_NOMINAL_HZ == hsi.nominal_source);
+        assert!(RTC::SOURCE_MINIMUM_HZ == hsi.minimum_source);
+        assert!(RTC::SOURCE_MAXIMUM_HZ == hsi.maximum_source);
+        assert!(RTC::TEMPERATURE_C.0 == hsi.temperature_c.0);
+        assert!(RTC::TEMPERATURE_C.1 == hsi.temperature_c.1);
+        assert!(RTC::SUPPLY_MV.0 == hsi.supply_mv.0);
+        assert!(RTC::SUPPLY_MV.1 == hsi.supply_mv.1);
+    }
 };
 
 /// Exact source envelope propagated through integer hardware divisors.
@@ -126,23 +144,16 @@ impl ClockBounds {
     }
     #[cfg(rtc)]
     pub(crate) const fn rtc_source() -> Self {
-        #[cfg(rcc_lsi_sysclk)]
-        {
-            Self::lsi()
-        }
-        #[cfg(not(rcc_lsi_sysclk))]
-        {
-            use crate::{peripherals::RTC, rtc::sealed::Instance};
-            Self {
-                nominal_source: RTC::SOURCE_NOMINAL_HZ,
-                minimum_source: RTC::SOURCE_MINIMUM_HZ,
-                maximum_source: RTC::SOURCE_MAXIMUM_HZ,
-                divisor: 1,
-                #[cfg(any(rcc_pll, rcc_lsi_sysclk))]
-                rate_only: false,
-                temperature_c: RTC::TEMPERATURE_C,
-                supply_mv: RTC::SUPPLY_MV,
-            }
+        use crate::{peripherals::RTC, rtc::sealed::Instance};
+        Self {
+            nominal_source: RTC::SOURCE_NOMINAL_HZ,
+            minimum_source: RTC::SOURCE_MINIMUM_HZ,
+            maximum_source: RTC::SOURCE_MAXIMUM_HZ,
+            divisor: 1,
+            #[cfg(any(rcc_pll, rcc_lsi_sysclk))]
+            rate_only: RTC::SOURCE_IS_LSI && cfg!(rcc_lsi_sysclk),
+            temperature_c: RTC::TEMPERATURE_C,
+            supply_mv: RTC::SUPPLY_MV,
         }
     }
     /// Exact integer divisor needed to produce a requested nominal clock.

@@ -50,6 +50,20 @@ never disabled. No ADC reset is asserted. Reconfiguration, timeout and drop
 retain this policy. Source startup's documented approximate BGR value still
 requires board/silicon qualification for analog accuracy.
 
+Native ADC timing requires cycle-qualified PCLK. `Error::UnqualifiedCycleTiming`
+rejects rate-only sources, including exact-L010 live LSI, after existing limits
+and uninitialized-clock validation but before acquisition/rate selection or the
+constructor's first gate, ADC/BGR, trigger/watchdog or IRQ change. L010's minimum
+ADC clock is zero; that numeric minimum cannot replace this semantic check.
+Blocking/async fallible constructors, scan timing and the existing BTIM1-triggered
+constructor share this boundary. Infallible wrappers panic on the error.
+Caller-created timer owners or analog channel pins may already have changed
+hardware, and consumed tokens or earlier preparation are not restored. A rejected
+`Btim1Adc::try_new` also drops the supplied `Btim1Update`, running its existing
+BTIM1 stop, request-disable and gate-release cleanup; the admission guard precedes
+ADC setup. Manually constructed public timing values retain their strict-helper
+preconditions.
+
 The constructor validates its initial 390-cycle acquisition before acquiring the
 clock. The default nominal 4 MHz L011 clock does not satisfy its actual 4 MHz
 lower ADC bound after HSI tolerance; an appropriate clock configuration is still

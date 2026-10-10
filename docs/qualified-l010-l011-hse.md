@@ -9,6 +9,12 @@ initializes and reserves it when the selected system source remains HSI.
 No PLL or runtime clock-reconfiguration path is introduced. CW32L012 remains
 a separate qualification and backend.
 
+The later [exact L010 live-only LSI target](l010-live-factory-lsi-sysclk.md)
+uses its own live-LSI guards and a target-only single-GPIOA HSE inspection
+window. Existing HSI/HSE/LSE targets retain their original helper behavior,
+ownership, electrical limits and error mapping. The addition creates no native
+LSI RTC source or HSE source migration.
+
 ## Sources and scope
 
 This qualification follows each family's own documentation:

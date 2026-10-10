@@ -2,7 +2,7 @@ schema_version: 1
 source_authority: sources/evidence-sources.json
 scope: Init-only factory LSI SYSCLK for F020/F030/A030, F002 exact2, F003 exact3 L031 exact3 and R031 exact1. Rate-only qualification. Whole GPIO bank inspection
   can advance sampling, filters and armed events, including before failure. No runtime source switch or LSE
-  SYSCLK.
+  SYSCLK. Exact CW32L010F8P6/F8U6/Y8M6 additionally admit live factory reuse only; ordinary POR, generic L010, L011 and L012 are excluded.
 families:
   CW32F020:
     lsi_sysclk:
@@ -19607,3 +19607,3622 @@ families:
             value: 2
           - name: LSI
             value: 3
+
+  CW32L010:
+    exact_parts:
+    - name: CW32L010F8P6
+      package: TSSOP20
+    - name: CW32L010F8U6
+      package: QFN20
+    - name: CW32L010Y8M6
+      package: SOP16
+    sysctrl_version: cw32l010_v1
+    lsi_sysclk:
+      nominal_hz: 32800
+      minimum_hz: 31816
+      maximum_hz: 33784
+      supply_mv:
+      - 1620
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      factory_trim_address: 1050562
+      rtc_allowed_sources:
+      - 0
+      - 1
+      - 2
+      - 3
+      awt_allowed_sources:
+      - 0
+      - 1
+      uart_allowed_sources:
+      - 0
+      - 1
+      - 2
+      - 3
+      uarts:
+      - UART1
+      - UART2
+      gpio_banks:
+      - GPIOA
+      - GPIOB
+      gpio_filter_allowed_sources:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 5
+      - 7
+      mco_allowed_sources:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      lsi_output_pin: null
+      lsi_output_allowed_af: []
+      rcc_irq: 4
+    admission: live_factory_reuse_only
+    watchdog_source: lsi
+    trim_write: forbidden
+    waitcycle_preserved: true
+    factory_read_width_bits: 16
+    factory_erased_raw_halfword: 65535
+    factory_zero_is_erased: false
+    software_lsien_required: true
+    entry_stable_required: true
+    factory_trim_match_required: true
+    ordinary_por_supported: false
+    cycle_timing_qualified: false
+    config_lse_on_lsi_target: refuse_some
+    gpio_inspection: whole_bank_functional_handover
+    inspection_scope: existing_owner_windows_only
+    selector_inventory_semantics: documented_encodings_preserved_by_live_reuse
+    awt_register: RTC.CR2.AWTSRC
+    sources:
+    - evidence_kind: external-evidence
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      sha256: b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa
+      text_sha256: bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938
+      pdf_pages_1_based:
+      - 29
+      - 34
+      - 52
+      - 53
+      - 54
+      - 56
+      - 57
+      - 58
+      - 59
+      - 63
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 83
+      - 84
+      - 87
+      - 89
+      - 104
+      - 114
+      - 123
+      - 124
+      - 130
+      - 139
+      - 140
+      - 151
+      - 152
+      - 153
+      - 154
+      - 165
+      - 166
+      - 167
+      - 168
+      - 169
+      - 170
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 182
+      - 200
+      - 201
+      - 202
+      - 234
+      - 281
+      - 311
+      - 377
+      - 378
+      - 381
+      - 382
+      - 383
+      - 384
+      - 385
+      - 386
+      - 387
+      - 388
+      - 389
+      - 420
+      - 421
+      - 502
+      - 511
+      - 516
+      - 517
+      - 518
+      - 521
+      - 529
+      - 530
+      - 531
+      - 533
+      - 534
+      - 535
+      - 537
+      - 538
+      - 541
+      - 542
+      - 543
+      - 544
+      - 545
+      - 546
+      - 547
+      printed_pages:
+      - 28
+      - 33
+      - 51
+      - 52
+      - 53
+      - 55
+      - 56
+      - 57
+      - 58
+      - 62
+      - 66
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 73
+      - 74
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 83
+      - 86
+      - 88
+      - 103
+      - 113
+      - 122
+      - 123
+      - 129
+      - 138
+      - 139
+      - 150
+      - 151
+      - 152
+      - 153
+      - 164
+      - 165
+      - 166
+      - 167
+      - 168
+      - 169
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 181
+      - 199
+      - 200
+      - 201
+      - 233
+      - 280
+      - 310
+      - 376
+      - 377
+      - 380
+      - 381
+      - 382
+      - 383
+      - 384
+      - 385
+      - 386
+      - 387
+      - 388
+      - 419
+      - 420
+      - 501
+      - 510
+      - 515
+      - 516
+      - 517
+      - 520
+      - 528
+      - 529
+      - 530
+      - 532
+      - 533
+      - 534
+      - 536
+      - 537
+      - 540
+      - 541
+      - 542
+      - 543
+      - 544
+      - 545
+      - 546
+    - evidence_kind: external-evidence
+      source_ref: vendor:CW32L010_DataSheet_CN_V1.3.pdf
+      sha256: 6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86
+      text_sha256: ba32a6838b5375c7a4d0225d9aeed6ebcad964e5668080ee87c8ddac1036595f
+      pdf_pages_1_based:
+      - 8
+      - 13
+      - 24
+      - 25
+      - 32
+      - 43
+      printed_pages:
+      - 7
+      - 12
+      - 23
+      - 24
+      - 31
+      - 42
+    sdk_source:
+      source_ref: vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip
+      sha256: 84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716
+      generator_svd_path: cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP.1.0.2/WHXY.CW32L010_DFP/SVD/CW32L010.svd
+      generator_header_path: cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h
+    sdk_members:
+    - source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP.1.0.2/WHXY.CW32L010_DFP/SVD/CW32L010.svd
+      sha256: 733cc8ff3e186a128342134aee71db1d155e5e2b95ab1c8c8a77054391cb8c66
+      bytes: 349237
+      member_chain:
+      - CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP/SVD/CW32L010.svd
+    - source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP/WHXY.CW32L010_DFP.pdsc
+      sha256: 3d4adb6e098dfa9190a85bf5c05a2adcc7599435b19ef16f1a1ebf29c6c3cf3d
+      bytes: 2666
+      member_chain:
+      - CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP/WHXY.CW32L010_DFP.pdsc
+    - source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h
+      sha256: 28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b
+      bytes: 540100
+      member_chain:
+      - CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h
+    - source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h
+      sha256: 1ec5958352e78cfdb050b4e648373ed25f2befc01d6724602b0e69c4d098969e
+      bytes: 28798
+      member_chain:
+      - CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h
+    - source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_iwdt.h
+      sha256: 17cbdad76c6d9490b058dc1fa56b3771d9a3dd4eba1ac8a9ea2595ccd7b831db
+      bytes: 7156
+      member_chain:
+      - CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_iwdt.h
+    - source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h
+      sha256: 81d6c37b3920465595b702bdf102e5710c22490efa422207e5148852d719e91f
+      bytes: 35109
+      member_chain:
+      - CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_sysctrl.h
+    - source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_iwdt.c
+      sha256: 8ae8e5bd5c654316200dda8d613783cc5e98f37f0376aaa750b18d27a860ea35
+      bytes: 6541
+      member_chain:
+      - CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_iwdt.c
+    - source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_sysctrl.c
+      sha256: 5b90bab195a6308aab9194451c862553cb14d11b23ef3d128d05e443ffc6ad92
+      bytes: 24957
+      member_chain:
+      - CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_sysctrl.c
+    peripheral_inventory:
+    - ADC
+    - ATIM
+    - BTIM1
+    - BTIM2
+    - BTIM3
+    - CRC
+    - FLASH
+    - GPIOA
+    - GPIOB
+    - GTIM1
+    - I2C1
+    - IRMOD
+    - IWDT
+    - LPTIM
+    - LVD
+    - RAM
+    - RTC
+    - SPI
+    - SYSCTRL
+    - UART1
+    - UART2
+    - VC1
+    - VC2
+    - VCDIV
+    native_peripherals:
+      ADC:
+        address: 1073741824
+        kind: adc
+        version: cw32l010_v1
+        block: ADC
+      ATIM:
+        address: 1073746944
+        kind: atim
+        version: cw32l010_v1
+        block: ATIM
+      BTIM1:
+        address: 1073760256
+        kind: btim
+        version: cw32l010_v1
+        block: BTIM
+      BTIM2:
+        address: 1073760320
+        kind: btim
+        version: cw32l010_v1
+        block: BTIM
+      BTIM3:
+        address: 1073760384
+        kind: btim
+        version: cw32l010_v1
+        block: BTIM
+      CRC:
+        address: 1073885184
+        kind: crc
+        version: cw32l010_v1
+        block: CRC
+      FLASH:
+        address: 1073881088
+        kind: flash
+        version: cw32l010_v1
+        block: FLASH
+      GPIOA:
+        address: 1207959552
+        kind: gpio
+        version: cw32l010_v1
+        block: GPIO
+      GPIOB:
+        address: 1207959808
+        kind: gpiob
+        version: cw32l010_v1
+        block: GPIOB
+      GTIM1:
+        address: 1073747968
+        kind: gtim
+        version: cw32l010_v1
+        block: GTIM
+      I2C1:
+        address: 1073764352
+        kind: i2c
+        version: cw32l010_v1
+        block: I2C
+      IRMOD:
+        address: 1073758336
+        kind: irmod
+        version: cw32l010_v1
+        block: IRMOD
+      IWDT:
+        address: 1073762304
+        kind: iwdt
+        version: v1
+        block: IWDT
+      LPTIM:
+        address: 1073766400
+        kind: lptim
+        version: cw32l010_v1
+        block: LPTIM
+      LVD:
+        address: 1073742032
+        kind: lvd
+        version: cw32l010_v1
+        block: LVD
+      RAM:
+        address: 1073882112
+        kind: ram
+        version: cw32l010_v1
+        block: RAM
+      RTC:
+        address: 1073759232
+        kind: rtc
+        version: cw32l010_v1
+        block: RTC
+      SPI:
+        address: 1073743872
+        kind: spi
+        version: cw32l010_v1
+        block: SPI
+      SYSCTRL:
+        address: 1073758208
+        kind: sysctrl
+        version: cw32l010_v1
+        block: SYSCTRL
+      UART1:
+        address: 1073744896
+        kind: uart
+        version: cw32l010_v1
+        block: UART
+      UART2:
+        address: 1073745920
+        kind: uart
+        version: cw32l010_v1
+        block: UART
+      VC1:
+        address: 1073741988
+        kind: vc
+        version: cw32l010_v1
+        block: VC
+      VC2:
+        address: 1073742004
+        kind: vc
+        version: cw32l010_v1
+        block: VC
+      VCDIV:
+        address: 1073741984
+        kind: vcdiv
+        version: cw32l010_v1
+        block: VCDIV
+    native_controls_source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP.1.0.2/WHXY.CW32L010_DFP/SVD/CW32L010.svd
+    native_controls:
+    - peripheral: ADC
+      register: CR
+      byte_offset: 0
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: EN
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: BGREN
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: TSEN
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: CONT
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: CLK
+        bit_offset: 4
+        bit_size: 2
+        source_access: read-write
+      - field: ENS
+        bit_offset: 6
+        bit_size: 3
+        source_access: read-write
+    - peripheral: ADC
+      register: START
+      byte_offset: 8
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: START
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+    - peripheral: ADC
+      register: TRIGGER
+      byte_offset: 24
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: ATIMTRGO
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: ATIMTRGO2
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: ATIMCC1
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: ATIMCC2
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: ATIMCC3
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: ATIMCC4
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: ATIMCC5
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: ATIMCC6
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: GTIM1TRGO
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: GTIM1CC1
+        bit_offset: 9
+        bit_size: 1
+        source_access: read-write
+      - field: GTIM1CC2
+        bit_offset: 10
+        bit_size: 1
+        source_access: read-write
+      - field: GTIM1CC3
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: GTIM1CC4
+        bit_offset: 12
+        bit_size: 1
+        source_access: read-write
+      - field: BTIM1TRGO
+        bit_offset: 13
+        bit_size: 1
+        source_access: read-write
+      - field: BTIM2TRGO
+        bit_offset: 14
+        bit_size: 1
+        source_access: read-write
+      - field: BTIM3TRGO
+        bit_offset: 15
+        bit_size: 1
+        source_access: read-write
+      - field: SPI1
+        bit_offset: 16
+        bit_size: 1
+        source_access: read-write
+      - field: UART1
+        bit_offset: 17
+        bit_size: 1
+        source_access: read-write
+      - field: UART2
+        bit_offset: 18
+        bit_size: 1
+        source_access: read-write
+    - peripheral: ATIM
+      register: CR2
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: CCPC
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: CCUS
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+      - field: TI1S
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: OIS1
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: OIS1N
+        bit_offset: 9
+        bit_size: 1
+        source_access: read-write
+      - field: OIS2
+        bit_offset: 10
+        bit_size: 1
+        source_access: read-write
+      - field: OIS2N
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: OIS3
+        bit_offset: 12
+        bit_size: 1
+        source_access: read-write
+      - field: OIS3N
+        bit_offset: 13
+        bit_size: 1
+        source_access: read-write
+      - field: OIS4
+        bit_offset: 14
+        bit_size: 1
+        source_access: read-write
+      - field: OIS4N
+        bit_offset: 15
+        bit_size: 1
+        source_access: read-write
+      - field: OIS5
+        bit_offset: 16
+        bit_size: 1
+        source_access: read-write
+      - field: OIS5N
+        bit_offset: 17
+        bit_size: 1
+        source_access: read-write
+      - field: OIS6
+        bit_offset: 18
+        bit_size: 1
+        source_access: read-write
+      - field: OIS6N
+        bit_offset: 19
+        bit_size: 1
+        source_access: read-write
+      - field: MMS2
+        bit_offset: 20
+        bit_size: 5
+        source_access: read-write
+      - field: MMSH
+        bit_offset: 25
+        bit_size: 2
+        source_access: read-write
+    - peripheral: ATIM
+      register: SMCR
+      byte_offset: 8
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: OCCS
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: TS
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+      - field: MSM
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: ETF
+        bit_offset: 8
+        bit_size: 4
+        source_access: read-write
+      - field: ETPS
+        bit_offset: 12
+        bit_size: 2
+        source_access: read-write
+      - field: ECE
+        bit_offset: 14
+        bit_size: 1
+        source_access: read-write
+      - field: ETP
+        bit_offset: 15
+        bit_size: 1
+        source_access: read-write
+      - field: SMSH
+        bit_offset: 16
+        bit_size: 1
+        source_access: read-write
+      - field: TSH
+        bit_offset: 20
+        bit_size: 2
+        source_access: read-write
+      - field: SMSPE
+        bit_offset: 24
+        bit_size: 1
+        source_access: read-write
+      - field: SMSPS
+        bit_offset: 25
+        bit_size: 1
+        source_access: read-write
+    - peripheral: ATIM
+      register: TISEL1
+      byte_offset: 92
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: TI1SEL
+        bit_offset: 0
+        bit_size: 4
+        source_access: read-write
+      - field: TI2SEL
+        bit_offset: 8
+        bit_size: 4
+        source_access: read-write
+      - field: TI3SEL
+        bit_offset: 16
+        bit_size: 4
+        source_access: read-write
+      - field: TI4SEL
+        bit_offset: 24
+        bit_size: 4
+        source_access: read-write
+    - peripheral: ATIM
+      register: AF1
+      byte_offset: 96
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: BKINE
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: BKVC1E
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: BKVC2E
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: BKINP
+        bit_offset: 9
+        bit_size: 1
+        source_access: read-write
+      - field: BKVC1P
+        bit_offset: 10
+        bit_size: 1
+        source_access: read-write
+      - field: BKVC2P
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: ETRSEL
+        bit_offset: 14
+        bit_size: 4
+        source_access: read-write
+    - peripheral: ATIM
+      register: AF2
+      byte_offset: 100
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: BK2INE
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: BK2VC1E
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: BK2VC2E
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: BK2INP
+        bit_offset: 9
+        bit_size: 1
+        source_access: read-write
+      - field: BK2VC1P
+        bit_offset: 10
+        bit_size: 1
+        source_access: read-write
+      - field: BK2VC2P
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: OCRSEL
+        bit_offset: 16
+        bit_size: 3
+        source_access: read-write
+    - peripheral: ATIM
+      register: TISEL2
+      byte_offset: 108
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: TI5SEL
+        bit_offset: 0
+        bit_size: 4
+        source_access: read-write
+      - field: TI6SEL
+        bit_offset: 8
+        bit_size: 4
+        source_access: read-write
+    - peripheral: BTIM1
+      register: CR2
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+    - peripheral: BTIM1
+      register: SMCR
+      byte_offset: 8
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: RSTISRC
+        bit_offset: 3
+        bit_size: 4
+        source_access: read-write
+      - field: TRGISRC
+        bit_offset: 7
+        bit_size: 4
+        source_access: read-write
+      - field: MSM
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: TRGIFLT
+        bit_offset: 12
+        bit_size: 3
+        source_access: read-write
+      - field: RSTIPOL
+        bit_offset: 16
+        bit_size: 1
+        source_access: read-write
+      - field: TRGIPOL
+        bit_offset: 17
+        bit_size: 1
+        source_access: read-write
+    - peripheral: BTIM2
+      register: CR2
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+    - peripheral: BTIM2
+      register: SMCR
+      byte_offset: 8
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: RSTISRC
+        bit_offset: 3
+        bit_size: 4
+        source_access: read-write
+      - field: TRGISRC
+        bit_offset: 7
+        bit_size: 4
+        source_access: read-write
+      - field: MSM
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: TRGIFLT
+        bit_offset: 12
+        bit_size: 3
+        source_access: read-write
+      - field: RSTIPOL
+        bit_offset: 16
+        bit_size: 1
+        source_access: read-write
+      - field: TRGIPOL
+        bit_offset: 17
+        bit_size: 1
+        source_access: read-write
+    - peripheral: BTIM3
+      register: CR2
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+    - peripheral: BTIM3
+      register: SMCR
+      byte_offset: 8
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: RSTISRC
+        bit_offset: 3
+        bit_size: 4
+        source_access: read-write
+      - field: TRGISRC
+        bit_offset: 7
+        bit_size: 4
+        source_access: read-write
+      - field: MSM
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: TRGIFLT
+        bit_offset: 12
+        bit_size: 3
+        source_access: read-write
+      - field: RSTIPOL
+        bit_offset: 16
+        bit_size: 1
+        source_access: read-write
+      - field: TRGIPOL
+        bit_offset: 17
+        bit_size: 1
+        source_access: read-write
+    - peripheral: FLASH
+      register: CR2
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: WAIT
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        source_access: write-only
+    - peripheral: GPIOA
+      register: DIR
+      byte_offset: 0
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+    - peripheral: GPIOA
+      register: AFRH
+      byte_offset: 20
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: AFR8
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+    - peripheral: GPIOA
+      register: AFRL
+      byte_offset: 24
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: AFR0
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: AFR1
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+      - field: AFR2
+        bit_offset: 8
+        bit_size: 3
+        source_access: read-write
+      - field: AFR3
+        bit_offset: 12
+        bit_size: 3
+        source_access: read-write
+      - field: AFR4
+        bit_offset: 16
+        bit_size: 3
+        source_access: read-write
+      - field: AFR5
+        bit_offset: 20
+        bit_size: 3
+        source_access: read-write
+      - field: AFR6
+        bit_offset: 24
+        bit_size: 3
+        source_access: read-write
+      - field: AFR7
+        bit_offset: 28
+        bit_size: 3
+        source_access: read-write
+    - peripheral: GPIOA
+      register: ANALOG
+      byte_offset: 28
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+    - peripheral: GPIOA
+      register: FILTER
+      byte_offset: 64
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 16
+        bit_size: 3
+        source_access: read-write
+    - peripheral: GPIOB
+      register: DIR
+      byte_offset: 0
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+    - peripheral: GPIOB
+      register: AFRL
+      byte_offset: 24
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: AFR0
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: AFR1
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+      - field: AFR2
+        bit_offset: 8
+        bit_size: 3
+        source_access: read-write
+      - field: AFR3
+        bit_offset: 12
+        bit_size: 3
+        source_access: read-write
+      - field: AFR4
+        bit_offset: 16
+        bit_size: 3
+        source_access: read-write
+      - field: AFR5
+        bit_offset: 20
+        bit_size: 3
+        source_access: read-write
+      - field: AFR6
+        bit_offset: 24
+        bit_size: 3
+        source_access: read-write
+      - field: AFR7
+        bit_offset: 28
+        bit_size: 3
+        source_access: read-write
+    - peripheral: GPIOB
+      register: ANALOG
+      byte_offset: 28
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+    - peripheral: GPIOB
+      register: FILTER
+      byte_offset: 64
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 16
+        bit_size: 3
+        source_access: read-write
+    - peripheral: GTIM1
+      register: CR2
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+      - field: TI1S
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: MMSH
+        bit_offset: 25
+        bit_size: 2
+        source_access: read-write
+    - peripheral: GTIM1
+      register: SMCR
+      byte_offset: 8
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: OCCS
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: TS
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+      - field: MSM
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: ETF
+        bit_offset: 8
+        bit_size: 4
+        source_access: read-write
+      - field: ETPS
+        bit_offset: 12
+        bit_size: 2
+        source_access: read-write
+      - field: ECE
+        bit_offset: 14
+        bit_size: 1
+        source_access: read-write
+      - field: ETP
+        bit_offset: 15
+        bit_size: 1
+        source_access: read-write
+      - field: SMSH
+        bit_offset: 16
+        bit_size: 1
+        source_access: read-write
+      - field: TSH
+        bit_offset: 20
+        bit_size: 2
+        source_access: read-write
+      - field: SMSPE
+        bit_offset: 24
+        bit_size: 1
+        source_access: read-write
+      - field: SMSPS
+        bit_offset: 25
+        bit_size: 1
+        source_access: read-write
+    - peripheral: GTIM1
+      register: TISEL
+      byte_offset: 92
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: TI1SEL
+        bit_offset: 0
+        bit_size: 4
+        source_access: read-write
+      - field: TI2SEL
+        bit_offset: 8
+        bit_size: 4
+        source_access: read-write
+      - field: TI3SEL
+        bit_offset: 16
+        bit_size: 4
+        source_access: read-write
+      - field: TI4SEL
+        bit_offset: 24
+        bit_size: 4
+        source_access: read-write
+    - peripheral: GTIM1
+      register: AF1
+      byte_offset: 96
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: ETRSEL
+        bit_offset: 14
+        bit_size: 4
+        source_access: read-write
+    - peripheral: GTIM1
+      register: AF2
+      byte_offset: 100
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: OCRSEL
+        bit_offset: 16
+        bit_size: 3
+        source_access: read-write
+    - peripheral: IWDT
+      register: KR
+      byte_offset: 0
+      bit_size: 32
+      access: Write
+      fields:
+      - field: KR
+        bit_offset: 0
+        bit_size: 16
+        source_access: write-only
+    - peripheral: IWDT
+      register: CR
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: PRS
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: ACTION
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: IE
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: PAUSE
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+    - peripheral: IWDT
+      register: ARR
+      byte_offset: 8
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: ARR
+        bit_offset: 0
+        bit_size: 12
+        source_access: read-write
+    - peripheral: IWDT
+      register: SR
+      byte_offset: 12
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: CRF
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-only
+      - field: ARRF
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-only
+      - field: WINRF
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-only
+      - field: OV
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: RUN
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-only
+      - field: RELOAD
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-only
+    - peripheral: IWDT
+      register: WINR
+      byte_offset: 16
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: WINR
+        bit_offset: 0
+        bit_size: 12
+        source_access: read-write
+    - peripheral: IWDT
+      register: CNT
+      byte_offset: 36
+      bit_size: 32
+      access: Read
+      fields:
+      - field: CNT
+        bit_offset: 0
+        bit_size: 12
+        source_access: read-only
+    - peripheral: LPTIM
+      register: CFGR
+      byte_offset: 12
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: CKSEL
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: ENCMD_CKPOL
+        bit_offset: 1
+        bit_size: 2
+        source_access: read-write
+      - field: CHFLT
+        bit_offset: 3
+        bit_size: 2
+        source_access: read-write
+      - field: TRIGFLT
+        bit_offset: 6
+        bit_size: 2
+        source_access: read-write
+      - field: PRS
+        bit_offset: 9
+        bit_size: 3
+        source_access: read-write
+      - field: TRIGSEL
+        bit_offset: 13
+        bit_size: 3
+        source_access: read-write
+      - field: TRIGEN
+        bit_offset: 17
+        bit_size: 2
+        source_access: read-write
+      - field: TIMOUT
+        bit_offset: 19
+        bit_size: 1
+        source_access: read-write
+      - field: WAVE
+        bit_offset: 20
+        bit_size: 1
+        source_access: read-write
+      - field: WAVPOL
+        bit_offset: 21
+        bit_size: 1
+        source_access: read-write
+      - field: PRELOAD
+        bit_offset: 22
+        bit_size: 1
+        source_access: read-write
+      - field: COUNTMD
+        bit_offset: 23
+        bit_size: 1
+        source_access: read-write
+      - field: ENC
+        bit_offset: 24
+        bit_size: 1
+        source_access: read-write
+      - field: ICLKSRC
+        bit_offset: 25
+        bit_size: 2
+        source_access: read-write
+    - peripheral: LPTIM
+      register: CR
+      byte_offset: 16
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: EN
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: SNGSTART
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: CNTSTART
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: SRST
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: ARST
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+    - peripheral: LVD
+      register: CR0
+      byte_offset: 0
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: EN
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: ACTION
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: SOURCE
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: VTH
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+    - peripheral: LVD
+      register: CR1
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: IE
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: LEVEL
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: RISE
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: FALL
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: FLTTIME
+        bit_offset: 4
+        bit_size: 4
+        source_access: read-write
+    - peripheral: RTC
+      register: CR0
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: INTERVAL
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: H24
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: RTC1HZ
+        bit_offset: 5
+        bit_size: 2
+        source_access: read-write
+      - field: START
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+    - peripheral: RTC
+      register: CR1
+      byte_offset: 8
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: ACCESS
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: WINDOW
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-only
+      - field: WAIT
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-only
+      - field: SOURCE
+        bit_offset: 8
+        bit_size: 3
+        source_access: read-write
+    - peripheral: RTC
+      register: CR2
+      byte_offset: 12
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: AWTPRS
+        bit_offset: 0
+        bit_size: 2
+        source_access: read-write
+      - field: AWTSRC
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: TAMPEDGE
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: RTCOUT
+        bit_offset: 4
+        bit_size: 2
+        source_access: read-write
+      - field: TAMPEN
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: AWTEN
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: ALARMAEN
+        bit_offset: 9
+        bit_size: 1
+        source_access: read-write
+      - field: ALARMBEN
+        bit_offset: 10
+        bit_size: 1
+        source_access: read-write
+    - peripheral: RTC
+      register: IER
+      byte_offset: 48
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: ALARMA
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: ALARMB
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: AWTIMER
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: TAMP
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: TAMPOV
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: INTERVAL
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+    - peripheral: RTC
+      register: ISR
+      byte_offset: 52
+      bit_size: 32
+      access: Read
+      fields:
+      - field: ALARMA
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-only
+      - field: ALARMB
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-only
+      - field: AWTIMER
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-only
+      - field: TAMP
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-only
+      - field: TAMPOV
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-only
+      - field: INTERVAL
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-only
+    - peripheral: RTC
+      register: ICR
+      byte_offset: 56
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: ALARMA
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: ALARMB
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: AWTIMER
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: TAMP
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: TAMPOV
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: INTERVAL
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+    - peripheral: RTC
+      register: PSC
+      byte_offset: 64
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: PSC2
+        bit_offset: 0
+        bit_size: 20
+        source_access: read-write
+      - field: PSC1
+        bit_offset: 20
+        bit_size: 8
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: CR0
+      byte_offset: 0
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: SYSCLK
+        bit_offset: 0
+        bit_size: 3
+        source_access: read-write
+      - field: PCLKPRS
+        bit_offset: 3
+        bit_size: 2
+        source_access: read-write
+      - field: HCLKPRS
+        bit_offset: 5
+        bit_size: 3
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: HSIEN
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: HSEEN
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: LSIEN
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: LSEEN
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: LSELOCK
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: LSECCS
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: HSECCS
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: CLKCCS
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: CR2
+      byte_offset: 8
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: RSTIO
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: SWDIO
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: LOCKUP
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: WAKEUPCLK
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: FLASHWAIT
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+      - field: RTCLPM
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: HSEBRKEN
+        bit_offset: 10
+        bit_size: 1
+        source_access: read-write
+      - field: LSEBRKEN
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: CLLBRKEN
+        bit_offset: 12
+        bit_size: 1
+        source_access: read-write
+      - field: DSBRKEN
+        bit_offset: 13
+        bit_size: 1
+        source_access: read-write
+      - field: LVDBRKEN
+        bit_offset: 14
+        bit_size: 1
+        source_access: read-write
+      - field: RAMBRKEN
+        bit_offset: 15
+        bit_size: 1
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: IER
+      byte_offset: 12
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: HSIRDY
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: HSERDY
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: LSIRDY
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: LSERDY
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: LSEFAIL
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: HSEFAIL
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: LSEFAULT
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: HSEFAULT
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      bit_size: 32
+      access: Read
+      fields:
+      - field: HSIRDY
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-only
+      - field: HSERDY
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-only
+      - field: LSIRDY
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-only
+      - field: LSERDY
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-only
+      - field: LSEFAIL
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-only
+      - field: HSEFAIL
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-only
+      - field: LSEFAULT
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-only
+      - field: HSEFAULT
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-only
+      - field: HSISTABLE
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-only
+      - field: HSESTABLE
+        bit_offset: 12
+        bit_size: 1
+        source_access: read-only
+      - field: LSISTABLE
+        bit_offset: 14
+        bit_size: 1
+        source_access: read-only
+      - field: LSESTABLE
+        bit_offset: 15
+        bit_size: 1
+        source_access: read-only
+    - peripheral: SYSCTRL
+      register: ICR
+      byte_offset: 20
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: HSIRDY
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: HSERDY
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: LSIRDY
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: LSERDY
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: LSEFAIL
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: HSEFAIL
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: LSEFAULT
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: HSEFAULT
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: HSI
+      byte_offset: 24
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: TRIM
+        bit_offset: 0
+        bit_size: 11
+        source_access: read-write
+      - field: DIV
+        bit_offset: 11
+        bit_size: 4
+        source_access: read-write
+      - field: STABLE
+        bit_offset: 15
+        bit_size: 1
+        source_access: read-only
+    - peripheral: SYSCTRL
+      register: HSE
+      byte_offset: 28
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: DRIVER
+        bit_offset: 0
+        bit_size: 4
+        source_access: read-write
+      - field: WAITCYCLE
+        bit_offset: 4
+        bit_size: 2
+        source_access: read-write
+      - field: MODE
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: HEXENPOL
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: DETCNT
+        bit_offset: 8
+        bit_size: 11
+        source_access: read-write
+      - field: STABLE
+        bit_offset: 19
+        bit_size: 1
+        source_access: read-only
+      - field: PDRIVER
+        bit_offset: 20
+        bit_size: 4
+        source_access: read-write
+      - field: DIGFLT
+        bit_offset: 24
+        bit_size: 1
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: LSI
+      byte_offset: 32
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: TRIM
+        bit_offset: 0
+        bit_size: 10
+        source_access: read-write
+      - field: WAITCYCLE
+        bit_offset: 10
+        bit_size: 2
+        source_access: read-write
+      - field: STABLE
+        bit_offset: 15
+        bit_size: 1
+        source_access: read-only
+    - peripheral: SYSCTRL
+      register: LSE
+      byte_offset: 36
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: DRIVER
+        bit_offset: 0
+        bit_size: 4
+        source_access: read-write
+      - field: WAITCYCLE
+        bit_offset: 4
+        bit_size: 2
+        source_access: read-write
+      - field: MODE
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: PDRIVER
+        bit_offset: 8
+        bit_size: 4
+        source_access: read-write
+      - field: PINLOCK
+        bit_offset: 17
+        bit_size: 1
+        source_access: read-write
+      - field: STABLE
+        bit_offset: 18
+        bit_size: 1
+        source_access: read-only
+    - peripheral: SYSCTRL
+      register: DEBUG
+      byte_offset: 44
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: ATIM
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: GTIM1
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: BTIM123
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: LPTIM
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: RTC
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: IWDT
+        bit_offset: 9
+        bit_size: 1
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: AHBEN
+      byte_offset: 48
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: FLASH
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: CRC
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: GPIOA
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: GPIOB
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: APBEN2
+      byte_offset: 52
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: RTC
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: BTIM123
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: IWDT
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: I2C1
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: LPTIM
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: APBEN1
+      byte_offset: 56
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: ADC
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: VC
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: SPI1
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: UART1
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: UART2
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: ATIM
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: GTIM1
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: AHBRST
+      byte_offset: 64
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: FLASH
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: CRC
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: GPIOA
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: GPIOB
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: APBRST2
+      byte_offset: 68
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: RTC
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: BTIM123
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: IWDT
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: I2C1
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: LPTIM
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: APBRST1
+      byte_offset: 72
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: ADC
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: VC
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: SPI1
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: UART1
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: UART2
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: ATIM
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: GTIM1
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: RESETFLAG
+      byte_offset: 76
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: POR
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: LVD
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: IWDT
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: RSTB
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: LOCKUP
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: SYSRESETREQ
+        bit_offset: 9
+        bit_size: 1
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: MCO
+      byte_offset: 112
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: SOURCE
+        bit_offset: 0
+        bit_size: 4
+        source_access: read-write
+      - field: DIV
+        bit_offset: 4
+        bit_size: 3
+        source_access: read-write
+    - peripheral: UART1
+      register: CR1
+      byte_offset: 0
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: TXEN
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: RXEN
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: PARITY
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: PARITYEN
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: STOP
+        bit_offset: 4
+        bit_size: 2
+        source_access: read-write
+      - field: CHLEN
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: MSBF
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: START
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: OVER
+        bit_offset: 9
+        bit_size: 2
+        source_access: read-write
+      - field: SIGNAL
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: SOURCE
+        bit_offset: 12
+        bit_size: 2
+        source_access: read-write
+      - field: SYNC
+        bit_offset: 14
+        bit_size: 1
+        source_access: read-write
+    - peripheral: UART2
+      register: CR1
+      byte_offset: 0
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: TXEN
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: RXEN
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: PARITY
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: PARITYEN
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: STOP
+        bit_offset: 4
+        bit_size: 2
+        source_access: read-write
+      - field: CHLEN
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: MSBF
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: START
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: OVER
+        bit_offset: 9
+        bit_size: 2
+        source_access: read-write
+      - field: SIGNAL
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: SOURCE
+        bit_offset: 12
+        bit_size: 2
+        source_access: read-write
+      - field: SYNC
+        bit_offset: 14
+        bit_size: 1
+        source_access: read-write
+    - peripheral: VC1
+      register: CR0
+      byte_offset: 0
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: EN
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: RESP
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: HYS
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: IE
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: POL
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: WINDOW
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: INP
+        bit_offset: 6
+        bit_size: 2
+        source_access: read-write
+      - field: INN
+        bit_offset: 8
+        bit_size: 2
+        source_access: read-write
+    - peripheral: VC1
+      register: CR1
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: FLTTIME
+        bit_offset: 0
+        bit_size: 4
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: FALLIE
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: RISEIE
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: HIGHIE
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH1
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH2
+        bit_offset: 9
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH3
+        bit_offset: 10
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH4
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH5
+        bit_offset: 12
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH6
+        bit_offset: 13
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKTIME
+        bit_offset: 14
+        bit_size: 3
+        source_access: read-write
+      - field: BLANKLVL
+        bit_offset: 17
+        bit_size: 1
+        source_access: read-write
+    - peripheral: VC2
+      register: CR0
+      byte_offset: 0
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: EN
+        bit_offset: 0
+        bit_size: 1
+        source_access: read-write
+      - field: RESP
+        bit_offset: 1
+        bit_size: 1
+        source_access: read-write
+      - field: HYS
+        bit_offset: 2
+        bit_size: 1
+        source_access: read-write
+      - field: IE
+        bit_offset: 3
+        bit_size: 1
+        source_access: read-write
+      - field: POL
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: WINDOW
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: INP
+        bit_offset: 6
+        bit_size: 2
+        source_access: read-write
+      - field: INN
+        bit_offset: 8
+        bit_size: 2
+        source_access: read-write
+    - peripheral: VC2
+      register: CR1
+      byte_offset: 4
+      bit_size: 32
+      access: ReadWrite
+      fields:
+      - field: FLTTIME
+        bit_offset: 0
+        bit_size: 4
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 4
+        bit_size: 1
+        source_access: read-write
+      - field: FALLIE
+        bit_offset: 5
+        bit_size: 1
+        source_access: read-write
+      - field: RISEIE
+        bit_offset: 6
+        bit_size: 1
+        source_access: read-write
+      - field: HIGHIE
+        bit_offset: 7
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH1
+        bit_offset: 8
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH2
+        bit_offset: 9
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH3
+        bit_offset: 10
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH4
+        bit_offset: 11
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH5
+        bit_offset: 12
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKATCH6
+        bit_offset: 13
+        bit_size: 1
+        source_access: read-write
+      - field: BLANKTIME
+        bit_offset: 14
+        bit_size: 3
+        source_access: read-write
+      - field: BLANKLVL
+        bit_offset: 17
+        bit_size: 1
+        source_access: read-write
+    source_status_overlays:
+    - block: SYSCTRL
+      register: HSE
+      fieldset: HSE
+      field: STABLE
+      bit_offset: 19
+      bit_size: 1
+    - block: SYSCTRL
+      register: LSE
+      fieldset: LSE
+      field: STABLE
+      bit_offset: 18
+      bit_size: 1
+    - block: SYSCTRL
+      register: HSI
+      fieldset: HSI
+      field: STABLE
+      bit_offset: 15
+      bit_size: 1
+    - block: SYSCTRL
+      register: LSI
+      fieldset: LSI
+      field: STABLE
+      bit_offset: 15
+      bit_size: 1
+    consumer_gates:
+    - peripheral: ADC
+      gate_register: APBEN1
+      gate_field: ADC
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: ADC
+      reset_byte_offset: 72
+      bit_offset: 0
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: ATIM
+      gate_register: APBEN1
+      gate_field: ATIM
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: ATIM
+      reset_byte_offset: 72
+      bit_offset: 5
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: BTIM1
+      gate_register: APBEN2
+      gate_field: BTIM123
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: BTIM123
+      reset_byte_offset: 68
+      bit_offset: 2
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: BTIM1-BTIM2-BTIM3
+      shared_reset_group: BTIM1-BTIM2-BTIM3
+    - peripheral: BTIM2
+      gate_register: APBEN2
+      gate_field: BTIM123
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: BTIM123
+      reset_byte_offset: 68
+      bit_offset: 2
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: BTIM1-BTIM2-BTIM3
+      shared_reset_group: BTIM1-BTIM2-BTIM3
+    - peripheral: BTIM3
+      gate_register: APBEN2
+      gate_field: BTIM123
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: BTIM123
+      reset_byte_offset: 68
+      bit_offset: 2
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: BTIM1-BTIM2-BTIM3
+      shared_reset_group: BTIM1-BTIM2-BTIM3
+    - peripheral: FLASH
+      gate_register: AHBEN
+      gate_field: FLASH
+      gate_byte_offset: 48
+      reset_register: AHBRST
+      reset_field: FLASH
+      reset_byte_offset: 64
+      bit_offset: 1
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: HCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: GPIOA
+      gate_register: AHBEN
+      gate_field: GPIOA
+      gate_byte_offset: 48
+      reset_register: AHBRST
+      reset_field: GPIOA
+      reset_byte_offset: 64
+      bit_offset: 4
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: HCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: GPIOB
+      gate_register: AHBEN
+      gate_field: GPIOB
+      gate_byte_offset: 48
+      reset_register: AHBRST
+      reset_field: GPIOB
+      reset_byte_offset: 64
+      bit_offset: 5
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: HCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: GTIM1
+      gate_register: APBEN1
+      gate_field: GTIM1
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: GTIM1
+      reset_byte_offset: 72
+      bit_offset: 6
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: IWDT
+      gate_register: APBEN2
+      gate_field: IWDT
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: IWDT
+      reset_byte_offset: 68
+      bit_offset: 4
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: LPTIM
+      gate_register: APBEN2
+      gate_field: LPTIM
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: LPTIM
+      reset_byte_offset: 68
+      bit_offset: 7
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: RTC
+      gate_register: APBEN2
+      gate_field: RTC
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: RTC
+      reset_byte_offset: 68
+      bit_offset: 1
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: UART1
+      gate_register: APBEN1
+      gate_field: UART1
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: UART1
+      reset_byte_offset: 72
+      bit_offset: 3
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: UART2
+      gate_register: APBEN1
+      gate_field: UART2
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: UART2
+      reset_byte_offset: 72
+      bit_offset: 4
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: VC1
+      gate_register: APBEN1
+      gate_field: VC
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: VC
+      reset_byte_offset: 72
+      bit_offset: 1
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: VC1-VC2
+      shared_reset_group: VC1-VC2
+    - peripheral: VC2
+      gate_register: APBEN1
+      gate_field: VC
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: VC
+      reset_byte_offset: 72
+      bit_offset: 1
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: VC1-VC2
+      shared_reset_group: VC1-VC2
+    observer_irq:
+      name: SYSCTRL
+      number: 4
+      peripheral: SYSCTRL
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      header_source_ref: member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h
+      pdf_pages_1_based:
+      - 89
+      printed_pages:
+      - 88
+    requester_observers:
+    - id: iwdt
+      members:
+      - IWDT
+      disposition: Preserve the running LSI counter, automatic request and possible reset. Never read IWDT to
+        manufacture admission or write its gate, reset, KR, SR, counter, feed, stop, start or pause. RUN/update
+        flags do not prove cold request history.
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      pdf_pages_1_based:
+      - 69
+      - 81
+      - 84
+      - 381
+      - 382
+      - 383
+      - 384
+      - 385
+      - 386
+      - 387
+      - 388
+      - 389
+      printed_pages:
+      - 68
+      - 80
+      - 83
+      - 380
+      - 381
+      - 382
+      - 383
+      - 384
+      - 385
+      - 386
+      - 387
+      - 388
+    - id: rtc_awt_calendar_output
+      members:
+      - RTC
+      - AWT
+      - calendar
+      - RTC_OUT
+      disposition: Preserve SOURCE2 live LSI and existing independent SOURCE0/1/3 owners, prescalers, START,
+        alarms, AWT, flags and outputs. No new RTC source capability. AWTSRC0 is RTCCLKD and AWTSRC1 is TICKCLK;
+        neither independently identifies the raw oscillator.
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      pdf_pages_1_based:
+      - 140
+      - 151
+      - 152
+      - 153
+      - 154
+      printed_pages:
+      - 139
+      - 150
+      - 151
+      - 152
+      - 153
+    - id: uart
+      members:
+      - UART1
+      - UART2
+      disposition: Preserve actual CR1.SOURCE bits13:12, including LSI3, and controls; add no inspection window.
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      pdf_pages_1_based:
+      - 420
+      - 421
+      printed_pages:
+      - 419
+      - 420
+    - id: lptim
+      members:
+      - LPTIM
+      disposition: Preserve native source3 request, route and functional progress. Existing fractional wait arithmetic
+        is unchanged.
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      pdf_pages_1_based:
+      - 200
+      - 201
+      - 202
+      printed_pages:
+      - 199
+      - 200
+      - 201
+    - id: ready_and_output
+      members:
+      - MCO
+      - LSIRDY
+      - SYSCTRL_IRQ4
+      - NVIC_SYSCTRL_PENDING
+      disposition: Preserve MCO LSI4, source-ready enable/status and IRQ4/NVIC observers without clearing flags
+        or requiring idleness. MCO3 retains the separate raw-HSI ownership veto.
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      pdf_pages_1_based:
+      - 75
+      - 77
+      - 78
+      - 87
+      - 89
+      printed_pages:
+      - 74
+      - 76
+      - 77
+      - 86
+      - 88
+    - id: gpio
+      members:
+      - GPIOA
+      - GPIOB
+      disposition: Preserve FILTER source5 automatic LSI requests, all filters and events. Existing necessary
+        inspection windows run the whole bank; do not add dormant-bank scans.
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      pdf_pages_1_based:
+      - 69
+      - 123
+      - 124
+      - 130
+      printed_pages:
+      - 68
+      - 122
+      - 123
+      - 129
+    - id: analog
+      members:
+      - VC1
+      - VC2
+      - LVD
+      disposition: Preserve enabled LSI-filtered automatic requests, BGR/reference state and routes. Existing
+        PCLK/SYSCLK/blanking owner vetoes remain independent.
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      pdf_pages_1_based:
+      - 69
+      - 529
+      - 530
+      - 531
+      - 533
+      - 534
+      - 535
+      - 537
+      - 538
+      - 541
+      - 542
+      - 543
+      - 544
+      - 545
+      - 546
+      - 547
+      printed_pages:
+      - 68
+      - 528
+      - 529
+      - 530
+      - 532
+      - 533
+      - 534
+      - 536
+      - 537
+      - 540
+      - 541
+      - 542
+      - 543
+      - 544
+      - 545
+      - 546
+    - id: clock_policy
+      members:
+      - HSECCS
+      - LSECCS
+      - clock_policy
+      disposition: Preserve automatic LSI requests, fault routes and inherited external-source ownership. Refuse
+        a new Config.lse declaration only when targeting this live LSI mode.
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      pdf_pages_1_based:
+      - 54
+      - 56
+      - 57
+      - 58
+      - 59
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 73
+      - 74
+      printed_pages:
+      - 53
+      - 55
+      - 56
+      - 57
+      - 58
+      - 66
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 73
+    - id: downstream
+      members:
+      - GTIM1
+      - ATIM
+      - BTIM1
+      - BTIM2
+      - BTIM3
+      - ADC
+      - external_recipients
+      disposition: Preserve GTIM/ATIM LSI_OUT, MCO/RTC/VC/LVD inputs, cascades, ADC triggers and downstream GPIO/external
+        recipients. Unchanged routes do not prove absence; allow functional progression and do not open dormant
+        work gates to prove idleness.
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      pdf_pages_1_based:
+      - 123
+      - 124
+      - 130
+      - 165
+      - 166
+      - 167
+      - 168
+      - 169
+      - 170
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 182
+      - 234
+      - 281
+      - 311
+      - 377
+      - 378
+      - 511
+      - 521
+      printed_pages:
+      - 122
+      - 123
+      - 129
+      - 164
+      - 165
+      - 166
+      - 167
+      - 168
+      - 169
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 181
+      - 233
+      - 280
+      - 310
+      - 376
+      - 377
+      - 510
+      - 520
+    packages:
+      CW32L010F8P6:
+        package: TSSOP20
+        memory:
+        - name: FLASH
+          kind: flash
+          address: 0
+          size: 65536
+        - name: RAM
+          kind: ram
+          address: 536870912
+          size: 4096
+        pins:
+        - position: '1'
+          signals:
+          - PB4
+        - position: '2'
+          signals:
+          - PB5
+        - position: '3'
+          signals:
+          - PB6
+        - position: '4'
+          signals:
+          - PB7
+          - NRST
+        - position: '5'
+          signals:
+          - PA0
+          - OSC_IN
+        - position: '6'
+          signals:
+          - PA1
+          - OSC_OUT
+        - position: '7'
+          signals:
+          - VSS
+        - position: '8'
+          signals:
+          - Vcore
+        - position: '9'
+          signals:
+          - VDD
+        - position: '10'
+          signals:
+          - PA2
+        - position: '11'
+          signals:
+          - PB0
+          - OSC32_OUT
+        - position: '12'
+          signals:
+          - PB1
+          - OSC32_IN
+        - position: '13'
+          signals:
+          - PA3
+        - position: '14'
+          signals:
+          - PA4
+        - position: '15'
+          signals:
+          - PA5
+        - position: '16'
+          signals:
+          - PA6
+        - position: '17'
+          signals:
+          - PA7
+          - SWDIO
+        - position: '18'
+          signals:
+          - PA8
+          - SWCLK
+        - position: '19'
+          signals:
+          - PB2
+        - position: '20'
+          signals:
+          - PB3
+        gpio_pins:
+        - PA0
+        - PA1
+        - PA2
+        - PA3
+        - PA4
+        - PA5
+        - PA6
+        - PA7
+        - PA8
+        - PB0
+        - PB1
+        - PB2
+        - PB3
+        - PB4
+        - PB5
+        - PB6
+        input_only_pins:
+        - PB7
+        dfp_device: CW32L010F8
+        source_ids:
+        - CW32L010_datasheet
+        - CW32L010_dfp
+      CW32L010F8U6:
+        package: QFN20
+        memory:
+        - name: FLASH
+          kind: flash
+          address: 0
+          size: 65536
+        - name: RAM
+          kind: ram
+          address: 536870912
+          size: 4096
+        pins:
+        - position: '1'
+          signals:
+          - PB7
+          - NRST
+        - position: '2'
+          signals:
+          - PA0
+          - OSC_IN
+        - position: '3'
+          signals:
+          - PA1
+          - OSC_OUT
+        - position: '4'
+          signals:
+          - VSS
+        - position: '5'
+          signals:
+          - Vcore
+        - position: '6'
+          signals:
+          - VDD
+        - position: '7'
+          signals:
+          - PA2
+        - position: '8'
+          signals:
+          - PB0
+          - OSC32_OUT
+        - position: '9'
+          signals:
+          - PB1
+          - OSC32_IN
+        - position: '10'
+          signals:
+          - PA3
+        - position: '11'
+          signals:
+          - PA4
+        - position: '12'
+          signals:
+          - PA5
+        - position: '13'
+          signals:
+          - PA6
+        - position: '14'
+          signals:
+          - PA7
+          - SWDIO
+        - position: '15'
+          signals:
+          - PA8
+          - SWCLK
+        - position: '16'
+          signals:
+          - PB2
+        - position: '17'
+          signals:
+          - PB3
+        - position: '18'
+          signals:
+          - PB4
+        - position: '19'
+          signals:
+          - PB5
+        - position: '20'
+          signals:
+          - PB6
+        gpio_pins:
+        - PA0
+        - PA1
+        - PA2
+        - PA3
+        - PA4
+        - PA5
+        - PA6
+        - PA7
+        - PA8
+        - PB0
+        - PB1
+        - PB2
+        - PB3
+        - PB4
+        - PB5
+        - PB6
+        input_only_pins:
+        - PB7
+        dfp_device: CW32L010F8
+        source_ids:
+        - CW32L010_datasheet
+        - CW32L010_dfp
+      CW32L010Y8M6:
+        package: SOP16
+        memory:
+        - name: FLASH
+          kind: flash
+          address: 0
+          size: 65536
+        - name: RAM
+          kind: ram
+          address: 536870912
+          size: 4096
+        pins:
+        - position: '1'
+          signals:
+          - PB5
+        - position: '2'
+          signals:
+          - PB6
+        - position: '3'
+          signals:
+          - PB7
+          - NRST
+        - position: '4'
+          signals:
+          - PA0
+          - OSC_IN
+        - position: '5'
+          signals:
+          - PA1
+          - OSC_OUT
+        - position: '6'
+          signals:
+          - VSS
+        - position: '7'
+          signals:
+          - Vcore
+        - position: '8'
+          signals:
+          - VDD
+        - position: '9'
+          signals:
+          - PB0
+          - OSC32_OUT
+        - position: '10'
+          signals:
+          - PB1
+          - OSC32_IN
+        - position: '11'
+          signals:
+          - PA3
+        - position: '12'
+          signals:
+          - PA4
+        - position: '13'
+          signals:
+          - PA5
+        - position: '14'
+          signals:
+          - PA6
+        - position: '15'
+          signals:
+          - PA7
+          - SWDIO
+        - position: '16'
+          signals:
+          - PA8
+          - SWCLK
+        gpio_pins:
+        - PA0
+        - PA1
+        - PA3
+        - PA4
+        - PA5
+        - PA6
+        - PA7
+        - PA8
+        - PB0
+        - PB1
+        - PB5
+        - PB6
+        input_only_pins:
+        - PB7
+        dfp_device: null
+        source_ids:
+        - CW32L010_datasheet
+    positive_lsi_routes:
+      dedicated_lsi_gpio_af: null
+      mco_source: 4
+      mco_pads:
+      - pin: PA4
+        af: 4
+      - pin: PA8
+        af: 3
+      - pin: PB3
+        af: 4
+      timer_inputs:
+      - peripheral: GTIM1
+        register: TISEL
+        fields:
+        - TI1SEL
+        - TI2SEL
+        - TI3SEL
+        - TI4SEL
+        encoding: 9
+      - peripheral: ATIM
+        register: TISEL1
+        fields:
+        - TI1SEL
+        - TI2SEL
+        - TI3SEL
+        - TI4SEL
+        encoding: 9
+      - peripheral: ATIM
+        register: TISEL2
+        fields:
+        - TI5SEL
+        - TI6SEL
+        encoding: 9
+      source_ref: vendor:CW32L010_UserManual_CN_V1.2.pdf
+      pdf_pages_1_based:
+      - 87
+      - 123
+      - 234
+      - 281
+      - 311
+      - 377
+      - 378
+      printed_pages:
+      - 86
+      - 122
+      - 233
+      - 280
+      - 310
+      - 376
+      - 377
+    historical_lse_monitor:
+      monitor_reference: inherited_legal
+      factory_trim_address: null
+      maximum_hz: 36080

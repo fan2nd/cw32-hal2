@@ -219,7 +219,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - CW32L083RBT6/RCT6/RCS6/MCT6/VCT6: init-only factory LSI SYSCLK with own
   31,816–33,784 Hz rate bounds at 1.65–5.5 V, VDDA=VDD and −40–85°C. RBT6
   retains 128 KiB Flash, the other four 256 KiB, and all five 24 KiB SRAM.
-  Generic L083 and native L010/L011/L012 remain excluded. Full six-UART,
+  Generic L083, generic L010 and native L011/L012 remain excluded. Full six-UART,
   six-GPIO-bank and complete bonded LSI/PLL route admission preserves off
   LCD/LPTIM work gates; inspection can advance unrelated pins and events.
   The inherited PLL must depart through a proven HSI/HSE bridge and reach
@@ -232,6 +232,22 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   passed within the finite source scope. At main acceptance clean had not run;
   final-package completion requires a separate clean 2-library/3-ELF receipt. See the
   [L083 source contract and finite scope](docs/l083-factory-lsi-sysclk.md).
+- CW32L010F8P6/F8U6/Y8M6: init-only live factory-LSI reuse, nominal 32,800 Hz
+  with 31,816–33,784 Hz rate bounds at 1.62–5.5 V and −40–85°C. Original entry
+  must already have software LSIEN, STABLE and factory-matching TRIM; ordinary
+  POR, stopped startup and automatic-only requests are refused. No LSI parameter
+  or IWDT operation prepares admission. Running consumers and observers may
+  progress, including watchdog reset; necessary whole-bank windows can advance
+  unrelated events. New-target `Config.lse=Some(_)` is refused; inherited LSE
+  and old HSI/HSE/LSE contracts are preserved. Native RTC retains strict raw-HSI
+  bounds; ADC and buffered complementary PWM return cycle-qualification errors.
+  Main eight-library/seven-ELF verification, six finite source/data/layout
+  gates and independent runtime/metadata reviews passed. The main logs retain
+  three existing unused LSE-constant warnings in L010/L011 rows. At main
+  acceptance clean had not run; final-package completion requires a separate
+  final-source two-library/two-ELF clean receipt. No hardware result follows.
+  Generic L010 and all L011/L012 gain no LSI SYSCLK capability.
+  See the [live-only contract](docs/l010-live-factory-lsi-sysclk.md).
 - F020/F030/A030: init-only factory LSI SYSCLK with complete cold-start admission,
   explicit whole-GPIO-bank inspection effects, permanent target request and
   rate-only bounds. The same families' LsiClock/RTC aliases are also rate-only;

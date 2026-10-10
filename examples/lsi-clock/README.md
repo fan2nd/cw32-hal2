@@ -7,6 +7,13 @@ bounds. Choose one exact part with `--no-default-features`:
   system/bus bounds only. F002/F003 have no RTC and share the existing branch
   that uses no `LsiClock`, `CalendarClock` or calendar API. Generic F002/F003
   aliases are not qualified for this mode.
+- CW32L010F8P6, CW32L010F8U6 or CW32L010Y8M6: live-entry reuse only.
+  This branch declares 1.62–5.5 V and −40–85°C, leaves `Config.lse=None`, and
+  calls ordinary `try_init`. It does not start/prepare/trim LSI or command IWDT.
+  A normal-POR error is expected. Success exposes system/bus/HSI bounds and
+  acquires the existing read-only `HsiOscClock` capability; it does not change
+  RTC or invent a native `LsiClock`/LSI calendar variant. Each part retains
+  64 KiB Flash and 4 KiB SRAM. See the [live-only contract](../../docs/l010-live-factory-lsi-sysclk.md).
 - CW32F020C6U7, CW32F030C8T7, CW32A030C8T7, CW32L031C8T6,
   CW32L031C8U6, CW32L031F8U6, CW32R031C8U6, CW32W031R8U6,
   CW32L052C8T6, CW32L052R8S6, CW32L052R8T6, CW32L083RBT6, CW32L083RCT6,
@@ -19,7 +26,8 @@ bounds. Choose one exact part with `--no-default-features`:
 The default feature remains CW32F030C8T7. The firmware requires no GPIO wiring,
 external oscillator, UART baud or other board peripherals. Support is init-only;
 it does not provide runtime switching or sleep/wake recovery. Generic L031,
-its other packages, generic R031/W031/L052/L083 and native L010/L011/L012 are excluded from LSI SYSCLK.
+its other packages, generic R031/W031/L052/L083, generic L010 and all L011/L012
+are excluded from LSI SYSCLK.
 
 ## Board declarations and rate bounds
 
@@ -35,7 +43,8 @@ successful initialization; selecting LSI does not replace its independent
 qualification.
 
 The nominal LSI rate is 32,800 Hz. Factory full-range bounds are 31,160–34,440 Hz
-for F002/F020 and 31,816–33,784 Hz for F003/F030/A030 and exact L031/R031/W031/L052/L083. F003's bounds come from its
+for F002/F020 and 31,816–33,784 Hz for F003/F030/A030 and exact
+L010/L031/R031/W031/L052/L083. F003's bounds come from its
 own datasheet Rev1.9, PDF pages 32 and 38: factory ±3% over the declared full
 temperature range, independently of the other families. L031 uses its own DS
 Rev1.9, PDF pages 38 and 47, with ±3% only over −40–85°C; the 25°C-only ±1%
@@ -242,3 +251,23 @@ RCT6/MCT6/VCT6 release LSI ELFs. The
 [L083 contract](../../docs/l083-factory-lsi-sysclk.md) records this finite scope,
 which differs from the accumulated future local recipe. Prior family results
 are not relabeled as L083 acceptance or hardware evidence.
+
+## Exact L010 live-entry build scope
+
+Select exactly one of `cw32l010f8p6`, `cw32l010f8u6` or `cw32l010y8m6`:
+
+```sh
+cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features \
+  --features cw32l010f8p6,defmt --bin cw32-lsi-clock-example
+```
+
+A linked image checks compilation and exact linker limits only. It does not
+prove normal-reset boot, successful live handover, watchdog survival, oscillator
+continuity or electrical behavior. Current-stage main verification passed eight
+actual library builds and seven ELF links, with six finite source/data/layout
+gates and independent runtime/metadata reviews accepted. The main logs retain
+three existing unused LSE-constant warnings in L010/L011 rows. At main acceptance
+clean had not run; final-package completion requires a separate final-source
+two-library/two-ELF clean receipt. Historical receipts above retain their own
+source scope; the aggregate future recipe is not this stage's acceptance.

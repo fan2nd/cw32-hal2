@@ -1,5 +1,12 @@
 # Init-only factory LSI SYSCLK on F020/F030/A030
 
+This page describes classic F020/F030/A030 cold-start and live-reuse admission.
+The [exact L010 live-only contract](l010-live-factory-lsi-sysclk.md) separately
+covers CW32L010F8P6/F8U6/Y8M6: original entry must already be software-requested,
+stable and factory-matching. This page's stopped startup and trim preparation
+are not imported. Other exact contracts remain in the
+[qualification policy](../cw32-data/lsi-sysclk-qualified.yaml).
+
 CW32F002F3P7/F3U7 use a separate [exact-two contract](f002-factory-lsi-sysclk.md),
 with their own consumer roster and no RTC or dedicated LSI_OUT pad. The optional
 `lsi_output_pin` metadata representation preserves the real classic output pin

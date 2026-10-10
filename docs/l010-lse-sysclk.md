@@ -2,7 +2,10 @@
 
 The system target is limited to CW32L010F8P6, CW32L010F8U6 and CW32L010Y8M6. It uses the existing native `Config.lse` declaration and `LseFaultDetection` policy. `Sysclk::LSE` is exposed only under `all(cw32l010, rcc_lse)`, whose generated exact-package validation admits these three parts. Generic CW32L010 and CW32L011/L012 do not gain this target. The existing 16 system-target profiles and all 23 auxiliary-LSE paths retain their previous behavior.
 
-This is an initialization contract, not runtime switching, recovery, RTC migration, low-power restoration, or hardware qualification. `Config::new()` remains factory HSI. Successful initialization keeps HSI factory calibrated and enabled so the existing raw-HSI RTC capability remains valid. No public LSI system-clock or RTC capability is added.
+This is an initialization contract, not runtime switching, recovery, RTC migration, low-power restoration, or hardware qualification. `Config::new()` remains factory HSI. Successful initialization keeps HSI factory calibrated and enabled so the existing raw-HSI RTC capability remains valid. This LSE qualification adds no public LSI system-clock or RTC capability. The
+separate [exact L010 live-only LSI system contract](l010-live-factory-lsi-sysclk.md)
+adds only an initialization target; it does not change this page's inherited-legal
+36,080 Hz monitor, original LSE admission or raw-HSI/LSE RTC sources.
 
 ## Declaration and physical obligations
 

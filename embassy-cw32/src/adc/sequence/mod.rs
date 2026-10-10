@@ -179,6 +179,8 @@ impl Default for Config {
 pub enum Error {
     /// HAL clocks have not been initialized successfully.
     ClockNotInitialized,
+    /// The source qualifies average rate, but not the required cycle timing.
+    UnqualifiedCycleTiming,
     /// Supply is outside the selected family's allowed range.
     InvalidSupplyVoltage,
     /// Requested maximum ADC frequency is zero.
@@ -207,6 +209,7 @@ impl core::fmt::Display for Error {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.write_str(match self {
             Self::ClockNotInitialized => "ADC clocks are not initialized",
+            Self::UnqualifiedCycleTiming => "ADC source cycle timing is not qualified",
             Self::InvalidSupplyVoltage => "ADC supply is outside the allowed range",
             Self::FrequencyZero => "ADC frequency limit must be nonzero",
             Self::FrequencyTooLow => "no ADC divider meets the timing limits",
@@ -309,6 +312,9 @@ impl Config {
         let (clock, rate, external_acquisition_ps) = self.limits()?;
         if pclk.nominal().0 == 0 {
             return Err(Error::ClockNotInitialized);
+        }
+        if !pclk.has_cycle_timing_bounds() {
+            return Err(Error::UnqualifiedCycleTiming);
         }
         let acquisition_ps = if channel >= 14 {
             crate::ADC_INTERNAL_ACQUISITION_PS

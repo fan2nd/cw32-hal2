@@ -97,6 +97,33 @@ pub struct Config {
 /// runs. Runtime integration and direct PAC access must preserve HAL ownership.
 /// This is the platform entry model, not a per-driver unsafe caller obligation.
 ///
+/// On CW32L010F8P6/F8U6/Y8M6 only, selecting factory LSI SYSCLK reuses an
+/// already software-requested, stable, factory-matching source observed at
+/// original entry. Ordinary POR, stopped startup and automatic-only LSI requests
+/// are refused. LSI TRIM/WAIT and the continuous software request are preserved;
+/// no IWDT register, gate, reset or feed operation establishes admission.
+/// `Config.lse=Some(_)` is refused for this target before hardware changes.
+/// Inherited LSE and existing RTC/HSI/HSE/analog ownership remain protected.
+///
+/// Running IWDT, ready/fault observers, LSI-selected timers, UARTs, filters and
+/// downstream or external recipients may continue progressing, including toward
+/// reset, before an error and afterward. Necessary existing GPIO inspection
+/// windows run the whole bank and may advance unrelated sampling/events;
+/// restoring a gate cannot undo that progress. No dormant work-bank scan proves
+/// idleness. The functional handover must permit these effects. This adds no
+/// hidden memory-safety duty to safe callers and does not replace the pre-Rust
+/// bus-master/ownership boundary above.
+///
+/// Final bus dividers and Flash latency are established under verified factory
+/// HSI before the last source write selects LSI. Errors publish no new clocks;
+/// partial hardware state can remain and requires reset before retry. A lost
+/// CPU source can prevent an error return. LSI system/bus bounds are rate-only;
+/// native ADC and buffered complementary PWM reject their strict timing use,
+/// and the fixed 1 MHz time driver refuses before singleton acquisition/MMIO.
+/// The existing HsiOscClock/RTC source keeps independent raw-HSI cycle bounds.
+/// No normal-reset boot, watchdog survival, oscillator continuity or hardware
+/// validation is claimed. See docs/l010-live-factory-lsi-sysclk.md.
+///
 /// On CW32F002F3P7/F3U7 only, selecting factory LSI SYSCLK can briefly run
 /// each whole GPIOA/B/C bank to inspect retained selectors. Sampling, filters
 /// and armed events may advance before an error; restored gates cannot undo
