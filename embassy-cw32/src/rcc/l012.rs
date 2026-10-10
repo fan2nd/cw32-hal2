@@ -1005,6 +1005,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     )?;
     #[cfg(rcc_lse)]
     if let (Some(lse), Some(admission)) = (config.lse, lse_admission) {
+        let admission = admission.after_owned_flash_wait(MAX_FLASH_WAIT)?;
         super::lse::start(lse, admission, cs)?;
     }
     let sysclk = match config.sys {

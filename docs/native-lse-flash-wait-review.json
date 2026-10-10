@@ -1,0 +1,411 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-10",
+  "status": "accepted_static_runtime_source_review",
+  "reviewer_independent_of_implementation": true,
+  "blocking_findings": [],
+  "scope": "Minimal native auxiliary-LSE owned FLASH WAIT admission correction; actual frozen source inspection only.",
+  "qualified_packages": [
+    "CW32L010F8P6",
+    "CW32L010F8U6",
+    "CW32L010Y8M6",
+    "CW32L011K8T6",
+    "CW32L011K8U6",
+    "CW32L012C8T6",
+    "CW32L012C8U6"
+  ],
+  "baseline": {
+    "tree_sha1": "63756afe6fe520b7b94af40248f9e09692157c65",
+    "source_ref": "external-evidence:immutable-stage62-publication-recovery",
+    "reconstructed_source_manifest_sha256": "eff0983733b283557c2e57e44b11ca0fb6f9eb7d0537fdbf4b354d663d129eba"
+  },
+  "approved_design": {
+    "source_ref": "external-evidence:approved-native-auxiliary-lse-wait-design",
+    "sha256": "1c6551089a808660b1b6e18b4f2f7334021cf022ba0154aeda4b44dfe82c8474",
+    "recovery_binding_ref": "external-evidence:native-lse-wait-design-recovery-binding",
+    "recovery_binding_sha256": "561a45382569583193f1f089fca32251e845a75069fdfece9bb892721b05f077"
+  },
+  "freeze": {
+    "manifest_ref": "external-evidence:native-lse-wait-runtime-manifest.json",
+    "manifest_sha256": "33b5bae9c0a9893242d9b9a4dcd9e31a04940b134a60d1735a81f9ce6ae32551",
+    "diff_ref": "external-evidence:native-lse-wait-runtime.diff",
+    "diff_sha256": "3d63843734ceffa5ba89e68c3959ab9efac52d91a49015ee5dbb2ce3b24efa73",
+    "expected_hashes_independently_verified": true,
+    "source_files": [
+      {
+        "path": "embassy-cw32/src/rcc/lse_native_low_power.rs",
+        "original_sha256": "0259c1b0d7d53fcf8c9f5a97e78b3905ae6164a309a537a7aeb6ce0deb727c5f",
+        "final_sha256": "0483e7494b68e660cab3187b0b28cb8c4d2a73ab05379e86b2cbbe5f290cf620",
+        "final_bytes": 25998,
+        "inserted_lines": 29,
+        "removed_lines": 0,
+        "all_original_bytes_preserved_in_order": true,
+        "reviewed_added_lines": [
+          181,
+          209
+        ]
+      },
+      {
+        "path": "embassy-cw32/src/rcc/l010_l011.rs",
+        "original_sha256": "2423a689a7b70c9854aa4a4299c8354dcf7ac277caad676959e2c8bcd54ded56",
+        "final_sha256": "9f8dfede63e2a5c17220caf2287e8feae016095e89bb3cddf3c0c6a6c8dc5590",
+        "final_bytes": 59760,
+        "inserted_lines": 5,
+        "removed_lines": 0,
+        "all_original_bytes_preserved_in_order": true,
+        "reviewed_added_lines": [
+          1110,
+          1114
+        ]
+      },
+      {
+        "path": "embassy-cw32/src/rcc/l012.rs",
+        "original_sha256": "949f86b014dd4088d654e82f03f5d6b21952352805275e10658c33ae8096cfe3",
+        "final_sha256": "2aadcdb1d6e8ef7517c465f03c006d9a07960a4f779fa4ff5de3263737a4a037",
+        "final_bytes": 42149,
+        "inserted_lines": 1,
+        "removed_lines": 0,
+        "all_original_bytes_preserved_in_order": true,
+        "reviewed_added_lines": [
+          1008,
+          1008
+        ]
+      }
+    ],
+    "total_inserted_lines": 35,
+    "total_removed_lines": 0
+  },
+  "own_source_evidence": [
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "bytes": 15074519,
+      "pages": [
+        {
+          "pdf_page_1_based": 70,
+          "printed_page": 69
+        },
+        {
+          "pdf_page_1_based": 114,
+          "printed_page": 113
+        }
+      ],
+      "basis": "Own-family reciprocal same-function WAIT fields; both RW, reset WAIT0. Original visual review and subsequent exact-byte recovery binding are recorded separately; not rerendered for this unchanged source review."
+    },
+    {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "bytes": 15199549,
+      "pages": [
+        {
+          "pdf_page_1_based": 68,
+          "printed_page": 67
+        },
+        {
+          "pdf_page_1_based": 113,
+          "printed_page": 112
+        }
+      ],
+      "basis": "Own-family reciprocal same-function WAIT fields; both RW, reset WAIT0. Original visual review and subsequent exact-byte recovery binding are recorded separately; not rerendered for this unchanged source review."
+    },
+    {
+      "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "bytes": 18034510,
+      "pages": [
+        {
+          "pdf_page_1_based": 73,
+          "printed_page": 47
+        },
+        {
+          "pdf_page_1_based": 127,
+          "printed_page": 101
+        }
+      ],
+      "basis": "Own-family reciprocal same-function WAIT fields; both RW, reset WAIT0. Original visual review and subsequent exact-byte recovery binding are recorded separately; not rerendered for this unchanged source review."
+    },
+    {
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_EN_V1.0.pdf",
+      "sha256": "f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088",
+      "bytes": 19538580,
+      "pages": [
+        {
+          "pdf_page_1_based": 77,
+          "printed_page": 51
+        },
+        {
+          "pdf_page_1_based": 135,
+          "printed_page": 109
+        }
+      ],
+      "basis": "Own-family reciprocal same-function WAIT fields; both RW, reset WAIT0. Original visual review and subsequent exact-byte recovery binding are recorded separately; not rerendered for this unchanged source review."
+    }
+  ],
+  "unchanged_supporting_inputs": [
+    {
+      "path": "embassy-cw32/src/rcc/mod.rs",
+      "sha256": "0a9c23bea8743f76d0e6da3204b144aa93b274fe8ab4fde8dece916d227faaab",
+      "bytes": 5933,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/peripheral.rs",
+      "sha256": "92fce92a5ad9f68106dfa400ecea2e0798e3dd4204baa300e00bd8b224351284",
+      "bytes": 9435,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "b00270b9f58308900e8af8cac3b371285b2fc607220430b53c78d3dd269fcdb5",
+      "bytes": 19758,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "c4f405ee9c0c613ab169e47aa00bec5736bdbda6550d4527813e46b6376259f6",
+      "bytes": 184923,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "cw32-data/electrical.yaml",
+      "sha256": "c9293fabd4bfaec32cd8c34f6de9b56a100837a22683777b163dbe4249ee3fda",
+      "bytes": 74239,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "sha256": "31f98f7249f7f46018b28d50a22404c8e0cfe8bcbad78d14f75423c3e10ca19c",
+      "bytes": 355116,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "cw32-data/registers/sysctrl_cw32l010_v1.yaml",
+      "sha256": "016aae6d0c4aff63fac68f56792b0e02d2a0c90b2f4556946eb0af4c6e8bcec9",
+      "bytes": 16506,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "cw32-data/registers/flash_cw32l010_v1.yaml",
+      "sha256": "95f0e7bc52c05657d0116c8cc2660e38dec30149cfaf9a2466d235537d573563",
+      "bytes": 4450,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "cw32-data/registers/sysctrl_cw32l011_v1.yaml",
+      "sha256": "92426afbabd991bba2e97d38e128df2c80ea720b6f422bcd5f3de869686ed810",
+      "bytes": 16954,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "cw32-data/registers/flash_cw32l011_v1.yaml",
+      "sha256": "b62e3089589aaf137eedce7d23d366dae6804788f090fab16d1ca51874146bba",
+      "bytes": 4693,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "cw32-data/registers/sysctrl_cw32l012_v1.yaml",
+      "sha256": "fbf8ff76fa6f5341421fdab175fcc62ff60031eb2ef3c1402e4df5e37f12ac81",
+      "bytes": 19363,
+      "byte_equal_baseline": true
+    },
+    {
+      "path": "cw32-data/registers/flash_cw32l012_v1.yaml",
+      "sha256": "21aca74ab3fcf6d1e6a683ee4b85ba5f7e1fb07ccf6b49dcf5c0bc54edb19f1a",
+      "bytes": 5193,
+      "byte_equal_baseline": true
+    }
+  ],
+  "checks": [
+    {
+      "id": "authoritative_wait",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:186-189",
+        "embassy-cw32/src/rcc/l010_l011.rs:870",
+        "embassy-cw32/src/rcc/l012.rs:809"
+      ],
+      "finding": "The existing outer FLASH write/readback remains before both calls. The new method independently reads FLASH.CR2.WAIT and requires the caller-supplied expected maximum, returning FlashLatencyTimeout otherwise. Callers supply the unchanged family MAX_FLASH_WAIT, 1 for L010 and 3 for L011/L012; no expected value is inferred from current hardware."
+    },
+    {
+      "id": "typed_expected_word",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:190-198"
+      ],
+      "finding": "Cr2(self.routes) constructs a local value from the original frozen word. set_flashwait changes only its typed FLASHWAIT field. The actual complete current SYSCTRL.CR2 must equal that expected word. The own input descriptions place FLASHWAIT at 6:4 and FLASH WAIT at 2:0 for all three families. The method neither writes the hardware mirror nor masks WAIT out of native start."
+    },
+    {
+      "id": "all_non_wait_bits",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:191-198"
+      ],
+      "finding": "Full-word equality against the original word with only FLASHWAIT replaced retains comparison of all non-WAIT bits, including brake routes, wake/debug/lockup controls, reserved bits and L010 RTCLPM. Unexpected mirror WAIT also rejects."
+    },
+    {
+      "id": "ier_and_lse",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:194-198"
+      ],
+      "finding": "IER and LSE are compared as complete words against the original Admission. No fresh current-word snapshot replaces either original field."
+    },
+    {
+      "id": "original_monitor_admission",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:119-137",
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:151-166",
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:200-207",
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:267-268",
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:402-432"
+      ],
+      "finding": "The original native preflight still rejects an unqualified monitor before it can return an Admission. The new operation uses the original Option<LSI TRIM, WAIT> and repeats current monitor_qualified plus tuple equality. L010 keeps its inherited stable legal-LSI policy; L011/L012 keep their own valid-factory checks, own address and typed TRIM masking. It does not run preflight again or let later LSI readiness manufacture an original admission. Stability is checked at the existing/new observation points; no continuous hardware-stability measurement is claimed."
+    },
+    {
+      "id": "original_classification",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:205-208",
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:651-670"
+      ],
+      "finding": "The returned Self changes only routes; struct update carries reused, lsi, lse and interrupts verbatim. Original fresh/reused branching remains in native start. MONITOR_LSI conflict checking and its only start-time assignment remain there, unchanged."
+    },
+    {
+      "id": "l010_l011_aux_only",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/l010_l011.rs:655",
+        "embassy-cw32/src/rcc/l010_l011.rs:895-909",
+        "embassy-cw32/src/rcc/l010_l011.rs:1104-1119"
+      ],
+      "finding": "The added call is inside the existing Some(config.lse)/Some(admission) block and runs only when lse_target.is_none(). Existing LSE-target admission refresh, original snapshot checks, first-LSI-request classification, target finish path and ownership policies retain all original bytes. HSI/HSE auxiliary paths gain only the approved read-only rebase before the unchanged start call."
+    },
+    {
+      "id": "l012_aux_only",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/l012.rs:1006-1014"
+      ],
+      "finding": "The single added line rebases the original Admission immediately before native start inside the existing Some/Some block. Both current public targets remain HSI/HSE. No L012 LSE SYSCLK option or new feature is introduced."
+    },
+    {
+      "id": "none_preservation",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/l010_l011.rs:1108-1116",
+        "embassy-cw32/src/rcc/l012.rs:1006-1010"
+      ],
+      "finding": "Config.lse=None cannot enter either existing conditional. It gains no new snapshot, register read, source request, gate operation or eligibility condition."
+    },
+    {
+      "id": "native_start_preservation",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:639-719"
+      ],
+      "finding": "Native start is byte-preserved after a line-number shift. Its first full CR2/IER/LSE guard, monitor qualification/conflict checks, original fresh/reused branch, central checks, configuration consumers, pad ownership, L011/L012 commit-edge full-word checks, final CR2/IER guard and fault/readiness handling are unchanged."
+    },
+    {
+      "id": "no_new_mmio_writes_or_gates",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/lse_native_low_power.rs:183-210"
+      ],
+      "finding": "The new operation contains reads, local typed-value mutation and a returned copied Admission only. Its called qualification/parameter helpers are unchanged readers. It performs no MMIO write, peripheral gate/reset operation, oscillator request, GPIO operation, preflight recapture or MONITOR_LSI assignment. FLASH is already enabled by the unchanged outer transition."
+    },
+    {
+      "id": "existing_partial_init_effects",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/l010_l011.rs:858-1115",
+        "embassy-cw32/src/rcc/l012.rs:797-1009",
+        "embassy-cw32/src/rcc/mod.rs:123-138",
+        "embassy-cw32/src/lib.rs:329-343"
+      ],
+      "finding": "The added guard runs at the existing start edge after the existing partial clock transition. No rollback, gate restoration, ownership or publication policy changes. On its rejection, no new source/pad/gate write has occurred. On an admitted owned-WAIT change, the previously blocked path may intentionally proceed to existing native startup and later clock writes. This is not a claim that the complete successful path has no effects."
+    },
+    {
+      "id": "flash_non_wait_controls",
+      "status": "accepted",
+      "locations": [
+        "embassy-cw32/src/rcc/l012.rs:569-589",
+        "embassy-cw32/src/rcc/l010_l011.rs:629-643"
+      ],
+      "finding": "Existing WAIT-only hardware writes retain their original bytes. L012 FETCH/CACHE/CACHEINVALID and reserved fields are not changed by this correction; L010/L011 reserved FLASH fields retain their existing treatment."
+    }
+  ],
+  "error_contract": {
+    "wrong_authoritative_flash_wait": "FlashLatencyTimeout before returning an adjusted Admission. This is an explicit added guard, so error priority is not claimed globally identical to the baseline.",
+    "wrong_sysctrl_mirror_or_non_wait_cr2_or_ier_or_lse": "LseClockInUse; original snapshot values are not overwritten to hide the change.",
+    "lost_monitor_qualification_or_changed_original_lsi_tuple": "LseMonitorNotReady.",
+    "following_native_start_errors": "Unchanged existing guard/consumer/pad/readiness behavior after the read-only rebase succeeds.",
+    "gate_side_effects": "No new gate operations or restoration behavior; existing pre-call partial transition and permanent software pad reservations remain."
+  },
+  "state_reasoning": {
+    "method": "Independent static path analysis, not executed test cases.",
+    "incoming_wait_cases": [
+      {
+        "family": "L010",
+        "owned_change_from": [
+          0
+        ],
+        "maximum": 1
+      },
+      {
+        "family": "L011",
+        "owned_change_from": [
+          0,
+          1,
+          2
+        ],
+        "maximum": 3
+      },
+      {
+        "family": "L012",
+        "owned_change_from": [
+          0,
+          1,
+          2
+        ],
+        "maximum": 3
+      }
+    ],
+    "already_maximum_wait": "The expected full word equals the original full word; the method cannot remove unrelated differences.",
+    "invalid_incoming_wait": "Existing above-maximum rejection before the owned write is unchanged.",
+    "modes_reviewed": [
+      "HSI/HSE auxiliary target",
+      "fresh/reused LSE",
+      "crystal/bypass",
+      "StartupOnly/MonitoredExistingRoutes",
+      "Config.lse=None",
+      "unchanged existing L010/L011 LSE SYSCLK branch"
+    ],
+    "interpretation": "These are code-path conclusions under documented source semantics and existing exclusive-init entry requirements, not runtime pass results."
+  },
+  "separate_compilation_and_hardware_receipts": {
+    "ordinary_library_compilation": "Not performed or evaluated by this review; coordinator-owned separate evidence.",
+    "representative_real_firmware_elf_compilation": "Not performed or evaluated by this review; coordinator-owned separate evidence.",
+    "hal_tests_run": false,
+    "hal_models_run": false,
+    "simulated_register_tests_run": false,
+    "probes_run": false,
+    "harnesses_run": false,
+    "hardware_execution": false,
+    "static_acceptance_does_not_claim": [
+      "Successful package compilation or linking",
+      "Physical mirror timing",
+      "Source startup or continuous source availability",
+      "Execution of any hardware-state case"
+    ]
+  },
+  "review_mutations": {
+    "runtime_source_modified_by_reviewer": false,
+    "only_written_project_file": "docs/native-lse-flash-wait-review.json"
+  },
+  "public_path_policy": "Project-relative source paths; external evidence labels for off-tree receipts; no internal environment paths or task identifiers."
+}

@@ -180,6 +180,35 @@ pub(crate) struct Admission {
     interrupts: u32,
 }
 
+impl Admission {
+    /// Admit only the enclosing auxiliary-LSE transition's owned maximum WAIT
+    /// change. Keep every other original fact and all native start guards.
+    pub(crate) fn after_owned_flash_wait(self, expected_wait: u32) -> Result<Self, Error> {
+        if u32::from(pac::FLASH.cr2().read().wait()) != expected_wait {
+            return Err(Error::FlashLatencyTimeout);
+        }
+        // Change the local saved word, never the SYSCTRL mirror register.
+        let mut routes = pac::sysctrl::regs::Cr2(self.routes);
+        routes.set_flashwait(expected_wait as u8);
+        let r = pac::SYSCTRL;
+        if r.cr2().read().0 != routes.0
+            || r.ier().read().0 != self.interrupts
+            || r.lse().read().0 != self.lse
+        {
+            return Err(Error::LseClockInUse);
+        }
+        if let Some(parameters) = self.lsi {
+            if !monitor_qualified() || lsi_parameters() != parameters {
+                return Err(Error::LseMonitorNotReady);
+            }
+        }
+        Ok(Self {
+            routes: routes.0,
+            ..self
+        })
+    }
+}
+
 fn oscillator_gpio() -> super::peripheral::RccInfo {
     #[cfg(rcc_cw32l010_v1)]
     {

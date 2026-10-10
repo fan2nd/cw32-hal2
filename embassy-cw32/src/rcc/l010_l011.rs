@@ -1107,6 +1107,11 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     }
     #[cfg(rcc_lse)]
     if let (Some(lse), Some(admission)) = (config.lse, lse_admission) {
+        let admission = if lse_target.is_none() {
+            admission.after_owned_flash_wait(MAX_FLASH_WAIT)?
+        } else {
+            admission
+        };
         super::lse::start(lse, admission, cs)?;
     }
     #[cfg(rcc_lse)]
