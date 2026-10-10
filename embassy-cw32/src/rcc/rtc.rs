@@ -23,7 +23,7 @@ pub enum RtcClockError {
     IncompatibleConfiguration,
 }
 
-#[cfg(any(all(rtc_cw32l010_v1, not(rcc_lse)), rtc_cw32l011_v1, rtc_cw32l012_v1))]
+#[cfg(all(not(rcc_lse), any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
 /// Calendar source on programmable-prescaler RTCs.
 pub type CalendarClock<'d> = HsiOscClock<'d>;
 #[cfg(all(
@@ -144,29 +144,29 @@ impl<'d> LsiClock<'d> {
 /// Selecting LSE keeps its board-qualified envelope conditional on source health.
 /// No RTC fallback to LSI, elapsed-time continuity or fault recovery is promised.
 pub enum CalendarClock<'d> {
-    #[cfg(not(rtc_cw32l010_v1))]
+    #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
     Lsi(LsiClock<'d>),
-    #[cfg(rtc_cw32l010_v1)]
+    #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
     HsiOsc(HsiOscClock<'d>),
     Lse(LseClock<'d>),
 }
 #[cfg(rcc_lse)]
 impl<'d> CalendarClock<'d> {
     /// Existing factory-trim LSI acquisition path.
-    #[cfg(not(rtc_cw32l010_v1))]
+    #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
     pub fn new(sysctrl: Peri<'d, SYSCTRL>, poll_budget: u32) -> Result<Self, RtcClockError> {
         LsiClock::new(sysctrl, poll_budget).map(Self::Lsi)
     }
-    /// Existing L010 HSIOSC acquisition; same one-argument constructor.
-    #[cfg(rtc_cw32l010_v1)]
+    /// Existing native HSIOSC acquisition; same one-argument constructor.
+    #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
     pub fn new(sysctrl: Peri<'d, SYSCTRL>) -> Result<Self, RtcClockError> {
         HsiOscClock::new(sysctrl).map(Self::HsiOsc)
     }
     pub const fn frequency(&self) -> Hertz {
         match self {
-            #[cfg(not(rtc_cw32l010_v1))]
+            #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
             Self::Lsi(c) => c.frequency(),
-            #[cfg(rtc_cw32l010_v1)]
+            #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
             Self::HsiOsc(c) => c.frequency(),
             Self::Lse(c) => c.frequency(),
         }
@@ -174,23 +174,23 @@ impl<'d> CalendarClock<'d> {
     /// Declared healthy-source envelope, not a guarantee after oscillator faults.
     pub const fn bounds(&self) -> ClockBounds {
         match self {
-            #[cfg(not(rtc_cw32l010_v1))]
+            #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
             Self::Lsi(c) => c.bounds(),
-            #[cfg(rtc_cw32l010_v1)]
+            #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
             Self::HsiOsc(c) => c.bounds(),
             Self::Lse(c) => c.bounds(),
         }
     }
     pub(crate) const fn calendar_divisor(&self) -> u32 {
         match self {
-            #[cfg(not(rtc_cw32l010_v1))]
+            #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
             Self::Lsi(c) => c.calendar_divisor(),
-            #[cfg(rtc_cw32l010_v1)]
+            #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
             Self::HsiOsc(c) => c.calendar_divisor(),
             Self::Lse(c) => c.calendar_divisor(),
         }
     }
-    #[cfg(rtc_cw32l010_v1)]
+    #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
     pub(crate) const fn prescalers(&self) -> (u16, u32) {
         match self {
             Self::HsiOsc(c) => c.prescalers(),
@@ -202,30 +202,30 @@ impl<'d> CalendarClock<'d> {
     }
     pub(crate) fn source(&self) -> crate::rtc::Source {
         match self {
-            #[cfg(not(rtc_cw32l010_v1))]
+            #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
             Self::Lsi(c) => c.source(),
-            #[cfg(rtc_cw32l010_v1)]
+            #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
             Self::HsiOsc(c) => c.source(),
             Self::Lse(c) => c.source(),
         }
     }
     pub(crate) fn is_ready(&self) -> bool {
         match self {
-            #[cfg(not(rtc_cw32l010_v1))]
+            #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
             Self::Lsi(c) => c.is_ready(),
-            #[cfg(rtc_cw32l010_v1)]
+            #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
             Self::HsiOsc(c) => c.is_ready(),
             Self::Lse(c) => c.is_ready(),
         }
     }
 }
-#[cfg(all(rcc_lse, not(rtc_cw32l010_v1)))]
+#[cfg(all(rcc_lse, not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))))]
 impl<'d> From<LsiClock<'d>> for CalendarClock<'d> {
     fn from(clock: LsiClock<'d>) -> Self {
         Self::Lsi(clock)
     }
 }
-#[cfg(all(rcc_lse, rtc_cw32l010_v1))]
+#[cfg(all(rcc_lse, any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
 impl<'d> From<HsiOscClock<'d>> for CalendarClock<'d> {
     fn from(clock: HsiOscClock<'d>) -> Self {
         Self::HsiOsc(clock)
@@ -244,9 +244,15 @@ impl<'d> From<LseClock<'d>> for CalendarClock<'d> {
 /// starts, stops or reconfigures an oscillator or pad. Drop retains the source.
 /// Bounds require the board's complete per-cycle and electrical guarantees;
 /// EN/STABLE and sticky fault flags are checked by every RTC operation.
-/// On L010, `LseFaultDetection::StartupOnly` leaves CCS clear: later
+/// On L010/L011/L012, `LseFaultDetection::StartupOnly` leaves CCS clear: later
 /// source loss can be invisible because STABLE latches and no fault is raised.
 /// Monitored operation retains the already selected brake/timer fault routes.
+/// On L011/L012, acquisition temporarily opens GPIOC to inspect the oscillator
+/// pads. Whole-bank sampling, filters and armed edges may advance, including
+/// before an error; restoring the gate does not undo that progress. Supported
+/// functional handover must permit it. Acquisition does not establish ownership
+/// of RTC_OUT/RTC_1Hz recipients for later calendar activation; see
+/// [`crate::rtc::Rtc::initialize_if_unset`].
 /// Drop, forgetting the capability, and failed acquisition never release pads.
 pub struct LseClock<'d> {
     _sysctrl: Peri<'d, SYSCTRL>,
@@ -313,16 +319,16 @@ impl<'d> LseClock<'d> {
     }
     /// Frozen native monitoring semantics; startup-only checks cannot prove a
     /// source is still running. No continuous frequency measurement is made.
-    #[cfg(rtc_cw32l010_v1)]
+    #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
     pub const fn fault_detection(&self) -> super::LseFaultDetection {
         self.config.fault_detection
     }
     pub(crate) const fn calendar_divisor(&self) -> u32 {
-        #[cfg(rtc_cw32l010_v1)]
+        #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
         {
             crate::RCC_LSE_RTC_CALENDAR_DIVISOR
         }
-        #[cfg(not(rtc_cw32l010_v1))]
+        #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
         {
             RTC::CALENDAR_DIVISOR
         }

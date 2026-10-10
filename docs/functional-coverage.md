@@ -159,8 +159,8 @@ still apply.
   independent of HSE qualification. Crystal, bypass, family-specific pad locks
   and package bond-outs determine the boot-retained reservation before safe pin
   construction. Active LSE crystal/bypass setup and an owned calendar source
-  are qualified for nineteen exact packages: the previous sixteen
-  x030/F020/L031/R031/W031/L052/L083 packages and three native L010 packages. The
+  are qualified for twenty-three exact packages: the previous sixteen
+  x030/F020/L031/R031/W031/L052/L083 packages, three native L010, two L011 and two L012 packages. The
   three L052 parts have separate pre-start/run analog settings, native AUTOTRIM
   admission, and LPTIM/LCD work-gate preservation; see their
   [own-source contract](qualified-l052-lse.md). The five L083 parts have one analog
@@ -170,15 +170,17 @@ still apply.
   The previous sixteen retain their own monitoring and consumer contracts.
   Native L010 uses independent four-bit running/startup drive without amplitude.
   `StartupOnly` leaves CCS clear and may retain STABLE after loss;
-  `MonitoredExistingRoutes` requires legal stable unchanged LSI at most36080Hz,
+  `MonitoredExistingRoutes` requires legal stable unchanged LSI at most 36080Hz,
   checks `256 * LSE_min_hz > 129 * 36080`, and retains deliberate fault routes.
   Its source-zero startup also requires the public RTC observer and whole-GPIOB
   functional handover; dormant timer work gates are not probed. See the
-  [native L010 contract](qualified-l010-lse.md). L010 HSI and L011/L012 calendar
-  sources remain available as before. The shared gate-inspection helper now
+  [native L010 contract](qualified-l010-lse.md). The [new L011/L012 contract](qualified-l011-l012-lse.md)
+  uses factory-matching stable LSI with 41000/36080Hz upper bounds and explicit whole-GPIOC,
+  closed-output/UART3 and retained-root functional handover exclusions. Native HSIOSC
+  calendar sources remain available, with direct LSE source and PSC selection. The shared gate-inspection helper now
   attempts bounded restoration after initial enable-readback failure; successful
-  HSI/HSE/PLL paths are unchanged. All nineteen require board electrical and
-  every-cycle frequency bounds around nominal32768Hz. Each family applies its
+  HSI/HSE/PLL paths are unchanged. All twenty-three require board electrical and
+  every-cycle frequency bounds around nominal 32768Hz. Each family applies its
   own retained-consumer admission; exact enabled reuse preserves configuration. Poll-budget exhaustion retains the source and reservations
   and requires reset; ordinary reset need not clear retained LSE controls, so
   POR may be required. There is no automatic calendar fallback, low-power

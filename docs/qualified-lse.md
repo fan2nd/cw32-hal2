@@ -1,8 +1,10 @@
 # Bounded active LSE qualification
 
-Active LSE configuration is qualified on nineteen exact parts: the sixteen x030/F020/L031/R031/W031/L052/L083 parts in the table below, plus CW32L010F8P6 (TSSOP20), CW32L010F8U6 (QFN20) and CW32L010Y8M6 (SOP16). Every family alias and all other parts retain only previously established pad-ownership facts.
+Active LSE configuration is qualified on twenty-three exact parts: the sixteen x030/F020/L031/R031/W031/L052/L083 parts in the table below, plus CW32L010F8P6 (TSSOP20), CW32L010F8U6 (QFN20) and CW32L010Y8M6 (SOP16), CW32L011K8T6/K8U6 (LQFP32/QFN32), and CW32L012C8T6/C8U6 (LQFP48/QFN48). Every family alias and all other parts retain only previously established pad-ownership facts.
 
-The native L010 parts use PB1/PB0 and a separate [own-source contract](qualified-l010-lse.md): four-bit independent running/startup drive, no amplitude, and explicit `StartupOnly` or `MonitoredExistingRoutes`. StartupOnly can retain STABLE after clock loss; monitored mode requires legally stable unchanged LSI, a native detector margin and acceptance of inherited fault routes. Its RTC observer and GPIOB functional handover also differ. The remaining sections and table describe the previous sixteen parts and do not extend their monitor or reset-image guarantees to L010.
+The native L010 parts use PB1/PB0 and a separate [own-source contract](qualified-l010-lse.md): four-bit independent running/startup drive, no amplitude, and explicit `StartupOnly` or `MonitoredExistingRoutes`. StartupOnly can retain STABLE after clock loss; monitored mode requires legally stable unchanged LSI, a native detector margin and acceptance of inherited fault routes. Its RTC observer and GPIOB functional handover also differ. The remaining sections and table describe the previous sixteen parts and do not extend their monitor or reset-image guarantees to the native L010/L011/L012 families.
+
+The four new L011/L012 packages have a separate [own-source contract](qualified-l011-l012-lse.md), with PC14/PC15, factory-matching stable LSI monitoring and explicit downstream/GPIOC handover limits. Their no-ACCESS programmable RTC uses SOURCE0 and PSC1=0 / PSC2=0x3fff. No runtime proof is claimed for closed output banks, inaccessible L012 UART3, or unresolved timer mappings.
 
 | Part | Package | PC14 / PC15 physical pins | Direct LSE output |
 |---|---|---|---|

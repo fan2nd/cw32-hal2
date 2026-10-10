@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-09T20:47:13.179154+00:00",
+  "result": "accepted_frozen_three_model_delta_conditional_on_coordinated_semantic_migration_and_lineage_update",
+  "scope": "Static three-model byte identity, delta reversal, field/projection and Serde contract review only. No integrated implementation, build, runtime, hardware or legal clearance.",
+  "baseline_zip": "external-evidence/stage54/baseline-archives/embassy-cw32-stage53-source-final-2026-10-09.zip",
+  "baseline_zip_sha256": "778274a52b4994a0e379963afa8c870d522cfd42f3338cfacc950d13c7a4b032",
+  "freeze_path": "external-evidence/stage54/native-lse-schema/evidence/native-low-power-model-freeze.json",
+  "freeze_sha256": "0ac13f39c9f4c9476ef7d6d2ea45842bd80b20469141a1bd1c113cf92a3af413",
+  "patch_path": "external-evidence/stage54/native-lse-schema/evidence/native-low-power-model-delta.patch",
+  "patch_sha256": "a9cc8003d9f71e3f0a07a8c37e484fa5d3431cb9699f0e87fab66727416978dc",
+  "exact_patch_matches_reconstructed_unified_diff": true,
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "c7c59622c69f77894f838cb0737a1dcf5b802a17b63fef01099417c06c781998",
+      "after_sha256": "42345e5143a6dded05aafec1fa5d83521a6a6e3eb0d359cd22beff637b0a6d63",
+      "before_bytes": 32816,
+      "after_bytes": 33306,
+      "before_matches_archive": true,
+      "after_matches_candidate": true,
+      "explicit_reverse_equals_stage53": true,
+      "old_nine_names_types_relative_order_unchanged": true,
+      "new_fields": {
+        "detector_margin_lse_edges": "u16",
+        "monitor_reference": "String",
+        "lsi_factory_trim_address": "Option<u32>"
+      }
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "a261aa1a741b10adf591ef8d32ac1f27b83877363414ae5e1b2a2cc53d82ec68",
+      "after_sha256": "026cb57571d20dced19a7c735ed370f6a1866d5a3f864dde701bf7de3ca04f76",
+      "before_bytes": 33335,
+      "after_bytes": 33729,
+      "before_matches_archive": true,
+      "after_matches_candidate": true,
+      "explicit_reverse_equals_stage53": true,
+      "old_nine_names_types_relative_order_unchanged": true,
+      "new_fields": {
+        "detector_margin_lse_edges": "u16",
+        "monitor_reference": "String",
+        "lsi_factory_trim_address": "Option<u32>"
+      }
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "0ad4ca521646fed418b80c526d6c9d5f0403a88ecdf3e596c4f36cb9865ef081",
+      "after_sha256": "180797a4cf5451f29d413a0f206d590c14da3a81cc4f27ecd3a29d89c1cc1869",
+      "before_bytes": 21409,
+      "after_bytes": 21809,
+      "before_matches_archive": true,
+      "after_matches_candidate": true,
+      "explicit_reverse_equals_stage53": true,
+      "old_nine_names_types_relative_order_unchanged": true,
+      "new_fields": {
+        "detector_margin_lse_edges": "u16",
+        "monitor_reference": "&'static str",
+        "lsi_factory_trim_address": "Option<u32>"
+      }
+    }
+  ],
+  "schema_findings": {
+    "migration": "Explicit breaking serialized native_l010 to native_low_power rename and Rust LseNativeL010/PeripheralLseNativeL010 to LseNativeLowPower/PeripheralLseNativeLowPower rename; no compatibility alias.",
+    "outer_option": "Missing or explicit null native_low_power deserializes None in both input models. The serde model explicitly defaults and omits None on serialization. The generator model uses standard Option missing-field handling and is Deserialize-only. Static metadata has no serialization derives.",
+    "required_new_fields": "Within Some, monitor_reference:String and detector_margin_lse_edges:u16 must be supplied and nonnull. No defaults or aliases were introduced. Empty/arbitrary strings and other in-range integer values are structurally representable and require generator validation.",
+    "factory_address": "lsi_factory_trim_address:Option<u32> accepts omission or null as None in both input models; cw32-data-serde has no skip_serializing_if here, so None serializes as null inside a present profile. Some serializes as a u32 value. It is syntactically optional but semantically mandatory for factory_trim and semantically None for inherited_legal.",
+    "unknown_fields": "Both parent configuration and native records deny unknown fields in both input models. New readers reject old native_l010 keys even when null. Stage53 readers reject native_low_power keys even when null. Old documents omitting the native profile preserve the optional None representation.",
+    "rust_api": "Struct literal field names, imports, exhaustive patterns and new required fields require coordinated consumer migration. Static projection uses monitor_reference:&static str and retains the prior output-route static slice. Derived Debug/Hash contents may change; no source, ABI, binary or serialized-byte compatibility is claimed.",
+    "model_role": "The project-authored serde model remains source-independent data representation. No family constants, MMIO policy or hardware validator were introduced. Widths/Option/String cannot establish family applicability, address exactness, detector margin, legal frequency, calibration, route completeness or runtime ownership.",
+    "old_fields": "All nine prior field names, types, relative order and applicable units/meaning survive. The upper-bound comment generalizes the reference qualification; it does not authorize changing accepted L010 36080 Hz inherited-legal behavior."
+  },
+  "baseline_semantic_evidence": {
+    "qualified_yaml_byte_identical_to_stage53": true,
+    "l010_exact_records": {
+      "CW32L010F8P6": {
+        "drive_bits": 4,
+        "startup_drive_bits": 4,
+        "monitored_lsi_maximum_hz": 36080,
+        "detector_lse_edges": 128,
+        "detector_lsi_cycles": 256,
+        "rtc_first_divisor": 1,
+        "rtc_second_divisor": 16384,
+        "rtc_calendar_divisor": 32768,
+        "rtc_output_routes": [
+          {
+            "pin": "PB4",
+            "af": 2
+          },
+          {
+            "pin": "PB6",
+            "af": 2
+          }
+        ]
+      },
+      "CW32L010F8U6": {
+        "drive_bits": 4,
+        "startup_drive_bits": 4,
+        "monitored_lsi_maximum_hz": 36080,
+        "detector_lse_edges": 128,
+        "detector_lsi_cycles": 256,
+        "rtc_first_divisor": 1,
+        "rtc_second_divisor": 16384,
+        "rtc_calendar_divisor": 32768,
+        "rtc_output_routes": [
+          {
+            "pin": "PB4",
+            "af": 2
+          },
+          {
+            "pin": "PB6",
+            "af": 2
+          }
+        ]
+      },
+      "CW32L010Y8M6": {
+        "drive_bits": 4,
+        "startup_drive_bits": 4,
+        "monitored_lsi_maximum_hz": 36080,
+        "detector_lse_edges": 128,
+        "detector_lsi_cycles": 256,
+        "rtc_first_divisor": 1,
+        "rtc_second_divisor": 16384,
+        "rtc_calendar_divisor": 32768,
+        "rtc_output_routes": [
+          {
+            "pin": "PB4",
+            "af": 2
+          },
+          {
+            "pin": "PB6",
+            "af": 2
+          }
+        ]
+      }
+    },
+    "prior16_native_profile_absent": [
+      "CW32A030C8T7",
+      "CW32F030C8T7",
+      "CW32F020C6U7",
+      "CW32L031C8T6",
+      "CW32L031C8U6",
+      "CW32L031F8U6",
+      "CW32R031C8U6",
+      "CW32W031R8U6",
+      "CW32L052C8T6",
+      "CW32L052R8S6",
+      "CW32L052R8T6",
+      "CW32L083RBT6",
+      "CW32L083RCT6",
+      "CW32L083RCS6",
+      "CW32L083MCT6",
+      "CW32L083VCT6"
+    ],
+    "migration_status": "The reviewed current YAML still uses native_l010. This confirms preserved input facts, not compatibility with the new model. Integrated migration and behavior remain pending."
+  },
+  "acceptance_conditions": [
+    "Migrate both generators/emission, HAL build consumers, exact YAML and fixtures together. Do not add an alias or default that erases explicit family qualification.",
+    "Enforce exactly inherited_legal and margin 1 with trim-address None for accepted L010 parts; preserve all nine existing values/routes and 36080 Hz behavior, with prior16 profiles None and behavior unchanged.",
+    "Enforce factory_trim and margin 1 with own LSI halfword address exactly 0x001007C2 for L011/L012, bounds respectively 41000/36080 Hz, and their own exact parts/routes. Do not reuse RTC HSIOSC factory address 0x001007C0.",
+    "Use own native register TRIM widths (L011 10 bits, L012 9 bits), source-qualified runtime admission, and preserved accepted hardware restrictions; model acceptance is no proof of these.",
+    "Before claiming integrated acceptance, validate these conditions through relevant existing metadata/source tests and representative exact-part builds; no new default historical inverse checker.",
+    "Advance only the reviewed serde identity to the frozen after hash, wrapping the entire existing replacement_review as previous_review unchanged. Record both metapac before/after identities while preserving adapted ancestry, package declaration, notices, historical observed hashes and all earlier reviews."
+  ],
+  "lineage": {
+    "observed_files": {
+      "docs/upstream-file-provenance.json": {
+        "sha256": "335734b2ce1197e1fb735d59eecb0f36f0434a9592cba80f0748ee5980840b20",
+        "byte_identical_to_stage53": true
+      },
+      "docs/lse-l010-schema-acceptance.json": {
+        "sha256": "06debbd10df2783c3aa34b9760f07eb1ddb77918c710527229ecd534d51b477e",
+        "byte_identical_to_stage53": true
+      },
+      "docs/lse-l010-qualification.json": {
+        "sha256": "8d97aaf656a2c68f2e05cd0ac42205d1bcab707484decfc30c745fafb55202f0",
+        "byte_identical_to_stage53": true
+      },
+      "cw32-data/lse-qualified.yaml": {
+        "sha256": "4e72720d3294595429649a446eab7a899962717b5b0c030a9284af3d014a8b6d",
+        "byte_identical_to_stage53": true
+      }
+    },
+    "current_serde_identity_tip": "c7c59622c69f77894f838cb0737a1dcf5b802a17b63fef01099417c06c781998",
+    "identity_not_yet_advanced": true,
+    "entire_prior_replacement_review_canonical_sha256": "f92c9a76a44e7deb5a26b4939b53cc162dd561b201eb0bdb3491a552f77d4a4f",
+    "selected_entries_canonical_sha256": {
+      "cw32-data-serde/src/lib.rs": "fac9cfe393418fbae5561a41d95682821ae6f429dcc0da518a22dc14558c4ae9",
+      "cw32-metapac-gen/src/data.rs": "fa6872d0a5ac62e8e7e128dc13d0a2273c1809cf5522ec725172a345304c62a9",
+      "cw32-metapac-gen/res/src/metadata.rs": "d15dda63c608ee2f627245e2dec25d88587680cead1c35e190ce91a6e51f3e17"
+    },
+    "canonicalization": "JSON UTF-8, sort_keys=True, separators=(comma,colon), ensure_ascii=True",
+    "metapac_adapted_classification_retained": true,
+    "legal_clearance": false
+  },
+  "verification": {
+    "static_source_review": true,
+    "explicit_reverse_byte_equality": true,
+    "new_serialization_probes_run": false,
+    "cargo_run": false,
+    "hal_tests_run": false,
+    "project_source_edits": false,
+    "new_default_historical_inverse_checker_added": false
+  },
+  "design_reference": {
+    "path": "external-evidence/stage54/native-lse-design/design.md",
+    "sha256": "49c833504e231493cfe1c04f6f3656070dd0c6fceb858e92cbc042cd2f5c1d58"
+  },
+  "design_review_reference": {
+    "path": "external-evidence/stage54/native-lse-design-review/receipt.json",
+    "sha256": "4f0bac132f51b3995e668ecf8b1adf52c19572718bb8d5ac314d3e01053f6bfa"
+  }
+}

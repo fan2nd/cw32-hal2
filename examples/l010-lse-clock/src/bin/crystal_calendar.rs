@@ -9,7 +9,19 @@ use embassy_cw32::{
 #[cortex_m_rt::entry]
 fn main() -> ! {
     let p = hal::init(board::config(LseMode::Oscillator));
+    #[cfg(any(
+        feature = "cw32l010f8p6",
+        feature = "cw32l010f8u6",
+        feature = "cw32l010y8m6"
+    ))]
     let clock = LseClock::new(p.SYSCTRL, p.PB1, p.PB0).unwrap();
+    #[cfg(any(
+        feature = "cw32l011k8t6",
+        feature = "cw32l011k8u6",
+        feature = "cw32l012c8t6",
+        feature = "cw32l012c8u6"
+    ))]
+    let clock = LseClock::new(p.SYSCTRL, p.PC14, p.PC15).unwrap();
     core::hint::black_box(clock.fault_detection());
     // Deliberate cold provisioning. Use attach_preserving_state for a retained calendar.
     let rtc =

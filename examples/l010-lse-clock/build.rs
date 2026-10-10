@@ -4,7 +4,13 @@ fn main() {
     assert_eq!(metadata.memory.len(), 1);
     assert!(matches!(
         metadata.name,
-        "CW32L010F8P6" | "CW32L010F8U6" | "CW32L010Y8M6"
+        "CW32L010F8P6"
+            | "CW32L010F8U6"
+            | "CW32L010Y8M6"
+            | "CW32L011K8T6"
+            | "CW32L011K8U6"
+            | "CW32L012C8T6"
+            | "CW32L012C8U6"
     ));
     let mut memory = String::from("MEMORY {\n");
     for bank in metadata.memory[0] {

@@ -265,9 +265,9 @@ pub struct Config {
     pub hsi: Hsi,
     /// Board-qualified HSE; its oscillator pads are reserved even with HSI SYSCLK.
     pub hse: Option<Hse>,
-    /// Native board-qualified L010 LSE; no LSE system-clock selection is added.
+    /// Native board-qualified L010/L011 LSE; no LSE system-clock selection is added.
     /// See [`crate::init`] and [`crate::try_init`] for the required RTC_OUT/
-    /// RTC_1Hz observer disconnection and whole-GPIOB operational handover.
+    /// RTC_1Hz observer disconnection and whole-GPIOB (L010) or GPIOC (L011) handover.
     /// Genuine reset entry with untouched selectors meets those functional
     /// conditions; a register image does not prove reset. Failure permanently
     /// reserves requested pads and may leave the oscillator/gates enabled.

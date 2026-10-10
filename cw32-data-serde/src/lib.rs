@@ -350,15 +350,21 @@ pub mod chip {
                 }
             }
             record! {
-                /// CW32L010 native drive, detector and RTC clock facts. No amplitude field exists.
+                /// Exact-family native low-power drive, detector and RTC facts. No amplitude field exists.
                 #[serde(deny_unknown_fields)]
-                LseNativeL010 {
+                LseNativeLowPower {
                     pub drive_bits: u8,
                     pub startup_drive_bits: u8,
-                    /// Legal unchanged LSI upper bound; STABLE alone does not prove this bound.
+                    /// Qualified unchanged LSI reference upper bound; STABLE alone does not prove it.
                     pub monitored_lsi_maximum_hz: u32,
                     pub detector_lse_edges: u16,
                     pub detector_lsi_cycles: u16,
+                    /// Engineering phase margin, separate from the hardware edge threshold.
+                    pub detector_margin_lse_edges: u16,
+                    /// Exact qualification: inherited_legal or factory_trim, checked per family.
+                    pub monitor_reference: String,
+                    /// Own-source LSI halfword address; required for factory_trim, absent otherwise.
+                    pub lsi_factory_trim_address: Option<u32>,
                     /// Actual divisors; PSC stores each divisor minus one.
                     pub rtc_first_divisor: u16,
                     pub rtc_second_divisor: u16,
@@ -383,7 +389,7 @@ pub mod chip {
                             #[serde(default, skip_serializing_if = "Option::is_none")]
                             pub startup_consumers: Option<LseStartupConsumers>,
                             #[serde(default, skip_serializing_if = "Option::is_none")]
-                            pub native_l010: Option<LseNativeL010>,
+                            pub native_low_power: Option<LseNativeLowPower>,
                             pub mco_source: u8,
                             pub gpio_dir_offset: u32,
                             pub gpio_speed_offset: Option<u32>,

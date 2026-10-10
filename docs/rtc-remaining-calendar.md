@@ -1,12 +1,16 @@
 # RTC calendar breadth
 
 The RC-source description and historical batch evidence below remain the baseline.
-Current held LSE support covers nineteen exact packages: the previous sixteen
-use their [own monitor contracts](qualified-lse.md), while three native L010
-packages follow [StartupOnly/MonitoredExistingRoutes and functional handover](qualified-l010-lse.md).
+Current held LSE support covers twenty-three exact packages: the previous sixteen
+use their [own monitor contracts](qualified-lse.md), three native L010 packages
+retain [their inherited-legal monitor and functional handover](qualified-l010-lse.md),
+and four native L011/L012 packages use [their factory-matching monitor and handover](qualified-l011-l012-lse.md).
 L010 retains HSIOSC and adds LSE source0 with PSC1=0/PSC2=0x3fff; StartupOnly
 checks configuration/startup state without proving continued calendar progression.
-L011/L012 HSIOSC behavior is unchanged. Later alarm/async scope is in
+L011/L012 retain HSIOSC and add held LSE with SOURCE0 and PSC1=0/PSC2=0x3fff.
+StartupOnly is equally limited; monitored mode additionally requires stable,
+unchanged factory-matching LSI with own maxima 41000/36080 Hz. Their RTC has WAIT
+and no ACCESS. Later alarm/async scope is in
 [the current alarm contract](rtc-alarms.md); the unsupported-work list below
 records the original batch rather than current capability declarations.
 
@@ -27,9 +31,11 @@ reuse assignment changes in this batch.
 | W031 | factory-trim LSI | 32800 | 31816–33784 | 2000–3600 | −40…85 |
 | L010 | frozen HSIOSC | 48000000 | 47040000–48960000 | 1620–5500 | −40…85 |
 | L011/L012 | frozen HSIOSC | 96000000 | 94080000–97920000 | 1700–5500 | −40…85 |
+| L010, three exact packages | held LSE | 32768 | board-declared cycle bounds | 1620–5500 | −40…85 |
+| L011/L012, four exact packages | held LSE | 32768 | board-declared cycle bounds | 1700–5500 | −40…85 |
 
-These are each own datasheet's factory calibration ratings under its stated
-conditions. Neither supply, ambient temperature nor actual frequency is measured.
+The RC rows use each own datasheet's factory calibration ratings under its stated
+conditions; LSE rows require the corresponding exact-package board/source qualification. Neither supply, ambient temperature nor actual frequency is measured.
 The existing RCC board declaration must stay true throughout use. See the exact
 own PDF pages, URLs, hashes and SDK archive members in
 [the source evidence](rtc-remaining-evidence.json). R031/W031 changes concern

@@ -33,7 +33,10 @@ pub struct ClockError;
 pub(crate) enum ClockInspectionError {
     EnableFailed {
         // Legacy callers deliberately retain their generic error classification.
-        #[cfg_attr(not(all(rcc_lse, rcc_cw32l010_v1)), allow(dead_code))]
+        #[cfg_attr(
+            not(all(rcc_lse, any(rcc_cw32l010_v1, rcc_cw32l011_v1, rcc_cw32l012_v1))),
+            allow(dead_code)
+        )]
         restore_failed: bool,
     },
     RestoreFailed,

@@ -3605,21 +3605,40 @@ fn generate_time_driver(out: &mut String, selected: Option<&str>) {
     ));
 }
 
-// Native L010 is a different oscillator/RTC hardware contract, not an amplitude
-// translation. Authored exact-part facts feed these constants; IR checks bind
+// Native low-power oscillator/RTC hardware has no amplitude translation. Authored exact-part facts feed these constants; IR checks bind
 // every handwritten MMIO field to its own selected PAC layout.
-fn generate_l010_lse_configuration(
+fn generate_native_low_power_lse_configuration(
     out: &mut String,
     lse: &cw32_metapac::metadata::PeripheralLseConfiguration,
 ) {
     use cw32_metapac::metadata::{METADATA, ir};
     use std::fmt::Write;
     let native = lse
-        .native_l010
+        .native_low_power
         .as_ref()
-        .expect("missing native L010 LSE facts");
+        .expect("missing own native low-power LSE facts");
+    let l010 = METADATA.line == "CW32L010";
+    let l011 = METADATA.line == "CW32L011";
+    let l012 = METADATA.line == "CW32L012";
+    assert!(l010 || l011 || l012);
+    assert_eq!(
+        native.monitor_reference,
+        if l010 {
+            "inherited_legal"
+        } else {
+            "factory_trim"
+        }
+    );
+    assert_eq!(
+        native.lsi_factory_trim_address,
+        if l010 { None } else { Some(0x0010_07c2) }
+    );
+    assert_eq!(native.detector_margin_lse_edges, 1);
     assert_eq!((native.drive_bits, native.startup_drive_bits), (4, 4));
-    assert_eq!(native.monitored_lsi_maximum_hz, 36080);
+    assert_eq!(
+        native.monitored_lsi_maximum_hz,
+        if l011 { 41000 } else { 36080 }
+    );
     assert_eq!(
         (native.detector_lse_edges, native.detector_lsi_cycles),
         (128, 256)
@@ -3687,12 +3706,24 @@ fn generate_l010_lse_configuration(
         ("LSE", 36, "PDRIVER", 8, 4),
         ("LSE", 36, "PINLOCK", 17, 1),
         ("LSE", 36, "STABLE", 18, 1),
-        ("LSI", 32, "TRIM", 0, 10),
+        ("LSI", 32, "TRIM", 0, if l012 { 9 } else { 10 }),
         ("LSI", 32, "WAITCYCLE", 10, 2),
         ("LSI", 32, "STABLE", 15, 1),
-        ("AHBEN", 48, "GPIOB", 5, 1),
+        (
+            "AHBEN",
+            48,
+            if l010 { "GPIOB" } else { "GPIOC" },
+            if l010 { 5 } else { 6 },
+            1,
+        ),
         ("AHBEN", 48, "KEY", 16, 16),
-        ("AHBRST", 64, "GPIOB", 5, 1),
+        (
+            "AHBRST",
+            64,
+            if l010 { "GPIOB" } else { "GPIOC" },
+            if l010 { 5 } else { 6 },
+            1,
+        ),
     ] {
         field("SYSCTRL", reg, offset, name, bit, width);
     }
@@ -3704,7 +3735,10 @@ fn generate_l010_lse_configuration(
     }
     field("SYSCTRL", "ISR", 16, "LSESTABLE", 15, 1);
     field("RTC", "CR0", 4, "H24", 3, 1);
-    for (name, bit, width) in [("ACCESS", 0, 1), ("WAIT", 2, 1), ("SOURCE", 8, 3)] {
+    if l010 {
+        field("RTC", "CR1", 8, "ACCESS", 0, 1);
+    }
+    for (name, bit, width) in [("WAIT", 2, 1), ("SOURCE", 8, 3)] {
         field("RTC", "CR1", 8, name, bit, width);
     }
     field("RTC", "PSC", 64, "PSC1", 20, 8);
@@ -3712,52 +3746,102 @@ fn generate_l010_lse_configuration(
     for name in ["UART1", "UART2"] {
         field(name, "CR1", 0, "SOURCE", 12, 2);
     }
-    field("LPTIM", "CR", 16, "EN", 0, 1);
-    for (name, bit, width) in [("ICLKSRC", 25, 2), ("TRIGEN", 17, 2), ("TRIGSEL", 13, 3)] {
+    if !l010 {
+        field("UART3", "CR1", 0, "SOURCE", 12, 2);
+    }
+    if l012 {
+        for name in ["I2C1", "I2C2"] {
+            field(name, "MCR0", 0x10, "CLKSRC", 6, 2);
+            field(name, "SCR0", 0x110, "CLKSRC", 6, 2);
+        }
+    }
+    field("LPTIM", if l012 { "CR0" } else { "CR" }, 16, "EN", 0, 1);
+    for (name, bit, width) in [
+        ("ICLKSRC", 25, 2),
+        ("TRIGEN", 17, 2),
+        (
+            "TRIGSEL",
+            if l012 { 12 } else { 13 },
+            if l012 { 4 } else { 3 },
+        ),
+    ] {
         field("LPTIM", "CFGR", 12, name, bit, width);
     }
-    for bit in [0, 1, 4, 6] {
-        for (reg, offset) in [("DIR", 0), ("ANALOG", 28)] {
-            field("GPIOB", reg, offset, &format!("PIN{bit}"), bit, 1);
-        }
-        field("GPIOB", "AFRL", 24, &format!("AFR{bit}"), bit * 4, 3);
-    }
-    for bit in [0, 1] {
+    let gpio = if l010 { "GPIOB" } else { "GPIOC" };
+    let pad_bits: &[u32] = if l010 { &[0, 1] } else { &[14, 15] };
+    for &bit in pad_bits {
         for (reg, offset) in [
+            ("DIR", 0),
+            ("ANALOG", 28),
             ("OPENDRAIN", 4),
             ("PUR", 16),
             ("RISEIE", 36),
             ("FALLIE", 40),
             ("FILTER", 64),
         ] {
-            field("GPIOB", reg, offset, &format!("PIN{bit}"), bit, 1);
+            field(gpio, reg, offset, &format!("PIN{bit}"), bit, 1);
         }
+        field(
+            gpio,
+            if l010 { "AFRL" } else { "AFRH" },
+            if l010 { 24 } else { 20 },
+            &format!("{}{bit}", if l012 { "PIN" } else { "AFR" }),
+            (bit % 8) * 4,
+            if l012 { 4 } else { 3 },
+        );
     }
+    let rtc_routes: &[(&str, u8)] = if l010 {
+        &[("PB4", 2), ("PB6", 2)]
+    } else if l011 {
+        &[("PA1", 3), ("PA3", 3)]
+    } else {
+        &[
+            ("PA1", 3),
+            ("PA3", 3),
+            ("PB14", 4),
+            ("PB15", 4),
+            ("PC13", 4),
+        ]
+    };
     assert_eq!(
         native
             .rtc_output_routes
             .iter()
             .map(|r| (r.pin, r.af))
             .collect::<Vec<_>>(),
-        [("PB4", 2), ("PB6", 2)]
+        rtc_routes
     );
+    // Only already-open output banks are observed by the native leaf.
+    for route in native
+        .rtc_output_routes
+        .iter()
+        .chain(lse.output_routes.iter())
+    {
+        let port = &route.pin[..2];
+        let bit: u32 = route.pin[2..].parse().unwrap();
+        let name = format!("GPIO{}", &port[1..]);
+        field(&name, "DIR", 0, &format!("PIN{bit}"), bit, 1);
+        field(&name, "ANALOG", 28, &format!("PIN{bit}"), bit, 1);
+        field(
+            &name,
+            if bit < 8 { "AFRL" } else { "AFRH" },
+            if bit < 8 { 24 } else { 20 },
+            &format!("{}{bit}", if l012 { "PIN" } else { "AFR" }),
+            (bit % 8) * 4,
+            if l012 { 4 } else { 3 },
+        );
+    }
     let sysctrl = METADATA
         .peripherals
         .iter()
         .find(|p| p.name == "SYSCTRL")
         .unwrap();
-    assert!(
-        sysctrl
-            .pins
-            .iter()
-            .any(|p| p.signal == "LSE_IN" && p.pin == "PB1" && p.af.is_none())
-    );
-    assert!(
-        sysctrl
-            .pins
-            .iter()
-            .any(|p| p.signal == "LSE_OUT" && p.pin == "PB0" && p.af.is_none())
-    );
+    assert!(sysctrl.pins.iter().any(|p| p.signal == "LSE_IN"
+        && p.pin == if l010 { "PB1" } else { "PC14" }
+        && p.af.is_none()));
+    assert!(sysctrl.pins.iter().any(|p| p.signal == "LSE_OUT"
+        && p.pin == if l010 { "PB0" } else { "PC15" }
+        && p.af.is_none()));
     writeln!(
         out,
         "pub(crate) const RCC_LSE_NOMINAL_HZ: u32 = {};",
@@ -3785,6 +3869,10 @@ fn generate_l010_lse_configuration(
     for (name, value) in [
         ("MONITORED_LSI_MAXIMUM_HZ", native.monitored_lsi_maximum_hz),
         ("DETECTOR_LSE_EDGES", u32::from(native.detector_lse_edges)),
+        (
+            "DETECTOR_MARGIN_LSE_EDGES",
+            u32::from(native.detector_margin_lse_edges),
+        ),
         ("DETECTOR_LSI_CYCLES", u32::from(native.detector_lsi_cycles)),
         ("RTC_SECOND_DIVISOR", u32::from(native.rtc_second_divisor)),
         ("RTC_CALENDAR_DIVISOR", native.rtc_calendar_divisor),
@@ -3803,6 +3891,13 @@ fn generate_l010_lse_configuration(
         ("MCO_SOURCE", lse.mco_source),
     ] {
         writeln!(out, "pub(crate) const RCC_LSE_{name}: u8 = {value};").unwrap();
+    }
+    if let Some(address) = native.lsi_factory_trim_address {
+        writeln!(
+            out,
+            "pub(crate) const RCC_LSE_LSI_FACTORY_TRIM_ADDRESS: usize = {address};"
+        )
+        .unwrap();
     }
     // Field locations above are the source-reviewed native PAC contract.
     out.push_str("pub(crate) const RCC_LSE_CHANGE_MASK: u32 = 0x00040f7f;\n");
@@ -3832,6 +3927,10 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             | "CW32L010F8P6"
             | "CW32L010F8U6"
             | "CW32L010Y8M6"
+            | "CW32L011K8T6"
+            | "CW32L011K8U6"
+            | "CW32L012C8T6"
+            | "CW32L012C8U6"
     );
     assert_eq!(
         c.lse_configuration.is_some(),
@@ -3842,13 +3941,13 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         return;
     };
     println!("cargo:rustc-cfg=rcc_lse");
-    if METADATA.line == "CW32L010" {
-        generate_l010_lse_configuration(out, lse);
+    if matches!(METADATA.line, "CW32L010" | "CW32L011" | "CW32L012") {
+        generate_native_low_power_lse_configuration(out, lse);
         return;
     }
     assert!(
-        lse.native_l010.is_none(),
-        "native L010 facts leaked to another line"
+        lse.native_low_power.is_none(),
+        "native low-power facts leaked to an unqualified line"
     );
     let peripheral = |name: &str| {
         METADATA

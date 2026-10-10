@@ -1,0 +1,126 @@
+{
+  "reviewed_at_utc": "2026-10-09T21:06:40.321004+00:00",
+  "result": "accepted_bounded_runtime_implementation_at_final_source",
+  "starting_manifest_sha256": "2dd294eeb0d6a9b314f3eb46026638a63ca9a71b9a59ff263021d8f9be9c10a5",
+  "final_implementation_accepted": true,
+  "unresolved_runtime_blockers": [],
+  "resolved_findings": [
+    {
+      "id": "R1",
+      "description": "New-family examples passed L010 PB1/PB0 instead of PC14/PC15 to LseClock constructors",
+      "status": "fixed_and_bound_to_successful_final_exact_part_example_builds"
+    }
+  ],
+  "original_artifacts_verified": 7,
+  "source_texts_verified": 5,
+  "candidate_modified_by_reviewer": false,
+  "cargo_run_by_reviewer": false,
+  "hal_tests_or_harnesses_run_by_reviewer": false,
+  "files": [
+    {
+      "path": "embassy-cw32/src/rcc/lse_native_low_power.rs",
+      "sha256": "0259c1b0d7d53fcf8c9f5a97e78b3905ae6164a309a537a7aeb6ce0deb727c5f"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l010_l011.rs",
+      "sha256": "e46218cad6f8ada885e29592e5aa399b41e9bce4ffdb6a24c034a722f3ba7773"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l012.rs",
+      "sha256": "949f86b014dd4088d654e82f03f5d6b21952352805275e10658c33ae8096cfe3"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/mod.rs",
+      "sha256": "6be78192ebc8b92ff5885c53e02de0828ce959e8d6f2b4461b8825465264b2dc"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/rtc.rs",
+      "sha256": "646970c51cdd424efae5c47f5decea3d359ce09426226978efad8c9b6e6c8197"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/peripheral.rs",
+      "sha256": "92fce92a5ad9f68106dfa400ecea2e0798e3dd4204baa300e00bd8b224351284"
+    },
+    {
+      "path": "embassy-cw32/src/rtc/mod.rs",
+      "sha256": "7974509395f0c4d33fdfa4a79fa6783587867452f3925683759705e862ab39c1"
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "416edd01f85996ee2fb93d6e3bf74115c83517fa1e6c5403240ecc864b46a197"
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "0b2fbcc05dff9744964f23f2d827888919c5f8ade52640f91b4d7722e0fed107"
+    },
+    {
+      "path": "cw32-data/lse-qualified.yaml",
+      "sha256": "bfb9675ec9239252d25e59c344f6ca4b8afa3b63af28f872907a18104a81d14c"
+    },
+    {
+      "path": "cw32-data/registers/sysctrl_cw32l011_v1.yaml",
+      "sha256": "92426afbabd991bba2e97d38e128df2c80ea720b6f422bcd5f3de869686ed810"
+    },
+    {
+      "path": "cw32-data/registers/sysctrl_cw32l012_v1.yaml",
+      "sha256": "fbf8ff76fa6f5341421fdab175fcc62ff60031eb2ef3c1402e4df5e37f12ac81"
+    },
+    {
+      "path": "examples/l010-lse-clock/src/bin/crystal_calendar.rs",
+      "sha256": "adeb694ecc4459d5b72ee6f08d6fd43df4c5ad8685403ef23db3745caa85fd68"
+    },
+    {
+      "path": "examples/l010-lse-clock/src/bin/bypass_calendar.rs",
+      "sha256": "a1bece9cc9884756e4862a2f4d74137d71decec078a064419c9b92c37f4727b8"
+    },
+    {
+      "path": "examples/l010-lse-clock/src/bin/hsi_calendar.rs",
+      "sha256": "28ee68791d195f12712aa1093435743c83a664b016eddd8dbf103148f340277d"
+    },
+    {
+      "path": "docs/native-low-power-lse-implementation.md",
+      "sha256": "c1516fe6004995cdf71fe20bdafff5c5bb948cb09961d419f05a75d4d23aaed3"
+    },
+    {
+      "path": "docs/qualified-l011-l012-lse.md",
+      "sha256": "5763c1433ee88242bf7706779813929cb3e22c1d250d036b5c1a3cbdc00bc526"
+    }
+  ],
+  "report_sha256": "dd50d9e4173f516bc7a50d1cf1e608a95a52e343e6ad49fb8f92b824cfbf5094",
+  "whole_hal_soundness_proven": false,
+  "hardware_validated": false,
+  "source_manifest": {
+    "path": "external-evidence/stage54/native-lse-accepted-runtime/evidence/release-source-manifest.json",
+    "sha256": "afb2a651bc8e1b5f9246311b03d80cf88b1b70669a4bdc085ac19a3ae17ac38a",
+    "files": 1188,
+    "all_current_files_match": true
+  },
+  "generated_manifest": {
+    "path": "external-evidence/stage54/native-lse-accepted-runtime/evidence/accepted-generated-manifest.json",
+    "sha256": "5f0d08c8d6bfa1b4901dc5dccef6c0da248f1727309f8016c1c08f02b33e05f0",
+    "files": 902,
+    "all_current_files_match": true
+  },
+  "elf_manifest": {
+    "path": "external-evidence/stage54/native-lse-accepted-runtime/evidence/elf-manifest.json",
+    "sha256": "a45282983df060929a015c25a0c0985cc62da4ae702eaf002387c173e63ec7dd",
+    "files": 25,
+    "all_current_files_match": true
+  },
+  "elf_layout": {
+    "path": "external-evidence/stage54/native-lse-accepted-runtime/evidence/elf-layout.json",
+    "sha256": "b1c47e8cd87f63a1cbbac61b7ab12a50283dc75ca4d1af2a03af58d9f28eb4b1",
+    "status": "passed",
+    "manifests_correspond": true
+  },
+  "observed_existing_validation": {
+    "host_data_schema_tests_passed": 150,
+    "release_hal_builds_passed": 25,
+    "native_exact_parts": 7,
+    "native_calendar_elves": 21,
+    "classic_representative_elves": 4,
+    "rtc_or_hal_harness_run_by_reviewer": false
+  },
+  "final_correspondence_sha256": "36949a07e5b9e1fdbbc507f3c776d791f8bd8da0e9a528ce1deadd3b13e5d706",
+  "original_report_sha256": "83fafed26d40a6f49f8bb53a55abd15fdb0e96218bcc29cdfc1c494c757bbc11"
+}

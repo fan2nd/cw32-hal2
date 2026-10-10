@@ -420,3 +420,59 @@ fn lse_hardware_policy_distinguishes_configurable_ccs_and_absent_speed() {
         read(catalog["parts"]["CW32F020C6U7"]["configuration"].clone());
     assert!(!classic.configurable_ccs && classic.gpio_speed_offset == Some(8));
 }
+
+#[test]
+fn native_lse_schema_requires_explicit_monitor_facts_and_rejects_old_name() {
+    let catalog: Value =
+        serde_yaml::from_str(include_str!("../../cw32-data/lse-qualified.yaml")).unwrap();
+    for part in ["CW32L010F8P6", "CW32L011K8T6", "CW32L012C8T6"] {
+        let value = catalog["parts"][part]["configuration"].clone();
+        let parsed: peripheral::LseConfiguration = read(value.clone());
+        let n = parsed.native_low_power.as_ref().unwrap();
+        assert_eq!(n.detector_margin_lse_edges, 1);
+        let serialized = encoded(parsed);
+        assert!(serialized["native_low_power"].is_object());
+        assert!(serialized.get("native_l010").is_none());
+        for required in ["monitor_reference", "detector_margin_lse_edges"] {
+            let mut missing = value.clone();
+            missing["native_low_power"]
+                .as_object_mut()
+                .unwrap()
+                .remove(required);
+            assert!(serde_json::from_value::<peripheral::LseConfiguration>(missing).is_err());
+        }
+        let mut old = value.clone();
+        let profile = old
+            .as_object_mut()
+            .unwrap()
+            .remove("native_low_power")
+            .unwrap();
+        old["native_l010"] = profile;
+        assert!(serde_json::from_value::<peripheral::LseConfiguration>(old).is_err());
+        if part == "CW32L010F8P6" {
+            assert!(serialized["native_low_power"]["lsi_factory_trim_address"].is_null());
+            let mut omitted = value;
+            omitted["native_low_power"]
+                .as_object_mut()
+                .unwrap()
+                .remove("lsi_factory_trim_address");
+            let parsed: peripheral::LseConfiguration = read(omitted);
+            assert!(
+                parsed
+                    .native_low_power
+                    .unwrap()
+                    .lsi_factory_trim_address
+                    .is_none()
+            );
+        } else {
+            assert_eq!(
+                serialized["native_low_power"]["lsi_factory_trim_address"],
+                json!(0x0010_07c2u32)
+            );
+        }
+    }
+    let old: peripheral::LseConfiguration =
+        read(catalog["parts"]["CW32F020C6U7"]["configuration"].clone());
+    assert!(old.native_low_power.is_none());
+    assert!(encoded(old).get("native_low_power").is_none());
+}

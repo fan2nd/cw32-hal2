@@ -118,6 +118,34 @@ pub struct Config {
 /// side-effect-free read. No particular unrelated output-level change is
 /// implied by gate opening.
 ///
+/// CW32L011/L012 have the same functional requirement when a new LSE feeds
+/// RTC SOURCE0, and again when an RTC owner later activates or changes the
+/// calendar source: no independent RTC_OUT/RTC_1Hz recipient may depend on
+/// the transition unless its effects are within that RTC owner's scope. This
+/// includes all output pads/external wiring, BTIM trigger/reset, GTIM/ATIM
+/// inputs and their cascades, and LPTIM events. L011 routes include PA01/PA03,
+/// BTIM1..3 code6, GTIM/ATIM TI code8 and LPTIM triggers1..4. L012 includes
+/// PA01/PA03/PB14/PB15/PC13 and LPTIM triggers1..5. Its BTIM/ATIM mapping
+/// conflicts remain unresolved; all documented alternatives must be inactive
+/// or disconnected. Reserved RTC1HZ0 and a reset-looking selector are not
+/// proof that a root is constant or disconnected.
+///
+/// On L012, newly starting LSE also requires no independent direct LSE_OUT
+/// recipients on PB12/PF01/PF03, and no inaccessible inherited UART3 LSE
+/// owner. The two current manuals disagree about UART3's gate operation.
+/// Only already-open output banks and UART3 are inspected; closed gates do
+/// not prove absence of users. These conditions are not fully checked by the
+/// HAL. Dormant output/timer banks are never opened merely to inspect them.
+///
+/// L011/L012 pad admission temporarily runs the whole GPIOC bank, including
+/// during exact source reuse. Sampling, filters and armed edge capture can
+/// advance before an error. The handover must permit that progress; restoring
+/// the incoming gate cannot undo it. PC13, unrelated controls, shared FLTCLK
+/// and flags are preserved. No particular unrelated output glitch is implied.
+/// MonitoredExistingRoutes intentionally permits existing asynchronous fault
+/// capture, enabled IRQ and brake/PWM effects before an error and afterward;
+/// preserving routes does not freeze their observers during a real fault.
+///
 /// These are functional limits on supported hardware handovers. They do not
 /// replace the existing pre-Rust bus-master/memory-ownership boundary or give
 /// safe Rust callers a hidden memory-safety obligation.
@@ -141,7 +169,7 @@ pub fn init(config: Config) -> Peripherals {
 }
 
 /// Fallible initialization with the same one-time ownership boundary and public
-/// L010 RTC-observer/GPIOB functional handover requirements as [`init`].
+/// native RTC/output-observer and whole-bank functional handover requirements as [`init`].
 ///
 /// Invalid configuration is rejected before taking ownership. A hardware timeout
 /// can leave clocks partially changed and consumes the singleton set; reset the

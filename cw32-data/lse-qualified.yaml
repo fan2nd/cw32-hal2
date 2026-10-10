@@ -17,6 +17,10 @@ policies:
   docs/lse-active-l083-rtc-admission.json: 7788c207689420cee20c9e4ec99327c92564c1371e6456044860b53fd6c8ef24
   docs/lse-l010-qualification.json: 8d97aaf656a2c68f2e05cd0ac42205d1bcab707484decfc30c745fafb55202f0
   docs/lse-l010-rtc-admission.json: 7bf6db8079b1f896601fbcde5f601c5d0fba282f37db32579a030d5276deca80
+  docs/lse-l011-qualification.json: 7c25c801183356e814972fcb7d6dbd0012291f4c62be7996efeacf9fc38063eb
+  docs/lse-l011-rtc-admission.json: fc840657ee671b20d3b10b397f2571cd81e70a031c374ec50d8a5a2e670d39a9
+  docs/lse-l012-qualification.json: b3b681c57fe5107b2ae2098f4ddfad12af8cf249f2e0c58ce98cc03f4f18da56
+  docs/lse-l012-rtc-admission.json: 82a983157a27504450cc708b40885fcca7f51af189b0103ac235dedaf432a4b4
 parts:
   CW32A030C8T7:
     family: CW32A030
@@ -3714,7 +3718,10 @@ parts:
         value: 0
         mask: 95
       output_routes: []
-      native_l010:
+      native_low_power:
+        monitor_reference: inherited_legal
+        detector_margin_lse_edges: 1
+        lsi_factory_trim_address: null
         drive_bits: 4
         startup_drive_bits: 4
         monitored_lsi_maximum_hz: 36080
@@ -3925,7 +3932,10 @@ parts:
         value: 0
         mask: 95
       output_routes: []
-      native_l010:
+      native_low_power:
+        monitor_reference: inherited_legal
+        detector_margin_lse_edges: 1
+        lsi_factory_trim_address: null
         drive_bits: 4
         startup_drive_bits: 4
         monitored_lsi_maximum_hz: 36080
@@ -4136,7 +4146,10 @@ parts:
         value: 0
         mask: 95
       output_routes: []
-      native_l010:
+      native_low_power:
+        monitor_reference: inherited_legal
+        detector_margin_lse_edges: 1
+        lsi_factory_trim_address: null
         drive_bits: 4
         startup_drive_bits: 4
         monitored_lsi_maximum_hz: 36080
@@ -4150,3 +4163,1029 @@ parts:
           af: 2
         - pin: PB6
           af: 2
+  CW32L011K8T6:
+    family: CW32L011
+    package: LQFP32
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: own_manual
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+      pdf_pages_1_based:
+      - 50
+      - 51
+      - 54
+      - 55
+      - 56
+      - 57
+      - 65
+      - 66
+      - 67
+      - 68
+      - 70
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 85
+      - 122
+      - 123
+      - 126
+      - 127
+      - 128
+      - 129
+      - 130
+      - 139
+      - 140
+      - 144
+      - 145
+      - 151
+      - 152
+      - 153
+      - 154
+      - 161
+      - 182
+      - 183
+      - 200
+      - 201
+      - 202
+      - 281
+      - 282
+      - 283
+      - 325
+      - 351
+      - 353
+      - 375
+      - 376
+      - 379
+      - 380
+      - 422
+      - 423
+      - 424
+      - 425
+      - 493
+      - 494
+      - 495
+      - 496
+      printed_pages:
+      - 49
+      - 50
+      - 53
+      - 54
+      - 55
+      - 56
+      - 64
+      - 65
+      - 66
+      - 67
+      - 69
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 84
+      - 121
+      - 122
+      - 125
+      - 126
+      - 127
+      - 128
+      - 129
+      - 138
+      - 139
+      - 143
+      - 144
+      - 150
+      - 151
+      - 152
+      - 153
+      - 160
+      - 181
+      - 182
+      - 199
+      - 200
+      - 201
+      - 280
+      - 281
+      - 282
+      - 324
+      - 350
+      - 352
+      - 374
+      - 375
+      - 378
+      - 379
+      - 421
+      - 422
+      - 423
+      - 424
+      - 492
+      - 493
+      - 494
+      - 495
+    - citation_ref: own_datasheet
+      source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+      sha256: 0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5
+      pdf_pages_1_based:
+      - 28
+      - 29
+      - 31
+      - 39
+      - 48
+      - 50
+      - 51
+      - 71
+      printed_pages:
+      - 25
+      - 26
+      - 28
+      - 36
+      - 45
+      - 47
+      - 48
+      - 68
+    configuration:
+      nominal_hz: 32768
+      maximum_hz: 100000
+      configurable_ccs: true
+      supply_mv:
+      - 1700
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: null
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 231
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1796
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPCFR1
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes: []
+      native_low_power:
+        monitor_reference: factory_trim
+        detector_margin_lse_edges: 1
+        lsi_factory_trim_address: 1050562
+        drive_bits: 4
+        startup_drive_bits: 4
+        monitored_lsi_maximum_hz: 41000
+        detector_lse_edges: 128
+        detector_lsi_cycles: 256
+        rtc_first_divisor: 1
+        rtc_second_divisor: 16384
+        rtc_calendar_divisor: 32768
+        rtc_output_routes:
+        - pin: PA1
+          af: 3
+        - pin: PA3
+          af: 3
+  CW32L011K8U6:
+    family: CW32L011
+    package: QFN32
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: own_manual
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+      pdf_pages_1_based:
+      - 50
+      - 51
+      - 54
+      - 55
+      - 56
+      - 57
+      - 65
+      - 66
+      - 67
+      - 68
+      - 70
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 85
+      - 122
+      - 123
+      - 126
+      - 127
+      - 128
+      - 129
+      - 130
+      - 139
+      - 140
+      - 144
+      - 145
+      - 151
+      - 152
+      - 153
+      - 154
+      - 161
+      - 182
+      - 183
+      - 200
+      - 201
+      - 202
+      - 281
+      - 282
+      - 283
+      - 325
+      - 351
+      - 353
+      - 375
+      - 376
+      - 379
+      - 380
+      - 422
+      - 423
+      - 424
+      - 425
+      - 493
+      - 494
+      - 495
+      - 496
+      printed_pages:
+      - 49
+      - 50
+      - 53
+      - 54
+      - 55
+      - 56
+      - 64
+      - 65
+      - 66
+      - 67
+      - 69
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 84
+      - 121
+      - 122
+      - 125
+      - 126
+      - 127
+      - 128
+      - 129
+      - 138
+      - 139
+      - 143
+      - 144
+      - 150
+      - 151
+      - 152
+      - 153
+      - 160
+      - 181
+      - 182
+      - 199
+      - 200
+      - 201
+      - 280
+      - 281
+      - 282
+      - 324
+      - 350
+      - 352
+      - 374
+      - 375
+      - 378
+      - 379
+      - 421
+      - 422
+      - 423
+      - 424
+      - 492
+      - 493
+      - 494
+      - 495
+    - citation_ref: own_datasheet
+      source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+      sha256: 0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5
+      pdf_pages_1_based:
+      - 28
+      - 29
+      - 31
+      - 39
+      - 48
+      - 50
+      - 51
+      - 71
+      printed_pages:
+      - 25
+      - 26
+      - 28
+      - 36
+      - 45
+      - 47
+      - 48
+      - 68
+    configuration:
+      nominal_hz: 32768
+      maximum_hz: 100000
+      configurable_ccs: true
+      supply_mv:
+      - 1700
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: null
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 231
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1796
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPCFR1
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes: []
+      native_low_power:
+        monitor_reference: factory_trim
+        detector_margin_lse_edges: 1
+        lsi_factory_trim_address: 1050562
+        drive_bits: 4
+        startup_drive_bits: 4
+        monitored_lsi_maximum_hz: 41000
+        detector_lse_edges: 128
+        detector_lsi_cycles: 256
+        rtc_first_divisor: 1
+        rtc_second_divisor: 16384
+        rtc_calendar_divisor: 32768
+        rtc_output_routes:
+        - pin: PA1
+          af: 3
+        - pin: PA3
+          af: 3
+  CW32L012C8T6:
+    family: CW32L012
+    package: LQFP48
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: own_manual_cn
+      source_ref: vendor:CW32L012_UserManual_CN_V1.4.pdf
+      sha256: a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340
+      pdf_pages_1_based:
+      - 57
+      - 59
+      - 61
+      - 62
+      - 71
+      - 73
+      - 75
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 83
+      - 84
+      - 85
+      - 87
+      - 154
+      - 155
+      - 158
+      - 161
+      - 190
+      - 193
+      - 195
+      - 196
+      - 201
+      - 202
+      - 203
+      - 204
+      - 232
+      - 253
+      - 287
+      - 334
+      - 366
+      - 378
+      - 432
+      - 433
+      - 573
+      - 583
+      printed_pages:
+      - 31
+      - 33
+      - 35
+      - 36
+      - 45
+      - 47
+      - 49
+      - 51
+      - 52
+      - 53
+      - 54
+      - 55
+      - 56
+      - 57
+      - 58
+      - 59
+      - 61
+      - 128
+      - 129
+      - 132
+      - 135
+      - 164
+      - 167
+      - 169
+      - 170
+      - 175
+      - 176
+      - 177
+      - 178
+      - 206
+      - 227
+      - 261
+      - 308
+      - 340
+      - 352
+      - 406
+      - 407
+      - 547
+      - 557
+    - citation_ref: own_datasheet
+      source_ref: vendor:CW32L012_DataSheet_CN_V1.0.pdf
+      sha256: 08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76
+      pdf_pages_1_based:
+      - 8
+      - 35
+      - 36
+      - 37
+      - 38
+      - 39
+      - 40
+      - 47
+      - 55
+      - 57
+      - 58
+      printed_pages:
+      - 5
+      - 32
+      - 33
+      - 34
+      - 35
+      - 36
+      - 37
+      - 44
+      - 52
+      - 54
+      - 55
+    - citation_ref: own_manual_en_current
+      source_ref: vendor:CW32L012_UserManual_EN_V1.0.pdf
+      sha256: f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088
+      pdf_pages_1_based:
+      - 59
+      - 63
+      - 65
+      - 66
+      - 70
+      - 74
+      - 75
+      - 76
+      - 79
+      - 82
+      - 83
+      - 84
+      - 85
+      - 86
+      - 87
+      - 88
+      - 89
+      - 90
+      - 91
+      - 92
+      - 93
+      - 94
+      - 97
+      - 167
+      - 168
+      - 207
+      - 208
+      - 210
+      - 211
+      - 212
+      - 213
+      - 218
+      - 219
+      - 220
+      - 221
+      - 228
+      - 251
+      - 252
+      - 273
+      - 312
+      - 368
+      - 403
+      - 416
+      - 474
+      - 475
+      - 552
+      - 626
+      - 636
+      printed_pages:
+      - 33
+      - 37
+      - 39
+      - 40
+      - 44
+      - 48
+      - 49
+      - 50
+      - 53
+      - 56
+      - 57
+      - 58
+      - 59
+      - 60
+      - 61
+      - 62
+      - 63
+      - 64
+      - 65
+      - 66
+      - 67
+      - 68
+      - 71
+      - 141
+      - 142
+      - 181
+      - 182
+      - 184
+      - 185
+      - 186
+      - 187
+      - 192
+      - 193
+      - 194
+      - 195
+      - 202
+      - 225
+      - 226
+      - 247
+      - 286
+      - 342
+      - 377
+      - 390
+      - 448
+      - 449
+      - 526
+      - 600
+      - 610
+    configuration:
+      nominal_hz: 32768
+      maximum_hz: 100000
+      configurable_ccs: true
+      supply_mv:
+      - 1700
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: null
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 231
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1796
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPCFR1
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 4
+      - pin: PF1
+        af: 3
+      - pin: PF3
+        af: 1
+      native_low_power:
+        monitor_reference: factory_trim
+        detector_margin_lse_edges: 1
+        lsi_factory_trim_address: 1050562
+        drive_bits: 4
+        startup_drive_bits: 4
+        monitored_lsi_maximum_hz: 36080
+        detector_lse_edges: 128
+        detector_lsi_cycles: 256
+        rtc_first_divisor: 1
+        rtc_second_divisor: 16384
+        rtc_calendar_divisor: 32768
+        rtc_output_routes:
+        - pin: PA1
+          af: 3
+        - pin: PA3
+          af: 3
+        - pin: PB14
+          af: 4
+        - pin: PB15
+          af: 4
+        - pin: PC13
+          af: 4
+  CW32L012C8U6:
+    family: CW32L012
+    package: QFN48
+    input_pin: PC14
+    output_pin: PC15
+    sources:
+    - citation_ref: own_manual_cn
+      source_ref: vendor:CW32L012_UserManual_CN_V1.4.pdf
+      sha256: a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340
+      pdf_pages_1_based:
+      - 57
+      - 59
+      - 61
+      - 62
+      - 71
+      - 73
+      - 75
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 83
+      - 84
+      - 85
+      - 87
+      - 154
+      - 155
+      - 158
+      - 161
+      - 190
+      - 193
+      - 195
+      - 196
+      - 201
+      - 202
+      - 203
+      - 204
+      - 232
+      - 253
+      - 287
+      - 334
+      - 366
+      - 378
+      - 432
+      - 433
+      - 573
+      - 583
+      printed_pages:
+      - 31
+      - 33
+      - 35
+      - 36
+      - 45
+      - 47
+      - 49
+      - 51
+      - 52
+      - 53
+      - 54
+      - 55
+      - 56
+      - 57
+      - 58
+      - 59
+      - 61
+      - 128
+      - 129
+      - 132
+      - 135
+      - 164
+      - 167
+      - 169
+      - 170
+      - 175
+      - 176
+      - 177
+      - 178
+      - 206
+      - 227
+      - 261
+      - 308
+      - 340
+      - 352
+      - 406
+      - 407
+      - 547
+      - 557
+    - citation_ref: own_datasheet
+      source_ref: vendor:CW32L012_DataSheet_CN_V1.0.pdf
+      sha256: 08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76
+      pdf_pages_1_based:
+      - 8
+      - 35
+      - 36
+      - 37
+      - 38
+      - 39
+      - 40
+      - 47
+      - 55
+      - 57
+      - 58
+      printed_pages:
+      - 5
+      - 32
+      - 33
+      - 34
+      - 35
+      - 36
+      - 37
+      - 44
+      - 52
+      - 54
+      - 55
+    - citation_ref: own_manual_en_current
+      source_ref: vendor:CW32L012_UserManual_EN_V1.0.pdf
+      sha256: f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088
+      pdf_pages_1_based:
+      - 59
+      - 63
+      - 65
+      - 66
+      - 70
+      - 74
+      - 75
+      - 76
+      - 79
+      - 82
+      - 83
+      - 84
+      - 85
+      - 86
+      - 87
+      - 88
+      - 89
+      - 90
+      - 91
+      - 92
+      - 93
+      - 94
+      - 97
+      - 167
+      - 168
+      - 207
+      - 208
+      - 210
+      - 211
+      - 212
+      - 213
+      - 218
+      - 219
+      - 220
+      - 221
+      - 228
+      - 251
+      - 252
+      - 273
+      - 312
+      - 368
+      - 403
+      - 416
+      - 474
+      - 475
+      - 552
+      - 626
+      - 636
+      printed_pages:
+      - 33
+      - 37
+      - 39
+      - 40
+      - 44
+      - 48
+      - 49
+      - 50
+      - 53
+      - 56
+      - 57
+      - 58
+      - 59
+      - 60
+      - 61
+      - 62
+      - 63
+      - 64
+      - 65
+      - 66
+      - 67
+      - 68
+      - 71
+      - 141
+      - 142
+      - 181
+      - 182
+      - 184
+      - 185
+      - 186
+      - 187
+      - 192
+      - 193
+      - 194
+      - 195
+      - 202
+      - 225
+      - 226
+      - 247
+      - 286
+      - 342
+      - 377
+      - 390
+      - 448
+      - 449
+      - 526
+      - 600
+      - 610
+    configuration:
+      nominal_hz: 32768
+      maximum_hz: 100000
+      configurable_ccs: true
+      supply_mv:
+      - 1700
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: null
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 231
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1796
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPCFR1
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 4
+      - pin: PF1
+        af: 3
+      - pin: PF3
+        af: 1
+      native_low_power:
+        monitor_reference: factory_trim
+        detector_margin_lse_edges: 1
+        lsi_factory_trim_address: 1050562
+        drive_bits: 4
+        startup_drive_bits: 4
+        monitored_lsi_maximum_hz: 36080
+        detector_lse_edges: 128
+        detector_lsi_cycles: 256
+        rtc_first_divisor: 1
+        rtc_second_divisor: 16384
+        rtc_calendar_divisor: 32768
+        rtc_output_routes:
+        - pin: PA1
+          af: 3
+        - pin: PA3
+          af: 3
+        - pin: PB14
+          af: 4
+        - pin: PB15
+          af: 4
+        - pin: PC13
+          af: 4

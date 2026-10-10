@@ -1,16 +1,22 @@
 //! Owned blocking whole-second calendars for all eleven RTC-bearing families.
 //!
-//! L010 selects frozen HSIOSC or its owned LSE; L011/L012 use frozen HSIOSC.
+//! L010/L011/L012 select frozen HSIOSC or an owned, qualified LSE.
 //! Prescalers and tick bounds follow the actual held source. The eight
 //! classic families support a verified factory-trim LSI capability; its
 //! nominal rate is 32800/32768 calendar ticks per SI second, with the own RC
 //! tolerance retained in ClockBounds. This is not a precision wall clock.
 //! Exact source-qualified packages also accept a held board-qualified LSE source.
 //! Bounds describe a healthy source, with no automatic LSI fallback after failure.
-//! L010 StartupOnly readiness cannot detect later source loss: STABLE may latch
+//! Native StartupOnly readiness cannot detect later source loss: STABLE may latch
 //! indefinitely with CCS clear. A successful read does not prove elapsed time.
 //! Attach and reads preserve retained calendar/event state. Drop never stops,
 //! resets or gates the RTC or its oscillator. Cold initialization is explicit.
+//! On L011/L012, activating or changing the RTC source also affects RTC_OUT,
+//! RTC_1Hz and their downstream recipients. Supported functional handover
+//! requires these recipients to be inactive/disconnected or within the RTC
+//! owner's explicitly requested scope. These roots are not all runtime-checked;
+//! owning the RTC and oscillator pads alone does not own other timer or output
+//! recipients. This functional limit adds no safe-Rust memory-safety obligation.
 //! Weekly Alarm A and A/B event flags are supported; run-mode async waits are limited to L010/L011/L012.
 //! No compensation, subseconds, low-power or battery guarantee.
 //! Sources and unsupported boundaries: docs/rtc-remaining-evidence.json.
@@ -133,11 +139,32 @@ impl<'d> Rtc<'d> {
     /// Explicitly initialize a stopped, DATE=0, inactive calendar only.
     ///
     /// Existing compensation/event/interrupt configuration causes an error.
+    /// L011/L012 also reject pending event flags and drain WAIT before reading
+    /// DATE; retained flags are never cleared to manufacture an unset calendar.
     /// Inactive alarm matches and AWT reload are preserved. Source and format
     /// are configured without peripheral reset or clearing flags. Failure can
     /// leave partial configuration; use borrowed tokens if retry is required.
     /// Classic LSI must already carry factory trim before obtaining its clock
     /// capability; this constructor does not calibrate shared oscillators.
+    ///
+    /// L011/L012 source/prescaler writes can change RTC_OUT and RTC_1Hz before
+    /// START is set. Functional handover must cover external output recipients,
+    /// BTIM trigger/reset roots, GTIM/ATIM inputs, LPTIM RTC event roots and their
+    /// downstream cascades throughout this operation and later RTC use. L011
+    /// RTC_OUT uses PA01/PA03 AF3; L012 additionally uses PB14/PB15/PC13 AF4.
+    /// L012's disputed BTIM/ATIM selector mappings must be covered across all
+    /// documented alternatives. START=0, reserved RTC1HZ=0, stopped counters or
+    /// closed working gates do not establish that these recipients are absent.
+    /// This API does not inspect or disconnect them. Independent ownership must
+    /// already be absent, or those effects must belong to the requested RTC
+    /// operation. This is an unverified functional condition, not an additional
+    /// memory-safety precondition for safe Rust callers.
+    ///
+    /// L011/L012 stage the first prescaler without increasing the incoming
+    /// RTCCLKD, verify the source change, then install the requested divisors.
+    /// Incoming clocking must already be legal; initialization cannot repair an
+    /// earlier overclock retroactively. Failure can leave a staged divider or
+    /// the requested source selected, without an elapsed-time continuity claim.
     pub fn initialize_if_unset(
         rtc: Peri<'d, RTC>,
         clock: impl Into<CalendarClock<'d>>,
@@ -151,33 +178,55 @@ impl<'d> Rtc<'d> {
             return Err(RtcError::ClockNotReady);
         }
         check_write_mode()?;
-        if pac::RTC.cr0().read().start() {
-            return Err(RtcError::AlreadyRunning);
-        }
-        let mut controls = pac::RTC.cr0().read();
-        controls.set_h24(false);
-        if pac::RTC.date().read().0 != 0
-            || controls.0 != 0
-            || pac::RTC.cr2().read().0 != 0
-            || compensation() != 0
-            || pac::RTC.ier().read().0 != 0
+        #[cfg(any(rtc_cw32l011_v1, rtc_cw32l012_v1))]
         {
-            return Err(RtcError::AlreadyConfigured);
+            // Own WAIT protocol excludes DATE/TIME/AWTARR access during load.
+            // Read controls first, then inspect DATE only after synchronization.
+            check_native_unset_controls()?;
+            wait_load(config)?;
+            if !clock.is_ready() {
+                return Err(RtcError::ClockNotReady);
+            }
+            check_native_unset_controls()?;
+            if pac::RTC.date().read().0 != 0 {
+                return Err(RtcError::AlreadyConfigured);
+            }
         }
-        check_access_free()?;
-        wait_load(config)?;
-        if !clock.is_ready() {
-            return Err(RtcError::ClockNotReady);
+        #[cfg(not(any(rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+        {
+            if pac::RTC.cr0().read().start() {
+                return Err(RtcError::AlreadyRunning);
+            }
+            let mut controls = pac::RTC.cr0().read();
+            controls.set_h24(false);
+            if pac::RTC.date().read().0 != 0
+                || controls.0 != 0
+                || pac::RTC.cr2().read().0 != 0
+                || compensation() != 0
+                || pac::RTC.ier().read().0 != 0
+            {
+                return Err(RtcError::AlreadyConfigured);
+            }
+            check_access_free()?;
+            wait_load(config)?;
+            if !clock.is_ready() {
+                return Err(RtcError::ClockNotReady);
+            }
         }
         let guard = Unlocked::new();
-        // Fresh typed write excludes WINDOW/WAIT status bits.
-        pac::RTC.cr1().write(|w| w.set_source(clock.source()));
-        #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
-        pac::RTC.psc().write(|w| {
-            let (first, second) = clock.prescalers();
-            w.set_psc1((first - 1) as u8);
-            w.set_psc2(second - 1);
-        });
+        #[cfg(any(rtc_cw32l011_v1, rtc_cw32l012_v1))]
+        initialize_native_source(&clock, config)?;
+        #[cfg(not(any(rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+        {
+            // Fresh typed write excludes WINDOW/WAIT status bits.
+            pac::RTC.cr1().write(|w| w.set_source(clock.source()));
+            #[cfg(rtc_cw32l010_v1)]
+            pac::RTC.psc().write(|w| {
+                let (first, second) = clock.prescalers();
+                w.set_psc1((first - 1) as u8);
+                w.set_psc2(second - 1);
+            });
+        }
         pac::RTC.cr0().write(|w| w.set_h24(true));
         check_clock(&clock)?;
         if !pac::RTC.cr0().read().h24() {
@@ -368,6 +417,74 @@ fn compensation() -> u32 {
         pac::RTC.compen().read().0
     }
 }
+#[cfg(any(rtc_cw32l011_v1, rtc_cw32l012_v1))]
+fn check_native_unset_controls() -> Result<(), RtcError> {
+    let mut controls = pac::RTC.cr0().read();
+    if controls.start() {
+        return Err(RtcError::AlreadyRunning);
+    }
+    controls.set_h24(false);
+    if controls.0 != 0
+        || pac::RTC.cr2().read().0 != 0
+        || compensation() != 0
+        || pac::RTC.ier().read().0 != 0
+        || pac::RTC.isr().read().0 != 0
+    {
+        return Err(RtcError::AlreadyConfigured);
+    }
+    Ok(())
+}
+/// Called only while the RTC is unlocked, stopped and explicitly owned for
+/// initialization. L011/L012 have no ACCESS field; all writes are direct.
+#[cfg(any(rtc_cw32l011_v1, rtc_cw32l012_v1))]
+fn initialize_native_source(clock: &CalendarClock<'_>, config: RtcConfig) -> Result<(), RtcError> {
+    let (first, second) = clock.prescalers();
+    if clock
+        .bounds()
+        .divided_by(u32::from(first))
+        .maximum_exceeds(1_000_000)
+    {
+        return Err(RtcError::IncompatibleClock);
+    }
+    let mut staged = pac::RTC.psc().read();
+    let staged_first = first.max(u16::from(staged.psc1()) + 1);
+    // Increasing division cannot overclock the incoming source. It also bounds
+    // the requested source before SOURCE changes, without assuming which source
+    // was inherited or reducing its existing division. Preserve PSC2 here.
+    staged.set_psc1((staged_first - 1) as u8);
+    pac::RTC.psc().write_value(staged);
+    poll(
+        config.timeout,
+        || pac::RTC.psc().read().psc1() == staged.psc1(),
+        RtcError::WriteFailure,
+    )?;
+    if !clock.is_ready() {
+        return Err(RtcError::ClockNotReady);
+    }
+    pac::RTC.cr1().write(|w| w.set_source(clock.source()));
+    poll(
+        config.timeout,
+        || pac::RTC.cr1().read().source() == clock.source(),
+        RtcError::WriteFailure,
+    )?;
+    if !clock.is_ready() {
+        return Err(RtcError::ClockNotReady);
+    }
+    // SOURCE is now verified before reducing division for the LSE path.
+    pac::RTC.psc().write(|w| {
+        w.set_psc1((first - 1) as u8);
+        w.set_psc2(second - 1);
+    });
+    poll(
+        config.timeout,
+        || {
+            let p = pac::RTC.psc().read();
+            u16::from(p.psc1()) + 1 == first && p.psc2() + 1 == second
+        },
+        RtcError::WriteFailure,
+    )?;
+    check_clock_source(clock)
+}
 fn check_clock_source(clock: &CalendarClock<'_>) -> Result<(), RtcError> {
     if !clock.is_ready() {
         return Err(RtcError::ClockNotReady);
@@ -387,7 +504,7 @@ fn check_clock_source(clock: &CalendarClock<'_>) -> Result<(), RtcError> {
         }
         // Native LSE qualification fixes PSC1=0, PSC2=0x3fff. Preserve the
         // prior HSIOSC attach rule allowing any safe exact nominal factor pair.
-        #[cfg(all(rcc_lse, rtc_cw32l010_v1))]
+        #[cfg(all(rcc_lse, any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
         if matches!(clock, CalendarClock::Lse(_))
             && (first, second)
                 != (

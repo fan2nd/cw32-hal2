@@ -1,5 +1,5 @@
-//! Native L010 init-only LSE. Own RM Rev1.2 and DS Rev1.3, with source-backed
-//! electrical/admission facts in docs/lse-l010-qualification.json.
+//! Native low-power init-only LSE, qualified separately for L010/L011/L012.
+//! Direct PAC branches retain each family's consumer, pad and monitor semantics.
 use super::{ClockBounds, Error, OperatingConditions, SealedRccPeripheral};
 use crate::{pac, peripherals, time::Hertz};
 
@@ -21,7 +21,10 @@ pub enum LseFaultDetection {
     StartupOnly,
     /// Use an already stable, legally operating, unchanged LSI and the existing
     /// fault routes. No LSI calibration or startup is attempted here. LSIEN may
-    /// be clear: native CCS requests LSI automatically.
+    /// be clear: native CCS requests LSI automatically. L011/L012 additionally
+    /// require an unchanged factory-matching TRIM at the own LSI calibration
+    /// halfword, within the declared source/board operating envelope. Factory
+    /// matching does not measure frequency or prove individual-cycle jitter.
     ///
     /// A real fault can set timer capture/system-brake flags (including SBIF
     /// before BKE), request an enabled IRQ, and asynchronously clear PWM MOE.
@@ -31,12 +34,12 @@ pub enum LseFaultDetection {
     MonitoredExistingRoutes,
 }
 
-/// Board-qualified nominal 32768 Hz source on the three exact L010 packages.
+/// Board-qualified nominal 32768 Hz source on exact qualified native packages.
 /// Bounds must cover every individual cycle throughout the declared supply,
 /// ambient, aging and load conditions. Average ppm is insufficient. The board
 /// must qualify crystal load/drive/startup or bypass voltage, duty, pulses and
 /// edges. No startup maximum or continuing source availability is measured.
-/// See [`crate::init`] for the functional RTC-observer and GPIOB handover limits.
+/// See [`crate::init`] for the functional downstream-observer and whole GPIO-bank handover limits.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub struct Lse {
@@ -80,11 +83,13 @@ impl Lse {
             return Err(Error::InvalidLseBounds);
         }
         // Sufficient worst-period detector proof, with one complete extra LSE
-        // edge of phase margin. The 36080-Hz legal inherited-LSI maximum comes
-        // from own RM +/-10%, never DS factory +/-3% inferred from STABLE.
+        // edge of phase margin, explicitly separate from the hardware threshold.
+        // Own qualification selects inherited-legal L010 or factory-matching
+        // L011/L012 bounds; STABLE never establishes these frequency bounds.
         if self.monitored()
             && u64::from(self.min_freq.0) * u64::from(crate::RCC_LSE_DETECTOR_LSI_CYCLES)
-                <= (u64::from(crate::RCC_LSE_DETECTOR_LSE_EDGES) + 1)
+                <= (u64::from(crate::RCC_LSE_DETECTOR_LSE_EDGES)
+                    + u64::from(crate::RCC_LSE_DETECTOR_MARGIN_LSE_EDGES))
                     * u64::from(crate::RCC_LSE_MONITORED_LSI_MAXIMUM_HZ)
         {
             return Err(Error::InvalidLseBounds);
@@ -109,6 +114,29 @@ fn lsi_parameters() -> (u16, u8) {
     let lsi = pac::SYSCTRL.lsi().read();
     (lsi.trim(), lsi.waitcycle())
 }
+// Mask through the own typed PAC field: L011 has ten TRIM bits, L012 nine.
+// Never derive this address from HSI calibration or write another LSI owner's trim.
+fn monitor_qualified() -> bool {
+    if !pac::SYSCTRL.lsi().read().stable() {
+        return false;
+    }
+    #[cfg(any(rcc_cw32l011_v1, rcc_cw32l012_v1))]
+    {
+        let factory = unsafe {
+            core::ptr::read_volatile(crate::RCC_LSE_LSI_FACTORY_TRIM_ADDRESS as *const u16)
+        };
+        if factory == u16::MAX {
+            return false;
+        }
+        let mut calibrated = pac::sysctrl::regs::Lsi::default();
+        calibrated.set_trim(factory);
+        if pac::SYSCTRL.lsi().read().trim() != calibrated.trim() {
+            return false;
+        }
+    }
+    true
+}
+
 fn parameters_match(config: Lse) -> bool {
     let r = pac::SYSCTRL.lse().read();
     r.mode() == config.bypass()
@@ -131,7 +159,7 @@ fn ready(config: Lse, require_frozen: bool) -> bool {
         return false;
     }
     !config.monitored()
-        || (pac::SYSCTRL.lsi().read().stable()
+        || (monitor_qualified()
             && critical_section::with(|cs| match MONITOR_LSI.borrow(cs).get() {
                 Some(parameters) => lsi_parameters() == parameters,
                 None => !require_frozen,
@@ -150,6 +178,37 @@ pub(crate) struct Admission {
     lse: u32,
     routes: u32,
     interrupts: u32,
+}
+
+fn oscillator_gpio() -> super::peripheral::RccInfo {
+    #[cfg(rcc_cw32l010_v1)]
+    {
+        peripherals::GPIOB::RCC_INFO
+    }
+    #[cfg(any(rcc_cw32l011_v1, rcc_cw32l012_v1))]
+    {
+        peripherals::GPIOC::RCC_INFO
+    }
+}
+fn rtc_access_requested() -> bool {
+    #[cfg(rcc_cw32l010_v1)]
+    {
+        pac::RTC.cr1().read().access()
+    }
+    #[cfg(any(rcc_cw32l011_v1, rcc_cw32l012_v1))]
+    {
+        false
+    } // Native CR1 bits1:0 are reserved, not ACCESS/WINDOW.
+}
+fn rtc_trigger(selector: u8) -> bool {
+    #[cfg(rcc_cw32l011_v1)]
+    {
+        matches!(selector, 1..=4)
+    } // Code5 is PC13 input.
+    #[cfg(any(rcc_cw32l010_v1, rcc_cw32l012_v1))]
+    {
+        matches!(selector, 1..=5)
+    }
 }
 
 fn central_new(config: Lse) -> Result<(), Error> {
@@ -176,11 +235,11 @@ fn central_new(config: Lse) -> Result<(), Error> {
     if !config.monitored() && cr1.lseccs() {
         return Err(Error::LseClockInUse);
     }
-    if config.monitored() && !r.lsi().read().stable() {
+    if config.monitored() && !monitor_qualified() {
         return Err(Error::LseMonitorNotReady);
     }
     // Active-low resets are observed, never asserted or released to inspect.
-    if peripherals::GPIOB::RCC_INFO.reset_asserted()
+    if oscillator_gpio().reset_asserted()
         || peripherals::RTC::RCC_INFO.reset_asserted()
         || peripherals::UART1::RCC_INFO.reset_asserted()
         || peripherals::UART2::RCC_INFO.reset_asserted()
@@ -188,10 +247,19 @@ fn central_new(config: Lse) -> Result<(), Error> {
     {
         return Err(Error::LseClockInUse);
     }
+    #[cfg(rcc_cw32l011_v1)]
+    if peripherals::UART3::RCC_INFO.reset_asserted() {
+        return Err(Error::LseClockInUse);
+    }
+    #[cfg(rcc_cw32l012_v1)]
+    if peripherals::I2C1::RCC_INFO.reset_asserted() || peripherals::I2C2::RCC_INFO.reset_asserted()
+    {
+        return Err(Error::LseClockInUse);
+    }
     Ok(())
 }
 
-/// Configuration-only gates, in RTC/UART1/UART2/LPTIM order. Restores gates on
+/// Own-family configuration-only gates. Restores their incoming state on
 /// rejection; failed restoration is an error. DATE/PSC/status are never written.
 fn configuration_consumers(
     config: Lse,
@@ -224,7 +292,7 @@ fn configuration_consumers(
             let mut cr0 = pac::RTC.cr0().read();
             cr0.set_h24(false);
             if cr0.0 != 0
-                || cr1.access()
+                || rtc_access_requested()
                 || cr1.wait()
                 || pac::RTC.cr2().read().0 != 0
                 || pac::RTC.compcfr1().read().0 != 0
@@ -240,6 +308,8 @@ fn configuration_consumers(
     for (info, uart) in [
         (peripherals::UART1::RCC_INFO, pac::UART1),
         (peripherals::UART2::RCC_INFO, pac::UART2),
+        #[cfg(rcc_cw32l011_v1)]
+        (peripherals::UART3::RCC_INFO, pac::UART3),
     ] {
         if info
             .inspect_for_init(cs, config.poll_budget, || {
@@ -250,13 +320,48 @@ fn configuration_consumers(
             return Err(Error::LseClockInUse);
         }
     }
+    #[cfg(rcc_cw32l012_v1)]
+    {
+        // UART3's gate meaning conflicts between current native manuals.
+        // A closed gate stays closed; its unverified owner is a functional
+        // handover condition, never inferred absent from the gate bit.
+        let info = peripherals::UART3::RCC_INFO;
+        if info.is_enabled()
+            && !info.reset_asserted()
+            && u8::from(pac::UART3.cr1().read().source()) == crate::RCC_LSE_UART_SOURCE
+        {
+            return Err(Error::LseClockInUse);
+        }
+        for (info, i2c) in [
+            (peripherals::I2C1::RCC_INFO, pac::I2C1),
+            (peripherals::I2C2::RCC_INFO, pac::I2C2),
+        ] {
+            if info.reset_asserted() {
+                return Err(Error::LseClockInUse);
+            }
+            let conflict = info
+                .inspect_for_init(cs, config.poll_budget, || {
+                    // Both master and slave select their own timing clock. Code1
+                    // is reserved; code3's HSI/LSI disagreement is not interpreted.
+                    matches!(u8::from(i2c.mcr0().read().clksrc()), 1 | 2)
+                        || matches!(u8::from(i2c.scr0().read().clksrc()), 1 | 2)
+                })
+                .map_err(inspection_error)?;
+            if conflict {
+                return Err(Error::LseClockInUse);
+            }
+        }
+    }
     let conflict = peripherals::LPTIM::RCC_INFO
         .inspect_for_init(cs, config.poll_budget, || {
+            #[cfg(not(rcc_cw32l012_v1))]
             let cr = pac::LPTIM.cr().read();
+            #[cfg(rcc_cw32l012_v1)]
+            let cr = pac::LPTIM.cr0().read();
             let cfgr = pac::LPTIM.cfgr().read();
             cr.en()
                 && (cfgr.iclksrc() == pac::lptim::vals::Source::Lse
-                    || (rtc_lse && u8::from(cfgr.trigen()) != 0 && matches!(cfgr.trigsel(), 1..=5)))
+                    || (rtc_lse && u8::from(cfgr.trigen()) != 0 && rtc_trigger(cfgr.trigsel())))
         })
         .map_err(inspection_error)?;
     if conflict {
@@ -272,10 +377,14 @@ pub(crate) fn preflight(
     let r = pac::SYSCTRL;
     let reused = r.cr1().read().lseen();
     if reused {
+        #[cfg(any(rcc_cw32l011_v1, rcc_cw32l012_v1))]
+        if r.lse().read().pinlock() {
+            return Err(Error::LseClockInUse);
+        }
         if !ready(config, false) {
             return Err(Error::LseNotReady);
         }
-        if peripherals::GPIOB::RCC_INFO.reset_asserted() {
+        if oscillator_gpio().reset_asserted() {
             return Err(Error::LsePinConflict);
         }
     } else {
@@ -294,6 +403,7 @@ pub(crate) fn preflight(
     Ok(admission)
 }
 
+#[cfg(rcc_cw32l010_v1)]
 fn poll(mut ready: impl FnMut() -> bool, attempts: u32, error: Error) -> Result<(), Error> {
     for _ in 0..attempts {
         if ready() {
@@ -304,11 +414,12 @@ fn poll(mut ready: impl FnMut() -> bool, attempts: u32, error: Error) -> Result<
     Err(error)
 }
 
+#[cfg(rcc_cw32l010_v1)]
 /// GPIOB's gate controls the WHOLE BANK's operation, not just configuration.
 /// The public functional handover allows sampling/filter/edge progress even on
 /// failure. Preserve unrelated pin controls/flags; never open a timer gate.
 fn pads(config: Lse, unused: bool, rtc_lse: bool, configure: bool) -> Result<(), Error> {
-    if peripherals::GPIOB::RCC_INFO.reset_asserted() {
+    if oscillator_gpio().reset_asserted() {
         return Err(Error::LsePinConflict);
     }
     let was_enabled = pac::SYSCTRL.ahben().read().gpiob();
@@ -372,6 +483,119 @@ fn pads(config: Lse, unused: bool, rtc_lse: bool, configure: bool) -> Result<(),
     result
 }
 
+// Observe only already operational output banks. Closed-bank and downstream
+// timer/external recipients remain explicit, unverified functional handovers.
+#[cfg(any(rcc_cw32l011_v1, rcc_cw32l012_v1))]
+fn output_routes_idle(rtc_lse: bool) -> bool {
+    if rtc_lse
+        && peripherals::GPIOA::RCC_INFO.is_enabled()
+        && !peripherals::GPIOA::RCC_INFO.reset_asserted()
+    {
+        let r = pac::GPIOA;
+        let analog = r.analog().read();
+        let dir = r.dir().read();
+        let af = r.afrl().read();
+        #[cfg(rcc_cw32l011_v1)]
+        let (af1, af3) = (af.afr1(), af.afr3());
+        #[cfg(rcc_cw32l012_v1)]
+        let (af1, af3) = (af.pin1(), af.pin3());
+        if (!analog.pin1() && !dir.pin1() && af1 == 3)
+            || (!analog.pin3() && !dir.pin3() && af3 == 3)
+        {
+            return false;
+        }
+    }
+    #[cfg(rcc_cw32l012_v1)]
+    {
+        if peripherals::GPIOB::RCC_INFO.is_enabled()
+            && !peripherals::GPIOB::RCC_INFO.reset_asserted()
+        {
+            let r = pac::GPIOB;
+            let analog = r.analog().read();
+            let dir = r.dir().read();
+            let af = r.afrh().read();
+            if (!analog.pin12() && !dir.pin12() && af.pin12() == 4)
+                || (rtc_lse
+                    && ((!analog.pin14() && !dir.pin14() && af.pin14() == 4)
+                        || (!analog.pin15() && !dir.pin15() && af.pin15() == 4)))
+            {
+                return false;
+            }
+        }
+        if peripherals::GPIOF::RCC_INFO.is_enabled()
+            && !peripherals::GPIOF::RCC_INFO.reset_asserted()
+        {
+            let r = pac::GPIOF;
+            let analog = r.analog().read();
+            let dir = r.dir().read();
+            let af = r.afrl().read();
+            if (!analog.pin1() && !dir.pin1() && af.pin1() == 3)
+                || (!analog.pin3() && !dir.pin3() && af.pin3() == 1)
+            {
+                return false;
+            }
+        }
+    }
+    true
+}
+
+/// GPIOC inspection resumes the entire bank's sampling/filter/event operation.
+/// Central RCC restores the exact incoming gate even on rejection; restoration
+/// does not undo events. No timer or other output bank is opened to inspect it.
+#[cfg(any(rcc_cw32l011_v1, rcc_cw32l012_v1))]
+fn pads(config: Lse, unused: bool, rtc_lse: bool, configure: bool) -> Result<(), Error> {
+    let info = peripherals::GPIOC::RCC_INFO;
+    if info.reset_asserted() {
+        return Err(Error::LsePinConflict);
+    }
+    if unused && !output_routes_idle(rtc_lse) {
+        return Err(Error::LseClockInUse);
+    }
+    critical_section::with(|cs| {
+        info.inspect_for_init(cs, config.poll_budget, || {
+            let r = pac::GPIOC;
+            let dir = r.dir().read();
+            let analog = r.analog().read();
+            let af = r.afrh().read();
+            #[cfg(rcc_cw32l011_v1)]
+            let (af14, af15) = (af.afr14(), af.afr15());
+            #[cfg(rcc_cw32l012_v1)]
+            let (af14, af15) = (af.pin14(), af.pin15());
+            #[cfg(rcc_cw32l012_v1)]
+            if rtc_lse && !analog.pin13() && !dir.pin13() && af.pin13() == 4 {
+                return Err(Error::LseClockInUse);
+            }
+            let pin_mask = if config.bypass() {
+                1 << 14
+            } else {
+                (1 << 14) | (1 << 15)
+            };
+            if !dir.pin14()
+                || analog.pin14() != (unused || !config.bypass())
+                || af14 != 0
+                || (!config.bypass() && (!dir.pin15() || !analog.pin15() || af15 != 0))
+                || (r.opendrain().read().0
+                    | r.pur().read().0
+                    | r.riseie().read().0
+                    | r.fallie().read().0
+                    | r.filter().read().0)
+                    & pin_mask
+                    != 0
+            {
+                return Err(Error::LsePinConflict);
+            }
+            if configure && config.bypass() {
+                r.analog().modify(|w| w.set_pin14(false));
+                if r.analog().read().pin14() {
+                    return Err(Error::LsePinConflict);
+                }
+            }
+            Ok(())
+        })
+    })
+    .map_err(|_| Error::LseGpioGateTimeout)?
+}
+
 pub(crate) fn verify(config: Lse, _cs: critical_section::CriticalSection<'_>) -> Result<(), Error> {
     if !healthy(config) {
         return Err(Error::LseNotReady);
@@ -396,7 +620,7 @@ pub(crate) fn start(
         return Err(Error::LseClockInUse);
     }
     if let Some(parameters) = admission.lsi {
-        if !r.lsi().read().stable() || lsi_parameters() != parameters {
+        if !monitor_qualified() || lsi_parameters() != parameters {
             return Err(Error::LseMonitorNotReady);
         }
         if MONITOR_LSI
@@ -416,6 +640,26 @@ pub(crate) fn start(
     central_new(config)?;
     pads(config, true, rtc_lse, true)?;
     central_new(config)?;
+    #[cfg(any(rcc_cw32l011_v1, rcc_cw32l012_v1))]
+    {
+        // GPIOC working-clock progress may expose a retained event. Recheck
+        // the admitted consumers and frozen source/routes at the commit edge.
+        if configuration_consumers(config, cs)? != rtc_lse
+            || r.cr2().read().0 != admission.routes
+            || r.ier().read().0 != admission.interrupts
+            || r.lse().read().0 != admission.lse
+        {
+            return Err(Error::LseClockInUse);
+        }
+        if admission
+            .lsi
+            .is_some_and(|parameters| lsi_parameters() != parameters)
+            || (config.monitored() && !monitor_qualified())
+        {
+            return Err(Error::LseMonitorNotReady);
+        }
+        central_new(config)?;
+    }
     r.lse().modify(|w| {
         w.set_mode(config.bypass());
         w.set_driver(config.drive);

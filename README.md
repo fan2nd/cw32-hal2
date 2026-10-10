@@ -130,7 +130,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - All eleven LSE-bearing families: read-only inherited LSE pad reservation before
   token return, with source-specific pad locks and exact package routes. GPIO and
   peripheral pin construction reject reserved pads before GPIO writes.
-  Nineteen exact packages support explicitly requested, board-qualified nominal
+  Twenty-three exact packages support explicitly requested, board-qualified nominal
   32768 Hz crystal/bypass setup and an owned RTC source. The previous sixteen
   x030/F020/L031/R031/W031/L052/L083 packages retain their own monitoring,
   electrical and consumer limits. The five L083 parts
@@ -141,7 +141,10 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   contract. `StartupOnly` leaves CCS clear and can retain STABLE after clock loss;
   `MonitoredExistingRoutes` requires legal stable unchanged LSI and retains
   deliberate hardware fault routes. Neither promises continuing timekeeping.
-  See the [native L010 contract](docs/qualified-l010-lse.md). Failure requires
+  L011/L012 use own-source factory-matching LSI for monitoring, with 41000Hz/36080Hz
+  maxima and explicit whole-GPIOC/downstream handover limits; closed output banks
+  and L012 UART3 are not an absence proof. See the [native L011/L012 contract](docs/qualified-l011-l012-lse.md)
+  and [native L010 contract](docs/qualified-l010-lse.md). Failure requires
   reset (POR may be needed for retained LSE controls); no automatic RTC fallback, low-power recovery or elapsed-time accuracy
   after a clock fault is promised. Other parts retain read-only inherited-pad
   protection. See [the ownership contract](docs/inherited-lse-pads.md) and
@@ -234,11 +237,12 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   [firmware example](examples/halltim/README.md).
 - All eleven RTC-bearing families: bounded whole-second calendar with preserving
   attachment and explicit initialization. L010 retains frozen HSIOSC and adds
-  held LSE on its three qualified exact packages; L011/L012 use frozen HSIOSC.
+  held LSE on its three qualified exact packages; L011/L012 retain frozen HSIOSC
+  and add native LSE on their four exact qualified packages.
   Classic families normally retain preconfigured factory-trim LSI and its exact
-  32800/32768 rate and tolerance. Nineteen qualified LSE packages can hold an
+  32800/32768 rate and tolerance. Twenty-three qualified LSE packages can hold an
   explicitly initialized LSE source. The previous sixteen retain their monitor
-  checks; native L010 checks its selected fault-detection contract around
+  checks; native L010/L011/L012 check their selected fault-detection contract around
   calendar operations, with no progression guarantee under `StartupOnly`. Typed weekly Alarm A programming and A/B
   event status/acknowledgement are supported; L010/L011/L012 also have scoped
   run-mode async waits. Alarm B mask programming remains contradictory in the
@@ -400,4 +404,4 @@ Stage20 adds qualified UART RTS/CTS constructors and buffered timer capture/enco
 
 Stage21 adds source-qualified Alarm A programming, A/B event handling and scoped async waits on the direct-access RTC variants. See [verification and limits](docs/hal-stage21-verification.md).
 
-Native CW32L010 LSE/calendar qualification and functional handover limits: [qualified-l010-lse.md](docs/qualified-l010-lse.md). Normal crystal, bypass and preserved HSI calendar examples are in [examples/l010-lse-clock](examples/l010-lse-clock).
+Native CW32L010/L011/L012 LSE/calendar qualification and functional handover limits: [qualified-l010-lse.md](docs/qualified-l010-lse.md). The new two-family [own-source contract](docs/qualified-l011-l012-lse.md) retains bounded functional exclusions. Normal crystal, bypass and preserved HSI calendar examples are in [examples/l010-lse-clock](examples/l010-lse-clock).
