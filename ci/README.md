@@ -66,3 +66,11 @@ dead time and global MOE. Its own-PDF/data audit is
 `./d audit-current` includes `ci/verify-l052-lse-data.py` for the three exact L052 parts, using their own locked originals and SDK members. The L052 addition retains evidence for five selected ordinary library configurations and ten linked crystal/bypass ELFs (the three L052 parts plus F030C8T7 and L031C8T6 regression). Four library commands and five example-pair commands have retained numeric exit status 0; the earlier C8T6 library pass is supported by its original `Finished`/`PASS` log, with no numeric exit receipt reconstructed. These are software checks only.
 
 `./d audit-current` also includes `ci/verify-l083-lse-data.py` for the five exact L083 parts, with four own locked originals, five SDK members and the native register/package facts. The L083 candidate has retained passes for seven ordinary library configurations and fourteen linked crystal/bypass ELFs: all five L083 parts, L052C8T6 and F030C8T7. Those receipts apply to the frozen candidate source, and do not claim a rerun of the full script or hardware execution. Its source-qualified detector-margin check runs before peripheral acquisition or RCC writes; see the [L083 contract](../docs/qualified-l083-lse.md).
+
+`./d check-lsi-clock` is a bounded local compile check: three F020/F030/A030
+libraries with defmt and the fixed-time-driver cfg, three ordinary factory-LSI
+calendar firmware builds, and one existing HSI, HSE and PLL firmware regression
+each. These commands compile production sources and examples; they do not run
+HAL tests, prove a runtime time-driver rejection, or execute hardware. Each
+example's build.rs derives exact memory bounds and links with -Tlink.x. Inspect
+the resulting ELF entry, vectors and PT_LOAD regions separately before flashing.

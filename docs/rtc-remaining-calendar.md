@@ -50,9 +50,19 @@ mode-specific 1.8 V source fact remains recorded in the evidence.
 Classic RTCs divide the source by 32768. The published LSI nominal is **32800**,
 so their nominal calendar tick rate is **32800/32768**, not exactly 1 Hz. Even
 before RC tolerance, that ratio implies about 84.4 extra calendar seconds per
-SI day. `calendar_tick_bounds()` retains this fraction; its duration methods
-use exact division and round outward. Whole-Hz getters are intentionally coarse.
-No rounded frequency is substituted at a hardware ceiling.
+SI day. `calendar_tick_bounds()` retains this fraction. Whole-Hz getters are
+intentionally coarse; no rounded frequency is substituted at a hardware ceiling.
+
+F020/F030/A030 factory-LSI bounds qualify **rate only**, consistently through
+`LsiClock::bounds()`, `CalendarClock::bounds()`, `source_clock_bounds()` and
+`calendar_tick_bounds()`, even when SYSCLK remains on HSI. This withdraws their
+previous strict cycle-duration qualification: `has_cycle_timing_bounds()` now
+returns false, and the strict `minimum_duration_ns` / `maximum_duration_ns`
+helpers reject these envelopes. Published factory accuracy does not independently
+establish an absolute per-cycle bound. The rate endpoints, operating conditions
+and exact calendar ratio remain unchanged. Other families' RTC qualifications
+and board-qualified LSE envelopes are unchanged; where cycle timing is qualified,
+duration methods retain exact division and outward rounding.
 
 L010 selects PSC1=59, PSC2=399999; L011/L012 retain PSC1=119, PSC2=399999. The
 intermediate nominal rate is 800 kHz and its upper bound is 816 kHz, within the
@@ -66,9 +76,12 @@ the own factory calibration halfword, rejects erased storage, and compares the
 trim with the typed SYSCTRL.LSI.TRIM field. A mismatch returns an error before
 any write. The capability does **not** load calibration. LSIEN=0 is insufficient
 to prove no hardware user is starting or requesting this shared oscillator.
-Board startup or a bootloader must establish factory trim before acquisition.
-This remains a concrete prerequisite for classic-family use; there is no safe
-cold-source provisioning API in this batch.
+On F020/F030/A030, selecting `Sysclk::LSI` during RCC initialization can establish
+factory trim through its separately checked cold-start admission. This is an
+initialization-only route, with the documented whole-GPIO-bank inspection and
+failure behavior; it does not add live calibration to `LsiClock::new`. Otherwise,
+board startup or a bootloader must establish factory trim before acquisition.
+Other classic families still require that prior provisioning.
 
 For matching trim, acquisition enables only LSIEN using the SYSCTRL key,
 preserves WAITCYCLE/trim and neighboring controls, and polls both enable and
@@ -95,8 +108,10 @@ boot/reset/interrupt flags. Partial initialization is not rolled back.
 ## Access and calendar semantics
 
 - Classic A030/F020/F030/L031/L052/L083/R031/W031: poll WINDOW before unlock and
-  ACCESS. Failed polls have at least the manual's 10 ms CPU delay, calculated
-  from maximum HCLK ClockBounds, with at most 1000 attempts. Recheck WINDOW
+  ACCESS. Failed polls use a software delay calculated for the manual's 10 ms
+  interval from the selected HCLK rate upper bound, with at most 1000 attempts.
+  This rate-derived cycle count adds no absolute per-cycle or wall-clock timing
+  guarantee for a rate-only source. Recheck WINDOW
   after masking ordinary interrupts, then perform the fixed DATE/TIME write
   and readback. The ACCESS guard clears ACCESS before the unlock guard relocks.
 - L010: require RTCLPM=0 for writes, leaving that mode unchanged. Wait WAIT=0,

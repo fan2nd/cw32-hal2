@@ -77,15 +77,19 @@ impl<'d> HsiOscClock<'d> {
 #[cfg(any(rtc_v1, rtc_cw32f020_v1, rtc_cw32l031_v1, rtc_cw32l052_v1))]
 /// Shared LSI with verified, unchanged factory trim and bounded startup polling.
 ///
-/// This capability requires factory trim already loaded by board startup or a
-/// bootloader. It never loads trim itself: LSIEN=0 does not prove no shared
-/// hardware user is starting the oscillator. A mismatch is rejected before any
-/// write. Existing WAITCYCLE, consumers and RTC state are preserved. Software
+/// This capability requires factory trim already loaded. On F020/F030/A030,
+/// selecting `Sysclk::LSI` during RCC initialization can establish it; otherwise
+/// board startup or a bootloader must do so. This constructor never loads trim:
+/// LSIEN=0 does not prove no shared hardware user is starting the oscillator.
+/// A mismatch is rejected before any write. Existing WAITCYCLE, consumers and
+/// RTC state are preserved. Software
 /// enable is retained on timeout and Drop so another user never loses LSI.
 ///
 /// The own datasheet nominal is 32,800 Hz, not 32,768 Hz. Bounds require the
 /// published supply/ambient interval and unchanged factory trim; readiness is
 /// startup status, not a measurement or continuous loss-of-clock monitor.
+/// On F020/F030/A030 these are rate-only bounds even when SYSCLK uses another
+/// source; they do not qualify strict cycle durations.
 pub struct LsiClock<'d> {
     _sysctrl: Peri<'d, SYSCTRL>,
 }
@@ -122,6 +126,8 @@ impl<'d> LsiClock<'d> {
     pub const fn frequency(&self) -> Hertz {
         Hertz(RTC::SOURCE_NOMINAL_HZ)
     }
+    /// Factory-source envelope. F020/F030/A030 qualify rate only;
+    /// check `has_cycle_timing_bounds()` before requesting strict durations.
     pub const fn bounds(&self) -> ClockBounds {
         ClockBounds::rtc_source()
     }
@@ -172,6 +178,7 @@ impl<'d> CalendarClock<'d> {
         }
     }
     /// Declared healthy-source envelope, not a guarantee after oscillator faults.
+    /// Preserves the selected source's rate-only or cycle-timing qualification.
     pub const fn bounds(&self) -> ClockBounds {
         match self {
             #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]

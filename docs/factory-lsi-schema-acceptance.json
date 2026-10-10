@@ -1,0 +1,553 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-09T22:29:10.084206+00:00",
+  "result": "accepted_frozen_three_model_schema_delta_subject_to_separate_integration_and_lineage_gates",
+  "scope": "Static three-model schema acceptance only. No generator source validation, runtime, hardware, build, or legal acceptance.",
+  "baseline_zip": "external-evidence/stage55/source-archive/embassy-cw32-stage55-source-reviewed-2026-10-09.zip",
+  "baseline_zip_sha256": "8cb0e8869d1970361e99ec7debfb64393c1e11ee41085284bc326a960b3c1b32",
+  "freeze_path": "external-evidence/stage56/factory-lsi-candidate/evidence/stage56-schema-freeze.json",
+  "freeze_sha256": "31d546f701e69d1066698f2288b62e2d2fcdbb7d7b8261ee6e7ce4224b7e051b",
+  "patch_path": "external-evidence/stage56/factory-lsi-candidate/evidence/stage56-schema-delta.patch",
+  "patch_sha256": "2be04d88547bc74083bc7f5dca3efd090d66d32d374a1fc49340a1a22dd40569",
+  "files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "3300723d4ae9b0e7d00051f6d158c9d72569ade9350d8f32a093cc505c8195bb",
+      "after_sha256": "30d9f8fd473d5c3fe41e84d016821cf07282c196131c76030fa7511a67ab0e18",
+      "before_bytes": 33428,
+      "after_bytes": 34590,
+      "before_matches_stage55_archive": true,
+      "current_matches_frozen_after": true,
+      "all_changes_insertions": true,
+      "insertion_runs": 2,
+      "explicit_record_and_field_removal_reconstructs_before": true,
+      "field_count": 16,
+      "fields": [
+        {
+          "name": "nominal_hz",
+          "type": "u32"
+        },
+        {
+          "name": "minimum_hz",
+          "type": "u32"
+        },
+        {
+          "name": "maximum_hz",
+          "type": "u32"
+        },
+        {
+          "name": "supply_mv",
+          "type": "(u16, u16)"
+        },
+        {
+          "name": "temperature_c",
+          "type": "(i16, i16)"
+        },
+        {
+          "name": "factory_trim_address",
+          "type": "u32"
+        },
+        {
+          "name": "rtc_allowed_sources",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "awt_allowed_sources",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "uart_allowed_sources",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "uarts",
+          "type": "Vec<String>"
+        },
+        {
+          "name": "gpio_banks",
+          "type": "Vec<String>"
+        },
+        {
+          "name": "gpio_filter_allowed_sources",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "mco_allowed_sources",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "lsi_output_pin",
+          "type": "String"
+        },
+        {
+          "name": "lsi_output_allowed_af",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "rcc_irq",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "9806f170fa4873896a7bc193c6e0dd4a492918304210a6664005cd278df325e6",
+      "after_sha256": "22679779e7a536d31b6fd18e72fa35258e67ed4a2a1c6b4129704e9a4be2ee02",
+      "before_bytes": 33851,
+      "after_bytes": 34668,
+      "before_matches_stage55_archive": true,
+      "current_matches_frozen_after": true,
+      "all_changes_insertions": true,
+      "insertion_runs": 2,
+      "explicit_record_and_field_removal_reconstructs_before": true,
+      "field_count": 16,
+      "fields": [
+        {
+          "name": "nominal_hz",
+          "type": "u32"
+        },
+        {
+          "name": "minimum_hz",
+          "type": "u32"
+        },
+        {
+          "name": "maximum_hz",
+          "type": "u32"
+        },
+        {
+          "name": "supply_mv",
+          "type": "(u16, u16)"
+        },
+        {
+          "name": "temperature_c",
+          "type": "(i16, i16)"
+        },
+        {
+          "name": "factory_trim_address",
+          "type": "u32"
+        },
+        {
+          "name": "rtc_allowed_sources",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "awt_allowed_sources",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "uart_allowed_sources",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "uarts",
+          "type": "Vec<String>"
+        },
+        {
+          "name": "gpio_banks",
+          "type": "Vec<String>"
+        },
+        {
+          "name": "gpio_filter_allowed_sources",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "mco_allowed_sources",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "lsi_output_pin",
+          "type": "String"
+        },
+        {
+          "name": "lsi_output_allowed_af",
+          "type": "Vec<u8>"
+        },
+        {
+          "name": "rcc_irq",
+          "type": "u16"
+        }
+      ]
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "e0d3d918eefa896932d86434fa5461572883eeb4c1f3ee9ec1a6f28e3178ea46",
+      "after_sha256": "1039884416d72e27fced89046ee1eba647339b59b24e31994232ef317f3903c5",
+      "before_bytes": 21931,
+      "after_bytes": 22749,
+      "before_matches_stage55_archive": true,
+      "current_matches_frozen_after": true,
+      "all_changes_insertions": true,
+      "insertion_runs": 2,
+      "explicit_record_and_field_removal_reconstructs_before": true,
+      "field_count": 16,
+      "fields": [
+        {
+          "name": "nominal_hz",
+          "type": "u32"
+        },
+        {
+          "name": "minimum_hz",
+          "type": "u32"
+        },
+        {
+          "name": "maximum_hz",
+          "type": "u32"
+        },
+        {
+          "name": "supply_mv",
+          "type": "(u16, u16)"
+        },
+        {
+          "name": "temperature_c",
+          "type": "(i16, i16)"
+        },
+        {
+          "name": "factory_trim_address",
+          "type": "u32"
+        },
+        {
+          "name": "rtc_allowed_sources",
+          "type": "&'static [u8]"
+        },
+        {
+          "name": "awt_allowed_sources",
+          "type": "&'static [u8]"
+        },
+        {
+          "name": "uart_allowed_sources",
+          "type": "&'static [u8]"
+        },
+        {
+          "name": "uarts",
+          "type": "&'static [&'static str]"
+        },
+        {
+          "name": "gpio_banks",
+          "type": "&'static [&'static str]"
+        },
+        {
+          "name": "gpio_filter_allowed_sources",
+          "type": "&'static [u8]"
+        },
+        {
+          "name": "mco_allowed_sources",
+          "type": "&'static [u8]"
+        },
+        {
+          "name": "lsi_output_pin",
+          "type": "&'static str"
+        },
+        {
+          "name": "lsi_output_allowed_af",
+          "type": "&'static [u8]"
+        },
+        {
+          "name": "rcc_irq",
+          "type": "u16"
+        }
+      ]
+    }
+  ],
+  "exact_patch_matches_reconstructed_unified_diff": true,
+  "lineage": {
+    "preserved_files": {
+      "docs/upstream-file-provenance.json": {
+        "sha256": "bd1dcb41320dc44ad22c547eb1b850b2db2e5e2c2c78884fd3764c0e7fae1a99",
+        "byte_identical_to_stage55_archive": true
+      },
+      "docs/hse-pll-schema-acceptance.json": {
+        "sha256": "73485e9c0db6e0ef8f23e8120c0214ba4a8c8eafcd6c22f6a3aa00ca6bed23f1",
+        "byte_identical_to_stage55_archive": true
+      },
+      "NOTICE.md": {
+        "sha256": "5eddad2a601e86e476b0cf3cacc45153e42ec0bb1b7caae676c6bc334cbd3538",
+        "byte_identical_to_stage55_archive": true
+      },
+      "LICENSE-MIT": {
+        "sha256": "83d04e56c5beb631d65d6bd7b78c9350083084acc19753a3e6e1b68806a607f5",
+        "byte_identical_to_stage55_archive": true
+      },
+      "LICENSE-APACHE": {
+        "sha256": "64853d2f346cf20ad5a133c441e792d4b99b45adb2ef3acfa2b890d713e4ed0b",
+        "byte_identical_to_stage55_archive": true
+      },
+      "cw32-metapac-gen/Cargo.toml": {
+        "sha256": "dcfda429044bfd739e7af75ad6564242b38afefb542431e53358f44eb4b0d9e1",
+        "byte_identical_to_stage55_archive": true
+      }
+    },
+    "current_serde_identity_tip": "3300723d4ae9b0e7d00051f6d158c9d72569ade9350d8f32a093cc505c8195bb",
+    "identity_tip_not_advanced": true,
+    "entire_current_replacement_review_canonical_sha256": "993ff21865603e696b72fc13b47cf7b8bd5d24241c4632c396916b3e7fc21c6c",
+    "legal_clearance": false,
+    "canonicalization": "JSON UTF-8, sort_keys=True, separators=(comma,colon), ensure_ascii=True",
+    "selected_entries_canonical_sha256": {
+      "cw32-data-serde/src/lib.rs": "477d569cf1b9864d07066589f01bfdb4513f4a30fad9e718c193111f3070f760",
+      "cw32-metapac-gen/src/data.rs": "fa6872d0a5ac62e8e7e128dc13d0a2273c1809cf5522ec725172a345304c62a9",
+      "cw32-metapac-gen/res/src/metadata.rs": "d15dda63c608ee2f627245e2dec25d88587680cead1c35e190ce91a6e51f3e17"
+    },
+    "retained_review_chain": [
+      {
+        "replacement_sha256": "3300723d4ae9b0e7d00051f6d158c9d72569ade9350d8f32a093cc505c8195bb",
+        "review_reference": "docs/hse-pll-schema-acceptance.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "42345e5143a6dded05aafec1fa5d83521a6a6e3eb0d359cd22beff637b0a6d63",
+        "review_reference": "docs/lse-native-low-power-schema-acceptance.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "c7c59622c69f77894f838cb0737a1dcf5b802a17b63fef01099417c06c781998",
+        "review_reference": "docs/lse-l010-schema-acceptance.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "54a4de94f232c208ab22ac03c177d7f12ea5eba967ac17d023a147f26a60e761",
+        "review_reference": "docs/lse-stage50-l052-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "aceb8fc88f3dab0c405fe86da2ccbdc800f81a433b77bf93bcb7ef1a2d24ac50",
+        "review_reference": "docs/lse-stage49-family-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "dd26f0aeebed0b2e64a81db5d8d067e2234fb7f1f04a784de5e8787cc5e43a7a",
+        "review_reference": "docs/lse-stage48-rebuild-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "0b06a84ce26dc25558ec52f4b0d23e8690dfdc521f9798d71f27c4b50b9a907c",
+        "review_reference": "docs/l012-hse-stage44-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "b791f7737e032a99cd473d119e84171e1d1a25f59bb7e71a1f1e9ef2367bad8b",
+        "review_reference": "docs/pll-stage42-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "c183923bcb189ea2d6617d6ff13963070d64e06d8308c856b8d1b45cef78c810",
+        "review_reference": "docs/lse-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "3dfa050491fe73aa16bd1d5f96e5ae01beb76affc5253222faeba073e2b0759c",
+        "review_reference": "docs/optional-hse-schema-note.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "e70e0c81debc6484b2949b12590fe54670001188d5caf23f3d432a61c24de133",
+        "review_reference": "docs/classic-complementary-schema-note.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "1240bf168f847297ede62b2423d8376d2c260d2eace27e74c726623859e0707f",
+        "review_reference": "docs/hex-stage28-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "9de005188b6001252d21cc8c43cf3514535c80601496bf8c62b305aa0986359d",
+        "review_reference": "docs/vref-schema-review.json",
+        "legal_clearance": false
+      },
+      {
+        "replacement_sha256": "19b49b7fe32d20c26ff33827d558f1676b25153f8388909d74957545bccaa82b",
+        "review_reference": "docs/hse-schema-review.json"
+      },
+      {
+        "replacement_sha256": "adc50cb1275be65b6451f1d283426ec3ec842460ee95d724600922f733c1081f",
+        "review_reference": "docs/stage24-schema-review.json"
+      },
+      {
+        "replacement_sha256": "0ed2f1ebbe890dca06de3c2bf78c3c45776ab7fe5a519b1c6f00ac19fd08aa6f",
+        "review_reference": "docs/dac-opa-schema-delta.json"
+      },
+      {
+        "replacement_sha256": "2b53b5486a2a1f208922367fb36a9ced580fad7af3b815634cb75eb73e1fd160",
+        "review_reference": "docs/stage14-schema-review.md"
+      },
+      {
+        "replacement_sha256": "7c1c569ee508dba0e77ce8f9f9eb3f049ad48f99aeb1813ec76bc9edf4ed8416",
+        "review_reference": "docs/combined-schema-extension-review.md"
+      },
+      {
+        "replacement_sha256": "aff3d62a4f1513f9573072ba8d0e1c397b5965c6e9039fe4f20d3eed1fa14108",
+        "review_reference": "docs/spi-metadata-refactor.md#schema-extension-review"
+      }
+    ],
+    "combined_metapac_adapted_entries_canonical_sha256": "f7fc163cc233f16322a31222e2f3899b69435c5ad3150b80082b51fc1363e91f"
+  },
+  "source_basis": {
+    "design": {
+      "path": "docs/factory-lsi-cold-start-design.md",
+      "sha256": "c9f16c7346b703e4e05b8d4fc9512eff81c9248aa18700afb10b0a2c6473c616",
+      "bytes": 37057
+    },
+    "independent_design_review": {
+      "path": "docs/factory-lsi-cold-start-review.md",
+      "sha256": "c9787bd9cb63a8ef14807681dbd2998a7feba178a63428f7e57e2fff329c78f9",
+      "bytes": 11283,
+      "original_sha256": "19398be21231b5e73b1f3710fffa2803001886bb7ee65983fc85246a0ae0bf67",
+      "original_bytes": 11215
+    },
+    "new_vendor_source_review_performed": false,
+    "basis": "Accepted immutable design v2 and its independent source review. Their hashes are bound here; no new silicon/source qualification is asserted."
+  },
+  "context_files_at_review": {
+    "cw32-metapac-gen/src/lib.rs": {
+      "sha256": "2fa92927fef3b1f6d0deb40b25c370e669e0b7d62ee1c127e714369ab9d058e9",
+      "bytes": 21809
+    },
+    "cw32-data-gen/src/electrical.rs": {
+      "sha256": "af3b888f3aba1091c3b5fcdc97e2e5bcecab1f01987f8fbf7c0471a6eb67547a",
+      "bytes": 116243
+    }
+  },
+  "schema_findings": {
+    "addition": "Exactly one new LsiSysclk/PeripheralLsiSysclk record and one final optional lsi_sysclk field in ClockLimits/PeripheralClockLimits in each model. No previous record, field, order, width, attribute or comment was altered.",
+    "outer_option": "Both owned models use serde(default) on Option. Absent and explicit null lsi_sysclk deserialize as None; project serde skips None during serialization. Static metadata uses Option<PeripheralLsiSysclk>. These are static derived-Serde conclusions, not execution results.",
+    "required_inner_facts": "All 16 present-record fields are required and nonnullable, with no struct/field default, Option, flatten, alias or custom deserializer. Both input record definitions deny unknown fields. Empty/missing are different: empty vectors or strings remain structurally accepted values, while a missing field is rejected.",
+    "numeric_domains": "Frequency and factory address are u32; supply uses a two-element u16 tuple; temperature uses a two-element i16 tuple; selector elements are u8; RCC IRQ is u16. Rust/Serde representational width does not establish hardware ranges, tuple ordering, positive frequencies, alignment, valid pins, unique roster, IRQ number, or safe shift count.",
+    "static_projection": "Both owned models have the same ordered 16 names and exact owned types. Static metadata maps Vec<u8> to static u8 slices, Vec<String> to static slices of static str, and String to static str; scalar and tuple types remain identical. Existing metapac stringify uses derived Debug followed by replacement of colon-space-open-bracket with colon-space-ampersand-open-bracket. Every new collection is a direct named field and every string remains a quoted literal under Debug, so the declared projection fits the existing emitter by inspection. No generated-output compile/probe was run.",
+    "serialization": "The project record macro supplies Serialize/Deserialize and retains declaration order. All present inner values, including zero/empty values, are serialized because no inner skip rule was added. The owned metapac model derives Deserialize/Debug, not Serialize; the static model has no Serde derive.",
+    "legacy_wire_compatibility": "Old input without lsi_sysclk still fits the new owned models as None. With None, the project serializer omits the new key and retains prior field order; exact byte output was not dynamically tested. The existing outer ClockLimits records do not deny unknown fields, so old permissive readers may ignore a supplied lsi_sysclk; that does not enable the capability or certify new hardware behavior.",
+    "rust_api_compatibility": "The new public field changes direct struct literals and exhaustive patterns in all three models. Derived Debug/Hash contents and static metadata shape can change even for None. No Rust source, ABI, memory-layout, binary or unconditional serialized-byte compatibility is claimed.",
+    "meaning": "The record represents source-qualified factory LSI rate bounds and direct-consumer facts, not a runtime cold-admission witness, per-cycle timing certificate, reset-history proof, caller-provided calibration license, or general-family capability."
+  },
+  "qualification_contract_for_later_validator": {
+    "status": "Required integration contract, not validated implementation. At the inspected electrical.rs snapshot there was no lsi_sysclk branch.",
+    "qualified_families": [
+      "CW32F020",
+      "CW32F030",
+      "CW32A030"
+    ],
+    "required_presence": "The source-validation/generation path must require Some for all three qualified profiles and reject Some for every other family. Legacy Deserialize None compatibility must not let missing qualified-family facts bypass required validation.",
+    "nominal_hz": 32800,
+    "bounds_hz": {
+      "CW32F020": [
+        31160,
+        34440
+      ],
+      "CW32F030": [
+        31816,
+        33784
+      ],
+      "CW32A030": [
+        31816,
+        33784
+      ]
+    },
+    "supply_mv": [
+      1650,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      105
+    ],
+    "factory_trim_address": 75266,
+    "factory_trim_address_hex": "0x00012602",
+    "rtc_allowed_sources": [
+      0,
+      4,
+      5,
+      6,
+      7
+    ],
+    "awt_allowed_sources": [
+      0,
+      2,
+      3,
+      4
+    ],
+    "uart_allowed_sources": [
+      0,
+      1,
+      2
+    ],
+    "uarts": [
+      "UART1",
+      "UART2",
+      "UART3"
+    ],
+    "gpio_banks": [
+      "GPIOA",
+      "GPIOB",
+      "GPIOC",
+      "GPIOF"
+    ],
+    "gpio_filter_allowed_sources": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6
+    ],
+    "mco_allowed_sources": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "lsi_output_pin": "PB11",
+    "lsi_output_allowed_af": [
+      0,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "rcc_irq": 4,
+    "source_selection": "Bind each family to its own reviewed sources and hashes, including the current-datasheets F020 Rev1.3 and explicitly joint x030 manual for F030/A030; do not substitute the similarly named old F020 datasheet or copy other-family consumer rosters.",
+    "roster_validation": "Reject missing/extra/duplicate consumer instances, missing/extra/duplicate allowed selector encodings, reserved/LSI encodings, invalid pin/AF, inconsistent factory address/IRQ, wrong intervals, or cross-family injection. Check metadata instance/register/field/base/gate/reset/IRQ correspondence before emission; the schema alone cannot prove any of these facts.",
+    "runtime_scope": "CR1/CR0 sequencing, stable/ready/NVIC observers, HSE/LSE exclusions, factory halfword validity, twice-checked cold admission, workgate handover/restoration, permanent requests, PLL bridge and failure phases require separate runtime review. They are not enforced by optional metadata or by these 16 fields.",
+    "same_source_qualification": "Keep LSI and derived RTC bounds rate-only for exactly the three families; this schema has no selectable timing-certificate field and does not itself implement that policy."
+  },
+  "integration_conditions": [
+    "Keep the three exact frozen postimage hashes. Any model-byte change requires incremental or new review before advancing accepted identity.",
+    "Coordinate authored data, source validator, generator output, owned metapac input, static emission, HAL build-time cfg/constants and Rust struct construction. Existing omitted data remains structurally readable, but qualified live profiles must contain and validate the complete record.",
+    "Run the separate generator parity/source validation and relevant representative build/runtime checks on final integrated inputs. This receipt is not evidence that any of those ran or passed.",
+    "Advance only the accepted serde identity from 3300723d4ae9b0e7d00051f6d158c9d72569ade9350d8f32a093cc505c8195bb to 30d9f8fd473d5c3fe41e84d016821cf07282c196131c76030fa7511a67ab0e18 after schema acceptance, and bind this receipt hash and project review reference.",
+    "Wrap the ENTIRE current replacement_review object unchanged as previous_review, using its recorded canonical hash to verify preservation. Retain all 19 prior review nodes, every accepted_extensions/component review/compatibility note and every historical identity/reference; do not flatten or reconstruct only a hash list.",
+    "Record both metapac before/after model hashes from this receipt without relabeling their adapted ancestry. Preserve original observed/upstream hashes, package declaration, notices, licensing evidence and unresolved upstream permission finding. Keep legal_clearance false."
+  ],
+  "verification": {
+    "static_model_review": true,
+    "baseline_zip_hash_verified": true,
+    "exact_additive_reversal_checks": true,
+    "field_order_and_projection_checks": true,
+    "new_serde_probes_run": false,
+    "generator_run": false,
+    "cargo_run": false,
+    "shared_target_used": false,
+    "hal_tests_run": false,
+    "new_adapter_or_path_attribute_added": false,
+    "project_source_edits": false,
+    "identity_tip_edited": false,
+    "new_default_historical_inverse_checker_added": false
+  },
+  "final_model_recheck": {
+    "cw32-data-serde/src/lib.rs": {
+      "sha256": "30d9f8fd473d5c3fe41e84d016821cf07282c196131c76030fa7511a67ab0e18",
+      "equals_frozen_postimage": true
+    },
+    "cw32-metapac-gen/src/data.rs": {
+      "sha256": "22679779e7a536d31b6fd18e72fa35258e67ed4a2a1c6b4129704e9a4be2ee02",
+      "equals_frozen_postimage": true
+    },
+    "cw32-metapac-gen/res/src/metadata.rs": {
+      "sha256": "1039884416d72e27fced89046ee1eba647339b59b24e31994232ef317f3903c5",
+      "equals_frozen_postimage": true
+    }
+  }
+}

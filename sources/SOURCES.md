@@ -13,11 +13,11 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 
 ## 当前文件级来源覆盖
 
-只统计 `cw32-data/` 内的 294 份 authored YAML：137 份寄存器定义 + 157 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；主动 LSE 的 `lse-qualified.yaml` 直接记录二十三个精确料号/封装的原厂文档 ID、SHA、PDF 页码与书页；完整清单及各族来源见末节。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
+只统计 `cw32-data/` 内的 295 份 authored YAML：137 份寄存器定义 + 158 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；主动 LSE 的 `lse-qualified.yaml` 直接记录二十三个精确料号/封装的原厂文档 ID、SHA、PDF 页码与书页；完整清单及各族来源见末节。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
 
 | 归类 | 文件数 | 边界 |
 | --- | ---: | --- |
-| 可直接定位原件中的内容 | 284 | 137 份寄存器有既有 canonical/input → 官方 SVD 结构来源；147 份其他 YAML 至少有文档章节/页码、SDK 符号/行号等入口。 |
+| 可直接定位原件中的内容 | 285 | 137 份寄存器有既有 canonical/input → 官方 SVD 结构来源；148 份其他 YAML 至少有文档章节/页码、SDK 符号/行号等入口。 |
 | 经明确引用的审阅记录可找到原件与章节/页码 | 10 | 下列十个根级能力文件；正文已摘出其中部分精确引文。 |
 | 只找到原文件，未找到上述内容定位 | 0 | 指整个文件没有任何内容定位；不表示每条事实都已有章节。 |
 | 连原文件都无法确定 | 0 | 仅表示这次文件级来源链检查没有遇到此类文件。 |
@@ -42,6 +42,7 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 | `hse-qualified.yaml` | F020/F030/A030/L010/L011/L031/L052/L083/R031/W031 HSE 的各自 RM/DS；L010/L011/L031/L052/L083/R031/W031 的实际版本、章节与页码见下表。保留 RM/DS 外部输入下限冲突的交集，不跨族继承电气限值或 CCS 策略。 |
 | `lse-qualified.yaml` | 仅末节二十三个精确料号/封装；x030、F020、L031、R031、W031、L052、L083、L010、L011、L012 各自 RM/DS 与原件对应收据给出原件 ID/SHA、PDF/书页和 SDK 成员定位，其他料号不自动继承主动配置资格。 |
 | `pll-qualified.yaml`、`electrical.yaml` 的 PLL、对应 SYSCTRL 模板与 `field-access.yaml` 的 PLL 字段 | CW32L083/F020/F030/A030 的一次性 factory-HSI- 或 HSE-fed 系统 PLL；晶振/旁路共用既有HSE板级契约，各族自己的 RM/DS、原件 SHA 与 PDF/书页见末节。F020 采用 current-datasheets 中 printed Rev1.3，输出交集12–48MHz；L083/F030/A030为12–64MHz。保留模拟档位与电气上限区别、reserved-debug默认0x5、STABLE只读及rate-only时序限制；不外推其他族。 |
+| `lsi-sysclk-qualified.yaml`、`electrical.yaml` 的 `lsi_sysclk` | 仅 F020/F030/A030 的 init-only factory-LSI SYSCLK；逐族记录既锁 RM/DS 的 ID、SHA、PDF/书页，以及完整消费者、门控、复位与基址事实。F020 使用 current-datasheets 中真正 printed Rev1.3。32.8 kHz 的同源 RTC/LSI 别名均为 rate-only，其他十族不继承此资格；具体定位与兼容变化见下节。 |
 | `hex-qualified.yaml` | F002/F003 各自 RM/DS 的直接 HEX 输入、PB0/PB1 与 AWT 来源；精确 PDF/书页见下表。保留 RM 4–32 MHz 与 DS 1–32 MHz 的交集及全部波形条件，不据此推定晶振、PLL 或失钟恢复能力。 |
 | `gpio-interrupt.yaml` | 各族 RM GPIO ICR 和中断表；CMSIS IRQ 枚举。 |
 | `reference-dividers.yaml` | L010/L011/L012 RM VC 分压器及 DS 电气范围，SDK VC 头/实现作佐证。 |
@@ -52,6 +53,12 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 | `lvd-ir.yaml` | 同族 RM LVD/IR 控制，DS IR 引脚表，SDK GPIO/LVD；不继承别族阈值。 |
 | `register-source-aliases.yaml` | A030 DS Rev 1.1 表 6-1 书页 28，与 x030 RM Rev 2.5 表 2-1 书页 26–27、§6.5 书页 108，支持限定的 F030→A030 寄存器映射复用。 |
 | `register-reuse.yaml` | 项目对完整标准化寄存器描述的相等性记录；不是原厂手册，不证明电气或行为等价。 |
+
+## F020/F030/A030 factory-LSI SYSCLK 来源与兼容边界
+
+新增的 `lsi-sysclk-qualified.yaml` 只引用已有锁定原件，不增加来源或修改其 SHA。F020 RM Rev1.4 的 CR1、LSI、ready/IRQ、门控分别见 PDF 69、72、76–79、80–85；GPIO、RTC、AWT、UART 的选择器与消费者定位分别在 PDF 140–155、174–186、163–170、267–295，IWDT 独立 RC10K 见 PDF 250–251。F030/A030 共同使用 x030 RM Rev2.5，对应页为 71、74、78–81、82–87，以及 143–158、177–189、166–173、329–357、312–313。这两本 RM 在上述定位的书页均为 PDF 页减一；完整离散页集合与逐字段定位保留在 YAML。
+
+LSI 电气表使用 F020 current DS Rev1.3 PDF 44（书页 43）、F030 DS Rev1.9 PDF 46（45）及 A030 DS Rev1.1 PDF 43（42）。三族标称均为 32800 Hz，适用 1.65–5.5 V、−40–105 °C；F020 速率区间为 31160–34440 Hz，F030/A030 为 31816–33784 Hz。这些是速率界限，没有逐边沿周期或抖动保证。三族现有 `LsiClock`、`CalendarClock::Lsi` 和 RTC 分频后界限统一保留 rate-only 属性，即使 SYSCLK 选 HSI 也如此；严格周期与死区时序请求会被拒绝。其他十族的 RTC/LSI 资格不变。完整 admission、whole-GPIO 功能移交与失败边界见 [factory-lsi-sysclk.md](../docs/factory-lsi-sysclk.md)。
 
 ## 13 个芯片族对应的原件版本
 

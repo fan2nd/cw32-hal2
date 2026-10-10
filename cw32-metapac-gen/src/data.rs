@@ -790,6 +790,28 @@ pub struct PeripheralPllLimits {
     pub cycle_to_cycle_jitter_ps: u32,
 }
 
+/// Own-source init-only factory LSI; rate bounds only, with the complete direct-consumer roster.
+#[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct PeripheralLsiSysclk {
+    pub nominal_hz: u32,
+    pub minimum_hz: u32,
+    pub maximum_hz: u32,
+    pub supply_mv: (u16, u16),
+    pub temperature_c: (i16, i16),
+    pub factory_trim_address: u32,
+    pub rtc_allowed_sources: Vec<u8>,
+    pub awt_allowed_sources: Vec<u8>,
+    pub uart_allowed_sources: Vec<u8>,
+    pub uarts: Vec<String>,
+    pub gpio_banks: Vec<String>,
+    pub gpio_filter_allowed_sources: Vec<u8>,
+    pub mco_allowed_sources: Vec<u8>,
+    pub lsi_output_pin: String,
+    pub lsi_output_allowed_af: Vec<u8>,
+    pub rcc_irq: u16,
+}
+
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]
 pub struct PeripheralClockLimits {
     pub hsi_frequency_hz: u32,
@@ -816,6 +838,8 @@ pub struct PeripheralClockLimits {
     pub lse_configuration: Option<PeripheralLseConfiguration>,
     #[serde(default)]
     pub pll: Option<PeripheralPllLimits>,
+    #[serde(default)]
+    pub lsi_sysclk: Option<PeripheralLsiSysclk>,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]

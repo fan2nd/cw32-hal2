@@ -28,8 +28,8 @@
 //! do not concurrently change them through raw registers.
 //! ADC limits and settling waits include the selected RCC source envelope.
 //! The board must satisfy that source's declared voltage, temperature and
-//! accuracy conditions throughout use. L083 PLL rate-only envelopes are rejected
-//! by checked constructors before ADC/RCC writes; use a qualified direct source.
+//! accuracy conditions throughout use. Rate-only envelopes are rejected by
+//! checked constructors before ADC/RCC writes; use a cycle-qualified source.
 //! R031 logical ADC_IN0..8 use hardware mux4..12; generated pin traits consume
 //! separately qualified hardware-mux metadata rather than parsing signal names.
 
@@ -185,9 +185,9 @@ impl Default for Config {
 pub enum Error {
     /// HAL clock initialization has not completed successfully.
     ClockNotInitialized,
-    /// A PLL-derived rate envelope does not qualify strict ADC acquisition and
+    /// A rate-only source envelope does not qualify strict ADC acquisition and
     /// conversion duration bounds. Rejected before acquiring the ADC gate.
-    #[cfg(rcc_pll)]
+    #[cfg(any(rcc_pll, rcc_lsi_sysclk))]
     UnqualifiedCycleTiming,
     /// The inherited ADC reset is asserted; this driver never changes it.
     ResetAsserted,
@@ -226,8 +226,10 @@ impl core::fmt::Display for Error {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.write_str(match self {
             Self::ClockNotInitialized => "ADC clocks are not initialized",
-            #[cfg(rcc_pll)]
-            Self::UnqualifiedCycleTiming => "ADC cycle timing is not qualified for PLL clocks",
+            #[cfg(any(rcc_pll, rcc_lsi_sysclk))]
+            Self::UnqualifiedCycleTiming => {
+                "ADC cycle timing is not qualified for rate-only clocks"
+            }
             Self::ResetAsserted => "ADC reset is asserted",
             Self::ClockEnableTimeout => "ADC clock enable timed out",
             Self::InvalidSequenceLength => "ADC sequence length is outside the hardware range",
@@ -339,7 +341,7 @@ impl Config {
         channel: u8,
         sample_time: SampleTime,
     ) -> Result<Timing, Error> {
-        #[cfg(rcc_pll)]
+        #[cfg(any(rcc_pll, rcc_lsi_sysclk))]
         if !pclk.has_cycle_timing_bounds() {
             return Err(Error::UnqualifiedCycleTiming);
         }

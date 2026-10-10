@@ -19,10 +19,73 @@ policies:
   cw32-data/hex-qualified.yaml: cc7b6f5da58f76ad76a32ba71ce894bc4fb62158ebf1a19bc3330421c9c04126
   cw32-data/lse-ownership.yaml: 1108d430581567e0dc6cffafc7155791be1ab0be33b630bf595d0eaadd8ecdd4
   cw32-data/pll-qualified.yaml: 42a4a96a6b294f07e25cbcbad162987142e3b40429e2513432d80532f194eaf3
+  cw32-data/lsi-sysclk-qualified.yaml: bfc0ab1711058d88d984d90c4b9fd10cb9bf55494d3421bfb2826fd379308d1a
 profiles:
   CW32A030:
     policy_family: CW32A030
     clock_limits:
+      lsi_sysclk:
+        nominal_hz: 32800
+        minimum_hz: 31816
+        maximum_hz: 33784
+        supply_mv:
+        - 1650
+        - 5500
+        temperature_c:
+        - -40
+        - 105
+        factory_trim_address: 75266
+        rtc_allowed_sources:
+        - 0
+        - 4
+        - 5
+        - 6
+        - 7
+        awt_allowed_sources:
+        - 0
+        - 2
+        - 3
+        - 4
+        uart_allowed_sources:
+        - 0
+        - 1
+        - 2
+        uarts:
+        - UART1
+        - UART2
+        - UART3
+        gpio_banks:
+        - GPIOA
+        - GPIOB
+        - GPIOC
+        - GPIOF
+        gpio_filter_allowed_sources:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 6
+        mco_allowed_sources:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        lsi_output_pin: PB11
+        lsi_output_allowed_af:
+        - 0
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        rcc_irq: 4
       lse:
         pin_lock: false
         pin_lock_requires_enable_lock: false
@@ -585,6 +648,68 @@ profiles:
   CW32F020:
     policy_family: CW32F020
     clock_limits:
+      lsi_sysclk:
+        nominal_hz: 32800
+        minimum_hz: 31160
+        maximum_hz: 34440
+        supply_mv:
+        - 1650
+        - 5500
+        temperature_c:
+        - -40
+        - 105
+        factory_trim_address: 75266
+        rtc_allowed_sources:
+        - 0
+        - 4
+        - 5
+        - 6
+        - 7
+        awt_allowed_sources:
+        - 0
+        - 2
+        - 3
+        - 4
+        uart_allowed_sources:
+        - 0
+        - 1
+        - 2
+        uarts:
+        - UART1
+        - UART2
+        - UART3
+        gpio_banks:
+        - GPIOA
+        - GPIOB
+        - GPIOC
+        - GPIOF
+        gpio_filter_allowed_sources:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 6
+        mco_allowed_sources:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        lsi_output_pin: PB11
+        lsi_output_allowed_af:
+        - 0
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        rcc_irq: 4
       lse:
         pin_lock: false
         pin_lock_requires_enable_lock: false
@@ -862,6 +987,68 @@ profiles:
   CW32F030:
     policy_family: CW32F030
     clock_limits:
+      lsi_sysclk:
+        nominal_hz: 32800
+        minimum_hz: 31816
+        maximum_hz: 33784
+        supply_mv:
+        - 1650
+        - 5500
+        temperature_c:
+        - -40
+        - 105
+        factory_trim_address: 75266
+        rtc_allowed_sources:
+        - 0
+        - 4
+        - 5
+        - 6
+        - 7
+        awt_allowed_sources:
+        - 0
+        - 2
+        - 3
+        - 4
+        uart_allowed_sources:
+        - 0
+        - 1
+        - 2
+        uarts:
+        - UART1
+        - UART2
+        - UART3
+        gpio_banks:
+        - GPIOA
+        - GPIOB
+        - GPIOC
+        - GPIOF
+        gpio_filter_allowed_sources:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 6
+        mco_allowed_sources:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        lsi_output_pin: PB11
+        lsi_output_allowed_af:
+        - 0
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        rcc_irq: 4
       lse:
         pin_lock: false
         pin_lock_requires_enable_lock: false

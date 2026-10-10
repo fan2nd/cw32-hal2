@@ -417,6 +417,28 @@ pub mod chip {
                 }
             }
             record! {
+                /// Own-source init-only factory LSI; rate bounds only, with the complete direct-consumer roster.
+                #[serde(deny_unknown_fields)]
+                LsiSysclk {
+                    pub nominal_hz: u32,
+                    pub minimum_hz: u32,
+                    pub maximum_hz: u32,
+                    pub supply_mv: (u16, u16),
+                    pub temperature_c: (i16, i16),
+                    pub factory_trim_address: u32,
+                    pub rtc_allowed_sources: Vec<u8>,
+                    pub awt_allowed_sources: Vec<u8>,
+                    pub uart_allowed_sources: Vec<u8>,
+                    pub uarts: Vec<String>,
+                    pub gpio_banks: Vec<String>,
+                    pub gpio_filter_allowed_sources: Vec<u8>,
+                    pub mco_allowed_sources: Vec<u8>,
+                    pub lsi_output_pin: String,
+                    pub lsi_output_allowed_af: Vec<u8>,
+                    pub rcc_irq: u16,
+                }
+            }
+            record! {
                 ClockLimits {
                     pub hsi_frequency_hz: u32,
                     pub hsi_error_percent: u32,
@@ -442,6 +464,8 @@ pub mod chip {
                     pub lse_configuration: Option<LseConfiguration>,
                     #[serde(default, skip_serializing_if = "Option::is_none")]
                     pub pll: Option<PllLimits>,
+                    #[serde(default, skip_serializing_if = "Option::is_none")]
+                    pub lsi_sysclk: Option<LsiSysclk>,
                 }
             }
             record! {

@@ -149,8 +149,8 @@ impl<'d, T: ComplementaryInstance> ComplementaryPwm<'d, T> {
             .unwrap_or_else(|_| panic!("unsupported classic complementary PWM configuration"))
     }
     /// Validate before changing ATIM/RCC. Pin wrappers have already disconnected
-    /// their pads; use reborrowed tokens to retain ownership on error. PLL-derived
-    /// rate-only clocks are rejected even when zero dead time is requested.
+    /// their pads; use reborrowed tokens to retain ownership on error. Rate-only
+    /// clocks are rejected even when zero dead time is requested.
     pub fn try_new3(
         tim: Peri<'d, T>,
         ch1: Option<ComplementaryPwmPair<'d, T, Ch1>>,

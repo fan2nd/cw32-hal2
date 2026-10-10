@@ -1,4 +1,4 @@
-//! Qualified HSI, direct HSE and HSI- or HSE-fed PLL on F020/F030/A030.
+//! Qualified HSI, factory LSI, direct HSE and HSI- or HSE-fed PLL on F020/F030/A030.
 //!
 //! Own sources: F020 RM CN1.4 and x030 RM CN2.5 §§4.3–4.7, own datasheet
 //! external-clock/electrical tables. See docs/qualified-hse.md for conflicts,
@@ -9,7 +9,7 @@
 //! unsupported. See docs/f020-x030-hsi-pll.md for own-source limits.
 //! Entry clocks/Flash must already be legal and stable. DMA, peripheral,
 //! IRQ/NMI, MCO and dedicated PLL_OUT consumers must be quiescent. A failure
-//! can leave partial state, including temporary LSI or a stopped PLL; reset
+//! can leave partial state, including LSI execution or stopped HSI/PLL; reset
 //! before retrying. Poll budgets are not wall-time guarantees.
 
 use crate::{pac, time::Hertz};
@@ -242,6 +242,15 @@ impl Pll {
 pub enum Sysclk {
     /// Factory-calibrated HSI through its configured divider.
     HSI,
+    /// Factory-qualified nominal 32,800 Hz, with rate bounds only.
+    ///
+    /// Initialization may briefly open each entire GPIOA/B/C/F bank to inspect
+    /// retained LSI selectors. Sampling, filters and armed events can advance,
+    /// including before an error; gate restoration cannot undo those effects.
+    /// GPIO configuration and flags are preserved. Running factory-matching LSI
+    /// is reused unchanged; a stopped source needs complete consumer admission.
+    /// See docs/factory-lsi-sysclk.md for the entry and partial-failure contract.
+    LSI,
     /// Qualified external high-speed oscillator or input.
     HSE,
     /// HSI- or HSE-fed PLL, with qualified rate bounds only.
@@ -357,6 +366,7 @@ pub struct Config {
     #[cfg(rcc_lse)]
     pub lse: Option<super::Lse>,
     /// System clock source. HSE/PLL require their corresponding configuration.
+    /// LSI includes the documented whole-GPIO-bank inspection handover.
     pub sys: Sysclk,
     /// HCLK prescaler.
     pub ahb_pre: AHBPrescaler,
@@ -437,6 +447,17 @@ impl Config {
         };
         let source = match self.sys {
             Sysclk::HSI => crate::rcc::ClockBounds::hsi(self.hsi.div.divisor()),
+            Sysclk::LSI => {
+                let c = self.operating_conditions;
+                if c.min_supply_mv < crate::RCC_LSI_SUPPLY_MV.0
+                    || c.max_supply_mv > crate::RCC_LSI_SUPPLY_MV.1
+                    || c.min_temperature_c < crate::RCC_LSI_TEMPERATURE_C.0
+                    || c.max_temperature_c > crate::RCC_LSI_TEMPERATURE_C.1
+                {
+                    return Err(Error::LsiConditionsOutsideQualifiedRange);
+                }
+                crate::rcc::ClockBounds::lsi()
+            }
             Sysclk::HSE => hse.ok_or(Error::HseNotConfigured)?,
             #[cfg(rcc_pll)]
             Sysclk::PLL => pll.ok_or(Error::PllNotConfigured)?,
@@ -528,6 +549,24 @@ impl Clocks {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
+    LsiConditionsOutsideQualifiedRange,
+    /// The public factory-LSI halfword is erased. Zero itself is valid.
+    InvalidLsiCalibration,
+    /// A running or starting LSI has a different trim; it was not retuned.
+    LsiCalibrationInUse,
+    /// A retained root, observer, reset or changing state prevents a new start.
+    /// A use-edge recheck failure can leave the admitted TRIM, without enable.
+    LsiClockInUse,
+    /// Inspection gate enable failed; its original state was restored.
+    /// On a post-trim recheck, the admitted TRIM may already remain.
+    LsiGateEnableTimeout,
+    /// An inspection gate could not be restored and may remain active.
+    /// On a post-trim recheck, the admitted TRIM may already remain.
+    LsiGateRestoreTimeout,
+    /// Factory trim/readback failed; attempted trim may remain, without enable.
+    LsiConfigurationTimeout,
+    /// Retuning an inherited live PLL reference would interrupt its consumers.
+    RetainedPllClockInUse,
     #[cfg(rcc_pll)]
     PllNotConfigured,
     #[cfg(rcc_pll)]
@@ -612,7 +651,7 @@ pub enum Error {
     FlashLatencyTimeout,
     /// HSI did not report stable within the poll budget.
     HsiTimeout,
-    /// Temporary LSI did not report stable within the polling budget.
+    /// Requested or temporary LSI did not report stable within the polling budget.
     LsiTimeout,
     /// HSI did not disable and lose its STABLE indication before calibration.
     HsiStopTimeout,
@@ -644,8 +683,9 @@ pub fn clocks() -> Clocks {
 /// Configure once, before HAL drivers or application interrupts can use clocks.
 ///
 /// Safety: the caller must own the device initialization sequence. No other
-/// code, including DMA or NMI handlers, may change or depend on clock registers
-/// during this call. Normal interrupts are masked for the complete sequence.
+/// code, including DMA or exception handlers, may race clock-register writes
+/// during this call. Retained consumers follow the documented functional
+/// handover and source admission. Normal interrupts are masked throughout.
 // The caller must enter from a clock/voltage operating point legal for the
 // selected chip, and ensure the final HCLK/PCLK obey the board's VDD limits.
 // At least /4 AHB and /8 APB keep the legal incoming sources and qualified
@@ -719,8 +759,173 @@ fn set_flash_latency(wait: u32, timeout: u32, preserve_features: bool) -> Result
     Ok(())
 }
 
+// A read-only snapshot of the stopped-source admission controls. This is current
+// hardware evidence, not a claim to reconstruct reset history.
+struct LsiColdSnapshot {
+    cr0: u32,
+    cr1: u32,
+    hsi: u32,
+    pll: u32,
+}
+impl LsiColdSnapshot {
+    fn capture() -> Self {
+        let r = pac::SYSCTRL;
+        Self {
+            cr0: r.cr0().read().0,
+            cr1: r.cr1().read().0,
+            hsi: r.hsi().read().0,
+            pll: r.pll().read().0,
+        }
+    }
+    fn check(&self, expected: pac::sysctrl::regs::Lsi) -> Result<(), Error> {
+        let r = pac::SYSCTRL;
+        let cr0 = r.cr0().read();
+        let cr1 = r.cr1().read();
+        let isr = r.isr().read();
+        if cr0.0 != self.cr0
+            || cr1.0 != self.cr1
+            || r.hsi().read().0 != self.hsi
+            || r.pll().read().0 != self.pll
+            || r.lsi().read().0 != expected.0
+            || !matches!(cr0.sysclk(), ClockSource::Hsi | ClockSource::Pll)
+            || cr1.lsien()
+            || isr.lsistable()
+            || r.lsi().read().stable()
+            || cr1.hseccs()
+            || cr1.lseccs()
+            || cr1.hseen()
+            || cr1.lseen()
+            || r.hse().read().stable()
+            || r.lse().read().stable()
+            || isr.hsestable()
+            || isr.lsestable()
+            || r.ier().read().lsirdy()
+            || isr.lsirdy()
+            || cortex_m::peripheral::NVIC::is_pending(pac::Interrupt::RCC)
+            || (cr0.sysclk() == ClockSource::Pll
+                && r.pll().read().source() != pac::sysctrl::vals::PllSource::Hsi)
+        {
+            return Err(Error::LsiClockInUse);
+        }
+        Ok(())
+    }
+}
+
+// All callers use the existing central gate protocol, including its restoration
+// attempt after a failed enable. A restoration failure may leave the bank active.
+pub(crate) fn lsi_inspection_error(error: super::peripheral::ClockInspectionError) -> Error {
+    match error {
+        super::peripheral::ClockInspectionError::EnableFailed {
+            restore_failed: false,
+        } => Error::LsiGateEnableTimeout,
+        super::peripheral::ClockInspectionError::EnableFailed {
+            restore_failed: true,
+        }
+        | super::peripheral::ClockInspectionError::RestoreFailed => Error::LsiGateRestoreTimeout,
+    }
+}
+
+fn lsi_parameters(value: pac::sysctrl::regs::Lsi) -> u32 {
+    // The mask is generated from the selected PAC's read-only STABLE field.
+    // WAIT and every reserved bit remain part of the exact comparison.
+    value.0 & crate::RCC_LSI_PARAMETERS_MASK
+}
+
+fn prepare_factory_lsi(
+    timeout: u32,
+    cs: critical_section::CriticalSection<'_>,
+) -> Result<pac::sysctrl::regs::Lsi, Error> {
+    let r = pac::SYSCTRL;
+    let factory =
+        unsafe { core::ptr::read_volatile(crate::RCC_LSI_FACTORY_TRIM_ADDRESS as *const u16) };
+    if factory == u16::MAX {
+        return Err(Error::InvalidLsiCalibration);
+    }
+    let original = r.lsi().read();
+    let mut expected = original;
+    expected.set_trim(factory); // Typed ten-bit field; zero is a valid trim.
+    let requested = r.cr1().read().lsien();
+    let selected = r.cr0().read().sysclk() == ClockSource::Lsi;
+    let mirror = r.isr().read().lsistable();
+    if original.trim() != expected.trim() && (requested || selected || original.stable() || mirror)
+    {
+        return Err(Error::LsiCalibrationInUse);
+    }
+    if original.stable() != mirror {
+        return Err(Error::LsiClockInUse);
+    }
+    if requested || selected {
+        // Reuse without touching TRIM or WAIT, including an enabled matching
+        // oscillator still starting. Selected LSI has hardware stop protection.
+        wait_until(timeout, Error::LsiTimeout, || {
+            let lsi = r.lsi().read();
+            lsi_parameters(lsi) == lsi_parameters(original)
+                && lsi.stable()
+                && r.isr().read().lsistable()
+                && (r.cr1().read().lsien() || r.cr0().read().sysclk() == ClockSource::Lsi)
+        })?;
+        return Ok(original);
+    }
+    if original.stable() || mirror {
+        return Err(Error::LsiClockInUse);
+    }
+    let snapshot = LsiColdSnapshot::capture();
+    let mut previous = None;
+    for _ in 0..2 {
+        snapshot.check(original)?;
+        let consumers = crate::rcc_factory_lsi_consumers(timeout, cs)?;
+        snapshot.check(original)?;
+        if previous.is_some_and(|old| old != consumers) {
+            return Err(Error::LsiClockInUse);
+        }
+        previous = Some(consumers);
+    }
+    // An accidental stopped factory match still requires both complete passes.
+    snapshot.check(original)?;
+    if original.trim() != expected.trim() {
+        r.lsi().modify(|w| w.set_trim(expected.trim()));
+    }
+    wait_until(timeout, Error::LsiConfigurationTimeout, || {
+        r.lsi().read().0 == expected.0 && !r.isr().read().lsistable()
+    })?;
+    // The use-edge snapshot advances only TRIM to the admitted factory value.
+    // No source-request write has occurred. Reopening GPIO banks is the same
+    // explicitly documented functional handover, including on a later failure.
+    snapshot.check(expected)?;
+    if Some(crate::rcc_factory_lsi_consumers(timeout, cs)?) != previous {
+        return Err(Error::LsiClockInUse);
+    }
+    snapshot.check(expected)?;
+    Ok(expected)
+}
+
+fn wait_factory_lsi(expected: pac::sysctrl::regs::Lsi, timeout: u32) -> Result<(), Error> {
+    wait_until(timeout, Error::LsiTimeout, || {
+        let r = pac::SYSCTRL;
+        let lsi = r.lsi().read();
+        r.cr1().read().lsien()
+            && lsi.stable()
+            && r.isr().read().lsistable()
+            && lsi_parameters(lsi) == lsi_parameters(expected)
+    })
+}
+
+fn modify_sources(target_lsi: bool, change: impl FnOnce(&mut pac::sysctrl::regs::Cr1)) {
+    pac::SYSCTRL.cr1().modify(|w| {
+        change(w);
+        w.set_key(0x5a5a);
+        w.set_clkccs(true);
+        w.set_hseccs(true);
+        w.set_lseccs(true);
+        if target_lsi {
+            w.set_lsien(true);
+        }
+    });
+}
+
 fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Result<Clocks, Error> {
     let clocks = config.frequencies()?;
+    let target_lsi = config.sys == Sysclk::LSI;
     #[cfg(rcc_lse)]
     let reuse_lse = config
         .lse
@@ -748,7 +953,8 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             return Err(Error::ClockConfigurationTimeout);
         }
     }
-    let needs_lsi = config.hse.is_some() || old_sources.hseen() || old_sources.lseen();
+    let needs_lsi =
+        target_lsi || config.hse.is_some() || old_sources.hseen() || old_sources.lseen();
     #[cfg(rcc_lse)]
     let needs_lsi = needs_lsi || config.lse.is_some();
     if !matches!(
@@ -774,6 +980,26 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     calibrated.set_trim(factory);
     let trim = calibrated.trim();
     let needs_trim = old_hsi.trim() != trim;
+    let old_pll = r.pll().read();
+    let retain_pll = target_lsi
+        && (old_sources.pllen() || old_pll.stable() || old_clock.sysclk() == ClockSource::Pll);
+    if retain_pll {
+        // This new source selection does not acquire or stop an inherited PLL.
+        // Its reference stays unchanged, including the divided HSI source.
+        if !old_sources.pllen()
+            || !old_pll.stable()
+            || (old_pll.source() == pac::sysctrl::vals::PllSource::Hsi
+                && (needs_trim || old_hsi.div() != config.hsi.div as u8))
+            || !matches!(
+                old_pll.source(),
+                pac::sysctrl::vals::PllSource::Hsi
+                    | pac::sysctrl::vals::PllSource::HseCrystal
+                    | pac::sysctrl::vals::PllSource::HseBypass
+            )
+        {
+            return Err(Error::RetainedPllClockInUse);
+        }
+    }
     // APB gates control register access, not the independent AWT/RTC source.
     // Inspect with their original gates restored; never reset retained owners.
     let awt = if needs_trim || config.hse.is_some() {
@@ -807,8 +1033,9 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
                 | pac::rtc::vals::Source::HseDiv512
                 | pac::rtc::vals::Source::HseDiv1024
         );
-        preserve_hse =
-            rtc_hse || awt.is_some_and(|v| v.en() && v.src() == pac::awt::vals::Source::Hse);
+        preserve_hse = rtc_hse
+            || (retain_pll && old_pll.source() != pac::sysctrl::vals::PllSource::Hsi)
+            || awt.is_some_and(|v| v.en() && v.src() == pac::awt::vals::Source::Hse);
         if preserve_hse
             && (!r.cr1().read().hseen()
                 || !r.hse().read().stable()
@@ -853,7 +1080,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     })?;
     barrier();
 
-    r.cr1().modify(|w| {
+    let factory_lsi = if target_lsi {
+        Some(prepare_factory_lsi(config.timeout, cs)?)
+    } else {
+        None
+    };
+    modify_sources(target_lsi, |w| {
         w.set_key(0x5a5a);
         w.set_clkccs(true);
         w.set_hseccs(true);
@@ -864,6 +1096,9 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         let v = r.cr1().read();
         v.hsien() && v.clkccs() && v.hseccs() && v.lseccs()
     })?;
+    if let Some(expected) = factory_lsi {
+        wait_factory_lsi(expected, config.timeout)?;
+    }
     wait_until(config.timeout, Error::HsiTimeout, || {
         r.hsi().read().stable()
     })?;
@@ -876,21 +1111,23 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         r.cr0().read().sysclk() == ClockSource::Hsi
     })?;
     barrier();
-    r.cr1().modify(|w| {
-        w.set_key(0x5a5a);
-        w.set_pllen(false);
-    });
-    wait_until(config.timeout, Error::PllStopTimeout, || {
-        !r.cr1().read().pllen()
-    })?;
-    wait_until(config.timeout, Error::PllStopTimeout, || {
-        !r.pll().read().stable()
-    })?;
+    if !target_lsi {
+        modify_sources(target_lsi, |w| {
+            w.set_key(0x5a5a);
+            w.set_pllen(false);
+        });
+        wait_until(config.timeout, Error::PllStopTimeout, || {
+            !r.cr1().read().pllen()
+        })?;
+        wait_until(config.timeout, Error::PllStopTimeout, || {
+            !r.pll().read().stable()
+        })?;
+    }
 
     let lsi_was_enabled = r.cr1().read().lsien();
     // HSE requires unchanged, legal LSI for CCS even without a trim bridge.
     if needs_trim || needs_lsi {
-        r.cr1().modify(|w| {
+        modify_sources(target_lsi, |w| {
             w.set_key(0x5a5a);
             w.set_lsien(true);
         });
@@ -911,7 +1148,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             r.cr0().read().sysclk() == ClockSource::Lsi
         })?;
         barrier();
-        r.cr1().modify(|w| {
+        modify_sources(target_lsi, |w| {
             w.set_key(0x5a5a);
             w.set_hsien(false);
         });
@@ -925,7 +1162,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         wait_until(config.timeout, Error::ClockConfigurationTimeout, || {
             r.hsi().read().trim() == trim
         })?;
-        r.cr1().modify(|w| {
+        modify_sources(target_lsi, |w| {
             w.set_key(0x5a5a);
             w.set_hsien(true);
         });
@@ -945,7 +1182,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         })?;
         barrier();
         if !lsi_was_enabled && !needs_lsi {
-            r.cr1().modify(|w| {
+            modify_sources(target_lsi, |w| {
                 w.set_key(0x5a5a);
                 w.set_lsien(false);
             });
@@ -965,7 +1202,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     if let Some(hse) = config.hse.filter(|_| !preserve_hse) {
         // Even an already-ready source is stopped before pin or parameter
         // changes: STABLE alone is not continuous oscillator validity.
-        r.cr1().modify(|w| {
+        modify_sources(target_lsi, |w| {
             w.set_key(0x5a5a);
             w.set_hseen(false);
         });
@@ -1001,7 +1238,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
                 && !v.flt()
                 && v.detcnt() == detector
         })?;
-        r.cr1().modify(|w| {
+        modify_sources(target_lsi, |w| {
             w.set_key(0x5a5a);
             w.set_hseen(true);
         });
@@ -1058,7 +1295,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         // Recheck the selected reference and its physical pads immediately
         // before enabling the dependent PLL; STABLE alone is insufficient.
         verify_pll_reference(pll)?;
-        r.cr1().modify(|w| {
+        modify_sources(target_lsi, |w| {
             w.set_key(0x5a5a);
             w.set_pllen(true);
         });
@@ -1082,6 +1319,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     }
     let sysclk = match config.sys {
         Sysclk::HSI => ClockSource::Hsi,
+        Sysclk::LSI => ClockSource::Lsi,
         Sysclk::HSE => ClockSource::Hse,
         #[cfg(rcc_pll)]
         Sysclk::PLL => ClockSource::Pll,
@@ -1214,6 +1452,27 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         || final_flash.cache() != flash_features.cache()
     {
         return Err(Error::FlashLatencyTimeout);
+    }
+    if let Some(expected) = factory_lsi {
+        wait_factory_lsi(expected, config.timeout)?;
+        let cr0 = r.cr0().read();
+        let cr1 = r.cr1().read();
+        let hsi = r.hsi().read();
+        if cr0.sysclk() != ClockSource::Lsi
+            || cr0.hclkprs() != config.ahb_pre as u8
+            || cr0.pclkprs() != config.apb_pre as u8
+            || !cr1.hsien()
+            || !hsi.stable()
+            || hsi.trim() != trim
+            || hsi.div() != config.hsi.div as u8
+            || !cr1.clkccs()
+            || !cr1.hseccs()
+            || !cr1.lseccs()
+            || (retain_pll && (!cr1.pllen() || r.pll().read().0 != old_pll.0))
+        {
+            return Err(Error::ClockConfigurationTimeout);
+        }
+        check_external_faults(cr1.hseen(), cr1.lseen())?;
     }
     Ok(clocks)
 }

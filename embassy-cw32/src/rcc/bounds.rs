@@ -6,6 +6,8 @@
 //! extended 85..105 C operation on some L families has no qualified HSI bound.
 //! HSE envelopes instead use the explicitly declared board-qualified source
 //! endpoints and conditions. Neither source accuracy is inferred from the other.
+//! F020/F030/A030 factory-LSI envelopes qualify rate under their own source
+//! conditions; they do not establish strict cycle-duration bounds.
 use crate::time::Hertz;
 
 /// Qualified ambient-temperature interval for the factory HSI error bound.
@@ -14,9 +16,23 @@ pub const HSI_BOUND_TEMPERATURE_C: (i16, i16) = crate::RCC_HSI_TEMPERATURE_RANGE
 pub const HSI_BOUND_SUPPLY_MV: (u16, u16) = crate::RCC_HSI_SUPPLY_RANGE_MV;
 const HSI_ERROR_PERCENT: u32 = crate::RCC_HSI_ERROR_PERCENT;
 
+// The RTC and SYSCLK capabilities describe the same factory-qualified LSI.
+// Keep their independently generated source facts identical on these families.
+#[cfg(all(rtc, rcc_lsi_sysclk))]
+const _: () = {
+    use crate::{peripherals::RTC, rtc::sealed::Instance};
+    assert!(RTC::SOURCE_NOMINAL_HZ == crate::RCC_LSI_NOMINAL_HZ);
+    assert!(RTC::SOURCE_MINIMUM_HZ == crate::RCC_LSI_MINIMUM_HZ);
+    assert!(RTC::SOURCE_MAXIMUM_HZ == crate::RCC_LSI_MAXIMUM_HZ);
+    assert!(RTC::TEMPERATURE_C.0 == crate::RCC_LSI_TEMPERATURE_C.0);
+    assert!(RTC::TEMPERATURE_C.1 == crate::RCC_LSI_TEMPERATURE_C.1);
+    assert!(RTC::SUPPLY_MV.0 == crate::RCC_LSI_SUPPLY_MV.0);
+    assert!(RTC::SUPPLY_MV.1 == crate::RCC_LSI_SUPPLY_MV.1);
+};
+
 /// Exact source envelope propagated through integer hardware divisors.
 ///
-/// Public whole-hertz getters round outward. PLL envelopes qualify rate only;
+/// Public whole-hertz getters round outward. Some sources qualify rate only;
 /// strict cycle-duration helpers require `has_cycle_timing_bounds()`.
 /// Electrical comparisons and time
 /// bounds retain the exact fraction, including HSI /7, /14 and bus dividers.
@@ -28,7 +44,7 @@ pub struct ClockBounds {
     minimum_source: u32,
     maximum_source: u32,
     divisor: u32,
-    #[cfg(rcc_pll)]
+    #[cfg(any(rcc_pll, rcc_lsi_sysclk))]
     rate_only: bool,
     temperature_c: (i16, i16),
     supply_mv: (u16, u16),
@@ -41,10 +57,23 @@ impl ClockBounds {
             minimum_source: nominal / 100 * (100 - HSI_ERROR_PERCENT),
             maximum_source: nominal / 100 * (100 + HSI_ERROR_PERCENT),
             divisor,
-            #[cfg(rcc_pll)]
+            #[cfg(any(rcc_pll, rcc_lsi_sysclk))]
             rate_only: false,
             temperature_c: HSI_BOUND_TEMPERATURE_C,
             supply_mv: HSI_BOUND_SUPPLY_MV,
+        }
+    }
+    /// Factory-LSI rate envelope for the specifically qualified SYSCLK families.
+    #[cfg(rcc_lsi_sysclk)]
+    pub(crate) const fn lsi() -> Self {
+        Self {
+            nominal_source: crate::RCC_LSI_NOMINAL_HZ,
+            minimum_source: crate::RCC_LSI_MINIMUM_HZ,
+            maximum_source: crate::RCC_LSI_MAXIMUM_HZ,
+            divisor: 1,
+            rate_only: true,
+            temperature_c: crate::RCC_LSI_TEMPERATURE_C,
+            supply_mv: crate::RCC_LSI_SUPPLY_MV,
         }
     }
     #[cfg(rcc_external_clock)]
@@ -67,7 +96,7 @@ impl ClockBounds {
             minimum_source: minimum.0,
             maximum_source: maximum.0,
             divisor: 1,
-            #[cfg(rcc_pll)]
+            #[cfg(any(rcc_pll, rcc_lsi_sysclk))]
             rate_only: false,
             temperature_c: (conditions.min_temperature_c, conditions.max_temperature_c),
             supply_mv: (conditions.min_supply_mv, conditions.max_supply_mv),
@@ -91,16 +120,23 @@ impl ClockBounds {
     }
     #[cfg(rtc)]
     pub(crate) const fn rtc_source() -> Self {
-        use crate::{peripherals::RTC, rtc::sealed::Instance};
-        Self {
-            nominal_source: RTC::SOURCE_NOMINAL_HZ,
-            minimum_source: RTC::SOURCE_MINIMUM_HZ,
-            maximum_source: RTC::SOURCE_MAXIMUM_HZ,
-            divisor: 1,
-            #[cfg(rcc_pll)]
-            rate_only: false,
-            temperature_c: RTC::TEMPERATURE_C,
-            supply_mv: RTC::SUPPLY_MV,
+        #[cfg(rcc_lsi_sysclk)]
+        {
+            Self::lsi()
+        }
+        #[cfg(not(rcc_lsi_sysclk))]
+        {
+            use crate::{peripherals::RTC, rtc::sealed::Instance};
+            Self {
+                nominal_source: RTC::SOURCE_NOMINAL_HZ,
+                minimum_source: RTC::SOURCE_MINIMUM_HZ,
+                maximum_source: RTC::SOURCE_MAXIMUM_HZ,
+                divisor: 1,
+                #[cfg(any(rcc_pll, rcc_lsi_sysclk))]
+                rate_only: false,
+                temperature_c: RTC::TEMPERATURE_C,
+                supply_mv: RTC::SUPPLY_MV,
+            }
         }
     }
     /// Exact integer divisor needed to produce a requested nominal clock.
@@ -153,14 +189,14 @@ impl ClockBounds {
             > u128::from(cycles) * 1_000_000_000_000 * u128::from(self.divisor)
     }
     /// Whether this source has the cycle-duration qualification used by the
-    /// strict duration helpers. PLL rate bounds alone do not establish it.
-    /// This does not assert that PLL multi-cycle durations are unbounded.
+    /// strict duration helpers. Rate bounds alone do not establish it.
+    /// A rate-only envelope does not assert that cycle durations are unbounded.
     pub const fn has_cycle_timing_bounds(self) -> bool {
-        #[cfg(rcc_pll)]
+        #[cfg(any(rcc_pll, rcc_lsi_sysclk))]
         {
             !self.rate_only
         }
-        #[cfg(not(rcc_pll))]
+        #[cfg(not(any(rcc_pll, rcc_lsi_sysclk)))]
         {
             true
         }
@@ -168,13 +204,13 @@ impl ClockBounds {
     /// Lower bound on the duration of a number of clock cycles, in ns.
     ///
     /// # Panics
-    /// Panics for a PLL-derived rate-only envelope. Check
-    /// [`Self::has_cycle_timing_bounds`] first. The datasheet's cycle-to-cycle
-    /// jitter limit cannot be substituted for an absolute period error bound.
+    /// Panics for a rate-only envelope. Check [`Self::has_cycle_timing_bounds`]
+    /// first. Source rate accuracy or a cycle-to-cycle jitter limit alone cannot
+    /// be substituted for an absolute period error bound.
     pub fn minimum_duration_ns(self, cycles: u32) -> u64 {
         assert!(
             self.has_cycle_timing_bounds(),
-            "PLL cycle-duration bounds are not qualified"
+            "source cycle-duration bounds are not qualified"
         );
         ((u128::from(cycles) * 1_000_000_000 * u128::from(self.divisor))
             / u128::from(self.maximum_source)) as u64
@@ -182,19 +218,19 @@ impl ClockBounds {
     /// Upper bound on the duration of a number of clock cycles, in ns.
     ///
     /// # Panics
-    /// Panics for a PLL-derived rate-only envelope. Check
+    /// Panics for a rate-only envelope. Check
     /// [`Self::has_cycle_timing_bounds`] before requesting strict duration bounds.
     pub fn maximum_duration_ns(self, cycles: u32) -> u64 {
         assert!(
             self.has_cycle_timing_bounds(),
-            "PLL cycle-duration bounds are not qualified"
+            "source cycle-duration bounds are not qualified"
         );
         (u128::from(cycles) * 1_000_000_000 * u128::from(self.divisor))
             .div_ceil(u128::from(self.minimum_source)) as u64
     }
-    /// Rate-derived cycles for an internal software delay. This is not a PLL
-    /// pulse-by-pulse timing guarantee. Strict analog consumers must reject a
-    /// rate-only source; RTC uses this only between observed WINDOW polls.
+    /// Rate-derived cycles for an internal software delay. This does not
+    /// establish pulse-by-pulse timing qualification. Strict analog consumers
+    /// must reject a rate-only source; RTC uses this only between WINDOW polls.
     pub(crate) fn delay_cycles_us(self, microseconds: u32) -> u64 {
         (u64::from(self.maximum_source) * u64::from(microseconds))
             .div_ceil(1_000_000 * u64::from(self.divisor))

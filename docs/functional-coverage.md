@@ -146,6 +146,19 @@ still apply.
   guaranteed. See [the complete HEX contract](qualified-hex.md).
   These are bounded one-time source modes; runtime switching, low-power
   restoration and source-loss recovery remain outside their contracts.
+- Init-only factory-LSI SYSCLK is qualified on F020/F030/A030. Cold admission
+  precedes the first source-enable write and checks every documented shared
+  consumer, gate, reset and inherited source request; factory-matching running
+  LSI can be reused without retrimming. Inspecting whole GPIO banks can advance
+  sampling, filters and armed events, including before a later failure.
+  The three families' SYSCLK and existing RTC/LSI aliases share rate-only
+  bounds, including divided RTC clocks; strict ADC and complementary-PWM
+  timing guards remain enforced. A 1 MHz Embassy timebase rejects this rate
+  before singleton acquisition. This is a static control-flow guarantee;
+  compiling the time-driver feature does not execute that rejection.
+  Other ten families retain their previous qualification. LSE SYSCLK, runtime
+  switching and low-power restoration remain outside this slice. See the
+  [complete factory-LSI contract](factory-lsi-sysclk.md).
 - Factory-HSI- and HSE-fed system PLL is qualified on F020/F030/A030/L083, the four
   documented system-PLL families. R031/W031 radio synthesis remains separate
   and user-deferred. The nine F020 and twelve F030/A030/L083 HSI pairs remain admitted

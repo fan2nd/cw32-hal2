@@ -1134,6 +1134,28 @@ functions:
       limitations:
       - Frozen clocks; legal stable entry conditions, declared supply/ambient and actual bounds required. No
         measurement or complete oscillator calibration.
+    - id: factory_lsi_sysclk
+      status: partial
+      scope: Init-only factory-qualified nominal 32800 Hz LSI SYSCLK on F020/F030/A030.
+      implemented_families: [CW32F020, CW32F030, CW32A030]
+      limitations:
+      - Complete stopped-source admission precedes the first mandatory CCS write; all RTC/AWT/UART/MCO/GPIO
+        roots and ready observers must be absent. Running factory-matching LSI is reused without retrim.
+      - Whole GPIOA/B/C/F inspection windows may advance sampling, filters and armed events, even before
+        failure. Gate restoration preserves settings but cannot undo progress; failed restore may leave a gate active.
+      - Target LSIEN remains requested after enable attempts. HSI calibration can fail with HSI stopped
+        while executing on LSI. No automatic rollback, runtime switching, source-loss or low-power recovery.
+      - Factory bounds and same-family LsiClock/CalendarClock/RTC aliases are rate-only, including when
+        SYSCLK is HSI. Strict duration helpers, ADC and complementary PWM reject this qualification;
+        fixed 1 MHz time-driver selection fails before singleton acquisition. Other ten families are unchanged.
+      registers_any: [LSI]
+      evidence:
+      - path: cw32-data/lsi-sysclk-qualified.yaml
+      - path: docs/factory-lsi-sysclk.md
+      - path: embassy-cw32/src/rcc/hsi_48mhz.rs
+        anchor: fn prepare_factory_lsi
+      - path: examples/lsi-clock/src/main.rs
+        anchor: config.rcc.sys = rcc::Sysclk::LSI
     - id: external_high_speed
       status: partial
       scope: Direct HSE oscillator/crystal or bypass on F020/F030/A030/L010/L011/L012/L031/R031/W031/L052/L083 and digital HEX on F002/F003.

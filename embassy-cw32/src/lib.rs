@@ -97,6 +97,12 @@ pub struct Config {
 /// runs. Runtime integration and direct PAC access must preserve HAL ownership.
 /// This is the platform entry model, not a per-driver unsafe caller obligation.
 ///
+/// On F020/F030/A030, selecting factory LSI SYSCLK may briefly open each
+/// entire GPIOA/B/C/F bank to inspect retained source selectors. Sampling,
+/// filters and armed events can advance, including before a failure. GPIO
+/// configuration and flags are preserved; gate restoration cannot undo events.
+/// This is an explicit functional handover under the entry model above.
+///
 /// On CW32L010, starting a previously disabled LSE while RTC selects LSE
 /// additionally requires a handover with no dependent RTC_OUT or RTC_1Hz
 /// observer. Disconnect or leave inactive PB04/PB06 RTC digital output pads

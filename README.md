@@ -154,6 +154,12 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   watchdog, documented CRC16 presets, blocking/interrupt-driven UART, blocking
   master SPI, blocking seven-bit master I2C and polling BTIM1–3 counters
 - All except L010/L011: polling window watchdog with explicit irreversible start
+- F020/F030/A030: init-only factory LSI SYSCLK with complete cold-start admission,
+  explicit whole-GPIO-bank inspection effects, permanent target request and
+  rate-only bounds. The same families' LsiClock/RTC aliases are also rate-only;
+  strict duration helpers, ADC and complementary PWM reject those bounds, and
+  the 1 MHz time driver rejects selected LSI before singleton acquisition. See
+  [the contract and compatibility change](docs/factory-lsi-sysclk.md).
 - F020/F030/A030: direct qualified HSE crystal/bypass system clocks with explicit
   board nominal/minimum/maximum bounds, preserved factory HSI, mandatory CCS/LSI,
   retained-source protection and oscillator-pad reservation. See

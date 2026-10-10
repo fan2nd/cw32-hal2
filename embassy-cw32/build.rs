@@ -34,6 +34,7 @@ fn main() {
         "rcc_lse_startup_analog",
         "rcc_lse_native_consumers",
         "rcc_pll",
+        "rcc_lsi_sysclk",
         "rcc_external_clock",
         "aes_cw32l083_v1",
         "trng_cw32l083_v1",
@@ -323,11 +324,15 @@ fn main() {
         println!("cargo:rustc-cfg=vref_{}", registers.kind);
     }
     for kind in ["dac", "opa"] {
-        for p in metadata
-            .peripherals
-            .iter()
-            .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == kind))
-        {
+        for p in metadata.peripherals.iter().filter(|p| {
+            p.registers.as_ref().is_some_and(|r| {
+                if kind == "gpio" {
+                    matches!(r.kind.as_ref(), "gpio" | "gpioc" | "gpiof")
+                } else {
+                    r.kind == kind
+                }
+            })
+        }) {
             assert_eq!(p.registers.as_ref().unwrap().version, "cw32l012_v1");
             assert!(p.rcc_control.is_some());
             println!("cargo:rustc-cfg={kind}_cw32l012_v1");
@@ -1935,6 +1940,7 @@ fn generate_electrical(out: &mut String) {
     generate_lse(out, c);
     generate_lse_configuration(out, c);
     generate_pll(out, c);
+    generate_factory_lsi(out, c);
     generate_hse(out, c);
     generate_hex(out, c);
     let a = peripherals
@@ -2360,6 +2366,154 @@ fn generate_lse(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLim
     };
     writeln!(out, "let pad_lock = {locked};").unwrap();
     out.push_str("(cr1.lseen() || pad_lock, (cr1.lseen() && !lse.mode()) || pad_lock)\n}\n");
+}
+
+fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLimits) {
+    use cw32_metapac::metadata::METADATA;
+    use std::fmt::Write;
+    let Some(lsi) = &c.lsi_sysclk else { return };
+    println!("cargo:rustc-cfg=rcc_lsi_sysclk");
+    let sysctrl = METADATA
+        .peripherals
+        .iter()
+        .find(|p| p.name == "SYSCTRL")
+        .unwrap()
+        .registers
+        .as_ref()
+        .unwrap();
+    let block = sysctrl
+        .ir
+        .blocks
+        .iter()
+        .find(|b| b.name == sysctrl.block)
+        .unwrap();
+    let register = block
+        .items
+        .iter()
+        .find(|r| r.name.eq_ignore_ascii_case("LSI"))
+        .unwrap();
+    let cw32_metapac::metadata::ir::BlockItemInner::Register(register) = &register.inner else {
+        panic!("LSI is not a register")
+    };
+    let fields = sysctrl
+        .ir
+        .fieldsets
+        .iter()
+        .find(|f| Some(f.name) == register.fieldset)
+        .unwrap();
+    let stable = fields
+        .fields
+        .iter()
+        .find(|f| f.name.eq_ignore_ascii_case("STABLE"))
+        .unwrap();
+    assert_eq!(stable.bit_size, 1);
+    assert!(stable.array.is_none());
+    let cw32_metapac::metadata::ir::BitOffset::Regular(offset) = &stable.bit_offset else {
+        panic!("LSI stability field is not scalar")
+    };
+    // Derive the read-only normalization mask from the selected PAC IR, never
+    // duplicate a register bit definition in the runtime backend.
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSI_PARAMETERS_MASK: u32 = {};",
+        !(1u32 << offset.offset)
+    )
+    .unwrap();
+
+    for (name, value) in [
+        ("NOMINAL_HZ", lsi.nominal_hz),
+        ("MINIMUM_HZ", lsi.minimum_hz),
+        ("MAXIMUM_HZ", lsi.maximum_hz),
+        ("FACTORY_TRIM_ADDRESS", lsi.factory_trim_address),
+    ] {
+        writeln!(out, "pub(crate) const RCC_LSI_{name}: u32 = {value};").unwrap();
+    }
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSI_SUPPLY_MV: (u16, u16) = {:?};",
+        lsi.supply_mv
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const RCC_LSI_TEMPERATURE_C: (i16, i16) = {:?};",
+        lsi.temperature_c
+    )
+    .unwrap();
+    assert!(
+        METADATA
+            .interrupts
+            .iter()
+            .any(|i| i.name == "RCC" && i.number == u32::from(lsi.rcc_irq))
+    );
+    let peripherals = |kind: &str| {
+        METADATA
+            .peripherals
+            .iter()
+            .filter(|p| {
+                p.registers.as_ref().is_some_and(|r| {
+                    if kind == "gpio" {
+                        matches!(r.kind.as_ref(), "gpio" | "gpioc" | "gpiof")
+                    } else {
+                        r.kind == kind
+                    }
+                })
+            })
+            .map(|p| p.name)
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(peripherals("uart"), lsi.uarts);
+    assert_eq!(peripherals("gpio"), lsi.gpio_banks);
+    // Register layout and own-source gate/reset semantics were validated before
+    // metadata emission. All MMIO below uses the selected typed PAC and the one
+    // existing central gate-inspection protocol; no local I/O abstraction.
+    let mut roots = vec![
+        (
+            "RTC",
+            "u8::from(crate::pac::RTC.cr1().read().source())".to_string(),
+            lsi.rtc_allowed_sources,
+        ),
+        (
+            "AWT",
+            "u8::from(crate::pac::AWT.cr().read().src())".to_string(),
+            lsi.awt_allowed_sources,
+        ),
+    ];
+    for uart in lsi.uarts {
+        roots.push((
+            uart,
+            format!("u8::from(crate::pac::{uart}.cr2().read().source())"),
+            lsi.uart_allowed_sources,
+        ));
+    }
+    let gates = roots.len() + lsi.gpio_banks.len();
+    let sources = gates + 2; // ungated MCO and the direct LSI output AF
+    writeln!(
+        out,
+        "pub(crate) type RccFactoryLsiConsumers = ([u8; {sources}], [bool; {gates}]);"
+    )
+    .unwrap();
+    writeln!(out, "pub(crate) fn rcc_factory_lsi_consumers(timeout: u32, cs: critical_section::CriticalSection<'_>) -> Result<RccFactoryLsiConsumers, crate::rcc::Error> {{\nuse crate::rcc::SealedRccPeripheral;\nlet mut sources = [0; {sources}];\nlet mut gates = [false; {gates}];").unwrap();
+    for (i, (name, read, allowed)) in roots.iter().enumerate() {
+        writeln!(out, "let info = crate::peripherals::{name}::RCC_INFO;\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LsiClockInUse); }}\ngates[{i}] = info.is_enabled();\nlet source = info.inspect_for_init(cs, timeout, || {read}).map_err(crate::rcc::lsi_inspection_error)?;\nif info.reset_asserted() || info.is_enabled() != gates[{i}] || !{:?}.contains(&source) {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nsources[{i}] = source;", allowed).unwrap();
+    }
+    let pin = lsi.lsi_output_pin.as_bytes();
+    assert_eq!(pin.first(), Some(&b'P'));
+    let output_gpio = format!("GPIO{}", char::from(pin[1]));
+    let output_bit: u8 = lsi.lsi_output_pin[2..].parse().unwrap();
+    assert!(output_bit < 16 && lsi.gpio_banks.contains(&output_gpio.as_str()));
+    let afreg = if output_bit < 8 { "afrl" } else { "afrh" };
+    for (i, gpio) in lsi.gpio_banks.iter().enumerate() {
+        let index = roots.len() + i;
+        writeln!(out, "let info = crate::peripherals::{gpio}::RCC_INFO;\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LsiClockInUse); }}\ngates[{index}] = info.is_enabled();").unwrap();
+        if *gpio == output_gpio {
+            writeln!(out, "let (source, af) = info.inspect_for_init(cs, timeout, || (crate::pac::{gpio}.filter().read().fltclk(), crate::pac::{gpio}.{afreg}().read().afr{output_bit}())).map_err(crate::rcc::lsi_inspection_error)?;\nif !{:?}.contains(&af) {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nsources[{}] = af;", lsi.lsi_output_allowed_af, gates + 1).unwrap();
+        } else {
+            writeln!(out, "let source = info.inspect_for_init(cs, timeout, || crate::pac::{gpio}.filter().read().fltclk()).map_err(crate::rcc::lsi_inspection_error)?;").unwrap();
+        }
+        writeln!(out, "if info.reset_asserted() || info.is_enabled() != gates[{index}] || !{:?}.contains(&source) {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nsources[{index}] = source;", lsi.gpio_filter_allowed_sources).unwrap();
+    }
+    writeln!(out, "let source = crate::pac::SYSCTRL.mco().read().source();\nif !{:?}.contains(&source) {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nsources[{gates}] = source;\nOk((sources, gates))\n}}", lsi.mco_allowed_sources).unwrap();
 }
 
 fn generate_pll(out: &mut String, c: &cw32_metapac::metadata::PeripheralClockLimits) {
