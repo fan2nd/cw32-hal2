@@ -79,8 +79,9 @@ impl<'d> HsiOscClock<'d> {
 /// Shared LSI with verified, unchanged factory trim and bounded startup polling.
 ///
 /// This capability requires factory trim already loaded. On F020/F030/A030
-/// and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6 or CW32W031R8U6, selecting `Sysclk::LSI` during RCC
-/// initialization can establish it. Separately qualified monitored `Sysclk::LSE`
+/// and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6, CW32W031R8U6 or
+/// CW32L052C8T6/R8S6/R8T6, selecting `Sysclk::LSI` during RCC initialization
+/// can establish it. Separately qualified monitored `Sysclk::LSE`
 /// paths can establish their own factory monitor under their own contracts; otherwise
 /// board startup or a bootloader must do so. This constructor never loads trim:
 /// LSIEN=0 does not prove no shared hardware user is starting the oscillator.
@@ -91,11 +92,12 @@ impl<'d> HsiOscClock<'d> {
 /// The own datasheet nominal is 32,800 Hz, not 32,768 Hz. Bounds require the
 /// published supply/ambient interval and unchanged factory trim; readiness is
 /// startup status, not a measurement or continuous loss-of-clock monitor.
-/// On F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6 or CW32W031R8U6
-/// these are rate-only
+/// On F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6,
+/// CW32W031R8U6 or CW32L052C8T6/R8S6/R8T6 these are rate-only
 /// bounds under every SYSCLK, including HSI, HSE and LSE; they do not qualify
-/// strict cycle durations. Excluded L031, generic R031/W031 and board LSE
-/// retain their prior qualification; nominal calendar ticks remain 32800/32768.
+/// strict cycle durations. Excluded L031, generic R031/W031/L052, all L083
+/// and board LSE retain their prior qualification; nominal calendar ticks
+/// remain 32800/32768.
 pub struct LsiClock<'d> {
     _sysctrl: Peri<'d, SYSCTRL>,
 }
@@ -133,7 +135,8 @@ impl<'d> LsiClock<'d> {
         Hertz(RTC::SOURCE_NOMINAL_HZ)
     }
     /// Factory-source envelope. F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6
-    /// or CW32R031C8U6/CW32W031R8U6 qualify rate only under every SYSCLK;
+    /// or CW32R031C8U6/CW32W031R8U6/CW32L052C8T6/R8S6/R8T6 qualify rate only
+    /// under every SYSCLK;
     /// check `has_cycle_timing_bounds()` before requesting strict durations.
     pub const fn bounds(&self) -> ClockBounds {
         ClockBounds::rtc_source()

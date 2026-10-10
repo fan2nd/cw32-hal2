@@ -526,3 +526,52 @@ ADC共享门自身CN84/58及EN89/63明确为配置兼工作门：开启后ADC1/A
 两款PC14/PC15分别为脚3/4，旁路只持有PC14。原生Level2/Level10、16384周期、StartupOnly与3.0–3.6V、−20…70°C、每周期32766–32770Hz均为须实板资格化的显式声明，不是测量结果。DS100kHz旁路上限不被RM1MHz替换；波形仍需45–55%占空、至少450ns高低脉宽与至多50ns边沿，1.50s晶体启动仅典型（DS55/52、57–58/54–55）。既有原生LSE与HSIOSC日历源/分频保留，SYSCLK切换不迁移RTC/AWT；固定1MHz time-driver在取所有权前拒绝。失钟使冻结时钟失效，错误不发布新时钟且须复位。
 
 既有 `examples/lse-sysclk` 仅新增两款feature，复用原生晶体/旁路与自身生成FLASH/RAM、显式link.x；此前21款配置、引脚和依赖不变。本地 `ci/check-lse-sysclk.sh` 计划范围为24个普通库、23组晶体/旁路SYSCLK固件（46个二进制）及原4条回归命令，数字不是已执行结果。原 `examples/l010-lse-clock` 两款L012辅助晶体/旁路/HSIOSC日历仍为独立保留检查入口，不新建workspace、probe、HAL测试、harness、hosted CI或实板验证。
+
+
+## Exact CW32L052 factory-LSI SYSCLK
+
+Only CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6 receive the independent
+factory-LSI SYSCLK capability in `cw32-data/lsi-sysclk-qualified.yaml`.
+Generic L052, every L083 and native L010/L011/L012 are excluded. The earlier
+L052 LSE-specific qualification remains historical; its statement that it did
+not qualify LSI is unchanged. See the [separate L052 factory-LSI contract](../docs/l052-factory-lsi-sysclk.md).
+
+External manufacturer evidence is the selected own CN RM V1.5, CN DS V1.3
+and SDK V1.4 in [`evidence-sources.json`](evidence-sources.json). The RM SHA-256
+is `4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41`,
+the DS is `f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f`,
+and the SDK is `d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f`.
+Originals, extracted text and unapproved SDK members remain external evidence;
+these page locators and project contracts do not redistribute them.
+
+- RM PDF57/59/74 (printed56/58/73): factory halfword 0x00100A02, native
+  ten-bit TRIM, WAIT[11:10], STABLE[15] and stopped-only trim programming.
+- DS PDF43/51 (printed42/50): 32,800 Hz nominal, 31,816–33,784 Hz factory
+  range at 1.65–5.5 V, VDDA=VDD and −40–85°C; the conditional +105°C row
+  does not extend that tolerance. Buses have a 24 MHz ceiling below 1.8 V
+  and 48 MHz at/above 1.8 V, independent of Flash latency.
+- RM PDF64/66/67/70–74 and112 (printed pages one less): direct source
+  switching, HSI /6 fixed CCS escape, native request/status/divider identity
+  and Flash sequencing. HSI /6 has an 8.16 MHz factory upper rate before any
+  bus-divider credit; undivided factory HSI has an upper rate of 48.96 MHz.
+- RM PDF94/142/144/146/148/157/166–169/175/184–185/192–195/200,
+  224–225/235–237/359/362/390/536/538/552–554: MCO/GPIO, AUTOTRIM,
+  RTC, LPTIM, UART and LCD source/control identities. GPIO FLTCLK7 is LPTIM
+  PWM; no standalone AWT exists. Work-off LCD/LPTIM gates are not opened.
+- DS PDF10/27/33/79 and RM PDF146: exact packages and PC4/AF6 route.
+  PC4 is unbonded on C8T6; both R8 packages expose it at physical pin24.
+  Conservative inspection of its register grants no C8T6 output token.
+
+The native source graph includes internal MCO-to-timer edges, PCLK-derived
+ADC/timers/SPI/I2C, GPIO/filter cascades, independent IWDT RC10K and WWDT PCLK.
+Source checks do not prove external pin feedback is harmless; that belongs to
+the whole-bank functional handover. No RF or PLL capability is added.
+Software build/source review is separate from hardware timing, fault recovery
+or sleep/wake qualification. Final main verification passed eight actual library
+builds and eight ELF links with zero warnings, plus generation and six finite
+Python source/data checks. See the [metadata review](../docs/l052-factory-lsi-metadata-review.json)
+and [runtime/source review](../docs/l052-factory-lsi-runtime-review.json).
+At main acceptance, clean replay had not run; final-package completion requires
+a separate final-source two-library/three-ELF clean receipt. Earlier failed
+attempts remain historical records as described in the contract, not successful
+checks or hardware tests.

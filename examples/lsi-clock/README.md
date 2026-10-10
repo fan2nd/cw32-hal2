@@ -8,7 +8,8 @@ bounds. Choose one exact part with `--no-default-features`:
   that uses no `LsiClock`, `CalendarClock` or calendar API. Generic F002/F003
   aliases are not qualified for this mode.
 - CW32F020C6U7, CW32F030C8T7, CW32A030C8T7, CW32L031C8T6,
-  CW32L031C8U6, CW32L031F8U6, CW32R031C8U6 or CW32W031R8U6: the existing calendar branch also
+  CW32L031C8U6, CW32L031F8U6, CW32R031C8U6, CW32W031R8U6,
+  CW32L052C8T6, CW32L052R8S6 or CW32L052R8T6: the existing calendar branch also
   acquires the same factory source through `LsiClock` and `CalendarClock::Lsi`,
   initializes an unset RTC and polls its date/time and source/divided bounds.
   Its demonstration epoch is 2026-10-09 00:00:00; replace it with the intended
@@ -17,23 +18,23 @@ bounds. Choose one exact part with `--no-default-features`:
 The default feature remains CW32F030C8T7. The firmware requires no GPIO wiring,
 external oscillator, UART baud or other board peripherals. Support is init-only;
 it does not provide runtime switching or sleep/wake recovery. Generic L031,
-its other packages and generic R031/W031 are excluded from LSI SYSCLK.
+its other packages, generic R031/W031/L052 and every L083 are excluded from LSI SYSCLK.
 
 ## Board declarations and rate bounds
 
 The example declares VDD 1.65–5.5 V and ambient temperature −40–85°C on the
-three L031 parts. R031C8U6 explicitly declares 2.2–3.6 V and −40–85°C;
+three L031 and three exact L052 parts. R031C8U6 explicitly declares 2.2–3.6 V and −40–85°C;
 W031R8U6 declares 2.0–3.6 V and −40–85°C;
 the other existing example families retain −40–105°C. These are
 source-qualified limits, not measurements or proof about a particular
 board. Qualify the board across its actual complete operating envelope and
 adjust the declarations accordingly before hardware use. Default AHB/APB
-prescalers remain /1. F002/F003/L031/R031/W031 retain factory HSIOSC /6, nominal 8 MHz, on
+prescalers remain /1. F002/F003/L031/R031/W031/L052 retain factory HSIOSC /6, nominal 8 MHz, on
 successful initialization; selecting LSI does not replace its independent
 qualification.
 
 The nominal LSI rate is 32,800 Hz. Factory full-range bounds are 31,160–34,440 Hz
-for F002/F020 and 31,816–33,784 Hz for F003/F030/A030 and exact L031/R031/W031. F003's bounds come from its
+for F002/F020 and 31,816–33,784 Hz for F003/F030/A030 and exact L031/R031/W031/L052. F003's bounds come from its
 own datasheet Rev1.9, PDF pages 32 and 38: factory ±3% over the declared full
 temperature range, independently of the other families. L031 uses its own DS
 Rev1.9, PDF pages 38 and 47, with ±3% only over −40–85°C; the 25°C-only ±1%
@@ -47,6 +48,10 @@ table7-4: ±3% over −40–85°C and the conservative 2.0–3.6 V RF-LDO/DCDC
 intersection. VDDA=VDD; DS16/15 requires independent VDDRF to use the same
 supply as VDD when RF is used. The 25°C-only ±1% row does not broaden the
 qualification, and no RF-mode probe chooses a wider voltage range.
+L052 uses its own DS CN V1.3 PDF43/51 (printed42/50): ±3% over 1.65–5.5 V,
+VDDA=VDD and −40–85°C. Its conditional +105°C operating row does not extend
+this factory envelope. Its final configured HSI must also fit the voltage
+ceiling with the final bus divisors.
 SYSCLK/HCLK/PCLK
 bounds are rate-only; retained HSI keeps its own timing qualification. Exact
 source bounds and divisors are retained through prescaling. For example, F003
@@ -54,19 +59,22 @@ AHB /128 and APB /8 would expose PCLK nominal/minimum/maximum 32/31/33 Hz while
 retaining divisor 1024 internally; the example itself uses /1.
 
 The calendar's nominal tick rate is 32800/32768 Hz, not a precision one-second
-claim. Exact L031, CW32R031C8U6 and CW32W031R8U6 RTC LSI aliases are rate-only under every
-SYSCLK, including HSI, HSE and LSE. Generic R031/W031, other L031
-packages and board-qualified LSE keep their prior
+claim. Exact L031, CW32R031C8U6, CW32W031R8U6 and exact L052 RTC LSI
+aliases are rate-only under every SYSCLK, including HSI, HSE and LSE.
+Generic R031/W031/L052, all L083, other L031 packages and board-qualified LSE keep their prior
 qualification. Strict cycle-duration helpers are not used. ADC timing
 rejects these rate-only system clocks, and the fixed 1 MHz time driver rejects
 selected LSI before singleton acquisition or RCC access. This crate enables
-no time driver. AWT retains its independent HSIOSC timing qualification; F003's
+no time driver. Where present as a standalone peripheral, AWT retains its
+independent HSIOSC timing qualification; L052 instead has AUTOTRIM timer
+mode and RTC-local wake logic. F003's
 ATIM/IR presence does not grant new peripheral modes or timing guarantees.
 
 ## Initialization and failure effects
 
 Selecting the mode permits bounded whole-GPIOA/B/C inspection windows on
-F002/F003, and whole-GPIOA/B/C/F windows on the classic and exact L031/R031/W031 parts. Sampling, filters
+F002/F003, whole-GPIOA/B/C/F windows on the classic and exact L031/R031/W031
+parts, and whole-GPIOA/B/C/D/F windows on exact L052. Sampling, filters
 and armed events may advance, including before failure. Configuration and
 locks are preserved; software does not clear flags, but flags can change
 naturally. Restoring gates cannot undo this progress. Existing exclusive
@@ -87,6 +95,19 @@ is conservatively rejected; MCO7 is separately undocumented. Matching cold
 trim does not bypass admission. The retained configured HSI tree must remain
 legal with the final dividers and determines the conservative Flash wait along
 with LSI. L031F8U6 still cannot request HSE.
+
+Exact L052 uses a separate native snapshot and transition. Cold admission
+checks RTC, AUTOTRIM, UART1/2/3, all five GPIO FILTER words, MCO, PC4 AF and
+SYSCTRL ready/NVIC observers, even for matching cold trim. Off LCD/LPTIM
+work gates stay off and their local controls are not read; gate-on cold LCD
+requires EN=0 and BUMP=0 independently. PC4/AF6 is unbonded on C8T6 but
+conservatively inspected without a pin token; both R8 packages bond it at pin24.
+Live factory-matching LSI is never stopped or retrimmed. The whole-bank
+handover includes unrelated pins, armed edge/level/event paths and external
+loopbacks. No timer reset/stop, LCD pump write or IRQ/event clear manufactures
+admission. Factory HSI, final divisors and Flash are complete before the final
+source-only LSI switch. A failed attempt requires reset, or power reset where
+POR-retained LSE controls require it; there is no rollback or safe retry claim.
 
 On R031, RFCLK has its independent dedicated 16 MHz oscillator. Selected LSI
 can nevertheless affect RF host traffic through PCLK, the GPIOA working gate
@@ -121,7 +142,8 @@ the complete [F002 contract](../../docs/f002-factory-lsi-sysclk.md),
 [F003 contract](../../docs/f003-factory-lsi-sysclk.md),
 [L031 contract](../../docs/l031-factory-lsi-sysclk.md),
 [R031 contract](../../docs/qualified-r031-lsi-sysclk.md),
-[W031 contract](../../docs/qualified-w031-lsi-sysclk.md), or
+[W031 contract](../../docs/qualified-w031-lsi-sysclk.md),
+[L052 contract](../../docs/l052-factory-lsi-sysclk.md), or
 [classic contract](../../docs/factory-lsi-sysclk.md) before hardware use.
 
 ## Ordinary firmware builds
@@ -142,6 +164,9 @@ cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --t
 cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32l031f8u6,defmt
 cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32r031c8u6,defmt --bin cw32-lsi-clock-example
 cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32w031r8u6,defmt --bin cw32-lsi-clock-example
+cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32l052c8t6,defmt --bin cw32-lsi-clock-example
+cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32l052r8s6,defmt --bin cw32-lsi-clock-example
+cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32l052r8t6,defmt --bin cw32-lsi-clock-example
 ```
 
 `build.rs` derives `memory.x` from the exact package's generated memory facts
@@ -155,8 +180,9 @@ specify 64 KiB Flash at 0x00000000 and 8 KiB SRAM at 0x20000000 for the three
 exact packages. R031C8U6 uses its own DS CN V1.2 PDF11/35 and own PDSC
 for the same exact 64 KiB Flash / 8 KiB SRAM at those bases. W031R8U6 is
 QFN64, with its own DS CN V1.3 PDF9/33–34/71 and PDSC proving those same
-64 KiB / 8 KiB limits. The build script
-asserts each package's limits and RTC presence, while
+64 KiB / 8 KiB limits. The three exact L052 packages use their own DS CN V1.3
+package/memory facts for 64 KiB Flash / 8 KiB SRAM at those same addresses.
+The build script asserts each package's limits and RTC presence, while
 preserving F002/F003's own limits and RTC absence.
 Release uses size optimization, LTO and one codegen
 unit. A Flash overflow must be resolved within the real capacity.
@@ -167,4 +193,10 @@ have run. Compilation and ELF inspection establish source/link integration
 only; actual load segments, Flash/RAM use, remaining stack space, entry and
 vectors must be inspected before claiming a binary fits. No hardware startup,
 electrical rate, RTC operation, real-time behavior or runtime error-path
-validation is claimed.
+validation is claimed. Final exact-L052 main verification passed eight actual
+library builds and eight ELF links with zero warnings, plus generation and six
+finite Python source/data checks. At main acceptance, clean replay had not run;
+final-package completion requires a separate final-source two-library/three-ELF
+clean receipt. The full future recipe is not that execution record. See the
+[runtime/source review](../../docs/l052-factory-lsi-runtime-review.json) and
+[metadata review](../../docs/l052-factory-lsi-metadata-review.json).

@@ -200,6 +200,21 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   replay had not run; final-package completion requires a separate clean receipt.
   See the
   [own W031 contract and evidence status](docs/qualified-w031-lsi-sysclk.md).
+- CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6: separate init-only
+  factory LSI SYSCLK with own 31,816–33,784 Hz rate bounds at 1.65–5.5 V,
+  VDDA=VDD and −40–85°C; all three have 64 KiB Flash / 8 KiB SRAM.
+  Whole-GPIOA/B/C/D/F inspection may advance events even before failure;
+  off LCD/LPTIM work gates remain off. Live factory-matching LSI is retained
+  without stop/retrim. Every exact-L052 RTC LSI alias becomes rate-only under
+  HSI, HSE, LSE and LSI SYSCLK. Generic L052 and every L083 remain excluded.
+  Final main verification passed eight actual library builds and eight ELF
+  links with zero warnings, plus generation and six finite Python source/data
+  checks. At main acceptance, clean replay had not run; final-package completion
+  requires a separate final-source two-library/three-ELF clean receipt.
+  These software results do not establish hardware behavior. See the
+  [L052 contract](docs/l052-factory-lsi-sysclk.md),
+  [runtime/source review](docs/l052-factory-lsi-runtime-review.json) and
+  [metadata review](docs/l052-factory-lsi-metadata-review.json).
 - F020/F030/A030: init-only factory LSI SYSCLK with complete cold-start admission,
   explicit whole-GPIO-bank inspection effects, permanent target request and
   rate-only bounds. The same families' LsiClock/RTC aliases are also rate-only;

@@ -204,6 +204,31 @@ still apply.
   At main acceptance, clean replay had not run; final-package completion
   requires a separate one-library/one-ELF clean receipt. See the
   [W031 contract](qualified-w031-lsi-sysclk.md).
+- CW32L052C8T6/R8S6/R8T6 add a separate native factory-LSI SYSCLK path:
+  nominal 32,800 Hz, 31,816–33,784 Hz at 1.65–5.5 V, VDDA=VDD and −40–85°C,
+  with 64 KiB Flash / 8 KiB SRAM. Generic L052 and every L083 stay excluded.
+  Full native snapshots cover RTC, AUTOTRIM, UART1/2/3, GPIOA/B/C/D/F,
+  MCO and PC4 AF, plus tagged LCD/LPTIM work gates. Off work gates stay off
+  without local register reads; cold gate-on LCD requires both EN=0 and BUMP=0.
+  Whole GPIO banks can advance sampling, filters and armed events, including
+  on unrelated pins and before failure. Restoration does not undo progress.
+  PC4/AF6 is inspected conservatively on unbonded C8T6 without a pin token.
+  Matching cold trim skips no admission; live matching LSI is never stopped
+  or retrimmed. Configured factory HSI is checked at final bus divisors before
+  the final source-only LSI commit. There is no standalone AWT or L052 PLL.
+  Every exact-L052 RTC LSI alias becomes rate-only under HSI/HSE/LSE/LSI;
+  board-LSE provenance and native HSI-based RTC sources stay unchanged.
+  ADC timing refuses rate-only PCLK before its gate/reset writes; strict
+  duration helpers retain refusal and the fixed 1 MHz time driver refuses
+  selected LSI before singleton acquisition and RCC work. This is source
+  reasoning, not exercised runtime evidence. Final main verification passed
+  eight actual library builds and eight ELF links with zero warnings; generation
+  and all six finite Python source/data checks passed. At main acceptance,
+  clean replay had not run. Final-package completion requires a separate
+  two-library/three-ELF clean receipt bound to the final source ZIP. See the
+  [L052 contract](l052-factory-lsi-sysclk.md),
+  [runtime/source review](l052-factory-lsi-runtime-review.json) and
+  [metadata review](l052-factory-lsi-metadata-review.json).
 - Init-only factory-LSI SYSCLK is qualified on F020/F030/A030. Cold admission
   precedes the first source-enable write and checks every documented shared
   consumer, gate, reset and inherited source request; factory-matching running
@@ -214,7 +239,7 @@ still apply.
   timing guards remain enforced. A 1 MHz Embassy timebase rejects this rate
   before singleton acquisition. This is a static control-flow guarantee;
   compiling the time-driver feature does not execute that rejection.
-  Apart from the exact L031/R031/W031 changes above, other RTC/LSI qualifications
+  Apart from the exact L031/R031/W031/L052 changes above, other RTC/LSI qualifications
   are unchanged. Runtime switching and
   low-power restoration remain outside this slice. See the
   [complete factory-LSI contract](factory-lsi-sysclk.md).

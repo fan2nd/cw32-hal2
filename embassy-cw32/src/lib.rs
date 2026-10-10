@@ -168,6 +168,33 @@ pub struct Config {
 /// acquisition and RCC MMIO. Reset before retrying hardware failure.
 /// See docs/qualified-w031-lsi-sysclk.md for source and verification status.
 ///
+/// On CW32L052C8T6/R8S6/R8T6 only, factory LSI SYSCLK uses own 31,816..33,784 Hz
+/// rate bounds at 1.65..5.5 V, VDDA=VDD and -40..85 C. Admission may temporarily
+/// run each whole GPIOA/B/C/D/F bank, including unrelated pins. Sampling,
+/// filters and armed edge/level/event paths can advance before failure;
+/// restoring gates cannot undo that activity. The functional handover must
+/// permit the whole-bank interval and external pin loopbacks. Other application
+/// clock-dependent clients must remain quiescent during initialization.
+/// Off LCD/LPTIM work gates stay off and their local registers are not read.
+/// Cold admission includes RTC, AUTOTRIM, all three UARTs, both work gates,
+/// GPIO FILTER words, MCO, PC4 AF and ready/NVIC observers even for matching
+/// cold TRIM. PC4/AF6 is conservatively checked on unbonded C8T6 without a pin
+/// token. Live factory-matching LSI is neither stopped nor retrimmed. Full
+/// consumer and source identity is retained; no IRQ/event clear, timer stop,
+/// LCD pump manipulation or peripheral reset manufactures admission.
+/// The incoming source/buses/Flash must already be legal for actual voltage.
+/// Configured factory HSI must also be legal with final bus divisors. Failure
+/// publishes no clocks and can leave partial source, Flash, pad or gate state;
+/// reset, or power reset for POR-retained LSE controls, before another attempt.
+/// Poll budgets are not elapsed deadlines and clock loss may prevent return.
+/// All exact-L052 RTC LSI aliases become rate-only under every SYSCLK, including
+/// HSI/HSE/LSE. Strict duration consumers refuse these bounds; ADC timing
+/// refuses rate-only PCLK before peripheral gate/reset writes. The fixed 1 MHz
+/// time driver refuses selected LSI before singleton acquisition and RCC work.
+/// This functional handover adds no hidden Rust memory-safety precondition,
+/// rollback, source-loss recovery, sleep/wake or hardware-validation guarantee.
+/// See docs/l052-factory-lsi-sysclk.md for the complete contract.
+///
 /// On F020/F030/A030, selecting factory LSI SYSCLK (or LSE SYSCLK on the
 /// three qualified packages) may briefly open each
 /// entire GPIOA/B/C/F bank to inspect retained source selectors. Sampling,
@@ -201,10 +228,11 @@ pub struct Config {
 /// normal clock-sensitive peripheral/interrupt work remains excluded. This
 /// does not change the pre-Rust bus-master/memory-ownership boundary above.
 /// Configured HSI must be legal at the final AHB/APB dividers even without HSE
-/// or enabled CLKCCS. Separately, fallback electrical coverage uses undivided
-/// fixed-output HSI's 8.16 MHz upper bound without assuming divider retention.
-/// Frozen healthy LSE clocks are invalid after source loss/fallback. This adds
-/// no public LSI SYSCLK, recovery, continuity or silicon-validation guarantee.
+/// or enabled CLKCCS. Separately, fallback electrical coverage uses fixed
+/// HSI /6 escape's 8.16 MHz upper bound before any bus-divider credit.
+/// Frozen healthy LSE clocks are invalid after source loss/fallback. This LSE
+/// path grants no factory-LSI SYSCLK qualification, recovery, continuity or
+/// silicon-validation guarantee; the separate LSI contract is documented above.
 ///
 /// On the five qualified CW32L083 RBT6/RCT6/RCS6/MCT6/VCT6 packages,
 /// LSE SYSCLK uses a separate init-only transition. The unchanged HSI used to

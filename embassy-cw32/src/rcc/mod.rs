@@ -73,6 +73,8 @@ pub use l012::*;
 mod l052_l083;
 #[cfg(any(rcc_cw32l052_v1, rcc_cw32l083_v1))]
 pub(crate) use l052_l083::init as init_backend;
+#[cfg(all(rcc_cw32l052_v1, rcc_lsi_sysclk))]
+pub(crate) use l052_l083::lsi_inspection_error;
 #[cfg(any(rcc_cw32l052_v1, rcc_cw32l083_v1))]
 pub use l052_l083::*;
 

@@ -67,8 +67,8 @@ dead time and global MOE. Its own-PDF/data audit is
 
 `./d audit-current` also includes `ci/verify-l083-lse-data.py` for the five exact L083 parts, with four own locked originals, five SDK members and the native register/package facts. The earlier auxiliary-LSE L083 candidate has retained passes for seven ordinary library configurations and fourteen linked crystal/bypass ELFs: all five L083 parts, L052C8T6 and F030C8T7. Those receipts apply to the frozen candidate source, and do not claim a rerun of the full script or hardware execution. Its source-qualified detector-margin check runs before peripheral acquisition or RCC writes; see the [L083 contract](../docs/qualified-l083-lse.md).
 
-`./d check-lsi-clock` is a reusable future local recipe with twenty-four library
-commands: nineteen actual builds and five historical checks (two generic
+Before the exact-L052 addition, `./d check-lsi-clock` declared twenty-four
+library commands: nineteen builds and five historical checks (two generic
 F002/F003 and three classic). The builds comprise four F002 (two profiles),
 three F003, three exact L031 release, one L031C8T6 debug, generic L031 and
 excluded F8P6, R031C8U6/W031R8U6 release, R031C8U6 debug and generic R031
@@ -77,7 +77,7 @@ The exact/representative builds
 enable defmt and the appropriate time driver; the generic/excluded L031 and
 generic R031/W031 builds enable defmt only. Generic aliases still gain no LSI SYSCLK capability.
 
-The recipe links thirty-two ELFs: the previous fifteen (five F002/F003 LSI,
+That historical recipe declared thirty-two ELFs: the previous fifteen (five F002/F003 LSI,
 three classic LSI, one HSI/calendar, HSE and PLL each, and four HEX PB0/PB1),
 plus three L031 LSI, four shared-backend LSE SYSCLK, L031 HSI/calendar,
 L031 auxiliary-LSE/calendar and L031 HSE, then R031 LSI, HSI/calendar,
@@ -87,6 +87,51 @@ selected-LSE row already exists above. L031C8T6/C8U6/F8U6 retain their own −40
 R031C8U6 uses the existing RTC branch with explicit 2.2–3.6 V and −40–85°C
 board declarations; W031R8U6 declares 2.0–3.6 V and −40–85°C. These declarations
 require actual board qualification.
+
+The current reusable future recipe adds six library builds (exact L052 three
+release, C8T6 debug, generic L052 release and L083RCT6 release) and seven ELFs
+(three L052 LSI, L052 HSE, LSE SYSCLK and preserved calendar, plus L083 PLL UART).
+It therefore declares thirty library commands: twenty-five builds and the five
+historical checks, plus thirty-nine linked ELFs. The existing L031C8U6 LSI ELF
+is reused in the recipe; no duplicate row is added. The historical F030 recipe
+row remains a check; the focused L052 matrix separately requires a real F030
+library build. Recipe totals do not assert execution. Keep the script executable.
+
+Final focused exact-L052 main verification passed all sixteen Cargo commands:
+eight actual library builds and eight ELF links, with zero warnings and the
+1,297-file build-input snapshot unchanged. Generation and all six finite Python
+source/data checks also passed. These are separate software checks, not an
+aggregate test count. The [L052 contract](../docs/l052-factory-lsi-sysclk.md)
+lists exact chips, features and binaries; the
+[runtime/source review](../docs/l052-factory-lsi-runtime-review.json) and
+[metadata review](../docs/l052-factory-lsi-metadata-review.json) record their
+main-source scope and dispositions.
+
+The first library attempt failed with E0308 in the generated AUTOTRIM PRS
+comparison (exit 101); the emitter was corrected to use the typed encoding.
+An earlier operating-envelope check failed because the external evidence root
+was missing (exit 1), then passed with that environment corrected. Both failures
+remain historical records. The affected intermediate L052 builds each emitted five helper warnings; the
+final sixteen-command rerun followed the scoped
+warning correction and emitted none. Failed attempts and superseded runs are
+not added to the final successful build count.
+
+Main rows ran serially in one shared task-owned target directory, copying each
+row's actual artifact and generated `OUT_DIR` before the next row. Per-row
+receipts record command flags, observed artifact freshness and source binding;
+shared-target results do not imply every dependency was rebuilt. At main
+acceptance, clean replay had not run. Final-package completion requires a
+separate receipt for two representative libraries and all three new LSI ELFs
+from one fresh extraction of the final source ZIP, with an independent target
+directory. Only verified external originals and the official dependency download
+cache may be shared; main generated outputs and targets are not copied into
+clean. This historical main status does not assert the later clean result.
+The accumulated thirty-command/thirty-nine-ELF recipe was not run for this
+slice, nor were hosted CI, HAL tests, probes, runtime models or hardware.
+The all-54 projection comparison is a separate source/data requirement: only
+the three selected capability fields change the historical positive LSI count
+from 26 to 29. The previous L052 LSE-specific qualification evidence remains
+historical and unchanged.
 
 The focused L031 implementation verification is a different finite scope:
 ten actual library builds and ten linked ELFs in the main tree, followed by
@@ -132,7 +177,7 @@ tests, prove runtime time-driver/ADC rejection, or execute hardware. Static
 review must trace those guards through the actual generated exact-part cfg.
 Each example's build.rs derives memory bounds and links with `-Tlink.x`:
 F002 has 16 KiB Flash / 2 KiB RAM, F003 has 20 KiB Flash / 3 KiB RAM, and
-exact L031, R031C8U6 and W031R8U6 have 64 KiB Flash / 8 KiB RAM.
+exact L031, R031C8U6, W031R8U6 and exact L052 have 64 KiB Flash / 8 KiB RAM.
 Inspect each linked ELF's entry, vectors, PT_LOAD regions, Flash use and static
 RAM/stack headroom before claiming it fits or flashing it; never expand
 memory.x to hide overflow. Startup, error paths and electrical behavior remain
@@ -140,7 +185,8 @@ unvalidated. See the [F002 contract](../docs/f002-factory-lsi-sysclk.md) and
 [F003 contract](../docs/f003-factory-lsi-sysclk.md) and
 [L031 contract](../docs/l031-factory-lsi-sysclk.md) and
 [R031 contract](../docs/qualified-r031-lsi-sysclk.md) and
-[W031 contract](../docs/qualified-w031-lsi-sysclk.md). No hosted workflow is added.
+[W031 contract](../docs/qualified-w031-lsi-sysclk.md) and
+[L052 contract](../docs/l052-factory-lsi-sysclk.md). No hosted workflow is added.
 
 
 `./d check-lse-sysclk` declares a bounded local compile/link scope: twenty-four

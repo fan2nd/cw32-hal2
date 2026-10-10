@@ -1,0 +1,4941 @@
+{
+  "schema_version": 1,
+  "status": "accepted main metadata and projection; clean-package reproduction pending",
+  "scope": [
+    "CW32L052C8T6",
+    "CW32L052R8S6",
+    "CW32L052R8T6"
+  ],
+  "review_date": "2026-10-10",
+  "baseline_commit": "f210acc671017f7818972e667dc621cdc1d65084",
+  "accepted_design": {
+    "design_sha256": "35363afa4719452085b862ce5b92f89181cf9459c7e936d2c3b0f789ea5f0311",
+    "source_evidence_sha256": "7221271ac5a0c8001471d2344e76d8714a6a335200bac81abd6e0dda0bf3f21c",
+    "metadata_design_sha256": "9777480a9e82c4d75378a4dd9387be257bf9d305ae53a0e30bb8d4f7058445d8",
+    "metadata_evidence_sha256": "7d540b111dba98c903762a8f321e0503d8230ef266f43733aea12d5819434458"
+  },
+  "main_freeze": {
+    "archive": "stage70-main-source-v4.zip",
+    "archive_sha256": "b75d4cdd210a4fa97f4bbe5095c9716a31a2f20c46d4c6bb09e7227c1755644b",
+    "manifest": "verification/main-source-v4-manifest.json",
+    "manifest_sha256": "319ad73a30ae192638e7a31557b37504277d58381ee91fba9359a590ac58845c",
+    "input_files": 1297,
+    "bound_sources": [
+      {
+        "path": "cw32-data/lsi-sysclk-qualified.yaml",
+        "sha256": "4f53b673c8f9aca5e80be501359da83823f9829e4457daf82a6adfd5b9ba5109"
+      },
+      {
+        "path": "cw32-data/electrical.yaml",
+        "sha256": "8f4005dad214ed21a0abd0425188108413bfc548023fb8f33841865d6db57b8d"
+      },
+      {
+        "path": "cw32-data-gen/src/lsi.rs",
+        "sha256": "8597ae49ea0161ce8804f204da51d8673bf33dd198ba5d43d8edd3a359b1a6c9"
+      },
+      {
+        "path": "embassy-cw32/build.rs",
+        "sha256": "d4c97c593bdec96fbf2de2b03f170f9379a497a1ba21bb2d3b0d578929a7d745"
+      },
+      {
+        "path": "embassy-cw32/src/rcc/l052_l083.rs",
+        "sha256": "0eaa667a74d5b50f0a3b2be05dc62250d91f1844e742f94aa9f4f627fc372be4"
+      },
+      {
+        "path": "embassy-cw32/src/rcc/mod.rs",
+        "sha256": "2dd527186e5a5eb4b4765a3161c6cb5d17bc0422ab28a535c5a81c9b1dd5ca79"
+      },
+      {
+        "path": "embassy-cw32/src/rcc/bounds.rs",
+        "sha256": "025cd9ea5a37307e3cf2838f51ce888fa9143b1f0bc03a7648fd2be05a744c6a"
+      },
+      {
+        "path": "embassy-cw32/src/rcc/rtc.rs",
+        "sha256": "aced8413cdf04bc0155cbdef7b03b7c20a4cd4ff12ae45e1e597f49332456e16"
+      },
+      {
+        "path": "embassy-cw32/src/rtc/mod.rs",
+        "sha256": "5ab5d003d64d589fac73f0789c19a2535df2a96984673a666f743d607a1eb443"
+      },
+      {
+        "path": "embassy-cw32/src/lib.rs",
+        "sha256": "9f0cf675d7b184dc760dcf2f31077c1fc762b047b3ccbff6347fdd971174e50e"
+      },
+      {
+        "path": "embassy-cw32/src/adc/classic.rs",
+        "sha256": "f08973c004ba5bb5b9efca7b17354fece22bf58642959eaff671e4a5502048e9"
+      },
+      {
+        "path": "embassy-cw32/src/timer/complementary_pwm/buffered.rs",
+        "sha256": "3882bc2c4ba30a4343ea35cef16db7482477e48cb5815cc2fa988ed852744de3"
+      },
+      {
+        "path": "embassy-cw32/src/time_driver.rs",
+        "sha256": "f23f754fa62f62664cee5d30d7fb37c6964e4b58c788b726325bf99674991924"
+      }
+    ]
+  },
+  "main_metadata_blockers": [],
+  "pending_final_package_acceptance": [
+    "Independently extract the final source ZIP after including final review/status documents.",
+    "Run the approved clean host generation and six finite data/provenance inspections.",
+    "Compare all generated main/clean files by relative path and hash; retain exact3-only all54 correspondence.",
+    "Complete the approved two clean libraries and three clean ELFs in the independent clean target, then bind a supplemental receipt to the final ZIP and main review."
+  ],
+  "reviewer_execution": {
+    "read_only_source_evidence_and_receipt_inspection": true,
+    "generated_review_documents": true,
+    "source_edits": false,
+    "generator": false,
+    "Cargo": false,
+    "project_tests": false,
+    "HAL_probes_or_models": false,
+    "hardware": false
+  },
+  "coordinated_generation": {
+    "command": [
+      "./d",
+      "gen-all"
+    ],
+    "exit": 0,
+    "log_sha256": "17aac85a6f95f10df1d20d13049baaafc85c77dda42a7018b13cd429b46f18a8",
+    "scope": "host data/PAC generation; three data inputs unchanged through final main freeze; final HAL helpers regenerated during each main-v4 Cargo row"
+  },
+  "coordinated_finite_data": {
+    "summary": {
+      "status": "passed",
+      "commands": 6,
+      "successful_commands": 6,
+      "historical_failed_invocations": 0,
+      "full_audit_current": false,
+      "hal_tests": false
+    },
+    "rows": [
+      {
+        "name": "source-derived-data",
+        "command": [
+          "python3",
+          "cw32-data/tools/validate.py"
+        ],
+        "exit": 0,
+        "seconds": 0.025,
+        "log": "source-derived-data.log",
+        "log_sha256": "ede75656b2001292bd260d75448fcb8d7ed6be25506b9fa23d1dcc1e6fe8e0e2",
+        "log_hash_matches": true
+      },
+      {
+        "name": "pac-inventory",
+        "command": [
+          "python3",
+          "tests/validate_pac_inventory.py"
+        ],
+        "exit": 0,
+        "seconds": 0.814,
+        "log": "pac-inventory.log",
+        "log_sha256": "b8ab963549b86a9c65020ed595816955605b3a7ee1878ee0c12dc99f1b3c825f",
+        "log_hash_matches": true
+      },
+      {
+        "name": "rcc-operating-envelope",
+        "command": [
+          "python3",
+          "tests/verify_rcc_operating_envelope.py"
+        ],
+        "exit": 0,
+        "seconds": 1.805,
+        "log": "rcc-operating-envelope.log",
+        "log_sha256": "903c53b88e93d775cdf2525afeecc5b4670e7912e7cbd2e650b526df8fb2faf1",
+        "log_hash_matches": true
+      },
+      {
+        "name": "rtc-evidence",
+        "command": [
+          "python3",
+          "tests/verify_rtc_remaining_evidence.py"
+        ],
+        "exit": 0,
+        "seconds": 26.457,
+        "log": "rtc-evidence.log",
+        "log_sha256": "51db0fca79e0320395ca23e56e2ea09bbb28467852b81b8953a46b928ef0ca36",
+        "log_hash_matches": true
+      },
+      {
+        "name": "l052-own-source",
+        "command": [
+          "python3",
+          "ci/verify-l052-lse-data.py",
+          "--sources",
+          "sources/vendor",
+          "--data",
+          "cw32-data/data",
+          "--out",
+          "build/audit/stage70-l052-lse.json"
+        ],
+        "exit": 0,
+        "seconds": 6.388,
+        "log": "l052-own-source.log",
+        "log_sha256": "555f177755f8bf18c15908a660c10262aa1ef33b94cc00b97e1b34eb043afe72",
+        "log_hash_matches": true
+      },
+      {
+        "name": "hardware-source-provenance",
+        "command": [
+          "python3",
+          "cw32-data/tools/source_provenance.py",
+          "--sources",
+          "sources/vendor"
+        ],
+        "exit": 0,
+        "seconds": 10.545,
+        "log": "hardware-source-provenance.log",
+        "log_sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f",
+        "log_hash_matches": true
+      }
+    ],
+    "binding": "Six final data/provenance inspections rerun successfully against the main-v4 source freeze.",
+    "historical_attempts": {
+      "summary": {
+        "status": "passed",
+        "commands": 7,
+        "successful_commands": 6,
+        "historical_failed_invocations": 1,
+        "full_audit_current": false,
+        "hal_tests": false
+      },
+      "rows": [
+        {
+          "name": "source-derived-data",
+          "command": [
+            "python3",
+            "cw32-data/tools/validate.py"
+          ],
+          "exit": 0,
+          "seconds": 0.027,
+          "log": "source-derived-data.log",
+          "log_sha256": "ede75656b2001292bd260d75448fcb8d7ed6be25506b9fa23d1dcc1e6fe8e0e2",
+          "log_hash_matches": true
+        },
+        {
+          "name": "pac-inventory",
+          "command": [
+            "python3",
+            "tests/validate_pac_inventory.py"
+          ],
+          "exit": 0,
+          "seconds": 0.809,
+          "log": "pac-inventory.log",
+          "log_sha256": "b8ab963549b86a9c65020ed595816955605b3a7ee1878ee0c12dc99f1b3c825f",
+          "log_hash_matches": true
+        },
+        {
+          "name": "rcc-operating-envelope",
+          "command": [
+            "python3",
+            "tests/verify_rcc_operating_envelope.py"
+          ],
+          "exit": 1,
+          "seconds": 0.05,
+          "log": "rcc-operating-envelope.log",
+          "log_sha256": "5dd9de5dc9d7b56a3b9f6d9b2e35d03ab15ae6e27d846de08a08a9279d033135",
+          "log_hash_matches": true
+        },
+        {
+          "name": "rcc-operating-envelope-retry2",
+          "command": [
+            "python3",
+            "tests/verify_rcc_operating_envelope.py"
+          ],
+          "exit": 0,
+          "seconds": 1.81,
+          "log": "rcc-operating-envelope-retry2.log",
+          "log_sha256": "903c53b88e93d775cdf2525afeecc5b4670e7912e7cbd2e650b526df8fb2faf1",
+          "log_hash_matches": true
+        },
+        {
+          "name": "rtc-evidence",
+          "command": [
+            "python3",
+            "tests/verify_rtc_remaining_evidence.py"
+          ],
+          "exit": 0,
+          "seconds": 26.544,
+          "log": "rtc-evidence.log",
+          "log_sha256": "51db0fca79e0320395ca23e56e2ea09bbb28467852b81b8953a46b928ef0ca36",
+          "log_hash_matches": true
+        },
+        {
+          "name": "l052-own-source",
+          "command": [
+            "python3",
+            "ci/verify-l052-lse-data.py",
+            "--sources",
+            "sources/vendor",
+            "--data",
+            "cw32-data/data",
+            "--out",
+            "build/audit/stage70-l052-lse.json"
+          ],
+          "exit": 0,
+          "seconds": 6.246,
+          "log": "l052-own-source.log",
+          "log_sha256": "555f177755f8bf18c15908a660c10262aa1ef33b94cc00b97e1b34eb043afe72",
+          "log_hash_matches": true
+        },
+        {
+          "name": "hardware-source-provenance",
+          "command": [
+            "python3",
+            "cw32-data/tools/source_provenance.py",
+            "--sources",
+            "sources/vendor"
+          ],
+          "exit": 0,
+          "seconds": 10.895,
+          "log": "hardware-source-provenance.log",
+          "log_sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f",
+          "log_hash_matches": true
+        }
+      ],
+      "historical_failure": "One operating-envelope invocation lacked CW32_SOURCES; its failing receipt is retained and the same command succeeded after explicit locked-source configuration."
+    }
+  },
+  "history": [
+    {
+      "finding": "First normal C8 library build failed on direct integer comparison with typed AUTOTRIM Prescaler.",
+      "old_build_rs_sha256": "38f1fd76a3d5d76ab4ae112c728c0a849daab372b9b5e904b063942e4d2b17c9",
+      "correction": "Use prs().to_bits() != 0, preserving documented raw PRS 1..15.",
+      "failed_exit": 101,
+      "failed_log_sha256": "64c529897d147906ab4a2931c2621de27c94c9486a1d1be1c9740a9134b02153",
+      "resolved": true
+    },
+    {
+      "finding": "source_clock_bounds Rustdoc omitted the new exact-L052 aliases.",
+      "correction": "Approved comment-only roster correction; method body unchanged.",
+      "resolved": true
+    },
+    {
+      "finding": "Four unreferenced emitted STABLE constants and an unused GPIOC initializer produced warnings.",
+      "correction": "Retain all native mask layout checks but omit unused constants; use one definite assignment for GPIOC. No register operation, predicate or ordering changed.",
+      "reviewed_patch_sha256": "d6b28b245aac25c0a56f40a50d40fde209d2753a9efa759bf019eb61f3c2b7c5",
+      "resolved": true
+    }
+  ],
+  "source_authority": {
+    "status": "matched",
+    "scope": "external locked evidence read only; no distribution of source bytes",
+    "records": [
+      {
+        "ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+        "actual_sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+        "expected_sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41"
+      },
+      {
+        "ref": "text:CW32L052_UserManual_CN_V1.5.txt",
+        "actual_sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb",
+        "expected_sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb"
+      },
+      {
+        "ref": "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+        "actual_sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+        "expected_sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f"
+      },
+      {
+        "ref": "text:CW32L052_DataSheet_CN_V1.3.txt",
+        "actual_sha256": "8b1d9ac2caafd9e81dc5292f68bf1b1b04f0fef5a612bf1271edc9b77067be7c",
+        "expected_sha256": "8b1d9ac2caafd9e81dc5292f68bf1b1b04f0fef5a612bf1271edc9b77067be7c"
+      },
+      {
+        "ref": "vendor:CW32L052_StandardPeripheralLib_V1.4.zip",
+        "actual_sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+        "expected_sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/SVD/CW32L052.svd",
+        "actual_sha256": "78920e75111aa9845d9f66a2f305f96ec5577cde8c52543f0fa1d708e53867c7",
+        "expected_sha256": "78920e75111aa9845d9f66a2f305f96ec5577cde8c52543f0fa1d708e53867c7"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/WHXY.CW32L052_DFP.pdsc",
+        "actual_sha256": "395db42c49f85d953349dbaad6d35185ef1ce023b6e90d7d44986b01a0e20781",
+        "expected_sha256": "395db42c49f85d953349dbaad6d35185ef1ce023b6e90d7d44986b01a0e20781"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+        "actual_sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1",
+        "expected_sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_adc.h",
+        "actual_sha256": "f14df878f5cb5ddb1bba79c816a4c8db404e54e535fac11a99bc15b30f1e2ce7",
+        "expected_sha256": "f14df878f5cb5ddb1bba79c816a4c8db404e54e535fac11a99bc15b30f1e2ce7"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_autotrim.h",
+        "actual_sha256": "2d2aeb18384833a1576d00d1a935612cf4d4d80124e2c1f979862c9dface7fce",
+        "expected_sha256": "2d2aeb18384833a1576d00d1a935612cf4d4d80124e2c1f979862c9dface7fce"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_btim.h",
+        "actual_sha256": "0fc07478153cbdb40ce456546ab1d18f5878336ef03afa1d772b81c8f5a3a66f",
+        "expected_sha256": "0fc07478153cbdb40ce456546ab1d18f5878336ef03afa1d772b81c8f5a3a66f"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_crc.h",
+        "actual_sha256": "2d0bdd4484261fa8fbff0d69e9323e628ee736bd339ed0889ce19f875474db50",
+        "expected_sha256": "2d0bdd4484261fa8fbff0d69e9323e628ee736bd339ed0889ce19f875474db50"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_dma.h",
+        "actual_sha256": "c137e7b6502d54ff9fcb50f954dcddac2758ce8803c189c4bf78f6401fc74693",
+        "expected_sha256": "c137e7b6502d54ff9fcb50f954dcddac2758ce8803c189c4bf78f6401fc74693"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_flash.h",
+        "actual_sha256": "737255227573a2b804fd38b409dcb3f502d51ebdd83debf489ac3f59e4f3c44a",
+        "expected_sha256": "737255227573a2b804fd38b409dcb3f502d51ebdd83debf489ac3f59e4f3c44a"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gpio.h",
+        "actual_sha256": "59f0d8904b2724ddbc137287d80f83297eb903e1909763e84cf11c157514bc18",
+        "expected_sha256": "59f0d8904b2724ddbc137287d80f83297eb903e1909763e84cf11c157514bc18"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gtim.h",
+        "actual_sha256": "47031228fc70b30d79668c9666caea3691bb1c7a96199e505152717f0b94cdbb",
+        "expected_sha256": "47031228fc70b30d79668c9666caea3691bb1c7a96199e505152717f0b94cdbb"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_i2c.h",
+        "actual_sha256": "4d42d2f325ed4fa1a99d9f41da4b3278f4b2f7370ef4374678c07c888e115480",
+        "expected_sha256": "4d42d2f325ed4fa1a99d9f41da4b3278f4b2f7370ef4374678c07c888e115480"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_iwdt.h",
+        "actual_sha256": "7a07699d67d938b03ee6eede15a333fd12d3851bc6a42522f7c0a5b2f36e913c",
+        "expected_sha256": "7a07699d67d938b03ee6eede15a333fd12d3851bc6a42522f7c0a5b2f36e913c"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lcd.h",
+        "actual_sha256": "dda9c1bacfec8043a09c68e10e67bbae870d49f1814bfc7692940c22dd50e7d1",
+        "expected_sha256": "dda9c1bacfec8043a09c68e10e67bbae870d49f1814bfc7692940c22dd50e7d1"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lptim.h",
+        "actual_sha256": "1cfe4b4145d34c5c034b9afa9907fa7653a1d52fb2fe84722eb0cea6daeb93d9",
+        "expected_sha256": "1cfe4b4145d34c5c034b9afa9907fa7653a1d52fb2fe84722eb0cea6daeb93d9"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lvd.h",
+        "actual_sha256": "bd044fe229a5a8f583d72735a7d07c4ffe34621f3b241ff6cfc8e12a6e47626f",
+        "expected_sha256": "bd044fe229a5a8f583d72735a7d07c4ffe34621f3b241ff6cfc8e12a6e47626f"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_ram.h",
+        "actual_sha256": "0db1518feeb399d70f87e7d683539f0575a2685102b9ac25bbfecf64e8351890",
+        "expected_sha256": "0db1518feeb399d70f87e7d683539f0575a2685102b9ac25bbfecf64e8351890"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_rcc.h",
+        "actual_sha256": "8caac8b9e700fdf94aeaaaa7b0ce2140530a584d2e3d52b01b9205889d073ce1",
+        "expected_sha256": "8caac8b9e700fdf94aeaaaa7b0ce2140530a584d2e3d52b01b9205889d073ce1"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_rtc.h",
+        "actual_sha256": "ce9235b5be3ac6af493c7bc92e3d496550e97dfa581c462b35bdb9c05fa41737",
+        "expected_sha256": "ce9235b5be3ac6af493c7bc92e3d496550e97dfa581c462b35bdb9c05fa41737"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_uart.h",
+        "actual_sha256": "74b7386d7f44c4676505c21bc5ac78180775c21dbcf67f18a4157b4bdea78a67",
+        "expected_sha256": "74b7386d7f44c4676505c21bc5ac78180775c21dbcf67f18a4157b4bdea78a67"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_vc.h",
+        "actual_sha256": "7b2a9a833986adc8f7f51e7fcbd667bc6eee8e818b612411d91798c90e9e3f86",
+        "expected_sha256": "7b2a9a833986adc8f7f51e7fcbd667bc6eee8e818b612411d91798c90e9e3f86"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_wwdt.h",
+        "actual_sha256": "1b23c7c123e555def7a7c4930e5d249ef2e65cfa933c247ad6821ef6c8d8ff47",
+        "expected_sha256": "1b23c7c123e555def7a7c4930e5d249ef2e65cfa933c247ad6821ef6c8d8ff47"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_autotrim.c",
+        "actual_sha256": "532ebe39e90ebe0d7688ef261041d41b24fa1597e62557c306ee2c7b11bb6027",
+        "expected_sha256": "532ebe39e90ebe0d7688ef261041d41b24fa1597e62557c306ee2c7b11bb6027"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_gpio.c",
+        "actual_sha256": "eb0ff896e05b6cabea1ab3d9fc314f23763f37c2d4124bb80d06cac024edd6a7",
+        "expected_sha256": "eb0ff896e05b6cabea1ab3d9fc314f23763f37c2d4124bb80d06cac024edd6a7"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_lcd.c",
+        "actual_sha256": "7d2821c7e6ba7a5e92ae66c94ee070103027f508411e654f99183e44d64e9fac",
+        "expected_sha256": "7d2821c7e6ba7a5e92ae66c94ee070103027f508411e654f99183e44d64e9fac"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_lptim.c",
+        "actual_sha256": "88bd459d2c4c7084cd825231a4dcf513880ee97d7a328c63962e94f5529d9d6c",
+        "expected_sha256": "88bd459d2c4c7084cd825231a4dcf513880ee97d7a328c63962e94f5529d9d6c"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_rcc.c",
+        "actual_sha256": "e86db517f071da87adb6b47988964ee4e9ce44ff98130d58af8e9e3daed384ac",
+        "expected_sha256": "e86db517f071da87adb6b47988964ee4e9ce44ff98130d58af8e9e3daed384ac"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_rtc.c",
+        "actual_sha256": "0c60d92df121017c9a24267a6a79d2580b2310a31c13850ae35c13da068ccd8b",
+        "expected_sha256": "0c60d92df121017c9a24267a6a79d2580b2310a31c13850ae35c13da068ccd8b"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_spi.c",
+        "actual_sha256": "b31f1e2b7661177036d9f3aa316e24a96b74473df992d6f14095ee3754c6c0b5",
+        "expected_sha256": "b31f1e2b7661177036d9f3aa316e24a96b74473df992d6f14095ee3754c6c0b5"
+      },
+      {
+        "ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_uart.c",
+        "actual_sha256": "4cb850d1c762fe86e87aa6f3212b71238455df94e6fc1278c1b255f916921b50",
+        "expected_sha256": "4cb850d1c762fe86e87aa6f3212b71238455df94e6fc1278c1b255f916921b50"
+      }
+    ]
+  },
+  "original_archive_members": {
+    "status": "all 30 selected original SDK member chains matched; read-only in-memory extraction",
+    "archive_sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+    "records": [
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/SVD/CW32L052.svd",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/IdeSupport/EWARM/arm/config/debugger/WHXY/CW32L052.svd"
+        ],
+        "actual_sha256": "78920e75111aa9845d9f66a2f305f96ec5577cde8c52543f0fa1d708e53867c7",
+        "expected_sha256": "78920e75111aa9845d9f66a2f305f96ec5577cde8c52543f0fa1d708e53867c7",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/WHXY.CW32L052_DFP.pdsc",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0.pack",
+          "WHXY.CW32L052_DFP.pdsc"
+        ],
+        "actual_sha256": "395db42c49f85d953349dbaad6d35185ef1ce023b6e90d7d44986b01a0e20781",
+        "expected_sha256": "395db42c49f85d953349dbaad6d35185ef1ce023b6e90d7d44986b01a0e20781",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h"
+        ],
+        "actual_sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1",
+        "expected_sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_adc.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_adc.h"
+        ],
+        "actual_sha256": "f14df878f5cb5ddb1bba79c816a4c8db404e54e535fac11a99bc15b30f1e2ce7",
+        "expected_sha256": "f14df878f5cb5ddb1bba79c816a4c8db404e54e535fac11a99bc15b30f1e2ce7",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_autotrim.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_autotrim.h"
+        ],
+        "actual_sha256": "2d2aeb18384833a1576d00d1a935612cf4d4d80124e2c1f979862c9dface7fce",
+        "expected_sha256": "2d2aeb18384833a1576d00d1a935612cf4d4d80124e2c1f979862c9dface7fce",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_btim.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_btim.h"
+        ],
+        "actual_sha256": "0fc07478153cbdb40ce456546ab1d18f5878336ef03afa1d772b81c8f5a3a66f",
+        "expected_sha256": "0fc07478153cbdb40ce456546ab1d18f5878336ef03afa1d772b81c8f5a3a66f",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_crc.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_crc.h"
+        ],
+        "actual_sha256": "2d0bdd4484261fa8fbff0d69e9323e628ee736bd339ed0889ce19f875474db50",
+        "expected_sha256": "2d0bdd4484261fa8fbff0d69e9323e628ee736bd339ed0889ce19f875474db50",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_dma.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_dma.h"
+        ],
+        "actual_sha256": "c137e7b6502d54ff9fcb50f954dcddac2758ce8803c189c4bf78f6401fc74693",
+        "expected_sha256": "c137e7b6502d54ff9fcb50f954dcddac2758ce8803c189c4bf78f6401fc74693",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_flash.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_flash.h"
+        ],
+        "actual_sha256": "737255227573a2b804fd38b409dcb3f502d51ebdd83debf489ac3f59e4f3c44a",
+        "expected_sha256": "737255227573a2b804fd38b409dcb3f502d51ebdd83debf489ac3f59e4f3c44a",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gpio.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gpio.h"
+        ],
+        "actual_sha256": "59f0d8904b2724ddbc137287d80f83297eb903e1909763e84cf11c157514bc18",
+        "expected_sha256": "59f0d8904b2724ddbc137287d80f83297eb903e1909763e84cf11c157514bc18",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gtim.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gtim.h"
+        ],
+        "actual_sha256": "47031228fc70b30d79668c9666caea3691bb1c7a96199e505152717f0b94cdbb",
+        "expected_sha256": "47031228fc70b30d79668c9666caea3691bb1c7a96199e505152717f0b94cdbb",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_i2c.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_i2c.h"
+        ],
+        "actual_sha256": "4d42d2f325ed4fa1a99d9f41da4b3278f4b2f7370ef4374678c07c888e115480",
+        "expected_sha256": "4d42d2f325ed4fa1a99d9f41da4b3278f4b2f7370ef4374678c07c888e115480",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_iwdt.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_iwdt.h"
+        ],
+        "actual_sha256": "7a07699d67d938b03ee6eede15a333fd12d3851bc6a42522f7c0a5b2f36e913c",
+        "expected_sha256": "7a07699d67d938b03ee6eede15a333fd12d3851bc6a42522f7c0a5b2f36e913c",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lcd.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lcd.h"
+        ],
+        "actual_sha256": "dda9c1bacfec8043a09c68e10e67bbae870d49f1814bfc7692940c22dd50e7d1",
+        "expected_sha256": "dda9c1bacfec8043a09c68e10e67bbae870d49f1814bfc7692940c22dd50e7d1",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lptim.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lptim.h"
+        ],
+        "actual_sha256": "1cfe4b4145d34c5c034b9afa9907fa7653a1d52fb2fe84722eb0cea6daeb93d9",
+        "expected_sha256": "1cfe4b4145d34c5c034b9afa9907fa7653a1d52fb2fe84722eb0cea6daeb93d9",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lvd.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_lvd.h"
+        ],
+        "actual_sha256": "bd044fe229a5a8f583d72735a7d07c4ffe34621f3b241ff6cfc8e12a6e47626f",
+        "expected_sha256": "bd044fe229a5a8f583d72735a7d07c4ffe34621f3b241ff6cfc8e12a6e47626f",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_ram.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_ram.h"
+        ],
+        "actual_sha256": "0db1518feeb399d70f87e7d683539f0575a2685102b9ac25bbfecf64e8351890",
+        "expected_sha256": "0db1518feeb399d70f87e7d683539f0575a2685102b9ac25bbfecf64e8351890",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_rcc.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_rcc.h"
+        ],
+        "actual_sha256": "8caac8b9e700fdf94aeaaaa7b0ce2140530a584d2e3d52b01b9205889d073ce1",
+        "expected_sha256": "8caac8b9e700fdf94aeaaaa7b0ce2140530a584d2e3d52b01b9205889d073ce1",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_rtc.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_rtc.h"
+        ],
+        "actual_sha256": "ce9235b5be3ac6af493c7bc92e3d496550e97dfa581c462b35bdb9c05fa41737",
+        "expected_sha256": "ce9235b5be3ac6af493c7bc92e3d496550e97dfa581c462b35bdb9c05fa41737",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_uart.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_uart.h"
+        ],
+        "actual_sha256": "74b7386d7f44c4676505c21bc5ac78180775c21dbcf67f18a4157b4bdea78a67",
+        "expected_sha256": "74b7386d7f44c4676505c21bc5ac78180775c21dbcf67f18a4157b4bdea78a67",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_vc.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_vc.h"
+        ],
+        "actual_sha256": "7b2a9a833986adc8f7f51e7fcbd667bc6eee8e818b612411d91798c90e9e3f86",
+        "expected_sha256": "7b2a9a833986adc8f7f51e7fcbd667bc6eee8e818b612411d91798c90e9e3f86",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_wwdt.h",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_wwdt.h"
+        ],
+        "actual_sha256": "1b23c7c123e555def7a7c4930e5d249ef2e65cfa933c247ad6821ef6c8d8ff47",
+        "expected_sha256": "1b23c7c123e555def7a7c4930e5d249ef2e65cfa933c247ad6821ef6c8d8ff47",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_autotrim.c",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_autotrim.c"
+        ],
+        "actual_sha256": "532ebe39e90ebe0d7688ef261041d41b24fa1597e62557c306ee2c7b11bb6027",
+        "expected_sha256": "532ebe39e90ebe0d7688ef261041d41b24fa1597e62557c306ee2c7b11bb6027",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_gpio.c",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_gpio.c"
+        ],
+        "actual_sha256": "eb0ff896e05b6cabea1ab3d9fc314f23763f37c2d4124bb80d06cac024edd6a7",
+        "expected_sha256": "eb0ff896e05b6cabea1ab3d9fc314f23763f37c2d4124bb80d06cac024edd6a7",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_lcd.c",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_lcd.c"
+        ],
+        "actual_sha256": "7d2821c7e6ba7a5e92ae66c94ee070103027f508411e654f99183e44d64e9fac",
+        "expected_sha256": "7d2821c7e6ba7a5e92ae66c94ee070103027f508411e654f99183e44d64e9fac",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_lptim.c",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_lptim.c"
+        ],
+        "actual_sha256": "88bd459d2c4c7084cd825231a4dcf513880ee97d7a328c63962e94f5529d9d6c",
+        "expected_sha256": "88bd459d2c4c7084cd825231a4dcf513880ee97d7a328c63962e94f5529d9d6c",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_rcc.c",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_rcc.c"
+        ],
+        "actual_sha256": "e86db517f071da87adb6b47988964ee4e9ce44ff98130d58af8e9e3daed384ac",
+        "expected_sha256": "e86db517f071da87adb6b47988964ee4e9ce44ff98130d58af8e9e3daed384ac",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_rtc.c",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_rtc.c"
+        ],
+        "actual_sha256": "0c60d92df121017c9a24267a6a79d2580b2310a31c13850ae35c13da068ccd8b",
+        "expected_sha256": "0c60d92df121017c9a24267a6a79d2580b2310a31c13850ae35c13da068ccd8b",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_spi.c",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_spi.c"
+        ],
+        "actual_sha256": "b31f1e2b7661177036d9f3aa316e24a96b74473df992d6f14095ee3754c6c0b5",
+        "expected_sha256": "b31f1e2b7661177036d9f3aa316e24a96b74473df992d6f14095ee3754c6c0b5",
+        "matches": true
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_uart.c",
+        "member_chain": [
+          "CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_uart.c"
+        ],
+        "actual_sha256": "4cb850d1c762fe86e87aa6f3212b71238455df94e6fc1278c1b255f916921b50",
+        "expected_sha256": "4cb850d1c762fe86e87aa6f3212b71238455df94e6fc1278c1b255f916921b50",
+        "matches": true
+      }
+    ]
+  },
+  "native_controls": {
+    "status": "all 98 native controls match original source and unchanged curated IR",
+    "exception": "Existing own-RM RTC.COMPEN.FREQ removal applied before comparing the selected SVD; no source correction introduced here.",
+    "records": [
+      {
+        "peripheral": "AUTOTRIM",
+        "register": "CR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "FLASH",
+        "register": "CR2",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "DIR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "OPENDRAIN",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "PDR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "PUR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "AFRH",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "AFRL",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "ANALOG",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "RISEIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "FALLIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "HIGHIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "LOWIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "LOCK",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOA",
+        "register": "FILTER",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "DIR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "OPENDRAIN",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "PDR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "PUR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "AFRH",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "AFRL",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "ANALOG",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "RISEIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "FALLIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "HIGHIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "LOWIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "LOCK",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOB",
+        "register": "FILTER",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "DIR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "OPENDRAIN",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "PDR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "PUR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "AFRH",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "AFRL",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "ANALOG",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "RISEIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "FALLIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "HIGHIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "LOWIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "LOCK",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOC",
+        "register": "FILTER",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "DIR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "OPENDRAIN",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "PDR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "PUR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "AFRH",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "AFRL",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "ANALOG",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "RISEIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "FALLIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "HIGHIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "LOWIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "LOCK",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOD",
+        "register": "FILTER",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "DIR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "OPENDRAIN",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "PDR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "PUR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "AFRH",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "AFRL",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "ANALOG",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "RISEIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "FALLIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "HIGHIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "LOWIE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "LOCK",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "GPIOF",
+        "register": "FILTER",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "LCD",
+        "register": "CR0",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true,
+        "source_normalization": "Trim own-SVD trailing whitespace in field names, as existing import does."
+      },
+      {
+        "peripheral": "LCD",
+        "register": "CR1",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true,
+        "source_normalization": "Trim own-SVD trailing whitespace in field names, as existing import does."
+      },
+      {
+        "peripheral": "LPTIM",
+        "register": "CFGR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "LPTIM",
+        "register": "CR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "LVD",
+        "register": "CR0",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "LVD",
+        "register": "CR1",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "RTC",
+        "register": "CR0",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "RTC",
+        "register": "CR1",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "RTC",
+        "register": "CR2",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "RTC",
+        "register": "COMPEN",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "CR0",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "CR1",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "IER",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "ISR",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "HSI",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "HSE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "LSI",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "LSE",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "AHBEN",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "APBEN2",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "APBEN1",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "AHBRST",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "APBRST2",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "APBRST1",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "SYSCTRL",
+        "register": "MCO",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true,
+        "source_normalization": "Trim own-SVD trailing whitespace in field names, as existing import does."
+      },
+      {
+        "peripheral": "UART1",
+        "register": "CR1",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "UART1",
+        "register": "CR2",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "UART2",
+        "register": "CR1",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "UART2",
+        "register": "CR2",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "UART3",
+        "register": "CR1",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      },
+      {
+        "peripheral": "UART3",
+        "register": "CR2",
+        "original_fieldset_matches": true,
+        "original_offset_matches": true,
+        "original_access_matches": true,
+        "curated_fieldset_matches": true,
+        "curated_offset_matches": true,
+        "curated_access_matches": true
+      }
+    ]
+  },
+  "admission_facts": {
+    "status": "read-only generated admission facts match own policy; generic has no capability",
+    "rows": [
+      {
+        "chip": "CW32L052",
+        "lsi_sysclk": null,
+        "startup_hardware_present": false,
+        "startup_hardware_matches_own_policy": true,
+        "pc4_public_pin": false,
+        "standalone_awt_absent": true,
+        "sysctrl_irq": [
+          {
+            "name": "SYSCTRL",
+            "number": 4
+          }
+        ],
+        "own_sysctrl_version": "cw32l052_v1",
+        "rtc_own_envelope_matches_lsi_policy": true,
+        "rtc_source": "LSI",
+        "rtc_source_encoding": 2,
+        "calendar_divisor": 32768,
+        "hsi_frequency_hz": 48000000,
+        "factory_hsi_trim_address": 1051136,
+        "bus_limits": [
+          1800,
+          24000000,
+          48000000
+        ],
+        "memory": [],
+        "native_gates": [
+          {
+            "peripheral": "RTC",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "AUTOTRIM",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART1",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART2",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART3",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOA",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOB",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOC",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOD",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOF",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "LPTIM",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "LCD",
+            "native_gate_reset_matches": true
+          }
+        ]
+      },
+      {
+        "chip": "CW32L052C8T6",
+        "lsi_sysclk": {
+          "awt_allowed_sources": [],
+          "factory_trim_address": 1051138,
+          "gpio_banks": [
+            "GPIOA",
+            "GPIOB",
+            "GPIOC",
+            "GPIOD",
+            "GPIOF"
+          ],
+          "gpio_filter_allowed_sources": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7
+          ],
+          "lsi_output_allowed_af": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lsi_output_pin": "PC4",
+          "maximum_hz": 33784,
+          "mco_allowed_sources": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            8,
+            9
+          ],
+          "minimum_hz": 31816,
+          "nominal_hz": 32800,
+          "rcc_irq": 4,
+          "rtc_allowed_sources": [
+            0,
+            4,
+            5,
+            6,
+            7
+          ],
+          "supply_mv": [
+            1650,
+            5500
+          ],
+          "temperature_c": [
+            -40,
+            85
+          ],
+          "uart_allowed_sources": [
+            0,
+            1,
+            2
+          ],
+          "uarts": [
+            "UART1",
+            "UART2",
+            "UART3"
+          ]
+        },
+        "startup_hardware_present": true,
+        "startup_hardware_matches_own_policy": true,
+        "pc4_public_pin": false,
+        "standalone_awt_absent": true,
+        "sysctrl_irq": [
+          {
+            "name": "SYSCTRL",
+            "number": 4
+          }
+        ],
+        "own_sysctrl_version": "cw32l052_v1",
+        "rtc_own_envelope_matches_lsi_policy": true,
+        "rtc_source": "LSI",
+        "rtc_source_encoding": 2,
+        "calendar_divisor": 32768,
+        "hsi_frequency_hz": 48000000,
+        "factory_hsi_trim_address": 1051136,
+        "bus_limits": [
+          1800,
+          24000000,
+          48000000
+        ],
+        "memory": [
+          [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ]
+        ],
+        "native_gates": [
+          {
+            "peripheral": "RTC",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "AUTOTRIM",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART1",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART2",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART3",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOA",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOB",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOC",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOD",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOF",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "LPTIM",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "LCD",
+            "native_gate_reset_matches": true
+          }
+        ]
+      },
+      {
+        "chip": "CW32L052R8S6",
+        "lsi_sysclk": {
+          "awt_allowed_sources": [],
+          "factory_trim_address": 1051138,
+          "gpio_banks": [
+            "GPIOA",
+            "GPIOB",
+            "GPIOC",
+            "GPIOD",
+            "GPIOF"
+          ],
+          "gpio_filter_allowed_sources": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7
+          ],
+          "lsi_output_allowed_af": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lsi_output_pin": "PC4",
+          "maximum_hz": 33784,
+          "mco_allowed_sources": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            8,
+            9
+          ],
+          "minimum_hz": 31816,
+          "nominal_hz": 32800,
+          "rcc_irq": 4,
+          "rtc_allowed_sources": [
+            0,
+            4,
+            5,
+            6,
+            7
+          ],
+          "supply_mv": [
+            1650,
+            5500
+          ],
+          "temperature_c": [
+            -40,
+            85
+          ],
+          "uart_allowed_sources": [
+            0,
+            1,
+            2
+          ],
+          "uarts": [
+            "UART1",
+            "UART2",
+            "UART3"
+          ]
+        },
+        "startup_hardware_present": true,
+        "startup_hardware_matches_own_policy": true,
+        "pc4_public_pin": true,
+        "standalone_awt_absent": true,
+        "sysctrl_irq": [
+          {
+            "name": "SYSCTRL",
+            "number": 4
+          }
+        ],
+        "own_sysctrl_version": "cw32l052_v1",
+        "rtc_own_envelope_matches_lsi_policy": true,
+        "rtc_source": "LSI",
+        "rtc_source_encoding": 2,
+        "calendar_divisor": 32768,
+        "hsi_frequency_hz": 48000000,
+        "factory_hsi_trim_address": 1051136,
+        "bus_limits": [
+          1800,
+          24000000,
+          48000000
+        ],
+        "memory": [
+          [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ]
+        ],
+        "native_gates": [
+          {
+            "peripheral": "RTC",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "AUTOTRIM",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART1",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART2",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART3",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOA",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOB",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOC",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOD",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOF",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "LPTIM",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "LCD",
+            "native_gate_reset_matches": true
+          }
+        ]
+      },
+      {
+        "chip": "CW32L052R8T6",
+        "lsi_sysclk": {
+          "awt_allowed_sources": [],
+          "factory_trim_address": 1051138,
+          "gpio_banks": [
+            "GPIOA",
+            "GPIOB",
+            "GPIOC",
+            "GPIOD",
+            "GPIOF"
+          ],
+          "gpio_filter_allowed_sources": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            6,
+            7
+          ],
+          "lsi_output_allowed_af": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "lsi_output_pin": "PC4",
+          "maximum_hz": 33784,
+          "mco_allowed_sources": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            8,
+            9
+          ],
+          "minimum_hz": 31816,
+          "nominal_hz": 32800,
+          "rcc_irq": 4,
+          "rtc_allowed_sources": [
+            0,
+            4,
+            5,
+            6,
+            7
+          ],
+          "supply_mv": [
+            1650,
+            5500
+          ],
+          "temperature_c": [
+            -40,
+            85
+          ],
+          "uart_allowed_sources": [
+            0,
+            1,
+            2
+          ],
+          "uarts": [
+            "UART1",
+            "UART2",
+            "UART3"
+          ]
+        },
+        "startup_hardware_present": true,
+        "startup_hardware_matches_own_policy": true,
+        "pc4_public_pin": true,
+        "standalone_awt_absent": true,
+        "sysctrl_irq": [
+          {
+            "name": "SYSCTRL",
+            "number": 4
+          }
+        ],
+        "own_sysctrl_version": "cw32l052_v1",
+        "rtc_own_envelope_matches_lsi_policy": true,
+        "rtc_source": "LSI",
+        "rtc_source_encoding": 2,
+        "calendar_divisor": 32768,
+        "hsi_frequency_hz": 48000000,
+        "factory_hsi_trim_address": 1051136,
+        "bus_limits": [
+          1800,
+          24000000,
+          48000000
+        ],
+        "memory": [
+          [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ]
+        ],
+        "native_gates": [
+          {
+            "peripheral": "RTC",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "AUTOTRIM",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART1",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART2",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "UART3",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOA",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOB",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOC",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOD",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "GPIOF",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "LPTIM",
+            "native_gate_reset_matches": true
+          },
+          {
+            "peripheral": "LCD",
+            "native_gate_reset_matches": true
+          }
+        ]
+      }
+    ]
+  },
+  "complete_projection_preservation": {
+    "status": "independent read-only projection correspondence after coordinated generation; no generator or test executed by reviewer",
+    "whole_original_policy_tree_equal": true,
+    "electrical_only_correct_policy_digest": true,
+    "chip_roster_equal": true,
+    "chip_count": 54,
+    "lsi_counts": [
+      26,
+      29
+    ],
+    "objects": [
+      {
+        "chip": "CW32A030",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "d91ad0ee464f27748e2c6ec47148dc82e850c13085d0255738498e8d94c08de8",
+        "candidate_sha256": "d91ad0ee464f27748e2c6ec47148dc82e850c13085d0255738498e8d94c08de8"
+      },
+      {
+        "chip": "CW32A030C8T7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "03a3521ea6e694ad73c099ee24f65573a09bafa4d3f2e08a03f99b27ee114b99",
+        "candidate_sha256": "03a3521ea6e694ad73c099ee24f65573a09bafa4d3f2e08a03f99b27ee114b99"
+      },
+      {
+        "chip": "CW32F002",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "939cfb2f20eaa1cfdac4bb6970b41f1962eb01bd722791b81096d8a1a907fe98",
+        "candidate_sha256": "939cfb2f20eaa1cfdac4bb6970b41f1962eb01bd722791b81096d8a1a907fe98"
+      },
+      {
+        "chip": "CW32F002F3P7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "844db2da4e468b401eb90f0b7bf7ac1024ae374c884b1c680f0fed3f1b3cd37d",
+        "candidate_sha256": "844db2da4e468b401eb90f0b7bf7ac1024ae374c884b1c680f0fed3f1b3cd37d"
+      },
+      {
+        "chip": "CW32F002F3U7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "0e760416f8e5e7cf85fd3c9a0f0bbac8aaae0342eeba2680bbd02842badfe858",
+        "candidate_sha256": "0e760416f8e5e7cf85fd3c9a0f0bbac8aaae0342eeba2680bbd02842badfe858"
+      },
+      {
+        "chip": "CW32F003",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "80b05dece24755b5b0c3063a3c7dff35c1738e632634177593a09dc2fa0186f5",
+        "candidate_sha256": "80b05dece24755b5b0c3063a3c7dff35c1738e632634177593a09dc2fa0186f5"
+      },
+      {
+        "chip": "CW32F003E4P7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "7b8f4de295706d6d0407176c2351a6694f4bb35470a1599aee2cc5239decb992",
+        "candidate_sha256": "7b8f4de295706d6d0407176c2351a6694f4bb35470a1599aee2cc5239decb992"
+      },
+      {
+        "chip": "CW32F003F4P7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "dd9aaf0dffb5cd8f9855e888c2b6b522725c4bfa8977ed63071276b85a370197",
+        "candidate_sha256": "dd9aaf0dffb5cd8f9855e888c2b6b522725c4bfa8977ed63071276b85a370197"
+      },
+      {
+        "chip": "CW32F003F4U7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "2597258f4baee6f7d5498a084d7b232b085e69dca6c11dd35acea3c71d014e5c",
+        "candidate_sha256": "2597258f4baee6f7d5498a084d7b232b085e69dca6c11dd35acea3c71d014e5c"
+      },
+      {
+        "chip": "CW32F020",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "bc3e3cea2da9b1a9807cf7d2e230d3a5166eca4f56d9de7ba0a1bd41e3959b06",
+        "candidate_sha256": "bc3e3cea2da9b1a9807cf7d2e230d3a5166eca4f56d9de7ba0a1bd41e3959b06"
+      },
+      {
+        "chip": "CW32F020C6U7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "dc6aac4e3c1d214cae77b0c7df33c82b580591494e4111df41e6de23eb2096ce",
+        "candidate_sha256": "dc6aac4e3c1d214cae77b0c7df33c82b580591494e4111df41e6de23eb2096ce"
+      },
+      {
+        "chip": "CW32F020F6U7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "2ca511dee36c0cc14bf222a2512e324146d7a5f1c124a77869cb40130cca85e6",
+        "candidate_sha256": "2ca511dee36c0cc14bf222a2512e324146d7a5f1c124a77869cb40130cca85e6"
+      },
+      {
+        "chip": "CW32F020K6U7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "fc17d93fb4738e63a20d1e771a565a3027df59c829df0e73562204ed748c1b34",
+        "candidate_sha256": "fc17d93fb4738e63a20d1e771a565a3027df59c829df0e73562204ed748c1b34"
+      },
+      {
+        "chip": "CW32F030",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "c53fafbed22cb171377111974ca8a6d4583187c6bd52c03d892d9a3b5cbb291f",
+        "candidate_sha256": "c53fafbed22cb171377111974ca8a6d4583187c6bd52c03d892d9a3b5cbb291f"
+      },
+      {
+        "chip": "CW32F030C8",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "0549c48df097d14678d86d75620ad5674f35e005348b6e353dee3b48f31f9677",
+        "candidate_sha256": "0549c48df097d14678d86d75620ad5674f35e005348b6e353dee3b48f31f9677"
+      },
+      {
+        "chip": "CW32F030C8T7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "cb5afb73c024aaabd144217daea8a24f3ac328e9e2ec50ed471ce2bae33e607f",
+        "candidate_sha256": "cb5afb73c024aaabd144217daea8a24f3ac328e9e2ec50ed471ce2bae33e607f"
+      },
+      {
+        "chip": "CW32F030F6",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "5ca5e15d5934592295532ca056cd58430c7a666126b881823599e2a56535ba25",
+        "candidate_sha256": "5ca5e15d5934592295532ca056cd58430c7a666126b881823599e2a56535ba25"
+      },
+      {
+        "chip": "CW32F030F6P7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "5c55afe4dc6f9a54d7b16d8dcc1405ecb483f34d2645857dae130cd5945bc03f",
+        "candidate_sha256": "5c55afe4dc6f9a54d7b16d8dcc1405ecb483f34d2645857dae130cd5945bc03f"
+      },
+      {
+        "chip": "CW32F030F8",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "a453befe1b54c8467e0e08383345851532e2ddeb8d829741ce16978e0a95cca4",
+        "candidate_sha256": "a453befe1b54c8467e0e08383345851532e2ddeb8d829741ce16978e0a95cca4"
+      },
+      {
+        "chip": "CW32F030F8V7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "83e16edd91c3c748e02ab933020226f695b8587a4cd8ff6041c0698a68697b6a",
+        "candidate_sha256": "83e16edd91c3c748e02ab933020226f695b8587a4cd8ff6041c0698a68697b6a"
+      },
+      {
+        "chip": "CW32F030K8",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "a68fd1d881570f37341b04ce57a928802cc830dc9739a091ce00bdc8617ccf58",
+        "candidate_sha256": "a68fd1d881570f37341b04ce57a928802cc830dc9739a091ce00bdc8617ccf58"
+      },
+      {
+        "chip": "CW32F030K8T7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "d5331c0a4657d0d470875d1197cbbb2f534c6cc7f7ca2b5116f32576f551a1f4",
+        "candidate_sha256": "d5331c0a4657d0d470875d1197cbbb2f534c6cc7f7ca2b5116f32576f551a1f4"
+      },
+      {
+        "chip": "CW32F030K8U7",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "7c298e6c5c65af8a77a5abc405b6468a146320316163f653c4258b36821108ed",
+        "candidate_sha256": "7c298e6c5c65af8a77a5abc405b6468a146320316163f653c4258b36821108ed"
+      },
+      {
+        "chip": "CW32L010",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "095b29fdae5324cdacbb312a06b700e3fa7af63c3df85e3b5a799c0ac8a3b20f",
+        "candidate_sha256": "095b29fdae5324cdacbb312a06b700e3fa7af63c3df85e3b5a799c0ac8a3b20f"
+      },
+      {
+        "chip": "CW32L010F8P6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "1b454d60d166a1fea4bb8816e67922d4e03b221b721a96a54759e36e1065b136",
+        "candidate_sha256": "1b454d60d166a1fea4bb8816e67922d4e03b221b721a96a54759e36e1065b136"
+      },
+      {
+        "chip": "CW32L010F8U6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "6810d2891db1e98c3ac5cd627262676fa4d836c2e14fa9f98dad67ec530a9fc4",
+        "candidate_sha256": "6810d2891db1e98c3ac5cd627262676fa4d836c2e14fa9f98dad67ec530a9fc4"
+      },
+      {
+        "chip": "CW32L010Y8M6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "9038838494a2e172db233befe054083e09c5cdf7018ec07d962c50036f29d67e",
+        "candidate_sha256": "9038838494a2e172db233befe054083e09c5cdf7018ec07d962c50036f29d67e"
+      },
+      {
+        "chip": "CW32L011",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "9fba04d8cc1b67ee51a9f944a47eee81c54d4eadfd6a661fb98ffc9d9ba7e2af",
+        "candidate_sha256": "9fba04d8cc1b67ee51a9f944a47eee81c54d4eadfd6a661fb98ffc9d9ba7e2af"
+      },
+      {
+        "chip": "CW32L011K8T6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "da5c746ae34d1baf4f88ce96f0aaeafa80e644c0175d0870be0d94265bc2cf42",
+        "candidate_sha256": "da5c746ae34d1baf4f88ce96f0aaeafa80e644c0175d0870be0d94265bc2cf42"
+      },
+      {
+        "chip": "CW32L011K8U6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "52aeda56c105b08506c20f278bcc7493b9be3bee10aff3c73c56e8f17d7330a0",
+        "candidate_sha256": "52aeda56c105b08506c20f278bcc7493b9be3bee10aff3c73c56e8f17d7330a0"
+      },
+      {
+        "chip": "CW32L012",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "7cb60384721c0c62ab9e8776a854e03aa3aa83c94e541e1c3e3022a125ef0ba7",
+        "candidate_sha256": "7cb60384721c0c62ab9e8776a854e03aa3aa83c94e541e1c3e3022a125ef0ba7"
+      },
+      {
+        "chip": "CW32L012C8T6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "669afb117738d56db7950fed62c39376609d7c05035d4e09d93ed6b43bfec636",
+        "candidate_sha256": "669afb117738d56db7950fed62c39376609d7c05035d4e09d93ed6b43bfec636"
+      },
+      {
+        "chip": "CW32L012C8U6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "fd8b15e1931fcc9614739d0494ed8fb347d4fcd1374c0523d69ed968d23b7bc4",
+        "candidate_sha256": "fd8b15e1931fcc9614739d0494ed8fb347d4fcd1374c0523d69ed968d23b7bc4"
+      },
+      {
+        "chip": "CW32L031",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "d1b35154292118a111f7aa0500c055753d210e186e9841b35a85dc635cb8fdae",
+        "candidate_sha256": "d1b35154292118a111f7aa0500c055753d210e186e9841b35a85dc635cb8fdae"
+      },
+      {
+        "chip": "CW32L031C8T6",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "ec52265fe7eb81aaf2714f81b48273095e41205937b5b48945f3804249cfc232",
+        "candidate_sha256": "ec52265fe7eb81aaf2714f81b48273095e41205937b5b48945f3804249cfc232"
+      },
+      {
+        "chip": "CW32L031C8U6",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "ca2e0b9c4befc3bcbe7ca98ed04d1672272e80a979f03648c5f24a1d1657a51b",
+        "candidate_sha256": "ca2e0b9c4befc3bcbe7ca98ed04d1672272e80a979f03648c5f24a1d1657a51b"
+      },
+      {
+        "chip": "CW32L031F8P6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "6ef4d5e42af74abe38747c46263cf5893d5d5fd8cccc14b3bb301b5f6b95c3a6",
+        "candidate_sha256": "6ef4d5e42af74abe38747c46263cf5893d5d5fd8cccc14b3bb301b5f6b95c3a6"
+      },
+      {
+        "chip": "CW32L031F8U6",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "599a3727740a429b0b3df45c46822c1704eb82776a09f9ffccc682eb2e6c688d",
+        "candidate_sha256": "599a3727740a429b0b3df45c46822c1704eb82776a09f9ffccc682eb2e6c688d"
+      },
+      {
+        "chip": "CW32L031K8U6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "14f8e3fb5a85dea12b959f9a5257f1a8fbfcfaaf359d43ac7a0a6e70f8724a92",
+        "candidate_sha256": "14f8e3fb5a85dea12b959f9a5257f1a8fbfcfaaf359d43ac7a0a6e70f8724a92"
+      },
+      {
+        "chip": "CW32L031K8V6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "ad6b164fc945dee06da2594c2f34c0b1274d3ff84934811b2e3f7cf9b9188b69",
+        "candidate_sha256": "ad6b164fc945dee06da2594c2f34c0b1274d3ff84934811b2e3f7cf9b9188b69"
+      },
+      {
+        "chip": "CW32L052",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "88074fd086781a92bf4e4d58d9358aa10ba62bd0c9f74404fbe22d7568a1336e",
+        "candidate_sha256": "88074fd086781a92bf4e4d58d9358aa10ba62bd0c9f74404fbe22d7568a1336e"
+      },
+      {
+        "chip": "CW32L052C8T6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": true,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "1928470ba7e15b5523934a8006a49b6ce65eaa903390b2001874dc618ed735c5",
+        "candidate_sha256": "5beeb3e919c17576125380c6c07a1fe2fc65c0ead2464ccf66662c66cf30b87e"
+      },
+      {
+        "chip": "CW32L052R8S6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": true,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "81ea201b2b038eb094ae0de59381c2fc46b4b7c4f453b3627a6930dcf99d7d32",
+        "candidate_sha256": "e364fda40a011a5c6d7c1bfe3899bef546e7e82c657d59d776f1bcfbf70f934c"
+      },
+      {
+        "chip": "CW32L052R8T6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": true,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "9a961edd1071ed13a9591d804de6c85dc5d9d38077be7f43272cb4ac92f78ce6",
+        "candidate_sha256": "f093c7eb7577611d80396e5af69a4c759564cca10990048b7d7359214b9770ba"
+      },
+      {
+        "chip": "CW32L083",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "db0bdfeb991355333fdc2aa19322c5143d45ea629eb216a7385deebc717f1d83",
+        "candidate_sha256": "db0bdfeb991355333fdc2aa19322c5143d45ea629eb216a7385deebc717f1d83"
+      },
+      {
+        "chip": "CW32L083MCT6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "6f89092657202d404cd730698c28aa816dc276dca9218ed5caf41192f92fa278",
+        "candidate_sha256": "6f89092657202d404cd730698c28aa816dc276dca9218ed5caf41192f92fa278"
+      },
+      {
+        "chip": "CW32L083RBT6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "643f82ae1ce85a88c4361037d3207121e09fe5c20d4476fb7f089e01a66ee3c1",
+        "candidate_sha256": "643f82ae1ce85a88c4361037d3207121e09fe5c20d4476fb7f089e01a66ee3c1"
+      },
+      {
+        "chip": "CW32L083RCS6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "8be420d1d0c994ede96148fde9673cd0ade65f3e816a72d3deeaa4f05be80afa",
+        "candidate_sha256": "8be420d1d0c994ede96148fde9673cd0ade65f3e816a72d3deeaa4f05be80afa"
+      },
+      {
+        "chip": "CW32L083RCT6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "c058219872fef58aba3c24b459fa3251bdd214cfb2422986dcf14f8683037434",
+        "candidate_sha256": "c058219872fef58aba3c24b459fa3251bdd214cfb2422986dcf14f8683037434"
+      },
+      {
+        "chip": "CW32L083VCT6",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "f89a573eb9cc4faac353d61c79e63828dbb13edd4944dfeeb25e3c1a90f1fd6b",
+        "candidate_sha256": "f89a573eb9cc4faac353d61c79e63828dbb13edd4944dfeeb25e3c1a90f1fd6b"
+      },
+      {
+        "chip": "CW32R031",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "5f419588f60ee528bc6ed70999d86682f1cde320935819213a7e707e942bde6b",
+        "candidate_sha256": "5f419588f60ee528bc6ed70999d86682f1cde320935819213a7e707e942bde6b"
+      },
+      {
+        "chip": "CW32R031C8U6",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "0152fc1dff5012a8a5420afe2838f912c89e1992768f6b0b83c7316eb5078fde",
+        "candidate_sha256": "0152fc1dff5012a8a5420afe2838f912c89e1992768f6b0b83c7316eb5078fde"
+      },
+      {
+        "chip": "CW32W031",
+        "baseline_lsi_sysclk": false,
+        "candidate_lsi_sysclk": false,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "538bd5f6ddb9c0af845464773607ddaa4176e7a9b64c177e39e14990ec4d9f4c",
+        "candidate_sha256": "538bd5f6ddb9c0af845464773607ddaa4176e7a9b64c177e39e14990ec4d9f4c"
+      },
+      {
+        "chip": "CW32W031R8U6",
+        "baseline_lsi_sysclk": true,
+        "candidate_lsi_sysclk": true,
+        "capability_scope_matches": true,
+        "exact_target_payload_matches_policy": null,
+        "whole_object_unchanged_after_exact_capability_removal": true,
+        "baseline_sha256": "e944e3be338adb47c4b5a75767a078e9f47e641acb7d823a0aaa1c873be06d30",
+        "candidate_sha256": "e944e3be338adb47c4b5a75767a078e9f47e641acb7d823a0aaa1c873be06d30"
+      }
+    ],
+    "unchanged_trees": [
+      {
+        "path": "cw32-data/registers",
+        "baseline_files": 137,
+        "candidate_files": 137,
+        "exact_bytes_equal": true
+      },
+      {
+        "path": "cw32-data/data/registers",
+        "baseline_files": 274,
+        "candidate_files": 274,
+        "exact_bytes_equal": true
+      },
+      {
+        "path": "cw32-metapac/src/registers",
+        "baseline_files": 138,
+        "candidate_files": 138,
+        "exact_bytes_equal": true
+      },
+      {
+        "path": "cw32-metapac/src/peripherals",
+        "baseline_files": 138,
+        "candidate_files": 138,
+        "exact_bytes_equal": true
+      }
+    ],
+    "unchanged_pac_and_vectors": [
+      {
+        "path": "cw32-metapac/src/chips/cw32a030/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32a030/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32a030c8t7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32a030c8t7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f002/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "46c1b1a69553a6684a74451d4d879af5901ce48b371e51665c46b6657771d639"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f002/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "a44662221535a22ae2e3ba654654660e941359f2265e28ef17c765b17f5425be"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f002f3p7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "46c1b1a69553a6684a74451d4d879af5901ce48b371e51665c46b6657771d639"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f002f3p7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "a44662221535a22ae2e3ba654654660e941359f2265e28ef17c765b17f5425be"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f002f3u7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "46c1b1a69553a6684a74451d4d879af5901ce48b371e51665c46b6657771d639"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f002f3u7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "a44662221535a22ae2e3ba654654660e941359f2265e28ef17c765b17f5425be"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f003/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "f1f5e92de5b9b7f998ce8a4c8232d43bf9dae5d62297600cefc22e5613d5de20"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f003/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "c7295766b1d27ced5eceaaad6220764bb8cfe4ba4729e616b79b37bfe7ebb509"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f003e4p7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "f1f5e92de5b9b7f998ce8a4c8232d43bf9dae5d62297600cefc22e5613d5de20"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f003e4p7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "c7295766b1d27ced5eceaaad6220764bb8cfe4ba4729e616b79b37bfe7ebb509"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f003f4p7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "f1f5e92de5b9b7f998ce8a4c8232d43bf9dae5d62297600cefc22e5613d5de20"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f003f4p7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "c7295766b1d27ced5eceaaad6220764bb8cfe4ba4729e616b79b37bfe7ebb509"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f003f4u7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "f1f5e92de5b9b7f998ce8a4c8232d43bf9dae5d62297600cefc22e5613d5de20"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f003f4u7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "c7295766b1d27ced5eceaaad6220764bb8cfe4ba4729e616b79b37bfe7ebb509"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f020/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "2a26ef207e9f039983e54e29baebb713c7e9083db0f4efa465539233ea133cdb"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f020/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "df539cd997629b69dab8adefbca28438e7ff99aaa040f48b761b8318b3ce8565"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f020c6u7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "2a26ef207e9f039983e54e29baebb713c7e9083db0f4efa465539233ea133cdb"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f020c6u7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "df539cd997629b69dab8adefbca28438e7ff99aaa040f48b761b8318b3ce8565"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f020f6u7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "2a26ef207e9f039983e54e29baebb713c7e9083db0f4efa465539233ea133cdb"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f020f6u7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "df539cd997629b69dab8adefbca28438e7ff99aaa040f48b761b8318b3ce8565"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f020k6u7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "2a26ef207e9f039983e54e29baebb713c7e9083db0f4efa465539233ea133cdb"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f020k6u7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "df539cd997629b69dab8adefbca28438e7ff99aaa040f48b761b8318b3ce8565"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030c8/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030c8/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030c8t7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030c8t7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030f6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030f6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030f6p7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030f6p7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030f8/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030f8/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030f8v7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030f8v7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030k8/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030k8/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030k8t7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030k8t7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030k8u7/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "1fb55d93e796f4654aeb3da98f0ce29278a246b9b67a3282526d361b9d8d5ac9"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32f030k8u7/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "1864a5276db9af63cc4d072c6b9b2b431cda0f62764077cb604dc8e8f29efbe4"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l010/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "4e1562ea7e332d66bcbceeede3f09ae15036a5cf96131591850e094cfa01485f"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l010/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "b97c4902ca536d7153704a27f452642e756c63b48797b12ecd794b2d2ac52486"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l010f8p6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "4e1562ea7e332d66bcbceeede3f09ae15036a5cf96131591850e094cfa01485f"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l010f8p6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "b97c4902ca536d7153704a27f452642e756c63b48797b12ecd794b2d2ac52486"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l010f8u6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "4e1562ea7e332d66bcbceeede3f09ae15036a5cf96131591850e094cfa01485f"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l010f8u6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "b97c4902ca536d7153704a27f452642e756c63b48797b12ecd794b2d2ac52486"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l010y8m6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "4e1562ea7e332d66bcbceeede3f09ae15036a5cf96131591850e094cfa01485f"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l010y8m6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "b97c4902ca536d7153704a27f452642e756c63b48797b12ecd794b2d2ac52486"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l011/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "7e49c9ae51810892de836c6825742d44514745e1bdc3f115063488a1fdd8fe34"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l011/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "0ab3e33bb2bbb4ba48559636d13c4b5a97543cdf0b9f6f4d332679eed7a43648"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l011k8t6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "7e49c9ae51810892de836c6825742d44514745e1bdc3f115063488a1fdd8fe34"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l011k8t6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "0ab3e33bb2bbb4ba48559636d13c4b5a97543cdf0b9f6f4d332679eed7a43648"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l011k8u6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "7e49c9ae51810892de836c6825742d44514745e1bdc3f115063488a1fdd8fe34"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l011k8u6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "0ab3e33bb2bbb4ba48559636d13c4b5a97543cdf0b9f6f4d332679eed7a43648"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l012/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "82186eb97d0b027157a36c4e8e329ad5e56833688c407a39a7b7b216c33a3bab"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l012/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "7fa93508090df1c8877159c7a390493cc8be2cc255d406ed1f0387542e242d62"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l012c8t6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "82186eb97d0b027157a36c4e8e329ad5e56833688c407a39a7b7b216c33a3bab"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l012c8t6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "7fa93508090df1c8877159c7a390493cc8be2cc255d406ed1f0387542e242d62"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l012c8u6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "82186eb97d0b027157a36c4e8e329ad5e56833688c407a39a7b7b216c33a3bab"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l012c8u6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "7fa93508090df1c8877159c7a390493cc8be2cc255d406ed1f0387542e242d62"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031c8t6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031c8t6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031c8u6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031c8u6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031f8p6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031f8p6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031f8u6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031f8u6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031k8u6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031k8u6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031k8v6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l031k8v6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l052/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "2a789c2ef2d063f051d41f8edd0ee96d133b7b3be5e7cd3738e89fbd06015f7c"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l052/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "293d2229bdc681b742bfde86762f5230d0bcf0490b1d7104bffb2ffb6aee4d2d"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l052c8t6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "2a789c2ef2d063f051d41f8edd0ee96d133b7b3be5e7cd3738e89fbd06015f7c"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l052c8t6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "293d2229bdc681b742bfde86762f5230d0bcf0490b1d7104bffb2ffb6aee4d2d"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l052r8s6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "2a789c2ef2d063f051d41f8edd0ee96d133b7b3be5e7cd3738e89fbd06015f7c"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l052r8s6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "293d2229bdc681b742bfde86762f5230d0bcf0490b1d7104bffb2ffb6aee4d2d"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l052r8t6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "2a789c2ef2d063f051d41f8edd0ee96d133b7b3be5e7cd3738e89fbd06015f7c"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l052r8t6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "293d2229bdc681b742bfde86762f5230d0bcf0490b1d7104bffb2ffb6aee4d2d"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "5598d54bc8763ed605d95a128e83ae9ae4f8a86f480fa5757ca9e487363bfcfa"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "361eb12c7667f2f62fda200d685244a8dd7d3f87e5db60e6a21954adf3c37417"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083mct6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "5598d54bc8763ed605d95a128e83ae9ae4f8a86f480fa5757ca9e487363bfcfa"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083mct6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "361eb12c7667f2f62fda200d685244a8dd7d3f87e5db60e6a21954adf3c37417"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083rbt6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "5598d54bc8763ed605d95a128e83ae9ae4f8a86f480fa5757ca9e487363bfcfa"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083rbt6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "361eb12c7667f2f62fda200d685244a8dd7d3f87e5db60e6a21954adf3c37417"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083rcs6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "5598d54bc8763ed605d95a128e83ae9ae4f8a86f480fa5757ca9e487363bfcfa"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083rcs6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "361eb12c7667f2f62fda200d685244a8dd7d3f87e5db60e6a21954adf3c37417"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083rct6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "5598d54bc8763ed605d95a128e83ae9ae4f8a86f480fa5757ca9e487363bfcfa"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083rct6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "361eb12c7667f2f62fda200d685244a8dd7d3f87e5db60e6a21954adf3c37417"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083vct6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "5598d54bc8763ed605d95a128e83ae9ae4f8a86f480fa5757ca9e487363bfcfa"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32l083vct6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "361eb12c7667f2f62fda200d685244a8dd7d3f87e5db60e6a21954adf3c37417"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32r031/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32r031/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32r031c8u6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32r031c8u6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32w031/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32w031/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32w031r8u6/pac.rs",
+        "exact_bytes_equal": true,
+        "sha256": "9a612ca24aed468d57c70ab3dfd05a803f793d8d66a4a21447ffff1725af7852"
+      },
+      {
+        "path": "cw32-metapac/src/chips/cw32w031r8u6/device.x",
+        "exact_bytes_equal": true,
+        "sha256": "4856ed3b44c6c07c8c7cd3c727c76718630987edd4f515abbed76ad530cac4cd"
+      }
+    ],
+    "unchanged_authority_schema_and_other_sources": [
+      {
+        "path": "cw32-data-serde/src/lib.rs",
+        "exact_bytes_equal": true,
+        "sha256": "b4d875955a51d7e8061e2459b975362ac45a1723819ba9256bd62949d45feefc"
+      },
+      {
+        "path": "cw32-data-gen/src/lib.rs",
+        "exact_bytes_equal": true,
+        "sha256": "5c7c7b4d4566e5096d7e60777628300658d17d4aa87d9d8b6b480685689f22fd"
+      },
+      {
+        "path": "cw32-data-gen/src/electrical.rs",
+        "exact_bytes_equal": true,
+        "sha256": "7ff0c6ac37e7cb1d44632277e975028c8f0966e01e0e7a5cbaf80399dea4c2f9"
+      },
+      {
+        "path": "cw32-metapac-gen/src/lib.rs",
+        "exact_bytes_equal": true,
+        "sha256": "2fa92927fef3b1f6d0deb40b25c370e669e0b7d62ee1c127e714369ab9d058e9"
+      },
+      {
+        "path": "cw32-metapac-gen/res/src/metadata.rs",
+        "exact_bytes_equal": true,
+        "sha256": "adceff0bcaa25727ab3c8e2515b08a85220f149c92bb730c03195a18e7af79b5"
+      },
+      {
+        "path": "cw32-metapac/src/metadata.rs",
+        "exact_bytes_equal": true,
+        "sha256": "adceff0bcaa25727ab3c8e2515b08a85220f149c92bb730c03195a18e7af79b5"
+      },
+      {
+        "path": "cw32-metapac/Cargo.toml",
+        "exact_bytes_equal": true,
+        "sha256": "84e604c6519889ebd14f252500834490a04ec75c9e550eadc5eecf6aaa85a521"
+      },
+      {
+        "path": "sources/evidence-sources.json",
+        "exact_bytes_equal": true,
+        "sha256": "ca5fa04337464797466d7fa90a9b4b5e43cf0d1aa913eef27b743732c024e6d8"
+      },
+      {
+        "path": "cw32-data/field-access.yaml",
+        "exact_bytes_equal": true,
+        "sha256": "46903429cb4f423e8c803ee12ba0c1b405b20f4d0f8427b9d069843dbecdc7bd"
+      },
+      {
+        "path": "cw32-data/inputs/cw32l052.yaml",
+        "exact_bytes_equal": true,
+        "sha256": "f0b5e9c6431e345ca50ed5703cd9023f98144e9b4bcffa635fb2baee0dd5d942"
+      },
+      {
+        "path": "cw32-data/pinouts/cw32l052.yaml",
+        "exact_bytes_equal": true,
+        "sha256": "c0330f1bf584d944d9b1300dff2ee726dddccbd0e085636940eb0ab17981e7d3"
+      },
+      {
+        "path": "cw32-data/parts.yaml",
+        "exact_bytes_equal": true,
+        "sha256": "6e8194c84122d440e5476ba527cc04ff6c0e5c196bc413fa02dbbba41458f899"
+      },
+      {
+        "path": "cw32-data/lse-qualified.yaml",
+        "exact_bytes_equal": true,
+        "sha256": "afeb8bcbda67b96545db1d4baf4ca0763f819754cacd13823a441087c54c9dcc"
+      },
+      {
+        "path": "Cargo.lock",
+        "exact_bytes_equal": true,
+        "sha256": "4982aada2d4ce7a432eb281946f360a4330547f331288067438e23461382827f"
+      },
+      {
+        "path": "firmware/Cargo.lock",
+        "exact_bytes_equal": true,
+        "sha256": "d8a7337b8da9342c9190af55a4e76113004ce4ce434218be51a93d0d9510c9af"
+      },
+      {
+        "path": "examples/lsi-clock/Cargo.lock",
+        "exact_bytes_equal": true,
+        "sha256": "63edb412b931077f6e9f8522e5bb0f0337289651c78af6f29a0eedb9d161ce6f"
+      },
+      {
+        "path": "examples/hse-clock/Cargo.lock",
+        "exact_bytes_equal": true,
+        "sha256": "377622ed69fbd7484b588c5472bc2be3688b33359d57b4574af6875f2466d825"
+      },
+      {
+        "path": "examples/lse-sysclk/Cargo.lock",
+        "exact_bytes_equal": true,
+        "sha256": "4873279fe16e35e56a05db90837a75a977407986bca43a4113d0b648b1d691ac"
+      },
+      {
+        "path": "examples/rtc-calendar/Cargo.lock",
+        "exact_bytes_equal": true,
+        "sha256": "c57fc80936e137c712e36dbf2307d263b96fc6cb330ec8f2372e7f76313e1e5a"
+      },
+      {
+        "path": "examples/pll-clock/Cargo.lock",
+        "exact_bytes_equal": true,
+        "sha256": "fd4959e6193718a5cadf57f9f072642aa169c17661f3098392621ac3c08c4030"
+      },
+      {
+        "path": "embassy-cw32/src/adc/classic.rs",
+        "exact_bytes_equal": true,
+        "sha256": "f08973c004ba5bb5b9efca7b17354fece22bf58642959eaff671e4a5502048e9"
+      },
+      {
+        "path": "embassy-cw32/src/adc/mod.rs",
+        "exact_bytes_equal": true,
+        "sha256": "91142df61612a95d12a2046ff1bcc9faa15ff081c297eee2c84808be02ac3f78"
+      },
+      {
+        "path": "embassy-cw32/src/timer/complementary_pwm/buffered.rs",
+        "exact_bytes_equal": true,
+        "sha256": "3882bc2c4ba30a4343ea35cef16db7482477e48cb5815cc2fa988ed852744de3"
+      },
+      {
+        "path": "embassy-cw32/src/time_driver.rs",
+        "exact_bytes_equal": true,
+        "sha256": "f23f754fa62f62664cee5d30d7fb37c6964e4b58c788b726325bf99674991924"
+      }
+    ],
+    "approved_comment_only_sources": [
+      {
+        "path": "embassy-cw32/src/lib.rs",
+        "code_outside_line_comments_equal": true,
+        "candidate_sha256": "9f0cf675d7b184dc760dcf2f31077c1fc762b047b3ccbff6347fdd971174e50e"
+      },
+      {
+        "path": "embassy-cw32/src/rcc/bounds.rs",
+        "code_outside_line_comments_equal": true,
+        "candidate_sha256": "025cd9ea5a37307e3cf2838f51ce888fa9143b1f0bc03a7648fd2be05a744c6a"
+      },
+      {
+        "path": "embassy-cw32/src/rcc/rtc.rs",
+        "code_outside_line_comments_equal": true,
+        "candidate_sha256": "aced8413cdf04bc0155cbdef7b03b7c20a4cd4ff12ae45e1e597f49332456e16"
+      },
+      {
+        "path": "embassy-cw32/src/rtc/mod.rs",
+        "code_outside_line_comments_equal": true,
+        "candidate_sha256": "5ab5d003d64d589fac73f0789c19a2535df2a96984673a666f743d607a1eb443"
+      }
+    ]
+  },
+  "typed_metadata_projection": {
+    "status": "all 54 typed Rust metadata projections correspond; only exact3 LSI payload and deduplication group names differ",
+    "records": [
+      {
+        "chip": "CW32A030",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0000.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0000.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "d548b1558de139d69d1212331a4613a9bfdb679dbf44fc431a3fdf90a4805ff0"
+      },
+      {
+        "chip": "CW32A030C8T7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0001.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0001.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "6cdc45203f0eba705aee2dd409ca96191b2f52fa3635c50241adf4a35407d233"
+      },
+      {
+        "chip": "CW32F002",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0002.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0002.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "a47dbc775b57e0afea0072bc670eedf7af180ee9fc4dc6d51cc7c47f903c3291"
+      },
+      {
+        "chip": "CW32F002F3P7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0003.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0003.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "2756ee6cf7da911c1cceba96572ab5185a3428727b55503aeb0fd3a3a68a4d45"
+      },
+      {
+        "chip": "CW32F002F3U7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0003.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0003.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "2756ee6cf7da911c1cceba96572ab5185a3428727b55503aeb0fd3a3a68a4d45"
+      },
+      {
+        "chip": "CW32F003",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0004.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0004.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "84f56ccd79cbb41c7ab1e7f87222eda291104d07c2a489e7b943ae6f615310a1"
+      },
+      {
+        "chip": "CW32F003E4P7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0005.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0005.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "7502b74f55d792353a6a29b20d3d8f0dc2ad2596dfc186415e9d27e63b4f8cd4"
+      },
+      {
+        "chip": "CW32F003F4P7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0006.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0006.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "ae72adecb8435242c9a671fbd67f57e29ea95eda199a191aac00c6cc102526f6"
+      },
+      {
+        "chip": "CW32F003F4U7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0006.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0006.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "ae72adecb8435242c9a671fbd67f57e29ea95eda199a191aac00c6cc102526f6"
+      },
+      {
+        "chip": "CW32F020",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0007.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0007.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "52252404ce9d9088ff2d00d8642ee894b4d1a166b8df46c44c1dc7a24a8fe577"
+      },
+      {
+        "chip": "CW32F020C6U7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0008.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0008.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "0e33a3f5ecbae3f830996656962bd906bf638171bc7fbab6001b20426db13581"
+      },
+      {
+        "chip": "CW32F020F6U7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0007.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0007.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "52252404ce9d9088ff2d00d8642ee894b4d1a166b8df46c44c1dc7a24a8fe577"
+      },
+      {
+        "chip": "CW32F020K6U7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0009.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0009.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "d420cbcc230f1ab3c5feeac0d225efc920bb95aa7edf0707a560f073e1eb880b"
+      },
+      {
+        "chip": "CW32F030",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0010.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0010.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "38485e2240cd325101bf44e9dc4fd7815a77450d31d1dd441b35b189940d92ff"
+      },
+      {
+        "chip": "CW32F030C8",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0000.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0000.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "d548b1558de139d69d1212331a4613a9bfdb679dbf44fc431a3fdf90a4805ff0"
+      },
+      {
+        "chip": "CW32F030C8T7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0001.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0001.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "6cdc45203f0eba705aee2dd409ca96191b2f52fa3635c50241adf4a35407d233"
+      },
+      {
+        "chip": "CW32F030F6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0011.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0011.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "d3998994baf01ac3be1e20d40dd470cc58f5ebca034d92955e71bff3f1d1e0ec"
+      },
+      {
+        "chip": "CW32F030F6P7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0011.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0011.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "d3998994baf01ac3be1e20d40dd470cc58f5ebca034d92955e71bff3f1d1e0ec"
+      },
+      {
+        "chip": "CW32F030F8",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0012.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0012.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "609e9df0a3520143b8b3aa1598b4d876123586d2e7d912d7b6439c9a7cfd806f"
+      },
+      {
+        "chip": "CW32F030F8V7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0012.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0012.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "609e9df0a3520143b8b3aa1598b4d876123586d2e7d912d7b6439c9a7cfd806f"
+      },
+      {
+        "chip": "CW32F030K8",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0013.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0013.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "825b9c33bf2bcea292de982c34a2783ae9e45239eaa9c393510237b261eb6537"
+      },
+      {
+        "chip": "CW32F030K8T7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0013.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0013.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "825b9c33bf2bcea292de982c34a2783ae9e45239eaa9c393510237b261eb6537"
+      },
+      {
+        "chip": "CW32F030K8U7",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0014.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0014.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "72f6ebe516ec7a3dc1ce3ba8d6aa70f3e950dda4e9d97e76f850544a6a54f178"
+      },
+      {
+        "chip": "CW32L010",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0015.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0015.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "d825078dd8559221d989a94a676304651bc859f7fd6711f35b2c5701d1b00d2b"
+      },
+      {
+        "chip": "CW32L010F8P6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0016.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0016.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "05d438a38288230c45d9b1f1bd8762d1d899b2519fac9bf1a9ec213f371ec51b"
+      },
+      {
+        "chip": "CW32L010F8U6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0016.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0016.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "05d438a38288230c45d9b1f1bd8762d1d899b2519fac9bf1a9ec213f371ec51b"
+      },
+      {
+        "chip": "CW32L010Y8M6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0017.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0017.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "2b5a4690777369f69319907a168c90dfbf549b9382173cab1c704bbea48aa2ae"
+      },
+      {
+        "chip": "CW32L011",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0018.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0018.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "0a64545f988ce7ae4342ee6d30b11b0f43ed1c359887039a25aebb174d008e9a"
+      },
+      {
+        "chip": "CW32L011K8T6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0019.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0019.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "e28b7ed5cf52dee06213012c7c13ec7527036be2e1dd0f3c67a1a00d37c07d03"
+      },
+      {
+        "chip": "CW32L011K8U6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0019.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0019.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "e28b7ed5cf52dee06213012c7c13ec7527036be2e1dd0f3c67a1a00d37c07d03"
+      },
+      {
+        "chip": "CW32L012",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0020.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0020.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "2b856d3a0b1ce8a5c76f6d1de431d7a2c1a6ac082f4d1a5eaf12e6c61f5a790e"
+      },
+      {
+        "chip": "CW32L012C8T6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0021.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0021.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "bdfe0b4529ec6f799b8016bd2de42ab73bf00fab51d1bf8957b8645c87f09ab2"
+      },
+      {
+        "chip": "CW32L012C8U6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0021.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0021.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "bdfe0b4529ec6f799b8016bd2de42ab73bf00fab51d1bf8957b8645c87f09ab2"
+      },
+      {
+        "chip": "CW32L031",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0022.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0022.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "f2a3ef647dcd4f44f96bf89d32852352da289feaec6481960bed3b6ec525bc30"
+      },
+      {
+        "chip": "CW32L031C8T6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0023.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0023.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "f801188438da04d608cd174aa401270434f9657875bb3224d45eb25ab20d9380"
+      },
+      {
+        "chip": "CW32L031C8U6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0023.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0023.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "f801188438da04d608cd174aa401270434f9657875bb3224d45eb25ab20d9380"
+      },
+      {
+        "chip": "CW32L031F8P6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0024.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0024.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "a0d257529c04e8af5005e322970f66c6742346887c384b317e185cbbde9f270b"
+      },
+      {
+        "chip": "CW32L031F8U6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0025.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0025.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "0d92757e96ac7c67253d0af0887cec942d2159aac170b4fc9c8262563936df58"
+      },
+      {
+        "chip": "CW32L031K8U6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0026.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0026.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "0e9534376d693bfb35fa6dab1f8e45cc5d47ef870ceb4c686da190b2e468acce"
+      },
+      {
+        "chip": "CW32L031K8V6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0026.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0026.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "0e9534376d693bfb35fa6dab1f8e45cc5d47ef870ceb4c686da190b2e468acce"
+      },
+      {
+        "chip": "CW32L052",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0027.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0027.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "04f935b245d5e01b276905a7ba0955bfcb5a8858ec80955f5b0e19b14537a922"
+      },
+      {
+        "chip": "CW32L052C8T6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0028.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0028.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 1,
+        "candidate_group_sha256": "cec93d0f4dcf1f8822dc6ba101dd9c0d747fcf10a4592b2c61e16f8686638bbd"
+      },
+      {
+        "chip": "CW32L052R8S6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0029.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0029.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 1,
+        "candidate_group_sha256": "d206fe4c55a432b874770637b1528c7fd4528aa2508a5c9d690b11af3dc6355f"
+      },
+      {
+        "chip": "CW32L052R8T6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0029.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0029.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 1,
+        "candidate_group_sha256": "d206fe4c55a432b874770637b1528c7fd4528aa2508a5c9d690b11af3dc6355f"
+      },
+      {
+        "chip": "CW32L083",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0030.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0030.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "d0f766a4a25deb7df1e2383d1e42b897ca2f0c6c213e6f808659a75033d17240"
+      },
+      {
+        "chip": "CW32L083MCT6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0031.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0031.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "d914ec6dd552f3fae892aab9c70452d223f6486ab12f8cce481dfe59538cb4a2"
+      },
+      {
+        "chip": "CW32L083RBT6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0032.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0032.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "c599a7c2462b3d32aa09aa5ea10001d0f95fd5da869932b2d7ee9b079ce6f5a5"
+      },
+      {
+        "chip": "CW32L083RCS6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0032.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0032.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "c599a7c2462b3d32aa09aa5ea10001d0f95fd5da869932b2d7ee9b079ce6f5a5"
+      },
+      {
+        "chip": "CW32L083RCT6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0032.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0032.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "c599a7c2462b3d32aa09aa5ea10001d0f95fd5da869932b2d7ee9b079ce6f5a5"
+      },
+      {
+        "chip": "CW32L083VCT6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0033.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0033.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "05fcf59112e078e41cfc32edbc3e69471eba1782c6529bd3a0b72f9bebf76118"
+      },
+      {
+        "chip": "CW32R031",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0034.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0034.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "0bb69c03ed04ca623b45db935e8f09aa1a3945a56fcbedbed3a58b1586e31e48"
+      },
+      {
+        "chip": "CW32R031C8U6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0035.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0035.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "e7aa18157a00167b8928b4e12fb82ba82f84de45cc766893a20dfd783797049d"
+      },
+      {
+        "chip": "CW32W031",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0036.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0036.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "d9e5af2cf18799179fb6fc9cdf628ff7c47488571e176cb7cb96280da6103f6d"
+      },
+      {
+        "chip": "CW32W031R8U6",
+        "baseline_group": "cw32-metapac/src/chips/metadata_0037.rs",
+        "candidate_group": "cw32-metapac/src/chips/metadata_0037.rs",
+        "per_chip_identity_unchanged_except_group_name": true,
+        "complete_group_unchanged_after_exact_lsi_removal": true,
+        "capability_removals_for_comparison": 0,
+        "candidate_group_sha256": "b238176a39c72e0753d38929df861b36cb4345616730de981d4e2a373cc582da"
+      }
+    ]
+  },
+  "actual_emitted_helpers": {
+    "status": "actual final coordinated main-v4 emitted helpers inspected",
+    "rows": [
+      {
+        "build": "rlib-cw32l052c8t6-release",
+        "path": "verification/main-v4/rlib-cw32l052c8t6-release-_generated.rs",
+        "sha256": "299d80d1eb02e862636c64e39d412779079a2be1b1f22a2707c5a511ff02af32",
+        "target_exact_l052": true,
+        "native_lsi_collector_present": true,
+        "factory_lsi_constants_present": true,
+        "native_section_sha256": "0ddac2e6d90299113a33d4aebdd6a7a8c58a603bd98077b7d2305519deebf674",
+        "corrected_typed_prescaler": true,
+        "unused_stable_definitions_absent": true,
+        "gpioc_definite_assignment_once": true,
+        "conservative_pc4_register_read": true,
+        "no_standalone_awt_read": true
+      },
+      {
+        "build": "rlib-cw32l052r8s6-release",
+        "path": "verification/main-v4/rlib-cw32l052r8s6-release-_generated.rs",
+        "sha256": "7e4208867d7bc2b271a8a31c9cbfd00e77cd6df47f85dd2dfd5f6fa23fe65f26",
+        "target_exact_l052": true,
+        "native_lsi_collector_present": true,
+        "factory_lsi_constants_present": true,
+        "native_section_sha256": "0ddac2e6d90299113a33d4aebdd6a7a8c58a603bd98077b7d2305519deebf674",
+        "corrected_typed_prescaler": true,
+        "unused_stable_definitions_absent": true,
+        "gpioc_definite_assignment_once": true,
+        "conservative_pc4_register_read": true,
+        "no_standalone_awt_read": true
+      },
+      {
+        "build": "rlib-cw32l052r8t6-release",
+        "path": "verification/main-v4/rlib-cw32l052r8t6-release-_generated.rs",
+        "sha256": "7e4208867d7bc2b271a8a31c9cbfd00e77cd6df47f85dd2dfd5f6fa23fe65f26",
+        "target_exact_l052": true,
+        "native_lsi_collector_present": true,
+        "factory_lsi_constants_present": true,
+        "native_section_sha256": "0ddac2e6d90299113a33d4aebdd6a7a8c58a603bd98077b7d2305519deebf674",
+        "corrected_typed_prescaler": true,
+        "unused_stable_definitions_absent": true,
+        "gpioc_definite_assignment_once": true,
+        "conservative_pc4_register_read": true,
+        "no_standalone_awt_read": true
+      },
+      {
+        "build": "rlib-cw32l052-release",
+        "path": "verification/main-v4/rlib-cw32l052-release-_generated.rs",
+        "sha256": "57100297549aa3f5964392ad8cdbc0bd781d360632908a92251c58dd7e15c030",
+        "target_exact_l052": false,
+        "native_lsi_collector_present": false,
+        "factory_lsi_constants_present": false
+      },
+      {
+        "build": "rlib-cw32l052c8t6-debug",
+        "path": "verification/main-v4/rlib-cw32l052c8t6-debug-_generated.rs",
+        "sha256": "299d80d1eb02e862636c64e39d412779079a2be1b1f22a2707c5a511ff02af32",
+        "target_exact_l052": true,
+        "native_lsi_collector_present": true,
+        "factory_lsi_constants_present": true,
+        "native_section_sha256": "0ddac2e6d90299113a33d4aebdd6a7a8c58a603bd98077b7d2305519deebf674",
+        "corrected_typed_prescaler": true,
+        "unused_stable_definitions_absent": true,
+        "gpioc_definite_assignment_once": true,
+        "conservative_pc4_register_read": true,
+        "no_standalone_awt_read": true
+      },
+      {
+        "build": "rlib-cw32l083rct6-release",
+        "path": "verification/main-v4/rlib-cw32l083rct6-release-_generated.rs",
+        "sha256": "7891c596e84e41f5a4135e41adfd8cbd429ef6bd121f525440f3ff8d4b08ef39",
+        "target_exact_l052": false,
+        "native_lsi_collector_present": false,
+        "factory_lsi_constants_present": false
+      },
+      {
+        "build": "rlib-cw32l031c8u6-release",
+        "path": "verification/main-v4/rlib-cw32l031c8u6-release-_generated.rs",
+        "sha256": "1bbb23754924cc0a4a62773411ded8ad3eb7c0601d6174ae80dcbbebfee27694",
+        "target_exact_l052": false,
+        "native_lsi_collector_present": false,
+        "factory_lsi_constants_present": true
+      },
+      {
+        "build": "rlib-cw32f030c8t7-release",
+        "path": "verification/main-v4/rlib-cw32f030c8t7-release-_generated.rs",
+        "sha256": "3bef7f93b229b1381229c712b79695d2cca2c922ae58f73448532d7f340579c8",
+        "target_exact_l052": false,
+        "native_lsi_collector_present": false,
+        "factory_lsi_constants_present": true
+      },
+      {
+        "build": "elf-cw32l052c8t6-release",
+        "path": "verification/main-v4/elf-cw32l052c8t6-release-_generated.rs",
+        "sha256": "46e48de02f786ba01f417473ac161195b8a1ee8c5edb37009165b98432fa8a93",
+        "target_exact_l052": true,
+        "native_lsi_collector_present": true,
+        "factory_lsi_constants_present": true,
+        "native_section_sha256": "0ddac2e6d90299113a33d4aebdd6a7a8c58a603bd98077b7d2305519deebf674",
+        "corrected_typed_prescaler": true,
+        "unused_stable_definitions_absent": true,
+        "gpioc_definite_assignment_once": true,
+        "conservative_pc4_register_read": true,
+        "no_standalone_awt_read": true
+      },
+      {
+        "build": "elf-cw32l052r8s6-release",
+        "path": "verification/main-v4/elf-cw32l052r8s6-release-_generated.rs",
+        "sha256": "e10a073a7878553d8135718aa5ddd56d4e586edf7a2cb330b585ef0dbabb6230",
+        "target_exact_l052": true,
+        "native_lsi_collector_present": true,
+        "factory_lsi_constants_present": true,
+        "native_section_sha256": "0ddac2e6d90299113a33d4aebdd6a7a8c58a603bd98077b7d2305519deebf674",
+        "corrected_typed_prescaler": true,
+        "unused_stable_definitions_absent": true,
+        "gpioc_definite_assignment_once": true,
+        "conservative_pc4_register_read": true,
+        "no_standalone_awt_read": true
+      },
+      {
+        "build": "elf-cw32l052r8t6-release",
+        "path": "verification/main-v4/elf-cw32l052r8t6-release-_generated.rs",
+        "sha256": "e10a073a7878553d8135718aa5ddd56d4e586edf7a2cb330b585ef0dbabb6230",
+        "target_exact_l052": true,
+        "native_lsi_collector_present": true,
+        "factory_lsi_constants_present": true,
+        "native_section_sha256": "0ddac2e6d90299113a33d4aebdd6a7a8c58a603bd98077b7d2305519deebf674",
+        "corrected_typed_prescaler": true,
+        "unused_stable_definitions_absent": true,
+        "gpioc_definite_assignment_once": true,
+        "conservative_pc4_register_read": true,
+        "no_standalone_awt_read": true
+      },
+      {
+        "build": "elf-cw32l052c8t6-release-crystal",
+        "path": "verification/main-v4/elf-cw32l052c8t6-release-crystal-_generated.rs",
+        "sha256": "46e48de02f786ba01f417473ac161195b8a1ee8c5edb37009165b98432fa8a93",
+        "target_exact_l052": true,
+        "native_lsi_collector_present": true,
+        "factory_lsi_constants_present": true,
+        "native_section_sha256": "0ddac2e6d90299113a33d4aebdd6a7a8c58a603bd98077b7d2305519deebf674",
+        "corrected_typed_prescaler": true,
+        "unused_stable_definitions_absent": true,
+        "gpioc_definite_assignment_once": true,
+        "conservative_pc4_register_read": true,
+        "no_standalone_awt_read": true
+      },
+      {
+        "build": "elf-cw32l052r8s6-release-crystal",
+        "path": "verification/main-v4/elf-cw32l052r8s6-release-crystal-_generated.rs",
+        "sha256": "e10a073a7878553d8135718aa5ddd56d4e586edf7a2cb330b585ef0dbabb6230",
+        "target_exact_l052": true,
+        "native_lsi_collector_present": true,
+        "factory_lsi_constants_present": true,
+        "native_section_sha256": "0ddac2e6d90299113a33d4aebdd6a7a8c58a603bd98077b7d2305519deebf674",
+        "corrected_typed_prescaler": true,
+        "unused_stable_definitions_absent": true,
+        "gpioc_definite_assignment_once": true,
+        "conservative_pc4_register_read": true,
+        "no_standalone_awt_read": true
+      },
+      {
+        "build": "elf-cw32l052r8t6-release-preserve_calendar",
+        "path": "verification/main-v4/elf-cw32l052r8t6-release-preserve_calendar-_generated.rs",
+        "sha256": "e10a073a7878553d8135718aa5ddd56d4e586edf7a2cb330b585ef0dbabb6230",
+        "target_exact_l052": true,
+        "native_lsi_collector_present": true,
+        "factory_lsi_constants_present": true,
+        "native_section_sha256": "0ddac2e6d90299113a33d4aebdd6a7a8c58a603bd98077b7d2305519deebf674",
+        "corrected_typed_prescaler": true,
+        "unused_stable_definitions_absent": true,
+        "gpioc_definite_assignment_once": true,
+        "conservative_pc4_register_read": true,
+        "no_standalone_awt_read": true
+      },
+      {
+        "build": "elf-cw32l083rct6-release-pll-uart",
+        "path": "verification/main-v4/elf-cw32l083rct6-release-pll-uart-_generated.rs",
+        "sha256": "b015e1209f97700d8bcf787824ea38db0e42de9bbaacdc25b320857928884a37",
+        "target_exact_l052": false,
+        "native_lsi_collector_present": false,
+        "factory_lsi_constants_present": false
+      },
+      {
+        "build": "elf-cw32l031c8u6-release",
+        "path": "verification/main-v4/elf-cw32l031c8u6-release-_generated.rs",
+        "sha256": "5902e6362ed62f9932543542afc5ffd42fae30739431ba36bddd9ebc2a51f90c",
+        "target_exact_l052": false,
+        "native_lsi_collector_present": false,
+        "factory_lsi_constants_present": true
+      }
+    ]
+  },
+  "main_build_receipts": {
+    "status": "all 16 approved main build argument sets and saved artifacts verified by read-only receipt inspection",
+    "method_variance": "Authorized serial shared main Cargo target with current compiler-artifact and build-script OUT_DIR capture, immediate copying/hashing before next row, cfg/freshness capture and source snapshots; not the design appendix ci/run-verified.py or per-row isolated target wrapper. Clean reproduction is separately required.",
+    "source_manifest_sha256": "319ad73a30ae192638e7a31557b37504277d58381ee91fba9359a590ac58845c",
+    "source_manifest_files": 1297,
+    "source_before_after_match_frozen_manifest": true,
+    "row_roster_matches": true,
+    "rows": [
+      {
+        "id": "rlib-cw32l052c8t6-release",
+        "kind": "rlib",
+        "features": [
+          "cw32l052c8t6",
+          "defmt",
+          "time-driver-gtim1"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/rlib-cw32l052c8t6-release.rlib",
+            "sha256": "030b55e0c02f18622fbad317eab596fabc97346e5ce79bf5132b84396e2f167f",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l052c8t6-release-_generated.rs",
+            "sha256": "299d80d1eb02e862636c64e39d412779079a2be1b1f22a2707c5a511ff02af32",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l052c8t6-release-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "rlib-cw32l052r8s6-release",
+        "kind": "rlib",
+        "features": [
+          "cw32l052r8s6",
+          "defmt",
+          "time-driver-gtim1"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/rlib-cw32l052r8s6-release.rlib",
+            "sha256": "423aad45ec0e585629727fa68c43cd107cd6cc59e30e8aa1659ffefecc6ba17e",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l052r8s6-release-_generated.rs",
+            "sha256": "7e4208867d7bc2b271a8a31c9cbfd00e77cd6df47f85dd2dfd5f6fa23fe65f26",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l052r8s6-release-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "rlib-cw32l052r8t6-release",
+        "kind": "rlib",
+        "features": [
+          "cw32l052r8t6",
+          "defmt",
+          "time-driver-gtim1"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/rlib-cw32l052r8t6-release.rlib",
+            "sha256": "44028ecce92744ba84a5752887265338f777833120a487752ef2724a349d4d40",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l052r8t6-release-_generated.rs",
+            "sha256": "7e4208867d7bc2b271a8a31c9cbfd00e77cd6df47f85dd2dfd5f6fa23fe65f26",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l052r8t6-release-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "rlib-cw32l052-release",
+        "kind": "rlib",
+        "features": [
+          "cw32l052",
+          "defmt"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": false,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/rlib-cw32l052-release.rlib",
+            "sha256": "54eba1f60774fd7b405dd78af53579b36cdce085361a1b6293c8dfe9e586bcac",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l052-release-_generated.rs",
+            "sha256": "57100297549aa3f5964392ad8cdbc0bd781d360632908a92251c58dd7e15c030",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l052-release-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "rlib-cw32l052c8t6-debug",
+        "kind": "rlib",
+        "features": [
+          "cw32l052c8t6",
+          "defmt",
+          "time-driver-gtim1"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/rlib-cw32l052c8t6-debug.rlib",
+            "sha256": "eb7c917acdd47c3954f303d6f72ecd56a14c1e8db1bb088fb1d61e5a3a48333c",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l052c8t6-debug-_generated.rs",
+            "sha256": "299d80d1eb02e862636c64e39d412779079a2be1b1f22a2707c5a511ff02af32",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l052c8t6-debug-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "rlib-cw32l083rct6-release",
+        "kind": "rlib",
+        "features": [
+          "cw32l083rct6",
+          "defmt",
+          "time-driver-gtim1"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": false,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/rlib-cw32l083rct6-release.rlib",
+            "sha256": "7644cb8cb0158e616d58f841b2c956db909ac4a5e126ea78901f5380a122e399",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l083rct6-release-_crypto.rs",
+            "sha256": "4f3e3a1176f87c930a4fc3d3628535891be547ccb06ea87c67df64bdf9141237",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l083rct6-release-_generated.rs",
+            "sha256": "7891c596e84e41f5a4135e41adfd8cbd429ef6bd121f525440f3ff8d4b08ef39",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l083rct6-release-_generated_exti.rs",
+            "sha256": "3f6a37f60b147b4033d8eb504fb449a79eb5555f850ed08fb54484a8a601a387",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "rlib-cw32l031c8u6-release",
+        "kind": "rlib",
+        "features": [
+          "cw32l031c8u6",
+          "defmt",
+          "time-driver-gtim1"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/rlib-cw32l031c8u6-release.rlib",
+            "sha256": "669b8acb873559374b3868ae98f0c17dc8e49154db94232440d2a6b24e8a512c",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l031c8u6-release-_generated.rs",
+            "sha256": "1bbb23754924cc0a4a62773411ded8ad3eb7c0601d6174ae80dcbbebfee27694",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32l031c8u6-release-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "rlib-cw32f030c8t7-release",
+        "kind": "rlib",
+        "features": [
+          "cw32f030c8t7",
+          "defmt",
+          "time-driver-gtim1"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/rlib-cw32f030c8t7-release.rlib",
+            "sha256": "802e8ea372760d395bfdb53a175f25c002e6865db0aa8c09993e97bcf1065da3",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32f030c8t7-release-_generated.rs",
+            "sha256": "3bef7f93b229b1381229c712b79695d2cca2c922ae58f73448532d7f340579c8",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/rlib-cw32f030c8t7-release-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "elf-cw32l052c8t6-release",
+        "kind": "elf",
+        "features": [
+          "cw32l052c8t6",
+          "defmt"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "cw32-lsi-clock-example",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/elf-cw32l052c8t6-release-cw32-lsi-clock-example.elf",
+            "sha256": "6b72cb9aa2078b52e4be4a1226d1f72c54c5b89d43efec234773281cb46a9dd5",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052c8t6-release-_generated.rs",
+            "sha256": "46e48de02f786ba01f417473ac161195b8a1ee8c5edb37009165b98432fa8a93",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052c8t6-release-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "elf-cw32l052r8s6-release",
+        "kind": "elf",
+        "features": [
+          "cw32l052r8s6",
+          "defmt"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "cw32-lsi-clock-example",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/elf-cw32l052r8s6-release-cw32-lsi-clock-example.elf",
+            "sha256": "ddf7fa820452cdaa519fa03eead2f4d8e3d02af41cb08c54b548c6bcb2ad8d56",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052r8s6-release-_generated.rs",
+            "sha256": "e10a073a7878553d8135718aa5ddd56d4e586edf7a2cb330b585ef0dbabb6230",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052r8s6-release-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "elf-cw32l052r8t6-release",
+        "kind": "elf",
+        "features": [
+          "cw32l052r8t6",
+          "defmt"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "cw32-lsi-clock-example",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/elf-cw32l052r8t6-release-cw32-lsi-clock-example.elf",
+            "sha256": "a57911d0807dabca1d7f5c2a73e16cd50821876b339e616f8e6e204ae7384d67",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052r8t6-release-_generated.rs",
+            "sha256": "e10a073a7878553d8135718aa5ddd56d4e586edf7a2cb330b585ef0dbabb6230",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052r8t6-release-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "elf-cw32l052c8t6-release-crystal",
+        "kind": "elf",
+        "features": [
+          "cw32l052c8t6"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "crystal",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/elf-cw32l052c8t6-release-crystal-crystal.elf",
+            "sha256": "2009b07edd9e319065bf4e819f94f2792c6201907e077668ed6dd5d5c9d76ae7",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052c8t6-release-crystal-_generated.rs",
+            "sha256": "46e48de02f786ba01f417473ac161195b8a1ee8c5edb37009165b98432fa8a93",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052c8t6-release-crystal-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "elf-cw32l052r8s6-release-crystal",
+        "kind": "elf",
+        "features": [
+          "cw32l052r8s6"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "crystal",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/elf-cw32l052r8s6-release-crystal-crystal.elf",
+            "sha256": "150418145da741cfc47c7698646b219cee3a23ddf0a54cb83297930072c265ef",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052r8s6-release-crystal-_generated.rs",
+            "sha256": "e10a073a7878553d8135718aa5ddd56d4e586edf7a2cb330b585ef0dbabb6230",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052r8s6-release-crystal-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "elf-cw32l052r8t6-release-preserve_calendar",
+        "kind": "elf",
+        "features": [
+          "cw32l052r8t6"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "preserve_calendar",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/elf-cw32l052r8t6-release-preserve_calendar-preserve_calendar.elf",
+            "sha256": "6b71029cc40639b87935bc3730256697927e18f1edfe4923d7c04d0f2e8b8b02",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052r8t6-release-preserve_calendar-_generated.rs",
+            "sha256": "e10a073a7878553d8135718aa5ddd56d4e586edf7a2cb330b585ef0dbabb6230",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l052r8t6-release-preserve_calendar-_generated_exti.rs",
+            "sha256": "adc2a3c5fab0822a8baee969e9092527d18980075b024b9533ea155baecd19c3",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "elf-cw32l083rct6-release-pll-uart",
+        "kind": "elf",
+        "features": [
+          "cw32l083rct6"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "pll-uart",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": false,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/elf-cw32l083rct6-release-pll-uart-pll-uart.elf",
+            "sha256": "dabdfaa82418770b94ce811f412924fcb108232ab634d8fd396f8ac234b50a86",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l083rct6-release-pll-uart-_crypto.rs",
+            "sha256": "4f3e3a1176f87c930a4fc3d3628535891be547ccb06ea87c67df64bdf9141237",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l083rct6-release-pll-uart-_generated.rs",
+            "sha256": "b015e1209f97700d8bcf787824ea38db0e42de9bbaacdc25b320857928884a37",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l083rct6-release-pll-uart-_generated_exti.rs",
+            "sha256": "3f6a37f60b147b4033d8eb504fb449a79eb5555f850ed08fb54484a8a601a387",
+            "matches_receipt": true
+          }
+        ]
+      },
+      {
+        "id": "elf-cw32l031c8u6-release",
+        "kind": "elf",
+        "features": [
+          "cw32l031c8u6"
+        ],
+        "command_matches_design_build_arguments": true,
+        "exit": 0,
+        "log_hash_matches": true,
+        "cache_strategy": "serial-shared-main-target",
+        "compiler_artifact_fresh_flags": [
+          {
+            "target": "embassy_cw32",
+            "fresh": false
+          },
+          {
+            "target": "cw32-lsi-clock-example",
+            "fresh": false
+          }
+        ],
+        "rcc_lsi_sysclk": true,
+        "capability_cfg_matches_chip_metadata": true,
+        "artifacts": [
+          {
+            "path": "verification/main-v4/elf-cw32l031c8u6-release-cw32-lsi-clock-example.elf",
+            "sha256": "e6d2f184ba9ac4b68dc7112a73ad228b75e7796c53120c3fe4a0321154dabbd7",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l031c8u6-release-_generated.rs",
+            "sha256": "5902e6362ed62f9932543542afc5ffd42fae30739431ba36bddd9ebc2a51f90c",
+            "matches_receipt": true
+          },
+          {
+            "path": "verification/main-v4/elf-cw32l031c8u6-release-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "matches_receipt": true
+          }
+        ]
+      }
+    ]
+  },
+  "source_and_runtime_findings": {
+    "complete_original_yaml_subtree_preserved": true,
+    "electrical_only_matching_policy_digest_changed": true,
+    "canonical_L052_policy_keys": 35,
+    "positive_omitted_roots_identical_to_accepted_design": 14,
+    "genuine_independent_LsiSysclk_validation": true,
+    "genuine_independent_LseStartupConsumers_revalidation": true,
+    "runtime_Config_lse_required": false,
+    "own_SYSCTRL_IRQ": 4,
+    "no_system_PLL_HEX_standalone_AWT": true,
+    "conservative_unbonded_C8_PC4_register_inspection_without_token": true,
+    "all_exact_L052_RTC_LSI_aliases_rate_only_under_all_SYSCLK": true,
+    "numerical_RTC_envelope_and_divisor_unchanged": true,
+    "classic_and_native_HSIOSC_RTC_behavior_unchanged": true,
+    "ADC_strict_timing_and_time_driver_refusals_statically_preserved": true,
+    "runtime_refusals_executed": false,
+    "complete_operation_review_separate": true
+  },
+  "limitations": [
+    "No claim of hardware validation, startup/fault-path execution, watchdog survival, low-power behavior, source-loss recovery, rollback or safe retry.",
+    "Main build wrapper/target orchestration intentionally differs from the original design appendix; actual authorized method is recorded in main_build_receipts.method_variance.",
+    "This is main metadata/projection acceptance only; final clean package reproduction remains pending."
+  ]
+}
