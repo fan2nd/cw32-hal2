@@ -258,13 +258,15 @@ impl<'d> Rtc<'d> {
     }
     /// Declared healthy-source envelope before the calendar divider.
     /// This getter does not guarantee continuity after a source fault.
-    /// F020/F030/A030 factory-LSI bounds qualify rate only.
+    /// F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6 factory-LSI bounds
+    /// qualify rate only under every SYSCLK.
     pub const fn source_clock_bounds(&self) -> ClockBounds {
         self.clock.bounds()
     }
     /// Healthy-source envelope of calendar second transitions. Whole-Hz getters round;
     /// the exact 32800/32768 classic LSI fraction is retained internally.
-    /// F020/F030/A030 factory-LSI bounds remain rate-only after division;
+    /// F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6 factory-LSI bounds
+    /// remain rate-only after division under every SYSCLK;
     /// check `has_cycle_timing_bounds()` before using strict duration methods.
     pub const fn calendar_tick_bounds(&self) -> ClockBounds {
         self.clock

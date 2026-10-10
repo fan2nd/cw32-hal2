@@ -78,9 +78,10 @@ impl<'d> HsiOscClock<'d> {
 #[cfg(any(rtc_v1, rtc_cw32f020_v1, rtc_cw32l031_v1, rtc_cw32l052_v1))]
 /// Shared LSI with verified, unchanged factory trim and bounded startup polling.
 ///
-/// This capability requires factory trim already loaded. On F020/F030/A030,
-/// selecting `Sysclk::LSI` during RCC initialization can establish it, as can
-/// `Sysclk::LSE` on its three qualified packages; otherwise
+/// This capability requires factory trim already loaded. On F020/F030/A030
+/// and exactly CW32L031C8T6/C8U6/F8U6, selecting `Sysclk::LSI` during RCC
+/// initialization can establish it. Separately qualified monitored `Sysclk::LSE`
+/// paths can establish their own factory monitor under their own contracts; otherwise
 /// board startup or a bootloader must do so. This constructor never loads trim:
 /// LSIEN=0 does not prove no shared hardware user is starting the oscillator.
 /// A mismatch is rejected before any write. Existing WAITCYCLE, consumers and
@@ -90,8 +91,9 @@ impl<'d> HsiOscClock<'d> {
 /// The own datasheet nominal is 32,800 Hz, not 32,768 Hz. Bounds require the
 /// published supply/ambient interval and unchanged factory trim; readiness is
 /// startup status, not a measurement or continuous loss-of-clock monitor.
-/// On F020/F030/A030 these are rate-only bounds even when SYSCLK uses another
-/// source; they do not qualify strict cycle durations.
+/// On F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6 these are rate-only
+/// bounds under every SYSCLK, including HSI, HSE and LSE; they do not qualify
+/// strict cycle durations. Excluded L031 parts and board LSE are unchanged.
 pub struct LsiClock<'d> {
     _sysctrl: Peri<'d, SYSCTRL>,
 }
@@ -128,7 +130,8 @@ impl<'d> LsiClock<'d> {
     pub const fn frequency(&self) -> Hertz {
         Hertz(RTC::SOURCE_NOMINAL_HZ)
     }
-    /// Factory-source envelope. F020/F030/A030 qualify rate only;
+    /// Factory-source envelope. F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6
+    /// qualify rate only under every SYSCLK;
     /// check `has_cycle_timing_bounds()` before requesting strict durations.
     pub const fn bounds(&self) -> ClockBounds {
         ClockBounds::rtc_source()

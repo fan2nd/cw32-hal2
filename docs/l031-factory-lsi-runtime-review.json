@@ -1,0 +1,617 @@
+{
+  "kind": "stage67_l031_factory_lsi_independent_runtime_review",
+  "status": "accepted_main_source_and_build_evidence_clean_pending",
+  "date_utc": "2026-10-10",
+  "public_target": "docs/l031-factory-lsi-runtime-review.json",
+  "exact_scope": [
+    "CW32L031C8T6",
+    "CW32L031C8U6",
+    "CW32L031F8U6"
+  ],
+  "conclusion": "No unresolved runtime implementation defect found against the approved frozen design and own L031 evidence. This is main-stage acceptance only; clean replay and final packaging require a separate addendum.",
+  "inputs": {
+    "design": {
+      "path": "external-evidence/stage67-design/l031-lsi-sysclk-design.md",
+      "sha256": "bc673f1d55882dbc1695f2295cecbc52dae63004fbbc409f5b5b37aff81fce93"
+    },
+    "design_evidence_sha256": "b84777b410904874c22120521b080a3aa929008a082670d58b41b6b22ada280d",
+    "independent_design_review_sha256": "c4c228ad4a0b933bd2222a01aa243107131811f55842e44dc62320014f063ef9",
+    "irq_clarification": {
+      "path": "external-evidence/stage67-design/l031-irq-symbol-supplement.md",
+      "sha256": "adc53186b966b0417c855491210e3929ad6c97cee0f939199c034b31c73dd603"
+    },
+    "functional_source_sha256": {
+      "cw32-data/lsi-sysclk-qualified.yaml": "2354a9142f8ffb59375d02b1c82417ad2f9bb32f3fb0898cdd40663e803f2acc",
+      "cw32-data/electrical.yaml": "f7781d6d25757476f9708424ffe569e2dd6cf7a0e4952f9f2ba24ac9fcfb07f3",
+      "cw32-data-gen/src/lsi.rs": "d53a695c095392a7a24ff7643ae617e78f320491d317ec6ee0dabd37710b4025",
+      "embassy-cw32/build.rs": "eecbdf8beea96521c11722e1b5bba8e1cd0f6bfaf857704d39dd8657bfcaf3aa",
+      "embassy-cw32/src/rcc/l031_r031_w031.rs": "06363d1c4e09269efae84e57d5689bc29638aa099239f0c02ee7ac91bd0b3b72",
+      "embassy-cw32/src/rcc/mod.rs": "2b32708ab0eeeae60bca9d715100ce52c30e063bdce4b3862874ff137b159ba0"
+    },
+    "main_source_manifest": {
+      "path": "external-evidence/stage67-verification/main-source-manifest.json",
+      "sha256": "e5f462d991d6331148b7c4a530b418ca7ed95d356867a59d7eef16ea7046aeb4",
+      "files": 1288,
+      "all_current_file_bytes_independently_matched": true
+    },
+    "own_evidence": [
+      {
+        "path": "external-evidence/CW32L031_UserManual_CN_V1.6.pdf",
+        "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760"
+      },
+      {
+        "path": "external-evidence/CW32L031_DataSheet_CN_V1.9.pdf",
+        "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855"
+      },
+      {
+        "path": "external-evidence/cw32l031/IdeSupport/EWARM/arm/config/debugger/WHXY/CW32L031.svd",
+        "sha256": "f8044dc562825ce49a32f7cfa19df1b09e0f60daebe61e4c91c7e973670be815"
+      }
+    ],
+    "public_api_comment_files": {
+      "embassy-cw32/src/lib.rs": "95991a1efd83dbf7bcf866eeaf2f0a456574d1ef8e4ee2380cc463adac589a50",
+      "embassy-cw32/src/rcc/bounds.rs": "5b6d184f9a0edaf49a669e1e31e8989cf498963d4b309dd7ae5b91f3def38766",
+      "embassy-cw32/src/rcc/rtc.rs": "acddd37c856014ae01e0736bb7cd79bc8bd1fc28191f551a5b1fa26220c6df24",
+      "embassy-cw32/src/rtc/mod.rs": "511da6df215f9104aa5458183799ab2552604d91a99bc081e28c62f1005e7761"
+    }
+  },
+  "resolved_findings": [
+    {
+      "id": "R1",
+      "severity": "blocking_integration",
+      "finding": "Initial new pending reads and shared assertions named IRQ4 RCC; own L031 PAC/SVD/header name it SYSCTRL.",
+      "resolution": "Both pending reads and L031-only assertions use existing SYSCTRL+4; old-family RCC names and PAC bytes remain unchanged.",
+      "runtime_source_sha256": "06363d1c4e09269efae84e57d5689bc29638aa099239f0c02ee7ac91bd0b3b72",
+      "verified_in_actual_exact3_generated_pacs": true
+    }
+  ],
+  "unresolved_findings": [],
+  "stage_trace": {
+    "P0": "Pure selected-LSI envelope/bus validation plus independently legal configured-HSI final tree; existing time-driver preflight remains before singleton/MMIO.",
+    "P1": "Selected target alone captures immutable entry state before LSE helpers; one native LSI and HSI factory halfword read; full AWT owner and existing RTC/AWT/HSE/LVD blockers preserved.",
+    "P2": "Conservative Flash and monotonic /4 AHB /8 APB minimum guards retain entry source; full normalized CR0 expected acknowledgement precedes preparation.",
+    "P3": "Cold matching and mismatching TRIM both require two equal complete consumer/global passes and request-edge comparison; only needed native TRIM is modified, preserving WAIT/reserved identity.",
+    "P4": "First source request jointly sets permanent LSIEN and HSIEN before escape; full normalized CR1, LSI parameters/IER and dual ready views are checked; readiness sticks and events may rise only after the request for cold entry.",
+    "P5": "Existing HSI calibration bridge has target/owner checks before temporary LSI and HSI stop; typed HSI/source expected advances only; permanent target cannot take restore-off tail.",
+    "P6": "Retained HSE owner requires exact ready source/pads; deliberate HSE setup advances only native parameter/enables and projected GPIOF gate8. F8U6 has no owned HSE route.",
+    "P7": "Existing auxiliary LSE helper is bracketed by complete target checks while HSI/guarded buses remain active; fresh default-register write is modeled exactly, reused source is unchanged, GPIOC gates restore, no selected-LSE marker.",
+    "P8": "Final owner/pad/source/consumer proof precedes explicitly selected configured HSI under final buses; conservative Flash persists through the divider change.",
+    "P9": "Final WAIT covers max(LSI upper HCLK, retained-HSI upper HCLK); final SYSCLK-only LSI write is last oscillator/source/divider write; all final proofs and Flash precede last CR0 read and publication."
+  },
+  "branch_review": {
+    "immutable_classification": true,
+    "cold_matching_trim_two_passes_and_request_edge": true,
+    "live_reuse_has_no_cold_selector_restriction": true,
+    "live_mismatch_never_retrimmed": true,
+    "selected_lsi_software_enable_zero_requested_before_escape": true,
+    "cold_ready_observers_not_cleared": true,
+    "direct_and_mirrored_ready_coherent_and_sticky": true,
+    "parameter_reserved_bits_preserved_except_deliberate_legacy_fresh_lse_write": true,
+    "typed_expected_state_never_refreshed_wholesale": true,
+    "old_lsi_consumers_idle_not_substituted": true,
+    "complete_awt_owner_retained": true,
+    "hsi_awt_lvd_and_hse_rtc_awt_blockers_retained": true,
+    "inherited_hse_lse_ccs_pads_and_enables_retained": true,
+    "failed_init_never_publishes_clocks": true,
+    "final_lsi_selector_is_last_oscillator_source_divider_write": true
+  },
+  "actual_generated_contract": {
+    "signature": "rcc_factory_lsi_consumers(timeout, cs, monitor_hse, monitor_lse)",
+    "gate_count": 9,
+    "selector_count": 11,
+    "gate_order": [
+      "RTC",
+      "AWT",
+      "UART1",
+      "UART2",
+      "UART3",
+      "GPIOA",
+      "GPIOB",
+      "GPIOC",
+      "GPIOF"
+    ],
+    "cold_allowed": {
+      "RTC": [
+        0,
+        4,
+        5,
+        6,
+        7
+      ],
+      "AWT": [
+        0,
+        2,
+        3,
+        4
+      ],
+      "UART1_2_3": [
+        0,
+        1,
+        2
+      ],
+      "GPIOA_B_C_F_FILTER": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        6
+      ],
+      "MCO": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        6,
+        8,
+        9
+      ],
+      "PB11_AFR11": [
+        0,
+        3,
+        5,
+        6,
+        7
+      ]
+    },
+    "gpio_b_filter_af_share_window": true,
+    "strict_window_order": [
+      "pre-reset check",
+      "central enable",
+      "enabled/non-reset before reads",
+      "read selector(s)",
+      "enabled/non-reset after reads and buffer semantic result",
+      "central restoration/error resolution",
+      "original gate equality",
+      "relevant captured HSE/LSE fault check",
+      "post-reset check",
+      "buffered semantic release"
+    ],
+    "normalization_masks": {
+      "LSI": 4294934527,
+      "HSI": 4294934527,
+      "HSE": 4294443007,
+      "LSE": 4294934527
+    },
+    "actual_outputs": [
+      {
+        "chip": "cw32l031c8t6",
+        "path": "external-evidence/stage67-main/lib-cw32l031c8t6-release-_generated.rs",
+        "sha256": "1bbb23754924cc0a4a62773411ded8ad3eb7c0601d6174ae80dcbbebfee27694",
+        "consumer_function_sha256": "7176a27d59c43f733eafabde25cb5c9482c797d45f5ac00dbd00f7e07f3b31e8",
+        "hse_gate_indices": [
+          8,
+          8
+        ],
+        "native_interrupt": "SYSCTRL = 4"
+      },
+      {
+        "chip": "cw32l031c8u6",
+        "path": "external-evidence/stage67-main/lib-cw32l031c8u6-release-_generated.rs",
+        "sha256": "1bbb23754924cc0a4a62773411ded8ad3eb7c0601d6174ae80dcbbebfee27694",
+        "consumer_function_sha256": "7176a27d59c43f733eafabde25cb5c9482c797d45f5ac00dbd00f7e07f3b31e8",
+        "hse_gate_indices": [
+          8,
+          8
+        ],
+        "native_interrupt": "SYSCTRL = 4"
+      },
+      {
+        "chip": "cw32l031f8u6",
+        "path": "external-evidence/stage67-main/lib-cw32l031f8u6-release-_generated.rs",
+        "sha256": "f950463138ccb894576bbef64da461fd9d5313f88b0d63ed24b1aa52371f9cdc",
+        "consumer_function_sha256": "7176a27d59c43f733eafabde25cb5c9482c797d45f5ac00dbd00f7e07f3b31e8",
+        "hse_gate_indices": [
+          null,
+          null
+        ],
+        "native_interrupt": "SYSCTRL = 4"
+      }
+    ],
+    "old_hse_lse_pad_helper_contract_not_strengthened": true,
+    "fresh_lse_gpio_c_gate_advance": false
+  },
+  "preservation": {
+    "byte_equal_to_stage66": [
+      "existing selected-LSE final tail",
+      "external helper suffix from check_external_faults",
+      "LseSysclkState and monitor helpers",
+      "prepare_lse_monitor",
+      "embassy-cw32/src/rcc/lse.rs",
+      "embassy-cw32/src/rcc/peripheral.rs",
+      "embassy-cw32/src/adc/classic.rs",
+      "embassy-cw32/src/time_driver.rs"
+    ],
+    "non_lsi_target_hooks_unreachable": true,
+    "actual_excluded_main_library_cfgs_without_lsi": [
+      "cw32l031",
+      "cw32l031f8p6",
+      "cw32r031c8u6",
+      "cw32w031r8u6"
+    ],
+    "rtc_compatibility": "Exactly the new three parts make every factory-LSI RTC alias/source/tick bound rate-only under all SYSCLK choices; exact numerator/divisor and nominal calendar behavior remain; excluded parts and board LSE retain qualification.",
+    "public_handover_and_compatibility_comments_reviewed": true,
+    "no_adc_uart_rtc_awt_algorithm_change": true
+  },
+  "main_build_evidence": {
+    "commands_path": "external-evidence/stage67-main/commands.json",
+    "commands_sha256": "7b777b29d35c879cc13337331f83c20fd93315f6334042505d2812f7a57e15d1",
+    "summary_path": "external-evidence/stage67-main/summary.json",
+    "summary_sha256": "fb0566e03e80aa640f715f9c1297d72dff3f302f376f2cac920c36b74b434311",
+    "successful_commands": 20,
+    "actual_rlib_count": 10,
+    "linked_elf_count": 10,
+    "all_rlib_compiler_artifacts_fresh_false": true,
+    "all_logs_artifacts_and_generated_files_independently_hash_verified": true,
+    "all_10_elf_headers_entry_stack_and_load_segments_independently_verified": true,
+    "exact3_memory": {
+      "flash_origin": 0,
+      "flash_bytes": 65536,
+      "sram_origin": 536870912,
+      "sram_bytes": 8192
+    },
+    "regression_memory_checked_against_own_emitted_limits": true,
+    "historical_failed_invocations": [
+      {
+        "name": "rtc-calendar-cw32l031c8t6-preserve_calendar",
+        "exit": 101,
+        "reason": "Package has no top-level defmt feature; corrected existing invocation, no source changes",
+        "log_sha256": "728a75a33c6437daa084511afbee5ebaf2f0350680e0414e50cc478df5342489"
+      },
+      {
+        "name": "lse-clock-cw32l031c8t6-crystal_calendar",
+        "exit": 101,
+        "reason": "Package has no top-level defmt feature; corrected existing invocation, no source changes",
+        "log_sha256": "100f9fb71055e82b9a0833db7348e5a2b025e8b3828495db8bbc2f4bf19df940"
+      }
+    ],
+    "entries": [
+      {
+        "name": "lib-cw32l031c8t6-release",
+        "exit": 0,
+        "artifact_kind": "actual_rlib",
+        "rlib_sha256": "dc439222eccd84f3f5c123d615a32bec79b1a33cf25cd4e5b47ae350b3dbb0a4",
+        "compiler_fresh": false
+      },
+      {
+        "name": "lib-cw32l031c8u6-release",
+        "exit": 0,
+        "artifact_kind": "actual_rlib",
+        "rlib_sha256": "345bd2e56b6771a96ec01da09a6f55bf3c2f2ff83aa78aa5a5a4db452be0a2e0",
+        "compiler_fresh": false
+      },
+      {
+        "name": "lib-cw32l031f8u6-release",
+        "exit": 0,
+        "artifact_kind": "actual_rlib",
+        "rlib_sha256": "a8b6d2da954d28c79d937e1482e1073fcbd171c69a17615b3ffc8c8d5093e8c3",
+        "compiler_fresh": false
+      },
+      {
+        "name": "lib-cw32l031c8t6-debug",
+        "exit": 0,
+        "artifact_kind": "actual_rlib",
+        "rlib_sha256": "19017f25745781ff4be60730bf83aac87a052a7ba2e1f94868f9a2b45b5ab35f",
+        "compiler_fresh": false
+      },
+      {
+        "name": "lib-cw32l031-release",
+        "exit": 0,
+        "artifact_kind": "actual_rlib",
+        "rlib_sha256": "ba3a965b17534812ad903fbd29f75ac5a170dde59678ae7e43861814c34d1a73",
+        "compiler_fresh": false
+      },
+      {
+        "name": "lib-cw32l031f8p6-release",
+        "exit": 0,
+        "artifact_kind": "actual_rlib",
+        "rlib_sha256": "940ebaceb5f6dc1b057cce0ed3da74c99efb541f0e5649a0ae92208a42e4d79d",
+        "compiler_fresh": false
+      },
+      {
+        "name": "lib-cw32r031c8u6-release",
+        "exit": 0,
+        "artifact_kind": "actual_rlib",
+        "rlib_sha256": "a3e9706412177e1535fe80e783ec5aff8428a2a84757e66b026074cf3a6cccae",
+        "compiler_fresh": false
+      },
+      {
+        "name": "lib-cw32w031r8u6-release",
+        "exit": 0,
+        "artifact_kind": "actual_rlib",
+        "rlib_sha256": "3fbbc42538ea6e1fac939276482cdc0446aa96e2e8bd0b43432bec844b7c23a3",
+        "compiler_fresh": false
+      },
+      {
+        "name": "lib-cw32f003e4p7-release",
+        "exit": 0,
+        "artifact_kind": "actual_rlib",
+        "rlib_sha256": "278edb2c4b16de726631fbefdd9df7887b8706ed131a87aeb584aed2f4aab7eb",
+        "compiler_fresh": false
+      },
+      {
+        "name": "lib-cw32f030c8t7-release",
+        "exit": 0,
+        "artifact_kind": "actual_rlib",
+        "rlib_sha256": "bd1794a55d3a0ddb400e421325554bfbfa5f32f1182308d30032f18cb1f20f77",
+        "compiler_fresh": false
+      },
+      {
+        "name": "lsi-clock-cw32l031c8t6-cw32-lsi-clock-example",
+        "exit": 0,
+        "artifact_kind": "linked_arm_elf",
+        "chip": "cw32l031c8t6",
+        "elf_sha256": "2f0054206ebe6780376bfafa9255cae194098c1ae1e1f8e193da6cc37bdff033",
+        "entry": 193,
+        "stack": 536879104,
+        "memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "load_segments_verified": true
+      },
+      {
+        "name": "lsi-clock-cw32l031c8u6-cw32-lsi-clock-example",
+        "exit": 0,
+        "artifact_kind": "linked_arm_elf",
+        "chip": "cw32l031c8u6",
+        "elf_sha256": "02dd53317229d0a188636823b4e1b55e447060a3e9249a47b82dd246c9967412",
+        "entry": 193,
+        "stack": 536879104,
+        "memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "load_segments_verified": true
+      },
+      {
+        "name": "lsi-clock-cw32l031f8u6-cw32-lsi-clock-example",
+        "exit": 0,
+        "artifact_kind": "linked_arm_elf",
+        "chip": "cw32l031f8u6",
+        "elf_sha256": "6f41398297afb989191e6a220d7836aead235f9adb71bd9b17de7c23f5cc7be2",
+        "entry": 193,
+        "stack": 536879104,
+        "memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "load_segments_verified": true
+      },
+      {
+        "name": "lse-sysclk-cw32l031c8t6-crystal",
+        "exit": 0,
+        "artifact_kind": "linked_arm_elf",
+        "chip": "cw32l031c8t6",
+        "elf_sha256": "c2ae5d8a028dbe20a0bac927a613f9e55fd82af755d9e6df311c619ee0654db2",
+        "entry": 193,
+        "stack": 536879104,
+        "memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "load_segments_verified": true
+      },
+      {
+        "name": "lse-sysclk-cw32l031f8u6-bypass",
+        "exit": 0,
+        "artifact_kind": "linked_arm_elf",
+        "chip": "cw32l031f8u6",
+        "elf_sha256": "8254690aa276064ba172191c633112a2ae5f81c9b867fc0182899b607427fac0",
+        "entry": 193,
+        "stack": 536879104,
+        "memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "load_segments_verified": true
+      },
+      {
+        "name": "lse-sysclk-cw32r031c8u6-crystal",
+        "exit": 0,
+        "artifact_kind": "linked_arm_elf",
+        "chip": "cw32r031c8u6",
+        "elf_sha256": "7d5751533c2c9d27432a7fedf26f45aaf47c6fed673df1c378cd76296e960a85",
+        "entry": 193,
+        "stack": 536879104,
+        "memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "load_segments_verified": true
+      },
+      {
+        "name": "lse-sysclk-cw32w031r8u6-crystal",
+        "exit": 0,
+        "artifact_kind": "linked_arm_elf",
+        "chip": "cw32w031r8u6",
+        "elf_sha256": "d0c2282baec61dfe106dd099256fc3d4a36ad35128a467b72d6ef6d082e05b71",
+        "entry": 193,
+        "stack": 536879104,
+        "memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "load_segments_verified": true
+      },
+      {
+        "name": "rtc-calendar-cw32l031c8t6-preserve_calendar",
+        "exit": 101,
+        "classification": "Unsupported top-level defmt feature; command corrected without source edit",
+        "log_sha256": "728a75a33c6437daa084511afbee5ebaf2f0350680e0414e50cc478df5342489"
+      },
+      {
+        "name": "rtc-calendar-cw32l031c8t6-preserve_calendar-retry2",
+        "exit": 0,
+        "artifact_kind": "linked_arm_elf",
+        "chip": "cw32l031c8t6",
+        "elf_sha256": "6c1296213cdab840ba3ad327ac836d024b164883d798cb3a9ac6c8f319d8a208",
+        "entry": 193,
+        "stack": 536879104,
+        "memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "load_segments_verified": true
+      },
+      {
+        "name": "lse-clock-cw32l031c8t6-crystal_calendar",
+        "exit": 101,
+        "classification": "Unsupported top-level defmt feature; command corrected without source edit",
+        "log_sha256": "100f9fb71055e82b9a0833db7348e5a2b025e8b3828495db8bbc2f4bf19df940"
+      },
+      {
+        "name": "lse-clock-cw32l031c8t6-crystal_calendar-retry2",
+        "exit": 0,
+        "artifact_kind": "linked_arm_elf",
+        "chip": "cw32l031c8t6",
+        "elf_sha256": "b17245f84178ab3700a12e49c0987ca777106fe00678856d8ac0d55e8357cf04",
+        "entry": 193,
+        "stack": 536879104,
+        "memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "load_segments_verified": true
+      },
+      {
+        "name": "hse-clock-cw32l031c8t6-crystal",
+        "exit": 0,
+        "artifact_kind": "linked_arm_elf",
+        "chip": "cw32l031c8t6",
+        "elf_sha256": "fac5a3a8dc6878e4dd2df96cfb8e2f3ce71657a781b34e3be007ab274887a825",
+        "entry": 193,
+        "stack": 536879104,
+        "memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "load_segments_verified": true
+      }
+    ]
+  },
+  "clean_replay": {
+    "status": "pending",
+    "planned_actual_libraries": 2,
+    "planned_linked_elfs": 3,
+    "main_receipt_will_remain_immutable": true
+  },
+  "boundaries": {
+    "reviewer_modified_source": false,
+    "reviewer_executed_cargo_generation_or_validators": false,
+    "hal_tests_probes_models_harnesses": false,
+    "hardware_execution": false,
+    "network_remote": false,
+    "runtime_branch_execution_claimed": false,
+    "silicon_timing_or_recovery_claimed": false,
+    "repository_wide_production_validation_claimed": false
+  },
+  "limits": [
+    "Build/link evidence does not execute cold/live/failure admission branches or establish hardware timing/recovery.",
+    "Asynchronous source loss and concurrent clock/pad/consumer mutation are outside the admitted handover.",
+    "Gate restoration cannot undo GPIO sampling/filter/event progress.",
+    "Full metadata/PAC comparison and final packaging are separate coordinator evidence.",
+    "Clean replay remains pending and must be recorded separately."
+  ]
+}

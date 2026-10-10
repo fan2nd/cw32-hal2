@@ -47,6 +47,8 @@ pub use f002_f003::*;
 mod l031_r031_w031;
 #[cfg(rcc_cw32l031_v1)]
 pub(crate) use l031_r031_w031::init as init_backend;
+#[cfg(all(rcc_cw32l031_v1, rcc_lsi_sysclk))]
+pub(crate) use l031_r031_w031::lsi_inspection_error;
 #[cfg(rcc_cw32l031_v1)]
 pub use l031_r031_w031::*;
 

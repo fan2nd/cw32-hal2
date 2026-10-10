@@ -22,7 +22,9 @@ pub fn apply(
 ) -> Result<()> {
     let classic = matches!(line, "CW32F020" | "CW32F030" | "CW32A030");
     let exact_family = matches!(line, "CW32F002" | "CW32F003");
-    let qualified = classic || exact_family;
+    let l031 = line == "CW32L031";
+    let has_rtc = classic || l031;
+    let qualified = classic || exact_family || l031;
     let Some(clock) = core
         .peripherals
         .iter()
@@ -54,7 +56,9 @@ pub fn apply(
         .context("missing LSI family roster")?;
     ensure!(
         families.keys().map(String::as_str).collect::<Vec<_>>()
-            == ["CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030"],
+            == [
+                "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L031"
+            ],
         "factory-LSI family scope changed"
     );
     let own = &policy["families"][line];
@@ -99,6 +103,8 @@ pub fn apply(
     }
     let exact_part = if exact_family {
         validate_exact_family(root, chip, line, own, &lsi)?
+    } else if l031 {
+        validate_l031_family(root, chip, own, &lsi)?
     } else {
         false
     };
@@ -136,6 +142,10 @@ pub fn apply(
         "CW32A030" => [
             "vendor:CW32x030_UserManual_CN_V2.5.pdf",
             "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+        ],
+        "CW32L031" => [
+            "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+            "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
         ],
         _ => anyhow::bail!("unqualified factory-LSI family"),
     };
@@ -198,15 +208,27 @@ pub fn apply(
             .find(|r| r.name == reg && r.byte_offset == offset)
             .with_context(|| format!("wrong LSI register {name}.{reg}"))?;
         ensure!(item.array.is_none(), "unexpected LSI register array");
-        let ir::BlockItemInner::Register(reg) = &item.inner else {
+        let ir::BlockItemInner::Register(register) = &item.inner else {
             anyhow::bail!("LSI object is not a register")
         };
         ensure!(
-            reg.bit_size == 32 && matches!(reg.access, ir::Access::Read | ir::Access::ReadWrite),
+            register.bit_size == 32
+                && matches!(register.access, ir::Access::Read | ir::Access::ReadWrite),
             "LSI register is not readable u32"
         );
+        if l031 {
+            ensure!(
+                register.access
+                    == if name == "SYSCTRL" && reg == "ISR" {
+                        ir::Access::Read
+                    } else {
+                        ir::Access::ReadWrite
+                    },
+                "L031 own register access changed: {name}.{reg}"
+            );
+        }
         ir.fieldsets
-            .get(reg.fieldset.as_ref().context("missing LSI fields")?)
+            .get(register.fieldset.as_ref().context("missing LSI fields")?)
             .context("missing LSI fieldset")
     };
     let field = |fields: &ir::FieldSet, name: &str, bit: u32, size: u32| -> Result<()> {
@@ -230,7 +252,7 @@ pub fn apply(
         .context("missing LSI peripheral addresses")?;
     let expected_names: Vec<_> = ["SYSCTRL", "AWT"]
         .into_iter()
-        .chain(classic.then_some("RTC"))
+        .chain(has_rtc.then_some("RTC"))
         .chain(lsi.uarts.iter().map(String::as_str))
         .chain(lsi.gpio_banks.iter().map(String::as_str))
         .collect();
@@ -265,6 +287,55 @@ pub fn apply(
             ("SYSCTRL", "LSI", "STABLE"),
             ("SYSCTRL", "MCO", "SOURCE"),
             ("AWT", "CR", "SRC"),
+        ]
+    } else if l031 {
+        vec![
+            ("SYSCTRL", "CR0", "SYSCLK"),
+            ("SYSCTRL", "CR0", "PCLKPRS"),
+            ("SYSCTRL", "CR0", "HCLKPRS"),
+            ("SYSCTRL", "CR0", "KEY"),
+            ("SYSCTRL", "CR1", "HSIEN"),
+            ("SYSCTRL", "CR1", "HSEEN"),
+            ("SYSCTRL", "CR1", "LSIEN"),
+            ("SYSCTRL", "CR1", "LSEEN"),
+            ("SYSCTRL", "CR1", "LSELOCK"),
+            ("SYSCTRL", "CR1", "LSECCS"),
+            ("SYSCTRL", "CR1", "HSECCS"),
+            ("SYSCTRL", "CR1", "CLKCCS"),
+            ("SYSCTRL", "CR1", "KEY"),
+            ("SYSCTRL", "IER", "LSIRDY"),
+            ("SYSCTRL", "IER", "KEY"),
+            ("SYSCTRL", "ISR", "LSIRDY"),
+            ("SYSCTRL", "ISR", "HSISTABLE"),
+            ("SYSCTRL", "ISR", "HSESTABLE"),
+            ("SYSCTRL", "ISR", "LSISTABLE"),
+            ("SYSCTRL", "ISR", "LSESTABLE"),
+            ("SYSCTRL", "ISR", "HSEFAIL"),
+            ("SYSCTRL", "ISR", "HSEFAULT"),
+            ("SYSCTRL", "ISR", "LSEFAIL"),
+            ("SYSCTRL", "ISR", "LSEFAULT"),
+            ("SYSCTRL", "HSI", "TRIM"),
+            ("SYSCTRL", "HSI", "DIV"),
+            ("SYSCTRL", "HSI", "STABLE"),
+            ("SYSCTRL", "HSE", "DRIVER"),
+            ("SYSCTRL", "HSE", "FREQRANGE"),
+            ("SYSCTRL", "HSE", "WAITCYCLE"),
+            ("SYSCTRL", "HSE", "MODE"),
+            ("SYSCTRL", "HSE", "FLT"),
+            ("SYSCTRL", "HSE", "DETCNT"),
+            ("SYSCTRL", "HSE", "STABLE"),
+            ("SYSCTRL", "LSI", "TRIM"),
+            ("SYSCTRL", "LSI", "WAITCYCLE"),
+            ("SYSCTRL", "LSI", "STABLE"),
+            ("SYSCTRL", "LSE", "DRIVER"),
+            ("SYSCTRL", "LSE", "AMP"),
+            ("SYSCTRL", "LSE", "WAITCYCLE"),
+            ("SYSCTRL", "LSE", "MODE"),
+            ("SYSCTRL", "LSE", "STABLE"),
+            ("SYSCTRL", "MCO", "SOURCE"),
+            ("RTC", "CR1", "SOURCE"),
+            ("AWT", "CR", "SRC"),
+            ("GPIOB", "AFRH", "AFR11"),
         ]
     } else {
         vec![
@@ -322,12 +393,19 @@ pub fn apply(
     actual_fields.sort();
     ensure!(
         actual_fields == required_fields
-            && actual_fields.len() == if exact_family { 22 } else { 32 },
+            && actual_fields.len()
+                == if exact_family {
+                    22
+                } else if l031 {
+                    53
+                } else {
+                    32
+                },
         "LSI field roster must be exact, complete and unique"
     );
     let mut required_gates = ["AWT"]
         .into_iter()
-        .chain(classic.then_some("RTC"))
+        .chain(has_rtc.then_some("RTC"))
         .chain(lsi.uarts.iter().map(String::as_str))
         .chain(lsi.gpio_banks.iter().map(String::as_str))
         .collect::<Vec<_>>();
@@ -421,6 +499,71 @@ pub fn apply(
             actual == expected.iter().map(String::as_str).collect::<Vec<_>>(),
             "incomplete LSI {kind} roster"
         );
+    }
+    if l031 {
+        let sysctrl = peripheral("SYSCTRL")?
+            .registers
+            .as_ref()
+            .context("missing L031 SYSCTRL IP")?;
+        ensure!(
+            sysctrl.version == "cw32l031_v1" && own["sysctrl_version"] == sysctrl.version,
+            "L031 factory-LSI requires its own validated SYSCTRL IP"
+        );
+        let ir = registers
+            .get(&sysctrl.kind)
+            .context("missing L031 SYSCTRL IR")?;
+        let block = ir
+            .blocks
+            .get(&sysctrl.block)
+            .context("missing L031 SYSCTRL block")?;
+        ensure!(
+            block
+                .items
+                .iter()
+                .all(|r| !matches!(r.name.as_str(), "PLL" | "HEX"))
+                && register("SYSCTRL", "CR1", 4)?
+                    .fields
+                    .iter()
+                    .all(|f| !matches!(f.name.as_str(), "PLLEN" | "HEXEN" | "LSILOCK"))
+                && core.peripherals.iter().all(|p| !matches!(
+                    p.name.as_str(),
+                    "AUTOTRIM" | "LCD" | "LPTIM" | "LPTIM1" | "LPTIM2"
+                )),
+            "L031 source/root absence differs from selected hardware"
+        );
+        // chiptool IR keeps register access; the existing separate overlay is
+        // the source of per-field read-only restrictions in the generated PAC.
+        let access = parse_policy(&fs::read(root.join("cw32-data/field-access.yaml"))?)?;
+        let access = access["registers"]["sysctrl_cw32l031_v1"]
+            .as_array()
+            .context("missing L031 source status access")?;
+        for (name, bit) in [("HSI", 15), ("HSE", 19), ("LSI", 15), ("LSE", 15)] {
+            ensure!(
+                access
+                    .iter()
+                    .filter(|f| f["block"] == "SYSCTRL"
+                        && f["register"] == name
+                        && f["fieldset"] == name
+                        && f["field"] == "STABLE"
+                        && f["bit_offset"] == bit
+                        && f["bit_size"] == 1)
+                    .count()
+                    == 1,
+                "L031 source STABLE must retain its reviewed read-only overlay"
+            );
+        }
+        if exact_part {
+            let bonded = chip.name != "CW32L031F8U6";
+            ensure!(
+                core.pins.iter().any(|p| p.name == "PB11") == bonded
+                    && chip.packages[0]
+                        .pins
+                        .iter()
+                        .any(|p| p.signals.iter().any(|s| s == "PB11"))
+                        == bonded,
+                "L031 PB11 physical bonding differs from own package evidence"
+            );
+        }
     }
     if exact_family {
         // The independent complete manual AF-table exclusion is cross-checked
@@ -552,10 +695,11 @@ pub fn apply(
             "same-source LSI/RTC qualification diverges"
         );
     }
+    let observer_irq = if l031 { "SYSCTRL" } else { "RCC" };
     ensure!(
         core.interrupts
             .iter()
-            .any(|i| i.name == "RCC" && u16::from(i.number) == lsi.rcc_irq),
+            .any(|i| i.name == observer_irq && u16::from(i.number) == lsi.rcc_irq),
         "RCC pending observer IRQ changed"
     );
     // All source/package/register/consumer checks finish before the only injection.
@@ -569,6 +713,127 @@ pub fn apply(
         clock.lsi_sysclk = Some(lsi);
     }
     Ok(())
+}
+
+// L031 has its own RTC, external detectors, direct PB11 output and nine-gate
+// shape. Shared register backends do not authorize R031/W031 or other packages.
+fn validate_l031_family(
+    root: &Path,
+    chip: &crate::ChipInput,
+    own: &Value,
+    lsi: &cw32_data_serde::chip::core::peripheral::LsiSysclk,
+) -> Result<bool> {
+    use serde_json::json;
+    let parts = json!([
+        {"name":"CW32L031C8T6", "package":"LQFP48"},
+        {"name":"CW32L031C8U6", "package":"QFN48"},
+        {"name":"CW32L031F8U6", "package":"QFN20"}
+    ]);
+    ensure!(
+        own["exact_parts"] == parts && own["sysctrl_version"] == "cw32l031_v1",
+        "L031 exact factory-LSI qualification roster or IP changed"
+    );
+    let memory = json!([
+        {"name":"FLASH", "kind":"flash", "address":0, "size":65_536},
+        {"name":"RAM", "kind":"ram", "address":0x2000_0000, "size":8_192}
+    ]);
+    let catalog = parse_policy(&fs::read(root.join("cw32-data/parts.yaml"))?)?;
+    let roster = catalog["parts"]
+        .as_array()
+        .context("missing L031 parts catalog")?;
+    for part in parts.as_array().unwrap() {
+        let selected = roster
+            .iter()
+            .filter(|p| p["name"] == part["name"])
+            .collect::<Vec<_>>();
+        ensure!(
+            selected.len() == 1
+                && selected[0]["family"] == "CW32L031"
+                && selected[0]["feature"] == part["name"].as_str().unwrap().to_ascii_lowercase()
+                && selected[0]["package"] == part["package"]
+                && selected[0]["memory"] == memory
+                && selected[0]["datasheet_source_id"] == "CW32L031_datasheet",
+            "L031 exact factory-LSI package/memory differs from own catalog"
+        );
+    }
+    ensure!(
+        catalog["sources"]["CW32L031_datasheet"]["source_ref"] == own["sources"][1]["source_ref"]
+            && catalog["sources"]["CW32L031_datasheet"]["sha256"]
+                == "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+        "L031 physical package evidence is not the selected own datasheet"
+    );
+    let selected = parts
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|p| p["name"] == chip.name);
+    if let Some(part) = selected {
+        ensure!(
+            chip.packages.len() == 1
+                && part["package"] == chip.packages[0].package
+                && serde_json::to_value(&chip.memory)? == json!([memory]),
+            "L031 exact factory-LSI requires the reviewed physical package and memory"
+        );
+    }
+    ensure!(
+        lsi.nominal_hz == 32_800
+            && lsi.minimum_hz == 31_816
+            && lsi.maximum_hz == 33_784
+            && lsi.supply_mv == (1650, 5500)
+            && lsi.temperature_c == (-40, 85)
+            && lsi.factory_trim_address == 0x0010_0a02
+            && lsi.rcc_irq == 4
+            && lsi.rtc_allowed_sources == [0, 4, 5, 6, 7]
+            && lsi.awt_allowed_sources == [0, 2, 3, 4]
+            && lsi.uart_allowed_sources == [0, 1, 2]
+            && lsi.uarts == ["UART1", "UART2", "UART3"]
+            && lsi.gpio_banks == ["GPIOA", "GPIOB", "GPIOC", "GPIOF"]
+            && lsi.gpio_filter_allowed_sources == [0, 1, 2, 3, 4, 6]
+            && lsi.mco_allowed_sources == [0, 1, 2, 3, 5, 6, 8, 9]
+            && lsi.lsi_output_pin.as_deref() == Some("PB11")
+            && lsi.lsi_output_allowed_af == [0, 3, 5, 6, 7],
+        "L031 own factory-LSI envelope or complete consumer facts changed"
+    );
+    ensure!(
+        own["sources"][0]["sha256"]
+            == "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760"
+            && own["sources"][1]["sha256"]
+                == "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855"
+            && own["sources"][0]["pdf_pages_1_based"]
+                == json!([
+                    47, 54, 55, 56, 57, 58, 59, 60, 61, 64, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76,
+                    77, 78, 79, 80, 81, 82, 89, 91, 92, 94, 95, 107, 117, 137, 141, 142, 150, 159,
+                    160, 161, 165, 168, 169, 170, 171, 172, 179, 180, 303, 304, 321, 322, 353, 475,
+                    488, 493
+                ])
+            && own["sources"][1]["pdf_pages_1_based"]
+                == json!([9, 10, 23, 24, 25, 26, 27, 30, 32, 33, 38, 47, 77, 78]),
+        "L031 own source identity or evidence pages changed"
+    );
+    ensure!(
+        own["ready_observers"] == json!(["IER.LSIRDY", "ISR.LSIRDY", "NVIC.SYSCTRL.pending"])
+            && own["stable_observers"] == json!(["LSI.STABLE", "ISR.LSISTABLE"])
+            && own["absent_direct_roots"]
+                == json!(["system_PLL", "system_HEX", "AUTOTRIM", "LCD", "LPTIM"])
+            && own["other_clock_sources"]
+                == json!({
+                    "IWDT":["RC10K"], "VC":["PCLK","RC150K"], "LVD":["HSIOSC","RC150K"]
+                })
+            && own["pb11_bonded"]
+                == json!({
+                    "CW32L031C8T6":true, "CW32L031C8U6":true, "CW32L031F8U6":false
+                })
+            && own["conservative_policy"]
+                == json!({
+                    "pb11_unbonded_register_inspection":true,
+                    "gpio_filter_7":"reject_documented_awt_overflow",
+                    "mco_7":"reject_undocumented", "pb11_blank_af_2_4":"reject_undocumented",
+                    "cold_external_detectors":"reject_either_enabled",
+                    "ccs_and_lselock":"preserve_configurable", "rtc_lsi_bounds":"rate_only_all_sysclk"
+                }),
+        "L031 complete root/observer/bonding and conservative policy changed"
+    );
+    Ok(selected.is_some())
 }
 
 // Both exact-only families use this one structural admission process. The local

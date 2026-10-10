@@ -166,6 +166,13 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   ADC and the fixed 1 MHz time driver reject this rate-only system tree;
   AWT keeps independent HSIOSC timing. ATIM/IR add no inspection windows
   or new API qualification. See [the exact-three contract](docs/f003-factory-lsi-sysclk.md).
+- CW32L031C8T6, CW32L031C8U6 and CW32L031F8U6: init-only factory LSI
+  SYSCLK with own 31,816–33,784 Hz (±3%) rate bounds at 1.65–5.5 V and
+  −40–85°C, 64 KiB Flash / 8 KiB SRAM and default retained HSI /6.
+  Whole-GPIOA/B/C/F inspection can advance events even before failure.
+  RTC LSI aliases become rate-only under every SYSCLK on these three parts;
+  generic/other L031 and R031/W031 keep their previous qualifications.
+  See [the exact L031 contract and review status](docs/l031-factory-lsi-sysclk.md).
 - F020/F030/A030: init-only factory LSI SYSCLK with complete cold-start admission,
   explicit whole-GPIO-bank inspection effects, permanent target request and
   rate-only bounds. The same families' LsiClock/RTC aliases are also rate-only;

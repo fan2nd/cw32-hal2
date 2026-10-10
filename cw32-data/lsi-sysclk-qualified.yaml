@@ -1,6 +1,6 @@
 schema_version: 1
 source_authority: sources/evidence-sources.json
-scope: Init-only factory LSI SYSCLK for F020/F030/A030, F002 exact2 and F003 exact3. Rate-only qualification. Whole GPIO bank inspection
+scope: Init-only factory LSI SYSCLK for F020/F030/A030, F002 exact2, F003 exact3 and L031 exact3. Rate-only qualification. Whole GPIO bank inspection
   can advance sampling, filters and armed events, including before failure. No runtime source switch or LSE
   SYSCLK.
 families:
@@ -2424,3 +2424,681 @@ families:
       sdk_catalog: cw32-data/af/cw32f003.yaml
       sdk_catalog_sha256: 335e35021f2ee0dcd25e3b80ce232577e13ec2fe2ed69e13c108d3ae517a0cf9
       sdk_header_source_ref: member:cw32f003/Libraries/inc/cw32f003_gpio.h
+  CW32L031:
+    exact_parts:
+    - name: CW32L031C8T6
+      package: LQFP48
+    - name: CW32L031C8U6
+      package: QFN48
+    - name: CW32L031F8U6
+      package: QFN20
+    sysctrl_version: cw32l031_v1
+    lsi_sysclk:
+      nominal_hz: 32800
+      minimum_hz: 31816
+      maximum_hz: 33784
+      supply_mv:
+      - 1650
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      factory_trim_address: 1051138
+      rtc_allowed_sources:
+      - 0
+      - 4
+      - 5
+      - 6
+      - 7
+      awt_allowed_sources:
+      - 0
+      - 2
+      - 3
+      - 4
+      uart_allowed_sources:
+      - 0
+      - 1
+      - 2
+      uarts:
+      - UART1
+      - UART2
+      - UART3
+      gpio_banks:
+      - GPIOA
+      - GPIOB
+      - GPIOC
+      - GPIOF
+      gpio_filter_allowed_sources:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 6
+      mco_allowed_sources:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 5
+      - 6
+      - 8
+      - 9
+      lsi_output_pin: PB11
+      lsi_output_allowed_af:
+      - 0
+      - 3
+      - 5
+      - 6
+      - 7
+      rcc_irq: 4
+    sources:
+    - source_ref: vendor:CW32L031_UserManual_CN_V1.6.pdf
+      sha256: 4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760
+      pdf_pages_1_based:
+      - 47
+      - 54
+      - 55
+      - 56
+      - 57
+      - 58
+      - 59
+      - 60
+      - 61
+      - 64
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 89
+      - 91
+      - 92
+      - 94
+      - 95
+      - 107
+      - 117
+      - 137
+      - 141
+      - 142
+      - 150
+      - 159
+      - 160
+      - 161
+      - 165
+      - 168
+      - 169
+      - 170
+      - 171
+      - 172
+      - 179
+      - 180
+      - 303
+      - 304
+      - 321
+      - 322
+      - 353
+      - 475
+      - 488
+      - 493
+      printed_pages:
+      - 46
+      - 53
+      - 54
+      - 55
+      - 56
+      - 57
+      - 58
+      - 59
+      - 60
+      - 63
+      - 66
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 88
+      - 90
+      - 91
+      - 93
+      - 94
+      - 106
+      - 116
+      - 136
+      - 140
+      - 141
+      - 149
+      - 158
+      - 159
+      - 160
+      - 164
+      - 167
+      - 168
+      - 169
+      - 170
+      - 171
+      - 178
+      - 179
+      - 302
+      - 303
+      - 320
+      - 321
+      - 352
+      - 474
+      - 487
+      - 492
+    - source_ref: vendor:CW32L031_DataSheet_CN_V1.9.pdf
+      sha256: 90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855
+      pdf_pages_1_based:
+      - 9
+      - 10
+      - 23
+      - 24
+      - 25
+      - 26
+      - 27
+      - 30
+      - 32
+      - 33
+      - 38
+      - 47
+      - 77
+      - 78
+      printed_pages:
+      - 8
+      - 9
+      - 22
+      - 23
+      - 24
+      - 25
+      - 26
+      - 29
+      - 31
+      - 32
+      - 37
+      - 46
+      - 76
+      - 77
+    register_fields:
+    - peripheral: SYSCTRL
+      register: CR0
+      byte_offset: 0
+      field: SYSCLK
+      bit_offset: 0
+      bit_size: 3
+    - peripheral: SYSCTRL
+      register: CR0
+      byte_offset: 0
+      field: PCLKPRS
+      bit_offset: 3
+      bit_size: 2
+    - peripheral: SYSCTRL
+      register: CR0
+      byte_offset: 0
+      field: HCLKPRS
+      bit_offset: 5
+      bit_size: 3
+    - peripheral: SYSCTRL
+      register: CR0
+      byte_offset: 0
+      field: KEY
+      bit_offset: 16
+      bit_size: 16
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      field: HSIEN
+      bit_offset: 0
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      field: HSEEN
+      bit_offset: 1
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      field: LSIEN
+      bit_offset: 3
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      field: LSEEN
+      bit_offset: 4
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      field: LSELOCK
+      bit_offset: 5
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      field: LSECCS
+      bit_offset: 6
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      field: HSECCS
+      bit_offset: 7
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      field: CLKCCS
+      bit_offset: 8
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      field: KEY
+      bit_offset: 16
+      bit_size: 16
+    - peripheral: SYSCTRL
+      register: IER
+      byte_offset: 12
+      field: LSIRDY
+      bit_offset: 3
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: IER
+      byte_offset: 12
+      field: KEY
+      bit_offset: 16
+      bit_size: 16
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      field: LSIRDY
+      bit_offset: 3
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      field: HSISTABLE
+      bit_offset: 11
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      field: HSESTABLE
+      bit_offset: 12
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      field: LSISTABLE
+      bit_offset: 14
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      field: LSESTABLE
+      bit_offset: 15
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      field: HSEFAIL
+      bit_offset: 6
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      field: HSEFAULT
+      bit_offset: 8
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      field: LSEFAIL
+      bit_offset: 5
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      field: LSEFAULT
+      bit_offset: 7
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: HSI
+      byte_offset: 24
+      field: TRIM
+      bit_offset: 0
+      bit_size: 11
+    - peripheral: SYSCTRL
+      register: HSI
+      byte_offset: 24
+      field: DIV
+      bit_offset: 11
+      bit_size: 4
+    - peripheral: SYSCTRL
+      register: HSI
+      byte_offset: 24
+      field: STABLE
+      bit_offset: 15
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: HSE
+      byte_offset: 28
+      field: DRIVER
+      bit_offset: 0
+      bit_size: 2
+    - peripheral: SYSCTRL
+      register: HSE
+      byte_offset: 28
+      field: FREQRANGE
+      bit_offset: 2
+      bit_size: 2
+    - peripheral: SYSCTRL
+      register: HSE
+      byte_offset: 28
+      field: WAITCYCLE
+      bit_offset: 4
+      bit_size: 2
+    - peripheral: SYSCTRL
+      register: HSE
+      byte_offset: 28
+      field: MODE
+      bit_offset: 6
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: HSE
+      byte_offset: 28
+      field: FLT
+      bit_offset: 7
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: HSE
+      byte_offset: 28
+      field: DETCNT
+      bit_offset: 8
+      bit_size: 11
+    - peripheral: SYSCTRL
+      register: HSE
+      byte_offset: 28
+      field: STABLE
+      bit_offset: 19
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: LSI
+      byte_offset: 32
+      field: TRIM
+      bit_offset: 0
+      bit_size: 10
+    - peripheral: SYSCTRL
+      register: LSI
+      byte_offset: 32
+      field: WAITCYCLE
+      bit_offset: 10
+      bit_size: 2
+    - peripheral: SYSCTRL
+      register: LSI
+      byte_offset: 32
+      field: STABLE
+      bit_offset: 15
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: LSE
+      byte_offset: 36
+      field: DRIVER
+      bit_offset: 0
+      bit_size: 2
+    - peripheral: SYSCTRL
+      register: LSE
+      byte_offset: 36
+      field: AMP
+      bit_offset: 2
+      bit_size: 2
+    - peripheral: SYSCTRL
+      register: LSE
+      byte_offset: 36
+      field: WAITCYCLE
+      bit_offset: 4
+      bit_size: 2
+    - peripheral: SYSCTRL
+      register: LSE
+      byte_offset: 36
+      field: MODE
+      bit_offset: 6
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: LSE
+      byte_offset: 36
+      field: STABLE
+      bit_offset: 15
+      bit_size: 1
+    - peripheral: SYSCTRL
+      register: MCO
+      byte_offset: 112
+      field: SOURCE
+      bit_offset: 0
+      bit_size: 4
+    - peripheral: RTC
+      register: CR1
+      byte_offset: 8
+      field: SOURCE
+      bit_offset: 8
+      bit_size: 3
+    - peripheral: AWT
+      register: CR
+      byte_offset: 0
+      field: SRC
+      bit_offset: 8
+      bit_size: 3
+    - peripheral: UART1
+      register: CR2
+      byte_offset: 4
+      field: SOURCE
+      bit_offset: 8
+      bit_size: 2
+    - peripheral: UART2
+      register: CR2
+      byte_offset: 4
+      field: SOURCE
+      bit_offset: 8
+      bit_size: 2
+    - peripheral: UART3
+      register: CR2
+      byte_offset: 4
+      field: SOURCE
+      bit_offset: 8
+      bit_size: 2
+    - peripheral: GPIOA
+      register: FILTER
+      byte_offset: 64
+      field: FLTCLK
+      bit_offset: 16
+      bit_size: 3
+    - peripheral: GPIOB
+      register: FILTER
+      byte_offset: 64
+      field: FLTCLK
+      bit_offset: 16
+      bit_size: 3
+    - peripheral: GPIOC
+      register: FILTER
+      byte_offset: 64
+      field: FLTCLK
+      bit_offset: 16
+      bit_size: 3
+    - peripheral: GPIOF
+      register: FILTER
+      byte_offset: 64
+      field: FLTCLK
+      bit_offset: 16
+      bit_size: 3
+    - peripheral: GPIOB
+      register: AFRH
+      byte_offset: 20
+      field: AFR11
+      bit_offset: 12
+      bit_size: 4
+    consumer_gates:
+    - peripheral: RTC
+      register: APBEN1
+      byte_offset: 56
+      bit_offset: 3
+      reset_register: APBRST1
+      reset_byte_offset: 72
+      gate_controls_work: false
+      enable_active_value: true
+      reset_asserted_value: false
+      keyed: false
+    - peripheral: AWT
+      register: APBEN2
+      byte_offset: 52
+      bit_offset: 13
+      reset_register: APBRST2
+      reset_byte_offset: 68
+      gate_controls_work: false
+      enable_active_value: true
+      reset_asserted_value: false
+      keyed: false
+    - peripheral: UART1
+      register: APBEN2
+      byte_offset: 52
+      bit_offset: 9
+      reset_register: APBRST2
+      reset_byte_offset: 68
+      gate_controls_work: false
+      enable_active_value: true
+      reset_asserted_value: false
+      keyed: false
+    - peripheral: UART2
+      register: APBEN1
+      byte_offset: 56
+      bit_offset: 7
+      reset_register: APBRST1
+      reset_byte_offset: 72
+      gate_controls_work: false
+      enable_active_value: true
+      reset_asserted_value: false
+      keyed: false
+    - peripheral: UART3
+      register: APBEN1
+      byte_offset: 56
+      bit_offset: 8
+      reset_register: APBRST1
+      reset_byte_offset: 72
+      gate_controls_work: false
+      enable_active_value: true
+      reset_asserted_value: false
+      keyed: false
+    - peripheral: GPIOA
+      register: AHBEN
+      byte_offset: 48
+      bit_offset: 4
+      reset_register: AHBRST
+      reset_byte_offset: 64
+      gate_controls_work: true
+      enable_active_value: true
+      reset_asserted_value: false
+      keyed: false
+    - peripheral: GPIOB
+      register: AHBEN
+      byte_offset: 48
+      bit_offset: 5
+      reset_register: AHBRST
+      reset_byte_offset: 64
+      gate_controls_work: true
+      enable_active_value: true
+      reset_asserted_value: false
+      keyed: false
+    - peripheral: GPIOC
+      register: AHBEN
+      byte_offset: 48
+      bit_offset: 6
+      reset_register: AHBRST
+      reset_byte_offset: 64
+      gate_controls_work: true
+      enable_active_value: true
+      reset_asserted_value: false
+      keyed: false
+    - peripheral: GPIOF
+      register: AHBEN
+      byte_offset: 48
+      bit_offset: 9
+      reset_register: AHBRST
+      reset_byte_offset: 64
+      gate_controls_work: true
+      enable_active_value: true
+      reset_asserted_value: false
+      keyed: false
+    watchdog_source: independent_rc10k
+    gpio_inspection: whole_bank_functional_handover
+    factory_read_width_bits: 16
+    trim_write: stopped_field_only
+    waitcycle_preserved: true
+    cycle_timing_qualified: false
+    peripheral_addresses:
+      SYSCTRL: 1073807360
+      RTC: 1073752064
+      AWT: 1073826816
+      UART1: 1073821696
+      UART2: 1073759232
+      UART3: 1073760256
+      GPIOA: 1207959552
+      GPIOB: 1207960576
+      GPIOC: 1207961600
+      GPIOF: 1207964672
+    ready_observers:
+    - IER.LSIRDY
+    - ISR.LSIRDY
+    - NVIC.SYSCTRL.pending
+    stable_observers:
+    - LSI.STABLE
+    - ISR.LSISTABLE
+    absent_direct_roots:
+    - system_PLL
+    - system_HEX
+    - AUTOTRIM
+    - LCD
+    - LPTIM
+    other_clock_sources:
+      IWDT:
+      - RC10K
+      VC:
+      - PCLK
+      - RC150K
+      LVD:
+      - HSIOSC
+      - RC150K
+    pb11_bonded:
+      CW32L031C8T6: true
+      CW32L031C8U6: true
+      CW32L031F8U6: false
+    conservative_policy:
+      pb11_unbonded_register_inspection: true
+      gpio_filter_7: reject_documented_awt_overflow
+      mco_7: reject_undocumented
+      pb11_blank_af_2_4: reject_undocumented
+      cold_external_detectors: reject_either_enabled
+      ccs_and_lselock: preserve_configurable
+      rtc_lsi_bounds: rate_only_all_sysclk

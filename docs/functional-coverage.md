@@ -160,6 +160,18 @@ still apply.
   driver rejects selected LSI before singleton acquisition or RCC MMIO.
   AWT retains independent HSIOSC timing. No rollback or hardware validation
   is promised; see the [F003 contract](f003-factory-lsi-sysclk.md).
+- CW32L031C8T6/C8U6/F8U6 add init-only factory-LSI SYSCLK using their own
+  31,816–33,784 Hz bounds at 1.65–5.5 V and −40–85°C, with 64 KiB Flash
+  and 8 KiB SRAM. Matching cold trim still needs the complete nine-gate,
+  eleven-selector admission. Whole-GPIOA/B/C/F inspection can advance events
+  even before failure. PB11 AF is conservatively inspected on unbonded F8U6;
+  documented AWT-overflow FILTER7 is conservatively rejected. Configurable
+  CCS and inherited HSE/LSE ownership remain distinct from classic policy.
+  All RTC LSI aliases become rate-only under every SYSCLK on these exact
+  three parts. Generic/other L031 and R031/W031 stay unchanged; board LSE
+  retains its independent qualification. ADC and the fixed 1 MHz time driver
+  reject selected LSI. See the [L031 contract and separate implementation
+  evidence](l031-factory-lsi-sysclk.md).
 - Init-only factory-LSI SYSCLK is qualified on F020/F030/A030. Cold admission
   precedes the first source-enable write and checks every documented shared
   consumer, gate, reset and inherited source request; factory-matching running
@@ -170,7 +182,7 @@ still apply.
   timing guards remain enforced. A 1 MHz Embassy timebase rejects this rate
   before singleton acquisition. This is a static control-flow guarantee;
   compiling the time-driver feature does not execute that rejection.
-  The other families' RTC/LSI alias qualification is unchanged. Runtime switching and
+  Apart from the exact L031 change above, other RTC/LSI qualifications are unchanged. Runtime switching and
   low-power restoration remain outside this slice. See the
   [complete factory-LSI contract](factory-lsi-sysclk.md).
 - Init-only LSE SYSCLK is qualified on twenty-three exact packages through the single

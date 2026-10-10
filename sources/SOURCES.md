@@ -42,7 +42,7 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 | `hse-qualified.yaml` | F020/F030/A030/L010/L011/L031/L052/L083/R031/W031 HSE 的各自 RM/DS；L010/L011/L031/L052/L083/R031/W031 的实际版本、章节与页码见下表。保留 RM/DS 外部输入下限冲突的交集，不跨族继承电气限值或 CCS 策略。 |
 | `lse-qualified.yaml` | 仅末节二十三个精确料号/封装；x030、F020、L031、R031、W031、L052、L083、L010、L011、L012 各自 RM/DS 与原件对应收据给出原件 ID/SHA、PDF/书页和 SDK 成员定位，其他料号不自动继承主动配置资格。 |
 | `pll-qualified.yaml`、`electrical.yaml` 的 PLL、对应 SYSCTRL 模板与 `field-access.yaml` 的 PLL 字段 | CW32L083/F020/F030/A030 的一次性 factory-HSI- 或 HSE-fed 系统 PLL；晶振/旁路共用既有HSE板级契约，各族自己的 RM/DS、原件 SHA 与 PDF/书页见末节。F020 采用 current-datasheets 中 printed Rev1.3，输出交集12–48MHz；L083/F030/A030为12–64MHz。保留模拟档位与电气上限区别、reserved-debug默认0x5、STABLE只读及rate-only时序限制；不外推其他族。 |
-| `lsi-sysclk-qualified.yaml`、`electrical.yaml` 的 `lsi_sysclk` | F020/F030/A030、精确 CW32F002F3P7/F3U7 与 CW32F003F4P7/F4U7/E4P7 的 init-only factory-LSI SYSCLK；逐族记录既锁 RM/DS 的 ID、SHA、PDF/书页，以及完整消费者、门控、复位与基址事实。F020 使用 current-datasheets 中真正 printed Rev1.3。F002/F003 generic alias 与其他未列料号不继承资格；两族均无 RTC/专用 LSI_OUT。classic 同源 RTC/LSI 别名仍为 rate-only，定位与兼容变化见下节。 |
+| `lsi-sysclk-qualified.yaml`、`electrical.yaml` 的 `lsi_sysclk` | F020/F030/A030、精确 CW32F002F3P7/F3U7、CW32F003F4P7/F4U7/E4P7 与 CW32L031C8T6/C8U6/F8U6 的 init-only factory-LSI SYSCLK；逐族记录既锁 RM/DS 的 ID、SHA、PDF/书页，以及完整消费者、门控、复位与基址事实。F020 使用 current-datasheets 中真正 printed Rev1.3。F002/F003 generic alias 与其他未列料号不继承资格；两族均无 RTC/专用 LSI_OUT。classic 同源 RTC/LSI 别名仍为 rate-only，定位与兼容变化见下节。 |
 | `hex-qualified.yaml` | F002/F003 各自 RM/DS 的直接 HEX 输入、PB0/PB1 与 AWT 来源；精确 PDF/书页见下表。保留 RM 4–32 MHz 与 DS 1–32 MHz 的交集及全部波形条件，不据此推定晶振、PLL 或失钟恢复能力。 |
 | `gpio-interrupt.yaml` | 各族 RM GPIO ICR 和中断表；CMSIS IRQ 枚举。 |
 | `reference-dividers.yaml` | L010/L011/L012 RM VC 分压器及 DS 电气范围，SDK VC 头/实现作佐证。 |
@@ -58,7 +58,17 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 
 新增的 `lsi-sysclk-qualified.yaml` 只引用已有锁定原件，不增加来源或修改其 SHA。F020 RM Rev1.4 的 CR1、LSI、ready/IRQ、门控分别见 PDF 69、72、76–79、80–85；GPIO、RTC、AWT、UART 的选择器与消费者定位分别在 PDF 140–155、174–186、163–170、267–295，IWDT 独立 RC10K 见 PDF 250–251。F030/A030 共同使用 x030 RM Rev2.5，对应页为 71、74、78–81、82–87，以及 143–158、177–189、166–173、329–357、312–313。这两本 RM 在上述定位的书页均为 PDF 页减一；完整离散页集合与逐字段定位保留在 YAML。
 
-LSI 电气表使用 F020 current DS Rev1.3 PDF 44（书页 43）、F030 DS Rev1.9 PDF 46（45）及 A030 DS Rev1.1 PDF 43（42）。三族标称均为 32800 Hz，适用 1.65–5.5 V、−40–105 °C；F020 速率区间为 31160–34440 Hz，F030/A030 为 31816–33784 Hz。这些是速率界限，没有逐边沿周期或抖动保证。三族现有 `LsiClock`、`CalendarClock::Lsi` 和 RTC 分频后界限统一保留 rate-only 属性，即使 SYSCLK 选 HSI 也如此；严格周期与死区时序请求会被拒绝。其他十族的 RTC/LSI 资格不变。完整 admission、whole-GPIO 功能移交与失败边界见 [factory-lsi-sysclk.md](../docs/factory-lsi-sysclk.md)。
+LSI 电气表使用 F020 current DS Rev1.3 PDF 44（书页 43）、F030 DS Rev1.9 PDF 46（45）及 A030 DS Rev1.1 PDF 43（42）。三族标称均为 32800 Hz，适用 1.65–5.5 V、−40–105 °C；F020 速率区间为 31160–34440 Hz，F030/A030 为 31816–33784 Hz。这些是速率界限，没有逐边沿周期或抖动保证。三族现有 `LsiClock`、`CalendarClock::Lsi` 和 RTC 分频后界限统一保留 rate-only 属性，即使 SYSCLK 选 HSI 也如此；严格周期与死区时序请求会被拒绝。另有下节精确 L031 三封装的独立 rate-only 兼容变化；其他料号的 RTC/LSI 资格不变。完整 admission、whole-GPIO 功能移交与失败边界见 [factory-lsi-sysclk.md](../docs/factory-lsi-sysclk.md)。
+
+## L031 精确三封装 factory-LSI SYSCLK
+
+仅 CW32L031C8T6（LQFP48）、CW32L031C8U6（QFN48）和 CW32L031F8U6（QFN20）使用自身已锁 `CW32L031_UserManual_CN_V1.6.pdf`、`CW32L031_DataSheet_CN_V1.9.pdf` 与 SDK V1.4；不增加原件或修改来源锁。RM SHA-256 为 `4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760`，DS 为 `90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855`。SDK ZIP 身份为 `ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d`，仅作自身字段佐证。
+
+DS PDF47/书页46 表7-18/19 与 PDF38/书页37 表7-4给出 32800 Hz、31816–33784 Hz、1.65–5.5 V、−40–85°C。25°C 的 ±1% 行和有条件105°C低耗工作区不扩大该精度范围。DS PDF10/23–27/32/77–78（书页各减一）绑定封装、64 KiB Flash、8 KiB SRAM 和引脚；F8U6 无 HSE 焊盘，PB11 也未键合。仍检查其 AFR11 是保守软件政策，不代表存在物理输出。
+
+RM PDF54/56/71（书页53/55/70）给出0x00100A02原厂半字、十位 TRIM 与 WAIT；PDF55/67/68/74–76/91–95（书页各减一）支持原生 selector3、可配置 CCS/LSELOCK、双稳定状态、独立 LSIRDY 与 SYSCTRL IRQ4（RCC 功能）。九门十一selector的自身依据为 RM PDF77–82/89/141–142/150/165/168–172/179–180/321–322/353，以及 DS PDF30；书页均减一。FILTER7 是文档化 AWT overflow，本次保守拒绝；SDK 的 LPTIMPWM 名称不替代 RM，MCO7 则另属未文档化值。
+
+所有精确三款 RTC LSI 别名与分频后界限在任何 SYSCLK 下均为 rate-only；其他 L031、R031/W031 和板级 LSE 资格不变。完整冷/活源、外部所有权、工作门、失败与有限验证边界见 [L031 contract](../docs/l031-factory-lsi-sysclk.md)。该说明及其有限验证计划不替代[运行/源码审阅](../docs/l031-factory-lsi-runtime-review.json)与[metadata 审阅](../docs/l031-factory-lsi-metadata-review.json)的明确范围和结果；最终 clean 复现需另有收据绑定最终源码包，不改写 main 审阅。既有 LSE 资格记录不被改写为新 LSI 验收。
 
 ## F002 精确两封装 factory-LSI SYSCLK
 

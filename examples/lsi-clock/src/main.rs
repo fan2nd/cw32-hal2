@@ -4,22 +4,34 @@
 #[cfg(any(
     feature = "cw32f020c6u7",
     feature = "cw32f030c8t7",
-    feature = "cw32a030c8t7"
+    feature = "cw32a030c8t7",
+    feature = "cw32l031c8t6",
+    feature = "cw32l031c8u6",
+    feature = "cw32l031f8u6"
 ))]
 use embassy_cw32::rtc::{DateTime, DayOfWeek, Rtc};
 use embassy_cw32::{self as hal, rcc};
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
-    // This firmware requires 1.65..5.5 V and ambient -40..105 C. These are
-    // example board declarations, not measurements. Qualify the actual board
+    // All example parts require 1.65..5.5 V. L031 is qualified at -40..85 C;
+    // the other example families retain their own -40..105 C envelope.
+    // These board declarations are not measurements. Qualify the actual board
     // across its complete operating envelope. No external crystal or pin is used.
     let mut config = hal::Config::default();
     config.rcc.operating_conditions = rcc::OperatingConditions {
         min_supply_mv: 1_650,
         max_supply_mv: 5_500,
         min_temperature_c: -40,
-        max_temperature_c: 105,
+        max_temperature_c: if cfg!(any(
+            feature = "cw32l031c8t6",
+            feature = "cw32l031c8u6",
+            feature = "cw32l031f8u6"
+        )) {
+            85
+        } else {
+            105
+        },
     };
     config.rcc.sys = rcc::Sysclk::LSI;
     let p = hal::try_init(config).unwrap_or_else(|error| stop(error));
@@ -50,7 +62,10 @@ fn run(_p: hal::Peripherals) -> ! {
 #[cfg(any(
     feature = "cw32f020c6u7",
     feature = "cw32f030c8t7",
-    feature = "cw32a030c8t7"
+    feature = "cw32a030c8t7",
+    feature = "cw32l031c8t6",
+    feature = "cw32l031c8u6",
+    feature = "cw32l031f8u6"
 ))]
 fn run(p: hal::Peripherals) -> ! {
     let lsi = rcc::LsiClock::new(p.SYSCTRL, 100_000).unwrap_or_else(|error| stop(error));

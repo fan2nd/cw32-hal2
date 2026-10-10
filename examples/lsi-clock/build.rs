@@ -13,21 +13,28 @@ fn main() {
             | "CW32F020C6U7"
             | "CW32F030C8T7"
             | "CW32A030C8T7"
+            | "CW32L031C8T6"
+            | "CW32L031C8U6"
+            | "CW32L031F8U6"
     ));
     assert!(metadata.peripherals.iter().any(|p| {
         p.clock_limits
             .as_ref()
             .is_some_and(|c| c.lsi_sysclk.is_some())
     }));
-    let no_rtc_memory = match metadata.name {
+    let exact_memory = match metadata.name {
         // Own F002 DS Rev1.2 tables 3-1 and 6-1.
-        "CW32F002F3P7" | "CW32F002F3U7" => Some((16 * 1024, 2 * 1024)),
+        "CW32F002F3P7" | "CW32F002F3U7" => Some((16 * 1024, 2 * 1024, false)),
         // Own F003 DS Rev1.9 PDF pages 5, 8, 27 and 62, including E4P7.
-        "CW32F003F4P7" | "CW32F003F4U7" | "CW32F003E4P7" => Some((20 * 1024, 3 * 1024)),
+        "CW32F003F4P7" | "CW32F003F4U7" | "CW32F003E4P7" => Some((20 * 1024, 3 * 1024, false)),
+        // Own L031 DS Rev1.9 PDF pages 10, 32 and 77-78.
+        "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" => {
+            Some((64 * 1024, 8 * 1024, true))
+        }
         _ => None,
     };
-    if let Some((flash_size, ram_size)) = no_rtc_memory {
-        assert!(!metadata.peripherals.iter().any(|p| p.name == "RTC"));
+    if let Some((flash_size, ram_size, has_rtc)) = exact_memory {
+        assert_eq!(metadata.peripherals.iter().any(|p| p.name == "RTC"), has_rtc);
         // Retain each exact package's real linker limits.
         let banks = metadata.memory[0];
         assert_eq!(banks.len(), 2);

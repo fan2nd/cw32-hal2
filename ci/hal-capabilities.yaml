@@ -1136,19 +1136,27 @@ functions:
         measurement or complete oscillator calibration.
     - id: factory_lsi_sysclk
       status: partial
-      scope: Init-only factory-qualified nominal 32800 Hz LSI SYSCLK on F020/F030/A030, exactly CW32F002F3P7/F3U7 and CW32F003F4P7/F4U7/E4P7.
-      implemented_families: [CW32F002, CW32F003, CW32F020, CW32F030, CW32A030]
+      scope: Init-only factory-qualified nominal 32800 Hz LSI SYSCLK on F020/F030/A030, exactly CW32F002F3P7/F3U7, CW32F003F4P7/F4U7/E4P7 and CW32L031C8T6/C8U6/F8U6.
+      implemented_families: [CW32F002, CW32F003, CW32F020, CW32F030, CW32A030, CW32L031]
       limitations:
       - F002 means CW32F002F3P7 and CW32F002F3U7 only; own bounds remain 31160..34440 Hz.
         F003 means CW32F003F4P7, CW32F003F4U7 and CW32F003E4P7 only; own bounds are
         31816..33784 Hz (full-temperature ±3%), with 20 KiB Flash and 3 KiB SRAM.
         Both require 1.65..5.5 V and -40..105 C. Generic F002/F003 aliases and unlisted parts
         gain no capability. Neither family has RTC, dedicated LSI_OUT, system PLL/LSE or classic CCS.
+      - L031 means CW32L031C8T6/C8U6/F8U6 only, with own 31816..33784 Hz at 1.65..5.5 V,
+        -40..85 C and 64 KiB Flash / 8 KiB SRAM. HSI /6 remains the default. Generic/other L031
+        and all R031/W031 gain no LSI SYSCLK capability. The dedicated contract links the separate
+        main runtime/source and metadata reviews; this declaration is not an execution receipt.
+      - L031 cold admission checks RTC, AWT, UART1/2/3, GPIOA/B/C/F, MCO, PB11 AF and ready/NVIC
+        observers even for matching TRIM. PB11 is conservatively inspected on unbonded F8U6;
+        FILTER7 means documented AWT overflow and is conservatively rejected. Native configurable
+        CCS/LSELOCK and external ownership are retained, with no classic mandatory-CCS rule.
       - Complete stopped-source admission precedes the first source request. Classic mandatory CCS
         checks retain their existing roster. F002/F003 check AWT, UART1/2, GPIOA/B/C, MCO and ready
         observers in two passes plus a post-trim use-edge pass, even if cold TRIM already matches.
         Running factory-matching LSI is reused without retrim or WAIT writes.
-      - Whole GPIOA/B/C on F002/F003, or GPIOA/B/C/F on classic, inspection windows may advance sampling,
+      - Whole GPIOA/B/C on F002/F003, or GPIOA/B/C/F on classic and exact L031, inspection windows may advance sampling,
         filters and armed events, even before failure. Software does not clear flags; they may change
         naturally. Restoring gates cannot undo progress; failed restore may leave a gate active.
       - F002/F003 cold preparation uses each family's own 0x001007BA factory halfword and typed ten-bit TRIM-only
@@ -1159,8 +1167,9 @@ functions:
         bits including ATIM bit7 are preserved. Existing API qualifications are unchanged.
       - Target LSIEN remains requested after enable attempts. HSI calibration can fail with HSI stopped
         while executing on LSI. No automatic rollback, runtime switching, source-loss or low-power recovery.
-      - Selected LSI SYSCLK/bus bounds are rate-only. Classic LsiClock/CalendarClock/RTC aliases
-        remain rate-only even with HSI SYSCLK; F002/F003 gain none of those RTC APIs. Strict duration helpers
+      - Selected LSI SYSCLK/bus bounds are rate-only. Classic and exact L031 LsiClock/CalendarClock/RTC
+        aliases remain rate-only under every SYSCLK; excluded L031 and board LSE retain qualification.
+        F002/F003 gain none of those RTC APIs. Strict duration helpers
         and ADC reject this qualification; classic complementary PWM does too. Fixed 1 MHz time-driver
         selection fails before singleton acquisition. F002/F003 AWT retains independent HSIOSC timing.
       - Existing optional lsi_output_pin represents independently checked F002/F003 absence; F003
@@ -1172,6 +1181,10 @@ functions:
       - path: docs/factory-lsi-sysclk.md
       - path: docs/f002-factory-lsi-sysclk.md
       - path: docs/f003-factory-lsi-sysclk.md
+      - path: docs/l031-factory-lsi-sysclk.md
+      - path: docs/l031-factory-lsi-runtime-review.json
+      - path: docs/l031-factory-lsi-metadata-review.json
+      - path: embassy-cw32/src/rcc/l031_r031_w031.rs
       - path: embassy-cw32/src/rcc/f002_f003.rs
       - path: embassy-cw32/src/rcc/hsi_48mhz.rs
         anchor: fn prepare_factory_lsi

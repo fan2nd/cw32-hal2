@@ -53,14 +53,17 @@ before RC tolerance, that ratio implies about 84.4 extra calendar seconds per
 SI day. `calendar_tick_bounds()` retains this fraction. Whole-Hz getters are
 intentionally coarse; no rounded frequency is substituted at a hardware ceiling.
 
-F020/F030/A030 factory-LSI bounds qualify **rate only**, consistently through
+F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6 factory-LSI bounds
+qualify **rate only**, consistently through
 `LsiClock::bounds()`, `CalendarClock::bounds()`, `source_clock_bounds()` and
-`calendar_tick_bounds()`, even when SYSCLK remains on HSI. This withdraws their
+`calendar_tick_bounds()`, under every SYSCLK, including HSI, HSE and LSE.
+The [exact L031 contract](l031-factory-lsi-sysclk.md) records that compatibility
+change and links its separate implementation evidence. This withdraws their
 previous strict cycle-duration qualification: `has_cycle_timing_bounds()` now
 returns false, and the strict `minimum_duration_ns` / `maximum_duration_ns`
 helpers reject these envelopes. Published factory accuracy does not independently
 establish an absolute per-cycle bound. The rate endpoints, operating conditions
-and exact calendar ratio remain unchanged. Other families' RTC qualifications
+and exact calendar ratio remain unchanged. Excluded L031 parts and other families' RTC qualifications
 and board-qualified LSE envelopes are unchanged; where cycle timing is qualified,
 duration methods retain exact division and outward rounding.
 
@@ -76,7 +79,8 @@ the own factory calibration halfword, rejects erased storage, and compares the
 trim with the typed SYSCTRL.LSI.TRIM field. A mismatch returns an error before
 any write. The capability does **not** load calibration. LSIEN=0 is insufficient
 to prove no hardware user is starting or requesting this shared oscillator.
-On F020/F030/A030, selecting `Sysclk::LSI` during RCC initialization can establish
+On F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6, selecting
+`Sysclk::LSI` during RCC initialization can establish
 factory trim through its separately checked cold-start admission. This is an
 initialization-only route, with the documented whole-GPIO-bank inspection and
 failure behavior; it does not add live calibration to `LsiClock::new`. Otherwise,

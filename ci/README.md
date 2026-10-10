@@ -67,31 +67,45 @@ dead time and global MOE. Its own-PDF/data audit is
 
 `./d audit-current` also includes `ci/verify-l083-lse-data.py` for the five exact L083 parts, with four own locked originals, five SDK members and the native register/package facts. The earlier auxiliary-LSE L083 candidate has retained passes for seven ordinary library configurations and fourteen linked crystal/bypass ELFs: all five L083 parts, L052C8T6 and F030C8T7. Those receipts apply to the frozen candidate source, and do not claim a rerun of the full script or hardware execution. Its source-qualified detector-margin check runs before peripheral acquisition or RCC writes; see the [L083 contract](../docs/qualified-l083-lse.md).
 
-`./d check-lsi-clock` is a reusable local recipe with twelve library commands:
-four F002 exact-package builds (both profiles with defmt and `time-driver-gtim`),
-three F003 exact-package release builds with the same features, two F002/F003
-generic checks and three classic checks with `time-driver-gtim1`. It links
-fifteen ELFs: five exact F002/F003 no-RTC LSI examples, three classic LSI
-examples, one existing HSI/calendar, HSE and PLL example each, and four existing
-F002/F003 HEX PB0/PB1 examples. Exact F002 support is F3P7/F3U7; exact F003
-support is F4P7/F4U7/E4P7. Both generic aliases remain excluded from LSI SYSCLK.
+`./d check-lsi-clock` is a reusable future local recipe with twenty library
+commands: fifteen actual builds and five historical checks (two generic
+F002/F003 and three classic). The builds comprise four F002 (two profiles),
+three F003, three exact L031 release, one L031C8T6 debug, generic L031 and
+excluded F8P6, and R031C8U6/W031R8U6 release configurations. The exact/representative builds
+enable defmt and the appropriate time driver; the generic/excluded L031
+builds enable defmt only. Generic aliases still gain no LSI SYSCLK capability.
 
-This future recipe is not a build receipt or the scope of the F003 acceptance
-run. That run is bounded separately to nine library configurations and six
-ELFs in the main tree, then two library configurations and the three new F003
-LSI ELFs in a clean tree. Completed commands and outcomes require their own
-receipts; neither these counts nor this recipe assert they have run.
+The recipe links twenty-five ELFs: the previous fifteen (five F002/F003 LSI,
+three classic LSI, one HSI/calendar, HSE and PLL each, and four HEX PB0/PB1),
+plus three L031 LSI, four shared-backend LSE SYSCLK, L031 HSI/calendar,
+L031 auxiliary-LSE/calendar and L031 HSE. L031C8T6/C8U6/F8U6 share the existing
+RTC example branch and retain their own −40–85°C envelope.
+
+The focused L031 implementation verification is a different finite scope:
+ten actual library builds and ten linked ELFs in the main tree, followed by
+two representative libraries and all three new LSI ELFs in one clean replay.
+Its exact configurations and limits are in the [L031 contract](../docs/l031-factory-lsi-sysclk.md).
+These are planned counts, not execution receipts. The earlier F003 acceptance
+scope remains its own historical nine-library/six-ELF main and two/three clean
+record. Consult the separate [runtime/source review](../docs/l031-factory-lsi-runtime-review.json)
+and [metadata review](../docs/l031-factory-lsi-metadata-review.json) for their
+main-source decisions and recorded outcomes. Final clean replay requires a
+separate receipt bound to the final packaged source. Recipe counts are not
+completion receipts. Do not run the whole reusable script merely
+to satisfy the focused scope.
 
 The commands compile production sources and examples; they do not run HAL
 tests, prove runtime time-driver/ADC rejection, or execute hardware. Static
 review must trace those guards through the actual generated exact-part cfg.
 Each example's build.rs derives memory bounds and links with `-Tlink.x`:
-F002 has 16 KiB Flash / 2 KiB RAM and F003 has 20 KiB Flash / 3 KiB RAM.
+F002 has 16 KiB Flash / 2 KiB RAM, F003 has 20 KiB Flash / 3 KiB RAM, and
+exact L031 has 64 KiB Flash / 8 KiB RAM.
 Inspect each linked ELF's entry, vectors, PT_LOAD regions, Flash use and static
 RAM/stack headroom before claiming it fits or flashing it; never expand
 memory.x to hide overflow. Startup, error paths and electrical behavior remain
 unvalidated. See the [F002 contract](../docs/f002-factory-lsi-sysclk.md) and
-[F003 contract](../docs/f003-factory-lsi-sysclk.md). No hosted workflow is added.
+[F003 contract](../docs/f003-factory-lsi-sysclk.md) and
+[L031 contract](../docs/l031-factory-lsi-sysclk.md). No hosted workflow is added.
 
 
 `./d check-lse-sysclk` declares a bounded local compile/link scope: twenty-four

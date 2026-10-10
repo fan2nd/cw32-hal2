@@ -2420,11 +2420,24 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     )
     .unwrap();
 
-    if matches!(sysctrl.version, "cw32f002_v1" | "cw32f003_v1") {
+    let l031 = sysctrl.version == "cw32l031_v1";
+    if l031 {
+        assert_eq!(METADATA.line, "CW32L031");
+        assert!(matches!(
+            METADATA.name,
+            "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6"
+        ));
+    }
+    let parameter_sources: &[(&str, u32, u32)] = match sysctrl.version {
+        "cw32f002_v1" | "cw32f003_v1" => &[("HSI", 24, 15), ("HEX", 28, 19)],
+        "cw32l031_v1" => &[("HSI", 24, 15), ("HSE", 28, 19), ("LSE", 36, 15)],
+        _ => &[],
+    };
+    {
         // These startup latches are already read-only in the selected PAC's
         // reviewed field-access policy. Derive masks from their actual IR;
         // the runtime compares parameters and checks typed readiness separately.
-        for (name, byte_offset, stable_bit) in [("HSI", 24, 15), ("HEX", 28, 19)] {
+        for &(name, byte_offset, stable_bit) in parameter_sources {
             let item = block
                 .items
                 .iter()
@@ -2483,11 +2496,12 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
         lsi.temperature_c
     )
     .unwrap();
+    let observer_irq = if l031 { "SYSCTRL" } else { "RCC" };
     assert!(
         METADATA
             .interrupts
             .iter()
-            .any(|i| i.name == "RCC" && i.number == u32::from(lsi.rcc_irq))
+            .any(|i| i.name == observer_irq && i.number == u32::from(lsi.rcc_irq))
     );
     let peripherals = |kind: &str| {
         METADATA
@@ -2534,10 +2548,11 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     }
     let gates = roots.len() + lsi.gpio_banks.len();
     let sources = gates + 1 + usize::from(lsi.lsi_output_pin.is_some());
-    // Only the separately qualified F002/F003 IPs get these inspection windows.
+    // Only the separately qualified F002/F003 and L031 IPs get strict windows.
     // Hardware absence chooses roots, never the gate/reset checking strategy.
-    let strict_windows = matches!(sysctrl.version, "cw32f002_v1" | "cw32f003_v1");
-    if strict_windows {
+    let hex_windows = matches!(sysctrl.version, "cw32f002_v1" | "cw32f003_v1");
+    let strict_windows = hex_windows || l031;
+    if hex_windows {
         let hex_gpio_banks: std::collections::BTreeSet<_> = METADATA
             .peripherals
             .iter()
@@ -2562,20 +2577,97 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
         )
         .unwrap();
     }
+    if l031 {
+        assert_eq!((gates, sources), (9, 11));
+        assert_eq!(lsi.lsi_output_pin, Some("PB11"));
+        let controller = METADATA
+            .peripherals
+            .iter()
+            .find(|p| p.name == "SYSCTRL")
+            .unwrap();
+        let mut indices = [None; 2];
+        for (index, signal) in ["HSE_IN", "HSE_OUT"].iter().enumerate() {
+            let pins = controller
+                .pins
+                .iter()
+                .filter(|p| p.signal == *signal)
+                .collect::<Vec<_>>();
+            assert!(pins.len() <= 1, "ambiguous L031 HSE gate projection");
+            if let Some(pin) = pins.first() {
+                assert!(pin.af.is_none());
+                let gpio = format!("GPIO{}", char::from(pin.pin.as_bytes()[1]));
+                assert_eq!(gpio, "GPIOF");
+                indices[index] = Some(
+                    roots.len()
+                        + lsi
+                            .gpio_banks
+                            .iter()
+                            .position(|p| *p == gpio.as_str())
+                            .unwrap(),
+                );
+            }
+        }
+        assert_eq!(
+            indices,
+            if METADATA.name == "CW32L031F8U6" {
+                [None, None]
+            } else {
+                [Some(8), Some(8)]
+            }
+        );
+        writeln!(out, "pub(crate) const RCC_LSI_HSE_GPIO_GATE_INDICES: (Option<usize>, Option<usize>) = {:?};", (indices[0], indices[1])).unwrap();
+    }
     writeln!(
         out,
         "pub(crate) type RccFactoryLsiConsumers = ([u8; {sources}], [bool; {gates}]);"
     )
     .unwrap();
-    writeln!(out, "pub(crate) fn rcc_factory_lsi_consumers(timeout: u32, cs: critical_section::CriticalSection<'_>) -> Result<RccFactoryLsiConsumers, crate::rcc::Error> {{\nuse crate::rcc::SealedRccPeripheral;\nlet mut sources = [0; {sources}];\nlet mut gates = [false; {gates}];").unwrap();
+    let monitor_arguments = if l031 {
+        ", monitor_hse: bool, monitor_lse: bool"
+    } else {
+        ""
+    };
+    writeln!(out, "pub(crate) fn rcc_factory_lsi_consumers(timeout: u32, cs: critical_section::CriticalSection<'_>{monitor_arguments}) -> Result<RccFactoryLsiConsumers, crate::rcc::Error> {{\nuse crate::rcc::SealedRccPeripheral;\nlet mut sources = [0; {sources}];\nlet mut gates = [false; {gates}];").unwrap();
     // Each buffered semantic result is examined only after the central helper
     // restores its gate. Restore errors dominate even a rejected selector.
-    let strict_window = |out: &mut String, index: usize, name: &str, read: &str, allowed: &[u8]| {
-        writeln!(out, "let info = crate::peripherals::{name}::RCC_INFO;\ngates[{index}] = info.is_enabled();\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nlet buffered = info.inspect_for_init(cs, timeout, || {{\nif !info.is_enabled() || info.reset_asserted() {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nlet source = {read};\nif !info.is_enabled() || info.reset_asserted() || !{allowed:?}.contains(&source) {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nOk(source)\n}}).map_err(crate::rcc::lsi_inspection_error)?;\nif info.is_enabled() != gates[{index}] {{ return Err(crate::rcc::Error::LsiGateRestoreTimeout); }}\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nsources[{index}] = buffered?;").unwrap();
+    let strict_window = |out: &mut String,
+                         index: usize,
+                         name: &str,
+                         read: &str,
+                         allowed: &[u8],
+                         extra: Option<(&str, &[u8])>| {
+        // Fixed target monitor flags are captured before any source write. A
+        // successful central restoration and original-gate check precede faults;
+        // relevant faults precede post-reset and buffered semantic refusals.
+        let faults = if l031 {
+            "let flags = crate::pac::SYSCTRL.isr().read();\nif (monitor_hse && (flags.hsefail() || flags.hsefault())) || (monitor_lse && (flags.lsefail() || flags.lsefault())) { return Err(crate::rcc::Error::ExternalClockFault); }\n"
+        } else {
+            ""
+        };
+        let (extra_read, extra_check, result, release) = if let Some((read, allowed)) = extra {
+            assert!(l031, "only L031 adds an output to a strict GPIO window");
+            (
+                format!("let af = {read};\n"),
+                format!(" || !{allowed:?}.contains(&af)"),
+                "(source, af)",
+                format!(
+                    "let (source, af) = buffered?;\nsources[{index}] = source;\nsources[{}] = af;",
+                    gates + 1
+                ),
+            )
+        } else {
+            (
+                String::new(),
+                String::new(),
+                "source",
+                format!("sources[{index}] = buffered?;"),
+            )
+        };
+        writeln!(out, "let info = crate::peripherals::{name}::RCC_INFO;\ngates[{index}] = info.is_enabled();\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nlet buffered = info.inspect_for_init(cs, timeout, || {{\nif !info.is_enabled() || info.reset_asserted() {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nlet source = {read};\n{extra_read}if !info.is_enabled() || info.reset_asserted() || !{allowed:?}.contains(&source){extra_check} {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nOk({result})\n}}).map_err(crate::rcc::lsi_inspection_error)?;\nif info.is_enabled() != gates[{index}] {{ return Err(crate::rcc::Error::LsiGateRestoreTimeout); }}\n{faults}if info.reset_asserted() {{ return Err(crate::rcc::Error::LsiClockInUse); }}\n{release}").unwrap();
     };
     for (i, (name, read, allowed)) in roots.iter().enumerate() {
         if strict_windows {
-            strict_window(out, i, name, read, allowed);
+            strict_window(out, i, name, read, allowed, None);
         } else {
             writeln!(out, "let info = crate::peripherals::{name}::RCC_INFO;\nif info.reset_asserted() {{ return Err(crate::rcc::Error::LsiClockInUse); }}\ngates[{i}] = info.is_enabled();\nlet source = info.inspect_for_init(cs, timeout, || {read}).map_err(crate::rcc::lsi_inspection_error)?;\nif info.reset_asserted() || info.is_enabled() != gates[{i}] || !{:?}.contains(&source) {{ return Err(crate::rcc::Error::LsiClockInUse); }}\nsources[{i}] = source;", allowed).unwrap();
         }
@@ -2592,14 +2684,22 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     for (i, gpio) in lsi.gpio_banks.iter().enumerate() {
         let index = roots.len() + i;
         if strict_windows {
-            // The validated F002/F003 complete AF catalogs have no direct LSI_OUT.
-            assert!(output.is_none());
+            // F002/F003 retain their proved output absence. L031 reads GPIOB
+            // FILTER and AFR11 together, including on physically unbonded F8U6.
+            assert!(l031 || output.is_none());
+            let extra = output
+                .as_ref()
+                .filter(|(output_gpio, _, _)| *gpio == output_gpio.as_str())
+                .map(|(_, bit, afreg)| format!("crate::pac::{gpio}.{afreg}().read().afr{bit}()"));
             strict_window(
                 out,
                 index,
                 gpio,
                 &format!("crate::pac::{gpio}.filter().read().fltclk()"),
                 lsi.gpio_filter_allowed_sources,
+                extra
+                    .as_deref()
+                    .map(|read| (read, lsi.lsi_output_allowed_af)),
             );
             continue;
         }
@@ -4666,9 +4766,14 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                 (l031_sysclk_qualified || l052_sysclk_qualified || l083_sysclk_qualified)
                     && lse.configurable_ccs
             );
-            assert!(
-                c.lsi_sysclk.is_none(),
-                "Native LSE SYSCLK does not qualify LSI SYSCLK"
+            let l031_lsi_qualified = matches!(
+                METADATA.name,
+                "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6"
+            );
+            assert_eq!(
+                c.lsi_sysclk.is_some(),
+                l031_lsi_qualified,
+                "Only the independent L031 exact3 policy qualifies native LSI SYSCLK"
             );
             let rtc = METADATA
                 .peripherals
@@ -4692,6 +4797,17 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             assert_eq!(rtc.supply_mv, supply_mv);
             assert_eq!(lse.temperature_c, rtc.temperature_c);
             assert_eq!(lse.supply_mv, rtc.supply_mv);
+            if let Some(lsi) = &c.lsi_sysclk {
+                assert_eq!(METADATA.line, "CW32L031");
+                assert!(l031_sysclk_qualified);
+                assert_eq!(lsi.factory_trim_address, rtc.factory_trim_address);
+                assert_eq!(
+                    (lsi.nominal_hz, lsi.minimum_hz, lsi.maximum_hz),
+                    (rtc.nominal_hz, rtc.minimum_hz, rtc.maximum_hz)
+                );
+                assert_eq!(lsi.supply_mv, rtc.supply_mv);
+                assert_eq!(lsi.temperature_c, rtc.temperature_c);
+            }
             if l052_sysclk_qualified {
                 assert_eq!(METADATA.line, "CW32L052");
                 assert_eq!(

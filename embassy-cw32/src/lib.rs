@@ -123,6 +123,23 @@ pub struct Config {
 /// initialization; no rollback, recovery or hardware validation is promised.
 /// See docs/f003-factory-lsi-sysclk.md for the complete exact-package contract.
 ///
+/// On CW32L031C8T6/C8U6/F8U6 only, selecting factory LSI SYSCLK may run
+/// each whole GPIOA/B/C/F bank. Sampling, filters and armed events may advance
+/// even before an error; restoring gates cannot undo that progress. Cold
+/// admission checks RTC, AWT, UART1/2/3, all four FILTER selectors, MCO, PB11 AF
+/// and ready/NVIC observers even when factory TRIM already matches. PB11 is
+/// unbonded on F8U6; its register check is conservative software policy.
+/// Documented AWT-overflow FILTER7 is also conservatively refused. A live,
+/// factory-matching LSI is retained without TRIM/WAIT writes. Configurable
+/// CCS/LSELOCK and inherited HSE/LSE ownership remain preserved except the
+/// existing fresh-LSE enable/monitor addition. Source loss or concurrent
+/// clock/pad/consumer changes are outside this bounded functional handover.
+/// Failure can leave partial clock, pad, gate or calibration state and publishes
+/// no RCC clocks; reset before retry. This adds no memory-safety precondition,
+/// rollback or recovery promise. RTC LSI bounds become rate-only under every
+/// SYSCLK on these three parts; ADC and the fixed 1 MHz time driver reject
+/// selected LSI. See docs/l031-factory-lsi-sysclk.md for the complete contract.
+///
 /// On F020/F030/A030, selecting factory LSI SYSCLK (or LSE SYSCLK on the
 /// three qualified packages) may briefly open each
 /// entire GPIOA/B/C/F bank to inspect retained source selectors. Sampling,
