@@ -21,8 +21,8 @@ pub fn apply(
     registers: &BTreeMap<String, ir::IR>,
 ) -> Result<()> {
     let classic = matches!(line, "CW32F020" | "CW32F030" | "CW32A030");
-    let f002 = line == "CW32F002";
-    let qualified = classic || f002;
+    let exact_family = matches!(line, "CW32F002" | "CW32F003");
+    let qualified = classic || exact_family;
     let Some(clock) = core
         .peripherals
         .iter()
@@ -54,7 +54,7 @@ pub fn apply(
         .context("missing LSI family roster")?;
     ensure!(
         families.keys().map(String::as_str).collect::<Vec<_>>()
-            == ["CW32A030", "CW32F002", "CW32F020", "CW32F030"],
+            == ["CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030"],
         "factory-LSI family scope changed"
     );
     let own = &policy["families"][line];
@@ -74,7 +74,7 @@ pub fn apply(
         return Ok(());
     }
     // Option deserialization accepts a missing field. Qualification does not:
-    // explicit null is permitted solely for the independently proved F002 absence.
+    // explicit null requires independently proved own-family hardware absence.
     ensure!(
         own["lsi_sysclk"]
             .as_object()
@@ -97,8 +97,8 @@ pub fn apply(
             "classic RTC/direct-output/consumer facts must remain complete"
         );
     }
-    let exact_f002 = if f002 {
-        validate_f002(root, chip, own, &lsi)?
+    let exact_part = if exact_family {
+        validate_exact_family(root, chip, line, own, &lsi)?
     } else {
         false
     };
@@ -120,6 +120,10 @@ pub fn apply(
         "CW32F002" => [
             "vendor:CW32F002_UserManual_CN_V1.4.pdf",
             "vendor:CW32F002_DataSheet_CN_V1.2.pdf",
+        ],
+        "CW32F003" => [
+            "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+            "vendor:CW32F003_DataSheet_CN_V1.9.pdf",
         ],
         "CW32F020" => [
             "vendor:CW32F020_UserManual_CN_V1.4.pdf",
@@ -242,7 +246,7 @@ pub fn apply(
     }
     // Require complete unique identities before checking their source-bound IR
     // positions. Merely iterating supplied entries would accept omissions.
-    let mut required_fields = if f002 {
+    let mut required_fields = if exact_family {
         vec![
             ("SYSCTRL", "CR0", "SYSCLK"),
             ("SYSCTRL", "CR0", "PCLKPRS"),
@@ -317,7 +321,8 @@ pub fn apply(
     required_fields.sort();
     actual_fields.sort();
     ensure!(
-        actual_fields == required_fields && actual_fields.len() == if f002 { 22 } else { 32 },
+        actual_fields == required_fields
+            && actual_fields.len() == if exact_family { 22 } else { 32 },
         "LSI field roster must be exact, complete and unique"
     );
     let mut required_gates = ["AWT"]
@@ -336,7 +341,7 @@ pub fn apply(
     required_gates.sort();
     actual_gates.sort();
     ensure!(
-        actual_gates == required_gates && actual_gates.len() == if f002 { 6 } else { 9 },
+        actual_gates == required_gates && actual_gates.len() == if exact_family { 6 } else { 9 },
         "LSI gate roster must be exact, complete and unique"
     );
     for fact in own["register_fields"]
@@ -417,45 +422,67 @@ pub fn apply(
             "incomplete LSI {kind} roster"
         );
     }
-    if f002 {
+    if exact_family {
         // The independent complete manual AF-table exclusion is cross-checked
         // against every entry in the frozen full SDK catalog, including entries
         // not merged as supported routes. None alone is never absence evidence.
-        let af_bytes = fs::read(root.join("cw32-data/af/cw32f002.yaml"))?;
+        let af_path = own["no_lsi_output_evidence"]["sdk_catalog"]
+            .as_str()
+            .context("missing own-family AF catalog")?;
+        let af_bytes = fs::read(root.join(af_path))?;
         ensure!(
             format!("{:x}", Sha256::digest(&af_bytes))
                 == own["no_lsi_output_evidence"]["sdk_catalog_sha256"],
-            "F002 complete SDK AF catalog changed"
+            "F002/F003 complete SDK AF catalog changed"
         );
         let af = parse_policy(&af_bytes)?;
+        let (sdk_ref, sdk_sha256, af_counts) = match line {
+            "CW32F002" => (
+                "vendor:CW32F002_StandardPeripheralLib_V1.2.zip",
+                "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc",
+                [107, 21, 15],
+            ),
+            "CW32F003" => (
+                "vendor:CW32F003_StandardPeripheralLib_V1.7.zip",
+                "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+                [133, 21, 11],
+            ),
+            _ => unreachable!("bounded exact-only family"),
+        };
         let sdk = lock["artifacts"]
             .as_array()
             .context("missing source lock")?
             .iter()
-            .find(|a| a["id"] == "vendor:CW32F002_StandardPeripheralLib_V1.2.zip")
-            .context("missing F002 SDK source")?;
+            .find(|a| a["id"] == sdk_ref)
+            .context("missing own-family SDK source")?;
         let header_path = own["no_lsi_output_evidence"]["sdk_header_source_ref"]
             .as_str()
             .and_then(|s| s.strip_prefix("member:"))
-            .context("missing F002 AF member")?;
+            .context("missing own-family AF member")?;
         let header = sdk["members"]
             .as_array()
             .context("missing SDK members")?
             .iter()
             .find(|m| m["path"] == header_path)
-            .context("missing F002 AF header source")?;
+            .context("missing own-family AF header source")?;
         ensure!(
-            af["profile"] == "CW32F002"
+            af["profile"] == line
                 && af["source"]["sdk_sha256"] == sdk["sha256"]
-                && sdk["sha256"]
-                    == "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc"
+                && sdk["sha256"] == sdk_sha256
+                && sdk["provenance"]["status"] == "selected"
+                && sdk["provenance"]["chip_scope"]
+                    .as_array()
+                    .is_some_and(|scope| scope.iter().any(|family| family == line))
                 && af["source"]["header_sha256"] == header["sha256"],
-            "F002 AF absence check must use its own locked header"
+            "F002/F003 AF absence check must use its own locked header"
         );
-        for (section, count) in [("routes", 107), ("gpio_selection", 21), ("unresolved", 15)] {
+        for (section, count) in ["routes", "gpio_selection", "unresolved"]
+            .into_iter()
+            .zip(af_counts)
+        {
             let entries = af[section]
                 .as_array()
-                .context("missing complete F002 AF section")?;
+                .context("missing complete own-family AF section")?;
             ensure!(
                 entries.len() == count
                     && entries.iter().all(|r| r["function"]
@@ -464,43 +491,43 @@ pub fn apply(
                         && r["source_macro"]
                             .as_str()
                             .is_some_and(|f| !f.contains("LSI"))),
-                "F002 complete AF catalog must contain no independent LSI output"
+                "F002/F003 complete AF catalog must contain no independent LSI output"
             );
         }
         ensure!(
             core.peripherals
                 .iter()
                 .all(|p| p.pins.iter().all(|r| !r.signal.contains("LSI"))),
-            "F002 selected pin routes contain an unsupported LSI output"
+            "F002/F003 selected pin routes contain an unsupported LSI output"
         );
         let sysctrl = peripheral("SYSCTRL")?
             .registers
             .as_ref()
             .context("missing SYSCTRL IP")?;
         ensure!(
-            sysctrl.version == "cw32f002_v1" && own["sysctrl_version"] == sysctrl.version,
-            "F002 factory-LSI requires its validated SYSCTRL IP"
+            own["sysctrl_version"] == sysctrl.version,
+            "F002/F003 factory-LSI requires its validated SYSCTRL IP"
         );
         ensure!(
             core.peripherals.iter().all(|p| !matches!(
                 p.name.as_str(),
                 "RTC" | "AUTOTRIM" | "LCD" | "LPTIM" | "LPTIM1" | "LPTIM2"
             )),
-            "F002 absent direct roots differ from selected hardware"
+            "F002/F003 absent direct roots differ from selected hardware"
         );
         let ir = registers
             .get(&sysctrl.kind)
-            .context("missing F002 SYSCTRL IR")?;
+            .context("missing own-family SYSCTRL IR")?;
         let block = ir
             .blocks
             .get(&sysctrl.block)
-            .context("missing F002 SYSCTRL block")?;
+            .context("missing own-family SYSCTRL block")?;
         ensure!(
             block
                 .items
                 .iter()
                 .all(|r| !matches!(r.name.as_str(), "PLL" | "LSE" | "HSE")),
-            "F002 system source absence differs from selected hardware"
+            "F002/F003 system source absence differs from selected hardware"
         );
         let cr1 = register("SYSCTRL", "CR1", 4)?;
         ensure!(
@@ -508,7 +535,7 @@ pub fn apply(
                 f.name.as_str(),
                 "PLLEN" | "LSEEN" | "HSECCS" | "LSECCS" | "CLKCCS"
             )),
-            "F002 CCS/system-source absence differs from selected hardware"
+            "F002/F003 CCS/system-source absence differs from selected hardware"
         );
     } else {
         let rtc = peripheral("RTC")?
@@ -532,7 +559,7 @@ pub fn apply(
         "RCC pending observer IRQ changed"
     );
     // All source/package/register/consumer checks finish before the only injection.
-    if exact_f002 {
+    if exact_part {
         let clock = core
             .peripherals
             .iter_mut()
@@ -544,57 +571,124 @@ pub fn apply(
     Ok(())
 }
 
-fn validate_f002(
+// Both exact-only families use this one structural admission process. The local
+// match binds differences to separately reviewed own-family sources, never to
+// the mere presence of a shared register backend or to an absent RTC/output.
+fn validate_exact_family(
     root: &Path,
     chip: &crate::ChipInput,
+    line: &str,
     own: &Value,
     lsi: &cw32_data_serde::chip::core::peripheral::LsiSysclk,
 ) -> Result<bool> {
     use serde_json::json;
-    let parts = json!([
-        {"name":"CW32F002F3P7", "package":"TSSOP20"},
-        {"name":"CW32F002F3U7", "package":"QFN20"}
-    ]);
+    let binding = match line {
+        "CW32F002" => json!({
+            "parts": [
+                {"name":"CW32F002F3P7", "package":"TSSOP20"},
+                {"name":"CW32F002F3U7", "package":"QFN20"}
+            ],
+            "sysctrl_version": "cw32f002_v1",
+            "minimum_hz": 31_160, "maximum_hz": 34_440,
+            "flash_bytes": 16_384, "ram_bytes": 2_048,
+            "rm_sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+            "ds_sha256": "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506",
+            "rm_pages": [
+                37, 39, 40, 41, 44, 45, 46, 47, 48, 49, 50, 51, 54, 55, 57, 58, 59, 60, 61, 62,
+                63, 65, 70, 72, 73, 74, 75, 76, 101, 105, 106, 113, 123, 125, 129, 132, 136,
+                137, 152, 168, 178, 185, 186, 188, 194, 195, 203, 227, 228, 236, 268, 303, 340,
+                346, 351, 356
+            ],
+            "ds_pages": [8, 22, 23, 24, 31, 37],
+            "other_clock_sources": {
+                "IWDT":["RC10K"], "VC":["PCLK","RC150K"], "LVD":["HSIOSC","RC150K"]
+            },
+            "no_lsi_output_evidence": {
+                "source_ref":"vendor:CW32F002_UserManual_CN_V1.4.pdf",
+                "pdf_pages_1_based":[105], "printed_pages":[104], "complete_af_catalog":true,
+                "sdk_catalog":"cw32-data/af/cw32f002.yaml",
+                "sdk_catalog_sha256":"ad2faf10e3271b0f84ef045fe69cacc8dc170538240f9df1d1cc168270080e1e",
+                "sdk_header_source_ref":"member:cw32f002/Libraries/inc/cw32f002_gpio.h"
+            }
+        }),
+        "CW32F003" => json!({
+            "parts": [
+                {"name":"CW32F003F4P7", "package":"TSSOP20"},
+                {"name":"CW32F003F4U7", "package":"QFN20"},
+                {"name":"CW32F003E4P7", "package":"TSSOP24"}
+            ],
+            "sysctrl_version": "cw32f003_v1",
+            "minimum_hz": 31_816, "maximum_hz": 33_784,
+            "flash_bytes": 20_480, "ram_bytes": 3_072,
+            "rm_sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+            "ds_sha256": "5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd",
+            "rm_pages": [
+                42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+                64, 65, 66, 67, 70, 71, 72, 74, 75, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+                100, 101, 107, 108, 110, 115, 131, 188, 189, 221, 222, 245, 246, 248, 287,
+                355, 356, 360, 402, 410, 415, 420
+            ],
+            "ds_pages": [5, 8, 23, 24, 25, 26, 27, 32, 37, 38, 40, 62],
+            "other_clock_sources": {
+                "IWDT":["RC10K"], "VC":["PCLK","RC150K"], "LVD":["HSIOSC","RC150K"],
+                "ATIM":["PCLK","ETR"], "IR":["GTIM/BTIM/UART output or software data"]
+            },
+            "no_lsi_output_evidence": {
+                "source_ref":"vendor:CW32F003_UserManual_CN_V2.3.pdf",
+                "pdf_pages_1_based":[107], "printed_pages":[106], "complete_af_catalog":true,
+                "sdk_catalog":"cw32-data/af/cw32f003.yaml",
+                "sdk_catalog_sha256":"335e35021f2ee0dcd25e3b80ce232577e13ec2fe2ed69e13c108d3ae517a0cf9",
+                "sdk_header_source_ref":"member:cw32f003/Libraries/inc/cw32f003_gpio.h"
+            }
+        }),
+        _ => anyhow::bail!("unreviewed exact-only factory-LSI family"),
+    };
+    let parts = binding["parts"].as_array().unwrap();
     ensure!(
-        own["exact_parts"] == parts,
-        "F002 exact qualification roster changed"
+        own["exact_parts"] == binding["parts"]
+            && own["sysctrl_version"] == binding["sysctrl_version"],
+        "exact factory-LSI qualification roster or IP changed"
     );
     let catalog = parse_policy(&fs::read(root.join("cw32-data/parts.yaml"))?)?;
     let roster = catalog["parts"]
         .as_array()
         .context("missing exact parts catalog")?;
-    for part in parts.as_array().unwrap() {
+    let datasheet_id = format!("{line}_datasheet");
+    let memory = json!([
+        {"name":"FLASH", "kind":"flash", "address":0, "size":binding["flash_bytes"]},
+        {"name":"RAM", "kind":"ram", "address":0x2000_0000, "size":binding["ram_bytes"]}
+    ]);
+    for part in parts {
         let selected = roster
             .iter()
             .filter(|p| p["name"] == part["name"])
             .collect::<Vec<_>>();
         ensure!(
             selected.len() == 1
-                && selected[0]["family"] == "CW32F002"
+                && selected[0]["family"] == line
+                && selected[0]["feature"] == part["name"].as_str().unwrap().to_ascii_lowercase()
                 && selected[0]["package"] == part["package"]
-                && selected[0]["datasheet_source_id"] == "CW32F002_datasheet"
-                && catalog["sources"]["CW32F002_datasheet"]["source_ref"]
-                    == "vendor:CW32F002_DataSheet_CN_V1.2.pdf"
-                && catalog["sources"]["CW32F002_datasheet"]["sha256"]
-                    == "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506",
-            "F002 exact qualification differs from own datasheet/catalog"
+                && selected[0]["memory"] == memory
+                && selected[0]["datasheet_source_id"] == datasheet_id
+                && catalog["sources"][&datasheet_id]["source_ref"]
+                    == own["sources"][1]["source_ref"]
+                && catalog["sources"][&datasheet_id]["sha256"] == binding["ds_sha256"],
+            "exact factory-LSI qualification differs from own datasheet/catalog"
         );
     }
-    let selected = parts
-        .as_array()
-        .unwrap()
-        .iter()
-        .find(|p| p["name"] == chip.name);
+    let selected = parts.iter().find(|p| p["name"] == chip.name);
     if let Some(part) = selected {
         ensure!(
-            chip.packages.len() == 1 && part["package"] == chip.packages[0].package,
-            "F002 exact qualification requires the reviewed physical package"
+            chip.packages.len() == 1
+                && part["package"] == chip.packages[0].package
+                && serde_json::to_value(&chip.memory)? == json!([memory]),
+            "exact factory-LSI qualification requires the reviewed physical package and memory"
         );
     }
     ensure!(
         lsi.nominal_hz == 32_800
-            && lsi.minimum_hz == 31_160
-            && lsi.maximum_hz == 34_440
+            && binding["minimum_hz"] == lsi.minimum_hz
+            && binding["maximum_hz"] == lsi.maximum_hz
             && lsi.supply_mv == (1650, 5500)
             && lsi.temperature_c == (-40, 105)
             && lsi.factory_trim_address == 0x0010_07ba
@@ -608,7 +702,7 @@ fn validate_f002(
             && lsi.gpio_banks == ["GPIOA", "GPIOB", "GPIOC"]
             && lsi.gpio_filter_allowed_sources == [0, 1, 2, 3, 4, 6]
             && lsi.mco_allowed_sources == [0, 1, 2, 3, 5, 8, 9],
-        "F002 source envelope or complete selector facts changed"
+        "exact factory-LSI source envelope or complete selector facts changed"
     );
     ensure!(
         own["absent_direct_roots"]
@@ -623,33 +717,18 @@ fn validate_f002(
                 "LPTIM",
                 "LSI_OUT"
             ])
-            && own["other_clock_sources"]
-                == json!({"IWDT":["RC10K"], "VC":["PCLK","RC150K"], "LVD":["HSIOSC","RC150K"]})
+            && own["other_clock_sources"] == binding["other_clock_sources"]
             && own["ready_observers"] == json!(["IER.LSIRDY", "ISR.LSIRDY", "NVIC.RCC.pending"])
             && own["stable_observers"] == json!(["LSI.STABLE", "ISR.LSISTABLE"])
-            && own["no_lsi_output_evidence"]
-                == json!({
-            "source_ref":"vendor:CW32F002_UserManual_CN_V1.4.pdf",
-            "pdf_pages_1_based":[105], "printed_pages":[104], "complete_af_catalog":true,
-            "sdk_catalog":"cw32-data/af/cw32f002.yaml",
-            "sdk_catalog_sha256":"ad2faf10e3271b0f84ef045fe69cacc8dc170538240f9df1d1cc168270080e1e",
-            "sdk_header_source_ref":"member:cw32f002/Libraries/inc/cw32f002_gpio.h"}),
-        "F002 complete observer/negative/direct-output evidence changed"
+            && own["no_lsi_output_evidence"] == binding["no_lsi_output_evidence"],
+        "exact factory-LSI complete observer/negative/direct-output evidence changed"
     );
     ensure!(
-        own["sources"][0]["sha256"]
-            == "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add"
-            && own["sources"][1]["sha256"]
-                == "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506"
-            && own["sources"][0]["pdf_pages_1_based"]
-                == json!([
-                    37, 39, 40, 41, 44, 45, 46, 47, 48, 49, 50, 51, 54, 55, 57, 58, 59, 60, 61, 62,
-                    63, 65, 70, 72, 73, 74, 75, 76, 101, 105, 106, 113, 123, 125, 129, 132, 136,
-                    137, 152, 168, 178, 185, 186, 188, 194, 195, 203, 227, 228, 236, 268, 303, 340,
-                    346, 351, 356
-                ])
-            && own["sources"][1]["pdf_pages_1_based"] == json!([8, 22, 23, 24, 31, 37]),
-        "F002 selected source identity or evidence pages changed"
+        own["sources"][0]["sha256"] == binding["rm_sha256"]
+            && own["sources"][1]["sha256"] == binding["ds_sha256"]
+            && own["sources"][0]["pdf_pages_1_based"] == binding["rm_pages"]
+            && own["sources"][1]["pdf_pages_1_based"] == binding["ds_pages"],
+        "exact factory-LSI selected source identity or evidence pages changed"
     );
     Ok(selected.is_some())
 }

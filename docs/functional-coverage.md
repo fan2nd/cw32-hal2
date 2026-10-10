@@ -146,6 +146,20 @@ still apply.
   guaranteed. See [the complete HEX contract](qualified-hex.md).
   These are bounded one-time source modes; runtime switching, low-power
   restoration and source-loss recovery remain outside their contracts.
+- CW32F002F3P7/F3U7 qualify init-only factory-LSI SYSCLK with their own
+  31,160–34,440 Hz rate bounds and 16 KiB Flash / 2 KiB SRAM. Generic F002
+  remains excluded; see the [F002 contract](f002-factory-lsi-sysclk.md).
+- CW32F003F4P7/F4U7/E4P7 qualify the same init-only selection using their
+  own 31,816–33,784 Hz (±3%) factory bounds and 20 KiB Flash / 3 KiB SRAM.
+  Generic F003 remains excluded. Both exact-package groups have no RTC API
+  or dedicated LSI_OUT and inspect AWT, UART1/2, whole GPIOA/B/C, MCO and
+  ready/NVIC observers. Whole-bank sampling, filters and events may advance
+  before failure; restoring gates cannot undo that progress. F003 ATIM/IR
+  dependencies add no direct LSI root or inspection gate; unrelated gate/reset
+  bits are preserved. ADC rejects rate-only timing, and the fixed 1 MHz time
+  driver rejects selected LSI before singleton acquisition or RCC MMIO.
+  AWT retains independent HSIOSC timing. No rollback or hardware validation
+  is promised; see the [F003 contract](f003-factory-lsi-sysclk.md).
 - Init-only factory-LSI SYSCLK is qualified on F020/F030/A030. Cold admission
   precedes the first source-enable write and checks every documented shared
   consumer, gate, reset and inherited source request; factory-matching running
@@ -156,7 +170,7 @@ still apply.
   timing guards remain enforced. A 1 MHz Embassy timebase rejects this rate
   before singleton acquisition. This is a static control-flow guarantee;
   compiling the time-driver feature does not execute that rejection.
-  Other ten families retain their previous qualification. Runtime switching and
+  The other families' RTC/LSI alias qualification is unchanged. Runtime switching and
   low-power restoration remain outside this slice. See the
   [complete factory-LSI contract](factory-lsi-sysclk.md).
 - Init-only LSE SYSCLK is qualified on twenty-three exact packages through the single

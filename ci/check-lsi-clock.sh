@@ -11,6 +11,12 @@ for chip in cw32f002f3p7 cw32f002f3u7; do
   cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
     --target thumbv6m-none-eabi --no-default-features --features "$chip,defmt"
 done
+for chip in cw32f003f4p7 cw32f003f4u7 cw32f003e4p7; do
+  cargo build --release --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 \
+    --target thumbv6m-none-eabi --no-default-features --features "$chip,defmt,time-driver-gtim"
+  cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
+    --target thumbv6m-none-eabi --no-default-features --features "$chip,defmt"
+done
 for chip in cw32f002 cw32f003; do
   cargo check --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 \
     --target thumbv6m-none-eabi --no-default-features --features "$chip,defmt"

@@ -1,13 +1,13 @@
 #![no_std]
 #![no_main]
 
-use embassy_cw32::{self as hal, rcc};
 #[cfg(any(
     feature = "cw32f020c6u7",
     feature = "cw32f030c8t7",
     feature = "cw32a030c8t7"
 ))]
 use embassy_cw32::rtc::{DateTime, DayOfWeek, Rtc};
+use embassy_cw32::{self as hal, rcc};
 
 #[cortex_m_rt::entry]
 fn main() -> ! {
@@ -26,9 +26,15 @@ fn main() -> ! {
     run(p)
 }
 
-#[cfg(any(feature = "cw32f002f3p7", feature = "cw32f002f3u7"))]
+#[cfg(any(
+    feature = "cw32f002f3p7",
+    feature = "cw32f002f3u7",
+    feature = "cw32f003f4p7",
+    feature = "cw32f003f4u7",
+    feature = "cw32f003e4p7"
+))]
 fn run(_p: hal::Peripherals) -> ! {
-    // F002 has no RTC. Successful init exposes factory LSI rate bounds for
+    // F002/F003 have no RTC. Successful init exposes factory LSI rate bounds for
     // SYSCLK and both buses, while HSI keeps its independent qualification.
     let clocks = rcc::clocks();
     loop {

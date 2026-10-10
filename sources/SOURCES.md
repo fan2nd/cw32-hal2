@@ -42,7 +42,7 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 | `hse-qualified.yaml` | F020/F030/A030/L010/L011/L031/L052/L083/R031/W031 HSE 的各自 RM/DS；L010/L011/L031/L052/L083/R031/W031 的实际版本、章节与页码见下表。保留 RM/DS 外部输入下限冲突的交集，不跨族继承电气限值或 CCS 策略。 |
 | `lse-qualified.yaml` | 仅末节二十三个精确料号/封装；x030、F020、L031、R031、W031、L052、L083、L010、L011、L012 各自 RM/DS 与原件对应收据给出原件 ID/SHA、PDF/书页和 SDK 成员定位，其他料号不自动继承主动配置资格。 |
 | `pll-qualified.yaml`、`electrical.yaml` 的 PLL、对应 SYSCTRL 模板与 `field-access.yaml` 的 PLL 字段 | CW32L083/F020/F030/A030 的一次性 factory-HSI- 或 HSE-fed 系统 PLL；晶振/旁路共用既有HSE板级契约，各族自己的 RM/DS、原件 SHA 与 PDF/书页见末节。F020 采用 current-datasheets 中 printed Rev1.3，输出交集12–48MHz；L083/F030/A030为12–64MHz。保留模拟档位与电气上限区别、reserved-debug默认0x5、STABLE只读及rate-only时序限制；不外推其他族。 |
-| `lsi-sysclk-qualified.yaml`、`electrical.yaml` 的 `lsi_sysclk` | F020/F030/A030 与精确 CW32F002F3P7/F3U7 的 init-only factory-LSI SYSCLK；逐族记录既锁 RM/DS 的 ID、SHA、PDF/书页，以及完整消费者、门控、复位与基址事实。F020 使用 current-datasheets 中真正 printed Rev1.3。F002 alias、F003 与其他未列料号不继承新资格；F002 无 RTC/LSI_OUT。classic 同源 RTC/LSI 别名仍为 rate-only，定位与兼容变化见下节。 |
+| `lsi-sysclk-qualified.yaml`、`electrical.yaml` 的 `lsi_sysclk` | F020/F030/A030、精确 CW32F002F3P7/F3U7 与 CW32F003F4P7/F4U7/E4P7 的 init-only factory-LSI SYSCLK；逐族记录既锁 RM/DS 的 ID、SHA、PDF/书页，以及完整消费者、门控、复位与基址事实。F020 使用 current-datasheets 中真正 printed Rev1.3。F002/F003 generic alias 与其他未列料号不继承资格；两族均无 RTC/专用 LSI_OUT。classic 同源 RTC/LSI 别名仍为 rate-only，定位与兼容变化见下节。 |
 | `hex-qualified.yaml` | F002/F003 各自 RM/DS 的直接 HEX 输入、PB0/PB1 与 AWT 来源；精确 PDF/书页见下表。保留 RM 4–32 MHz 与 DS 1–32 MHz 的交集及全部波形条件，不据此推定晶振、PLL 或失钟恢复能力。 |
 | `gpio-interrupt.yaml` | 各族 RM GPIO ICR 和中断表；CMSIS IRQ 枚举。 |
 | `reference-dividers.yaml` | L010/L011/L012 RM VC 分压器及 DS 电气范围，SDK VC 头/实现作佐证。 |
@@ -67,6 +67,14 @@ LSI 电气表使用 F020 current DS Rev1.3 PDF 44（书页 43）、F030 DS Rev1.
 DS 表 3-1 PDF 8（书页 7）明确两个料号均为 16 KiB FLASH、2 KiB SRAM；表 6-1 PDF 26（书页 25）给出 0x00000000–0x00003FFF 与 0x20000000–0x200007FF。例程从既有 exact metadata 生成链接边界并核实真实容量，不扩大容量以通过链接。
 
 新资格检查 AWT、UART1/2、GPIOA/B/C、MCO 与 ready/NVIC 观察者；没有 RTC、UART3、GPIOF、PB11 LSI_OUT 或 classic CCS 字段。whole-bank 检查可能推进采样、滤波和事件，软件不清旗标但旗标可自然改变。`lsi_output_pin` 从必有字符串变为 Option 是公开 metadata 类型变化；classic 仍为真实 Some，保持原 RTC/output/consumer 检查。ADC 与固定 1MHz time driver 拒绝 selected LSI 的 rate-only 系统时钟。完整初始化、功能移交和失败边界见 [F002 contract](../docs/f002-factory-lsi-sysclk.md)；编译/静态审阅不构成硬件验证。
+
+## F003 精确三封装 factory-LSI SYSCLK
+
+仅 CW32F003F4P7（TSSOP20）、CW32F003F4U7（QFN20）与 CW32F003E4P7（TSSOP24）使用自身已锁 RM Rev2.3、DS Rev1.9 和 SDK V1.7；不修改来源锁。DS PDF 5/8/27/62（书页 4/7/26/61）给出精确封装及 20 KiB Flash、3 KiB SRAM，基址分别为 0x00000000、0x20000000。E4 由 DS 支持，没有匹配 DFP device，不能标作 DFP 验证。
+
+DS 表 7-15 PDF 38（书页 37）给出 32800 Hz、全温 ±3% 即 31816–33784 Hz，适用 1.65–5.5 V、−40–105°C；不采用 25°C ±1% 或 RM ±10% 调整范围代替该行。RM PDF 46/48/59（书页 45/47/58）与 SDK `cw32f003_rcc.h:133`、`cw32f003_rcc.c:301–307` 支持自身 0x001007BA halfword 和十位 TRIM；保留 WAIT 与其他位，不复制 SDK 整字写。RM SHA-256 为 `0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738`，DS 为 `5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd`。
+
+自身 RM PDF 62–67、70–71、188–189、221–222、355–356、360 支持 gate/reset 邻位保护及 ATIM/IR 的传递路径；没有独立 LSI selector，不新增它们的工作窗口或 API 资格。AWT/UART1/2/GPIOA/B/C、MCO 和 ready/NVIC 构成七 selector、六 gate；保留 whole-bank 功能移交、rate-only ADC/time-driver 拒绝及失败部分状态。既有 optional output metadata 已能表达自身无 RTC/专用 LSI_OUT，不新增 schema；F002/classic 事实与消费者集合保持。完整边界见 [F003 contract](../docs/f003-factory-lsi-sysclk.md)。
 
 ## 13 个芯片族对应的原件版本
 

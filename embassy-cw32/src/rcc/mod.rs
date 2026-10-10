@@ -38,7 +38,7 @@ pub(crate) use hsi_48mhz::{init as init_backend, lsi_inspection_error};
 mod f002_f003;
 #[cfg(any(rcc_cw32f002_v1, rcc_cw32f003_v1))]
 pub(crate) use f002_f003::init as init_backend;
-#[cfg(all(rcc_cw32f002_v1, rcc_lsi_sysclk))]
+#[cfg(all(any(rcc_cw32f002_v1, rcc_cw32f003_v1), rcc_lsi_sysclk))]
 pub(crate) use f002_f003::lsi_inspection_error;
 #[cfg(any(rcc_cw32f002_v1, rcc_cw32f003_v1))]
 pub use f002_f003::*;

@@ -111,6 +111,18 @@ pub struct Config {
 /// This functional handover adds no hardware-validation or recovery guarantee.
 /// See docs/f002-factory-lsi-sysclk.md for the complete exact-package contract.
 ///
+/// On CW32F003F4P7/F4U7/E4P7 only, factory LSI SYSCLK has the same
+/// whole-GPIOA/B/C functional handover and partial-state failure boundary,
+/// using its own 31,816..33,784 Hz factory rate qualification. Cold admission
+/// also checks AWT, UART1/2, MCO and RCC ready/NVIC observers; there is no
+/// RTC API. ATIM/IR dependencies require no additional inspection gates;
+/// unrelated gate/reset bits, including ATIM, are preserved. ADC rejects
+/// LSI rate-only timing; the fixed 1 MHz time driver rejects selected LSI
+/// before singleton acquisition or RCC MMIO. AWT keeps its independent
+/// HSIOSC timing. Generic F003 is excluded. Reset before retrying hardware
+/// initialization; no rollback, recovery or hardware validation is promised.
+/// See docs/f003-factory-lsi-sysclk.md for the complete exact-package contract.
+///
 /// On F020/F030/A030, selecting factory LSI SYSCLK (or LSE SYSCLK on the
 /// three qualified packages) may briefly open each
 /// entire GPIOA/B/C/F bank to inspect retained source selectors. Sampling,

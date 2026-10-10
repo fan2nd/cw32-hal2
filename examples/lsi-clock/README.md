@@ -3,16 +3,19 @@
 This ordinary firmware selects `Sysclk::LSI` and exposes the resulting rate
 bounds. Choose one exact part with `--no-default-features`:
 
-- CW32F002F3P7 or CW32F002F3U7: system/bus bounds only. F002 has no RTC and this
-  branch uses no `LsiClock`, `CalendarClock` or calendar API.
+- CW32F002F3P7, CW32F002F3U7, CW32F003F4P7, CW32F003F4U7 or CW32F003E4P7:
+  system/bus bounds only. F002/F003 have no RTC and share the existing branch
+  that uses no `LsiClock`, `CalendarClock` or calendar API. Generic F002/F003
+  aliases are not qualified for this mode.
 - CW32F020C6U7, CW32F030C8T7 or CW32A030C8T7: the existing calendar branch also
   acquires the same factory source through `LsiClock` and `CalendarClock::Lsi`,
   initializes an unset RTC and polls its date/time and source/divided bounds.
   Its demonstration epoch is 2026-10-09 00:00:00; replace it with the intended
   time. An already-running compatible calendar retains its date/time.
 
-The default feature remains CW32F030C8T7. Neither branch uses GPIO, an external
-oscillator, UART baud or other unnecessary board peripherals.
+The default feature remains CW32F030C8T7. The firmware requires no GPIO wiring,
+external oscillator, UART baud or other board peripherals. F003 support is
+init-only; it does not provide runtime switching or sleep/wake recovery.
 
 ## Board declarations and rate bounds
 
@@ -20,35 +23,51 @@ The example declares VDD 1.65–5.5 V and ambient temperature −40–105°C. Th
 are source-qualified limits, not measurements or proof about a particular
 board. Qualify the board across its actual complete operating envelope and
 adjust the declarations accordingly before hardware use. Default AHB/APB
-prescalers remain /1. F002 retains factory HSIOSC /6, nominal 8 MHz, on
+prescalers remain /1. F002/F003 retain factory HSIOSC /6, nominal 8 MHz, on
 successful initialization; selecting LSI does not replace its independent
 qualification.
 
 The nominal LSI rate is 32,800 Hz. Factory full-range bounds are 31,160–34,440 Hz
-for F002/F020 and 31,816–33,784 Hz for F030/A030. F002's SYSCLK/HCLK/PCLK bounds
-are rate-only; retained HSI keeps its own timing qualification. The classic
-calendar's nominal tick rate is 32800/32768 Hz, not a precision one-second
-claim. Strict cycle-duration helpers are not used. ADC timing rejects these
-rate-only system clocks, and the fixed 1 MHz time driver rejects selected LSI
-before singleton acquisition or RCC access. This crate enables no time driver.
+for F002/F020 and 31,816–33,784 Hz for F003/F030/A030. F003's bounds come from its
+own datasheet Rev1.9, PDF pages 32 and 38: factory ±3% over the declared full
+temperature range, independently of the other families. SYSCLK/HCLK/PCLK
+bounds are rate-only; retained HSI keeps its own timing qualification. Exact
+source bounds and divisors are retained through prescaling. For example, F003
+AHB /128 and APB /8 would expose PCLK nominal/minimum/maximum 32/31/33 Hz while
+retaining divisor 1024 internally; the example itself uses /1.
+
+The classic calendar's nominal tick rate is 32800/32768 Hz, not a precision
+one-second claim. Strict cycle-duration helpers are not used. ADC timing
+rejects these rate-only system clocks, and the fixed 1 MHz time driver rejects
+selected LSI before singleton acquisition or RCC access. This crate enables
+no time driver. AWT retains its independent HSIOSC timing qualification; F003's
+ATIM/IR presence does not grant new peripheral modes or timing guarantees.
 
 ## Initialization and failure effects
 
-Selecting the mode permits bounded whole-GPIOA/B/C inspection windows on F002,
-and whole-GPIOA/B/C/F windows on the classic parts. Sampling, filters and armed
-events may advance, including before failure. Configuration and locks are
-preserved; software does not clear flags, but flags can change naturally.
-Restoring gates cannot undo this progress. A cold source with retained
-LSI-selected consumers or ready observers is rejected; an already-running
-factory-matching source is reused without TRIM/WAIT writes. No ready flag is
-cleared to obtain admission or after a new start.
+Selecting the mode permits bounded whole-GPIOA/B/C inspection windows on
+F002/F003, and whole-GPIOA/B/C/F windows on the classic parts. Sampling, filters
+and armed events may advance, including before failure. Configuration and
+locks are preserved; software does not clear flags, but flags can change
+naturally. Restoring gates cannot undo this progress. Existing exclusive
+clock/memory handover and a continuously legal execution clock remain required;
+a critical section does not freeze hardware. System/bus clock changes also
+change downstream timing, including F003 ATIM/IR, despite retained configuration.
+A cold source with retained LSI-selected consumers or ready observers is
+rejected; an already-running factory-matching source is reused without
+TRIM/WAIT writes. No ready flag is cleared to obtain admission or after a new
+start.
 
 An error stops at a debugger breakpoint. A failed hardware initialization can
 leave attempted TRIM, an enabled inspection gate, conservative Flash/bus
 guards or a permanent LSI request. HSI-calibration failure can leave execution
-on the LSI bridge with HSI stopped or incompletely restarted. No hardware error
-promises rollback; reset before retrying. Read the complete
-[F002 contract](../../docs/f002-factory-lsi-sysclk.md) or
+on the LSI bridge with HSI stopped or incompletely restarted. A partial HEX
+configuration may also remain. RCC failure publishes no clocks or peripheral
+tokens. No hardware error promises rollback; reset before retrying. Ready
+status is a startup latch, not running clock-loss detection, and poll budgets
+are not microseconds. Loss of the execution clock may prevent a return. Read
+the complete [F002 contract](../../docs/f002-factory-lsi-sysclk.md),
+[F003 contract](../../docs/f003-factory-lsi-sysclk.md), or
 [classic contract](../../docs/factory-lsi-sysclk.md) before hardware use.
 
 ## Ordinary firmware builds
@@ -58,6 +77,9 @@ From the repository root:
 ```sh
 cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f002f3p7,defmt
 cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f002f3u7,defmt
+cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f003f4p7
+cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f003f4u7,defmt
+cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f003e4p7,defmt
 cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f020c6u7,defmt
 cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f030c8t7,defmt
 cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32a030c8t7,defmt
@@ -65,12 +87,18 @@ cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml --t
 
 `build.rs` derives `memory.x` from the exact package's generated memory facts
 and passes `-Tlink.x`. F002's own datasheet Rev1.2 tables 3-1 and 6-1 specify
-16 KiB Flash at 0x00000000 and 2 KiB SRAM at 0x20000000 for both packages; the
-build script asserts these limits. Release uses size optimization, LTO and one
-codegen unit. A Flash overflow must be resolved within the real capacity.
+16 KiB Flash at 0x00000000 and 2 KiB SRAM at 0x20000000 for both packages. F003's
+own datasheet Rev1.9 PDF pages 5, 8, 27 and 62 specify 20 KiB Flash at
+0x00000000 and 3 KiB SRAM at 0x20000000 for all three exact packages. The F4
+packages also match their DFP device entries; E4P7 is supported by the datasheet
+without a matching DFP device. The build script asserts the family-specific
+limits and absence of RTC. Release uses size optimization, LTO and one codegen
+unit. A Flash overflow must be resolved within the real capacity.
 
 The `defmt` feature exercises HAL formatting implementations without requiring
 a logging transport. These commands are a build recipe, not evidence that they
 have run. Compilation and ELF inspection establish source/link integration
-only. No hardware startup, electrical rate, RTC operation or runtime error-path
+only; actual load segments, Flash/RAM use, remaining stack space, entry and
+vectors must be inspected before claiming a binary fits. No hardware startup,
+electrical rate, RTC operation, real-time behavior or runtime error-path
 validation is claimed.

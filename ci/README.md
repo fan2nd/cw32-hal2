@@ -67,23 +67,31 @@ dead time and global MOE. Its own-PDF/data audit is
 
 `./d audit-current` also includes `ci/verify-l083-lse-data.py` for the five exact L083 parts, with four own locked originals, five SDK members and the native register/package facts. The earlier auxiliary-LSE L083 candidate has retained passes for seven ordinary library configurations and fourteen linked crystal/bypass ELFs: all five L083 parts, L052C8T6 and F030C8T7. Those receipts apply to the frozen candidate source, and do not claim a rerun of the full script or hardware execution. Its source-qualified detector-margin check runs before peripheral acquisition or RCC writes; see the [L083 contract](../docs/qualified-l083-lse.md).
 
-`./d check-lsi-clock` declares a bounded local compile/link scope: four F002
-exact-package library builds (each exact part in debug and release, with defmt
-and its applicable `time-driver-gtim` cfg), two F002/F003 generic library checks,
-and the existing three classic library checks with `time-driver-gtim1`. It links
-two F002 no-RTC LSI ELFs, three existing classic LSI/calendar ELFs, the existing
-HSI/HSE/PLL regression ELF each, and four existing F002/F003 HEX PB0/PB1 ELFs.
-The two F002 exact packages are CW32F002F3P7 and CW32F002F3U7; aliases/F003 gain
-no LSI capability. This recipe is not a receipt that these commands ran.
+`./d check-lsi-clock` is a reusable local recipe with twelve library commands:
+four F002 exact-package builds (both profiles with defmt and `time-driver-gtim`),
+three F003 exact-package release builds with the same features, two F002/F003
+generic checks and three classic checks with `time-driver-gtim1`. It links
+fifteen ELFs: five exact F002/F003 no-RTC LSI examples, three classic LSI
+examples, one existing HSI/calendar, HSE and PLL example each, and four existing
+F002/F003 HEX PB0/PB1 examples. Exact F002 support is F3P7/F3U7; exact F003
+support is F4P7/F4U7/E4P7. Both generic aliases remain excluded from LSI SYSCLK.
+
+This future recipe is not a build receipt or the scope of the F003 acceptance
+run. That run is bounded separately to nine library configurations and six
+ELFs in the main tree, then two library configurations and the three new F003
+LSI ELFs in a clean tree. Completed commands and outcomes require their own
+receipts; neither these counts nor this recipe assert they have run.
 
 The commands compile production sources and examples; they do not run HAL
 tests, prove runtime time-driver/ADC rejection, or execute hardware. Static
-review must trace those guards through the actual generated F002 cfg. Each
-example's build.rs derives exact memory bounds and links with -Tlink.x. F002
-has 16 KiB Flash / 2 KiB RAM; release LTO must fit the real limits without
-expanding memory.x. Inspect ELF entry, vectors and PT_LOAD regions separately
-before flashing. Runtime startup, error paths and electrical behavior remain
-unvalidated. See the [F002 contract](../docs/f002-factory-lsi-sysclk.md).
+review must trace those guards through the actual generated exact-part cfg.
+Each example's build.rs derives memory bounds and links with `-Tlink.x`:
+F002 has 16 KiB Flash / 2 KiB RAM and F003 has 20 KiB Flash / 3 KiB RAM.
+Inspect each linked ELF's entry, vectors, PT_LOAD regions, Flash use and static
+RAM/stack headroom before claiming it fits or flashing it; never expand
+memory.x to hide overflow. Startup, error paths and electrical behavior remain
+unvalidated. See the [F002 contract](../docs/f002-factory-lsi-sysclk.md) and
+[F003 contract](../docs/f003-factory-lsi-sysclk.md). No hosted workflow is added.
 
 
 `./d check-lse-sysclk` declares a bounded local compile/link scope: twenty-four

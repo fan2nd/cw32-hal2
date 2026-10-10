@@ -1,0 +1,1717 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-10",
+  "status": "accepted_frozen_main_implementation_and_actual_9_library_6_elf_evidence",
+  "scope": [
+    "CW32F003F4P7",
+    "CW32F003F4U7",
+    "CW32F003E4P7"
+  ],
+  "path_convention": "Project paths are relative to candidate source; review and verification artifacts are relative to candidate root. Prior inputs use external-evidence labels.",
+  "review_method": "Independent source-operation review plus read-only inspection of vendor originals, metadata, actual generated HAL and build/ELF artifacts. Reviewer ran no Cargo, tests, probes, models, harnesses, network or hardware.",
+  "frozen_design": {
+    "external_evidence": "external-evidence/stage66-design/f003-factory-lsi-sysclk-design.md",
+    "sha256": "9efb62caf7ebf5a5dbe07b41f9efa67cefce8c34a6c7e06c01a8084be8c83cad"
+  },
+  "source_manifest": {
+    "artifact": "source-manifest.json",
+    "sha256": "6a0fba1a58ef5832e9a368c261d8246b5bf1687f76e2f2ed263d7879d8b4e8fd",
+    "entries": 1286,
+    "all_current_files_match": true,
+    "both_build_snapshots_match": true
+  },
+  "project_inputs": [
+    {
+      "path": "cw32-data-gen/src/lsi.rs",
+      "sha256": "5bed55645089237338e7cad9c6f9d465a32994093b965c850db18b7eed65eb1c",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "cw32-data/lsi-sysclk-qualified.yaml",
+      "sha256": "b03cdfb8290a8c35b5b656c22d72ed0ace6007c327a1c3a97689b26335f23202",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "cw32-data/electrical.yaml",
+      "sha256": "26c4e0b20a4e88a7b288a4ace0e3ea57d8a567573a802f596e6a457d94fbb3d5",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "cw32-data/parts.yaml",
+      "sha256": "6e8194c84122d440e5476ba527cc04ff6c0e5c196bc413fa02dbbba41458f899",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "cw32-data/af/cw32f003.yaml",
+      "sha256": "335e35021f2ee0dcd25e3b80ce232577e13ec2fe2ed69e13c108d3ae517a0cf9",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "cw32-data/field-access.yaml",
+      "sha256": "46903429cb4f423e8c803ee12ba0c1b405b20f4d0f8427b9d069843dbecdc7bd",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "sha256": "ca5fa04337464797466d7fa90a9b4b5e43cf0d1aa913eef27b743732c024e6d8",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "sha256": "b4d875955a51d7e8061e2459b975362ac45a1723819ba9256bd62949d45feefc",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "sha256": "f0415cfd5e5ca402213bcf1942849b6fa9665fc475f5e8e803e2c1537785a774",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "sha256": "adceff0bcaa25727ab3c8e2515b08a85220f149c92bb730c03195a18e7af79b5",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "cw32-metapac/src/peripherals/sysctrl_cw32f003_v1.rs",
+      "sha256": "978a9ba978b3ae963264676431ab2d1815a3c06af8a564d78f0cb3052d7b7a41",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "064adbf434d6ac496cebfbd5cd00693af6a21dae91bfbe227688b0c0aa8ee022",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "embassy-cw32/src/rcc/mod.rs",
+      "sha256": "6bc7cd1c976668286f02f8855906de1b73b1a52cebe28aa6e36bb567c62dad6e",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "embassy-cw32/src/rcc/f002_f003.rs",
+      "sha256": "4a33c60bb584867384afc398107a0cdb4298249685913de20067b87c557240b6",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/hsi_48mhz.rs",
+      "sha256": "793e9e5e0bb1040728da36167c43b6cf24e10f0b695b3cec6dd777daf953e4cf",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/peripheral.rs",
+      "sha256": "92fce92a5ad9f68106dfa400ecea2e0798e3dd4204baa300e00bd8b224351284",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/bounds.rs",
+      "sha256": "0de6c5c907b22ce299ee0e844f7cfa5175359b1d8219d268c01b7070d28c086d",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "embassy-cw32/src/rcc/operating.rs",
+      "sha256": "1807ed96557149d78e3a256d64f036fadf16511fec7ec58eb2a636ac26477519",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/adc/classic.rs",
+      "sha256": "f08973c004ba5bb5b9efca7b17354fece22bf58642959eaff671e4a5502048e9",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/time_driver.rs",
+      "sha256": "f23f754fa62f62664cee5d30d7fb37c6964e4b58c788b726325bf99674991924",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/awt.rs",
+      "sha256": "e6a52f40384943dcd423982c06f0e49eb188c5fc233a6aa0d12be2bfb51579a6",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/flash.rs",
+      "sha256": "c367f7c31acc45584306a027f5a04368bd52a305d786adb4d5af4453104d6454",
+      "baseline_byte_identical": true
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "0c818c58a7f7607f6e8e507ea52f1649900b51d27a9742fdb076ac22ea52911d",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "README.md",
+      "sha256": "92380eadfd4758aa5c8c5bdd6b9335274b757ca668552c1ed1c9913a9a873a82",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "docs/f003-factory-lsi-sysclk.md",
+      "sha256": "d35967bbc2f7cd05e1de8a49f2174e767d357f2c2659a3007f3f634f36ecc0c0",
+      "baseline_byte_identical": null
+    },
+    {
+      "path": "docs/f002-factory-lsi-sysclk.md",
+      "sha256": "1e89ad17711414d63d3a455900a2182016269fbee4a10ee26b3199f4376e6fff",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "ci/hal-capabilities.yaml",
+      "sha256": "12e359278a1c05e33babd387f6a40dd636ec8f484868d0e3bb7288b45e21546a",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "examples/lsi-clock/Cargo.toml",
+      "sha256": "dd6259006437497969802f5ab89434f5de483aae4368510d779d94edd068ad6d",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "examples/lsi-clock/build.rs",
+      "sha256": "e3c82edb8c88ac1382432b91516defa05fa71388a3a49a899faa91a2be44fc13",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "examples/lsi-clock/src/main.rs",
+      "sha256": "9f7676fa2628dc35e1b950afba9f72ac0916022b040ee8949d2d2a9b688a86e2",
+      "baseline_byte_identical": false
+    },
+    {
+      "path": "examples/lsi-clock/README.md",
+      "sha256": "adfaabbecf28dcd3ca7d5478c0f34a5664882e2d65c168e1b280accdc3254e93",
+      "baseline_byte_identical": false
+    }
+  ],
+  "vendor_source_receipts": [
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/CW32F003_StandardPeripheralLib_V1.7.zip",
+      "sha256": "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+      "matches_approved_receipt": true
+    },
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/cw32f003/IdeSupport/MDK/WHXY.CW32F003_DFP.1.0.2/SVD/CW32F003.svd",
+      "sha256": "9535665c3cd517e4619121ccac8f47b91a6528d295e3c9aed99367691a094293",
+      "matches_approved_receipt": true
+    },
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/cw32f003/IdeSupport/MDK/WHXY.CW32F003_DFP.1.0.2/WHXY.CW32F003_DFP.pdsc",
+      "sha256": "d2cf4a2e46eee04118d96205011d94f36a83188708230510198a499a0dcc81e4",
+      "matches_approved_receipt": true
+    },
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/cw32f003/Libraries/inc/cw32f003.h",
+      "sha256": "1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f",
+      "matches_approved_receipt": true
+    },
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/cw32f003/Libraries/inc/cw32f003_gpio.h",
+      "sha256": "f4970bcdfb6da3403aa0d43e13ca1acfc82f3e3f19e2d2b557806ee456df5ce1",
+      "matches_approved_receipt": true
+    },
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/cw32f003/Libraries/inc/cw32f003_rcc.h",
+      "sha256": "12af56866d53c0822576fcc599efb625d68e04132f2d32b8c5b20f46a93f53ae",
+      "matches_approved_receipt": true
+    },
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/cw32f003/Libraries/src/cw32f003_rcc.c",
+      "sha256": "31b6e244e5469fdd1a7b78c4f2384a1033e4cce4d6c5c73f44adbe9fc970894f",
+      "matches_approved_receipt": true
+    },
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/CW32F003_DataSheet_CN_V1.9.pdf",
+      "sha256": "5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd",
+      "matches_approved_receipt": true
+    },
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/CW32F003_DataSheet_CN_V1.9.txt",
+      "sha256": "1c78a99eee262f3fb85457ffe171f0a92f0979cc847d2ba72e880305ff955580",
+      "matches_approved_receipt": true
+    },
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/CW32F003_UserManual_CN_V2.3.pdf",
+      "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+      "matches_approved_receipt": true
+    },
+    {
+      "external_evidence": "external-evidence/stage65/source/sources/vendor/CW32F003_UserManual_CN_V2.3.txt",
+      "sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319",
+      "matches_approved_receipt": true
+    }
+  ],
+  "own_svd_field_correspondence": [
+    {
+      "field": "SYSCTRL.CR0.SYSCLK",
+      "svd_offset_bit_width": [
+        0,
+        0,
+        3
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.CR0.PCLKPRS",
+      "svd_offset_bit_width": [
+        0,
+        3,
+        2
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.CR0.HCLKPRS",
+      "svd_offset_bit_width": [
+        0,
+        5,
+        3
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.CR0.KEY",
+      "svd_offset_bit_width": [
+        0,
+        16,
+        16
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.CR1.HSIEN",
+      "svd_offset_bit_width": [
+        4,
+        0,
+        1
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.CR1.HEXEN",
+      "svd_offset_bit_width": [
+        4,
+        1,
+        1
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.CR1.LSIEN",
+      "svd_offset_bit_width": [
+        4,
+        3,
+        1
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.CR1.KEY",
+      "svd_offset_bit_width": [
+        4,
+        16,
+        16
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.IER.LSIRDY",
+      "svd_offset_bit_width": [
+        12,
+        3,
+        1
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.IER.KEY",
+      "svd_offset_bit_width": [
+        12,
+        16,
+        16
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.ISR.LSIRDY",
+      "svd_offset_bit_width": [
+        16,
+        3,
+        1
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.ISR.LSISTABLE",
+      "svd_offset_bit_width": [
+        16,
+        14,
+        1
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.LSI.TRIM",
+      "svd_offset_bit_width": [
+        32,
+        0,
+        10
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.LSI.WAITCYCLE",
+      "svd_offset_bit_width": [
+        32,
+        10,
+        2
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.LSI.STABLE",
+      "svd_offset_bit_width": [
+        32,
+        15,
+        1
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "SYSCTRL.MCO.SOURCE",
+      "svd_offset_bit_width": [
+        112,
+        0,
+        4
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "AWT.CR.SRC",
+      "svd_offset_bit_width": [
+        0,
+        8,
+        3
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "UART1.CR2.SOURCE",
+      "svd_offset_bit_width": [
+        4,
+        8,
+        2
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "UART2.CR2.SOURCE",
+      "svd_offset_bit_width": [
+        4,
+        8,
+        2
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "GPIOA.FILTER.FLTCLK",
+      "svd_offset_bit_width": [
+        64,
+        16,
+        3
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "GPIOB.FILTER.FLTCLK",
+      "svd_offset_bit_width": [
+        64,
+        16,
+        3
+      ],
+      "matches_policy": true
+    },
+    {
+      "field": "GPIOC.FILTER.FLTCLK",
+      "svd_offset_bit_width": [
+        64,
+        16,
+        3
+      ],
+      "matches_policy": true
+    }
+  ],
+  "own_svd_gate_correspondence": [
+    {
+      "peripheral": "AWT",
+      "enable_offset": 52,
+      "enable_bit": 13,
+      "reset_offset": 68,
+      "reset_bit": 13
+    },
+    {
+      "peripheral": "UART1",
+      "enable_offset": 52,
+      "enable_bit": 9,
+      "reset_offset": 68,
+      "reset_bit": 9
+    },
+    {
+      "peripheral": "UART2",
+      "enable_offset": 56,
+      "enable_bit": 7,
+      "reset_offset": 72,
+      "reset_bit": 7
+    },
+    {
+      "peripheral": "GPIOA",
+      "enable_offset": 48,
+      "enable_bit": 4,
+      "reset_offset": 64,
+      "reset_bit": 4
+    },
+    {
+      "peripheral": "GPIOB",
+      "enable_offset": 48,
+      "enable_bit": 5,
+      "reset_offset": 64,
+      "reset_bit": 5
+    },
+    {
+      "peripheral": "GPIOC",
+      "enable_offset": 48,
+      "enable_bit": 6,
+      "reset_offset": 64,
+      "reset_bit": 6
+    }
+  ],
+  "own_ro_authority": {
+    "sources": "Own RM PDF58/59/61, own locked SVD, existing field-access policy, actual typed PAC; separate from layout-mask derivation.",
+    "stable_bits": {
+      "HSI": 15,
+      "HEX": 19,
+      "LSI": 15
+    },
+    "isr_register_access": "read-only",
+    "pac_stable_setters_absent": true,
+    "atim_neighbor_bit": 7
+  },
+  "metadata_scope": {
+    "changed_chip_jsons": [
+      "CW32F003E4P7",
+      "CW32F003F4P7",
+      "CW32F003F4U7"
+    ],
+    "resolved_per_part_views_compared": 54,
+    "only_same_three_resolved_views_changed": true,
+    "register_json_and_pac_peripherals_byte_identical": true,
+    "all_old_policy_family_objects_equal": true,
+    "generic_f003_f002_none": true
+  },
+  "actual_main_builds": {
+    "library_builds": 9,
+    "release_elfs": 6,
+    "all_actual_commands_cargo_build": true,
+    "commands": [
+      {
+        "name": "lib-cw32f003f4p7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003f4p7,rt"
+        ],
+        "exit": 0,
+        "log": "verification/main/lib-cw32f003f4p7.log",
+        "log_sha256": "aad28b12726e0d19007f5b2919ccc598baebce106f5fe65f777b4350eb571c33",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lib-cw32f003f4p7-_generated.rs",
+            "sha256": "b444dfd43fb5d585078e87c10a2d14c88cfaed6a635c3c103b472f255901e06d",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lib-cw32f003f4p7-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lib-cw32f003f4u7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003f4u7,rt,defmt",
+          "--release"
+        ],
+        "exit": 0,
+        "log": "verification/main/lib-cw32f003f4u7.log",
+        "log_sha256": "936e14fe35a51dfdcb1c164abe038a1b65c18dbd034ed384adebe3a9cb28d0ff",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lib-cw32f003f4u7-_generated.rs",
+            "sha256": "b444dfd43fb5d585078e87c10a2d14c88cfaed6a635c3c103b472f255901e06d",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lib-cw32f003f4u7-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lib-cw32f003e4p7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003e4p7,rt,defmt"
+        ],
+        "exit": 0,
+        "log": "verification/main/lib-cw32f003e4p7.log",
+        "log_sha256": "b4a8388c2465714f284e6948d645a515310c453c2c7afeae75a1deeae5c4a60a",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lib-cw32f003e4p7-_generated.rs",
+            "sha256": "6668b31782e2e318b31d8ab9ae60c7930fae771211a90142f9048e5617d4e8b7",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lib-cw32f003e4p7-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lib-cw32f003f4p7-time",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003f4p7,rt,defmt,time-driver-gtim",
+          "--release"
+        ],
+        "exit": 0,
+        "log": "verification/main/lib-cw32f003f4p7-time.log",
+        "log_sha256": "c24f8a5066c235492172616f7a6221cd4e8d33f51f441624688efbe440feede2",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lib-cw32f003f4p7-time-_generated.rs",
+            "sha256": "2a62985fba22243d8fc1d9342875d901b6b20aeacc6f730423a9557e417a37fd",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lib-cw32f003f4p7-time-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lib-cw32f003e4p7-time",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003e4p7,rt,time-driver-gtim",
+          "--release"
+        ],
+        "exit": 0,
+        "log": "verification/main/lib-cw32f003e4p7-time.log",
+        "log_sha256": "2d001d0c1c63e02e113a845998fa718b39d90828366cbccd5ab5968baec7b9c9",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lib-cw32f003e4p7-time-_generated.rs",
+            "sha256": "12ecbce282b0f9e76bc445de4eb55e6c0ca4ab524540fd523d922fd100b874e0",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lib-cw32f003e4p7-time-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lib-cw32f003",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003,rt"
+        ],
+        "exit": 0,
+        "log": "verification/main/lib-cw32f003.log",
+        "log_sha256": "e4464f0bb64de2a1bb467ba68e7bc4db79af56971178f43324575345e101c942",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": false,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lib-cw32f003-_generated.rs",
+            "sha256": "a4c0b27662565a6152904cdedd54940632207b443cb33aa7c2ddeb3faf13a3f3",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lib-cw32f003-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lib-cw32f002",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f002,rt"
+        ],
+        "exit": 0,
+        "log": "verification/main/lib-cw32f002.log",
+        "log_sha256": "618a05ac9af9e66a3fe20a48aaf2165bdc8dc9f9ff32aa07a42cd18283356164",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": false,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lib-cw32f002-_generated.rs",
+            "sha256": "40a41072f7b12ad8672b039278279a1ea4b296aff46b005b5ad9cebe53e8496d",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lib-cw32f002-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lib-cw32f002f3p7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f002f3p7,rt,defmt",
+          "--release"
+        ],
+        "exit": 0,
+        "log": "verification/main/lib-cw32f002f3p7.log",
+        "log_sha256": "0696db20191d1d960b9e979ef08f8dcc3657f175fcd41cd3d681c515a116e1c3",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lib-cw32f002f3p7-_generated.rs",
+            "sha256": "33dd37b78139ab1016a480c915a32eb0461cb39d855264905a456999b3b53d3d",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lib-cw32f002f3p7-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lib-cw32f030c8t7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "-p",
+          "embassy-cw32",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7,rt,defmt",
+          "--release"
+        ],
+        "exit": 0,
+        "log": "verification/main/lib-cw32f030c8t7.log",
+        "log_sha256": "ed1b7cfa6905d632c8f5a5ee43dbee09ec2c324fcabe3d68a014b1a03acbfa05",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lib-cw32f030c8t7-_generated.rs",
+            "sha256": "6c37e2f13e15909901775e9493afe0443da4279ba34406d47ff22656e9f4e1e5",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lib-cw32f030c8t7-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lsi-clock-cw32f003f4p7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "examples/lsi-clock/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003f4p7",
+          "--bin",
+          "cw32-lsi-clock-example"
+        ],
+        "exit": 0,
+        "log": "verification/main/lsi-clock-cw32f003f4p7.log",
+        "log_sha256": "ced2b9b4498a920f3ebc383380b880f84d0fe4723c05f02c19cf2e45e3f8ee22",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lsi-clock-cw32f003f4p7-_generated.rs",
+            "sha256": "b444dfd43fb5d585078e87c10a2d14c88cfaed6a635c3c103b472f255901e06d",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lsi-clock-cw32f003f4p7-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lsi-clock-cw32f003f4u7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "examples/lsi-clock/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003f4u7,defmt",
+          "--bin",
+          "cw32-lsi-clock-example"
+        ],
+        "exit": 0,
+        "log": "verification/main/lsi-clock-cw32f003f4u7.log",
+        "log_sha256": "9e1571a6fac7a392303ed5cae10ad30e37832f440fdb0abf497af2c6628e2a96",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lsi-clock-cw32f003f4u7-_generated.rs",
+            "sha256": "b444dfd43fb5d585078e87c10a2d14c88cfaed6a635c3c103b472f255901e06d",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lsi-clock-cw32f003f4u7-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lsi-clock-cw32f003e4p7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "examples/lsi-clock/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003e4p7,defmt",
+          "--bin",
+          "cw32-lsi-clock-example"
+        ],
+        "exit": 0,
+        "log": "verification/main/lsi-clock-cw32f003e4p7.log",
+        "log_sha256": "15cba03e3eb09cf06284d5246d6f0714711ef1475d6a49d9bed6b17b0106d795",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lsi-clock-cw32f003e4p7-_generated.rs",
+            "sha256": "6668b31782e2e318b31d8ab9ae60c7930fae771211a90142f9048e5617d4e8b7",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lsi-clock-cw32f003e4p7-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "lsi-clock-cw32f002f3p7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "examples/lsi-clock/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f002f3p7,defmt",
+          "--bin",
+          "cw32-lsi-clock-example"
+        ],
+        "exit": 0,
+        "log": "verification/main/lsi-clock-cw32f002f3p7.log",
+        "log_sha256": "37cbc12281b6dd7cf2cb9d1d12541d2de001a165f17775d806fe688a74424a1f",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/lsi-clock-cw32f002f3p7-_generated.rs",
+            "sha256": "33dd37b78139ab1016a480c915a32eb0461cb39d855264905a456999b3b53d3d",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/lsi-clock-cw32f002f3p7-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "hex-clock-cw32f003f4p7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "examples/hex-clock/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003f4p7",
+          "--bin",
+          "pb0"
+        ],
+        "exit": 0,
+        "log": "verification/main/hex-clock-cw32f003f4p7.log",
+        "log_sha256": "38a95a91e4367aedc760e2bfd1758ebb245fd500e3bd65d080c009afe46408ba",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/hex-clock-cw32f003f4p7-_generated.rs",
+            "sha256": "b444dfd43fb5d585078e87c10a2d14c88cfaed6a635c3c103b472f255901e06d",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/hex-clock-cw32f003f4p7-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      },
+      {
+        "name": "low-power-timers-cw32f003e4p7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--release",
+          "--locked",
+          "--manifest-path",
+          "examples/low-power-timers/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f003e4p7",
+          "--bin",
+          "polling"
+        ],
+        "exit": 0,
+        "log": "verification/main/low-power-timers-cw32f003e4p7.log",
+        "log_sha256": "0890676ebb2d97df2fbf00ec37f2dbb63fce43763e570ec821553eab3d09c22e",
+        "log_hash_matches": true,
+        "rcc_lsi_sysclk": true,
+        "generated_files": [
+          {
+            "artifact": "verification/main/low-power-timers-cw32f003e4p7-_generated.rs",
+            "sha256": "6668b31782e2e318b31d8ab9ae60c7930fae771211a90142f9048e5617d4e8b7",
+            "matches_receipt": true
+          },
+          {
+            "artifact": "verification/main/low-power-timers-cw32f003e4p7-_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231",
+            "matches_receipt": true
+          }
+        ],
+        "actual_build_finished_success": true
+      }
+    ]
+  },
+  "actual_f003_generated_lsi": {
+    "parameters_masks": {
+      "LSI": "0xFFFF7FFF",
+      "HSI": "0xFFFF7FFF",
+      "HEX": "0xFFF7FFFF"
+    },
+    "nominal_minimum_maximum_hz": [
+      32800,
+      31816,
+      33784
+    ],
+    "factory_trim_address": "0x001007BA",
+    "supply_mv": [
+      1650,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      105
+    ],
+    "selectors": 7,
+    "gates": 6,
+    "hex_gpio_gate_index": 4,
+    "generated_blocks": [
+      {
+        "artifact": "verification/main/lib-cw32f003f4p7-_generated.rs",
+        "lsi_block_sha256": "23c8010c4ea9b21b26ced481ad59ce0517ea00846eff6ecd68c741b3ac1abef5",
+        "strict_windows": 6,
+        "source_and_gate_roster": "AWT,UART1,UART2,GPIOA,GPIOB,GPIOC; MCO last ungated",
+        "no_rtc_pb11_atim_ir_access": true
+      },
+      {
+        "artifact": "verification/main/lib-cw32f003f4u7-_generated.rs",
+        "lsi_block_sha256": "23c8010c4ea9b21b26ced481ad59ce0517ea00846eff6ecd68c741b3ac1abef5",
+        "strict_windows": 6,
+        "source_and_gate_roster": "AWT,UART1,UART2,GPIOA,GPIOB,GPIOC; MCO last ungated",
+        "no_rtc_pb11_atim_ir_access": true
+      },
+      {
+        "artifact": "verification/main/lib-cw32f003e4p7-_generated.rs",
+        "lsi_block_sha256": "23c8010c4ea9b21b26ced481ad59ce0517ea00846eff6ecd68c741b3ac1abef5",
+        "strict_windows": 6,
+        "source_and_gate_roster": "AWT,UART1,UART2,GPIOA,GPIOB,GPIOC; MCO last ungated",
+        "no_rtc_pb11_atim_ir_access": true
+      },
+      {
+        "artifact": "verification/main/lib-cw32f003f4p7-time-_generated.rs",
+        "lsi_block_sha256": "23c8010c4ea9b21b26ced481ad59ce0517ea00846eff6ecd68c741b3ac1abef5",
+        "strict_windows": 6,
+        "source_and_gate_roster": "AWT,UART1,UART2,GPIOA,GPIOB,GPIOC; MCO last ungated",
+        "no_rtc_pb11_atim_ir_access": true
+      },
+      {
+        "artifact": "verification/main/lib-cw32f003e4p7-time-_generated.rs",
+        "lsi_block_sha256": "23c8010c4ea9b21b26ced481ad59ce0517ea00846eff6ecd68c741b3ac1abef5",
+        "strict_windows": 6,
+        "source_and_gate_roster": "AWT,UART1,UART2,GPIOA,GPIOB,GPIOC; MCO last ungated",
+        "no_rtc_pb11_atim_ir_access": true
+      },
+      {
+        "artifact": "verification/main/lsi-clock-cw32f003f4p7-_generated.rs",
+        "lsi_block_sha256": "23c8010c4ea9b21b26ced481ad59ce0517ea00846eff6ecd68c741b3ac1abef5",
+        "strict_windows": 6,
+        "source_and_gate_roster": "AWT,UART1,UART2,GPIOA,GPIOB,GPIOC; MCO last ungated",
+        "no_rtc_pb11_atim_ir_access": true
+      },
+      {
+        "artifact": "verification/main/lsi-clock-cw32f003f4u7-_generated.rs",
+        "lsi_block_sha256": "23c8010c4ea9b21b26ced481ad59ce0517ea00846eff6ecd68c741b3ac1abef5",
+        "strict_windows": 6,
+        "source_and_gate_roster": "AWT,UART1,UART2,GPIOA,GPIOB,GPIOC; MCO last ungated",
+        "no_rtc_pb11_atim_ir_access": true
+      },
+      {
+        "artifact": "verification/main/lsi-clock-cw32f003e4p7-_generated.rs",
+        "lsi_block_sha256": "23c8010c4ea9b21b26ced481ad59ce0517ea00846eff6ecd68c741b3ac1abef5",
+        "strict_windows": 6,
+        "source_and_gate_roster": "AWT,UART1,UART2,GPIOA,GPIOB,GPIOC; MCO last ungated",
+        "no_rtc_pb11_atim_ir_access": true
+      },
+      {
+        "artifact": "verification/main/hex-clock-cw32f003f4p7-_generated.rs",
+        "lsi_block_sha256": "23c8010c4ea9b21b26ced481ad59ce0517ea00846eff6ecd68c741b3ac1abef5",
+        "strict_windows": 6,
+        "source_and_gate_roster": "AWT,UART1,UART2,GPIOA,GPIOB,GPIOC; MCO last ungated",
+        "no_rtc_pb11_atim_ir_access": true
+      },
+      {
+        "artifact": "verification/main/low-power-timers-cw32f003e4p7-_generated.rs",
+        "lsi_block_sha256": "23c8010c4ea9b21b26ced481ad59ce0517ea00846eff6ecd68c741b3ac1abef5",
+        "strict_windows": 6,
+        "source_and_gate_roster": "AWT,UART1,UART2,GPIOA,GPIOB,GPIOC; MCO last ungated",
+        "no_rtc_pb11_atim_ir_access": true
+      }
+    ],
+    "all_ten_generated_blocks_identical": true
+  },
+  "old_generated_preservation": [
+    {
+      "candidate_artifact": "verification/main/lib-cw32f002-_generated.rs",
+      "external_evidence": "external-evidence/stage65/verification/main/lib-cw32f002-_generated.rs",
+      "byte_identical": true,
+      "sha256": "40a41072f7b12ad8672b039278279a1ea4b296aff46b005b5ad9cebe53e8496d"
+    },
+    {
+      "candidate_artifact": "verification/main/lib-cw32f003-_generated.rs",
+      "external_evidence": "external-evidence/stage65/verification/main/lib-cw32f003-_generated.rs",
+      "byte_identical": true,
+      "sha256": "a4c0b27662565a6152904cdedd54940632207b443cb33aa7c2ddeb3faf13a3f3"
+    },
+    {
+      "candidate_artifact": "verification/main/lib-cw32f002f3p7-_generated.rs",
+      "external_evidence": "external-evidence/stage65/verification/main/lib-cw32f002f3p7-_generated.rs",
+      "byte_identical": true,
+      "sha256": "33dd37b78139ab1016a480c915a32eb0461cb39d855264905a456999b3b53d3d"
+    },
+    {
+      "candidate_artifact": "verification/main/lib-cw32f030c8t7-_generated.rs",
+      "external_evidence": "external-evidence/stage65/verification/main/lib-cw32f030c8t7-_generated.rs",
+      "byte_identical": true,
+      "sha256": "6c37e2f13e15909901775e9493afe0443da4279ba34406d47ff22656e9f4e1e5"
+    },
+    {
+      "candidate_artifact": "verification/main/lsi-clock-cw32f002f3p7-_generated.rs",
+      "external_evidence": "external-evidence/stage65/verification/main/lsi-clock-cw32f002f3p7-_generated.rs",
+      "byte_identical": true,
+      "sha256": "33dd37b78139ab1016a480c915a32eb0461cb39d855264905a456999b3b53d3d"
+    }
+  ],
+  "actual_elf_review": [
+    {
+      "artifact": "verification/main/lsi-clock-cw32f003f4p7-cw32-lsi-clock-example.elf",
+      "sha256": "8dd668bb0a9cffb45146344c26d5ec2ac3292aee58aa05890054560a98bcf64f",
+      "matches_build_receipt": true,
+      "elf32_little_endian_arm_executable": true,
+      "entry": 189,
+      "vector_base": 0,
+      "vector_bytes": 188,
+      "reset_vector_equals_entry": true,
+      "thumb_entry_in_executable_load": true,
+      "initial_sp": 536873984,
+      "sp_eight_byte_aligned": true,
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 20480
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 3072
+        }
+      ],
+      "actual_memory_x": [
+        {
+          "text": "MEMORY {\n  FLASH : ORIGIN = 0x0, LENGTH = 20480\n  RAM : ORIGIN = 0x20000000, LENGTH = 3072\n}\n",
+          "sha256": "51a09a3ba8eaf2843fe33235d60bcbefa9ab36b38daa3375e4eacd6dde9b0038"
+        }
+      ],
+      "flash_load_span_bytes": 11136,
+      "static_ram_bytes": 64,
+      "ram_high_water_bytes": 64,
+      "remaining_to_initial_sp_bytes": 3008,
+      "stack_limit": "Remaining bytes are static link headroom, not a measured or proven runtime stack bound.",
+      "allocated_sections_within_real_memory": true,
+      "loads_within_real_memory": true,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 188,
+          "memsz": 188,
+          "flags": 4
+        },
+        {
+          "offset": 65724,
+          "vaddr": 188,
+          "paddr": 188,
+          "filesz": 10564,
+          "memsz": 10564,
+          "flags": 5
+        },
+        {
+          "offset": 76288,
+          "vaddr": 10752,
+          "paddr": 10752,
+          "filesz": 324,
+          "memsz": 324,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 11076,
+          "filesz": 60,
+          "memsz": 60,
+          "flags": 6
+        },
+        {
+          "offset": 196668,
+          "vaddr": 536870972,
+          "paddr": 536870972,
+          "filesz": 0,
+          "memsz": 4,
+          "flags": 6
+        }
+      ]
+    },
+    {
+      "artifact": "verification/main/lsi-clock-cw32f003f4u7-cw32-lsi-clock-example.elf",
+      "sha256": "a7bcc87a6b8cc848e838de7b21a31a681b89a1186d2bde971737c67eba547ab7",
+      "matches_build_receipt": true,
+      "elf32_little_endian_arm_executable": true,
+      "entry": 189,
+      "vector_base": 0,
+      "vector_bytes": 188,
+      "reset_vector_equals_entry": true,
+      "thumb_entry_in_executable_load": true,
+      "initial_sp": 536873984,
+      "sp_eight_byte_aligned": true,
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 20480
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 3072
+        }
+      ],
+      "actual_memory_x": [
+        {
+          "text": "MEMORY {\n  FLASH : ORIGIN = 0x0, LENGTH = 20480\n  RAM : ORIGIN = 0x20000000, LENGTH = 3072\n}\n",
+          "sha256": "51a09a3ba8eaf2843fe33235d60bcbefa9ab36b38daa3375e4eacd6dde9b0038"
+        }
+      ],
+      "flash_load_span_bytes": 11138,
+      "static_ram_bytes": 64,
+      "ram_high_water_bytes": 64,
+      "remaining_to_initial_sp_bytes": 3008,
+      "stack_limit": "Remaining bytes are static link headroom, not a measured or proven runtime stack bound.",
+      "allocated_sections_within_real_memory": true,
+      "loads_within_real_memory": true,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 188,
+          "memsz": 188,
+          "flags": 4
+        },
+        {
+          "offset": 65724,
+          "vaddr": 188,
+          "paddr": 188,
+          "filesz": 10564,
+          "memsz": 10564,
+          "flags": 5
+        },
+        {
+          "offset": 76288,
+          "vaddr": 10752,
+          "paddr": 10752,
+          "filesz": 324,
+          "memsz": 324,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 11076,
+          "filesz": 60,
+          "memsz": 60,
+          "flags": 6
+        },
+        {
+          "offset": 142208,
+          "vaddr": 11136,
+          "paddr": 11136,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196668,
+          "vaddr": 536870972,
+          "paddr": 536870972,
+          "filesz": 0,
+          "memsz": 4,
+          "flags": 6
+        }
+      ]
+    },
+    {
+      "artifact": "verification/main/lsi-clock-cw32f003e4p7-cw32-lsi-clock-example.elf",
+      "sha256": "f08509a1dce61dbf87b70b6f7c14968b88e437efd2c8fd49c46da7e70c28074c",
+      "matches_build_receipt": true,
+      "elf32_little_endian_arm_executable": true,
+      "entry": 189,
+      "vector_base": 0,
+      "vector_bytes": 188,
+      "reset_vector_equals_entry": true,
+      "thumb_entry_in_executable_load": true,
+      "initial_sp": 536873984,
+      "sp_eight_byte_aligned": true,
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 20480
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 3072
+        }
+      ],
+      "actual_memory_x": [
+        {
+          "text": "MEMORY {\n  FLASH : ORIGIN = 0x0, LENGTH = 20480\n  RAM : ORIGIN = 0x20000000, LENGTH = 3072\n}\n",
+          "sha256": "51a09a3ba8eaf2843fe33235d60bcbefa9ab36b38daa3375e4eacd6dde9b0038"
+        }
+      ],
+      "flash_load_span_bytes": 11138,
+      "static_ram_bytes": 64,
+      "ram_high_water_bytes": 64,
+      "remaining_to_initial_sp_bytes": 3008,
+      "stack_limit": "Remaining bytes are static link headroom, not a measured or proven runtime stack bound.",
+      "allocated_sections_within_real_memory": true,
+      "loads_within_real_memory": true,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 188,
+          "memsz": 188,
+          "flags": 4
+        },
+        {
+          "offset": 65724,
+          "vaddr": 188,
+          "paddr": 188,
+          "filesz": 10564,
+          "memsz": 10564,
+          "flags": 5
+        },
+        {
+          "offset": 76288,
+          "vaddr": 10752,
+          "paddr": 10752,
+          "filesz": 324,
+          "memsz": 324,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 11076,
+          "filesz": 60,
+          "memsz": 60,
+          "flags": 6
+        },
+        {
+          "offset": 142208,
+          "vaddr": 11136,
+          "paddr": 11136,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196668,
+          "vaddr": 536870972,
+          "paddr": 536870972,
+          "filesz": 0,
+          "memsz": 4,
+          "flags": 6
+        }
+      ]
+    },
+    {
+      "artifact": "verification/main/lsi-clock-cw32f002f3p7-cw32-lsi-clock-example.elf",
+      "sha256": "b40a8bf4d7a20c1276d62b868200a3a41c9c3d14f9f4ea3a3750a44ae20e4ba5",
+      "matches_build_receipt": true,
+      "elf32_little_endian_arm_executable": true,
+      "entry": 189,
+      "vector_base": 0,
+      "vector_bytes": 188,
+      "reset_vector_equals_entry": true,
+      "thumb_entry_in_executable_load": true,
+      "initial_sp": 536872960,
+      "sp_eight_byte_aligned": true,
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 16384
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 2048
+        }
+      ],
+      "actual_memory_x": [
+        {
+          "text": "MEMORY {\n  FLASH : ORIGIN = 0x0, LENGTH = 16384\n  RAM : ORIGIN = 0x20000000, LENGTH = 2048\n}\n",
+          "sha256": "8a134ce5a9a5bd4efb8975b096a87691bce23a80aace4e387642395c10230a07"
+        }
+      ],
+      "flash_load_span_bytes": 11138,
+      "static_ram_bytes": 64,
+      "ram_high_water_bytes": 64,
+      "remaining_to_initial_sp_bytes": 1984,
+      "stack_limit": "Remaining bytes are static link headroom, not a measured or proven runtime stack bound.",
+      "allocated_sections_within_real_memory": true,
+      "loads_within_real_memory": true,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 188,
+          "memsz": 188,
+          "flags": 4
+        },
+        {
+          "offset": 65724,
+          "vaddr": 188,
+          "paddr": 188,
+          "filesz": 10564,
+          "memsz": 10564,
+          "flags": 5
+        },
+        {
+          "offset": 76288,
+          "vaddr": 10752,
+          "paddr": 10752,
+          "filesz": 324,
+          "memsz": 324,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 11076,
+          "filesz": 60,
+          "memsz": 60,
+          "flags": 6
+        },
+        {
+          "offset": 142208,
+          "vaddr": 11136,
+          "paddr": 11136,
+          "filesz": 2,
+          "memsz": 2,
+          "flags": 4
+        },
+        {
+          "offset": 196668,
+          "vaddr": 536870972,
+          "paddr": 536870972,
+          "filesz": 0,
+          "memsz": 4,
+          "flags": 6
+        }
+      ]
+    },
+    {
+      "artifact": "verification/main/hex-clock-cw32f003f4p7-pb0.elf",
+      "sha256": "abfc02ad6a09bda427741b93096aed51037dced5ea08e08fef129650f2331f23",
+      "matches_build_receipt": true,
+      "elf32_little_endian_arm_executable": true,
+      "entry": 193,
+      "vector_base": 0,
+      "vector_bytes": 188,
+      "reset_vector_equals_entry": true,
+      "thumb_entry_in_executable_load": true,
+      "initial_sp": 536873984,
+      "sp_eight_byte_aligned": true,
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 20480
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 3072
+        }
+      ],
+      "actual_memory_x": [
+        {
+          "text": "MEMORY {\n  FLASH : ORIGIN = 0x0, LENGTH = 20480\n  RAM : ORIGIN = 0x20000000, LENGTH = 3072\n}\n",
+          "sha256": "51a09a3ba8eaf2843fe33235d60bcbefa9ab36b38daa3375e4eacd6dde9b0038"
+        }
+      ],
+      "flash_load_span_bytes": 12944,
+      "static_ram_bytes": 68,
+      "ram_high_water_bytes": 68,
+      "remaining_to_initial_sp_bytes": 3004,
+      "stack_limit": "Remaining bytes are static link headroom, not a measured or proven runtime stack bound.",
+      "allocated_sections_within_real_memory": true,
+      "loads_within_real_memory": true,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 188,
+          "memsz": 188,
+          "flags": 4
+        },
+        {
+          "offset": 65728,
+          "vaddr": 192,
+          "paddr": 192,
+          "filesz": 12312,
+          "memsz": 12312,
+          "flags": 5
+        },
+        {
+          "offset": 78040,
+          "vaddr": 12504,
+          "paddr": 12504,
+          "filesz": 380,
+          "memsz": 380,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 12884,
+          "filesz": 60,
+          "memsz": 60,
+          "flags": 6
+        },
+        {
+          "offset": 196668,
+          "vaddr": 536870972,
+          "paddr": 536870972,
+          "filesz": 0,
+          "memsz": 8,
+          "flags": 6
+        }
+      ]
+    },
+    {
+      "artifact": "verification/main/low-power-timers-cw32f003e4p7-polling.elf",
+      "sha256": "7d460079f1593959086cd57a80bf7fa71047cb0fbd5aa01203bd2c7b7c38e045",
+      "matches_build_receipt": true,
+      "elf32_little_endian_arm_executable": true,
+      "entry": 189,
+      "vector_base": 0,
+      "vector_bytes": 188,
+      "reset_vector_equals_entry": true,
+      "thumb_entry_in_executable_load": true,
+      "initial_sp": 536873984,
+      "sp_eight_byte_aligned": true,
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 20480
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 3072
+        }
+      ],
+      "actual_memory_x": [
+        {
+          "text": "MEMORY {\n  FLASH : ORIGIN = 0x0, LENGTH = 20480\n  RAM : ORIGIN = 0x20000000, LENGTH = 3072\n}\n",
+          "sha256": "51a09a3ba8eaf2843fe33235d60bcbefa9ab36b38daa3375e4eacd6dde9b0038"
+        }
+      ],
+      "flash_load_span_bytes": 11100,
+      "static_ram_bytes": 64,
+      "ram_high_water_bytes": 64,
+      "remaining_to_initial_sp_bytes": 3008,
+      "stack_limit": "Remaining bytes are static link headroom, not a measured or proven runtime stack bound.",
+      "allocated_sections_within_real_memory": true,
+      "loads_within_real_memory": true,
+      "load_segments": [
+        {
+          "offset": 65536,
+          "vaddr": 0,
+          "paddr": 0,
+          "filesz": 188,
+          "memsz": 188,
+          "flags": 4
+        },
+        {
+          "offset": 65724,
+          "vaddr": 188,
+          "paddr": 188,
+          "filesz": 10528,
+          "memsz": 10528,
+          "flags": 5
+        },
+        {
+          "offset": 76252,
+          "vaddr": 10716,
+          "paddr": 10716,
+          "filesz": 324,
+          "memsz": 324,
+          "flags": 4
+        },
+        {
+          "offset": 131072,
+          "vaddr": 536870912,
+          "paddr": 11040,
+          "filesz": 60,
+          "memsz": 60,
+          "flags": 6
+        },
+        {
+          "offset": 196668,
+          "vaddr": 536870972,
+          "paddr": 536870972,
+          "filesz": 0,
+          "memsz": 4,
+          "flags": 6
+        }
+      ]
+    }
+  ],
+  "remaining_blockers": [],
+  "clean_review": "pending separate real clean receipt",
+  "hardware_validated": false,
+  "publication_authorized_by_review": false,
+  "review_document": {
+    "artifact": "runtime-review/f003-independent-implementation-review.md",
+    "sha256": "c01dc4aeba901a0cff546de5775dcb1613c3ddb482f86fca793b2e9cfe0319c5"
+  }
+}

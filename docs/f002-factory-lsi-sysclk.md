@@ -1,8 +1,10 @@
 # Init-only factory LSI SYSCLK on CW32F002F3P7/F3U7
 
-`rcc::Sysclk::LSI` is available only on CW32F002F3P7 (TSSOP20) and
-CW32F002F3U7 (QFN20), through their qualified metadata. The generic CW32F002
-alias, F003 and all other parts gain no capability from sharing this backend.
+For F002, `rcc::Sysclk::LSI` is available only on CW32F002F3P7 (TSSOP20)
+and CW32F002F3U7 (QFN20), through their qualified metadata. The generic
+CW32F002 alias and all unlisted F002 parts remain excluded. F003's three
+exact packages have a [separate contract](f003-factory-lsi-sysclk.md) and
+independent qualification; sharing this backend does not grant capability.
 HSI remains the default. F002 has no RTC or dedicated LSI_OUT pad: this addition
 provides no `LsiClock`, `CalendarClock` or RTC API. The existing
 [classic factory-LSI contract](factory-lsi-sysclk.md) remains separate.

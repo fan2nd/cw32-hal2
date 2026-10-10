@@ -2420,7 +2420,7 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     )
     .unwrap();
 
-    if sysctrl.version == "cw32f002_v1" {
+    if matches!(sysctrl.version, "cw32f002_v1" | "cw32f003_v1") {
         // These startup latches are already read-only in the selected PAC's
         // reviewed field-access policy. Derive masks from their actual IR;
         // the runtime compares parameters and checks typed readiness separately.
@@ -2534,9 +2534,9 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     }
     let gates = roots.len() + lsi.gpio_banks.len();
     let sources = gates + 1 + usize::from(lsi.lsi_output_pin.is_some());
-    // Only the separately qualified F002 IP gets the new inspection windows.
+    // Only the separately qualified F002/F003 IPs get these inspection windows.
     // Hardware absence chooses roots, never the gate/reset checking strategy.
-    let strict_windows = sysctrl.version == "cw32f002_v1";
+    let strict_windows = matches!(sysctrl.version, "cw32f002_v1" | "cw32f003_v1");
     if strict_windows {
         let hex_gpio_banks: std::collections::BTreeSet<_> = METADATA
             .peripherals
@@ -2592,7 +2592,7 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     for (i, gpio) in lsi.gpio_banks.iter().enumerate() {
         let index = roots.len() + i;
         if strict_windows {
-            // The validated F002 complete AF catalog has no direct LSI_OUT.
+            // The validated F002/F003 complete AF catalogs have no direct LSI_OUT.
             assert!(output.is_none());
             strict_window(
                 out,

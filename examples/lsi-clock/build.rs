@@ -5,22 +5,36 @@ fn main() {
     assert_eq!(metadata.memory.len(), 1, "select one exact package");
     assert!(matches!(
         metadata.name,
-        "CW32F002F3P7" | "CW32F002F3U7" | "CW32F020C6U7" | "CW32F030C8T7" | "CW32A030C8T7"
+        "CW32F002F3P7"
+            | "CW32F002F3U7"
+            | "CW32F003F4P7"
+            | "CW32F003F4U7"
+            | "CW32F003E4P7"
+            | "CW32F020C6U7"
+            | "CW32F030C8T7"
+            | "CW32A030C8T7"
     ));
     assert!(metadata.peripherals.iter().any(|p| {
         p.clock_limits
             .as_ref()
             .is_some_and(|c| c.lsi_sysclk.is_some())
     }));
-    if matches!(metadata.name, "CW32F002F3P7" | "CW32F002F3U7") {
+    let no_rtc_memory = match metadata.name {
+        // Own F002 DS Rev1.2 tables 3-1 and 6-1.
+        "CW32F002F3P7" | "CW32F002F3U7" => Some((16 * 1024, 2 * 1024)),
+        // Own F003 DS Rev1.9 PDF pages 5, 8, 27 and 62, including E4P7.
+        "CW32F003F4P7" | "CW32F003F4U7" | "CW32F003E4P7" => Some((20 * 1024, 3 * 1024)),
+        _ => None,
+    };
+    if let Some((flash_size, ram_size)) = no_rtc_memory {
         assert!(!metadata.peripherals.iter().any(|p| p.name == "RTC"));
-        // Own F002 DS Rev1.2 tables 3-1 and 6-1: retain real linker limits.
+        // Retain each exact package's real linker limits.
         let banks = metadata.memory[0];
         assert_eq!(banks.len(), 2);
         let flash = banks.iter().find(|bank| bank.name == "FLASH").unwrap();
         let ram = banks.iter().find(|bank| bank.name == "RAM").unwrap();
-        assert_eq!((flash.address, flash.size), (0x0000_0000, 16 * 1024));
-        assert_eq!((ram.address, ram.size), (0x2000_0000, 2 * 1024));
+        assert_eq!((flash.address, flash.size), (0x0000_0000, flash_size));
+        assert_eq!((ram.address, ram.size), (0x2000_0000, ram_size));
     }
     let mut memory = String::from("MEMORY {\n");
     for bank in metadata.memory[0] {

@@ -156,10 +156,16 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - All except L010/L011: polling window watchdog with explicit irreversible start
 - CW32F002F3P7 and CW32F002F3U7: init-only factory LSI SYSCLK with own
   31,160–34,440 Hz rate bounds, complete cold-source admission and explicit
-  whole-GPIOA/B/C functional handover. Generic F002 and F003 are excluded;
+  whole-GPIOA/B/C functional handover. Generic F002 is excluded;
   there is no RTC API. ADC and the fixed 1 MHz time driver reject the rate-only
   system tree. Metadata `lsi_output_pin` is now optional to express actual
   hardware absence. See [the exact-two contract](docs/f002-factory-lsi-sysclk.md).
+- CW32F003F4P7, CW32F003F4U7 and CW32F003E4P7: init-only factory LSI
+  SYSCLK with own 31,816–33,784 Hz (±3%) rate bounds, 20 KiB Flash / 3 KiB
+  SRAM and the whole-GPIOA/B/C handover. Generic F003 remains excluded.
+  ADC and the fixed 1 MHz time driver reject this rate-only system tree;
+  AWT keeps independent HSIOSC timing. ATIM/IR add no inspection windows
+  or new API qualification. See [the exact-three contract](docs/f003-factory-lsi-sysclk.md).
 - F020/F030/A030: init-only factory LSI SYSCLK with complete cold-start admission,
   explicit whole-GPIO-bank inspection effects, permanent target request and
   rate-only bounds. The same families' LsiClock/RTC aliases are also rate-only;
