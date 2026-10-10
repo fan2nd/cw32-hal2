@@ -330,6 +330,26 @@ pub mod chip {
                 }
             }
             record! {
+                /// LPTIM/LCD source and the documented effect of their RCC gate.
+                #[serde(deny_unknown_fields)]
+                LseWorkGatedConsumer {
+                    pub source: u8,
+                    pub gate_controls_work: bool,
+                }
+            }
+            record! {
+                /// Own native facts for AUTOTRIM-equipped LSE hardware.
+                #[serde(deny_unknown_fields)]
+                LseStartupConsumers {
+                    pub startup_analog: bool,
+                    pub autotrim_source: u8,
+                    pub lptim: LseWorkGatedConsumer,
+                    pub lcd: LseWorkGatedConsumer,
+                    pub uarts: Vec<String>,
+                    pub lsi_output_routes: Vec<LseOutputRoute>,
+                }
+            }
+            record! {
                         /// Exact-part active LSE qualification. Board frequency bounds remain mandatory.
                         #[serde(deny_unknown_fields)]
                         LseConfiguration {
@@ -342,7 +362,9 @@ pub mod chip {
                             pub startup_cycles: [u32; 4],
                             pub rtc_source: u8,
                             pub uart_source: u8,
-                            pub awt_source: u8,
+                            pub awt_source: Option<u8>,
+                            #[serde(default, skip_serializing_if = "Option::is_none")]
+                            pub startup_consumers: Option<LseStartupConsumers>,
                             pub mco_source: u8,
                             pub gpio_dir_offset: u32,
                             pub gpio_speed_offset: Option<u32>,

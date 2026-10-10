@@ -1,0 +1,347 @@
+{
+  "schema_version": 1,
+  "status": "accepted_narrow_l052_active_lse_source_runtime_and_build_evidence",
+  "reviewed_at_utc": "2026-10-09T18:04:37.376905+00:00",
+  "identity": {
+    "review_kind": "Independent read-only source/runtime safety review and independent reconciliation of final build evidence.",
+    "source_manifest_sha256": "585a405b9d9897b2ae3b72cbd3c61de6e4960847cdd6d43c5b82f86062357d45",
+    "no_candidate_edits": true,
+    "artifact_scope": "Review receipt only; candidate sources were not modified.",
+    "technical_acceptance_only": true,
+    "legal_clearance": false,
+    "publication_hold_unchanged": true
+  },
+  "scope": {
+    "new_exact_parts": [
+      "CW32L052C8T6",
+      "CW32L052R8S6",
+      "CW32L052R8T6"
+    ],
+    "modes": [
+      "crystal",
+      "bypass"
+    ],
+    "nominal_hz": 32768,
+    "envelope": "Positive board-declared per-cycle minimum and maximum bracketing nominal; board conditions within 1.65-5.5 V and -40 to +85 C; own absolute input ceiling 1 MHz does not admit arbitrary nominal frequencies.",
+    "family_alias_active": false,
+    "l083_active_lse_added": false,
+    "total_generated_active_profiles": 11,
+    "source_files_verified": 1153,
+    "generated_files_verified": 899,
+    "source_modes_verified": true,
+    "generated_modes_verified": true,
+    "new_scope_does_not_include": [
+      "arbitrary nominal-frequency LSE",
+      "LSE SYSCLK API",
+      "live analog retuning",
+      "autonomous calibration",
+      "retained RTC reconfiguration",
+      "power-mode API",
+      "automatic RTC fallback",
+      "guaranteed startup duration",
+      "electrical or silicon qualification"
+    ]
+  },
+  "frozen_evidence": {
+    "source_manifest": {
+      "path": "external-evidence/l052-lse/candidate-source-manifest.json",
+      "sha256": "585a405b9d9897b2ae3b72cbd3c61de6e4960847cdd6d43c5b82f86062357d45",
+      "files": 1153,
+      "before_and_after_review_match": true
+    },
+    "generated_manifest": {
+      "path": "external-evidence/l052-lse/resume/generated-input-manifest.json",
+      "sha256": "5ce9423890a2aca9514de6d3b76f3ba9c8390105559e1a046c2498629de8ab26",
+      "files": 899,
+      "before_and_after_review_match": true
+    },
+    "final_inventory": {
+      "path": "external-evidence/l052-lse/resume/evidence-manifest.json",
+      "sha256": "6b18c413c6c7866eca6ee21de86b1a0f0a7fc6d8dabb34d4388711621209c859",
+      "files": 61,
+      "all_actual_files_rehashed": true,
+      "note": "The 61-file inventory precedes and does not include this new independent review artifact."
+    },
+    "build_receipt": {
+      "path": "external-evidence/l052-lse/resume/build-receipt.json",
+      "sha256": "e978a0327a1d3d1fbbcea836a985cd496aa3227c596a03913b780050ad7bd850"
+    },
+    "elf_receipt": {
+      "path": "external-evidence/l052-lse/resume/elf-layout.json",
+      "sha256": "16fa1fb9d283a10a99357f49645db298ba03eb61cade7b54994fe757d3e04283"
+    },
+    "normal_cargo_diagnostics": {
+      "path": "external-evidence/l052-lse/resume/normal-cargo-diagnostics.json",
+      "sha256": "2a940eeab1ec4bca41ecda9c19f9f66619a8a45d622798371e68140189558d3a"
+    },
+    "schema_receipt": {
+      "path": "docs/lse-stage50-l052-schema-review.json",
+      "sha256": "90cf678c96f9597d29e66991718d76f013d7df0110975c9dc30b73f8fa55ca4b",
+      "original_sha256": "742cb61a1cc4db8231af5110f2b3fa2b3260398bd69bf32bf9ea3ca775f6cae4"
+    }
+  },
+  "reviewed_source_files": [
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "25c884fed492d98f269da980ba80f74a50b4715062c506920bf390d557f71abf"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/lse.rs",
+      "sha256": "fd71fe2b06e48f864d76d8d79fdcb51599b23a6ad9fa82b67a10565ba0438f8c"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083.rs",
+      "sha256": "6308498094315bcd6163c8bba6c43e8955e2898cbe0fe216598701d251d3cb7f"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/mod.rs",
+      "sha256": "e8b3d6572ba43e1dfa7185308baeaf549c6584e3dc8bc2955658333bd2b91d82"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/rtc.rs",
+      "sha256": "a8113459f08e4961bfbdf0b49391fe23c960fdc9db0ce0f8249fada28efa5c7d"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/peripheral.rs",
+      "sha256": "504394bdd7818a66d173f70bcbf9b5a264cbeb7cbc3dab95875741f32a1154ad"
+    },
+    {
+      "path": "cw32-data-gen/src/electrical.rs",
+      "sha256": "f4bd89c82bfb9019385f261a369415e2a9f59f1eb42856ab74f9ede8b2a45a5c"
+    },
+    {
+      "path": "cw32-data/lse-qualified.yaml",
+      "sha256": "fd5987eb5ce610a838f9940d4edd9fbb85a4f0a500a0c895d679f06768340c40"
+    },
+    {
+      "path": "cw32-data/registers/sysctrl_cw32l052_v1.yaml",
+      "sha256": "2e32a98e372b3224bc22736dc4e45d78bc590ffa11958e4dcf75843b03ebc284"
+    },
+    {
+      "path": "cw32-data/registers/uart_cw32l052_v1.yaml",
+      "sha256": "5faf1c27e06b3418f0bd6e351104214a343d67984aacccdbf5c13a6779f4607b"
+    },
+    {
+      "path": "docs/lse-active-l052.json",
+      "sha256": "b3c669fbfd8a2a9e21199d2f7af6ac3ca58b68e0d4e2f8aad7e79d866be8c196"
+    },
+    {
+      "path": "docs/lse-active-l052-rtc-admission.json",
+      "sha256": "2ba84ed1336cd2a9dc6a0de84f4157c217a612c08aacbeb1c74918dc9fbc0439"
+    },
+    {
+      "path": "examples/lse-clock/src/lib.rs",
+      "sha256": "b8fb26237b325174129f5e20466038c960ffeca60544a336f8f3acd82ee47836"
+    },
+    {
+      "path": "examples/lse-clock/build.rs",
+      "sha256": "3596926de5c1438eada8795403f93a771ad723dcbe9e490892317a81a39a1aa2"
+    }
+  ],
+  "own_source_verification": {
+    "original_vendor_files_rehashed": 4,
+    "sdk_members_rehashed": 4,
+    "source_page_receipts_rehashed": 65,
+    "source_receipt": {
+      "path": "docs/lse-l052-source-receipt.json",
+      "sha256": "acba91a6d6a65633734a84640844c14e086fa689d5d8079141857395ad113c56"
+    },
+    "sdk_member_receipt": {
+      "path": "docs/lse-l052-sdk-member-receipt.json",
+      "sha256": "cacae21086322e9d4ecc256ce0897e5667cef6add97e62f11d574a592135e2f4"
+    },
+    "source_page_receipt": {
+      "path": "external-evidence/l052-lse/source-audit.json",
+      "sha256": "1b8175b3ed9c825539d3b8fc2be692f35c045cf793b61ccd1ff6cc992241ff53"
+    },
+    "manual": "CW32L052_UserManual_CN_V1.5.pdf",
+    "manual_sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+    "datasheet": "CW32L052_DataSheet_CN_V1.3.pdf",
+    "datasheet_sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+    "interpretation_limit": "Programming both native analog banks before enable is supported; the precise hardware bank-switch instant relative to STABLE is not claimed."
+  },
+  "static_runtime_semantics": {
+    "analog": "All four independent PDRIVER/PAMP/DRIVER/AMP fields, mode and wait participate in matching. Cold startup programs all settings while stopped, before LSEEN, preserving reserved fields. No post-enable analog rewrite exists.",
+    "gpio": "Own LOCK at native LCKR address is inspected with full AF, direction, analog mode, pulls, open drain, filter, RISEIE/FALLIE/HIGHIE/LOWIE. No fictitious SPEED access. LOCK/LCKR alternatives preserve the old family layouts. Crystal uses PC14/PC15; bypass changes only PC14 analog selection and permits PC15 general use.",
+    "rtc": "All 13 own reset rows are checked twice; CR0/CR1/CR2/IER/ISR precede compensation/calendar/alarms/timestamp/AWTARR. ALARMA is 0x04120000, ALARMB 0x00120000. No KEY/ACCESS/ICR write or retained reset is used for inspection.",
+    "autotrim": "Automatic calibration, enabled calibration, reserved mode and reserved source are rejected, including the implicit LSI consumer in LSI-calibration mode independent of SRC. No standalone AWT is substituted.",
+    "uart": "Exact UART1/UART2/UART3 roster, source selections 2=LSE and 3=LSI. L052 uses native sorce(); older cohorts retain source(). No TXEN/RXEN-only idle inference.",
+    "lptim_lcd": "Both LSE and LSI paths inspect local enable/selectors only if the documented work gate is already on. A disabled gate remains off; neither is temporarily probe-enabled. Gate changes during inspection are rejected.",
+    "direct_outputs": "LSE PB12 AF3 and PF1 AF1 selections remain conservative retained owners. LSI PC4 AF6 is present only on R8S6/R8T6; absent on C8T6. No imported PB11 rule for L052. GPIO LSI filter selection is included.",
+    "lsi_trim": "Factory address 0x00100A02 is read as a halfword; erased 0xffff is rejected and the 10-bit trim field is used. Factory-matched live LSI is preserved. Mismatched trim requires repeated stopped/unused checks, both stable indications low, no ready observer/pending flag or HSE/LSE detector, and the complete reviewed consumer graph. WAIT and reserved fields are preserved.",
+    "reuse_and_ccs": "Matching inherited LSE is verified without reconfiguration. LSECCS and stable enabled factory LSI are required; monitored trim/wait stay frozen. HSECCS, CLKCCS and LSELOCK are preserved. LSE is not stopped to obtain a preferred configuration.",
+    "none": "The added Option branches perform no LSE-specific MMIO when config.lse is None; the existing inherited-state path remains.",
+    "failure_ownership": "Requested and inherited pads are captured before backend initialization and never released during the boot. Timeout retains source enable and necessary detector LSI, clears no other-owner flags, and publishes no usable LSE capability. LSE control can survive ordinary reset; POR-only retention is disclosed.",
+    "capability": "LseClock consumes SYSCTRL and physical pads, verifies the frozen source, uses declared bounds, and retains oscillators on Drop. No automatic RTC source fallback, post-fault elapsed-time continuity, waveform measurement or continuous availability is promised."
+  },
+  "build_verification": {
+    "normal_cargo_commands_observed": 10,
+    "resumed_commands": 9,
+    "resumed_exit_codes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "resumed_commands_have_source_and_generated_before_after_binding": true,
+    "resumed_ids": [
+      "cw32l052c8t6-examples",
+      "cw32l052r8s6-library",
+      "cw32l052r8s6-examples",
+      "cw32l052r8t6-library",
+      "cw32l052r8t6-examples",
+      "cw32f030c8t7-library",
+      "cw32f030c8t7-examples",
+      "cw32l031c8t6-library",
+      "cw32l031c8t6-examples"
+    ],
+    "normal_logs_rehashed": 10,
+    "normal_logs_release_finished": 10,
+    "normal_warning_error_diagnostics": 0,
+    "warning_flags_added": false,
+    "known_passed_commands_rerun": false,
+    "prior_c8t6_library": {
+      "status": "retained_prior_finished_and_pass_log",
+      "log": "external-evidence/l052-lse/build-cw32l052c8t6-library.log",
+      "sha256": "fb6fb4f5e051b383ccf6567d4fb9f389c3e1f916ea59206394d031d88c23612e",
+      "numeric_exit_code": null,
+      "note": "The original successful C8T6 library log contains Finished and its original summary contains PASS. No numeric prior exit receipt survived; none is fabricated or inferred as a recorded value. The successful command was not rerun."
+    },
+    "actual_elf_count": 10,
+    "all_actual_elf_and_readelf_logs_rehashed": true,
+    "independent_elf_parsing": [
+      "ELF32 little-endian ARM EXEC",
+      "actual vector table at selected FLASH origin",
+      "matching Thumb reset-vector and entry address",
+      "8-byte-aligned initial SP within selected RAM",
+      "bounded file-backed and memory PT_LOAD segments in exact selected-part FLASH/RAM",
+      "entry lies in executable load segment"
+    ],
+    "elf_identity": [
+      {
+        "chip": "CW32L052C8T6",
+        "path": "external-evidence/l052-lse/elf/cw32l052c8t6-crystal_calendar.elf",
+        "sha256": "e9f788842d0ae8e69686cb81ddac446dd55974b749d22f335c2ba525ab261fed",
+        "entry": 189,
+        "initial_sp": 536879104
+      },
+      {
+        "chip": "CW32L052C8T6",
+        "path": "external-evidence/l052-lse/elf/cw32l052c8t6-bypass_calendar.elf",
+        "sha256": "ea2e7c31241210bb49e92cf20123a9b92164e1ddc015af0f3a879c754abd286d",
+        "entry": 189,
+        "initial_sp": 536879104
+      },
+      {
+        "chip": "CW32L052R8S6",
+        "path": "external-evidence/l052-lse/elf/cw32l052r8s6-crystal_calendar.elf",
+        "sha256": "d0899db65c46cee89948daf5019971833d2c1625d041d6c33d20341cde7b7465",
+        "entry": 189,
+        "initial_sp": 536879104
+      },
+      {
+        "chip": "CW32L052R8S6",
+        "path": "external-evidence/l052-lse/elf/cw32l052r8s6-bypass_calendar.elf",
+        "sha256": "58f032f688627129164bbe518202705c0efb6e68b96ee3d4f2efb2ffd035c60b",
+        "entry": 189,
+        "initial_sp": 536879104
+      },
+      {
+        "chip": "CW32L052R8T6",
+        "path": "external-evidence/l052-lse/elf/cw32l052r8t6-crystal_calendar.elf",
+        "sha256": "4e636be2785b74f71d75bedd540070b86888d5ebc77f1db11287e8e5be271c75",
+        "entry": 189,
+        "initial_sp": 536879104
+      },
+      {
+        "chip": "CW32L052R8T6",
+        "path": "external-evidence/l052-lse/elf/cw32l052r8t6-bypass_calendar.elf",
+        "sha256": "e72081f80dee4edc5bcd5b5b904e869157483ba5a3a9fe8e8b352f9014e47085",
+        "entry": 189,
+        "initial_sp": 536879104
+      },
+      {
+        "chip": "CW32F030C8T7",
+        "path": "external-evidence/l052-lse/elf/cw32f030c8t7-crystal_calendar.elf",
+        "sha256": "9cdc45f66265cb5dbb207fbc92623eaeacd93e91a567fb05da9d26f7a8bf4033",
+        "entry": 193,
+        "initial_sp": 536879104
+      },
+      {
+        "chip": "CW32F030C8T7",
+        "path": "external-evidence/l052-lse/elf/cw32f030c8t7-bypass_calendar.elf",
+        "sha256": "0aae4d6efa4810797ac8b8398ff7c1cf75591c87fd3706f99689fc00f51c6245",
+        "entry": 193,
+        "initial_sp": 536879104
+      },
+      {
+        "chip": "CW32L031C8T6",
+        "path": "external-evidence/l052-lse/elf/cw32l031c8t6-crystal_calendar.elf",
+        "sha256": "8f684f7d5616654e2a86ba8bb45bab3bda180f8d350c8e7333e907cc04712ad1",
+        "entry": 193,
+        "initial_sp": 536879104
+      },
+      {
+        "chip": "CW32L031C8T6",
+        "path": "external-evidence/l052-lse/elf/cw32l031c8t6-bypass_calendar.elf",
+        "sha256": "d9a5a450f62ebde0b96b0c85ed60f757aa3d53502f1d91dbef5bd4384bc7d1c8",
+        "entry": 193,
+        "initial_sp": 536879104
+      }
+    ],
+    "hardware_execution": false
+  },
+  "schema_acceptance_separate": {
+    "existing_independent_schema_probes_passed": 11,
+    "existing_generator_lse_tests_passed": 7,
+    "probe_log": {
+      "path": "external-evidence/l052-lse/schema-review/probe.log",
+      "sha256": "bad7f2ac508e79f109167d607c6d4864e373c07e91e697dfdb53ebfc3d011047"
+    },
+    "generator_log": {
+      "path": "external-evidence/l052-lse/schema-review/generator-lse-tests.log",
+      "sha256": "ce1e4d9b2083e45cb07f2e99c39f5e6bd9c66d3a4cbd4966386fb2f788a24355"
+    },
+    "three_models": [
+      {
+        "path": "cw32-data-serde/src/lib.rs",
+        "before_sha256": "aceb8fc88f3dab0c405fe86da2ccbdc800f81a433b77bf93bcb7ef1a2d24ac50",
+        "after_sha256": "54a4de94f232c208ab22ac03c177d7f12ea5eba967ac17d023a147f26a60e761"
+      },
+      {
+        "path": "cw32-metapac-gen/src/data.rs",
+        "before_sha256": "97d71c22e624b2d1a0626f7f7ed2961e1cd8c3f618104b9a7f800209502c2471",
+        "after_sha256": "e6aadf79d41eb015276ed9c523a41213939184581989609707f9c8407e6b55ff"
+      },
+      {
+        "path": "cw32-metapac-gen/res/src/metadata.rs",
+        "before_sha256": "a6cf5ff62afc12639bd3332970e589da7d66303504ba409f39862c10a38cc534",
+        "after_sha256": "102cde69650c1d28b3c2a6ff5f2578b777c063925a0d692da6e33577f3771d6d"
+      }
+    ],
+    "three_model_hashes_still_match": true,
+    "tested_electrical_sha256": "56283373d255198fb3eb890270c390a58ad2ad58bc6e2d05670cfc2f9c06e1cb",
+    "current_electrical_sha256": "f4bd89c82bfb9019385f261a369415e2a9f59f1eb42856ab74f9ede8b2a45a5c",
+    "post_test_delta": "Only the reviewed L052 SORCE field binding differs from the tested electrical.rs snapshot; legacy SOURCE binding is preserved. The existing seven tests were not rerun on this later byte identity.",
+    "api_compatibility_limit": "awt_source u8 becomes Option<u8> and startup_consumers changes struct-literal/API shape; this review does not relabel it insertion-only Rust compatibility.",
+    "provenance_limit": "The serde model remains a project-authored independent replacement with previous review history; metapac retains adapted upstream ancestry. No legal clearance or publication permission is inferred."
+  },
+  "findings": [],
+  "limitations": [
+    "No silicon execution, oscillator waveform measurement or board electrical qualification.",
+    "Static source semantics and normal build/ELF evidence are not hardware validation.",
+    "The original C8T6 library numeric exit receipt is absent and remains explicitly absent.",
+    "The 11 schema probes and seven generator tests retain their exact recorded scope and hashes; no broader test success is claimed.",
+    "The review did not modify candidate or generated source bytes."
+  ],
+  "reviewer_actions": {
+    "cargo_invocations": 0,
+    "hal_tests": 0,
+    "candidate_edits": 0
+  }
+}

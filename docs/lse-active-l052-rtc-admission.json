@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-09",
+  "source": {
+    "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+    "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+    "pdf_pages_1_based": [
+      192,
+      193,
+      194,
+      195,
+      196,
+      197,
+      198,
+      199,
+      200
+    ],
+    "printed_pages": [
+      191,
+      192,
+      193,
+      194,
+      195,
+      196,
+      197,
+      198,
+      199
+    ]
+  },
+  "rtc_reset": [
+    {
+      "register": "CR0",
+      "byte_offset": 4,
+      "value": 0,
+      "mask": 239
+    },
+    {
+      "register": "CR1",
+      "byte_offset": 8,
+      "value": 0,
+      "mask": 1795
+    },
+    {
+      "register": "CR2",
+      "byte_offset": 12,
+      "value": 0,
+      "mask": 1791
+    },
+    {
+      "register": "COMPEN",
+      "byte_offset": 16,
+      "value": 0,
+      "mask": 65535
+    },
+    {
+      "register": "DATE",
+      "byte_offset": 20,
+      "value": 0,
+      "mask": 134217727
+    },
+    {
+      "register": "TIME",
+      "byte_offset": 24,
+      "value": 1179648,
+      "mask": 4161407
+    },
+    {
+      "register": "ALARMA",
+      "byte_offset": 28,
+      "value": 68288512,
+      "mask": 2143289343
+    },
+    {
+      "register": "ALARMB",
+      "byte_offset": 32,
+      "value": 1179648,
+      "mask": 2143289343
+    },
+    {
+      "register": "TAMPDATE",
+      "byte_offset": 36,
+      "value": 0,
+      "mask": 65343
+    },
+    {
+      "register": "TAMPTIME",
+      "byte_offset": 40,
+      "value": 0,
+      "mask": 4161407
+    },
+    {
+      "register": "AWTARR",
+      "byte_offset": 44,
+      "value": 65535,
+      "mask": 65535
+    },
+    {
+      "register": "IER",
+      "byte_offset": 48,
+      "value": 0,
+      "mask": 95
+    },
+    {
+      "register": "ISR",
+      "byte_offset": 52,
+      "value": 0,
+      "mask": 95
+    }
+  ],
+  "important_difference": "ALARMA reset 0x04120000 independently repeated by EN Rev1.0 PDF210/printed209. No write-only KEY or W0C ICR in snapshot.",
+  "policy": "Check CR0/CR1/CR2/IER/ISR first, then COMPEN and calendar/alarm/wake/timestamp rows twice; do not touch KEY, ACCESS or ICR. No START-only or SOURCE-only admission."
+}

@@ -1,0 +1,109 @@
+{
+  "status": "accepted_narrow_three_model_schema_delta",
+  "scope": "Independent frozen shared L052 active-LSE schema review, plus focused execution of the existing generator LSE fact-validation tests. This does not accept runtime behavior, complete generation, HAL builds, ELF behavior, or silicon.",
+  "models": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "aceb8fc88f3dab0c405fe86da2ccbdc800f81a433b77bf93bcb7ef1a2d24ac50",
+      "after_sha256": "54a4de94f232c208ab22ac03c177d7f12ea5eba967ac17d023a147f26a60e761"
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "97d71c22e624b2d1a0626f7f7ed2961e1cd8c3f618104b9a7f800209502c2471",
+      "after_sha256": "e6aadf79d41eb015276ed9c523a41213939184581989609707f9c8407e6b55ff"
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "a6cf5ff62afc12639bd3332970e589da7d66303504ba409f39862c10a38cc534",
+      "after_sha256": "102cde69650c1d28b3c2a6ff5f2578b777c063925a0d692da6e33577f3771d6d"
+    }
+  ],
+  "three_models_patch_exact": true,
+  "compatibility": {
+    "legacy_json": "All eight old authored active profiles retain exact serde_json serialization values and field order; all 54 existing full-chip JSON documents roundtrip with no Value changes.",
+    "rust_api": "awt_source changes u8 to Option<u8> in all three models; Some(3) is required for legacy Rust callers. Addition of startup_consumers also changes struct literal construction. This is not insertion-only Rust/API compatibility.",
+    "awt_source": "A JSON number remains that number through Some. Missing and explicit null now both deserialize None in the two input models. Unlike the old required u8, those forms are accepted syntactically; None serializes as explicit null.",
+    "startup_consumers": "Missing and explicit null both deserialize None in the two input models; the serde model omits None when serializing. A present object has six required nonnullable fields, including both vectors even if empty. Inner work-gate source and boolean are required.",
+    "required_existing_facts": "configurable_ccs remains a required bool. All other nonoptional top-level fields remain required. Existing gpio_speed_offset remains nullable/omittable and emits explicit null.",
+    "rejection": "Both deserializing models reject unknown fields in LseConfiguration, LseStartupConsumers, LseWorkGatedConsumer and route/reset records; source u8 widths, bool types and roster string element types are enforced.",
+    "static_projection": "Names, declaration order, widths and nested types match exactly after Peripheral prefix/container substitutions. Vec<String> maps to static slice of static str, Vec<LseOutputRoute> to static slice, Option<native struct> stays a value Option. Actual generator Debug/stringify function compiled all 11 profile expressions against exact extracted static definitions and every projected field was compared.",
+    "generated_rust": "Legacy JSON value compatibility does not preserve generated Rust bytes: awt_source now renders Some(3), startup_consumers renders None, and derived Debug/Hash shape changes with the explicit Rust/API change."
+  },
+  "verification": {
+    "test_log": "schema-review/probe.log",
+    "probe_source": "schema-review/probe-source",
+    "tests_passed": 11,
+    "tests_failed": 0,
+    "compile_seconds": 16.04,
+    "test_seconds": 0.24,
+    "frozen_models_rehashed_after_test": true,
+    "dependencies_match_candidate_lock": {
+      "serde": "1.0.229",
+      "serde_derive": "1.0.229",
+      "serde_json": "1.0.151",
+      "regex": "1.13.1"
+    },
+    "build_scope": "Only isolated temporary probe crate and cw32-data-serde dependency; CARGO_TARGET_DIR under /tmp; offline; one job; debug=0; incremental=0; no HAL/shared-target build.",
+    "initial_launch": "First Cargo launch could not locate rustc before compilation. Explicit RUSTC/RUSTDOC paths fixed environment; retained successful run used same permitted toolchain/cache.",
+    "generator_log": "schema-review/generator-lse-tests.log"
+  },
+  "generator_boundary": {
+    "status": "focused_existing_generator_lse_tests_passed",
+    "legacy": "validate_lse_configuration requires awt_source=Some(3) and startup_consumers=None.",
+    "l052": "Requires awt_source=None and native extension Some with startup_analog=true, autotrim_source=3, LPTIM (2,true), LCD (1,true), ordered UART1/2/3 roster, and exact package LSIOUT roster; all other families reject extension.",
+    "exact_parts": "Outer validate_lse_parts admits exactly eleven named parts before internal starts_with family classification; no new arbitrary family alias admission.",
+    "hardware_facts": "Serde accepts structurally correct false/wrong/empty hardware facts. Qualification validation, source-proof equality, native register/field matching and exact package bonding own their rejection. Do not report syntax deserialization alone as hardware acceptance.",
+    "af_issue": {
+      "initial": "New raw LSIOUT comparison narrowed as_u64() with as u8, allowing 262 to equal AF6.",
+      "resolution_observed": "Worker replaced cast with u8::try_from plus af<16, preserving both range failure and four-bit mux enforcement.",
+      "runtime_negatives": "Passed actual decoder lse_lsi_af_routes used by apply_lse: AF262 fails exceeds-u8; AF16 fails four-bit-selector; AF6 accepted when PC4 bonded and excluded when unbonded."
+    },
+    "initial_execution": {
+      "electrical_sha256": "8b8dfc490b6191fe8b8adf4c69a5c62181df9b0bf8f21129291db99d6bd111f2",
+      "status": "compile_failed_before_tests",
+      "finding": "electrical.rs:1293 passed &Result<Vec<u8>, io::Error> to serde_yaml::from_slice because the inner fs::read lacked ?.",
+      "log": "schema-review/generator-lse-tests-initial-compile-failure.log",
+      "worker_notified": true,
+      "resolution": "Worker added ? to the inner fs::read, then froze electrical.rs at 56283373d255198fb3eb890270c390a58ad2ad58bc6e2d05670cfc2f9c06e1cb. Focused group passed on rerun."
+    },
+    "electrical_sha256": "56283373d255198fb3eb890270c390a58ad2ad58bc6e2d05670cfc2f9c06e1cb",
+    "verification": {
+      "command": "cargo test --offline --locked --jobs 1 -p cw32-data-gen electrical::lse_tests",
+      "tests_passed": 7,
+      "tests_failed": 0,
+      "other_lib_tests_filtered_out": 94,
+      "integration_tests_filtered_out": 15,
+      "compile_seconds": 20.24,
+      "test_seconds": 0.06,
+      "log": "schema-review/generator-lse-tests.log",
+      "same_isolated_tmp_target": true
+    },
+    "coverage_limits": "The seven retained tests exercise L052 missing extension, contradictory AWT, startup analog, work gates, AUTOTRIM source, LCD source, UART omission, LSI AF/package roster, own ALARMA reset, and older qualification/preseed failures. Legacy missing awt_source rejection follows the source-level Some(3) check; it was not a separately added generator test. Full generate/apply_lse success for every exact part was not executed by this reviewer."
+  },
+  "provenance": {
+    "current_provenance_file_unchanged_from_baseline": true,
+    "serde_identity": "Project-authored independent replacement; retain complete previous_review chain and accepted Stage49 hash aceb8fc88f3dab0c405fe86da2ccbdc800f81a433b77bf93bcb7ef1a2d24ac50.",
+    "metapac_identity": "Adapted upstream ancestry remains; this schema correspondence review does not rewrite it as independent authorship.",
+    "legal_clearance": false,
+    "lineage_updated_by_this_reviewer": false
+  },
+  "observed_source_manifest": {
+    "path": "schema-review/observed-source-manifest.json",
+    "sha256": "5c1cf547450616301c1239ce5bfbadbb5563f2a78f1b87d125d4d749150c0db8",
+    "file_count": 1153,
+    "reviewed_paths_match_manifest": [
+      "cw32-data-serde/src/lib.rs",
+      "cw32-metapac-gen/src/data.rs",
+      "cw32-metapac-gen/res/src/metadata.rs",
+      "cw32-data-gen/src/electrical.rs",
+      "cw32-data/lse-qualified.yaml"
+    ],
+    "note": "Worker confirmed current manifest 5c1cf547450616301c1239ce5bfbadbb5563f2a78f1b87d125d4d749150c0db8. Change from prior a24125deef25bcb699dd97d3009bc8b5d0ca0e45c4d66fed5f0d2d2ad73fa51b was separate runtime/build.rs work outside this narrow acceptance. The five reviewed source hashes remained unchanged.",
+    "worker_confirmed_current": true
+  },
+  "limitations": [
+    "No HAL build/tests/harness, generated ARM code, electrical waveform, or silicon validation.",
+    "No shared target writes, main-source edits, source-lineage edits, uploads, GitHub or publication.",
+    "This narrow technical acceptance is not a legal licensing clearance; publication hold remains."
+  ]
+}

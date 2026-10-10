@@ -431,6 +431,22 @@ pub struct PeripheralLseOutputRoute {
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralLseWorkGatedConsumer {
+    pub source: u8,
+    pub gate_controls_work: bool,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub struct PeripheralLseStartupConsumers {
+    pub startup_analog: bool,
+    pub autotrim_source: u8,
+    pub lptim: PeripheralLseWorkGatedConsumer,
+    pub lcd: PeripheralLseWorkGatedConsumer,
+    pub uarts: &'static [&'static str],
+    pub lsi_output_routes: &'static [PeripheralLseOutputRoute],
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
 pub struct PeripheralLseConfiguration {
     pub nominal_hz: u32,
     pub maximum_hz: u32,
@@ -441,7 +457,8 @@ pub struct PeripheralLseConfiguration {
     pub startup_cycles: &'static [u32; 4],
     pub rtc_source: u8,
     pub uart_source: u8,
-    pub awt_source: u8,
+    pub awt_source: Option<u8>,
+    pub startup_consumers: Option<PeripheralLseStartupConsumers>,
     pub mco_source: u8,
     pub gpio_dir_offset: u32,
     pub gpio_speed_offset: Option<u32>,

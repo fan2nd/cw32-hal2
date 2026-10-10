@@ -1151,7 +1151,7 @@ groups:
     checking all three own-family evidence records against raw SVD import candidates.
 
 - canonical: sysctrl_cw32l052_v1.yaml
-  canonical_ir_sha256: 1530959ce8ab6da13c6f75e747c3e4fa74c21d823bea10c3e8d4481518d1828d
+  canonical_ir_sha256: cbc1aa357176c3ff34479e881d57824ca4c4e67d4261c6a64081576971ba04ec
   source_versions:
   - sysctrl_cw32l052_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
@@ -1188,6 +1188,19 @@ groups:
     evidence: docs/qualified-l052-hse-source-receipt.json
     reason: 'Own L052 RM CN V1.5 sections4.7.1/4.7.6 PDF70/75-76 and12.5.3 PDF193: typed selectors and
       pre-start/run fields only; canonical group contains L052 alone, no source reuse membership change.'
+  - canonical: sysctrl_cw32l052_v1.yaml
+    before_sha256: 1530959ce8ab6da13c6f75e747c3e4fa74c21d823bea10c3e8d4481518d1828d
+    after_sha256: cbc1aa357176c3ff34479e881d57824ca4c4e67d4261c6a64081576971ba04ec
+    added_enums: [enum/LseDrive, enum/LseAmplitude, enum/LseWait]
+    field_associations:
+    - [fieldset/LSE, DRIVER, LseDrive]
+    - [fieldset/LSE, AMP, LseAmplitude]
+    - [fieldset/LSE, WAITCYCLE, LseWait]
+    - [fieldset/LSE, PDRIVER, LseDrive]
+    - [fieldset/LSE, PAMP, LseAmplitude]
+    source_policy: docs/lse-active-l052.json
+    basis: Own CW32L052 manual Rev1.5 PDF76-77 defines all four analog fields and all encodings. Layout, access and reuse membership are unchanged.
+
 - canonical: sysctrl_cw32l083_v1.yaml
   canonical_ir_sha256: baa2222d244ca2c94f58608b4e5e9662f860bbd8fc5fb8a502b5e26566471234
   source_versions:

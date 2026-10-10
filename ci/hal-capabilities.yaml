@@ -644,7 +644,7 @@ functions:
       status: partial
       scope: Blocking calendar with preserved-state attach and explicit cold initialization.
       limitations:
-      - L010/L011/L012 use qualified HSIOSC; classic RTCs use pretrimmed LSI, with held LSE also available on exact F030C8T7/A030C8T7/F020C6U7. No UTC precision, compensation,
+      - L010/L011/L012 use qualified HSIOSC; classic RTCs use pretrimmed LSI, with held LSE also available on the eleven exact x030/F020/L031/R031/W031/L052 packages in lse-qualified.yaml. No UTC precision, compensation,
         subseconds or retention guarantee.
     - id: alarm_a
       status: partial
@@ -1227,7 +1227,7 @@ functions:
           for final buses and Flash. Retain unchanged legal LSI when enabled external detectors require it.
         - Retained RTC/AUTOTRIM HSE requires exact ready parameter/pad reuse. Active calibration, automatic
           mode and ETR with an HSE request are excluded; raw-HSI AUTOTRIM/LVD blocks required retrim.
-        - No PLL exists. No runtime switching, LSE setup, sleep/resume or source-loss recovery. Finite polls
+        - No PLL exists. Active LSE is separately qualified below. No runtime switching, sleep/resume or source-loss recovery. Finite polls
           require CPU progress; STABLE is a startup latch; failure requires reset and frozen rates are invalid after loss.
       - families: [CW32L083]
         status: partial
@@ -1312,12 +1312,14 @@ functions:
       - path: cw32-data/lse-ownership.yaml
     - id: external_low_speed
       status: partial
-      scope: Init-only nominal 32768 Hz crystal/bypass LSE and held RTC source on eight exact source-qualified x030/F020/L031/R031/W031 packages.
-      implemented_families: [CW32F030, CW32A030, CW32F020]
+      scope: Init-only nominal 32768 Hz crystal/bypass LSE and held RTC source on eleven exact source-qualified x030/F020/L031/R031/W031/L052 packages.
+      implemented_families: [CW32F030, CW32A030, CW32F020, CW32L031, CW32R031, CW32W031, CW32L052]
       limitations:
       - Other packages retain inherited-pad protection only. Every-cycle board bounds, waveform, drive and load qualification are required.
       - None preserves LSE parameters and pads. Existing mandatory CCS behavior remains; configurable CCS changes only LSECCS for a requested new start. Exact enabled reuse never restarts.
-      - L031/R031/W031 preserve calibrated LSI; only a repeatedly verified stopped unused source can load factory trim for a requested monitored LSE start. No live trim, source reset or IRQ acknowledgement.
+      - L031/R031/W031/L052 preserve calibrated LSI; only a repeatedly verified stopped unused source can load factory trim for a requested monitored LSE start. No live trim, source reset or IRQ acknowledgement.
+      - L052 independently configures pre-start and run analog banks while disabled, rejects active/automatic AUTOTRIM calibration, preserves off LPTIM/LCD work gates, and checks its own RTC reset roster.
+      - Failure retains source enables, pad reservations and diagnostics. Ordinary reset may not clear retained LSE controls; POR may be required.
       - No LSE system clock, runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
       registers_any:
       - LSE
@@ -1327,6 +1329,8 @@ functions:
       - path: embassy-cw32/src/rcc/rtc.rs
         anchor: pub struct LseClock
       - path: docs/qualified-lse.md
+      - path: docs/qualified-l052-lse.md
+      - path: cw32-data/lse-qualified.yaml
     - id: power_sleep_wakeup
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

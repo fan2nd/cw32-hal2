@@ -340,6 +340,9 @@ pub struct Config {
     /// Optional board-qualified source; its pads are reserved even with HSI SYSCLK.
     #[cfg(rcc_hse)]
     pub hse: Option<Hse>,
+    /// Init-only nominal 32768 Hz LSE; None preserves inherited state.
+    #[cfg(rcc_lse)]
+    pub lse: Option<super::Lse>,
     /// Optional L083 PLL, admitted only when selected as the system source.
     #[cfg(rcc_pll)]
     pub pll: Option<Pll>,
@@ -366,6 +369,8 @@ impl Config {
             },
             #[cfg(rcc_hse)]
             hse: None,
+            #[cfg(rcc_lse)]
+            lse: None,
             #[cfg(rcc_hse)]
             sys: Sysclk::HSI,
             #[cfg(rcc_pll)]
@@ -389,6 +394,11 @@ impl Config {
         if self.timeout == 0 {
             return Err(Error::InvalidTimeout);
         }
+        #[cfg(rcc_lse)]
+        let lse = self
+            .lse
+            .map(|c| c.bounds(self.operating_conditions).map(|b| (c, b)))
+            .transpose()?;
         #[cfg(not(rcc_hse))]
         let clocks = {
             let hsi = HSI_FREQ / self.hsi.div.divisor();
@@ -459,6 +469,8 @@ impl Config {
                 ],
                 source,
                 hse: self.hse.map(|hse| hse.mode),
+                #[cfg(rcc_lse)]
+                lse,
                 #[cfg(rcc_pll)]
                 pll,
             };
@@ -513,6 +525,8 @@ pub struct Clocks {
     pub(crate) source: crate::rcc::ClockBounds,
     #[cfg(rcc_hse)]
     hse: Option<HseMode>,
+    #[cfg(rcc_lse)]
+    pub(crate) lse: Option<(super::Lse, crate::rcc::ClockBounds)>,
     #[cfg(rcc_pll)]
     pll: Option<crate::rcc::ClockBounds>,
 }
@@ -539,6 +553,14 @@ impl Clocks {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
+    #[cfg(rcc_lse)]
+    InvalidLseBounds,
+    #[cfg(rcc_lse)]
+    LseNotReady,
+    #[cfg(rcc_lse)]
+    LsePinConflict,
+    #[cfg(rcc_lse)]
+    LseClockInUse,
     #[cfg(rcc_pll)]
     PllNotConfigured,
     #[cfg(rcc_pll)]
@@ -958,6 +980,15 @@ fn configure_hse(
 ) -> Result<Clocks, Error> {
     let mut clocks = config.frequencies()?;
     let r = pac::SYSCTRL;
+    #[cfg(rcc_lse)]
+    let reuse_lse = config
+        .lse
+        .map(|c| super::lse::preflight(c, cs))
+        .transpose()?;
+    #[cfg(rcc_lse)]
+    if let Some(lse) = config.lse {
+        prepare_lse_monitor(lse.poll_budget, cs)?;
+    }
     let old_clock = r.cr0().read();
     let old_sources = r.cr1().read();
     let old_hse = r.hse().read();
@@ -969,7 +1000,13 @@ fn configure_hse(
     }
     let monitor_hse = config.hse.is_some() || old_sources.hseen();
     let monitor_lse = old_sources.lseen();
+    #[cfg(rcc_lse)]
+    let monitor_lse = monitor_lse || config.lse.is_some();
+    #[cfg(rcc_lse)]
+    let old_lsi = config.lse.map(|_| r.lsi().read());
     let needs_lsi = (monitor_hse && old_sources.hseccs()) || (monitor_lse && old_sources.lseccs());
+    #[cfg(rcc_lse)]
+    let needs_lsi = needs_lsi || config.lse.is_some();
     // HSE/LSE CCS controls are configurable here, not reserved mandatory ones.
     let ccs_unchanged = || {
         let v = r.cr1().read();
@@ -1406,6 +1443,30 @@ fn configure_hse(
             return Err(Error::ClockConfigurationTimeout);
         }
     }
+    #[cfg(rcc_lse)]
+    if let Some(old_lsi) = old_lsi {
+        let current = r.lsi().read();
+        if !r.cr1().read().lsien()
+            || !current.stable()
+            || current.trim() != old_lsi.trim()
+            || current.waitcycle() != old_lsi.waitcycle()
+        {
+            return Err(Error::LsiTimeout);
+        }
+    }
+    #[cfg(rcc_lse)]
+    if let Some(lse) = config.lse {
+        super::lse::start(lse, reuse_lse.unwrap(), cs)?;
+        let after = r.cr1().read();
+        if after.clkccs() != old_sources.clkccs()
+            || after.hseccs() != old_sources.hseccs()
+            || after.lselock() != old_sources.lselock()
+            || !after.lseccs()
+        {
+            return Err(Error::ClockConfigurationTimeout);
+        }
+        super::lse::verify(lse, cs)?;
+    }
     // Freeze inherited ownership too, so safe GPIO remains blocked for the
     // entire boot even if later unsupported raw PAC writes disable HSE.
     // An inherited crystal keeps both pads reserved for the boot even if an
@@ -1459,4 +1520,65 @@ fn pll_parameters_match(pll: Pll, parameters: &PllParameters) -> bool {
         && v.freqout() == parameters.output_range
         && v.waitcycle().to_bits() == crate::RCC_PLL_STARTUP_ENCODING
         && v.reserved_debug().to_bits() == crate::RCC_PLL_RESERVED_DEBUG_DEFAULT
+}
+
+// Only a requested LSE source needs this monitored-source policy. Default None
+// retains the original RCC path. Factory-valid live LSI is never retuned.
+#[cfg(rcc_lse)]
+fn prepare_lse_monitor(
+    timeout: u32,
+    cs: critical_section::CriticalSection<'_>,
+) -> Result<(), Error> {
+    use crate::rtc::sealed::Instance;
+    // AUTOTRIM calibration can consume/mutate LSI independently of SRC. Its
+    // configuration-only gate may be inspected without resuming gated work.
+    if !crate::rcc_lse_monitor_can_freeze(timeout, cs)? {
+        return Err(Error::LseClockInUse);
+    }
+    let r = pac::SYSCTRL;
+    let factory = unsafe {
+        core::ptr::read_volatile(crate::peripherals::RTC::FACTORY_TRIM_ADDRESS as *const u16)
+    };
+    if factory == u16::MAX {
+        return Err(Error::LseNotReady);
+    }
+    let mut calibration = pac::sysctrl::regs::Lsi::default();
+    calibration.set_trim(factory);
+    let before = r.lsi().read();
+    // An enabled or pending ready interrupt is a retained observer when this
+    // request would start LSI. Never clear it or mask the peripheral's owner.
+    if !r.cr1().read().lsien() && (r.ier().read().lsirdy() || r.isr().read().lsirdy()) {
+        return Err(Error::LseClockInUse);
+    }
+    if before.trim() == calibration.trim() {
+        return Ok(());
+    }
+    // LSIEN alone is not used as ownership proof. The generated gate-preserving
+    // checks cover every reviewed direct selector and detector, twice, with
+    // unchanged native trim/wait and both hardware stable indications low.
+    let stopped = || {
+        let control = r.cr1().read();
+        let lsi = r.lsi().read();
+        !control.lsien()
+            && !lsi.stable()
+            && !r.isr().read().lsistable()
+            && !control.hseccs()
+            && !control.lseccs()
+            && !r.ier().read().lsirdy()
+            && !r.isr().read().lsirdy()
+            && lsi.trim() == before.trim()
+            && lsi.waitcycle() == before.waitcycle()
+    };
+    for _ in 0..2 {
+        if !stopped() || !crate::rcc_lsi_consumers_idle(timeout, cs)? || !stopped() {
+            return Err(Error::LseClockInUse);
+        }
+    }
+    // Own manuals require parameters before enable. LSI has no write key.
+    // Keep WAIT and every unrelated/reserved field; never stop a live source.
+    r.lsi().modify(|w| w.set_trim(calibration.trim()));
+    wait_until(timeout, Error::LseNotReady, || {
+        let lsi = r.lsi().read();
+        lsi.trim() == calibration.trim() && lsi.waitcycle() == before.waitcycle()
+    })
 }

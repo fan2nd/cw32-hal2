@@ -21,8 +21,12 @@ pub fn config(mode: LseMode) -> hal::Config {
         mode,
         drive: LseDrive::Strong,
         amplitude: LseAmplitude::Normal,
+        #[cfg(lse_startup_analog)]
+        startup_drive: LseDrive::Normal,
+        #[cfg(lse_startup_analog)]
+        startup_amplitude: LseAmplitude::Normal,
         wait: LseWait::Cycles16384,
-        // Attempts, not a guaranteed startup duration. Reset on timeout.
+        // Attempts, not a guaranteed startup duration. POR-retained source on timeout.
         poll_budget: 20_000_000,
     });
     config

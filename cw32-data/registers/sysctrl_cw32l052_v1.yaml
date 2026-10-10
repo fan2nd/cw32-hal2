@@ -762,14 +762,17 @@ fieldset/LSE:
     description: desc DRIVER.
     bit_offset: 0
     bit_size: 2
+    enum: LseDrive
   - name: AMP
     description: desc AMP.
     bit_offset: 2
     bit_size: 2
+    enum: LseAmplitude
   - name: WAITCYCLE
     description: desc WAITCYCLE.
     bit_offset: 4
     bit_size: 2
+    enum: LseWait
   - name: MODE
     description: desc MODE.
     bit_offset: 6
@@ -778,10 +781,12 @@ fieldset/LSE:
     description: desc PDRIVER.
     bit_offset: 8
     bit_size: 2
+    enum: LseDrive
   - name: PAMP
     description: desc PAMP.
     bit_offset: 10
     bit_size: 2
+    enum: LseAmplitude
   - name: STABLE
     description: desc STABLE.
     bit_offset: 15
@@ -875,8 +880,7 @@ fieldset/TIMITR:
     bit_offset: 21
     bit_size: 3
 enum/IrMode:
-  description: Documented infrared modulator inputs and boolean combination; source
-    timers/UARTs are configured independently.
+  description: Documented infrared modulator inputs and boolean combination; source timers/UARTs are configured independently.
   bit_size: 4
   variants:
   - name: GTIM1_CH1_AND_GTIM2_CH1
@@ -991,3 +995,51 @@ enum/Sysclk:
   - name: LSE
     description: LSE system clock.
     value: 4
+enum/LseDrive:
+  description: Own CW32L052 CN UM Rev1.5 PDF76-77 / printed75-76; docs/lse-active-l052.json. Startup and run banks remain independent.
+  bit_size: 2
+  variants:
+  - name: LEAST
+    description: Minimum crystal drive.
+    value: 0
+  - name: SMALL
+    description: Lower crystal drive.
+    value: 1
+  - name: NORMAL
+    description: Normal crystal drive.
+    value: 2
+  - name: STRONG
+    description: Strong crystal drive; manual recommended post-stable value.
+    value: 3
+enum/LseAmplitude:
+  description: Own CW32L052 CN UM Rev1.5 PDF76-77 / printed75-76; docs/lse-active-l052.json. Startup and run banks remain independent.
+  bit_size: 2
+  variants:
+  - name: LEAST
+    description: Minimum amplitude.
+    value: 0
+  - name: SMALL
+    description: Lower amplitude.
+    value: 1
+  - name: NORMAL
+    description: Normal amplitude; manual recommended post-stable value.
+    value: 2
+  - name: LARGE
+    description: Higher amplitude.
+    value: 3
+enum/LseWait:
+  description: Own CW32L052 CN UM Rev1.5 PDF76-77 / printed75-76; docs/lse-active-l052.json. Startup and run banks remain independent.
+  bit_size: 2
+  variants:
+  - name: CYCLES256
+    description: Wait for 256 LSE cycles.
+    value: 0
+  - name: CYCLES1024
+    description: Wait for 1024 LSE cycles.
+    value: 1
+  - name: CYCLES4096
+    description: Wait for 4096 LSE cycles.
+    value: 2
+  - name: CYCLES16384
+    description: Wait for 16384 LSE cycles.
+    value: 3

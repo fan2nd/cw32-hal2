@@ -29,6 +29,9 @@ fn main() {
             | "CW32L031F8U6"
             | "CW32R031C8U6"
             | "CW32W031R8U6"
+            | "CW32L052C8T6"
+            | "CW32L052R8S6"
+            | "CW32L052R8T6"
     ));
     println!("cargo:rustc-check-cfg=cfg(gpio_has_speed)");
     let lse = metadata
@@ -44,6 +47,14 @@ fn main() {
         .unwrap();
     if lse.gpio_speed_offset.is_some() {
         println!("cargo:rustc-cfg=gpio_has_speed");
+    }
+    println!("cargo:rustc-check-cfg=cfg(lse_startup_analog)");
+    if lse
+        .startup_consumers
+        .as_ref()
+        .is_some_and(|n| n.startup_analog)
+    {
+        println!("cargo:rustc-cfg=lse_startup_analog");
     }
     println!("cargo:rerun-if-changed=build.rs");
 }

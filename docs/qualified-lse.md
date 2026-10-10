@@ -1,6 +1,6 @@
 # Bounded active LSE qualification
 
-Active LSE configuration is qualified on the eight exact parts below. Every family alias and all other parts retain only previously established pad-ownership facts.
+Active LSE configuration is qualified on the eleven exact parts below. Every family alias and all other parts retain only previously established pad-ownership facts.
 
 | Part | Package | PC14 / PC15 physical pins | Direct LSE output |
 |---|---|---|---|
@@ -10,6 +10,8 @@ Active LSE configuration is qualified on the eight exact parts below. Every fami
 | CW32L031F8U6 | QFN20 | 1 / 2 | Neither route bonded |
 | CW32R031C8U6 | QFN48 | 2 / 3 | PB12 AF3; PF1 AF1 |
 | CW32W031R8U6 | QFN64 | 61 / 62 | PB12 AF3; PF1 AF1 |
+| CW32L052C8T6 | LQFP48 | 3 / 4 | PB12 AF3; PF1 AF1 |
+| CW32L052R8S6 / CW32L052R8T6 | LQFP64 7×7 / 10×10 mm | 3 / 4 | PB12 AF3; PF1 AF1 |
 
  Qualification is projected after exact-package expansion through `ClockLimits.lse_configuration`, not placed in family electrical profiles.
 
@@ -111,3 +113,17 @@ LSI reset trim is unspecified. Before requested LSE initialization, the immutabl
 No live source is stopped or trimmed, and no pending event is cleared. LSI startup has bounded polling and preserves WAIT, gates and unrelated CR1 controls. A successful LSE start freezes the detector's LSI trim/wait; subsequent held-source health checks require unchanged parameters, LSIEN/STABLE, LSECCS, LSEEN/STABLE and no LSE faults. Failure never publishes Clocks or attempts rollback. No automatic RTC fallback, clock-loss recovery, low-power service or frequency/accuracy measurement is implied.
 
 The authored schema intentionally adds required configurable_ccs and changes gpio_speed_offset to Option<u32>. Existing profiles explicitly carry false and numeric 8; these three families carry true and null. Older active-LSE JSON without the required field needs regeneration. This is an explicit source/wire contract update.
+
+## CW32L052 native startup and consumers
+
+The three exact L052 parts use their own [source qualification](qualified-l052-lse.md), [native facts](lse-active-l052.json), [RTC reset record](lse-active-l052-rtc-admission.json), and [original receipts](lse-l052-source-receipt.json). Nominal frequency remains 32768 Hz and the board must bound each cycle. General source conditions are 1.65–5.5 V and −40–85 °C; the board must separately qualify both analog banks and the electrical interface.
+
+`Lse.startup_drive` and `startup_amplitude` are required on this native hardware in addition to running `drive` and `amplitude`. All four typed PAC fields are written while disabled and checked on reuse and health checks. No post-enable write or claim about the precise bank-switch instant is made. LSE reset is 0x0A2B and RTC ALARMA reset is 0x04120000; these are own L052 facts.
+
+The optional `startup_consumers` record represents concrete native startup fields and AUTOTRIM/LPTIM/LCD hardware, not power-mode support. Existing `awt_source` values become `Some(3)` internally while their JSON remains the number 3. L052 has no standalone AWT, so it explicitly uses null and must provide the complete native fact record. Absent/null `startup_consumers` stays omitted on prior profiles. Exact UART names must equal the selected complete UART roster. L052 keeps the vendor PAC spelling `SORCE` / `sorce()` for the manual’s UART `SOURCE` field; no register rename or adapter is introduced. PC4/AF6 is the only LSI output and is bonded only on the two 64-pin packages. The existing raw AF catalog leaves LSIOUT in its unmerged special-function set, so qualification compares its complete bonded roster with the explicit route list without changing the general AF generator.
+
+AUTOTRIM can consume or mutate LSI independently of its reference selector. Every requested LSE path, including reuse, rejects automatic calibration, enabled calibration, and reserved mode/source encodings before freezing the monitor. A mismatched stopped LSI also requires the full source/observer/consumer admission twice; only factory trim is written and WAIT is preserved. Matching live LSI is retained without retuning.
+
+LPTIM and LCD RCC gates stop work as well as configuration. An off gate stays off and is not temporarily enabled for inspection. An already-on gate is read without writes and must remain unchanged; native EN and source determine whether the peripheral consumes the source. RTC, UART and AUTOTRIM have configuration-only gates, so their retained state is inspected even when their gates start off. RTC compensation remains an LSE consumer independently of RTC SOURCE, and a new start requires all thirteen own reset observations with controls first. No KEY, ACCESS, reset or flag-clear write manufactures admission.
+
+`None` adds no inspection, source, analog or pad writes. Failures retain enables, reservations, detector LSI and diagnostic flags and publish no healthy capability. LSE parameters and enable are retained across ordinary reset; only POR clears the documented controls. Software cannot promise that a CPU reset makes retry possible. No automatic RTC failover or elapsed-time continuity is established.

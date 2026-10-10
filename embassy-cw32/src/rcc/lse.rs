@@ -27,9 +27,17 @@ pub struct Lse {
     pub mode: LseMode,
     pub drive: LseDrive,
     pub amplitude: LseAmplitude,
+    /// Independent pre-stable drive. Programmed before enable, never retuned.
+    #[cfg(rcc_lse_startup_analog)]
+    pub startup_drive: LseDrive,
+    /// Independent pre-stable amplitude; exact hardware phase-switch timing is
+    /// unspecified. Both native analog banks are configured before enable.
+    #[cfg(rcc_lse_startup_analog)]
+    pub startup_amplitude: LseAmplitude,
     pub wait: LseWait,
     /// Explicit nonzero maximum polling attempts, not milliseconds. Crystal
-    /// startup can be slow. A timeout retains EN and reservations; reset to retry.
+    /// startup can be slow. A timeout retains EN and reservations. LSE control is
+    /// POR-retained on supported devices; an ordinary reset may not permit retry.
     pub poll_budget: u32,
 }
 impl Lse {
@@ -68,6 +76,10 @@ impl Lse {
 
 fn parameters_match(config: Lse) -> bool {
     let r = pac::SYSCTRL.lse().read();
+    #[cfg(rcc_lse_startup_analog)]
+    if r.pdriver() != config.startup_drive || r.pamp() != config.startup_amplitude {
+        return false;
+    }
     r.mode() == config.bypass()
         && r.driver() == config.drive
         && r.amp() == config.amplitude
@@ -156,6 +168,13 @@ pub(crate) fn preflight(
         verify_state(config, false, cs)?;
         return Ok(true);
     }
+    #[cfg(rcc_lse_startup_analog)]
+    {
+        let flags = pac::SYSCTRL.isr().read();
+        if flags.lserdy() || flags.lsestable() {
+            return Err(Error::LseClockInUse);
+        }
+    }
     let interrupts = pac::SYSCTRL.ier().read();
     if control.lselock()
         || pac::SYSCTRL.lse().read().stable()
@@ -197,13 +216,24 @@ pub(crate) fn start(
     }
     freeze_monitor(cs)?;
     crate::rcc_configure_lse_pins(config.bypass(), config.poll_budget, cs)?;
-    // Fresh typed value contains only documented writable configuration fields.
-    pac::SYSCTRL.lse().write(|w| {
+    // Program every source-defined analog bank while disabled. The native
+    // startup-bank path preserves reserved bits and never depends on a precise
+    // hardware bank-switch instant. Older cohorts retain their original write.
+    let configure = |w: &mut pac::sysctrl::regs::Lse| {
         w.set_mode(config.bypass());
         w.set_driver(config.drive);
         w.set_amp(config.amplitude);
+        #[cfg(rcc_lse_startup_analog)]
+        {
+            w.set_pdriver(config.startup_drive);
+            w.set_pamp(config.startup_amplitude);
+        }
         w.set_waitcycle(config.wait);
-    });
+    };
+    #[cfg(rcc_lse_startup_analog)]
+    pac::SYSCTRL.lse().modify(configure);
+    #[cfg(not(rcc_lse_startup_analog))]
+    pac::SYSCTRL.lse().write(configure);
     if !parameters_match(config) {
         return Err(Error::LseNotReady);
     }

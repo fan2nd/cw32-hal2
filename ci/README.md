@@ -61,4 +61,6 @@ The new classic API is limited to optional complete pairs, interior duty, fixed
 dead time and global MOE. Its own-PDF/data audit is
 `ci/verify-classic-atim-complementary-data.py`; it runs under `./d audit-current`.
 
-`./ci/check-lse-rtc.sh` builds the ordinary ARM libraries for thirteen family representatives, the F030 and F020 alias/unbonded exclusions, all eight qualified packages with defmt, sixteen LSE firmware links, and fifteen retained calendar firmware links. It does not execute firmware or add HAL tests.
+`./ci/check-lse-rtc.sh` builds the ordinary ARM libraries for thirteen family representatives, the F030 and F020 alias/unbonded exclusions, all eleven qualified packages with defmt, twenty-two LSE firmware links, and fifteen retained calendar firmware links. It does not execute firmware or add HAL tests. This is the script's full declared scope, not a claim that every command was rerun for the L052 addition.
+
+`./d audit-current` includes `ci/verify-l052-lse-data.py` for the three exact L052 parts, using their own locked originals and SDK members. The L052 addition retains evidence for five selected ordinary library configurations and ten linked crystal/bypass ELFs (the three L052 parts plus F030C8T7 and L031C8T6 regression). Four library commands and five example-pair commands have retained numeric exit status 0; the earlier C8T6 library pass is supported by its original `Finished`/`PASS` log, with no numeric exit receipt reconstructed. These are software checks only.

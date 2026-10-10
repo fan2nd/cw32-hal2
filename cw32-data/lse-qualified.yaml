@@ -11,6 +11,8 @@ policies:
   docs/lse-active-r031-rtc-admission.json: dd7922ac166e0a0a25d5e7c097b674974de58b171a975856578400b96a2b8c9b
   docs/lse-active-w031.json: b3a483c5ea1c39b80a59066a6df4ab26da0977d2ae5996ee15f45269555e3f0c
   docs/lse-active-w031-rtc-admission.json: 7a31fc31eb5b38f31eac64a42f9658b27846e0914c9377362891ff0651d858c2
+  docs/lse-active-l052.json: b3c669fbfd8a2a9e21199d2f7af6ac3ca58b68e0d4e2f8aad7e79d866be8c196
+  docs/lse-active-l052-rtc-admission.json: 2ba84ed1336cd2a9dc6a0de84f4157c217a612c08aacbeb1c74918dc9fbc0439
 parts:
   CW32A030C8T7:
     family: CW32A030
@@ -1724,3 +1726,444 @@ parts:
         af: 1
       maximum_hz: 1000000
       configurable_ccs: true
+  CW32L052C8T6:
+    family: CW32L052
+    package: LQFP48
+    input_pin: PC14
+    output_pin: PC15
+    sources: &id001
+    - citation_ref: l052_lse_native_startup_and_consumers
+      source_ref: vendor:CW32L052_UserManual_CN_V1.5.pdf
+      sha256: 4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41
+      pdf_pages_1_based:
+      - 55
+      - 56
+      - 57
+      - 59
+      - 61
+      - 62
+      - 70
+      - 71
+      - 74
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 83
+      - 94
+      - 146
+      - 147
+      - 157
+      - 167
+      - 168
+      - 169
+      - 170
+      - 175
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 189
+      - 192
+      - 193
+      - 194
+      - 195
+      - 196
+      - 197
+      - 198
+      - 199
+      - 200
+      - 224
+      - 225
+      - 235
+      - 236
+      - 237
+      - 340
+      - 341
+      - 350
+      - 359
+      - 390
+      - 536
+      - 553
+      - 554
+      printed_pages:
+      - 54
+      - 55
+      - 56
+      - 58
+      - 60
+      - 61
+      - 69
+      - 70
+      - 73
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 93
+      - 145
+      - 146
+      - 156
+      - 166
+      - 167
+      - 168
+      - 169
+      - 174
+      - 183
+      - 184
+      - 185
+      - 186
+      - 187
+      - 188
+      - 191
+      - 192
+      - 193
+      - 194
+      - 195
+      - 196
+      - 197
+      - 198
+      - 199
+      - 223
+      - 224
+      - 234
+      - 235
+      - 236
+      - 339
+      - 340
+      - 349
+      - 358
+      - 389
+      - 535
+      - 552
+      - 553
+    - citation_ref: l052_exact_packages_pads_electrical
+      source_ref: vendor:CW32L052_DataSheet_CN_V1.3.pdf
+      sha256: f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f
+      pdf_pages_1_based:
+      - 10
+      - 26
+      - 27
+      - 32
+      - 33
+      - 34
+      - 43
+      - 49
+      - 50
+      - 51
+      - 79
+      printed_pages:
+      - 9
+      - 25
+      - 26
+      - 31
+      - 32
+      - 33
+      - 42
+      - 48
+      - 49
+      - 50
+      - 78
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 1650
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: null
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 68288512
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 3
+      - pin: PF1
+        af: 1
+      maximum_hz: 1000000
+      configurable_ccs: true
+      startup_consumers:
+        startup_analog: true
+        autotrim_source: 3
+        lptim:
+          source: 2
+          gate_controls_work: true
+        lcd:
+          source: 1
+          gate_controls_work: true
+        uarts:
+        - UART1
+        - UART2
+        - UART3
+        lsi_output_routes: []
+  CW32L052R8S6:
+    family: CW32L052
+    package: LQFP64（7×7mm）
+    input_pin: PC14
+    output_pin: PC15
+    sources: *id001
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 1650
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: null
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 68288512
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 3
+      - pin: PF1
+        af: 1
+      maximum_hz: 1000000
+      configurable_ccs: true
+      startup_consumers:
+        startup_analog: true
+        autotrim_source: 3
+        lptim:
+          source: 2
+          gate_controls_work: true
+        lcd:
+          source: 1
+          gate_controls_work: true
+        uarts:
+        - UART1
+        - UART2
+        - UART3
+        lsi_output_routes:
+        - pin: PC4
+          af: 6
+  CW32L052R8T6:
+    family: CW32L052
+    package: LQFP64（10×10mm）
+    input_pin: PC14
+    output_pin: PC15
+    sources: *id001
+    configuration:
+      nominal_hz: 32768
+      supply_mv:
+      - 1650
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      startup_cycles:
+      - 256
+      - 1024
+      - 4096
+      - 16384
+      rtc_source: 0
+      uart_source: 2
+      awt_source: null
+      mco_source: 6
+      gpio_dir_offset: 0
+      gpio_speed_offset: null
+      rtc_reset:
+      - register: CR0
+        byte_offset: 4
+        value: 0
+        mask: 239
+      - register: CR1
+        byte_offset: 8
+        value: 0
+        mask: 1795
+      - register: CR2
+        byte_offset: 12
+        value: 0
+        mask: 1791
+      - register: COMPEN
+        byte_offset: 16
+        value: 0
+        mask: 65535
+      - register: DATE
+        byte_offset: 20
+        value: 0
+        mask: 134217727
+      - register: TIME
+        byte_offset: 24
+        value: 1179648
+        mask: 4161407
+      - register: ALARMA
+        byte_offset: 28
+        value: 68288512
+        mask: 2143289343
+      - register: ALARMB
+        byte_offset: 32
+        value: 1179648
+        mask: 2143289343
+      - register: TAMPDATE
+        byte_offset: 36
+        value: 0
+        mask: 65343
+      - register: TAMPTIME
+        byte_offset: 40
+        value: 0
+        mask: 4161407
+      - register: AWTARR
+        byte_offset: 44
+        value: 65535
+        mask: 65535
+      - register: IER
+        byte_offset: 48
+        value: 0
+        mask: 95
+      - register: ISR
+        byte_offset: 52
+        value: 0
+        mask: 95
+      output_routes:
+      - pin: PB12
+        af: 3
+      - pin: PF1
+        af: 1
+      maximum_hz: 1000000
+      configurable_ccs: true
+      startup_consumers:
+        startup_analog: true
+        autotrim_source: 3
+        lptim:
+          source: 2
+          gate_controls_work: true
+        lcd:
+          source: 1
+          gate_controls_work: true
+        uarts:
+        - UART1
+        - UART2
+        - UART3
+        lsi_output_routes:
+        - pin: PC4
+          af: 6

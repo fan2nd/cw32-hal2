@@ -1,7 +1,7 @@
 # Qualified LSE calendar examples
 
 These two firmware examples target CW32F030C8T7/CW32A030C8T7 LQFP48
-CW32F020C6U7 QFN48, and the five exact L031/R031/W031 parts listed below.
+CW32F020C6U7 QFN48, the five exact L031/R031/W031 parts and three exact L052 parts listed below.
 Other F020 packages lack the oscillator pair.
 Crystal uses PC14/PC15; bypass consumes PC14 and leaves PC15 available.
 RCC init requests the source before peripheral tokens are exposed. LseClock
@@ -15,7 +15,7 @@ duty, pulse widths and edges. Nothing here measures or validates a real board.
 
 The explicit20000000poll budget counts attempts, not milliseconds. Crystal
 startup is slow; the published1.5s is typical, not an upper bound. A timeout
-retains EN and the permanent pad reservation. Reset before retrying.
+retains EN and the permanent pad reservation. LSE controls survive ordinary reset; a POR may be needed before retrying.
 
 Cold provisioning deliberately writes2026-10-09 12:00:00. Replace it with the
 intended time, or use Rtc::attach_preserving_state for a retained calendar.
@@ -33,3 +33,11 @@ pads but neither direct-output route. These families use a monitored LSE
 policy and qualify factory LSI trim only for a repeatedly verified stopped,
 unused source; inherited calibrated LSI is preserved. The declarations are
 board assumptions, not measurements. See ../../docs/qualified-lse.md.
+
+The same binaries select cw32l052c8t6, cw32l052r8s6 and cw32l052r8t6.
+L052 requires independent startup_drive and startup_amplitude in addition to
+running drive/amplitude. All four must be qualified for the actual board;
+the example settings are declarations only. Both banks are programmed before
+enable, with no assumed precise bank-switch timing. Its separate AUTOTRIM,
+LPTIM and LCD consumers and the own ALARMA reset value are admitted through
+the native source facts. No power-mode behavior or live calibration is offered.
