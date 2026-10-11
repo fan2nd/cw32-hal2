@@ -543,6 +543,23 @@ and the historical verification boundary.
 Unsupported scope includes additional ADC/timer modes, peripheral DMA beyond staged x030/L083 UART TX/RX and SPI master,
 external/PLL modes beyond each explicitly qualified family/source and low-power policy. Check the coverage ledger before selecting a device/API.
 
+Exactly CW32F030C8T7 adds immutable owned HCLK/PCLK output on PA8 AF4 through
+`rcc::Mco`, retaining the real SYSCTRL and PA8 owners. All eight documented
+output divisors are available; the two ordinary examples choose /8. Admission
+uses published cycle-qualified logical bounds and an explicit compatible board
+supply/ambient/load declaration. The conservative 20 MHz policy does not prove
+loaded duty, edge timing or receiver suitability; the vendor I/O table is
+unmeasured design/simulation data. GPIOA gate activity, pin handover, bounded
+cleanup/Drop, forgetting and live RTC ownership restrictions apply. See the
+[complete contract](docs/f030-owned-mco.md) and [examples](examples/mco/README.md).
+No other package or family gains this capability. Main verification produced
+five actual ARM libraries and three ordinary firmware ELFs with no warnings;
+all eight Cargo builds passed. Generation, the full 54-selection comparison,
+19 schema contracts and eight finite source/data gates passed in separate
+receipts. `./d check-mco` remains a separate local recipe, not the execution
+receipt. At main acceptance clean had not run; final-package completion requires
+a separate clean receipt for one exact F030 release library and one HCLK ELF.
+
 ## Data and PAC verification
 
 - `./d check`: reproducible regeneration plus per-chip target checks

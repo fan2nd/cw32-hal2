@@ -476,3 +476,63 @@ fn native_lse_schema_requires_explicit_monitor_facts_and_rejects_old_name() {
     assert!(old.native_low_power.is_none());
     assert!(encoded(old).get("native_low_power").is_none());
 }
+
+
+#[test]
+fn exact_mco_option_preserves_old_clock_shape_and_requires_all_inner_fields() {
+    let catalog: Value = serde_yaml::from_str(include_str!("../../cw32-data/mco-qualified.yaml")).unwrap();
+    let facts = catalog["parts"]["CW32F030C8T7"]["facts"].clone();
+    let parsed: peripheral::Mco = read(facts.clone());
+    assert_eq!(parsed.divisors, [(0,1),(1,2),(2,8),(3,64),(4,128),(5,256),(6,512),(7,1024)]);
+    assert!(!parsed.electrical_values_measured);
+    assert_eq!(encoded(parsed), facts);
+    let electrical: Value = serde_yaml::from_str(include_str!("../../cw32-data/electrical.yaml")).unwrap();
+    let old = electrical["profiles"]["CW32F030"]["clock_limits"].clone();
+    let clock: peripheral::ClockLimits = read(old.clone());
+    assert!(clock.mco.is_none());
+    assert_eq!(encoded(clock), old);
+    let mut null = old.clone();
+    null["mco"] = Value::Null;
+    assert_eq!(encoded(read::<peripheral::ClockLimits>(null)), old);
+    let mut present = old.clone();
+    present["mco"] = facts.clone();
+    assert_eq!(encoded(read::<peripheral::ClockLimits>(present.clone())), present);
+    let mut future_outer = old.clone();
+    future_outer["future_clock_field"] = json!(17);
+    assert_eq!(encoded(read::<peripheral::ClockLimits>(future_outer)), old);
+    assert_eq!(facts.as_object().unwrap().len(), 12);
+    for key in facts.as_object().unwrap().keys() {
+        let mut missing = facts.clone();
+        missing.as_object_mut().unwrap().remove(key);
+        assert!(serde_json::from_value::<peripheral::Mco>(missing).is_err(), "missing {key}");
+        let mut null = facts.clone();
+        null[key] = Value::Null;
+        assert!(serde_json::from_value::<peripheral::Mco>(null).is_err(), "null {key}");
+    }
+    let mut unknown = facts.clone();
+    unknown["waveform_verified"] = json!(true);
+    assert!(serde_json::from_value::<peripheral::Mco>(unknown).is_err());
+    for length in [0,7,9] {
+        let mut invalid = facts.clone();
+        invalid["divisors"] = json!(vec![(0u8,1u16); length]);
+        assert!(serde_json::from_value::<peripheral::Mco>(invalid).is_err());
+    }
+    for (key, value) in [
+        ("disabled_source", json!(256)), ("hclk_source", json!(-1)),
+        ("pclk_source", json!("2")), ("maximum_output_hz", json!(4294967296_u64)),
+        ("supply_mv", json!([2400,65536])), ("temperature_c", json!([-32769,105])),
+        ("maximum_load_pf", json!(65536)), ("gpio_speed", json!(1.0)),
+        ("fmax_condition_duty_percent", json!([45,256])),
+        ("fmax_condition_edge_sum_period_ratio", json!([2])),
+        ("electrical_values_measured", json!(0)),
+        ("divisors", json!([[0,65536],[1,2],[2,8],[3,64],[4,128],[5,256],[6,512],[7,1024]])),
+    ] {
+        let mut invalid = facts.clone();
+        invalid[key] = value;
+        assert!(serde_json::from_value::<peripheral::Mco>(invalid).is_err(), "{key}");
+    }
+    let text = serde_json::to_string(&read::<peripheral::ClockLimits>(present)).unwrap();
+    assert!(text.find("\"lsi_sysclk\"").unwrap() < text.find("\"mco\"").unwrap());
+    let duplicate = serde_json::to_string(&facts).unwrap().replacen("{", "{\"hclk_source\":1,", 1);
+    assert!(serde_json::from_str::<peripheral::Mco>(&duplicate).is_err());
+}

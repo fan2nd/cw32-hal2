@@ -29,6 +29,7 @@ fn main() {
     let i2c = true;
     let serial = uart || spi || i2c;
     let cfgs = [
+        "mco_f030",
         "rcc_hse",
         "rcc_lse",
         "rcc_lse_startup_analog",
@@ -914,6 +915,7 @@ fn main() {
     generate_time_driver(&mut out, time_driver);
     generate_gpio_interrupts(&mut out);
     generate_electrical(&mut out);
+    generate_mco(&mut out, time_driver);
     generate_lvd_ir(&mut out);
     if flash_storage {
         out.push_str(&format!(
@@ -1855,6 +1857,261 @@ fn generate_gpio_interrupts(out: &mut String) {
         impls,
     )
     .unwrap();
+}
+
+// Exact-part MCO admission, independent of family-wide alternate-function lists.
+fn generate_mco(out: &mut String, time_driver: Option<&str>) {
+    use cw32_metapac::metadata::{METADATA, PeripheralRegisters, ir};
+    use std::fmt::Write;
+
+    let qualified: Vec<_> = METADATA
+        .peripherals
+        .iter()
+        .filter_map(|p| {
+            p.clock_limits
+                .as_ref()
+                .and_then(|c| c.mco.as_ref())
+                .map(|m| (p, m))
+        })
+        .collect();
+    assert_eq!(
+        qualified.len(),
+        usize::from(METADATA.name == "CW32F030C8T7")
+    );
+    let Some(&(sysctrl, mco)) = qualified.first() else {
+        return;
+    };
+    assert_eq!((METADATA.name, METADATA.line), ("CW32F030C8T7", "CW32F030"));
+    assert_eq!((sysctrl.name, sysctrl.address), ("SYSCTRL", 0x4001_0000));
+    assert_ne!(time_driver, Some(sysctrl.name));
+    assert_eq!(
+        METADATA
+            .peripherals
+            .iter()
+            .filter(|p| p.name == "SYSCTRL")
+            .count(),
+        1
+    );
+    let sys = sysctrl.registers.as_ref().unwrap();
+    assert_eq!(
+        (sys.kind, sys.version, sys.block),
+        ("sysctrl", "v1", "Sysctrl")
+    );
+    let gpios: Vec<_> = METADATA
+        .peripherals
+        .iter()
+        .filter(|p| p.name == "GPIOA")
+        .collect();
+    assert_eq!(gpios.len(), 1);
+    let gpio = gpios[0];
+    assert_eq!(gpio.address, 0x4800_0000);
+    let regs = gpio.registers.as_ref().unwrap();
+    assert_eq!(
+        (regs.kind, regs.version, regs.block),
+        ("gpio", "v1", "Gpio")
+    );
+    assert_eq!(METADATA.pins.iter().filter(|p| p.name == "PA8").count(), 1);
+    assert!(safe_pin("PA8"));
+    let routes: Vec<_> = sysctrl.pins.iter().filter(|p| p.signal == "MCO").collect();
+    assert_eq!(routes.len(), 1);
+    let route = routes[0];
+    assert_eq!((route.pin, route.signal, route.af), ("PA8", "MCO", Some(4)));
+    assert!(route.adc_mux.is_none() && route.comparator_mux.is_none());
+    // These are the actual reservation maps consulted by Flex::new. None can
+    // claim PA8, even if HSE/LSE is retained from an earlier boot stage.
+    for (signal, pin) in [
+        ("HSE_IN", "PF0"),
+        ("HSE_OUT", "PF1"),
+        ("LSE_IN", "PC14"),
+        ("LSE_OUT", "PC15"),
+    ] {
+        let pins: Vec<_> = sysctrl.pins.iter().filter(|p| p.signal == signal).collect();
+        assert_eq!(pins.len(), 1);
+        assert_eq!((pins[0].pin, pins[0].af), (pin, None));
+    }
+
+    assert_eq!(
+        (mco.disabled_source, mco.hclk_source, mco.pclk_source),
+        (0, 1, 2)
+    );
+    assert_eq!(
+        mco.divisors,
+        &[
+            (0, 1),
+            (1, 2),
+            (2, 8),
+            (3, 64),
+            (4, 128),
+            (5, 256),
+            (6, 512),
+            (7, 1024)
+        ]
+    );
+    assert_eq!(mco.maximum_output_hz, 20_000_000);
+    assert_eq!(mco.supply_mv, (2400, 5500));
+    assert_eq!(mco.temperature_c, (-40, 105));
+    assert_eq!(mco.maximum_load_pf, 50);
+    assert_eq!(mco.gpio_speed, 1);
+    // These are conditions of the unmeasured vendor fmax table, not waveform
+    // properties established by software, cycle bounds, or integer division.
+    assert_eq!(mco.fmax_condition_duty_percent, (45, 55));
+    assert_eq!(mco.fmax_condition_edge_sum_period_ratio, (2, 3));
+    assert!(!mco.electrical_values_measured);
+
+    fn fields(regs: &PeripheralRegisters, name: &str, byte_offset: u32) -> &'static [ir::Field] {
+        let blocks: Vec<_> = regs
+            .ir
+            .blocks
+            .iter()
+            .filter(|b| b.name == regs.block)
+            .collect();
+        assert_eq!(blocks.len(), 1);
+        let items: Vec<_> = blocks[0]
+            .items
+            .iter()
+            .filter(|r| r.name.eq_ignore_ascii_case(name))
+            .collect();
+        assert_eq!(items.len(), 1);
+        let item = items[0];
+        assert_eq!(item.byte_offset, byte_offset);
+        assert!(item.array.is_none());
+        let ir::BlockItemInner::Register(reg) = &item.inner else {
+            panic!("MCO requires a register")
+        };
+        assert_eq!(reg.access, ir::Access::ReadWrite);
+        assert_eq!(reg.bit_size, 32);
+        let sets: Vec<_> = regs
+            .ir
+            .fieldsets
+            .iter()
+            .filter(|f| Some(f.name) == reg.fieldset)
+            .collect();
+        assert_eq!(sets.len(), 1);
+        assert_eq!(sets[0].bit_size, 32);
+        assert!(sets[0].extends.is_none());
+        sets[0].fields
+    }
+    fn field(fields: &[ir::Field], name: &str, bit: u32, width: u32) {
+        let found: Vec<_> = fields
+            .iter()
+            .filter(|f| f.name.eq_ignore_ascii_case(name))
+            .collect();
+        assert_eq!(found.len(), 1);
+        let f = found[0];
+        assert_eq!(f.bit_size, width);
+        assert!(f.array.is_none() && f.enumm.is_none());
+        let ir::BitOffset::Regular(position) = &f.bit_offset else {
+            panic!("MCO requires a linear field")
+        };
+        assert_eq!(position.offset, bit);
+    }
+    let mco_fields = fields(sys, "MCO", 0x70);
+    assert_eq!(mco_fields.len(), 2);
+    field(mco_fields, "SOURCE", 0, 4);
+    field(mco_fields, "DIV", 4, 3);
+    for (name, offset) in [
+        ("DIR", 0x00),
+        ("OPENDRAIN", 0x04),
+        ("SPEED", 0x08),
+        ("PDR", 0x0c),
+        ("PUR", 0x10),
+        ("ANALOG", 0x1c),
+        ("RISEIE", 0x24),
+        ("FALLIE", 0x28),
+        ("HIGHIE", 0x2c),
+        ("LOWIE", 0x30),
+    ] {
+        field(fields(regs, name, offset), "PIN8", 8, 1);
+    }
+    field(fields(regs, "AFRH", 0x14), "AFR8", 0, 4);
+    let lock = fields(regs, "LOCK", 0x3c);
+    assert_eq!(lock.len(), 17);
+    for pin in 0..16 {
+        field(lock, &format!("PIN{pin}"), pin, 1);
+    }
+    field(lock, "KEY", 16, 16);
+    let pads = gpio.gpio.as_ref().unwrap();
+    assert_ne!(pads.output_mask & (1 << 8), 0);
+    assert_ne!(pads.pull_down_mask & (1 << 8), 0);
+    let irq = gpio.gpio_interrupt.as_ref().unwrap();
+    assert!(irq.level_trigger);
+    assert_ne!(irq.serviced_mask & (1 << 8), 0);
+    // Normal per-pin LOCK, Speed1 and the real retained bank gate are required.
+    // No private GPIO policy or synthetic peripheral is emitted for MCO.
+    let control = gpio.rcc_control.as_ref().unwrap();
+    assert_eq!((control.controller, control.bus_clock), ("SYSCTRL", "HCLK"));
+    assert_eq!(
+        (control.enable.register, control.enable.field),
+        ("ahben", "gpioa")
+    );
+    assert!(control.enable_active_value && control.enable_write_key.is_none());
+    let reset = control.reset.as_ref().unwrap();
+    assert_eq!((reset.register, reset.field), ("ahbrst", "gpioa"));
+    assert_eq!(control.reset_asserted_value, Some(false));
+    assert!(control.shared_enable_group.is_none() && control.shared_reset_group.is_none());
+    field(fields(sys, "AHBEN", 0x30), "GPIOA", 4, 1);
+    field(fields(sys, "AHBRST", 0x40), "GPIOA", 4, 1);
+    let gate = gpio.rcc.as_ref().unwrap();
+    assert_eq!(gate.bus_clock, "HCLK");
+    assert_eq!(gate.enable.as_ref(), Some(&control.enable));
+    assert_eq!(gate.reset.as_ref(), Some(reset));
+
+    writeln!(
+        out,
+        "pub(crate) const MCO_DISABLED_SOURCE: u8 = {};",
+        mco.disabled_source
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const MCO_HCLK_SOURCE: u8 = {};",
+        mco.hclk_source
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const MCO_PCLK_SOURCE: u8 = {};",
+        mco.pclk_source
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const MCO_DIVISORS: [(u8, u16); 8] = {:?};",
+        mco.divisors
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const MCO_MAXIMUM_OUTPUT_HZ: u32 = {};",
+        mco.maximum_output_hz
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const MCO_SUPPLY_MV: (u16, u16) = {:?};",
+        mco.supply_mv
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const MCO_TEMPERATURE_C: (i16, i16) = {:?};",
+        mco.temperature_c
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const MCO_MAXIMUM_LOAD_PF: u16 = {};",
+        mco.maximum_load_pf
+    )
+    .unwrap();
+    writeln!(
+        out,
+        "pub(crate) const MCO_GPIO_SPEED: u8 = {};",
+        mco.gpio_speed
+    )
+    .unwrap();
+    writeln!(out, "pub(crate) const MCO_AF: u8 = {};", route.af.unwrap()).unwrap();
+    println!("cargo:rustc-cfg=mco_f030");
 }
 
 // Selected chip facts are data, not register-version selection logic.
@@ -4156,6 +4413,13 @@ fn generate_rcc(out: &mut String, time_driver: Option<&str>) {
         let allow_disable = (independently_owned
             || matches!(kind, "crc" | "cordic" | "eau" | "aes" | "trng"))
             && !shared_enable;
+        if METADATA.name == "CW32F030C8T7" && peripheral.name == "GPIOA" {
+            // MCO relies on this actual classic Flex gate policy. Once is a
+            // barrier, not an acknowledgement poll; the leaf checks the gate.
+            assert_eq!(version, "v1");
+            assert_eq!((enable_readback, disable_readback, reset_readback), ("Once", "None", false));
+            assert!(!allow_reset && !allow_disable);
+        }
         let bus = match control.bus_clock {
             "PCLK" => "pclk",
             "HCLK" => "hclk",

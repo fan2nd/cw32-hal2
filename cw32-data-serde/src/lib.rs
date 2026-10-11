@@ -453,6 +453,29 @@ pub mod chip {
                 }
             }
             record! {
+                /// Exact-part, own-source qualified MCO electrical and register facts.
+                #[serde(deny_unknown_fields)]
+                Mco {
+                    pub disabled_source: u8,
+                    pub hclk_source: u8,
+                    pub pclk_source: u8,
+                    /// Full hardware code-to-divisor pairs; the static borrowed fixed array matches the existing PLL array projection convention.
+                    pub divisors: [(u8, u16); 8],
+                    /// Conservative HAL MCO qualification ceiling under the documented board/source/waveform conditions; not an unconditional silicon maximum.
+                    pub maximum_output_hz: u32,
+                    pub supply_mv: (u16, u16),
+                    pub temperature_c: (i16, i16),
+                    pub maximum_load_pf: u16,
+                    pub gpio_speed: u8,
+                    /// Condition in the loaded-I/O vendor fmax definition, not an output guarantee.
+                    pub fmax_condition_duty_percent: (u8, u8),
+                    /// Maximum (tr+tf)/T in the loaded-I/O vendor fmax definition, not proven by rate bounds.
+                    pub fmax_condition_edge_sum_period_ratio: (u8, u8),
+                    /// False describes this exact vendor datasheet table characterization. It does not assert whether an application board has been measured.
+                    pub electrical_values_measured: bool,
+                }
+            }
+            record! {
                 ClockLimits {
                     pub hsi_frequency_hz: u32,
                     pub hsi_error_percent: u32,
@@ -480,6 +503,8 @@ pub mod chip {
                     pub pll: Option<PllLimits>,
                     #[serde(default, skip_serializing_if = "Option::is_none")]
                     pub lsi_sysclk: Option<LsiSysclk>,
+                    #[serde(default, skip_serializing_if = "Option::is_none")]
+                    pub mco: Option<Mco>,
                 }
             }
             record! {

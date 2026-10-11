@@ -1661,6 +1661,28 @@ functions:
       - path: docs/qualified-l052-lse.md
       - path: docs/qualified-l083-lse.md
       - path: cw32-data/lse-qualified.yaml
+    - id: owned_bus_clock_output
+      status: partial
+      scope: Immutable owned HCLK/PCLK MCO on exactly CW32F030C8T7 PA8 AF4; real SYSCTRL and PA8 owners, all eight own-documented divisors.
+      implemented_families: [CW32F030]
+      pins_all: [MCO]
+      registers_any: [MCO]
+      limitations:
+      - CW32F030C8T7 LQFP48 pin29 is the sole qualified selection. Generic F030/C8, other F030 packages, A030 and F020 gain no API; absent qualification is not silicon absence.
+      - Admission requires published initialized cycle-qualified bus bounds and explicit ordered source-compatible board voltage/ambient/load declarations. Frozen Clocks does not retain the earlier init declaration; caller consistency remains required.
+      - Exact divided maximum is at most 20 MHz, with 2.4..5.5 V, -40..105 C and 0 < total load <= 50 pF. Rate-only PLL/LSI roots fail even at a low divided rate; source conditions can narrow the admitted interval.
+      - The vendor fmax table is unmeasured design/simulation data conditioned on loaded 45..55 percent duty and tr+tf <= 2T/3. Rate admission and integer division do not prove waveform or receiver suitability; board qualification remains required.
+      - GPIOA whole-bank enable can advance other pins and armed events before success or error. PA8 stays unlocked, prior function is not restored and shared GPIOA stays enabled. Cleanup booleans are bounded observations; Drop has no acknowledgement result and forget may leave output active.
+      - Real SYSCTRL excludes simultaneous live safe CalendarClock/LsiClock/LseClock and an Rtc retaining a clock; a forgotten reborrow can leave hardware active after later token reuse.
+      - No source/divider setter, oscillator/system/bus-clock transition, raw oscillator or PLL output, sleep/fault recovery or hardware-validation claim. Nominal/rounded getters are not measurements; duration getters panic for unrepresentable u64 nanoseconds.
+      - Main five-library/three-ELF verification passed with no warnings, plus generation, the full 54-selection projection comparison, 19 schema contracts and eight finite source/data gates. Independent main acceptance is recorded in the accompanying reviews. At main acceptance clean had not run; final-package completion requires a separate clean one-library/one-HCLK-ELF receipt. No aggregate recipe or hardware execution was run.
+      evidence:
+      - path: embassy-cw32/src/rcc/mco.rs
+        anchor: pub struct Mco
+      - path: cw32-data/mco-qualified.yaml
+      - path: docs/f030-owned-mco.md
+      - path: examples/mco/src/bin/hclk.rs
+      - path: examples/mco/src/bin/pclk.rs
     - id: power_sleep_wakeup
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

@@ -1,0 +1,963 @@
+{
+  "schema_version": 1,
+  "stage": "Stage76",
+  "reviewed_at_utc": "2026-10-11T03:13:13.310920+00:00",
+  "review_kind": "independent_actual_runtime_source_and_main_compile_link_artifact_acceptance",
+  "status": "accepted_main_runtime_clean_replay_not_run",
+  "intended_project_path": "docs/f030-mco-runtime-acceptance.json",
+  "scope": "Exact CW32F030C8T7 owned HCLK/PCLK MCO on PA8; frozen source review plus eight completed main build rows. This is not a clean replay or hardware acceptance.",
+  "independent_review_passed": true,
+  "blocking_findings": [],
+  "path_convention": "Source paths are project-relative. external: labels identify separately retained review or verification artifacts; no private filesystem roots are required.",
+  "baseline": {
+    "publication_commit": "6181c0dab7756f3c97041f4ba914c1b5d5ab908a",
+    "basis": "Accepted Stage75 export and bound independent design review."
+  },
+  "source_acceptance": {
+    "receipt": {
+      "artifact": "external:runtime-independent-review/source-receipt.json",
+      "sha256": "e38522c670b7a7ada852cd51c7fb1979cb208a1ed817562f97cc6e2156b1b7bd",
+      "bytes": 8705
+    },
+    "review_document": {
+      "artifact": "external:runtime-independent-review/review.md",
+      "sha256": "7cce2534345e655bf74a50b9d6dc93586fc114f2330385853c891bceee557a29",
+      "bytes": 11173
+    },
+    "implementation_manifest": {
+      "artifact": "external:runtime-implementation/manifest.json",
+      "sha256": "ac6cd8bc043d3cf647527b9afe56a3f516bbd1a23a478a4a6d22a2c22fca9bf2",
+      "bytes": 1630
+    },
+    "implementation_patch": {
+      "artifact": "external:runtime-implementation/runtime.patch",
+      "sha256": "7c8663215d8a35df4b4c69f6eeef725a0cc238feee828d74a4aef4b564d0ef15",
+      "bytes": 27845
+    },
+    "four_runtime_paths": [
+      {
+        "artifact": "embassy-cw32/src/rcc/mco.rs",
+        "sha256": "b458cdd8bd927fe01890acd888ecc42e4a1fb1375640ad4d7aecd125550ac597",
+        "bytes": 14921
+      },
+      {
+        "artifact": "embassy-cw32/src/rcc/mod.rs",
+        "sha256": "8ebb82bd2c1f7d411400c5fc6562a6ba64381abb19c6d2f7ff64a3606d755633",
+        "bytes": 6719
+      },
+      {
+        "artifact": "embassy-cw32/src/rcc/bounds.rs",
+        "sha256": "a686584611038c3dd1069585006107c879d37e862e3f635d6cddad5b8359e9a1",
+        "bytes": 13434
+      },
+      {
+        "artifact": "embassy-cw32/build.rs",
+        "sha256": "358f455dfc71ab3af24bdde93c52b10fc7353b4e59c030c454f4b5ecb17b4c6f",
+        "bytes": 274768
+      }
+    ],
+    "all_four_still_match_source_review": true,
+    "supporting_hal_and_pinned_dependency_sources_still_match": true,
+    "hal_crate_scope": "Exactly four changed HAL crate files versus accepted Stage75; no unrelated HAL source edit.",
+    "bounds_fix": "Literal approved patch: two checked u128-to-u64 duration conversions and overflow-panic documentation; formulas, rounding and all representable results retained.",
+    "contract_review": [
+      "Published initialized HCLK/PCLK exact source bounds, cycle qualification and pure-admission error ordering",
+      "Explicit board conditions, source-envelope compatibility and separate conditional GPIO electrical policy",
+      "Reserved MCO state; no takeover of an inherited active source",
+      "Whole GPIOA activation and per-pin lock, interrupt-enable and configuration effects",
+      "Actual Once gate read barrier, complete full-read PA8 predicates and exact reservation-map assumptions",
+      "Bounded programming sequence, MCO-before-pin error priority, cleanup after the final local Flex destructor",
+      "Drop, forget, reborrow and actual retained RTC SYSCTRL exclusion with documented lifetime limits",
+      "All reachable public ClockBounds getters, checked durations and private ingress/domain bounds",
+      "Generated exact-part qualification, data-derived constants, typed PAC geometry and access"
+    ],
+    "electrical_limits": {
+      "maximum_output_hz": 20000000,
+      "supply_mv": [
+        2400,
+        5500
+      ],
+      "temperature_c": [
+        -40,
+        105
+      ],
+      "maximum_load_pf": 50,
+      "gpio_speed": 1,
+      "measured": false,
+      "required_duty_percent": [
+        45,
+        55
+      ],
+      "required_edge_sum_to_period_max_ratio": [
+        2,
+        3
+      ]
+    },
+    "electrical_meaning": "Board and source declarations remain conditional. Rate admission and cycle bounds do not establish pad duty, rise/fall, first/last pulses, receiver qualification, phase continuity or live source health."
+  },
+  "frozen_main_source": {
+    "archive": {
+      "external_artifact": "external:main-source.zip",
+      "sha256": "c903a350bfe38b1c3a1d122e4e1a75112a68212c690e95799842a198dccedcc6",
+      "bytes": 5095537
+    },
+    "manifest": {
+      "artifact": "external:source-manifest.json",
+      "sha256": "93922bced2c8693eb3eee5d2cb2805a3c232a4390010c3451419b41c6609a493",
+      "bytes": 326577
+    },
+    "file_count": 1325,
+    "executable_file_count": 28,
+    "snapshots": [
+      {
+        "artifact": "external:verification/main-v1/source-before.json",
+        "sha256": "ec88d3d794b6204a0929d50c9ed958691df23b1fef2c1af673a671d7d4b4c261",
+        "bytes": 143276
+      },
+      {
+        "artifact": "external:verification/main-v1/source-after.json",
+        "sha256": "ec88d3d794b6204a0929d50c9ed958691df23b1fef2c1af673a671d7d4b4c261",
+        "bytes": 143276
+      },
+      {
+        "artifact": "external:verification/main-v1/source-modes.json",
+        "sha256": "45df39b4b9d8fef589a102b3d73523e483f32cc138166de67f5e12d5313dc0cc",
+        "bytes": 66426
+      }
+    ],
+    "before_equals_after_equals_manifest": true,
+    "all_current_file_hashes_sizes_modes_and_git_blob_ids_match": true,
+    "zip_inventory_hashes_and_modes_match_manifest": true,
+    "independent_binding": {
+      "artifact": "external:runtime-independent-review/main-identity-binding.json",
+      "sha256": "8ae3f3db7cd093aeb6dea016faf2b608dda54a2ebb128b27aba770faf67647ad",
+      "bytes": 1529
+    },
+    "snapshot_scope": "The frozen main source ZIP precedes installation of this acceptance document. Adding this review document is not retroactively described as part of the build input."
+  },
+  "generated_and_schema_context": {
+    "generation_receipt": {
+      "artifact": "external:verification/generation-v1.json",
+      "sha256": "55850dbeb018d9e184863afb85116e54385b7230a891d6cdab743b4321539182",
+      "bytes": 189
+    },
+    "generation_log": {
+      "artifact": "external:verification/generation-v1.log",
+      "sha256": "267d51a405dd33a720b12d971443510e34daec590677d7cf57326d5a2119da19",
+      "bytes": 9334
+    },
+    "generation_command": [
+      "./d",
+      "gen-all"
+    ],
+    "generation_exit": 0,
+    "full_generated_comparison": {
+      "artifact": "external:verification/projection-comparison-v1.json",
+      "sha256": "fc861c44ef5df4d292436dadd895b224b599ac749605d7df265f749cd06771f7",
+      "bytes": 392261
+    },
+    "independent_metadata_review": {
+      "artifact": "external:metadata-independent-review/main-generated-delta-review.json",
+      "sha256": "d6a031397b1f99a653ee0f0ed674be3d41748233820117c5ee74db5c3aa5134d",
+      "bytes": 24032
+    },
+    "generated_comparison_summary": {
+      "baseline_generated_files": 904,
+      "candidate_generated_files": 905,
+      "chip_jsons_checked": 54,
+      "chip_jsons_byte_identical": 53,
+      "chip_jsons_exact_bounded_delta": 1,
+      "other_generated_data_files_byte_identical": 362,
+      "prior_rust_metadata_body_counterparts_full_retained_bytes_equal": 38,
+      "new_distinct_rust_metadata_body_exact_bounded_delta": 1,
+      "wrappers_checked": 54,
+      "wrappers_only_predicted_include_changed": 39,
+      "wrappers_byte_identical": 15,
+      "static_metadata_equals_independently_reviewed_template": true,
+      "other_generated_files_byte_identical": 757,
+      "all_54_chip_body_resolutions_checked": true,
+      "inputs_stable_during_comparison": true
+    },
+    "all_905_current_generated_paths_hashes_and_sizes_match_comparison_inventory": true,
+    "current_catalog_count": 54,
+    "exact_mco_qualified_parts": [
+      "CW32F030C8T7"
+    ],
+    "other_53_mco_facts_absent": true,
+    "exact_route": {
+      "owner": "SYSCTRL",
+      "pin": "PA8",
+      "signal": "MCO",
+      "af": 4
+    },
+    "runtime_used_sysctrl_v1_and_gpio_v1_pac_bytes_equal_accepted_stage75": true,
+    "schema_static_acceptance": {
+      "artifact": "external:schema-independent-review/f030-mco-schema-acceptance.json",
+      "sha256": "6b2ad4f47877694ccd3b22cf5ec23a0ece5b3d44913762f7c65a7785e3e2368f",
+      "bytes": 17072
+    },
+    "schema_execution_supplement": {
+      "artifact": "external:schema-independent-review/schema-test-supplement.json",
+      "sha256": "f5212f9a199419e8cf664c31930adfb33d0b60224ecf262b22493f31a15fcac3",
+      "bytes": 7744
+    },
+    "schema_outcome": {
+      "initial_exit": 101,
+      "initial_passed": 18,
+      "initial_failed": 1,
+      "reason": "Generated chip directory was absent before generation; the original failure is preserved.",
+      "rerun_exit": 0,
+      "rerun_passed": 19,
+      "rerun_failed": 0,
+      "same_model_and_test_source_hashes": true
+    },
+    "legacy_route_gate": {
+      "initial_receipts": {
+        "artifact": "external:verification/main-data-v1/commands.json",
+        "sha256": "c4838c0ffaa0d8086c1747cfb42fc5ab9b8060fa7117a88d8fc58f2961c5c92c",
+        "bytes": 900
+      },
+      "initial_log": {
+        "artifact": "external:verification/main-data-v1/metadata-contracts.log",
+        "sha256": "7c4328d670d2cbfe6e210bf877be7d424463cbddb1556a81c8da65a15a0c24fa",
+        "bytes": 11631
+      },
+      "initial_exit": 1,
+      "initial_errors": 7,
+      "reviewed_repair": {
+        "artifact": "external:metadata-independent-review/legacy-output-proposal-v2-review.json",
+        "sha256": "3af97a771e0e6889a7055b5dd06e793966775a413fab00badaf5e7335b932e02",
+        "bytes": 2052
+      },
+      "installed_repair": {
+        "artifact": "external:metadata-implementation/legacy-clock-output-proposal/applied.json",
+        "sha256": "a78dab9c765897953496cabc3188ebfb57bc523942986dc718eb70dcb6e88515",
+        "bytes": 365
+      },
+      "successful_receipt": {
+        "artifact": "external:verification/metadata-contracts-v2/receipt.json",
+        "sha256": "431df34db4d318a24ddec048971b8e9e3a785f8da1f1e5849086d1a1d7f3bad0",
+        "bytes": 282
+      },
+      "successful_log": {
+        "artifact": "external:verification/metadata-contracts-v2/run.log",
+        "sha256": "93eed79c6e818f06bc61574af789542a123a567df640312163d1167f2de6cd20",
+        "bytes": 3190
+      },
+      "rerun_exit": 0,
+      "rerun_tests_passed": 22,
+      "current_checker_matches_reviewed_and_tested_hash": true,
+      "meaning": "Only the independently reviewed legacy L012/L083 expected-output-route repair resolves the earlier seven errors. Original route equality and exact MCO checks remain; old failures are not relabeled as passes.",
+      "stale_review_note": "The outstanding seven-error note in the earlier generated-delta review is superseded by this separately bound repair and successful rerun."
+    },
+    "final_explicit_generation": {
+      "receipt": {
+        "artifact": "external:verification/generation-v3-final-main.json",
+        "sha256": "0a23521c02dc7996a2de3d64f5b6ed689b94e5b26ca0047a91d998fdd641267d",
+        "bytes": 306
+      },
+      "log": {
+        "artifact": "external:verification/generation-v3-final-main.log",
+        "sha256": "319528f13775787b41d9bee2cce16cced2c908ae6111533fb654dd14d6a586fc",
+        "bytes": 6598
+      },
+      "supplement": {
+        "artifact": "external:metadata-implementation/yaml-format/explicit-generation-supplement.json",
+        "sha256": "754d053a571ca7e5e489d00d437c117140fdb13c480aaaf67233dcb8212d9928",
+        "bytes": 567
+      },
+      "preserved_original_format_proof": {
+        "artifact": "external:metadata-implementation/yaml-format/proof.json",
+        "sha256": "d89c08781482df1dae83b886a986a8d2452bc1f6c6f2599ccac8ee3e3c6d9000",
+        "bytes": 403
+      },
+      "exit": 0,
+      "all_905_paths_hashes_and_sizes_rechecked_equal": true,
+      "frozen_main_source_hashes_and_modes_rechecked_equal": true,
+      "explanation": "The prior final-source shell wrapper returned its last comparison status. This separately captured generator process exit is 0. The extra generation changed no frozen source or generated bytes and added no ARM build row; original accepted metadata records are preserved."
+    }
+  },
+  "main_compile_link": {
+    "commands_receipt": {
+      "artifact": "external:verification/main-v1/commands.json",
+      "sha256": "a43078fa87a15f64c85794d1e7c236dcd7f131e09f04c91228f70e8bb055ff87",
+      "bytes": 34101
+    },
+    "summary_receipt": {
+      "artifact": "external:verification/main-v1/summary.json",
+      "sha256": "061888437e8817cfddc586a2d0140dd776c4679dc6c83d43161ac0fb5da77fd0",
+      "bytes": 288
+    },
+    "frozen_plan": {
+      "artifact": "external:verification/build-plan.json",
+      "sha256": "1ebb140c97e233dadc902962ce14f5ea4945685f5beb72b6425aef8cd2299b92",
+      "bytes": 6750
+    },
+    "independent_artifact_binding": {
+      "artifact": "external:runtime-independent-review/main-artifact-binding.json",
+      "sha256": "34becf3340b5ef38ec13f6e5f88300dd92fd74c76689862026b2ede9c4ff714c",
+      "bytes": 20313
+    },
+    "row_count": 8,
+    "library_count": 5,
+    "elf_count": 3,
+    "all_exit_zero": true,
+    "compiler_warning_count": 0,
+    "extra_build_rows_added_by_review": 0,
+    "command_match": "Each command equals its frozen main row with only the machine-readable diagnostics option added.",
+    "artifact_verification": "All copied bytes and hashes match recorded artifacts and actual compiler dependency/executable paths. Five rlibs contain ARM ELF32 relocatable objects and Rust metadata. Three firmware files are ARM ELF32 EABI5 executables with a 192-byte vector table, Thumb entry 0xC1, initial stack 0x20002000, 64 KiB FLASH/8 KiB RAM range-correct loads, and no undefined global symbols.",
+    "cfg_verification": "Actual build-script cfg lists and retained OUT_DIR bytes match the receipts. MCO cfg and ten constants exist only for exact CW32F030C8T7 rows; generic CW32F030, CW32A030C8T7 and true CW32F020K6U7 controls omit them.",
+    "rows": [
+      {
+        "name": "01-main-rlib-cw32f030c8t7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7,rt,defmt",
+          "--release",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "profile": "release",
+        "features": [
+          "cw32f030c8t7",
+          "rt",
+          "defmt"
+        ],
+        "exit": 0,
+        "compiler_log": {
+          "artifact": "external:verification/main-v1/01-main-rlib-cw32f030c8t7.log",
+          "sha256": "fa8b4540613ac6acf8837aad6c711c25845814370fc783927a496708712e12e3",
+          "bytes": 91870
+        },
+        "build_finished_success": true,
+        "compiler_warning_or_error_count": 0,
+        "mco_f030_cfg_present": true,
+        "mco_constants_count": 10,
+        "generated_hal": [
+          {
+            "artifact": "external:verification/main-v1/01-main-rlib-cw32f030c8t7-out-_generated.rs",
+            "sha256": "c58746f69f4c39c8f53a50d5eebbf29d6c7b6c75e982e4e767fb324911754ecf",
+            "bytes": 72051
+          },
+          {
+            "artifact": "external:verification/main-v1/01-main-rlib-cw32f030c8t7-out-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ],
+        "artifacts": [
+          {
+            "artifact": "external:verification/main-v1/01-main-rlib-cw32f030c8t7.rlib",
+            "sha256": "bd42bb8afb2d199acd5f74b4af53d012a9c01d3ca4b709c2efc43aebf9ce5680",
+            "bytes": 6829746,
+            "format": "ar",
+            "elf32_arm_relocatable_objects": 12,
+            "contains_rust_metadata": true,
+            "members": 14,
+            "matches_compiler_dependency_artifact": true
+          }
+        ]
+      },
+      {
+        "name": "02-main-rlib-cw32f030c8t7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7,rt,defmt,time-driver-gtim1",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "profile": "debug",
+        "features": [
+          "cw32f030c8t7",
+          "rt",
+          "defmt",
+          "time-driver-gtim1"
+        ],
+        "exit": 0,
+        "compiler_log": {
+          "artifact": "external:verification/main-v1/02-main-rlib-cw32f030c8t7.log",
+          "sha256": "b0e00dbcb60054aa2726138195479f0247a01d474635f62cc41224783a16b320",
+          "bytes": 101747
+        },
+        "build_finished_success": true,
+        "compiler_warning_or_error_count": 0,
+        "mco_f030_cfg_present": true,
+        "mco_constants_count": 10,
+        "generated_hal": [
+          {
+            "artifact": "external:verification/main-v1/02-main-rlib-cw32f030c8t7-out-_generated.rs",
+            "sha256": "e726b2da92e7ccdafa53425886e86d062707aa8b91dfeed4deb1e58ed93071ce",
+            "bytes": 71220
+          },
+          {
+            "artifact": "external:verification/main-v1/02-main-rlib-cw32f030c8t7-out-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ],
+        "artifacts": [
+          {
+            "artifact": "external:verification/main-v1/02-main-rlib-cw32f030c8t7.rlib",
+            "sha256": "499e82a44fcad9e0cf492ae22d7103bcfa723d93726e816cb8bc42aebd6fb105",
+            "bytes": 12582860,
+            "format": "ar",
+            "elf32_arm_relocatable_objects": 171,
+            "contains_rust_metadata": true,
+            "members": 173,
+            "matches_compiler_dependency_artifact": true
+          }
+        ]
+      },
+      {
+        "name": "03-main-rlib-cw32f030",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030,rt,defmt",
+          "--release",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "profile": "release",
+        "features": [
+          "cw32f030",
+          "rt",
+          "defmt"
+        ],
+        "exit": 0,
+        "compiler_log": {
+          "artifact": "external:verification/main-v1/03-main-rlib-cw32f030.log",
+          "sha256": "00917550ed5e4171be1d7f591c8819071223587acb78af2ac50ca98a213f0849",
+          "bytes": 90025
+        },
+        "build_finished_success": true,
+        "compiler_warning_or_error_count": 0,
+        "mco_f030_cfg_present": false,
+        "mco_constants_count": 0,
+        "generated_hal": [
+          {
+            "artifact": "external:verification/main-v1/03-main-rlib-cw32f030-out-_generated.rs",
+            "sha256": "3cbd4d78a673142f6e8a1079a23bc771d89cb7531db27e86ac6b79bc09e092c8",
+            "bytes": 53823
+          },
+          {
+            "artifact": "external:verification/main-v1/03-main-rlib-cw32f030-out-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ],
+        "artifacts": [
+          {
+            "artifact": "external:verification/main-v1/03-main-rlib-cw32f030.rlib",
+            "sha256": "9585211e76bfde66147e15d4d6ddbdb8274206e703e4e06b28cb6f7ea2f999d4",
+            "bytes": 6060954,
+            "format": "ar",
+            "elf32_arm_relocatable_objects": 11,
+            "contains_rust_metadata": true,
+            "members": 13,
+            "matches_compiler_dependency_artifact": true
+          }
+        ]
+      },
+      {
+        "name": "04-main-rlib-cw32a030c8t7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32a030c8t7,rt,defmt",
+          "--release",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "profile": "release",
+        "features": [
+          "cw32a030c8t7",
+          "rt",
+          "defmt"
+        ],
+        "exit": 0,
+        "compiler_log": {
+          "artifact": "external:verification/main-v1/04-main-rlib-cw32a030c8t7.log",
+          "sha256": "fe212d27367d4ab2b97a91b3ff3df9fa19b5c26979985fbfbfe6bb4da02d5493",
+          "bytes": 90083
+        },
+        "build_finished_success": true,
+        "compiler_warning_or_error_count": 0,
+        "mco_f030_cfg_present": false,
+        "mco_constants_count": 0,
+        "generated_hal": [
+          {
+            "artifact": "external:verification/main-v1/04-main-rlib-cw32a030c8t7-out-_generated.rs",
+            "sha256": "7449e27b2eac3f1d75556c6d271839285ccdb367df95ec96220f345d15e0744d",
+            "bytes": 71499
+          },
+          {
+            "artifact": "external:verification/main-v1/04-main-rlib-cw32a030c8t7-out-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ],
+        "artifacts": [
+          {
+            "artifact": "external:verification/main-v1/04-main-rlib-cw32a030c8t7.rlib",
+            "sha256": "1b4312ab204cc5a3f523a0a4436989c286101dc273b954a167d1809f120d2d9b",
+            "bytes": 6723942,
+            "format": "ar",
+            "elf32_arm_relocatable_objects": 12,
+            "contains_rust_metadata": true,
+            "members": 14,
+            "matches_compiler_dependency_artifact": true
+          }
+        ]
+      },
+      {
+        "name": "05-main-rlib-cw32f020k6u7",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f020k6u7,rt,defmt",
+          "--release",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "profile": "release",
+        "features": [
+          "cw32f020k6u7",
+          "rt",
+          "defmt"
+        ],
+        "exit": 0,
+        "compiler_log": {
+          "artifact": "external:verification/main-v1/05-main-rlib-cw32f020k6u7.log",
+          "sha256": "b261c68eb36834157324102174358a4389d88c19677649165daaa0eecf651928",
+          "bytes": 90100
+        },
+        "build_finished_success": true,
+        "compiler_warning_or_error_count": 0,
+        "mco_f030_cfg_present": false,
+        "mco_constants_count": 0,
+        "generated_hal": [
+          {
+            "artifact": "external:verification/main-v1/05-main-rlib-cw32f020k6u7-out-_generated.rs",
+            "sha256": "c28c5b7c3b1e79aaa3bd68235795433c02fae7c061829f471a4a073b9fc71b9d",
+            "bytes": 53471
+          },
+          {
+            "artifact": "external:verification/main-v1/05-main-rlib-cw32f020k6u7-out-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ],
+        "artifacts": [
+          {
+            "artifact": "external:verification/main-v1/05-main-rlib-cw32f020k6u7.rlib",
+            "sha256": "ea76f7079d5e42ab95f0f94b4cbf72fc834181048a8ac7f125b04a7f7424f0e4",
+            "bytes": 5365902,
+            "format": "ar",
+            "elf32_arm_relocatable_objects": 9,
+            "contains_rust_metadata": true,
+            "members": 11,
+            "matches_compiler_dependency_artifact": true
+          }
+        ]
+      },
+      {
+        "name": "06-main-elf-cw32f030c8t7-hclk",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "examples/mco/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7",
+          "--release",
+          "--bin",
+          "hclk"
+        ],
+        "profile": "release",
+        "features": [
+          "cw32f030c8t7"
+        ],
+        "exit": 0,
+        "compiler_log": {
+          "artifact": "external:verification/main-v1/06-main-elf-cw32f030c8t7-hclk.log",
+          "sha256": "e8ebd8804b632188e141023afc1a2fa18793a6c905e7093ffef2d3e00207891e",
+          "bytes": 84523
+        },
+        "build_finished_success": true,
+        "compiler_warning_or_error_count": 0,
+        "mco_f030_cfg_present": true,
+        "mco_constants_count": 10,
+        "generated_hal": [
+          {
+            "artifact": "external:verification/main-v1/06-main-elf-cw32f030c8t7-hclk-out-_generated.rs",
+            "sha256": "c58746f69f4c39c8f53a50d5eebbf29d6c7b6c75e982e4e767fb324911754ecf",
+            "bytes": 72051
+          },
+          {
+            "artifact": "external:verification/main-v1/06-main-elf-cw32f030c8t7-hclk-out-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ],
+        "artifacts": [
+          {
+            "artifact": "external:verification/main-v1/06-main-elf-cw32f030c8t7-hclk-hclk.elf",
+            "sha256": "83e4a20ecd0fabaa959b5fc9a123acf50075a0c26bb5f1c295a3c2122a68d17b",
+            "bytes": 209756,
+            "class": "ELF32",
+            "endianness": "little",
+            "machine": "ARM",
+            "type": "EXEC",
+            "eabi_version": 5,
+            "entry": 193,
+            "stack": 536879104,
+            "vector_bytes": 192,
+            "text_bytes": 21060,
+            "load_segments": [
+              {
+                "offset": 65536,
+                "vaddr": 0,
+                "paddr": 0,
+                "filesz": 192,
+                "memsz": 192,
+                "flags": 4
+              },
+              {
+                "offset": 65728,
+                "vaddr": 192,
+                "paddr": 192,
+                "filesz": 21060,
+                "memsz": 21060,
+                "flags": 5
+              },
+              {
+                "offset": 86788,
+                "vaddr": 21252,
+                "paddr": 21252,
+                "filesz": 668,
+                "memsz": 668,
+                "flags": 4
+              },
+              {
+                "offset": 131072,
+                "vaddr": 536870912,
+                "paddr": 21920,
+                "filesz": 220,
+                "memsz": 220,
+                "flags": 6
+              },
+              {
+                "offset": 196828,
+                "vaddr": 536871132,
+                "paddr": 536871132,
+                "filesz": 0,
+                "memsz": 12,
+                "flags": 6
+              }
+            ],
+            "undefined_global_symbols": [],
+            "flash_bytes": 65536,
+            "ram_bytes": 8192,
+            "matches_compiler_executable_artifact": true
+          }
+        ]
+      },
+      {
+        "name": "07-main-elf-cw32f030c8t7-pclk",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "examples/mco/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7",
+          "--release",
+          "--bin",
+          "pclk"
+        ],
+        "profile": "release",
+        "features": [
+          "cw32f030c8t7"
+        ],
+        "exit": 0,
+        "compiler_log": {
+          "artifact": "external:verification/main-v1/07-main-elf-cw32f030c8t7-pclk.log",
+          "sha256": "1d2e5db72723ff88a9aeaa9be9009b44d46d93a684f0261892e8b4d4915f598f",
+          "bytes": 82693
+        },
+        "build_finished_success": true,
+        "compiler_warning_or_error_count": 0,
+        "mco_f030_cfg_present": true,
+        "mco_constants_count": 10,
+        "generated_hal": [
+          {
+            "artifact": "external:verification/main-v1/07-main-elf-cw32f030c8t7-pclk-out-_generated.rs",
+            "sha256": "c58746f69f4c39c8f53a50d5eebbf29d6c7b6c75e982e4e767fb324911754ecf",
+            "bytes": 72051
+          },
+          {
+            "artifact": "external:verification/main-v1/07-main-elf-cw32f030c8t7-pclk-out-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ],
+        "artifacts": [
+          {
+            "artifact": "external:verification/main-v1/07-main-elf-cw32f030c8t7-pclk-pclk.elf",
+            "sha256": "be46f0d98e00c37a0de0986a176cb3136e17fc632c6b107cea4648a998ddc3cf",
+            "bytes": 209756,
+            "class": "ELF32",
+            "endianness": "little",
+            "machine": "ARM",
+            "type": "EXEC",
+            "eabi_version": 5,
+            "entry": 193,
+            "stack": 536879104,
+            "vector_bytes": 192,
+            "text_bytes": 21060,
+            "load_segments": [
+              {
+                "offset": 65536,
+                "vaddr": 0,
+                "paddr": 0,
+                "filesz": 192,
+                "memsz": 192,
+                "flags": 4
+              },
+              {
+                "offset": 65728,
+                "vaddr": 192,
+                "paddr": 192,
+                "filesz": 21060,
+                "memsz": 21060,
+                "flags": 5
+              },
+              {
+                "offset": 86788,
+                "vaddr": 21252,
+                "paddr": 21252,
+                "filesz": 668,
+                "memsz": 668,
+                "flags": 4
+              },
+              {
+                "offset": 131072,
+                "vaddr": 536870912,
+                "paddr": 21920,
+                "filesz": 220,
+                "memsz": 220,
+                "flags": 6
+              },
+              {
+                "offset": 196828,
+                "vaddr": 536871132,
+                "paddr": 536871132,
+                "filesz": 0,
+                "memsz": 12,
+                "flags": 6
+              }
+            ],
+            "undefined_global_symbols": [],
+            "flash_bytes": 65536,
+            "ram_bytes": 8192,
+            "matches_compiler_executable_artifact": true
+          }
+        ]
+      },
+      {
+        "name": "08-main-elf-cw32f030c8t7-preserve_calendar",
+        "command": [
+          "cargo",
+          "build",
+          "--message-format=json-render-diagnostics",
+          "--locked",
+          "--manifest-path",
+          "examples/rtc-calendar/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7",
+          "--release",
+          "--bin",
+          "preserve_calendar"
+        ],
+        "profile": "release",
+        "features": [
+          "cw32f030c8t7"
+        ],
+        "exit": 0,
+        "compiler_log": {
+          "artifact": "external:verification/main-v1/08-main-elf-cw32f030c8t7-preserve_calendar.log",
+          "sha256": "52fa716d8372f12d0ae4edfd7fcbbf124f260e3f0c277158ce15be4170d93536",
+          "bytes": 81866
+        },
+        "build_finished_success": true,
+        "compiler_warning_or_error_count": 0,
+        "mco_f030_cfg_present": true,
+        "mco_constants_count": 10,
+        "generated_hal": [
+          {
+            "artifact": "external:verification/main-v1/08-main-elf-cw32f030c8t7-preserve_calendar-out-_generated.rs",
+            "sha256": "c58746f69f4c39c8f53a50d5eebbf29d6c7b6c75e982e4e767fb324911754ecf",
+            "bytes": 72051
+          },
+          {
+            "artifact": "external:verification/main-v1/08-main-elf-cw32f030c8t7-preserve_calendar-out-_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a",
+            "bytes": 837
+          }
+        ],
+        "artifacts": [
+          {
+            "artifact": "external:verification/main-v1/08-main-elf-cw32f030c8t7-preserve_calendar-preserve_calendar.elf",
+            "sha256": "71dd7e68372875fbe4a930c3dab7b7dd8df8555952c8912e6807ea20a488d137",
+            "bytes": 210224,
+            "class": "ELF32",
+            "endianness": "little",
+            "machine": "ARM",
+            "type": "EXEC",
+            "eabi_version": 5,
+            "entry": 193,
+            "stack": 536879104,
+            "vector_bytes": 192,
+            "text_bytes": 21964,
+            "load_segments": [
+              {
+                "offset": 65536,
+                "vaddr": 0,
+                "paddr": 0,
+                "filesz": 192,
+                "memsz": 192,
+                "flags": 4
+              },
+              {
+                "offset": 65728,
+                "vaddr": 192,
+                "paddr": 192,
+                "filesz": 21964,
+                "memsz": 21964,
+                "flags": 5
+              },
+              {
+                "offset": 87692,
+                "vaddr": 22156,
+                "paddr": 22156,
+                "filesz": 668,
+                "memsz": 668,
+                "flags": 4
+              },
+              {
+                "offset": 131072,
+                "vaddr": 536870912,
+                "paddr": 22824,
+                "filesz": 220,
+                "memsz": 220,
+                "flags": 6
+              },
+              {
+                "offset": 196828,
+                "vaddr": 536871132,
+                "paddr": 536871132,
+                "filesz": 0,
+                "memsz": 12,
+                "flags": 6
+              }
+            ],
+            "undefined_global_symbols": [],
+            "flash_bytes": 65536,
+            "ram_bytes": 8192,
+            "matches_compiler_executable_artifact": true
+          }
+        ]
+      }
+    ]
+  },
+  "clean_replay": {
+    "status": "not_run",
+    "accepted": false,
+    "required_remaining": [
+      "one frozen CW32F030C8T7 release ARM library",
+      "one frozen CW32F030C8T7 HCLK MCO firmware ELF"
+    ],
+    "future_binding": "Record clean results separately and verify their final source, generated output and artifact identities."
+  },
+  "review_actions": [
+    "Read source and accepted source review",
+    "Hash source ZIP, full source manifest, modes and 905 generated files",
+    "Parse all eight existing compiler logs and verify their generated cfg/OUT_DIR records",
+    "Read existing archive and ELF structures and match their recorded compiler artifacts",
+    "Bind schema/generation/metadata receipts and preserve earlier failed runs",
+    "Write external review and acceptance records only"
+  ],
+  "not_performed_by_this_review": [
+    "Cargo or rustc invocation",
+    "generation or test rerun",
+    "HAL source edit",
+    "HAL tests, negative compile fixtures, executable models or probes",
+    "device execution",
+    "waveform measurement"
+  ],
+  "hardware_executed": false,
+  "waveform_verified": false,
+  "legal_clearance": false,
+  "acceptance_boundary": "Main compile/link and source review passed. Clean replay is not yet run. Neither source review nor build/ELF inspection establishes physical output, loaded waveform or fault behavior."
+}

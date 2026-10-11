@@ -485,6 +485,26 @@ still apply.
   HSI budgets are <31.207619 ms at ±5% or <32.125490 ms at ±2%; qualified HSE uses
   its own bounds. Flash stalls, debugger stops and deep sleep can lose elapsed
   time. These are required bounds, not measured latency guarantees.
+- Owned MCO is one partial SYSCTRL mode only for exact CW32F030C8T7,
+  with PA8/MCO/AF4 as its sole qualified selection. Generic F030/C8, other
+  F030 packages, A030 and F020 remain outside the API. The existing inventory's
+  required-signal filter reports that exact selection without promoting family
+  AF discovery. Holding real SYSCTRL and PA8 selects immutable initialized HCLK
+  or PCLK with /1, /2, /8, /64, /128, /256, /512 or /1024. Published cycle-qualified
+  bounds, source-compatible explicit board conditions and exact maximum-rate
+  division must pass. Rate-only PLL/LSI roots are rejected. The 20 MHz and
+  0 < load <= 50 pF policies do not establish the vendor table's loaded duty or
+  edge conditions; its values are explicitly unmeasured design/simulation data.
+  Shared GPIOA progress, non-restored PA8 function/lock, bounded error/Drop
+  observations and forgotten output remain functional limits. Live safe RTC
+  clock ownership is excluded by SYSCTRL; forgotten hardware is not permanently
+  excluded. There is no source/divider mutation, oscillator or bus-clock change,
+  recovery, other package or hardware-validation claim. Main verification passed
+  five actual ARM library builds and three ordinary firmware links with no warnings,
+  plus generation, the full projection comparison, 19 schema contracts and eight
+  finite source/data gates. At main acceptance clean had not run; final-package
+  completion requires a separate clean 1-library/1-HCLK-ELF receipt. The local
+  recipe remains separate from these results. See [the full contract](f030-owned-mco.md).
 - RF remains explicitly user-deferred on R031/W031.
 
 Every row has `hardware_validated: false`. This tool performs no compilation,

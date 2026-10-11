@@ -182,6 +182,7 @@ case "${1:-help}" in
     python3 ci/verify-l010-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l010-lse.json
     python3 ci/verify-l011-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l011-lse.json
     python3 ci/verify-l012-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l012-lse.json
+    python3 ci/verify-f030-mco-data.py --sources "$CW32_SOURCES" --data cw32-data/data --out build/audit/f030-mco.json
     python3 tests/audit_generated_parity.py
     python3 tests/verify_dma_owned_evidence.py
     python3 tests/verify_remaining_serial_af.py --sources "$CW32_SOURCES"
@@ -224,6 +225,7 @@ case "${1:-help}" in
     ;;
   check-lsi-clock) bash ci/check-lsi-clock.sh ;;
   check-lse-sysclk) bash ci/check-lse-sysclk.sh ;;
+  check-mco) bash ci/check-mco.sh ;;
   lint)
     python3 tests/test_module_layout.py
     ;;
@@ -252,5 +254,5 @@ case "${1:-help}" in
       cargo test --locked --manifest-path firmware/Cargo.toml -p cw32-metapac --no-default-features --features "$chip,metadata" --test metadata
     done < <(sed -n 's/^\(cw32[a-z0-9-]*\) = \[\]/\1/p' cw32-metapac/Cargo.toml)
     ;;
-  *) echo 'Usage: ./d {fetch-sources|fetch-evidence|refresh-discovery|provenance|audit-sources|import-registers|gen|gen-all|test|audit-current|check|check-lsi-clock|check-lse-sysclk|lint}' ;;
+  *) echo 'Usage: ./d {fetch-sources|fetch-evidence|refresh-discovery|provenance|audit-sources|import-registers|gen|gen-all|test|audit-current|check|check-lsi-clock|check-lse-sysclk|check-mco|lint}' ;;
 esac

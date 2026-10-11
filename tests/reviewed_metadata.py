@@ -290,6 +290,28 @@ def af_projection(manifest, pins):
     return result
 
 
+def mco_projection(chip, expected_packages, expected_pins):
+    """Exact one-part policy, independent of the Rust projection implementation."""
+    expected = {'disabled_source': 0, 'hclk_source': 1, 'pclk_source': 2, 'divisors': [[0, 1], [1, 2], [2, 8], [3, 64], [4, 128], [5, 256], [6, 512], [7, 1024]], 'maximum_output_hz': 20000000, 'supply_mv': [2400, 5500], 'temperature_c': [-40, 105], 'maximum_load_pf': 50, 'gpio_speed': 1, 'fmax_condition_duty_percent': [45, 55], 'fmax_condition_edge_sum_period_ratio': [2, 3], 'electrical_values_measured': False}
+    catalog = load('cw32-data/mco-qualified.yaml')
+    assert set(catalog) == {'schema_version', 'source_authority', 'policies', 'parts'}
+    assert catalog['schema_version'] == 1 and catalog['source_authority'] == 'sources/evidence-sources.json'
+    assert set(catalog['parts']) == {'CW32F030C8T7'}
+    own = catalog['parts']['CW32F030C8T7']
+    assert own['facts'] == expected and own['route'] == {'pin': 'PA8', 'signal': 'MCO', 'af': 4}
+    assert (own['family'], own['package'], own['pin_position']) == ('CW32F030', 'LQFP48', '29')
+    assert catalog['policies'] == {'docs/f030-mco-qualification.json':
+        hashlib.sha256((ROOT / 'docs/f030-mco-qualification.json').read_bytes()).hexdigest()}
+    if chip['name'] != 'CW32F030C8T7':
+        return None
+    assert chip['line'] == 'CW32F030' and len(expected_packages) == 1
+    package = expected_packages[0]
+    assert (package['name'], package['package']) == ('CW32F030C8T7', 'LQFP48')
+    assert sum(pin['position'] == '29' and 'PA8' in pin['signals'] for pin in package['pins']) == 1
+    assert sum(pin['name'] == 'PA8' for pin in expected_pins) == 1
+    return expected
+
+
 def projection_errors(chip, manifest):
     errors = []
     if 'device_id' in chip:
@@ -328,6 +350,45 @@ def projection_errors(chip, manifest):
         names = {p['name'] for p in expected_pins}
         af.setdefault('SYSCTRL', []).extend(route for route in qualified['routes'] if route['pin'] in names)
         af['SYSCTRL'].sort(key=lambda route: (route['pin'], route['signal'], route.get('af')))
+    if chip['line'] in ('CW32L012', 'CW32L083') and expected_packages:
+        # Existing exact-part clock outputs have their own reviewed source policy.
+        # Construct the complete expected roster from that policy and physical
+        # package tables, independently of generated peripheral pins.
+        policy_path = 'cw32-data/lsi-sysclk-qualified.yaml'
+        assert load(manifest['electrical_metadata'])['policies'][policy_path] == hashlib.sha256(
+            (ROOT / policy_path).read_bytes()).hexdigest()
+        own = load(policy_path)['families'][chip['line']]
+        part_names = {part['name'] for part in own['exact_parts']}
+        assert part_names == ({'CW32L012C8T6', 'CW32L012C8U6'} if chip['line'] == 'CW32L012' else
+            {'CW32L083RBT6', 'CW32L083RCT6', 'CW32L083RCS6', 'CW32L083MCT6', 'CW32L083VCT6'})
+        assert chip['name'] in part_names and len(expected_packages) == 1
+        package = expected_packages[0]
+        names = {pin['name'] for pin in expected_pins}
+        if chip['line'] == 'CW32L012':
+            routes = own['positive_lsi_routes']['exact_sysctrl_pin_projection']
+            assert routes == [{'pin': 'PB11', 'signal': 'LSI_OUT', 'af': 4},
+                              {'pin': 'PF3', 'signal': 'LSI_OUT', 'af': 2}]
+            qualified = own['packages'][chip['name']]
+            bonds = qualified['direct_lsi_bonds']
+        else:
+            qualified = next(part for part in own['packages'] if part['name'] == chip['name'])
+            routes = [{'pin': row['pin'], 'signal': 'PLL_OUT', 'af': row['af']}
+                      for row in own['clock_output_proof']
+                      if row['function'] == 'PLLOUT' and row['pin'] in names]
+            bonds = qualified['pll_output_routes']
+        assert package['name'] == chip['name'] and package['package'] == qualified['package']
+        assert len({(route['pin'], route['signal'], route['af']) for route in routes}) == len(routes)
+        assert [(route['pin'], route['af']) for route in routes] == [(row['pin'], row['af']) for row in bonds]
+        for route, bond in zip(routes, bonds):
+            assert route['pin'] in names and route['pin'] in qualified['gpio_pins']
+            assert sum(pin['position'] == bond['position'] and route['pin'] in pin['signals']
+                       for pin in package['pins']) == 1
+            assert route not in af.setdefault('SYSCTRL', [])
+            af['SYSCTRL'].append(dict(route))
+    expected_mco = mco_projection(chip, expected_packages, expected_pins)
+    if expected_mco is not None:
+        af.setdefault('SYSCTRL', []).append({'pin': 'PA8', 'signal': 'MCO', 'af': 4})
+        af['SYSCTRL'].sort(key=lambda route: (route['pin'], route['signal'], route.get('af')))
     dma = load(manifest['dma_metadata'])
     clocks = load(manifest['clock_metadata'])
     assert dma['family'] == clocks['profile'] == chip['line']
@@ -339,6 +400,15 @@ def projection_errors(chip, manifest):
             errors.append('Core DMA projection differs from reviewed channels')
         for peripheral in core['peripherals']:
             name = peripheral['name']
+            expected_owned_mco = expected_mco if name == 'SYSCTRL' else None
+            actual_clock = peripheral.get('clock_limits', {})
+            if actual_clock.get('mco') != expected_owned_mco or (
+                    expected_owned_mco is None and 'mco' in actual_clock):
+                errors.append(f'{name}: MCO qualification differs from exact own-part policy')
+            if expected_owned_mco is not None and (
+                    peripheral['address'] != 0x40010000 or peripheral.get('registers') !=
+                    {'block': 'SYSCTRL', 'kind': 'sysctrl', 'version': 'v1'}):
+                errors.append('MCO qualification lacks its real SYSCTRL owner')
             expected_rtc = load('cw32-data/rtc-calendar.yaml')['profiles'].get(manifest['line']) if name == 'RTC' else None
             if peripheral.get('rtc_calendar') != expected_rtc:
                 errors.append('RTC source facts differ from reviewed own-family evidence')

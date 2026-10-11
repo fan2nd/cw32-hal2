@@ -149,8 +149,8 @@ pub fn apply(root: &Path, path: &str, line: &str, peripherals: &mut [Peripheral]
     let i = family(&i2c_policy, line)?;
     let c = &p.clock_limits;
     ensure!(
-        c.lse_configuration.is_none(),
-        "family electrical profiles cannot preseed active LSE qualification"
+        c.lse_configuration.is_none() && c.mco.is_none(),
+        "family electrical profiles cannot preseed active LSE or MCO qualification"
     );
     let mut hex_routes = Vec::new();
     let lock: Value = serde_json::from_slice(&fs::read(root.join(&catalog.source_authority))?)?;
@@ -4307,4 +4307,237 @@ mod lse_tests {
         .unwrap_err();
         assert!(error.to_string().contains("preseeded"));
     }
+}
+
+
+// MCO facts are an exact-part qualification, applied after bonded-pin expansion.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct McoCatalog {
+    schema_version: u32,
+    source_authority: String,
+    policies: BTreeMap<String, String>,
+    parts: BTreeMap<String, McoProfile>,
+}
+#[derive(Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+struct McoProfile {
+    family: String,
+    package: String,
+    pin_position: String,
+    route: McoRoute,
+    facts: cw32_data_serde::chip::core::peripheral::Mco,
+    sources: McoSources,
+}
+#[derive(Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+struct McoRoute {
+    pin: String,
+    signal: String,
+    af: u8,
+}
+#[derive(Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+struct McoSources {
+    pdfs: Vec<McoPdf>,
+    sdk: McoSdk,
+}
+#[derive(Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+struct McoPdf {
+    source_ref: String,
+    path: String,
+    sha256: String,
+    text_path: String,
+    text_sha256: String,
+    pages: Vec<McoPage>,
+}
+#[derive(Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+struct McoPage {
+    pdf_page_1_based: u32,
+    printed_page: u32,
+    text_sha256: String,
+}
+#[derive(Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+struct McoSdk {
+    source_ref: String,
+    path: String,
+    sha256: String,
+    members: Vec<McoMember>,
+}
+#[derive(Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+struct McoMember {
+    source_ref: String,
+    path: String,
+    archive_member: String,
+    sha256: String,
+    lines_1_based: (u32, u32),
+}
+fn mco_json(bytes: &[u8]) -> Result<Value> {
+    // Reject duplicate keys recursively before maps or JSON Value could erase them.
+    let value: serde_yaml::Value = serde_yaml::from_slice(bytes)?;
+    Ok(serde_json::to_value(value)?)
+}
+fn mco_register<'a>(
+    registers: &'a BTreeMap<String, chiptool::ir::IR>,
+    owner: &Peripheral,
+    name: &str,
+    offset: u32,
+) -> Result<&'a chiptool::ir::FieldSet> {
+    let selected = owner.registers.as_ref().context("MCO owner lacks registers")?;
+    let ir = registers.get(&selected.kind).context("missing MCO selected IR")?;
+    let block = ir.blocks.get(&selected.block).context("missing MCO selected block")?;
+    let matches: Vec<_> = block.items.iter().filter(|r| r.name == name).collect();
+    ensure!(matches.len() == 1 && matches[0].byte_offset == offset && matches[0].array.is_none(),
+        "MCO requires one scalar register at its own-source offset");
+    let chiptool::ir::BlockItemInner::Register(reg) = &matches[0].inner else {
+        anyhow::bail!("MCO route refers to a non-register")
+    };
+    ensure!(reg.bit_size == 32, "MCO register width changed");
+    ir.fieldsets.get(reg.fieldset.as_ref().context("MCO register lacks fields")?)
+        .context("missing MCO fieldset")
+}
+fn mco_field(fields: &chiptool::ir::FieldSet, name: &str, offset: u32, width: u32) -> Result<()> {
+    let matches: Vec<_> = fields.fields.iter().filter(|f| f.name == name).collect();
+    ensure!(matches.len() == 1
+        && matches[0].bit_offset == chiptool::ir::BitOffset::Regular(offset)
+        && matches[0].bit_size == width && matches[0].array.is_none()
+        && matches[0].enumm.is_none(), "MCO selected field differs from own-source layout: {name}");
+    Ok(())
+}
+/// Add one qualified fact and PA8/AF4 Pin, without broadening family AF metadata.
+pub fn apply_mco(
+    root: &Path,
+    chip: &crate::ChipInput,
+    line: &str,
+    core: &mut cw32_data_serde::chip::Core,
+    registers: &BTreeMap<String, chiptool::ir::IR>,
+) -> Result<()> {
+    use cw32_data_serde::chip::core::peripheral::{Mco, Pin};
+    ensure!(core.peripherals.iter().all(|p|
+        p.clock_limits.as_ref().is_none_or(|c| c.mco.is_none())
+        && p.pins.iter().all(|p| p.signal != "MCO")),
+        "MCO fact or route cannot be preseeded or inherited");
+    let raw: serde_yaml::Value = serde_yaml::from_slice(&fs::read(root.join("cw32-data/mco-qualified.yaml"))?)?;
+    let catalog: McoCatalog = serde_yaml::from_value(raw)?;
+    ensure!(catalog.schema_version == 1 && catalog.source_authority == "sources/evidence-sources.json"
+        && catalog.parts.keys().map(String::as_str).collect::<Vec<_>>() == ["CW32F030C8T7"]
+        && catalog.policies.keys().map(String::as_str).collect::<Vec<_>>() == ["docs/f030-mco-qualification.json"],
+        "MCO exact part or policy authority changed");
+    let p = &catalog.parts["CW32F030C8T7"];
+    let proof_bytes = fs::read(root.join("docs/f030-mco-qualification.json"))?;
+    ensure!(catalog.policies["docs/f030-mco-qualification.json"] == format!("{:x}", Sha256::digest(&proof_bytes)),
+        "MCO own-source qualification policy changed");
+    let proof = mco_json(&proof_bytes)?;
+    ensure!(proof["schema_version"] == 1 && proof["part"] == "CW32F030C8T7"
+        && serde_json::to_value(p)? == proof["profile"], "MCO catalog differs from own-source policy");
+    let expected = Mco {
+        disabled_source: 0, hclk_source: 1, pclk_source: 2,
+        divisors: [(0,1),(1,2),(2,8),(3,64),(4,128),(5,256),(6,512),(7,1024)],
+        maximum_output_hz: 20_000_000, supply_mv: (2400,5500), temperature_c: (-40,105),
+        maximum_load_pf: 50, gpio_speed: 1, fmax_condition_duty_percent: (45,55),
+        fmax_condition_edge_sum_period_ratio: (2,3), electrical_values_measured: false,
+    };
+    ensure!(p.facts == expected && p.family == "CW32F030" && p.package == "LQFP48"
+        && p.pin_position == "29" && p.route.pin == "PA8" && p.route.signal == "MCO" && p.route.af == 4,
+        "MCO source codes, complete divisor table, electrical conditions or exact route changed");
+    ensure!(proof["conditions"]["numerical_rate_check_is_sufficient_for_waveform_qualification"] == false
+        && proof["source_facts"]["fmax_conditions"] == serde_json::json!({
+            "loaded_duty_percent":[45,55],"rise_plus_fall_maximum_period_ratio":[2,3],"data_measured":false}),
+        "MCO conditional unmeasured table cannot become waveform certification");
+    ensure!(proof["source_facts"]["gpio"] == serde_json::json!({
+        "owner":"GPIOA", "address":0x4800_0000u32,
+        "registers":{"kind":"gpio","version":"v1","block":"GPIO"},
+        "af_register":"AFRH","af_offset":20,"af_field":"AFR8","af_bit_offset":0,"af_bit_size":4,
+        "speed_register":"SPEED","speed_offset":8,"speed_field":"PIN8","speed_bit_offset":8,"speed_bit_size":1
+    }), "MCO source GPIO register coordinates changed");
+    let authority = mco_json(&fs::read(root.join(&catalog.source_authority))?)?;
+    let artifacts = authority["artifacts"].as_array().context("missing MCO original-source index")?;
+    let selected = |source_ref: &str, path: &str, digest: &str| -> Result<&Value> {
+        let rows: Vec<_> = artifacts.iter().filter(|a| a["id"] == source_ref).collect();
+        ensure!(rows.len() == 1, "MCO source identity missing or duplicated");
+        let a = rows[0];
+        ensure!(a["path"] == path && a["sha256"] == digest && a["provenance"]["status"] == "selected"
+            && a["provenance"]["chip_scope"].as_array().is_some_and(|v| v.iter().any(|f| f == "CW32F030")),
+            "MCO needs selected own F030 originals");
+        Ok(a)
+    };
+    let pdf_names = ["CW32x030_UserManual_CN_V2.5.pdf", "CW32F030_DataSheet_CN_V1.9.pdf"];
+    let pdf_pages: [&[u32]; 2] = [&[61,94,147], &[26,29,38,51]];
+    ensure!(p.sources.pdfs.len() == 2, "MCO needs own manual and datasheet");
+    for (index, source) in p.sources.pdfs.iter().enumerate() {
+        ensure!(source.path == pdf_names[index] && source.source_ref == format!("vendor:{}",source.path)
+            && source.pages.iter().map(|p| p.pdf_page_1_based).collect::<Vec<_>>() == pdf_pages[index],
+            "MCO selected PDF or exact evidence coordinates changed");
+        let a = selected(&source.source_ref, &source.path, &source.sha256)?;
+        ensure!(a["text"]["path"] == source.text_path && a["text"]["sha256"] == source.text_sha256,
+            "MCO extracted text identity changed");
+        let count = a["provenance"]["pdf_page_count"].as_u64().context("MCO PDF length missing")?;
+        ensure!(source.pages.iter().all(|p| p.pdf_page_1_based == p.printed_page + 1
+            && u64::from(p.pdf_page_1_based) <= count && p.text_sha256.len() == 64),
+            "MCO page citation outside own original");
+    }
+    let sdk = &p.sources.sdk;
+    ensure!(sdk.path == "CW32F030_StandardPeripheralLib_V2.2.zip"
+        && sdk.source_ref == format!("vendor:{}", sdk.path) && sdk.members.len() == 3,
+        "MCO requires its own selected SDK");
+    let a = selected(&sdk.source_ref, &sdk.path, &sdk.sha256)?;
+    for (m, (path, lines)) in sdk.members.iter().zip([
+        ("cw32f030/Libraries/inc/cw32f030_gpio.h", (837,837)),
+        ("cw32f030/Libraries/inc/cw32f030_rcc.h", (402,440)),
+        ("cw32f030/Libraries/src/cw32f030_rcc.c", (906,914)),
+    ]) {
+        ensure!(m.path == path && m.source_ref == format!("member:{path}")
+            && m.archive_member == path.strip_prefix("cw32f030/").unwrap() && m.lines_1_based == lines,
+            "MCO SDK source member or line range changed");
+        let rows: Vec<_> = a["members"].as_array().context("MCO SDK members missing")?.iter()
+            .filter(|row| row["path"] == path).collect();
+        ensure!(rows.len() == 1 && rows[0]["sha256"] == m.sha256
+            && rows[0]["members"] == serde_json::json!([m.archive_member]),
+            "MCO SDK member is outside selected source lock");
+    }
+    if chip.name != "CW32F030C8T7" { return Ok(()); }
+    ensure!(line == p.family && chip.packages.len() == 1 && chip.packages[0].name == chip.name
+        && chip.packages[0].package == p.package, "MCO requires exact C8T7 LQFP48 selection");
+    ensure!(core.pins.iter().filter(|pin| pin.name == p.route.pin).count() == 1
+        && chip.packages[0].pins.iter().filter(|pin| pin.position == p.pin_position
+            && pin.signals.iter().any(|s| s == &p.route.pin)).count() == 1,
+        "MCO PA8 must be uniquely bonded at position 29");
+    let pinouts = mco_json(&fs::read(root.join("cw32-data/pinouts/cw32f030.yaml"))?)?;
+    let rows: Vec<_> = pinouts["table_rows"].as_array().context("MCO pin table missing")?.iter()
+        .filter(|row| row["signals"].as_array().is_some_and(|s| s.iter().any(|s| s == "PA8"))).collect();
+    ensure!(rows.len() == 1 && rows[0]["positions"]["LQFP48"] == "29" && rows[0]["pin_type"] == "I/O",
+        "MCO own datasheet output-capable PA8 cell changed");
+    let af = mco_json(&fs::read(root.join("cw32-data/af/cw32f030.yaml"))?)?;
+    let routes: Vec<_> = af["unresolved"].as_array().context("MCO historical AF candidates missing")?.iter()
+        .filter(|r| r["pin"] == "PA8" && r["af"] == 4).collect();
+    ensure!(routes.len() == 1 && routes[0]["function"] == "MCO" && routes[0]["source_macro"] == "PA08_AFx_MCO"
+        && routes[0]["source_line"] == 837 && routes[0]["gpio_register"] == "AFRH" && routes[0]["gpio_field"] == "AFR8",
+        "MCO own raw AF discovery evidence changed");
+    let owners: Vec<_> = core.peripherals.iter().enumerate().filter(|(_,p)| p.clock_limits.is_some()).collect();
+    ensure!(owners.len() == 1, "MCO needs exactly one real clock owner");
+    let (owner_index, owner) = owners[0];
+    ensure!(owner.name == "SYSCTRL" && owner.address == 0x4001_0000
+        && owner.registers.as_ref().is_some_and(|r| r.kind == "sysctrl" && r.version == "v1" && r.block == "SYSCTRL"),
+        "MCO real SYSCTRL identity changed");
+    let fields = mco_register(registers, owner, "MCO", 0x70)?;
+    ensure!(fields.fields.len() == 2, "MCO reserved fields must remain unmodeled");
+    mco_field(fields, "SOURCE", 0, 4)?;
+    mco_field(fields, "DIV", 4, 3)?;
+    let gpio: Vec<_> = core.peripherals.iter().filter(|p| p.name == "GPIOA").collect();
+    ensure!(gpio.len() == 1 && gpio[0].address == 0x4800_0000
+        && gpio[0].registers.as_ref().is_some_and(|r| r.kind == "gpio" && r.version == "v1" && r.block == "GPIO")
+        && gpio[0].gpio.as_ref().is_some_and(|g| g.output_mask & (1 << 8) != 0),
+        "MCO requires the real output-capable GPIOA pin");
+    mco_field(mco_register(registers, gpio[0], "AFRH", 0x14)?, "AFR8", 0, 4)?;
+    mco_field(mco_register(registers, gpio[0], "SPEED", 0x08)?, "PIN8", 8, 1)?;
+    let owner = &mut core.peripherals[owner_index];
+    owner.clock_limits.as_mut().unwrap().mco = Some(p.facts.clone());
+    owner.pins.push(Pin {pin: p.route.pin.clone(), signal: p.route.signal.clone(), af: Some(p.route.af),
+        adc_mux: None, comparator_mux: None});
+    owner.pins.sort_by(|a,b| (&a.pin,&a.signal,a.af).cmp(&(&b.pin,&b.signal,b.af)));
+    Ok(())
 }

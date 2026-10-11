@@ -224,26 +224,34 @@ impl ClockBounds {
     /// Panics for a rate-only envelope. Check [`Self::has_cycle_timing_bounds`]
     /// first. Source rate accuracy or a cycle-to-cycle jitter limit alone cannot
     /// be substituted for an absolute period error bound.
+    /// Also panics if the rounded duration exceeds `u64::MAX` nanoseconds.
     pub fn minimum_duration_ns(self, cycles: u32) -> u64 {
         assert!(
             self.has_cycle_timing_bounds(),
             "source cycle-duration bounds are not qualified"
         );
-        ((u128::from(cycles) * 1_000_000_000 * u128::from(self.divisor))
-            / u128::from(self.maximum_source)) as u64
+        u64::try_from(
+            (u128::from(cycles) * 1_000_000_000 * u128::from(self.divisor))
+                / u128::from(self.maximum_source),
+        )
+        .expect("clock duration exceeds u64 nanoseconds")
     }
     /// Upper bound on the duration of a number of clock cycles, in ns.
     ///
     /// # Panics
     /// Panics for a rate-only envelope. Check
     /// [`Self::has_cycle_timing_bounds`] before requesting strict duration bounds.
+    /// Also panics if the rounded duration exceeds `u64::MAX` nanoseconds.
     pub fn maximum_duration_ns(self, cycles: u32) -> u64 {
         assert!(
             self.has_cycle_timing_bounds(),
             "source cycle-duration bounds are not qualified"
         );
-        (u128::from(cycles) * 1_000_000_000 * u128::from(self.divisor))
-            .div_ceil(u128::from(self.minimum_source)) as u64
+        u64::try_from(
+            (u128::from(cycles) * 1_000_000_000 * u128::from(self.divisor))
+                .div_ceil(u128::from(self.minimum_source)),
+        )
+        .expect("clock duration exceeds u64 nanoseconds")
     }
     /// Rate-derived cycles for an internal software delay. This does not
     /// establish pulse-by-pulse timing qualification. Strict analog consumers

@@ -102,6 +102,11 @@ pub use rtc::LsiClock;
 #[cfg(rtc)]
 pub use rtc::{CalendarClock, RtcClockError};
 
+#[cfg(mco_f030)]
+mod mco;
+#[cfg(mco_f030)]
+pub use mco::{Mco, McoBoardConditions, McoError, McoPrescaler, McoSource};
+
 mod bounds;
 pub use bounds::{ClockBounds, HSI_BOUND_SUPPLY_MV, HSI_BOUND_TEMPERATURE_C};
 

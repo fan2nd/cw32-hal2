@@ -338,3 +338,53 @@ Historical LSE proof scope and its source qualification remain
 unchanged; the old 21-to-23 L012 LSE baseline comparison is not a Stage75 delta
 check. No aggregate run, HAL tests, probes, models, hosted CI or hardware
 execution is part of the finite verification.
+
+## Exact F030 owned MCO local verification
+
+`./d check-mco` is a separate future recipe with five actual ARM library builds
+and three release firmware links. Its library rows are exact CW32F030C8T7 release
+(`rt,defmt`) and debug (`rt,defmt,time-driver-gtim1`), generic CW32F030 release,
+CW32A030C8T7 release and CW32F020K6U7 release (the last three with `rt,defmt`).
+Every command uses `--locked`, `--no-default-features` and `thumbv6m-none-eabi`.
+The firmware rows are `examples/mco` binaries `hclk` and `pclk`, and the existing
+`examples/rtc-calendar` binary `preserve_calendar`, all exact F030C8T7 release.
+Each MCO binary owns SYSCTRL and PA8; RTC preservation is a separate executable.
+The new example uses the real 64 KiB Flash / 8 KiB SRAM map and explicit `link.x`.
+
+Separate main receipts record five real ARM library rlibs and three ordinary
+firmware ELFs, all eight Cargo builds exiting successfully with no warnings.
+Source bytes and modes stayed unchanged during those builds. Generation and the
+complete 904-to-905-file comparison passed across all 54 selections with only
+the approved exact-part MCO fact/route and optional schema/projection changes.
+All 19 schema contracts passed after generation; the earlier run failed because
+the generated directory did not yet exist, and its receipt is retained.
+
+Eight finite source/data gates passed across separate receipts: the MCO
+own-source audit; ADC clock bounds, RCC operating envelope, x030/F020 PLL source,
+validation, original-source provenance and module layout; and all 22 metadata
+contracts after correcting seven existing L012/L083 route expectation omissions.
+The earlier metadata-contract failure remains recorded. No aggregate recipe was
+run. Independent main acceptance is recorded in the accompanying reviews.
+
+At main acceptance clean had not run; final-package completion requires a
+separate clean receipt. Final source-only package replay is one exact F030
+release library (`rt,defmt`) and one HCLK ELF, from a fresh extraction with a
+separate target directory. Keep main 5/3 and clean 1/1 records distinct, including
+actual commands, warning text, source/output hashes and ELF Flash/RAM use;
+neither the broad HAL matrix nor accumulated LSI/LSE scripts substitute for
+them. No extra build, divisor-instantiation, HAL test, compile probe,
+register-model, hosted-CI or board-execution row is implied.
+
+The own-source/data audit accepts explicit vendor and complete generated-data
+roots and writes an independent receipt:
+
+```sh
+python3 ci/verify-f030-mco-data.py --sources "$CW32_SOURCES" \
+  --data cw32-data/data --out build/audit/f030-mco.json
+```
+
+It does not execute the HAL. Complete 54-selection projection, three-model
+correspondence, current source/provenance/layout and final packaging identity
+checks remain separate requirements. Source and electrical limits are in the
+[public contract](../docs/f030-owned-mco.md); compile/link success cannot prove
+pad-level waveform, duty, electrical suitability or receiver timing.

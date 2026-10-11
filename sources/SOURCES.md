@@ -13,11 +13,11 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 
 ## 当前文件级来源覆盖
 
-只统计 `cw32-data/` 内的 295 份 authored YAML：137 份寄存器定义 + 158 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；主动 LSE 的 `lse-qualified.yaml` 直接记录二十三个精确料号/封装的原厂文档 ID、SHA、PDF 页码与书页；完整清单及各族来源见末节。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
+只统计 `cw32-data/` 内的 296 份 authored YAML：137 份寄存器定义 + 159 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；新增 `mco-qualified.yaml` 直接引用既有 x030 RM、F030 DS 与三个 SDK 成员，仅投影精确 C8T7 的 MCO 事实和 PA8 AF4；主动 LSE 的 `lse-qualified.yaml` 直接记录二十三个精确料号/封装的原厂文档 ID、SHA、PDF 页码与书页；完整清单及各族来源见末节。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
 
 | 归类 | 文件数 | 边界 |
 | --- | ---: | --- |
-| 可直接定位原件中的内容 | 285 | 137 份寄存器有既有 canonical/input → 官方 SVD 结构来源；148 份其他 YAML 至少有文档章节/页码、SDK 符号/行号等入口。 |
+| 可直接定位原件中的内容 | 286 | 137 份寄存器有既有 canonical/input → 官方 SVD 结构来源；149 份其他 YAML 至少有文档章节/页码、SDK 符号/行号等入口。 |
 | 经明确引用的审阅记录可找到原件与章节/页码 | 10 | 下列十个根级能力文件；正文已摘出其中部分精确引文。 |
 | 只找到原文件，未找到上述内容定位 | 0 | 指整个文件没有任何内容定位；不表示每条事实都已有章节。 |
 | 连原文件都无法确定 | 0 | 仅表示这次文件级来源链检查没有遇到此类文件。 |
@@ -701,3 +701,48 @@ objects unchanged. Board qualification remains unverified.
 The accumulated local recipe, historical LSE qualifications and earlier family's
 accepted receipts do not supply these results. No HAL tests, probes, register
 models, hosted CI or hardware execution are added.
+
+## Exact CW32F030C8T7 owned MCO qualification
+
+The [exact MCO catalog](../cw32-data/mco-qualified.yaml) and
+[qualification record](../docs/f030-mco-qualification.json) use the existing
+selected x030 RM CN2.5, F030 DS CN1.9 and F030 standard-peripheral SDK V2.2
+identities in `evidence-sources.json`. No new vendor original, source hash,
+license inference or redistribution scope is introduced.
+
+- RM PDF61/printed60 describes MCO; PDF94/printed93 specifies SYSCTRL offset
+  0x70, SOURCE[3:0], DIV[6:4] and reserved[31:7]. Disabled/HCLK/PCLK codes are
+  0/1/2; divider codes 0..7 correspond to /1, /2, /8, /64, /128, /256, /512 and
+  /1024. RM PDF147/printed146 supplies PA8 AF4.
+- DS Table5-2 PDF26/printed25 places PA8 at LQFP48 pin29, and Table5-3
+  PDF29/printed28 supplies AF4 MCO. Table7-4 PDF38/printed37 supplies ordinary
+  voltage/ambient and power/junction restrictions. Table7-27/Figure7-7
+  PDF51/printed50 supplies SPEED1 I/O values and their conditional fmax definition.
+- Locked `cw32f030_gpio.h` line837 corroborates PA8 AF4; `cw32f030_rcc.h`
+  lines402–440 and `cw32f030_rcc.c` lines906–914 corroborate source/divider facts.
+  Exact member paths and hashes remain in the source lock.
+
+The HAL's 20 MHz, 2.4–5.5 V, normal ambient −40–105°C and declared total-load
+0 < CL <= 50 pF policies are conservative software qualification limits.
+The vendor calls the I/O table design/simulation data, explicitly unmeasured;
+its fmax additionally requires loaded duty45–55% and tr+tf<=2T/3. Numerical
+rate admission and cycle-qualified logical bounds do not prove those conditions,
+receiver suitability or pin-level pulses. Init and MCO board declarations must
+truthfully describe the same board; frozen Clocks cannot verify equality with
+the earlier declaration. Actual waveform/current/thermal qualification remains
+required. See the [complete public contract](../docs/f030-owned-mco.md).
+
+Only exact C8T7 gains the new optional fact and PA8 route. Shared generated
+Rust metadata also receives the optional schema shape; this does not grant
+other parts an API. The two /8 examples are ordinary firmware, with separate
+RTC preservation control. Main verification produced five actual ARM libraries
+and three ordinary firmware ELFs; all eight Cargo builds passed with no warnings.
+Generation, the complete 904-to-905-file comparison across all 54 selections,
+19 schema contracts and eight finite source/data gates passed. The generated
+delta is limited to the approved exact-part MCO fact/route and optional
+schema/projection changes. Independent main acceptance is recorded in the
+accompanying reviews. At main acceptance clean had not run; final-package
+completion requires a separate clean receipt
+for one exact F030 release library and one HCLK ELF. No aggregate recipe or
+hardware execution was run; no physical output has been measured, and no hosted
+CI, HAL tests, probes or register models are added.
