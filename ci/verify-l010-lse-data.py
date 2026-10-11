@@ -124,7 +124,7 @@ def verify_live_lsi_policy(source_root, authority):
     assert policy["schema_version"] == 1
     assert policy["source_authority"] == "sources/evidence-sources.json"
     assert sorted(policy["families"]) == [
-        "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L010",
+        "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L010", "CW32L012",
         "CW32L031", "CW32L052", "CW32L083", "CW32R031", "CW32W031",
     ]
     own = policy["families"]["CW32L010"]
@@ -677,7 +677,7 @@ def main():
                 clock = owner["clock_limits"]
                 config = clock.get("lse_configuration")
                 assert config == expected, (name, owner["name"])
-                if chip["line"] in {"CW32L011", "CW32L012"}:
+                if chip["line"] in {"CW32L011"}:
                     assert clock.get("lsi_sysclk") is None, (name, owner["name"])
                 if chip["line"] == "CW32L010":
                     assert bool(config and config.get("sysclk_detector")) == (name in PARTS)

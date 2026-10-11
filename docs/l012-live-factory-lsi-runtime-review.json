@@ -1,0 +1,277 @@
+{
+  "decision": "accepted",
+  "scope": "Independent runtime implementation and actual main 7-library/6-ELF acceptance on main-source v2. This is not independent clean 2/2 or hardware acceptance.",
+  "unresolved_findings": [],
+  "source_freeze": {
+    "external_artifact": "stage75-main-source-v2.zip",
+    "sha256": "b0761c3659fd017f08dab00c87e3ae8debf1f5eb67d6ad087d5cbd71f4ab9846",
+    "manifest_external_artifact": "source-manifest-v2.json",
+    "manifest_sha256": "cfd53565aeebbbd607b6ab359a71e2f08b24070185fce043339ebc7950872d5a",
+    "file_count": 1309,
+    "all_archive_and_main_file_bytes_modes_verified": true,
+    "delta_from_v1": [
+      "embassy-cw32/build.rs"
+    ],
+    "exact_two_literal_delta_verified": true
+  },
+  "reviewed_project_files": [
+    {
+      "path": "embassy-cw32/src/rcc/l012.rs",
+      "sha256": "62e35c82b27b5898ee34dd58a2ee0b5e79f86ff022046d280768339ab79b9fd9"
+    },
+    {
+      "path": "embassy-cw32/src/rcc/mod.rs",
+      "sha256": "d51ab392688cd2cd9b43615f53d89551e6daa5ef0f143342c859b47f15669cb4"
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "ca79621e37dfd9426c7c6c2eb6c275d4608a847d32c56f1204f7c168a1637d78"
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "687d2471ddec57be279783b54e7a09a34a0a24a2442b66abd13651bb932e1683"
+    },
+    {
+      "path": "docs/l012-live-factory-lsi-sysclk.md",
+      "sha256": "aa8d40487300c3ab27c1a7b8c8e6f0aaa652e3f3223a0e7b4a671dfffd108696"
+    }
+  ],
+  "accepted_design_inputs": [
+    {
+      "external_artifact": "runtime/l012-live-sequence-design.md",
+      "sha256": "bd9abe6a394e0aa72a788ca79f48021d808281d94a6fc266749f2037340146d1"
+    },
+    {
+      "external_artifact": "metadata/metadata-design.md",
+      "sha256": "979e0ed1af164d21aeda858085bc792d928a61708340729cb66a40dc47fe975f"
+    },
+    {
+      "external_artifact": "independent-review/design-review.json",
+      "sha256": "a5ac39d016aa4e20c106cb400a1c094ca92b695dc47b34d21e006008263ca722"
+    }
+  ],
+  "resolved_findings": [
+    {
+      "id": "R1",
+      "description": "Post-final-K settled checks originally collapsed unexpected selector/reversal into ClockConfigurationTimeout.",
+      "resolution": "All pending and post-K selector checks now preserve LsiClockSwitchTimeout via final_source and exact LSI check."
+    },
+    {
+      "id": "R2",
+      "description": "Pending K selector error originally preceded non-selector phase, LSI-readiness and Flash-pair checks.",
+      "resolution": "final_source checks non-selector phase and full live-source/Flash guard before returning the selector to the K loop."
+    },
+    {
+      "id": "R3",
+      "reported_by": "implementation_self_audit_confirmed_by_reviewer",
+      "description": "Extra immediate FLASH pre-access refusal returned without a repeated post-observation source guard.",
+      "resolution": "Initial capture and latency-write prechecks now repeat the read-only full guard before returning remembered access refusal."
+    },
+    {
+      "id": "R4",
+      "reported_by": "implementation_self_audit_confirmed_by_reviewer",
+      "description": "Erased raw factory value was rejected by admission but had first passed through the local typed mask.",
+      "resolution": "factory_trim is now Option<u16>; raw 0xffff never reaches typed set_trim, preserving exactly one volatile read and refusal precedence."
+    },
+    {
+      "id": "R5",
+      "description": "First actual ARM build fails because own capability assertion uses raw IR block name SYSCTRL while generated metadata block name is Sysctrl; GPIO assertion also uses GPIO while actual generated metadata is Gpio.",
+      "source": "embassy-cw32/build.rs:2898",
+      "evidence_external_artifact": "verification/main-v1/commands.json",
+      "exit": 101,
+      "runtime_behavior_changed": false,
+      "resolution": "Two new build-validator literals now use generated Rust metadata block spelling Sysctrl/Gpio. All other authored files and modes match v1.",
+      "independent_metadata_review_external_artifact": "implementation/metadata-review/block-name-correction-review.json"
+    }
+  ],
+  "phase_review": [
+    {
+      "phase": "A",
+      "source": "embassy-cw32/src/rcc/l012.rs:701",
+      "finding": "Original full snapshot; raw erased halfword withheld from typed trim; original software LSIEN/STABLE/factory equality; retained owner windows and exact inherited HSE matching before any source write."
+    },
+    {
+      "phase": "B",
+      "source": "embassy-cw32/src/rcc/l012.rs:1134",
+      "finding": "Own FLASH reset checked before deliberate enable; actual gate error distinct; authoritative capture only with operational/reset checks and source guards; original pair must agree and be <=3."
+    },
+    {
+      "phase": "C",
+      "source": "embassy-cw32/src/rcc/l012.rs:1170",
+      "finding": "FLASH WAIT original to3 only; independent FLASH/SYSCTRL matching-old or matching-target pair, mixed/other immediate refusal; authoritative non-WAIT image preserved."
+    },
+    {
+      "phase": "D",
+      "source": "embassy-cw32/src/rcc/l012.rs:1213",
+      "finding": "Only HSIEN and HSI.STABLE independently progress to true; HSI parameters and complete other phase fields remain exact; HsiTimeout is exhaustion only."
+    },
+    {
+      "phase": "E",
+      "source": "embassy-cw32/src/rcc/l012.rs:1244",
+      "finding": "One keyed CR0 RMW selects HSI and /8-or-larger guards; ACK accepts only whole prior or whole target tuple, then barrier and exact settled guard."
+    },
+    {
+      "phase": "F0",
+      "source": "embassy-cw32/src/rcc/l012.rs:1322",
+      "finding": "Retrim only: CLKCCS prior to false, no other pending field."
+    },
+    {
+      "phase": "F1",
+      "source": "embassy-cw32/src/rcc/l012.rs:1347",
+      "finding": "Retrim only: HSI to live LSI under fixed guards/WAIT3; third selector is immediate ClockConfigurationTimeout; valid-prior exhaustion is TemporaryClockSwitchTimeout."
+    },
+    {
+      "phase": "F2",
+      "source": "embassy-cw32/src/rcc/l012.rs:1374",
+      "finding": "Retrim only: HSIEN/STABLE independently to false; both required before parameter write."
+    },
+    {
+      "phase": "F3",
+      "source": "embassy-cw32/src/rcc/l012.rs:1400",
+      "finding": "Stopped HSI only: own typed TRIM and DIV independently prior to factory/requested; all RFU preserved; no readiness reversal."
+    },
+    {
+      "phase": "F4",
+      "source": "embassy-cw32/src/rcc/l012.rs:1433",
+      "finding": "HSIEN/STABLE independently to true with final parameters fixed; valid-prior exhaustion HsiTimeout."
+    },
+    {
+      "phase": "F5",
+      "source": "embassy-cw32/src/rcc/l012.rs:1459",
+      "finding": "LSI to ready factory HSI with fixed guards/WAIT3; third selector ClockConfigurationTimeout; valid-prior exhaustion ClockSwitchTimeout."
+    },
+    {
+      "phase": "F6",
+      "source": "embassy-cw32/src/rcc/l012.rs:1486",
+      "finding": "CLKCCS false to original only, acknowledged before continuing."
+    },
+    {
+      "phase": "F7",
+      "source": "embassy-cw32/src/rcc/l012.rs:1505",
+      "finding": "No-retrim branch changes only HSI.DIV; factory TRIM and enabled/ready HSI remain exact."
+    },
+    {
+      "phase": "G0",
+      "source": "embassy-cw32/src/rcc/l012.rs:1538",
+      "finding": "Fresh declared HSE only after original/current stopped/unready checks; complete GPIOF setup window bracketed by full source guards and gate-first result classification."
+    },
+    {
+      "phase": "G1",
+      "source": "embassy-cw32/src/rcc/l012.rs:1567",
+      "finding": "Only declared MODE/DRIVER/PDRIVER/WAITCYCLE/DIGFLT/DETCNT independently progress while HSE remains stopped; original HEXENPOL/RFU preserved."
+    },
+    {
+      "phase": "G2",
+      "source": "embassy-cw32/src/rcc/l012.rs:1626",
+      "finding": "Only HSEEN/STABLE independently progress to true, relevant HSE faults first; valid-prior exhaustion HseTimeout."
+    },
+    {
+      "phase": "G3",
+      "source": "embassy-cw32/src/rcc/l012.rs:1652",
+      "finding": "Live target excludes both legacy explicit LSIEN writes/polls and returns before native LSE start/verify; settled guard remains."
+    },
+    {
+      "phase": "H",
+      "source": "embassy-cw32/src/rcc/l012.rs:2742",
+      "finding": "Dedicated tail verifies HSE pads with live policy and gate-first errors; full settled HSI/guard/WAIT3 state checked before final divider write."
+    },
+    {
+      "phase": "I",
+      "source": "embassy-cw32/src/rcc/l012.rs:2768",
+      "finding": "CR0 explicitly retains HSI; only AHB/APB independently advance to final with no reversal; barrier and full settled check."
+    },
+    {
+      "phase": "J",
+      "source": "embassy-cw32/src/rcc/l012.rs:2817",
+      "finding": "Final WAIT installed under factory HSI/final buses using strict pair; outward HCLK maxima include final LSI, configured HSI and full undivided 4.08MHz fallback."
+    },
+    {
+      "phase": "K",
+      "source": "embassy-cw32/src/rcc/l012.rs:2821",
+      "finding": "Last clock/source/divider/FLASH write selects LSI; final_source checks all non-selector phase, live readiness and FLASH first; only HSI may wait, unexpected selector/exhaustion/reversal use LsiClockSwitchTimeout."
+    },
+    {
+      "phase": "L",
+      "source": "embassy-cw32/src/rcc/l012.rs:2835",
+      "finding": "Only read-only final checks plus independently required borrowed GPIO gate restoration; final HSE matching followed by full final guard; no repair/reselect/rollback/native-LSE path."
+    }
+  ],
+  "reviewed_constraints": [
+    "Exact C8T6/C8U6 capability only; generic L012 and L011 remain excluded.",
+    "Original software LSIEN, STABLE and own nine-bit factory match cannot be upgraded; raw0xffff is never masked and zero remains valid.",
+    "LSI non-STABLE mask0xffff7fff retains RFU9, WAIT and every other bit; HSI/HSE masks exclude only own STABLE and LSE18 is checked separately; all non-owned CR0/CR1/CR2/IER/MCO remain authority.",
+    "Relevant external faults sampled before and after collected images; immutable and phase mismatch precede LSI readiness; Flash pair precedes final-selector interpretation.",
+    "RTC actual PSC1+1 and raw HSIOSC ownership; ADC1/2 shared gate/EN; ungated LVD; shared VC1..4; OPA1/2; DAC; conditional separate I2C1/2 master/slave raw1/3 refusal inspected with independent restoration diagnostics.",
+    "No new UART3, timer or output-bank inspection; closed work gate does not prove absence; GPIOF whole-bank progression and both direct outputs are explicit public functional constraints.",
+    "Private Legacy/LseSysclk/LiveLsiSysclk HSE selector retains old mappings and uses one GPIOF live matcher window with detailed LSI gate errors; fresh setup alone intentionally leaves gate enabled.",
+    "No SYSCTRL.LSI write, explicit LSIEN operation or IWDT register/gate/reset/feed/pause operation reachable for live LSI; no source/divider/Flash write after final mux.",
+    "Shared RTC semantic identity remains raw HSIOSC3 at96MHz with94.08..97.92MHz strict bounds; no native LSI calendar alias.",
+    "Protected L010/shared RTC/bounds/peripheral/native LSE/ADC/PWM/time-driver/schema files remain baseline-identical. Old LSE finish differs only in two HSE enum arguments; its inspection/mapping helpers remain exact.",
+    "New38-line public init rustdoc is documentation only; removing it restores the full prior lib.rs bytes. Safe API retains the existing pre-Rust platform memory-ownership boundary and states additional requirements as functional handover constraints."
+  ],
+  "actual_main_receipts": {
+    "external_artifact": "implementation/runtime-review/main-receipt-inspection.json",
+    "sha256": "6a66d73b0aa056054832f81353fb1ed748a48af647be5e218dbcfda7fa4f2fbd",
+    "commands": 13,
+    "rlibs": 7,
+    "elfs": 6,
+    "product_records_verified": 100,
+    "source_files": 1309,
+    "source_modes_and_before_after_equal": true,
+    "structured_warning_count": 0,
+    "rendered_warning_instances": 9,
+    "warning_rows": [
+      "main-05-cw32l010f8p6-release",
+      "main-06-cw32l011k8t6-release",
+      "main-13-cw32l010f8p6-release"
+    ],
+    "warning_detail": "Each warning row reports the same three unused legacy LSE detector constants; exact/generic L012 rows have no rendered warnings.",
+    "cache_scope": "Main uses serial shared target; recorded fresh flags are preserved. Independent clean2/2 is not represented as completed."
+  },
+  "actual_generated_hal_observations": {
+    "exact_l012_generated_sha256": "5c7d9066c86d9082aeced024af19e1518edeadf5c1687760fed88d85cff0a104",
+    "masks": {
+      "LSI": "0xffff7fff",
+      "HSI": "0xffff7fff",
+      "HSE": "0xfff7ffff",
+      "LSE": "0xfffbffff"
+    },
+    "hse_gpio_bank": 5,
+    "rtc_source_is_lsi": false,
+    "rtc_source": 3,
+    "nominal_hz": 32800,
+    "minimum_hz": 29520,
+    "maximum_hz": 36080,
+    "generic_has_live_branch": false
+  },
+  "source_inspection_external_artifact": "implementation/runtime-review/source-inspection.json",
+  "main_source_gates_verified": 6,
+  "historical_failure": {
+    "external_artifact": "verification/main-v1/commands.json",
+    "sha256": "3641ccb3474b6c0c8ce71009d53ad055fbfa7b8285ff36774d3420cafa9d74c7",
+    "status": "one_initial_exit101_build_block_name_assertion_resolved_before_v2"
+  },
+  "downstream_gate": {
+    "independent_clean_2_2": "Pending; must run against the later final-source freeze before final delivery acceptance.",
+    "any_functional_change": "invalidates this acceptance until independently reviewed and affected finite builds refreshed"
+  },
+  "limitations": [
+    "All register observations are non-atomic; STABLE is not a continuous-health proof.",
+    "Functional gate/output/ADC/timer/watchdog progression cannot be undone by restoration.",
+    "Iteration budgets have no elapsed-time or guaranteed recovery claim.",
+    "No ordinary-POR startup, analog/output continuity, watchdog survival or hardware performance has been established."
+  ],
+  "performed_by_reviewer": {
+    "project_source_edits": false,
+    "source_and_existing_artifact_reads": true,
+    "source_hash_byte_comparisons": true,
+    "existing_elf_data_inspection": true,
+    "generator": false,
+    "compiler": false,
+    "hal_tests": false,
+    "probes": false,
+    "models": false,
+    "hardware": false,
+    "network_writes": false
+  }
+}

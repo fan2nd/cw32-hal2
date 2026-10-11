@@ -1,0 +1,2350 @@
+{
+  "schema_version": 1,
+  "status": "accepted_source_and_main_implementation",
+  "scope": "Init-only reuse of an originally and continuously software-requested, stable, own factory-matching LSI on exactly CW32L012C8T6 and CW32L012C8U6. Generic CW32L012, every CW32L011, ordinary POR, stopped startup and automatic-only request admission are excluded. Source correspondence and the finite main implementation matrix are independently accepted. Final-package clean completion is recorded separately.",
+  "parts": [
+    {
+      "name": "CW32L012C8T6",
+      "package": "LQFP48"
+    },
+    {
+      "name": "CW32L012C8U6",
+      "package": "QFN48"
+    }
+  ],
+  "qualification_policy": {
+    "path": "cw32-data/lsi-sysclk-qualified.yaml",
+    "family": "CW32L012",
+    "canonical_sorted_json_sha256": "6561702cdfc98a675a761b072e83da1aa9a11427eb1e8e6305775a08185c65ea",
+    "strict_keys_and_explicit_nulls": true
+  },
+  "projected_lsi_sysclk": {
+    "nominal_hz": 32800,
+    "minimum_hz": 29520,
+    "maximum_hz": 36080,
+    "supply_mv": [
+      1700,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      85
+    ],
+    "factory_trim_address": 1050562,
+    "rtc_allowed_sources": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "awt_allowed_sources": [
+      0,
+      1
+    ],
+    "uart_allowed_sources": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "uarts": [
+      "UART1",
+      "UART2",
+      "UART3"
+    ],
+    "gpio_banks": [
+      "GPIOA",
+      "GPIOB",
+      "GPIOC",
+      "GPIOF"
+    ],
+    "gpio_filter_allowed_sources": [
+      0,
+      1,
+      2,
+      3,
+      5,
+      6,
+      7
+    ],
+    "mco_allowed_sources": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      9
+    ],
+    "lsi_output_pin": "PB11",
+    "lsi_output_allowed_af": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "rcc_irq": 4
+  },
+  "admission": {
+    "admission": "live_factory_reuse_only",
+    "watchdog_source": "independent_rc10k_with_documented_automatic_lsi_request",
+    "trim_write": "forbidden",
+    "waitcycle_preserved": true,
+    "factory_read_width_bits": 16,
+    "factory_erased_raw_halfword": 65535,
+    "factory_zero_is_erased": false,
+    "software_lsien_required": true,
+    "entry_stable_required": true,
+    "factory_trim_match_required": true,
+    "ordinary_por_supported": false,
+    "cycle_timing_qualified": false,
+    "config_lse_on_lsi_target": "refuse_some",
+    "gpio_inspection": "whole_bank_functional_handover",
+    "inspection_scope": "existing_owner_windows_only",
+    "selector_inventory_semantics": "documented_encodings_preserved_by_live_reuse",
+    "awt_register": "RTC.CR2.AWTSRC"
+  },
+  "lsi_parameter_preservation": {
+    "register_byte_offset": 32,
+    "trim_bit_offset": 0,
+    "trim_bit_size": 9,
+    "trim_mask": 511,
+    "reserved_bit9": 9,
+    "waitcycle_bit_offset": 10,
+    "waitcycle_bit_size": 2,
+    "stable_bit": 15,
+    "parameter_mask": 4294934527,
+    "operation": "read_only",
+    "factory_erased_check_order": "raw_u16_ffff_before_typed_trim_mask",
+    "zero_trim_accepted": true
+  },
+  "entry_and_lifetime": "Original-entry software LSIEN=1, STABLE=1 and own typed nine-bit factory TRIM equality are required and cannot be upgraded later in the attempt. Reject raw factory halfword 0xffff before masking; zero TRIM is valid. Preserve RFU9, WAITCYCLE and every non-STABLE LSI bit under 0xffff7fff. Preserve software LSIEN through every CR1 RMW. Never write SYSCTRL.LSI, explicitly set or restore LSIEN, or read/write IWDT, its gate/reset, command, feed, start, stop, status or pause. No cold preparation establishes admission.",
+  "source_identity": "RTC remains the independent raw HSIOSC SOURCE3 capability: 96 MHz nominal, 94.08-97.92 MHz, independent of SYSCLK and HSI.DIV. SOURCE3 retains ownership even with START=0; the actual retained PSC1+1 divisor must be at least 98. The existing calendar profile remains first120/second400000. No native LSI calendar alias is introduced.",
+  "independent_rtc_source": {
+    "calendar_divisor": 96000000,
+    "factory_trim_address": 1050560,
+    "maximum_hz": 97920000,
+    "minimum_hz": 94080000,
+    "nominal_hz": 96000000,
+    "prescaler_first": 120,
+    "prescaler_second": 400000,
+    "source": "HSIOSC",
+    "source_encoding": 3,
+    "supply_mv": [
+      1700,
+      5500
+    ],
+    "temperature_c": [
+      -40,
+      85
+    ]
+  },
+  "historical_lse_monitor": {
+    "monitor_reference": "factory_trim",
+    "factory_trim_address": 1050562,
+    "maximum_hz": 36080,
+    "trim_bit_size": 9,
+    "software_lsien_required": false,
+    "policy": "Old proof bytes and automatic-only stable monitor admission remain unchanged; the new SYSCLK target has stricter original software-requested entry.",
+    "existing_proof": "docs/l012-lse-sysclk-qualification.json",
+    "existing_proof_sha256": "3cee406969c9c15b0d6261ef3cce426ad89ffccda64bdff8cc281bebbe475a2c",
+    "existing_proof_lsi_sysclk_qualification": false,
+    "preservation_requirement": "Preserve every old LSE qualification byte and value, including its automatic-only stable factory-matching monitor admission, historical LSI SYSCLK=false, cycle-timing=false and PLL=false. That older proof does not establish the new stricter software-requested SYSCLK entry."
+  },
+  "requester_observers": [
+    {
+      "id": "iwdt",
+      "members": [
+        "IWDT"
+      ],
+      "disposition": "Preserve both own facts: RCC automatic LSI request from KR=0xCCCC without software LSIEN, and independent RC10K counter. Never observe RUN to manufacture admission; no IWDT reads, commands, feeding, pause, gate or reset operation. No command-to-RUN or request-release bound is proved.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        76,
+        495,
+        497,
+        501,
+        503
+      ],
+      "printed_pages": [
+        50,
+        469,
+        471,
+        475,
+        477
+      ]
+    },
+    {
+      "id": "rtc_awt_calendar_output",
+      "members": [
+        "RTC",
+        "AWT",
+        "calendar",
+        "RTC_OUT"
+      ],
+      "disposition": "Keep SOURCE2 live LSI. Preserve all RTC state and raw HSIOSC SOURCE3 ownership even START=0; require actual PSC1+1 to keep raw-HSI upper/first_divisor<=1MHz. Retained HSE SOURCE1 and LSE SOURCE0 keep their independent owner checks. AWTSRC0 uses RTCCLKD, AWTSRC1 TICKCLK; neither alone identifies oscillator.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        207,
+        208,
+        218,
+        219,
+        220,
+        221
+      ],
+      "printed_pages": [
+        181,
+        182,
+        192,
+        193,
+        194,
+        195
+      ]
+    },
+    {
+      "id": "uart",
+      "members": [
+        "UART1",
+        "UART2",
+        "UART3"
+      ],
+      "disposition": "CR1.SOURCE3 selects LSI. Preserve live selectors and functional progression. UART3 gate conflict remains; do not open a closed gate to prove idleness. No new cold-source UART sweep.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        88,
+        552
+      ],
+      "printed_pages": [
+        62,
+        526
+      ]
+    },
+    {
+      "id": "i2c",
+      "members": [
+        "I2C1",
+        "I2C2"
+      ],
+      "disposition": "Master and slave have independent CLKSRC[7:6]. EN master3=HSI conflicts with own SDK/CN LSI; EN slave3=LSI. Conservatively refuse raw1/3 on both sides when HSI is started/restarted/retrimmed or initially unready. Factory-ready DIV-only changes preserve raw HSIOSC. Live LSI does not relax this check.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        626,
+        636
+      ],
+      "printed_pages": [
+        600,
+        610
+      ]
+    },
+    {
+      "id": "lptim",
+      "members": [
+        "LPTIM"
+      ],
+      "disposition": "Preserve enabled ICLKSRC3 live LSI regardless timer mode; keep RTC trigger set1..5 and other retained roots. No cold requester scan or dormant work-gate census.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        258,
+        259,
+        260,
+        272,
+        273
+      ],
+      "printed_pages": [
+        232,
+        233,
+        234,
+        246,
+        247
+      ]
+    },
+    {
+      "id": "ready_and_output",
+      "members": [
+        "MCO",
+        "LSIRDY",
+        "SYSCTRL_IRQ4",
+        "NVIC_SYSCTRL_PENDING",
+        "PB11_LSI_OUT",
+        "PF3_LSI_OUT"
+      ],
+      "disposition": "MCO4 and both direct outputs remain live and unchanged; preserve LSIRDY enable/status and IRQ/NVIC events. Existing HSI ownership retains MCO3 and HSIRDY veto on disturbance. Pin projection does not configure/disable/reject either output or create a new inspection window.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        67,
+        84,
+        85,
+        97,
+        167,
+        168
+      ],
+      "printed_pages": [
+        41,
+        58,
+        59,
+        71,
+        141,
+        142
+      ]
+    },
+    {
+      "id": "gpio",
+      "members": [
+        "GPIOA",
+        "GPIOB",
+        "GPIOC",
+        "GPIOF"
+      ],
+      "disposition": "FILTER.FLTCLK5 automatic LSI requests are preserved along with enables, sampling and events. Existing required bank windows can advance all bonded/unbonded native filter logic. Preserve native guard fields even if a pad is unbonded; do not turn raw fields into physical pin claims or add dormant-bank scans.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        76,
+        87,
+        163,
+        167,
+        168,
+        169,
+        171,
+        176
+      ],
+      "printed_pages": [
+        50,
+        61,
+        137,
+        141,
+        142,
+        143,
+        145,
+        150
+      ]
+    },
+    {
+      "id": "analog",
+      "members": [
+        "VC1",
+        "VC2",
+        "VC3",
+        "VC4",
+        "LVD",
+        "BGR",
+        "VC12REF",
+        "VC34REF"
+      ],
+      "disposition": "Preserve enabled LSI filters, reference state and all routes. EN+FLTCLK0 requests LSI even when filter count0. Keep independent active PCLK filtering and VC blanking vetoes. LVD is ungated; VC1..4 share configuration gate/reset. Existing VCREF width/illegal-code policy is unchanged.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        76,
+        89,
+        702,
+        705,
+        707,
+        709,
+        713,
+        714,
+        715,
+        716,
+        720,
+        722,
+        724,
+        726,
+        727
+      ],
+      "printed_pages": [
+        50,
+        63,
+        676,
+        679,
+        681,
+        683,
+        687,
+        688,
+        689,
+        690,
+        694,
+        696,
+        698,
+        700,
+        701
+      ]
+    },
+    {
+      "id": "adc_dac_opa",
+      "members": [
+        "ADC1",
+        "ADC2",
+        "DAC",
+        "OPA1",
+        "OPA2"
+      ],
+      "disposition": "ADC1/2 share a configuration-and-work gate whose opening can advance conversion before refusal. Retain active-ADC, OPA calibration and DAC trigger/DMA/wave vetoes; reset checks and independent restoration remain. No relaxed bus/per-cycle claim follows from slow LSI.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        89,
+        90,
+        655,
+        669,
+        670,
+        683,
+        691,
+        692,
+        693,
+        694,
+        737,
+        738
+      ],
+      "printed_pages": [
+        63,
+        64,
+        629,
+        643,
+        644,
+        657,
+        665,
+        666,
+        667,
+        668,
+        711,
+        712
+      ]
+    },
+    {
+      "id": "clock_policy",
+      "members": [
+        "HSECCS",
+        "LSECCS",
+        "HSIRDY",
+        "clock_policy",
+        "CLKFAULT_IRQ31"
+      ],
+      "disposition": "Preserve automatic LSI requester policy and fault/event routes, inherited HSE/LSE ownership and masks. Config.lse must be None only for the new LSI target. No PLL, calibration preparation, source recovery or low-power restoration.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        53,
+        54,
+        59,
+        60,
+        63,
+        65,
+        66,
+        68,
+        70,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        84,
+        85
+      ],
+      "printed_pages": [
+        27,
+        28,
+        33,
+        34,
+        37,
+        39,
+        40,
+        42,
+        44,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        58,
+        59
+      ]
+    },
+    {
+      "id": "downstream",
+      "members": [
+        "GTIM1",
+        "GTIM2",
+        "GTIM3",
+        "GTIM4",
+        "ATIM",
+        "BTIM1",
+        "BTIM2",
+        "BTIM3",
+        "HALLTIM",
+        "IRMOD",
+        "external_recipients"
+      ],
+      "disposition": "Preserve every retained timer input/capture/cascade/trigger and GPIO/external recipient. Generic ATIM LSI9/MCO15 prose conflicts with actual per-channel TISEL tables; no universal LSI9 assumption or positive absence proof. No new timer/Hall work-gate windows. Bus-clock change can alter downstream rates while LSI root remains unchanged.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        167,
+        168,
+        251,
+        252,
+        283,
+        333,
+        334,
+        335,
+        336,
+        337,
+        403,
+        474,
+        475
+      ],
+      "printed_pages": [
+        141,
+        142,
+        225,
+        226,
+        257,
+        307,
+        308,
+        309,
+        310,
+        311,
+        377,
+        448,
+        449
+      ]
+    },
+    {
+      "id": "bus_domain_consumers",
+      "members": [
+        "CPU",
+        "DMA",
+        "DMACHANNEL1",
+        "DMACHANNEL2",
+        "DMACHANNEL3",
+        "DMACHANNEL4",
+        "SPI1",
+        "SPI2",
+        "SPI3",
+        "WWDT",
+        "CRC",
+        "CORDIC",
+        "EAU",
+        "RAM",
+        "FLASH"
+      ],
+      "disposition": "These downstream system/bus-clock recipients are covered by the existing initialization and bus-master ownership contract. Their function/rate/progress can change with HCLK/PCLK. No new register census, gate opening, DMA/WWDT operation, memory-safety precondition or peripheral-rate equivalence is introduced.",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        53,
+        54,
+        87,
+        88,
+        90
+      ],
+      "printed_pages": [
+        27,
+        28,
+        61,
+        62,
+        64
+      ]
+    }
+  ],
+  "observer_irq": {
+    "name": "SYSCTRL",
+    "number": 4,
+    "peripheral": "SYSCTRL",
+    "header_source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+    "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+    "pdf_pages_1_based": [
+      83,
+      84,
+      85
+    ],
+    "printed_pages": [
+      57,
+      58,
+      59
+    ],
+    "fault_irq": {
+      "name": "CLKFAULT",
+      "number": 31,
+      "source": "existing supplemental interrupt evidence; unchanged"
+    }
+  },
+  "positive_lsi_routes": {
+    "dedicated_lsi_gpio_af": [
+      {
+        "pin": "PB11",
+        "af": 4,
+        "gpio": "GPIOB",
+        "register": "AFRH",
+        "byte_offset": 20,
+        "field": "PIN11",
+        "bit_offset": 12,
+        "bit_size": 4,
+        "documented_af_codes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "documented_af_functions": [
+          "GPIO",
+          "UART1_RXD",
+          "ATIM_BK2OUT",
+          "I2C1_SDA",
+          "LSI_OUT",
+          "BTIM1_ETR",
+          "GTIM2_CH4",
+          "ATIM_CH3",
+          "I2C2_SDA",
+          "HALLTIM_CH3"
+        ]
+      },
+      {
+        "pin": "PF3",
+        "af": 2,
+        "gpio": "GPIOF",
+        "register": "AFRL",
+        "byte_offset": 24,
+        "field": "PIN3",
+        "bit_offset": 12,
+        "bit_size": 4,
+        "documented_af_codes": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "documented_af_functions": [
+          "GPIO",
+          "LSE_OUT",
+          "LSI_OUT",
+          "ADC1_SAM",
+          "LVD_OUT",
+          "HCLK_OUT",
+          "ATIM_TRGO",
+          "IR_OUT",
+          "GTIM3_TRGO",
+          "GTIM4_TRGO"
+        ]
+      }
+    ],
+    "exact_sysctrl_pin_projection": [
+      {
+        "pin": "PB11",
+        "signal": "LSI_OUT",
+        "af": 4
+      },
+      {
+        "pin": "PF3",
+        "signal": "LSI_OUT",
+        "af": 2
+      }
+    ],
+    "mco_source": 4,
+    "mco_pads": [
+      {
+        "pin": "PA4",
+        "af": 4
+      },
+      {
+        "pin": "PA8",
+        "af": 4
+      },
+      {
+        "pin": "PC13",
+        "af": 1
+      }
+    ],
+    "internal_timer_policy": "Complete actual control fieldsets retained. EN403 generic LSI_OUT9 is a disputed positive route only; actual per-channel tables EN333..337 and474..475 take precedence for structure but do not establish cold absence. Do not copy L010 encoding9 assertions.",
+    "source_refs": [
+      {
+        "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+        "pdf_pages_1_based": [
+          36,
+          38,
+          39,
+          40
+        ],
+        "printed_pages": [
+          33,
+          35,
+          36,
+          37
+        ]
+      },
+      {
+        "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+        "pdf_pages_1_based": [
+          67,
+          97,
+          167,
+          168,
+          333,
+          334,
+          335,
+          336,
+          337,
+          403,
+          474,
+          475
+        ],
+        "printed_pages": [
+          41,
+          71,
+          141,
+          142,
+          307,
+          308,
+          309,
+          310,
+          311,
+          377,
+          448,
+          449
+        ]
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012_gpio.h",
+        "macros": [
+          "PB11_AFx_LSIOUT",
+          "PF03_AFx_LSIOUT"
+        ]
+      }
+    ]
+  },
+  "legacy_lsi_output_scalar_semantics": "PB11 is a nonexhaustive compatibility anchor only. Both direct outputs must be obtained from the complete native positive_lsi_routes and SYSCTRL.pins LSI_OUT projection. The scalar must never select a singular runtime output observer or imply PF3 absence.",
+  "pin_projection_contract": {
+    "source_type": "cw32_data_serde::chip::core::peripheral::Pin",
+    "static_type": "cw32_metapac::metadata::PeripheralPin",
+    "existing_transport_only": true,
+    "new_pin_fields": {
+      "pin": "String -> &'static str",
+      "signal": "String -> &'static str",
+      "af": "Option<u8> -> Option<u8>",
+      "adc_mux": "None",
+      "comparator_mux": "None"
+    },
+    "exact_sysctrl_pin_projection": [
+      {
+        "pin": "PB11",
+        "signal": "LSI_OUT",
+        "af": 4
+      },
+      {
+        "pin": "PF3",
+        "signal": "LSI_OUT",
+        "af": 2
+      }
+    ],
+    "order": "Append PB11 AF4, then PF3 AF2 after the unchanged four HSE/LSE tuples on each exact part; no duplicates, extras or generic-part projection.",
+    "complete_validation_before_native_leaf_return": true,
+    "runtime_effect": "Both package bonds and actual native field shapes must be validated before the live leaf returns ahead of singular-output and cold-observer generation. Neither projection authorizes pad configuration, rejection of an active output, an added observer read or a new GPIO gate window."
+  },
+  "native_binding": {
+    "policy_section": "families.CW32L012",
+    "sysctrl_version": "cw32l012_v1",
+    "native_peripherals": 50,
+    "native_controls": 166,
+    "native_fields": 1466,
+    "gate_reset_records": 31,
+    "source_status_overlays": 4,
+    "sysctrl_irq": 4,
+    "native_controls_source_ref": "member:cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+    "access_note": "The own SVD binds all selected complete native fieldsets and raw access. Operational RM meanings and existing reviewed status overlays remain distinct and unchanged. This source inventory does not authorize runtime inspection of every peripheral."
+  },
+  "package_binding": {
+    "catalog": "cw32-data/parts.yaml",
+    "pinouts": "cw32-data/pinouts/cw32l012.yaml",
+    "parts": {
+      "CW32L012C8T6": {
+        "package": "LQFP48",
+        "memory": [
+          {
+            "name": "FLASH",
+            "kind": "flash",
+            "address": 0,
+            "size": 65536
+          },
+          {
+            "name": "RAM",
+            "kind": "ram",
+            "address": 536870912,
+            "size": 8192
+          }
+        ],
+        "pins": [
+          {
+            "position": "1",
+            "signals": [
+              "Vcore"
+            ]
+          },
+          {
+            "position": "2",
+            "signals": [
+              "PC13"
+            ]
+          },
+          {
+            "position": "3",
+            "signals": [
+              "PC14",
+              "OSC32_IN"
+            ]
+          },
+          {
+            "position": "4",
+            "signals": [
+              "PC15",
+              "OSC32_OUT"
+            ]
+          },
+          {
+            "position": "5",
+            "signals": [
+              "PF0",
+              "OSC_IN"
+            ]
+          },
+          {
+            "position": "6",
+            "signals": [
+              "PF1",
+              "OSC_OUT"
+            ]
+          },
+          {
+            "position": "7",
+            "signals": [
+              "NRST"
+            ]
+          },
+          {
+            "position": "8",
+            "signals": [
+              "VSSA"
+            ]
+          },
+          {
+            "position": "9",
+            "signals": [
+              "VDDA"
+            ]
+          },
+          {
+            "position": "10",
+            "signals": [
+              "PA0"
+            ]
+          },
+          {
+            "position": "11",
+            "signals": [
+              "PA1"
+            ]
+          },
+          {
+            "position": "12",
+            "signals": [
+              "PA2"
+            ]
+          },
+          {
+            "position": "13",
+            "signals": [
+              "PA3"
+            ]
+          },
+          {
+            "position": "14",
+            "signals": [
+              "PA4"
+            ]
+          },
+          {
+            "position": "15",
+            "signals": [
+              "PA5"
+            ]
+          },
+          {
+            "position": "16",
+            "signals": [
+              "PA6"
+            ]
+          },
+          {
+            "position": "17",
+            "signals": [
+              "PA7"
+            ]
+          },
+          {
+            "position": "18",
+            "signals": [
+              "PB0"
+            ]
+          },
+          {
+            "position": "19",
+            "signals": [
+              "PB1"
+            ]
+          },
+          {
+            "position": "20",
+            "signals": [
+              "PB2"
+            ]
+          },
+          {
+            "position": "21",
+            "signals": [
+              "PB10"
+            ]
+          },
+          {
+            "position": "22",
+            "signals": [
+              "PB11"
+            ]
+          },
+          {
+            "position": "23",
+            "signals": [
+              "VSS"
+            ]
+          },
+          {
+            "position": "24",
+            "signals": [
+              "VDD"
+            ]
+          },
+          {
+            "position": "25",
+            "signals": [
+              "PB12"
+            ]
+          },
+          {
+            "position": "26",
+            "signals": [
+              "PB13"
+            ]
+          },
+          {
+            "position": "27",
+            "signals": [
+              "PB14"
+            ]
+          },
+          {
+            "position": "28",
+            "signals": [
+              "PB15"
+            ]
+          },
+          {
+            "position": "29",
+            "signals": [
+              "PA8"
+            ]
+          },
+          {
+            "position": "30",
+            "signals": [
+              "PA9"
+            ]
+          },
+          {
+            "position": "31",
+            "signals": [
+              "PA10"
+            ]
+          },
+          {
+            "position": "32",
+            "signals": [
+              "PA11"
+            ]
+          },
+          {
+            "position": "33",
+            "signals": [
+              "PA12"
+            ]
+          },
+          {
+            "position": "34",
+            "signals": [
+              "PA13",
+              "SWDIO"
+            ]
+          },
+          {
+            "position": "35",
+            "signals": [
+              "PF6"
+            ]
+          },
+          {
+            "position": "36",
+            "signals": [
+              "PF7"
+            ]
+          },
+          {
+            "position": "37",
+            "signals": [
+              "PA14",
+              "SWCLK"
+            ]
+          },
+          {
+            "position": "38",
+            "signals": [
+              "PA15"
+            ]
+          },
+          {
+            "position": "39",
+            "signals": [
+              "PB3"
+            ]
+          },
+          {
+            "position": "40",
+            "signals": [
+              "PB4"
+            ]
+          },
+          {
+            "position": "41",
+            "signals": [
+              "PB5"
+            ]
+          },
+          {
+            "position": "42",
+            "signals": [
+              "PB6"
+            ]
+          },
+          {
+            "position": "43",
+            "signals": [
+              "PB7"
+            ]
+          },
+          {
+            "position": "44",
+            "signals": [
+              "PF3",
+              "BOOT"
+            ]
+          },
+          {
+            "position": "45",
+            "signals": [
+              "PB8"
+            ]
+          },
+          {
+            "position": "46",
+            "signals": [
+              "PB9"
+            ]
+          },
+          {
+            "position": "47",
+            "signals": [
+              "VSS"
+            ]
+          },
+          {
+            "position": "48",
+            "signals": [
+              "VDD"
+            ]
+          }
+        ],
+        "gpio_pins": [
+          "PA0",
+          "PA1",
+          "PA2",
+          "PA3",
+          "PA4",
+          "PA5",
+          "PA6",
+          "PA7",
+          "PA8",
+          "PA9",
+          "PA10",
+          "PA11",
+          "PA12",
+          "PA13",
+          "PA14",
+          "PA15",
+          "PB0",
+          "PB1",
+          "PB2",
+          "PB3",
+          "PB4",
+          "PB5",
+          "PB6",
+          "PB7",
+          "PB8",
+          "PB9",
+          "PB10",
+          "PB11",
+          "PB12",
+          "PB13",
+          "PB14",
+          "PB15",
+          "PC13",
+          "PC14",
+          "PC15",
+          "PF0",
+          "PF1",
+          "PF3",
+          "PF6",
+          "PF7"
+        ],
+        "input_only_pins": [],
+        "dfp_device": "CW32L012C8",
+        "source_ids": [
+          "CW32L012_datasheet",
+          "CW32L012_dfp"
+        ],
+        "direct_lsi_bonds": [
+          {
+            "pin": "PB11",
+            "position": "22",
+            "af": 4
+          },
+          {
+            "pin": "PF3",
+            "position": "44",
+            "af": 2
+          }
+        ]
+      },
+      "CW32L012C8U6": {
+        "package": "QFN48",
+        "memory": [
+          {
+            "name": "FLASH",
+            "kind": "flash",
+            "address": 0,
+            "size": 65536
+          },
+          {
+            "name": "RAM",
+            "kind": "ram",
+            "address": 536870912,
+            "size": 8192
+          }
+        ],
+        "pins": [
+          {
+            "position": "1",
+            "signals": [
+              "Vcore"
+            ]
+          },
+          {
+            "position": "2",
+            "signals": [
+              "PC13"
+            ]
+          },
+          {
+            "position": "3",
+            "signals": [
+              "PC14",
+              "OSC32_IN"
+            ]
+          },
+          {
+            "position": "4",
+            "signals": [
+              "PC15",
+              "OSC32_OUT"
+            ]
+          },
+          {
+            "position": "5",
+            "signals": [
+              "PF0",
+              "OSC_IN"
+            ]
+          },
+          {
+            "position": "6",
+            "signals": [
+              "PF1",
+              "OSC_OUT"
+            ]
+          },
+          {
+            "position": "7",
+            "signals": [
+              "NRST"
+            ]
+          },
+          {
+            "position": "8",
+            "signals": [
+              "VSSA"
+            ]
+          },
+          {
+            "position": "9",
+            "signals": [
+              "VDDA"
+            ]
+          },
+          {
+            "position": "10",
+            "signals": [
+              "PA0"
+            ]
+          },
+          {
+            "position": "11",
+            "signals": [
+              "PA1"
+            ]
+          },
+          {
+            "position": "12",
+            "signals": [
+              "PA2"
+            ]
+          },
+          {
+            "position": "13",
+            "signals": [
+              "PA3"
+            ]
+          },
+          {
+            "position": "14",
+            "signals": [
+              "PA4"
+            ]
+          },
+          {
+            "position": "15",
+            "signals": [
+              "PA5"
+            ]
+          },
+          {
+            "position": "16",
+            "signals": [
+              "PA6"
+            ]
+          },
+          {
+            "position": "17",
+            "signals": [
+              "PA7"
+            ]
+          },
+          {
+            "position": "18",
+            "signals": [
+              "PB0"
+            ]
+          },
+          {
+            "position": "19",
+            "signals": [
+              "PB1"
+            ]
+          },
+          {
+            "position": "20",
+            "signals": [
+              "PB2"
+            ]
+          },
+          {
+            "position": "21",
+            "signals": [
+              "PB10"
+            ]
+          },
+          {
+            "position": "22",
+            "signals": [
+              "PB11"
+            ]
+          },
+          {
+            "position": "23",
+            "signals": [
+              "VSS"
+            ]
+          },
+          {
+            "position": "24",
+            "signals": [
+              "VDD"
+            ]
+          },
+          {
+            "position": "25",
+            "signals": [
+              "PB12"
+            ]
+          },
+          {
+            "position": "26",
+            "signals": [
+              "PB13"
+            ]
+          },
+          {
+            "position": "27",
+            "signals": [
+              "PB14"
+            ]
+          },
+          {
+            "position": "28",
+            "signals": [
+              "PB15"
+            ]
+          },
+          {
+            "position": "29",
+            "signals": [
+              "PA8"
+            ]
+          },
+          {
+            "position": "30",
+            "signals": [
+              "PA9"
+            ]
+          },
+          {
+            "position": "31",
+            "signals": [
+              "PA10"
+            ]
+          },
+          {
+            "position": "32",
+            "signals": [
+              "PA11"
+            ]
+          },
+          {
+            "position": "33",
+            "signals": [
+              "PA12"
+            ]
+          },
+          {
+            "position": "34",
+            "signals": [
+              "PA13",
+              "SWDIO"
+            ]
+          },
+          {
+            "position": "35",
+            "signals": [
+              "PF6"
+            ]
+          },
+          {
+            "position": "36",
+            "signals": [
+              "PF7"
+            ]
+          },
+          {
+            "position": "37",
+            "signals": [
+              "PA14",
+              "SWCLK"
+            ]
+          },
+          {
+            "position": "38",
+            "signals": [
+              "PA15"
+            ]
+          },
+          {
+            "position": "39",
+            "signals": [
+              "PB3"
+            ]
+          },
+          {
+            "position": "40",
+            "signals": [
+              "PB4"
+            ]
+          },
+          {
+            "position": "41",
+            "signals": [
+              "PB5"
+            ]
+          },
+          {
+            "position": "42",
+            "signals": [
+              "PB6"
+            ]
+          },
+          {
+            "position": "43",
+            "signals": [
+              "PB7"
+            ]
+          },
+          {
+            "position": "44",
+            "signals": [
+              "PF3",
+              "BOOT"
+            ]
+          },
+          {
+            "position": "45",
+            "signals": [
+              "PB8"
+            ]
+          },
+          {
+            "position": "46",
+            "signals": [
+              "PB9"
+            ]
+          },
+          {
+            "position": "47",
+            "signals": [
+              "VSS"
+            ]
+          },
+          {
+            "position": "48",
+            "signals": [
+              "VDD"
+            ]
+          }
+        ],
+        "gpio_pins": [
+          "PA0",
+          "PA1",
+          "PA2",
+          "PA3",
+          "PA4",
+          "PA5",
+          "PA6",
+          "PA7",
+          "PA8",
+          "PA9",
+          "PA10",
+          "PA11",
+          "PA12",
+          "PA13",
+          "PA14",
+          "PA15",
+          "PB0",
+          "PB1",
+          "PB2",
+          "PB3",
+          "PB4",
+          "PB5",
+          "PB6",
+          "PB7",
+          "PB8",
+          "PB9",
+          "PB10",
+          "PB11",
+          "PB12",
+          "PB13",
+          "PB14",
+          "PB15",
+          "PC13",
+          "PC14",
+          "PC15",
+          "PF0",
+          "PF1",
+          "PF3",
+          "PF6",
+          "PF7"
+        ],
+        "input_only_pins": [],
+        "dfp_device": "CW32L012C8",
+        "source_ids": [
+          "CW32L012_datasheet",
+          "CW32L012_dfp"
+        ],
+        "direct_lsi_bonds": [
+          {
+            "pin": "PB11",
+            "position": "22",
+            "af": 4
+          },
+          {
+            "pin": "PF3",
+            "position": "44",
+            "af": 2
+          }
+        ]
+      }
+    }
+  },
+  "unbonded_native_fields": {
+    "GPIOA": [],
+    "GPIOB": [],
+    "GPIOC": [
+      "PC0",
+      "PC1",
+      "PC2",
+      "PC3",
+      "PC4",
+      "PC5",
+      "PC6",
+      "PC7",
+      "PC8",
+      "PC9",
+      "PC10",
+      "PC11",
+      "PC12"
+    ],
+    "GPIOF": [
+      "PF2",
+      "PF4",
+      "PF5",
+      "PF8",
+      "PF9",
+      "PF10",
+      "PF11",
+      "PF12",
+      "PF13",
+      "PF14",
+      "PF15"
+    ],
+    "policy": "Both direct LSI pads are bonded in every admitted exact part. Full 16-bit native DIR/ANALOG/FILTER and 4-bit AF fields retain conservative existing bank checks; unbonded fields do not become output routes or create new observer reads."
+  },
+  "operational_access_facts": [
+    {
+      "peripheral": "SYSCTRL",
+      "registers": [
+        "CR0",
+        "CR1",
+        "CR2",
+        "IER",
+        "AHBEN",
+        "APBEN1",
+        "APBEN2"
+      ],
+      "field": "KEY",
+      "raw_svd_access": "write-only",
+      "operational_rm_access": "WO",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        74,
+        75,
+        77,
+        83,
+        87,
+        88,
+        90
+      ],
+      "contract": "Normalize/write key as existing typed protocol requires; never require the raw key to echo. Do not change IR.",
+      "printed_pages": [
+        48,
+        49,
+        51,
+        57,
+        61,
+        62,
+        64
+      ]
+    },
+    {
+      "peripheral": "FLASH",
+      "registers": [
+        "CR2"
+      ],
+      "field": "KEY",
+      "raw_svd_access": "write-only",
+      "operational_rm_access": "WO",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        135
+      ],
+      "printed_pages": [
+        109
+      ]
+    },
+    {
+      "peripheral": "IWDT",
+      "registers": [
+        "SR"
+      ],
+      "fields": [
+        "CRF",
+        "ARRF",
+        "WINRF",
+        "RUN",
+        "RELOAD"
+      ],
+      "raw_svd_access": "read-only",
+      "operational_rm_access": "RO",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        503
+      ],
+      "printed_pages": [
+        477
+      ]
+    },
+    {
+      "peripheral": "IWDT",
+      "registers": [
+        "SR"
+      ],
+      "field": "OV",
+      "raw_svd_access": "read-write",
+      "operational_rm_access": "RW0",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        503
+      ],
+      "contract": "The operational clear-on-zero behavior is not an SVD read/write spelling correction. No watchdog access is authorized.",
+      "printed_pages": [
+        477
+      ]
+    },
+    {
+      "peripheral": "RTC",
+      "registers": [
+        "CR1"
+      ],
+      "field": "WAIT",
+      "raw_svd_access": "read-only",
+      "operational_rm_access": "RO",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        219
+      ],
+      "printed_pages": [
+        193
+      ]
+    },
+    {
+      "peripheral": "SYSCTRL",
+      "registers": [
+        "HSI",
+        "LSI",
+        "HSE",
+        "LSE"
+      ],
+      "field": "STABLE",
+      "raw_svd_access": "read-only",
+      "operational_rm_access": "RO",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "pdf_pages_1_based": [
+        78,
+        79,
+        80,
+        82
+      ],
+      "contract": "Preserve existing reviewed field-access overlays; exclude only own status bit from parameter identity.",
+      "printed_pages": [
+        52,
+        53,
+        54,
+        56
+      ]
+    }
+  ],
+  "known_source_conflicts": [
+    "RM LSE bypass1MHz is not adopted over DS100kHz.",
+    "RCC WAIT4 narrative does not widen the qualified96MHz envelope or Flash WAIT0..3 table.",
+    "UART3 gate: CN configuration-only versus EN configuration-and-work; do not open a closed gate.",
+    "I2C master source3: EN HSI versus SDK LSI; slave source3 EN LSI. Raw1/3 are conservatively refused without resolving the conflict.",
+    "BTIM native raw0 no signal and instance-specific raw3 BTIM1 RTC_OUT, BTIM2 LPTIM_OV, BTIM3 VC4_OUT versus SDK AWT0/RTC6; native SPI5/UART6 versus SDK SPI3/UART5; native reset4 I2Cx_TRGO versus SDK I2C_SCL. No positive timer absence proof uses either disputed table.",
+    "ATIM native TI2/TI5 RTC6 versus generic/SDK8; generic LSI9/MCO15 and native tables are not interchangeable absence proofs.",
+    "LPTIM block trigger5 PC13 versus native table RTC_1Hz; conservatively preserve all1..5 RTC dependencies.",
+    "PINLOCK fault behavior remains unresolved; never clear or adopt raw PINLOCK.",
+    "LSI approximate0.4% and30-36kHz prose does not replace DS0.16% steps or its factory +/-10% envelope.",
+    "Stray SDK PLL parameter comment conflicts with the own four-source selector set; no PLL is qualified."
+  ],
+  "sources": [
+    {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "text_sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505",
+      "provenance_status": "selected",
+      "pdf_pages_1_based": [
+        53,
+        54,
+        57,
+        58,
+        59,
+        61,
+        62,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        104,
+        115,
+        127,
+        154,
+        155,
+        161,
+        163,
+        190,
+        191,
+        201,
+        202,
+        203,
+        204,
+        231,
+        232,
+        238,
+        253,
+        366,
+        432,
+        433,
+        453,
+        461,
+        484,
+        573,
+        583,
+        643,
+        646,
+        649,
+        650,
+        651,
+        652,
+        653,
+        659,
+        661,
+        663,
+        664
+      ],
+      "printed_pages": [
+        27,
+        28,
+        31,
+        32,
+        33,
+        35,
+        36,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        78,
+        89,
+        101,
+        128,
+        129,
+        135,
+        137,
+        164,
+        165,
+        175,
+        176,
+        177,
+        178,
+        205,
+        206,
+        212,
+        227,
+        340,
+        406,
+        407,
+        427,
+        435,
+        458,
+        547,
+        557,
+        617,
+        620,
+        623,
+        624,
+        625,
+        626,
+        627,
+        633,
+        635,
+        637,
+        638
+      ]
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "sha256": "f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088",
+      "text_sha256": "4b4413bdc5c57d7c0f23b5c949a66e10997b0adf6b087cea8d08b125b5320737",
+      "provenance_status": "corroborating-language-edition",
+      "pdf_pages_1_based": [
+        53,
+        54,
+        59,
+        60,
+        63,
+        65,
+        66,
+        67,
+        68,
+        70,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        97,
+        135,
+        163,
+        167,
+        168,
+        169,
+        171,
+        176,
+        207,
+        208,
+        218,
+        219,
+        220,
+        221,
+        251,
+        252,
+        258,
+        259,
+        260,
+        272,
+        273,
+        283,
+        333,
+        334,
+        335,
+        336,
+        337,
+        403,
+        474,
+        475,
+        495,
+        497,
+        501,
+        503,
+        552,
+        626,
+        636,
+        655,
+        669,
+        670,
+        683,
+        691,
+        692,
+        693,
+        694,
+        702,
+        705,
+        707,
+        709,
+        713,
+        714,
+        715,
+        716,
+        720,
+        722,
+        724,
+        726,
+        727,
+        737,
+        738
+      ],
+      "printed_pages": [
+        27,
+        28,
+        33,
+        34,
+        37,
+        39,
+        40,
+        41,
+        42,
+        44,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        71,
+        109,
+        137,
+        141,
+        142,
+        143,
+        145,
+        150,
+        181,
+        182,
+        192,
+        193,
+        194,
+        195,
+        225,
+        226,
+        232,
+        233,
+        234,
+        246,
+        247,
+        257,
+        307,
+        308,
+        309,
+        310,
+        311,
+        377,
+        448,
+        449,
+        469,
+        471,
+        475,
+        477,
+        526,
+        600,
+        610,
+        629,
+        643,
+        644,
+        657,
+        665,
+        666,
+        667,
+        668,
+        676,
+        679,
+        681,
+        683,
+        687,
+        688,
+        689,
+        690,
+        694,
+        696,
+        698,
+        700,
+        701,
+        711,
+        712
+      ]
+    },
+    {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+      "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+      "text_sha256": "00ba7e2c9d26a8ce5a4eaa4cc2e7790773c427b13a4d491838622041abfa8b0a",
+      "provenance_status": "selected",
+      "pdf_pages_1_based": [
+        14,
+        15,
+        16,
+        17,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        47,
+        55,
+        57,
+        58
+      ],
+      "printed_pages": [
+        11,
+        12,
+        13,
+        14,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        44,
+        52,
+        54,
+        55
+      ]
+    }
+  ],
+  "sdk_source": {
+    "source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+    "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+    "generator_svd_path": "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+    "generator_header_path": "cw32l012/Libraries/inc/cw32l012.h"
+  },
+  "sdk_members": [
+    {
+      "source_ref": "member:cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+      "sha256": "fda08355c30ed60204cd53b2c1ca33e6ee2233530e6cb2448522158dfc302942",
+      "bytes": 505809,
+      "member_chain": [
+        "IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2.pack",
+        "SVD/CW32L012.svd"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/WHXY.CW32L012_DFP.pdsc",
+      "sha256": "0c88e4226659eadac050161d2b5ca3b1c4695c2793a3f609e0eb58646003657c",
+      "bytes": 3199,
+      "member_chain": [
+        "IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2.pack",
+        "WHXY.CW32L012_DFP.pdsc"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+      "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+      "bytes": 834392,
+      "member_chain": [
+        "Libraries/inc/cw32l012.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_btim.h",
+      "sha256": "b3bf357bf668bccfca8881b8880135c5d1b81b030a668d17fcc6734d48dda7f9",
+      "bytes": 24411,
+      "member_chain": [
+        "Libraries/inc/cw32l012_btim.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_flash.h",
+      "sha256": "11014ce8ab671738975bb4f879bb55cee584ff5ecdb696d126160a6da5535bf7",
+      "bytes": 7884,
+      "member_chain": [
+        "Libraries/inc/cw32l012_flash.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_gpio.h",
+      "sha256": "45f356e8028475c2e25d135c5fdd0b75babb6b1c83f1d5534038e9355822d717",
+      "bytes": 69670,
+      "member_chain": [
+        "Libraries/inc/cw32l012_gpio.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_gtim.h",
+      "sha256": "d6477ab2af1e17bbb710177adaa658afef4c19a1f165f8c3c194e021a10eb34a",
+      "bytes": 18238,
+      "member_chain": [
+        "Libraries/inc/cw32l012_gtim.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_iwdt.h",
+      "sha256": "23b0b694bcde3bfc128e728faa82118d1296faa3f5ec13dfff79726d15021a67",
+      "bytes": 7435,
+      "member_chain": [
+        "Libraries/inc/cw32l012_iwdt.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_lpi2c.h",
+      "sha256": "47ef67bfdab9d7b6a61307c83305b4c9c55700f05072ce9c302941d619a580c4",
+      "bytes": 63276,
+      "member_chain": [
+        "Libraries/inc/cw32l012_lpi2c.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_lptim.h",
+      "sha256": "3967044d9082b056733cd9b23de9b710ef9cd8327b9ebb270f1e03d799635e82",
+      "bytes": 8886,
+      "member_chain": [
+        "Libraries/inc/cw32l012_lptim.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_rtc.h",
+      "sha256": "faf8a50f1ff9b19cda2995ff05d0cfb010fb8203ae45407e7541352f85b9ffeb",
+      "bytes": 22718,
+      "member_chain": [
+        "Libraries/inc/cw32l012_rtc.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_sysctrl.h",
+      "sha256": "3746c16b7a3fa72d1b43d42c080111e64faa36e8beb4b1f19c13daf3c71b993c",
+      "bytes": 53947,
+      "member_chain": [
+        "Libraries/inc/cw32l012_sysctrl.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_uart.h",
+      "sha256": "689975d2980e5748dde9ddf419b57fa27621617126bd7652f65e186a69d8e5c2",
+      "bytes": 20037,
+      "member_chain": [
+        "Libraries/inc/cw32l012_uart.h"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/src/cw32l012_iwdt.c",
+      "sha256": "755d184242d1136830bc99b9a5118add82f4cfa613052b5b96072db1983aec29",
+      "bytes": 6651,
+      "member_chain": [
+        "Libraries/src/cw32l012_iwdt.c"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/src/cw32l012_lpi2c.c",
+      "sha256": "026cf80a54f13bb08de55aff304c7d4fc629bb7477242ab337cabef61dc46d69",
+      "bytes": 112572,
+      "member_chain": [
+        "Libraries/src/cw32l012_lpi2c.c"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/src/cw32l012_sysctrl.c",
+      "sha256": "6c1764be4a47f37f052fe6abed87b6bf54df87385e0c4072b7db819bcb8926cf",
+      "bytes": 28330,
+      "member_chain": [
+        "Libraries/src/cw32l012_sysctrl.c"
+      ]
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_atim.h",
+      "sha256": "1b41e255fe6dbd73d4d4b39be80e6f1cdc0403d4a14efe81917bea6e403970d1",
+      "bytes": 30756,
+      "member_chain": [
+        "Libraries/inc/cw32l012_atim.h"
+      ]
+    }
+  ],
+  "runtime_design_requirements": {
+    "original_snapshot": "Keep original admission and immutable central identities separate from phase-owned acknowledged fields. Every explicit new-target source/divider/Flash ACK rejects unexpected values and reversal without rebasing original authority.",
+    "independent_hsi_ownership": "Retain own I2C1/2 master/slave raw1/3 refusal when HSI is started, restarted, retrimmed or initially unready, plus RTC SOURCE3 and MCO3/HSIRDY ownership. Factory-ready HSI divider-only changes retain raw HSIOSC. PB0 AF3 and downstream recipients remain functional handover constraints.",
+    "flash": "Deliberately enable FLASH access only under its own active-low reset checks, capture authoritative FLASH.CR2 after acknowledgment, and retain its access gate. Guard every later access. Original WAIT/mirror must agree and be <=3; WAIT3 protects transition. Only complete old/old or target/target FLASH.WAIT and SYSCTRL.FLASHWAIT pairs are admitted; mixed pairs fail immediately. Preserve every non-WAIT Flash and non-owned SYSCTRL bit.",
+    "final_latency": "While factory HSI and final dividers remain selected, install a final WAIT covering target LSI, configured factory HSI under final AHB and the full 4.08-MHz fallback without divider credit. Final HSI-to-LSI selection is the last clock/source/divider/Flash mutation on every success and error path.",
+    "gate_windows": "Full source guards bracket borrowed-domain and GPIO windows; they are not claimed inside every existing gate poll or individual pad RMW. Independent borrowed-gate restoration remains required after source failure, and detailed enable/restore errors precede buffered semantic results.",
+    "hse": "Preserve old Legacy and LseSysclk behavior. New LiveLsiSysclk uses own PF0/PF1 and GPIOF, preserves PF3 fields and other bank fields, and admits only fresh stopped/unready HSE preparation or exact inherited reuse. No native-LSE preflight/start/verify is called for the new target.",
+    "publication": "After final mux, perform final HSE pad inspection and repeat complete source/fault/phase/Flash checks before publishing clocks. No source/Flash repair, rollback or reselection follows final mux. RCC failure publishes no clocks and requires reset before retry."
+  },
+  "verification_requirements": {
+    "data": "Actual complete 54-object and 904-file comparison passed: exactly two own-L012 LSI records and four appended SYSCTRL Pin tuples; the other 52 complete chip objects and 901 generated files are byte-identical. No generated file was added or deleted.",
+    "source_checker": "ci/verify-l012-lse-data.py",
+    "source_checkers": [
+      "ci/verify-l012-lse-data.py",
+      "ci/verify-l010-lse-data.py",
+      "ci/verify-l011-lse-data.py"
+    ],
+    "independent_review_receipts": [
+      {
+        "path": "docs/l012-live-factory-lsi-runtime-review.json",
+        "status": "accepted_main_implementation",
+        "sha256": "259db534e3f88b9b2ad580350d76d9dbad51a99bb20380d6835acc035a9a39dd"
+      },
+      {
+        "path": "docs/l012-live-factory-lsi-metadata-review.json",
+        "status": "accepted_main_implementation",
+        "sha256": "e1b74adcd369f15589dac7ff44898ce171049e11edd6314fd1f259aed45889e0"
+      }
+    ],
+    "implementation_acceptance": true,
+    "executed_data_verification": true,
+    "executed_build_verification": true,
+    "hal_execution": false,
+    "hardware_execution": false,
+    "finite_matrix": {
+      "status": "main_7_libraries_6_elfs_passed",
+      "matrix_external_artifact": "stage75-scope/proposed-finite-matrix.json",
+      "sha256": "0eac99f51991cc895e3b633a0ade5bed97e4a78ffc67c98084f4052ccc5fd03d",
+      "main_libraries": 7,
+      "main_linked_elfs": 6,
+      "independent_clean_libraries": 2,
+      "independent_clean_linked_elfs": 2,
+      "other_checks": "Own L012/L010/L011 source gates, current data validation,43 required hardware-original provenance,module layout,full54-object/904-file delta; runtime and byte-preservation review against actual implemented source"
+    },
+    "final_package_clean": "At main acceptance the independent final-source two-library/two-ELF clean replay had not run; final-package completion requires its separate receipt.",
+    "reused_guard_contract": {
+      "generate_rtc_region": {
+        "project_relative": "embassy-cw32/build.rs",
+        "function": "generate_rtc",
+        "baseline_sha256": "ab645afb96468cd44b9672afb4aa104664f785b33b2163914f18bd89aada8e77",
+        "expected": "region byte-identical despite other build.rs changes; HSIOSC source3 means SOURCE_IS_LSI=false"
+      },
+      "unchanged_files": [
+        "embassy-cw32/src/rcc/bounds.rs",
+        "embassy-cw32/src/rcc/rtc.rs",
+        "embassy-cw32/src/rtc/mod.rs",
+        "embassy-cw32/src/adc/sequence/mod.rs",
+        "embassy-cw32/src/timer/complementary_pwm/buffered.rs",
+        "embassy-cw32/src/rcc/l010_l011.rs",
+        "embassy-cw32/src/rcc/lse_native_low_power.rs"
+      ],
+      "source_checks": {
+        "rtc_rate_only_expression": "RTC::SOURCE_IS_LSI && cfg!(rcc_lsi_sysclk)",
+        "native_rtc_source": "HSIOSC,3,96000000,94080000,97920000,first120,second400000",
+        "adc_guard": "!pclk.has_cycle_timing_bounds() -> Error::UnqualifiedCycleTiming before timing/conversion",
+        "buffered_pwm_guard": "!bounds.has_cycle_timing_bounds() -> ConfigError::UnqualifiedCycleTiming before Timer::new_configured; includes zero dead time"
+      },
+      "validation_status": "source inspected, no HAL execution"
+    },
+    "generated_delta_contract": {
+      "external_artifact": "stage75-design/metadata/generated-delta-contract.json",
+      "sha256": "6a4ff6143ca672f4c01ae1be9ab03b29a538532e77814d296658980ed8d43e7f",
+      "status": "actual_generated_comparison_passed",
+      "chip_objects": 54,
+      "changed_chip_objects": 2,
+      "unchanged_chip_objects": 52,
+      "new_lsi_records": 2,
+      "new_direct_lsi_pin_entries": 4,
+      "generated_files": 904,
+      "anticipated_changed_generated_files": [
+        "cw32-data/data/chips/CW32L012C8T6.json",
+        "cw32-data/data/chips/CW32L012C8U6.json",
+        "cw32-metapac/src/chips/metadata_0021.rs"
+      ],
+      "anticipated_identical_generated_files": 901,
+      "actual_result": {
+        "external_artifact": "stage75/verification/generated-delta.json",
+        "sha256": "8faa2863a6c5c9cc335cad584442c2053f40c80270c822836980caf04863e866"
+      }
+    }
+  },
+  "frozen_design_binding": {
+    "status": "accepted_frozen_design_only",
+    "policy_external_artifact": "stage75-design/metadata/l012-live-policy-design.json",
+    "policy_file_sha256": "e30a16f7a7bc87a9cdf96b9d25f70b7674503e54ab3f3649535d12f7d28b0614",
+    "source_evidence_external_artifact": "stage75-design/metadata/source-evidence.json",
+    "source_evidence_sha256": "41b004ef937158a0cc826f0b94d80b9ab4fdde84cdf020df37df58aea96fd93b",
+    "runtime_external_artifact": "stage75-design/runtime/l012-live-sequence-design.md",
+    "runtime_sha256": "bd9abe6a394e0aa72a788ca79f48021d808281d94a6fc266749f2037340146d1",
+    "review_external_artifact": "stage75-design/independent-review/design-review.json",
+    "review_sha256": "a5ac39d016aa4e20c106cb400a1c094ca92b695dc47b34d21e006008263ca722",
+    "implementation_acceptance": false
+  },
+  "limits": [
+    "Matching factory TRIM and source-consistency observations are rate qualification, not measured frequency, cycle-duration qualification, analog continuity or watchdog survival. IWDT uses its separate RC10K counter and may request LSI automatically; neither fact supplies live-entry permission.",
+    "No ordinary-POR success, stopped oscillator startup, calibration preparation, source-loss recovery, runtime switching, wake/resume or system PLL capability is established.",
+    "Existing ADC configuration-and-work gate and whole GPIO bank windows can advance conversion, filters, events and output recipients before refusal or after partial failure. GPIOF access for HSE can affect PF3 LSI_OUT. Gate restoration cannot undo functional progress or watchdog countdown/reset.",
+    "Supported boot integration establishes legal incoming clock/bus/Flash state and safe bus-master/application-memory ownership before Rust starts. The additional consumer/output conditions are functional handover constraints, not a new hidden memory-safety duty of safe init/try_init.",
+    "Retain all independent HSI/HSE/RTC/ADC/analog ownership refusals. Config.lse=Some(_) is refused only for the new LSI target; inherited LSE and its existing ownership/fault state remain preserved.",
+    "Existing native sequence ADC and buffered complementary PWM reject unqualified cycle timing before their respective constructor-owned mutations, including zero dead time. Caller-created pin wrappers can already have effects; no rollback promise follows.",
+    "The fixed nominal 1-MHz time driver rejects any integer-divided 32.8-kHz tree before singleton ownership or RCC MMIO. Feature compilation is not execution of that refusal.",
+    "Poll budgets count CPU iterations while execution continues; later source loss can leave STABLE set, halt execution or invalidate frozen timing. Static inspection and future finite compilation do not establish silicon behavior."
+  ]
+}

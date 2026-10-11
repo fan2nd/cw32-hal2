@@ -25,6 +25,7 @@ use embassy_cw32::{self as hal, rcc};
 #[cortex_m_rt::entry]
 fn main() -> ! {
     // Exact L010 declares 1.62..5.5 V and -40..85 C for live factory-LSI reuse.
+    // Exact L012 declares its own 1.7..5.5 V and -40..85 C live-only envelope.
     // W031 requires 2.0..3.6 V; R031 retains 2.2..3.6 V, both at -40..85 C.
     // L031 and exact L052/L083 declare 1.65..5.5 V and -40..85 C.
     // Other prior example parts retain 1.65..5.5 V and -40..105 C.
@@ -38,6 +39,8 @@ fn main() -> ! {
             feature = "cw32l010y8m6"
         )) {
             1_620
+        } else if cfg!(any(feature = "cw32l012c8t6", feature = "cw32l012c8u6")) {
+            1_700
         } else if cfg!(feature = "cw32r031c8u6") {
             2_200
         } else if cfg!(feature = "cw32w031r8u6") {
@@ -55,6 +58,8 @@ fn main() -> ! {
             feature = "cw32l010f8p6",
             feature = "cw32l010f8u6",
             feature = "cw32l010y8m6",
+            feature = "cw32l012c8t6",
+            feature = "cw32l012c8u6",
             feature = "cw32l031c8t6",
             feature = "cw32l031c8u6",
             feature = "cw32l031f8u6",
@@ -78,7 +83,9 @@ fn main() -> ! {
     #[cfg(any(
         feature = "cw32l010f8p6",
         feature = "cw32l010f8u6",
-        feature = "cw32l010y8m6"
+        feature = "cw32l010y8m6",
+        feature = "cw32l012c8t6",
+        feature = "cw32l012c8u6"
     ))]
     {
         // This does not prepare LSI. Ordinary POR is expected to return an error.
@@ -159,6 +166,24 @@ fn run(p: hal::Peripherals) -> ! {
 fn run(p: hal::Peripherals) -> ! {
     // HSIOSC keeps its independent strict 48 MHz source envelope. Acquiring
     // this existing capability only reads readiness; it does not alter RTC.
+    let hsi = rcc::HsiOscClock::new(p.SYSCTRL).unwrap_or_else(|error| stop(error));
+    let clocks = rcc::clocks();
+    loop {
+        core::hint::black_box((
+            clocks.sys_bounds(),
+            clocks.hclk_bounds(),
+            clocks.pclk_bounds(),
+            clocks.hsi_bounds(),
+            hsi.bounds(),
+        ));
+    }
+}
+
+#[cfg(any(feature = "cw32l012c8t6", feature = "cw32l012c8u6"))]
+fn run(p: hal::Peripherals) -> ! {
+    // This observes the existing raw 96 MHz HSIOSC capability. Its strict
+    // bounds stay independent of rate-only LSI SYSCLK and the HSI divider.
+    // No LSI preparation, watchdog operation or RTC initialization is hidden here.
     let hsi = rcc::HsiOscClock::new(p.SYSCTRL).unwrap_or_else(|error| stop(error));
     let clocks = rcc::clocks();
     loop {

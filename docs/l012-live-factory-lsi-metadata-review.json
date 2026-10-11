@@ -1,0 +1,733 @@
+{
+  "schema_version": 1,
+  "status": "accepted",
+  "review_kind": "independent_read_only_metadata_and_source_implementation_review",
+  "implementation_acceptance": true,
+  "acceptance_scope": "Stage75 own-CW32L012 metadata/source implementation and transported build-time validators on the bound main-v2 source. Runtime behavior has its own independent review. Main compilation is not HAL execution or silicon validation.",
+  "scope": {
+    "qualified_parts": [
+      {
+        "name": "CW32L012C8T6",
+        "package": "LQFP48"
+      },
+      {
+        "name": "CW32L012C8U6",
+        "package": "QFN48"
+      }
+    ],
+    "generic_cw32l012_qualified": false,
+    "cw32l011_qualified": false
+  },
+  "baseline": {
+    "external_artifact": "published-stage74-source",
+    "supplied_published_commit": "f8fabf3eaf2eeaef5145f81a23045891e2a7782d",
+    "commit_independently_verified": false,
+    "binding": "inspected file bytes"
+  },
+  "reviewed_source": {
+    "archive": {
+      "external_artifact": "stage75-main-source-v2.zip",
+      "sha256": "b0761c3659fd017f08dab00c87e3ae8debf1f5eb67d6ad087d5cbd71f4ab9846",
+      "bytes": 5029496
+    },
+    "manifest": {
+      "external_artifact": "stage75-source-manifest-v2.json",
+      "sha256": "cfd53565aeebbbd607b6ab359a71e2f08b24070185fce043339ebc7950872d5a",
+      "bytes": 237648
+    },
+    "file_count": 1309,
+    "executable_file_count": 27,
+    "archive_manifest_and_current_source_full_byte_and_mode_correspondence": true,
+    "main_source_before_after_exact_manifest_correspondence": true,
+    "files": [
+      {
+        "project_relative": "cw32-data/lsi-sysclk-qualified.yaml",
+        "sha256": "146af3df13903cf7770ee16a56bb57a1d964d1b05e1fdda0b29afad366bb4e69",
+        "bytes": 1034037
+      },
+      {
+        "project_relative": "cw32-data/electrical.yaml",
+        "sha256": "e121245d6a34da7e97e82c36d6ca63fc11dd307726d59530ea14952b75bc06e5",
+        "bytes": 74239
+      },
+      {
+        "project_relative": "cw32-data-gen/src/lsi.rs",
+        "sha256": "a28e4688c4933316b2ae899c1e6360cc600464fb0d0caa1b67432cc5ef63c148",
+        "bytes": 175315
+      },
+      {
+        "project_relative": "ci/verify-l012-lse-data.py",
+        "sha256": "5210595636cd6241f6012823f3fcb73b5f27c5aad438c99d9de55c19b2b79e26",
+        "bytes": 52159
+      },
+      {
+        "project_relative": "ci/verify-l010-lse-data.py",
+        "sha256": "a1c80ae311fc8837bff1f49771fff16e3a79768c5f7e915378a33960231d1cd5",
+        "bytes": 45586
+      },
+      {
+        "project_relative": "embassy-cw32/build.rs",
+        "sha256": "ca79621e37dfd9426c7c6c2eb6c275d4608a847d32c56f1204f7c168a1637d78",
+        "bytes": 265827
+      }
+    ]
+  },
+  "frozen_design_and_accepted_correction": {
+    "original_design": {
+      "metadata_design_sha256": "979e0ed1af164d21aeda858085bc792d928a61708340729cb66a40dc47fe975f",
+      "policy_file_sha256": "e30a16f7a7bc87a9cdf96b9d25f70b7674503e54ab3f3649535d12f7d28b0614",
+      "policy_canonical_sha256": "1bb7382333879bc85092df252a91981037d22ae64000602b2b691ba1a897ea11",
+      "source_evidence_sha256": "41b004ef937158a0cc826f0b94d80b9ab4fdde84cdf020df37df58aea96fd93b",
+      "generated_delta_contract_sha256": "6a4ff6143ca672f4c01ae1be9ab03b29a538532e77814d296658980ed8d43e7f"
+    },
+    "original_design_bytes_unchanged": true,
+    "accepted_current_policy_canonical_sha256": "6561702cdfc98a675a761b072e83da1aa9a11427eb1e8e6305775a08185c65ea",
+    "current_policy_file_sha256": "146af3df13903cf7770ee16a56bb57a1d964d1b05e1fdda0b29afad366bb4e69",
+    "citation_addendum": {
+      "external_artifact": "stage75-implementation/metadata-review/citation-correction-review.json",
+      "sha256": "f0d6ab04fd4213d893ca3f083add14093fb6079527d1e3c9bfea9c1cbc36d036",
+      "bytes": 13624
+    },
+    "sanitized_block_addendum": {
+      "external_artifact": "stage75-implementation/metadata-review/block-name-correction-review.json",
+      "sha256": "f20df5a035a2b7c4a96bdfe0bc6b33b06b1e0bc39221fa7dfcec3d7eb93d4a09",
+      "bytes": 7967
+    }
+  },
+  "open_findings": [],
+  "resolved_findings": [
+    {
+      "id": "citation-completeness",
+      "discovered_by": "initial actual generation provenance rejection",
+      "original_failure_preserved": {
+        "external_artifact": "stage75-verification/generation-initial.json",
+        "sha256": "dafd2a6d36bab623345895385c31a2720fb7e2609705e96e5b86ef04b912d5e6",
+        "bytes": 585
+      },
+      "correction": "Exactly39 printed_pages arrays in own policy and8 in qualification, corresponding digest bindings, and mandatory checker correspondence. All35 distinct already-frozen page hashes/footer mappings independently matched EN physical−26 and DS physical−3. No hardware fact changed.",
+      "status": "resolved_in_bound_v2_and_successful_generation"
+    },
+    {
+      "id": "static-block-name-case",
+      "discovered_by": "main-v1 first actual library build, exit101",
+      "original_failure_preserved": {
+        "external_artifact": "stage75-verification/main-v1/commands.json",
+        "sha256": "3641ccb3474b6c0c8ce71009d53ad055fbfa7b8285ff36774d3420cafa9d74c7",
+        "bytes": 838
+      },
+      "original_failure_log": {
+        "external_artifact": "stage75-verification/main-v1/main-01-cw32l012c8t6-release.log",
+        "sha256": "a9157dae2669fb1d4caadcd5be5df9c9260ac7d4160648663520710bec503ef3",
+        "bytes": 96446
+      },
+      "correction": "Exactly two new build assertion strings now use existing sanitized Sysctrl/Gpio transport names. Raw YAML SYSCTRL/GPIO and all original hardware/PAC/IR facts remain unchanged.",
+      "status": "resolved_in_bound_v2_and_successful_main_matrix"
+    }
+  ],
+  "implementation_findings": [
+    "Current own policy equals the accepted frozen hardware facts plus only the reviewed page-navigation additions. Every preexisting family policy object is unchanged; electrical policy changes only its digest.",
+    "The native apply_l012 leaf precedes classic/cold paths. It validates own originals/member authority,50 native identities/addresses,166 complete controls,1466 fields,31 gate/reset/key/shared-group instances, requester/observer membership, source enums, independent electrical/HSI/RTC facts and packages before projection.",
+    "Only exact C8T6/C8U6 receive the full LsiSysclk record and PB11 AF4 then PF3 AF2 existing Pin records. Both routes have absent optional muxes and are physically bonded at22 and44. Generic L012 receives neither. The existing PB11 scalar is a nonexhaustive compatibility anchor.",
+    "The build predicate checks full PeripheralLsiSysclk equality, exact2 names/native version/line, no PLL, complete PeripheralPin tuple equality, core bonds and native field shapes. Existing sanitization is respected. The native early return prevents cold requester, separate AWT and singular-output generation.",
+    "Raw SVD and curated IR permissions are compared independently. Raw KEY write-only fields in RW registers, unkeyed reset registers, four read-only STABLE overlays, IWDT OV raw RW versus operational RW0, and the existing ADC ISR Read override are retained. No register/access overlay was changed.",
+    "The own checker preserves historical LSE qualification=false for LSI/cycle timing/PLL and raw electrical preprojection absence. It enforces complete54 input/file/name/line identities, one SYSCTRL clock owner, full exact2 LSI records, both Pin tuples and generic exclusion.",
+    "The L010 checker is restricted to the approved sorted global roster insertion and retired cross-L012 exclusion. Own L010 facts remain unchanged. L011 checker and all three transport definitions remain byte-identical.",
+    "Source registry contains exactly21 terminal evidence-reference appends, four originals and17 selected members. Removing only those entries reproduces baseline bytes exactly. The bound qualification remains pending implementation receipt assembly, with no fabricated review hash or execution claim."
+  ],
+  "independent_source_inspection": {
+    "locked_originals_verified": 4,
+    "locked_texts_verified": 3,
+    "sdk_members_verified": 17,
+    "native_inventory_and_addresses_verified": 50,
+    "native_controls_verified": 166,
+    "raw_svd_and_curated_ir_fields_verified": 1466,
+    "central_gate_instances_verified": 31,
+    "mismatches": [],
+    "semantic_pages_read": [
+      {
+        "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+        "pdf_pages_1_based": [
+          36,
+          38,
+          39,
+          40,
+          47,
+          58
+        ]
+      },
+      {
+        "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+        "pdf_pages_1_based": [
+          60,
+          63,
+          76,
+          79,
+          97,
+          168,
+          176,
+          495,
+          503
+        ]
+      }
+    ],
+    "method": "Read and hash locked original/text bytes; read nested ZIP/PACK members without extracting or executing them; resolve native SVD derivedFrom declarations; compare full fact records to original XML and curated YAML; inspect generator and checker source text."
+  },
+  "preservation": {
+    "individual_files": [
+      {
+        "project_relative": "cw32-data-serde/src/lib.rs",
+        "sha256": "b4d875955a51d7e8061e2459b975362ac45a1723819ba9256bd62949d45feefc",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "cw32-metapac-gen/src/data.rs",
+        "sha256": "f0415cfd5e5ca402213bcf1942849b6fa9665fc475f5e8e803e2c1537785a774",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "cw32-metapac-gen/res/src/metadata.rs",
+        "sha256": "adceff0bcaa25727ab3c8e2515b08a85220f149c92bb730c03195a18e7af79b5",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "ci/verify-l011-lse-data.py",
+        "sha256": "3f363d1e2896e5fffe3a7df432566b893cbd8f46af0cbb3e73f7058f366faf8a",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "docs/l012-lse-sysclk-qualification.json",
+        "sha256": "3cee406969c9c15b0d6261ef3cce426ad89ffccda64bdff8cc281bebbe475a2c",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "cw32-data/field-access.yaml",
+        "sha256": "46903429cb4f423e8c803ee12ba0c1b405b20f4d0f8427b9d069843dbecdc7bd",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "cw32-data/inputs/cw32l012.yaml",
+        "sha256": "ffd4d0db1495d283aa1448c73fcb6dd708c814403ca0e87319ac5448dafe6e2b",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "cw32-data/parts.yaml",
+        "sha256": "6e8194c84122d440e5476ba527cc04ff6c0e5c196bc413fa02dbbba41458f899",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "cw32-data/pinouts/cw32l012.yaml",
+        "sha256": "70ad225317acd9b1bd51a19fff15f6834f3efb4f58563b33344ab5d69eab07fb",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "cw32-data/af/cw32l012.yaml",
+        "sha256": "130aab7ba3ee34a8fa83a4cbafa052d415dca2b4f1a5d0853d8ead9ac9421afb",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "cw32-data/clock/cw32l012.yaml",
+        "sha256": "9ea436a7ea18cb2b353415be96725af7c86d3347e1cae19db796d7421ab35ff0",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "cw32-data/lse-qualified.yaml",
+        "sha256": "afeb8bcbda67b96545db1d4baf4ca0763f819754cacd13823a441087c54c9dcc",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "embassy-cw32/src/rcc/bounds.rs",
+        "sha256": "309b6ace74998e9f2f444b6a8744a3359aca3b96452807d85ee9fae69ea5f494",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "embassy-cw32/src/rcc/rtc.rs",
+        "sha256": "e09bece40f398043d39d44f2c2a2a0fa288ee8bbf88ee1d20db2f5d079bd1a7b",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "embassy-cw32/src/rtc/mod.rs",
+        "sha256": "98ba82044ffe6624b42101cb91cd5cdd003ff71a1b541ce6325a934af2d0c4b8",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "embassy-cw32/src/adc/sequence/mod.rs",
+        "sha256": "be8915bd14bb5017abcd991813585b9b6a012e34ac8ddb8eb66bb255e0278933",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "embassy-cw32/src/timer/complementary_pwm/buffered.rs",
+        "sha256": "085e3598ef6a15faf798f8f34b0dc41d8124204b1285025ad13b1155572d5541",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "embassy-cw32/src/rcc/l010_l011.rs",
+        "sha256": "f384eee18fcd8a2716e9a2fcea52f1f779433fc607f939a498aa778ba4d7e948",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "embassy-cw32/src/rcc/lse_native_low_power.rs",
+        "sha256": "d60a0884eaf07d63237750750d69b65450be3349817f84ff86f35977db32b6d5",
+        "byte_identical_to_baseline": true
+      },
+      {
+        "project_relative": "Cargo.lock",
+        "sha256": "4982aada2d4ce7a432eb281946f360a4330547f331288067438e23461382827f",
+        "byte_identical_to_baseline": true
+      }
+    ],
+    "complete_source_directories": [
+      {
+        "project_relative": "cw32-data/registers",
+        "files": 137,
+        "byte_identical": true
+      },
+      {
+        "project_relative": "cw32-data/inputs",
+        "files": 13,
+        "byte_identical": true
+      },
+      {
+        "project_relative": "cw32-data/pinouts",
+        "files": 14,
+        "byte_identical": true
+      }
+    ],
+    "generate_rtc_region_byte_identical_to_baseline": true
+  },
+  "actual_generated_output": {
+    "status": "independently_verified",
+    "receipt": {
+      "external_artifact": "stage75-verification/generated-delta.json",
+      "sha256": "8faa2863a6c5c9cc335cad584442c2053f40c80270c822836980caf04863e866",
+      "bytes": 169893
+    },
+    "generated_file_count": 904,
+    "file_additions": 0,
+    "file_deletions": 0,
+    "changed_file_count": 3,
+    "byte_identical_file_count": 901,
+    "changed_files": [
+      {
+        "path": "cw32-data/data/chips/CW32L012C8T6.json",
+        "before_sha256": "669afb117738d56db7950fed62c39376609d7c05035d4e09d93ed6b43bfec636",
+        "after_sha256": "e7f46bcb28f618f23837c2ffdfd34c0039dab5146bc2c7b8c1ac76817bc2d588"
+      },
+      {
+        "path": "cw32-data/data/chips/CW32L012C8U6.json",
+        "before_sha256": "fd8b15e1931fcc9614739d0494ed8fb347d4fcd1374c0523d69ed968d23b7bc4",
+        "after_sha256": "c22d07da6324b784fc3b8f227d61f9873a4a46769fdf3522fbf94db6b2ccb69c"
+      },
+      {
+        "path": "cw32-metapac/src/chips/metadata_0021.rs",
+        "before_sha256": "bdfe0b4529ec6f799b8016bd2de42ab73bf00fab51d1bf8957b8645c87f09ab2",
+        "after_sha256": "7e8f35e7e627d2b1426e72df262e59fdfaa15b203b256ecf1fafe3d8295dc959"
+      }
+    ],
+    "chip_object_count": 54,
+    "changed_chip_object_count": 2,
+    "byte_identical_other_chip_objects": 52,
+    "new_lsi_records": 2,
+    "new_pin_entries": 4,
+    "complete_object_reversal": "Removing only each exact new lsi_sysclk key and its two ordered Pin records restores the complete baseline JSON object. Every other object matches baseline bytes.",
+    "actual_shared_metadata_diff_reviewed": true,
+    "transport_types_raw_ir_and_pac_unchanged": true
+  },
+  "source_record": {
+    "registry_project_relative": "sources/evidence-sources.json",
+    "registry_sha256": "c11e7b0af98e02f34ce64035946ac9a96b9d988fed0eb1f71de7cba080fe4aa9",
+    "evidence_append_count": 21,
+    "registry_reversal_byte_identical": true,
+    "qualification_project_relative": "docs/l012-live-factory-lsi-qualification.json",
+    "qualification_sha256": "cb7fe40137a1ee0ae3683592fac8d73c923cbf46dca992e5d6f0d670316a307d",
+    "qualification_status_at_reviewed_freeze": "source_bound_pending_implementation_acceptance",
+    "qualification_receipt_assembly_is_downstream": true
+  },
+  "actual_data_gate_receipts": {
+    "status": "verified_passed",
+    "commands": {
+      "external_artifact": "stage75-verification/main-data/commands.json",
+      "sha256": "629009b2442589327ecc2bee65dd1f04044a818882bc0512f902897d8b73493e",
+      "bytes": 2725
+    },
+    "gates": [
+      {
+        "name": "l010-own-source",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-data/l010-own-source.log",
+        "log_sha256": "1a9485f1f8cbc4ea761fbf210bb8341e51915bc7f6bfe74b162e9726e5d69ea5",
+        "actual_log_hash_verified": true
+      },
+      {
+        "name": "l011-own-source",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-data/l011-own-source.log",
+        "log_sha256": "8df2d91275e62fe658cd6f2673e1d81b7e2dd2943550fed6e263ca04b2fad1fc",
+        "actual_log_hash_verified": true
+      },
+      {
+        "name": "l012-own-source",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-data/l012-own-source.log",
+        "log_sha256": "8c77c61571aa3333f5041e94820e40629837a16cf2be981fe4e9409887285a72",
+        "actual_log_hash_verified": true
+      },
+      {
+        "name": "validate",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-data/validate.log",
+        "log_sha256": "ede75656b2001292bd260d75448fcb8d7ed6be25506b9fa23d1dcc1e6fe8e0e2",
+        "actual_log_hash_verified": true
+      },
+      {
+        "name": "provenance-originals",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-data/provenance-originals.log",
+        "log_sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f",
+        "actual_log_hash_verified": true
+      },
+      {
+        "name": "module-layout",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-data/module-layout.log",
+        "log_sha256": "462364cfa481e63dc679e3313c2b1ac20ee3e4d5f0b5b50a9b069c0b646ed3fd",
+        "actual_log_hash_verified": true
+      }
+    ],
+    "own_checker_receipts": [
+      {
+        "external_artifact": "stage75-verification/main-data/l010.json",
+        "sha256": "7d01247b2230fbb54887ab736382a064450141f0416560960d6e2546bb59d759",
+        "bytes": 43007
+      },
+      {
+        "external_artifact": "stage75-verification/main-data/l011.json",
+        "sha256": "7f6b3e41bb00e4e0649da355cf41f6af6abdf2bbe4551d30776d05ad1317559a",
+        "bytes": 17055
+      },
+      {
+        "external_artifact": "stage75-verification/main-data/l012.json",
+        "sha256": "4730fe66e5525f95f2fd51a5a0cd2b91d4ab0903e323dbbf31f22bf6ebe97767",
+        "bytes": 82775
+      }
+    ],
+    "required_hardware_originals": 43,
+    "discovery_originals_omitted": 2,
+    "provenance_scope": "hardware",
+    "module_layout_rust_sources": 571
+  },
+  "actual_main_build_receipts": {
+    "status": "verified_passed",
+    "summary": {
+      "external_artifact": "stage75-verification/main-v2/summary.json",
+      "sha256": "9b06538abbe9a0636544aab8b462ab16d3f91445484a5c67447a81dd26a7fcf9",
+      "bytes": 290
+    },
+    "commands": {
+      "external_artifact": "stage75-verification/main-v2/commands.json",
+      "sha256": "d4f7f215ddd6cb1de72832529447990d5e2bef93862dcc8766fe16c46446f3e4",
+      "bytes": 62218
+    },
+    "successful_commands": 13,
+    "actual_rlibs": 7,
+    "actual_linked_arm_elfs": 6,
+    "every_log_contains_successful_build_finished": true,
+    "artifact_hashes_sizes_and_formats_verified": true,
+    "source_before_after_identical": true,
+    "rows": [
+      {
+        "name": "main-01-cw32l012c8t6-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-01-cw32l012c8t6-release.log",
+        "log_sha256": "2f42de1869bf7239bd8a648f7b53e8814f27786af6b5a22028d049064b7d0d33",
+        "generated_lsi_cfg": true,
+        "rlibs": [
+          {
+            "artifact": "main-01-cw32l012c8t6-release.rlib",
+            "sha256": "308f6c20cd3ef1b66265542294ffbb694cffaeb1c4ad6470423c15ffea0c6d78",
+            "bytes": 7597472
+          }
+        ],
+        "elfs": [],
+        "warning_headers": []
+      },
+      {
+        "name": "main-02-cw32l012c8u6-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-02-cw32l012c8u6-release.log",
+        "log_sha256": "8fe55e79cf5668a158e43333d34829a6a68ff1e5bb26f4733448ae0a3fbc026c",
+        "generated_lsi_cfg": true,
+        "rlibs": [
+          {
+            "artifact": "main-02-cw32l012c8u6-release.rlib",
+            "sha256": "497e7324e8ebcb03985c2653d52962075f10608349ab4e90c520fe09b082679c",
+            "bytes": 7597454
+          }
+        ],
+        "elfs": [],
+        "warning_headers": []
+      },
+      {
+        "name": "main-03-cw32l012c8t6-debug",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-03-cw32l012c8t6-debug.log",
+        "log_sha256": "5c74954ad78467f7b9c6e96a0d1096ca051b7cde855aca33e005b6eb2cf87378",
+        "generated_lsi_cfg": true,
+        "rlibs": [
+          {
+            "artifact": "main-03-cw32l012c8t6-debug.rlib",
+            "sha256": "8afc9214247212bf062c069cb0a4c288a7101b33b5426043abea9ed5ce26f4ef",
+            "bytes": 9258976
+          }
+        ],
+        "elfs": [],
+        "warning_headers": []
+      },
+      {
+        "name": "main-04-cw32l012-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-04-cw32l012-release.log",
+        "log_sha256": "f6036749a8be832c053005c728d097e0962e637d58a52397aea61682f412c23d",
+        "generated_lsi_cfg": false,
+        "rlibs": [
+          {
+            "artifact": "main-04-cw32l012-release.rlib",
+            "sha256": "4d46c22b0966e24f5c2c9d30cdbcabd69727438da9c1b5c60748664488504b65",
+            "bytes": 7280290
+          }
+        ],
+        "elfs": [],
+        "warning_headers": []
+      },
+      {
+        "name": "main-05-cw32l010f8p6-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-05-cw32l010f8p6-release.log",
+        "log_sha256": "864656c8dcf4bd1a25e875c68dd39c48cb6ad9eeb7a3b32cc3cc9872677d8480",
+        "generated_lsi_cfg": true,
+        "rlibs": [
+          {
+            "artifact": "main-05-cw32l010f8p6-release.rlib",
+            "sha256": "5ff76d222eea38b80c93bfd9af3ad7d83fa7a30edb01609c5191ad03997bf65a",
+            "bytes": 5472826
+          }
+        ],
+        "elfs": [],
+        "warning_headers": [
+          "warning: constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ]
+      },
+      {
+        "name": "main-06-cw32l011k8t6-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-06-cw32l011k8t6-release.log",
+        "log_sha256": "b5c70581354d0ebcf1ec75ca787d556f21ad3d4b9404ccc9dc3b8b7a362838c1",
+        "generated_lsi_cfg": false,
+        "rlibs": [
+          {
+            "artifact": "main-06-cw32l011k8t6-release.rlib",
+            "sha256": "19a773154b1e2ad1d454d505baf2413513f7b561fa1195b954b7c90fbb8958e0",
+            "bytes": 5661316
+          }
+        ],
+        "elfs": [],
+        "warning_headers": [
+          "warning: constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ]
+      },
+      {
+        "name": "main-07-cw32f030c8t7-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-07-cw32f030c8t7-release.log",
+        "log_sha256": "53b37b4bb140956a7082cdc7eff887902e7c94877122fac5a63e33d144603064",
+        "generated_lsi_cfg": true,
+        "rlibs": [
+          {
+            "artifact": "main-07-cw32f030c8t7-release.rlib",
+            "sha256": "d03b264b2d014209d3016e1cab7213cff6e0c07933a945fba8c009aef046b8ff",
+            "bytes": 6714594
+          }
+        ],
+        "elfs": [],
+        "warning_headers": []
+      },
+      {
+        "name": "main-08-cw32l012c8t6-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-08-cw32l012c8t6-release.log",
+        "log_sha256": "2ddee7f9b9f2cc30d99733f3ddff0342fcc0c542f066c697d92abd5fe0960261",
+        "generated_lsi_cfg": true,
+        "rlibs": [],
+        "elfs": [
+          {
+            "artifact": "main-08-cw32l012c8t6-release-cw32-lsi-clock-example.elf",
+            "sha256": "b64275a8d9cc83b860183c3bd79cfbd690e02317d81e963f0a3c3d376659688b",
+            "bytes": 214592,
+            "chip": "cw32l012c8t6",
+            "entry": 193,
+            "stack": 536879104
+          }
+        ],
+        "warning_headers": []
+      },
+      {
+        "name": "main-09-cw32l012c8u6-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-09-cw32l012c8u6-release.log",
+        "log_sha256": "0ea15111d04fb7b8762a0ebd1a819a22b4874584864032754804ff8ace76b2d9",
+        "generated_lsi_cfg": true,
+        "rlibs": [],
+        "elfs": [
+          {
+            "artifact": "main-09-cw32l012c8u6-release-cw32-lsi-clock-example.elf",
+            "sha256": "c1ee695ea2719d4b22fbb66f10af7a3451c507521df6f64363117693a5c84c7f",
+            "bytes": 214592,
+            "chip": "cw32l012c8u6",
+            "entry": 193,
+            "stack": 536879104
+          }
+        ],
+        "warning_headers": []
+      },
+      {
+        "name": "main-10-cw32l012c8t6-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-10-cw32l012c8t6-release.log",
+        "log_sha256": "21eadfbb327435058f843a563a8476790ce0830699c265362d90be9ab5085dc8",
+        "generated_lsi_cfg": true,
+        "rlibs": [],
+        "elfs": [
+          {
+            "artifact": "main-10-cw32l012c8t6-release-crystal.elf",
+            "sha256": "ae5cd4aae4a7b70d939109747408f1384abc90843c421bfafcde2aff7ada333b",
+            "bytes": 215508,
+            "chip": "cw32l012c8t6",
+            "entry": 193,
+            "stack": 536879104
+          }
+        ],
+        "warning_headers": []
+      },
+      {
+        "name": "main-11-cw32l012c8t6-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-11-cw32l012c8t6-release.log",
+        "log_sha256": "6feb3cd0f5cff6600b2beed9bde9a7f43c3c4eab1ae355d8605cd6259df669f4",
+        "generated_lsi_cfg": true,
+        "rlibs": [],
+        "elfs": [
+          {
+            "artifact": "main-11-cw32l012c8t6-release-preserve_calendar.elf",
+            "sha256": "d1b3cc50ba12335b89d4092ee03eb2fd11412fb68562068e2ea1c0315aec73a1",
+            "bytes": 215124,
+            "chip": "cw32l012c8t6",
+            "entry": 193,
+            "stack": 536879104
+          }
+        ],
+        "warning_headers": []
+      },
+      {
+        "name": "main-12-cw32l012c8u6-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-12-cw32l012c8u6-release.log",
+        "log_sha256": "14ab8c30018cbd6b1fafbd9b22cf7bd14a4669e33cee9d735b8194a4e4a9acf7",
+        "generated_lsi_cfg": true,
+        "rlibs": [],
+        "elfs": [
+          {
+            "artifact": "main-12-cw32l012c8u6-release-crystal.elf",
+            "sha256": "4aba97d1ea42f4b1da1a4d45369a116f6c3381db3a5afa7ea05bd81f7793ad39",
+            "bytes": 214832,
+            "chip": "cw32l012c8u6",
+            "entry": 193,
+            "stack": 536879104
+          }
+        ],
+        "warning_headers": []
+      },
+      {
+        "name": "main-13-cw32l010f8p6-release",
+        "exit": 0,
+        "log_external_artifact": "stage75-verification/main-v2/main-13-cw32l010f8p6-release.log",
+        "log_sha256": "3109801b414fe4a12b71c1a6b87afccd97b5308bdd8c33c08486cce760973177",
+        "generated_lsi_cfg": true,
+        "rlibs": [],
+        "elfs": [
+          {
+            "artifact": "main-13-cw32l010f8p6-release-cw32-lsi-clock-example.elf",
+            "sha256": "ff5579a743a976200a3da101de6cddbfb1b793c2377aed794f38782160b211cb",
+            "bytes": 209420,
+            "chip": "cw32l010f8p6",
+            "entry": 193,
+            "stack": 536875008
+          }
+        ],
+        "warning_headers": [
+          "warning: constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "warning: constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ]
+      }
+    ]
+  },
+  "actual_generated_hal_inspection": {
+    "exact_l012_build_outputs_checked": 8,
+    "generic_l012_lsi_cfg": false,
+    "l011_lsi_cfg": false,
+    "exact_l012_lsi_cfg": true,
+    "constants": {
+      "RCC_LSI_PARAMETERS_MASK": 4294934527,
+      "RCC_LSI_HSI_PARAMETERS_MASK": 4294934527,
+      "RCC_LSI_HSE_PARAMETERS_MASK": 4294443007,
+      "RCC_LSI_LSE_PARAMETERS_MASK": 4294705151,
+      "RCC_LSI_NOMINAL_HZ": 32800,
+      "RCC_LSI_MINIMUM_HZ": 29520,
+      "RCC_LSI_MAXIMUM_HZ": 36080,
+      "RCC_LSI_FACTORY_TRIM_ADDRESS": 1050562,
+      "RCC_LSI_SUPPLY_MV": [
+        1700,
+        5500
+      ],
+      "RCC_LSI_TEMPERATURE_C": [
+        -40,
+        85
+      ]
+    },
+    "rtc": {
+      "SOURCE_IS_LSI": false,
+      "SOURCE": 3,
+      "SOURCE_NOMINAL_HZ": 96000000,
+      "SOURCE_MINIMUM_HZ": 94080000,
+      "SOURCE_MAXIMUM_HZ": 97920000,
+      "PRESCALER_FIRST": 120,
+      "PRESCALER_SECOND": 400000
+    },
+    "cold_separate_awt_and_singular_output_generation_absent": true
+  },
+  "historical_attempts": {
+    "initial_generation_failed": true,
+    "main_v1_first_library_failed": true,
+    "main_v1_remaining_matrix_not_executed": true,
+    "main_v2_completed_full_original_13_rows": true,
+    "failed_receipts_not_relabelled_as_success": true
+  },
+  "review_operations": {
+    "source_and_artifact_reads": true,
+    "hash_and_full_byte_comparisons": true,
+    "project_source_edits": false,
+    "project_generator_checker_or_build_execution": false,
+    "hal_tests_probes_models_or_hardware_execution": false,
+    "external_review_artifact_writes": true
+  },
+  "downstream_release_requirement": "After final receipt/document assembly, the separately authorized independent clean2-library/2-linked-LSI-ELF check must bind the final packaged source. It is separate from this accepted metadata/source review.",
+  "limits": [
+    "Acceptance is specific to the bound main-v2 code and current generated artifacts. Subsequent functional edits require renewed review and appropriate verification.",
+    "Successful builds establish compilation/linking only. They do not execute the debug time-driver refusal, ADC/PWM cycle guards, HAL runtime, watchdog survival or silicon clock behavior.",
+    "Source-loss, analog continuity and bus-domain functional handover claims remain limited by the accepted own-source/runtime contract.",
+    "The v2 matrix retains three unused historical LSE constant warning headers in each L010/L011 control row; exact-L012 rows have no warning headers."
+  ]
+}

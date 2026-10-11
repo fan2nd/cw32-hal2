@@ -308,3 +308,33 @@ passed after its reviewed checker correction; split receipts retain that
 history. Deterministic final source-only packaging remains a separate completion
 obligation. No aggregate recipe, HAL tests, probes, register models, hosted CI
 or hardware work was executed to establish this finite acceptance.
+
+## Exact L012 live factory-LSI main verification
+
+Stage75 main verification passed seven actual library builds and six linked
+ELFs, with independent runtime and metadata/source acceptance. At main
+acceptance clean replay had not run; final-package completion requires a
+separate final-source two-library/two-LSI-ELF clean receipt. No prior family's
+acceptance or future recipe counts as an executed row. The [own contract](../docs/l012-live-factory-lsi-sysclk.md#finite-verification-scope)
+lists exact manifests, features, binaries and profiles. The time-driver debug
+row is compilation evidence only; it does not execute pure LSI rejection.
+Record real statuses, warning text, source/output hashes, fresh artifacts and
+actual ELF Flash/RAM use separately for main and clean.
+
+The accumulated `check-lsi-clock.sh` recipe reuses four already-present release
+library rows and the existing L010 LSI example recipe. It adds three libraries
+and five ELF links, bringing the future total to47 library commands (42 builds,
+five historical checks) and 58 ELF links. The reused L010 recipe enables defmt;
+the finite Stage75 L010 LSI row does not. This accumulated scope is neither the
+main 7/6 matrix nor clean 2/2, and it must not be run to supply finite acceptance.
+
+The six finite source/data gates passed: own L012/L010/L011 checks, current data
+validation, all 43 locked hardware-original provenance and module layout.
+Complete 54-object and 904-file baseline comparison found exactly two new LSI
+capability records and four appended Pin tuples in the two exact L012 chip JSONs
+and shared metadata_0021.rs. All other 901 files and 52 chip objects were unchanged;
+no files were added or deleted. Board qualification remains unverified.
+Historical LSE proof scope and its source qualification remain
+unchanged; the old 21-to-23 L012 LSE baseline comparison is not a Stage75 delta
+check. No aggregate run, HAL tests, probes, models, hosted CI or hardware
+execution is part of the finite verification.

@@ -14,6 +14,13 @@ bounds. Choose one exact part with `--no-default-features`:
   acquires the existing read-only `HsiOscClock` capability; it does not change
   RTC or invent a native `LsiClock`/LSI calendar variant. Each part retains
   64 KiB Flash and 4 KiB SRAM. See the [live-only contract](../../docs/l010-live-factory-lsi-sysclk.md).
+- CW32L012C8T6 or CW32L012C8U6: own live-entry reuse only, 64 KiB Flash and
+  8 KiB SRAM. The branch declares 1.7–5.5 V and −40–85°C and leaves
+  `Config.lse=None`. Ordinary POR is expected to stop in the error handler.
+  There is no LSI preparation, calibration, software-request write or IWDT
+  operation before `try_init`. Successful initialization observes system/bus/HSI
+  bounds and the existing read-only raw 96 MHz `HsiOscClock`; it does not
+  initialize RTC. See the [own live-only contract](../../docs/l012-live-factory-lsi-sysclk.md).
 - CW32F020C6U7, CW32F030C8T7, CW32A030C8T7, CW32L031C8T6,
   CW32L031C8U6, CW32L031F8U6, CW32R031C8U6, CW32W031R8U6,
   CW32L052C8T6, CW32L052R8S6, CW32L052R8T6, CW32L083RBT6, CW32L083RCT6,
@@ -26,13 +33,15 @@ bounds. Choose one exact part with `--no-default-features`:
 The default feature remains CW32F030C8T7. The firmware requires no GPIO wiring,
 external oscillator, UART baud or other board peripherals. Support is init-only;
 it does not provide runtime switching or sleep/wake recovery. Generic L031,
-its other packages, generic R031/W031/L052/L083, generic L010 and all L011/L012
+its other packages, generic R031/W031/L052/L083, generic L010/L012 and all L011
 are excluded from LSI SYSCLK.
 
 ## Board declarations and rate bounds
 
 The example declares VDD 1.65–5.5 V and ambient temperature −40–85°C on the
-three L031, three exact L052 and five exact L083 parts. R031C8U6 explicitly declares 2.2–3.6 V and −40–85°C;
+three L031, three exact L052 and five exact L083 parts. Exact L010 declares
+1.62–5.5 V and exact L012 declares 1.7–5.5 V, both at −40–85°C.
+R031C8U6 explicitly declares 2.2–3.6 V and −40–85°C;
 W031R8U6 declares 2.0–3.6 V and −40–85°C;
 the other existing example families retain −40–105°C. These are
 source-qualified limits, not measurements or proof about a particular
@@ -44,7 +53,9 @@ qualification.
 
 The nominal LSI rate is 32,800 Hz. Factory full-range bounds are 31,160–34,440 Hz
 for F002/F020 and 31,816–33,784 Hz for F003/F030/A030 and exact
-L010/L031/R031/W031/L052/L083. F003's bounds come from its
+L010/L031/R031/W031/L052/L083. Exact L012 instead uses its own
+29,520–36,080 Hz (±10%) range from DS CN V1.0 PDF58/printed55, Table7-19,
+over 1.7–5.5 V and −40–85°C. F003's bounds come from its
 own datasheet Rev1.9, PDF pages 32 and 38: factory ±3% over the declared full
 temperature range, independently of the other families. L031 uses its own DS
 Rev1.9, PDF pages 38 and 47, with ±3% only over −40–85°C; the 25°C-only ±1%
@@ -90,7 +101,16 @@ ATIM/IR presence does not grant new peripheral modes or timing guarantees.
 
 ## Initialization and failure effects
 
-Selecting the mode permits bounded whole-GPIOA/B/C inspection windows on
+The L010 and L012 live-only branches require eligible original state and never
+use cold admission. L012 preserves the continuous software LSI request and both
+LSI_OUT routes (PB11 AF4 and PF3 AF2). Its shared ADC1/ADC2 work-gate inspection
+may advance conversions/triggers before refusal; necessary HSE GPIOF windows
+may affect PF3 output, filtering and events. Closed UART3, timer and output-bank
+gates are not opened merely to prove idleness. Functional handover must permit
+progress or disconnect affected recipients; restoration cannot undo events.
+The independent pre-Rust bus-master/application-memory boundary still applies.
+
+For the existing cold-capable branches, selecting the mode permits bounded whole-GPIOA/B/C inspection windows on
 F002/F003, whole-GPIOA/B/C/F windows on the classic and exact L031/R031/W031
 parts, whole-GPIOA/B/C/D/F windows on exact L052, and whole-GPIOA/B/C/D/E/F
 windows on exact L083. Sampling, filters
@@ -264,10 +284,33 @@ cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
 
 A linked image checks compilation and exact linker limits only. It does not
 prove normal-reset boot, successful live handover, watchdog survival, oscillator
-continuity or electrical behavior. Current-stage main verification passed eight
+continuity or electrical behavior. For the earlier exact L010 addition, main verification passed eight
 actual library builds and seven ELF links, with six finite source/data/layout
 gates and independent runtime/metadata reviews accepted. The main logs retain
 three existing unused LSE-constant warnings in L010/L011 rows. At main acceptance
 clean had not run; final-package completion requires a separate final-source
 two-library/two-ELF clean receipt. Historical receipts above retain their own
 source scope; the aggregate future recipe is not this stage's acceptance.
+
+
+## Exact L012 live-entry build scope
+
+Select exactly one of `cw32l012c8t6` or `cw32l012c8u6`; retain the existing
+crate and binary `cw32-lsi-clock-example`:
+
+```sh
+cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features \
+  --features cw32l012c8t6 --bin cw32-lsi-clock-example
+```
+
+The exact linker regions are Flash 0x00000000/65,536 bytes and SRAM
+0x20000000/8,192 bytes for both packages; no linker-memory enlargement is allowed.
+Main verification passed seven actual libraries and six linked ELFs, including
+both L012 LSI images, plus six finite source/data gates and independent runtime
+and metadata/source reviews. At main acceptance clean replay had not run;
+final-package completion requires a separate final-source two-library/two-LSI-ELF
+clean receipt (L012C8T6 and retained L010F8P6). Board qualification remains
+unverified. See the [exact matrix](../../docs/l012-live-factory-lsi-sysclk.md#finite-verification-scope).
+A successful link does not execute POR rejection or live handover. No hardware,
+watchdog survival, oscillator continuity or elapsed-time guarantee is claimed.

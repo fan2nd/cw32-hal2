@@ -146,6 +146,21 @@ still apply.
   guaranteed. See [the complete HEX contract](qualified-hex.md).
   These are bounded one-time source modes; runtime switching, low-power
   restoration and source-loss recovery remain outside their contracts.
+- CW32L012C8T6/C8U6 add own live-only factory-LSI SYSCLK: original software
+  LSIEN, STABLE and nine-bit factory equality; rate-only 29,520–36,080 Hz at
+  1.7–5.5 V and −40–85°C, 64 KiB Flash / 8 KiB SRAM. Ordinary POR and
+  automatic-only requests are refused. There is no LSI/request/IWDT preparation;
+  `Config.lse=None` preserves inherited LSE. Shared ADC work-gate and HSE GPIOF
+  windows can advance activity, including PF3 LSI_OUT. Both PB11 AF4 and PF3 AF2
+  remain complete metadata routes; the scalar PB11 anchor is nonexhaustive.
+  Native RTC keeps strict raw 96 MHz HSIOSC, while ADC/PWM cycle timing and the
+  fixed 1 MHz time driver refuse the rate-only system tree. Generic L012 and
+  all L011 remain excluded. Main verification passed seven actual libraries,
+  six linked ELFs and six finite source/data gates, with independent runtime
+  and metadata/source acceptance. At main acceptance clean replay had not run;
+  final-package completion requires a separate final-source two-library/two-ELF
+  clean receipt. Board qualification remains unverified. See the
+  [contract and finite matrix](l012-live-factory-lsi-sysclk.md).
 - CW32F002F3P7/F3U7 qualify init-only factory-LSI SYSCLK with their own
   31,160–34,440 Hz rate bounds and 16 KiB Flash / 2 KiB SRAM. Generic F002
   remains excluded; see the [F002 contract](f002-factory-lsi-sysclk.md).

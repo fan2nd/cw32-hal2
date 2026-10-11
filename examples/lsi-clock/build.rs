@@ -16,6 +16,8 @@ fn main() {
             | "CW32L010F8P6"
             | "CW32L010F8U6"
             | "CW32L010Y8M6"
+            | "CW32L012C8T6"
+            | "CW32L012C8U6"
             | "CW32L031C8T6"
             | "CW32L031C8U6"
             | "CW32L031F8U6"
@@ -47,6 +49,14 @@ fn main() {
             assert_eq!(calendar.source, "HSIOSC");
             assert_eq!(calendar.nominal_hz, 48_000_000);
             Some((64 * 1024, 4 * 1024, true))
+        }
+        // Own L012 DS CN V1.0: both exact packages retain raw-HSIOSC RTC.
+        "CW32L012C8T6" | "CW32L012C8U6" => {
+            let rtc = metadata.peripherals.iter().find(|p| p.name == "RTC").unwrap();
+            let calendar = rtc.rtc_calendar.as_ref().unwrap();
+            assert_eq!(calendar.source, "HSIOSC");
+            assert_eq!(calendar.nominal_hz, 96_000_000);
+            Some((64 * 1024, 8 * 1024, true))
         }
         // Own L031 DS Rev1.9 PDF pages 10, 32 and 77-78.
         "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" => {

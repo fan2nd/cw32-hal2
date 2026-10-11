@@ -1,6 +1,6 @@
 # CW32L012 init-only LSE system clock
 
-Direct `Sysclk::LSE` is limited to CW32L012C8T6 (LQFP48) and CW32L012C8U6 (QFN48), using the existing native `Config.lse` declaration. Generic CW32L012 and guessed packages are excluded. This adds two targets to the former 21-part SYSCLK roster while preserving those records and all 23 auxiliary declarations. There is no PLL, public LSI SYSCLK, runtime retuning, RTC migration or recovery mode. `Config.lse=None` and auxiliary-only HSI/HSE paths retain their existing contracts.
+Direct `Sysclk::LSE` is limited to CW32L012C8T6 (LQFP48) and CW32L012C8U6 (QFN48), using the existing native `Config.lse` declaration. Generic CW32L012 and guessed packages are excluded. This adds two targets to the former 21-part SYSCLK roster while preserving those records and all 23 auxiliary declarations. There is no PLL, runtime retuning, RTC migration or recovery mode. Separately qualified [live-only factory-LSI SYSCLK](l012-live-factory-lsi-sysclk.md) on these two exact parts requires original software LSIEN, STABLE and factory-matching TRIM; it does not change this LSE contract or its historical qualification. `Config.lse=None` and auxiliary-only HSI/HSE paths retain their existing contracts.
 
 ## Frequencies and board declaration
 

@@ -170,3 +170,28 @@ cargo build --release --locked --manifest-path examples/rtc-calendar/Cargo.toml 
   --target thumbv6m-none-eabi --no-default-features --features cw32l010f8p6 --bin preserve_calendar
 cargo build --release --locked --manifest-path examples/hse-clock/Cargo.toml \
   --target thumbv6m-none-eabi --no-default-features --features cw32l011k8t6 --bin crystal
+
+# Exact L012 live-only additions to the future aggregate recipe, not receipts.
+# Existing release library rows already cover C8T6, L010F8P6, L011K8T6 and F030C8T7.
+# Add three libraries and five ELFs: aggregate 47 library commands (42 builds,
+# five historical checks) and 58 ELF links. The retained L010 LSI recipe uses
+# defmt; this does not replace its separate finite Stage75 row without defmt.
+# Actual planned main acceptance is exactly 7 libraries/6 ELFs; independent
+# final-source clean is 2 libraries/2 LSI ELFs. Do not run this aggregate recipe
+# to substitute for either finite matrix. All Stage75 receipts remain pending.
+for chip in cw32l012c8u6 cw32l012; do
+  cargo build --release --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 --lib \
+    --target thumbv6m-none-eabi --no-default-features --features "$chip,rt,defmt"
+done
+cargo build --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 --lib \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l012c8t6,rt,defmt,time-driver-gtim1
+for chip in cw32l012c8t6 cw32l012c8u6; do
+  cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
+    --target thumbv6m-none-eabi --no-default-features --features "$chip" --bin cw32-lsi-clock-example
+done
+cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l012c8t6 --bin crystal
+cargo build --release --locked --manifest-path examples/rtc-calendar/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l012c8t6 --bin preserve_calendar
+cargo build --release --locked --manifest-path examples/hse-clock/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features --features cw32l012c8u6 --bin crystal

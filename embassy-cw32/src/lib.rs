@@ -124,6 +124,44 @@ pub struct Config {
 /// No normal-reset boot, watchdog survival, oscillator continuity or hardware
 /// validation is claimed. See docs/l010-live-factory-lsi-sysclk.md.
 ///
+/// On CW32L012C8T6/C8U6 only, factory LSI SYSCLK likewise requires original
+/// software LSIEN, STABLE and own nine-bit factory-TRIM equality. Ordinary
+/// POR, stopped startup and automatic-only requests are refused; no later
+/// observation upgrades admission. Raw erased calibration is rejected before
+/// masking; zero is valid. No LSI parameter register, explicit LSIEN setter,
+/// IWDT register, gate, reset, command, feed or pause operation prepares entry.
+/// `Config.lse=Some(_)` is refused in pure validation for this target only.
+/// Inherited LSE, HSE ownership and all previous target contracts are retained.
+/// Own rate-only LSI bounds are 29,520..36,080 Hz at 1.7..5.5 V and -40..85 C;
+/// board declarations require actual qualification and are not measurements.
+///
+/// Native L012 ADC1/ADC2 share a configuration-and-work gate: inspecting EN
+/// can resume conversions or triggers before refusal. Required HSE GPIOF
+/// windows affect the whole bank, including PF3 LSI_OUT, filters and events.
+/// Both PB11 AF4 and PF3 AF2 outputs, PB0 raw-HSI output, native timer/cascade
+/// alternatives and downstream/external recipients need functional handover
+/// that permits progression or disconnects them. Closed UART3/timer/output-bank
+/// gates are not opened merely to prove idleness. Restoring borrowed gates
+/// cannot undo sampling, pin pulses, IRQs, capture/brake flags or IWDT progress.
+/// The RCC automatic-LSI-request clause and the IWDT counter's separate RC10K
+/// source both remain applicable. These are functional limits within the
+/// existing pre-Rust bus-master/memory-ownership boundary above, not a new
+/// hidden memory-safety duty of safe callers.
+///
+/// Exact L012 preserves independent HSI owners, actual retained RTC PSC1 and
+/// both Flash latency interfaces. Final bus divisors and Flash WAIT are set
+/// under factory HSI before the last source/divider/Flash mutation selects LSI.
+/// Borrowed GPIO gate restoration and complete read-only checks precede clock
+/// publication. RCC errors publish no new clocks and can leave partial state;
+/// reset is required before retry. Poll limits count CPU iterations, and source
+/// loss can prevent an error return or invalidate frozen timing. Native ADC
+/// and buffered complementary PWM reject rate-only cycle timing; the fixed
+/// 1 MHz time driver rejects selected LSI before singleton acquisition/MMIO.
+/// `HsiOscClock` and native RTC retain raw 96 MHz HSIOSC with 94.08..97.92 MHz
+/// strict bounds and existing calendar source variants. No native LSI calendar,
+/// normal-POR success, recovery or hardware validation is claimed. See
+/// docs/l012-live-factory-lsi-sysclk.md.
+///
 /// On CW32F002F3P7/F3U7 only, selecting factory LSI SYSCLK can briefly run
 /// each whole GPIOA/B/C bank to inspect retained selectors. Sampling, filters
 /// and armed events may advance before an error; restored gates cannot undo

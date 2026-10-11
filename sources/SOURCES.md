@@ -632,7 +632,7 @@ these software obligations is a hardware timing, recovery, RF or sleep/wake clai
 ## Exact CW32L010 live factory-LSI SYSCLK
 
 CW32L010F8P6/F8U6/Y8M6 gain only init-time reuse of an already software-requested,
-stable, factory-matching LSI. Generic L010 and all L011/L012 remain excluded;
+stable, factory-matching LSI. That L010 addition left generic L010 and all L011/L012 excluded;
 ordinary POR, stopped startup and automatic-only requests are not admitted.
 The [live-only contract](../docs/l010-live-factory-lsi-sysclk.md) and its
 [source qualification record](../docs/l010-live-factory-lsi-qualification.json)
@@ -663,3 +663,41 @@ warnings remain in L010/L011 main rows. At main acceptance clean had not run;
 final-package completion requires a separate final-source two-library/two-ELF
 clean receipt. No hardware, watchdog-survival or oscillator-continuity result
 follows from these software receipts.
+
+
+## Exact CW32L012 live factory-LSI SYSCLK
+
+Only CW32L012C8T6 (LQFP48) and CW32L012C8U6 (QFN48), each 64 KiB Flash and
+8 KiB SRAM, gain the separate [live-only contract](../docs/l012-live-factory-lsi-sysclk.md).
+Generic L012 and all L011 remain excluded. Own CN RM1.4, EN RM1.0, CN DS1.0 and
+SDK1.0.5 retain their vendor-original identities, versions and hashes. Raw and
+curated register-access facts stay unchanged. The evidence registry only appends
+reviewed qualification-evidence references.
+
+CN RM PDF58/printed32 and EN PDF60/34 prohibit modifying running LSI parameters;
+CN59/33 and EN63/37 bind the factory halfword at 0x001007C2. Own nine-bit TRIM,
+RFU9, WAIT[11:10] and STABLE15 are distinct from L010's ten-bit layout. DS58/55
+Table 7-19 qualifies nominal 32,800 Hz, 29,520–36,080 Hz at 1.7–5.5 V and
+−40–85°C. CN72/46 and EN76/50 document automatic LSI request from IWDT
+KR=0xCCCC; CN453/427 and EN495/469 separately source the counter from RC10K.
+Neither fact permits watchdog-based admission or a cold-request inference.
+
+DS39/36 and40/37 bind both PB11 AF4/physical22 and PF3 AF2/physical44 on each
+package. Both complete Pin records are projected; scalar PB11 is only the old
+nonexhaustive compatibility anchor. EN88/62's UART3 work-gate meaning conflicts
+with CN; EN626/600 versus636/610 and SDK disagree on I2C master raw3. Timer
+routing tables also differ. No inactive-looking state or borrowed closed work
+gate resolves these conflicts. Raw-HSI RTC source3 stays 96 MHz with unchanged
+first120/second400000; no native LSI calendar alias is introduced.
+
+Stage75 main verification passed seven actual libraries, six linked ELFs and
+six finite source/data gates, with independent runtime and metadata/source
+acceptance. At main acceptance clean replay had not run; final-package completion
+requires a separate final-source two-library/two-LSI-ELF clean receipt. Actual
+54-object/904-file comparison found only two new LSI records and four appended
+LSI_OUT Pin tuples in the two exact L012 chip JSONs and shared metadata_0021.rs:
+three changed files, no additions/deletions, all other 901 files and 52 chip
+objects unchanged. Board qualification remains unverified.
+The accumulated local recipe, historical LSE qualifications and earlier family's
+accepted receipts do not supply these results. No HAL tests, probes, register
+models, hosted CI or hardware execution are added.
