@@ -11,8 +11,14 @@ See `docs/upstream.md`, the source manifests, and the coverage report before use
 
 Finite software ADC reads and ordered scans support typed IRQ bindings and
 caller-composed deadlines on [L010/L011](docs/adc-low-async.md),
-[all classic lines and L012 ADC1](docs/adc-remaining-async.md). L012 ADC2 retains
-blocking reads/scans; its ADC2_DAC shared-vector lifetime remains separate.
+[all classic lines and L012](docs/adc-remaining-async.md).
+[L012 ADC2](docs/adc-l012-adc2-async.md) checks actual DAC IRQ quietness before
+using shared ADC2_DAC; ordinary direct-loading DAC outputs can coexist.
+Stage91 main produced five standalone ARM libraries and ten linked ELFs in
+sixteen attempts, retaining the initial link failure and reviewed example-only
+size-profile correction. At main acceptance clean replay and final54 report
+binding had not run; final completion requires their separate receipts.
+These software results are not hardware validation.
 
 ## Workspace
 
@@ -483,6 +489,8 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   F002 exposes VDD reference and VDD/3 only; no TS or internal reference.
   L010/L011 sequence ADCs provide blocking single conversions and [ordered 1–8 slot scans](docs/adc-scan-sequences.md); L012 dual ADCs provide blocking single conversions and ordered 1–8 slot scans;
   L012 ADC1/ADC2 borrow a common BGR owner and preserve shared analog resources.
+  Both also provide finite software async singles/scans with the distinct
+  [ADC2 shared-vector admission and fault contract](docs/adc-l012-adc2-async.md).
 - Classic ADCs: ordered software-triggered scans with four or eight slots,
   common acquisition timing and sealed owned/borrowed channels. Multi-slot scans
   require unbuffered external inputs; internal and follower-enabled inputs retain

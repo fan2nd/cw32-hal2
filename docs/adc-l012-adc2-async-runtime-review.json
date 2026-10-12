@@ -1,0 +1,1065 @@
+{
+  "schema_version": 1,
+  "stage": 91,
+  "reviewed_on": "2026-10-12",
+  "review_kind": "independent_actual_runtime_examples_and_main_artifacts",
+  "status": "accepted_main_runtime_software_evidence",
+  "independent_review_passed": true,
+  "blocking_findings": [],
+  "stage_acceptance_complete": false,
+  "hardware_execution": false,
+  "legal_clearance": false,
+  "review_independence": "The reviewer did not author or edit the reviewed production runtime, build integration, examples, manifests or contract. The reviewer inspected final source and actual retained compiler outputs and wrote only external review artifacts. Authors implemented the reported source/document fixes.",
+  "scope": "CW32L012 ADC2 finite software async single conversion and ordered1\u20138-slot scan with automatic valid-domain DAC IE-zero admission, direct DAC output coexistence, ADC2-specific shared-vector fault containment and abandoned-async retirement. ADC1 and prior blocking behavior remain within their existing contracts.",
+  "baseline_commit": "e8e36a544f66e10f4980a8bf8bd69957b452c1bc",
+  "reviewed_sources": [
+    {
+      "path": "embassy-cw32/src/adc/l012.rs",
+      "sha256": "21558f5ccb3bad02e5de95a22076c30be0e146c2435aa29c17a816ee58fbec8f",
+      "bytes": 59342
+    },
+    {
+      "path": "embassy-cw32/src/adc/mod.rs",
+      "sha256": "de1eb76bb46a93d9bbb36566be7ffbc135a40f5febe40b1eaeee0b02353f0010",
+      "bytes": 1029
+    },
+    {
+      "path": "embassy-cw32/src/dac.rs",
+      "sha256": "673e03d0c98737999686136b155b243770dbf451b71dd113cdf4869ccc178a4a",
+      "bytes": 9932
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "70f00eca1ea0fe97ee8734c3091272100bc7b3d16416bcdc3e985b56f937d2d3",
+      "bytes": 376922
+    },
+    {
+      "path": "examples/l012-adc-scan/src/bin/async_single.rs",
+      "sha256": "b188bd420ec3f6d843f7457865015a6a49d3397231bec246d8033090b69857ca",
+      "bytes": 3407
+    },
+    {
+      "path": "examples/l012-adc-scan/src/bin/async_scan_borrowed.rs",
+      "sha256": "f787edf555b082e1191b10efaabaea70c6e02e08fa2159edb31125f61e865d5d",
+      "bytes": 6251
+    },
+    {
+      "path": "examples/l012-adc-scan/Cargo.toml",
+      "sha256": "82a089333185ed80efc309325ee5badc472374450e392deda65671b809a612dc",
+      "bytes": 1538
+    },
+    {
+      "path": "examples/l012-adc-scan/Cargo.lock",
+      "sha256": "e854da11874ed9e8451cbce449a4757dee9f5a10d527d9da9fa109783a5026f9",
+      "bytes": 21712
+    },
+    {
+      "path": "examples/l012-adc-scan/build.rs",
+      "sha256": "ec6a4b92dfe42366c4e203dc7f59afed973ff9c15c9d9d8af65308677aa380f4",
+      "bytes": 822
+    },
+    {
+      "path": "examples/l012-analog/Cargo.toml",
+      "sha256": "f5ee730b5d5e00bb5046806f5c5b48a169203e0c8bbc56734d04931664eb1a06",
+      "bytes": 768
+    },
+    {
+      "path": "examples/l012-analog/Cargo.lock",
+      "sha256": "a229f33960cf1fa0c22f03f4a1e78e7cca5dd458aca8fcebcccde7cf1753f3a6",
+      "bytes": 10507
+    },
+    {
+      "path": "examples/l012-analog/build.rs",
+      "sha256": "ec6a4b92dfe42366c4e203dc7f59afed973ff9c15c9d9d8af65308677aa380f4",
+      "bytes": 822
+    },
+    {
+      "path": "examples/l012-analog/src/bin/dac_steps.rs",
+      "sha256": "31646fed86c975480a26cb8769d299ec9a978ed902c2b0038d058e8ec3bc4d4d",
+      "bytes": 869
+    },
+    {
+      "path": "docs/adc-l012-adc2-async.md",
+      "sha256": "60a152b3a6d7c753ae9a98fe341c4ca118657f0918ef2ea9be801ba07813130a",
+      "bytes": 10041
+    },
+    {
+      "path": "docs/adc-l012-adc2-async-evidence.json",
+      "sha256": "903692459a41427e0ed918571e004e7e9d9eecab409a178ef5e693b9eba70526",
+      "bytes": 28955
+    }
+  ],
+  "external_artifacts": [
+    {
+      "external_artifact": "stage91-design",
+      "artifact_relative_path": "freeze.json",
+      "sha256": "5746cfb20b52fc26b027bbbe4585d9d9bb861769222645f2ba63e83762ca001c"
+    },
+    {
+      "external_artifact": "stage91-design",
+      "artifact_relative_path": "independent-runtime-review.json",
+      "sha256": "5222a8b9addf60f5e2e07db5dd2711cbbcb16b16150e027cfa63374d60f0404d"
+    },
+    {
+      "external_artifact": "stage91-design",
+      "artifact_relative_path": "independent-runtime-review-storage-addendum.json",
+      "sha256": "8289f941a128599f178937404a85a1f36dd789a864ac678b2d15d292db6deff5"
+    },
+    {
+      "external_artifact": "stage91-design",
+      "artifact_relative_path": "independent-source-review.json",
+      "sha256": "aa85ef640e547d5ab3908c133d92398b1cc31e2eb62a39db14fa25a508aaeb2e"
+    },
+    {
+      "external_artifact": "stage91-runtime-implementation",
+      "artifact_relative_path": "runtime-implementation-freeze.json",
+      "sha256": "c247d4b77c0eba544ba5a4aecc4995c1a65aff0b74b60faa9052bcdf10fa5db0"
+    },
+    {
+      "external_artifact": "stage91-runtime-implementation",
+      "artifact_relative_path": "runtime-implementation.patch",
+      "sha256": "4bf66f634326b50f9822abe4db9f1bb3e350e06dc9f6dcfc7302a1f1239ef449"
+    },
+    {
+      "external_artifact": "stage91-example-preparation",
+      "artifact_relative_path": "versions/v3/candidate-manifest.json",
+      "sha256": "418e2c126b9da3035b590e3158ce9a657815db4b9710f9d2139c3cdc823da5df"
+    },
+    {
+      "external_artifact": "stage91-example-preparation",
+      "artifact_relative_path": "size-profile-proposal/size-profile.patch",
+      "sha256": "ac694851a3cf0dd4ded8d4672e64735e41ddf2dab09455f6e0ee8a3cdd889702"
+    },
+    {
+      "external_artifact": "stage91-runtime-independent-review",
+      "artifact_relative_path": "runtime-source-review.json",
+      "sha256": "71c7d676191216a05d46c102acff8af660807f5a8eb2fcd17d7352720d158d99"
+    },
+    {
+      "external_artifact": "stage91-runtime-independent-review",
+      "artifact_relative_path": "examples-source-review.json",
+      "sha256": "49dc244799fc1e7c3720de5f348ad869d282808a72083a22bdd2150120c2e1f4"
+    },
+    {
+      "external_artifact": "stage91-runtime-independent-review",
+      "artifact_relative_path": "integrated-static-review.json",
+      "sha256": "de41607608063431874ce5d33bfa4b8682b56b37ae66c3721489cfdb1317a029"
+    },
+    {
+      "external_artifact": "stage91-runtime-independent-review",
+      "artifact_relative_path": "size-profile-proposal-review.json",
+      "sha256": "6dc4bcc9bb144a5d27bd02b0338ee71b99b42349c0d4e9ceb1363754475128af"
+    },
+    {
+      "external_artifact": "stage91-runtime-independent-review",
+      "artifact_relative_path": "size-profile-installed-review.json",
+      "sha256": "f95c4236074dbd68d8850839ea0e081cc8615b9a17070fbc431c6cea8a97632d"
+    },
+    {
+      "external_artifact": "stage91-runtime-independent-review",
+      "artifact_relative_path": "main-artifact-inspection.json",
+      "sha256": "9efea8cdfeeb36d3c78a5200a5f1a7fb1cbea52cf7bec25fc67693fd82a20217"
+    },
+    {
+      "external_artifact": "stage91-main-original",
+      "artifact_relative_path": "summary.json",
+      "sha256": "609a9fdce4e22a7d125eda5c387bad7133b778a03efb6f217ceef04f8e0494aa"
+    },
+    {
+      "external_artifact": "stage91-main-original",
+      "artifact_relative_path": "source-before.json",
+      "sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968"
+    },
+    {
+      "external_artifact": "stage91-main-original",
+      "artifact_relative_path": "source-after.json",
+      "sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968"
+    },
+    {
+      "external_artifact": "stage91-main-original",
+      "artifact_relative_path": "E1/receipt.json",
+      "sha256": "c4a7c0bf540aa8d429ca6ed8dafbdc79985b3f2b66152feb9dc2a0ba5cb35aa1"
+    },
+    {
+      "external_artifact": "stage91-main-original",
+      "artifact_relative_path": "E1/cargo.jsonl",
+      "sha256": "82266c1a328c6780ec24e4f6e4608187db52a0396a0fc53f34f64c7e2c37a499"
+    },
+    {
+      "external_artifact": "stage91-main-original",
+      "artifact_relative_path": "E1/cargo.stderr.log",
+      "sha256": "e0ce63f87281356081252b3425fb3ca0092d92db077c398d935e0bc9ea0dd026"
+    },
+    {
+      "external_artifact": "stage91-main-continuation",
+      "artifact_relative_path": "summary.json",
+      "sha256": "d7ebca2b6863bd2e465bf97dbc0f7f6703a0870adadc3f0b2688bda1cbc1eb43"
+    },
+    {
+      "external_artifact": "stage91-main-continuation",
+      "artifact_relative_path": "source-before.json",
+      "sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d"
+    },
+    {
+      "external_artifact": "stage91-main-continuation",
+      "artifact_relative_path": "source-after.json",
+      "sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d"
+    },
+    {
+      "external_artifact": "stage91-main-composite",
+      "artifact_relative_path": "summary.json",
+      "sha256": "efed8a4a1c12cebb67eab0e97220762ae4aa45415bc707252a59cb15d347f2f3"
+    },
+    {
+      "external_artifact": "stage91-main-composite",
+      "artifact_relative_path": "origin-mapping.json",
+      "sha256": "a9120c6d9dcfc604b1d6341dd0bc9d5e23d759a9b5ce5bce0a187a75c1f62ac4"
+    },
+    {
+      "external_artifact": "stage91-main-composite",
+      "artifact_relative_path": "source-transition.json",
+      "sha256": "d36ca34a96d4354e11a4fdac41807dfddd60c08abc2c3ff75e46b287029bccae"
+    },
+    {
+      "external_artifact": "stage91-main-composite",
+      "artifact_relative_path": "preserved-first5-inputs.json",
+      "sha256": "3e00b58834f93f3f725412ea322ab9328b9f4e6d85bd0b27ac2041769086b5af"
+    },
+    {
+      "external_artifact": "stage91-main-composite",
+      "artifact_relative_path": "generated-after.json",
+      "sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3"
+    }
+  ],
+  "static_checks": [
+    {
+      "id": "admission_before_raii",
+      "result": "accepted_static",
+      "finding": "try_new_async performs sibling/inherited-source rejection and ADC2 fault recheck, then admit_dac_peer, before constructing the local ADC owner, cleanup writes or NVIC enable."
+    },
+    {
+      "id": "valid_dac_domain",
+      "result": "accepted_static",
+      "finding": "DAC RCC reset is read before gate write; finite keyed gate enable is retained; actual gate/reset are read immediately before and after typed CR0 read. Both DMAUDRIE1/2 must be false. No DAC register is written."
+    },
+    {
+      "id": "typed_pac_and_rcc",
+      "result": "accepted_static",
+      "finding": "Actual DAC CR0 typed RW accessor and bit13/bit29 getters match usage; RCC_INFO reads actual register state and uses existing keyed enable_with_cs_readback. DAC domain is distinct from common ADC gate/reset."
+    },
+    {
+      "id": "safe_dac_zero_preservation",
+      "result": "accepted_static",
+      "finding": "Actual DAC prepare/start full writes start from Cr0 default zero; set writes only DHR; read reads DOR; Drop modifies only output/EN controls. OPA only retains gates and reads DAC. Private RCC and safe SRAM/fixed-serial DMA paths do not rearm DAC IEs. Supporting source hashes still match the accepted design review."
+    },
+    {
+      "id": "inactive_isr_before_mmio",
+      "result": "accepted_static",
+      "finding": "The unchanged ISR first checks static irq_active inside its critical section; only then obtains registers and reads local EOS enable/status. It masks EOS, verifies once and wakes after the critical section. No sample, caller pointer or DAC MMIO access occurs."
+    },
+    {
+      "id": "shared_fault_leaf",
+      "result": "accepted_static",
+      "finding": "contain_shared_fault directly latches fault, masks local EOC/EOS and finitely reads raw enables without fallible wrappers. It retires dispatch and leaves NVIC unchanged when masked, disabling only if mask cannot be observed; no recursive call edge exists."
+    },
+    {
+      "id": "completion_and_output",
+      "result": "accepted_static",
+      "finding": "The existing finite engine is unchanged: waker registration before arming/start and final sticky-EOS check; bounded post-EOS EOC/START polling; local eight-sample staging; verified local masks/selective W0C clear before whole caller-slice copy with no await."
+    },
+    {
+      "id": "drop_forget_reconstruction",
+      "result": "accepted_static",
+      "finding": "ADC2 async reacquisition retires stale dispatch in the admission/cleanup critical section. ADC2 blocking try_new rechecks fault before RAII, detects irq_active, temporarily enables async cleanup lifecycle, retires dispatch and completes bounded old-async cleanup before ordinary initialize. Errors keep async cleanup semantics and sticky fault. Ordinary Drop performs cleanup before dispatch retirement."
+    },
+    {
+      "id": "adc1_correspondence",
+      "result": "accepted_static",
+      "finding": "Baseline-relative diff leaves ISR, finite read engine, cleanup helpers and blocking initialize body unchanged. ADC1 Dedicated bypasses new DAC admission/retirement and executes original async_fault body. Blocking owner construction moved into an equivalent FnOnce closure; only SharedDac takes the extra branch."
+    },
+    {
+      "id": "closed_public_api",
+      "result": "accepted_static",
+      "finding": "ADC2 policy is crate-private and generated, with the existing checked new_async/try_new_async and binding shape; no public guard, bypass, conversion constructor, caller pointer, reset, gate-disable or NVIC pending-clear path was added."
+    },
+    {
+      "id": "explicit_policy_emission",
+      "finding": "Only the existing dual_adc=L012 branch calls assert_l012_adc_shared_irq and emits ADC1,ADC2,ADC1,Dedicated plus ADC2,ADC1,ADC2_DAC,SharedDac. Macro signature agrees with the frozen runtime. Other ADC backends and generated branches are untouched."
+    },
+    {
+      "id": "complete_vector_identity",
+      "finding": "The helper requires unique ADC1/ADC2/DAC/SYSCTRL identities and their exact addresses/register kinds/versions/blocks; one GLOBAL link per ADC/DAC; unique name/number entries for IRQ12/30; and resolves every peripheral link by interrupt number before comparing the complete IRQ30 owner/link set to ADC2 plus DAC. The prior ADC1 dedicated-owner assertion remains intact."
+    },
+    {
+      "id": "control_domain_geometry",
+      "finding": "Exact typed IR checks bind full14-field DAC CR0 geometry, CR1/DOR layout, ADC IER/ISR/ICR sources/access, separate keyed active-high DAC APBEN2 and active-low APBRST2 bit10, and common ADC APBEN1/APBRST1 bit0 with ADC1-ADC2 groups. DAC uses rcc_control without inventing an analog kernel clock. PAC ICR no-op31/reset15 and runtime typed use remain unchanged."
+    },
+    {
+      "id": "offset_type_resolution",
+      "finding": "The reported initial u8/u32 offset conflict is resolved with u32 byte offsets and checked u8::try_from(offset/4) for the RCC word-offset helper. All later register-geometry calls receive u32. No compilation was needed or run to identify/resolve this source issue."
+    },
+    {
+      "id": "ordinary_example_composition",
+      "finding": "Both bins use ordinary Adc::try_new_async for ADC1 and ADC2 with one ADC1 and one ADC2_DAC binding. join composes independent conversions while live Dac owns PB0/PB1. Single reads use caller deadlines/reuse; scan has eight ADC2 slots, repeated external and owned internal handles, per-slot sample times, select cancellation, immediate reuse and later single reads. No HAL probe, mock, test hook or assertion of a timeout winner is introduced."
+    },
+    {
+      "id": "electrical_routes_memory",
+      "finding": "Independently read actual CW32L012C8T6/C8U6 generated JSON and Rust metadata. PA0/PA1 are ADC1 IN0/IN1 at pins10/11; PA8 is ADC2 IN5 at pin29; PB0/PB1 are DAC OUT1/OUT2 at pins18/19. Exact packages carry Flash0..65536 and SRAM0x20000000..0x20002000; generic L012 has no package/memory. Board supply3.0..3.6V, VDDA=VDD, HSI/8, qualified temperature and DAC nominal3.3V/load/settling limits remain explicit."
+    },
+    {
+      "id": "cargo_and_linker",
+      "finding": "Actual unchanged manifests forward exactly C8T6/C8U6 to HAL and PAC, require async for the two bins and retain the pinned executor/time/futures dependencies. async reserves HAL time-driver-gtim1. Both unchanged build.rs files require one exact memory map, emit metadata-derived memory.x and link.x. Existing blocking and dac_steps bins/locks remain byte-identical to Stage90."
+    },
+    {
+      "id": "public_contract",
+      "finding": "The frozen contract accurately states checked DAC valid-domain IE-zero admission and retained-gate effect, current-safe-API closure, no DAC MMIO writes, local EOS behavior, mask-failure-only shared containment, static waker lifetime, cancellation/forget/reconstruction and output commit. Main, clean and final54 acceptance are accurately pending; no silicon result is claimed."
+    },
+    {
+      "id": "declaration_scope",
+      "finding": "Only L012 ADC2 single/scan overrides become bounded partial, with their own limitations/evidence. ADC1 remains distinct; advanced modes and user-deferred RF/low-power scope are not promoted. The renderer change is the authorized limitation prose only; no renderer execution was performed by this reviewer."
+    }
+  ],
+  "resolved_findings": [
+    {
+      "id": "rcc_offset_types",
+      "resolution": "Explicit u32 byte offsets and checked u8 word-offset conversions resolve the build helper type conflict before compilation."
+    },
+    {
+      "id": "constructor_error_wording",
+      "resolution": "Initial configuration/sibling validation rejection is distinguished from bounded abandoned-async retirement that may write and fail terminally."
+    },
+    {
+      "id": "E1_flash_overflow",
+      "resolution": "The original E1 link failed by maximum1088 bytes against the real64KiB Flash. A separately reviewed single release-profile opt-level s-to-z change in the ADC example manifest preserved runtime/example semantics and memory. Final E1\u2013E10 passed; the original failed attempt remains retained."
+    }
+  ],
+  "main": {
+    "accepted_rows": 15,
+    "standalone_arm_library_commands": 5,
+    "ordinary_elf_links": 10,
+    "successful_elf_dependency_hal_archives": 10,
+    "dependency_archives_counted_as_standalone_commands": false,
+    "actual_command_attempts": 16,
+    "retained_failed_attempts": 1,
+    "main_generation_runs": 0,
+    "rows": [
+      {
+        "id": "L1",
+        "manifest": "firmware/Cargo.toml",
+        "features": [
+          "cw32l012",
+          "rt"
+        ],
+        "target": "embassy-cw32",
+        "kind": "rlib",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-original",
+          "artifact_relative_path": "L1/libembassy_cw32.rlib",
+          "sha256": "24e7b58042952c02edad3ba89d4ff1747ff6f18e410aac1a2f033d23d21e46d7",
+          "bytes": 6078304
+        },
+        "receipt_sha256": "f56c1bcbeed8e1ef5767f2f4f9a52c34a30254f3c50daab489f7dcbb5ea6f0b7",
+        "actual_source_manifest_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+        "actual_hal_features": [
+          "cw32l012",
+          "rt"
+        ],
+        "effective_opt_level": "3",
+        "cargo_fresh": false,
+        "actual_arm_objects": 9,
+        "arm_executable_section_bytes": 65968
+      },
+      {
+        "id": "L2",
+        "manifest": "firmware/Cargo.toml",
+        "features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "target": "embassy-cw32",
+        "kind": "rlib",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-original",
+          "artifact_relative_path": "L2/libembassy_cw32.rlib",
+          "sha256": "adf121dd5d921df0d2e6f657a7d14d0fd407f065037e7781ee864bee45e72efa",
+          "bytes": 6638702
+        },
+        "receipt_sha256": "270487658b7e7bb0021fe1ef1b3f944de49e67022df5c14122ac774ba55d7b38",
+        "actual_source_manifest_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+        "actual_hal_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "effective_opt_level": "3",
+        "cargo_fresh": false,
+        "actual_arm_objects": 11,
+        "arm_executable_section_bytes": 135838
+      },
+      {
+        "id": "L3",
+        "manifest": "firmware/Cargo.toml",
+        "features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "target": "embassy-cw32",
+        "kind": "rlib",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-original",
+          "artifact_relative_path": "L3/libembassy_cw32.rlib",
+          "sha256": "56de82b7cf9b0bc1efcf01077b11032cd9c9134da55115b98544318279f64300",
+          "bytes": 6637150
+        },
+        "receipt_sha256": "a4dce46ade865c4d14612fffa9c7b5e8bf90040944a8a79e120508a6c251ec92",
+        "actual_source_manifest_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+        "actual_hal_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "effective_opt_level": "3",
+        "cargo_fresh": false,
+        "actual_arm_objects": 11,
+        "arm_executable_section_bytes": 135838
+      },
+      {
+        "id": "L4",
+        "manifest": "firmware/Cargo.toml",
+        "features": [
+          "cw32l010f8p6",
+          "rt"
+        ],
+        "target": "embassy-cw32",
+        "kind": "rlib",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-original",
+          "artifact_relative_path": "L4/libembassy_cw32.rlib",
+          "sha256": "e76c30023afb5f8604a73c447b2e971fc3c9990e58174cb7d41fb3f463c48252",
+          "bytes": 4907160
+        },
+        "receipt_sha256": "b2b8792751222d950efcd267e3606a7cbba6d2efad482ebe88d28e9ab50fa044",
+        "actual_source_manifest_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+        "actual_hal_features": [
+          "cw32l010f8p6",
+          "rt"
+        ],
+        "effective_opt_level": "3",
+        "cargo_fresh": false,
+        "actual_arm_objects": 10,
+        "arm_executable_section_bytes": 96976
+      },
+      {
+        "id": "L5",
+        "manifest": "firmware/Cargo.toml",
+        "features": [
+          "cw32f030c8t7",
+          "rt"
+        ],
+        "target": "embassy-cw32",
+        "kind": "rlib",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-original",
+          "artifact_relative_path": "L5/libembassy_cw32.rlib",
+          "sha256": "e68c13e0628899c14def2bcecfd67d479a89ce19ce69b4ba4eab6c7fc1076a74",
+          "bytes": 5721334
+        },
+        "receipt_sha256": "c8a4b28fe7fc523d0c44dfc11e2955b21f400831da72dda327cb2df2b6dc67a4",
+        "actual_source_manifest_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+        "actual_hal_features": [
+          "cw32f030c8t7",
+          "rt"
+        ],
+        "effective_opt_level": "3",
+        "cargo_fresh": false,
+        "actual_arm_objects": 10,
+        "arm_executable_section_bytes": 81050
+      },
+      {
+        "id": "E1",
+        "manifest": "examples/l012-adc-scan/Cargo.toml",
+        "features": [
+          "cw32l012c8t6",
+          "async"
+        ],
+        "target": "async_single",
+        "kind": "elf",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-continuation",
+          "artifact_relative_path": "E1/firmware.elf",
+          "sha256": "87c00d148f2890aadafc90f7e382d1ea76e788c24a169ae210e3e399118f25a6",
+          "bytes": 159040
+        },
+        "receipt_sha256": "3058d0b9e061ce95d48a28eb1b589f82c2438d91f56aee09dd5b3ffc7bbf8002",
+        "actual_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "actual_hal_features": [
+          "_time-driver",
+          "cw32l012c8t6",
+          "rt",
+          "time-driver-gtim1"
+        ],
+        "effective_opt_level": "z",
+        "cargo_fresh": false,
+        "flash_load_image_end": 59804,
+        "static_ram_load_extent_bytes": 860,
+        "initial_stack": 536879104,
+        "actual_vectors": [
+          {
+            "name": "ADC1",
+            "irq": 12,
+            "value": 253,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          },
+          {
+            "name": "ADC2_DAC",
+            "irq": 30,
+            "value": 357,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          },
+          {
+            "name": "GTIM1",
+            "irq": 16,
+            "value": 9365,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          }
+        ]
+      },
+      {
+        "id": "E2",
+        "manifest": "examples/l012-adc-scan/Cargo.toml",
+        "features": [
+          "cw32l012c8t6",
+          "async"
+        ],
+        "target": "async_scan_borrowed",
+        "kind": "elf",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-continuation",
+          "artifact_relative_path": "E2/firmware.elf",
+          "sha256": "22b0cb8e06fdf51e297a6c0a53eb3d8d860871e572b246d33982310ca5bb1959",
+          "bytes": 161204
+        },
+        "receipt_sha256": "91832eb3c08ada4008c3eef0647b75aeed151bd9020e254b751b123a74108fa7",
+        "actual_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "actual_hal_features": [
+          "_time-driver",
+          "cw32l012c8t6",
+          "rt",
+          "time-driver-gtim1"
+        ],
+        "effective_opt_level": "z",
+        "cargo_fresh": true,
+        "flash_load_image_end": 61692,
+        "static_ram_load_extent_bytes": 1028,
+        "initial_stack": 536879104,
+        "actual_vectors": [
+          {
+            "name": "ADC1",
+            "irq": 12,
+            "value": 253,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          },
+          {
+            "name": "ADC2_DAC",
+            "irq": 30,
+            "value": 357,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          },
+          {
+            "name": "GTIM1",
+            "irq": 16,
+            "value": 10933,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          }
+        ]
+      },
+      {
+        "id": "E3",
+        "manifest": "examples/l012-adc-scan/Cargo.toml",
+        "features": [
+          "cw32l012c8t6"
+        ],
+        "target": "owned_ordered",
+        "kind": "elf",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-continuation",
+          "artifact_relative_path": "E3/firmware.elf",
+          "sha256": "6c30f842eec222bbd99b3a7b0368279e2579304fb29bc2fbbe0eabf6a49a095e",
+          "bytes": 217548
+        },
+        "receipt_sha256": "dc5b90a06aaa1ad74c2a0c1a1fbb725136cda709b7f358648950ed107505f5e8",
+        "actual_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "actual_hal_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "effective_opt_level": "z",
+        "cargo_fresh": false,
+        "flash_load_image_end": 54172,
+        "static_ram_load_extent_bytes": 192,
+        "initial_stack": 536879104,
+        "actual_vectors": [
+          {
+            "name": "ADC1",
+            "irq": 12,
+            "value": 4949,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "ADC2_DAC",
+            "irq": 30,
+            "value": 4949,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "GTIM1",
+            "irq": 16,
+            "value": 4949,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          }
+        ]
+      },
+      {
+        "id": "E4",
+        "manifest": "examples/l012-adc-scan/Cargo.toml",
+        "features": [
+          "cw32l012c8t6"
+        ],
+        "target": "borrowed_internal",
+        "kind": "elf",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-continuation",
+          "artifact_relative_path": "E4/firmware.elf",
+          "sha256": "25b77c0a5d6ac5dfc7a344b6d493ea6f8f37947d523ac753f523764246d24d4d",
+          "bytes": 217560
+        },
+        "receipt_sha256": "efd168da9af726bb7669218b876f503ddffcdcab66e6b7f5259bec0f2df87451",
+        "actual_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "actual_hal_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "effective_opt_level": "z",
+        "cargo_fresh": true,
+        "flash_load_image_end": 52836,
+        "static_ram_load_extent_bytes": 192,
+        "initial_stack": 536879104,
+        "actual_vectors": [
+          {
+            "name": "ADC1",
+            "irq": 12,
+            "value": 3705,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "ADC2_DAC",
+            "irq": 30,
+            "value": 3705,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "GTIM1",
+            "irq": 16,
+            "value": 3705,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          }
+        ]
+      },
+      {
+        "id": "E5",
+        "manifest": "examples/l012-adc-scan/Cargo.toml",
+        "features": [
+          "cw32l012c8u6",
+          "async"
+        ],
+        "target": "async_single",
+        "kind": "elf",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-continuation",
+          "artifact_relative_path": "E5/firmware.elf",
+          "sha256": "7ca122badc80637100045d4ece35b5ea45799bec12e85dfd25eed4d95538ec40",
+          "bytes": 159040
+        },
+        "receipt_sha256": "ac922f113ba8843e0190f7952d88681b9c271f8d71650e1cfd0739b359df6f16",
+        "actual_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "actual_hal_features": [
+          "_time-driver",
+          "cw32l012c8u6",
+          "rt",
+          "time-driver-gtim1"
+        ],
+        "effective_opt_level": "z",
+        "cargo_fresh": false,
+        "flash_load_image_end": 59804,
+        "static_ram_load_extent_bytes": 860,
+        "initial_stack": 536879104,
+        "actual_vectors": [
+          {
+            "name": "ADC1",
+            "irq": 12,
+            "value": 253,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          },
+          {
+            "name": "ADC2_DAC",
+            "irq": 30,
+            "value": 357,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          },
+          {
+            "name": "GTIM1",
+            "irq": 16,
+            "value": 9365,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          }
+        ]
+      },
+      {
+        "id": "E6",
+        "manifest": "examples/l012-adc-scan/Cargo.toml",
+        "features": [
+          "cw32l012c8u6",
+          "async"
+        ],
+        "target": "async_scan_borrowed",
+        "kind": "elf",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-continuation",
+          "artifact_relative_path": "E6/firmware.elf",
+          "sha256": "0c3984cbcfbb798b5c41d8643d66d4f216e9bc29a87d3aa0db0ba0fae1ecdd54",
+          "bytes": 161204
+        },
+        "receipt_sha256": "03e3bbfb6ad95a08944cf7a5e4a0315c723defcd1978a41e5a37a0c81f450d30",
+        "actual_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "actual_hal_features": [
+          "_time-driver",
+          "cw32l012c8u6",
+          "rt",
+          "time-driver-gtim1"
+        ],
+        "effective_opt_level": "z",
+        "cargo_fresh": true,
+        "flash_load_image_end": 61692,
+        "static_ram_load_extent_bytes": 1028,
+        "initial_stack": 536879104,
+        "actual_vectors": [
+          {
+            "name": "ADC1",
+            "irq": 12,
+            "value": 253,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          },
+          {
+            "name": "ADC2_DAC",
+            "irq": 30,
+            "value": 357,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          },
+          {
+            "name": "GTIM1",
+            "irq": 16,
+            "value": 10933,
+            "binding": "GLOBAL",
+            "role": "bound_handler"
+          }
+        ]
+      },
+      {
+        "id": "E7",
+        "manifest": "examples/l012-adc-scan/Cargo.toml",
+        "features": [
+          "cw32l012c8u6"
+        ],
+        "target": "owned_ordered",
+        "kind": "elf",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-continuation",
+          "artifact_relative_path": "E7/firmware.elf",
+          "sha256": "3cbd369cec1c11b02975a5235094fafe9a3cb4ce02f0e74822a65772853d0da8",
+          "bytes": 217548
+        },
+        "receipt_sha256": "05eb050f4eda3bff15e25940f27c6c326900c43cea11f170ca2c063e68cc8676",
+        "actual_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "actual_hal_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "effective_opt_level": "z",
+        "cargo_fresh": false,
+        "flash_load_image_end": 54172,
+        "static_ram_load_extent_bytes": 192,
+        "initial_stack": 536879104,
+        "actual_vectors": [
+          {
+            "name": "ADC1",
+            "irq": 12,
+            "value": 4949,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "ADC2_DAC",
+            "irq": 30,
+            "value": 4949,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "GTIM1",
+            "irq": 16,
+            "value": 4949,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          }
+        ]
+      },
+      {
+        "id": "E8",
+        "manifest": "examples/l012-adc-scan/Cargo.toml",
+        "features": [
+          "cw32l012c8u6"
+        ],
+        "target": "borrowed_internal",
+        "kind": "elf",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-continuation",
+          "artifact_relative_path": "E8/firmware.elf",
+          "sha256": "5f177a607ee63714dbfebf29beb1b47d7a5c89dc206d3df40f6e05b8f66a1fa3",
+          "bytes": 217560
+        },
+        "receipt_sha256": "a7ce1bb958632bcc1d3fde7d8e6455659b572cf2e8d532ed10a49a18ea2df47a",
+        "actual_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "actual_hal_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "effective_opt_level": "z",
+        "cargo_fresh": true,
+        "flash_load_image_end": 52836,
+        "static_ram_load_extent_bytes": 192,
+        "initial_stack": 536879104,
+        "actual_vectors": [
+          {
+            "name": "ADC1",
+            "irq": 12,
+            "value": 3705,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "ADC2_DAC",
+            "irq": 30,
+            "value": 3705,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "GTIM1",
+            "irq": 16,
+            "value": 3705,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          }
+        ]
+      },
+      {
+        "id": "E9",
+        "manifest": "examples/l012-analog/Cargo.toml",
+        "features": [
+          "cw32l012c8t6"
+        ],
+        "target": "dac_steps",
+        "kind": "elf",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-continuation",
+          "artifact_relative_path": "E9/firmware.elf",
+          "sha256": "aa4b210224ff34e24a2e39d0465c391318ed8e249f3b4ff8e83bf95802f37625",
+          "bytes": 215124
+        },
+        "receipt_sha256": "a3c69223fcb5fcd2b5172724891e1e8020a042a2ecdbc564d2e9f4ed910199f5",
+        "actual_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "actual_hal_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "effective_opt_level": "s",
+        "cargo_fresh": false,
+        "flash_load_image_end": 55440,
+        "static_ram_load_extent_bytes": 192,
+        "initial_stack": 536879104,
+        "actual_vectors": [
+          {
+            "name": "ADC1",
+            "irq": 12,
+            "value": 1177,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "ADC2_DAC",
+            "irq": 30,
+            "value": 1177,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "GTIM1",
+            "irq": 16,
+            "value": 1177,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          }
+        ]
+      },
+      {
+        "id": "E10",
+        "manifest": "examples/l012-analog/Cargo.toml",
+        "features": [
+          "cw32l012c8u6"
+        ],
+        "target": "dac_steps",
+        "kind": "elf",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "stage91-main-continuation",
+          "artifact_relative_path": "E10/firmware.elf",
+          "sha256": "3150d3b880d08661220c1305c2a042e6a1ffe1d827bd4475eea7b12dbde19618",
+          "bytes": 215124
+        },
+        "receipt_sha256": "80f36ec17623b5ddfd971e69b0f4de5c69aa4509a69839f5bfef58afec61846b",
+        "actual_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "actual_hal_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "effective_opt_level": "s",
+        "cargo_fresh": false,
+        "flash_load_image_end": 55440,
+        "static_ram_load_extent_bytes": 192,
+        "initial_stack": 536879104,
+        "actual_vectors": [
+          {
+            "name": "ADC1",
+            "irq": 12,
+            "value": 1177,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "ADC2_DAC",
+            "irq": 30,
+            "value": 1177,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          },
+          {
+            "name": "GTIM1",
+            "irq": 16,
+            "value": 1177,
+            "binding": "GLOBAL",
+            "role": "DefaultHandler_alias"
+          }
+        ]
+      }
+    ],
+    "source_identity": {
+      "same_whole_source_tree_for_all_rows": false,
+      "original_source_manifest_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+      "final_source_manifest_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+      "only_transition": "examples/l012-adc-scan/Cargo.toml release opt-level s to z",
+      "unchanged_first_five_library_compiler_closures": true,
+      "reason": "The original five successful library commands use the separate firmware workspace. The isolated example manifest is outside their actual manifest/lock/source closure; all other authored and all910 generated bytes were preserved."
+    },
+    "generated_correspondence": {
+      "files": 910,
+      "changed": 0,
+      "manifest_sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3"
+    },
+    "retained_outputs_rehashed": 2904,
+    "warnings": [
+      {
+        "row": "L4",
+        "kind": "dead_code",
+        "items": [
+          "RCC_LSE_SYSCLK_LSE_EDGES",
+          "RCC_LSE_SYSCLK_LSI_CYCLES",
+          "RCC_LSE_SYSCLK_MARGIN_LSE_EDGES"
+        ],
+        "location": "generated HAL LSE constants",
+        "disposition": "Unchanged L010 representative generated constants, unrelated to ADC2 runtime; command succeeded."
+      }
+    ],
+    "observations": [
+      "All15 actual argv lists match the approved tuples, with offline/locked/release/no-default-features/Thumb target and one selected bin per ELF.",
+      "All five standalone archives contain actual ARM relocatable objects with executable sections; these are not cargo-check metadata-only results.",
+      "Actual Cargo JSON, diagnostics, compiler outputs, every retained OUT_DIR, memory.x and row source snapshots were independently inspected and rehashed.",
+      "L012 generated instances explicitly emit ADC1 Dedicated and ADC2 SharedDac; non-L012 ADC instance emissions retain their existing form.",
+      "All ten ELFs fit the selected64KiB Flash and8KiB SRAM load ranges. The four async ELFs use real distinct ADC1 IRQ12, ADC2_DAC IRQ30 and GTIM1 IRQ16 bindings, each matching the vector word. Blocking/DAC ELF ADC/timer entries are DefaultHandler aliases and are not claimed as active handlers.",
+      "The single/scan async Flash load images end at59,804/61,692 bytes. Static RAM load extents are860/1,028 bytes; this does not prove worst-case stack usage or hardware behavior."
+    ]
+  },
+  "clean": {
+    "status": "pending_at_main_acceptance",
+    "library_commands": 2,
+    "ordinary_elf_links": 3,
+    "repeat_rows": [
+      "L2",
+      "L3",
+      "E1",
+      "E2",
+      "E9"
+    ],
+    "result_will_be_separate_external_supplement": true
+  },
+  "performed_by_reviewer": [
+    "Actual frozen source/diff and typed PAC/RCC inspection",
+    "Independent current safe DAC/OPA/RCC/DMA write-set review",
+    "Actual example route/memory/feature/linker inspection",
+    "Actual archive/ELF/Cargo JSON/log/source/OUTDIR/hash inspection"
+  ],
+  "not_performed_by_reviewer": [
+    "Production edits",
+    "Cargo or rustc compilation",
+    "Generation or source-data gate execution",
+    "HAL tests, probes, simulations or models",
+    "Firmware execution or silicon/electrical qualification"
+  ],
+  "pending_acceptance": [
+    "Separate final-source clean replay and its retained artifact inspection",
+    "Overall final54 capability/data exit, final-source correspondence and publication handled separately"
+  ],
+  "limitations": [
+    "Software source/compiler/link evidence is not hardware execution.",
+    "No analog settling/accuracy, abort latency, IRQ fairness, worst-case stack usage, external DMA cancellation, low-power or RF guarantee.",
+    "Future DAC interrupt/control support must reopen the current safe-API closure and shared fault contract."
+  ]
+}

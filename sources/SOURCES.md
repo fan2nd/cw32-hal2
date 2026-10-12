@@ -34,7 +34,7 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 | `parts.yaml`、`additional-parts.yaml` | 各族 DS 产品/存储器表与订货表 9-1；DFP `.pdsc` 只作交叉核对。网页目录是产品快照，不裁定寄存器兼容性。 |
 | `pinouts/*.yaml`、`af/*.yaml` | 各族 DS 封装/复用表、RM 路由表，以及 SDK GPIO 宏；保留候选、未解决和适用封装标记。新增 F030/A030 `*-atim-complementary.yaml` 的 CH1B–3B 路由及封装定位见下表。 |
 | `clock/*.yaml`、`dma/*.yaml`、`triggers/*.yaml` | 各族 RM 时钟、复位、DMA 请求与目标触发表；CMSIS 和外设头文件作编码核对。 |
-| `adc-sequences.yaml`、`classic-adc-scans.yaml` | 各族 RM ADC 顺序、启动/结束/结果寄存器；当前 async 的独立 IRQ、有限转换与 R1W0 定位另列如下。电气条件另见 `electrical.yaml`；L012 ADC2 仍仅 blocking。 |
+| `adc-sequences.yaml`、`classic-adc-scans.yaml` | 各族 RM ADC 顺序、启动/结束/结果寄存器；async 的独立 IRQ、有限转换与 R1W0 定位另列如下。L012 ADC2 另有 DAC 共享 IRQ 入场依据；电气条件仍见 `electrical.yaml`。 |
 | `classic-timer-input.yaml` | 同族 RM GTIM 捕获/QEI/输入选择与 GPIO AF；SDK GTIM 仅佐证。 |
 | `rtc-calendar.yaml`、`rtc-alarms.yaml` | 同族 RM RTC 访问窗口、日历与闹钟；DS 振荡器条件；SDK RTC 佐证。冲突未解决的 Alarm B 不因有引文而变成已验证功能。 |
 | `ram-parity.yaml`、`field-access.yaml`、`register-writes.yaml` | 同族 RM 读写属性、状态/清零语义；后两项是字段/命令覆盖，若只写审计文件名，仍欠直接原件定位。 |
@@ -177,7 +177,7 @@ PDF 页从 1 起计；“书页”沿用印刷页码。以下各行使用上表�
 
 ## 当前异步 ADC 的补充依据
 
-13 个芯片族已有软件触发的有限单次/扫描 async：L010/L011 的 ADC、L012 的 ADC1，以及 F002/F003/F020/F030/A030/L031/L052/L083/R031/W031。L012 ADC2 的转换证据齐全，但 ADC2_DAC 共享 IRQ 缺少可约束 DAC 同伴的所有权/故障处理，仍只提供 blocking；不能由 ADC1 的支持推定 ADC2 async。现行说明见 [adc-remaining-async.md](../docs/adc-remaining-async.md)，精确来源 ID 与逐项页码见其 [证据记录](../docs/adc-remaining-async-evidence.json)。这些记录引用上表已经锁定的手册和 CMSIS 芯片头，没有新增原厂文件或 SDK 示例依赖。
+13 个芯片族的软件触发有限单次/扫描 async 包括 L010/L011 的 ADC、L012 的 ADC1/ADC2，以及 F002/F003/F020/F030/A030/L031/L052/L083/R031/W031。ADC2 单独检查有效时钟/复位域中的 DAC DMAUDRIE1/2 均为零，保留正常直接装载 DAC 输出；共享 ADC2_DAC 的整线禁用只用于无法确认本地完成中断已屏蔽的故障。ADC1 的独立向量依据保持不变。现行说明见 [adc-remaining-async.md](../docs/adc-remaining-async.md) 与 [ADC2 契约](../docs/adc-l012-adc2-async.md)，精确来源 ID 与逐项页码分别见 [原有记录](../docs/adc-remaining-async-evidence.json) 和 [ADC2 新记录](../docs/adc-l012-adc2-async-evidence.json)。这些记录只使用已经锁定的自身手册、SVD 和 SDK 成员，不新增原厂文件或 SDK 示例依赖。Stage91 main 通过5个独立ARM库和10个ELF链接，共16次尝试；保留首次E1超出64 KiB Flash 1,088字节的失败以及仅示例 release 优化 s→z 的已审修正，原5个库的实际输入不变。L4保留3条既有L010 RCC警告，没有新警告。两个有限数据/来源门通过，早先导航证据定位键失败及修正另有记录；910个生成文件未变，main未重新生成硬件。main验收时clean 2库/3ELF和final54最终报告绑定尚未执行；54选择语义核对已有自身记录，最终完成仍需另行绑定clean和final54收据，不声明实板结果。
 
 下表从各族当前记录摘出专用 ADC IRQ12、MODE0 单次、MODE4 扫描及 START/IER/ISR/ICR 的页码；均为“PDF / 书页”。版本和文件名沿用上方各族原件表；F030/A030 明确共用 x030 RM，其余逐族使用自己的 RM。
 
@@ -194,6 +194,10 @@ PDF 页从 1 起计；“书页”沿用印刷页码。以下各行使用上表�
 | W031 / CN Rev 1.4 | 92 / 91 | 440 / 439；447 / 446 | 469 / 468；470 / 469；471 / 470 |
 
 L012 使用 `CW32L012_UserManual_CN_V1.4.pdf` Rev 1.4：§5.4 IRQ 表 PDF 96–97 / 书页 70–71；§25.5.2 有限扫描 607–608 / 581–582；§25.5.1 与 §25.12.2 停止/游标复位 605、616 / 579、590；§25.10、§25.12.8–10 中断访问 613、622–623 / 587、596–597；结果/BGR 624–625 / 598–599；DAC 共享中断源 §26.8 表 26-2 为 633 / 607。经典系列 START=0 只采用其手册所述停止语义，不移植 L010/L011 的显式游标复位结论；这批功能均未据此承诺独立排空握手、最长模拟中止延迟或硬件实测结果。
+
+ADC2 共享向量的补充定位：CN RM1.4 的 IRQ30 为书页71/PDF97；DAC 两个 DMA 欠载中断源为607/633，CR0 的 DMAUDRIE1/2 位13/29及完整控制字段为609–611/635–637，DOR1/2 的 DMAUDR 位15是 R1W0、DATA 为只读（615/641），CR1 外部输出开关为616/642。DAC APBEN2/APBRST2 位10分别见59/85及63/89；ADC1/2 共用 APBEN1/APBRST1 位0见57–58/83–84及61–62/87–88。当前 EN RM1.0 的对应 IRQ、DAC 中断/控制/状态/输出、DAC 门/复位及 ADC 共用域分别为76/102、663/689、665–668/691–694、672/698、673/699、64/90、68/94、62–63/88–89及66–67/92–93。当前英文原件 SHA-256 为 `f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088`，不替换成同名旧版本。
+
+实际 IE 零值检查保留掩蔽的 DAC DMAUDR 标志，不要求 EN/OUT/TEN/WAVE/DMAEN 为零，也不写任何 DAC 控制、数据或状态。DAC 时钟门开启后可能推进保留活动属于保守功能边界；EN 字段下的时钟说明不能等同于明确的 APBEN2→DOR 转移保证。当前 safe DAC/OPA/RCC/DMA 调用保持零 IE 的结论属于软件写集合审阅，不能编码成硬件事实；未来 DAC 中断接口必须重新处理共享调度与故障策略。硬件证据记录与运行/构建验收分开保存。
 
 ## 已记录的外设引文入口
 

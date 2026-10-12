@@ -349,7 +349,7 @@ class Inventory:
                                    "Pin signal availability is necessary, not proof of a simultaneously constructible board/pin combination. Exact chip and owner restrictions still apply.",
                                    "Generated hardware must be refreshed with ./d gen after authored input changes. Input hashes identify data used; they do not substitute for regeneration.",
                                    "No standalone BGR register does not imply absence of an internal bandgap.",
-                                   "RF is explicitly user-deferred. SYSCTRL sleep/wake, most trigger routes and peripheral DMA beyond staged x030 UART TX and paired SPI master remain open."],
+                                   "RF and low-power/deep-sleep/wake integration are explicitly user-deferred. Most trigger routes and peripheral DMA beyond the declared bounded copy/UART/SPI cohorts remain open."],
                       input_sha256=fingerprints, inventory_fingerprint=fingerprint,
                       families=sorted(profiles), hardware_inventory=hardware_inventory,
                       pin_policy=declarations["pin_policy"], peripherals=peripherals, rows=rows)

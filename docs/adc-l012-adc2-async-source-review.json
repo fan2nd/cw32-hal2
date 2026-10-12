@@ -1,0 +1,433 @@
+{
+  "schema_version": 1,
+  "stage": 91,
+  "review_role": "independent own-source and metadata implementation acceptance",
+  "decision": "accepted_main_source_and_metadata_implementation",
+  "review_scope": "Actual current source, source identity and interpretation, strict build metadata policy, finite source/data results and correspondence with the completed main software build rows. This is not silicon validation or a final-source clean-replay result.",
+  "hardware_evidence": {
+    "path": "docs/adc-l012-adc2-async-evidence.json",
+    "sha256": "903692459a41427e0ed918571e004e7e9d9eecab409a178ef5e693b9eba70526",
+    "bytes_frozen": true,
+    "hardware_facts_separate_from_acceptance": true
+  },
+  "reviewed_production_files": [
+    {
+      "path": "embassy-cw32/build.rs",
+      "bytes": 376922,
+      "sha256": "70f00eca1ea0fe97ee8734c3091272100bc7b3d16416bcdc3e985b56f937d2d3"
+    },
+    {
+      "path": "ci/verify-l012-adc-scan-data.py",
+      "bytes": 28482,
+      "sha256": "9933d1bc55b364ba61dce6f72313c087c79bdfa6b5b0b28810065bdd4f3c2b74"
+    },
+    {
+      "path": "docs/adc-l012-adc2-async-evidence.json",
+      "bytes": 28955,
+      "sha256": "903692459a41427e0ed918571e004e7e9d9eecab409a178ef5e693b9eba70526"
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "bytes": 446372,
+      "sha256": "e1d4a5f94565a09f784fcaf589d27b4ef56b7d9542f280e5e84c169adc10a865"
+    }
+  ],
+  "source_implementation_findings": {
+    "mandatory_policy": "ADC1 emits Dedicated for its exclusive IRQ12; ADC2 emits SharedDac for shared ADC2_DAC IRQ30. There is no policy-free L012 async macro route.",
+    "IRQ_identity": "Exactly one ADC1, ADC2, DAC and SYSCTRL; exact own-L012 addresses, register kind/version/block; unique IRQ12/30 by name and number; complete IRQ30 owner/link set is ADC2 GLOBAL and DAC GLOBAL.",
+    "register_geometry": "All14 DAC scalar registers accounted for, full14-field CR0 equality, CR1 and mixed DOR geometry; ADC IER/ISR/ICR exact offset/access/field sets including reserved bit2 preservation.",
+    "rcc_control": "Authoritative real DAC APBEN2/APBRST2 bit10 domain, key0x5A5A at31:16, gate active true/reset asserted false, no shared group; common ADC1-ADC2 APBEN1/APBRST1 bit0 domain remains distinct. No DAC analog kernel clock invented.",
+    "checker_delta": "One existing finite checker extended; original39 pre-receipt AST nodes preserved. No HAL-string assertions, models, fake peripherals, build subprocess or permanent historical canonical hash gate.",
+    "source_lock": "Exactly15 evidence-consumer appends; reversing their exact pointers restores complete prior parsed lock, including all order and unrelated values. No original/member/text identity, archive chain, URL, provenance, pin history or license change.",
+    "current_source_identity": "Independently verified15 selected cache artifacts and8 original archive chains;43 PDF pages re-extracted and matched pinned text exactly. Current EN manual is the selected identity from the immutable hardware proof.",
+    "independent_geometry": "Actual own SVD matches current18 ADC registers94 fields, with existing manual ISR RO correction, and14 DAC registers34 fields. All3 selections have exact interrupt and RCC domains.",
+    "safe_API_closure": "Current DAC preparation/start full writes produce both IEs0; set/read do not write IEs; Drop preserves them. OPA only retains gate and reads DAC; RCC mutation remains private/init-only; safe DMA has SRAM or fixed serial destinations. Raw writers and arbitrary faults are outside this functional contract.",
+    "interpretation_boundaries": "Masked stale DAC flags allowed; EN/OUT/TEN/WAVE/DMAEN are not IRQ masks. No DAC control/data/status writes or reset/gate-off are added. Gate-opening progress is a conservative policy inference, not a proven APBEN2-to-DOR transfer event. Future safe DAC IRQ/trigger/DMA or public RCC mutation needs re-review."
+  },
+  "main_source_gates": {
+    "actual_gate_source_snapshot_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+    "actual_gate_source_files": 1471,
+    "successful_gate_commands": 2,
+    "generation_runs": 0,
+    "rows": [
+      {
+        "id": "D01",
+        "script": "ci/verify-l012-adc-scan-data.py",
+        "exit_code": 0,
+        "external_receipt": "main-gates/D01.receipt.json",
+        "receipt_sha256": "3eb6b2bae11cad582368ed91652eb9d6eb32b63040ff6233276213245683ac31",
+        "stdout_sha256": "1f91ab55a760e5dc22666b6342827dca381f62437e000a9ecafa0ce46e804a0f",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "id": "D02",
+        "script": "cw32-data/tools/source_provenance.py",
+        "exit_code": 0,
+        "external_receipt": "main-gates/D02.receipt.json",
+        "receipt_sha256": "70cb468f0330a88833cf4d5c86a5d5185cac558da6c965a25da3a870e2d49ca7",
+        "stdout_sha256": "d483b76d50fa851106f7a71c92cb6e3e036e54aab66519ec86cf6689f184d0e3",
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "data": {
+      "receipt_external_artifact": "main-gates/l012-adc2-async-data.json",
+      "sha256": "1fd1c257674e0ce41af45a0b3356d8e661257c4fcaf28fef84f9dcb4b67ad8d4",
+      "checks_passed": 597,
+      "selections_checked": 3,
+      "ADC_instances_checked": 6,
+      "ADC_registers": 18,
+      "ADC_fields": 94,
+      "IRQ_number": 30,
+      "complete_IRQ_owners": [
+        "ADC2",
+        "DAC"
+      ],
+      "data_geometry_matches_independent_review": true
+    },
+    "provenance": {
+      "required_originals": 43,
+      "required_hardware_source_files": 564,
+      "catalogued_originals": 45,
+      "discovery_only_originals_omitted": 2,
+      "complete_hardware": true,
+      "complete_manifest": false,
+      "current_views_checked": 4,
+      "new_hardware_evidence_references": 67,
+      "unique_proof_source_ids_resolved": 15,
+      "unresolved_references": 0
+    },
+    "source_and_toolchain_before_after_equal": true
+  },
+  "schema_correction_lineage": {
+    "original_navigation_exit_code": 1,
+    "cause": "The new evidence locator used pdf_pages_one_based; the existing validator requires pdf_pages_1_based paired with printed_pages.",
+    "exact_superseding_correction": "25 evidence key renames plus2 checker references; inverse replacement restores both prior files byte-for-byte. All numbers, claims and original-source identities unchanged; validator unchanged.",
+    "prior_evidence_sha256": "3313b9d4c55dc7a874b8fe14371b7a74f442720720464dbaed5b5508ed3ff426",
+    "accepted_evidence_sha256": "903692459a41427e0ed918571e004e7e9d9eecab409a178ef5e693b9eba70526",
+    "superseding_independent_review_sha256": "96b91d1451d605401f9ef346e1b15dc27ea0b6b393d34b2799659f2b0f93955a",
+    "failed_navigation_retained": true,
+    "corrected_navigation_exit_code": 0
+  },
+  "main_build_correspondence": {
+    "successful_standalone_libraries": 5,
+    "successful_ordinary_ELFs": 10,
+    "ELF_dependency_HAL_archives": 10,
+    "actual_command_attempts": 16,
+    "failed_initial_E1_retained": true,
+    "same_whole_tree_for_all15_rows": false,
+    "original_library_and_gate_snapshot_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+    "final_ELF_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+    "single_source_transition": {
+      "path": "examples/l012-adc-scan/Cargo.toml",
+      "field": "profile.release.opt-level",
+      "before": "s",
+      "after": "z",
+      "reason": "Initial ordinary async_single exceeded unchanged64KiB Flash by1088 bytes.",
+      "before_sha256": "6ae008cb661f1acd3472ffbe237c358cb4be5a9742aa85291d837a61a6769084",
+      "after_sha256": "82a089333185ed80efc309325ee5badc472374450e392deda65671b809a612dc",
+      "inverse_byte_equality": true,
+      "all_other_authored_bytes_and_modes_unchanged": true,
+      "five_original_library_input_closures_unchanged": true,
+      "source_gate_inputs_unaffected": true,
+      "data_gate_reexecution": 0,
+      "independent_data_equivalence_review_sha256": "b3e8ccf985e6eb5e1ec5de7fc0a278cc92fcb29c6013ffde2723429bc791128c"
+    },
+    "actual_rows": [
+      {
+        "id": "L1",
+        "selection": "cw32l012",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32l012,rt",
+        "exit_code": 0,
+        "external_receipt": "main/L1/receipt.json",
+        "receipt_sha256": "f56c1bcbeed8e1ef5767f2f4f9a52c34a30254f3c50daab489f7dcbb5ea6f0b7",
+        "actual_source_snapshot_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main/L1/libembassy_cw32.rlib",
+            "sha256": "24e7b58042952c02edad3ba89d4ff1747ff6f18e410aac1a2f033d23d21e46d7",
+            "bytes": 6078304
+          }
+        ]
+      },
+      {
+        "id": "L2",
+        "selection": "cw32l012c8t6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32l012c8t6,rt",
+        "exit_code": 0,
+        "external_receipt": "main/L2/receipt.json",
+        "receipt_sha256": "270487658b7e7bb0021fe1ef1b3f944de49e67022df5c14122ac774ba55d7b38",
+        "actual_source_snapshot_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main/L2/libembassy_cw32.rlib",
+            "sha256": "adf121dd5d921df0d2e6f657a7d14d0fd407f065037e7781ee864bee45e72efa",
+            "bytes": 6638702
+          }
+        ]
+      },
+      {
+        "id": "L3",
+        "selection": "cw32l012c8u6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32l012c8u6,rt",
+        "exit_code": 0,
+        "external_receipt": "main/L3/receipt.json",
+        "receipt_sha256": "a4dce46ade865c4d14612fffa9c7b5e8bf90040944a8a79e120508a6c251ec92",
+        "actual_source_snapshot_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main/L3/libembassy_cw32.rlib",
+            "sha256": "56de82b7cf9b0bc1efcf01077b11032cd9c9134da55115b98544318279f64300",
+            "bytes": 6637150
+          }
+        ]
+      },
+      {
+        "id": "L4",
+        "selection": "cw32l010f8p6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32l010f8p6,rt",
+        "exit_code": 0,
+        "external_receipt": "main/L4/receipt.json",
+        "receipt_sha256": "b2b8792751222d950efcd267e3606a7cbba6d2efad482ebe88d28e9ab50fa044",
+        "actual_source_snapshot_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main/L4/libembassy_cw32.rlib",
+            "sha256": "e76c30023afb5f8604a73c447b2e971fc3c9990e58174cb7d41fb3f463c48252",
+            "bytes": 4907160
+          }
+        ]
+      },
+      {
+        "id": "L5",
+        "selection": "cw32f030c8t7",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32f030c8t7,rt",
+        "exit_code": 0,
+        "external_receipt": "main/L5/receipt.json",
+        "receipt_sha256": "c8a4b28fe7fc523d0c44dfc11e2955b21f400831da72dda327cb2df2b6dc67a4",
+        "actual_source_snapshot_sha256": "f4dc413734d33338ea092047d818c30ef7e9901f62d096266573ba883fa86968",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main/L5/libembassy_cw32.rlib",
+            "sha256": "e68c13e0628899c14def2bcecfd67d479a89ce19ce69b4ba4eab6c7fc1076a74",
+            "bytes": 5721334
+          }
+        ]
+      },
+      {
+        "id": "E1",
+        "selection": "cw32l012c8t6",
+        "kind": "elf",
+        "target": "async_single",
+        "features": "cw32l012c8t6,async",
+        "exit_code": 0,
+        "external_receipt": "main-continuation/E1/receipt.json",
+        "receipt_sha256": "3058d0b9e061ce95d48a28eb1b589f82c2438d91f56aee09dd5b3ffc7bbf8002",
+        "actual_source_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main-continuation/E1/firmware.elf",
+            "sha256": "87c00d148f2890aadafc90f7e382d1ea76e788c24a169ae210e3e399118f25a6",
+            "bytes": 159040
+          }
+        ]
+      },
+      {
+        "id": "E2",
+        "selection": "cw32l012c8t6",
+        "kind": "elf",
+        "target": "async_scan_borrowed",
+        "features": "cw32l012c8t6,async",
+        "exit_code": 0,
+        "external_receipt": "main-continuation/E2/receipt.json",
+        "receipt_sha256": "91832eb3c08ada4008c3eef0647b75aeed151bd9020e254b751b123a74108fa7",
+        "actual_source_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main-continuation/E2/firmware.elf",
+            "sha256": "22b0cb8e06fdf51e297a6c0a53eb3d8d860871e572b246d33982310ca5bb1959",
+            "bytes": 161204
+          }
+        ]
+      },
+      {
+        "id": "E3",
+        "selection": "cw32l012c8t6",
+        "kind": "elf",
+        "target": "owned_ordered",
+        "features": "cw32l012c8t6",
+        "exit_code": 0,
+        "external_receipt": "main-continuation/E3/receipt.json",
+        "receipt_sha256": "dc5b90a06aaa1ad74c2a0c1a1fbb725136cda709b7f358648950ed107505f5e8",
+        "actual_source_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main-continuation/E3/firmware.elf",
+            "sha256": "6c30f842eec222bbd99b3a7b0368279e2579304fb29bc2fbbe0eabf6a49a095e",
+            "bytes": 217548
+          }
+        ]
+      },
+      {
+        "id": "E4",
+        "selection": "cw32l012c8t6",
+        "kind": "elf",
+        "target": "borrowed_internal",
+        "features": "cw32l012c8t6",
+        "exit_code": 0,
+        "external_receipt": "main-continuation/E4/receipt.json",
+        "receipt_sha256": "efd168da9af726bb7669218b876f503ddffcdcab66e6b7f5259bec0f2df87451",
+        "actual_source_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main-continuation/E4/firmware.elf",
+            "sha256": "25b77c0a5d6ac5dfc7a344b6d493ea6f8f37947d523ac753f523764246d24d4d",
+            "bytes": 217560
+          }
+        ]
+      },
+      {
+        "id": "E5",
+        "selection": "cw32l012c8u6",
+        "kind": "elf",
+        "target": "async_single",
+        "features": "cw32l012c8u6,async",
+        "exit_code": 0,
+        "external_receipt": "main-continuation/E5/receipt.json",
+        "receipt_sha256": "ac922f113ba8843e0190f7952d88681b9c271f8d71650e1cfd0739b359df6f16",
+        "actual_source_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main-continuation/E5/firmware.elf",
+            "sha256": "7ca122badc80637100045d4ece35b5ea45799bec12e85dfd25eed4d95538ec40",
+            "bytes": 159040
+          }
+        ]
+      },
+      {
+        "id": "E6",
+        "selection": "cw32l012c8u6",
+        "kind": "elf",
+        "target": "async_scan_borrowed",
+        "features": "cw32l012c8u6,async",
+        "exit_code": 0,
+        "external_receipt": "main-continuation/E6/receipt.json",
+        "receipt_sha256": "03e3bbfb6ad95a08944cf7a5e4a0315c723defcd1978a41e5a37a0c81f450d30",
+        "actual_source_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main-continuation/E6/firmware.elf",
+            "sha256": "0c3984cbcfbb798b5c41d8643d66d4f216e9bc29a87d3aa0db0ba0fae1ecdd54",
+            "bytes": 161204
+          }
+        ]
+      },
+      {
+        "id": "E7",
+        "selection": "cw32l012c8u6",
+        "kind": "elf",
+        "target": "owned_ordered",
+        "features": "cw32l012c8u6",
+        "exit_code": 0,
+        "external_receipt": "main-continuation/E7/receipt.json",
+        "receipt_sha256": "05eb050f4eda3bff15e25940f27c6c326900c43cea11f170ca2c063e68cc8676",
+        "actual_source_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main-continuation/E7/firmware.elf",
+            "sha256": "3cbd369cec1c11b02975a5235094fafe9a3cb4ce02f0e74822a65772853d0da8",
+            "bytes": 217548
+          }
+        ]
+      },
+      {
+        "id": "E8",
+        "selection": "cw32l012c8u6",
+        "kind": "elf",
+        "target": "borrowed_internal",
+        "features": "cw32l012c8u6",
+        "exit_code": 0,
+        "external_receipt": "main-continuation/E8/receipt.json",
+        "receipt_sha256": "a7ce1bb958632bcc1d3fde7d8e6455659b572cf2e8d532ed10a49a18ea2df47a",
+        "actual_source_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main-continuation/E8/firmware.elf",
+            "sha256": "5f177a607ee63714dbfebf29beb1b47d7a5c89dc206d3df40f6e05b8f66a1fa3",
+            "bytes": 217560
+          }
+        ]
+      },
+      {
+        "id": "E9",
+        "selection": "cw32l012c8t6",
+        "kind": "elf",
+        "target": "dac_steps",
+        "features": "cw32l012c8t6",
+        "exit_code": 0,
+        "external_receipt": "main-continuation/E9/receipt.json",
+        "receipt_sha256": "a3c69223fcb5fcd2b5172724891e1e8020a042a2ecdbc564d2e9f4ed910199f5",
+        "actual_source_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main-continuation/E9/firmware.elf",
+            "sha256": "aa4b210224ff34e24a2e39d0465c391318ed8e249f3b4ff8e83bf95802f37625",
+            "bytes": 215124
+          }
+        ]
+      },
+      {
+        "id": "E10",
+        "selection": "cw32l012c8u6",
+        "kind": "elf",
+        "target": "dac_steps",
+        "features": "cw32l012c8u6",
+        "exit_code": 0,
+        "external_receipt": "main-continuation/E10/receipt.json",
+        "receipt_sha256": "80f36ec17623b5ddfd971e69b0f4de5c69aa4509a69839f5bfef58afec61846b",
+        "actual_source_snapshot_sha256": "79c9513105f2e488c855a5bc5e917cf5ba38a578d3d21bfacdd1272e9d14e91d",
+        "retained_artifacts": [
+          {
+            "external_artifact": "main-continuation/E10/firmware.elf",
+            "sha256": "3150d3b880d08661220c1305c2a042e6a1ffe1d827bd4475eea7b12dbde19618",
+            "bytes": 215124
+          }
+        ]
+      }
+    ],
+    "all_retained_outputs_and_original_receipt_hashes_reverified": true,
+    "external_summary": "main-composite/summary.json",
+    "summary_sha256": "efed8a4a1c12cebb67eab0e97220762ae4aa45415bc707252a59cb15d347f2f3",
+    "external_origin_mapping": "main-composite/origin-mapping.json",
+    "origin_mapping_sha256": "a9120c6d9dcfc604b1d6341dd0bc9d5e23d759a9b5ce5bce0a187a75c1f62ac4"
+  },
+  "unchanged_hardware_and_models": {
+    "canonical_paths": 910,
+    "baseline_manifest_sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3",
+    "active_canonical_path_and_byte_delta": 0,
+    "protected_data_model_generator_test_sources": 477,
+    "protected_source_byte_delta": 0,
+    "redundant_generated_tree_archive_created": false
+  },
+  "capability_and_reporting": {
+    "actual_changed_mode_ids": [
+      "async_single_conversion",
+      "async_ordered_scan"
+    ],
+    "only_semantic_status_changes": "CW32L012 ADC2 unimplemented to partial for these two modes. ADC1 and other families retain existing status.",
+    "renderer": "One authorized RF/low-power/peripheral-DMA prose string only; inverse restores all bytes and AST.",
+    "final54": "Separate coordinator-owned source/data reconciliation, not54newbuilds.",
+    "clean_scope": "A separate final-source replay record covers one bootstrap, exact910 identity, two source gates and2libraries/3ELFs. No clean result is asserted here."
+  },
+  "remaining_main_source_findings": [],
+  "hardware_execution": false
+}

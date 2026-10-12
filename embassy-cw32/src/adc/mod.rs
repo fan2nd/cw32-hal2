@@ -1,6 +1,7 @@
 //! 12-bit ADCs with Embassy ownership and package-qualified channels.
 //! Blocking APIs cover every backend. Software async reads/scans cover classic ADCs,
-//! L010/L011 and L012 ADC1; L012 ADC2 remains blocking on its shared DAC vector.
+//! L010/L011 and both L012 ADCs. L012 ADC2 checks DAC interrupt quietness before
+//! using the shared vector; ordinary direct-loading DAC outputs may coexist.
 //!
 //! The public hardware-version facade selects the verified classic, ordered-sequence or independent dual
 //! converter implementation. Their sample times, divider range, reference and

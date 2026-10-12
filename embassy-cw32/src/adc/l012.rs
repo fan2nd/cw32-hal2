@@ -16,17 +16,26 @@
 //! must stay within rcc::HSI_BOUND_TEMPERATURE_C; extended-temperature HSI
 //! accuracy beyond that interval is unqualified, even if other circuitry is rated.
 //!
-//! ADC1 also supports IRQ-driven finite software reads/scans. ADC2 remains blocking
-//! because its shared DAC interrupt needs a separate lifetime contract.
-//! No DMA, external-trigger, DAC-output, synchronized/slave,
+//! Both ADCs support IRQ-driven finite software reads/scans. ADC2 admits its
+//! shared `ADC2_DAC` vector only after reading both DAC underrun interrupt enables
+//! as zero in a clocked, reset-released domain. Current safe DAC operations keep
+//! those enables zero, so ordinary direct-loading DAC outputs may coexist. ADC2
+//! never writes DAC registers or clears its flags. Acquiring the retained DAC
+//! gate can advance inherited DAC activity, including on a rejected constructor.
+//! Future DAC interrupt support needs shared dispatch and a new fault policy.
+//! No ADC DMA, external-trigger, synchronized/slave,
 //! calibration or engineering-unit API is exposed. Internal channels return raw
 //! counts and require >=40 us acquisition. There is no READY or overrun flag.
 //! Inherited sibling slave configuration is rejected before converter writes.
 //! Raw register users must not change shared gate/reset/BGR or either owned ADC.
 //! Raw users of an unowned sibling must not change its SLAVE bit concurrently:
 //! the preflight check is a snapshot, not synchronization with arbitrary raw code.
+//! During ADC2 async ownership, raw/PAC or external DMA users must not arm DAC
+//! DMAUDRIE1/2 or change the DAC gate/reset. Admission does not stop an inherited
+//! external DMA writer. This is a functional ownership contract; the ISR retains
+//! no pointer to caller buffers, channels or futures.
 //! Current scan contract: docs/adc-l012-scans.md. Historical electrical review:
-//! docs/adc-l012-dual-ownership.md.
+//! docs/adc-l012-dual-ownership.md. Shared-vector contract: docs/adc-l012-adc2-async.md.
 use crate::interrupt::typelevel::{Binding, Handler, Interrupt};
 use crate::mode::{Async, Blocking, Mode};
 use crate::rcc::ClockBounds;
@@ -186,6 +195,14 @@ pub enum Error {
     ClockEnableTimeout,
     /// The shared ADC reset is asserted; it cannot be released per instance.
     CommonInReset,
+    /// ADC2 could not verify the DAC gate for shared-vector admission.
+    /// An attempted gate enable is retained and may advance inherited DAC activity.
+    DacClockUnavailable,
+    /// The DAC reset is asserted; ADC2 never releases it for async admission.
+    DacInReset,
+    /// Either DAC underrun interrupt is enabled; ADC2 leaves DAC registers intact.
+    /// A DAC gate acquired before this rejection remains enabled.
+    DacInterruptEnabled,
     /// The sibling has inherited synchronized slave mode; no ADC writes occur.
     SiblingInSlaveMode,
     /// A scan must contain between one and eight slots.
@@ -210,6 +227,9 @@ impl core::fmt::Display for Error {
             Self::InvalidTimeout => "ADC polling budget must be nonzero",
             Self::ClockEnableTimeout => "ADC clock gate did not enable",
             Self::CommonInReset => "shared ADC reset is asserted",
+            Self::DacClockUnavailable => "DAC clock gate is unavailable for ADC2 async",
+            Self::DacInReset => "DAC reset is asserted",
+            Self::DacInterruptEnabled => "DAC underrun interrupt is enabled",
             Self::SiblingInSlaveMode => {
                 "ADC sibling is configured for synchronized slave conversion"
             }
@@ -408,6 +428,9 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
     /// analog/BGR startup. Reject inherited slave-mode configuration on the
     /// sibling: starting this ADC must never start an unowned converter.
     /// The default initial acquisition is Cycles518; reads choose their own.
+    /// ADC2 first retires a forgotten async owner with bounded local cleanup.
+    /// Cleanup failure remains terminal; blocking construction does not admit
+    /// or reserve the shared DAC interrupt.
     pub fn try_new(
         peripheral: Peri<'d, T>,
         common: &'d Common<'d>,
@@ -419,7 +442,7 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
         // Reject before constructing the RAII owner: dropping a rejected owner
         // would otherwise alter the converter during an error return.
         Self::check_sibling()?;
-        let mut adc = Self {
+        let construct = || Self {
             _peripheral: peripheral,
             config,
             pclk: clocks.pclk_bounds(),
@@ -429,6 +452,23 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
             async_lifecycle: false,
             _common: common,
             _mode: PhantomData,
+        };
+        let mut adc = if matches!(T::ASYNC_POLICY, AsyncPolicy::SharedDac) {
+            critical_section::with(|_| -> Result<Self, Error> {
+                // A forgotten async owner can retain static dispatch after its
+                // token reborrow expires. Reject an ISR fault before RAII exists.
+                check_fault::<T>()?;
+                let mut adc = construct();
+                if T::state().irq_active.load(Ordering::Acquire) {
+                    adc.async_lifecycle = true;
+                    T::state().irq_active.store(false, Ordering::Release);
+                    adc.async_cleanup()?;
+                    adc.async_lifecycle = false;
+                }
+                Ok(adc)
+            })?
+        } else {
+            construct()
         };
         adc.initialize();
         Ok(adc)
@@ -615,6 +655,15 @@ impl<'d, T: AsyncInstance> Adc<'d, T, Async> {
     /// changing their configuration or flags. Raw PAC code must not concurrently
     /// reconfigure this exclusively owned ADC. A prior cleanup fault is terminal
     /// across both blocking and asynchronous replacement owners until chip reset.
+    ///
+    /// ADC2 also requires both actual DAC DMAUDRIE bits to be zero. Admission
+    /// checks DAC reset before enabling its gate and brackets the CR0 read with
+    /// gate/reset checks, before an ADC owner or any ADC2 writes exist. It never
+    /// changes DAC registers, output routing or flags. A newly acquired DAC gate
+    /// remains enabled even on rejection and may advance retained DAC activity.
+    /// Current safe DAC construction, set/read and drop preserve zero interrupt
+    /// enables, so direct outputs may coexist without borrowing the DAC token.
+    /// Raw DAC interrupt/control writers require coordination outside this API.
     pub fn try_new_async(
         peripheral: Peri<'d, T>,
         common: &'d Common<'d>,
@@ -626,10 +675,17 @@ impl<'d, T: AsyncInstance> Adc<'d, T, Async> {
         let timing = config.timing(clocks.pclk_bounds(), 0, SampleTime::Cycles518)?;
         // Keep inherited-source rejection and initial masking
         // atomic with respect to a previously enabled/pending ADC vector.
-        let mut adc = critical_section::with(|_| {
+        let mut adc = critical_section::with(|cs| {
             Self::check_sibling()?;
             if inherited_async_configuration::<T>() {
                 return Err(Error::UnsupportedConfiguration);
+            }
+            if matches!(T::ASYNC_POLICY, AsyncPolicy::SharedDac) {
+                check_fault::<T>()?;
+                admit_dac_peer(config.timeout, cs)?;
+                // Retire a forgotten owner's dispatch before local cleanup,
+                // in the same critical section as peer admission and masking.
+                T::state().irq_active.store(false, Ordering::Release);
             }
             let mut adc = Self {
                 _peripheral: peripheral,
@@ -647,8 +703,8 @@ impl<'d, T: AsyncInstance> Adc<'d, T, Async> {
         })?;
         adc.initialize_async()?;
         T::state().irq_active.store(true, Ordering::Release);
-        // Dedicated vector proven by the metadata generator. No pending clear
-        // is needed: the handler ignores masked EOS and preserves sticky flags.
+        // Metadata proves the dedicated/shared policy; ADC2 has admitted its
+        // quiet DAC peer. No pending clear is needed: masked EOS is ignored.
         unsafe { T::Interrupt::enable() };
         Ok(adc)
     }
@@ -906,10 +962,14 @@ impl<T: Instance, M: Mode> Adc<'_, T, M> {
     }
 
     fn async_fault(&mut self) -> Error {
+        if matches!(T::ASYNC_POLICY, AsyncPolicy::SharedDac) {
+            self.active = false;
+            return contain_shared_fault::<T>(self.config.timeout);
+        }
         T::state().faulted.store(true, Ordering::Release);
         T::state().irq_active.store(false, Ordering::Release);
         // Only a failed control readback disables the dedicated ADC vector.
-        // ADC1 exclusivity is asserted from metadata; ADC2 has no async owner.
+        // ADC1 exclusivity is asserted from metadata.
         T::disable_async_interrupt();
         self.active = false;
         Error::Faulted
@@ -1088,6 +1148,7 @@ impl<T: Instance, M: Mode> Drop for Adc<'_, T, M> {
 }
 
 pub(crate) trait SealedInstance {
+    const ASYNC_POLICY: AsyncPolicy;
     fn regs() -> pac::adc::Adc;
     fn sibling() -> pac::adc::Adc;
     fn state() -> &'static State;
@@ -1097,12 +1158,18 @@ pub(crate) trait SealedInstance {
 #[allow(private_bounds)]
 pub trait Instance: PeripheralType + SealedInstance + 'static {}
 
+/// Private, generated choice; sharing never inherits the dedicated fault policy.
+pub(crate) enum AsyncPolicy {
+    Dedicated,
+    SharedDac,
+}
+
 pub(crate) trait SealedAsyncInstance {}
-/// ADC with a metadata-proven dedicated interrupt and safe async lifetime.
-/// Only ADC1 implements this; ADC2 shares its vector with DAC.
+/// ADC with a metadata-proven interrupt policy and safe async lifetime.
+/// ADC1 is dedicated; ADC2 checks its DAC peer before using `ADC2_DAC`.
 #[allow(private_bounds)]
 pub trait AsyncInstance: Instance + SealedAsyncInstance {
-    /// Dedicated ADC1 GLOBAL interrupt.
+    /// The instance's GLOBAL interrupt, dedicated or admitted shared ADC2/DAC.
     type Interrupt: Interrupt;
 }
 
@@ -1124,6 +1191,8 @@ impl State {
 
 /// EOS-only software conversion handler, bound using `bind_interrupts!`.
 /// The sticky completion is retained for the future; no sample is copied here.
+/// ADC2 touches no DAC registers. Shared-vector disable occurs only when this
+/// handler cannot verify that its owned EOS source was masked.
 pub struct InterruptHandler<T: AsyncInstance>(PhantomData<T>);
 impl<T: AsyncInstance> Handler<T::Interrupt> for InterruptHandler<T> {
     unsafe fn on_interrupt() {
@@ -1159,6 +1228,75 @@ fn check_fault<T: Instance>() -> Result<(), Error> {
     } else {
         Ok(())
     }
+}
+
+fn admit_dac_peer(timeout: u32, cs: critical_section::CriticalSection<'_>) -> Result<(), Error> {
+    use crate::rcc::{Readback, SealedRccPeripheral};
+    // This is DAC's distinct APBEN2/APBRST2 domain, never the common ADC gate.
+    let rcc = crate::peripherals::DAC::RCC_INFO;
+    if rcc.reset_asserted() {
+        return Err(Error::DacInReset);
+    }
+    if !rcc.is_enabled() {
+        // Retain even a delayed enable; closing this gate could affect outputs.
+        rcc.enable_with_cs_readback(
+            cs,
+            Readback::Poll {
+                attempts: timeout,
+                spin: false,
+            },
+        )
+        .map_err(|_| Error::DacClockUnavailable)?;
+    }
+    if !rcc.is_enabled() {
+        return Err(Error::DacClockUnavailable);
+    }
+    if rcc.reset_asserted() {
+        return Err(Error::DacInReset);
+    }
+    let control = pac::DAC.cr0().read();
+    // Never interpret a zero sample from a closed/reset domain as quietness.
+    if !rcc.is_enabled() {
+        return Err(Error::DacClockUnavailable);
+    }
+    if rcc.reset_asserted() {
+        return Err(Error::DacInReset);
+    }
+    if control.dmaudrie1() || control.dmaudrie2() {
+        return Err(Error::DacInterruptEnabled);
+    }
+    // EN/OUT and masked sticky DMAUDR flags do not request the shared vector.
+    // No DAC control, output, data or status register is written here.
+    Ok(())
+}
+
+fn contain_shared_fault<T: Instance>(timeout: u32) -> Error {
+    // A leaf: raw local masking/readback must not consult the new fault latch
+    // or call fallible cleanup/mask wrappers that could reenter this function.
+    critical_section::with(|_| {
+        let state = T::state();
+        state.faulted.store(true, Ordering::Release);
+        let regs = T::regs();
+        regs.ier().modify(|v| {
+            v.set_eoc(false);
+            v.set_eos(false);
+        });
+        let mut masked = false;
+        for _ in 0..timeout {
+            let ier = regs.ier().read();
+            if !ier.eoc() && !ier.eos() {
+                masked = true;
+                break;
+            }
+        }
+        state.irq_active.store(false, Ordering::Release);
+        if !masked {
+            // Only a failed owned-source mask permits whole-vector containment.
+            // The admitted DAC peer has no enabled interrupt contribution.
+            T::disable_async_interrupt();
+        }
+    });
+    Error::Faulted
 }
 
 pub(crate) trait SealedAdcChannel<T> {
@@ -1240,8 +1378,9 @@ impl_internal!(VrefInt, 15);
 
 // Emitted only for the selected device and package's verified analog routes.
 macro_rules! impl_instance {
-    ($name:ident, $sibling:ident $(, $irq:ident)?) => {
+    ($name:ident, $sibling:ident, $irq:ident, $policy:ident) => {
         impl $crate::adc::SealedInstance for $crate::peripherals::$name {
+            const ASYNC_POLICY: $crate::adc::AsyncPolicy = $crate::adc::AsyncPolicy::$policy;
             fn regs() -> $crate::pac::adc::Adc { $crate::pac::$name }
             fn sibling() -> $crate::pac::adc::Adc { $crate::pac::$sibling }
             fn state() -> &'static $crate::adc::State {
@@ -1249,14 +1388,14 @@ macro_rules! impl_instance {
                 &STATE
             }
             fn disable_async_interrupt() {
-                $(<$crate::interrupt::typelevel::$irq as $crate::interrupt::typelevel::Interrupt>::disable();)?
+                <$crate::interrupt::typelevel::$irq as $crate::interrupt::typelevel::Interrupt>::disable();
             }
         }
         impl $crate::adc::Instance for $crate::peripherals::$name {}
-        $(impl $crate::adc::SealedAsyncInstance for $crate::peripherals::$name {}
+        impl $crate::adc::SealedAsyncInstance for $crate::peripherals::$name {}
         impl $crate::adc::AsyncInstance for $crate::peripherals::$name {
             type Interrupt = $crate::interrupt::typelevel::$irq;
-        })?
+        }
     };
 }
 pub(crate) use impl_instance;

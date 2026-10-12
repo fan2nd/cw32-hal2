@@ -1306,6 +1306,7 @@ fn main() {
             ));
         }
         if dual_adc {
+            assert_l012_adc_shared_irq();
             let peripheral = metadata
                 .peripherals
                 .iter()
@@ -1331,10 +1332,10 @@ fn main() {
                 "ADC1 software IRQ must be dedicated"
             );
             out.push_str(&format!(
-                "crate::adc::impl_instance!(ADC1, ADC2, {});\n",
+                "crate::adc::impl_instance!(ADC1, ADC2, {}, Dedicated);\n",
                 irq
             ));
-            out.push_str("crate::adc::impl_instance!(ADC2, ADC1);\n");
+            out.push_str("crate::adc::impl_instance!(ADC2, ADC1, ADC2_DAC, SharedDac);\n");
         }
         if i2c {
             for peripheral in metadata
@@ -3047,6 +3048,153 @@ fn generate_gpio(out: &mut String) {
         ));
     }
     out.push_str(&format!("pub(crate) const GPIO_AF_MASK: u32 = {af_mask};\npub(crate) const GPIO_AF_MAX: u32 = {af_max};\n"));
+}
+
+// Admission and fault containment for ADC2 rely on these exact own-L012
+// source facts. DAC has a shared vector but a separate configuration domain;
+// its partially qualified analog kernel clock is not needed or inferred here.
+fn assert_l012_adc_shared_irq() {
+    use cw32_metapac::metadata::{ir, Peripheral, PeripheralRegisters, METADATA};
+    use std::collections::BTreeMap;
+
+    assert_eq!(METADATA.line, "CW32L012");
+    let peripheral = |name| -> &Peripheral {
+        let matches: Vec<_> = METADATA.peripherals.iter().filter(|p| p.name == name).collect();
+        assert_eq!(matches.len(), 1, "L012 ADC shared-vector owner missing or duplicated");
+        matches[0]
+    };
+    let adc1 = peripheral("ADC1");
+    let adc2 = peripheral("ADC2");
+    let dac = peripheral("DAC");
+    let sysctrl = peripheral("SYSCTRL");
+    for (p, address, kind, block) in [
+        (adc1, 0x4000_0000, "adc", "Adc"),
+        (adc2, 0x4000_0100, "adc", "Adc"),
+        (dac, 0x4000_00c0, "dac", "Dac"),
+        (sysctrl, 0x4000_4000, "sysctrl", "Sysctrl"),
+    ] {
+        assert_eq!(p.address, address);
+        let regs = p.registers.as_ref().unwrap();
+        assert_eq!((regs.kind, regs.version, regs.block), (kind, "cw32l012_v1", block));
+    }
+    for (p, name, number) in [(adc1, "ADC1", 12), (adc2, "ADC2_DAC", 30), (dac, "ADC2_DAC", 30)] {
+        assert_eq!(p.interrupts.len(), 1);
+        assert_eq!((p.interrupts[0].signal, p.interrupts[0].interrupt), ("GLOBAL", name));
+        let entries: Vec<_> = METADATA.interrupts.iter()
+            .filter(|i| i.name == name || i.number == number).collect();
+        assert_eq!(entries.len(), 1, "L012 ADC vector duplicated or aliased");
+        assert_eq!((entries[0].name, entries[0].number), (name, number));
+    }
+    // Resolve every link by number so an alternate name or duplicate mapping
+    // cannot silently add another owner of IRQ30.
+    let mut owners = Vec::new();
+    for p in METADATA.peripherals {
+        for link in p.interrupts {
+            let entries: Vec<_> = METADATA.interrupts.iter().filter(|i| i.name == link.interrupt).collect();
+            assert_eq!(entries.len(), 1, "unresolved or duplicated interrupt name");
+            if entries[0].number == 30 {
+                owners.push((p.name, link.signal, link.interrupt));
+            }
+        }
+    }
+    owners.sort_unstable();
+    assert_eq!(owners, [("ADC2", "GLOBAL", "ADC2_DAC"), ("DAC", "GLOBAL", "ADC2_DAC")]);
+
+    let register = |regs: &PeripheralRegisters, name: &str, offset, access: ir::Access| {
+        let blocks: Vec<_> = regs.ir.blocks.iter().filter(|b| b.name == regs.block).collect();
+        assert_eq!(blocks.len(), 1);
+        let items: Vec<_> = blocks[0].items.iter().filter(|r| r.name.eq_ignore_ascii_case(name)).collect();
+        assert_eq!(items.len(), 1, "L012 ADC/DAC control missing or duplicated");
+        let item = items[0];
+        assert_eq!(item.byte_offset, offset);
+        assert!(item.array.is_none());
+        let ir::BlockItemInner::Register(reg) = &item.inner else { panic!("expected scalar register") };
+        assert_eq!(reg.bit_size, 32);
+        assert_eq!(reg.access, access);
+        let fieldsets: Vec<_> = regs.ir.fieldsets.iter().filter(|f| Some(f.name) == reg.fieldset).collect();
+        assert_eq!(fieldsets.len(), 1);
+        assert_eq!(fieldsets[0].bit_size, 32);
+        let mut fields = BTreeMap::new();
+        for field in fieldsets[0].fields {
+            assert!(field.array.is_none());
+            let ir::BitOffset::Regular(bit) = &field.bit_offset else { panic!("expected scalar field") };
+            assert!(fields.insert(field.name.to_ascii_uppercase(), (bit.offset, field.bit_size)).is_none());
+        }
+        fields
+    };
+    let geometry = |fields: &[(&str, u32, u32)]| -> BTreeMap<String, (u32, u32)> {
+        fields.iter().map(|(name, bit, width)| (name.to_string(), (*bit, *width))).collect()
+    };
+    let dacregs = dac.registers.as_ref().unwrap();
+    let block = dacregs.ir.blocks.iter().find(|b| b.name == dacregs.block).unwrap();
+    assert_eq!(block.items.len(), 14, "unaccounted DAC register requires shared-IRQ review");
+    for (name, offset) in [
+        ("CR0", 0), ("SWTRGR", 4), ("DHR12R1", 8), ("DHR12L1", 12),
+        ("DHR8R1", 16), ("DHR12R2", 20), ("DHR12L2", 24), ("DHR8R2", 28),
+        ("DHR12RD", 32), ("DHR12LD", 36), ("DHR8RD", 40),
+        ("DOR1", 44), ("DOR2", 48), ("CR1", 52),
+    ] {
+        register(dacregs, name, offset, ir::Access::ReadWrite);
+    }
+    assert_eq!(register(dacregs, "CR0", 0, ir::Access::ReadWrite), geometry(&[
+        ("EN1", 0, 1), ("TEN1", 1, 1), ("TSEL1", 2, 4), ("WAVE1", 6, 2),
+        ("MAMP1", 8, 4), ("DMAEN1", 12, 1), ("DMAUDRIE1", 13, 1),
+        ("EN2", 16, 1), ("TEN2", 17, 1), ("TSEL2", 18, 4), ("WAVE2", 22, 2),
+        ("MAMP2", 24, 4), ("DMAEN2", 28, 1), ("DMAUDRIE2", 29, 1),
+    ]));
+    assert_eq!(register(dacregs, "CR1", 0x34, ir::Access::ReadWrite), geometry(&[("C1OUT", 0, 1), ("C2OUT", 1, 1)]));
+    for (name, offset) in [("DOR1", 0x2c), ("DOR2", 0x30)] {
+        // The register is RW for DMAUDR W0C; DATA is hardware RO. ADC2
+        // admission neither writes this mixed register nor needs to read it.
+        assert_eq!(register(dacregs, name, offset, ir::Access::ReadWrite), geometry(&[("DATA", 0, 12), ("DMAUDR", 15, 1)]));
+    }
+    for adc in [adc1, adc2] {
+        let regs = adc.registers.as_ref().unwrap();
+        assert_eq!(register(regs, "IER", 0x70, ir::Access::ReadWrite), geometry(&[
+            ("EOC", 0, 1), ("EOS", 1, 1), ("AWDL", 3, 1), ("AWDH", 4, 1),
+            ("DMAEOC", 5, 1), ("DMAEOS", 6, 1),
+        ]));
+        for (name, offset, access) in [("ISR", 0x78, ir::Access::Read), ("ICR", 0x74, ir::Access::ReadWrite)] {
+            assert_eq!(register(regs, name, offset, access), geometry(&[
+                ("EOC", 0, 1), ("EOS", 1, 1), ("AWDL", 3, 1), ("AWDH", 4, 1),
+            ]));
+        }
+    }
+
+    let sysregs = sysctrl.registers.as_ref().unwrap();
+    for (p, enable, enable_offset, reset, reset_offset, field, bit, group) in [
+        (adc1, "APBEN1", 0x38u32, "APBRST1", 0x48u32, "ADC", 0u8, Some("ADC1-ADC2")),
+        (adc2, "APBEN1", 0x38, "APBRST1", 0x48, "ADC", 0, Some("ADC1-ADC2")),
+        (dac, "APBEN2", 0x34, "APBRST2", 0x44, "DAC", 10, None),
+    ] {
+        // DAC deliberately has no fully qualified legacy rcc/kernel-clock
+        // record. Admission uses only its authoritative rcc_control domain.
+        let control = p.rcc_control.as_ref().expect("L012 analog configuration domain missing");
+        assert_eq!((control.controller, control.bus_clock), ("SYSCTRL", "PCLK"));
+        assert!(control.enable_active_value);
+        assert_eq!(control.reset_asserted_value, Some(false));
+        assert_eq!((control.shared_enable_group, control.shared_reset_group), (group, group));
+        assert!(control.enable.register.eq_ignore_ascii_case(enable));
+        assert!(control.enable.field.eq_ignore_ascii_case(field));
+        let reset_field = control.reset.as_ref().unwrap();
+        assert!(reset_field.register.eq_ignore_ascii_case(reset));
+        assert!(reset_field.field.eq_ignore_ascii_case(field));
+        assert_eq!(rcc_field(sysregs, &control.enable), (u8::try_from(enable_offset / 4).unwrap(), bit, 1));
+        assert_eq!(rcc_field(sysregs, reset_field), (u8::try_from(reset_offset / 4).unwrap(), bit, 1));
+        let key = control.enable_write_key.as_ref().expect("L012 analog gate key missing");
+        assert!(key.field.register.eq_ignore_ascii_case(enable));
+        assert!(key.field.field.eq_ignore_ascii_case("KEY"));
+        assert_eq!(key.value, 0x5a5a);
+        assert_eq!(rcc_field(sysregs, &key.field), (u8::try_from(enable_offset / 4).unwrap(), 16, 16));
+        let enable_fields = register(sysregs, enable, enable_offset, ir::Access::ReadWrite);
+        assert_eq!(enable_fields.get(field), Some(&(u32::from(bit), 1)));
+        assert_eq!(enable_fields.get("KEY"), Some(&(16, 16)));
+        let reset_fields = register(sysregs, reset, reset_offset, ir::Access::ReadWrite);
+        assert_eq!(reset_fields.get(field), Some(&(u32::from(bit), 1)));
+    }
+    assert_eq!(adc1.rcc_control, adc2.rcc_control);
+    assert_ne!(adc1.rcc_control.as_ref().unwrap().enable, dac.rcc_control.as_ref().unwrap().enable);
+    assert_ne!(adc1.rcc_control.as_ref().unwrap().reset, dac.rcc_control.as_ref().unwrap().reset);
 }
 
 // L012 is a separate command controller. Its own source-qualified vectors,

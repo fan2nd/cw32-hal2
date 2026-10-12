@@ -54,8 +54,9 @@ scope. It is authored source, not a generated report. Each function has:
   from hardware routing facts
 
 Per-mode overrides may select named `peripherals` within their listed families;
-selectors must match the generated instance inventory. L012 ADC1 support therefore
-cannot silently mark ADC2 implemented.
+selectors must match the generated instance inventory. L012 ADC1 and ADC2 retain
+separate overrides: ADC1 uses its dedicated vector, while ADC2 requires checked
+DAC-peer admission and its own shared-vector fault policy.
 
 The validator rejects new undeclared hardware kinds, changed family membership,
 duplicate modes/routes, unknown declaration keys/families and stale anchors.
@@ -91,10 +92,16 @@ still apply.
   F002/F003/F020/F030/A030 and 1–8 on the others, including both L012 ADCs.
   Classic scans share sample time and exclude buffered/internal multi-slot use;
   L010/L011/L012 provide per-slot sample times. All classic lines, L010/L011 and
-  L012 ADC1 additionally support finite software single reads and ordered scans
-  with typed IRQ completion. L012 ADC2 remains blocking: its shared ADC2_DAC
-  interrupt needs a separately owned lifetime and terminal-fault policy. See
-  [L010/L011](adc-low-async.md) and [remaining async ADC scope](adc-remaining-async.md).
+  both L012 ADCs additionally support finite software single reads and ordered
+  scans with typed IRQ completion. ADC2 checks actual DAC DMAUDRIE1/2 zero in a
+  valid retained clock/reset domain; ordinary direct-loading DAC outputs coexist.
+  Only unverified local completion masking permits shared ADC2_DAC disable.
+  Stage91 main produced five standalone ARM libraries and ten ELF links in
+  sixteen attempts, retaining the failed link and reviewed example-only profile
+  correction. At main acceptance clean 2-library/3-ELF replay and final54 report
+  binding had not run; final completion requires their separate receipts.
+  See [L010/L011](adc-low-async.md), [remaining async ADC scope](adc-remaining-async.md)
+  and [ADC2's shared-vector contract](adc-l012-adc2-async.md).
   Continuous scans, hardware-triggered scans and safe ADC DMA remain absent.
 - UART ordinary blocking/async and qualified RTS/CTS constructors exist. Pin
   availability differs by instance and exact selection; these ordinary owners
@@ -819,3 +826,60 @@ clean receipt. No hardware result is claimed. The shared blocking/async retireme
 order corrects a source-qualification gap, not a reproduced silicon defect.
 See [the L012 contract](l012-i2c-async.md) and
 [ordinary firmware](../examples/l012-i2c/README.md).
+
+## Fixed baseline and final 54-selection reconciliation
+
+The agreed baseline contains these ten bounded deliveries. Earlier accepted
+stages retain their original source, main, clean and publication receipts; the
+table does not turn those historical builds into new Stage91 commands.
+
+| Stage | Bounded delivery | Selection/application boundary | Disposition |
+| --- | --- | --- | --- |
+| 82 | [Finite UART idle receive](uart-idle.md) | Native L010/L011/L012, ten selections and qualified RX routes | Prior accepted scope |
+| 83 | [IRQ UART bounded ring receive](uart-buffered-rx.md) | All 13 families/54 selections, instance/pad and storage constraints | Prior accepted scope |
+| 84 | [Native F020 DMA copies and UART TX](f020-dma-owned.md) | Four selections; safe memory/staging only exact C6U7/F6U7/K6U7; F6 UART1 lacks safe TX | Prior accepted scope |
+| 85 | [Native four-family DMA copies and UART TX](four-channel-dma-owned.md) | L031/L052/R031/W031, 15 selections; 11 exact memory-qualified parts | Prior accepted scope |
+| 86 | [Native L012 DMA copies and UART TX](l012-dma-owned.md) | Three selections; safe memory/staging only C8T6/C8U6 | Prior accepted scope |
+| 87 | [Classic seven-bit I2C async master](classic-i2c-async.md) | Twelve families/51 selections, qualified instances, pins and timing | Prior accepted scope |
+| 88 | [L012 seven-bit I2C async master](l012-i2c-async.md) | Three selections; both native command/FIFO controllers | Prior accepted scope |
+| 89 | [SPI byte async master](spi-async-pio.md) | IRQ PIO on ten families/36 selections/14 family-controller pairs; retain prior F030/A030/L083 staged-DMA scope | Prior accepted scope |
+| 90 | [Timer overflow and native classic capture/QEI](timer-event-input.md) | 34 GTIM and 11 ATIM event associations; classic ATIM inputs on eight families; prior BTIM/buffered scopes retained | Prior accepted scope |
+| 91 | [L012 ADC2 finite software async single/scan](adc-l012-adc2-async.md) | Three selections; checked DAC IE-zero admission, direct DAC coexistence, distinct shared-vector fault policy | Main accepted within scope; at main acceptance final clean and final54 binding had not run |
+
+The 54-selection semantic source/data review was completed against its recorded
+inputs. At main acceptance the final source/report binding and final-source
+clean replay had not run; final completion requires their separate receipts.
+This overall exit check stays within Stage91, separate from its accepted main
+five-library/ten-ELF scope and required clean two-library/three-ELF replay. It is
+not a new 54-build campaign or evidence of every mode operating on every part. The selected roster remains
+13 family aliases, four F030 density aliases and 37 exact-package selections
+across 13 families. Generic/density aliases must not acquire invented package
+or memory guarantees, and alias routes remain common-package intersections.
+
+At final acceptance, reconcile every selected chip's identity, memory, register
+kind/version/address, complete interrupt owners, RCC domains, DMA requests and
+qualified routes against current canonical data and its accepted generated
+correspondence. Join those facts to the maintained per-family/peripheral mode
+declarations and the ten scopes above. The source-only renderer's family/mode
+rows and per-selection routes do not independently establish simultaneous pin
+compatibility, memory admission, shared-owner policy or source interpretation.
+
+The final freeze must bind current input hashes and both existing deterministic
+reports after their normal update/check. Main preserved canonical hardware
+inputs and all 910 accepted generated paths/bytes; final clean must establish
+its own correspondence. That generated-data check is separate from capability
+reporting. Neither stale ignored reports nor an unchanged file count establishes
+final currentness. Main acceptance alone does not close the fixed baseline;
+separate final-source clean and final54 binding receipts are required.
+
+RF and low-power/deep-sleep/wake integration remain explicitly user-deferred.
+Existing unimplemented sleep/wake declarations still mean no API is supplied.
+Advanced SPI slave modes, I2C slave/ten-bit, ADC continuous/general-triggered/DMA/
+coupled modes, full external-reference ownership, and additional timer
+capture-IRQ/DMA/cascade/history/complementary modes remain outside this baseline.
+Keep previously qualified narrow trigger and timer modes intact. Peripheral DMA
+remains limited to the declared admitted copy/UART/SPI cohorts; circular/scatter,
+broader requests, lossless receive and safe early-abort/bounded-drop guarantees
+remain absent or experimental. RTC Alarm B and L012 IR MOD remain source-disputed;
+R031 IR output remains route-unqualified. All `hardware_validated` values remain
+false, and unaudited exact hardware modes retain `mode_hardware_present: null`.

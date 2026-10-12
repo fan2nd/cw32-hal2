@@ -3,8 +3,11 @@
 Source implementation, 2026-10-08. Both exact parts (CW32L012C8T6 and
 CW32L012C8U6) and their package-intersection alias use the same independently
 qualified ADC1/ADC2 layout. This extends the historical single-read backend.
-The later [finite software async API](adc-remaining-async.md) covers ADC1 only;
-ADC2 retains this blocking contract.
+The later [finite software async API](adc-remaining-async.md) also covers both
+converters. ADC2 adds [checked DAC-peer shared-vector admission](adc-l012-adc2-async.md),
+with Stage91 main 5-library/10-ELF verification. At main acceptance clean and
+final54 report binding had not run; final completion requires their separate
+receipts. Both converters retain this blocking API.
 No firmware execution, electrical qualification, average, calibration accuracy
 or engineering-unit result is claimed.
 
@@ -18,8 +21,8 @@ borrowed handle. The result slice must have the same length as the sequence.
 Single reads use exactly one slot through this same path. Existing internal
 TS and BGR handles still return raw counts. No arbitrary numerical channel
 constructor, DAC-output source, dual coupling, continuous conversion, external
-trigger or DMA scan API is added by this blocking scope. ADC1 interrupt reads
-and scans are documented separately.
+trigger or DMA scan API is added by this blocking scope. ADC1/ADC2 interrupt
+reads and scans are documented separately.
 
 `Common` owns BGR and remains borrowed by both independently owned converters.
 Constructors, reconfiguration and reads reject a sibling with SLAVE=1 before
@@ -36,8 +39,14 @@ Sequence length, result length, every slot's timing, and the sibling preflight
 are checked before local ADC changes. Channel preparation through `degrade_adc`
 or `reborrow_adc` may already have configured its own GPIO as analog. This is
 the existing channel contract, not an ADC side effect on timing rejection.
-The constructor performs fallible checks before constructing the RAII owner,
-so its destructor cannot write the ADC during a rejected constructor return.
+Initial configuration and sibling checks precede construction of the RAII
+owner, so rejection by those checks does not run an ADC-writing destructor.
+An ADC2 blocking replacement additionally retires a forgotten async owner's
+static dispatch and bounded local conversion state before ordinary blocking
+initialization. That retirement uses an async-lifecycle temporary: cleanup can
+fail after local ADC writes and run its bounded destructor cleanup before
+returning a terminal error. A terminal async fault remains latched across replacement
+until chip reset; ordinary blocking-only acquisition retains its existing path.
 
 Before START the driver stops/resets the local cursor, clears local flags,
 programs the slot arrays and ENS=length-1, and selects one shared divider.

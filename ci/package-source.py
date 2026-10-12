@@ -113,6 +113,8 @@ def required_evidence(root: Path) -> set[str]:
     review = json.loads((root / "docs/upstream-file-provenance.json").read_text())
     for row in review["files"]:
         review_references(row.get("replacement_review", {}))
+    required.add("docs/adc-l012-adc2-async-runtime-review.json")
+    required.add("docs/adc-l012-adc2-async-source-review.json")
     return required
 
 

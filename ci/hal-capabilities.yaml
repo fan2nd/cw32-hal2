@@ -412,7 +412,7 @@ functions:
       - adc_limits.classic_scan
     - id: async_single_conversion
       status: partial
-      scope: Owned finite software single conversion with typed dedicated ADC IRQ binding; classic EOC/OVW or sequence EOS wake.
+      scope: Owned finite software single conversion with typed ADC IRQ binding; classic EOC/OVW or sequence EOS wake, with explicit L012 ADC2 shared-vector admission.
       facts:
       - adc_limits.sequence
       limitations:
@@ -430,11 +430,23 @@ functions:
         scope: Independent L012 ADC1 software single conversion with EOS completion and a borrowed Common owner.
       - families: [CW32L012]
         peripherals: [ADC2]
-        status: unimplemented
-        scope: L012 ADC2 retains its blocking API; shared ADC2_DAC IRQ ownership is not implemented.
+        status: partial
+        scope: Independent L012 ADC2 finite software single conversion with EOS completion, borrowed Common and checked DAC-peer admission on shared ADC2_DAC IRQ30.
         limitations:
-        - Finite conversion evidence is qualified, but DAC quiet-peer/shared-handler lifetime and terminal-fault
-          containment need a separate owner. ADC1's dedicated-vector policy cannot be applied to IRQ30.
+        - Actual DAC DMAUDRIE1/2 must both read zero in a verified gate-on/reset-released domain before ADC2 writes or IRQ activation.
+          Admission retains any acquired DAC gate; opening it may advance retained DAC activity even on later rejection.
+        - No DAC register or flag is written; ordinary direct-loading DAC construction, set/read, drop and reconstruction preserve
+          the checked zero-IE condition. No public lease, DAC-token reservation or DAC interrupt dispatcher is added.
+        - Normal cleanup masks only owned EOC/EOS. All required readback faults latch Faulted until chip reset, but shared-vector
+          disable occurs only when owned completion masking cannot be verified. Blocking/async replacement retires abandoned dispatch.
+        - Current safe DAC/OPA/RCC/DMA API closure is required; raw register/vector interference and external DAC-control writers
+          are outside the functional contract. Finite polls, caller deadlines, source timing and eventual executor service remain required.
+        - Stage91 main passed 5 standalone ARM libraries and 10 ELF links across 16 attempts, retaining initial E1 Flash overflow
+          and the reviewed example-only s-to-z profile continuation; library inputs stayed unchanged in their separate workspace.
+        - L4 retains three existing L010 RCC warnings; no new warnings. Both finite source/data gates passed after the preserved
+          navigation locator-key correction; all 910 generated files stayed unchanged and main ran no hardware generation.
+        - Independent main runtime and source reviews accepted this scope. At main acceptance clean 2-library/3-ELF replay and
+          final54 report binding had not run; final completion requires their separate receipts. No hardware result is claimed.
       evidence:
       - path: embassy-cw32/src/adc/sequence/mod.rs
         anchor: pub fn try_new_async
@@ -445,6 +457,8 @@ functions:
       - path: docs/adc-low-async.md
       - path: docs/adc-remaining-async.md
       - path: docs/adc-remaining-async-evidence.json
+      - path: docs/adc-l012-adc2-async.md
+      - path: docs/adc-l012-adc2-async-evidence.json
     - id: async_ordered_scan
       status: partial
       scope: Finite software ordered scan with typed IRQ completion, repeated channel handles and full-output commit.
@@ -453,7 +467,7 @@ functions:
       - adc_limits.classic_scan
       limitations:
       - Classic has four/eight slots, one common acquisition time, unbuffered external multi-slot inputs and EOS/OVW
-        wake. L010/L011/L012 ADC1 have eight per-slot sample times, qualified mixed sources and EOS-only wake.
+        wake. L010/L011 and both L012 ADCs have eight per-slot sample times, qualified mixed sources and EOS-only wake.
       - The future requires terminal completion and stopped START, stages results, verifies owned masking/acknowledgment,
         then commits the entire slice without an await. Cancellation or error leaves all output unchanged.
       - The same source-qualified electrical, deadline and terminal-fault contract as async_single_conversion applies.
@@ -461,14 +475,24 @@ functions:
       overrides:
       - families: [CW32L012]
         peripherals: [ADC1]
-        scope: Independent L012 ADC1 software one-shot 1–8-slot ordered scan, retaining shared BGR/TS and blocking ADC2.
+        scope: Independent L012 ADC1 software one-shot 1–8-slot ordered scan, retaining shared BGR/TS and the independently owned ADC2.
       - families: [CW32L012]
         peripherals: [ADC2]
-        status: unimplemented
-        scope: L012 ADC2 retains blocking ordered scans; shared ADC2_DAC async lifetime is not implemented.
+        status: partial
+        scope: Independent L012 ADC2 finite software 1–8-slot ordered scan with repeated typed channels, per-slot sample times and checked DAC-peer shared-vector admission.
         limitations:
-        - ADC2 async requires a checked DAC quiet-peer lease or shared IRQ owner with terminal-fault containment.
-          This is an ownership boundary, not missing finite ADC conversion evidence.
+        - Uses the same actual DAC IE-zero admission, retained gate, current-safe-API coexistence and mask-failure-only shared-vector
+          containment as ADC2 async_single_conversion. No DAC controls or flags are changed and no public peer lease is required.
+        - Terminal EOS/EOC/START observations, staged results, verified local masking and selective EOC/EOS clear precede the
+          whole-output commit. Error/cancellation leaves every output element unchanged; successful cancellation permits reuse.
+        - Forgotten futures keep no caller-buffer pointer in the ISR; subsequent operations clean up locally. Forgotten async
+          owners are retired by blocking or async reconstruction, without clearing sticky Faulted state or shared BGR/TS.
+        - Exact-length caller buffers, existing electrical/internal-source timing, running clocks, IRQ/executor progress and
+          caller-composed deadlines remain required. No continuous, triggered, coupled, DMA, lossless or hardware timing claim.
+        - Stage91 main passed 5 standalone ARM libraries and 10 ELF links in 16 attempts with the failed E1/profile continuation
+          preserved. Independent main reviews accepted the scope; existing L4 RCC warnings are unchanged and no hardware result follows.
+        - At main acceptance clean 2-library/3-ELF replay and final54 report binding had not run; final completion requires their
+          separate receipts. The completed54-selection semantic source/data review is not a new54-build campaign.
       evidence:
       - path: embassy-cw32/src/adc/sequence/mod.rs
         anchor: pub async fn read_sequence
@@ -479,12 +503,14 @@ functions:
       - path: docs/adc-low-async.md
       - path: docs/adc-remaining-async.md
       - path: docs/adc-remaining-async-evidence.json
+      - path: docs/adc-l012-adc2-async.md
+      - path: docs/adc-l012-adc2-async-evidence.json
     - id: continuous_irq_triggered_scan
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.
       limitations:
       - No continuous or hardware-triggered scan API. Software one-shot async single/scans are declared separately
-        for all classic lines, L010/L011 and L012 ADC1; the L010/L011 BTIM1-triggered single owner remains separate.
+        for all classic lines, L010/L011 and both L012 ADCs; the L010/L011 BTIM1-triggered single owner remains separate.
     - id: external_reference
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

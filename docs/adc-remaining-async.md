@@ -1,9 +1,12 @@
-# Finite software ADC interrupts on L012 ADC1 and classic families
+# Finite software ADC interrupts on L012 and classic families
 
-Source-qualified scope, 2026-10-09. L012 ADC1 and all ten classic lines expose
+Source-qualified scope, updated 2026-10-12. Both L012 ADCs and all ten classic lines expose
 `Adc<'d, T, Async>` for single reads and one finite ordered scan. Their existing
-blocking APIs remain available. L012 ADC2 stays blocking because its ADC2_DAC
-vector needs a separately owned shared-interrupt lifetime and fault policy.
+blocking APIs remain available. L012 ADC2 uses the separate
+[checked DAC-peer and shared-vector contract](adc-l012-adc2-async.md);
+its Stage91 main produced five libraries and ten ELFs. At main acceptance the
+separate clean replay and final54 report binding had not run; final completion
+requires their own receipts.
 This extends the [L010/L011 async scope](adc-low-async.md); each backend retains
 its own register, electrical, source and cancellation contract.
 
@@ -20,16 +23,17 @@ let sample = adc.read(&mut pin, sample_time).await?;
 let timing = adc.read_sequence(&sequence, &mut output).await?;
 ```
 
-L012 retains the common analog owner, and only ADC1 implements the sealed async
-instance capability:
+L012 retains the common analog owner. Both converters implement the sealed async
+instance capability with distinct dedicated/shared-vector policies:
 
 ```rust,ignore
 bind_interrupts!(struct Irqs {
     ADC1 => adc::InterruptHandler<peripherals::ADC1>;
+    ADC2_DAC => adc::InterruptHandler<peripherals::ADC2>;
 });
 let common = adc::Common::try_new(p.BGR, 100_000)?;
 let mut adc1 = adc::Adc::try_new_async(p.ADC1, &common, Irqs, config)?;
-let mut adc2 = adc::Adc::try_new(p.ADC2, &common, config)?;
+let mut adc2 = adc::Adc::try_new_async(p.ADC2, &common, Irqs, config)?;
 ```
 
 `new_async` is the panicking convenience constructor. `read` returns raw 12-bit
@@ -94,8 +98,11 @@ with finite readbacks. Successful cancellation permits fresh initialization.
 Failure of a required mask, stop, clear or configuration readback latches
 `Error::Faulted` per instance until chip reset, including replacement owners and
 switching between blocking and async. Reconfiguration does not clear the latch.
-Normal cancellation does not disable NVIC. Failed interrupt masking can disable
-only the metadata-proven dedicated ADC line to contain a stuck source.
+Normal cancellation does not disable NVIC. Dedicated-vector backends retain
+their existing terminal-fault containment. ADC2 disables the shared ADC2_DAC
+vector only if owned completion masking cannot be verified, under its checked
+DAC-interrupt-free contract. Other ADC2 readback faults still latch `Faulted`
+but leave the shared vector enabled when the local completion mask is verified.
 
 L012 explicitly documents START zero as stop plus sequence-cursor reset.
 Classic documents stop, and separately documents MODE4 as one complete selected
@@ -110,18 +117,23 @@ Forgetting a future skips its destructor and promises no quiescence. Finite
 hardware writes only peripheral result registers; no ISR/DMA pointer survives into
 caller memory. The next operation repairs the peripheral explicitly.
 
-L012 never resets/gates the ADC group or clears shared BGR/TS enables; `Common`
-remains borrowed, and ADC2, comparator, OPA and DAC state is preserved. On
+L012 never resets or disables the ADC group gate or clears shared BGR/TS enables; `Common`
+remains borrowed, and the sibling converter, comparator, OPA and DAC registers
+are preserved. ADC2's separate retained DAC-gate acquisition is described below. On
 F030/A030/F020/F003, live BGREN and its shared ADC gate are retained. F002 reserves
 BGREN/TSEN, while L031/R031/W031/L052/L083 reserve BGREN; no fabricated enable is
 written. Their existing ADC reference/temperature ownership limits still apply.
 Retained shared resources and unresolved fault state can retain power.
 
-ADC2's finite conversion engine is qualified, but its IRQ30 is shared with DAC.
-An ADC2-only owner cannot safely disable that vector after failed masking or
-adopt inherited live DAC interrupts. The current DAC owner exposes neither a
-checked quiet-peer lease nor a shared interrupt owner. This is the specific
-remaining ADC2 async boundary, independent of ADC1 support.
+ADC2 admission requires actual DAC CR0.DMAUDRIE1/2 both zero in a clocked,
+reset-released domain. It retains the DAC gate and does not write DAC registers;
+opening that gate can allow retained DAC activity to progress, including before
+a rejected admission. Ordinary direct-loading DAC outputs coexist because the
+current safe DAC/OPA/RCC/DMA API preserves both interrupt enables at zero.
+There is no public lease, DAC-token reservation or DAC interrupt dispatcher.
+Raw users must coordinate owned ADC/DAC interrupt controls and the vector.
+Forgotten ADC2 async ownership is retired before blocking or async replacement
+initializes the converter; the sticky fault latch survives replacement.
 
 ## Deadlines and examples
 
@@ -132,9 +144,10 @@ working time/wake source; losing futures are dropped. Progress needs running
 clocks, enabled interrupts, a correct typed binding and eventual executor service.
 There is no maximum IRQ, scheduling or whole-operation latency guarantee.
 
-[The L012 examples](../examples/l012-adc-scan/README.md) include ADC1 single reads,
-an eight-slot mixed-source scan, select/timeout cancellation and reuse, and an
-independent blocking ADC2 neighbor. [The classic examples](../examples/classic-adc-scan/README.md)
+[The L012 examples](../examples/l012-adc-scan/README.md) include independent
+ADC1/ADC2 single reads and eight-slot mixed-source scans, select/timeout
+cancellation and reuse, and concurrent direct-loading DAC output. The existing
+blocking binaries remain separate. [The classic examples](../examples/classic-adc-scan/README.md)
 cover all ten lines using generated package routes, full-length ordered scans,
 internal supply single reads and cancellation/reuse. Their optional `async`
 feature uses the existing executor/time/futures pin and family-appropriate GTIM
@@ -185,3 +198,10 @@ and reference conflicts remain in the electrical and scan source documents.
 The existing Embassy pin `f16efeffe37581092ec184718e6fdb1620393214` supplies the
 waker, binding, guard and caller-composition structure. It supplies no CW32
 hardware or electrical evidence.
+
+The additional [ADC2 source record](adc-l012-adc2-async-evidence.json) binds
+the own L012 DAC request enables, IRQ30 owner set and distinct gate/reset
+domains. Its hardware facts are separate from the current safe-API closure
+and the accepted main 5-library/10-ELF receipts. At main acceptance clean had
+not run; final completion requires separate final-source 2-library/3-ELF and
+final54 binding receipts, not a reinterpretation of the main results.

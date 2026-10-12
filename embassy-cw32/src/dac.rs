@@ -13,6 +13,15 @@
 //! This driver owns the whole DAC, disabling both channels before configuring it.
 //! It never resets/gates the analog block, changes ADC/VC, or disables BGR. The
 //! OPA gate is retained to safely inspect competing output drivers before use.
+//!
+//! Ordinary outputs may coexist with L012 ADC2 async reads/scans. ADC2 admits
+//! the shared vector by checking actual DAC DMAUDRIE1/2 are zero in a valid
+//! register domain. This driver's prepare/start full writes leave both zero;
+//! set/read never write them, and drop preserves their values. Thus every
+//! current safe DAC operation preserves an observed zero-interrupt condition,
+//! including drop and reconstruction during ADC2 ownership. Raw writers must
+//! coordinate the reserved interrupt controls. Future DAC interrupt support
+//! requires shared dispatch and a compatible ADC2 fault policy first.
 
 use crate::gpio::{Flex, Pin};
 use crate::rcc::{RccPeripheral, SealedRccPeripheral};
@@ -153,6 +162,7 @@ impl<'d, T: Instance> Dac<'d, T> {
             Ok(())
         })?;
         // Whole-DAC ownership permits quiescing both channels. No status/command writes.
+        // Full CR0 writes here and in start leave both DMAUDRIE bits zero.
         T::regs().cr0().write(|_| {});
         T::regs().cr1().write(|_| {});
         T::regs().dhr12rd().write(|w| {
@@ -213,6 +223,7 @@ impl<T: Instance> Drop for Dac<'_, T> {
             w.set_c2out(false);
         });
         T::regs().cr0().modify(|w| {
+            // Preserve the IE-zero invariant admitted by ADC2 async ownership.
             w.set_en1(false);
             w.set_en2(false);
         });
