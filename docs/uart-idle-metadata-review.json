@@ -1,0 +1,913 @@
+{
+  "stage": 82,
+  "review_type": "independent-metadata-source-main-acceptance",
+  "status": "accepted-main",
+  "reviewed_at": "2026-10-12T13:13:40.262322+00:00",
+  "open_blockers": [],
+  "actual_main_libraries": 6,
+  "actual_main_firmware_elfs": 5,
+  "unchanged_generated_files": 905,
+  "path_conventions": {
+    "project_paths": "Relative to repository root.",
+    "external_artifact": "Labels relative to the retained external acceptance bundle, not repository paths or live source dependencies.",
+    "source_snapshots": "Hashes identify historical bytes actually inspected; subsequent administrative status/index updates require their own supplement and do not invalidate or recursively depend on these snapshots."
+  },
+  "acceptance_scope": "Own-source and metadata review plus actual finite main compile/link evidence. Final-source clean replay remains pending. No firmware execution or hardware qualification is claimed.",
+  "clean": {
+    "status": "pending",
+    "required_libraries": 2,
+    "required_firmware_elfs": 2,
+    "required_necessary_bootstrap_runs": 1,
+    "required_generated_projection_files": 905,
+    "required_finite_current_source_data_gates": 4
+  },
+  "source_refs": [
+    "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+    "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+    "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+    "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_uart.h",
+    "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_uart.c",
+    "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+    "member:cw32l011/Libraries/inc/cw32l011.h",
+    "member:cw32l011/Libraries/inc/cw32l011_gpio.h",
+    "member:cw32l011/Libraries/inc/cw32l011_uart.h",
+    "member:cw32l011/Libraries/src/cw32l011_uart.c",
+    "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+    "member:cw32l012/Libraries/inc/cw32l012.h",
+    "member:cw32l012/Libraries/inc/cw32l012_gpio.h",
+    "member:cw32l012/Libraries/inc/cw32l012_uart.h",
+    "member:cw32l012/Libraries/src/cw32l012_uart.c",
+    "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+    "text:CW32L010_DataSheet_CN_V1.3.txt",
+    "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+    "text:CW32L010_UserManual_CN_V1.2.txt",
+    "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+    "text:CW32L011_DataSheet_CN_V1.1.txt",
+    "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+    "text:CW32L011_UserManual_CN_V1.1.txt",
+    "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+    "text:CW32L012_DataSheet_CN_V1.0.txt",
+    "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+    "text:CW32L012_UserManual_CN_V1.4.txt"
+  ],
+  "source_authority": "sources/evidence-sources.json",
+  "source_evidence": "docs/uart-idle-evidence.json",
+  "own_manual_pages": {
+    "CW32L010": {
+      "idle_frame_definition": [
+        398,
+        399
+      ],
+      "receive_and_overrun_idle": [
+        [
+          399,
+          400
+        ],
+        [
+          400,
+          401
+        ]
+      ],
+      "programmable_timer": [
+        407,
+        408
+      ],
+      "IER_ISR_ICR": [
+        [
+          425,
+          426
+        ],
+        [
+          426,
+          427
+        ],
+        [
+          427,
+          428
+        ],
+        [
+          428,
+          429
+        ]
+      ],
+      "rdr_no_clear_sdk_lines": [
+        370,
+        429
+      ]
+    },
+    "CW32L011": {
+      "idle_frame_definition": [
+        400,
+        401
+      ],
+      "receive_and_overrun_idle": [
+        [
+          401,
+          402
+        ],
+        [
+          402,
+          403
+        ]
+      ],
+      "programmable_timer": [
+        409,
+        410
+      ],
+      "IER_ISR_ICR": [
+        [
+          427,
+          428
+        ],
+        [
+          428,
+          429
+        ],
+        [
+          429,
+          430
+        ],
+        [
+          430,
+          431
+        ]
+      ],
+      "rdr_no_clear_sdk_lines": [
+        385,
+        444
+      ]
+    },
+    "CW32L012": {
+      "idle_frame_definition": [
+        455,
+        481
+      ],
+      "receive_and_overrun_idle": [
+        [
+          456,
+          482
+        ],
+        [
+          457,
+          483
+        ]
+      ],
+      "programmable_timer": [
+        465,
+        491
+      ],
+      "IER_ISR_ICR": [
+        [
+          486,
+          512
+        ],
+        [
+          487,
+          513
+        ],
+        [
+          488,
+          514
+        ],
+        [
+          489,
+          515
+        ]
+      ],
+      "rdr_no_clear_sdk_lines": [
+        755,
+        818
+      ]
+    }
+  },
+  "findings": [
+    "All 27 own PDF/text/SDK ZIP/member byte identities match the current selected lock. Selected June 2026 L011 CN 1.1 remains distinct from superseded September 2025 bytes.",
+    "Own manuals and SDK independently establish RXIDLE bit 3 versus TIMOV bit 6, completed-character idle start, separate RDR/RC clear, overwrite/ORE, and native R1W0 no-op 0x1fff. Existing software error priority and best-effort co-latched boundary are documented without attributing exact chronology to hardware.",
+    "Current metadata retains 10 selections, 8 family-instance pairs, 2 native versions, 136 canonical UART AF cells and 417 aggregate package-filtered route entries across selections. Aliases have no invented memory geometry; package/debug/oscillator restrictions remain.",
+    "The checker examines current semantic facts only. No HAL-source string freeze, historical generated hash gate, mock/model/probe, mutation corpus or recursive checker exists.",
+    "Exactly 54 reverse links were appended to 27 current evidence arrays for the new evidence and checker. Removing those exact append suffixes restores original source-index bytes; identity, URL, size, hash, history and old links remain.",
+    "Exactly 7 ordinary example files implement combined finite receive and L012 split concurrent I/O on the approved typed routes. The lockfile differs from existing uart-dma only by the root-package name. Metadata-derived memory.x and explicit -Tlink.x are used.",
+    "All 6 retained rlibs independently contain ARM ELF objects. All 5 retained ELF artifacts independently have machine 40, expected nondefault IRQ symbols/vectors and load ranges inside selected metadata memory. Retained artifact and OUT_DIR hashes were verified.",
+    "All 4 finite main gates exited 0. Current provenance verifies complete hardware sources; optional historical discovery pages are excluded from its hardware scope. Coverage remains a source inventory, not execution proof.",
+    "All 905 generated files match the baseline and before/after main snapshots byte-for-byte. Main source 1365 files remained unchanged throughout the 11 serial artifact commands; main ran no generator.",
+    "Coverage separates partial native finite_idle_receive from unimplemented buffered_ring_receive. Existing DMA behavior remains bounded by its prior contract."
+  ],
+  "source_delta_historical_observation": {
+    "baseline_published_commit": "90453bb7e8e0bd33259f2c17de6a914812315178",
+    "baseline_source_files": 1355,
+    "main_source_files": 1365,
+    "added": [
+      "docs/uart-idle-evidence.json",
+      "docs/uart-idle.md",
+      "examples/uart-idle/Cargo.lock",
+      "examples/uart-idle/Cargo.toml",
+      "examples/uart-idle/README.md",
+      "examples/uart-idle/build.rs",
+      "examples/uart-idle/src/bin/receive.rs",
+      "examples/uart-idle/src/bin/split.rs",
+      "examples/uart-idle/src/lib.rs",
+      "tests/verify_native_uart_idle_sources.py"
+    ],
+    "modified": [
+      "README.md",
+      "ci/hal-capabilities.yaml",
+      "docs/functional-coverage.md",
+      "embassy-cw32/src/usart.rs",
+      "sources/evidence-sources.json"
+    ],
+    "removed": [],
+    "models_canonical_generators_and_unrelated_source_unchanged": true,
+    "note": "Review receipt only, not a production gate or a claim that later administrative proof installation changes functional code."
+  },
+  "source_index_reversal": {
+    "main_index_sha256": "e057cb8138cbb078ee74f39aeaed12afa2a23368d55dc1168694bb8fea9c2931",
+    "restored_original_sha256": "a1c15c7d89300bdf31c95e40c4c2d851b16b473e7136653a5a74f2de1a338105",
+    "exact_new_entries": 54,
+    "existing_evidence_arrays": 27,
+    "independent_byte_exact_reverse": true,
+    "later_review_navigation_appends": "Not part of this historical 54-link snapshot; require a separate administrative supplement."
+  },
+  "main_artifacts": [
+    {
+      "selection": "cw32l010f8p6",
+      "artifact_kind": "rlib",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l010f8p6,rt",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/01-cw32l010f8p6-lib/libembassy_cw32.rlib",
+      "artifact_sha256": "42cc2aad8562814745692647bbe44a9c82d9e84b91cda5580fc1feaba1bcb1e4",
+      "artifact_bytes": 4473564,
+      "warnings": [
+        "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+        "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+        "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+      ],
+      "independently_observed_arm_object_members": 11,
+      "all_retained_out_dir_hashes_verified": true
+    },
+    {
+      "selection": "cw32l011k8t6",
+      "artifact_kind": "rlib",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l011k8t6,rt",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/02-cw32l011k8t6-lib/libembassy_cw32.rlib",
+      "artifact_sha256": "8131b246f56353f1bb68b00ec5a3ee8ca0bc167daad35fa9889b24663e5cc678",
+      "artifact_bytes": 4589212,
+      "warnings": [
+        "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+        "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+        "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+      ],
+      "independently_observed_arm_object_members": 11,
+      "all_retained_out_dir_hashes_verified": true
+    },
+    {
+      "selection": "cw32l012c8t6",
+      "artifact_kind": "rlib",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l012c8t6,rt",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/03-cw32l012c8t6-lib/libembassy_cw32.rlib",
+      "artifact_sha256": "8f7b8feb7de9178b5ea6fcc7a969812f61ad0cf6499c0544afea38728cd80f59",
+      "artifact_bytes": 5651364,
+      "warnings": [],
+      "independently_observed_arm_object_members": 12,
+      "all_retained_out_dir_hashes_verified": true
+    },
+    {
+      "selection": "cw32f030c8t7",
+      "artifact_kind": "rlib",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32f030c8t7,rt",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/04-cw32f030c8t7-lib/libembassy_cw32.rlib",
+      "artifact_sha256": "018099b4b6d4e84c8a689099110f7b5e64c4ed1408bb3d6c4c32d4d20f49cd55",
+      "artifact_bytes": 5240350,
+      "warnings": [],
+      "independently_observed_arm_object_members": 11,
+      "all_retained_out_dir_hashes_verified": true
+    },
+    {
+      "selection": "cw32l031c8t6",
+      "artifact_kind": "rlib",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l031c8t6,rt",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/05-cw32l031c8t6-lib/libembassy_cw32.rlib",
+      "artifact_sha256": "381c66e488dcc8c9670ebf3060e28d8c9dd793a9e817be438fbc85945296adc3",
+      "artifact_bytes": 4386068,
+      "warnings": [],
+      "independently_observed_arm_object_members": 9,
+      "all_retained_out_dir_hashes_verified": true
+    },
+    {
+      "selection": "cw32l083rct6",
+      "artifact_kind": "rlib",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l083rct6,rt",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/06-cw32l083rct6-lib/libembassy_cw32.rlib",
+      "artifact_sha256": "367b140b6631e207a2f3c1cab9df9df59994fba675da47d32e0baefc4e211eb1",
+      "artifact_bytes": 5985706,
+      "warnings": [],
+      "independently_observed_arm_object_members": 13,
+      "all_retained_out_dir_hashes_verified": true
+    },
+    {
+      "selection": "cw32l010f8p6",
+      "artifact_kind": "elf",
+      "manifest": "examples/uart-idle/Cargo.toml",
+      "features": "cw32l010f8p6",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/07-cw32l010f8p6-receive/firmware.elf",
+      "artifact_sha256": "02e65909cdc40184c25df5e1601fe3aa0019ad3c14a235d1f5c74668a6c41866",
+      "artifact_bytes": 211928,
+      "warnings": [
+        "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+        "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+        "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+      ],
+      "bin": "receive",
+      "elf_machine": 40,
+      "entry": 193,
+      "initial_stack": 536875008,
+      "bound_vectors": [
+        {
+          "name": "UART2",
+          "irq_number": 28,
+          "vector_word": 2769,
+          "matches_bound_nondefault_symbol": true
+        }
+      ],
+      "load_segments_within_selected_metadata_banks": true,
+      "load_segments": [
+        {
+          "vaddr": 0,
+          "paddr": 0,
+          "file_bytes": 192,
+          "memory_bytes": 192
+        },
+        {
+          "vaddr": 192,
+          "paddr": 192,
+          "file_bytes": 36620,
+          "memory_bytes": 36620
+        },
+        {
+          "vaddr": 36812,
+          "paddr": 36812,
+          "file_bytes": 388,
+          "memory_bytes": 388
+        },
+        {
+          "vaddr": 536870912,
+          "paddr": 37200,
+          "file_bytes": 116,
+          "memory_bytes": 116
+        },
+        {
+          "vaddr": 536871032,
+          "paddr": 536871032,
+          "file_bytes": 0,
+          "memory_bytes": 320
+        }
+      ],
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 65536
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 4096
+        }
+      ],
+      "all_retained_out_dir_hashes_verified": true
+    },
+    {
+      "selection": "cw32l011k8t6",
+      "artifact_kind": "elf",
+      "manifest": "examples/uart-idle/Cargo.toml",
+      "features": "cw32l011k8t6",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/08-cw32l011k8t6-receive/firmware.elf",
+      "artifact_sha256": "bf4621e7b289afdd137785fdfbe349202353a62b07e5f1aa5b796f68b884fe47",
+      "artifact_bytes": 212808,
+      "warnings": [
+        "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+        "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+        "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+      ],
+      "bin": "receive",
+      "elf_machine": 40,
+      "entry": 193,
+      "initial_stack": 536877056,
+      "bound_vectors": [
+        {
+          "name": "UART3",
+          "irq_number": 29,
+          "vector_word": 2753,
+          "matches_bound_nondefault_symbol": true
+        }
+      ],
+      "load_segments_within_selected_metadata_banks": true,
+      "load_segments": [
+        {
+          "vaddr": 0,
+          "paddr": 0,
+          "file_bytes": 192,
+          "memory_bytes": 192
+        },
+        {
+          "vaddr": 192,
+          "paddr": 192,
+          "file_bytes": 36196,
+          "memory_bytes": 36196
+        },
+        {
+          "vaddr": 36388,
+          "paddr": 36388,
+          "file_bytes": 508,
+          "memory_bytes": 508
+        },
+        {
+          "vaddr": 536870912,
+          "paddr": 36896,
+          "file_bytes": 116,
+          "memory_bytes": 116
+        },
+        {
+          "vaddr": 536871032,
+          "paddr": 536871032,
+          "file_bytes": 0,
+          "memory_bytes": 320
+        }
+      ],
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 65536
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 6144
+        }
+      ],
+      "all_retained_out_dir_hashes_verified": true
+    },
+    {
+      "selection": "cw32l012c8t6",
+      "artifact_kind": "elf",
+      "manifest": "examples/uart-idle/Cargo.toml",
+      "features": "cw32l012c8t6",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/09-cw32l012c8t6-receive/firmware.elf",
+      "artifact_sha256": "c6548dd901ab3d39d657af5c7671f35c5043b07d9cc36e129c93186fb3950b76",
+      "artifact_bytes": 217516,
+      "warnings": [],
+      "bin": "receive",
+      "elf_machine": 40,
+      "entry": 193,
+      "initial_stack": 536879104,
+      "bound_vectors": [
+        {
+          "name": "UART1",
+          "irq_number": 27,
+          "vector_word": 2657,
+          "matches_bound_nondefault_symbol": true
+        }
+      ],
+      "load_segments_within_selected_metadata_banks": true,
+      "load_segments": [
+        {
+          "vaddr": 0,
+          "paddr": 0,
+          "file_bytes": 192,
+          "memory_bytes": 192
+        },
+        {
+          "vaddr": 192,
+          "paddr": 192,
+          "file_bytes": 56824,
+          "memory_bytes": 56824
+        },
+        {
+          "vaddr": 57016,
+          "paddr": 57016,
+          "file_bytes": 696,
+          "memory_bytes": 696
+        },
+        {
+          "vaddr": 536870912,
+          "paddr": 57712,
+          "file_bytes": 116,
+          "memory_bytes": 116
+        },
+        {
+          "vaddr": 536871032,
+          "paddr": 536871032,
+          "file_bytes": 0,
+          "memory_bytes": 320
+        }
+      ],
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 65536
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 8192
+        }
+      ],
+      "all_retained_out_dir_hashes_verified": true
+    },
+    {
+      "selection": "cw32l012c8t6",
+      "artifact_kind": "elf",
+      "manifest": "examples/uart-idle/Cargo.toml",
+      "features": "cw32l012c8t6",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/10-cw32l012c8t6-split/firmware.elf",
+      "artifact_sha256": "1fc61dbade4fb31b12f86c018a1fb597dc384a5e1b79722e94662ba714318a7d",
+      "artifact_bytes": 217644,
+      "warnings": [],
+      "bin": "split",
+      "elf_machine": 40,
+      "entry": 193,
+      "initial_stack": 536879104,
+      "bound_vectors": [
+        {
+          "name": "UART1",
+          "irq_number": 27,
+          "vector_word": 3389,
+          "matches_bound_nondefault_symbol": true
+        }
+      ],
+      "load_segments_within_selected_metadata_banks": true,
+      "load_segments": [
+        {
+          "vaddr": 0,
+          "paddr": 0,
+          "file_bytes": 192,
+          "memory_bytes": 192
+        },
+        {
+          "vaddr": 192,
+          "paddr": 192,
+          "file_bytes": 57556,
+          "memory_bytes": 57556
+        },
+        {
+          "vaddr": 57748,
+          "paddr": 57748,
+          "file_bytes": 700,
+          "memory_bytes": 700
+        },
+        {
+          "vaddr": 536870912,
+          "paddr": 58448,
+          "file_bytes": 116,
+          "memory_bytes": 116
+        },
+        {
+          "vaddr": 536871032,
+          "paddr": 536871032,
+          "file_bytes": 0,
+          "memory_bytes": 352
+        }
+      ],
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 65536
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 8192
+        }
+      ],
+      "all_retained_out_dir_hashes_verified": true
+    },
+    {
+      "selection": "cw32l083rct6",
+      "artifact_kind": "elf",
+      "manifest": "examples/uart-dma/Cargo.toml",
+      "features": "cw32l083rct6",
+      "target": "thumbv6m-none-eabi",
+      "profile": "release",
+      "exit_code": 0,
+      "external_artifact": "main/11-cw32l083rct6-shared_vector/firmware.elf",
+      "artifact_sha256": "b838c53ca5129313a506f926b8f1ee05e5ef53e85a8e223fd80866c99f7f240d",
+      "artifact_bytes": 233968,
+      "warnings": [],
+      "bin": "shared_vector",
+      "elf_machine": 40,
+      "entry": 193,
+      "initial_stack": 536895488,
+      "bound_vectors": [
+        {
+          "name": "DMACH1",
+          "irq_number": 9,
+          "vector_word": 253,
+          "matches_bound_nondefault_symbol": true
+        },
+        {
+          "name": "DMACH23",
+          "irq_number": 10,
+          "vector_word": 265,
+          "matches_bound_nondefault_symbol": true
+        },
+        {
+          "name": "DMACH45",
+          "irq_number": 11,
+          "vector_word": 277,
+          "matches_bound_nondefault_symbol": true
+        },
+        {
+          "name": "UART1_UART4",
+          "irq_number": 27,
+          "vector_word": 297,
+          "matches_bound_nondefault_symbol": true
+        }
+      ],
+      "load_segments_within_selected_metadata_banks": true,
+      "load_segments": [
+        {
+          "vaddr": 0,
+          "paddr": 0,
+          "file_bytes": 192,
+          "memory_bytes": 192
+        },
+        {
+          "vaddr": 192,
+          "paddr": 192,
+          "file_bytes": 76956,
+          "memory_bytes": 76956
+        },
+        {
+          "vaddr": 77148,
+          "paddr": 77148,
+          "file_bytes": 1072,
+          "memory_bytes": 1072
+        },
+        {
+          "vaddr": 536870912,
+          "paddr": 78220,
+          "file_bytes": 220,
+          "memory_bytes": 220
+        },
+        {
+          "vaddr": 536871136,
+          "paddr": 536871136,
+          "file_bytes": 0,
+          "memory_bytes": 1064
+        }
+      ],
+      "memory": [
+        {
+          "address": 0,
+          "kind": "flash",
+          "name": "FLASH",
+          "size": 262144
+        },
+        {
+          "address": 536870912,
+          "kind": "ram",
+          "name": "RAM",
+          "size": 24576
+        }
+      ],
+      "all_retained_out_dir_hashes_verified": true
+    }
+  ],
+  "main_data_gates": [
+    {
+      "name": "native-uart-idle",
+      "exit_code": 0,
+      "external_artifact": "main-gates/native-uart-idle.log",
+      "log_sha256": "71fd8c3b5b3d7f81a4264b307abe32f08af1d3776474353f97ea42d08246a19b"
+    },
+    {
+      "name": "provenance",
+      "exit_code": 0,
+      "external_artifact": "main-gates/provenance.log",
+      "log_sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f"
+    },
+    {
+      "name": "coverage",
+      "exit_code": 0,
+      "external_artifact": "main-gates/coverage.log",
+      "log_sha256": "ef878929464270c58e1a6983298b527e6675fa597b4c74b67ed22fd852eee755"
+    },
+    {
+      "name": "layout",
+      "exit_code": 0,
+      "external_artifact": "main-gates/layout.log",
+      "log_sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8"
+    }
+  ],
+  "external_records": [
+    {
+      "label": "main-summary",
+      "external_artifact": "main/summary.json",
+      "sha256": "e2986048c9c6db8fe1d457b774ce09e580485360be9d990e18adae6a28094edd"
+    },
+    {
+      "label": "main-results",
+      "external_artifact": "main/results.json",
+      "sha256": "791448cd618a0c915fb4a5861fcf87dad6402c3d0b75c8d49965e671decc2a30"
+    },
+    {
+      "label": "main-source-before",
+      "external_artifact": "main/source-before.json",
+      "sha256": "b9e9a5a01cf644875d28e320f2815287d4356ce907dd283ce3cb940ea82c5c10"
+    },
+    {
+      "label": "main-source-after",
+      "external_artifact": "main/source-after.json",
+      "sha256": "b9e9a5a01cf644875d28e320f2815287d4356ce907dd283ce3cb940ea82c5c10"
+    },
+    {
+      "label": "main-generated-before",
+      "external_artifact": "main/generated-before.json",
+      "sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98"
+    },
+    {
+      "label": "main-generated-after",
+      "external_artifact": "main/generated-after.json",
+      "sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98"
+    },
+    {
+      "label": "toolchain-before",
+      "external_artifact": "main/toolchain-before.json",
+      "sha256": "9ba3050c515b5de35265b7245aceb45ed8aa19c4750710429584dfd56122a1a8"
+    },
+    {
+      "label": "toolchain-after",
+      "external_artifact": "main/toolchain-after.json",
+      "sha256": "f6c36932e842dc7c6ea78a704280f3a2fd5f459ede4991f8ab65952450e5b644"
+    },
+    {
+      "label": "four-main-gates",
+      "external_artifact": "main-gates/results.json",
+      "sha256": "c938e19120b05528b3febb96b97307df28b6a0187e9d8e6e1e86e47a335f4194"
+    },
+    {
+      "label": "independent-static-review",
+      "external_artifact": "independent-metadata/static-review.json",
+      "sha256": "7816e610ddc3c8ab35758d06913853ce752322dc63516d0db93940dd23754f77"
+    }
+  ],
+  "historical_source_snapshots": [
+    {
+      "production_path_at_main_review": "tests/verify_native_uart_idle_sources.py",
+      "historical_snapshot_sha256": "126544997030488f2e5fb433d2ebfe8582370dc29b0ca996f6dbea120421c1a8",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "docs/uart-idle-evidence.json",
+      "historical_snapshot_sha256": "4949e1cfa4980b8b127b7500db2b918b5c6195bceab742af7926326c8f9e1fa7",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "sources/evidence-sources.json",
+      "historical_snapshot_sha256": "e057cb8138cbb078ee74f39aeaed12afa2a23368d55dc1168694bb8fea9c2931",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "embassy-cw32/src/usart.rs",
+      "historical_snapshot_sha256": "f08f6fe860b7dd509287945ebc86729a951ad3aee92dc747921823524ed32ef8",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "README.md",
+      "historical_snapshot_sha256": "a27a21320dfe03d637ee03a7b63097b2b3aa418a1d824ed06245ef2a11ed799d",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "docs/functional-coverage.md",
+      "historical_snapshot_sha256": "4f7fa92fac4454e83ea6ce77633a66a39dc5a665b8e0d435f4dd2d22e13f4d3f",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "docs/uart-idle.md",
+      "historical_snapshot_sha256": "ac31489348ffb6c70f25cf199deacb03585dc20c7bc2a38ec503153142730c6b",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "ci/hal-capabilities.yaml",
+      "historical_snapshot_sha256": "742fb7da369296ccc3c5f9ef9a9fd8463ee18d9d453640e7b0c23d1dc0f4bc93",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "examples/uart-idle/Cargo.lock",
+      "historical_snapshot_sha256": "60d3fb0447f0992ccc429d1e6123a6f58e92b604bff63fc45b4bc53df6ede7b8",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "examples/uart-idle/Cargo.toml",
+      "historical_snapshot_sha256": "0ac81a82a4865fd13a5ab309d08a4c0e5093eaa82e582e120b9eae7519824698",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "examples/uart-idle/README.md",
+      "historical_snapshot_sha256": "a5004b62352c5836c86544d685443a6291ca909e3b3ddc29b25edfbbdaf83ebb",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "examples/uart-idle/build.rs",
+      "historical_snapshot_sha256": "8233c8da57e7eee0bb33f289a0ebf09d720e97d40313f48a4f15a6e0bc276486",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "examples/uart-idle/src/bin/receive.rs",
+      "historical_snapshot_sha256": "0f94df1dd189b8befec7b4075a2f5a04620f6662066df9906181e34e0aada143",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "examples/uart-idle/src/bin/split.rs",
+      "historical_snapshot_sha256": "0286137e3c8ead55c09c14b562eaa6c25e2aa689d2ce421dfda1d57acb87ef2f",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    },
+    {
+      "production_path_at_main_review": "examples/uart-idle/src/lib.rs",
+      "historical_snapshot_sha256": "5e9971caaa431dc445f912963c5095d4787c21aecd696d41ac6a9dda62b92438",
+      "snapshot_label": "independent static review source snapshot; historical binding only"
+    }
+  ],
+  "corrected_checker_findings": [
+    {
+      "id": "M1",
+      "finding": "L012 own SDK RDR spelling differs from L010/L011.",
+      "resolution": "Strict family-specific UART_RDR versus UARTx_RDR; exact lines/identities unchanged.",
+      "observed_during": "independent static review"
+    },
+    {
+      "id": "M2",
+      "finding": "Whole-page pin matching selected an earlier physical-pin row on L010 datasheet page 25.",
+      "resolution": "Bound parsing to exact AF table and exact pin row; SDK numeric AF equality retained.",
+      "observed_during": "first actual checker attempt; rejected source/log retained externally",
+      "final_checker_sha256": "126544997030488f2e5fb433d2ebfe8582370dc29b0ca996f6dbea120421c1a8"
+    }
+  ],
+  "warnings": {
+    "main_warning_counts": [
+      3,
+      3,
+      0,
+      0,
+      0,
+      0,
+      3,
+      3,
+      0,
+      0,
+      0
+    ],
+    "detail": "Three existing unused generated RCC constants warn in L010/L011 library and receive rows: RCC_LSE_SYSCLK_LSE_EDGES, RCC_LSE_SYSCLK_LSI_CYCLES, RCC_LSE_SYSCLK_MARGIN_LSE_EDGES. Other rows have no warnings; generated source is unchanged."
+  },
+  "limitations": [
+    "Clean replay is pending and is not accepted by this main review.",
+    "No firmware execution, waveform, baud accuracy, throughput, silicon or losslessness claim.",
+    "Cancellation, forget and error ordering are source-review obligations, not executed cases in these ordinary examples.",
+    "Runtime temporal proof is recorded separately in the independent runtime review."
+  ]
+}

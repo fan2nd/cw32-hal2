@@ -536,6 +536,16 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 
 - All 13 families: package-qualified blocking/async UART RTS+CTS, TX+CTS and
   RX+RTS constructors; no software receive FIFO or lossless-flow guarantee
+- L010/L011/L012: finite async `read_until_idle` on owned UART RX and combined
+  UART. A full buffer or observed native RXIDLE returns the received count;
+  co-latched RC is consumed before idle with best-effort boundary assignment.
+  No software ring, numeric timeout or lossless-packet guarantee follows.
+  Main verification passed six actual ARM libraries, five ELF links and four
+  finite source/data gates. Three existing native L010/L011 RCC LSE-constant
+  warnings remain in applicable rows. At main acceptance clean had not run;
+  completion requires a separate final-source two-library/two-ELF receipt.
+  No hardware result is claimed. See
+  [the native idle receive contract](docs/uart-idle.md).
 - L010/L011/L012: owned buffered GTIM/ATIM input capture and quadrature encoders,
   with modulo counts and coalesced/non-atomic capture observations
 - All 13 families: external-input comparator and LVD polling, IR controller

@@ -1,0 +1,1286 @@
+{
+  "artifact_role": "current-native-uart-observed-idle-source-evidence",
+  "date": "2026-10-12",
+  "status": "accepted-main",
+  "scope": "Finite IRQ-only observed-idle receive on CW32L010, CW32L011 and CW32L012 async receive owners.",
+  "path_conventions": {
+    "project": "Paths are relative to the production repository root.",
+    "external_artifact": "Source references label locked external vendor PDFs, derived text, SDK archives and members; these artifacts are not redistributed."
+  },
+  "identity_authority": "sources/evidence-sources.json",
+  "explanation": "docs/uart-idle.md",
+  "acceptance_boundary": {
+    "source_facts": "Own-family locked source bindings and present canonical/generated semantic projection only.",
+    "implementation": "Accepted independent runtime and metadata/source reviews of the frozen main implementation.",
+    "verification": "Main six real ARM libraries, five ELF links and four finite source/data gates passed. At main acceptance final-source clean had not run; completion requires its separate two-library/two-ELF clean receipt.",
+    "hardware": "No firmware execution, timing, losslessness or silicon validation claimed.",
+    "comparison_policy": "Current fields, routes and locked external identities. No historical generated-file or HAL-text hash gate."
+  },
+  "cohort": {
+    "families": 3,
+    "selections": 10,
+    "family_instances": 8,
+    "register_versions": 2,
+    "external_source_identities": 27
+  },
+  "cfg_register_versions": [
+    "uart_cw32l010_v1",
+    "uart_cw32l012_v1"
+  ],
+  "sources": [
+    {
+      "source_ref": "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "index_pointer": "/artifacts/4"
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "index_pointer": "/artifacts/4/members/2"
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+      "index_pointer": "/artifacts/4/members/7"
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_uart.h",
+      "index_pointer": "/artifacts/4/members/16"
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_uart.c",
+      "index_pointer": "/artifacts/4/members/31"
+    },
+    {
+      "source_ref": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "index_pointer": "/artifacts/5"
+    },
+    {
+      "source_ref": "member:cw32l011/Libraries/inc/cw32l011.h",
+      "index_pointer": "/artifacts/5/members/5"
+    },
+    {
+      "source_ref": "member:cw32l011/Libraries/inc/cw32l011_gpio.h",
+      "index_pointer": "/artifacts/5/members/10"
+    },
+    {
+      "source_ref": "member:cw32l011/Libraries/inc/cw32l011_uart.h",
+      "index_pointer": "/artifacts/5/members/19"
+    },
+    {
+      "source_ref": "member:cw32l011/Libraries/src/cw32l011_uart.c",
+      "index_pointer": "/artifacts/5/members/35"
+    },
+    {
+      "source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "index_pointer": "/artifacts/6"
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+      "index_pointer": "/artifacts/6/members/19"
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_gpio.h",
+      "index_pointer": "/artifacts/6/members/28"
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_uart.h",
+      "index_pointer": "/artifacts/6/members/39"
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/src/cw32l012_uart.c",
+      "index_pointer": "/artifacts/6/members/60"
+    },
+    {
+      "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+      "index_pointer": "/artifacts/20"
+    },
+    {
+      "source_ref": "text:CW32L010_DataSheet_CN_V1.3.txt",
+      "index_pointer": "/artifacts/20/text"
+    },
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "index_pointer": "/artifacts/21"
+    },
+    {
+      "source_ref": "text:CW32L010_UserManual_CN_V1.2.txt",
+      "index_pointer": "/artifacts/21/text"
+    },
+    {
+      "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "index_pointer": "/artifacts/22"
+    },
+    {
+      "source_ref": "text:CW32L011_DataSheet_CN_V1.1.txt",
+      "index_pointer": "/artifacts/22/text"
+    },
+    {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "index_pointer": "/artifacts/23"
+    },
+    {
+      "source_ref": "text:CW32L011_UserManual_CN_V1.1.txt",
+      "index_pointer": "/artifacts/23/text"
+    },
+    {
+      "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+      "index_pointer": "/artifacts/24"
+    },
+    {
+      "source_ref": "text:CW32L012_DataSheet_CN_V1.0.txt",
+      "index_pointer": "/artifacts/24/text"
+    },
+    {
+      "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+      "index_pointer": "/artifacts/25"
+    },
+    {
+      "source_ref": "text:CW32L012_UserManual_CN_V1.4.txt",
+      "index_pointer": "/artifacts/25/text"
+    }
+  ],
+  "families": {
+    "CW32L010": {
+      "own_manual_pages_printed_then_pdf_viewer_1_based": {
+        "idle_frame_definition": [
+          398,
+          399
+        ],
+        "receive_and_overrun_idle": [
+          [
+            399,
+            400
+          ],
+          [
+            400,
+            401
+          ]
+        ],
+        "programmable_timer": [
+          407,
+          408
+        ],
+        "IER_ISR_ICR": [
+          [
+            425,
+            426
+          ],
+          [
+            426,
+            427
+          ],
+          [
+            427,
+            428
+          ],
+          [
+            428,
+            429
+          ]
+        ],
+        "rdr_no_clear_sdk_lines": [
+          370,
+          429
+        ]
+      },
+      "instances": [
+        {
+          "name": "UART1",
+          "base": "0x40000c00",
+          "vector": "UART1",
+          "irq_number": 27,
+          "register_version": "cw32l010_v1",
+          "bus_clock": "PCLK",
+          "gate": {
+            "register": "APBEN1",
+            "field": "UART1",
+            "bit": 3,
+            "enable_value": 1,
+            "write_key": {
+              "field": "KEY",
+              "value": "0x5a5a"
+            }
+          },
+          "reset": {
+            "register": "APBRST1",
+            "field": "UART1",
+            "bit": 3,
+            "asserted_value": 0
+          }
+        },
+        {
+          "name": "UART2",
+          "base": "0x40001000",
+          "vector": "UART2",
+          "irq_number": 28,
+          "register_version": "cw32l010_v1",
+          "bus_clock": "PCLK",
+          "gate": {
+            "register": "APBEN1",
+            "field": "UART2",
+            "bit": 4,
+            "enable_value": 1,
+            "write_key": {
+              "field": "KEY",
+              "value": "0x5a5a"
+            }
+          },
+          "reset": {
+            "register": "APBRST1",
+            "field": "UART2",
+            "bit": 4,
+            "asserted_value": 0
+          }
+        }
+      ],
+      "af_path": "cw32-data/af/cw32l010-serial.yaml",
+      "pinout_path": "cw32-data/pinouts/cw32l010.yaml",
+      "alias_policy": "common-package-intersection",
+      "hal_excluded_pads": [
+        "PA7",
+        "PA8",
+        "PB7"
+      ],
+      "source_findings": {
+        "RXIDLE": "Native completed idle-character event starts only after a received character; independent of programmable timer.",
+        "TIMOV": "TIMCR=3 restarts a programmable timer on stop bits and signals TIMOV; (TIMARR+1)/baud applies here only.",
+        "RDR_RC": "RDR read does not clear RC; software clears observed RC through ICR.",
+        "ORE": "A character received while RC remains set sets ORE and overwrites RDR.",
+        "ICR": "Defined fields R1W0; existing native write_noop is 0x1fff including reserved bit0.",
+        "error_priority": "ORE > PE > FE > NE is existing HAL policy, not a vendor arbitration guarantee.",
+        "simultaneous_RC_RXIDLE": "No source ordering guarantee binds RDR to a side of idle when flags are co-latched; include observed RC before success only as documented best-effort policy."
+      },
+      "sources": {
+        "sdk": "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+        "cmsis": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+        "gpio_header": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+        "uart_header": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_uart.h",
+        "uart_driver": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_uart.c",
+        "datasheet": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+        "datasheet_text": "text:CW32L010_DataSheet_CN_V1.3.txt",
+        "manual": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+        "manual_text": "text:CW32L010_UserManual_CN_V1.2.txt"
+      },
+      "selections": [
+        "cw32l010",
+        "cw32l010f8p6",
+        "cw32l010f8u6",
+        "cw32l010y8m6"
+      ],
+      "uart_route_cells": 19,
+      "datasheet_af_pages_printed_then_pdf_viewer_1_based": [
+        [
+          24,
+          25
+        ]
+      ]
+    },
+    "CW32L011": {
+      "own_manual_pages_printed_then_pdf_viewer_1_based": {
+        "idle_frame_definition": [
+          400,
+          401
+        ],
+        "receive_and_overrun_idle": [
+          [
+            401,
+            402
+          ],
+          [
+            402,
+            403
+          ]
+        ],
+        "programmable_timer": [
+          409,
+          410
+        ],
+        "IER_ISR_ICR": [
+          [
+            427,
+            428
+          ],
+          [
+            428,
+            429
+          ],
+          [
+            429,
+            430
+          ],
+          [
+            430,
+            431
+          ]
+        ],
+        "rdr_no_clear_sdk_lines": [
+          385,
+          444
+        ]
+      },
+      "instances": [
+        {
+          "name": "UART1",
+          "base": "0x40000c00",
+          "vector": "UART1",
+          "irq_number": 27,
+          "register_version": "cw32l010_v1",
+          "bus_clock": "PCLK",
+          "gate": {
+            "register": "APBEN1",
+            "field": "UART1",
+            "bit": 3,
+            "enable_value": 1,
+            "write_key": {
+              "field": "KEY",
+              "value": "0x5a5a"
+            }
+          },
+          "reset": {
+            "register": "APBRST1",
+            "field": "UART1",
+            "bit": 3,
+            "asserted_value": 0
+          }
+        },
+        {
+          "name": "UART2",
+          "base": "0x40001000",
+          "vector": "UART2",
+          "irq_number": 28,
+          "register_version": "cw32l010_v1",
+          "bus_clock": "PCLK",
+          "gate": {
+            "register": "APBEN1",
+            "field": "UART2",
+            "bit": 4,
+            "enable_value": 1,
+            "write_key": {
+              "field": "KEY",
+              "value": "0x5a5a"
+            }
+          },
+          "reset": {
+            "register": "APBRST1",
+            "field": "UART2",
+            "bit": 4,
+            "asserted_value": 0
+          }
+        },
+        {
+          "name": "UART3",
+          "base": "0x40002000",
+          "vector": "UART3",
+          "irq_number": 29,
+          "register_version": "cw32l010_v1",
+          "bus_clock": "PCLK",
+          "gate": {
+            "register": "APBEN1",
+            "field": "UART3",
+            "bit": 8,
+            "enable_value": 1,
+            "write_key": {
+              "field": "KEY",
+              "value": "0x5a5a"
+            }
+          },
+          "reset": {
+            "register": "APBRST1",
+            "field": "UART3",
+            "bit": 8,
+            "asserted_value": 0
+          }
+        }
+      ],
+      "af_path": "cw32-data/af/cw32l011-serial.yaml",
+      "pinout_path": "cw32-data/pinouts/cw32l011.yaml",
+      "alias_policy": "common-package-intersection",
+      "hal_excluded_pads": [
+        "PA13",
+        "PA14"
+      ],
+      "source_findings": {
+        "RXIDLE": "Native completed idle-character event starts only after a received character; independent of programmable timer.",
+        "TIMOV": "TIMCR=3 restarts a programmable timer on stop bits and signals TIMOV; (TIMARR+1)/baud applies here only.",
+        "RDR_RC": "RDR read does not clear RC; software clears observed RC through ICR.",
+        "ORE": "A character received while RC remains set sets ORE and overwrites RDR.",
+        "ICR": "Defined fields R1W0; existing native write_noop is 0x1fff including reserved bit0.",
+        "error_priority": "ORE > PE > FE > NE is existing HAL policy, not a vendor arbitration guarantee.",
+        "simultaneous_RC_RXIDLE": "No source ordering guarantee binds RDR to a side of idle when flags are co-latched; include observed RC before success only as documented best-effort policy."
+      },
+      "sources": {
+        "sdk": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+        "cmsis": "member:cw32l011/Libraries/inc/cw32l011.h",
+        "gpio_header": "member:cw32l011/Libraries/inc/cw32l011_gpio.h",
+        "uart_header": "member:cw32l011/Libraries/inc/cw32l011_uart.h",
+        "uart_driver": "member:cw32l011/Libraries/src/cw32l011_uart.c",
+        "datasheet": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+        "datasheet_text": "text:CW32L011_DataSheet_CN_V1.1.txt",
+        "manual": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+        "manual_text": "text:CW32L011_UserManual_CN_V1.1.txt"
+      },
+      "selections": [
+        "cw32l011",
+        "cw32l011k8t6",
+        "cw32l011k8u6"
+      ],
+      "uart_route_cells": 48,
+      "datasheet_af_pages_printed_then_pdf_viewer_1_based": [
+        [
+          28,
+          31
+        ],
+        [
+          29,
+          32
+        ]
+      ]
+    },
+    "CW32L012": {
+      "own_manual_pages_printed_then_pdf_viewer_1_based": {
+        "idle_frame_definition": [
+          455,
+          481
+        ],
+        "receive_and_overrun_idle": [
+          [
+            456,
+            482
+          ],
+          [
+            457,
+            483
+          ]
+        ],
+        "programmable_timer": [
+          465,
+          491
+        ],
+        "IER_ISR_ICR": [
+          [
+            486,
+            512
+          ],
+          [
+            487,
+            513
+          ],
+          [
+            488,
+            514
+          ],
+          [
+            489,
+            515
+          ]
+        ],
+        "rdr_no_clear_sdk_lines": [
+          755,
+          818
+        ]
+      },
+      "instances": [
+        {
+          "name": "UART1",
+          "base": "0x40000c00",
+          "vector": "UART1",
+          "irq_number": 27,
+          "register_version": "cw32l012_v1",
+          "bus_clock": "PCLK",
+          "gate": {
+            "register": "APBEN1",
+            "field": "UART1",
+            "bit": 3,
+            "enable_value": 1,
+            "write_key": {
+              "field": "KEY",
+              "value": "0x5a5a"
+            }
+          },
+          "reset": {
+            "register": "APBRST1",
+            "field": "UART1",
+            "bit": 3,
+            "asserted_value": 0
+          }
+        },
+        {
+          "name": "UART2",
+          "base": "0x40001000",
+          "vector": "UART2",
+          "irq_number": 28,
+          "register_version": "cw32l012_v1",
+          "bus_clock": "PCLK",
+          "gate": {
+            "register": "APBEN1",
+            "field": "UART2",
+            "bit": 4,
+            "enable_value": 1,
+            "write_key": {
+              "field": "KEY",
+              "value": "0x5a5a"
+            }
+          },
+          "reset": {
+            "register": "APBRST1",
+            "field": "UART2",
+            "bit": 4,
+            "asserted_value": 0
+          }
+        },
+        {
+          "name": "UART3",
+          "base": "0x40002000",
+          "vector": "UART3",
+          "irq_number": 29,
+          "register_version": "cw32l012_v1",
+          "bus_clock": "PCLK",
+          "gate": {
+            "register": "APBEN1",
+            "field": "UART3",
+            "bit": 8,
+            "enable_value": 1,
+            "write_key": {
+              "field": "KEY",
+              "value": "0x5a5a"
+            }
+          },
+          "reset": {
+            "register": "APBRST1",
+            "field": "UART3",
+            "bit": 8,
+            "asserted_value": 0
+          }
+        }
+      ],
+      "af_path": "cw32-data/af/cw32l012-serial.yaml",
+      "pinout_path": "cw32-data/pinouts/cw32l012.yaml",
+      "alias_policy": "common-package-intersection",
+      "hal_excluded_pads": [
+        "PA13",
+        "PA14"
+      ],
+      "source_findings": {
+        "RXIDLE": "Native completed idle-character event starts only after a received character; independent of programmable timer.",
+        "TIMOV": "TIMCR=3 restarts a programmable timer on stop bits and signals TIMOV; (TIMARR+1)/baud applies here only.",
+        "RDR_RC": "RDR read does not clear RC; software clears observed RC through ICR.",
+        "ORE": "A character received while RC remains set sets ORE and overwrites RDR.",
+        "ICR": "Defined fields R1W0; existing native write_noop is 0x1fff including reserved bit0.",
+        "error_priority": "ORE > PE > FE > NE is existing HAL policy, not a vendor arbitration guarantee.",
+        "simultaneous_RC_RXIDLE": "No source ordering guarantee binds RDR to a side of idle when flags are co-latched; include observed RC before success only as documented best-effort policy."
+      },
+      "sources": {
+        "sdk": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "cmsis": "member:cw32l012/Libraries/inc/cw32l012.h",
+        "gpio_header": "member:cw32l012/Libraries/inc/cw32l012_gpio.h",
+        "uart_header": "member:cw32l012/Libraries/inc/cw32l012_uart.h",
+        "uart_driver": "member:cw32l012/Libraries/src/cw32l012_uart.c",
+        "datasheet": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+        "datasheet_text": "text:CW32L012_DataSheet_CN_V1.0.txt",
+        "manual": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+        "manual_text": "text:CW32L012_UserManual_CN_V1.4.txt"
+      },
+      "selections": [
+        "cw32l012",
+        "cw32l012c8t6",
+        "cw32l012c8u6"
+      ],
+      "uart_route_cells": 69,
+      "datasheet_af_pages_printed_then_pdf_viewer_1_based": [
+        [
+          36,
+          39
+        ],
+        [
+          37,
+          40
+        ]
+      ]
+    }
+  },
+  "register_contracts": {
+    "cw32l010_v1": {
+      "project_yaml": "cw32-data/registers/uart_cw32l010_v1.yaml",
+      "project_json": "cw32-data/data/registers/uart_cw32l010_v1.json",
+      "registers": {
+        "CR1": {
+          "offset": 0,
+          "access": "ReadWrite"
+        },
+        "CR2": {
+          "offset": 4,
+          "access": "ReadWrite"
+        },
+        "IER": {
+          "offset": 8,
+          "access": "ReadWrite"
+        },
+        "ISR": {
+          "offset": 28,
+          "access": "Read"
+        },
+        "ICR": {
+          "offset": 32,
+          "access": "ReadWrite"
+        },
+        "RDR": {
+          "offset": 36,
+          "access": "Read"
+        },
+        "TDR": {
+          "offset": 40,
+          "access": "Write"
+        },
+        "TIMARR": {
+          "offset": 20,
+          "access": "ReadWrite"
+        },
+        "TIMCNT": {
+          "offset": 24,
+          "access": "Read"
+        }
+      },
+      "fields": {
+        "IER": {
+          "TXE": [
+            0,
+            1
+          ],
+          "TC": [
+            1,
+            1
+          ],
+          "RC": [
+            2,
+            1
+          ],
+          "RXIDLE": [
+            3,
+            1
+          ],
+          "RXBRK": [
+            4,
+            1
+          ],
+          "BAUD": [
+            5,
+            1
+          ],
+          "TIMOV": [
+            6,
+            1
+          ],
+          "CTS": [
+            7,
+            1
+          ],
+          "FE": [
+            8,
+            1
+          ],
+          "PE": [
+            9,
+            1
+          ],
+          "NE": [
+            10,
+            1
+          ],
+          "ORE": [
+            11,
+            1
+          ],
+          "RXMATCH": [
+            12,
+            1
+          ]
+        },
+        "ISR": {
+          "TXE": [
+            0,
+            1
+          ],
+          "TC": [
+            1,
+            1
+          ],
+          "RC": [
+            2,
+            1
+          ],
+          "RXIDLE": [
+            3,
+            1
+          ],
+          "RXBRK": [
+            4,
+            1
+          ],
+          "BAUD": [
+            5,
+            1
+          ],
+          "TIMOV": [
+            6,
+            1
+          ],
+          "CTS": [
+            7,
+            1
+          ],
+          "FE": [
+            8,
+            1
+          ],
+          "PE": [
+            9,
+            1
+          ],
+          "NE": [
+            10,
+            1
+          ],
+          "ORE": [
+            11,
+            1
+          ],
+          "RXMATCH": [
+            12,
+            1
+          ],
+          "SLVMATCH": [
+            13,
+            1
+          ],
+          "TXBUSY": [
+            14,
+            1
+          ],
+          "CTSLV": [
+            15,
+            1
+          ]
+        },
+        "ICR": {
+          "TC": [
+            1,
+            1
+          ],
+          "RC": [
+            2,
+            1
+          ],
+          "RXIDLE": [
+            3,
+            1
+          ],
+          "RXBRK": [
+            4,
+            1
+          ],
+          "BAUD": [
+            5,
+            1
+          ],
+          "TIMOV": [
+            6,
+            1
+          ],
+          "CTS": [
+            7,
+            1
+          ],
+          "FE": [
+            8,
+            1
+          ],
+          "PE": [
+            9,
+            1
+          ],
+          "NE": [
+            10,
+            1
+          ],
+          "ORE": [
+            11,
+            1
+          ],
+          "RXMATCH": [
+            12,
+            1
+          ]
+        },
+        "RDR": {
+          "RDR": [
+            0,
+            9
+          ]
+        },
+        "CR1": {
+          "TXEN": [
+            0,
+            1
+          ],
+          "RXEN": [
+            1,
+            1
+          ],
+          "PARITY": [
+            2,
+            1
+          ],
+          "PARITYEN": [
+            3,
+            1
+          ],
+          "STOP": [
+            4,
+            2
+          ],
+          "CHLEN": [
+            6,
+            1
+          ],
+          "MSBF": [
+            7,
+            1
+          ],
+          "START": [
+            8,
+            1
+          ],
+          "OVER": [
+            9,
+            2
+          ],
+          "SIGNAL": [
+            11,
+            1
+          ],
+          "SOURCE": [
+            12,
+            2
+          ],
+          "SYNC": [
+            14,
+            1
+          ]
+        },
+        "CR2": {
+          "ADDREN": [
+            0,
+            1
+          ],
+          "RXMATCHEN": [
+            1,
+            1
+          ],
+          "CTSEN": [
+            2,
+            1
+          ],
+          "RTSEN": [
+            3,
+            1
+          ],
+          "RXINV": [
+            4,
+            1
+          ],
+          "TXINV": [
+            5,
+            1
+          ],
+          "TIMCR": [
+            8,
+            3
+          ],
+          "SWAP": [
+            11,
+            1
+          ],
+          "ADCRX": [
+            12,
+            1
+          ],
+          "ADCTX": [
+            13,
+            1
+          ],
+          "LOOP": [
+            14,
+            1
+          ],
+          "RXSRC": [
+            15,
+            3
+          ]
+        }
+      },
+      "icr_write_noop": 8191,
+      "icr_clearable_mask": 8190
+    },
+    "cw32l012_v1": {
+      "project_yaml": "cw32-data/registers/uart_cw32l012_v1.yaml",
+      "project_json": "cw32-data/data/registers/uart_cw32l012_v1.json",
+      "registers": {
+        "CR1": {
+          "offset": 0,
+          "access": "ReadWrite"
+        },
+        "CR2": {
+          "offset": 4,
+          "access": "ReadWrite"
+        },
+        "IER": {
+          "offset": 8,
+          "access": "ReadWrite"
+        },
+        "ISR": {
+          "offset": 28,
+          "access": "Read"
+        },
+        "ICR": {
+          "offset": 32,
+          "access": "ReadWrite"
+        },
+        "RDR": {
+          "offset": 36,
+          "access": "Read"
+        },
+        "TDR": {
+          "offset": 40,
+          "access": "Write"
+        },
+        "TIMARR": {
+          "offset": 20,
+          "access": "ReadWrite"
+        },
+        "TIMCNT": {
+          "offset": 24,
+          "access": "Read"
+        }
+      },
+      "fields": {
+        "IER": {
+          "TXE": [
+            0,
+            1
+          ],
+          "TC": [
+            1,
+            1
+          ],
+          "RC": [
+            2,
+            1
+          ],
+          "RXIDLE": [
+            3,
+            1
+          ],
+          "RXBRK": [
+            4,
+            1
+          ],
+          "BAUD": [
+            5,
+            1
+          ],
+          "TIMOV": [
+            6,
+            1
+          ],
+          "CTS": [
+            7,
+            1
+          ],
+          "FE": [
+            8,
+            1
+          ],
+          "PE": [
+            9,
+            1
+          ],
+          "NE": [
+            10,
+            1
+          ],
+          "ORE": [
+            11,
+            1
+          ],
+          "RXMATCH": [
+            12,
+            1
+          ]
+        },
+        "ISR": {
+          "TXE": [
+            0,
+            1
+          ],
+          "TC": [
+            1,
+            1
+          ],
+          "RC": [
+            2,
+            1
+          ],
+          "RXIDLE": [
+            3,
+            1
+          ],
+          "RXBRK": [
+            4,
+            1
+          ],
+          "BAUD": [
+            5,
+            1
+          ],
+          "TIMOV": [
+            6,
+            1
+          ],
+          "CTS": [
+            7,
+            1
+          ],
+          "FE": [
+            8,
+            1
+          ],
+          "PE": [
+            9,
+            1
+          ],
+          "NE": [
+            10,
+            1
+          ],
+          "ORE": [
+            11,
+            1
+          ],
+          "RXMATCH": [
+            12,
+            1
+          ],
+          "SLVMATCH": [
+            13,
+            1
+          ],
+          "TXBUSY": [
+            14,
+            1
+          ],
+          "CTSLV": [
+            15,
+            1
+          ]
+        },
+        "ICR": {
+          "TC": [
+            1,
+            1
+          ],
+          "RC": [
+            2,
+            1
+          ],
+          "RXIDLE": [
+            3,
+            1
+          ],
+          "RXBRK": [
+            4,
+            1
+          ],
+          "BAUD": [
+            5,
+            1
+          ],
+          "TIMOV": [
+            6,
+            1
+          ],
+          "CTS": [
+            7,
+            1
+          ],
+          "FE": [
+            8,
+            1
+          ],
+          "PE": [
+            9,
+            1
+          ],
+          "NE": [
+            10,
+            1
+          ],
+          "ORE": [
+            11,
+            1
+          ],
+          "RXMATCH": [
+            12,
+            1
+          ]
+        },
+        "RDR": {
+          "RDR": [
+            0,
+            9
+          ]
+        },
+        "CR1": {
+          "TXEN": [
+            0,
+            1
+          ],
+          "RXEN": [
+            1,
+            1
+          ],
+          "PARITY": [
+            2,
+            1
+          ],
+          "PARITYEN": [
+            3,
+            1
+          ],
+          "STOP": [
+            4,
+            2
+          ],
+          "CHLEN": [
+            6,
+            1
+          ],
+          "MSBF": [
+            7,
+            1
+          ],
+          "START": [
+            8,
+            1
+          ],
+          "OVER": [
+            9,
+            2
+          ],
+          "SIGNAL": [
+            11,
+            1
+          ],
+          "SOURCE": [
+            12,
+            2
+          ],
+          "SYNC": [
+            14,
+            1
+          ]
+        },
+        "CR2": {
+          "ADDREN": [
+            0,
+            1
+          ],
+          "RXMATCHEN": [
+            1,
+            1
+          ],
+          "CTSEN": [
+            2,
+            1
+          ],
+          "RTSEN": [
+            3,
+            1
+          ],
+          "RXINV": [
+            4,
+            1
+          ],
+          "TXINV": [
+            5,
+            1
+          ],
+          "DMARX": [
+            6,
+            1
+          ],
+          "DMATX": [
+            7,
+            1
+          ],
+          "TIMCR": [
+            8,
+            3
+          ],
+          "SWAP": [
+            11,
+            1
+          ],
+          "ADCRX": [
+            12,
+            1
+          ],
+          "ADCTX": [
+            13,
+            1
+          ],
+          "LOOP": [
+            14,
+            1
+          ],
+          "RXSRC": [
+            15,
+            3
+          ]
+        }
+      },
+      "icr_write_noop": 8191,
+      "icr_clearable_mask": 8190
+    }
+  },
+  "limits": [
+    "A completed received character starts native RXIDLE detection. RXIDLE is not the programmable TIMCR=3/TIMOV timer.",
+    "TIMCR stays disabled; no configurable duration or numeric timeout is promised.",
+    "Reading RDR does not clear RC; observed receive flags require separate R1W0 acknowledgement with the existing 0x1fff no-op seed.",
+    "A received character while RC remains set can overwrite RDR and set ORE; per-byte task service is still required.",
+    "ORE > PE > FE > NE is retained software policy, not vendor error arbitration.",
+    "For co-latched RC and RXIDLE no source establishes the temporal side of the boundary; consuming observed RC before success is best effort.",
+    "No continuous reception, background queue, ring buffer or bounded completion if neither full nor idle occurs.",
+    "L011 uses the L010 UART register version but retains its own source, SYSCTRL and package authority.",
+    "Existing package exclusions, oscillator reservations, ownership and L012 UART3 RCC inspection limits remain applicable."
+  ],
+  "accepted_main_reviews": [
+    {
+      "path": "docs/uart-idle-runtime-review.json",
+      "sha256": "a6fc68e02c446117322cb7b702de60c27a7743a03d17ea38c63d1e929ea464a2"
+    },
+    {
+      "path": "docs/uart-idle-metadata-review.json",
+      "sha256": "4dce08056567a8e0f190395e3e92f00bd9e983bf71f0b948f12faf42ab6913f9"
+    }
+  ],
+  "main_verification": {
+    "libraries": 6,
+    "firmware_elfs": 5,
+    "finite_gates": 4,
+    "main_generation_runs": 0,
+    "unchanged_generated_files": 905,
+    "hardware_execution": false,
+    "results": {
+      "external_artifact": "main/results.json",
+      "sha256": "791448cd618a0c915fb4a5861fcf87dad6402c3d0b75c8d49965e671decc2a30"
+    }
+  }
+}

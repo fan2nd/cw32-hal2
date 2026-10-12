@@ -96,11 +96,31 @@ functions:
       evidence:
       - path: embassy-cw32/src/usart.rs
         anchor: pub fn new_with_rts
-    - id: buffered_ring_idle
-      status: unimplemented
-      scope: No maintained HAL API declaration for this mode.
+    - id: finite_idle_receive
+      status: partial
+      scope: Native finite async caller-buffer reception to full capacity or observed RXIDLE.
+      implemented_families:
+      - CW32L010
+      - CW32L011
+      - CW32L012
+      pins_all:
+      - RX
       limitations:
-      - Software ring buffering and idle-line receive are absent.
+      - First nonempty poll clears stale idle only; unread RC/data and errors remain available.
+      - Co-latched RC is consumed before idle with best-effort boundary attribution; errors retain existing priority.
+      - Per-byte task service remains necessary; no software FIFO, numeric timeout, lossless framing or bounded completion.
+      - Main verification passed six actual ARM libraries, five ELF links and four finite source/data gates.
+      - Three existing RCC LSE-constant warnings remain in applicable L010/L011 main rows; no hardware validation is claimed.
+      - At main acceptance clean had not run; completion requires a separate final-source two-library/two-ELF clean receipt.
+      evidence:
+      - path: embassy-cw32/src/usart.rs
+        anchor: pub async fn read_until_idle
+      - path: docs/uart-idle.md
+    - id: buffered_ring_receive
+      status: unimplemented
+      scope: No background software receive ring or queue.
+      limitations:
+      - Finite idle reception does not add continuous buffering.
     - id: advanced_serial
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

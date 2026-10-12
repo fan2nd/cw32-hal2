@@ -1,0 +1,1552 @@
+{
+  "artifact_role": "independent-runtime-and-actual-main-build-review",
+  "date": "2026-10-12",
+  "reviewed_at": "2026-10-12T13:14:40.362022+00:00",
+  "status": "accepted-main",
+  "open_blockers": [],
+  "actual_main_libraries": 6,
+  "actual_main_firmware_elfs": 5,
+  "pending_gates": [
+    "final-source-package clean bootstrap and two-library/two-ELF replay",
+    "final package identity and publication"
+  ],
+  "accepted_scope": {
+    "families": [
+      "CW32L010",
+      "CW32L011",
+      "CW32L012"
+    ],
+    "selections": 10,
+    "family_instance_pairs": 8,
+    "native_register_versions": 2,
+    "function": "Finite IRQ-driven async caller-buffer receive until full or observed native RXIDLE",
+    "exact_packet_framing": false,
+    "ring_or_background_receive": false,
+    "dma_extension": false,
+    "timov_timeout": false,
+    "hardware_execution": false
+  },
+  "current_code_bindings": [
+    {
+      "project_path": "embassy-cw32/src/usart.rs",
+      "sha256": "f08f6fe860b7dd509287945ebc86729a951ad3aee92dc747921823524ed32ef8"
+    },
+    {
+      "project_path": "examples/uart-idle/Cargo.lock",
+      "sha256": "60d3fb0447f0992ccc429d1e6123a6f58e92b604bff63fc45b4bc53df6ede7b8"
+    },
+    {
+      "project_path": "examples/uart-idle/Cargo.toml",
+      "sha256": "0ac81a82a4865fd13a5ab309d08a4c0e5093eaa82e582e120b9eae7519824698"
+    },
+    {
+      "project_path": "examples/uart-idle/README.md",
+      "sha256": "a5004b62352c5836c86544d685443a6291ca909e3b3ddc29b25edfbbdaf83ebb"
+    },
+    {
+      "project_path": "examples/uart-idle/build.rs",
+      "sha256": "8233c8da57e7eee0bb33f289a0ebf09d720e97d40313f48a4f15a6e0bc276486"
+    },
+    {
+      "project_path": "examples/uart-idle/src/bin/receive.rs",
+      "sha256": "0f94df1dd189b8befec7b4075a2f5a04620f6662066df9906181e34e0aada143"
+    },
+    {
+      "project_path": "examples/uart-idle/src/bin/split.rs",
+      "sha256": "0286137e3c8ead55c09c14b562eaa6c25e2aa689d2ce421dfda1d57acb87ef2f"
+    },
+    {
+      "project_path": "examples/uart-idle/src/lib.rs",
+      "sha256": "5e9971caaa431dc445f912963c5095d4787c21aecd696d41ac6a9dda62b92438"
+    },
+    {
+      "project_path": "examples/uart-dma/src/bin/shared_vector.rs",
+      "sha256": "1ee1fdcf0ff4f31aac1f96089447999d402798f7221beecf30befe57568fa0d7"
+    },
+    {
+      "project_path": "cw32-data/registers/uart_cw32l010_v1.yaml",
+      "sha256": "33692d4f1fd276d581766222ca8a2aae6bb5a160af11f67682ed44b00000fab3"
+    },
+    {
+      "project_path": "cw32-data/registers/uart_cw32l012_v1.yaml",
+      "sha256": "b53198ac94efede91b9746f53397b69b8141070a280a33f01132535985b0c784"
+    },
+    {
+      "project_path": "cw32-data/register-writes.yaml",
+      "sha256": "72f17b6e67abb76db98d891c608189a5180f401af582a3233f75d5c03d6b98a6"
+    },
+    {
+      "project_path": "embassy-cw32/build.rs",
+      "sha256": "596d0c61c48db771e1e130a7225335d488ce9d652330e1da0d490b97032d5478"
+    }
+  ],
+  "historical_main_document_snapshots": [
+    {
+      "project_path": "README.md",
+      "snapshot_sha256": "a27a21320dfe03d637ee03a7b63097b2b3aa418a1d824ed06245ef2a11ed799d",
+      "external_artifact": "main/source-before.json",
+      "identity_role": "historical_main_snapshot_not_current_project_identity"
+    },
+    {
+      "project_path": "docs/functional-coverage.md",
+      "snapshot_sha256": "4f7fa92fac4454e83ea6ce77633a66a39dc5a665b8e0d435f4dd2d22e13f4d3f",
+      "external_artifact": "main/source-before.json",
+      "identity_role": "historical_main_snapshot_not_current_project_identity"
+    },
+    {
+      "project_path": "docs/uart-idle.md",
+      "snapshot_sha256": "ac31489348ffb6c70f25cf199deacb03585dc20c7bc2a38ec503153142730c6b",
+      "external_artifact": "main/source-before.json",
+      "identity_role": "historical_main_snapshot_not_current_project_identity"
+    },
+    {
+      "project_path": "docs/uart-idle-evidence.json",
+      "snapshot_sha256": "4949e1cfa4980b8b127b7500db2b918b5c6195bceab742af7926326c8f9e1fa7",
+      "external_artifact": "main/source-before.json",
+      "identity_role": "historical_main_snapshot_not_current_project_identity"
+    },
+    {
+      "project_path": "ci/hal-capabilities.yaml",
+      "snapshot_sha256": "742fb7da369296ccc3c5f9ef9a9fd8463ee18d9d453640e7b0c23d1dc0f4bc93",
+      "external_artifact": "main/source-before.json",
+      "identity_role": "historical_main_snapshot_not_current_project_identity"
+    },
+    {
+      "project_path": "sources/evidence-sources.json",
+      "snapshot_sha256": "e057cb8138cbb078ee74f39aeaed12afa2a23368d55dc1168694bb8fea9c2931",
+      "external_artifact": "main/source-before.json",
+      "identity_role": "historical_main_snapshot_not_current_project_identity"
+    },
+    {
+      "project_path": "tests/verify_native_uart_idle_sources.py",
+      "snapshot_sha256": "126544997030488f2e5fb433d2ebfe8582370dc29b0ca996f6dbea120421c1a8",
+      "external_artifact": "main/source-before.json",
+      "identity_role": "historical_main_snapshot_not_current_project_identity"
+    }
+  ],
+  "design_bindings": [
+    {
+      "external_artifact": "design/runtime-design.md",
+      "sha256": "3b1c7a498cb1dcfe05cae1e2fa2c967e8df5f127b134aa69a78dd69076f5eb69"
+    },
+    {
+      "external_artifact": "design/metadata-source-design.md",
+      "sha256": "c4e4013d9d67a9523f13c1afe336d7ecae361b90d6e48418787335c482012ef5"
+    },
+    {
+      "external_artifact": "design/source-bindings.json",
+      "sha256": "e8870437a25d56f07e97b8fb97c5c0a9bedbcade69608ae11a6e87e010b041bb"
+    },
+    {
+      "external_artifact": "design/verification-matrix.tsv",
+      "sha256": "18a0c471bb4e8f74f8d9aeae3acd4a1c71d34f9e2b978a69ea36b4f287048b61"
+    }
+  ],
+  "external_evidence_bindings": [
+    {
+      "external_artifact": "main/summary.json",
+      "sha256": "e2986048c9c6db8fe1d457b774ce09e580485360be9d990e18adae6a28094edd"
+    },
+    {
+      "external_artifact": "main/results.json",
+      "sha256": "791448cd618a0c915fb4a5861fcf87dad6402c3d0b75c8d49965e671decc2a30"
+    },
+    {
+      "external_artifact": "main/planned-matrix.json",
+      "sha256": "06e0102ba4d32caf26e23321ba5c83f318a42e5b4427f1ca1e7a830db43178b2"
+    },
+    {
+      "external_artifact": "main/source-before.json",
+      "sha256": "b9e9a5a01cf644875d28e320f2815287d4356ce907dd283ce3cb940ea82c5c10"
+    },
+    {
+      "external_artifact": "main/source-after.json",
+      "sha256": "b9e9a5a01cf644875d28e320f2815287d4356ce907dd283ce3cb940ea82c5c10"
+    },
+    {
+      "external_artifact": "main/generated-before.json",
+      "sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98"
+    },
+    {
+      "external_artifact": "main/generated-after.json",
+      "sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98"
+    },
+    {
+      "external_artifact": "main/toolchain-before.json",
+      "sha256": "9ba3050c515b5de35265b7245aceb45ed8aa19c4750710429584dfd56122a1a8"
+    },
+    {
+      "external_artifact": "main/toolchain-after.json",
+      "sha256": "f6c36932e842dc7c6ea78a704280f3a2fd5f459ede4991f8ab65952450e5b644"
+    },
+    {
+      "external_artifact": "main-gates/results.json",
+      "sha256": "c938e19120b05528b3febb96b97307df28b6a0187e9d8e6e1e86e47a335f4194"
+    },
+    {
+      "external_artifact": "independent-runtime/static-review.md",
+      "sha256": "ddc2920bfa7b09079e60679a5ca0d5362a2f37cb0acf995b353db4eb0e85015d"
+    },
+    {
+      "external_artifact": "independent-runtime/static-review.json",
+      "sha256": "103c6acb18d1e3d5898e1ee59c16b62bae58ba986698c74064d2fba142057d7f"
+    },
+    {
+      "external_artifact": "independent-runtime/examples-review.md",
+      "sha256": "c564362017cf009256fad915580b581182d9523abf931e5806b62d321300aca6"
+    },
+    {
+      "external_artifact": "independent-runtime/examples-review.json",
+      "sha256": "492be95cbe4008654646b774ed7108c667e6e7eba164078340a63498562b13db"
+    },
+    {
+      "external_artifact": "independent-runtime/main-artifact-verification.json",
+      "sha256": "eb8b664d6f3a70a716ec36f4849a696b032cf98f359879955c9f1cea012e013d"
+    },
+    {
+      "external_artifact": "runtime-implementation/usart.rs.diff",
+      "sha256": "0b031718442442809e12477c63bc38886ea4b29a7a4b92d0f2a59936e947cf6c"
+    },
+    {
+      "external_artifact": "example-implementation/source-sha256.json",
+      "sha256": "e99659a2f5cb43af61b049273c6f640a8f8a2c2edb1bea322d39d97f8db760d1"
+    },
+    {
+      "external_artifact": "docs-implementation/docs.patch",
+      "sha256": "7d1349ddabf62d407fbeed3375c000262617848e1efede59b83f7125f27b7a7f"
+    },
+    {
+      "external_artifact": "initial-gates-attempt1/results.json",
+      "sha256": "a53f0b1ae7f89d6c4e9e36a073eaf28670fb81e7838aeba165651187497e8a25"
+    },
+    {
+      "external_artifact": "initial-gates-attempt1/native-uart-idle.log",
+      "sha256": "303d4e1671a82c2953c1d3333135152532fe7d65eb55d229a0402c8b1e5e55bc"
+    },
+    {
+      "external_artifact": "metadata-implementation/datasheet-row-correction.diff",
+      "sha256": "48f1359523f31aa1791b6ce31c7213b1b364f9a04bb2cd76a956840cf504d111"
+    },
+    {
+      "external_artifact": "metadata-implementation/static-review-correction.diff",
+      "sha256": "34b006066463cde736a21893c126fc953b259c3f2e988b5cad8b6af5a01e4413"
+    }
+  ],
+  "source_refs": [
+    "text:CW32L010_UserManual_CN_V1.2.txt",
+    "text:CW32L011_UserManual_CN_V1.1.txt",
+    "text:CW32L012_UserManual_CN_V1.4.txt",
+    "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_uart.c",
+    "member:cw32l011/Libraries/src/cw32l011_uart.c",
+    "member:cw32l012/Libraries/src/cw32l012_uart.c"
+  ],
+  "own_source_inspection": [
+    {
+      "source_ref": "text:CW32L010_UserManual_CN_V1.2.txt",
+      "sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938",
+      "inspected_scope": "receive/ORE/native idle text, lines 19253-19278; RXIDLE IER/ISR excerpts"
+    },
+    {
+      "source_ref": "text:CW32L011_UserManual_CN_V1.1.txt",
+      "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3",
+      "inspected_scope": "receive/ORE/native idle text, lines 19463-19491"
+    },
+    {
+      "source_ref": "text:CW32L012_UserManual_CN_V1.4.txt",
+      "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505",
+      "inspected_scope": "receive/ORE/native idle text, lines 22368-22396; RXIDLE IER/ISR excerpts"
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_uart.c",
+      "sha256": "e1e4ec5ba2c819a2eb7a12ff645bc7ce291a30bb69ad62e07018fac003dae8ed",
+      "inspected_scope": "RDR/RC rules, lines 370/429"
+    },
+    {
+      "source_ref": "member:cw32l011/Libraries/src/cw32l011_uart.c",
+      "sha256": "d3e5e9dfa1be93bfc072b794d28e05aa9a31ddf6def64343ed634f4bb6dd3aeb",
+      "inspected_scope": "RDR/RC rules, lines 385/444"
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/src/cw32l012_uart.c",
+      "sha256": "49199142bb1e564d0edc297a08bf5e2b138b96111b9fc42b81539419c051c065",
+      "inspected_scope": "RDR/RC rules, lines 755/818"
+    }
+  ],
+  "actual_runtime_findings": [
+    {
+      "case": "first-poll and empty",
+      "source": "embassy-cw32/src/usart.rs:1492",
+      "finding": "Empty returns before MMIO; nonempty RX group mask and idle-only no-op clear occur once outside the receive loop. RC/RDR/errors survive."
+    },
+    {
+      "case": "one consumption snapshot",
+      "source": "embassy-cw32/src/usart.rs:1507",
+      "finding": "The completed Wait statement precedes one fresh ISR read used for RDR eligibility, ICR command, error selection and idle return."
+    },
+    {
+      "case": "R1W0 and errors",
+      "source": "embassy-cw32/src/usart.rs:1825",
+      "finding": "One typed no-op-seeded ICR write acknowledges only snapshot receive bits plus opted-in idle. ORE > PE > FE > NE returns before appending the sampled byte or returning buffer-full/idle success."
+    },
+    {
+      "case": "co-latched RC and idle",
+      "source": "embassy-cw32/src/usart.rs:1511",
+      "finding": "Clean observed RC is appended before idle completion. No extra read occurs after buffer fill. Boundary assignment is documented as best-effort; repeated already-set flags can coalesce."
+    },
+    {
+      "case": "register-arm-recheck and cancellation",
+      "source": "embassy-cw32/src/usart.rs:1924",
+      "finding": "Waker registration precedes arming and status recheck. Ready and Wait Drop mask the full RX event group; cancellation preserves unread flags/data and existing caller prefix."
+    },
+    {
+      "case": "forget and ISR memory ownership",
+      "source": "embassy-cw32/src/usart.rs:1878",
+      "finding": "ISR includes enabled native RXIDLE in RX pending, masks the full RX set and wakes. It does not consume RDR/ICR or hold a caller-buffer pointer. State has no new fields."
+    },
+    {
+      "case": "ordinary read reuse",
+      "source": "embassy-cw32/src/usart.rs:1433",
+      "finding": "Native exact-read entry and check_read retire abandoned RX enables, including blocking/trait/combined/empty ordinary paths. Readiness and ordinary acknowledgment ignore idle; classic/DMA paths are preserved."
+    },
+    {
+      "case": "empty new call after forget",
+      "source": "embassy-cw32/src/usart.rs:1454",
+      "finding": "The documented zero-MMIO empty method deliberately performs no old-wait cleanup; a later nonempty or ordinary read, enabled RX event, or RX-owner Drop retires it."
+    },
+    {
+      "case": "split/drop ownership",
+      "source": "embassy-cw32/src/usart.rs:355",
+      "finding": "Common RX mask includes idle before RX shutdown. TX/RX cleanup, live-peer clock/IRQ retention, dispatch guards and existing DMA leases remain per direction."
+    },
+    {
+      "case": "native timer separation",
+      "source": "embassy-cw32/src/usart.rs:2008",
+      "finding": "Configuration leaves RXIDLE initially disabled and TIMCR zero. No TIMARR/TIMCNT, DMA, low-power, ring or registry changes."
+    }
+  ],
+  "example_findings": {
+    "source_files": 7,
+    "files_match_writer_manifest": true,
+    "ordinary_application_bins": [
+      "receive",
+      "split"
+    ],
+    "split_selection": "cw32l012c8t6",
+    "local_buffer_size": 64,
+    "combined_and_rx_half_api_used": true,
+    "pinned_join_polls_rx_first": true,
+    "tx_flush_explicit": true,
+    "lock_identity_changes_from_existing_uart_dma": [],
+    "synthetic_lifecycle_probe_added": false,
+    "source_contract_consistent": true
+  },
+  "main_matrix": {
+    "rows": [
+      {
+        "id": "1",
+        "part": "cw32l010f8p6",
+        "kind": "rlib",
+        "features": "cw32l010f8p6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l010f8p6,rt",
+          "--message-format=json",
+          "--release",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:09:27.339101+00:00",
+        "end_utc": "2026-10-12T13:09:32.239020+00:00",
+        "artifact": {
+          "external_artifact": "main/01-cw32l010f8p6-lib/libembassy_cw32.rlib",
+          "sha256": "42cc2aad8562814745692647bbe44a9c82d9e84b91cda5580fc1feaba1bcb1e4",
+          "bytes": 4473564
+        },
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "hal_cargo_artifact_fresh": false,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/01-cw32l010f8p6-lib/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "18e0e53fda75cf3092e059fab50c45f7093d66705f995f37e7d4b3a0a43f37f2"
+          },
+          {
+            "external_artifact": "main/01-cw32l010f8p6-lib/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "b4d1f503aa90687e2b1d9798b704ef1ac145dd14f6348e76a68d33a86433607e"
+          },
+          {
+            "external_artifact": "main/01-cw32l010f8p6-lib/out-dir/7229804f95b8/adc_trigger_routes.rs",
+            "sha256": "e67d24b96489ccbd3c4b0ccee076cd8b3630ced673a5a8fb7ed306a197972e09"
+          },
+          {
+            "external_artifact": "main/01-cw32l010f8p6-lib/out-dir/7229804f95b8/timer_trigger_routes.rs",
+            "sha256": "7466b757f1abf93b9fe8f3aa3064d48f36c749c37c2f7bbf1054ab3bc176439a"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "4a2f3ff75fb37c945ed2e88c29642036bf164c1bfd4905633f9d2b599185743c",
+          "cargo.stderr.log": "e83183df09b22bc47344cb0638c3cbf0179ac1dbe9e6c711e5c90270d760ab81"
+        },
+        "binary_verification": {
+          "archive_code_objects_present": true,
+          "all_elf_members_machine": "ARM",
+          "all_elf_members_type": "REL",
+          "elf_members": 11
+        },
+        "receipt": {
+          "external_artifact": "main/01-cw32l010f8p6-lib/receipt.json",
+          "sha256": "6ee778bef356a9fb90d1fca86086b7bb868622da788c6223ea9a4c5a9b1d7e5e"
+        }
+      },
+      {
+        "id": "2",
+        "part": "cw32l011k8t6",
+        "kind": "rlib",
+        "features": "cw32l011k8t6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l011k8t6,rt",
+          "--message-format=json",
+          "--release",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:09:32.250118+00:00",
+        "end_utc": "2026-10-12T13:09:36.863440+00:00",
+        "artifact": {
+          "external_artifact": "main/02-cw32l011k8t6-lib/libembassy_cw32.rlib",
+          "sha256": "8131b246f56353f1bb68b00ec5a3ee8ca0bc167daad35fa9889b24663e5cc678",
+          "bytes": 4589212
+        },
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "hal_cargo_artifact_fresh": false,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/02-cw32l011k8t6-lib/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "284a57029cb84b8c07beae2914768ce330121734d4bdd141d58e7278136bf147"
+          },
+          {
+            "external_artifact": "main/02-cw32l011k8t6-lib/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231"
+          },
+          {
+            "external_artifact": "main/02-cw32l011k8t6-lib/out-dir/7229804f95b8/adc_trigger_routes.rs",
+            "sha256": "e67d24b96489ccbd3c4b0ccee076cd8b3630ced673a5a8fb7ed306a197972e09"
+          },
+          {
+            "external_artifact": "main/02-cw32l011k8t6-lib/out-dir/7229804f95b8/timer_trigger_routes.rs",
+            "sha256": "7466b757f1abf93b9fe8f3aa3064d48f36c749c37c2f7bbf1054ab3bc176439a"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "facf01d51d676e43c5e3e51ed146ff58b97031994fa3e72514d3d1efc975f55f",
+          "cargo.stderr.log": "5802e404edf15034df8ead820e1f2b5a5bc654f01ccf4cb7bcd4b3618b370c33"
+        },
+        "binary_verification": {
+          "archive_code_objects_present": true,
+          "all_elf_members_machine": "ARM",
+          "all_elf_members_type": "REL",
+          "elf_members": 11
+        },
+        "receipt": {
+          "external_artifact": "main/02-cw32l011k8t6-lib/receipt.json",
+          "sha256": "7838c1c9f7a42a4bc38797f1c3b10713475b064003dc2b6535c8d3e0d43c743d"
+        }
+      },
+      {
+        "id": "3",
+        "part": "cw32l012c8t6",
+        "kind": "rlib",
+        "features": "cw32l012c8t6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l012c8t6,rt",
+          "--message-format=json",
+          "--release",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:09:36.873024+00:00",
+        "end_utc": "2026-10-12T13:09:41.658849+00:00",
+        "artifact": {
+          "external_artifact": "main/03-cw32l012c8t6-lib/libembassy_cw32.rlib",
+          "sha256": "8f7b8feb7de9178b5ea6fcc7a969812f61ad0cf6499c0544afea38728cd80f59",
+          "bytes": 5651364
+        },
+        "warnings": [],
+        "hal_cargo_artifact_fresh": false,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/03-cw32l012c8t6-lib/out-dir/7229804f95b8/_cordic_domains.rs",
+            "sha256": "bf8c9f99439f3d7bf583a0f3d4a88ab077de921c20dd5da4611cc6b45147e96a"
+          },
+          {
+            "external_artifact": "main/03-cw32l012c8t6-lib/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "e7473d76b96f7edbad876c60bf195dda3deb7b53e9d3f14db8bf1e521f9211fc"
+          },
+          {
+            "external_artifact": "main/03-cw32l012c8t6-lib/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "27e3081115664ec55b149ec468ec77a0e15cd79116ed7b394cd2ad4d78d9d8f9",
+          "cargo.stderr.log": "6e0ad390fd470241c761c38d545ddf2afd1025e3a23cae7d59435edffbd479a7"
+        },
+        "binary_verification": {
+          "archive_code_objects_present": true,
+          "all_elf_members_machine": "ARM",
+          "all_elf_members_type": "REL",
+          "elf_members": 12
+        },
+        "receipt": {
+          "external_artifact": "main/03-cw32l012c8t6-lib/receipt.json",
+          "sha256": "929752832db34f695b2ff29ed325df0ccb698a6580d967c9ee855da1b293f5ad"
+        }
+      },
+      {
+        "id": "4",
+        "part": "cw32f030c8t7",
+        "kind": "rlib",
+        "features": "cw32f030c8t7,rt",
+        "manifest": "firmware/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32f030c8t7,rt",
+          "--message-format=json",
+          "--release",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:09:41.670089+00:00",
+        "end_utc": "2026-10-12T13:09:45.183195+00:00",
+        "artifact": {
+          "external_artifact": "main/04-cw32f030c8t7-lib/libembassy_cw32.rlib",
+          "sha256": "018099b4b6d4e84c8a689099110f7b5e64c4ed1408bb3d6c4c32d4d20f49cd55",
+          "bytes": 5240350
+        },
+        "warnings": [],
+        "hal_cargo_artifact_fresh": false,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/04-cw32f030c8t7-lib/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735"
+          },
+          {
+            "external_artifact": "main/04-cw32f030c8t7-lib/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "436bf1066da0133237dfecd85b8c1905f1a1d0064c049e545f4bfbd49689c492",
+          "cargo.stderr.log": "99d26ae008306fcd0ee16b0ebd8a1b5a84c26c4a9bdc929a817e179e93ece017"
+        },
+        "binary_verification": {
+          "archive_code_objects_present": true,
+          "all_elf_members_machine": "ARM",
+          "all_elf_members_type": "REL",
+          "elf_members": 11
+        },
+        "receipt": {
+          "external_artifact": "main/04-cw32f030c8t7-lib/receipt.json",
+          "sha256": "a277c38a7fbf7809fc3c3eb7095d0d3f12cf9ef62c982d043e828199911e4919"
+        }
+      },
+      {
+        "id": "5",
+        "part": "cw32l031c8t6",
+        "kind": "rlib",
+        "features": "cw32l031c8t6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l031c8t6,rt",
+          "--message-format=json",
+          "--release",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:09:45.191938+00:00",
+        "end_utc": "2026-10-12T13:09:48.761784+00:00",
+        "artifact": {
+          "external_artifact": "main/05-cw32l031c8t6-lib/libembassy_cw32.rlib",
+          "sha256": "381c66e488dcc8c9670ebf3060e28d8c9dd793a9e817be438fbc85945296adc3",
+          "bytes": 4386068
+        },
+        "warnings": [],
+        "hal_cargo_artifact_fresh": false,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/05-cw32l031c8t6-lib/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "738cdbc17d8017239ab11ed00637edd7b2f531e5772d51ac24821358b6e4e11a"
+          },
+          {
+            "external_artifact": "main/05-cw32l031c8t6-lib/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "d6360b44949f8747506ad217b15d2d5ef35706dd3751da79675e5768e2cfbad4",
+          "cargo.stderr.log": "e792feccfccae407c994ca49298d9b95bcc4cd29fd61145e9cc5693ebb3dda42"
+        },
+        "binary_verification": {
+          "archive_code_objects_present": true,
+          "all_elf_members_machine": "ARM",
+          "all_elf_members_type": "REL",
+          "elf_members": 9
+        },
+        "receipt": {
+          "external_artifact": "main/05-cw32l031c8t6-lib/receipt.json",
+          "sha256": "a2b8609240190431ecd1cfc8e33a941afdff76c5e31d6bc3d020053ca4abdbdc"
+        }
+      },
+      {
+        "id": "6",
+        "part": "cw32l083rct6",
+        "kind": "rlib",
+        "features": "cw32l083rct6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "firmware/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6,rt",
+          "--message-format=json",
+          "--release",
+          "-p",
+          "embassy-cw32",
+          "--lib"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:09:48.774163+00:00",
+        "end_utc": "2026-10-12T13:09:54.452358+00:00",
+        "artifact": {
+          "external_artifact": "main/06-cw32l083rct6-lib/libembassy_cw32.rlib",
+          "sha256": "367b140b6631e207a2f3c1cab9df9df59994fba675da47d32e0baefc4e211eb1",
+          "bytes": 5985706
+        },
+        "warnings": [],
+        "hal_cargo_artifact_fresh": false,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/06-cw32l083rct6-lib/out-dir/7229804f95b8/_crypto.rs",
+            "sha256": "4f3e3a1176f87c930a4fc3d3628535891be547ccb06ea87c67df64bdf9141237"
+          },
+          {
+            "external_artifact": "main/06-cw32l083rct6-lib/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "1dfe17a49a648a08a1349b6412df6254fe9abaa2e31f4932c2c875b91fb3a97e"
+          },
+          {
+            "external_artifact": "main/06-cw32l083rct6-lib/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "3f6a37f60b147b4033d8eb504fb449a79eb5555f850ed08fb54484a8a601a387"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "c925c36f0073abe1b3e01dd8cf4545c10c82e054099fab1632751cc5d65c439c",
+          "cargo.stderr.log": "48734494f1d403a26384f66e8a6855e268f3ab443df468c58c6c423e7f77b37c"
+        },
+        "binary_verification": {
+          "archive_code_objects_present": true,
+          "all_elf_members_machine": "ARM",
+          "all_elf_members_type": "REL",
+          "elf_members": 13
+        },
+        "receipt": {
+          "external_artifact": "main/06-cw32l083rct6-lib/receipt.json",
+          "sha256": "5ee53ddc5273487e76c6952b3dabcdccab10bb83f36534775fbf55f01cd22457"
+        }
+      },
+      {
+        "id": "7",
+        "part": "cw32l010f8p6",
+        "kind": "elf",
+        "features": "cw32l010f8p6",
+        "manifest": "examples/uart-idle/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "examples/uart-idle/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l010f8p6",
+          "--message-format=json",
+          "--release",
+          "--bin",
+          "receive"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:09:54.467500+00:00",
+        "end_utc": "2026-10-12T13:09:57.475197+00:00",
+        "artifact": {
+          "external_artifact": "main/07-cw32l010f8p6-receive/firmware.elf",
+          "sha256": "02e65909cdc40184c25df5e1601fe3aa0019ad3c14a235d1f5c74668a6c41866",
+          "bytes": 211928
+        },
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "hal_cargo_artifact_fresh": false,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/07-cw32l010f8p6-receive/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "18e0e53fda75cf3092e059fab50c45f7093d66705f995f37e7d4b3a0a43f37f2"
+          },
+          {
+            "external_artifact": "main/07-cw32l010f8p6-receive/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "b4d1f503aa90687e2b1d9798b704ef1ac145dd14f6348e76a68d33a86433607e"
+          },
+          {
+            "external_artifact": "main/07-cw32l010f8p6-receive/out-dir/7229804f95b8/adc_trigger_routes.rs",
+            "sha256": "e67d24b96489ccbd3c4b0ccee076cd8b3630ced673a5a8fb7ed306a197972e09"
+          },
+          {
+            "external_artifact": "main/07-cw32l010f8p6-receive/out-dir/7229804f95b8/timer_trigger_routes.rs",
+            "sha256": "7466b757f1abf93b9fe8f3aa3064d48f36c749c37c2f7bbf1054ab3bc176439a"
+          },
+          {
+            "external_artifact": "main/07-cw32l010f8p6-receive/out-dir/65fc2e6d0518/memory.x",
+            "sha256": "4b9f47e1a23cf36589dc5a3be0b68acff633880dbec554ac1d089aa611e959ee"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "6c620ddbfe3cdc83bbe75a067c30ed0fcdb9e14ae6d6a44173358a99abdb500e",
+          "cargo.stderr.log": "92ff330ca81ee1e30bb5518bf11198437d30ec461eb53781683c5847a9b2ee48"
+        },
+        "binary_verification": {
+          "class": "ELF32",
+          "machine": "ARM",
+          "type": "EXEC",
+          "entry": 193,
+          "initial_sp": 536875008,
+          "reset_vector": 193,
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 4096
+            }
+          ],
+          "load_segments": [
+            {
+              "filesz": 192,
+              "flags": 4,
+              "memsz": 192,
+              "paddr": 0,
+              "payload_sha256": "7514ba8c45e310fa01ee3cdb35f22b068f4f5a1234debd6b5e9aa85a018a8d47",
+              "vaddr": 0
+            },
+            {
+              "filesz": 36620,
+              "flags": 5,
+              "memsz": 36620,
+              "paddr": 192,
+              "payload_sha256": "be4b394980c40689bdbc0a51ae08ccc2bdc501af36f46335fd101c55f6777517",
+              "vaddr": 192
+            },
+            {
+              "filesz": 388,
+              "flags": 4,
+              "memsz": 388,
+              "paddr": 36812,
+              "payload_sha256": "62e62035215074ca960894645dbc436050f371a62202a405a11baf6be6762268",
+              "vaddr": 36812
+            },
+            {
+              "filesz": 116,
+              "flags": 6,
+              "memsz": 116,
+              "paddr": 37200,
+              "payload_sha256": "2f319f882febe33c4493ce523cde0900a5e918650b52cc0a182bf6a546b21e95",
+              "vaddr": 536870912
+            },
+            {
+              "filesz": 0,
+              "flags": 6,
+              "memsz": 320,
+              "paddr": 536871032,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "vaddr": 536871032
+            }
+          ],
+          "irq_vectors": [
+            {
+              "name": "UART2",
+              "irq_number": 28,
+              "vector_word": 2769,
+              "bound_symbol_matches": true,
+              "not_default": true
+            }
+          ],
+          "memory_x_verified": true
+        },
+        "receipt": {
+          "external_artifact": "main/07-cw32l010f8p6-receive/receipt.json",
+          "sha256": "fcff2c1cdd16fbf5cf577bef58ea6fa2acddc879e9b380421beea4181288723a"
+        }
+      },
+      {
+        "id": "8",
+        "part": "cw32l011k8t6",
+        "kind": "elf",
+        "features": "cw32l011k8t6",
+        "manifest": "examples/uart-idle/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "examples/uart-idle/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l011k8t6",
+          "--message-format=json",
+          "--release",
+          "--bin",
+          "receive"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:09:57.481843+00:00",
+        "end_utc": "2026-10-12T13:10:00.384842+00:00",
+        "artifact": {
+          "external_artifact": "main/08-cw32l011k8t6-receive/firmware.elf",
+          "sha256": "bf4621e7b289afdd137785fdfbe349202353a62b07e5f1aa5b796f68b884fe47",
+          "bytes": 212808
+        },
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "hal_cargo_artifact_fresh": false,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/08-cw32l011k8t6-receive/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "284a57029cb84b8c07beae2914768ce330121734d4bdd141d58e7278136bf147"
+          },
+          {
+            "external_artifact": "main/08-cw32l011k8t6-receive/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "546d1cf2020cd821fcd9f919f681017416ead443ed93aedc99788cf7feebe231"
+          },
+          {
+            "external_artifact": "main/08-cw32l011k8t6-receive/out-dir/7229804f95b8/adc_trigger_routes.rs",
+            "sha256": "e67d24b96489ccbd3c4b0ccee076cd8b3630ced673a5a8fb7ed306a197972e09"
+          },
+          {
+            "external_artifact": "main/08-cw32l011k8t6-receive/out-dir/7229804f95b8/timer_trigger_routes.rs",
+            "sha256": "7466b757f1abf93b9fe8f3aa3064d48f36c749c37c2f7bbf1054ab3bc176439a"
+          },
+          {
+            "external_artifact": "main/08-cw32l011k8t6-receive/out-dir/65fc2e6d0518/memory.x",
+            "sha256": "4a0a3bbecf653ad536fb04acdf085d0cd62a166e2ac3932d76a9cb5fb277c04f"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "8c1c992bedaac2e32ee2205b8fc5290e36c4484eb53d324924909f53b2fb459b",
+          "cargo.stderr.log": "67e90ccecc23282d1723d995a1df2e01980fd823dfe2c9a8b24cf8579038d1dd"
+        },
+        "binary_verification": {
+          "class": "ELF32",
+          "machine": "ARM",
+          "type": "EXEC",
+          "entry": 193,
+          "initial_sp": 536877056,
+          "reset_vector": 193,
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 6144
+            }
+          ],
+          "load_segments": [
+            {
+              "filesz": 192,
+              "flags": 4,
+              "memsz": 192,
+              "paddr": 0,
+              "payload_sha256": "f7e18bc914f48721355bf99f46b9848cd440f79ac8cb6a9c0a60c19030bbe53b",
+              "vaddr": 0
+            },
+            {
+              "filesz": 36196,
+              "flags": 5,
+              "memsz": 36196,
+              "paddr": 192,
+              "payload_sha256": "1ace2bbe4da7b9ecf9812d0842790210f5412b228eb30ec97053ca6ec0304845",
+              "vaddr": 192
+            },
+            {
+              "filesz": 508,
+              "flags": 4,
+              "memsz": 508,
+              "paddr": 36388,
+              "payload_sha256": "6f9a35eadc66b85181e81d902f6b27d9b492ea0a609e6ce9f9d358fe8b037b33",
+              "vaddr": 36388
+            },
+            {
+              "filesz": 116,
+              "flags": 6,
+              "memsz": 116,
+              "paddr": 36896,
+              "payload_sha256": "2f319f882febe33c4493ce523cde0900a5e918650b52cc0a182bf6a546b21e95",
+              "vaddr": 536870912
+            },
+            {
+              "filesz": 0,
+              "flags": 6,
+              "memsz": 320,
+              "paddr": 536871032,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "vaddr": 536871032
+            }
+          ],
+          "irq_vectors": [
+            {
+              "name": "UART3",
+              "irq_number": 29,
+              "vector_word": 2753,
+              "bound_symbol_matches": true,
+              "not_default": true
+            }
+          ],
+          "memory_x_verified": true
+        },
+        "receipt": {
+          "external_artifact": "main/08-cw32l011k8t6-receive/receipt.json",
+          "sha256": "2d233da7ea2d4d1bc84fcd5feb741c9a43d03d83939c158806cd61cc41df18bb"
+        }
+      },
+      {
+        "id": "9",
+        "part": "cw32l012c8t6",
+        "kind": "elf",
+        "features": "cw32l012c8t6",
+        "manifest": "examples/uart-idle/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "examples/uart-idle/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l012c8t6",
+          "--message-format=json",
+          "--release",
+          "--bin",
+          "receive"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:10:00.391691+00:00",
+        "end_utc": "2026-10-12T13:10:04.032893+00:00",
+        "artifact": {
+          "external_artifact": "main/09-cw32l012c8t6-receive/firmware.elf",
+          "sha256": "c6548dd901ab3d39d657af5c7671f35c5043b07d9cc36e129c93186fb3950b76",
+          "bytes": 217516
+        },
+        "warnings": [],
+        "hal_cargo_artifact_fresh": false,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/09-cw32l012c8t6-receive/out-dir/7229804f95b8/_cordic_domains.rs",
+            "sha256": "bf8c9f99439f3d7bf583a0f3d4a88ab077de921c20dd5da4611cc6b45147e96a"
+          },
+          {
+            "external_artifact": "main/09-cw32l012c8t6-receive/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "e7473d76b96f7edbad876c60bf195dda3deb7b53e9d3f14db8bf1e521f9211fc"
+          },
+          {
+            "external_artifact": "main/09-cw32l012c8t6-receive/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a"
+          },
+          {
+            "external_artifact": "main/09-cw32l012c8t6-receive/out-dir/65fc2e6d0518/memory.x",
+            "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "148b9a5e015fa2d7e264047c28ffe959ec1f977bb16923d0f4f64ffb2eb15f72",
+          "cargo.stderr.log": "f816aca489789bef87fa5e2707e789d2fd240a7465ba66675a29a35cbd6bc367"
+        },
+        "binary_verification": {
+          "class": "ELF32",
+          "machine": "ARM",
+          "type": "EXEC",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "reset_vector": 193,
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "load_segments": [
+            {
+              "filesz": 192,
+              "flags": 4,
+              "memsz": 192,
+              "paddr": 0,
+              "payload_sha256": "904df18794c68864594d3185cacd807023b76b5dc735bf0dd7fd01e98fac439e",
+              "vaddr": 0
+            },
+            {
+              "filesz": 56824,
+              "flags": 5,
+              "memsz": 56824,
+              "paddr": 192,
+              "payload_sha256": "c2272500c6c2a3744534ce2aa610719f3225fe74d34617918d405f85df5c3c5e",
+              "vaddr": 192
+            },
+            {
+              "filesz": 696,
+              "flags": 4,
+              "memsz": 696,
+              "paddr": 57016,
+              "payload_sha256": "395bfac2a4f76a22c95fdec6ebfdf2c75ff46657e202b4fa27a839f671e65390",
+              "vaddr": 57016
+            },
+            {
+              "filesz": 116,
+              "flags": 6,
+              "memsz": 116,
+              "paddr": 57712,
+              "payload_sha256": "2f319f882febe33c4493ce523cde0900a5e918650b52cc0a182bf6a546b21e95",
+              "vaddr": 536870912
+            },
+            {
+              "filesz": 0,
+              "flags": 6,
+              "memsz": 320,
+              "paddr": 536871032,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "vaddr": 536871032
+            }
+          ],
+          "irq_vectors": [
+            {
+              "name": "UART1",
+              "irq_number": 27,
+              "vector_word": 2657,
+              "bound_symbol_matches": true,
+              "not_default": true
+            }
+          ],
+          "memory_x_verified": true
+        },
+        "receipt": {
+          "external_artifact": "main/09-cw32l012c8t6-receive/receipt.json",
+          "sha256": "11825daf0d5c5f0508e943ddf55ee2020dbac518b570b03e07023b3d7d0fa3f4"
+        }
+      },
+      {
+        "id": "10",
+        "part": "cw32l012c8t6",
+        "kind": "elf",
+        "features": "cw32l012c8t6",
+        "manifest": "examples/uart-idle/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "examples/uart-idle/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l012c8t6",
+          "--message-format=json",
+          "--release",
+          "--bin",
+          "split"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:10:04.039414+00:00",
+        "end_utc": "2026-10-12T13:10:04.824710+00:00",
+        "artifact": {
+          "external_artifact": "main/10-cw32l012c8t6-split/firmware.elf",
+          "sha256": "1fc61dbade4fb31b12f86c018a1fb597dc384a5e1b79722e94662ba714318a7d",
+          "bytes": 217644
+        },
+        "warnings": [],
+        "hal_cargo_artifact_fresh": true,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/10-cw32l012c8t6-split/out-dir/7229804f95b8/_cordic_domains.rs",
+            "sha256": "bf8c9f99439f3d7bf583a0f3d4a88ab077de921c20dd5da4611cc6b45147e96a"
+          },
+          {
+            "external_artifact": "main/10-cw32l012c8t6-split/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "e7473d76b96f7edbad876c60bf195dda3deb7b53e9d3f14db8bf1e521f9211fc"
+          },
+          {
+            "external_artifact": "main/10-cw32l012c8t6-split/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "36e5fc868a0aab793eb2eacd5b5964386232a1f1cfe25d40ef63c3bd8b17336a"
+          },
+          {
+            "external_artifact": "main/10-cw32l012c8t6-split/out-dir/65fc2e6d0518/memory.x",
+            "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "d7c8786f9b3fdd3341f06cb8957b61ff05646c391d198a536f1997c472e7bcf3",
+          "cargo.stderr.log": "6196ae297dce1370ca1119d0fad6a77ad03fe3872a2232943bf2ca4b2adb0c96"
+        },
+        "binary_verification": {
+          "class": "ELF32",
+          "machine": "ARM",
+          "type": "EXEC",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "reset_vector": 193,
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "load_segments": [
+            {
+              "filesz": 192,
+              "flags": 4,
+              "memsz": 192,
+              "paddr": 0,
+              "payload_sha256": "17ef5f61abbc046361d36aaed3ddb1299464780379dc055434d25b417920bed1",
+              "vaddr": 0
+            },
+            {
+              "filesz": 57556,
+              "flags": 5,
+              "memsz": 57556,
+              "paddr": 192,
+              "payload_sha256": "f7454e8f3ef57e81c16d0bf6f0b64ac2e8ea7b928abe3a5a899c4a04411a7e27",
+              "vaddr": 192
+            },
+            {
+              "filesz": 700,
+              "flags": 4,
+              "memsz": 700,
+              "paddr": 57748,
+              "payload_sha256": "a9c213a693ff9fac7403cc61d54ce124041a52fa8766883e9a2447ee94d0a828",
+              "vaddr": 57748
+            },
+            {
+              "filesz": 116,
+              "flags": 6,
+              "memsz": 116,
+              "paddr": 58448,
+              "payload_sha256": "2f319f882febe33c4493ce523cde0900a5e918650b52cc0a182bf6a546b21e95",
+              "vaddr": 536870912
+            },
+            {
+              "filesz": 0,
+              "flags": 6,
+              "memsz": 352,
+              "paddr": 536871032,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "vaddr": 536871032
+            }
+          ],
+          "irq_vectors": [
+            {
+              "name": "UART1",
+              "irq_number": 27,
+              "vector_word": 3389,
+              "bound_symbol_matches": true,
+              "not_default": true
+            }
+          ],
+          "memory_x_verified": true
+        },
+        "receipt": {
+          "external_artifact": "main/10-cw32l012c8t6-split/receipt.json",
+          "sha256": "97fe386c54836d7fbd906ed12f2e7bb3255daf70c17740c9e1afc3669cb0c448"
+        }
+      },
+      {
+        "id": "11",
+        "part": "cw32l083rct6",
+        "kind": "elf",
+        "features": "cw32l083rct6",
+        "manifest": "examples/uart-dma/Cargo.toml",
+        "command": [
+          "cargo",
+          "build",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "examples/uart-dma/Cargo.toml",
+          "--target",
+          "thumbv6m-none-eabi",
+          "--no-default-features",
+          "--features",
+          "cw32l083rct6",
+          "--message-format=json",
+          "--release",
+          "--bin",
+          "shared_vector"
+        ],
+        "exit_code": 0,
+        "start_utc": "2026-10-12T13:10:04.831273+00:00",
+        "end_utc": "2026-10-12T13:10:11.063711+00:00",
+        "artifact": {
+          "external_artifact": "main/11-cw32l083rct6-shared_vector/firmware.elf",
+          "sha256": "b838c53ca5129313a506f926b8f1ee05e5ef53e85a8e223fd80866c99f7f240d",
+          "bytes": 233968
+        },
+        "warnings": [],
+        "hal_cargo_artifact_fresh": false,
+        "out_dir_files": [
+          {
+            "external_artifact": "main/11-cw32l083rct6-shared_vector/out-dir/3facfc6d0dde/memory.x",
+            "sha256": "382dd9cbb0b41ff04f8c42aa7bc9f91c43b6401e0b27bfe4ac6a581e0319062e"
+          },
+          {
+            "external_artifact": "main/11-cw32l083rct6-shared_vector/out-dir/7229804f95b8/_crypto.rs",
+            "sha256": "4f3e3a1176f87c930a4fc3d3628535891be547ccb06ea87c67df64bdf9141237"
+          },
+          {
+            "external_artifact": "main/11-cw32l083rct6-shared_vector/out-dir/7229804f95b8/_generated.rs",
+            "sha256": "1dfe17a49a648a08a1349b6412df6254fe9abaa2e31f4932c2c875b91fb3a97e"
+          },
+          {
+            "external_artifact": "main/11-cw32l083rct6-shared_vector/out-dir/7229804f95b8/_generated_exti.rs",
+            "sha256": "3f6a37f60b147b4033d8eb504fb449a79eb5555f850ed08fb54484a8a601a387"
+          }
+        ],
+        "log_hashes": {
+          "cargo.jsonl": "acda0529070ade9e10eb7353d4e3e8a209295c0b16d7887cfe9e5f4133e0f974",
+          "cargo.stderr.log": "836e21ed8edcd5567434653956ddd8094dd09fb9146fbf2167ec52d25a701e94"
+        },
+        "binary_verification": {
+          "class": "ELF32",
+          "machine": "ARM",
+          "type": "EXEC",
+          "entry": 193,
+          "initial_sp": 536895488,
+          "reset_vector": 193,
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 262144
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 24576
+            }
+          ],
+          "load_segments": [
+            {
+              "filesz": 192,
+              "flags": 4,
+              "memsz": 192,
+              "paddr": 0,
+              "payload_sha256": "48ce3f6361c97e4ac04fecc030137b07e578d3861290944be64b9a8ce9be57bf",
+              "vaddr": 0
+            },
+            {
+              "filesz": 76956,
+              "flags": 5,
+              "memsz": 76956,
+              "paddr": 192,
+              "payload_sha256": "0b782fca813a70b344b8737ffaf55fa5e0954765e67fba22be6624998c1aaa65",
+              "vaddr": 192
+            },
+            {
+              "filesz": 1072,
+              "flags": 4,
+              "memsz": 1072,
+              "paddr": 77148,
+              "payload_sha256": "7a41f7d62e072f055776b13ff0c3cc3ac8bfb13680117da4e13b534f6dcf18e7",
+              "vaddr": 77148
+            },
+            {
+              "filesz": 220,
+              "flags": 6,
+              "memsz": 220,
+              "paddr": 78220,
+              "payload_sha256": "768e5609f27e165d5889461217624132be738f91e48b00532b49268ebde0002c",
+              "vaddr": 536870912
+            },
+            {
+              "filesz": 0,
+              "flags": 6,
+              "memsz": 1064,
+              "paddr": 536871136,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "vaddr": 536871136
+            }
+          ],
+          "irq_vectors": [
+            {
+              "name": "DMACH1",
+              "irq_number": 9,
+              "vector_word": 253,
+              "bound_symbol_matches": true,
+              "not_default": true
+            },
+            {
+              "name": "DMACH23",
+              "irq_number": 10,
+              "vector_word": 265,
+              "bound_symbol_matches": true,
+              "not_default": true
+            },
+            {
+              "name": "DMACH45",
+              "irq_number": 11,
+              "vector_word": 277,
+              "bound_symbol_matches": true,
+              "not_default": true
+            },
+            {
+              "name": "UART1_UART4",
+              "irq_number": 27,
+              "vector_word": 297,
+              "bound_symbol_matches": true,
+              "not_default": true
+            }
+          ],
+          "memory_x_verified": true
+        },
+        "receipt": {
+          "external_artifact": "main/11-cw32l083rct6-shared_vector/receipt.json",
+          "sha256": "9d57e37fbaa8ecdbf4c444fda5244754953c1522f97b8331bbf98d06aef18663"
+        }
+      }
+    ],
+    "all_exit_codes_zero": true,
+    "source_snapshot_files": 1365,
+    "source_before_after_equal": true,
+    "generated_files": 905,
+    "generated_before_after_equal": true,
+    "main_generation_runs": 0,
+    "retained_out_dir_files_independently_verified": 40,
+    "actual_cargo_compiler_artifact_paths_verified": true,
+    "arm_archive_code_objects_verified": true,
+    "arm_elf_load_segments_vectors_memory_scripts_verified": true,
+    "target_strategy": "Serial shared existing main target; per-row actual artifacts and OUT_DIR retained before overwrite. Clean must use its own fresh target.",
+    "warnings": {
+      "counts": [
+        3,
+        3,
+        0,
+        0,
+        0,
+        0,
+        3,
+        3,
+        0,
+        0,
+        0
+      ],
+      "classification": "Only existing generated RCC LSE_SYSCLK unused constants on L010/L011 library and receive rows; zero on other rows."
+    }
+  },
+  "main_focused_gates": [
+    {
+      "name": "native-uart-idle",
+      "command": [
+        "python3",
+        "tests/verify_native_uart_idle_sources.py",
+        "--sources",
+        "<evidence-cache>"
+      ],
+      "exit_code": 0,
+      "external_log": {
+        "external_artifact": "main-gates/native-uart-idle.log",
+        "sha256": "71fd8c3b5b3d7f81a4264b307abe32f08af1d3776474353f97ea42d08246a19b"
+      }
+    },
+    {
+      "name": "provenance",
+      "command": [
+        "python3",
+        "cw32-data/tools/source_provenance.py",
+        "--root",
+        "<source-root>",
+        "--sources",
+        "<evidence-cache>"
+      ],
+      "exit_code": 0,
+      "external_log": {
+        "external_artifact": "main-gates/provenance.log",
+        "sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f"
+      }
+    },
+    {
+      "name": "coverage",
+      "command": [
+        "python3",
+        "ci/update-functional-coverage.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "external_log": {
+        "external_artifact": "main-gates/coverage.log",
+        "sha256": "ef878929464270c58e1a6983298b527e6675fa597b4c74b67ed22fd852eee755"
+      }
+    },
+    {
+      "name": "layout",
+      "command": [
+        "python3",
+        "tests/test_module_layout.py"
+      ],
+      "exit_code": 0,
+      "external_log": {
+        "external_artifact": "main-gates/layout.log",
+        "sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8"
+      }
+    }
+  ],
+  "prior_attempt_history": {
+    "cargo_build_failures": 0,
+    "initial_native_source_gate_exit": 1,
+    "cause": "The new checker initially matched a physical-pin table before the named datasheet AF table. Its parser was corrected to the exact table/row; the passing finite gate and initial failing log are both retained.",
+    "checker_spelling_correction": "Own L012 SDK uses UART_RDR while L010/L011 use UARTx_RDR; the source checker now accepts the correct family-specific anchor.",
+    "runtime_changes_after_static_review": false
+  },
+  "toolchain": {
+    "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1",
+    "cargo": "cargo 1.99.0 (5f94df478 2026-08-27)\nrelease: 1.99.0\ncommit-hash: 5f94df4789f005f9a352888e8355ffc645b7ed0e\ncommit-date: 2026-08-27\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.6 (sys:0.21.0 vendored)\nlibcurl: 8.21.0-DEV (sys:0.4.90+curl-8.21.0 vendored ssl:OpenSSL/3.6.3)\nssl: OpenSSL 3.6.3 9 Jun 2026\nos: Debian 13.0.0 (trixie) [64-bit]",
+    "active": "1.99.0-x86_64-unknown-linux-gnu (overridden by environment variable RUSTUP_TOOLCHAIN)",
+    "rustc_binary_sha256": "f3834d26669b03f6855fa54bd2381443123e860167bc0c7a8dd137e5cf6e5e4f",
+    "cargo_binary_sha256": "e951141cc55a6cd7b9876d187bd30a3720e6086b99413af95e3b8de1cdd72f14"
+  },
+  "reviewer_execution": {
+    "read_only_source_and_binary_inspection": true,
+    "builds_run_by_reviewer": false,
+    "tests_run_by_reviewer": false,
+    "production_edits_by_reviewer": false,
+    "hardware_probes": false
+  },
+  "limitations": [
+    "Static reasoning covers stale idle, RC/error/idle interleavings, cancellation and forget; the linked examples do not execute or inject those cases.",
+    "ELFs establish API/type/link/vector integration only, not baud, losslessness, latency, physical framing or hardware behavior.",
+    "A preserved pre-start byte whose old idle was cleared may need later traffic, fill or cancellation.",
+    "This accepted-main review is not final-source clean acceptance or publication.",
+    "Main document/evidence hashes are historical snapshots; later real-review and status installation may change those files without changing the reviewed runtime and example sources."
+  ]
+}

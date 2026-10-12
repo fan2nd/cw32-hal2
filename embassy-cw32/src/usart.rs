@@ -5,12 +5,15 @@
 //! `UartTx::new_with_dma`, `UartRx::new_with_dma` and `Uart::new_with_dma`
 //! own static staging for ordinary borrowed writes and reads. RX DMA receives
 //! finite explicitly armed chunks; reception/copy/rearm gaps can lose frames.
-//! Without DMA there is no software RX buffer: service each byte promptly. L010/L011/L012
-//! expose noise and overrun errors; other supported UARTs have no overrun flag
-//! and can silently overwrite an unread frame. No throughput guarantee follows.
+//! Without DMA there is no software RX buffer: service each byte promptly.
+//! L010/L011/L012 support finite async `read_until_idle` into a caller buffer
+//! and expose noise and overrun errors. Idle boundaries are best-effort under
+//! service delay; there is no continuous collector between calls. Other
+//! supported UARTs have no overrun flag and can silently overwrite an unread
+//! frame. No throughput guarantee follows.
 //! Hardware RTS/CTS is available through owned, package-checked flow-control pins.
-//! Continuous/ring RX DMA, idle-line receive, synchronous mode, LSI/deep-sleep UART,
-//! and custom nine-bit data are not exposed.
+//! Continuous/ring reception, RX DMA on L010/L011/L012, synchronous mode,
+//! LSI/deep-sleep UART, and custom nine-bit data are not exposed.
 //!
 //! Register semantics follow each family's official manual and SDK. See
 //! `docs/remaining-uart-implementation.md`, `docs/f020-serial-compatibility.md`
@@ -614,6 +617,16 @@ impl<'d> Uart<'d, Async> {
     /// [`UartRx::read`] for the receive and cancellation contract.
     pub async fn read(&mut self, buffer: &mut [u8]) -> Result<(), Error> {
         self.rx.read(buffer).await
+    }
+    /// Receive a finite prefix until the buffer fills or native RXIDLE is observed.
+    /// Available on L010/L011/L012. An empty slice returns `Ok(0)` without MMIO;
+    /// a nonempty call discards stale idle once on its first poll and can return
+    /// zero on a later idle event. This is an inherent API, not the embedded-io
+    /// short-read contract. See [`UartRx::read_until_idle`] for the observation
+    /// window, error priority, cancellation and possible indefinite-wait limits.
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    pub async fn read_until_idle(&mut self, buffer: &mut [u8]) -> Result<usize, Error> {
+        self.rx.read_until_idle(buffer).await
     }
     /// Wait until both the transmit buffer and shift register are empty.
     pub async fn flush(&mut self) -> Result<(), Error> {
@@ -1415,11 +1428,15 @@ impl<'d> UartRx<'d, Async> {
     /// An empty inherent read may await an old chunk without consuming it.
     /// FE/PE returns promptly but recovery may wait forever for that chunk.
     /// Finite chunks and rearm/copy gaps do not provide lossless reception.
+    /// On L010/L011/L012, even an empty read masks an abandoned RX/idle wait's
+    /// interrupt enables; it does not clear receive flags or consume data.
     pub async fn read(&mut self, buffer: &mut [u8]) -> Result<(), Error> {
         #[cfg(uart_dma)]
         if let Some(dma) = self.dma.as_mut() {
             return dma.read(self.info.regs, self.state, buffer).await;
         }
+        #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+        retire_receive_wait(self.info.regs);
         for byte in buffer {
             loop {
                 Wait::new(self.info.regs, &self.state.rx_waker, WaitEvent::Receive).await;
@@ -1430,6 +1447,75 @@ impl<'d> UartRx<'d, Async> {
             }
         }
         Ok(())
+    }
+
+    /// Receive a finite prefix until the buffer fills or native RXIDLE is observed.
+    ///
+    /// Available on L010/L011/L012. An empty slice returns `Ok(0)` on its first
+    /// poll without MMIO, waker registration, interrupt changes or stale-idle
+    /// acknowledgment. Constructing or dropping an unpolled future has no effect.
+    /// An empty call does not retire an abandoned earlier wait.
+    ///
+    /// A nonempty call starts one idle-observation window on its first poll:
+    /// it masks old RX wait interrupts and clears only the then-stale RXIDLE
+    /// indication, preserving unread RC/RDR and line errors. It does not flush
+    /// input or recover an earlier packet boundary. Each successfully consumed
+    /// byte increments the returned count; bytes beyond that prefix are untouched.
+    /// A new idle indication can return zero before any byte is collected. This
+    /// is an inherent API, not the embedded-io short-read contract.
+    ///
+    /// If RC and RXIDLE are observed together, the observed byte is consumed
+    /// before completing on idle, unless an observed error takes precedence.
+    /// Interrupt/executor delay makes the byte's position relative to an earlier
+    /// idle boundary best-effort: these flags provide no packet timestamp/order.
+    /// Errors take priority in the order ORE, PE, FE, NE. A byte sampled with an
+    /// error is consumed/acknowledged but not appended to the successful prefix,
+    /// matching exact reads. Already written bytes remain on error/cancellation;
+    /// an error carries no partial count.
+    ///
+    /// Hardware begins idle detection only after a completed received character.
+    /// There is no software timer, and this call can wait indefinitely without
+    /// the necessary receive/idle event. A preserved pre-start RC byte can be
+    /// collected after its old idle was discarded; clearing that flag does not
+    /// guarantee another idle event for the same character. More traffic, a later
+    /// idle indication, buffer completion or external cancellation may be needed.
+    /// There is no continuous reception/storage between calls. Service delays,
+    /// caller gaps and coalesced hardware flags can lose data or boundary history.
+    ///
+    /// Cancelling a pending wait masks RX/error/idle enables while preserving
+    /// unread data and flags, TX and unrelated interrupt enables. Forgetting the
+    /// future skips this cleanup; a later enabled RX event, ordinary read,
+    /// nonempty idle read or RX-owner drop retires the old wait. The ISR owns no
+    /// caller-buffer pointer and cannot write caller memory after cancellation
+    /// or forget. Neither action guarantees data or boundary recovery.
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    pub async fn read_until_idle(&mut self, buffer: &mut [u8]) -> Result<usize, Error> {
+        if buffer.is_empty() {
+            return Ok(0);
+        }
+        let regs = self.info.regs;
+        critical_section::with(|_| {
+            regs.ier().modify(|w| WaitEvent::Receive.set_enabled(w, false));
+            // This clear completes the new observation-window boundary. Keep
+            // unread RC/RDR and all line errors for the consumption snapshot.
+            let mut command = regs::Icr::write_noop();
+            command.set_rxidle(false);
+            regs.icr().write_value(command);
+        });
+        let mut received = 0;
+        loop {
+            Wait::new(regs, &self.state.rx_waker, WaitEvent::ReceiveUntilIdle).await;
+            // The wait only established readiness. Use one fresh snapshot for
+            // data eligibility, acknowledgment, error priority and completion.
+            let status = regs.isr().read();
+            if let Some(byte) = receive_observed(regs, status, true)? {
+                buffer[received] = byte;
+                received += 1;
+            }
+            if received == buffer.len() || status.rxidle() {
+                return Ok(received);
+            }
+        }
     }
 }
 impl<'d, M: Mode> UartRx<'d, M> {
@@ -1478,7 +1564,11 @@ impl<'d, M: Mode> UartRx<'d, M> {
     }
     // Trait reads must not await an abandoned multi-byte DMA chunk just to
     // return their first byte. Empty trait reads use this same observation.
+    // Native ordinary reads also retire old RX/idle enables without clearing
+    // receive flags, including blocking and empty trait entry points.
     fn check_read(&mut self) -> Result<(), Error> {
+        #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+        retire_receive_wait(self.info.regs);
         #[cfg(uart_dma)]
         if let Some(dma) = self.dma.as_mut() {
             dma.check_complete(self.info.regs, self.state)?;
@@ -1657,6 +1747,8 @@ enum WaitEvent {
     TxReady,
     TxComplete,
     Receive,
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    ReceiveUntilIdle,
     #[cfg(uart_dma)]
     ReceiveErrors,
 }
@@ -1680,7 +1772,13 @@ impl WaitEvent {
                 {
                     ier.set_ne(enabled);
                     ier.set_ore(enabled);
+                    ier.set_rxidle(false);
                 }
+            }
+            #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+            Self::ReceiveUntilIdle => {
+                Self::Receive.set_enabled(ier, enabled);
+                ier.set_rxidle(enabled);
             }
         }
     }
@@ -1690,10 +1788,19 @@ impl WaitEvent {
             Self::TxReady => status.txe(),
             Self::TxComplete => !status.txbusy(),
             Self::Receive => receive_event(status),
+            #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+            Self::ReceiveUntilIdle => receive_event(status) || status.rxidle(),
             #[cfg(uart_dma)]
             Self::ReceiveErrors => status.pe() || status.fe(),
         }
     }
+}
+
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+fn retire_receive_wait(regs: pac::uart::Uart) {
+    critical_section::with(|_| {
+        regs.ier().modify(|w| WaitEvent::Receive.set_enabled(w, false));
+    });
 }
 
 fn receive_event(status: regs::Isr) -> bool {
@@ -1712,7 +1819,20 @@ fn transmit(regs: pac::uart::Uart, byte: u8) {
 
 fn receive(regs: pac::uart::Uart) -> Result<Option<u8>, Error> {
     let status = regs.isr().read();
-    if !receive_event(status) {
+    receive_observed(regs, status, false)
+}
+
+fn receive_observed(
+    regs: pac::uart::Uart,
+    status: regs::Isr,
+    acknowledge_idle: bool,
+) -> Result<Option<u8>, Error> {
+    let pending = receive_event(status);
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    let pending = pending || (acknowledge_idle && status.rxidle());
+    #[cfg(not(any(uart_cw32l010_v1, uart_cw32l012_v1)))]
+    let _ = acknowledge_idle;
+    if !pending {
         return Ok(None);
     }
     let data = if status.rc() {
@@ -1721,8 +1841,10 @@ fn receive(regs: pac::uart::Uart) -> Result<Option<u8>, Error> {
         None
     };
     // R1W0: start from the generated no-op command, then clear only observed
-    // receive events. Unrelated and later flags, including reserved reset-one
-    // bits, remain untouched. Never read-modify-write ICR.
+    // receive events. Unrelated bits and events absent from the snapshot remain
+    // untouched, including reserved reset-one bits. A repeated assertion of an
+    // already observed bit can coalesce before acknowledgment; no ordering or
+    // lossless guarantee follows. Never read-modify-write ICR.
     let mut command = regs::Icr::write_noop();
     command.set_rc(!status.rc());
     command.set_fe(!status.fe());
@@ -1731,6 +1853,7 @@ fn receive(regs: pac::uart::Uart) -> Result<Option<u8>, Error> {
     {
         command.set_ne(!status.ne());
         command.set_ore(!status.ore());
+        command.set_rxidle(!(acknowledge_idle && status.rxidle()));
     }
     regs.icr().write_value(command);
     // Data-loss errors have priority, then parity, framing and noise. Clear
@@ -1760,8 +1883,10 @@ fn on_interrupt(regs: pac::uart::Uart, state: &State) {
             || (status.fe() && enabled.fe())
             || (status.pe() && enabled.pe());
         #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
-        let rx_pending =
-            rx_pending || (status.ne() && enabled.ne()) || (status.ore() && enabled.ore());
+        let rx_pending = rx_pending
+            || (status.ne() && enabled.ne())
+            || (status.ore() && enabled.ore())
+            || (status.rxidle() && enabled.rxidle());
         let tx_pending = (status.txe() && enabled.txe()) || (status.tc() && enabled.tc());
         // Reuse the sampled IER value. Only this driver's pending direction is
         // masked; all auxiliary and foreign interrupt enables are preserved.

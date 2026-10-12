@@ -98,6 +98,17 @@ still apply.
   Continuous scans, hardware-triggered scans and safe ADC DMA remain absent.
 - UART blocking/async and qualified RTS/CTS constructors exist. Pin availability
   differs by instance and exact selection; no software FIFO or throughput claim.
+  L010/L011/L012 additionally expose finite async native idle reception with
+  ordinary caller slices. Buffer-full or observed RXIDLE returns a count;
+  simultaneous RC is consumed before idle, without exact packet attribution.
+  First nonempty poll discards only stale idle, preserving unread bytes/errors;
+  service delays can still overrun RDR. No numeric timeout or software ring.
+  Main verification passed six actual ARM libraries, five ELF links and four
+  finite source/data gates. Three existing native L010/L011 RCC LSE-constant
+  warnings remain in applicable rows. At main acceptance clean had not run;
+  final-package completion requires a separate final-source two-library/
+  two-ELF clean receipt. These software results do not establish hardware behavior.
+  See [the finite idle contract](uart-idle.md).
   F030/A030/L083 additionally have safe staged TX DMA, finite-chunk RX and combined
   split full-duplex DMA with ordinary caller slices and separate wire flush.
   Static staging/channel/UART ownership is retained across cancellation; clean
