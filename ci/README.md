@@ -339,6 +339,45 @@ unchanged; the old 21-to-23 L012 LSE baseline comparison is not a Stage75 delta
 check. No aggregate run, HAL tests, probes, models, hosted CI or hardware
 execution is part of the finite verification.
 
+## Exact L011 live factory-LSI main verification
+
+This exact-two addition covers CW32L011K8T6/K8U6, each 64 KiB Flash / 6 KiB
+SRAM, with the narrow [live-only contract](../docs/l011-live-factory-lsi-sysclk.md).
+Final main verification passed exactly seven real library builds and seven
+linked ELFs, all fourteen commands with exit zero. The 1,334 source files and
+905 generated files stayed unchanged during that matrix. Generation and seven
+finite source/data gates passed in separately recorded invocations. Three
+existing unused LSE-constant warning headers remain; five new warning diagnostics
+were removed before this final run. The first main attempt's diagnostic
+collection defect and earlier three checker preparation failures remain in
+external history, outside the successful final count.
+
+At main acceptance clean had not run; completion requires a separate
+final-source two-library/two-ELF receipt: exactly the K8U6 and L010F8P6 release
+libraries and their LSI ELFs, freshly generated without copied generated or
+target artifacts. The contract lists every manifest, feature, profile and
+binary. A debug time-driver build compiles the refusal machinery; it does not
+execute the refusal or renew older LSE qualifications.
+
+The existing cumulative `check-lsi-clock.sh` recipe is unchanged and does not
+cover the new L011 live-LSI examples or its complete finite acceptance matrix.
+The L011 main 7/7 and independent clean 2/2 commands are recorded separately
+under the contract's finite verification scope; do not run or expand the
+cumulative script to establish those receipts. Historical recipe counts and
+acceptance records remain intact, including the Stage75 exclusion of L011
+at that earlier acceptance point.
+
+The permanent own-L011 gate checks current own sources and all 54 generated
+selections, exact-two capability and generic absence. The one-time external
+comparison passed: exactly two L011 chip JSONs and their shared generated
+metadata body changed among 905 files; the other 902 remained unchanged, with
+no additions or deletions. Removing only the two new LSI objects restored full
+54-chip equality, preserving register, Pin, RTC/LSE and memory facts. No
+historical baseline becomes a production-checker input. Actual statuses,
+warnings, source identities, fresh artifacts and ELF memory bounds are retained
+separately; no HAL tests, probes, models, hosted CI or hardware execution
+supplied this finite verification.
+
 ## Exact F030/A030 owned MCO local verification
 
 The current `./d check-mco` local recipe matches the bounded Stage77 main matrix:

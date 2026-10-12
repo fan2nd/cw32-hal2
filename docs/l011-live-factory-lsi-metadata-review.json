@@ -1,0 +1,912 @@
+{
+  "schema_version": 1,
+  "status": "accepted_frozen_main_metadata_implementation",
+  "review_date": "2026-10-12",
+  "scope": "Independent read-only review of own-CW32L011 live factory-LSI policy, data generation, build projection, permanent source/data checker, generated metadata and the specified terminal main-build evidence. Separate runtime-sequence and final clean-verification acceptance are required.",
+  "qualified_parts": [
+    "CW32L011K8T6",
+    "CW32L011K8U6"
+  ],
+  "generic_CW32L011_excluded": true,
+  "blocking_findings": [],
+  "approved_design_binding": {
+    "external_artifact_labels": {
+      "stage78.metadata-design": "9156b398ccb6a8bffb767bdac9dd2c5c92fff2c06f4987ce8a4ddea6c34aba06",
+      "stage78.metadata-contract": "6a088244c84daf568a47478466fb9b202e48ec8c6ddfcbc1a98fac1a7ae44cb0"
+    }
+  },
+  "reviewed_project_files_sha256": {
+    "cw32-data/lsi-sysclk-qualified.yaml": "6bed6966d98f2dec18f81d96ab4273a969973f0ecbc207cfd7c56a0cae59b49b",
+    "cw32-data/electrical.yaml": "079dcc0e873244e1d573c2f5e51e742d147e7df8778ef55556ace9390b5376bc",
+    "cw32-data-gen/src/lsi.rs": "c91897929b0bb636819e6be89de2dcbc90208bb163cae110b565dca3d704ed38",
+    "embassy-cw32/build.rs": "e030273a01578dfbd7f7c0e111b13eb1ecc0059a5671643423e9a5d3c4d0b6f1",
+    "ci/verify-l010-lse-data.py": "cbe368f0687bed2a93e84c9e15f6fefcbdeb56307a85a2c47090e65293bdad73",
+    "ci/verify-l011-lse-data.py": "eb2882d9fc6c2d2579ac137ea0bd4728b156bb988c3430082d63c6c9a1866e41",
+    "ci/verify-l012-lse-data.py": "c6fde49d466d7ef1876f96eb01d74446c98aa05416c313a16bbd89e4eb2b5754",
+    "sources/evidence-sources.json": "783636c93072ca56f6752b6908ff196c92934ba792bca5da1bdd8ec3445f84f2",
+    "docs/l011-live-factory-lsi-qualification.json": "f57d82b3990ab2db027083742bdce64758bd2189c4792edc65a89b585a66f929",
+    "cw32-data-serde/src/lib.rs": "d67b3787e3a7bc34d2f38f5eaaa7b1f007f2c801667c50636a242ff3cc3d8628",
+    "cw32-metapac-gen/src/data.rs": "fee884e43a76ed884c27bf2365e34de94b8da95fd704530c9ead23da14f58746",
+    "cw32-metapac-gen/res/src/metadata.rs": "1a7bc947aa44e8ba187b810b1af537251759e79e671f527dd12b0d0c8b1f1f6b",
+    "cw32-data/inputs/cw32l011.yaml": "c3c6350a97a69370154046c1ad06847b5ce30e0b7333967e047ccbc7c0bddf01",
+    "cw32-data/field-access.yaml": "46903429cb4f423e8c803ee12ba0c1b405b20f4d0f8427b9d069843dbecdc7bd",
+    "cw32-data/rtc-calendar.yaml": "1b1476229ccd55d0e9940f4192aed994ae562b8dd6e58f8c590c774d641f9904",
+    "cw32-data/lse-qualified.yaml": "afeb8bcbda67b96545db1d4baf4ca0763f819754cacd13823a441087c54c9dcc",
+    "docs/l011-lse-sysclk-qualification.json": "91641658261728a660e7f4b41c072c87af861c4cb53808409fb8c65da4b0a613"
+  },
+  "qualification_proof_input_state": {
+    "status": "implementation_pending_independent_review_and_terminal_acceptance",
+    "sha256": "f57d82b3990ab2db027083742bdce64758bd2189c4792edc65a89b585a66f929",
+    "note": "This receipt binds the actual pending-status proof used by terminal main-v2 builds. A later administrative status/terminal-receipt update requires a separately verified reverse projection and final clean receipt; it does not retroactively change the main-build input."
+  },
+  "own_policy": {
+    "canonical_sorted_json_sha256": "c17d37ef0a6a2c1eef021b29a969734b3dc76935df8a414c69529e7dd2ded577",
+    "complete_record": {
+      "nominal_hz": 32800,
+      "minimum_hz": 29520,
+      "maximum_hz": 41000,
+      "supply_mv": [
+        1700,
+        5500
+      ],
+      "temperature_c": [
+        -40,
+        85
+      ],
+      "factory_trim_address": 1050562,
+      "rtc_allowed_sources": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "awt_allowed_sources": [
+        0,
+        1
+      ],
+      "uart_allowed_sources": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "uarts": [
+        "UART1",
+        "UART2",
+        "UART3"
+      ],
+      "gpio_banks": [
+        "GPIOA",
+        "GPIOB",
+        "GPIOC"
+      ],
+      "gpio_filter_allowed_sources": [
+        0,
+        1,
+        2,
+        3,
+        5,
+        7
+      ],
+      "mco_allowed_sources": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "lsi_output_pin": null,
+      "lsi_output_allowed_af": [],
+      "rcc_irq": 4
+    },
+    "admission": "live_factory_reuse_only",
+    "ordinary_por_supported": false,
+    "cycle_timing_qualified": false,
+    "trim_and_lsien_writes": "forbidden",
+    "raw_factory_halfword_erased_value": 65535,
+    "raw_zero_valid": true,
+    "source_and_owner_shapes": "27 peripherals, 84 native registers, 630 fields, 22 actual enable/reset records and 21 derived masks independently matched to selected SVD inheritance and current own IR/clock inputs.",
+    "rtc_admission": {
+      "transport_rtc_allowed_sources_meaning": "Complete documented hardware encoding inventory, not unconditional retained-target admission",
+      "hardware_documented_encodings": {
+        "0": "LSE",
+        "1": "HSE",
+        "2": "LSI",
+        "3": "HSIOSC"
+      },
+      "target_refused_documented_encodings": [
+        1
+      ],
+      "target_undocumented_refused_encodings": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "source0": "Retain independent qualified LSE; no new declaration or monitor qualification",
+      "source2": "Own LSI bound41000 satisfies PSC1 <=1MHz at every divisor1..256",
+      "source3": "Actual u16(raw_PSC1)+1>=98; raw>=97, independent of START/AWTEN; original factory HSI ownership prevents startup or retrim",
+      "preserved_independent_rtc_calendar_identity": "HSIOSC/SOURCE3"
+    },
+    "independent_rtc_calendar": {
+      "calendar_divisor": 96000000,
+      "factory_trim_address": 1050560,
+      "maximum_hz": 97920000,
+      "minimum_hz": 94080000,
+      "nominal_hz": 96000000,
+      "prescaler_first": 120,
+      "prescaler_second": 400000,
+      "source": "HSIOSC",
+      "source_encoding": 3,
+      "supply_mv": [
+        1700,
+        5500
+      ],
+      "temperature_c": [
+        -40,
+        85
+      ]
+    },
+    "new_direct_LSI_pin_records": [],
+    "complete_hardware_selector_inventory_preserved": true
+  },
+  "own_sources": {
+    "manual": {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "bytes": 15199549,
+      "text_sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3",
+      "text_bytes": 1667087,
+      "provenance_status": "selected",
+      "pdf_pages_1_based": [
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55,
+        57,
+        60,
+        61,
+        62,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        85,
+        87,
+        102,
+        113,
+        122,
+        123,
+        124,
+        126,
+        127,
+        128,
+        129,
+        130,
+        139,
+        140,
+        144,
+        151,
+        152,
+        153,
+        154,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        175,
+        176,
+        177,
+        178,
+        179,
+        182,
+        183,
+        200,
+        201,
+        202,
+        234,
+        281,
+        282,
+        283,
+        312,
+        325,
+        351,
+        353,
+        375,
+        376,
+        377,
+        378,
+        379,
+        380,
+        384,
+        385,
+        386,
+        387,
+        388,
+        389,
+        390,
+        422,
+        423,
+        424,
+        425,
+        512,
+        522,
+        531,
+        532,
+        533,
+        534,
+        535,
+        536,
+        537,
+        538,
+        539,
+        540,
+        541,
+        548,
+        549,
+        550
+      ],
+      "printed_pages": [
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        56,
+        59,
+        60,
+        61,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        84,
+        86,
+        101,
+        112,
+        121,
+        122,
+        123,
+        125,
+        126,
+        127,
+        128,
+        129,
+        138,
+        139,
+        143,
+        150,
+        151,
+        152,
+        153,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        174,
+        175,
+        176,
+        177,
+        178,
+        181,
+        182,
+        199,
+        200,
+        201,
+        233,
+        280,
+        281,
+        282,
+        311,
+        324,
+        350,
+        352,
+        374,
+        375,
+        376,
+        377,
+        378,
+        379,
+        383,
+        384,
+        385,
+        386,
+        387,
+        388,
+        389,
+        421,
+        422,
+        423,
+        424,
+        511,
+        521,
+        530,
+        531,
+        532,
+        533,
+        534,
+        535,
+        536,
+        537,
+        538,
+        539,
+        540,
+        547,
+        548,
+        549
+      ]
+    },
+    "datasheet": {
+      "evidence_kind": "external-evidence",
+      "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+      "bytes": 2687011,
+      "text_sha256": "f8429daa0082c24f2d191855d6405d38cc1994c8d468827cb402bc6effc1ea6c",
+      "text_bytes": 157393,
+      "provenance_status": "selected",
+      "pdf_pages_1_based": [
+        8,
+        14,
+        28,
+        29,
+        30,
+        31,
+        32,
+        34,
+        39,
+        48,
+        50,
+        51,
+        71,
+        72
+      ],
+      "printed_pages": [
+        5,
+        11,
+        25,
+        26,
+        27,
+        28,
+        29,
+        31,
+        36,
+        45,
+        47,
+        48,
+        68,
+        69
+      ]
+    },
+    "sdk": {
+      "source_ref": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+      "bytes": 1808978,
+      "generator_svd_path": "cw32l011/IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/SVD/CW32L011.svd",
+      "generator_header_path": "cw32l011/Libraries/inc/cw32l011.h"
+    },
+    "selected_svd_sha256": "b814843fcea7ed61b11f49ba3a8c00289b98c4dfb36b051ec87671446013ca47",
+    "selected_member_hash_size_archive_chains_verified": 19,
+    "all_locked_source_pdf_text_archive_and_member_records_verified": 24,
+    "source_page_text_hashes_verified": 119,
+    "corroborating_archive_members_verified": 2,
+    "selected_chip_scope": [
+      "CW32L011"
+    ],
+    "same_filename_superseded_manual_not_used": true,
+    "member_scope": "The existing locked SVD, PDSC, CMSIS and peripheral clock/owner/timer headers supply native registers, memory, selectors and observation/control corroboration. Direct startup/example members remain corroboration inside the locked archive, not new canonical inputs or startup qualification.",
+    "unresolved_source_conflicts_preserved": [
+      {
+        "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+        "pdf_pages_1_based": [
+          54,
+          70
+        ],
+        "printed_pages": [
+          53,
+          69
+        ],
+        "other_source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+        "other_pdf_pages_1_based": [
+          51
+        ],
+        "other_printed_pages": [
+          48
+        ],
+        "conflict": "RM32.8kHz±10% calibration warning,30–36kHz range and approximate0.4% step coexist with DS factory−10/+25% and0.16% step. Preserve full factory29520..41000 rate envelope without universal electrical-legality, arbitrary-trim or strict-cycle claim."
+      },
+      {
+        "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+        "pdf_pages_1_based": [
+          68
+        ],
+        "printed_pages": [
+          67
+        ],
+        "other_source_ref": "member:cw32l011/IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/SVD/CW32L011.svd",
+        "conflict": "RM CR2 bits9:7 are RFU; selected SVD/CMSIS bit7 is RTCLPM. Preserve every nonowned low-half bit, no new meaning/access repair."
+      }
+    ]
+  },
+  "source_authority_delta": {
+    "before_sha256": "d75b41e0db84ccc1444388a2b00d3d1558e04e86292c09dc7d7386e5ce3061b9",
+    "after_sha256": "783636c93072ca56f6752b6908ff196c92934ba792bca5da1bdd8ec3445f84f2",
+    "evidence_appends": 48,
+    "records_with_appends": 24,
+    "appended_references": [
+      "cw32-data/lsi-sysclk-qualified.yaml#/families/CW32L011",
+      "docs/l011-live-factory-lsi-qualification.json"
+    ],
+    "sole_existing_scalar_change": {
+      "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "pointer": "/artifacts/22/provenance/revision_history_evidence/printed_page",
+      "before": 1,
+      "after": 69,
+      "physical_PDF_page_unchanged": 72,
+      "independent_render_inspected": true
+    },
+    "full_reverse_JSON_equal": true,
+    "full_reverse_bytes_equal": true,
+    "all_other_source_pins_URLs_sizes_licenses_provenance_member_chains_and_old_evidence_unchanged": true
+  },
+  "preservation": {
+    "old_LSI_family_canonical_sha256": {
+      "CW32F020": "7e824ddc442f578051cb6c261d42d4f01f1b1682d6ffcbfd973f9a6c714324bc",
+      "CW32F030": "ee57f5b2b000923378e61a727f1725e7f8917d96106fbee051932c5a69e4a1f5",
+      "CW32A030": "c82d136998192ebc722a73575ba5da403732172bf5a9a38f477b947ff0b117d3",
+      "CW32F002": "692cfa26c280326c91c5c80d4d22f445b6b7ec38bf057d00b137bdafef0b6042",
+      "CW32F003": "ee93578e94ea326b5f40fb08dd3901b3fd0113c6062607653cfc3214b9393420",
+      "CW32L031": "d2d9984d17b9a1af16bf7458e0fd1d0b3ee1355ccc4f4cdd52df8014ab800554",
+      "CW32R031": "15e1ece9a364b6a01c7613e757a3ed4733ac2cbc452f0fdf2ba82185adfddc91",
+      "CW32W031": "c10b12008f66457ac29665d968d6af1e5d5bc51ea9edae479add344d434e9a4d",
+      "CW32L052": "2897edc50461764711bdd5672119049f07d21cae20a24f01e75176b265ef8263",
+      "CW32L083": "883667fa2049acd273c285808a71bb6eb19bb7035807a99d75eb7eb95f7e990c",
+      "CW32L010": "25dff68088cdab41b33ecf4a7e77392b5e7d62eae825fd730a6149ab42db6609",
+      "CW32L012": "6561702cdfc98a675a761b072e83da1aa9a11427eb1e8e6305775a08185c65ea"
+    },
+    "all_old_family_objects_equal": true,
+    "electrical_only_policy_digest_changed": true,
+    "L011_family_electrical_profile_not_preseeded": true,
+    "old_generator_code_byte_equal_after_reversing_new_dispatch_and_leaf": true,
+    "three_transport_models_byte_unchanged": true,
+    "all54_core_package_peripheral_Pin_arrays_equal_including_order": true,
+    "all54_RTC_LSE_memory_topology_gate_reset_and_register_facts_unchanged": true,
+    "historical_L011_LSE_proof_byte_unchanged": true,
+    "historical_lsi_sysclk_qualification_false_preserved": true,
+    "historical_lsi_cycle_timing_qualified_false_preserved": true,
+    "historical_41000_Hz_LSE_monitor_128_256_margin1_and_fixed_HSI_div24_fallback_preserved": true,
+    "L010_and_L012_own_policy_digests_and_qualification_checks_preserved": true,
+    "L012_checker_roster_only": true,
+    "L010_checker_only_global_roster_and_exact_L011_coexistence_changed": true,
+    "old_L010_L012_build_qualifiers_and_generate_hse_byte_unchanged": true
+  },
+  "generated_projection": {
+    "actual_file_roster": 905,
+    "missing_paths": [],
+    "extra_paths": [],
+    "changed_paths": [
+      "cw32-data/data/chips/CW32L011K8T6.json",
+      "cw32-data/data/chips/CW32L011K8U6.json",
+      "cw32-metapac/src/chips/metadata_0020.rs"
+    ],
+    "changed_file_sha256": {
+      "cw32-data/data/chips/CW32L011K8T6.json": "8ae68f18054f8c374c14d1344163953c3bc51b48bf4bba216586f5336db912f2",
+      "cw32-data/data/chips/CW32L011K8U6.json": "0a03e74aeebd5b6df48f8f58296197f71708f4f231830c9d3dfb15b6ba16c54b",
+      "cw32-metapac/src/chips/metadata_0020.rs": "4f8af86a211f122e4581b7a393e0bf08fe4c1ebd05bf9f104f9a5bf28f795092"
+    },
+    "unchanged_files": 902,
+    "chip_selections": 54,
+    "unchanged_other_chip_JSON_bytes": 52,
+    "exact_two_full_objects_equal_to_baseline_after_only_new_capability_removal": true,
+    "shared_exact_metadata_body": "cw32-metapac/src/chips/metadata_0020.rs",
+    "generic_metadata_body": "cw32-metapac/src/chips/metadata_0019.rs",
+    "all_wrappers_deduplication_identity_features_interrupts_PAC_registers_and_transport_bytes_unchanged": true,
+    "PAC_body_diff_only_None_to_complete_16_field_record": true,
+    "acceptance_baseline": "One-time external comparison only; no baseline or historical generated hashes added to permanent gates."
+  },
+  "permanent_validator": {
+    "own_source_and_full_policy_binding": true,
+    "recursive_policy_mapping_and_identity_uniqueness_checks": true,
+    "current_authored_roster_54_unique_selections": true,
+    "one_SYSCTRL_clock_owner_per_selection": true,
+    "full_exact2_record_equality_and_generic_absence": true,
+    "current_Pin_RTC_gate_and_package_projection": true,
+    "native_readable_source_owner_shapes_and_four_STABLE_overlays_retained": true,
+    "no_IR_enum_field_access_or_Pin_mutation": true,
+    "source_shape_corrections": "Exact CMSIS terminal-enum token boundary, zero-padded hex encoding3, complete SVD SYSCTRL4/CLKFAULT31 pair, real enable+reset roster including partial-status records, optional serialized empty Pins and PDSC memory id attributes. These corrections preserve source facts and strict equalities."
+  },
+  "build_projection": {
+    "own_L011_qualifier_and_live_only_early_return": true,
+    "no_cold_AWT_or_UART_CR2_generation_for_L011": true,
+    "TRIM_width": 10,
+    "observer_IRQ": 4,
+    "distinct_fault_IRQ": 31,
+    "exact_part_cfg": "rcc_lsi_sysclk",
+    "generic_cfg_absent": true,
+    "generated_L011_rates_masks_and_factory_address_match_complete_record": true,
+    "RTC_SOURCE_IS_LSI": false,
+    "RTC_source_encoding": 3,
+    "RTC_source_Hz": [
+      96000000,
+      94080000,
+      97920000
+    ],
+    "warning_cleanup": "L011 LSE IR validation and derived mask remain checked; only its unused emitted LSE-parameter constant is omitted because runtime retains the complete inherited LSE word. All old-family emissions are unchanged."
+  },
+  "seven_finite_data_gates": [
+    {
+      "name": "l011-data",
+      "exit_code": 0,
+      "checker_sha256": "eb2882d9fc6c2d2579ac137ea0bd4728b156bb988c3430082d63c6c9a1866e41",
+      "log_sha256": "5e0ad86243575faa9d8dc13a5c017310ed610f5ff95feae29e203f424aa73477",
+      "external_artifact_label": "stage78.terminal-own-l011-data-check"
+    },
+    {
+      "name": "l010-data",
+      "exit_code": 0,
+      "log_sha256": "1a9485f1f8cbc4ea761fbf210bb8341e51915bc7f6bfe74b162e9726e5d69ea5",
+      "external_artifact_label": "stage78.data-gates-tail-001.l010-data"
+    },
+    {
+      "name": "l012-data",
+      "exit_code": 0,
+      "log_sha256": "8c77c61571aa3333f5041e94820e40629837a16cf2be981fe4e9409887285a72",
+      "external_artifact_label": "stage78.data-gates-tail-001.l012-data"
+    },
+    {
+      "name": "parity",
+      "exit_code": 0,
+      "log_sha256": "3b9a26bbcf3cb933471408f17c4d10327331b68241dd6868856405914e6d8abe",
+      "external_artifact_label": "stage78.data-gates-tail-001.parity"
+    },
+    {
+      "name": "provenance",
+      "exit_code": 0,
+      "log_sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f",
+      "external_artifact_label": "stage78.data-gates-tail-001.provenance"
+    },
+    {
+      "name": "validate",
+      "exit_code": 0,
+      "log_sha256": "ede75656b2001292bd260d75448fcb8d7ed6be25506b9fa23d1dcc1e6fe8e0e2",
+      "external_artifact_label": "stage78.data-gates-tail-001.validate"
+    },
+    {
+      "name": "layout",
+      "exit_code": 0,
+      "log_sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8",
+      "external_artifact_label": "stage78.data-gates-tail-001.layout"
+    }
+  ],
+  "data_gate_scope": {
+    "separate_terminal_runs": true,
+    "aggregate_audit_claimed": false,
+    "provenance_scope": "hardware",
+    "required_originals_verified": 43,
+    "source_files_verified": 551,
+    "omitted_discovery_HTML_originals": 2
+  },
+  "terminal_main_evidence": {
+    "artifact_label": "stage78.main-attempt-002",
+    "source_snapshot_sha256": "e61b6b200c4652aeeb8b98bab31d5f47a6eaa67b3a0010d8a5c0f1d7e7ecfaeb",
+    "generated_snapshot_sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98",
+    "source_files": 1334,
+    "generated_files": 905,
+    "source_and_generated_before_after_and_reviewed_current_bytes_equal": true,
+    "rlibs": 7,
+    "ELFs": 7,
+    "all_artifact_log_and_OUT_DIR_hashes_verified": true,
+    "all_ELF_vectors_and_load_segments_fit_selected_memory": true,
+    "cfgs_and_generated_constants_verified": true,
+    "toolchain": {
+      "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)\nbinary: rustc\ncommit-hash: b940084d7eb6a299eb4bfeb8e34901bc051e7ac4\ncommit-date: 2026-09-28\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.0\nLLVM version: 23.1.1",
+      "cargo": "cargo 1.99.0 (5f94df478 2026-08-27)\nrelease: 1.99.0\ncommit-hash: 5f94df4789f005f9a352888e8355ffc645b7ed0e\ncommit-date: 2026-08-27\nhost: x86_64-unknown-linux-gnu\nlibgit2: 1.9.6 (sys:0.21.0 vendored)\nlibcurl: 8.21.0-DEV (sys:0.4.90+curl-8.21.0 vendored ssl:OpenSSL/3.6.3)\nssl: OpenSSL 3.6.3 9 Jun 2026\nos: Debian 13.0.0 (trixie) [64-bit]",
+      "active": "1.99.0-x86_64-unknown-linux-gnu (overridden by environment variable RUSTUP_TOOLCHAIN)",
+      "rustc_binary_sha256": "f3834d26669b03f6855fa54bd2381443123e860167bc0c7a8dd137e5cf6e5e4f",
+      "cargo_binary_sha256": "e951141cc55a6cd7b9876d187bd30a3720e6086b99413af95e3b8de1cdd72f14"
+    },
+    "rows": [
+      {
+        "row": 1,
+        "kind": "rlib",
+        "part": "cw32l011k8t6",
+        "features": "cw32l011k8t6,rt,defmt",
+        "profile": "release",
+        "binary": null,
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "f34d38e37fe36c17385e28cdf489e2fa99a1b30de03d7135c9d9f89864ea864a",
+        "artifact_bytes": 5733120,
+        "generated_rs_sha256": "ccb767e8bbdce1a661d7187663a86803c5b8232a64011353d18aaffb2b41164e",
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "artifact_label": "stage78.main-v2.row-01"
+      },
+      {
+        "row": 2,
+        "kind": "rlib",
+        "part": "cw32l011k8u6",
+        "features": "cw32l011k8u6,rt,defmt",
+        "profile": "release",
+        "binary": null,
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "b1e522b87c3e9ee948c2ed76382c659243a761d61a653ad94946ac25e495affa",
+        "artifact_bytes": 5732710,
+        "generated_rs_sha256": "ccb767e8bbdce1a661d7187663a86803c5b8232a64011353d18aaffb2b41164e",
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "artifact_label": "stage78.main-v2.row-02"
+      },
+      {
+        "row": 3,
+        "kind": "rlib",
+        "part": "cw32l011k8t6",
+        "features": "cw32l011k8t6,rt,defmt,time-driver-gtim1",
+        "profile": "debug",
+        "binary": null,
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "b2f101b3352660cddfdfb1db1f3112ea1e869f767f6447a33808ceccc5c43110",
+        "artifact_bytes": 10001492,
+        "generated_rs_sha256": "3a4d8e08544b7019e26c8ae84a66dec8c0a3c427948026fc516f0abb7c39316d",
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "artifact_label": "stage78.main-v2.row-03"
+      },
+      {
+        "row": 4,
+        "kind": "rlib",
+        "part": "cw32l011",
+        "features": "cw32l011,rt,defmt",
+        "profile": "release",
+        "binary": null,
+        "exit_code": 0,
+        "rcc_lsi_sysclk": false,
+        "artifact_sha256": "f5434c2ecac06594627e49c4113d8fc3b2c521d84216dc13aa98588999b39898",
+        "artifact_bytes": 5485514,
+        "generated_rs_sha256": "69fa453b76c83cd67b7e0f81fdec057ef81bfcefce71aa65dca820165ba1fd86",
+        "warnings": [],
+        "artifact_label": "stage78.main-v2.row-04"
+      },
+      {
+        "row": 5,
+        "kind": "rlib",
+        "part": "cw32l010f8p6",
+        "features": "cw32l010f8p6,rt,defmt",
+        "profile": "release",
+        "binary": null,
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "076c34e050c760bced25792e46ec1d8a915714e90147f6b38a3b61067505d9ec",
+        "artifact_bytes": 5484852,
+        "generated_rs_sha256": "c2f6b7bea78c26735b6868d37b8e191c5c496b77a1288b1a9b29870404740bcb",
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "artifact_label": "stage78.main-v2.row-05"
+      },
+      {
+        "row": 6,
+        "kind": "rlib",
+        "part": "cw32l012c8t6",
+        "features": "cw32l012c8t6,rt,defmt",
+        "profile": "release",
+        "binary": null,
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "2b1ce4358e0a1a93aca7c295cfce9e3dc9059b0742012f0b34b86ad4116ee697",
+        "artifact_bytes": 7603544,
+        "generated_rs_sha256": "5c7d9066c86d9082aeced024af19e1518edeadf5c1687760fed88d85cff0a104",
+        "warnings": [],
+        "artifact_label": "stage78.main-v2.row-06"
+      },
+      {
+        "row": 7,
+        "kind": "rlib",
+        "part": "cw32f030c8t7",
+        "features": "cw32f030c8t7,rt,defmt",
+        "profile": "release",
+        "binary": null,
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "9727d99543559650e4f2067d50a0aba241a8817df384a03e92ceed5aff037365",
+        "artifact_bytes": 6827664,
+        "generated_rs_sha256": "c58746f69f4c39c8f53a50d5eebbf29d6c7b6c75e982e4e767fb324911754ecf",
+        "warnings": [],
+        "artifact_label": "stage78.main-v2.row-07"
+      },
+      {
+        "row": 8,
+        "kind": "elf",
+        "part": "cw32l011k8t6",
+        "features": "cw32l011k8t6,defmt",
+        "profile": "release",
+        "binary": "cw32-lsi-clock-example",
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "dd928c24ef141e0b1c82bcebf16e7f8acfa69f1701f01211da1d03daf167a565",
+        "artifact_bytes": 210336,
+        "generated_rs_sha256": "ccb767e8bbdce1a661d7187663a86803c5b8232a64011353d18aaffb2b41164e",
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "artifact_label": "stage78.main-v2.row-08"
+      },
+      {
+        "row": 9,
+        "kind": "elf",
+        "part": "cw32l011k8u6",
+        "features": "cw32l011k8u6,defmt",
+        "profile": "release",
+        "binary": "cw32-lsi-clock-example",
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "8ff4342b5b6b61b083d31455daa0955019506995824c89edf78f0e719f016844",
+        "artifact_bytes": 210336,
+        "generated_rs_sha256": "ccb767e8bbdce1a661d7187663a86803c5b8232a64011353d18aaffb2b41164e",
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "artifact_label": "stage78.main-v2.row-09"
+      },
+      {
+        "row": 10,
+        "kind": "elf",
+        "part": "cw32l010f8p6",
+        "features": "cw32l010f8p6,defmt",
+        "profile": "release",
+        "binary": "cw32-lsi-clock-example",
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "c66c4c4db324a84914d189faf52b0d505c059bd5bf1b77d77fe7d58623de1933",
+        "artifact_bytes": 209452,
+        "generated_rs_sha256": "c2f6b7bea78c26735b6868d37b8e191c5c496b77a1288b1a9b29870404740bcb",
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "artifact_label": "stage78.main-v2.row-10"
+      },
+      {
+        "row": 11,
+        "kind": "elf",
+        "part": "cw32l012c8t6",
+        "features": "cw32l012c8t6,defmt",
+        "profile": "release",
+        "binary": "cw32-lsi-clock-example",
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "1a44ffeab5867839379cb0c854d3197610d13da25ab336f41d2b12d9374ec787",
+        "artifact_bytes": 214840,
+        "generated_rs_sha256": "5c7d9066c86d9082aeced024af19e1518edeadf5c1687760fed88d85cff0a104",
+        "warnings": [],
+        "artifact_label": "stage78.main-v2.row-11"
+      },
+      {
+        "row": 12,
+        "kind": "elf",
+        "part": "cw32l011k8t6",
+        "features": "cw32l011k8t6",
+        "profile": "release",
+        "binary": "crystal",
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "ae72b6d85b06072ab9724e9a9b6e0ef3620c9fa158b50de633637a74f6a32b3f",
+        "artifact_bytes": 210204,
+        "generated_rs_sha256": "ccb767e8bbdce1a661d7187663a86803c5b8232a64011353d18aaffb2b41164e",
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "artifact_label": "stage78.main-v2.row-12"
+      },
+      {
+        "row": 13,
+        "kind": "elf",
+        "part": "cw32l011k8t6",
+        "features": "cw32l011k8t6",
+        "profile": "release",
+        "binary": "crystal",
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "2833c507fc028ddf27ca8f3ab33508881c5eced975f4354c796f5d7698fb01ee",
+        "artifact_bytes": 211012,
+        "generated_rs_sha256": "ccb767e8bbdce1a661d7187663a86803c5b8232a64011353d18aaffb2b41164e",
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "artifact_label": "stage78.main-v2.row-13"
+      },
+      {
+        "row": 14,
+        "kind": "elf",
+        "part": "cw32l011k8t6",
+        "features": "cw32l011k8t6",
+        "profile": "release",
+        "binary": "preserve_calendar",
+        "exit_code": 0,
+        "rcc_lsi_sysclk": true,
+        "artifact_sha256": "3d2f56a83933f3126a3b2bad5ff61a983d1cf3280e80a25cfae4546fe68dc32a",
+        "artifact_bytes": 210620,
+        "generated_rs_sha256": "ccb767e8bbdce1a661d7187663a86803c5b8232a64011353d18aaffb2b41164e",
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "artifact_label": "stage78.main-v2.row-14"
+      }
+    ],
+    "warnings": "Only the three historical unused RCC_LSE_SYSCLK detector constants remain in affected rows; no new mutable-binding or L011 LSE-mask warnings remain.",
+    "prior_main_v1_is_not_final_source_evidence": true
+  },
+  "verification_boundary": {
+    "review_executed_generation": false,
+    "review_executed_Cargo_or_HAL": false,
+    "hardware_execution": false,
+    "production_edits_by_review": false,
+    "runtime_sequence_acceptance_claimed": false,
+    "final_clean_verification_included": false,
+    "strict_duration_or_time_driver_runtime_execution_claimed": false,
+    "silicon_or_board_electrical_qualification_claimed": false
+  }
+}

@@ -14,6 +14,14 @@ bounds. Choose one exact part with `--no-default-features`:
   acquires the existing read-only `HsiOscClock` capability; it does not change
   RTC or invent a native `LsiClock`/LSI calendar variant. Each part retains
   64 KiB Flash and 4 KiB SRAM. See the [live-only contract](../../docs/l010-live-factory-lsi-sysclk.md).
+- CW32L011K8T6 or CW32L011K8U6: own live-entry reuse only, 64 KiB Flash and
+  6 KiB SRAM. The branch declares 1.7–5.5 V and −40–85°C, leaves both
+  `Config.hse=None` and `Config.lse=None`, and calls ordinary `try_init`.
+  Original HSEEN/HSECCS/LSECCS must be zero; original software-requested,
+  stable ten-bit factory LSI and HSI/LSI entry are required. Ordinary POR
+  stops in the error handler. No LSI/request/IWDT preparation occurs. Success
+  observes system/bus/HSI bounds and read-only raw 96 MHz `HsiOscClock`,
+  without changing RTC. See the [own contract](../../docs/l011-live-factory-lsi-sysclk.md).
 - CW32L012C8T6 or CW32L012C8U6: own live-entry reuse only, 64 KiB Flash and
   8 KiB SRAM. The branch declares 1.7–5.5 V and −40–85°C and leaves
   `Config.lse=None`. Ordinary POR is expected to stop in the error handler.
@@ -33,14 +41,15 @@ bounds. Choose one exact part with `--no-default-features`:
 The default feature remains CW32F030C8T7. The firmware requires no GPIO wiring,
 external oscillator, UART baud or other board peripherals. Support is init-only;
 it does not provide runtime switching or sleep/wake recovery. Generic L031,
-its other packages, generic R031/W031/L052/L083, generic L010/L012 and all L011
-are excluded from LSI SYSCLK.
+its other packages, generic R031/W031/L052/L083 and generic L010/L011/L012
+are excluded from LSI SYSCLK. The earlier Stage75 exclusion of every L011
+describes that historical scope; its contract and receipts remain unchanged.
 
 ## Board declarations and rate bounds
 
 The example declares VDD 1.65–5.5 V and ambient temperature −40–85°C on the
 three L031, three exact L052 and five exact L083 parts. Exact L010 declares
-1.62–5.5 V and exact L012 declares 1.7–5.5 V, both at −40–85°C.
+1.62–5.5 V; exact L011 and L012 declare 1.7–5.5 V, all at −40–85°C.
 R031C8U6 explicitly declares 2.2–3.6 V and −40–85°C;
 W031R8U6 declares 2.0–3.6 V and −40–85°C;
 the other existing example families retain −40–105°C. These are
@@ -55,7 +64,10 @@ The nominal LSI rate is 32,800 Hz. Factory full-range bounds are 31,160–34,440
 for F002/F020 and 31,816–33,784 Hz for F003/F030/A030 and exact
 L010/L031/R031/W031/L052/L083. Exact L012 instead uses its own
 29,520–36,080 Hz (±10%) range from DS CN V1.0 PDF58/printed55, Table7-19,
-over 1.7–5.5 V and −40–85°C. F003's bounds come from its
+over 1.7–5.5 V and −40–85°C. Exact L011 uses 29,520–41,000 Hz, the own DS
+CN V1.1 PDF51/printed48 factory −10/+25% envelope over the same PVT with
+VDDA=VDD. The RM ±10% calibration-adjustment warning remains unresolved;
+no new monitor or strict-cycle qualification follows. F003's bounds come from its
 own datasheet Rev1.9, PDF pages 32 and 38: factory ±3% over the declared full
 temperature range, independently of the other families. L031 uses its own DS
 Rev1.9, PDF pages 38 and 47, with ±3% only over −40–85°C; the 25°C-only ±1%
@@ -314,3 +326,30 @@ clean receipt (L012C8T6 and retained L010F8P6). Board qualification remains
 unverified. See the [exact matrix](../../docs/l012-live-factory-lsi-sysclk.md#finite-verification-scope).
 A successful link does not execute POR rejection or live handover. No hardware,
 watchdog survival, oscillator continuity or elapsed-time guarantee is claimed.
+
+
+## Exact L011 live-entry build scope
+
+Select exactly one of `cw32l011k8t6` or `cw32l011k8u6` using the existing
+crate and binary. This command is one of the verified main configurations:
+
+```sh
+cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
+  --target thumbv6m-none-eabi --no-default-features \
+  --features cw32l011k8u6,defmt --bin cw32-lsi-clock-example
+```
+
+Both exact linker regions are Flash 0x00000000/65,536 bytes and SRAM
+0x20000000/6,144 bytes. Do not enlarge them to hide overflow. Retained RTC
+SOURCE1 refuses after its actual configuration-gate window is restored;
+SOURCE3 needs already factory-ready raw HSI and actual PSC1 raw ≥97. The
+example neither supplies that entry nor alters RTC to obtain it. A link does
+not execute these refusals or establish watchdog survival or continuity.
+
+Final main verification passed seven actual libraries and seven linked ELFs,
+all with exit zero; generation and seven finite data gates passed separately.
+Three existing LSE-constant warning headers remain. At main acceptance clean
+had not run; completion requires a separate final-source two-library/two-ELF
+receipt using K8U6 and retained L010F8P6 libraries and their LSI ELFs. All exact
+rows and source, rate-only, board and failure limits are in the
+[public contract](../../docs/l011-live-factory-lsi-sysclk.md#finite-verification-scope).

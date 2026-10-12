@@ -3139,6 +3139,199 @@ fn l010_live_lsi_qualified(c: &cw32_metapac::metadata::PeripheralClockLimits) ->
     native && exact
 }
 
+// Own L011 admission and projection. Its three-bank GPIO layout and 41 kHz
+// endpoint are independent of L010/L012; generic L011 remains unqualified.
+fn l011_live_lsi_qualified(c: &cw32_metapac::metadata::PeripheralClockLimits) -> bool {
+    use cw32_metapac::metadata::{ir, METADATA, PeripheralLsiSysclk, PeripheralPin};
+    let owners: Vec<_> = METADATA.peripherals.iter().filter(|p| p.name == "SYSCTRL").collect();
+    assert_eq!(owners.len(), 1);
+    let sysctrl = owners[0];
+    let regs = sysctrl.registers.as_ref().unwrap();
+    let native = regs.version == "cw32l011_v1";
+    let exact = matches!(METADATA.name, "CW32L011K8T6" | "CW32L011K8U6");
+    if !(native || METADATA.line == "CW32L011" || exact) { return false; }
+    assert!(native && METADATA.line == "CW32L011");
+    assert!(exact || METADATA.name == "CW32L011");
+    assert_eq!(METADATA.peripherals.iter().filter(|p| p.clock_limits.is_some()).count(), 1);
+    assert_eq!(sysctrl.clock_limits.as_ref().unwrap(), c);
+    assert_eq!(c.lsi_sysclk.is_some(), exact, "missing or unexpected L011 live-LSI profile");
+    assert!(c.pll.is_none() && c.hex.is_none());
+    assert_eq!(sysctrl.pins, &[
+        PeripheralPin { pin: "PB7", signal: "HSE_OUT", af: None, adc_mux: None, comparator_mux: None },
+        PeripheralPin { pin: "PC13", signal: "HSE_IN", af: None, adc_mux: None, comparator_mux: None },
+        PeripheralPin { pin: "PC14", signal: "LSE_IN", af: None, adc_mux: None, comparator_mux: None },
+        PeripheralPin { pin: "PC15", signal: "LSE_OUT", af: None, adc_mux: None, comparator_mux: None },
+    ]);
+    assert_eq!(METADATA.pins.iter().map(|p| p.name).collect::<Vec<_>>(), [
+        "PA0", "PA1", "PA10", "PA11", "PA12", "PA13", "PA14", "PA15", "PA2", "PA3", "PA4", "PA5", "PA6", "PA7", "PA8", "PA9",
+        "PB0", "PB1", "PB3", "PB4", "PB5", "PB6", "PB7", "PC13", "PC14", "PC15",
+    ]);
+    let inventory = [
+        ("ADC", 0x40000000, "adc", "cw32l011_v1", "Adc"),
+        ("ATIM", 0x40001400, "atim", "cw32l010_v1", "Atim"),
+        ("BTIM1", 0x40004800, "btim", "cw32l010_v1", "Btim"),
+        ("BTIM2", 0x40004840, "btim", "cw32l010_v1", "Btim"),
+        ("BTIM3", 0x40004880, "btim", "cw32l010_v1", "Btim"),
+        ("CRC", 0x40023000, "crc", "cw32l010_v1", "Crc"),
+        ("FLASH", 0x40022000, "flash", "cw32l011_v1", "Flash"),
+        ("GPIOA", 0x48000000, "gpio", "cw32l011_v1", "Gpio"),
+        ("GPIOB", 0x48000100, "gpio", "cw32l011_v1", "Gpio"),
+        ("GPIOC", 0x48000200, "gpio", "cw32l011_v1", "Gpio"),
+        ("GTIM1", 0x40001800, "gtim", "cw32l010_v1", "Gtim"),
+        ("GTIM2", 0x40001c00, "gtim", "cw32l010_v1", "Gtim"),
+        ("I2C", 0x40005800, "i2c", "cw32l011_v1", "I2c"),
+        ("IRMOD", 0x40004080, "irmod", "cw32l011_v1", "Irmod"),
+        ("IWDT", 0x40005000, "iwdt", "v1", "Iwdt"),
+        ("LPTIM", 0x40006000, "lptim", "cw32l010_v1", "Lptim"),
+        ("LVD", 0x400000d0, "lvd", "cw32l010_v1", "Lvd"),
+        ("RAM", 0x40022400, "ram", "cw32l011_v1", "Ram"),
+        ("RTC", 0x40004400, "rtc", "cw32l011_v1", "Rtc"),
+        ("SPI", 0x40000800, "spi", "cw32l010_v1", "Spi"),
+        ("SYSCTRL", 0x40004000, "sysctrl", "cw32l011_v1", "Sysctrl"),
+        ("UART1", 0x40000c00, "uart", "cw32l010_v1", "Uart"),
+        ("UART2", 0x40001000, "uart", "cw32l010_v1", "Uart"),
+        ("UART3", 0x40002000, "uart", "cw32l010_v1", "Uart"),
+        ("VC1", 0x400000a4, "vc", "cw32l011_v1", "Vc"),
+        ("VC2", 0x400000b4, "vc", "cw32l011_v1", "Vc"),
+        ("VCDIV", 0x400000a0, "vcdiv", "cw32l010_v1", "Vcdiv"),
+    ];
+    assert_eq!(METADATA.peripherals.len(), inventory.len());
+    for (name, address, kind, version, block) in inventory {
+        let matches: Vec<_> = METADATA.peripherals.iter().filter(|p| p.name == name).collect();
+        assert_eq!(matches.len(), 1);
+        let p = matches[0];
+        let r = p.registers.as_ref().unwrap();
+        assert_eq!(p.address, address);
+        assert_eq!((r.kind, r.version, r.block), (kind, version, block));
+    }
+    // Exact readable fieldsets for every source/owner register used by this
+    // target. Access checks bind the selected PAC register IR; existing
+    // field-level STABLE overlays are separately source-checked, not repaired.
+    let control = |owner: &str, register: &str, byte_offset, access: ir::Access, expected: &[(&str, u32, u32)]| {
+        let p = METADATA.peripherals.iter().find(|p| p.name == owner).unwrap();
+        let regs = p.registers.as_ref().unwrap();
+        let blocks: Vec<_> = regs.ir.blocks.iter().filter(|b| b.name == regs.block).collect();
+        assert_eq!(blocks.len(), 1);
+        let items: Vec<_> = blocks[0].items.iter().filter(|r| r.name.eq_ignore_ascii_case(register)).collect();
+        assert_eq!(items.len(), 1);
+        assert_eq!(items[0].byte_offset, byte_offset);
+        assert!(items[0].array.is_none());
+        let ir::BlockItemInner::Register(r) = &items[0].inner else { panic!("L011 control must be a register") };
+        assert_eq!(r.bit_size, 32);
+        assert_eq!(r.access, access);
+        assert_ne!(r.access, ir::Access::Write);
+        let fieldsets: Vec<_> = regs.ir.fieldsets.iter().filter(|f| Some(f.name) == r.fieldset).collect();
+        assert_eq!(fieldsets.len(), 1);
+        let fs = fieldsets[0];
+        assert_eq!(fs.bit_size, 32);
+        assert_eq!(fs.fields.len(), expected.len());
+        for &(name, bit_offset, width) in expected {
+            let fields: Vec<_> = fs.fields.iter().filter(|f| f.name.eq_ignore_ascii_case(name)).collect();
+            assert_eq!(fields.len(), 1);
+            assert_eq!(fields[0].bit_size, width);
+            assert!(fields[0].array.is_none());
+            assert!(matches!(&fields[0].bit_offset, ir::BitOffset::Regular(p) if p.offset == bit_offset));
+        }
+    };
+    control("SYSCTRL", "CR0", 0, ir::Access::ReadWrite, &[("SYSCLK", 0, 3), ("PCLKPRS", 3, 2), ("HCLKPRS", 5, 3), ("KEY", 16, 16)]);
+    control("SYSCTRL", "CR1", 4, ir::Access::ReadWrite, &[("HSIEN", 0, 1), ("HSEEN", 1, 1), ("LSIEN", 3, 1), ("LSEEN", 4, 1), ("LSELOCK", 5, 1), ("LSECCS", 6, 1), ("HSECCS", 7, 1), ("CLKCCS", 8, 1), ("KEY", 16, 16)]);
+    control("SYSCTRL", "CR2", 8, ir::Access::ReadWrite, &[("SWDIO", 1, 1), ("LOCKUP", 2, 1), ("WAKEUPCLK", 3, 1), ("FLASHWAIT", 4, 3), ("RTCLPM", 7, 1), ("HSEBRKEN", 10, 1), ("LSEBRKEN", 11, 1), ("CLLBRKEN", 12, 1), ("DSBRKEN", 13, 1), ("LVDBRKEN", 14, 1), ("RAMBRKEN", 15, 1), ("KEY", 16, 16)]);
+    control("SYSCTRL", "IER", 12, ir::Access::ReadWrite, &[("HSIRDY", 0, 1), ("HSERDY", 1, 1), ("LSIRDY", 3, 1), ("LSERDY", 4, 1), ("LSEFAIL", 5, 1), ("HSEFAIL", 6, 1), ("LSEFAULT", 7, 1), ("HSEFAULT", 8, 1), ("KEY", 16, 16)]);
+    control("SYSCTRL", "ISR", 16, ir::Access::Read, &[("HSIRDY", 0, 1), ("HSERDY", 1, 1), ("LSIRDY", 3, 1), ("LSERDY", 4, 1), ("LSEFAIL", 5, 1), ("HSEFAIL", 6, 1), ("LSEFAULT", 7, 1), ("HSEFAULT", 8, 1), ("HSISTABLE", 11, 1), ("HSESTABLE", 12, 1), ("LSISTABLE", 14, 1), ("LSESTABLE", 15, 1)]);
+    control("SYSCTRL", "ICR", 20, ir::Access::ReadWrite, &[("HSIRDY", 0, 1), ("HSERDY", 1, 1), ("LSIRDY", 3, 1), ("LSERDY", 4, 1), ("LSEFAIL", 5, 1), ("HSEFAIL", 6, 1), ("LSEFAULT", 7, 1), ("HSEFAULT", 8, 1)]);
+    control("SYSCTRL", "HSI", 24, ir::Access::ReadWrite, &[("TRIM", 0, 11), ("DIV", 11, 4), ("STABLE", 15, 1)]);
+    control("SYSCTRL", "HSE", 28, ir::Access::ReadWrite, &[("DRIVER", 0, 4), ("WAITCYCLE", 4, 2), ("MODE", 6, 1), ("HEXENPOL", 7, 1), ("DETCNT", 8, 11), ("STABLE", 19, 1), ("PDRIVER", 20, 4), ("DIGFLT", 24, 1)]);
+    control("SYSCTRL", "LSI", 32, ir::Access::ReadWrite, &[("TRIM", 0, 10), ("WAITCYCLE", 10, 2), ("STABLE", 15, 1)]);
+    control("SYSCTRL", "LSE", 36, ir::Access::ReadWrite, &[("DRIVER", 0, 4), ("WAITCYCLE", 4, 2), ("MODE", 6, 1), ("PDRIVER", 8, 4), ("PINLOCK", 17, 1), ("STABLE", 18, 1)]);
+    control("SYSCTRL", "MCO", 112, ir::Access::ReadWrite, &[("SOURCE", 0, 4), ("DIV", 4, 3)]);
+    control("SYSCTRL", "AHBEN", 48, ir::Access::ReadWrite, &[("FLASH", 1, 1), ("CRC", 2, 1), ("GPIOA", 4, 1), ("GPIOB", 5, 1), ("GPIOC", 6, 1), ("KEY", 16, 16)]);
+    control("SYSCTRL", "APBEN1", 56, ir::Access::ReadWrite, &[("ADC", 0, 1), ("VC", 1, 1), ("SPI1", 2, 1), ("UART1", 3, 1), ("UART2", 4, 1), ("ATIM", 5, 1), ("GTIM1", 6, 1), ("GTIM2", 7, 1), ("UART3", 8, 1), ("KEY", 16, 16)]);
+    control("SYSCTRL", "APBEN2", 52, ir::Access::ReadWrite, &[("RTC", 1, 1), ("BTIM123", 2, 1), ("IWDT", 4, 1), ("I2C1", 6, 1), ("LPTIM", 7, 1), ("KEY", 16, 16)]);
+    control("SYSCTRL", "AHBRST", 64, ir::Access::ReadWrite, &[("FLASH", 1, 1), ("CRC", 2, 1), ("GPIOA", 4, 1), ("GPIOB", 5, 1), ("GPIOC", 6, 1)]);
+    control("SYSCTRL", "APBRST1", 72, ir::Access::ReadWrite, &[("ADC", 0, 1), ("VC", 1, 1), ("SPI1", 2, 1), ("UART1", 3, 1), ("UART2", 4, 1), ("ATIM", 5, 1), ("GTIM1", 6, 1), ("GTIM2", 7, 1), ("UART3", 8, 1)]);
+    control("SYSCTRL", "APBRST2", 68, ir::Access::ReadWrite, &[("RTC", 1, 1), ("BTIM123", 2, 1), ("IWDT", 4, 1), ("I2C1", 6, 1), ("LPTIM", 7, 1)]);
+    control("FLASH", "CR2", 4, ir::Access::ReadWrite, &[("WAIT", 0, 3), ("KEY", 16, 16)]);
+    control("RTC", "CR0", 4, ir::Access::ReadWrite, &[("INTERVAL", 0, 3), ("H24", 3, 1), ("RTC1HZ", 5, 2), ("START", 7, 1)]);
+    control("RTC", "CR1", 8, ir::Access::ReadWrite, &[("WAIT", 2, 1), ("SOURCE", 8, 3)]);
+    control("RTC", "CR2", 12, ir::Access::ReadWrite, &[("AWTPRS", 0, 2), ("AWTSRC", 2, 1), ("TAMPEDGE", 3, 1), ("RTCOUT", 4, 2), ("TAMPEN", 6, 1), ("AWTEN", 7, 1), ("ALARMAEN", 9, 1), ("ALARMBEN", 10, 1)]);
+    control("RTC", "IER", 48, ir::Access::ReadWrite, &[("ALARMA", 0, 1), ("ALARMB", 1, 1), ("AWTIMER", 2, 1), ("TAMP", 3, 1), ("TAMPOV", 4, 1), ("INTERVAL", 6, 1)]);
+    control("RTC", "PSC", 64, ir::Access::ReadWrite, &[("PSC2", 0, 20), ("PSC1", 20, 8)]);
+    control("ADC", "CR", 0, ir::Access::ReadWrite, &[("EN", 0, 1), ("BGREN", 1, 1), ("TSEN", 2, 1), ("CONT", 3, 1), ("CLK", 4, 2), ("ENS", 6, 3)]);
+    control("VC1", "CR0", 0, ir::Access::ReadWrite, &[("EN", 0, 1), ("RESP", 1, 1), ("HYS", 2, 1), ("IE", 3, 1), ("POL", 4, 1), ("WINDOW", 5, 1), ("INP", 6, 2), ("INN", 8, 2)]);
+    control("VC1", "CR1", 4, ir::Access::ReadWrite, &[("FLTTIME", 0, 4), ("FLTCLK", 4, 1), ("FALLIE", 5, 1), ("RISEIE", 6, 1), ("HIGHIE", 7, 1), ("BLANKATCH1", 8, 1), ("BLANKATCH2", 9, 1), ("BLANKATCH3", 10, 1), ("BLANKATCH4", 11, 1), ("BLANKATCH5", 12, 1), ("BLANKATCH6", 13, 1), ("BLANKTIME", 14, 3), ("BLANKLVL", 17, 1)]);
+    control("VC2", "CR0", 0, ir::Access::ReadWrite, &[("EN", 0, 1), ("RESP", 1, 1), ("HYS", 2, 1), ("IE", 3, 1), ("POL", 4, 1), ("WINDOW", 5, 1), ("INP", 6, 2), ("INN", 8, 2)]);
+    control("VC2", "CR1", 4, ir::Access::ReadWrite, &[("FLTTIME", 0, 4), ("FLTCLK", 4, 1), ("FALLIE", 5, 1), ("RISEIE", 6, 1), ("HIGHIE", 7, 1), ("BLANKATCH1", 8, 1), ("BLANKATCH2", 9, 1), ("BLANKATCH3", 10, 1), ("BLANKATCH4", 11, 1), ("BLANKATCH5", 12, 1), ("BLANKATCH6", 13, 1), ("BLANKTIME", 14, 3), ("BLANKLVL", 17, 1)]);
+    control("LVD", "CR0", 0, ir::Access::ReadWrite, &[("EN", 0, 1), ("ACTION", 1, 1), ("SOURCE", 2, 1), ("VTH", 4, 3), ("FLTCLK", 8, 1)]);
+    control("LVD", "CR1", 4, ir::Access::ReadWrite, &[("IE", 0, 1), ("LEVEL", 1, 1), ("RISE", 2, 1), ("FALL", 3, 1), ("FLTTIME", 4, 4)]);
+    // ICR transport is RW, but own source defines R1W0 flags. Qualification
+    // does not authorize any ICR operation; runtime leaves it untouched.
+    let controls = [
+        ("ADC", "PCLK", "apben1", "apbrst1", "adc", None),
+        ("ATIM", "PCLK", "apben1", "apbrst1", "atim", None),
+        ("BTIM1", "PCLK", "apben2", "apbrst2", "btim123", Some("BTIM1-BTIM2-BTIM3")),
+        ("BTIM2", "PCLK", "apben2", "apbrst2", "btim123", Some("BTIM1-BTIM2-BTIM3")),
+        ("BTIM3", "PCLK", "apben2", "apbrst2", "btim123", Some("BTIM1-BTIM2-BTIM3")),
+        ("CRC", "HCLK", "ahben", "ahbrst", "crc", None),
+        ("FLASH", "HCLK", "ahben", "ahbrst", "flash", None),
+        ("GPIOA", "HCLK", "ahben", "ahbrst", "gpioa", None),
+        ("GPIOB", "HCLK", "ahben", "ahbrst", "gpiob", None),
+        ("GPIOC", "HCLK", "ahben", "ahbrst", "gpioc", None),
+        ("GTIM1", "PCLK", "apben1", "apbrst1", "gtim1", None),
+        ("GTIM2", "PCLK", "apben1", "apbrst1", "gtim2", None),
+        ("I2C", "PCLK", "apben2", "apbrst2", "i2c1", None),
+        ("IWDT", "PCLK", "apben2", "apbrst2", "iwdt", None),
+        ("LPTIM", "PCLK", "apben2", "apbrst2", "lptim", None),
+        ("RTC", "PCLK", "apben2", "apbrst2", "rtc", None),
+        ("SPI", "PCLK", "apben1", "apbrst1", "spi1", None),
+        ("UART1", "PCLK", "apben1", "apbrst1", "uart1", None),
+        ("UART2", "PCLK", "apben1", "apbrst1", "uart2", None),
+        ("UART3", "PCLK", "apben1", "apbrst1", "uart3", None),
+        ("VC1", "PCLK", "apben1", "apbrst1", "vc", Some("VC1-VC2")),
+        ("VC2", "PCLK", "apben1", "apbrst1", "vc", Some("VC1-VC2")),
+    ];
+    assert_eq!(METADATA.peripherals.iter().filter(|p| p.rcc_control.is_some()).count(), controls.len());
+    for (name, bus, enable, reset, field, shared) in controls {
+        let p = METADATA.peripherals.iter().find(|p| p.name == name).unwrap();
+        let r = p.rcc_control.as_ref().unwrap();
+        assert_eq!((r.controller, r.bus_clock), ("SYSCTRL", bus));
+        assert_eq!((r.enable.register, r.enable.field), (enable, field));
+        assert!(r.enable_active_value);
+        let key = r.enable_write_key.as_ref().unwrap();
+        assert_eq!((key.field.register, key.field.field, key.value), (enable, "key", 0x5a5a));
+        let reset_field = r.reset.as_ref().unwrap();
+        assert_eq!((reset_field.register, reset_field.field), (reset, field));
+        assert_eq!(r.reset_asserted_value, Some(false));
+        assert_eq!(r.shared_enable_group, shared);
+        assert_eq!(r.shared_reset_group, shared);
+    }
+    let rtc = METADATA.peripherals.iter().find(|p| p.name == "RTC").unwrap().rtc_calendar.as_ref().unwrap();
+    assert_eq!((rtc.source, rtc.source_encoding), ("HSIOSC", 3));
+    assert_eq!((rtc.nominal_hz, rtc.minimum_hz, rtc.maximum_hz), (96_000_000, 94_080_000, 97_920_000));
+    assert_eq!((rtc.prescaler_first, rtc.prescaler_second, rtc.calendar_divisor), (120, 400_000, 96_000_000));
+    assert_eq!(rtc.factory_trim_address, 0x0010_07c0);
+    assert_eq!((rtc.supply_mv, rtc.temperature_c), ((1700, 5500), (-40, 85)));
+    if !exact {
+        assert!(METADATA.memory.is_empty());
+        return false;
+    }
+    assert_eq!(METADATA.memory.len(), 1);
+    assert_eq!(METADATA.memory[0].iter().map(|m| (m.name, m.address, m.size)).collect::<Vec<_>>(), [
+        ("FLASH", 0, 65_536), ("RAM", 0x2000_0000, 6144),
+    ]);
+    assert_eq!(c.lsi_sysclk.as_ref().unwrap(), &PeripheralLsiSysclk {
+        nominal_hz: 32_800, minimum_hz: 29_520, maximum_hz: 41_000,
+        supply_mv: (1700, 5500), temperature_c: (-40, 85),
+        factory_trim_address: 0x0010_07c2,
+        rtc_allowed_sources: &[0, 1, 2, 3], awt_allowed_sources: &[0, 1],
+        uart_allowed_sources: &[0, 1, 2, 3], uarts: &["UART1", "UART2", "UART3"],
+        gpio_banks: &["GPIOA", "GPIOB", "GPIOC"],
+        gpio_filter_allowed_sources: &[0, 1, 2, 3, 5, 7],
+        mco_allowed_sources: &[0, 1, 2, 3, 4, 5, 6],
+        lsi_output_pin: None, lsi_output_allowed_af: &[], rcc_irq: 4,
+    });
+    true
+}
+
 // L012 has two native direct LSI outputs. The legacy PB11 scalar is only a
 // compatibility anchor; never derive observer cardinality from that scalar.
 fn l012_live_lsi_qualified(c: &cw32_metapac::metadata::PeripheralClockLimits) -> bool {
@@ -3215,6 +3408,7 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     use cw32_metapac::metadata::METADATA;
     use std::fmt::Write;
     let l010 = l010_live_lsi_qualified(c);
+    let l011 = l011_live_lsi_qualified(c);
     let l012 = l012_live_lsi_qualified(c);
     let Some(lsi) = &c.lsi_sysclk else { return };
     println!("cargo:rustc-cfg=rcc_lsi_sysclk");
@@ -3237,7 +3431,7 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
         .iter()
         .find(|r| r.name.eq_ignore_ascii_case("LSI"))
         .unwrap();
-    if l010 || l012 {
+    if l010 || l011 || l012 {
         assert_eq!(register.byte_offset, 32);
         assert!(register.array.is_none());
     }
@@ -3260,7 +3454,7 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     let cw32_metapac::metadata::ir::BitOffset::Regular(offset) = &stable.bit_offset else {
         panic!("LSI stability field is not scalar")
     };
-    if l010 || l012 {
+    if l010 || l011 || l012 {
         assert_eq!(offset.offset, 15);
         assert_eq!(register.bit_size, 32);
         assert_ne!(register.access, cw32_metapac::metadata::ir::Access::Write);
@@ -3291,7 +3485,7 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
     }
     let parameter_sources: &[(&str, u32, u32)] = match sysctrl.version {
         "cw32l010_v1" => &[("HSI", 24, 15), ("HSE", 28, 19)],
-        "cw32l012_v1" => &[("HSI", 24, 15), ("HSE", 28, 19), ("LSE", 36, 18)],
+        "cw32l011_v1" | "cw32l012_v1" => &[("HSI", 24, 15), ("HSE", 28, 19), ("LSE", 36, 18)],
         "cw32f002_v1" | "cw32f003_v1" => &[("HSI", 24, 15), ("HEX", 28, 19)],
         "cw32l031_v1" | "cw32l052_v1" => &[("HSI", 24, 15), ("HSE", 28, 19), ("LSE", 36, 15)],
         "cw32l083_v1" => &[("HSI", 24, 15), ("HSE", 28, 19), ("LSE", 36, 15), ("PLL", 40, 15)],
@@ -3313,7 +3507,7 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
                 panic!("source control is not a register")
             };
             assert_eq!(register.bit_size, 32);
-            if l010 || l012 { assert_ne!(register.access, cw32_metapac::metadata::ir::Access::Write); }
+            if l010 || l011 || l012 { assert_ne!(register.access, cw32_metapac::metadata::ir::Access::Write); }
             let fields = sysctrl
                 .ir
                 .fieldsets
@@ -3333,11 +3527,14 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
             };
             assert_eq!(position.offset, stable_bit);
             let parameters_mask = !1u32.checked_shl(position.offset).unwrap();
-            writeln!(
-                out,
-                "pub(crate) const RCC_LSI_{name}_PARAMETERS_MASK: u32 = {parameters_mask};"
-            )
-            .unwrap();
+            // L011 retains the whole inherited LSE word, while still validating its IR above.
+            if !l011 || name != "LSE" {
+                writeln!(
+                    out,
+                    "pub(crate) const RCC_LSI_{name}_PARAMETERS_MASK: u32 = {parameters_mask};"
+                )
+                .unwrap();
+            }
         }
     }
 
@@ -3361,13 +3558,19 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
         lsi.temperature_c
     )
     .unwrap();
-    let observer_irq = if l010 || l012 || l031 || matches!(sysctrl.version, "cw32l052_v1" | "cw32l083_v1") { "SYSCTRL" } else { "RCC" };
+    let observer_irq = if l010 || l011 || l012 || l031 || matches!(sysctrl.version, "cw32l052_v1" | "cw32l083_v1") { "SYSCTRL" } else { "RCC" };
     assert!(
         METADATA
             .interrupts
             .iter()
             .any(|i| i.name == observer_irq && i.number == u32::from(lsi.rcc_irq))
     );
+    if l011 {
+        // Own complete source/owner shapes and three-bank topology were checked
+        // above. Live reuse never reaches standalone AWT, UART.CR2 or cold
+        // consumer generation; L011 has no direct LSI_OUT pin projection.
+        return;
+    }
     if l012 {
         // The complete record, both bonded routes and actual field shapes were
         // checked before this live-only return. No cold/AWT/singular-output
@@ -5689,7 +5892,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             // This historical monitor keeps its inherited-legal 36,080 Hz bound.
         } else if l011_sysclk_qualified {
             assert_eq!(METADATA.line, "CW32L011");
-            assert!(lse.configurable_ccs && c.lsi_sysclk.is_none() && c.pll.is_none());
+            assert!(lse.configurable_ccs && l011_live_lsi_qualified(c) && c.pll.is_none());
             let native = lse
                 .native_low_power
                 .as_ref()
@@ -5732,7 +5935,8 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             assert_eq!(c.default_hsi_divisor, 24);
             writeln!(out, "const _: () = {{ assert!(crate::rcc::HsiDiv::Div24 as u8 == 14); assert!(crate::rcc::HsiDiv::Div24.divisor() == 24); assert!(crate::rcc::HsiDiv::Div32 as u8 == 0); assert!(crate::rcc::HsiDiv::Div32.divisor() == 32); }};").unwrap();
             // Native helper below binds the own selector, HSI and Flash fields.
-            // No RTC factory-LSI facts or public LSI SYSCLK are implied.
+            // This historical LSE proof grants neither the separate LSI SYSCLK
+            // capability nor an RTC LSI identity.
         } else if l012_sysclk_qualified {
             assert_eq!(METADATA.line, "CW32L012");
             assert!(lse.configurable_ccs && l012_live_lsi_qualified(c) && c.pll.is_none());
@@ -5778,7 +5982,8 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             assert_eq!(c.default_hsi_divisor, 12);
             writeln!(out, "const _: () = {{ assert!(crate::rcc::HsiDiv::Div12 as u8 == 11); assert!(crate::rcc::HsiDiv::Div12.divisor() == 12); assert!(crate::rcc::HsiDiv::Div24 as u8 == 14); assert!(crate::rcc::HsiDiv::Div24.divisor() == 24); assert!(crate::rcc::HsiDiv::Div32 as u8 == 0); assert!(crate::rcc::HsiDiv::Div32.divisor() == 32); }};").unwrap();
             // Native helper below binds the own selector, HSI and Flash fields.
-            // No RTC factory-LSI facts or public LSI SYSCLK are implied.
+            // This historical LSE proof grants neither the separate LSI SYSCLK
+            // capability nor an RTC LSI identity.
         } else if classic_sysclk_qualified {
             assert!(
                 c.lsi_sysclk.is_some(),

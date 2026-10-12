@@ -124,7 +124,7 @@ def verify_live_lsi_policy(source_root, authority):
     assert policy["schema_version"] == 1
     assert policy["source_authority"] == "sources/evidence-sources.json"
     assert sorted(policy["families"]) == [
-        "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L010", "CW32L012",
+        "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L010", "CW32L011", "CW32L012",
         "CW32L031", "CW32L052", "CW32L083", "CW32R031", "CW32W031",
     ]
     own = policy["families"]["CW32L010"]
@@ -677,8 +677,12 @@ def main():
                 clock = owner["clock_limits"]
                 config = clock.get("lse_configuration")
                 assert config == expected, (name, owner["name"])
-                if chip["line"] in {"CW32L011"}:
-                    assert clock.get("lsi_sysclk") is None, (name, owner["name"])
+                if chip["line"] == "CW32L011":
+                    # Separate own-L011 live qualification; retain this complete
+                    # record comparison and the generic-alias exclusion.
+                    expected_l011 = {'nominal_hz': 32800, 'minimum_hz': 29520, 'maximum_hz': 41000, 'supply_mv': [1700, 5500], 'temperature_c': [-40, 85], 'factory_trim_address': 1050562, 'rtc_allowed_sources': [0, 1, 2, 3], 'awt_allowed_sources': [0, 1], 'uart_allowed_sources': [0, 1, 2, 3], 'uarts': ['UART1', 'UART2', 'UART3'], 'gpio_banks': ['GPIOA', 'GPIOB', 'GPIOC'], 'gpio_filter_allowed_sources': [0, 1, 2, 3, 5, 7], 'mco_allowed_sources': [0, 1, 2, 3, 4, 5, 6], 'lsi_output_pin': None, 'lsi_output_allowed_af': [], 'rcc_irq': 4}
+                    assert name in {"CW32L011", "CW32L011K8T6", "CW32L011K8U6"}
+                    assert canonical(clock.get("lsi_sysclk")) == canonical(expected_l011 if name != "CW32L011" else None), (name, owner["name"])
                 if chip["line"] == "CW32L010":
                     assert bool(config and config.get("sysclk_detector")) == (name in PARTS)
                     # This check deliberately sits outside the exact-only

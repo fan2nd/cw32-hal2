@@ -154,13 +154,31 @@ still apply.
   windows can advance activity, including PF3 LSI_OUT. Both PB11 AF4 and PF3 AF2
   remain complete metadata routes; the scalar PB11 anchor is nonexhaustive.
   Native RTC keeps strict raw 96 MHz HSIOSC, while ADC/PWM cycle timing and the
-  fixed 1 MHz time driver refuse the rate-only system tree. Generic L012 and
-  all L011 remain excluded. Main verification passed seven actual libraries,
+  fixed 1 MHz time driver refuse the rate-only system tree. Generic L012 remains
+  excluded; its historical Stage75 L011 exclusion is not a current blanket
+  exclusion or rewritten acceptance claim. Main verification passed seven actual libraries,
   six linked ELFs and six finite source/data gates, with independent runtime
   and metadata/source acceptance. At main acceptance clean replay had not run;
   final-package completion requires a separate final-source two-library/two-ELF
   clean receipt. Board qualification remains unverified. See the
   [contract and finite matrix](l012-live-factory-lsi-sysclk.md).
+- CW32L011K8T6/K8U6 add a separate live-only factory-LSI contract, with
+  64 KiB Flash / 6 KiB SRAM and own rate-only 29,520–41,000 Hz at 1.7–5.5 V,
+  VDDA=VDD and −40–85°C. Original software LSIEN, STABLE and ten-bit factory
+  equality are required. `Config.hse=None`, `Config.lse=None`, original
+  HSEEN/HSECCS/LSECCS=0 and HSI/LSI entry exclude cold startup and monitoring.
+  No LSI/request/IWDT operation creates admission. Restored RTC inspection
+  rejects SOURCE1 and requires actual raw PSC1 ≥97 plus original factory-ready
+  HSI for SOURCE3; native RTC remains raw 96 MHz HSIOSC. The RM ±10%
+  adjustment warning remains alongside the DS −10/+25% factory envelope.
+  No new direct LSI_OUT pad or GPIO/UART/LPTIM/IWDT inspection is introduced.
+  ADC/PWM strict timing and the fixed 1 MHz time driver refuse rate-only LSI.
+  Generic L011 remains excluded. Main seven-library/seven-ELF verification
+  passed with all exits zero; generation and seven finite data gates passed
+  separately. Three existing LSE-constant warning headers remain. At main
+  acceptance clean had not run; completion requires a separate final-source
+  two-library/two-ELF receipt. See the
+  [contract and finite matrix](l011-live-factory-lsi-sysclk.md).
 - CW32F002F3P7/F3U7 qualify init-only factory-LSI SYSCLK with their own
   31,160–34,440 Hz rate bounds and 16 KiB Flash / 2 KiB SRAM. Generic F002
   remains excluded; see the [F002 contract](f002-factory-lsi-sysclk.md).

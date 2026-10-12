@@ -124,6 +124,39 @@ pub struct Config {
 /// No normal-reset boot, watchdog survival, oscillator continuity or hardware
 /// validation is claimed. See docs/l010-live-factory-lsi-sysclk.md.
 ///
+/// On CW32L011K8T6/K8U6 only (64 KiB Flash / 6 KiB SRAM), factory LSI SYSCLK
+/// requires original software LSIEN, STABLE and own ten-bit factory equality.
+/// Raw factory 0xffff is erased; zero is valid. Config.hse and Config.lse must
+/// both be None; original HSEEN/HSECCS/LSECCS must be zero, with HSI or LSI
+/// entry. Inherited unmonitored LSE remains protected. Ordinary POR, stopped
+/// startup and automatic-only requests fail; no LSI parameter/request or IWDT
+/// operation obtains admission. Own 29,520..41,000 Hz bounds at 1.7..5.5 V,
+/// VDDA=VDD and -40..85 C are rate-only. The DS -10/+25% factory envelope does
+/// not withdraw the RM +/-10% calibration-adjustment warning or qualify cycles.
+///
+/// Actual RTC/ADC/VC configuration windows check gate/reset access and restore
+/// borrowed gates before buffered semantic refusals. Gate enable/restore errors
+/// retain both diagnostics. RTC SOURCE1 refuses even with START/AWT disabled;
+/// SOURCE3 requires original factory-ready raw HSI and actual PSC1 raw >=97
+/// (divisor >=98, widening before +1). SOURCE4..7 refuse. No RTC migration or
+/// profile-divisor assumption establishes admission; native RTC stays raw
+/// 96 MHz HSIOSC. Necessary windows may advance work before refusal, and
+/// restoration cannot undo it. No HSE GPIO or dormant UART/LPTIM/GPIO/IWDT
+/// inspection is added. PB0 AF3 raw-HSI and downstream observers must permit
+/// HSI-preparation effects. These functional limits add no hidden memory-safety
+/// obligation to the existing platform entry boundary.
+///
+/// FLASH stays enabled; its actual gate/reset and preserved non-WAIT state are
+/// checked around each access, with coherent WAIT/mirror acknowledgments.
+/// Final buses and latency are established under factory HSI, covering its
+/// requested rate and full 4.08 MHz fallback without divider credit. Final LSI
+/// selection is followed only by read-only checks before clock publication.
+/// Hardware refusals occur after singleton acquisition, publish no RCC clocks,
+/// may leave partial state and require reset before retry even without a clock
+/// write. Pure configuration/time-driver errors precede acquisition and MMIO.
+/// No continuity, watchdog survival, recovery or hardware validation is claimed.
+/// See docs/l011-live-factory-lsi-sysclk.md for scope and verification status.
+///
 /// On CW32L012C8T6/C8U6 only, factory LSI SYSCLK likewise requires original
 /// software LSIEN, STABLE and own nine-bit factory-TRIM equality. Ordinary
 /// POR, stopped startup and automatic-only requests are refused; no later

@@ -2,7 +2,7 @@ schema_version: 1
 source_authority: sources/evidence-sources.json
 scope: Init-only factory LSI SYSCLK for F020/F030/A030, F002 exact2, F003 exact3 L031 exact3 and R031 exact1. Rate-only qualification. Whole GPIO bank inspection
   can advance sampling, filters and armed events, including before failure. No runtime source switch or LSE
-  SYSCLK. Exact CW32L010F8P6/F8U6/Y8M6 additionally admit live factory reuse only; ordinary POR, generic L010 and L011 are excluded. Exact CW32L012C8T6/C8U6 additionally admit own live factory reuse only; generic L012 remains excluded.
+  SYSCLK. Exact CW32L010F8P6/F8U6/Y8M6 additionally admit live factory reuse only; ordinary POR and generic L010 are excluded. Exact CW32L012C8T6/C8U6 additionally admit own live factory reuse only; generic L012 remains excluded. Exact CW32L011K8T6/K8U6 additionally admit own live factory reuse only with HSE and both detectors off; ordinary POR and generic L011 remain excluded.
 families:
   CW32F020:
     lsi_sysclk:
@@ -42444,3 +42444,6439 @@ families:
     - PINLOCK fault behavior remains unresolved; never clear or adopt raw PINLOCK.
     - LSI approximate0.4% and30-36kHz prose does not replace DS0.16% steps or its factory +/-10% envelope.
     - Stray SDK PLL parameter comment conflicts with the own four-source selector set; no PLL is qualified.
+  CW32L011:
+    exact_parts:
+    - name: CW32L011K8T6
+      package: LQFP32
+    - name: CW32L011K8U6
+      package: QFN32
+    sysctrl_version: cw32l011_v1
+    lsi_sysclk:
+      nominal_hz: 32800
+      minimum_hz: 29520
+      maximum_hz: 41000
+      supply_mv:
+      - 1700
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+      factory_trim_address: 1050562
+      rtc_allowed_sources:
+      - 0
+      - 1
+      - 2
+      - 3
+      awt_allowed_sources:
+      - 0
+      - 1
+      uart_allowed_sources:
+      - 0
+      - 1
+      - 2
+      - 3
+      uarts:
+      - UART1
+      - UART2
+      - UART3
+      gpio_banks:
+      - GPIOA
+      - GPIOB
+      - GPIOC
+      gpio_filter_allowed_sources:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 5
+      - 7
+      mco_allowed_sources:
+      - 0
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      lsi_output_pin: null
+      lsi_output_allowed_af: []
+      rcc_irq: 4
+    admission: live_factory_reuse_only
+    watchdog_source: lsi
+    trim_write: forbidden
+    lsien_write: forbidden
+    waitcycle_preserved: true
+    all_nonstable_lsi_bits_preserved: true
+    factory_read_width_bits: 16
+    factory_erased_raw_halfword: 65535
+    factory_zero_is_erased: false
+    software_lsien_required: true
+    entry_stable_required: true
+    factory_trim_match_required: true
+    ordinary_por_supported: false
+    cycle_timing_qualified: false
+    config_hse_on_lsi_target: refuse_some
+    config_lse_on_lsi_target: refuse_some
+    original_hseen_required: false
+    original_hseccs_required: false
+    original_lseccs_required: false
+    entry_sysclk_encodings:
+    - 0
+    - 3
+    gpio_inspection: whole_bank_functional_handover
+    inspection_scope: existing_owner_windows_only
+    selector_inventory_semantics: documented_encodings_preserved_by_live_reuse
+    awt_register: RTC.CR2.AWTSRC
+    retained_hseen_required: false
+    retained_hseccs_required: false
+    retained_lseccs_required: false
+    vdda_equals_vdd: true
+    sources:
+    - evidence_kind: external-evidence
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      sha256: b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f
+      bytes: 15199549
+      text_sha256: 769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3
+      text_bytes: 1667087
+      provenance_status: selected
+      pdf_pages_1_based:
+      - 49
+      - 50
+      - 51
+      - 52
+      - 53
+      - 54
+      - 55
+      - 57
+      - 60
+      - 61
+      - 62
+      - 65
+      - 66
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 85
+      - 87
+      - 102
+      - 113
+      - 122
+      - 123
+      - 124
+      - 126
+      - 127
+      - 128
+      - 129
+      - 130
+      - 139
+      - 140
+      - 144
+      - 151
+      - 152
+      - 153
+      - 154
+      - 165
+      - 166
+      - 167
+      - 168
+      - 169
+      - 170
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 182
+      - 183
+      - 200
+      - 201
+      - 202
+      - 234
+      - 281
+      - 282
+      - 283
+      - 312
+      - 325
+      - 351
+      - 353
+      - 375
+      - 376
+      - 377
+      - 378
+      - 379
+      - 380
+      - 384
+      - 385
+      - 386
+      - 387
+      - 388
+      - 389
+      - 390
+      - 422
+      - 423
+      - 424
+      - 425
+      - 512
+      - 522
+      - 531
+      - 532
+      - 533
+      - 534
+      - 535
+      - 536
+      - 537
+      - 538
+      - 539
+      - 540
+      - 541
+      - 548
+      - 549
+      - 550
+      printed_pages:
+      - 48
+      - 49
+      - 50
+      - 51
+      - 52
+      - 53
+      - 54
+      - 56
+      - 59
+      - 60
+      - 61
+      - 64
+      - 65
+      - 66
+      - 67
+      - 68
+      - 69
+      - 70
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 84
+      - 86
+      - 101
+      - 112
+      - 121
+      - 122
+      - 123
+      - 125
+      - 126
+      - 127
+      - 128
+      - 129
+      - 138
+      - 139
+      - 143
+      - 150
+      - 151
+      - 152
+      - 153
+      - 164
+      - 165
+      - 166
+      - 167
+      - 168
+      - 169
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 181
+      - 182
+      - 199
+      - 200
+      - 201
+      - 233
+      - 280
+      - 281
+      - 282
+      - 311
+      - 324
+      - 350
+      - 352
+      - 374
+      - 375
+      - 376
+      - 377
+      - 378
+      - 379
+      - 383
+      - 384
+      - 385
+      - 386
+      - 387
+      - 388
+      - 389
+      - 421
+      - 422
+      - 423
+      - 424
+      - 511
+      - 521
+      - 530
+      - 531
+      - 532
+      - 533
+      - 534
+      - 535
+      - 536
+      - 537
+      - 538
+      - 539
+      - 540
+      - 547
+      - 548
+      - 549
+    - evidence_kind: external-evidence
+      source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+      sha256: 0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5
+      bytes: 2687011
+      text_sha256: f8429daa0082c24f2d191855d6405d38cc1994c8d468827cb402bc6effc1ea6c
+      text_bytes: 157393
+      provenance_status: selected
+      pdf_pages_1_based:
+      - 8
+      - 14
+      - 28
+      - 29
+      - 30
+      - 31
+      - 32
+      - 34
+      - 39
+      - 48
+      - 50
+      - 51
+      - 71
+      - 72
+      printed_pages:
+      - 5
+      - 11
+      - 25
+      - 26
+      - 27
+      - 28
+      - 29
+      - 31
+      - 36
+      - 45
+      - 47
+      - 48
+      - 68
+      - 69
+    sdk_source:
+      source_ref: vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip
+      sha256: 76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e
+      bytes: 1808978
+      generator_svd_path: cw32l011/IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/SVD/CW32L011.svd
+      generator_header_path: cw32l011/Libraries/inc/cw32l011.h
+    sdk_members:
+    - source_ref: member:cw32l011/IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/SVD/CW32L011.svd
+      sha256: b814843fcea7ed61b11f49ba3a8c00289b98c4dfb36b051ec87671446013ca47
+      bytes: 354399
+      member_chain:
+      - IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1.pack
+      - SVD/CW32L011.svd
+    - source_ref: member:cw32l011/IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/WHXY.CW32L011_DFP.pdsc
+      sha256: 90dbabd9c1f2870c9db4f2b814808b2b822293548b5858ed2c65ad0b72b7d23f
+      bytes: 2517
+      member_chain:
+      - IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1.pack
+      - WHXY.CW32L011_DFP.pdsc
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011.h
+      sha256: 2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8
+      bytes: 594153
+      member_chain:
+      - Libraries/inc/cw32l011.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_adc.h
+      sha256: a3a7006c78013ccd308d696d1dbdd839344e589a2038e23374c801ea42decfe5
+      bytes: 20018
+      member_chain:
+      - Libraries/inc/cw32l011_adc.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_atim.h
+      sha256: 14068420df29484a8e5078cb1305ad73672b18c325909b7d3cd15389aa89169a
+      bytes: 27877
+      member_chain:
+      - Libraries/inc/cw32l011_atim.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_btim.h
+      sha256: 028bb59c2cee0752aa456a9eded30d72328ef45e2b0ac0479d3d20339abbad01
+      bytes: 24113
+      member_chain:
+      - Libraries/inc/cw32l011_btim.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_flash.h
+      sha256: 53236c96dda689b460c34b58a142d40dff7a084cf2c2a541c33cb46c76ed1048
+      bytes: 7563
+      member_chain:
+      - Libraries/inc/cw32l011_flash.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_gpio.h
+      sha256: d78a3f5f0c4c04e7f948189b70a4e7ffe18025c98cc48418676ab1fa6ec8b78b
+      bytes: 52548
+      member_chain:
+      - Libraries/inc/cw32l011_gpio.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_gtim.h
+      sha256: d42933df9db61dffbabac18824126a7fd3d3b8a22f7ff65cdbb38c7dd1f76506
+      bytes: 18073
+      member_chain:
+      - Libraries/inc/cw32l011_gtim.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_i2c.h
+      sha256: 23748f1ea0a249d40ecdaa9ea1605b079a93f01d74d39ee94dd5653319177cf4
+      bytes: 6560
+      member_chain:
+      - Libraries/inc/cw32l011_i2c.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_iwdt.h
+      sha256: eff5f0e7234aad6426014989669eb17c0483b30f9a4d6e659dae5951123ef78d
+      bytes: 7343
+      member_chain:
+      - Libraries/inc/cw32l011_iwdt.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_lptim.h
+      sha256: 6c538cb62753a32046002c57a0854ea11831ed1ce69f2fcd0e77fa5e02edb927
+      bytes: 8886
+      member_chain:
+      - Libraries/inc/cw32l011_lptim.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_lvd.h
+      sha256: aff336841c2267b4763d970e2ee61e9abf0295e65a5cf0ebf3cda92a717777ee
+      bytes: 9343
+      member_chain:
+      - Libraries/inc/cw32l011_lvd.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_rtc.h
+      sha256: 6aff7c14860f4aa866fa4054ebc1a7fd1d1c008252f3bec14bc4f8c0cf33e1ec
+      bytes: 24026
+      member_chain:
+      - Libraries/inc/cw32l011_rtc.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_sysctrl.h
+      sha256: 3c9927ef4eb1126500c4528e0892ebd90bb217c2bdd64935d6e52d252c54507e
+      bytes: 47296
+      member_chain:
+      - Libraries/inc/cw32l011_sysctrl.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_uart.h
+      sha256: 9e658501b0fc851f2269b9535f8fa427b77110ed6ae585e6b36f286d2ce0a10e
+      bytes: 16734
+      member_chain:
+      - Libraries/inc/cw32l011_uart.h
+    - source_ref: member:cw32l011/Libraries/inc/cw32l011_vc.h
+      sha256: dc80bc24eace611303e49eafb1134f6df1368eb04e2e49e8c7d6c4306539f7d5
+      bytes: 17589
+      member_chain:
+      - Libraries/inc/cw32l011_vc.h
+    - source_ref: member:cw32l011/Libraries/src/cw32l011_iwdt.c
+      sha256: 8b862897c0c8ffa406b1e0045456095dd43e52fd6dabb67ffec203c23de2a94c
+      bytes: 6969
+      member_chain:
+      - Libraries/src/cw32l011_iwdt.c
+    - source_ref: member:cw32l011/Libraries/src/cw32l011_sysctrl.c
+      sha256: 7bdc0138bd94c7d0986d79b6f601954c86d04ab1d794af7484b218ba8d2cca89
+      bytes: 29407
+      member_chain:
+      - Libraries/src/cw32l011_sysctrl.c
+    peripheral_inventory:
+    - ADC
+    - ATIM
+    - BTIM1
+    - BTIM2
+    - BTIM3
+    - CRC
+    - FLASH
+    - GPIOA
+    - GPIOB
+    - GPIOC
+    - GTIM1
+    - GTIM2
+    - I2C
+    - IRMOD
+    - IWDT
+    - LPTIM
+    - LVD
+    - RAM
+    - RTC
+    - SPI
+    - SYSCTRL
+    - UART1
+    - UART2
+    - UART3
+    - VC1
+    - VC2
+    - VCDIV
+    native_peripherals:
+      ADC:
+        address: 1073741824
+        block: ADC
+        kind: adc
+        version: cw32l011_v1
+      ATIM:
+        address: 1073746944
+        block: ATIM
+        kind: atim
+        version: cw32l010_v1
+      BTIM1:
+        address: 1073760256
+        block: BTIM
+        kind: btim
+        version: cw32l010_v1
+      BTIM2:
+        address: 1073760320
+        block: BTIM
+        kind: btim
+        version: cw32l010_v1
+      BTIM3:
+        address: 1073760384
+        block: BTIM
+        kind: btim
+        version: cw32l010_v1
+      CRC:
+        address: 1073885184
+        block: CRC
+        kind: crc
+        version: cw32l010_v1
+      FLASH:
+        address: 1073881088
+        block: FLASH
+        kind: flash
+        version: cw32l011_v1
+      GPIOA:
+        address: 1207959552
+        block: GPIO
+        kind: gpio
+        version: cw32l011_v1
+      GPIOB:
+        address: 1207959808
+        block: GPIO
+        kind: gpio
+        version: cw32l011_v1
+      GPIOC:
+        address: 1207960064
+        block: GPIO
+        kind: gpio
+        version: cw32l011_v1
+      GTIM1:
+        address: 1073747968
+        block: GTIM
+        kind: gtim
+        version: cw32l010_v1
+      GTIM2:
+        address: 1073748992
+        block: GTIM
+        kind: gtim
+        version: cw32l010_v1
+      I2C:
+        address: 1073764352
+        block: I2C
+        kind: i2c
+        version: cw32l011_v1
+      IRMOD:
+        address: 1073758336
+        block: IRMOD
+        kind: irmod
+        version: cw32l011_v1
+      IWDT:
+        address: 1073762304
+        block: IWDT
+        kind: iwdt
+        version: v1
+      LPTIM:
+        address: 1073766400
+        block: LPTIM
+        kind: lptim
+        version: cw32l010_v1
+      LVD:
+        address: 1073742032
+        block: LVD
+        kind: lvd
+        version: cw32l010_v1
+      RAM:
+        address: 1073882112
+        block: RAM
+        kind: ram
+        version: cw32l011_v1
+      RTC:
+        address: 1073759232
+        block: RTC
+        kind: rtc
+        version: cw32l011_v1
+      SPI:
+        address: 1073743872
+        block: SPI
+        kind: spi
+        version: cw32l010_v1
+      SYSCTRL:
+        address: 1073758208
+        block: SYSCTRL
+        kind: sysctrl
+        version: cw32l011_v1
+      UART1:
+        address: 1073744896
+        block: UART
+        kind: uart
+        version: cw32l010_v1
+      UART2:
+        address: 1073745920
+        block: UART
+        kind: uart
+        version: cw32l010_v1
+      UART3:
+        address: 1073750016
+        block: UART
+        kind: uart
+        version: cw32l010_v1
+      VC1:
+        address: 1073741988
+        block: VC
+        kind: vc
+        version: cw32l011_v1
+      VC2:
+        address: 1073742004
+        block: VC
+        kind: vc
+        version: cw32l011_v1
+      VCDIV:
+        address: 1073741984
+        block: VCDIV
+        kind: vcdiv
+        version: cw32l010_v1
+    native_controls_source_ref: member:cw32l011/IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/SVD/CW32L011.svd
+    native_controls:
+    - peripheral: ADC
+      register: CR
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR
+      fields:
+      - field: EN
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BGREN
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TSEN
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: CONT
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: CLK
+        bit_offset: 4
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ENS
+        bit_offset: 6
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: ADC
+      register: START
+      byte_offset: 8
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: START
+      fields:
+      - field: START
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: ADC
+      register: TRIGGER
+      byte_offset: 24
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: TRIGGER
+      fields:
+      - field: ATIMTRGO
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ATIMTRGO2
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ATIMCC1
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ATIMCC2
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ATIMCC3
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ATIMCC4
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ATIMCC5
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ATIMCC6
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM1TRGO
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM1CC1
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM1CC2
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM1CC3
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM1CC4
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BTIM1TRGO
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BTIM2TRGO
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BTIM3TRGO
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SPI1
+        bit_offset: 16
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: UART1
+        bit_offset: 17
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: UART2
+        bit_offset: 18
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: UART3
+        bit_offset: 19
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM2TRGO
+        bit_offset: 20
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM2CC1
+        bit_offset: 21
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM2CC2
+        bit_offset: 22
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM2CC3
+        bit_offset: 23
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM2CC4
+        bit_offset: 24
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: ATIM
+      register: CR2
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR2
+      fields:
+      - field: CCPC
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: CCUS
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI1S
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS1
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS1N
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS2
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS2N
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS3
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS3N
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS4
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS4N
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS5
+        bit_offset: 16
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS5N
+        bit_offset: 17
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS6
+        bit_offset: 18
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OIS6N
+        bit_offset: 19
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MMS2
+        bit_offset: 20
+        bit_size: 5
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MMSH
+        bit_offset: 25
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: ATIM
+      register: SMCR
+      byte_offset: 8
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: SMCR
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OCCS
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TS
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MSM
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ETF
+        bit_offset: 8
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ETPS
+        bit_offset: 12
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ECE
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ETP
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SMSH
+        bit_offset: 16
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TSH
+        bit_offset: 20
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SMSPE
+        bit_offset: 24
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SMSPS
+        bit_offset: 25
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: ATIM
+      register: TISEL1
+      byte_offset: 92
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: TISEL1
+      fields:
+      - field: TI1SEL
+        bit_offset: 0
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI2SEL
+        bit_offset: 8
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI3SEL
+        bit_offset: 16
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI4SEL
+        bit_offset: 24
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: ATIM
+      register: AF1
+      byte_offset: 96
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AF1
+      fields:
+      - field: BKINE
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BKVC1E
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BKVC2E
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BKINP
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BKVC1P
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BKVC2P
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ETRSEL
+        bit_offset: 14
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: ATIM
+      register: AF2
+      byte_offset: 100
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AF2
+      fields:
+      - field: BK2INE
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BK2VC1E
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BK2VC2E
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BK2INP
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BK2VC1P
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BK2VC2P
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OCRSEL
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: ATIM
+      register: TISEL2
+      byte_offset: 108
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: TISEL2
+      fields:
+      - field: TI5SEL
+        bit_offset: 0
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI6SEL
+        bit_offset: 8
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: BTIM1
+      register: CR2
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR2
+      fields:
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: BTIM1
+      register: SMCR
+      byte_offset: 8
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: SMCR
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RSTISRC
+        bit_offset: 3
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRGISRC
+        bit_offset: 7
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MSM
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRGIFLT
+        bit_offset: 12
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RSTIPOL
+        bit_offset: 16
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRGIPOL
+        bit_offset: 17
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: BTIM2
+      register: CR2
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR2
+      fields:
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: BTIM2
+      register: SMCR
+      byte_offset: 8
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: SMCR
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RSTISRC
+        bit_offset: 3
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRGISRC
+        bit_offset: 7
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MSM
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRGIFLT
+        bit_offset: 12
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RSTIPOL
+        bit_offset: 16
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRGIPOL
+        bit_offset: 17
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: BTIM3
+      register: CR2
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR2
+      fields:
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: BTIM3
+      register: SMCR
+      byte_offset: 8
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: SMCR
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RSTISRC
+        bit_offset: 3
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRGISRC
+        bit_offset: 7
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MSM
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRGIFLT
+        bit_offset: 12
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RSTIPOL
+        bit_offset: 16
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRGIPOL
+        bit_offset: 17
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: FLASH
+      register: CR2
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR2
+      fields:
+      - field: WAIT
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        array: null
+        enum: null
+        source_access: write-only
+    - peripheral: GPIOA
+      register: DIR
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: DIR
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN9
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN10
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN11
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN12
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN13
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN14
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN15
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOA
+      register: AFRH
+      byte_offset: 20
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AFRH
+      fields:
+      - field: AFR8
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR9
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR10
+        bit_offset: 8
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR11
+        bit_offset: 12
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR12
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR13
+        bit_offset: 20
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR14
+        bit_offset: 24
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR15
+        bit_offset: 28
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOA
+      register: AFRL
+      byte_offset: 24
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AFRL
+      fields:
+      - field: AFR0
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR1
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR2
+        bit_offset: 8
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR3
+        bit_offset: 12
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR4
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR5
+        bit_offset: 20
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR6
+        bit_offset: 24
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR7
+        bit_offset: 28
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOA
+      register: ANALOG
+      byte_offset: 28
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: ANALOG
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN9
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN10
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN11
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN12
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN13
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN14
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN15
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOA
+      register: FILTER
+      byte_offset: 64
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: FILTER
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN9
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN10
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN11
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN12
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN13
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN14
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN15
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOB
+      register: DIR
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: DIR
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN9
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN10
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN11
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN12
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN13
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN14
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN15
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOB
+      register: AFRH
+      byte_offset: 20
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AFRH
+      fields:
+      - field: AFR8
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR9
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR10
+        bit_offset: 8
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR11
+        bit_offset: 12
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR12
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR13
+        bit_offset: 20
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR14
+        bit_offset: 24
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR15
+        bit_offset: 28
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOB
+      register: AFRL
+      byte_offset: 24
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AFRL
+      fields:
+      - field: AFR0
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR1
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR2
+        bit_offset: 8
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR3
+        bit_offset: 12
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR4
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR5
+        bit_offset: 20
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR6
+        bit_offset: 24
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR7
+        bit_offset: 28
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOB
+      register: ANALOG
+      byte_offset: 28
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: ANALOG
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN9
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN10
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN11
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN12
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN13
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN14
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN15
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOB
+      register: FILTER
+      byte_offset: 64
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: FILTER
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN9
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN10
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN11
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN12
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN13
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN14
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN15
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOC
+      register: DIR
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: DIR
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN9
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN10
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN11
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN12
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN13
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN14
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN15
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOC
+      register: AFRH
+      byte_offset: 20
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AFRH
+      fields:
+      - field: AFR8
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR9
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR10
+        bit_offset: 8
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR11
+        bit_offset: 12
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR12
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR13
+        bit_offset: 20
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR14
+        bit_offset: 24
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR15
+        bit_offset: 28
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOC
+      register: AFRL
+      byte_offset: 24
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AFRL
+      fields:
+      - field: AFR0
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR1
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR2
+        bit_offset: 8
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR3
+        bit_offset: 12
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR4
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR5
+        bit_offset: 20
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR6
+        bit_offset: 24
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AFR7
+        bit_offset: 28
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOC
+      register: ANALOG
+      byte_offset: 28
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: ANALOG
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN9
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN10
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN11
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN12
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN13
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN14
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN15
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GPIOC
+      register: FILTER
+      byte_offset: 64
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: FILTER
+      fields:
+      - field: PIN0
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN1
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN2
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN3
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN4
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN5
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN6
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN7
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN8
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN9
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN10
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN11
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN12
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN13
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN14
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PIN15
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GTIM1
+      register: CR2
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR2
+      fields:
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI1S
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MMSH
+        bit_offset: 25
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GTIM1
+      register: SMCR
+      byte_offset: 8
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: SMCR
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OCCS
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TS
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MSM
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ETF
+        bit_offset: 8
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ETPS
+        bit_offset: 12
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ECE
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ETP
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SMSH
+        bit_offset: 16
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TSH
+        bit_offset: 20
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SMSPE
+        bit_offset: 24
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SMSPS
+        bit_offset: 25
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GTIM1
+      register: TISEL
+      byte_offset: 92
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: TISEL
+      fields:
+      - field: TI1SEL
+        bit_offset: 0
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI2SEL
+        bit_offset: 8
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI3SEL
+        bit_offset: 16
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI4SEL
+        bit_offset: 24
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GTIM1
+      register: AF1
+      byte_offset: 96
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AF1
+      fields:
+      - field: ETRSEL
+        bit_offset: 14
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GTIM1
+      register: AF2
+      byte_offset: 100
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AF2
+      fields:
+      - field: OCRSEL
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GTIM2
+      register: CR2
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR2
+      fields:
+      - field: MMS
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI1S
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MMSH
+        bit_offset: 25
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GTIM2
+      register: SMCR
+      byte_offset: 8
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: SMCR
+      fields:
+      - field: SMS
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OCCS
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TS
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MSM
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ETF
+        bit_offset: 8
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ETPS
+        bit_offset: 12
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ECE
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ETP
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SMSH
+        bit_offset: 16
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TSH
+        bit_offset: 20
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SMSPE
+        bit_offset: 24
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SMSPS
+        bit_offset: 25
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GTIM2
+      register: TISEL
+      byte_offset: 92
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: TISEL
+      fields:
+      - field: TI1SEL
+        bit_offset: 0
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI2SEL
+        bit_offset: 8
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI3SEL
+        bit_offset: 16
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TI4SEL
+        bit_offset: 24
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GTIM2
+      register: AF1
+      byte_offset: 96
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AF1
+      fields:
+      - field: ETRSEL
+        bit_offset: 14
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: GTIM2
+      register: AF2
+      byte_offset: 100
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AF2
+      fields:
+      - field: OCRSEL
+        bit_offset: 16
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: IWDT
+      register: KR
+      byte_offset: 0
+      access: Write
+      bit_size: 32
+      array: null
+      fieldset: KR
+      fields:
+      - field: KR
+        bit_offset: 0
+        bit_size: 16
+        array: null
+        enum: null
+        source_access: write-only
+    - peripheral: IWDT
+      register: CR
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR
+      fields:
+      - field: PRS
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ACTION
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: IE
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PAUSE
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: IWDT
+      register: ARR
+      byte_offset: 8
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: ARR
+      fields:
+      - field: ARR
+        bit_offset: 0
+        bit_size: 12
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: IWDT
+      register: SR
+      byte_offset: 12
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: SR
+      fields:
+      - field: CRF
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: ARRF
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: WINRF
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: OV
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RUN
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: RELOAD
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+    - peripheral: IWDT
+      register: WINR
+      byte_offset: 16
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: WINR
+      fields:
+      - field: WINR
+        bit_offset: 0
+        bit_size: 12
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: IWDT
+      register: CNT
+      byte_offset: 36
+      access: Read
+      bit_size: 32
+      array: null
+      fieldset: CNT
+      fields:
+      - field: CNT
+        bit_offset: 0
+        bit_size: 12
+        array: null
+        enum: null
+        source_access: read-only
+    - peripheral: LPTIM
+      register: CFGR
+      byte_offset: 12
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CFGR
+      fields:
+      - field: CKSEL
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ENCMD_CKPOL
+        bit_offset: 1
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: CHFLT
+        bit_offset: 3
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRIGFLT
+        bit_offset: 6
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PRS
+        bit_offset: 9
+        bit_size: 3
+        array: null
+        enum: Prescaler
+        source_access: read-write
+      - field: TRIGSEL
+        bit_offset: 13
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TRIGEN
+        bit_offset: 17
+        bit_size: 2
+        array: null
+        enum: Trigger
+        source_access: read-write
+      - field: TIMOUT
+        bit_offset: 19
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: WAVE
+        bit_offset: 20
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: WAVPOL
+        bit_offset: 21
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PRELOAD
+        bit_offset: 22
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: COUNTMD
+        bit_offset: 23
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ENC
+        bit_offset: 24
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ICLKSRC
+        bit_offset: 25
+        bit_size: 2
+        array: null
+        enum: Source
+        source_access: read-write
+    - peripheral: LPTIM
+      register: CR
+      byte_offset: 16
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR
+      fields:
+      - field: EN
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SNGSTART
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: CNTSTART
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SRST
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ARST
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: LVD
+      register: CR0
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR0
+      fields:
+      - field: EN
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ACTION
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SOURCE
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: VTH
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: LVD
+      register: CR1
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR1
+      fields:
+      - field: IE
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LEVEL
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RISE
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: FALL
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: FLTTIME
+        bit_offset: 4
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: RTC
+      register: CR0
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR0
+      fields:
+      - field: INTERVAL
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: H24
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RTC1HZ
+        bit_offset: 5
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: START
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: RTC
+      register: CR1
+      byte_offset: 8
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR1
+      fields:
+      - field: WAIT
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: SOURCE
+        bit_offset: 8
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: RTC
+      register: CR2
+      byte_offset: 12
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR2
+      fields:
+      - field: AWTPRS
+        bit_offset: 0
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AWTSRC
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TAMPEDGE
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RTCOUT
+        bit_offset: 4
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TAMPEN
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AWTEN
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ALARMAEN
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ALARMBEN
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: RTC
+      register: IER
+      byte_offset: 48
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: IER
+      fields:
+      - field: ALARMA
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ALARMB
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AWTIMER
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TAMP
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TAMPOV
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: INTERVAL
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: RTC
+      register: ISR
+      byte_offset: 52
+      access: Read
+      bit_size: 32
+      array: null
+      fieldset: ISR
+      fields:
+      - field: ALARMA
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: ALARMB
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: AWTIMER
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: TAMP
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: TAMPOV
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: INTERVAL
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+    - peripheral: RTC
+      register: ICR
+      byte_offset: 56
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: ICR
+      fields:
+      - field: ALARMA
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ALARMB
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: AWTIMER
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TAMP
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: TAMPOV
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: INTERVAL
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: RTC
+      register: PSC
+      byte_offset: 64
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: PSC
+      fields:
+      - field: PSC2
+        bit_offset: 0
+        bit_size: 20
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PSC1
+        bit_offset: 20
+        bit_size: 8
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: CR0
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR0
+      fields:
+      - field: SYSCLK
+        bit_offset: 0
+        bit_size: 3
+        array: null
+        enum: Sysclk
+        source_access: read-write
+      - field: PCLKPRS
+        bit_offset: 3
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HCLKPRS
+        bit_offset: 5
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        array: null
+        enum: null
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: CR1
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR1
+      fields:
+      - field: HSIEN
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HSEEN
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSIEN
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSEEN
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSELOCK
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSECCS
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HSECCS
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: CLKCCS
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        array: null
+        enum: null
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: CR2
+      byte_offset: 8
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR2
+      fields:
+      - field: SWDIO
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LOCKUP
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: WAKEUPCLK
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: FLASHWAIT
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RTCLPM
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HSEBRKEN
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSEBRKEN
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: CLLBRKEN
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: DSBRKEN
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LVDBRKEN
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RAMBRKEN
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        array: null
+        enum: null
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: IER
+      byte_offset: 12
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: IER
+      fields:
+      - field: HSIRDY
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HSERDY
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSIRDY
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSERDY
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSEFAIL
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HSEFAIL
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSEFAULT
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HSEFAULT
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        array: null
+        enum: null
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: ISR
+      byte_offset: 16
+      access: Read
+      bit_size: 32
+      array: null
+      fieldset: ISR
+      fields:
+      - field: HSIRDY
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: HSERDY
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: LSIRDY
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: LSERDY
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: LSEFAIL
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: HSEFAIL
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: LSEFAULT
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: HSEFAULT
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: HSISTABLE
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: HSESTABLE
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: LSISTABLE
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: LSESTABLE
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+    - peripheral: SYSCTRL
+      register: ICR
+      byte_offset: 20
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: ICR
+      fields:
+      - field: HSIRDY
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HSERDY
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSIRDY
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSERDY
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSEFAIL
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HSEFAIL
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LSEFAULT
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HSEFAULT
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: HSI
+      byte_offset: 24
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: HSI
+      fields:
+      - field: TRIM
+        bit_offset: 0
+        bit_size: 11
+        array: null
+        enum: null
+        source_access: read-write
+      - field: DIV
+        bit_offset: 11
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: STABLE
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+    - peripheral: SYSCTRL
+      register: HSE
+      byte_offset: 28
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: HSE
+      fields:
+      - field: DRIVER
+        bit_offset: 0
+        bit_size: 4
+        array: null
+        enum: HseDrive
+        source_access: read-write
+      - field: WAITCYCLE
+        bit_offset: 4
+        bit_size: 2
+        array: null
+        enum: HseWait
+        source_access: read-write
+      - field: MODE
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HEXENPOL
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: DETCNT
+        bit_offset: 8
+        bit_size: 11
+        array: null
+        enum: null
+        source_access: read-write
+      - field: STABLE
+        bit_offset: 19
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+      - field: PDRIVER
+        bit_offset: 20
+        bit_size: 4
+        array: null
+        enum: HseDrive
+        source_access: read-write
+      - field: DIGFLT
+        bit_offset: 24
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: LSI
+      byte_offset: 32
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: LSI
+      fields:
+      - field: TRIM
+        bit_offset: 0
+        bit_size: 10
+        array: null
+        enum: null
+        source_access: read-write
+      - field: WAITCYCLE
+        bit_offset: 10
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: STABLE
+        bit_offset: 15
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+    - peripheral: SYSCTRL
+      register: LSE
+      byte_offset: 36
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: LSE
+      fields:
+      - field: DRIVER
+        bit_offset: 0
+        bit_size: 4
+        array: null
+        enum: LseDrive
+        source_access: read-write
+      - field: WAITCYCLE
+        bit_offset: 4
+        bit_size: 2
+        array: null
+        enum: LseWait
+        source_access: read-write
+      - field: MODE
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PDRIVER
+        bit_offset: 8
+        bit_size: 4
+        array: null
+        enum: LseDrive
+        source_access: read-write
+      - field: PINLOCK
+        bit_offset: 17
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: STABLE
+        bit_offset: 18
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-only
+    - peripheral: SYSCTRL
+      register: DEBUG
+      byte_offset: 44
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: DEBUG
+      fields:
+      - field: ATIM
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM1
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM2
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BTIM123
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LPTIM
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RTC
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: IWDT
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: AHBEN
+      byte_offset: 48
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AHBEN
+      fields:
+      - field: FLASH
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: CRC
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GPIOA
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GPIOB
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GPIOC
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        array: null
+        enum: null
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: APBEN2
+      byte_offset: 52
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: APBEN2
+      fields:
+      - field: RTC
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BTIM123
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: IWDT
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: I2C1
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LPTIM
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        array: null
+        enum: null
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: APBEN1
+      byte_offset: 56
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: APBEN1
+      fields:
+      - field: ADC
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: VC
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SPI1
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: UART1
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: UART2
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ATIM
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM1
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM2
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: UART3
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: KEY
+        bit_offset: 16
+        bit_size: 16
+        array: null
+        enum: null
+        source_access: write-only
+    - peripheral: SYSCTRL
+      register: AHBRST
+      byte_offset: 64
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: AHBRST
+      fields:
+      - field: FLASH
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: CRC
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GPIOA
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GPIOB
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GPIOC
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: APBRST2
+      byte_offset: 68
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: APBRST2
+      fields:
+      - field: RTC
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BTIM123
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: IWDT
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: I2C1
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LPTIM
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: APBRST1
+      byte_offset: 72
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: APBRST1
+      fields:
+      - field: ADC
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: VC
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SPI1
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: UART1
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: UART2
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: ATIM
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM1
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: GTIM2
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: UART3
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: RESETFLAG
+      byte_offset: 76
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: RESETFLAG
+      fields:
+      - field: POR
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LVD
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: IWDT
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RSTB
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: LOCKUP
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SYSRESETREQ
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: SYSCTRL
+      register: MCO
+      byte_offset: 112
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: MCO
+      fields:
+      - field: SOURCE
+        bit_offset: 0
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: DIV
+        bit_offset: 4
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: UART1
+      register: CR1
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR1
+      fields:
+      - field: TXEN
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RXEN
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PARITY
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: Parity
+        source_access: read-write
+      - field: PARITYEN
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: STOP
+        bit_offset: 4
+        bit_size: 2
+        array: null
+        enum: Stop
+        source_access: read-write
+      - field: CHLEN
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MSBF
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: START
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OVER
+        bit_offset: 9
+        bit_size: 2
+        array: null
+        enum: Over
+        source_access: read-write
+      - field: SIGNAL
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SOURCE
+        bit_offset: 12
+        bit_size: 2
+        array: null
+        enum: Source
+        source_access: read-write
+      - field: SYNC
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: UART2
+      register: CR1
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR1
+      fields:
+      - field: TXEN
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RXEN
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PARITY
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: Parity
+        source_access: read-write
+      - field: PARITYEN
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: STOP
+        bit_offset: 4
+        bit_size: 2
+        array: null
+        enum: Stop
+        source_access: read-write
+      - field: CHLEN
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MSBF
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: START
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OVER
+        bit_offset: 9
+        bit_size: 2
+        array: null
+        enum: Over
+        source_access: read-write
+      - field: SIGNAL
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SOURCE
+        bit_offset: 12
+        bit_size: 2
+        array: null
+        enum: Source
+        source_access: read-write
+      - field: SYNC
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: UART3
+      register: CR1
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR1
+      fields:
+      - field: TXEN
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RXEN
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: PARITY
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: Parity
+        source_access: read-write
+      - field: PARITYEN
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: STOP
+        bit_offset: 4
+        bit_size: 2
+        array: null
+        enum: Stop
+        source_access: read-write
+      - field: CHLEN
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: MSBF
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: START
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: OVER
+        bit_offset: 9
+        bit_size: 2
+        array: null
+        enum: Over
+        source_access: read-write
+      - field: SIGNAL
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: SOURCE
+        bit_offset: 12
+        bit_size: 2
+        array: null
+        enum: Source
+        source_access: read-write
+      - field: SYNC
+        bit_offset: 14
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: VC1
+      register: CR0
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR0
+      fields:
+      - field: EN
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RESP
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: ResponseSpeed
+        source_access: read-write
+      - field: HYS
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: Hysteresis
+        source_access: read-write
+      - field: IE
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: POL
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: Polarity
+        source_access: read-write
+      - field: WINDOW
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: INP
+        bit_offset: 6
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: INN
+        bit_offset: 8
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: VC1
+      register: CR1
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR1
+      fields:
+      - field: FLTTIME
+        bit_offset: 0
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: FilterClock
+        source_access: read-write
+      - field: FALLIE
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RISEIE
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HIGHIE
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH1
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH2
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH3
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH4
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH5
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH6
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKTIME
+        bit_offset: 14
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKLVL
+        bit_offset: 17
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: VC2
+      register: CR0
+      byte_offset: 0
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR0
+      fields:
+      - field: EN
+        bit_offset: 0
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RESP
+        bit_offset: 1
+        bit_size: 1
+        array: null
+        enum: ResponseSpeed
+        source_access: read-write
+      - field: HYS
+        bit_offset: 2
+        bit_size: 1
+        array: null
+        enum: Hysteresis
+        source_access: read-write
+      - field: IE
+        bit_offset: 3
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: POL
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: Polarity
+        source_access: read-write
+      - field: WINDOW
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: INP
+        bit_offset: 6
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+      - field: INN
+        bit_offset: 8
+        bit_size: 2
+        array: null
+        enum: null
+        source_access: read-write
+    - peripheral: VC2
+      register: CR1
+      byte_offset: 4
+      access: ReadWrite
+      bit_size: 32
+      array: null
+      fieldset: CR1
+      fields:
+      - field: FLTTIME
+        bit_offset: 0
+        bit_size: 4
+        array: null
+        enum: null
+        source_access: read-write
+      - field: FLTCLK
+        bit_offset: 4
+        bit_size: 1
+        array: null
+        enum: FilterClock
+        source_access: read-write
+      - field: FALLIE
+        bit_offset: 5
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: RISEIE
+        bit_offset: 6
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: HIGHIE
+        bit_offset: 7
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH1
+        bit_offset: 8
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH2
+        bit_offset: 9
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH3
+        bit_offset: 10
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH4
+        bit_offset: 11
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH5
+        bit_offset: 12
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKATCH6
+        bit_offset: 13
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKTIME
+        bit_offset: 14
+        bit_size: 3
+        array: null
+        enum: null
+        source_access: read-write
+      - field: BLANKLVL
+        bit_offset: 17
+        bit_size: 1
+        array: null
+        enum: null
+        source_access: read-write
+    source_status_overlays:
+    - block: SYSCTRL
+      register: HSE
+      fieldset: HSE
+      field: STABLE
+      bit_offset: 19
+      bit_size: 1
+    - block: SYSCTRL
+      register: LSE
+      fieldset: LSE
+      field: STABLE
+      bit_offset: 18
+      bit_size: 1
+    - block: SYSCTRL
+      register: HSI
+      fieldset: HSI
+      field: STABLE
+      bit_offset: 15
+      bit_size: 1
+    - block: SYSCTRL
+      register: LSI
+      fieldset: LSI
+      field: STABLE
+      bit_offset: 15
+      bit_size: 1
+    native_enums:
+      HseDrive:
+        description: 'Own CW32L011 RM CN V1.1 section 4.7.6: pre-start and run HSE drive; only codes 0..7 documented.'
+        bit_size: 4
+        variants:
+        - name: LEVEL0
+          description: Minimum drive.
+          value: 0
+        - name: LEVEL1
+          description: Board-qualified drive code 1.
+          value: 1
+        - name: LEVEL2
+          description: Board-qualified drive code 2.
+          value: 2
+        - name: LEVEL3
+          description: Board-qualified drive code 3.
+          value: 3
+        - name: LEVEL4
+          description: Board-qualified drive code 4.
+          value: 4
+        - name: LEVEL5
+          description: Board-qualified drive code 5.
+          value: 5
+        - name: LEVEL6
+          description: Board-qualified drive code 6.
+          value: 6
+        - name: LEVEL7
+          description: Maximum drive.
+          value: 7
+      HseWait:
+        description: 'Own CW32L011 RM CN V1.1 section 4.7.6: startup stable-detection HSE cycle counts.'
+        bit_size: 2
+        variants:
+        - name: CYCLES8192
+          description: Wait 8192 HSE cycles.
+          value: 0
+        - name: CYCLES32768
+          description: Wait 32768 HSE cycles.
+          value: 1
+        - name: CYCLES131072
+          description: Wait 131072 HSE cycles.
+          value: 2
+        - name: CYCLES262144
+          description: Wait 262144 HSE cycles.
+          value: 3
+      LseDrive:
+        description: Own CW32L011 RM CN Rev1.1 PDF72/printed71.
+        bit_size: 4
+        variants:
+        - name: LEVEL0
+          description: Board-qualified LSE drive code 0.
+          value: 0
+        - name: LEVEL1
+          description: Board-qualified LSE drive code 1.
+          value: 1
+        - name: LEVEL2
+          description: Board-qualified LSE drive code 2.
+          value: 2
+        - name: LEVEL3
+          description: Board-qualified LSE drive code 3.
+          value: 3
+        - name: LEVEL4
+          description: Board-qualified LSE drive code 4.
+          value: 4
+        - name: LEVEL5
+          description: Board-qualified LSE drive code 5.
+          value: 5
+        - name: LEVEL6
+          description: Board-qualified LSE drive code 6.
+          value: 6
+        - name: LEVEL7
+          description: Board-qualified LSE drive code 7.
+          value: 7
+        - name: LEVEL8
+          description: Board-qualified LSE drive code 8.
+          value: 8
+        - name: LEVEL9
+          description: Board-qualified LSE drive code 9.
+          value: 9
+        - name: LEVEL10
+          description: Board-qualified LSE drive code 10.
+          value: 10
+        - name: LEVEL11
+          description: Board-qualified LSE drive code 11.
+          value: 11
+        - name: LEVEL12
+          description: Board-qualified LSE drive code 12.
+          value: 12
+        - name: LEVEL13
+          description: Board-qualified LSE drive code 13.
+          value: 13
+        - name: LEVEL14
+          description: Board-qualified LSE drive code 14.
+          value: 14
+        - name: LEVEL15
+          description: Board-qualified LSE drive code 15.
+          value: 15
+      LseWait:
+        description: Own CW32L011 RM CN Rev1.1 PDF72/printed71.
+        bit_size: 2
+        variants:
+        - name: CYCLES256
+          description: Wait 256 LSE cycles.
+          value: 0
+        - name: CYCLES1024
+          description: Wait 1024 LSE cycles.
+          value: 1
+        - name: CYCLES4096
+          description: Wait 4096 LSE cycles.
+          value: 2
+        - name: CYCLES16384
+          description: Wait 16384 LSE cycles.
+          value: 3
+      Sysclk:
+        description: 'Own CW32L011 RM CN V1.1 section 4.7.1: system clock; codes 2 and 5..7 reserved, no documented
+          PLL.'
+        bit_size: 3
+        variants:
+        - name: HSI
+          description: HSI system clock.
+          value: 0
+        - name: HSE
+          description: HSE system clock.
+          value: 1
+        - name: LSI
+          description: LSI system clock.
+          value: 3
+        - name: LSE
+          description: LSE system clock.
+          value: 4
+    lsi_parameter_preservation:
+      nonstable_mask: 4294934527
+      trim_mask: 1023
+      trim_bit_size: 10
+      waitcycle_mask: 3072
+      stable_mask: 32768
+      all_nonstable_bits_including_reserved: true
+      write_parameters: false
+      write_lsien: false
+      raw_factory_halfword_read_width: 16
+      erased_raw_halfword: 65535
+      zero_valid: true
+      original_admission_not_later_upgrade: true
+    derived_masks:
+      LSI_parameters: 4294934527
+      HSI_parameters: 4294934527
+      HSE_parameters: 4294443007
+      LSE_parameters: 4294705151
+      LSI_trim: 1023
+      LSI_waitcycle: 3072
+      RTC_source: 1792
+      RTC_psc1: 267386880
+      RTC_psc2: 1048575
+      RTC_start: 128
+      RTC_cr1_wait_status: 4
+      SYSCTRL_ISR_current_status: 55296
+      SYSCTRL_ISR_ready_events: 27
+      SYSCTRL_ISR_faults: 480
+      SYSCTRL_ISR_HSE_faults: 320
+      SYSCTRL_ISR_LSE_faults: 160
+      SYSCTRL_CR1_low_half_identity: 65535
+      SYSCTRL_CR1_HSEEN: 2
+      SYSCTRL_CR1_detector_guards: 192
+      SYSCTRL_CR2_non_owned_low_half: 65423
+      SYSCTRL_CR2_FLASHWAIT: 112
+    consumer_gates:
+    - peripheral: ADC
+      gate_register: APBEN1
+      gate_field: ADC
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: ADC
+      reset_byte_offset: 72
+      bit_offset: 0
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: ATIM
+      gate_register: APBEN1
+      gate_field: ATIM
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: ATIM
+      reset_byte_offset: 72
+      bit_offset: 5
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: BTIM1
+      gate_register: APBEN2
+      gate_field: BTIM123
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: BTIM123
+      reset_byte_offset: 68
+      bit_offset: 2
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: BTIM1-BTIM2-BTIM3
+      shared_reset_group: BTIM1-BTIM2-BTIM3
+    - peripheral: BTIM2
+      gate_register: APBEN2
+      gate_field: BTIM123
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: BTIM123
+      reset_byte_offset: 68
+      bit_offset: 2
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: BTIM1-BTIM2-BTIM3
+      shared_reset_group: BTIM1-BTIM2-BTIM3
+    - peripheral: BTIM3
+      gate_register: APBEN2
+      gate_field: BTIM123
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: BTIM123
+      reset_byte_offset: 68
+      bit_offset: 2
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: BTIM1-BTIM2-BTIM3
+      shared_reset_group: BTIM1-BTIM2-BTIM3
+    - peripheral: CRC
+      gate_register: AHBEN
+      gate_field: CRC
+      gate_byte_offset: 48
+      reset_register: AHBRST
+      reset_field: CRC
+      reset_byte_offset: 64
+      bit_offset: 2
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: HCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: FLASH
+      gate_register: AHBEN
+      gate_field: FLASH
+      gate_byte_offset: 48
+      reset_register: AHBRST
+      reset_field: FLASH
+      reset_byte_offset: 64
+      bit_offset: 1
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: HCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: GPIOA
+      gate_register: AHBEN
+      gate_field: GPIOA
+      gate_byte_offset: 48
+      reset_register: AHBRST
+      reset_field: GPIOA
+      reset_byte_offset: 64
+      bit_offset: 4
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: HCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: GPIOB
+      gate_register: AHBEN
+      gate_field: GPIOB
+      gate_byte_offset: 48
+      reset_register: AHBRST
+      reset_field: GPIOB
+      reset_byte_offset: 64
+      bit_offset: 5
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: HCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: GPIOC
+      gate_register: AHBEN
+      gate_field: GPIOC
+      gate_byte_offset: 48
+      reset_register: AHBRST
+      reset_field: GPIOC
+      reset_byte_offset: 64
+      bit_offset: 6
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: HCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: GTIM1
+      gate_register: APBEN1
+      gate_field: GTIM1
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: GTIM1
+      reset_byte_offset: 72
+      bit_offset: 6
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: GTIM2
+      gate_register: APBEN1
+      gate_field: GTIM2
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: GTIM2
+      reset_byte_offset: 72
+      bit_offset: 7
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: I2C
+      gate_register: APBEN2
+      gate_field: I2C1
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: I2C1
+      reset_byte_offset: 68
+      bit_offset: 6
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: IWDT
+      gate_register: APBEN2
+      gate_field: IWDT
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: IWDT
+      reset_byte_offset: 68
+      bit_offset: 4
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: LPTIM
+      gate_register: APBEN2
+      gate_field: LPTIM
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: LPTIM
+      reset_byte_offset: 68
+      bit_offset: 7
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: RTC
+      gate_register: APBEN2
+      gate_field: RTC
+      gate_byte_offset: 52
+      reset_register: APBRST2
+      reset_field: RTC
+      reset_byte_offset: 68
+      bit_offset: 1
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: SPI
+      gate_register: APBEN1
+      gate_field: SPI1
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: SPI1
+      reset_byte_offset: 72
+      bit_offset: 2
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: UART1
+      gate_register: APBEN1
+      gate_field: UART1
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: UART1
+      reset_byte_offset: 72
+      bit_offset: 3
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: UART2
+      gate_register: APBEN1
+      gate_field: UART2
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: UART2
+      reset_byte_offset: 72
+      bit_offset: 4
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: UART3
+      gate_register: APBEN1
+      gate_field: UART3
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: UART3
+      reset_byte_offset: 72
+      bit_offset: 8
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: null
+      shared_reset_group: null
+    - peripheral: VC1
+      gate_register: APBEN1
+      gate_field: VC
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: VC
+      reset_byte_offset: 72
+      bit_offset: 1
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: VC1-VC2
+      shared_reset_group: VC1-VC2
+    - peripheral: VC2
+      gate_register: APBEN1
+      gate_field: VC
+      gate_byte_offset: 56
+      reset_register: APBRST1
+      reset_field: VC
+      reset_byte_offset: 72
+      bit_offset: 1
+      enable_active_value: true
+      reset_asserted_value: false
+      key_value: 23130
+      bus_clock: PCLK
+      shared_enable_group: VC1-VC2
+      shared_reset_group: VC1-VC2
+    observer_irq:
+      name: SYSCTRL
+      number: 4
+      peripheral: SYSCTRL
+      distinct_fault_irq:
+        name: CLKFAULT
+        number: 31
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      header_source_ref: member:cw32l011/Libraries/inc/cw32l011.h
+      pdf_pages_1_based:
+      - 87
+      printed_pages:
+      - 86
+    requester_observers:
+    - id: iwdt
+      members:
+      - IWDT
+      disposition: LSI clocks the counter. Preserve automatic requests and progress; never access its gate, reset,
+        commands, feed, flags or counter to manufacture live admission. No watchdog-survival guarantee.
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 66
+      - 67
+      - 78
+      - 81
+      - 384
+      - 385
+      - 386
+      - 387
+      - 388
+      - 389
+      - 390
+      printed_pages:
+      - 65
+      - 66
+      - 77
+      - 80
+      - 383
+      - 384
+      - 385
+      - 386
+      - 387
+      - 388
+      - 389
+    - id: rtc_awt_calendar_output
+      members:
+      - RTC
+      - AWT
+      - calendar
+      - RTC_OUT
+      disposition: Documented SOURCE0/1/2/3 is complete hardware inventory. Refuse SOURCE1 and undocumented4..7 in
+        the new target even when idle. SOURCE3 requires original factory HSI and actual u16(rawPSC1)+1>=98; SOURCE2
+        upper41000 meets the ceiling at every divisor1..256. Preserve calendar/AWT/outputs/flags/prescalers; no native
+        LSI RTC capability.
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 140
+      - 151
+      - 152
+      - 153
+      - 154
+      printed_pages:
+      - 139
+      - 150
+      - 151
+      - 152
+      - 153
+    - id: uart
+      members:
+      - UART1
+      - UART2
+      - UART3
+      disposition: Preserve actual CR1.SOURCE0/1/2/3 including live LSI3, all controls and progress. Add no UART work-gate
+        scan; retention is no baud-accuracy guarantee.
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 422
+      - 423
+      printed_pages:
+      - 421
+      - 422
+    - id: lptim
+      members:
+      - LPTIM
+      disposition: Preserve ICLKSRC3 live LSI request, controls and progression. No new window or fractional-timing
+        algorithm.
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 200
+      - 201
+      - 202
+      printed_pages:
+      - 199
+      - 200
+      - 201
+    - id: ready_and_output
+      members:
+      - MCO
+      - LSIRDY
+      - SYSCTRL_IRQ4
+      - NVIC_SYSCTRL_PENDING
+      - HSIRDY
+      - PB0_HSIOSC_OUT
+      disposition: Preserve source-ready enables/events and IRQ4/NVIC, distinct from CLKFAULT31, without clearing
+        flags. MCO4 exports LSI. MCO3 and enabled HSIRDY guard HSI disturbance; PB0 AF3 is a disclosed raw-HSI functional
+        handover limitation.
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 73
+      - 74
+      - 75
+      - 76
+      - 85
+      - 87
+      - 123
+      printed_pages:
+      - 72
+      - 73
+      - 74
+      - 75
+      - 84
+      - 86
+      - 122
+    - id: gpio
+      members:
+      - GPIOA
+      - GPIOB
+      - GPIOC
+      disposition: Preserve FILTER source5 automatic LSI requests, controls and armed events. Whole-bank necessary
+        windows may advance sampling; no dormant-bank idleness scans and no direct LSI_OUT pad.
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 66
+      - 67
+      - 123
+      - 124
+      - 130
+      printed_pages:
+      - 65
+      - 66
+      - 122
+      - 123
+      - 129
+    - id: analog
+      members:
+      - VC1
+      - VC2
+      - LVD
+      - VCDIV
+      disposition: Preserve LSI filter automatic requests and analog references. Keep existing nonzero PCLK/SYSCLK
+        filters and comparator blanking vetoes. Inspect LVD through existing shared VC configuration gate; no independent
+        LVD gate exists.
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 66
+      - 67
+      - 532
+      - 533
+      - 539
+      - 540
+      - 541
+      - 548
+      - 549
+      - 550
+      printed_pages:
+      - 65
+      - 66
+      - 531
+      - 532
+      - 538
+      - 539
+      - 540
+      - 547
+      - 548
+      - 549
+    - id: clock_policy
+      members:
+      - HSECCS
+      - LSECCS
+      - clock_policy
+      - CLKFAULT_IRQ31
+      disposition: Require Config.hse/lse None, original and retained HSEEN/HSECCS/LSECCS zero, entry HSI0 or LSI3.
+        Preserve CLKCCS, inherited LSE and every nonowned policy bit. No new monitor/fallback/cycle guarantee.
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 49
+      - 52
+      - 54
+      - 55
+      - 57
+      - 62
+      - 65
+      - 66
+      - 67
+      - 68
+      - 69
+      - 70
+      - 72
+      - 73
+      - 74
+      - 75
+      - 76
+      printed_pages:
+      - 48
+      - 51
+      - 53
+      - 54
+      - 56
+      - 61
+      - 64
+      - 65
+      - 66
+      - 67
+      - 68
+      - 69
+      - 71
+      - 72
+      - 73
+      - 74
+      - 75
+    - id: downstream
+      members:
+      - GTIM1
+      - GTIM2
+      - ATIM
+      - BTIM1
+      - BTIM2
+      - BTIM3
+      - ADC
+      - IRMOD
+      - external_recipients
+      disposition: Preserve internal timer TI9 LSI observation, routes/cascades/ADC triggers and external recipients.
+        Root continuity does not establish application timing; no dormant work-gate scans. Keep ADC active-source
+        veto and strict-cycle consumer refusals.
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 165
+      - 166
+      - 167
+      - 168
+      - 169
+      - 170
+      - 175
+      - 176
+      - 177
+      - 178
+      - 179
+      - 182
+      - 234
+      - 281
+      - 282
+      - 312
+      - 375
+      - 376
+      - 377
+      - 378
+      - 379
+      - 380
+      - 512
+      - 522
+      printed_pages:
+      - 164
+      - 165
+      - 166
+      - 167
+      - 168
+      - 169
+      - 174
+      - 175
+      - 176
+      - 177
+      - 178
+      - 181
+      - 233
+      - 280
+      - 281
+      - 311
+      - 374
+      - 375
+      - 376
+      - 377
+      - 378
+      - 379
+      - 511
+      - 521
+    - id: bus_domain_consumers
+      members:
+      - CPU
+      - I2C
+      - SPI
+      - CRC
+      - RAM
+      - FLASH
+      disposition: Bus rate changes affect PCLK/HCLK clients. L011 I2C is PCLK-derived without L012 raw-HSI mux. Fixed
+        fallback budget is full4.08MHz without bus-divider credit. FLASH uses actual gate/reset and normalized WAIT
+        mirror protocol. Existing platform quiescence requirements remain; no DMA/OPA/DAC/PLL/HEX is invented.
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 49
+      - 65
+      - 68
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 82
+      - 102
+      - 113
+      printed_pages:
+      - 48
+      - 64
+      - 67
+      - 76
+      - 77
+      - 78
+      - 79
+      - 80
+      - 81
+      - 101
+      - 112
+    packages:
+      CW32L011K8T6:
+        package: LQFP32
+        memory:
+        - name: FLASH
+          kind: flash
+          address: 0
+          size: 65536
+        - name: RAM
+          kind: ram
+          address: 536870912
+          size: 6144
+        dfp_device: CW32L011K8
+        source_ids:
+        - CW32L011_datasheet
+        - CW32L011_dfp
+        pins:
+        - position: '1'
+          signals:
+          - Vcore
+        - position: '2'
+          signals:
+          - PC14
+          - OSC32_IN
+        - position: '3'
+          signals:
+          - PC15
+          - OSC32_OUT
+        - position: '4'
+          signals:
+          - NRST
+        - position: '5'
+          signals:
+          - VDDA
+        - position: '6'
+          signals:
+          - PA0
+        - position: '7'
+          signals:
+          - PA1
+        - position: '8'
+          signals:
+          - PA2
+        - position: '9'
+          signals:
+          - PA3
+        - position: '10'
+          signals:
+          - PA4
+        - position: '11'
+          signals:
+          - PA5
+        - position: '12'
+          signals:
+          - PA6
+        - position: '13'
+          signals:
+          - PA7
+        - position: '14'
+          signals:
+          - PB0
+        - position: '15'
+          signals:
+          - PB1
+        - position: '16'
+          signals:
+          - VSS
+        - position: '17'
+          signals:
+          - VDD
+        - position: '18'
+          signals:
+          - PA8
+        - position: '19'
+          signals:
+          - PA9
+        - position: '20'
+          signals:
+          - PA10
+        - position: '21'
+          signals:
+          - PA11
+        - position: '22'
+          signals:
+          - PA12
+        - position: '23'
+          signals:
+          - PA13
+          - SWDIO
+        - position: '24'
+          signals:
+          - PA14
+          - SWCLK
+        - position: '25'
+          signals:
+          - PA15
+        - position: '26'
+          signals:
+          - PB3
+        - position: '27'
+          signals:
+          - PB4
+        - position: '28'
+          signals:
+          - PB5
+        - position: '29'
+          signals:
+          - PB6
+        - position: '30'
+          signals:
+          - PB7
+          - OSC_OUT
+        - position: '31'
+          signals:
+          - PC13
+          - OSC_IN
+        - position: '32'
+          signals:
+          - VSS
+        gpio_pins:
+        - PA0
+        - PA1
+        - PA2
+        - PA3
+        - PA4
+        - PA5
+        - PA6
+        - PA7
+        - PA8
+        - PA9
+        - PA10
+        - PA11
+        - PA12
+        - PA13
+        - PA14
+        - PA15
+        - PB0
+        - PB1
+        - PB3
+        - PB4
+        - PB5
+        - PB6
+        - PB7
+        - PC13
+        - PC14
+        - PC15
+        input_only_pins: []
+        direct_lsi_bonds: []
+      CW32L011K8U6:
+        package: QFN32
+        memory:
+        - name: FLASH
+          kind: flash
+          address: 0
+          size: 65536
+        - name: RAM
+          kind: ram
+          address: 536870912
+          size: 6144
+        dfp_device: CW32L011K8
+        source_ids:
+        - CW32L011_datasheet
+        - CW32L011_dfp
+        pins:
+        - position: '1'
+          signals:
+          - Vcore
+        - position: '2'
+          signals:
+          - PC14
+          - OSC32_IN
+        - position: '3'
+          signals:
+          - PC15
+          - OSC32_OUT
+        - position: '4'
+          signals:
+          - NRST
+        - position: '5'
+          signals:
+          - VDDA
+        - position: '6'
+          signals:
+          - PA0
+        - position: '7'
+          signals:
+          - PA1
+        - position: '8'
+          signals:
+          - PA2
+        - position: '9'
+          signals:
+          - PA3
+        - position: '10'
+          signals:
+          - PA4
+        - position: '11'
+          signals:
+          - PA5
+        - position: '12'
+          signals:
+          - PA6
+        - position: '13'
+          signals:
+          - PA7
+        - position: '14'
+          signals:
+          - PB0
+        - position: '15'
+          signals:
+          - PB1
+        - position: '16'
+          signals:
+          - VSS
+        - position: '17'
+          signals:
+          - VDD
+        - position: '18'
+          signals:
+          - PA8
+        - position: '19'
+          signals:
+          - PA9
+        - position: '20'
+          signals:
+          - PA10
+        - position: '21'
+          signals:
+          - PA11
+        - position: '22'
+          signals:
+          - PA12
+        - position: '23'
+          signals:
+          - PA13
+          - SWDIO
+        - position: '24'
+          signals:
+          - PA14
+          - SWCLK
+        - position: '25'
+          signals:
+          - PA15
+        - position: '26'
+          signals:
+          - PB3
+        - position: '27'
+          signals:
+          - PB4
+        - position: '28'
+          signals:
+          - PB5
+        - position: '29'
+          signals:
+          - PB6
+        - position: '30'
+          signals:
+          - PB7
+          - OSC_OUT
+        - position: '31'
+          signals:
+          - PC13
+          - OSC_IN
+        - position: '32'
+          signals:
+          - VSS
+        gpio_pins:
+        - PA0
+        - PA1
+        - PA2
+        - PA3
+        - PA4
+        - PA5
+        - PA6
+        - PA7
+        - PA8
+        - PA9
+        - PA10
+        - PA11
+        - PA12
+        - PA13
+        - PA14
+        - PA15
+        - PB0
+        - PB1
+        - PB3
+        - PB4
+        - PB5
+        - PB6
+        - PB7
+        - PC13
+        - PC14
+        - PC15
+        input_only_pins: []
+        direct_lsi_bonds: []
+    positive_lsi_routes:
+      dedicated_lsi_gpio_af: null
+      exact_sysctrl_pin_projection: []
+      mco_source: 4
+      mco_pads:
+      - pin: PA4
+        position: '10'
+        af: 4
+      - pin: PA8
+        position: '18'
+        af: 4
+      - pin: PC13
+        position: '31'
+        af: 1
+      raw_hsi_pad:
+        pin: PB0
+        position: '14'
+        af: 3
+      timer_inputs:
+      - peripheral: GTIM1
+        register: TISEL
+        fields:
+        - TI1SEL
+        - TI2SEL
+        - TI3SEL
+        - TI4SEL
+        encoding: 9
+      - peripheral: GTIM2
+        register: TISEL
+        fields:
+        - TI1SEL
+        - TI2SEL
+        - TI3SEL
+        - TI4SEL
+        encoding: 9
+      - peripheral: ATIM
+        register: TISEL1
+        fields:
+        - TI1SEL
+        - TI2SEL
+        - TI3SEL
+        - TI4SEL
+        encoding: 9
+      - peripheral: ATIM
+        register: TISEL2
+        fields:
+        - TI5SEL
+        - TI6SEL
+        encoding: 9
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 85
+      - 123
+      - 234
+      - 281
+      - 282
+      - 312
+      - 379
+      - 380
+      printed_pages:
+      - 84
+      - 122
+      - 233
+      - 280
+      - 281
+      - 311
+      - 378
+      - 379
+      pad_source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+      pad_pdf_pages_1_based:
+      - 29
+      - 30
+      - 31
+      - 32
+      pad_printed_pages:
+      - 26
+      - 27
+      - 28
+      - 29
+    independent_rtc_source:
+      calendar_divisor: 96000000
+      factory_trim_address: 1050560
+      maximum_hz: 97920000
+      minimum_hz: 94080000
+      nominal_hz: 96000000
+      prescaler_first: 120
+      prescaler_second: 400000
+      source: HSIOSC
+      source_encoding: 3
+      supply_mv:
+      - 1700
+      - 5500
+      temperature_c:
+      - -40
+      - 85
+    rtc_target_admission:
+      transport_rtc_allowed_sources_meaning: Complete documented hardware encoding inventory, not unconditional retained-target
+        admission
+      hardware_documented_encodings:
+        '0': LSE
+        '1': HSE
+        '2': LSI
+        '3': HSIOSC
+      target_refused_documented_encodings:
+      - 1
+      target_undocumented_refused_encodings:
+      - 4
+      - 5
+      - 6
+      - 7
+      source0: Retain independent qualified LSE; no new declaration or monitor qualification
+      source2: Own LSI bound41000 satisfies PSC1 <=1MHz at every divisor1..256
+      source3: Actual u16(raw_PSC1)+1>=98; raw>=97, independent of START/AWTEN; original factory HSI ownership prevents
+        startup or retrim
+      preserved_independent_rtc_calendar_identity: HSIOSC/SOURCE3
+    historical_lse_monitor:
+      monitor_reference: factory_trim
+      lsi_factory_trim_address: 1050562
+      monitored_lsi_maximum_hz: 41000
+      detector_lse_edges: 128
+      detector_lsi_cycles: 256
+      detector_margin_lse_edges: 1
+      historical_proof: docs/l011-lse-sysclk-qualification.json
+      historical_lsi_sysclk_qualification: false
+      historical_lsi_cycle_timing_qualified: false
+    own_fallback_source:
+      metadata: clock_limits.hse.fixed_ccs_hsi_divisor
+      raw_hsi_hz: 96000000
+      factory_error_percent: 2
+      divisor: 24
+      nominal_hz: 4000000
+      minimum_hz: 3920000
+      maximum_hz: 4080000
+      default_hsi_divisor: 24
+      default_hsi_divider_encoding: 14
+      encoding_zero_divisor: 32
+      new_lsi_monitor_qualification: false
+    operational_access_facts:
+    - peripheral: SYSCTRL
+      registers:
+      - CR0
+      - CR1
+      - CR2
+      - IER
+      - AHBEN
+      - APBEN1
+      - APBEN2
+      field: KEY
+      raw_svd_access: write-only
+      operational_rm_access: WO
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 65
+      - 66
+      - 68
+      - 73
+      - 77
+      - 78
+      - 79
+      printed_pages:
+      - 64
+      - 65
+      - 67
+      - 72
+      - 76
+      - 77
+      - 78
+    - peripheral: FLASH
+      registers:
+      - CR2
+      field: KEY
+      raw_svd_access: write-only
+      operational_rm_access: WO
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 113
+      printed_pages:
+      - 112
+    - peripheral: RTC
+      registers:
+      - CR1
+      field: WAIT
+      raw_svd_access: read-only
+      operational_rm_access: RO
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 152
+      printed_pages:
+      - 151
+      meaning: DATE/TIME/AWTARR load status only; never source readiness or admission
+    - peripheral: SYSCTRL
+      registers:
+      - HSI
+      - LSI
+      - HSE
+      - LSE
+      field: STABLE
+      raw_svd_access: read-only
+      operational_rm_access: RO
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 69
+      - 70
+      - 71
+      - 72
+      printed_pages:
+      - 68
+      - 69
+      - 70
+      - 71
+      contract: Keep the four existing field-access overlays; preserve every non-STABLE bit.
+    - peripheral: SYSCTRL
+      registers:
+      - ICR
+      operational_rm_access: R1W0
+      raw_register_access: ReadWrite
+      source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 76
+      printed_pages:
+      - 75
+      contract: Zero clears and one has no effect; fault clear also clears corresponding ready event. No ISR/ICR write
+        is admitted.
+    known_source_conflicts:
+    - source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 54
+      - 70
+      printed_pages:
+      - 53
+      - 69
+      other_source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+      other_pdf_pages_1_based:
+      - 51
+      other_printed_pages:
+      - 48
+      conflict: RM32.8kHz±10% calibration warning,30–36kHz range and approximate0.4% step coexist with DS factory−10/+25%
+        and0.16% step. Preserve full factory29520..41000 rate envelope without universal electrical-legality, arbitrary-trim
+        or strict-cycle claim.
+    - source_ref: vendor:CW32L011_UserManual_CN_V1.1.pdf
+      pdf_pages_1_based:
+      - 68
+      printed_pages:
+      - 67
+      other_source_ref: member:cw32l011/IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/SVD/CW32L011.svd
+      conflict: RM CR2 bits9:7 are RFU; selected SVD/CMSIS bit7 is RTCLPM. Preserve every nonowned low-half bit, no
+        new meaning/access repair.
+    source_locator_correction:
+      source_ref: vendor:CW32L011_DataSheet_CN_V1.1.pdf
+      json_pointer: /artifacts/22/provenance/revision_history_evidence/printed_page
+      old_printed_page: 1
+      corrected_printed_page: 69
+      pdf_page_1_based: 72
+      basis: Rendered own DS page72 footer is printed69; revision row2025-05-19 updates Table7-19. Source bytes and
+        dates unchanged.

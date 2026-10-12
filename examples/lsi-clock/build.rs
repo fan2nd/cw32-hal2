@@ -16,6 +16,8 @@ fn main() {
             | "CW32L010F8P6"
             | "CW32L010F8U6"
             | "CW32L010Y8M6"
+            | "CW32L011K8T6"
+            | "CW32L011K8U6"
             | "CW32L012C8T6"
             | "CW32L012C8U6"
             | "CW32L031C8T6"
@@ -44,32 +46,48 @@ fn main() {
         "CW32F003F4P7" | "CW32F003F4U7" | "CW32F003E4P7" => Some((20 * 1024, 3 * 1024, false)),
         // Own L010 DS CN V1.3 PDF pages 8 and 24-25.
         "CW32L010F8P6" | "CW32L010F8U6" | "CW32L010Y8M6" => {
-            let rtc = metadata.peripherals.iter().find(|p| p.name == "RTC").unwrap();
+            let rtc = metadata
+                .peripherals
+                .iter()
+                .find(|p| p.name == "RTC")
+                .unwrap();
             let calendar = rtc.rtc_calendar.as_ref().unwrap();
             assert_eq!(calendar.source, "HSIOSC");
             assert_eq!(calendar.nominal_hz, 48_000_000);
             Some((64 * 1024, 4 * 1024, true))
         }
+        // Own L011 DS CN V1.1: both exact packages retain raw-HSIOSC RTC.
+        "CW32L011K8T6" | "CW32L011K8U6" => {
+            let rtc = metadata
+                .peripherals
+                .iter()
+                .find(|p| p.name == "RTC")
+                .unwrap();
+            let calendar = rtc.rtc_calendar.as_ref().unwrap();
+            assert_eq!(calendar.source, "HSIOSC");
+            assert_eq!(calendar.nominal_hz, 96_000_000);
+            Some((64 * 1024, 6 * 1024, true))
+        }
         // Own L012 DS CN V1.0: both exact packages retain raw-HSIOSC RTC.
         "CW32L012C8T6" | "CW32L012C8U6" => {
-            let rtc = metadata.peripherals.iter().find(|p| p.name == "RTC").unwrap();
+            let rtc = metadata
+                .peripherals
+                .iter()
+                .find(|p| p.name == "RTC")
+                .unwrap();
             let calendar = rtc.rtc_calendar.as_ref().unwrap();
             assert_eq!(calendar.source, "HSIOSC");
             assert_eq!(calendar.nominal_hz, 96_000_000);
             Some((64 * 1024, 8 * 1024, true))
         }
         // Own L031 DS Rev1.9 PDF pages 10, 32 and 77-78.
-        "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" => {
-            Some((64 * 1024, 8 * 1024, true))
-        }
+        "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" => Some((64 * 1024, 8 * 1024, true)),
         // Own R031 DS CN V1.2 PDF pages 11 and 35, and own PDSC.
         "CW32R031C8U6" => Some((64 * 1024, 8 * 1024, true)),
         // Own W031 DS CN V1.3 PDF pages 9, 33-34 and 71, and own PDSC: QFN64.
         "CW32W031R8U6" => Some((64 * 1024, 8 * 1024, true)),
         // Own L052 DS CN V1.3: exact LQFP48 and both LQFP64 packages.
-        "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6" => {
-            Some((64 * 1024, 8 * 1024, true))
-        }
+        "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6" => Some((64 * 1024, 8 * 1024, true)),
         // Own L083 DS CN V1.9 tables 3-1/9-1: RBT6 differs from the C-density parts.
         "CW32L083RBT6" => Some((128 * 1024, 24 * 1024, true)),
         "CW32L083RCT6" | "CW32L083RCS6" | "CW32L083MCT6" | "CW32L083VCT6" => {
@@ -78,7 +96,10 @@ fn main() {
         _ => None,
     };
     if let Some((flash_size, ram_size, has_rtc)) = exact_memory {
-        assert_eq!(metadata.peripherals.iter().any(|p| p.name == "RTC"), has_rtc);
+        assert_eq!(
+            metadata.peripherals.iter().any(|p| p.name == "RTC"),
+            has_rtc
+        );
         // Retain each exact package's real linker limits.
         let banks = metadata.memory[0];
         assert_eq!(banks.len(), 2);

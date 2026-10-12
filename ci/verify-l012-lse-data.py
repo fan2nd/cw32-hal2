@@ -103,7 +103,7 @@ def verify_live_lsi_policy(source_root, authority):
     policy = load(ROOT / LSI_POLICY)
     assert policy["schema_version"] == 1 and policy["source_authority"] == "sources/evidence-sources.json"
     assert sorted(policy["families"]) == [
-        "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L010", "CW32L012",
+        "CW32A030", "CW32F002", "CW32F003", "CW32F020", "CW32F030", "CW32L010", "CW32L011", "CW32L012",
         "CW32L031", "CW32L052", "CW32L083", "CW32R031", "CW32W031",
     ]
     own = policy["families"]["CW32L012"]

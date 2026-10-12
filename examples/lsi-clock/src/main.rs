@@ -25,7 +25,7 @@ use embassy_cw32::{self as hal, rcc};
 #[cortex_m_rt::entry]
 fn main() -> ! {
     // Exact L010 declares 1.62..5.5 V and -40..85 C for live factory-LSI reuse.
-    // Exact L012 declares its own 1.7..5.5 V and -40..85 C live-only envelope.
+    // Exact L011/L012 declare their own 1.7..5.5 V and -40..85 C live-only envelope.
     // W031 requires 2.0..3.6 V; R031 retains 2.2..3.6 V, both at -40..85 C.
     // L031 and exact L052/L083 declare 1.65..5.5 V and -40..85 C.
     // Other prior example parts retain 1.65..5.5 V and -40..105 C.
@@ -39,7 +39,12 @@ fn main() -> ! {
             feature = "cw32l010y8m6"
         )) {
             1_620
-        } else if cfg!(any(feature = "cw32l012c8t6", feature = "cw32l012c8u6")) {
+        } else if cfg!(any(
+            feature = "cw32l011k8t6",
+            feature = "cw32l011k8u6",
+            feature = "cw32l012c8t6",
+            feature = "cw32l012c8u6"
+        )) {
             1_700
         } else if cfg!(feature = "cw32r031c8u6") {
             2_200
@@ -58,6 +63,8 @@ fn main() -> ! {
             feature = "cw32l010f8p6",
             feature = "cw32l010f8u6",
             feature = "cw32l010y8m6",
+            feature = "cw32l011k8t6",
+            feature = "cw32l011k8u6",
             feature = "cw32l012c8t6",
             feature = "cw32l012c8u6",
             feature = "cw32l031c8t6",
@@ -91,6 +98,14 @@ fn main() -> ! {
         // This does not prepare LSI. Ordinary POR is expected to return an error.
         // Only an already software-requested, stable, factory-matching source
         // qualifies; its existing TRIM and WAIT remain unchanged.
+        config.rcc.lse = None;
+    }
+    #[cfg(any(feature = "cw32l011k8t6", feature = "cw32l011k8u6"))]
+    {
+        // This requires an already live factory-matching LSI; POR returns an error.
+        // Inherited HSE and both CCS monitors must also be disabled.
+        // No HSE, LSE or watchdog preparation is performed by this example.
+        config.rcc.hse = None;
         config.rcc.lse = None;
     }
     let p = hal::try_init(config).unwrap_or_else(|error| stop(error));
@@ -179,7 +194,12 @@ fn run(p: hal::Peripherals) -> ! {
     }
 }
 
-#[cfg(any(feature = "cw32l012c8t6", feature = "cw32l012c8u6"))]
+#[cfg(any(
+    feature = "cw32l011k8t6",
+    feature = "cw32l011k8u6",
+    feature = "cw32l012c8t6",
+    feature = "cw32l012c8u6"
+))]
 fn run(p: hal::Peripherals) -> ! {
     // This observes the existing raw 96 MHz HSIOSC capability. Its strict
     // bounds stay independent of rate-only LSI SYSCLK and the HSI divider.

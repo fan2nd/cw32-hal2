@@ -1,7 +1,8 @@
 //! CW32L010/CW32L011 one-time factory-HSI and qualified direct-HSE clocks.
-//! Exact L010 packages additionally permit initialization-only reuse of already
-//! software-enabled, stable, factory-matching LSI; see
-//! docs/l010-live-factory-lsi-sysclk.md. LSI is never started or programmed here.
+//! Exact L010 and L011 packages additionally permit initialization-only reuse of
+//! already software-enabled, stable, factory-matching LSI; see
+//! docs/l010-live-factory-lsi-sysclk.md and docs/l011-live-factory-lsi-sysclk.md.
+//! The live target never starts or programs LSI.
 //! Exact qualified L010/L011 packages also support native init-only LSE SYSCLK;
 //! see docs/l010-lse-sysclk.md, docs/l011-lse-sysclk.md and [`crate::init`].
 //!
@@ -174,12 +175,15 @@ pub enum Sysclk {
     HSI,
     /// Qualified external high-speed oscillator or input.
     HSE,
-    /// Reuse live factory-matching LSI on CW32L010F8P6/F8U6/Y8M6 only.
+    /// Reuse live factory-matching LSI on CW32L010F8P6/F8U6/Y8M6
+    /// and CW32L011K8T6/K8U6 only.
     /// Requires LSIEN and STABLE at original entry and preserves TRIM/WAIT.
     /// Ordinary POR and `Config::lse = Some(_)` are unsupported. Bounds are
     /// rate-only; IWDT may continue counting and reset during initialization.
     /// No clock-continuity, watchdog deadline or per-cycle guarantee is made.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    /// L011 also requires no configured/enabled HSE and no HSE/LSE detector;
+    /// entry SYSCLK must be HSI or LSI. Retained raw-HSI RTC needs PSC1 >= 97.
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     LSI,
     /// Native LSE on CW32L010F8P6/F8U6/Y8M6 and CW32L011K8T6/K8U6.
     /// Requires [`Config::lse`]; generic-family and L012 targets are excluded.
@@ -349,6 +353,16 @@ impl Config {
         if self.timeout == 0 {
             return Err(Error::InvalidTimeout);
         }
+        // New-target exclusions precede even requested external-source bounds.
+        #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+        if self.sys == Sysclk::LSI {
+            if self.hse.is_some() {
+                return Err(Error::UnsupportedLsiHseConfiguration);
+            }
+            if self.lse.is_some() {
+                return Err(Error::UnsupportedLsiLseConfiguration);
+            }
+        }
         let hsi = HSI_FREQ / self.hsi.div.divisor();
         let hse = if let Some(hse) = self.hse {
             let bounds = hse.bounds()?;
@@ -386,7 +400,7 @@ impl Config {
         let source = match self.sys {
             Sysclk::HSI => crate::rcc::ClockBounds::hsi(self.hsi.div.divisor()),
             Sysclk::HSE => hse.ok_or(Error::HseNotConfigured)?,
-            #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+            #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
             Sysclk::LSI => crate::rcc::ClockBounds::lsi(),
             #[cfg(rcc_lse)]
             Sysclk::LSE => lse.ok_or(Error::LseNotConfigured)?.1,
@@ -430,7 +444,7 @@ impl Config {
                 },
             )?;
         }
-        #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+        #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
         if self.sys == Sysclk::LSI {
             crate::rcc::operating::validate(
                 self.operating_conditions,
@@ -489,20 +503,23 @@ pub struct Clocks {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
+    /// This L011 live-LSI slice cannot configure an auxiliary HSE.
+    #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+    UnsupportedLsiHseConfiguration,
     /// A live-LSI initialization cannot newly configure an auxiliary LSE.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     UnsupportedLsiLseConfiguration,
     /// Own factory halfword is erased or the entry LSI trim does not match it.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     InvalidLsiCalibration,
     /// Entry software request/readiness is absent, or live readiness was lost.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     LsiNotReady,
     /// Borrowed configuration-gate enable/restore failed, with both diagnostics.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     LsiConfigurationGateTimeout { enable_failed: bool, restore_failed: bool },
     /// Final LSI selector did not acknowledge within the iteration budget.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     LsiClockSwitchTimeout,
     #[cfg(rcc_lse)]
     InvalidLseBounds,
@@ -528,6 +545,7 @@ pub enum Error {
     #[cfg(rcc_lse)]
     LseNotConfigured,
     /// A first request for entry-nonstable LSI has an inherited consumer/IRQ owner.
+    /// L011 live-LSI also rejects either inherited external-clock detector.
     #[cfg(rcc_lse)]
     LsiClockInUse,
     /// Starting/restarting or awaiting HSI conflicts with raw-HSI MCO or HSIRDY.
@@ -584,10 +602,13 @@ pub enum Error {
     InvalidCalibration,
     /// An HSIOSC-selected RTC requires the current enabled, stable factory trim.
     /// No oscillator is changed on this error; the RTC bus gate is restored.
+    /// L011 live-LSI also rejects RTC reset/lost access, HSE selection, and
+    /// raw-HSI PSC1 divisors below 98, even when calendar/AWT is idle.
     RtcClockInUse,
     /// The RTC configuration bus gate did not acknowledge enable.
     RtcClockGateTimeout,
     /// The FLASH configuration clock could not be enabled.
+    /// L011 live-LSI also uses this for asserted reset or lost Flash access.
     FlashClockTimeout,
     /// FLASH WAIT did not read back as requested.
     FlashLatencyTimeout,
@@ -704,7 +725,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         interrupts: r.ier().read(),
         mco: r.mco().read(),
     });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     let lsi_target = (config.sys == Sysclk::LSI).then(|| LsiSysclkSnapshot {
         clock: old_clock,
         sources: old_sources,
@@ -716,7 +737,18 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         interrupts: r.ier().read(),
         mco: r.mco().read(),
         factory: unsafe { core::ptr::read_volatile(crate::RCC_LSI_FACTORY_TRIM_ADDRESS as *const u16) },
+        #[cfg(rcc_cw32l011_v1)]
+        flash: None,
     });
+    #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+    let mut lsi_target = lsi_target;
+    #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+    if let Some(entry) = lsi_target {
+        // Classify the immutable original entry before generic readiness errors.
+        // Only inherited LSE is relevant to the new HSE-off slice's fault check.
+        entry.post_observation()?;
+        entry.admit()?;
+    }
     let monitor_hse = config.hse.is_some() || old_sources.hseen() || old_sources.hseccs();
     let monitor_lse = old_sources.lseen() || old_sources.lseccs();
     #[cfg(rcc_lse)]
@@ -754,11 +786,14 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     let needs_trim = old_hsi.trim() != trim;
 
     // Phase expectations are separate from the immutable original observation.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     let (mut expected_clock, mut expected_sources, mut expected_hsi, mut expected_hsi_stable,
-         mut expected_hse, mut expected_hse_stable, mut expected_wait) =
-        (old_clock, old_sources, old_hsi, old_hsi.stable(), old_hse, old_hse.stable(), None);
+         mut expected_wait) = (old_clock, old_sources, old_hsi, old_hsi.stable(), None);
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
+    let (expected_hse, expected_hse_stable) = (old_hse, old_hse.stable());
     #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    let (mut expected_hse, mut expected_hse_stable) = (expected_hse, expected_hse_stable);
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.admit()?;
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
@@ -770,9 +805,9 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     }
 
     let live_lsi = false;
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     let live_lsi = live_lsi || lsi_target.is_some();
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     {
         expected_clock.set_key(0);
         expected_sources.set_key(0);
@@ -794,12 +829,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     {
         return Err(Error::RtcClockInUse);
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         if <crate::peripherals::RTC as crate::rcc::SealedRccPeripheral>::RCC_INFO.reset_asserted() {
             entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
@@ -807,16 +842,24 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             return Err(Error::RtcClockInUse);
         }
     }
-    let (rtc_source, operational) = <crate::peripherals::RTC as crate::rcc::SealedRccPeripheral>::RCC_INFO
+    let ((rtc_source, rtc_psc1), operational) = <crate::peripherals::RTC as crate::rcc::SealedRccPeripheral>::RCC_INFO
         .inspect_for_init(cs, config.timeout, || {
             let operational = true;
-            #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+            #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
             let operational = operational && (lsi_target.is_none() || {
                 let info = <crate::peripherals::RTC as crate::rcc::SealedRccPeripheral>::RCC_INFO;
                 info.is_enabled() && !info.reset_asserted()
             });
-            let value = pac::RTC.cr1().read().source();
-            #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+            #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+            if !operational {
+                return ((0, 0), false);
+            }
+            let source = pac::RTC.cr1().read().source();
+            let psc1 = 0;
+            #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+            let psc1 = if lsi_target.is_some() { pac::RTC.psc().read().psc1() } else { psc1 };
+            let value = (source, psc1);
+            #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
             let operational = operational && (lsi_target.is_none() || {
                 let info = <crate::peripherals::RTC as crate::rcc::SealedRccPeripheral>::RCC_INFO;
                 info.is_enabled() && !info.reset_asserted()
@@ -824,14 +867,14 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             (value, operational)
         })
         .map_err(|error| retained_inspection_error(config, error))?;
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     let operational = operational && (lsi_target.is_none() || !<crate::peripherals::RTC as crate::rcc::SealedRccPeripheral>::RCC_INFO.reset_asserted());
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if lsi_target.is_some() && !operational {
         return Err(Error::RtcClockInUse);
     }
@@ -842,8 +885,21 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     if rtc_source == 3 && (needs_trim || !old_sources.hsien() || !old_hsi.stable()) {
         return Err(Error::RtcClockInUse);
     }
+    #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+    if lsi_target.is_some() {
+        // PSC1 is the retained raw eight-bit value; widen before adding one.
+        // The raw HSI ceiling is independent of HSI DIV and public RTC defaults.
+        let divisor = u32::from(rtc_psc1) + 1;
+        if rtc_source == 1
+            || (rtc_source == 3
+                && crate::rcc::ClockBounds::hsi(1).maximum().0 > 1_000_000 * divisor)
+        {
+            return Err(Error::RtcClockInUse);
+        }
+    }
+    let _ = rtc_psc1;
     let preserve_hse = rtc_source == 1;
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -857,7 +913,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))] lsi_target.is_some(),
         )
     };
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         if let Err(error @ Error::LsiConfigurationGateTimeout { .. }) = retained_hse {
             return Err(error);
@@ -869,7 +925,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         return Err(Error::HseClockInUse);
     }
     if let Some(hse) = config.hse {
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -884,7 +940,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
                 result => result,
             }
         };
-        #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+        #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
         if let Some(entry) = lsi_target {
             if let Err(error @ Error::LsiConfigurationGateTimeout { .. }) = declared_hse {
                 return Err(error);
@@ -902,12 +958,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     {
         return Err(Error::AdcClockInUse);
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         if <crate::peripherals::ADC as crate::rcc::SealedRccPeripheral>::RCC_INFO.reset_asserted() {
             entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
@@ -918,13 +974,17 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     let (adc_enabled, operational) = <crate::peripherals::ADC as crate::rcc::SealedRccPeripheral>::RCC_INFO
         .inspect_for_init(cs, config.timeout, || {
             let operational = true;
-            #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+            #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
             let operational = operational && (lsi_target.is_none() || {
                 let info = <crate::peripherals::ADC as crate::rcc::SealedRccPeripheral>::RCC_INFO;
                 info.is_enabled() && !info.reset_asserted()
             });
+            #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+            if !operational {
+                return (false, false);
+            }
             let value = pac::ADC.cr().read().en();
-            #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+            #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
             let operational = operational && (lsi_target.is_none() || {
                 let info = <crate::peripherals::ADC as crate::rcc::SealedRccPeripheral>::RCC_INFO;
                 info.is_enabled() && !info.reset_asserted()
@@ -932,14 +992,14 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             (value, operational)
         })
         .map_err(|error| retained_inspection_error(config, error))?;
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     let operational = operational && (lsi_target.is_none() || !<crate::peripherals::ADC as crate::rcc::SealedRccPeripheral>::RCC_INFO.reset_asserted());
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if lsi_target.is_some() && !operational {
         return Err(Error::AdcClockInUse);
     }
@@ -955,12 +1015,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     {
         return Err(Error::ComparatorClockInUse);
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         if <crate::peripherals::VC1 as crate::rcc::SealedRccPeripheral>::RCC_INFO.reset_asserted() {
             entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
@@ -972,11 +1032,16 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         <crate::peripherals::VC1 as crate::rcc::SealedRccPeripheral>::RCC_INFO
             .inspect_for_init(cs, config.timeout, || {
                 let operational = true;
-                #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+                #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
                 let operational = operational && (lsi_target.is_none() || {
                     let info = <crate::peripherals::VC1 as crate::rcc::SealedRccPeripheral>::RCC_INFO;
                     info.is_enabled() && !info.reset_asserted()
                 });
+                #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+                if !operational {
+                    return ((Default::default(), Default::default(), Default::default(),
+                             Default::default(), Default::default(), Default::default()), false);
+                }
                 let values = (
                     pac::LVD.cr0().read(),
                     pac::LVD.cr1().read(),
@@ -985,7 +1050,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
                     pac::VC2.cr0().read(),
                     pac::VC2.cr1().read(),
                 );
-                #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+                #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
                 let operational = operational && (lsi_target.is_none() || {
                     let info = <crate::peripherals::VC1 as crate::rcc::SealedRccPeripheral>::RCC_INFO;
                     info.is_enabled() && !info.reset_asserted()
@@ -993,14 +1058,14 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
                 (values, operational)
             })
             .map_err(|error| retained_inspection_error(config, error))?;
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     let operational = operational && (lsi_target.is_none() || !<crate::peripherals::VC1 as crate::rcc::SealedRccPeripheral>::RCC_INFO.reset_asserted());
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if lsi_target.is_some() && !operational {
         return Err(Error::ComparatorClockInUse);
     }
@@ -1088,10 +1153,18 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             && v.lselock() == old_sources.lselock()
             && v.lseen() == lseen
     };
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
+    }
+    #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+    if let Some(entry) = lsi_target {
+        if <crate::peripherals::FLASH as crate::rcc::SealedRccPeripheral>::RCC_INFO.reset_asserted() {
+            entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
+                         expected_hse, expected_hse_stable, expected_wait)?;
+            return Err(Error::FlashClockTimeout);
+        }
     }
     <crate::peripherals::FLASH as crate::rcc::SealedRccPeripheral>::RCC_INFO
         .enable_with_cs_readback(
@@ -1102,7 +1175,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             },
         )
         .map_err(|_| Error::FlashClockTimeout)?;
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1117,10 +1190,30 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
     }
-    if u32::from(pac::FLASH.cr2().read().wait()) > MAX_FLASH_WAIT {
+    #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+    if let Some(entry) = lsi_target.as_mut() {
+        let flash = LsiSysclkSnapshot::read_flash();
+        // Buffer access failure until the complete source/fault observation.
+        entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
+                     expected_hse, expected_hse_stable, expected_wait)?;
+        let flash = flash?;
+        let wait = flash.wait();
+        if u32::from(wait) > MAX_FLASH_WAIT || wait != entry.routes.flashwait() {
+            return Err(Error::InvalidEntryClock);
+        }
+        // Only this separate Flash authority is attached; no source is recaptured.
+        entry.flash = Some(flash);
+        expected_wait = Some((wait, wait));
+        entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
+                     expected_hse, expected_hse_stable, expected_wait)?;
+    }
+    let legacy_flash_check = true;
+    #[cfg(all(rcc_cw32l011_v1, rcc_lsi_sysclk))]
+    let legacy_flash_check = legacy_flash_check && !live_lsi;
+    if legacy_flash_check && u32::from(pac::FLASH.cr2().read().wait()) > MAX_FLASH_WAIT {
         return Err(Error::InvalidEntryClock);
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1132,8 +1225,10 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         w.set_wait(MAX_FLASH_WAIT as u8);
     });
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
+        #[cfg(rcc_cw32l011_v1)]
+        let flash_write = LsiSysclkSnapshot::write_flash_wait(MAX_FLASH_WAIT as u8);
         // Both authoritative WAIT and its route mirror acknowledge the same owned write.
         let prior_0 = expected_wait.unwrap().0;
         let target_0 = MAX_FLASH_WAIT as u8;
@@ -1149,7 +1244,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             current_clock.set_key(0);
             current_sources.set_key(0);
             if current_sources.0 != expected_sources.0
@@ -1162,9 +1262,18 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
+            }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = flash_write.and(current_wait)?;
+            #[cfg(rcc_cw32l011_v1)]
+            if current_wait.unwrap().0 != current_wait.unwrap().1 {
+                return Err(Error::FlashLatencyTimeout);
             }
             let observed_0 = current_wait.unwrap().0;
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
@@ -1194,7 +1303,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     // /8 covers the own-family legal oscillator range even below 1.8 V.
     let guard_hclk = old_clock.hclkprs().max(AHBPrescaler::Div8 as u8);
     let guard_pclk = old_clock.pclkprs().max(APBPrescaler::Div8 as u8);
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1204,7 +1313,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         w.set_hclkprs(guard_hclk);
         w.set_pclkprs(guard_pclk);
     });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // Only the two guarded dividers may advance, independently and without reversal.
         let prior_0 = expected_clock.hclkprs();
@@ -1221,7 +1330,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             current_clock.set_key(0);
             current_sources.set_key(0);
             if current_sources.0 != expected_sources.0
@@ -1234,6 +1348,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             let observed_0 = current_clock.hclkprs();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
@@ -1250,6 +1365,10 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -1296,7 +1415,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     };
 
     // First leave the incoming source on unchanged HSI under guarded buses.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1305,7 +1424,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         w.set_key(0x5a5a);
         w.set_hsien(true);
     });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // Unchanged HSI may become requested and ready; every other field retains entry identity.
         let prior_0 = expected_sources.hsien();
@@ -1322,7 +1441,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             let observed_0 = current_sources.hsien();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
                 return Err(Error::ClockConfigurationTimeout);
@@ -1345,10 +1469,15 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -1370,7 +1499,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         || r.cr1().read().hsien() && r.hsi().read().stable(),
     )?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1379,7 +1508,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         w.set_key(0x5a5a);
         w.set_sysclk(ClockSource::Hsi);
     });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // Only the acknowledged entry selector or requested HSI selector is admissible.
         let prior_0 = expected_clock.sysclk();
@@ -1393,7 +1522,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             current_clock.set_key(0);
             current_sources.set_key(0);
             if current_sources.0 != expected_sources.0
@@ -1406,6 +1540,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             let observed_0 = current_clock.sysclk();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
@@ -1416,6 +1551,10 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -1452,7 +1591,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             // use the latched entry classification even if LSI is now stable.
             lse_target.unwrap().admit_first_lsi_request(config, cs)?;
         }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1473,7 +1612,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     }
     if needs_trim {
         // Automatic switching must not select HSI while stopped for retrim.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1482,7 +1621,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             w.set_key(0x5a5a);
             w.set_clkccs(false);
         });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // Only temporary clock-security disable may acknowledge here.
         let prior_0 = expected_sources.clkccs();
@@ -1496,7 +1635,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             let observed_0 = current_sources.clkccs();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
                 return Err(Error::ClockConfigurationTimeout);
@@ -1515,10 +1659,15 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -1537,7 +1686,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             Error::ClockConfigurationTimeout,
         )?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1546,7 +1695,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             w.set_key(0x5a5a);
             w.set_sysclk(ClockSource::Lsi);
         });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // The already-live LSI bridge changes only the system selector.
         let prior_0 = expected_clock.sysclk();
@@ -1560,7 +1709,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             current_clock.set_key(0);
             current_sources.set_key(0);
             if current_sources.0 != expected_sources.0
@@ -1573,6 +1727,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             let observed_0 = current_clock.sysclk();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
@@ -1583,6 +1738,10 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -1604,7 +1763,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         )?;
     }
         barrier();
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1613,7 +1772,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             w.set_key(0x5a5a);
             w.set_hsien(false);
         });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // HSI request and readiness may only fall while selected live LSI stays strict.
         let prior_0 = expected_sources.hsien();
@@ -1630,7 +1789,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             let observed_0 = current_sources.hsien();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
                 return Err(Error::ClockConfigurationTimeout);
@@ -1653,10 +1817,15 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -1678,7 +1847,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             || !r.cr1().read().hsien() && !r.hsi().read().stable(),
         )?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1687,7 +1856,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             w.set_trim(trim);
             w.set_div(config.hsi.div as u8);
         });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // Factory TRIM and requested DIV acknowledge independently only while HSI is stopped.
         let prior_0 = expected_hsi.trim();
@@ -1704,7 +1873,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             let observed_0 = current_hsi.trim();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
                 return Err(Error::ClockConfigurationTimeout);
@@ -1729,10 +1903,15 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -1755,7 +1934,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             Error::ClockConfigurationTimeout,
         )?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1764,7 +1943,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             w.set_key(0x5a5a);
             w.set_hsien(true);
         });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // Restarted HSI retains the exact acknowledged factory parameters.
         let prior_0 = expected_sources.hsien();
@@ -1781,7 +1960,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             let observed_0 = current_sources.hsien();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
                 return Err(Error::ClockConfigurationTimeout);
@@ -1804,10 +1988,15 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -1829,7 +2018,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             || r.cr1().read().hsien() && r.hsi().read().stable(),
         )?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1838,7 +2027,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             w.set_key(0x5a5a);
             w.set_sysclk(ClockSource::Hsi);
         });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // Return from live LSI only to the verified calibrated HSI.
         let prior_0 = expected_clock.sysclk();
@@ -1852,7 +2041,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             current_clock.set_key(0);
             current_sources.set_key(0);
             if current_sources.0 != expected_sources.0
@@ -1865,6 +2059,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             let observed_0 = current_clock.sysclk();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
@@ -1875,6 +2070,10 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -1896,7 +2095,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         )?;
     }
         barrier();
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -1905,7 +2104,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             w.set_key(0x5a5a);
             w.set_clkccs(old_sources.clkccs());
         });
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // Restore only the original clock-security policy; LSIEN remains asserted.
         let prior_0 = expected_sources.clkccs();
@@ -1919,7 +2118,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             let observed_0 = current_sources.clkccs();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
                 return Err(Error::ClockConfigurationTimeout);
@@ -1938,10 +2142,15 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -1956,13 +2165,13 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
 
     } else {
         // Both own §4.5.2 allow live divider changes, without changing TRIM.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
     }
         r.hsi().modify(|w| w.set_div(config.hsi.div as u8));
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         // Legal live HSI DIV-only update preserves factory TRIM and asserted readiness.
         let prior_0 = expected_hsi.div();
@@ -1976,7 +2185,12 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             let observed_0 = current_hsi.div();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
                 return Err(Error::ClockConfigurationTimeout);
@@ -1995,10 +2209,15 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -2012,7 +2231,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     }
 
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -2322,7 +2541,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     }
     // Restore only the software request; automatic LSI consumers stay active.
     // Never require STABLE to clear when LSIEN is cleared.
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
@@ -2338,7 +2557,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
         Error::TemporaryClockRestoreTimeout,
     )?;
     }
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if let Some(entry) = lsi_target {
         return finish_lsi_sysclk(config, clocks, entry, trim, cs);
     }
@@ -2362,7 +2581,7 @@ fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Resul
     let sysclk = match config.sys {
         Sysclk::HSI => ClockSource::Hsi,
         Sysclk::HSE => ClockSource::Hse,
-        #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+        #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
         Sysclk::LSI => unreachable!("live LSI target completed above"),
         #[cfg(rcc_lse)]
         Sysclk::LSE => unreachable!("LSE target completed above"),
@@ -2487,7 +2706,7 @@ fn retained_inspection_error(
     config: Config,
     error: super::peripheral::ClockInspectionError,
 ) -> Error {
-    #[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+    #[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
     if config.sys == Sysclk::LSI {
         return match error {
             super::peripheral::ClockInspectionError::EnableFailed { restore_failed } =>
@@ -2523,7 +2742,7 @@ fn lse_target_inspection_error(error: super::peripheral::ClockInspectionError) -
 }
 
 /// Immutable original-entry identity for exact native live factory-LSI reuse.
-#[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+#[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
 #[derive(Clone, Copy)]
 struct LsiSysclkSnapshot {
     clock: pac::sysctrl::regs::Cr0,
@@ -2536,11 +2755,26 @@ struct LsiSysclkSnapshot {
     interrupts: pac::sysctrl::regs::Ier,
     mco: pac::sysctrl::regs::Mco,
     factory: u16,
+    // Attached once after the first legal Flash observation, never recaptured.
+    #[cfg(rcc_cw32l011_v1)]
+    flash: Option<pac::flash::regs::Cr2>,
 }
 
-#[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+#[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
 impl LsiSysclkSnapshot {
     fn admit(self) -> Result<(), Error> {
+        #[cfg(rcc_cw32l011_v1)]
+        {
+            if self.sources.hseen() { return Err(Error::HseClockInUse); }
+            if self.sources.hseccs() || self.sources.lseccs() {
+                return Err(Error::LsiClockInUse);
+            }
+            match self.clock.sysclk() {
+                ClockSource::Hsi | ClockSource::Lsi => {}
+                ClockSource::Hse | ClockSource::Lse => return Err(Error::InvalidEntryClock),
+                _ => return Err(Error::InvalidClockSource),
+            }
+        }
         let mut factory = pac::sysctrl::regs::Lsi::default();
         factory.set_trim(self.factory);
         if self.factory == u16::MAX || self.lsi.trim() != factory.trim() {
@@ -2552,8 +2786,142 @@ impl LsiSysclkSnapshot {
         Ok(())
     }
 
+    #[cfg(rcc_cw32l011_v1)]
+    fn post_observation(self) -> Result<(), Error> {
+        // HSE is excluded; stale unrelated HSE flags do not veto this slice.
+        check_external_faults(false, self.sources.lseen() || self.sources.lseccs())
+    }
+
+    #[cfg(rcc_cw32l011_v1)]
+    fn flash_access() -> Result<(), Error> {
+        let info = <crate::peripherals::FLASH as crate::rcc::SealedRccPeripheral>::RCC_INFO;
+        if !info.is_enabled() || info.reset_asserted() {
+            return Err(Error::FlashClockTimeout);
+        }
+        Ok(())
+    }
+
+    #[cfg(rcc_cw32l011_v1)]
+    fn read_flash() -> Result<pac::flash::regs::Cr2, Error> {
+        Self::flash_access()?;
+        let flash = pac::FLASH.cr2().read();
+        Self::flash_access()?;
+        Ok(flash)
+    }
+
+    #[cfg(rcc_cw32l011_v1)]
+    fn write_flash_wait(wait: u8) -> Result<(), Error> {
+        // The caller has just verified the complete settled phase. Check the
+        // actual configuration gate/reset again before this typed RMW's read.
+        Self::flash_access()?;
+        pac::FLASH.cr2().modify(|w| {
+            w.set_key(0x5a5a);
+            w.set_wait(wait);
+        });
+        Self::flash_access()
+    }
+
+    #[cfg(rcc_cw32l011_v1)]
+    fn flash_wait(self, expected: Option<(u8, u8)>) -> Result<Option<(u8, u8)>, Error> {
+        if expected.is_none() { return Ok(None); }
+        // Return a buffered result: source/policy/readiness errors have priority.
+        let flash = Self::read_flash();
+        let mirror = pac::SYSCTRL.cr2().read().flashwait();
+        let mut flash = flash?;
+        let wait = flash.wait();
+        let mut original = self.flash.ok_or(Error::FlashLatencyTimeout)?;
+        flash.set_key(0);
+        original.set_key(0);
+        flash.set_wait(0);
+        original.set_wait(0);
+        if flash.0 != original.0 || u32::from(wait) > MAX_FLASH_WAIT {
+            return Err(Error::FlashLatencyTimeout);
+        }
+        Ok(Some((wait, mirror)))
+    }
+
+    #[cfg(rcc_cw32l011_v1)]
+    fn retained(self, config: Config) -> Result<bool, Error> {
+        let r = pac::SYSCTRL;
+        self.post_observation()?;
+        let mut original_sources = self.sources;
+        let mut sources = r.cr1().read();
+        let requested = sources.lsien();
+        let excluded = config.hse.is_some() || config.lse.is_some()
+            || self.sources.hseen() || self.sources.hseccs() || self.sources.lseccs()
+            || sources.hseen() || sources.hseccs() || sources.lseccs();
+        for source in [&mut original_sources, &mut sources] {
+            source.set_key(0);
+            source.set_hsien(false);
+            source.set_clkccs(false);
+        }
+        let mut routes = r.cr2().read();
+        let mut original_routes = self.routes;
+        for route in [&mut original_routes, &mut routes] {
+            route.set_key(0);
+            route.set_flashwait(0);
+        }
+        let lsi = r.lsi().read();
+        let lse = r.lse().read();
+        let interrupts = r.ier().read();
+        let mco = r.mco().read();
+        self.post_observation()?;
+        if excluded || !requested
+            || sources.0 != original_sources.0
+            || (lsi.0 & crate::RCC_LSI_PARAMETERS_MASK)
+                != (self.lsi.0 & crate::RCC_LSI_PARAMETERS_MASK)
+            || lse.0 != self.lse.0
+            || routes.0 != original_routes.0
+            || interrupts.0 != self.interrupts.0
+            || mco.0 != self.mco.0
+        {
+            return Err(Error::ClockConfigurationTimeout);
+        }
+        Ok(lsi.stable())
+    }
+
+    #[cfg(rcc_cw32l011_v1)]
+    #[allow(clippy::too_many_arguments)]
+    fn verify(
+        self, config: Config,
+        mut expected_clock: pac::sysctrl::regs::Cr0,
+        mut expected_sources: pac::sysctrl::regs::Cr1,
+        expected_hsi: pac::sysctrl::regs::Hsi, expected_hsi_stable: bool,
+        expected_hse: pac::sysctrl::regs::Hse, expected_hse_stable: bool,
+        expected_wait: Option<(u8, u8)>,
+    ) -> Result<(), Error> {
+        let lsi_stable = self.retained(config)?;
+        let r = pac::SYSCTRL;
+        let mut clock = r.cr0().read();
+        let mut sources = r.cr1().read();
+        let hsi = r.hsi().read();
+        let hse = r.hse().read();
+        let flash = self.flash_wait(expected_wait);
+        let initial_mirror = if expected_wait.is_none() { Some(r.cr2().read().flashwait()) } else { None };
+        self.post_observation()?;
+        clock.set_key(0);
+        expected_clock.set_key(0);
+        sources.set_key(0);
+        expected_sources.set_key(0);
+        if clock.0 != expected_clock.0 || sources.0 != expected_sources.0
+            || (hsi.0 & crate::RCC_LSI_HSI_PARAMETERS_MASK)
+                != (expected_hsi.0 & crate::RCC_LSI_HSI_PARAMETERS_MASK)
+            || hsi.stable() != expected_hsi_stable
+            || (hse.0 & crate::RCC_LSI_HSE_PARAMETERS_MASK)
+                != (expected_hse.0 & crate::RCC_LSI_HSE_PARAMETERS_MASK)
+            || hse.stable() != expected_hse_stable
+            || initial_mirror.is_some_and(|mirror| mirror != self.routes.flashwait())
+        {
+            return Err(Error::ClockConfigurationTimeout);
+        }
+        if !lsi_stable { return Err(Error::LsiNotReady); }
+        if flash? != expected_wait { return Err(Error::FlashLatencyTimeout); }
+        Ok(())
+    }
+
     // These invariants have no acknowledgment interval. In particular an LSI
     // request/readiness loss is never repaired or polled into eligibility.
+    #[cfg(rcc_cw32l010_v1)]
     fn retained(self, config: Config) -> Result<bool, Error> {
         let r = pac::SYSCTRL;
         check_external_faults(
@@ -2593,6 +2961,7 @@ impl LsiSysclkSnapshot {
 
     // Full settled phase identity. Pending fields are handled only by the
     // concrete local prior-to-target loops; no source-wide ignore mask exists.
+    #[cfg(rcc_cw32l010_v1)]
     #[allow(clippy::too_many_arguments)]
     fn verify(
         self, config: Config,
@@ -2840,12 +3209,23 @@ impl LseSysclkSnapshot {
 
 /// Final native live-LSI preparation: factory HSI carries the final divisors
 /// and conservative WAIT before the last clock-tree mutation selects LSI.
-#[cfg(all(rcc_cw32l010_v1, rcc_lsi_sysclk))]
+#[cfg(all(any(rcc_cw32l010_v1, rcc_cw32l011_v1), rcc_lsi_sysclk))]
 fn finish_lsi_sysclk(
-    config: Config, mut clocks: Clocks, entry: LsiSysclkSnapshot, trim: u16,
+    config: Config, clocks: Clocks, entry: LsiSysclkSnapshot, trim: u16,
     cs: critical_section::CriticalSection<'_>,
 ) -> Result<Clocks, Error> {
+    #[cfg(rcc_cw32l010_v1)]
+    let mut clocks = clocks;
     let r = pac::SYSCTRL;
+    #[cfg(rcc_cw32l011_v1)]
+    {
+        let _ = cs;
+        if config.hse.is_some() || config.lse.is_some() || clocks.hse.is_some()
+            || entry.sources.hseen() || entry.sources.hseccs() || entry.sources.lseccs()
+        {
+            return Err(Error::ClockConfigurationTimeout);
+        }
+    }
     let mut expected_clock = entry.clock;
     expected_clock.set_key(0);
     expected_clock.set_sysclk(ClockSource::Hsi);
@@ -2859,7 +3239,10 @@ fn finish_lsi_sysclk(
     expected_hsi.set_trim(trim);
     expected_hsi.set_div(config.hsi.div as u8);
     let expected_hsi_stable = true;
-    let mut expected_hse = entry.hse;
+    let expected_hse = entry.hse;
+    #[cfg(rcc_cw32l010_v1)]
+    let mut expected_hse = expected_hse;
+    #[cfg(rcc_cw32l010_v1)]
     if let Some(hse) = config.hse {
         expected_hse.set_mode(hse.mode == HseMode::Bypass);
         expected_hse.set_driver(hse.drive);
@@ -2893,11 +3276,14 @@ fn finish_lsi_sysclk(
     }
     entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
+    #[cfg(rcc_cw32l010_v1)]
     pac::FLASH.cr2().modify(|w| {
         w.set_key(0x5a5a);
         w.set_wait(final_wait as u8);
     });
     {
+        #[cfg(rcc_cw32l011_v1)]
+        let flash_write = LsiSysclkSnapshot::write_flash_wait(final_wait as u8);
         // Final WAIT and mirror acknowledge under verified final-divided factory HSI.
         let prior_0 = expected_wait.unwrap().0;
         let target_0 = final_wait as u8;
@@ -2913,7 +3299,12 @@ fn finish_lsi_sysclk(
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             current_clock.set_key(0);
             current_sources.set_key(0);
             if current_sources.0 != expected_sources.0
@@ -2926,9 +3317,18 @@ fn finish_lsi_sysclk(
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
+            }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = flash_write.and(current_wait)?;
+            #[cfg(rcc_cw32l011_v1)]
+            if current_wait.unwrap().0 != current_wait.unwrap().1 {
+                return Err(Error::FlashLatencyTimeout);
             }
             let observed_0 = current_wait.unwrap().0;
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
@@ -2970,7 +3370,12 @@ fn finish_lsi_sysclk(
             let current_hse = r.hse().read();
             let current_hsi_stable = current_hsi.stable();
             let current_hse_stable = current_hse.stable();
+            #[cfg(rcc_cw32l010_v1)]
             let current_wait = expected_wait.map(|_| (pac::FLASH.cr2().read().wait(), r.cr2().read().flashwait()));
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = entry.flash_wait(expected_wait);
+            #[cfg(rcc_cw32l011_v1)]
+            entry.post_observation()?;
             current_clock.set_key(0);
             current_sources.set_key(0);
             if current_sources.0 != expected_sources.0
@@ -2983,6 +3388,7 @@ fn finish_lsi_sysclk(
             {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l010_v1)]
             if !lsi_stable { return Err(Error::LsiNotReady); }
             let observed_0 = current_clock.sysclk();
             if observed_0 != target_0 && (observed_0 != prior_0 || acknowledged_0) {
@@ -2993,6 +3399,10 @@ fn finish_lsi_sysclk(
             if current_clock.0 != expected_clock.0 {
                 return Err(Error::ClockConfigurationTimeout);
             }
+            #[cfg(rcc_cw32l011_v1)]
+            if !lsi_stable { return Err(Error::LsiNotReady); }
+            #[cfg(rcc_cw32l011_v1)]
+            let current_wait = current_wait?;
             if current_wait != expected_wait {
                 return Err(Error::FlashLatencyTimeout);
             }
@@ -3007,6 +3417,8 @@ fn finish_lsi_sysclk(
     barrier();
     entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,
                      expected_hse, expected_hse_stable, expected_wait)?;
+    #[cfg(rcc_cw32l010_v1)]
+    {
     let final_hse_mode = config.hse.map(|hse| hse.mode).or_else(|| {
         entry.sources.hseen().then_some(if entry.hse.mode() { HseMode::Bypass } else { HseMode::Oscillator })
     });
@@ -3025,6 +3437,21 @@ fn finish_lsi_sysclk(
             clocks.hse = Some(HseMode::Oscillator);
         } else if clocks.hse.is_none() {
             clocks.hse = Some(HseMode::Bypass);
+        }
+    }
+    }
+    #[cfg(rcc_cw32l011_v1)]
+    {
+        let current_sources = r.cr1().read();
+        entry.post_observation()?;
+        let final_hse_mode = config.hse.map(|hse| hse.mode).or_else(|| {
+            entry.sources.hseen().then_some(if entry.hse.mode() { HseMode::Bypass } else { HseMode::Oscillator })
+        });
+        if config.hse.is_some() || final_hse_mode.is_some() || clocks.hse.is_some()
+            || entry.sources.hseen() || current_sources.hseen()
+            || current_sources.hseccs() || current_sources.lseccs()
+        {
+            return Err(Error::ClockConfigurationTimeout);
         }
     }
     entry.verify(config, expected_clock, expected_sources, expected_hsi, expected_hsi_stable,

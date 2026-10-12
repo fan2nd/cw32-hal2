@@ -1,0 +1,316 @@
+{
+  "schema_version": 1,
+  "status": "accepted_frozen_main_runtime_implementation",
+  "review_date": "2026-10-12",
+  "scope": "Independent read-only runtime, own-source, public-contract and actual finite main-build review. Separate final-source clean two-library/two-ELF acceptance is still required.",
+  "qualified_parts": [
+    "CW32L011K8T6",
+    "CW32L011K8U6"
+  ],
+  "generic_CW32L011_excluded": true,
+  "blocking_findings": [],
+  "approved_design": {
+    "external_artifact_label": "stage78.frozen-runtime-design",
+    "sha256": "f4479a11874cdf85873e1c5bc8d2dc659793ca462ef98f8f2d7b21ce171246f1"
+  },
+  "reviewed_main_code_sha256": {
+    "embassy-cw32/src/rcc/l010_l011.rs": "1f40106a0ab9f60fddcb90b3e2b8a8ced96e824a3b2fa95bf6ef1d639f8bf99d",
+    "embassy-cw32/build.rs": "e030273a01578dfbd7f7c0e111b13eb1ecc0059a5671643423e9a5d3c4d0b6f1",
+    "embassy-cw32/src/rcc/peripheral.rs": "92fce92a5ad9f68106dfa400ecea2e0798e3dd4204baa300e00bd8b224351284",
+    "embassy-cw32/src/rcc/mod.rs": "8ebb82bd2c1f7d411400c5fc6562a6ba64381abb19c6d2f7ff64a3606d755633",
+    "embassy-cw32/src/rcc/bounds.rs": "a686584611038c3dd1069585006107c879d37e862e3f635d6cddad5b8359e9a1",
+    "examples/lsi-clock/Cargo.toml": "ffaf81b37f43fa430b4b3ef65ea99fba5fa98b108172cc66c97c02e598a58211",
+    "examples/lsi-clock/build.rs": "830dfa2acf767715bd836efa0e82e509d97c773b7274bd186dc194fedcd1e2a4",
+    "examples/lsi-clock/src/main.rs": "5c8c859f059525f7e460a4a4be285e6a5687b053102b6b6d3c7d83c51e7888e3"
+  },
+  "public_contract_correspondence": {
+    "docs/l011-live-factory-lsi-sysclk.md": {
+      "main_input_sha256": "01ac6a0b6748ee471ccd302761a634ae4ac86c3f519f4d5ea934a74007207f71",
+      "reviewed_final_status_sha256": "a4d2f2c311ce7e77b46f8b20c49353819988438b4d1fb9a5c54b5972cb56b03d",
+      "change": "Verification status, warning/history and separate-clean statements only; substantive runtime contract unchanged."
+    },
+    "embassy-cw32/src/lib.rs": {
+      "main_input_sha256": "4f89a919601f093fc5efb3b5cd5aa61ce2a65203a42aaa58d0d0383aec768ed7",
+      "reviewed_final_status_sha256": "63c0550836e312ea655f8cad2000320f331a48044288b44aa0be8e7da90039ed",
+      "change": "One rustdoc phrase: scope and pending verification -> scope and verification status. Executable source unchanged."
+    },
+    "note": "Post-main status edits are not represented as original main-build inputs. Their exact reviewed bytes are the publication basis."
+  },
+  "own_source_review": {
+    "selected_locked_hashes_rechecked": 18,
+    "external_artifact_label": "stage78.independent-runtime.own-source-preparation",
+    "sha256": "b3710ca860009c4661e79722e21f29ca7a6e76366e276c48010afaee6af32a78",
+    "confirmed": "Own ten-bit trim, halfword 0x001007C2, 29520..41000 Hz rate-only envelope, RTC SOURCE/PSC1 fields, CR0/CR1/CR2 normalization, FLASH access/reset/WAIT and current versus historical source status."
+  },
+  "static_review": [
+    "Original software LSIEN, current STABLE and non-erased typed factory equality are required. Exactly one original source snapshot; no later source or readiness recapture. Requested HSE/LSE and original HSEEN/HSECCS/LSECCS are excluded.",
+    "RTC/ADC/VC reads require actual gate/reset access. The original bounded borrowing protocol restores before semantics and retains complete enable/restore error priority. RTC SOURCE1 and undocumented 4..7 refuse; SOURCE3 requires original factory-ready raw HSI and actual widened PSC1+1 >=98, independently of START/AWT, HSI DIV and profile defaults.",
+    "Exactly one separate authoritative FLASH.CR2 baseline is attached after legal access. All non-WAIT/KEY bits and SYSCTRL CR2 bit7 are preserved. Fourteen L011 live phase collectors use access-before/after checks; both WAIT writes require coherent old/old or target/target pairs without reversal.",
+    "Every phase owns only its named pending fields. Relevant faults precede invalid non-owned/pending phase state, lost live LSI readiness, then buffered Flash failures. Expected state advances only acknowledged fields; no observed whole-register image becomes a new source baseline.",
+    "There are no LSI parameter writes. The two original LSIEN write sites remain excluded by !live_lsi. No watchdog operation or added dormant UART/LPTIM/GPIO work-gate scan obtains admission. Existing ADC and analog ownership vetoes remain.",
+    "Final buses and latency are established under factory HSI, covering target LSI, configured HSI and full 4.08 MHz fallback. After the last source-only CR0 write, L011 performs only checks and barriers before the existing single CLOCKS publication; no HSE/GPIO gate, LSE helper, repair or reselection is reachable.",
+    "The legacy HSE write block, LSE snapshot/methods and LSE tail/helpers match Stage77 bytes. All five HSE extra-argument cfgs and the final four-argument matcher remain L010-only. L010 Flash/error behavior, non-LSI L011 routes, generic exclusion and separate L012 runtime are preserved.",
+    "Actual OUT_DIRs contain own L011 masks 0xffff7fff for LSI/HSI and 0xfff7ffff for HSE, exact rate/factory constants and three-argument HSE helpers. Generic L011 emits no LSI capability. Native RTC remains SOURCE3/raw 96 MHz HSIOSC with SOURCE_IS_LSI=false.",
+    "The ordinary example adds only both exact L011 features, retains real 65536/6144-byte memory and observes existing clock/HSIOSC bounds after normal try_init. It does not prepare LSI, command IWDT or migrate RTC.",
+    "Before final freeze, initial relevant-LSE fault priority was corrected. The final three-hunk runtime warning cleanup changes copied-value binding mutability only; L010-only mutable shadows preserve all register operations and phase logic."
+  ],
+  "main_evidence": {
+    "external_artifact_label": "stage78.main-attempt-002",
+    "source_manifest_sha256": "e61b6b200c4652aeeb8b98bab31d5f47a6eaa67b3a0010d8a5c0f1d7e7ecfaeb",
+    "generated_manifest_sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98",
+    "results_sha256": "79d8420a88d348e30400303ee78ab89a3c6bf0f66606e65f60fae47734cbcb84",
+    "independent_artifact_inspection_sha256": "ff7ef60cd810a0c4ec14f10cc38a1c473784f20967a3c059a0d170477be3d30a",
+    "source_files": 1334,
+    "generated_files": 905,
+    "source_and_generated_before_after_equal": true,
+    "all_main_inputs_matched_current_bytes_at_artifact_review": true,
+    "artifact_log_and_saved_OUT_DIR_hashes_rechecked": true,
+    "actual_compiler_products_not_fresh_cache_reports": 14,
+    "commands_match_frozen_main_matrix": true,
+    "common_flags": [
+      "--locked",
+      "--target",
+      "thumbv6m-none-eabi",
+      "--no-default-features",
+      "--message-format=json"
+    ],
+    "library_command": "cargo build --manifest-path firmware/Cargo.toml -p embassy-cw32 --lib; add common flags, listed features and --release except the debug row",
+    "elf_command": "cargo build --release; add common flags, listed manifest, features and binary",
+    "rustc": "1.99.0 (b940084d7 2026-09-28)",
+    "toolchain_before_after_equal": true,
+    "rlibs": 7,
+    "elfs": 7,
+    "rows": [
+      {
+        "id": "M-L1",
+        "chip": "cw32l011k8t6",
+        "profile": "release",
+        "features": "cw32l011k8t6,rt,defmt",
+        "artifact_sha256": "f34d38e37fe36c17385e28cdf489e2fa99a1b30de03d7135c9d9f89864ea864a",
+        "artifact_bytes": 5733120,
+        "exit_code": 0,
+        "warnings": 3
+      },
+      {
+        "id": "M-L2",
+        "chip": "cw32l011k8u6",
+        "profile": "release",
+        "features": "cw32l011k8u6,rt,defmt",
+        "artifact_sha256": "b1e522b87c3e9ee948c2ed76382c659243a761d61a653ad94946ac25e495affa",
+        "artifact_bytes": 5732710,
+        "exit_code": 0,
+        "warnings": 3
+      },
+      {
+        "id": "M-L3",
+        "chip": "cw32l011k8t6",
+        "profile": "debug",
+        "features": "cw32l011k8t6,rt,defmt,time-driver-gtim1",
+        "artifact_sha256": "b2f101b3352660cddfdfb1db1f3112ea1e869f767f6447a33808ceccc5c43110",
+        "artifact_bytes": 10001492,
+        "exit_code": 0,
+        "warnings": 3
+      },
+      {
+        "id": "M-L4",
+        "chip": "cw32l011",
+        "profile": "release",
+        "features": "cw32l011,rt,defmt",
+        "artifact_sha256": "f5434c2ecac06594627e49c4113d8fc3b2c521d84216dc13aa98588999b39898",
+        "artifact_bytes": 5485514,
+        "exit_code": 0,
+        "warnings": 0
+      },
+      {
+        "id": "M-L5",
+        "chip": "cw32l010f8p6",
+        "profile": "release",
+        "features": "cw32l010f8p6,rt,defmt",
+        "artifact_sha256": "076c34e050c760bced25792e46ec1d8a915714e90147f6b38a3b61067505d9ec",
+        "artifact_bytes": 5484852,
+        "exit_code": 0,
+        "warnings": 3
+      },
+      {
+        "id": "M-L6",
+        "chip": "cw32l012c8t6",
+        "profile": "release",
+        "features": "cw32l012c8t6,rt,defmt",
+        "artifact_sha256": "2b1ce4358e0a1a93aca7c295cfce9e3dc9059b0742012f0b34b86ad4116ee697",
+        "artifact_bytes": 7603544,
+        "exit_code": 0,
+        "warnings": 0
+      },
+      {
+        "id": "M-L7",
+        "chip": "cw32f030c8t7",
+        "profile": "release",
+        "features": "cw32f030c8t7,rt,defmt",
+        "artifact_sha256": "9727d99543559650e4f2067d50a0aba241a8817df384a03e92ceed5aff037365",
+        "artifact_bytes": 6827664,
+        "exit_code": 0,
+        "warnings": 0
+      },
+      {
+        "id": "M-E1",
+        "chip": "cw32l011k8t6",
+        "profile": "release",
+        "features": "cw32l011k8t6,defmt",
+        "artifact_sha256": "dd928c24ef141e0b1c82bcebf16e7f8acfa69f1701f01211da1d03daf167a565",
+        "artifact_bytes": 210336,
+        "exit_code": 0,
+        "warnings": 3,
+        "manifest": "examples/lsi-clock/Cargo.toml",
+        "binary": "cw32-lsi-clock-example",
+        "memory_bytes": {
+          "FLASH": 65536,
+          "RAM": 6144
+        },
+        "entry": 193,
+        "initial_stack": 536877056,
+        "load_segments_and_vectors_valid": true
+      },
+      {
+        "id": "M-E2",
+        "chip": "cw32l011k8u6",
+        "profile": "release",
+        "features": "cw32l011k8u6,defmt",
+        "artifact_sha256": "8ff4342b5b6b61b083d31455daa0955019506995824c89edf78f0e719f016844",
+        "artifact_bytes": 210336,
+        "exit_code": 0,
+        "warnings": 3,
+        "manifest": "examples/lsi-clock/Cargo.toml",
+        "binary": "cw32-lsi-clock-example",
+        "memory_bytes": {
+          "FLASH": 65536,
+          "RAM": 6144
+        },
+        "entry": 193,
+        "initial_stack": 536877056,
+        "load_segments_and_vectors_valid": true
+      },
+      {
+        "id": "M-E3",
+        "chip": "cw32l010f8p6",
+        "profile": "release",
+        "features": "cw32l010f8p6,defmt",
+        "artifact_sha256": "c66c4c4db324a84914d189faf52b0d505c059bd5bf1b77d77fe7d58623de1933",
+        "artifact_bytes": 209452,
+        "exit_code": 0,
+        "warnings": 3,
+        "manifest": "examples/lsi-clock/Cargo.toml",
+        "binary": "cw32-lsi-clock-example",
+        "memory_bytes": {
+          "FLASH": 65536,
+          "RAM": 4096
+        },
+        "entry": 193,
+        "initial_stack": 536875008,
+        "load_segments_and_vectors_valid": true
+      },
+      {
+        "id": "M-E4",
+        "chip": "cw32l012c8t6",
+        "profile": "release",
+        "features": "cw32l012c8t6,defmt",
+        "artifact_sha256": "1a44ffeab5867839379cb0c854d3197610d13da25ab336f41d2b12d9374ec787",
+        "artifact_bytes": 214840,
+        "exit_code": 0,
+        "warnings": 0,
+        "manifest": "examples/lsi-clock/Cargo.toml",
+        "binary": "cw32-lsi-clock-example",
+        "memory_bytes": {
+          "FLASH": 65536,
+          "RAM": 8192
+        },
+        "entry": 193,
+        "initial_stack": 536879104,
+        "load_segments_and_vectors_valid": true
+      },
+      {
+        "id": "M-E5",
+        "chip": "cw32l011k8t6",
+        "profile": "release",
+        "features": "cw32l011k8t6",
+        "artifact_sha256": "ae72b6d85b06072ab9724e9a9b6e0ef3620c9fa158b50de633637a74f6a32b3f",
+        "artifact_bytes": 210204,
+        "exit_code": 0,
+        "warnings": 3,
+        "manifest": "examples/hse-clock/Cargo.toml",
+        "binary": "crystal",
+        "memory_bytes": {
+          "FLASH": 65536,
+          "RAM": 6144
+        },
+        "entry": 193,
+        "initial_stack": 536877056,
+        "load_segments_and_vectors_valid": true
+      },
+      {
+        "id": "M-E6",
+        "chip": "cw32l011k8t6",
+        "profile": "release",
+        "features": "cw32l011k8t6",
+        "artifact_sha256": "2833c507fc028ddf27ca8f3ab33508881c5eced975f4354c796f5d7698fb01ee",
+        "artifact_bytes": 211012,
+        "exit_code": 0,
+        "warnings": 3,
+        "manifest": "examples/lse-sysclk/Cargo.toml",
+        "binary": "crystal",
+        "memory_bytes": {
+          "FLASH": 65536,
+          "RAM": 6144
+        },
+        "entry": 193,
+        "initial_stack": 536877056,
+        "load_segments_and_vectors_valid": true
+      },
+      {
+        "id": "M-E7",
+        "chip": "cw32l011k8t6",
+        "profile": "release",
+        "features": "cw32l011k8t6",
+        "artifact_sha256": "3d2f56a83933f3126a3b2bad5ff61a983d1cf3280e80a25cfae4546fe68dc32a",
+        "artifact_bytes": 210620,
+        "exit_code": 0,
+        "warnings": 3,
+        "manifest": "examples/rtc-calendar/Cargo.toml",
+        "binary": "preserve_calendar",
+        "memory_bytes": {
+          "FLASH": 65536,
+          "RAM": 6144
+        },
+        "entry": 193,
+        "initial_stack": 536877056,
+        "load_segments_and_vectors_valid": true
+      }
+    ],
+    "warnings": {
+      "total": 30,
+      "new_warning_count": 0,
+      "retained_classes": [
+        "unused RCC_LSE_SYSCLK_LSE_EDGES",
+        "unused RCC_LSE_SYSCLK_LSI_CYCLES",
+        "unused RCC_LSE_SYSCLK_MARGIN_LSE_EDGES"
+      ],
+      "note": "Counts are actual final Cargo JSON diagnostics. Historical main attempt 001 retains its original logs and separately corrected warning capture; it is superseded for final-source acceptance."
+    }
+  },
+  "limits": [
+    "Compilation and artifact inspection do not execute runtime refusals or the hardware transition.",
+    "No strict cycle timing, oscillator continuity, source-loss recovery, cold/POR support, retained-client correctness or watchdog survival is established.",
+    "The RM calibration warning and DS factory envelope remain distinct; source match and STABLE do not measure the oscillator.",
+    "No historical LSE or monitor qualification is renewed.",
+    "The reviewer ran no Cargo build, HAL test, probe, register model, hosted CI or hardware execution."
+  ],
+  "clean_verification": {
+    "status": "not_run_at_this_main_acceptance",
+    "required_rows": [
+      "M-L2",
+      "M-L5",
+      "M-E2",
+      "M-E3"
+    ],
+    "requirement": "Separate final source and target, fresh generation, no copied generated or target outputs; record independent two-library/two-ELF evidence."
+  }
+}

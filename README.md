@@ -219,7 +219,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - CW32L083RBT6/RCT6/RCS6/MCT6/VCT6: init-only factory LSI SYSCLK with own
   31,816–33,784 Hz rate bounds at 1.65–5.5 V, VDDA=VDD and −40–85°C. RBT6
   retains 128 KiB Flash, the other four 256 KiB, and all five 24 KiB SRAM.
-  Generic L083, generic L010/L012 and all L011 remain excluded. Full six-UART,
+  Generic L083 and generic L010/L011/L012 remain excluded. Full six-UART,
   six-GPIO-bank and complete bonded LSI/PLL route admission preserves off
   LCD/LPTIM work gates; inspection can advance unrelated pins and events.
   The inherited PLL must depart through a proven HSI/HSE bridge and reach
@@ -246,8 +246,9 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   three existing unused LSE-constant warnings in L010/L011 rows. At main
   acceptance clean had not run; final-package completion requires a separate
   final-source two-library/two-ELF clean receipt. No hardware result follows.
-  That L010 addition left generic L010 and all L011/L012 unqualified; the
-  separate exact L012 live-only contract below adds only C8T6/C8U6.
+  That L010 addition left generic L010 and all L011/L012 unqualified at that
+  historical acceptance point; the separate exact L012 and L011 contracts below
+  do not rewrite that evidence.
   See the [live-only contract](docs/l010-live-factory-lsi-sysclk.md).
 - CW32L012C8T6/C8U6: init-only reuse of an originally software-requested,
   stable, own factory-matching LSI, nominal 32,800 Hz and rate-only
@@ -262,9 +263,26 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   linked ELFs and six finite source/data gates, with independent runtime and
   metadata/source acceptance. At main acceptance clean replay had not run;
   final-package completion requires a separate final-source two-library/two-ELF
-  clean receipt. Board qualification remains unverified. Generic L012 and every
-  L011 remain excluded. See the
+  clean receipt. Board qualification remains unverified. Generic L012 remains
+  excluded. The historical Stage75 L011 exclusion belongs to that acceptance
+  point; the separate L011 contract below does not rewrite it. See the
   [own live-only contract](docs/l012-live-factory-lsi-sysclk.md).
+- CW32L011K8T6/K8U6: init-only reuse of originally software-requested, stable,
+  factory-matching ten-bit LSI, nominal 32,800 Hz and rate-only 29,520–41,000 Hz
+  at 1.7–5.5 V, VDDA=VDD and −40–85°C. Both parts retain 64 KiB Flash / 6 KiB
+  SRAM. `Config.hse` and `Config.lse` must be `None`; original HSEEN, HSECCS
+  and LSECCS must all be zero, with HSI or LSI entry. Ordinary POR, cold startup,
+  automatic-only request and new monitors are excluded. RTC SOURCE1 refuses
+  after its real restored configuration-gate window; SOURCE3 requires original
+  factory-ready raw HSI and actual PSC1 raw ≥97. Native RTC stays raw 96 MHz
+  HSIOSC. The DS −10/+25% factory envelope does not withdraw the RM ±10%
+  calibration-adjustment warning or qualify cycle timing. Main verification passed
+  seven actual libraries and seven linked ELFs, all with exit zero; generation
+  and seven finite data gates passed in separate invocations. Three existing
+  LSE-constant warning headers remain. At main acceptance clean had not run;
+  completion requires a separate final-source two-library/two-ELF receipt.
+  No hardware result is claimed. See the
+  [own live-only contract](docs/l011-live-factory-lsi-sysclk.md).
 - F020/F030/A030: init-only factory LSI SYSCLK with complete cold-start admission,
   explicit whole-GPIO-bank inspection effects, permanent target request and
   rate-only bounds. The same families' LsiClock/RTC aliases are also rate-only;

@@ -78,3 +78,22 @@ for review and refresh steps, and [`docs/SOURCE-BUNDLE.md`](../docs/SOURCE-BUNDL
 for distribution scope.
 
 The lock also lists `project_audit_inputs`: explicitly retained, byte-pinned historical acceptance records that cannot be regenerated from the current checkout. These are distinct from disposable build receipts. Their presence and hashes are mandatory, and they make no legal-clearance claim.
+
+
+Exact CW32L011K8T6/K8U6 live factory-LSI uses the current own CN RM1.1,
+CN DS1.1 and SDK1.0.3 already in that authority. See the
+[source reading index](SOURCES.md#exact-cw32l011-live-factory-lsi-sysclk) and
+[rate-only contract](../docs/l011-live-factory-lsi-sysclk.md). The DS factory
+29,520–41,000 Hz envelope and RM ±10% calibration-adjustment warning remain
+distinct; no new monitor or cold-start qualification follows. The DS revision
+locator correction is printed page 1 →69 at unchanged physical PDF page 72;
+the new qualification records both values and the rendered-page basis. Other
+authority changes are evidence-reference appends only. Historical source
+identities, selected editions, member chains and acceptance records remain
+unchanged. The earlier Stage75 L011 exclusion describes that earlier scope.
+Generation and seven finite data gates passed in separate invocations; final
+main verification passed seven real libraries and seven linked ELFs, all with
+exit zero and only three existing LSE-constant warning headers. At main
+acceptance clean had not run; completion requires a separate final-source
+two-library/two-ELF receipt. Earlier failed preparation and diagnostic records
+remain separate from those successful final results.

@@ -639,7 +639,7 @@ The [live-only contract](../docs/l010-live-factory-lsi-sysclk.md) and its
 bind the own RM CN1.2, DS CN1.3 and SDK1.0.9 inputs already retained in the
 existing source lock. No vendor bytes or historical source hashes are changed.
 
-Own RM PDF54/printed53 forbids changes to running LSI parameters; PDF56/55
+Own RM PDF 54/printed 53 forbids changes to running LSI parameters; PDF56/55
 and 72/71 bind the factory halfword and ten-bit TRIM, while PDF69/68 distinguishes
 automatic requests from software LSIEN. Own DS CN1.3 supplies the exact memory,
 package and factory-rate envelope. RM PDF89/printed88 binds IRQ4, named RCC by
@@ -669,7 +669,8 @@ follows from these software receipts.
 
 Only CW32L012C8T6 (LQFP48) and CW32L012C8U6 (QFN48), each 64 KiB Flash and
 8 KiB SRAM, gain the separate [live-only contract](../docs/l012-live-factory-lsi-sysclk.md).
-Generic L012 and all L011 remain excluded. Own CN RM1.4, EN RM1.0, CN DS1.0 and
+Generic L012 remains excluded. The Stage75 exclusion of all L011 is historical;
+the separate L011 addition below does not rewrite that acceptance. Own CN RM1.4, EN RM1.0, CN DS1.0 and
 SDK1.0.5 retain their vendor-original identities, versions and hashes. Raw and
 curated register-access facts stay unchanged. The evidence registry only appends
 reviewed qualification-evidence references.
@@ -804,3 +805,71 @@ replay was one exact F030C8T7 release library and one HCLK ELF. Those historical
 No aggregate recipe or hardware execution was run. No hosted CI, HAL tests,
 probes or register models are added, and no historical receipt supplies new
 implementation, physical-output or loaded-waveform acceptance.
+
+
+## Exact CW32L011 live factory-LSI SYSCLK
+
+Only CW32L011K8T6 (LQFP32) and CW32L011K8U6 (QFN32), each 64 KiB Flash and
+6 KiB SRAM, gain the separate [live-only contract](../docs/l011-live-factory-lsi-sysclk.md).
+Generic L011 remains excluded. This addition retains the selected own RM CN1.1
+(June 2026 cover), DS CN1.1 (July 2025 cover) and SDK1.0.3 identities in
+[the evidence authority](evidence-sources.json). The own
+[qualification record](../docs/l011-live-factory-lsi-qualification.json) binds
+the facts independently of previous LSE acceptance.
+
+One-based physical PDF/printed locators use those own editions:
+
+- DS 8/5, Table 3-1 and 34/31, Table 6-1 establish exact package and memory.
+  DS 51/48, Table 7-19 gives nominal 32,800 Hz, factory −10/+25%, hence
+  29,520–41,000 Hz at 1.7–5.5 V, VDDA=VDD and −40–85°C. The 25°C-only ±1%
+  row does not narrow the complete envelope. DS 72/69 records the 2025-05-19
+  Table 7-19 change. Its old printed-page locator 1 is corrected to 69 without
+  changing physical page 72 or any source bytes; both values and the rendered
+  basis remain in the new proof.
+- RM 54/53 retains the warning about adjustment outside 32.8 kHz ±10%.
+  The RM 0.4% trim-step/30–36 kHz range and DS 0.16% typical trim step remain
+  unresolved. The DS factory envelope does not withdraw the RM warning or
+  qualify every arbitrary trim, analog operating point or strict cycle time.
+- RM 52/51 prohibits modifying running oscillator parameters; 62/61 describes
+  LSI SYSCLK; 65/64 and 66–67/65–66 give SYSCLK3 and software LSIEN. RM 70/69
+  gives ten-bit TRIM, WAIT[11:10], STABLE15 and factory halfword 0x001007C2.
+  Raw 0xffff is refused before masking; zero is valid. RM 55/54 warns STABLE
+  can remain set after running failure. ISR LSIRDY is a retained event, not
+  current readiness. No LSI parameter/request or IWDT operation prepares entry.
+- RM 140/139, 152/151 and 154/153 give the common 1 MHz RTC prescaler ceiling,
+  SOURCE0/1/2/3 = LSE/HSE/LSI/raw HSIOSC and actual eight-bit PSC1+1.
+  This HSE-off slice rejects SOURCE1 after the real gate window is restored;
+  SOURCE3 requires original factory-ready raw HSI and raw PSC1 ≥97. Widen
+  before adding one so raw 255 gives divisor 256. RTC WAIT2 is load status,
+  not a source-readiness test. Native RTC stays raw 96 MHz HSIOSC.
+- RM 68/67 binds SYSCTRL FLASHWAIT to the same-function FLASH WAIT. The current RM
+  labels CR2[9:7] RFU while CMSIS/SVD names bit7 RTCLPM; preserve the bit without
+  assigning new semantics. Full 4.08 MHz effective-HSI fallback budgeting
+  grants no new fault recovery. SYSCTRL IRQ4 remains distinct from CLKFAULT31.
+- DS 29–32/26–29 lists MCO PA4 AF4, PA8 AF4 and PC13 AF1, and raw HSIOSC_OUT
+  PB0 AF3. No direct bonded LSI_OUT route is supplied. Own UART1/2/3, GPIOA/B/C,
+  integrated RTC/AWT and timer observers retain their identities; no L012
+  GPIOF/output/nine-bit/RC10K facts are imported. L011 IWDT is LSI-clocked
+  (RM 384–386/383–385), without an admission scan or survival guarantee.
+
+The narrow target requires Config.hse=None, Config.lse=None and original
+HSEEN/HSECCS/LSECCS=0, with HSI or LSI entry and already requested/stable,
+factory-matching LSI. Inherited unmonitored LSE remains protected. Selected
+SDK/SVD/member facts corroborate own register shapes; vendor startup/example
+code is not evidence that Rust initialization executed it. The two additional
+startup/example members are identified within the locked archive in the new
+proof, not promoted to new individually locked canonical members.
+
+Historical LSE proof booleans, source IDs/hashes/sizes/URLs/licenses/member
+chains, native RTC source/profile and all 54 Pin records retain their scope.
+Apart from the one DS printed-page correction, the authority only appends
+approved evidence references. Final main verification passed seven actual
+libraries and seven linked ELFs, all with exit zero; generation and seven
+finite data gates passed in separate invocations. The 905-file comparison
+found exactly two L011 JSONs and their shared metadata body changed, with
+902 files unchanged. Removing the two new LSI objects restored complete
+54-chip equality. Three existing LSE-constant warning headers remain; earlier
+checker failures and the first main diagnostic correction remain in external
+history. At main acceptance clean had not run; completion requires a separate
+final-source two-library/two-ELF receipt. The unchanged cumulative local recipe
+is not execution evidence.
