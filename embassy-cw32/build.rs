@@ -1876,12 +1876,21 @@ fn generate_mco(out: &mut String, time_driver: Option<&str>) {
         .collect();
     assert_eq!(
         qualified.len(),
-        usize::from(METADATA.name == "CW32F030C8T7")
+        usize::from(matches!(
+            METADATA.name,
+            "CW32F030C8T7" | "CW32F030K8T7" | "CW32F030K8U7" | "CW32A030C8T7"
+        ))
     );
     let Some(&(sysctrl, mco)) = qualified.first() else {
         return;
     };
-    assert_eq!((METADATA.name, METADATA.line), ("CW32F030C8T7", "CW32F030"));
+    let (line, lse_bonded) = match METADATA.name {
+        "CW32F030C8T7" => ("CW32F030", true),
+        "CW32F030K8T7" | "CW32F030K8U7" => ("CW32F030", false),
+        "CW32A030C8T7" => ("CW32A030", true),
+        _ => unreachable!("unqualified exact MCO part"),
+    };
+    assert_eq!(METADATA.line, line);
     assert_eq!((sysctrl.name, sysctrl.address), ("SYSCTRL", 0x4001_0000));
     assert_ne!(time_driver, Some(sysctrl.name));
     assert_eq!(
@@ -1919,15 +1928,30 @@ fn generate_mco(out: &mut String, time_driver: Option<&str>) {
     assert!(route.adc_mux.is_none() && route.comparator_mux.is_none());
     // These are the actual reservation maps consulted by Flex::new. None can
     // claim PA8, even if HSE/LSE is retained from an earlier boot stage.
-    for (signal, pin) in [
-        ("HSE_IN", "PF0"),
-        ("HSE_OUT", "PF1"),
-        ("LSE_IN", "PC14"),
-        ("LSE_OUT", "PC15"),
-    ] {
+    for (signal, pin) in [("HSE_IN", "PF0"), ("HSE_OUT", "PF1")] {
         let pins: Vec<_> = sysctrl.pins.iter().filter(|p| p.signal == signal).collect();
         assert_eq!(pins.len(), 1);
         assert_eq!((pins[0].pin, pins[0].af), (pin, None));
+        assert_eq!(METADATA.pins.iter().filter(|p| p.name == pin).count(), 1);
+    }
+    for (signal, pin) in [("LSE_IN", "PC14"), ("LSE_OUT", "PC15")] {
+        if lse_bonded {
+            let pins: Vec<_> = sysctrl.pins.iter().filter(|p| p.signal == signal).collect();
+            assert_eq!(pins.len(), 1);
+            assert_eq!((pins[0].pin, pins[0].af), (pin, None));
+            assert_eq!(METADATA.pins.iter().filter(|p| p.name == pin).count(), 1);
+        } else {
+            // K8 packages retain the GPIOC bank and die-level LSE registers,
+            // but neither unbonded pin nor any LSE route may become a token.
+            assert!(!METADATA.pins.iter().any(|p| p.name == pin));
+            assert!(
+                !METADATA
+                    .peripherals
+                    .iter()
+                    .flat_map(|p| p.pins)
+                    .any(|p| p.pin == pin || p.signal == signal)
+            );
+        }
     }
 
     assert_eq!(
@@ -4413,7 +4437,11 @@ fn generate_rcc(out: &mut String, time_driver: Option<&str>) {
         let allow_disable = (independently_owned
             || matches!(kind, "crc" | "cordic" | "eau" | "aes" | "trng"))
             && !shared_enable;
-        if METADATA.name == "CW32F030C8T7" && peripheral.name == "GPIOA" {
+        if matches!(
+            METADATA.name,
+            "CW32F030C8T7" | "CW32F030K8T7" | "CW32F030K8U7" | "CW32A030C8T7"
+        ) && peripheral.name == "GPIOA"
+        {
             // MCO relies on this actual classic Flex gate policy. Once is a
             // barrier, not an acknowledgement poll; the leaf checks the gate.
             assert_eq!(version, "v1");

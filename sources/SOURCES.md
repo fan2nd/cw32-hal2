@@ -702,47 +702,105 @@ The accumulated local recipe, historical LSE qualifications and earlier family's
 accepted receipts do not supply these results. No HAL tests, probes, register
 models, hosted CI or hardware execution are added.
 
-## Exact CW32F030C8T7 owned MCO qualification
+## Exact F030/A030 owned MCO qualification
 
-The [exact MCO catalog](../cw32-data/mco-qualified.yaml) and
-[qualification record](../docs/f030-mco-qualification.json) use the existing
-selected x030 RM CN2.5, F030 DS CN1.9 and F030 standard-peripheral SDK V2.2
-identities in `evidence-sources.json`. No new vendor original, source hash,
-license inference or redistribution scope is introduced.
+The [exact MCO catalog](../cw32-data/mco-qualified.yaml) covers CW32F030C8T7,
+CW32F030K8T7, CW32F030K8U7 and CW32A030C8T7 only. It retains the existing
+[Stage76 C8T7 qualification](../docs/f030-mco-qualification.json). Additional
+Stage77 source records are `docs/f030k8t7-mco-qualification.json`,
+`docs/f030k8u7-mco-qualification.json` and `docs/a030c8t7-mco-qualification.json`;
+the extension has separate Stage77 main implementation/build acceptance.
+Record names and historical acceptance do not themselves certify the extension.
 
-- RM PDF61/printed60 describes MCO; PDF94/printed93 specifies SYSCTRL offset
-  0x70, SOURCE[3:0], DIV[6:4] and reserved[31:7]. Disabled/HCLK/PCLK codes are
-  0/1/2; divider codes 0..7 correspond to /1, /2, /8, /64, /128, /256, /512 and
-  /1024. RM PDF147/printed146 supplies PA8 AF4.
-- DS Table5-2 PDF26/printed25 places PA8 at LQFP48 pin29, and Table5-3
-  PDF29/printed28 supplies AF4 MCO. Table7-4 PDF38/printed37 supplies ordinary
-  voltage/ambient and power/junction restrictions. Table7-27/Figure7-7
-  PDF51/printed50 supplies SPEED1 I/O values and their conditional fmax definition.
+Source authority remains the selected shared x030 RM CN2.5, F030 DS CN1.9,
+A030's own DS CN1.1 and F030 standard-peripheral SDK V2.2 identities in
+[`evidence-sources.json`](evidence-sources.json). The shared RM explicitly covers
+F030/A030. The F030 SDK retains its own provenance and is supplementary for
+A030; it is not an A030-owned SDK. No new vendor-original identity, hash,
+license inference or redistribution scope is introduced. Full PDFs, extracted
+text and rendered source-review pages remain external evidence.
+
+- Shared RM PDF61/printed60 describes MCO; PDF94/printed93 specifies SYSCTRL
+  offset 0x70, SOURCE[3:0], DIV[6:4] and reserved[31:7]. Disabled/HCLK/PCLK
+  codes are 0/1/2; codes 0..7 select /1, /2, /8, /64, /128, /256, /512 and /1024.
+  RM PDF147/printed146 supplies PA8 AF4.
+- F030 DS Table5-2 PDF24/printed23 records PC14/PC15 absent in both K8 package
+  columns. PDF26/printed25 places PA8 at LQFP48 pin29, LQFP32 pin18 and QFN32
+  pin18; Table5-3 PDF29/printed28 supplies AF4 MCO. The existing QFN32 exposed
+  VSS position 0 convention remains unchanged. Table7-4 PDF38/printed37 gives
+  ordinary voltage/ambient and junction limits, with power at TA=105°C of
+  364 mW for LQFP48, 357 mW for LQFP32 and 541 mW for QFN32. These package
+  limits are not interchangeable. Table7-27/Figure7-7 PDF51/printed50 supplies
+  SPEED1 I/O values and their conditional fmax definition.
+- A030's own DS PDF22/printed21 records PC14/PC15 on pins3/4; PDF23/printed22
+  places PA8 at LQFP48 pin29 and PDF26/printed25 gives AF4 MCO. Own Table7-4
+  PDF35/printed34 supplies ordinary −40..105°C, voltage/junction restrictions
+  and 364 mW LQFP48 power at TA=105°C. Own Table7-26/Figure7-7 PDF48/printed47
+  supplies SPEED1 I/O data; F030's table/page identities are not substituted.
 - Locked `cw32f030_gpio.h` line837 corroborates PA8 AF4; `cw32f030_rcc.h`
   lines402–440 and `cw32f030_rcc.c` lines906–914 corroborate source/divider facts.
   Exact member paths and hashes remain in the source lock.
 
-The HAL's 20 MHz, 2.4–5.5 V, normal ambient −40–105°C and declared total-load
-0 < CL <= 50 pF policies are conservative software qualification limits.
-The vendor calls the I/O table design/simulation data, explicitly unmeasured;
-its fmax additionally requires loaded duty45–55% and tr+tf<=2T/3. Numerical
-rate admission and cycle-qualified logical bounds do not prove those conditions,
-receiver suitability or pin-level pulses. Init and MCO board declarations must
-truthfully describe the same board; frozen Clocks cannot verify equality with
-the earlier declaration. Actual waveform/current/thermal qualification remains
-required. See the [complete public contract](../docs/f030-owned-mco.md).
+Both own I/O tables list SPEED1 50/30/20 MHz at respectively 30/50/50 pF under
+their documented pad-supply ranges. The HAL retains its conservative 20 MHz,
+2.4–5.5 V, normal ambient −40–105°C and declared total-load 0 < CL <= 50 pF
+software policy. The vendor calls those tables design/simulation data, explicitly
+unmeasured; fmax additionally requires loaded duty45–55% and tr+tf<=2T/3.
+Numerical rate admission and cycle-qualified logical bounds do not prove those
+conditions, receiver suitability or pin-level pulses. Init and MCO declarations
+must truthfully describe the same board; frozen Clocks cannot verify equality
+with the earlier declaration. Actual waveform/current/package-power/thermal
+qualification remains required. See the [complete contract](../docs/f030-owned-mco.md).
 
-Only exact C8T7 gains the new optional fact and PA8 route. Shared generated
-Rust metadata also receives the optional schema shape; this does not grant
-other parts an API. The two /8 examples are ordinary firmware, with separate
-RTC preservation control. Main verification produced five actual ARM libraries
-and three ordinary firmware ELFs; all eight Cargo builds passed with no warnings.
-Generation, the complete 904-to-905-file comparison across all 54 selections,
-19 schema contracts and eight finite source/data gates passed. The generated
-delta is limited to the approved exact-part MCO fact/route and optional
-schema/projection changes. Independent main acceptance is recorded in the
-accompanying reviews. At main acceptance clean had not run; final-package
-completion requires a separate clean receipt
-for one exact F030 release library and one HCLK ELF. No aggregate recipe or
-hardware execution was run; no physical output has been measured, and no hosted
-CI, HAL tests, probes or register models are added.
+Current permanent data policy admits exactly four of all 54 selections and
+excludes the other 50, including generic family/density aliases and no-PA8
+F030F8V7/QFN20 and F030F6P7/TSSOP20. Both K8 parts require PC14/PC15 identities
+and LSE routes absent everywhere, without removing GPIOC or die-level LSE
+register facts. Both C8T7 parts require those LSE reservations; all four require
+PF0/PF1 HSE reservations. No generic family discovery grants an API.
+
+Stage77's independent one-time generated comparison passed: only the three
+additional chip JSONs gain the complete MCO fact and PA8/AF4 route; the other
+51, including F030C8T7, remain byte-identical. The 905 generated files comprise
+416 data and 489 PAC files. All 54 wrappers resolve to 39 metadata bodies;
+six wrapper include numbers change, while 51 resolved selected bodies retain
+their bytes. Exactly 15 generated paths change, with no additions/deletions.
+Runtime code apart from its first scope comment, the three schema models and
+the generated metadata template remain unchanged.
+
+Main verification passed seven real library builds and five ELF links: all
+twelve commands exited zero with no warnings. The 1,330 authored and 905 generated
+build-input files stayed unchanged during the matrix. Eight finite source/data
+gates passed, including 22 existing metadata contracts and all 43 required
+hardware originals; two discovery HTML records remain excluded, so acquisition
+of all 45 catalog entries is not claimed. Independent main runtime and metadata
+reviews accept the frozen implementation. The initial generation failure on the
+retained C8T7/C8T6 source roster and its exact-roster repair remain recorded;
+the repair grants no C8T6 MCO capability.
+
+At main acceptance final-source clean had not run; completion requires a
+separate two-library/two-ELF and finite-gates receipt, using F030K8U7 and A030C8T7
+from a fresh extraction and target. The current local recipe matches 7/5; no
+aggregate recipe or hardware execution supplied the results, and no hardware
+output has been measured. Main-source and later final-source identities remain
+separate; these status updates are not retroactive build inputs.
+
+### Historical Stage76 MCO evidence
+
+The original qualification, [schema](../docs/f030-mco-schema-acceptance.json),
+[runtime](../docs/f030-mco-runtime-acceptance.json) and
+[metadata](../docs/f030-mco-metadata-acceptance.json) reviews keep their original
+C8T7-only scope and identities. Only that exact part gained the initial MCO fact
+and PA8 route; the optional schema shape then changed shared generated metadata
+without granting other parts an API. Historical main verification produced five
+actual ARM libraries and three firmware ELFs; all eight Cargo builds passed
+with no warnings. Generation, the 904-to-905-file comparison across all 54
+selections, 19 schema contracts and eight finite source/data gates passed, with
+original failures retained in their historical receipts.
+
+At Stage76 main acceptance clean had not run; its separate required final-source
+replay was one exact F030C8T7 release library and one HCLK ELF. Those historical
+5/3 main and 1/1 clean scopes remain separate from Stage77 7/5 main and 2/2 clean.
+No aggregate recipe or hardware execution was run. No hosted CI, HAL tests,
+probes or register models are added, and no historical receipt supplies new
+implementation, physical-output or loaded-waveform acceptance.

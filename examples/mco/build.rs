@@ -2,7 +2,13 @@ use std::{env, fs, path::PathBuf};
 
 fn main() {
     let metadata = &cw32_metapac::metadata::METADATA;
-    assert_eq!(metadata.name, "CW32F030C8T7");
+    assert!(
+        matches!(
+            metadata.name,
+            "CW32F030C8T7" | "CW32F030K8T7" | "CW32F030K8U7" | "CW32A030C8T7"
+        ),
+        "select one qualified exact MCO package"
+    );
     assert_eq!(
         metadata.memory.len(),
         1,

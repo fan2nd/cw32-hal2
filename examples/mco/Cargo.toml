@@ -12,6 +12,9 @@ autobins = false
 default = ["cw32f030c8t7"]
 defmt = ["embassy-cw32/defmt"]
 cw32f030c8t7 = ["embassy-cw32/cw32f030c8t7", "cw32-metapac/cw32f030c8t7"]
+cw32f030k8t7 = ["embassy-cw32/cw32f030k8t7", "cw32-metapac/cw32f030k8t7"]
+cw32f030k8u7 = ["embassy-cw32/cw32f030k8u7", "cw32-metapac/cw32f030k8u7"]
+cw32a030c8t7 = ["embassy-cw32/cw32a030c8t7", "cw32-metapac/cw32a030c8t7"]
 
 [dependencies]
 embassy-cw32 = { path = "../../embassy-cw32", default-features = false, features = ["rt"] }
@@ -24,12 +27,10 @@ cw32-metapac = { path = "../../cw32-metapac", default-features = false, features
 [[bin]]
 name = "hclk"
 path = "src/bin/hclk.rs"
-required-features = ["cw32f030c8t7"]
 
 [[bin]]
 name = "pclk"
 path = "src/bin/pclk.rs"
-required-features = ["cw32f030c8t7"]
 
 [profile.dev]
 opt-level = "s"

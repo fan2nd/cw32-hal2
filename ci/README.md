@@ -339,41 +339,55 @@ unchanged; the old 21-to-23 L012 LSE baseline comparison is not a Stage75 delta
 check. No aggregate run, HAL tests, probes, models, hosted CI or hardware
 execution is part of the finite verification.
 
-## Exact F030 owned MCO local verification
+## Exact F030/A030 owned MCO local verification
 
-`./d check-mco` is a separate future recipe with five actual ARM library builds
-and three release firmware links. Its library rows are exact CW32F030C8T7 release
-(`rt,defmt`) and debug (`rt,defmt,time-driver-gtim1`), generic CW32F030 release,
-CW32A030C8T7 release and CW32F020K6U7 release (the last three with `rt,defmt`).
-Every command uses `--locked`, `--no-default-features` and `thumbv6m-none-eabi`.
-The firmware rows are `examples/mco` binaries `hclk` and `pclk`, and the existing
-`examples/rtc-calendar` binary `preserve_calendar`, all exact F030C8T7 release.
-Each MCO binary owns SYSCTRL and PA8; RTC preservation is a separate executable.
-The new example uses the real 64 KiB Flash / 8 KiB SRAM map and explicit `link.x`.
+The current `./d check-mco` local recipe matches the bounded Stage77 main matrix:
+seven actual ARM release library builds and five release firmware links. It is
+not an accumulated Stage76-plus-Stage77 matrix. Separate main receipts record
+all twelve commands exiting zero with no warnings, and independent main runtime
+and metadata reviews accept the frozen implementation. The 1,330 authored-file
+and 905 generated-file snapshots stayed unchanged during the matrix. Matrix tool
+versions were captured in a post-run supplement, not a preflight. Every command
+uses `--locked`, `--no-default-features` and `thumbv6m-none-eabi`.
 
-Separate main receipts record five real ARM library rlibs and three ordinary
-firmware ELFs, all eight Cargo builds exiting successfully with no warnings.
-Source bytes and modes stayed unchanged during those builds. Generation and the
-complete 904-to-905-file comparison passed across all 54 selections with only
-the approved exact-part MCO fact/route and optional schema/projection changes.
-All 19 schema contracts passed after generation; the earlier run failed because
-the generated directory did not yet exist, and its receipt is retained.
+Run library commands from the repository root with the firmware manifest; the
+root workspace excludes the HAL/PAC. The seven exact command rows are:
 
-Eight finite source/data gates passed across separate receipts: the MCO
-own-source audit; ADC clock bounds, RCC operating envelope, x030/F020 PLL source,
-validation, original-source provenance and module layout; and all 22 metadata
-contracts after correcting seven existing L012/L083 route expectation omissions.
-The earlier metadata-contract failure remains recorded. No aggregate recipe was
-run. Independent main acceptance is recorded in the accompanying reviews.
+```sh
+cargo build --locked --manifest-path firmware/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f030k8t7,rt,defmt --release -p embassy-cw32 --lib
+cargo build --locked --manifest-path firmware/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f030k8u7,rt,defmt --release -p embassy-cw32 --lib
+cargo build --locked --manifest-path firmware/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32a030c8t7,rt,defmt --release -p embassy-cw32 --lib
+cargo build --locked --manifest-path firmware/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f030c8t7,rt,defmt --release -p embassy-cw32 --lib
+cargo build --locked --manifest-path firmware/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f030,rt,defmt --release -p embassy-cw32 --lib
+cargo build --locked --manifest-path firmware/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32a030,rt,defmt --release -p embassy-cw32 --lib
+cargo build --locked --manifest-path firmware/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f030f8v7,rt,defmt --release -p embassy-cw32 --lib
+```
 
-At main acceptance clean had not run; final-package completion requires a
-separate clean receipt. Final source-only package replay is one exact F030
-release library (`rt,defmt`) and one HCLK ELF, from a fresh extraction with a
-separate target directory. Keep main 5/3 and clean 1/1 records distinct, including
-actual commands, warning text, source/output hashes and ELF Flash/RAM use;
-neither the broad HAL matrix nor accumulated LSI/LSE scripts substitute for
-them. No extra build, divisor-instantiation, HAL test, compile probe,
-register-model, hosted-CI or board-execution row is implied.
+The five linked firmware rows are:
+
+```sh
+cargo build --locked --manifest-path examples/mco/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f030k8t7 --release --bin hclk
+cargo build --locked --manifest-path examples/mco/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f030k8u7 --release --bin pclk
+cargo build --locked --manifest-path examples/mco/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32a030c8t7 --release --bin hclk
+cargo build --locked --manifest-path examples/mco/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32f030c8t7 --release --bin pclk
+cargo build --locked --manifest-path examples/rtc-calendar/Cargo.toml --target thumbv6m-none-eabi --no-default-features --features cw32a030c8t7 --release --bin preserve_calendar
+```
+
+Each MCO binary retains real SYSCTRL and PA8 owners and its /8 program. The
+selected exact part has a 64 KiB Flash / 8 KiB SRAM map and explicit `link.x`.
+RTC preservation remains a separate executable. Generic F030, generic A030 and
+F030F8V7 are ordinary library controls; their successful compilation would not
+grant an MCO capability. Exclusions are established by the complete data audit
+and static admission policy, without adding negative compile probes.
+
+At main acceptance final-source clean had not run; completion requires a
+separate two-library/two-ELF and finite-gates receipt. From a fresh source
+extraction and fresh target directory, repeat only library rows 2 and 3 and their corresponding
+F030K8U7 PCLK and A030C8T7 HCLK firmware rows. Keep main 7/5 and clean 2/2 receipts
+separate, binding actual commands, toolchain/environment, exit status, warning
+text, source/output hashes and ELF Flash/RAM use. A recipe never substitutes for
+these results; the broad HAL matrix and accumulated LSI/LSE scripts do not
+supply the finite acceptance matrix.
 
 The own-source/data audit accepts explicit vendor and complete generated-data
 roots and writes an independent receipt:
@@ -383,8 +397,65 @@ python3 ci/verify-f030-mco-data.py --sources "$CW32_SOURCES" \
   --data cw32-data/data --out build/audit/f030-mco.json
 ```
 
-It does not execute the HAL. Complete 54-selection projection, three-model
-correspondence, current source/provenance/layout and final packaging identity
-checks remain separate requirements. Source and electrical limits are in the
-[public contract](../docs/f030-owned-mco.md); compile/link success cannot prove
-pad-level waveform, duty, electrical suitability or receiver timing.
+Its permanent policy must admit exactly F030C8T7, F030K8T7, F030K8U7 and
+A030C8T7 among all 54 selections, with the remaining 50 excluded. K8 requires
+PC14/PC15 and their LSE routes to be absent everywhere; both C8T7 parts require
+those reservations, while all four retain PF0/PF1 HSE reservations. A030 facts
+bind its own DS and the shared x030 RM; the F030 SDK remains supplementary.
+
+The independent one-time comparison with Stage76 passed across 905 generated
+files (416 data and 489 PAC files): exactly three chip JSONs gain the complete
+MCO fact and PA8/AF4 route; the other 51 remain byte-identical. All 54 metadata
+wrappers resolve to 39 bodies, unchanged in count. Six wrapper include numbers
+change, but 51 resolved selected bodies remain byte-identical; only the three
+new capability projections change. There are 15 changed generated paths and no
+additions or deletions. The three schema models and generated template remain
+unchanged, as does runtime code apart from its first scope-comment line.
+Historical generated hashes remain one-time evidence, not permanent gates.
+
+Eight finite source/data gates passed: own MCO source/data, all 22 existing
+metadata contracts, ADC clock bounds, RCC operating envelope, x030/F020 PLL
+sources, current data validation, hardware-source provenance and module layout.
+Provenance verified all 43 required hardware originals; two discovery HTML
+records remain excluded, so the full 45-entry source manifest is not complete.
+The first generation attempt failed on the retained C8T7/C8T6 two-orderable
+LQFP48 source row. The repair admits that exact source roster while keeping
+only four exact MCO selections; its successful regeneration and the original
+failed attempt remain separately recorded. No failure is relabeled as a pass.
+
+The main receipts bind the build-input source snapshot. These later acceptance-
+status documentation changes require their own final-source binding and clean
+replay; they are not retroactive main build inputs. No aggregate recipe ran.
+
+No extra divisor-instantiation matrix, HAL tests, compile probes, register
+models, hosted CI or hardware execution is added. The [public contract](../docs/f030-owned-mco.md)
+retains unmeasured conditional electrical limits; compilation and ELF inspection
+do not qualify pad-level waveform, duty, thermal behavior or receiver timing.
+
+### Historical Stage76 results
+
+Stage76's original five-library/three-ELF main receipts and original review
+identities remain historical C8T7-only evidence. Its library rows were exact
+F030C8T7 release (`rt,defmt`) and debug (`rt,defmt,time-driver-gtim1`), generic
+F030 release, exact A030C8T7 release and F020K6U7 release. The latter three used
+`rt,defmt`. Its three firmware ELFs were C8T7 HCLK, PCLK and RTC preservation.
+All eight Cargo builds passed with no warnings and unchanged source bytes/modes.
+
+Historical generation and the complete 904-to-905-file comparison across all
+54 selections passed with only the then-approved exact-part MCO fact/route and
+optional schema/projection changes. All 19 schema contracts passed after
+generation; the earlier missing-generated-directory failure remains recorded.
+Eight finite source/data gates passed across separate receipts: own MCO source,
+ADC clock bounds, RCC operating envelope, x030/F020 PLL source, data validation,
+original-source provenance, module layout and all 22 metadata contracts after
+correcting seven existing L012/L083 route expectation omissions. The earlier
+metadata-contract failure remains recorded. No aggregate recipe ran.
+
+The original [runtime](../docs/f030-mco-runtime-acceptance.json),
+[metadata](../docs/f030-mco-metadata-acceptance.json) and
+[schema](../docs/f030-mco-schema-acceptance.json) reviews retain their historical
+scope. At Stage76 main acceptance, clean replay had not run; the separately
+required clean scope was one F030C8T7 release library and one HCLK ELF. Keep
+that historical 5/3 main and 1/1 clean scope distinct from Stage77's accepted
+7/5 main and separately required 2/2 clean. Missing private historical archives/receipts cannot be
+recreated by the public source commit.

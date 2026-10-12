@@ -543,22 +543,36 @@ and the historical verification boundary.
 Unsupported scope includes additional ADC/timer modes, peripheral DMA beyond staged x030/L083 UART TX/RX and SPI master,
 external/PLL modes beyond each explicitly qualified family/source and low-power policy. Check the coverage ledger before selecting a device/API.
 
-Exactly CW32F030C8T7 adds immutable owned HCLK/PCLK output on PA8 AF4 through
-`rcc::Mco`, retaining the real SYSCTRL and PA8 owners. All eight documented
-output divisors are available; the two ordinary examples choose /8. Admission
-uses published cycle-qualified logical bounds and an explicit compatible board
-supply/ambient/load declaration. The conservative 20 MHz policy does not prove
-loaded duty, edge timing or receiver suitability; the vendor I/O table is
-unmeasured design/simulation data. GPIOA gate activity, pin handover, bounded
-cleanup/Drop, forgetting and live RTC ownership restrictions apply. See the
-[complete contract](docs/f030-owned-mco.md) and [examples](examples/mco/README.md).
-No other package or family gains this capability. Main verification produced
-five actual ARM libraries and three ordinary firmware ELFs with no warnings;
-all eight Cargo builds passed. Generation, the full 54-selection comparison,
-19 schema contracts and eight finite source/data gates passed in separate
-receipts. `./d check-mco` remains a separate local recipe, not the execution
-receipt. At main acceptance clean had not run; final-package completion requires
-a separate clean receipt for one exact F030 release library and one HCLK ELF.
+Exactly CW32F030C8T7, CW32F030K8T7, CW32F030K8U7 and CW32A030C8T7
+provide immutable owned HCLK/PCLK output on PA8 AF4 through `rcc::Mco`, retaining
+the real SYSCTRL and PA8 owners. C8T7 uses LQFP48 pin 29; F030K8T7 uses LQFP32
+pin 18 and F030K8U7 uses QFN32 pin 18. The K8 packages have no PC14/PC15 bonds
+or LSE routes. Generic family/density aliases and all other packages remain
+unqualified. All eight documented output divisors remain available; the two
+ordinary examples choose /8 and the runtime algorithm is unchanged.
+
+Admission uses published cycle-qualified logical bounds and an explicit
+compatible board supply/ambient/load declaration. The conservative 20 MHz,
+2.4–5.5 V, −40–105°C and nonzero total load at most 50 pF policy does not prove
+loaded duty, edge timing or receiver suitability. Each family's own I/O table
+is unmeasured design/simulation data, conditional on loaded duty 45–55% and
+`tr + tf <= 2T/3`; package-specific current/power/thermal limits still apply.
+A030 uses its own datasheet and the shared x030 RM; the F030 SDK is supplementary.
+GPIOA gate activity, pin handover, bounded cleanup/Drop, forgetting and live RTC
+ownership restrictions remain in the [complete contract](docs/f030-owned-mco.md)
+and [examples](examples/mco/README.md).
+
+Stage76's accepted five-library/three-ELF main results, original reviews and
+separate one-library/one-HCLK-ELF clean scope remain historical C8T7 evidence.
+At Stage76 main acceptance, clean replay had not run. Stage77 main verification
+passed seven real ARM library builds and five linked ELFs: all twelve commands
+exited zero with no warnings. Eight finite source/data gates and independent
+main runtime and metadata reviews passed; the build-input snapshot of 1,330
+authored and 905 generated files stayed unchanged during the matrix. At main
+acceptance final-source clean had not run; completion requires a separate
+two-library/two-ELF and finite-gates receipt. `./d check-mco` remains the current
+7/5 local recipe, not an aggregate execution receipt. No hardware output or
+loaded waveform is qualified by these software checks.
 
 ## Data and PAC verification
 

@@ -2,6 +2,9 @@ schema_version: 1
 source_authority: sources/evidence-sources.json
 policies:
   docs/f030-mco-qualification.json: 5dbfd91f389b6971a2c74fca603cadcb3acfe5bee38c60e923d21364c43654e7
+  docs/f030k8t7-mco-qualification.json: 10e206dad40d87d747adb9abc62d3773a2c22b45b2053cf85845d91df9a4404f
+  docs/f030k8u7-mco-qualification.json: a049f91725b67b1e249cba16aecb68f8b0ad71d6b19b8754151fe0878113d661
+  docs/a030c8t7-mco-qualification.json: 58dcc02742aadf6df5977c6dd09ae863c65cb5ba3de938687d7c1173df5d8275
 parts:
   CW32F030C8T7:
     family: CW32F030
@@ -83,6 +86,438 @@ parts:
         - pdf_page_1_based: 51
           printed_page: 50
           text_sha256: 097ba879001aff50086ee03d6eeeb31b97cee3dbe19339e7c7a87e852c593f9b
+      sdk:
+        source_ref: vendor:CW32F030_StandardPeripheralLib_V2.2.zip
+        path: CW32F030_StandardPeripheralLib_V2.2.zip
+        sha256: 7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780
+        members:
+        - source_ref: member:cw32f030/Libraries/inc/cw32f030_gpio.h
+          path: cw32f030/Libraries/inc/cw32f030_gpio.h
+          archive_member: Libraries/inc/cw32f030_gpio.h
+          sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+          lines_1_based:
+          - 837
+          - 837
+        - source_ref: member:cw32f030/Libraries/inc/cw32f030_rcc.h
+          path: cw32f030/Libraries/inc/cw32f030_rcc.h
+          archive_member: Libraries/inc/cw32f030_rcc.h
+          sha256: de32996b8f852c456ada827bc5c13fe64a29fc12115489d98e2d3ddf6133d184
+          lines_1_based:
+          - 402
+          - 440
+        - source_ref: member:cw32f030/Libraries/src/cw32f030_rcc.c
+          path: cw32f030/Libraries/src/cw32f030_rcc.c
+          archive_member: Libraries/src/cw32f030_rcc.c
+          sha256: dbb3c80fa07af902f704c7e812d3b04d8819548736eb1163fe9feaae1d1b4370
+          lines_1_based:
+          - 906
+          - 914
+  CW32F030K8T7:
+    family: CW32F030
+    package: LQFP32
+    pin_position: '18'
+    route:
+      pin: PA8
+      signal: MCO
+      af: 4
+    facts:
+      disabled_source: 0
+      hclk_source: 1
+      pclk_source: 2
+      divisors:
+      - - 0
+        - 1
+      - - 1
+        - 2
+      - - 2
+        - 8
+      - - 3
+        - 64
+      - - 4
+        - 128
+      - - 5
+        - 256
+      - - 6
+        - 512
+      - - 7
+        - 1024
+      maximum_output_hz: 20000000
+      supply_mv:
+      - 2400
+      - 5500
+      temperature_c:
+      - -40
+      - 105
+      maximum_load_pf: 50
+      gpio_speed: 1
+      fmax_condition_duty_percent:
+      - 45
+      - 55
+      fmax_condition_edge_sum_period_ratio:
+      - 2
+      - 3
+      electrical_values_measured: false
+    sources:
+      pdfs:
+      - source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+        path: CW32x030_UserManual_CN_V2.5.pdf
+        sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+        text_path: CW32x030_UserManual_CN_V2.5.txt
+        text_sha256: 23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe
+        pages:
+        - pdf_page_1_based: 61
+          printed_page: 60
+          text_sha256: 3bfc19f6b3e87f1719195e903a5e8704d47edaaee00a850306f7b8d2f9c027ca
+        - pdf_page_1_based: 69
+          printed_page: 68
+          text_sha256: 440600654eca68a27f37e5d3f34367b22126b3774ef2c1714b54a987ffab478e
+        - pdf_page_1_based: 82
+          printed_page: 81
+          text_sha256: 4b96d46b8f0d0602d77dd3a627853e5144269864a41979872edd3603d69d39dd
+        - pdf_page_1_based: 85
+          printed_page: 84
+          text_sha256: 49290e537b96e81a254052c4e3ac1d3bb98f430001fc4bd361b1801aff4b6067
+        - pdf_page_1_based: 94
+          printed_page: 93
+          text_sha256: 7490119efab35c46dbbd8707644fa4a933325ae1ff613e8628caff01216c2854
+        - pdf_page_1_based: 147
+          printed_page: 146
+          text_sha256: 5fcce0518d7be8262a17189bce13b248f468760e9927a69f7bf9e69e4f2eb7d3
+        - pdf_page_1_based: 152
+          printed_page: 151
+          text_sha256: f0cfa425f984acf1be26e6453021f44d75384b8d0d07156fe48084294e6153da
+        - pdf_page_1_based: 153
+          printed_page: 152
+          text_sha256: cdd7591cdd0e81d30f0be76708eeacc6ea2041145a3ea9fc44aba4da95d092d3
+        - pdf_page_1_based: 154
+          printed_page: 153
+          text_sha256: ec8d3f7f64ceb9e6a35b20dbe15892ab86c9e5909c0cdb4a7903c50bc0ebb431
+        - pdf_page_1_based: 155
+          printed_page: 154
+          text_sha256: 45c7eb1ee5ebf642f8f866f2767aecccad0bcb3b7b35a578fd94effe942a6312
+      - source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+        path: CW32F030_DataSheet_CN_V1.9.pdf
+        sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+        text_path: CW32F030_DataSheet_CN_V1.9.txt
+        text_sha256: 7c4d70098481fb58e0924901dbbe24cb88cf445689efaf718410617b37f4e5bf
+        pages:
+        - pdf_page_1_based: 24
+          printed_page: 23
+          text_sha256: 11b0bdb372fb76668825b84672820a7effb9cbb325ec012e6149e7752d085010
+        - pdf_page_1_based: 26
+          printed_page: 25
+          text_sha256: 3f4e0cb7f83aa98f509f276b3806fc32f28adb8bf184151613f53ab9ca668960
+        - pdf_page_1_based: 29
+          printed_page: 28
+          text_sha256: dbf8910726622cddc683c0c1812d60110a8432cb9c081894fc0f7062bf0cd0b5
+        - pdf_page_1_based: 32
+          printed_page: 31
+          text_sha256: 412a5ca4ed38e401a5c0f4b02f4f3d51fbca8107446bbf24a3cd956459bd7268
+        - pdf_page_1_based: 38
+          printed_page: 37
+          text_sha256: 09bd85a7237b78589863775e05796ad37bcb62c7e8c7d29b17f634d47a154a2b
+        - pdf_page_1_based: 50
+          printed_page: 49
+          text_sha256: c7b7db9e754f90342820c49d611ac3ea43e20918cc67e2491bfacc541f9be554
+        - pdf_page_1_based: 51
+          printed_page: 50
+          text_sha256: 097ba879001aff50086ee03d6eeeb31b97cee3dbe19339e7c7a87e852c593f9b
+        - pdf_page_1_based: 74
+          printed_page: 73
+          text_sha256: e3c5004e9e10afba37e6040978b2bd891befa382feec405e47620ccfba5f2f6c
+        - pdf_page_1_based: 75
+          printed_page: 74
+          text_sha256: ec453471cc41fa30fa2a365e05340efbc0b914b972e50841336fedd63abb015d
+        - pdf_page_1_based: 76
+          printed_page: 75
+          text_sha256: bb39e669dec8bf20e57326ed3024dd9ad87c1c5f7b42ede2bb2ed2563e6dd319
+      sdk:
+        source_ref: vendor:CW32F030_StandardPeripheralLib_V2.2.zip
+        path: CW32F030_StandardPeripheralLib_V2.2.zip
+        sha256: 7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780
+        members:
+        - source_ref: member:cw32f030/Libraries/inc/cw32f030_gpio.h
+          path: cw32f030/Libraries/inc/cw32f030_gpio.h
+          archive_member: Libraries/inc/cw32f030_gpio.h
+          sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+          lines_1_based:
+          - 837
+          - 837
+        - source_ref: member:cw32f030/Libraries/inc/cw32f030_rcc.h
+          path: cw32f030/Libraries/inc/cw32f030_rcc.h
+          archive_member: Libraries/inc/cw32f030_rcc.h
+          sha256: de32996b8f852c456ada827bc5c13fe64a29fc12115489d98e2d3ddf6133d184
+          lines_1_based:
+          - 402
+          - 440
+        - source_ref: member:cw32f030/Libraries/src/cw32f030_rcc.c
+          path: cw32f030/Libraries/src/cw32f030_rcc.c
+          archive_member: Libraries/src/cw32f030_rcc.c
+          sha256: dbb3c80fa07af902f704c7e812d3b04d8819548736eb1163fe9feaae1d1b4370
+          lines_1_based:
+          - 906
+          - 914
+  CW32F030K8U7:
+    family: CW32F030
+    package: QFN32
+    pin_position: '18'
+    route:
+      pin: PA8
+      signal: MCO
+      af: 4
+    facts:
+      disabled_source: 0
+      hclk_source: 1
+      pclk_source: 2
+      divisors:
+      - - 0
+        - 1
+      - - 1
+        - 2
+      - - 2
+        - 8
+      - - 3
+        - 64
+      - - 4
+        - 128
+      - - 5
+        - 256
+      - - 6
+        - 512
+      - - 7
+        - 1024
+      maximum_output_hz: 20000000
+      supply_mv:
+      - 2400
+      - 5500
+      temperature_c:
+      - -40
+      - 105
+      maximum_load_pf: 50
+      gpio_speed: 1
+      fmax_condition_duty_percent:
+      - 45
+      - 55
+      fmax_condition_edge_sum_period_ratio:
+      - 2
+      - 3
+      electrical_values_measured: false
+    sources:
+      pdfs:
+      - source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+        path: CW32x030_UserManual_CN_V2.5.pdf
+        sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+        text_path: CW32x030_UserManual_CN_V2.5.txt
+        text_sha256: 23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe
+        pages:
+        - pdf_page_1_based: 61
+          printed_page: 60
+          text_sha256: 3bfc19f6b3e87f1719195e903a5e8704d47edaaee00a850306f7b8d2f9c027ca
+        - pdf_page_1_based: 69
+          printed_page: 68
+          text_sha256: 440600654eca68a27f37e5d3f34367b22126b3774ef2c1714b54a987ffab478e
+        - pdf_page_1_based: 82
+          printed_page: 81
+          text_sha256: 4b96d46b8f0d0602d77dd3a627853e5144269864a41979872edd3603d69d39dd
+        - pdf_page_1_based: 85
+          printed_page: 84
+          text_sha256: 49290e537b96e81a254052c4e3ac1d3bb98f430001fc4bd361b1801aff4b6067
+        - pdf_page_1_based: 94
+          printed_page: 93
+          text_sha256: 7490119efab35c46dbbd8707644fa4a933325ae1ff613e8628caff01216c2854
+        - pdf_page_1_based: 147
+          printed_page: 146
+          text_sha256: 5fcce0518d7be8262a17189bce13b248f468760e9927a69f7bf9e69e4f2eb7d3
+        - pdf_page_1_based: 152
+          printed_page: 151
+          text_sha256: f0cfa425f984acf1be26e6453021f44d75384b8d0d07156fe48084294e6153da
+        - pdf_page_1_based: 153
+          printed_page: 152
+          text_sha256: cdd7591cdd0e81d30f0be76708eeacc6ea2041145a3ea9fc44aba4da95d092d3
+        - pdf_page_1_based: 154
+          printed_page: 153
+          text_sha256: ec8d3f7f64ceb9e6a35b20dbe15892ab86c9e5909c0cdb4a7903c50bc0ebb431
+        - pdf_page_1_based: 155
+          printed_page: 154
+          text_sha256: 45c7eb1ee5ebf642f8f866f2767aecccad0bcb3b7b35a578fd94effe942a6312
+      - source_ref: vendor:CW32F030_DataSheet_CN_V1.9.pdf
+        path: CW32F030_DataSheet_CN_V1.9.pdf
+        sha256: 04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2
+        text_path: CW32F030_DataSheet_CN_V1.9.txt
+        text_sha256: 7c4d70098481fb58e0924901dbbe24cb88cf445689efaf718410617b37f4e5bf
+        pages:
+        - pdf_page_1_based: 24
+          printed_page: 23
+          text_sha256: 11b0bdb372fb76668825b84672820a7effb9cbb325ec012e6149e7752d085010
+        - pdf_page_1_based: 26
+          printed_page: 25
+          text_sha256: 3f4e0cb7f83aa98f509f276b3806fc32f28adb8bf184151613f53ab9ca668960
+        - pdf_page_1_based: 29
+          printed_page: 28
+          text_sha256: dbf8910726622cddc683c0c1812d60110a8432cb9c081894fc0f7062bf0cd0b5
+        - pdf_page_1_based: 32
+          printed_page: 31
+          text_sha256: 412a5ca4ed38e401a5c0f4b02f4f3d51fbca8107446bbf24a3cd956459bd7268
+        - pdf_page_1_based: 38
+          printed_page: 37
+          text_sha256: 09bd85a7237b78589863775e05796ad37bcb62c7e8c7d29b17f634d47a154a2b
+        - pdf_page_1_based: 50
+          printed_page: 49
+          text_sha256: c7b7db9e754f90342820c49d611ac3ea43e20918cc67e2491bfacc541f9be554
+        - pdf_page_1_based: 51
+          printed_page: 50
+          text_sha256: 097ba879001aff50086ee03d6eeeb31b97cee3dbe19339e7c7a87e852c593f9b
+        - pdf_page_1_based: 74
+          printed_page: 73
+          text_sha256: e3c5004e9e10afba37e6040978b2bd891befa382feec405e47620ccfba5f2f6c
+        - pdf_page_1_based: 75
+          printed_page: 74
+          text_sha256: ec453471cc41fa30fa2a365e05340efbc0b914b972e50841336fedd63abb015d
+        - pdf_page_1_based: 76
+          printed_page: 75
+          text_sha256: bb39e669dec8bf20e57326ed3024dd9ad87c1c5f7b42ede2bb2ed2563e6dd319
+      sdk:
+        source_ref: vendor:CW32F030_StandardPeripheralLib_V2.2.zip
+        path: CW32F030_StandardPeripheralLib_V2.2.zip
+        sha256: 7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780
+        members:
+        - source_ref: member:cw32f030/Libraries/inc/cw32f030_gpio.h
+          path: cw32f030/Libraries/inc/cw32f030_gpio.h
+          archive_member: Libraries/inc/cw32f030_gpio.h
+          sha256: 3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e
+          lines_1_based:
+          - 837
+          - 837
+        - source_ref: member:cw32f030/Libraries/inc/cw32f030_rcc.h
+          path: cw32f030/Libraries/inc/cw32f030_rcc.h
+          archive_member: Libraries/inc/cw32f030_rcc.h
+          sha256: de32996b8f852c456ada827bc5c13fe64a29fc12115489d98e2d3ddf6133d184
+          lines_1_based:
+          - 402
+          - 440
+        - source_ref: member:cw32f030/Libraries/src/cw32f030_rcc.c
+          path: cw32f030/Libraries/src/cw32f030_rcc.c
+          archive_member: Libraries/src/cw32f030_rcc.c
+          sha256: dbb3c80fa07af902f704c7e812d3b04d8819548736eb1163fe9feaae1d1b4370
+          lines_1_based:
+          - 906
+          - 914
+  CW32A030C8T7:
+    family: CW32A030
+    package: LQFP48
+    pin_position: '29'
+    route:
+      pin: PA8
+      signal: MCO
+      af: 4
+    facts:
+      disabled_source: 0
+      hclk_source: 1
+      pclk_source: 2
+      divisors:
+      - - 0
+        - 1
+      - - 1
+        - 2
+      - - 2
+        - 8
+      - - 3
+        - 64
+      - - 4
+        - 128
+      - - 5
+        - 256
+      - - 6
+        - 512
+      - - 7
+        - 1024
+      maximum_output_hz: 20000000
+      supply_mv:
+      - 2400
+      - 5500
+      temperature_c:
+      - -40
+      - 105
+      maximum_load_pf: 50
+      gpio_speed: 1
+      fmax_condition_duty_percent:
+      - 45
+      - 55
+      fmax_condition_edge_sum_period_ratio:
+      - 2
+      - 3
+      electrical_values_measured: false
+    sources:
+      pdfs:
+      - source_ref: vendor:CW32x030_UserManual_CN_V2.5.pdf
+        path: CW32x030_UserManual_CN_V2.5.pdf
+        sha256: 1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2
+        text_path: CW32x030_UserManual_CN_V2.5.txt
+        text_sha256: 23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe
+        pages:
+        - pdf_page_1_based: 61
+          printed_page: 60
+          text_sha256: 3bfc19f6b3e87f1719195e903a5e8704d47edaaee00a850306f7b8d2f9c027ca
+        - pdf_page_1_based: 69
+          printed_page: 68
+          text_sha256: 440600654eca68a27f37e5d3f34367b22126b3774ef2c1714b54a987ffab478e
+        - pdf_page_1_based: 82
+          printed_page: 81
+          text_sha256: 4b96d46b8f0d0602d77dd3a627853e5144269864a41979872edd3603d69d39dd
+        - pdf_page_1_based: 85
+          printed_page: 84
+          text_sha256: 49290e537b96e81a254052c4e3ac1d3bb98f430001fc4bd361b1801aff4b6067
+        - pdf_page_1_based: 94
+          printed_page: 93
+          text_sha256: 7490119efab35c46dbbd8707644fa4a933325ae1ff613e8628caff01216c2854
+        - pdf_page_1_based: 147
+          printed_page: 146
+          text_sha256: 5fcce0518d7be8262a17189bce13b248f468760e9927a69f7bf9e69e4f2eb7d3
+        - pdf_page_1_based: 152
+          printed_page: 151
+          text_sha256: f0cfa425f984acf1be26e6453021f44d75384b8d0d07156fe48084294e6153da
+        - pdf_page_1_based: 153
+          printed_page: 152
+          text_sha256: cdd7591cdd0e81d30f0be76708eeacc6ea2041145a3ea9fc44aba4da95d092d3
+        - pdf_page_1_based: 154
+          printed_page: 153
+          text_sha256: ec8d3f7f64ceb9e6a35b20dbe15892ab86c9e5909c0cdb4a7903c50bc0ebb431
+        - pdf_page_1_based: 155
+          printed_page: 154
+          text_sha256: 45c7eb1ee5ebf642f8f866f2767aecccad0bcb3b7b35a578fd94effe942a6312
+      - source_ref: vendor:CW32A030_DataSheet_CN_V1.1.pdf
+        path: CW32A030_DataSheet_CN_V1.1.pdf
+        sha256: 690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9
+        text_path: CW32A030_DataSheet_CN_V1.1.txt
+        text_sha256: 87c782da759a6893bca9f773a474a7b0445f77cd51d86d9cb2d2d8b8de8d05b9
+        pages:
+        - pdf_page_1_based: 22
+          printed_page: 21
+          text_sha256: 63af3377739c5dd97647ac0313fac05770b6029d7b1204758d444a52c850e4fa
+        - pdf_page_1_based: 23
+          printed_page: 22
+          text_sha256: c522f1e6ca75b6cb1e8323841a1b64160d9fe245b50fa7056dbfcdd730e25816
+        - pdf_page_1_based: 26
+          printed_page: 25
+          text_sha256: e01a8dd07a8bdd15f91fda22adf0691db07d9688ede14b536858d2b60ef32aa0
+        - pdf_page_1_based: 29
+          printed_page: 28
+          text_sha256: 03cdd4a89043525e837aeb07822b2407b107ad09e6e3f41273841326b1e72627
+        - pdf_page_1_based: 35
+          printed_page: 34
+          text_sha256: 9f13479430aff962432963d54bc5921ce88692495b5f0313158ba18e6109d58a
+        - pdf_page_1_based: 47
+          printed_page: 46
+          text_sha256: 8bce78a800d647c756c132d0b8ff977c445cc51549c27e48f874ae3c3aec7980
+        - pdf_page_1_based: 48
+          printed_page: 47
+          text_sha256: e6c7abdf88d2e244fad888ac4a70957b80453adfa98db68906f9824f0d81dc21
+        - pdf_page_1_based: 62
+          printed_page: 61
+          text_sha256: 10a693e25bce6a680881d05024a2387baed351134425d410fc3a91512d6bf5fc
+        - pdf_page_1_based: 63
+          printed_page: 62
+          text_sha256: 8ca6bfa3d2c8f45e711f0a90ae49f19165a91da14d36d41152399ef984f8fb70
       sdk:
         source_ref: vendor:CW32F030_StandardPeripheralLib_V2.2.zip
         path: CW32F030_StandardPeripheralLib_V2.2.zip

@@ -291,24 +291,43 @@ def af_projection(manifest, pins):
 
 
 def mco_projection(chip, expected_packages, expected_pins):
-    """Exact one-part policy, independent of the Rust projection implementation."""
+    """Exact four-part policy, independent of the Rust projection implementation."""
     expected = {'disabled_source': 0, 'hclk_source': 1, 'pclk_source': 2, 'divisors': [[0, 1], [1, 2], [2, 8], [3, 64], [4, 128], [5, 256], [6, 512], [7, 1024]], 'maximum_output_hz': 20000000, 'supply_mv': [2400, 5500], 'temperature_c': [-40, 105], 'maximum_load_pf': 50, 'gpio_speed': 1, 'fmax_condition_duty_percent': [45, 55], 'fmax_condition_edge_sum_period_ratio': [2, 3], 'electrical_values_measured': False}
+    parts = {
+        'CW32F030C8T7': ('CW32F030', 'LQFP48', '29', 'docs/f030-mco-qualification.json'),
+        'CW32F030K8T7': ('CW32F030', 'LQFP32', '18', 'docs/f030k8t7-mco-qualification.json'),
+        'CW32F030K8U7': ('CW32F030', 'QFN32', '18', 'docs/f030k8u7-mco-qualification.json'),
+        'CW32A030C8T7': ('CW32A030', 'LQFP48', '29', 'docs/a030c8t7-mco-qualification.json'),
+    }
     catalog = load('cw32-data/mco-qualified.yaml')
     assert set(catalog) == {'schema_version', 'source_authority', 'policies', 'parts'}
     assert catalog['schema_version'] == 1 and catalog['source_authority'] == 'sources/evidence-sources.json'
-    assert set(catalog['parts']) == {'CW32F030C8T7'}
-    own = catalog['parts']['CW32F030C8T7']
-    assert own['facts'] == expected and own['route'] == {'pin': 'PA8', 'signal': 'MCO', 'af': 4}
-    assert (own['family'], own['package'], own['pin_position']) == ('CW32F030', 'LQFP48', '29')
-    assert catalog['policies'] == {'docs/f030-mco-qualification.json':
-        hashlib.sha256((ROOT / 'docs/f030-mco-qualification.json').read_bytes()).hexdigest()}
-    if chip['name'] != 'CW32F030C8T7':
+    assert set(catalog['parts']) == set(parts)
+    assert catalog['policies'] == {row[3]: hashlib.sha256((ROOT / row[3]).read_bytes()).hexdigest()
+                                    for row in parts.values()}
+    for part, (family, package, position, proof_path) in parts.items():
+        own = catalog['parts'][part]
+        assert set(own) == {'family', 'package', 'pin_position', 'route', 'facts', 'sources'}
+        assert own['facts'] == expected and own['route'] == {'pin': 'PA8', 'signal': 'MCO', 'af': 4}
+        assert (own['family'], own['package'], own['pin_position']) == (family, package, position)
+        proof = load(proof_path)
+        assert proof['schema_version'] == 1 and proof['part'] == part and proof['profile'] == own
+    if chip['name'] not in parts:
         return None
-    assert chip['line'] == 'CW32F030' and len(expected_packages) == 1
+    family, package_name, position, _ = parts[chip['name']]
+    assert chip['line'] == family and len(expected_packages) == 1
     package = expected_packages[0]
-    assert (package['name'], package['package']) == ('CW32F030C8T7', 'LQFP48')
-    assert sum(pin['position'] == '29' and 'PA8' in pin['signals'] for pin in package['pins']) == 1
+    assert (package['name'], package['package']) == (chip['name'], package_name)
+    pa8 = [pin for pin in package['pins'] if 'PA8' in pin['signals']]
+    assert len(pa8) == 1 and pa8[0]['position'] == position
     assert sum(pin['name'] == 'PA8' for pin in expected_pins) == 1
+    for pin, pin_position in [('PF0', '5' if package_name == 'LQFP48' else '2'),
+                              ('PF1', '6' if package_name == 'LQFP48' else '3'),
+                              ('PC14', '3' if package_name == 'LQFP48' else None),
+                              ('PC15', '4' if package_name == 'LQFP48' else None)]:
+        bonds = [p for p in package['pins'] if pin in p['signals']]
+        assert sum(p['name'] == pin for p in expected_pins) == (pin_position is not None)
+        assert ([p['position'] for p in bonds] == [pin_position] if pin_position is not None else not bonds)
     return expected
 
 

@@ -1663,19 +1663,23 @@ functions:
       - path: cw32-data/lse-qualified.yaml
     - id: owned_bus_clock_output
       status: partial
-      scope: Immutable owned HCLK/PCLK MCO on exactly CW32F030C8T7 PA8 AF4; real SYSCTRL and PA8 owners, all eight own-documented divisors.
-      implemented_families: [CW32F030]
+      scope: Immutable owned HCLK/PCLK MCO on exactly CW32F030C8T7, CW32F030K8T7, CW32F030K8U7 and CW32A030C8T7 PA8 AF4; real SYSCTRL and PA8 owners, all eight own-documented divisors.
+      implemented_families: [CW32F030, CW32A030]
       pins_all: [MCO]
       registers_any: [MCO]
       limitations:
-      - CW32F030C8T7 LQFP48 pin29 is the sole qualified selection. Generic F030/C8, other F030 packages, A030 and F020 gain no API; absent qualification is not silicon absence.
+      - F030C8T7 and A030C8T7 use LQFP48 PA8 pin29; F030K8T7 uses LQFP32 pin18 and F030K8U7 uses QFN32 pin18. Generic family/density aliases and all other selections remain excluded; absent qualification is not silicon absence.
+      - K8 requires PC14/PC15 and both LSE routes absent everywhere; both C8T7 parts require them. PF0/PF1 HSE reservations remain required on all four; GPIOC and die-level LSE registers are not removed.
+      - A030 binds its own DS CN1.1 and shared x030 RM CN2.5; the F030 SDK retains F030 provenance and is supplementary for A030. Package power limits at 105 C differ (LQFP48 364 mW, LQFP32 357 mW, QFN32 541 mW); own current/junction/thermal limits still apply.
       - Admission requires published initialized cycle-qualified bus bounds and explicit ordered source-compatible board voltage/ambient/load declarations. Frozen Clocks does not retain the earlier init declaration; caller consistency remains required.
       - Exact divided maximum is at most 20 MHz, with 2.4..5.5 V, -40..105 C and 0 < total load <= 50 pF. Rate-only PLL/LSI roots fail even at a low divided rate; source conditions can narrow the admitted interval.
       - The vendor fmax table is unmeasured design/simulation data conditioned on loaded 45..55 percent duty and tr+tf <= 2T/3. Rate admission and integer division do not prove waveform or receiver suitability; board qualification remains required.
-      - GPIOA whole-bank enable can advance other pins and armed events before success or error. PA8 stays unlocked, prior function is not restored and shared GPIOA stays enabled. Cleanup booleans are bounded observations; Drop has no acknowledgement result and forget may leave output active.
+      - GPIOA whole-bank enable can advance other pins and armed events before success or error. PA8 stays unlocked, prior function is not restored and shared GPIOA stays enabled. Constructor MCO/pin-error cleanup drops the local Flex before SOURCE disable; cleanup booleans are bounded observations. Normal Drop disconnects the retained Flex before SOURCE disable, then Flex drops; Drop has no acknowledgement result and forget may leave output active.
       - Real SYSCTRL excludes simultaneous live safe CalendarClock/LsiClock/LseClock and an Rtc retaining a clock; a forgotten reborrow can leave hardware active after later token reuse.
       - No source/divider setter, oscillator/system/bus-clock transition, raw oscillator or PLL output, sleep/fault recovery or hardware-validation claim. Nominal/rounded getters are not measurements; duration getters panic for unrepresentable u64 nanoseconds.
-      - Main five-library/three-ELF verification passed with no warnings, plus generation, the full 54-selection projection comparison, 19 schema contracts and eight finite source/data gates. Independent main acceptance is recorded in the accompanying reviews. At main acceptance clean had not run; final-package completion requires a separate clean one-library/one-HCLK-ELF receipt. No aggregate recipe or hardware execution was run.
+      - Stage77 main seven-library/five-ELF verification passed with all twelve commands exiting zero and no warnings; 1330 authored and 905 generated files stayed unchanged during the matrix. Eight finite source/data gates and independent main runtime/metadata reviews passed. At main acceptance final-source clean had not run; completion requires a separate F030K8U7/A030C8T7 two-library/two-ELF and finite-gates receipt. No aggregate recipe or hardware execution supplied these results.
+      - Permanent data policy admits four and excludes 50 selections. Independent generated comparison preserves the other 51 complete chip JSONs and resolved metadata bodies; 905 files, 54 wrappers and 39 bodies remain, with six wrapper include-number changes and 15 changed paths, no additions/deletions. The initial C8T7/C8T6 source-roster generation failure and exact-roster repair remain historical.
+      - Stage76 five-library/three-ELF verification passed with no warnings, plus generation, the full 54-selection comparison, 19 schema contracts and eight finite source/data gates. Original reviews remain historical C8T7-only evidence. At that main acceptance clean had not run; separate clean one-library/one-HCLK-ELF scope remains historical. No aggregate recipe or hardware execution was run; these records do not certify Stage77.
       evidence:
       - path: embassy-cw32/src/rcc/mco.rs
         anchor: pub struct Mco

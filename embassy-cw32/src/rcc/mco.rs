@@ -1,4 +1,4 @@
-//! Owned HCLK/PCLK output on PA8, qualified only for CW32F030C8T7.
+//! Owned HCLK/PCLK output on PA8 for exact F030C8T7/K8T7/K8U7 and A030C8T7.
 //!
 //! Admission uses the initialized bus's exact, cycle-qualified envelope and an
 //! explicit board declaration. The fixed 20 MHz, SPEED1, <=50 pF policy is
