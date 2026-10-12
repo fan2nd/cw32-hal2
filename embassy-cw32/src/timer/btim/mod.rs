@@ -1,6 +1,9 @@
-//! Private BTIM polling engine. Register maps remain actual IP-version PACs.
-use super::{CounterRegisters, low_level::Timing};
-use crate::pac;
+//! Private BTIM counter and overflow engine. Register maps remain actual IP-version PACs.
+use super::{CounterRegisters, OverflowInstance, low_level::Timing};
+use crate::{interrupt::typelevel::Handler, pac};
+use core::{cell::Cell, marker::PhantomData};
+use critical_section::Mutex;
+use embassy_sync::waitqueue::AtomicWaker;
 
 #[cfg(any(btim_cw32l010_v1, btim_cw32l012_v1))]
 mod cw32l010_v1;
@@ -9,16 +12,74 @@ mod cw32l031_v1;
 #[cfg(any(btim_v1, btim_cw32f002_v1))]
 mod v1;
 
+pub struct State {
+    pub(super) active: Mutex<Cell<bool>>,
+    pub(super) elapsed: Mutex<Cell<bool>>,
+    pub(super) waker: AtomicWaker,
+}
+impl State {
+    pub(crate) const fn new() -> Self {
+        Self {
+            active: Mutex::new(Cell::new(false)),
+            elapsed: Mutex::new(Cell::new(false)),
+            waker: AtomicWaker::new(),
+        }
+    }
+}
+
+/// Acknowledge only this BTIM's overflow and retain one coalesced event.
+///
+/// Every enabled foreign source sharing this vector needs its own handler in
+/// the same `bind_interrupts!` dispatch. This handler never accesses that source
+/// or disables, unpends, or changes the priority of the complete vector.
+pub struct OverflowInterruptHandler<T: OverflowInstance>(PhantomData<T>);
+impl<T: OverflowInstance> Handler<T::Interrupt> for OverflowInterruptHandler<T> {
+    unsafe fn on_interrupt() {
+        let wake = critical_section::with(|cs| {
+            let state = T::state();
+            // A partner may dispatch before construction or after Drop. Do not
+            // read even this bank's enable/status registers until it is active.
+            if !state.active.borrow(cs).get() {
+                return false;
+            }
+            let regs = T::OVERFLOW_REGS;
+            if regs.overflow_interrupt_enabled() && regs.counter_overflow() {
+                regs.counter_clear_overflow();
+                state.elapsed.borrow(cs).set(true);
+                true
+            } else {
+                false
+            }
+        });
+        if wake {
+            T::state().waker.wake();
+        }
+    }
+}
+
 // Every member of a group shares the gate AND reset. A per-instance owner must
 // never reset/gate a foreign or independently owned sibling. Keep the group
 // clock enabled on drop; initialize only the selected register bank in software.
 macro_rules! impl_btim {
-    ($name:ident) => {
+    ($name:ident, $irq:ident) => {
         impl $crate::timer::sealed::BasicInstance for $crate::peripherals::$name {
             type CounterRegisters = $crate::pac::btim::Btim;
             const COUNTER_REGS: Self::CounterRegisters = $crate::pac::$name;
+            fn overflow_state() -> Option<&'static $crate::timer::btim::State> {
+                Some(<Self as $crate::timer::sealed::OverflowInstance>::state())
+            }
         }
         impl $crate::timer::BasicInstance for $crate::peripherals::$name {}
+        impl $crate::timer::sealed::OverflowInstance for $crate::peripherals::$name {
+            const OVERFLOW_REGS: $crate::pac::btim::Btim = $crate::pac::$name;
+            fn state() -> &'static $crate::timer::btim::State {
+                static STATE: $crate::timer::btim::State = $crate::timer::btim::State::new();
+                &STATE
+            }
+        }
+        impl $crate::timer::OverflowInstance for $crate::peripherals::$name {
+            type Interrupt = $crate::interrupt::typelevel::$irq;
+        }
     };
 }
 pub(crate) use impl_btim;
@@ -34,6 +95,8 @@ pub(super) trait Registers: Copy {
     fn write_prescaler(self, timing: Timing);
     fn latch_prescaler(self);
     fn disable_requests(self);
+    fn overflow_interrupt_enabled(self) -> bool;
+    fn enable_overflow_interrupt(self);
     fn clear_inputs(self);
     fn status(self) -> u32;
     fn clear_flags(self, value: u32);

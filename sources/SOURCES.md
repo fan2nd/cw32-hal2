@@ -976,3 +976,43 @@ source cache. Main acceptance does not replace clean replay or publication.
 Compilation/source review cannot establish runtime loss handling, cancellation,
 detector latency, electrical validity or silicon behavior; no cumulative HAL
 recipe expansion follows.
+
+## BTIM coalesced overflow IRQ sources
+
+The [overflow-event contract](../docs/btim-overflow-irq.md) and
+[current own-source record](../docs/btim-overflow-irq-evidence.json) cover
+BTIM1/2/3 on all thirteen existing families and 54 normalized selections,
+including aliases: 162 selection/instance associations across six register
+variants. The record identifies twelve own manual PDF/text pairs, twelve
+existing SDK archives and 36 selected members: each SDK's CMSIS header,
+BTIM header and BTIM implementation. F030/A030 explicitly share x030 authority;
+every other family retains its own manual and SDK evidence.
+
+These are additional locators for already locked originals in
+[`evidence-sources.json`](evidence-sources.json), not new vendor files or
+revised identities. The record binds IRQ20/21/22, own-bank addresses, bit0
+OV/UIF enable/status and direct R1W0 overflow-only masks `0x06`/`0x40`.
+It independently records L052 `BTIM2_LPTIM`, L083 `BTIM2_LPTIM1` and L012
+`BTIM3_HALLTIM`, including each partner's distinct bank/gate/reset. Native
+MMS=0 still forwards UG onto TRGO; overflow IRQ qualification does not prove
+isolation from retained recipients or lossless event history.
+
+The earlier `docs/btim-counter-evidence.md` and `.json` retain their historical
+polling scope and results. No canonical hardware schema, register identity,
+source version, source hash or redistribution boundary changes. Final main
+verification passed 16 actual ARM library builds and 23 ELF links, all exit zero;
+the four finite source/data gates passed separately. The 1,353 source files and
+905 generated files stayed unchanged during the final matrix; no main generation
+was performed. Three existing native L010/L011 RCC warnings remain in applicable
+rows. Independent main runtime and metadata/source reviews accepted the frozen
+implementation. At main acceptance clean had not run; final-package completion
+requires a separate final-source 2-library/6-ELF receipt.
+
+The initial main attempt stopped intentionally after 25 successful commands
+(16 libraries/nine ELFs) for a visibility-only correction of eight introduced
+warnings; it is not a full-matrix receipt. The first provenance invocation
+failed on a stale derived reference index, refreshed before the final gates.
+These earlier results and the complete final rerun remain recorded in
+[the verification history](../docs/btim-overflow-irq.md#verification-boundary).
+Source provenance and software builds do not establish interrupt execution,
+sleep/wake, fault recovery or silicon behavior.

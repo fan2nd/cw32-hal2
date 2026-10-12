@@ -1,6 +1,20 @@
-//! Owned, polling basic/general-purpose/advanced timer counter. This is not an Embassy global time driver.
+//! Owned timer counters and BTIM coalesced overflow events, not an Embassy global time driver.
 use super::{BasicInstance, CounterRegisters};
-use crate::{Peri, time::Hertz};
+#[cfg(btim)]
+use super::{OverflowInstance, OverflowInterruptHandler, btim::Registers};
+use crate::{
+    Peri,
+    mode::{Blocking, Mode},
+    time::Hertz,
+};
+#[cfg(btim)]
+use crate::{
+    interrupt::typelevel::{Binding, Interrupt},
+    mode::Async,
+};
+use core::marker::PhantomData;
+#[cfg(btim)]
+use core::{future::poll_fn, task::Poll};
 
 /// Counter/PWM configuration error. Invalid frequency requests leave registers unchanged.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -289,16 +303,27 @@ pub(crate) fn select_timing_for<R: CounterRegisters>(
 /// An exclusively owned PCLK-driven basic, general-purpose or advanced counter.
 ///
 /// Construction configures the timer stopped, with 65536 ticks and
-/// no prescaling, interrupts or DMA. Start it explicitly. Dropping it stops the
-/// counter and disables requests. Independent GTIM/ATIM clocks are gated on drop; the
-/// shared BTIM clock stays enabled to protect unowned or independently used siblings.
-pub struct Timer<'d, T: BasicInstance> {
+/// no prescaling or DMA. The default Blocking constructors disable interrupts;
+/// BTIM Async construction enables only overflow. Start it explicitly. Dropping
+/// it stops the counter and disables requests. Independent GTIM/ATIM clocks are
+/// gated on drop; BTIM keeps its shared clock enabled to protect other siblings.
+///
+/// Forgetting an Async BTIM owner can leave it counting and waking its last
+/// registered task. ISR state is static, with no borrow into this owner or its
+/// wait. A successful reconstruction, including with an old Blocking constructor
+/// after a forgotten reborrow, retires that activity and discards old events.
+///
+/// Native BTIM initialization and reconfiguration generate UG; MMS=0 still
+/// forwards UG onto TRGO. Existing downstream recipients must be handled under
+/// their functional handover contract before reconfiguring their source.
+pub struct Timer<'d, T: BasicInstance, M: Mode = Blocking> {
     _peripheral: Peri<'d, T>,
+    _mode: PhantomData<M>,
     pub(crate) clock: Hertz,
     pub(crate) timing: Timing,
     pub(crate) bounds: crate::rcc::ClockBounds,
 }
-impl<'d, T: BasicInstance> Timer<'d, T> {
+impl<'d, T: BasicInstance> Timer<'d, T, Blocking> {
     /// Construct a stopped timer, panicking if RCC has not been initialized.
     pub fn new(peripheral: Peri<'d, T>) -> Self {
         Self::try_new(peripheral).unwrap_or_else(|e| panic!("invalid timer configuration: {}", e))
@@ -306,13 +331,7 @@ impl<'d, T: BasicInstance> Timer<'d, T> {
     /// Construct a stopped timer. On failure the token is consumed; use
     /// `reborrow()` if it should remain available after the attempt.
     pub fn try_new(peripheral: Peri<'d, T>) -> Result<Self, ConfigError> {
-        let clock = crate::rcc::bus_frequency::<T>().ok_or(ConfigError::ClockNotInitialized)?;
-        let bounds = crate::rcc::bus_clock_bounds::<T>().ok_or(ConfigError::ClockNotInitialized)?;
-        if clock.0 == 0 {
-            return Err(ConfigError::ClockNotInitialized);
-        }
-        let timing = Timing::new(Prescaler::Div1, 65536).unwrap();
-        Ok(Self::new_configured(peripheral, clock, bounds, timing))
+        Self::try_new_inner(peripheral)
     }
     pub(crate) fn new_configured(
         peripheral: Peri<'d, T>,
@@ -320,22 +339,130 @@ impl<'d, T: BasicInstance> Timer<'d, T> {
         bounds: crate::rcc::ClockBounds,
         timing: Timing,
     ) -> Self {
-        critical_section::with(crate::rcc::enable_and_reset_with_cs::<T>)
-            .expect("timer clock gate did not enable");
-        T::COUNTER_REGS.counter_initialize(timing);
+        Self::new_inner(peripheral, clock, bounds, timing)
+    }
+}
+#[cfg(btim)]
+impl<'d, T: OverflowInstance> Timer<'d, T, Async> {
+    /// Construct a stopped BTIM with continuous overflow interrupts enabled.
+    /// Panics if its configuration or clock gate is unavailable.
+    ///
+    /// On a shared vector, dispatch every independently enabled partner source
+    /// through its own handler; an omitted source can repeatedly interrupt.
+    pub fn new_async(
+        peripheral: Peri<'d, T>,
+        irq: impl Binding<T::Interrupt, OverflowInterruptHandler<T>>,
+    ) -> Self {
+        Self::try_new_async(peripheral, irq)
+            .unwrap_or_else(|e| panic!("invalid timer configuration: {}", e))
+    }
+    /// Construct a stopped BTIM with only its overflow request enabled. Pure
+    /// validation errors make no state/register changes but consume the token;
+    /// use `reborrow()` to retain it. Clock-gate failure still panics.
+    pub fn try_new_async(
+        peripheral: Peri<'d, T>,
+        _irq: impl Binding<T::Interrupt, OverflowInterruptHandler<T>>,
+    ) -> Result<Self, ConfigError> {
+        let this = Self::try_new_inner(peripheral)?;
+        critical_section::with(|cs| {
+            // Common initialization has already retired any forgotten owner.
+            // Until this transaction the bank remains stopped and inactive.
+            T::OVERFLOW_REGS.enable_overflow_interrupt();
+            T::state().active.borrow(cs).set(true);
+        });
+        // A stale pending entry rechecks the initialized state and live source.
+        // Never disable/unpend a vector that can belong to an independent owner.
+        unsafe {
+            T::Interrupt::enable();
+        }
+        Ok(this)
+    }
+    /// Consume one coalesced retained overflow event. Multiple overflows can
+    /// merge, including during acknowledgment; no elapsed count is returned.
+    ///
+    /// Cancelling or forgetting the wait leaves counting, interrupt enable and
+    /// retained events unchanged. A later wait replaces the registered waker.
+    /// Stopping the counter, losing PCLK or unavailable IRQ service can leave a
+    /// wait pending indefinitely. This is not a wall-clock or sleep/wake API.
+    pub async fn wait_overflow(&mut self) {
+        poll_fn(|cx| {
+            T::state().waker.register(cx.waker());
+            if self.take_overflow() {
+                Poll::Ready(())
+            } else {
+                Poll::Pending
+            }
+        })
+        .await
+    }
+}
+#[cfg(btim)]
+impl<T: OverflowInstance, M: Mode> Timer<'_, T, M> {
+    /// Consume software-latched or hardware overflow as one coalesced event.
+    /// Acknowledge hardware only when its flag was observed, preserving other
+    /// event flags and the continuous overflow interrupt enable.
+    pub fn take_overflow(&mut self) -> bool {
+        critical_section::with(|cs| {
+            let elapsed = T::state().elapsed.borrow(cs).replace(false);
+            let pending = T::COUNTER_REGS.counter_overflow();
+            if pending {
+                T::COUNTER_REGS.counter_clear_overflow();
+            }
+            elapsed || pending
+        })
+    }
+}
+impl<'d, T: BasicInstance, M: Mode> Timer<'d, T, M> {
+    fn try_new_inner(peripheral: Peri<'d, T>) -> Result<Self, ConfigError> {
+        let clock = crate::rcc::bus_frequency::<T>().ok_or(ConfigError::ClockNotInitialized)?;
+        let bounds = crate::rcc::bus_clock_bounds::<T>().ok_or(ConfigError::ClockNotInitialized)?;
+        if clock.0 == 0 {
+            return Err(ConfigError::ClockNotInitialized);
+        }
+        let timing = Timing::new(Prescaler::Div1, 65536).unwrap();
+        Ok(Self::new_inner(peripheral, clock, bounds, timing))
+    }
+    fn new_inner(
+        peripheral: Peri<'d, T>,
+        clock: Hertz,
+        bounds: crate::rcc::ClockBounds,
+        timing: Timing,
+    ) -> Self {
+        Self::initialize_counter(timing);
         Self {
             _peripheral: peripheral,
+            _mode: PhantomData,
             clock,
             timing,
             bounds,
         }
     }
-    /// Resume counting from the current CNT value. Prescalers have already been
-    /// latched by a software update or latch on the EN rising edge, by IP type.
+    fn initialize_counter(timing: Timing) {
+        #[cfg(btim)]
+        if let Some(state) = T::overflow_state() {
+            critical_section::with(|cs| {
+                crate::rcc::enable_and_reset_with_cs::<T>(cs)
+                    .expect("timer clock gate did not enable");
+                state.active.borrow(cs).set(false);
+                T::COUNTER_REGS.counter_initialize(timing);
+                state.elapsed.borrow(cs).set(false);
+            });
+            return;
+        }
+        // Preserve the original GTIM/ATIM critical-section extent: register
+        // initialization follows the RCC transaction with interrupts restored.
+        critical_section::with(crate::rcc::enable_and_reset_with_cs::<T>)
+            .expect("timer clock gate did not enable");
+        T::COUNTER_REGS.counter_initialize(timing);
+    }
+    /// Resume counting from the current CNT value without discarding overflow.
+    /// Prescalers have already been latched by a software update or latch on the
+    /// EN rising edge, by IP type.
     pub fn start(&mut self) {
         T::COUNTER_REGS.counter_start(self.timing);
     }
-    /// Stop counting without changing CNT.
+    /// Stop counting without changing CNT or discarding overflow. Async BTIM
+    /// keeps its overflow request enabled and a pending event remains consumable.
     pub fn stop(&mut self) {
         T::COUNTER_REGS.counter_stop(self.timing);
     }
@@ -409,28 +536,65 @@ impl<'d, T: BasicInstance> Timer<'d, T> {
     }
     /// Explicitly select a prescaler and period (ATIM/buffered GTIM: 2…65536 ticks;
     /// classic GTIM/BTIM: 1…65536). Restarts CNT at zero,
-    /// preserves stopped/running state and clears the previous overflow flag.
+    /// preserves stopped/running state and discards the previous overflow event,
+    /// including BTIM's software latch.
     pub fn set_period(&mut self, prescaler: Prescaler, ticks: u32) -> Result<(), ConfigError> {
         let timing = explicit_timing_for::<T::CounterRegisters>(prescaler, ticks)?;
         self.apply_timing(timing);
         Ok(())
     }
     pub(crate) fn apply_timing(&mut self, timing: Timing) {
+        #[cfg(btim)]
+        if let Some(state) = T::overflow_state() {
+            critical_section::with(|cs| {
+                state.elapsed.borrow(cs).set(false);
+                T::COUNTER_REGS.counter_configure(timing);
+            });
+            self.timing = timing;
+            return;
+        }
         T::COUNTER_REGS.counter_configure(timing);
         self.timing = timing;
     }
-    /// Whether an overflow occurred since the last clear. Multiple overflows
-    /// coalesce into one bit; this must not be used as a lossless async timebase.
+    /// Whether an overflow remains pending, including BTIM's software latch.
+    /// Multiple overflows coalesce; this is not a lossless async timebase.
     pub fn is_overflow_pending(&self) -> bool {
+        #[cfg(btim)]
+        if let Some(state) = T::overflow_state() {
+            return critical_section::with(|cs| {
+                state.elapsed.borrow(cs).get() || T::COUNTER_REGS.counter_overflow()
+            });
+        }
         T::COUNTER_REGS.counter_overflow()
     }
-    /// Clear OV with an R1W0 write, preserving every other pending event.
+    /// Discard overflow with an R1W0 write, preserving every other pending event.
+    /// BTIM also discards its software latch in the same transaction.
     pub fn clear_overflow(&mut self) {
+        #[cfg(btim)]
+        if let Some(state) = T::overflow_state() {
+            critical_section::with(|cs| {
+                state.elapsed.borrow(cs).set(false);
+                T::COUNTER_REGS.counter_clear_overflow();
+            });
+            return;
+        }
         T::COUNTER_REGS.counter_clear_overflow();
     }
 }
-impl<T: BasicInstance> Drop for Timer<'_, T> {
+impl<T: BasicInstance, M: Mode> Drop for Timer<'_, T, M> {
     fn drop(&mut self) {
+        #[cfg(btim)]
+        if let Some(state) = T::overflow_state() {
+            critical_section::with(|cs| {
+                state.active.borrow(cs).set(false);
+                self.stop();
+                T::COUNTER_REGS.counter_disable_requests();
+                state.elapsed.borrow(cs).set(false);
+                // The existing RCC policy retains BTIM's shared group gate.
+                crate::rcc::disable_with_cs::<T>(cs).expect("timer clock gate did not disable");
+            });
+            return;
+        }
         self.stop();
         T::COUNTER_REGS.counter_disable_requests();
         critical_section::with(crate::rcc::disable_with_cs::<T>)

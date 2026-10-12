@@ -343,12 +343,53 @@ functions:
       limitations:
       - No APB timer multiplier; qualified prescalers and actual clock bounds apply. BTIM shared gate/reset
         is retained.
+      - Timer defaults to Blocking. Successful construction retires prior static overflow state, including
+        after a forgotten Async reborrow; pure validation failure leaves the previous state unchanged.
+    - id: run_mode_overflow_irq
+      status: partial
+      scope: Owned BTIM1/2/3 internal-PCLK continuous ARR-overflow events on all thirteen families and 54 existing selections, with typed Async binding and coalesced wait_overflow.
+      limitations:
+      - Timer defaults to Blocking; only OverflowInstance with its real GLOBAL interrupt binding admits
+        Async construction. Existing polling and static trigger/ADC ownership remain separate.
+      - One static event latch per bank; take_overflow consumes software or hardware pending in either mode.
+        Repeated overflows and acknowledgment races can coalesce; no lossless count or exact event timestamp.
+      - Canceling or forgetting a wait preserves counting, overflow enable and retained events. Forgetting
+        an owner can leave requests and wakes active; successful Blocking or Async reconstruction retires it.
+      - Start resumes CNT and stop retains events. Valid period/frequency reconfiguration clears old events
+        and preserves running state; invalid setters leave registers and the latch unchanged.
+      - L052 BTIM2_LPTIM, L083 BTIM2_LPTIM1 and L012 BTIM3_HALLTIM require dispatch of every independently
+        enabled source. The BTIM handler never accesses partner banks or changes their gates, resets or requests.
+        The BTIM group gate stays enabled; no driver operation asserts shared reset, disables/unpends the
+        associated NVIC line or changes its priority.
+      - Native MMS=0 forwards UG onto TRGO; URS=1 restricts overflow requests but does not isolate retained
+        recipients from initialization/reconfiguration. Their existing functional handover still applies.
+      - Running clocks, IRQ service and eventual executor service are required. No stopped-clock progress,
+        clock-loss recovery, deep-sleep wake, general trigger/DMA mode, global timebase or hardware validation.
+      - Main verification passed 16 actual ARM libraries and 23 ELF links, all 39 exits zero. Four finite
+        source/data gates passed separately; 1353 source and 905 generated files stayed unchanged during
+        the final matrix. Three existing native L010/L011 RCC dead_code warnings remain in applicable rows.
+      - The initial main attempt stopped intentionally before row 26 after 16 libraries and 9 ELFs passed;
+        eight introduced private_interfaces warnings prompted a visibility-only State correction before
+        the complete final rerun. An earlier provenance check failed on a stale derived reference index;
+        refreshing that view preceded the passed final gates. Earlier results are not full acceptance.
+      - Independent main runtime and metadata/source reviews accepted the frozen implementation. At main
+        acceptance clean had not run; final-package completion requires a separate final-source 2-library/6-ELF
+        receipt. No cumulative recipe, HAL test or hardware execution supplied these results.
+      evidence:
+      - path: embassy-cw32/src/timer/mod.rs
+        anchor: pub trait OverflowInstance
+      - path: embassy-cw32/src/timer/btim/mod.rs
+        anchor: pub struct OverflowInterruptHandler
+      - path: embassy-cw32/src/timer/low_level.rs
+        anchor: pub async fn wait_overflow
+      - path: docs/btim-overflow-irq.md
+      - path: docs/btim-overflow-irq-evidence.json
     - id: irq_dma_other_counting
       status: unimplemented
-      scope: No maintained HAL API declaration for this mode.
+      scope: Other BTIM interrupt, DMA and counting modes remain outside the bounded overflow-event API.
       limitations:
-      - General counter/capture IRQ, DMA and other counting modes are absent; optional Embassy time and L010/L011
-        routes are listed separately.
+      - Trigger/TOP interrupts, capture, DMA, one-shot and other counting modes are absent; coalesced overflow
+        IRQs, optional Embassy time and L010/L011 routes are listed separately.
     - id: safe_peripheral_dma
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

@@ -119,6 +119,30 @@ still apply.
   duty endpoints, per-pair gating, brake/rearm, inversion and runtime timing
   changes; other classic advanced modes remain unqualified. No pad-level or
   shutdown safety guarantee is made. See [the classic contract](classic-atim-complementary-evidence.json).
+- BTIM1, BTIM2 and BTIM3 support internal-PCLK, continuous run-mode coalesced
+  ARR-overflow IRQ events on all thirteen families and 54 existing selections.
+  `Timer<'d, T>` remains Blocking; only the typed Async constructor with an
+  `OverflowInterruptHandler<T>` binding exposes `wait_overflow()`. BTIM
+  `take_overflow()` consumes one retained software-or-hardware event in either
+  mode. Successful old Blocking construction also retires a forgotten Async
+  owner's static ISR state; failed pure validation leaves that state unchanged.
+  Canceling a wait preserves counting, overflow enable and events; forgetting
+  an owner can leave them active. Shared L052/L083 BTIM2/LPTIM and L012
+  BTIM3/HALLTIM dispatch remains per owner, with no partner access or group
+  gate/reset changes. Native UG still reaches TRGO with MMS=0, so retained
+  recipients keep their functional handover contract. Other timer IRQ modes,
+  DMA, one-shot, general trigger routing, lossless counts, sleep/wake and
+  clock-loss recovery remain gaps; GTIM/ATIM gain no overflow-wait API.
+  Main verification passed 16 actual ARM library builds and 23 ELF links,
+  all exit zero. Four finite source/data gates passed separately; 1,353 source
+  files and all 905 generated files stayed unchanged during the final matrix.
+  Three existing native L010/L011 RCC warnings remain in applicable rows.
+  Independent main runtime and metadata/source reviews accepted the frozen
+  implementation. At main acceptance clean had not run; final-package completion
+  requires a separate
+  final-source 2-library/6-ELF receipt. Earlier partial/failed attempts retain
+  their recorded scope in the linked verification history.
+  See [the bounded contract and verification boundary](btim-overflow-irq.md).
 - RTC Alarm A and A/B event observation exist on all eleven RTC families.
   Async waits are limited to existing L010/L011/L012 HSIOSC/LSE sources; new
   native live-LSI waits refuse with `UnsupportedAsyncAlarmSource` before RTC,

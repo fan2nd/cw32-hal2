@@ -1,0 +1,4411 @@
+{
+  "schema_version": 1,
+  "artifact_role": "independent-main-metadata-source-review",
+  "date": "2026-10-12",
+  "status": "accepted-main",
+  "scope": "BTIM overflow IRQ current own-source evidence, canonical and emitted metadata, exact real example configurations and recorded main acceptance. Final-source clean remains pending.",
+  "review_method": "Read-only inspection of actual production/evidence bytes and retained command outputs. No reviewer-run generation, Cargo, source/data command, test, probe, model, firmware or hardware execution.",
+  "finding": "No blocking source, metadata, generated-association, example-scope or main artifact discrepancy remains.",
+  "design_inputs": [
+    {
+      "external_artifact": "design/metadata-source-design.md",
+      "sha256": "f7f9a57be64ee44d0dc4a9d93229bf8dac46892178a32109493aca4daa3c8f30"
+    },
+    {
+      "external_artifact": "design/metadata-source-bindings.json",
+      "sha256": "02d3bdcc746c8776117967523c797146554314c625cab4eb63428955f0b72d92"
+    },
+    {
+      "external_artifact": "design/runtime-design.md",
+      "sha256": "6ec2272b0b855a352e6c50142967fe08e0721d33b7d77567fe3ab661c480f246"
+    },
+    {
+      "external_artifact": "design/verification-matrix.tsv",
+      "sha256": "fe4187b35031edc17e5c85441ec3a2b1c0d3aaff0f687b76a34e94f12f122344"
+    },
+    {
+      "external_artifact": "design/clean-bootstrap-supplement.md",
+      "sha256": "a6c68dee4feaa1b90e78f57f6487de783ba502db85ad58e82b7408af83a7a4a7"
+    }
+  ],
+  "current_functional_source": [
+    {
+      "project_path": "embassy-cw32/build.rs",
+      "sha256": "596d0c61c48db771e1e130a7225335d488ce9d652330e1da0d490b97032d5478",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "tests/verify_btim_evidence.py",
+      "sha256": "e876d0c6ecb5bfb8d76174fbfefad49e8806b1491704053163dce651a65be3a0",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "embassy-cw32/src/timer/mod.rs",
+      "sha256": "17dc92d352724b99694b62429b20ffc274200543fcac09f3bebab36556f3de00",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "embassy-cw32/src/timer/low_level.rs",
+      "sha256": "12250e11e90e05b88ac34ccd4ccd3acc06e55ab37023ae76fb121273e0178ba1",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "embassy-cw32/src/timer/btim/mod.rs",
+      "sha256": "ca8838cd93c3366c34272def7a85acd0a5bac5d80dda99d4e0b26a7e602878ba",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "embassy-cw32/src/timer/btim/v1.rs",
+      "sha256": "f32c91c6cedbd084ea862e2cb9db02b7e7a7426e9212e4825e2266d844f33ad6",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "embassy-cw32/src/timer/btim/cw32l031_v1.rs",
+      "sha256": "4f5e41c51f34fa40e6c613d3a8359a4ea8a2a6c61f831bc6efb2c48be2e4d5a5",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "embassy-cw32/src/timer/btim/cw32l010_v1.rs",
+      "sha256": "69773fac25db3eb4c10d7ca4c5de19a83cdd38f48ad5693082563f0765d12313",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "examples/low-power-timers/Cargo.toml",
+      "sha256": "407bec96e01051ffade28cdf48925e891420b996fd665f404953acf0923b244d",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "examples/low-power-timers/build.rs",
+      "sha256": "023c12b3e7b602c68cc238ff1bc5da92615d96e554e9040d831fa1112f2ad3ce",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "examples/low-power-timers/src/bin/btim_events.rs",
+      "sha256": "98aa27eda57a6b5adbc24e94f0542df6dfc1ff968da39d6b32fc68194ba76cf2",
+      "mode": "0o644"
+    },
+    {
+      "project_path": "examples/low-power-timers/src/bin/btim_shared.rs",
+      "sha256": "7ef1561d45e93f1dc0f8c2d1bdc5f18e1b84519b6fe2246bc300c94fa4abb2cb",
+      "mode": "0o644"
+    }
+  ],
+  "historical_main_review_snapshots": [
+    {
+      "artifact_role": "historical-external-review-snapshot",
+      "external_artifact": "main-final/source-before.json",
+      "project_path": "README.md",
+      "sha256": "cb0c04c143bdeaebd5f96d6b371c6271600526f4c8a2ac94476cc6658870f535",
+      "interpretation": "Hash at reviewed main execution. Administrative evidence/status updates may later change the project file; this is not a final-current-file hash."
+    },
+    {
+      "artifact_role": "historical-external-review-snapshot",
+      "external_artifact": "main-final/source-before.json",
+      "project_path": "docs/functional-coverage.md",
+      "sha256": "57944332c5579186b5c5d679376dabd1eebd604ee960615b125f0f66f9d12024",
+      "interpretation": "Hash at reviewed main execution. Administrative evidence/status updates may later change the project file; this is not a final-current-file hash."
+    },
+    {
+      "artifact_role": "historical-external-review-snapshot",
+      "external_artifact": "main-final/source-before.json",
+      "project_path": "docs/btim-overflow-irq.md",
+      "sha256": "13a28f2be978e760b96c74fc9932a99d5754893a8a4e9c2ad61affdbe548be72",
+      "interpretation": "Hash at reviewed main execution. Administrative evidence/status updates may later change the project file; this is not a final-current-file hash."
+    },
+    {
+      "artifact_role": "historical-external-review-snapshot",
+      "external_artifact": "main-final/source-before.json",
+      "project_path": "ci/hal-capabilities.yaml",
+      "sha256": "de40390c6d8e64d3fd82c0868867e70d2ecaecdf1b39143a227d3c0747b97d89",
+      "interpretation": "Hash at reviewed main execution. Administrative evidence/status updates may later change the project file; this is not a final-current-file hash."
+    },
+    {
+      "artifact_role": "historical-external-review-snapshot",
+      "external_artifact": "main-final/source-before.json",
+      "project_path": "sources/SOURCES.md",
+      "sha256": "bb90d956d813b8ed42071eeec89d05a01f97d4d9957794af36944ee718bc7449",
+      "interpretation": "Hash at reviewed main execution. Administrative evidence/status updates may later change the project file; this is not a final-current-file hash."
+    },
+    {
+      "artifact_role": "historical-external-review-snapshot",
+      "external_artifact": "main-final/source-before.json",
+      "project_path": "sources/evidence-sources.json",
+      "sha256": "6a47c44c0a519862ea8558fd332ae8efd6f08d69bca9257ab05c775deb656c07",
+      "interpretation": "Hash at reviewed main execution. Administrative evidence/status updates may later change the project file; this is not a final-current-file hash."
+    },
+    {
+      "artifact_role": "historical-external-review-snapshot",
+      "external_artifact": "main-final/source-before.json",
+      "project_path": "docs/btim-overflow-irq-evidence.json",
+      "sha256": "7366eed84e7ac05758e32c10075c197a401ea07dcb3f776fd4e5d921200468f5",
+      "interpretation": "Hash at reviewed main execution. Administrative evidence/status updates may later change the project file; this is not a final-current-file hash."
+    },
+    {
+      "artifact_role": "historical-external-review-snapshot",
+      "external_artifact": "main-final/source-before.json",
+      "project_path": "examples/low-power-timers/README.md",
+      "sha256": "d6577ce22e5c33b2daa7b0960e2023d4a5c7c38478b3b6243b20e61a57d26224",
+      "interpretation": "Hash at reviewed main execution. Administrative evidence/status updates may later change the project file; this is not a final-current-file hash."
+    }
+  ],
+  "current_locked_sources": [
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32x030_UserManual_CN_V2.5.pdf",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32x030_UserManual_CN_V2.5.txt",
+      "sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32F020_UserManual_CN_V1.4.pdf",
+      "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32F020_UserManual_CN_V1.4.txt",
+      "sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32F002_UserManual_CN_V1.4.pdf",
+      "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32F002_UserManual_CN_V1.4.txt",
+      "sha256": "cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32F003_UserManual_CN_V2.3.pdf",
+      "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32F003_UserManual_CN_V2.3.txt",
+      "sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32L031_UserManual_CN_V1.6.txt",
+      "sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32R031_UserManual_CN_V1.3.pdf",
+      "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32R031_UserManual_CN_V1.3.txt",
+      "sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32W031_UserManual_CN_V1.4.pdf",
+      "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32W031_UserManual_CN_V1.4.txt",
+      "sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32L083_UserManual_CN_V2.0.txt",
+      "sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32L052_UserManual_CN_V1.5.pdf",
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32L052_UserManual_CN_V1.5.txt",
+      "sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32L010_UserManual_CN_V1.2.pdf",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32L010_UserManual_CN_V1.2.txt",
+      "sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32L011_UserManual_CN_V1.1.pdf",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32L011_UserManual_CN_V1.1.txt",
+      "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3"
+    },
+    {
+      "artifact_role": "locked-original-pdf",
+      "path": "CW32L012_UserManual_CN_V1.4.pdf",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf"
+    },
+    {
+      "artifact_role": "locked-derived-text",
+      "path": "CW32L012_UserManual_CN_V1.4.txt",
+      "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32F030_StandardPeripheralLib_V2.2.zip",
+      "sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+      "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32f030/Libraries/inc/cw32f030.h",
+      "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32f030/Libraries/inc/cw32f030_btim.h",
+      "sha256": "92783f02a097d9675b5488bc397f751396e4348d1d277448bf4994761cfd72e0"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32f030/Libraries/src/cw32f030_btim.c",
+      "sha256": "850e7ac645a2b3bb822c21774054bf2abff3fe2694cafd526635fa52e1de5cf3"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d",
+      "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32f020/Libraries/inc/cw32f020.h",
+      "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32f020/Libraries/inc/cw32f020_btim.h",
+      "sha256": "9aca1786bd52e97d632820c67afa05d4228d621ddeb3e859476a9c0eb862fdb9"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32f020/Libraries/src/cw32f020_btim.c",
+      "sha256": "0ff4bff394d4695b110c5cdf936b534d17bc9c2885d4d65d727c406ad53d707f"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32F002_StandardPeripheralLib_V1.2.zip",
+      "sha256": "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc",
+      "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32f002/Libraries/inc/cw32f002.h",
+      "sha256": "399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32f002/Libraries/inc/cw32f002_btim.h",
+      "sha256": "fd91beb0d65f30eed1fff9fc223aec7e460ff59984761a7371b2cc47a300cca8"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32f002/Libraries/src/cw32f002_btim.c",
+      "sha256": "56d5b81ca01e7b103c56a7607a0953869bda66be266d67597119bfa1a5f9b4ac"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32F003_StandardPeripheralLib_V1.7.zip",
+      "sha256": "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+      "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32f003/Libraries/inc/cw32f003.h",
+      "sha256": "1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32f003/Libraries/inc/cw32f003_btim.h",
+      "sha256": "08148366f31274a42b0670c7a3c2d2717c69115f30020363e49bd7132a9ecc80"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32f003/Libraries/src/cw32f003_btim.c",
+      "sha256": "9c91a4faa1e4718366dc82b89e357bd0d6f0012550b18f7eafee77c48ada74c3"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32L031_StandardPeripheralLib_V1.4.zip",
+      "sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d",
+      "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32l031/Libraries/inc/cw32l031.h",
+      "sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32l031/Libraries/inc/cw32l031_btim.h",
+      "sha256": "6124b6bc2e043eb2a679e0ca6a03c063cb0ad94fc7a3a199cb18ac471a820603"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32l031/Libraries/src/cw32l031_btim.c",
+      "sha256": "a5ba84288cd0082445b26d131492c89a929342a4fdbf49dc03b38a81f1ad3a19"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32R031_StandardPeripheralLib_V1.1.zip",
+      "sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082",
+      "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32r031/Libraries/inc/cw32r031.h",
+      "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32r031/Libraries/inc/cw32r031_btim.h",
+      "sha256": "b380a557e457ba394ffa87f7836d73f2c6ff7bc5e99dc0bbdd71c9323dd2ac0a"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32r031/Libraries/src/cw32r031_btim.c",
+      "sha256": "5e60d2526f0d91f28621ac2547a1e5afd3286972d25a0f5614c3c6cbb2ae7464"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32W031_StandardPeripheralLib_V1.3.zip",
+      "sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+      "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32w031/Libraries/inc/cw32w031.h",
+      "sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32w031/Libraries/inc/cw32w031_btim.h",
+      "sha256": "ed7830c2fa3db3d4e06b1b08efb77b2ef4d7b4bb2041f14611b1ba839093761a"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32w031/Libraries/src/cw32w031_btim.c",
+      "sha256": "e6136ba3f1b0bc98ff41a68ab8298d2e2383eb8f6bf9b6c3cf2fb7b969e1ba4a"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32L083_StandardPeripheralLib_V2.2.zip",
+      "sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+      "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32l083/Libraries/inc/cw32l083.h",
+      "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32l083/Libraries/inc/cw32l083_btim.h",
+      "sha256": "6f9a046b29c45c719e6fef6a1dbe4b1fb5011cf200a1edd9a27c27903b1c9bef"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32l083/Libraries/src/cw32l083_btim.c",
+      "sha256": "e732b8a3f33dbe17a2c134bba97f564b0e03e5c4f44d31acf2bc0d5ced5e031d"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32L052_StandardPeripheralLib_V1.4.zip",
+      "sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+      "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+      "sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_btim.h",
+      "sha256": "0fc07478153cbdb40ce456546ab1d18f5878336ef03afa1d772b81c8f5a3a66f"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_btim.c",
+      "sha256": "4875c3420c12848dd3417fc98b341e6b91cbb80aa9a9da9468df814ac02b9e11"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_btim.h",
+      "sha256": "e156ee79c987073517f0fd6df7deb0fe8886a2aeae7dbeb7e172f2661aaf8b50"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_btim.c",
+      "sha256": "5f1fc9883ec47eb4c9805e02aaf2db62354a6b62b81adddb1d3cbf9804c79b5d"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32l011/Libraries/inc/cw32l011.h",
+      "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32l011/Libraries/inc/cw32l011_btim.h",
+      "sha256": "028bb59c2cee0752aa456a9eded30d72328ef45e2b0ac0479d3d20339abbad01"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32l011/Libraries/src/cw32l011_btim.c",
+      "sha256": "64e12480c63fc1e1e7745534a8b1cbcd5e17dfd77ee95cdde63609ae4f0e5c2f"
+    },
+    {
+      "artifact_role": "locked-original-sdk",
+      "path": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "cmsis",
+      "path": "cw32l012/Libraries/inc/cw32l012.h",
+      "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_header",
+      "path": "cw32l012/Libraries/inc/cw32l012_btim.h",
+      "sha256": "b3bf357bf668bccfca8881b8880135c5d1b81b030a668d17fcc6734d48dda7f9"
+    },
+    {
+      "artifact_role": "locked-sdk-member",
+      "member_role": "btim_driver",
+      "path": "cw32l012/Libraries/src/cw32l012_btim.c",
+      "sha256": "23c131602cac01d1faa0d86d44472eea15e75b3d9952ead3887d93d4d9ec6edf"
+    }
+  ],
+  "current_register_bindings": [
+    {
+      "project_path": "cw32-data/data/registers/btim_cw32f002_v1.json",
+      "sha256": "f3f78ccc5dd3851e71228ff8973ad2d239769698072f870044df1205211f8c5d"
+    },
+    {
+      "project_path": "cw32-data/data/registers/btim_cw32l010_v1.json",
+      "sha256": "5db58eb4d3ba4e30c56b73f63e22d858d0bbf26a388f8d71ed8ae6db77c60fe4"
+    },
+    {
+      "project_path": "cw32-data/data/registers/btim_cw32l012_v1.json",
+      "sha256": "67785cd38196f63ea906cfaf0f00911a96f9d8c98d90f3bd7c9d6bd29bdaa5c8"
+    },
+    {
+      "project_path": "cw32-data/data/registers/btim_cw32l031_v1.json",
+      "sha256": "5a650694847c9f15fdb273b1bce280225b13a97420b79441bde6db941ce4648d"
+    },
+    {
+      "project_path": "cw32-data/data/registers/btim_cw32l052_v1.json",
+      "sha256": "c7a7a1953a644b9872eac168134d72e39c3ccc965a5107e86913689189090a39"
+    },
+    {
+      "project_path": "cw32-data/data/registers/btim_v1.json",
+      "sha256": "4975741c5bf8b389ab7acad7d466f1dbb4c94e2aedc7bea6cd94d70910679734"
+    },
+    {
+      "project_path": "cw32-data/data/registers/halltim_cw32l012_v1.json",
+      "sha256": "fc2507241e46eb039083eb33780806dc1691b0765d5de1c1db12e736b382c206"
+    },
+    {
+      "project_path": "cw32-data/data/registers/lptim_cw32l010_v1.json",
+      "sha256": "2ccc84fc16b32c32887839f7f9340a3791d5c52052db30831ecb2442159d66a6"
+    },
+    {
+      "project_path": "cw32-data/data/registers/lptim_cw32l083_v1.json",
+      "sha256": "354278ed831a891e789413459737a5be9518e14890cdea4c67dcd67d7e12474e"
+    },
+    {
+      "project_path": "cw32-data/data/registers/sysctrl_cw32f002_v1.json",
+      "sha256": "d781d401ffc286d4ae11b0812e35e7232e2acdce55f89622f6aa99b2e450d281"
+    },
+    {
+      "project_path": "cw32-data/data/registers/sysctrl_cw32f003_v1.json",
+      "sha256": "efd24b20b255580f51c022a14041907d8b52166cd0fa5352820f1a312fba5a17"
+    },
+    {
+      "project_path": "cw32-data/data/registers/sysctrl_cw32f020_v1.json",
+      "sha256": "ee26b4decf7f3a6af7072e3437dd6bc475c2d4d22ef8ff87085d381a9db80a82"
+    },
+    {
+      "project_path": "cw32-data/data/registers/sysctrl_cw32l010_v1.json",
+      "sha256": "faba8ae050c1b893d299771faa76adf791df73f79e404b3259ce04689d71c328"
+    },
+    {
+      "project_path": "cw32-data/data/registers/sysctrl_cw32l011_v1.json",
+      "sha256": "60b82a266ae2c01de113a82f9380553d72cebfad89210c18bc468c9c6e5ac6ca"
+    },
+    {
+      "project_path": "cw32-data/data/registers/sysctrl_cw32l012_v1.json",
+      "sha256": "bf9c697edc6cf3a5f6d2595454ca45ec3285400a4f8363fb8e1d4fb566b2dee2"
+    },
+    {
+      "project_path": "cw32-data/data/registers/sysctrl_cw32l031_v1.json",
+      "sha256": "d78c278a13892f28b40ac396ccb5a45c827d6baee681844a8023c870cb15c16b"
+    },
+    {
+      "project_path": "cw32-data/data/registers/sysctrl_cw32l052_v1.json",
+      "sha256": "91062086a3e9cab9681a9f7de9fa747a3c2ff6e9bee78b8efdd392bd1149852b"
+    },
+    {
+      "project_path": "cw32-data/data/registers/sysctrl_cw32l083_v1.json",
+      "sha256": "aef46330e253f7a67e7662f13793b02c4045e98c92ffa26c89ee3df433958a71"
+    },
+    {
+      "project_path": "cw32-data/data/registers/sysctrl_v1.json",
+      "sha256": "9152e2c8dc41b4a7f5f1ee5854f854910e929c3345a3e206233990f442e975f3"
+    },
+    {
+      "project_path": "cw32-data/registers/btim_cw32f002_v1.yaml",
+      "sha256": "a7b7fbffbcd92f516d282eefcf84e69e2409b448920d75768e06bc0c13336baa"
+    },
+    {
+      "project_path": "cw32-data/registers/btim_cw32l010_v1.yaml",
+      "sha256": "28ad5fa2063cca1e10c98a6bfd28d53237f2a75aac902c5e68d8f16301648628"
+    },
+    {
+      "project_path": "cw32-data/registers/btim_cw32l012_v1.yaml",
+      "sha256": "ac555d6c4fbe8aefc0c29dc7b6965411032135fbf8c64572317497de22cdb385"
+    },
+    {
+      "project_path": "cw32-data/registers/btim_cw32l031_v1.yaml",
+      "sha256": "48812e20451265875f00f2e749a88e8e269b832dbdc4a3f9f99892a7f2cbf7cb"
+    },
+    {
+      "project_path": "cw32-data/registers/btim_cw32l052_v1.yaml",
+      "sha256": "29dc09c9bfd47a4b86d044b98753a956a3fad9c76b4cdf021a84e40f2f8ec19c"
+    },
+    {
+      "project_path": "cw32-data/registers/btim_v1.yaml",
+      "sha256": "984aed0391d3bf6f816dcb2991c4f0fb038abb791fab4ecd33d172f4fc2297f3"
+    },
+    {
+      "project_path": "cw32-data/registers/halltim_cw32l012_v1.yaml",
+      "sha256": "0aa34fb7e5d312a06d69723fa59daea606ba8a8bf4696af7d7c2b65939c06d66"
+    },
+    {
+      "project_path": "cw32-data/registers/lptim_cw32l010_v1.yaml",
+      "sha256": "6879ce35fca1e592a0593c66d30d8f62df0e65ec66fb6b14bc2f17666dbfc30f"
+    },
+    {
+      "project_path": "cw32-data/registers/lptim_cw32l083_v1.yaml",
+      "sha256": "5831788de84b16f6022204f1fbeb95e1062a71f5e92563024ac84c9867b659c2"
+    },
+    {
+      "project_path": "cw32-data/registers/sysctrl_cw32f002_v1.yaml",
+      "sha256": "d11e4f09cea40af75ad6b844dd15dcc4ece2e0e196b248f62ec16c7a96254da1"
+    },
+    {
+      "project_path": "cw32-data/registers/sysctrl_cw32f003_v1.yaml",
+      "sha256": "ea91d5451fff028a6d28d088dce2be1d3996f7d11a4dbe1695838ab7437e8c65"
+    },
+    {
+      "project_path": "cw32-data/registers/sysctrl_cw32f020_v1.yaml",
+      "sha256": "34832efe82965a70efd2c7a9b714b4501341071bf35d484cfa8e7c1e3ccc26ae"
+    },
+    {
+      "project_path": "cw32-data/registers/sysctrl_cw32l010_v1.yaml",
+      "sha256": "016aae6d0c4aff63fac68f56792b0e02d2a0c90b2f4556946eb0af4c6e8bcec9"
+    },
+    {
+      "project_path": "cw32-data/registers/sysctrl_cw32l011_v1.yaml",
+      "sha256": "92426afbabd991bba2e97d38e128df2c80ea720b6f422bcd5f3de869686ed810"
+    },
+    {
+      "project_path": "cw32-data/registers/sysctrl_cw32l012_v1.yaml",
+      "sha256": "fbf8ff76fa6f5341421fdab175fcc62ff60031eb2ef3c1402e4df5e37f12ac81"
+    },
+    {
+      "project_path": "cw32-data/registers/sysctrl_cw32l031_v1.yaml",
+      "sha256": "a17b1ad9c8f2427596145904ec18c3653600f98676ba2713bfbba99109ae7804"
+    },
+    {
+      "project_path": "cw32-data/registers/sysctrl_cw32l052_v1.yaml",
+      "sha256": "2e32a98e372b3224bc22736dc4e45d78bc590ffa11958e4dcf75843b03ebc284"
+    },
+    {
+      "project_path": "cw32-data/registers/sysctrl_cw32l083_v1.yaml",
+      "sha256": "6e47728843ba4cffe334d46d24b1058c1694cb5330b6f97fff394cbf68b39741"
+    },
+    {
+      "project_path": "cw32-data/registers/sysctrl_v1.yaml",
+      "sha256": "ba05e77067c23924485ab3490f9cdca50c238d6761254ce44642d2b229b0fd35"
+    }
+  ],
+  "cohort": {
+    "families": 13,
+    "existing_chip_selections": 54,
+    "bank_associations": 162,
+    "canonical_btim_versions": 6,
+    "declared_hal_chip_feature_set_matches": true,
+    "no_new_schema": true
+  },
+  "shared_routes": [
+    {
+      "family": "CW32L052",
+      "bank": "BTIM2",
+      "interrupt": "BTIM2_LPTIM",
+      "irq_number": 21,
+      "partner": "LPTIM",
+      "partner_address": "0x40007800",
+      "independent_partner_control_verified": true
+    },
+    {
+      "family": "CW32L083",
+      "bank": "BTIM2",
+      "interrupt": "BTIM2_LPTIM1",
+      "irq_number": 21,
+      "partner": "LPTIM",
+      "partner_address": "0x40007800",
+      "independent_partner_control_verified": true
+    },
+    {
+      "family": "CW32L012",
+      "bank": "BTIM3",
+      "interrupt": "BTIM3_HALLTIM",
+      "irq_number": 22,
+      "partner": "HALLTIM",
+      "partner_address": "0x40006400",
+      "independent_partner_control_verified": true
+    }
+  ],
+  "provenance_review": {
+    "historical_checker_prefix_preserved_bytes": 2350,
+    "historical_counter_evidence": {
+      "project_path": "docs/btim-counter-evidence.json",
+      "sha256": "d6f0be110a07952a402d9acf64a8b94d718b4408801a96e85d2ceea2e3a5eaa7",
+      "unchanged": true
+    },
+    "source_registry_appended_reference_count": 72,
+    "reference_only_reversal_byte_identical": true,
+    "baseline_registry_sha256": "2eb6da22a2138773f88688bd0ba25248ba9dea2560642f32eb3fbd0186b212a0",
+    "registry_historical_main_snapshot_sha256": "6a47c44c0a519862ea8558fd332ae8efd6f08d69bca9257ab05c775deb656c07",
+    "vendor_identity_changes": false,
+    "new_permanent_historical_output_hash_gate": false,
+    "new_hal_test_probe_model_framework": false
+  },
+  "main_execution": {
+    "status": "passed-and-independently-inspected",
+    "libraries": 16,
+    "elfs": 23,
+    "commands": 39,
+    "cargo_failures": 0,
+    "retained_emission_outputs": 39,
+    "retained_emitted_bank_irq_associations": 117,
+    "independently_inspected_elfs": 23,
+    "independently_inspected_bound_irq_slots": 42,
+    "source_files": 1353,
+    "generated_files": 905,
+    "source_before_after_equal": true,
+    "generated_before_after_and_baseline_equal": true,
+    "toolchain_before_after_equal": true,
+    "new_private_interface_warnings": 0,
+    "remaining_diagnostics": 18,
+    "remaining_warning_scope": "Three unchanged native generated RCC_LSE_SYSCLK constants in six commands; dead_code only.",
+    "results": {
+      "external_artifact": "main-final/results.json",
+      "sha256": "f8210ce9b07df80aa9e2b0e87ac4b78a028ffff8f494832e8be75a0335aefc2b"
+    },
+    "summary": {
+      "external_artifact": "main-final/summary.json",
+      "sha256": "7fb16cdeada1c58ca1ce6fac20e7a543afa0cf054496b12b5f83a82f1efda649"
+    },
+    "input_snapshots": [
+      {
+        "external_artifact": "main-final/source-before.json",
+        "sha256": "586c2f031ec984c9750e429f9f710ac2520e6e5269b2d08de16a64e649913241"
+      },
+      {
+        "external_artifact": "main-final/source-after.json",
+        "sha256": "586c2f031ec984c9750e429f9f710ac2520e6e5269b2d08de16a64e649913241"
+      },
+      {
+        "external_artifact": "main-final/generated-before.json",
+        "sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98"
+      },
+      {
+        "external_artifact": "main-final/generated-after.json",
+        "sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98"
+      },
+      {
+        "external_artifact": "main-final/toolchain-before.json",
+        "sha256": "9ba3050c515b5de35265b7245aceb45ed8aa19c4750710429584dfd56122a1a8"
+      },
+      {
+        "external_artifact": "main-final/toolchain-after.json",
+        "sha256": "f6c36932e842dc7c6ea78a704280f3a2fd5f459ede4991f8ab65952450e5b644"
+      }
+    ]
+  },
+  "final_source_data_gates": {
+    "results": {
+      "external_artifact": "data-gates-final-main/results.json",
+      "sha256": "225fe5d74e466de1a6361bed7b4a5e35aa308ec5a7d8853185b86d506796cb37"
+    },
+    "commands": [
+      {
+        "name": "btim-irq",
+        "exit_code": 0,
+        "log": {
+          "external_artifact": "data-gates-final-main/btim-irq.log",
+          "sha256": "2366f9e4bab18c8896ac5764f87dfdc8c15a49744b6461ad14ea6bac1eda509b"
+        }
+      },
+      {
+        "name": "provenance",
+        "exit_code": 0,
+        "log": {
+          "external_artifact": "data-gates-final-main/provenance.log",
+          "sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f"
+        }
+      },
+      {
+        "name": "layout",
+        "exit_code": 0,
+        "log": {
+          "external_artifact": "data-gates-final-main/layout.log",
+          "sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8"
+        }
+      },
+      {
+        "name": "validate",
+        "exit_code": 0,
+        "log": {
+          "external_artifact": "data-gates-final-main/validate.log",
+          "sha256": "ede75656b2001292bd260d75448fcb8d7ed6be25506b9fa23d1dcc1e6fe8e0e2"
+        }
+      }
+    ]
+  },
+  "explicit_receipt_corrections": [
+    {
+      "external_artifact": "main-elf-memory-label-correction.json",
+      "sha256": "bfb4481cf8115ed79e83fedacb145256b5bda2df0d7262404c3fb77b381cd200",
+      "affected_elfs": 16,
+      "finding": "Actual original range assertions used correct Flash/RAM. A recorder local name collision mislabeled only the memory summary field with BTIM names. All 16 corrected maps independently match selected metadata; every other inspection field equals the immutable original receipt.",
+      "original_receipts_modified": false,
+      "new_cargo_execution": false
+    }
+  ],
+  "earlier_attempts_retained": [
+    {
+      "external_artifact": "data-gates-attempt-001/results.json",
+      "sha256": "61283679d92edd4c5d2dc7771450e1f2830115bfb044efa0c490850bee103382",
+      "scope": "Earlier provenance failure retained before current source-view refresh and successful gates."
+    },
+    {
+      "external_artifact": "main-attempt-001/partial-summary.json",
+      "sha256": "f462861b8c454ce1b8f43dc26a4969e1a5956dba00baefeb38fefbe9217a298b",
+      "scope": "Intentional safe command-boundary stop for reviewed warning cleanup; 16 libraries and 9 ELFs passed, 14 rows not run, zero Cargo failures, nonzero recorder stop retained. Entire final matrix rerun on corrected source."
+    }
+  ],
+  "main_rows": [
+    {
+      "id": "lib-01",
+      "kind": "rlib",
+      "part": "cw32a030c8t7",
+      "features": "cw32a030c8t7,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32a030c8t7,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/01-cw32a030c8t7-lib/receipt.json",
+        "sha256": "3f59a65669e4b2f27b97f4492790ac531e9fbe48caf37efbacfedd7db8a138d4"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/01-cw32a030c8t7-lib/libembassy_cw32.rlib",
+          "sha256": "1d93a8c2812a4c599e57a0d6a825d396c8bafa995df99fd9c96c71e5ee6369d5",
+          "bytes": 7119332
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/01-cw32a030c8t7-lib/cargo.jsonl",
+          "sha256": "0d867226d60fe2e613206ded4e958ae0818e4dd5bca33d3048020ef1f4f86869"
+        },
+        {
+          "external_artifact": "main-final/01-cw32a030c8t7-lib/cargo.stderr.log",
+          "sha256": "13c6d289440de2a9be209d027d308e0f6f3e9c1e24e53dd5d88877dddc22f2b8"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/01-cw32a030c8t7-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-02",
+      "kind": "rlib",
+      "part": "cw32f002f3p7",
+      "features": "cw32f002f3p7,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f002f3p7,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/02-cw32f002f3p7-lib/receipt.json",
+        "sha256": "6416c42e781ff38a1da002f68b0b2584a7ba5d8b45493196bf2cbc72e6200c36"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/02-cw32f002f3p7-lib/libembassy_cw32.rlib",
+          "sha256": "559ea43f9e67cd20df465f923f8f009983e8e54454fed408791341139bdb807d",
+          "bytes": 4509882
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/02-cw32f002f3p7-lib/cargo.jsonl",
+          "sha256": "00f1f1e9fa58e0064d3843fcba766722d46b0d9945f56fcfce599250ab010250"
+        },
+        {
+          "external_artifact": "main-final/02-cw32f002f3p7-lib/cargo.stderr.log",
+          "sha256": "511b50fac2249c9cdb8a8dc9bafb1eedfb821cc16bab003174bab195d2c5c81d"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/02-cw32f002f3p7-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "04818545b0c83e5201e71e1f621e8c74e6149e3c3fb1373d90133821122f1a42",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-03",
+      "kind": "rlib",
+      "part": "cw32f003e4p7",
+      "features": "cw32f003e4p7,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f003e4p7,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/03-cw32f003e4p7-lib/receipt.json",
+        "sha256": "5e69d9f53a3ad25003cdf056b5f3a073601a64a97ed712cf911205cefea8bfc2"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/03-cw32f003e4p7-lib/libembassy_cw32.rlib",
+          "sha256": "c76f5695e50aa00c75f0479cce4b20805e6e76cb55298f2ed612d43dbd90a37e",
+          "bytes": 4732222
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/03-cw32f003e4p7-lib/cargo.jsonl",
+          "sha256": "de705227c6b12dbc5b5e0fd88bab8ce332da67a98ad012959c8f011a8318204f"
+        },
+        {
+          "external_artifact": "main-final/03-cw32f003e4p7-lib/cargo.stderr.log",
+          "sha256": "4e47f73f51396f27e3ce1f4cb64f68948da001a60f43e89e6e4d2064b7d00cf0"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/03-cw32f003e4p7-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "80e340337abd7a3c1d2c040c7b46a07c7b90d88fe7adc62498dde27d7260fc8c",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-04",
+      "kind": "rlib",
+      "part": "cw32f020c6u7",
+      "features": "cw32f020c6u7,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f020c6u7,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/04-cw32f020c6u7-lib/receipt.json",
+        "sha256": "c2dde92df851ee3bf2fb1e0a27c656359f9102f6b74a890243b39c52c9030d87"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/04-cw32f020c6u7-lib/libembassy_cw32.rlib",
+          "sha256": "0cfd3d81f798f8d5f9d2c4c3aea58c78883577a66c43faad8f16c9ac8d1e47b3",
+          "bytes": 5825480
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/04-cw32f020c6u7-lib/cargo.jsonl",
+          "sha256": "dc5af82b470f1f3f812afb3f15fe7e0cbf2fca44270490790f64760bc8e6d364"
+        },
+        {
+          "external_artifact": "main-final/04-cw32f020c6u7-lib/cargo.stderr.log",
+          "sha256": "2bd7880a8a1f0464e8b788e4b37d1d7c85dab2baaa96592d3970866975c0e692"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/04-cw32f020c6u7-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "8e5bafe01f98ac14f17dd56563646d271005b3f92f17cf2688a76bab556bd9cb",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-05",
+      "kind": "rlib",
+      "part": "cw32f030c8t7",
+      "features": "cw32f030c8t7,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f030c8t7,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/05-cw32f030c8t7-lib/receipt.json",
+        "sha256": "d9904b28f8c6d955e7b95833538823601a04893943be3c9324d3a58f74b6fc0e"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/05-cw32f030c8t7-lib/libembassy_cw32.rlib",
+          "sha256": "9f5d32f7f362d77cff543def98faf7ca155afed173cec386b6dd9ffd188220d8",
+          "bytes": 7119194
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/05-cw32f030c8t7-lib/cargo.jsonl",
+          "sha256": "2856ce8750377f92606112978a25bd08f7d2beac7bf9afc90072a0e2c5abf095"
+        },
+        {
+          "external_artifact": "main-final/05-cw32f030c8t7-lib/cargo.stderr.log",
+          "sha256": "113b55e203ba3f2831de750cd178f2badb7a2d5eda04273ac9ebcb656c8ed9a3"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/05-cw32f030c8t7-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-06",
+      "kind": "rlib",
+      "part": "cw32l010f8p6",
+      "features": "cw32l010f8p6,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l010f8p6,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/06-cw32l010f8p6-lib/receipt.json",
+        "sha256": "280c97af96dbdba3181f37e2632286aa5c3117b9534243f50a0b9c7173e21fa3"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/06-cw32l010f8p6-lib/libembassy_cw32.rlib",
+          "sha256": "68f079610bbeae6ba858b100f60f02b3a965bbf2046a36f16b49bfc902ddda48",
+          "bytes": 5621980
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/06-cw32l010f8p6-lib/cargo.jsonl",
+          "sha256": "a2db5064cb70e0860e16c0cbb5edc476833b4204cec9c4b4be4b3a068b9987a0"
+        },
+        {
+          "external_artifact": "main-final/06-cw32l010f8p6-lib/cargo.stderr.log",
+          "sha256": "9e75ddf02a6296a43fdaf78fad332a810acdec6fd09da9831342c144f53338d6"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/06-cw32l010f8p6-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "18e0e53fda75cf3092e059fab50c45f7093d66705f995f37e7d4b3a0a43f37f2",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        }
+      ]
+    },
+    {
+      "id": "lib-07",
+      "kind": "rlib",
+      "part": "cw32l011k8t6",
+      "features": "cw32l011k8t6,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l011k8t6,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/07-cw32l011k8t6-lib/receipt.json",
+        "sha256": "c424e78b0c1fdbe3bbf021f145b5e145021ce1229b3d5857106b62a42975619c"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/07-cw32l011k8t6-lib/libembassy_cw32.rlib",
+          "sha256": "6de6eac195ce26b2349a2af9f9e10e2bbf9fcc8edd5b1aacb37bdfd79cd59862",
+          "bytes": 5865938
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/07-cw32l011k8t6-lib/cargo.jsonl",
+          "sha256": "2e1f8401672a875e626ea222a3667e47923b2b6889ac7e868f022346177920c1"
+        },
+        {
+          "external_artifact": "main-final/07-cw32l011k8t6-lib/cargo.stderr.log",
+          "sha256": "f882ddf515ef961cfe68ad1e2596eb9eac6aaa5fdf6a6b681e4004b9340a8134"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/07-cw32l011k8t6-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "284a57029cb84b8c07beae2914768ce330121734d4bdd141d58e7278136bf147",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        }
+      ]
+    },
+    {
+      "id": "lib-08",
+      "kind": "rlib",
+      "part": "cw32l012c8t6",
+      "features": "cw32l012c8t6,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l012c8t6,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/08-cw32l012c8t6-lib/receipt.json",
+        "sha256": "2f39495ee9292bbc179c37bde273e296605898d8ea0ac6aaf589d61fa63aba79"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/08-cw32l012c8t6-lib/libembassy_cw32.rlib",
+          "sha256": "cc1a1568021ce472e3c67d784aa99f891ac50bbde5f0153f269a09c3759ce4c2",
+          "bytes": 7727460
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/08-cw32l012c8t6-lib/cargo.jsonl",
+          "sha256": "0b12b79dfa05a115a07cc9e835486f209824aa32d2b02af7d2ad7363f76ec771"
+        },
+        {
+          "external_artifact": "main-final/08-cw32l012c8t6-lib/cargo.stderr.log",
+          "sha256": "f830524a77508017cd938a876fe0e4f0c2d6868d25bcbd62a5428372f0719a0b"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/08-cw32l012c8t6-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "e7473d76b96f7edbad876c60bf195dda3deb7b53e9d3f14db8bf1e521f9211fc",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3_HALLTIM"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-09",
+      "kind": "rlib",
+      "part": "cw32l031c8t6",
+      "features": "cw32l031c8t6,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l031c8t6,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/09-cw32l031c8t6-lib/receipt.json",
+        "sha256": "bcc99f34810bc4fd97e49e6e60afa9e5fc4af0557163382f51d1236a787d88de"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/09-cw32l031c8t6-lib/libembassy_cw32.rlib",
+          "sha256": "83c6da48c2b5d53b57e744ff13ea7b000639cb6fcc794f614435d4ca5d1190d7",
+          "bytes": 5850338
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/09-cw32l031c8t6-lib/cargo.jsonl",
+          "sha256": "1431002f010101e3e54bbd56be5f3118e13d86bf699534c114ebe2c5cd5adde7"
+        },
+        {
+          "external_artifact": "main-final/09-cw32l031c8t6-lib/cargo.stderr.log",
+          "sha256": "f3b0e9d572858cd369e630a6c68e6b05d2606a755d6b09d70c503c4bb1990fd7"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/09-cw32l031c8t6-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "738cdbc17d8017239ab11ed00637edd7b2f531e5772d51ac24821358b6e4e11a",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-10",
+      "kind": "rlib",
+      "part": "cw32l052c8t6",
+      "features": "cw32l052c8t6,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l052c8t6,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/10-cw32l052c8t6-lib/receipt.json",
+        "sha256": "a4e7d1c6ce92783b93ae02c6555c5fc14e930cef989e5d7583d345f4cbb5b696"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/10-cw32l052c8t6-lib/libembassy_cw32.rlib",
+          "sha256": "9442d494718060b998b0accddbd513afed04518a13d4a5224bf3e7715e8ed255",
+          "bytes": 6458766
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/10-cw32l052c8t6-lib/cargo.jsonl",
+          "sha256": "5b2bd3c3bc1459ff6e6b3664a9e2365b47027f1cf5243ff7d6297667fc507d84"
+        },
+        {
+          "external_artifact": "main-final/10-cw32l052c8t6-lib/cargo.stderr.log",
+          "sha256": "30a54a3a23a193d9560b0d9de127340249881a96d7bea247e0c7bd2a19c8735c"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/10-cw32l052c8t6-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "68f37bacb1610a57a6d39448bd37b503282a62ff160bb90b361853bff1ea5272",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2_LPTIM"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-11",
+      "kind": "rlib",
+      "part": "cw32l083mct6",
+      "features": "cw32l083mct6,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l083mct6,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/11-cw32l083mct6-lib/receipt.json",
+        "sha256": "1aa93a2e92598fec643e4627864da416852fa19d0e59c88b7d0173b4c494c379"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/11-cw32l083mct6-lib/libembassy_cw32.rlib",
+          "sha256": "549afcff537a07bf779ac7cdd304abbdbb17f511e44bb3b5bf4a573677126447",
+          "bytes": 8369030
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/11-cw32l083mct6-lib/cargo.jsonl",
+          "sha256": "2efd730be08edbf1458d6d0c5ea869be7c5209c054fd2b8b55693572dd56a350"
+        },
+        {
+          "external_artifact": "main-final/11-cw32l083mct6-lib/cargo.stderr.log",
+          "sha256": "6f452c58bdf0342b289de844680b03e75e7f49650600ef64d59031da983c958c"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/11-cw32l083mct6-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "e81495642f75ad630403f13ef358b782eafdaea8c7375bfeff70dcb167e04ef9",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2_LPTIM1"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-12",
+      "kind": "rlib",
+      "part": "cw32r031c8u6",
+      "features": "cw32r031c8u6,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32r031c8u6,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/12-cw32r031c8u6-lib/receipt.json",
+        "sha256": "59d94b8f57df049a849eae578fca839d9e038b8d5c3670c6951726f0f4959923"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/12-cw32r031c8u6-lib/libembassy_cw32.rlib",
+          "sha256": "aa419fac0b78d8cdc6ed6aa90b27b1fe5558a01d88c272064fba32cb3b32cb6d",
+          "bytes": 5678516
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/12-cw32r031c8u6-lib/cargo.jsonl",
+          "sha256": "459d8c2e2bbc3d5f6ced2a1811248a9956dead0e21368aa6b1db1dd56f162ac5"
+        },
+        {
+          "external_artifact": "main-final/12-cw32r031c8u6-lib/cargo.stderr.log",
+          "sha256": "2bd7880a8a1f0464e8b788e4b37d1d7c85dab2baaa96592d3970866975c0e692"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/12-cw32r031c8u6-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "bac188dd3e5cbe04e823c68808baa8da879fb6c3bf7cf659356e80d90dcad571",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-13",
+      "kind": "rlib",
+      "part": "cw32w031r8u6",
+      "features": "cw32w031r8u6,rt,defmt",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32w031r8u6,rt,defmt",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/13-cw32w031r8u6-lib/receipt.json",
+        "sha256": "c778c34103285cfed7bf0ecf33dd3d08e30fc5e445b0e955eae8134c7150f5c1"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/13-cw32w031r8u6-lib/libembassy_cw32.rlib",
+          "sha256": "b3264320def65c4885bebe59be31ed2d9eb91635cd9c07851d0ffa5c517ef8d5",
+          "bytes": 5740142
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/13-cw32w031r8u6-lib/cargo.jsonl",
+          "sha256": "51945d7c17d3c02c4c580132cf7e5e1f7654c94d0f4a19b76d4030e43a265ff4"
+        },
+        {
+          "external_artifact": "main-final/13-cw32w031r8u6-lib/cargo.stderr.log",
+          "sha256": "f91767bda9f2bdce875975f91cb094c2a9f201bf638ab7f08a2dfcbfe2da07f6"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/13-cw32w031r8u6-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "2225753901a3dee519a384354d6cb2a423b1eb13fcb915c6066ac88e942d8448",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-14",
+      "kind": "rlib",
+      "part": "cw32f030c8t7",
+      "features": "cw32f030c8t7",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f030c8t7",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/14-cw32f030c8t7-lib/receipt.json",
+        "sha256": "cb3e2179f03116908b70c31580cefecf48d37fc24c8b2924af0946b0ea17d01a"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/14-cw32f030c8t7-lib/libembassy_cw32.rlib",
+          "sha256": "e31c759203e299ffd742bd0d80abc7dbb106fa6834722b94093010286a126e4f",
+          "bytes": 5240884
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/14-cw32f030c8t7-lib/cargo.jsonl",
+          "sha256": "ae7a2293e80501ee0a9402421585288f525ae708f1aead3321b2b32e3ad0ce8e"
+        },
+        {
+          "external_artifact": "main-final/14-cw32f030c8t7-lib/cargo.stderr.log",
+          "sha256": "f09a312a1b62025342ec3f7dcfec5a591d1fcd42decf84a11ee7569efc5c71d3"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/14-cw32f030c8t7-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-15",
+      "kind": "rlib",
+      "part": "cw32f002f3p7",
+      "features": "cw32f002f3p7,time-driver-gtim",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f002f3p7,time-driver-gtim",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/15-cw32f002f3p7-lib/receipt.json",
+        "sha256": "573073c7b5cc5b6462246f6ce474c40a30ed3d861067782404674e126afd3ee3"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/15-cw32f002f3p7-lib/libembassy_cw32.rlib",
+          "sha256": "3ab10c17570a360050db1fcc55bbd87b057c88f8e42097308a52432fbd15683b",
+          "bytes": 3546166
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/15-cw32f002f3p7-lib/cargo.jsonl",
+          "sha256": "8e0a2689ea56dfb22efe83fc8b4d6dfd8131d785a19b031e3d6b2d57687971d6"
+        },
+        {
+          "external_artifact": "main-final/15-cw32f002f3p7-lib/cargo.stderr.log",
+          "sha256": "c51e49c6373c6d27463162faf454a222fd20ba64a3c5ffaf0dd2de3321a5257f"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/15-cw32f002f3p7-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "bb4fa30e8a3293b485164ee466033354d86bef407bdc647d2cab7bfec70b7e6f",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "lib-16",
+      "kind": "rlib",
+      "part": "cw32l012c8t6",
+      "features": "cw32l012c8t6,time-driver-gtim1",
+      "manifest": "firmware/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l012c8t6,time-driver-gtim1",
+        "--message-format=json",
+        "--release",
+        "-p",
+        "embassy-cw32",
+        "--lib"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/16-cw32l012c8t6-lib/receipt.json",
+        "sha256": "2da7022afccbaea3fa306c25ab401120c4b3b2c1e2863707802dc7d913312993"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/16-cw32l012c8t6-lib/libembassy_cw32.rlib",
+          "sha256": "872a1b0ff1e5a905ac57f43bf73a860f9d67edbee6e4bbd60aba020565a15974",
+          "bytes": 5658776
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/16-cw32l012c8t6-lib/cargo.jsonl",
+          "sha256": "b8fcabc1bff29631a90e54beff97c63ea81a1e77c7ad8269210f19eaeae5b137"
+        },
+        {
+          "external_artifact": "main-final/16-cw32l012c8t6-lib/cargo.stderr.log",
+          "sha256": "badb53bdc1da108480920fd3e95e0a8625ea5bec231eb1daa3745b3f5c041147"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/16-cw32l012c8t6-lib/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "0ec628fccb27ee1f5a0022105deb8a2f62837222d8c2c4ba8b998a32048096cb",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3_HALLTIM"
+            }
+          ]
+        }
+      ],
+      "warnings": []
+    },
+    {
+      "id": "elf-01",
+      "kind": "elf",
+      "part": "cw32a030c8t7",
+      "features": "cw32a030c8t7",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32a030c8t7",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/17-cw32a030c8t7-btim_events/receipt.json",
+        "sha256": "9f081317061779341f7d48fd6a56c44667b6b9a0bbdb5db8cadb7ffcf3e6ce16"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/17-cw32a030c8t7-btim_events/firmware.elf",
+          "sha256": "dc2e28d2df4231b43dbb59ff143b78d825e310262c3ef67e544923b083ce9f48",
+          "bytes": 145976
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/17-cw32a030c8t7-btim_events/cargo.jsonl",
+          "sha256": "d41b37beec67859a4c7a763afb2cad0ebf8946bf3f77b4b32f17716865d742b5"
+        },
+        {
+          "external_artifact": "main-final/17-cw32a030c8t7-btim_events/cargo.stderr.log",
+          "sha256": "6f574f0164097308a741047dc4a9d6e7df86ea8188fd38d8a3ee3cba685e785a"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/17-cw32a030c8t7-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 317
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 381
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-02",
+      "kind": "elf",
+      "part": "cw32f002f3p7",
+      "features": "cw32f002f3p7",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f002f3p7",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/18-cw32f002f3p7-btim_events/receipt.json",
+        "sha256": "26cdc935a613dc30e8774f3dcd057b7e3adbcbf69d0b291d512495ca2ecc18fe"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/18-cw32f002f3p7-btim_events/firmware.elf",
+          "sha256": "a3eaf1d23e7386a09e922bf43888756df96748cf06c4877a11f246c731f7493d",
+          "bytes": 140136
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/18-cw32f002f3p7-btim_events/cargo.jsonl",
+          "sha256": "6417119957bc004c42629c40f1fcf0914a4037df124aded59c4b7fbe976c9b07"
+        },
+        {
+          "external_artifact": "main-final/18-cw32f002f3p7-btim_events/cargo.stderr.log",
+          "sha256": "2c3436bb86b67f38fd71b5378b7bc7b3ec46391bbe180581bdff4294f618b8ba"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/18-cw32f002f3p7-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "04818545b0c83e5201e71e1f621e8c74e6149e3c3fb1373d90133821122f1a42",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 189,
+        "initial_sp": 536872960,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 249
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 313
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 377
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 16384
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 2048
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-03",
+      "kind": "elf",
+      "part": "cw32f003e4p7",
+      "features": "cw32f003e4p7",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f003e4p7",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/19-cw32f003e4p7-btim_events/receipt.json",
+        "sha256": "9a460dbb6509a3534238b9b1cce5279647f7a2095a4fd8751d66607a775e0548"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/19-cw32f003e4p7-btim_events/firmware.elf",
+          "sha256": "29f45a06b9d413651da03603824635eef6e6751ba941316d6b032024a205c56a",
+          "bytes": 140160
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/19-cw32f003e4p7-btim_events/cargo.jsonl",
+          "sha256": "22ce78efeac22926adb5030b989ea796c0be4f735a141864fc5d21e5f9652522"
+        },
+        {
+          "external_artifact": "main-final/19-cw32f003e4p7-btim_events/cargo.stderr.log",
+          "sha256": "a68d60520079d7708e4bbace9351030dd09b4dead26677f80e8f09813b61082e"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/19-cw32f003e4p7-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "80e340337abd7a3c1d2c040c7b46a07c7b90d88fe7adc62498dde27d7260fc8c",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 189,
+        "initial_sp": 536873984,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 249
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 313
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 377
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 20480
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 3072
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-04",
+      "kind": "elf",
+      "part": "cw32f020c6u7",
+      "features": "cw32f020c6u7",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f020c6u7",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/20-cw32f020c6u7-btim_events/receipt.json",
+        "sha256": "5adb8201abf16dcc32b5ea730ee44eb5df77c8b7a8b5ff6c88047d0f74fa2005"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/20-cw32f020c6u7-btim_events/firmware.elf",
+          "sha256": "ff164171b07c2485f7ec0450b9b5e6fc345dd71c141c7ec882b3864397dc193e",
+          "bytes": 211168
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/20-cw32f020c6u7-btim_events/cargo.jsonl",
+          "sha256": "8982c89bc776272db1335043a0bd8c4c9fc2fba1eaa1409ae7a80bb811381b4d"
+        },
+        {
+          "external_artifact": "main-final/20-cw32f020c6u7-btim_events/cargo.stderr.log",
+          "sha256": "79d8fbb93ecef34d71cb40030151b236ad55339e08256a4cc7beeab72ed8d252"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/20-cw32f020c6u7-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "8e5bafe01f98ac14f17dd56563646d271005b3f92f17cf2688a76bab556bd9cb",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 317
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 381
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 32768
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-05",
+      "kind": "elf",
+      "part": "cw32f030c8t7",
+      "features": "cw32f030c8t7",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f030c8t7",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/21-cw32f030c8t7-btim_events/receipt.json",
+        "sha256": "53344df4529bfb90553f7e67287564a8d7b8a9b6bf8407af994bbf51acd45236"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/21-cw32f030c8t7-btim_events/firmware.elf",
+          "sha256": "3ef561363104dc197e229b117f7a6f40269b1d4398386a83edb5eb3544e5fa3f",
+          "bytes": 145976
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/21-cw32f030c8t7-btim_events/cargo.jsonl",
+          "sha256": "2cb74db785f1611ba53084657f776d5759c8a38c15ba1905ec508a879b71130c"
+        },
+        {
+          "external_artifact": "main-final/21-cw32f030c8t7-btim_events/cargo.stderr.log",
+          "sha256": "0b207ad407e87ba8bde71a8d2cfa0a99e35e1ab4a07a5d4e81639fbf341ece5a"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/21-cw32f030c8t7-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 317
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 381
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-06",
+      "kind": "elf",
+      "part": "cw32l010f8p6",
+      "features": "cw32l010f8p6",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l010f8p6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/22-cw32l010f8p6-btim_events/receipt.json",
+        "sha256": "7607fb8f221ceeb603010ae181556de9862ddef24385b5fddb7558e6ca0beb38"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/22-cw32l010f8p6-btim_events/firmware.elf",
+          "sha256": "64a726ba04acf42a0826262f99d80ff81d960e9fecc6018d7fbb9cb4f7c1ef9b",
+          "bytes": 211244
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/22-cw32l010f8p6-btim_events/cargo.jsonl",
+          "sha256": "6bcbfe631cb746ee68b49805efbc42fe305b0c1b5aa49b9b4c4a7d42ab0d6ebe"
+        },
+        {
+          "external_artifact": "main-final/22-cw32l010f8p6-btim_events/cargo.stderr.log",
+          "sha256": "444887feaf50eb8910badba9de08cf3893cbf7163bb875cc0ef46730b10bdff4"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/22-cw32l010f8p6-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "18e0e53fda75cf3092e059fab50c45f7093d66705f995f37e7d4b3a0a43f37f2",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        }
+      ],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536875008,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 317
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 381
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 4096
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-07",
+      "kind": "elf",
+      "part": "cw32l011k8t6",
+      "features": "cw32l011k8t6",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l011k8t6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/23-cw32l011k8t6-btim_events/receipt.json",
+        "sha256": "11844923e8450c6825ce923627800f0bdfd8123514883f759aa14b49a61e87a1"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/23-cw32l011k8t6-btim_events/firmware.elf",
+          "sha256": "33d60d7a0f75e38b602c7a3fc8036936ddc832c8dcdaf8c0b1402278c8b71925",
+          "bytes": 212124
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/23-cw32l011k8t6-btim_events/cargo.jsonl",
+          "sha256": "0f176ecbf4117e5744d843ae393c5d788c19be0bdf47f3a92d6f7858228e3fcc"
+        },
+        {
+          "external_artifact": "main-final/23-cw32l011k8t6-btim_events/cargo.stderr.log",
+          "sha256": "d7f075411df647681afaa869b97c192fc7ccbf97bc64609a72bbb78fca5e8c6c"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/23-cw32l011k8t6-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "284a57029cb84b8c07beae2914768ce330121734d4bdd141d58e7278136bf147",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        }
+      ],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536877056,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 317
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 381
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 6144
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-08",
+      "kind": "elf",
+      "part": "cw32l012c8t6",
+      "features": "cw32l012c8t6",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l012c8t6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/24-cw32l012c8t6-btim_events/receipt.json",
+        "sha256": "9d000683690382416830c9f56fb30a07136c323e084da71a0511e26c5d4924f1"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/24-cw32l012c8t6-btim_events/firmware.elf",
+          "sha256": "e0f5f244a9d165970c2f11c0d1679c5bddecfe68719e3ed3cb7c45c60f6d7fa4",
+          "bytes": 216704
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/24-cw32l012c8t6-btim_events/cargo.jsonl",
+          "sha256": "d35b622ce7e5ea75fea5102dbe6179e729e9e4cf3d9a9bd6364cfff5c4098573"
+        },
+        {
+          "external_artifact": "main-final/24-cw32l012c8t6-btim_events/cargo.stderr.log",
+          "sha256": "684687d4e62b888e27af0be52e87711766ab91fe11378b41ce086cf0a290f6d2"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/24-cw32l012c8t6-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "e7473d76b96f7edbad876c60bf195dda3deb7b53e9d3f14db8bf1e521f9211fc",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3_HALLTIM"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 317
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3_HALLTIM",
+            "not_default_handler": true,
+            "vector_word": 381
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-09",
+      "kind": "elf",
+      "part": "cw32l031c8t6",
+      "features": "cw32l031c8t6",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l031c8t6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/25-cw32l031c8t6-btim_events/receipt.json",
+        "sha256": "28d38cf90024a0490721ef7a8cc92db19f0cb79d4c51bccefde8196fbc73b8a7"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/25-cw32l031c8t6-btim_events/firmware.elf",
+          "sha256": "bdd90179699bc945e29f1b0e801d9e1b58cc0c54355824ef4fee2bd9140260d7",
+          "bytes": 213972
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/25-cw32l031c8t6-btim_events/cargo.jsonl",
+          "sha256": "8364ec941726f04c255aedf41487d005ac543d86d7afb2d0f88926c20d1baa2b"
+        },
+        {
+          "external_artifact": "main-final/25-cw32l031c8t6-btim_events/cargo.stderr.log",
+          "sha256": "fd68579ea6391bc9a8ca18dbc93f1626b6df2da2d677db7da6f3b00e372d4e5d"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/25-cw32l031c8t6-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "738cdbc17d8017239ab11ed00637edd7b2f531e5772d51ac24821358b6e4e11a",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 317
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 381
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-10",
+      "kind": "elf",
+      "part": "cw32l052c8t6",
+      "features": "cw32l052c8t6",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l052c8t6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/26-cw32l052c8t6-btim_events/receipt.json",
+        "sha256": "1ac942c8885812316150158fb227f2769d01f36f685c75ed0bdb7e0849b52856"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/26-cw32l052c8t6-btim_events/firmware.elf",
+          "sha256": "62e31b629a70750fab35ec115ebf0d5e11724ddec92713c7623a7b60efe412ea",
+          "bytes": 220568
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/26-cw32l052c8t6-btim_events/cargo.jsonl",
+          "sha256": "1e8fa27f2abbe2c10625d3a380f6cf44745e725212d371437e6190ed04c321e4"
+        },
+        {
+          "external_artifact": "main-final/26-cw32l052c8t6-btim_events/cargo.stderr.log",
+          "sha256": "ac9a084773b33a60ed445b4b03ca79010782ccb7f2b26e01f9da981e941a9fcb"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/26-cw32l052c8t6-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "68f37bacb1610a57a6d39448bd37b503282a62ff160bb90b361853bff1ea5272",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2_LPTIM"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 189,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 249
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2_LPTIM",
+            "not_default_handler": true,
+            "vector_word": 313
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 377
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-11",
+      "kind": "elf",
+      "part": "cw32l083mct6",
+      "features": "cw32l083mct6",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l083mct6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/27-cw32l083mct6-btim_events/receipt.json",
+        "sha256": "3202e9d0060d25690fec029c435befbd773c067cb87394af0bd6963333a18d91"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/27-cw32l083mct6-btim_events/firmware.elf",
+          "sha256": "e9e736e33b137c99d6e93b601a2bc502f91a1ad7c8acc9b35a0476bcd0a027e6",
+          "bytes": 229316
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/27-cw32l083mct6-btim_events/cargo.jsonl",
+          "sha256": "ce6d1904d6a3fa2d894025a894999318af47e61e4d78b0d1af51a1b09626097b"
+        },
+        {
+          "external_artifact": "main-final/27-cw32l083mct6-btim_events/cargo.stderr.log",
+          "sha256": "e3bde5c717561b04f7601e53afbb6a5a43ec979794e91d2982e224103e9e6baf"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/27-cw32l083mct6-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "e81495642f75ad630403f13ef358b782eafdaea8c7375bfeff70dcb167e04ef9",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2_LPTIM1"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536895488,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2_LPTIM1",
+            "not_default_handler": true,
+            "vector_word": 317
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 381
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 262144
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 24576
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-12",
+      "kind": "elf",
+      "part": "cw32r031c8u6",
+      "features": "cw32r031c8u6",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32r031c8u6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/28-cw32r031c8u6-btim_events/receipt.json",
+        "sha256": "95aff9d2c5e97a2d60f1572a7f657cfce6908940c01b3a9ad27fe9114a00f1c1"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/28-cw32r031c8u6-btim_events/firmware.elf",
+          "sha256": "d0113518b4abf2fe7d07f33b0253818150272236200dc810b32e8d86f517af4c",
+          "bytes": 213936
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/28-cw32r031c8u6-btim_events/cargo.jsonl",
+          "sha256": "aaa03b88dd5ec90bd6c82d6374da420f2fbe02333d49d10c92d5f4389c9346c6"
+        },
+        {
+          "external_artifact": "main-final/28-cw32r031c8u6-btim_events/cargo.stderr.log",
+          "sha256": "73d7f8edca53cca8f713a0c5a8c5da1cdc506d7a0cd05686a620d5aafcf3175c"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/28-cw32r031c8u6-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "bac188dd3e5cbe04e823c68808baa8da879fb6c3bf7cf659356e80d90dcad571",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 317
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 381
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-13",
+      "kind": "elf",
+      "part": "cw32w031r8u6",
+      "features": "cw32w031r8u6",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32w031r8u6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_events"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/29-cw32w031r8u6-btim_events/receipt.json",
+        "sha256": "2e13409059bffa654b77dd1f4875ca6645825ed8cfe70f4ec9c71700d8ebae6c"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/29-cw32w031r8u6-btim_events/firmware.elf",
+          "sha256": "9de4cad70778202d69830879dc0aa473866b02ff5df60e92e64e15ca29c51f97",
+          "bytes": 213936
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/29-cw32w031r8u6-btim_events/cargo.jsonl",
+          "sha256": "e3f68f716075eda93d65ea3c4673fc85dc14a3ed6e0fc730abd731879e0846cd"
+        },
+        {
+          "external_artifact": "main-final/29-cw32w031r8u6-btim_events/cargo.stderr.log",
+          "sha256": "73d7f8edca53cca8f713a0c5a8c5da1cdc506d7a0cd05686a620d5aafcf3175c"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/29-cw32w031r8u6-btim_events/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "2225753901a3dee519a384354d6cb2a423b1eb13fcb915c6066ac88e942d8448",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_events",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [
+          {
+            "irq_number": 20,
+            "matches_bound_symbol": true,
+            "name": "BTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          },
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2",
+            "not_default_handler": true,
+            "vector_word": 317
+          },
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3",
+            "not_default_handler": true,
+            "vector_word": 381
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-14",
+      "kind": "elf",
+      "part": "cw32l012c8t6",
+      "features": "cw32l012c8t6,btim-shared",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l012c8t6,btim-shared",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_shared"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/30-cw32l012c8t6-btim_shared/receipt.json",
+        "sha256": "289ea3015e7ff9f0cb825ef6d945dcf559d659376180a57025ac557d11714c2b"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/30-cw32l012c8t6-btim_shared/firmware.elf",
+          "sha256": "fdef6945bdd6bd03e44ea4aabab9bf9abc1c47c35e21fb1ea18055dafb37fef6",
+          "bytes": 216984
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/30-cw32l012c8t6-btim_shared/cargo.jsonl",
+          "sha256": "d0108b1ef6b3dfe4f5b288a09e1e4c9a5aaa62c6d5faa8bca94c448254dcaae7"
+        },
+        {
+          "external_artifact": "main-final/30-cw32l012c8t6-btim_shared/cargo.stderr.log",
+          "sha256": "72a9b413a083eac44f798a5c5700c13873add0923711ca29ef38b19b0edb0374"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/30-cw32l012c8t6-btim_shared/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "e7473d76b96f7edbad876c60bf195dda3deb7b53e9d3f14db8bf1e521f9211fc",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3_HALLTIM"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_shared",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [
+          {
+            "irq_number": 22,
+            "matches_bound_symbol": true,
+            "name": "BTIM3_HALLTIM",
+            "not_default_handler": true,
+            "vector_word": 253
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-15",
+      "kind": "elf",
+      "part": "cw32l052c8t6",
+      "features": "cw32l052c8t6,btim-shared",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l052c8t6,btim-shared",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_shared"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/31-cw32l052c8t6-btim_shared/receipt.json",
+        "sha256": "bd067df347a786245b0b1c948236502a8fb6f2287497f16f68dc5a6b21c38f9a"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/31-cw32l052c8t6-btim_shared/firmware.elf",
+          "sha256": "bf608081b2a1d86c2877efb3cf2a22b75ddf23f3d0564e34e57e4c9cbee4a056",
+          "bytes": 220628
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/31-cw32l052c8t6-btim_shared/cargo.jsonl",
+          "sha256": "241b4a3b0c652cebe783c28c9de4b6f729f1d5f877d9800122f5de3e0b88d3b4"
+        },
+        {
+          "external_artifact": "main-final/31-cw32l052c8t6-btim_shared/cargo.stderr.log",
+          "sha256": "5790a01b0814098d49864d5b82aeaf0536b7c061c1d2067e8d47b131c594f958"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/31-cw32l052c8t6-btim_shared/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "68f37bacb1610a57a6d39448bd37b503282a62ff160bb90b361853bff1ea5272",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2_LPTIM"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_shared",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2_LPTIM",
+            "not_default_handler": true,
+            "vector_word": 253
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-16",
+      "kind": "elf",
+      "part": "cw32l083mct6",
+      "features": "cw32l083mct6,btim-shared",
+      "manifest": "examples/low-power-timers/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/low-power-timers/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l083mct6,btim-shared",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "btim_shared"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/32-cw32l083mct6-btim_shared/receipt.json",
+        "sha256": "c8a8a7a64e10f1e44ecab46e530e7c32389c6b6d5c5b9658cebb9ad227694987"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/32-cw32l083mct6-btim_shared/firmware.elf",
+          "sha256": "b447349b803e64b7836a4699dbfa81bc9e103a735a2ddb8d04532d5ceb63a866",
+          "bytes": 229296
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/32-cw32l083mct6-btim_shared/cargo.jsonl",
+          "sha256": "baf219b563acaeec07fba498269a5d8e80acaf8cb94a6ddccf22ef9932093ba7"
+        },
+        {
+          "external_artifact": "main-final/32-cw32l083mct6-btim_shared/cargo.stderr.log",
+          "sha256": "2ef45d59430f9e1a6b9d415626279e4df068073af7933a5e6f3ff36e99c36592"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/32-cw32l083mct6-btim_shared/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "e81495642f75ad630403f13ef358b782eafdaea8c7375bfeff70dcb167e04ef9",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2_LPTIM1"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "btim_shared",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536895488,
+        "required_irq_handlers": [
+          {
+            "irq_number": 21,
+            "matches_bound_symbol": true,
+            "name": "BTIM2_LPTIM1",
+            "not_default_handler": true,
+            "vector_word": 253
+          }
+        ],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 262144
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 24576
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-17",
+      "kind": "elf",
+      "part": "cw32l010f8p6",
+      "features": "cw32l010f8p6",
+      "manifest": "examples/trigger-routing/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/trigger-routing/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l010f8p6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "cascade"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/33-cw32l010f8p6-cascade/receipt.json",
+        "sha256": "b04393139de19b0736c16cca2cb8e046952809e0c4aba8ab5ed0699d17bda88c"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/33-cw32l010f8p6-cascade/firmware.elf",
+          "sha256": "39cda59273aea86543a5247ca3a7e28bacf93b067b2225a9ac0ee48d01e9a5b9",
+          "bytes": 209524
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/33-cw32l010f8p6-cascade/cargo.jsonl",
+          "sha256": "087ec166e25db75aa3fd63f3403917c3df8b603ce0a44f9f6c45c697b00c84b9"
+        },
+        {
+          "external_artifact": "main-final/33-cw32l010f8p6-cascade/cargo.stderr.log",
+          "sha256": "8b676c8e89d9af2948fbc3cd91cf9b86a9d9f4b3ee391e0a25d1544bf6122d47"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/33-cw32l010f8p6-cascade/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "18e0e53fda75cf3092e059fab50c45f7093d66705f995f37e7d4b3a0a43f37f2",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        }
+      ],
+      "bin": "cascade",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536875008,
+        "required_irq_handlers": [],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 4096
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-18",
+      "kind": "elf",
+      "part": "cw32l011k8t6",
+      "features": "cw32l011k8t6",
+      "manifest": "examples/trigger-routing/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/trigger-routing/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l011k8t6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "triggered_conversion"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/34-cw32l011k8t6-triggered_conversion/receipt.json",
+        "sha256": "8f4cf91e49c9a06485d793a07230993a4a92b05baea2f72b060021e0cc15792e"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/34-cw32l011k8t6-triggered_conversion/firmware.elf",
+          "sha256": "69509640c7dd7df07c36a8cd959d9e9948b4878ee8a30b9840f86d7f47ebb9fc",
+          "bytes": 211004
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/34-cw32l011k8t6-triggered_conversion/cargo.jsonl",
+          "sha256": "a95bdf1d7e2ea5d13ccd5e6155dd5bad712fa7e8d1711864fd20b8daf26f0f3c"
+        },
+        {
+          "external_artifact": "main-final/34-cw32l011k8t6-triggered_conversion/cargo.stderr.log",
+          "sha256": "f9d839d8518108b084aed598f203621a76ed78e24427aafbe13a61005f27bdc6"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/34-cw32l011k8t6-triggered_conversion/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "284a57029cb84b8c07beae2914768ce330121734d4bdd141d58e7278136bf147",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used"
+        },
+        {
+          "code": "dead_code",
+          "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        }
+      ],
+      "bin": "triggered_conversion",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536877056,
+        "required_irq_handlers": [],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 6144
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-19",
+      "kind": "elf",
+      "part": "cw32f030c8t7",
+      "features": "cw32f030c8t7",
+      "manifest": "examples/atim/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/atim/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32f030c8t7",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "main_pwm"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/35-cw32f030c8t7-main_pwm/receipt.json",
+        "sha256": "ec63c52899607fd15b4e47a368abeca9a2babce885f122afed1ec5ec151c9dc0"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/35-cw32f030c8t7-main_pwm/firmware.elf",
+          "sha256": "31a074e47731f7c44c0184aa5d99945d1e9ff7b7fedcd3e461f18626336dcb76",
+          "bytes": 210452
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/35-cw32f030c8t7-main_pwm/cargo.jsonl",
+          "sha256": "3b4200bf7a97321779315b49656aa500e961123f20b0e02a2b31d7953d21edca"
+        },
+        {
+          "external_artifact": "main-final/35-cw32f030c8t7-main_pwm/cargo.stderr.log",
+          "sha256": "82d8b746c721b51cad3fc517f87a708c7d79fbd1381daf084afb239a2580e406"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/35-cw32f030c8t7-main_pwm/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "main_pwm",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-20",
+      "kind": "elf",
+      "part": "cw32l012c8t6",
+      "features": "cw32l012c8t6",
+      "manifest": "examples/atim/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/atim/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l012c8t6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "polling_counter"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/36-cw32l012c8t6-polling_counter/receipt.json",
+        "sha256": "60dfd710960796057d2a5d3efe386c4729d5bac8c3d8f34a5a7a62d17fb77eb8"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/36-cw32l012c8t6-polling_counter/firmware.elf",
+          "sha256": "ec4d68dd17ca3bf447d7d3235c9cc5dfa2a183e7e86e84467ded664b1f5b6657",
+          "bytes": 214556
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/36-cw32l012c8t6-polling_counter/cargo.jsonl",
+          "sha256": "3d16d0c047f464e6d5876405f2d8caeb07980b6cc61e3cddd9311361963fe9b8"
+        },
+        {
+          "external_artifact": "main-final/36-cw32l012c8t6-polling_counter/cargo.stderr.log",
+          "sha256": "06dfbe3d6ad31b6d41e4c8aca3b055612a2e2b982f1905021f46a50c33ef13c2"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/36-cw32l012c8t6-polling_counter/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "e7473d76b96f7edbad876c60bf195dda3deb7b53e9d3f14db8bf1e521f9211fc",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3_HALLTIM"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "polling_counter",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-21",
+      "kind": "elf",
+      "part": "cw32l012c8t6",
+      "features": "cw32l012c8t6,time-driver",
+      "manifest": "examples/timer-input/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/timer-input/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l012c8t6,time-driver",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "polling_capture"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/37-cw32l012c8t6-polling_capture/receipt.json",
+        "sha256": "b82f835ef85f16c07ddc0eb77a74b6e8b3c49c5183c85af255b410901f778b55"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/37-cw32l012c8t6-polling_capture/firmware.elf",
+          "sha256": "8183565f36b254c4da00e819bb01c059c9ab42779359238701faa1f2f8c40596",
+          "bytes": 216516
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/37-cw32l012c8t6-polling_capture/cargo.jsonl",
+          "sha256": "517db37475e54d1f81622f20eab6ad1a12c6538921cb12297a1b2fedbbc9bff5"
+        },
+        {
+          "external_artifact": "main-final/37-cw32l012c8t6-polling_capture/cargo.stderr.log",
+          "sha256": "8f9990828970349268a5e9bb56788aeb343a2d8bb8a6f9ce725fcc8b34fdae0e"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/37-cw32l012c8t6-polling_capture/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "0ec628fccb27ee1f5a0022105deb8a2f62837222d8c2c4ba8b998a32048096cb",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3_HALLTIM"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "polling_capture",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-22",
+      "kind": "elf",
+      "part": "cw32l012c8t6",
+      "features": "cw32l012c8t6,time-driver",
+      "manifest": "examples/timer-input/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/timer-input/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l012c8t6,time-driver",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "quadrature_encoder"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/38-cw32l012c8t6-quadrature_encoder/receipt.json",
+        "sha256": "027ada9798635f5921f0f0ff1f79518894d14f9583580f233c25ad827fb9dfde"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/38-cw32l012c8t6-quadrature_encoder/firmware.elf",
+          "sha256": "c8c8924161812bf5df8b75b34166580f082c200d610bd703be70412655216af6",
+          "bytes": 215792
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/38-cw32l012c8t6-quadrature_encoder/cargo.jsonl",
+          "sha256": "38e685dd2e4c439e2b62db4aadd98caf2cadd72536b4a07a899b5ebae2002d89"
+        },
+        {
+          "external_artifact": "main-final/38-cw32l012c8t6-quadrature_encoder/cargo.stderr.log",
+          "sha256": "ee45ae3874793dc0522d308222080143ba24acea4853fb4bf85af75081487f80"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/38-cw32l012c8t6-quadrature_encoder/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "0ec628fccb27ee1f5a0022105deb8a2f62837222d8c2c4ba8b998a32048096cb",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3_HALLTIM"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "quadrature_encoder",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    },
+    {
+      "id": "elf-23",
+      "kind": "elf",
+      "part": "cw32l012c8t6",
+      "features": "cw32l012c8t6",
+      "manifest": "examples/atim-complementary/Cargo.toml",
+      "exit_code": 0,
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--locked",
+        "--manifest-path",
+        "examples/atim-complementary/Cargo.toml",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--no-default-features",
+        "--features",
+        "cw32l012c8t6",
+        "--message-format=json",
+        "--release",
+        "--bin",
+        "cw32-atim-complementary-examples"
+      ],
+      "receipt": {
+        "external_artifact": "main-final/39-cw32l012c8t6-cw32-atim-complementary-examples/receipt.json",
+        "sha256": "a807ae16a8d9718e8a68ecd376fa34492302bab59c133d65e004826916f0efb5"
+      },
+      "artifacts": [
+        {
+          "external_artifact": "main-final/39-cw32l012c8t6-cw32-atim-complementary-examples/firmware.elf",
+          "sha256": "e32e9c7fff0f0c87ae1e7fe6168648183e3e1a15244479cdb434b2c37ee7fb50",
+          "bytes": 215832
+        }
+      ],
+      "logs": [
+        {
+          "external_artifact": "main-final/39-cw32l012c8t6-cw32-atim-complementary-examples/cargo.jsonl",
+          "sha256": "ba9979c026dd429932fc872e3217685d34513a3b8c2a04e491b815518aedeae4"
+        },
+        {
+          "external_artifact": "main-final/39-cw32l012c8t6-cw32-atim-complementary-examples/cargo.stderr.log",
+          "sha256": "646eded980a807ee10b7979ff1c57e5de965cd3ee3a3207e3150fe35975a9741"
+        }
+      ],
+      "actual_hal_emission": [
+        {
+          "external_artifact": "main-final/39-cw32l012c8t6-cw32-atim-complementary-examples/out-dir/7229804f95b8/_generated.rs",
+          "sha256": "e7473d76b96f7edbad876c60bf195dda3deb7b53e9d3f14db8bf1e521f9211fc",
+          "associations": [
+            {
+              "bank": "BTIM1",
+              "interrupt": "BTIM1"
+            },
+            {
+              "bank": "BTIM2",
+              "interrupt": "BTIM2"
+            },
+            {
+              "bank": "BTIM3",
+              "interrupt": "BTIM3_HALLTIM"
+            }
+          ]
+        }
+      ],
+      "warnings": [],
+      "bin": "cw32-atim-complementary-examples",
+      "elf_identity": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "required_irq_handlers": [],
+        "selected_memory": [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ],
+        "inspection": "Independent read-only ELF header, load-range, SP/reset and bound IRQ symbol/vector inspection passed; no execution."
+      }
+    }
+  ],
+  "clean": {
+    "status": "pending-at-main-acceptance",
+    "bootstrap": "One ordinary gen-all from final source-only ZIP in a new extracted source root; all 905 outputs must equal reviewed baseline. No main generator replay and no copying main generated/build outputs.",
+    "libraries": 2,
+    "elfs": 6,
+    "accepted_by_this_review": false
+  },
+  "limits": [
+    "No silicon or firmware execution.",
+    "No lossless overflow count, clear-versus-new-event priority, timestamp, wall-clock deadline or stopped-clock/sleep-wake guarantee.",
+    "MMS=0 still forwards native UG to TRGO; the existing retained-recipient functional handover boundary remains.",
+    "Static source review does not execute cancellation, reconstruction or partner interrupt behavior.",
+    "Current functional/original/IR hashes remain precise. Historical documentation/proof/capability/index snapshots are labeled separately to avoid a status-update hash cycle."
+  ],
+  "open_blockers": []
+}

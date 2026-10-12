@@ -152,7 +152,23 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   [qualified LSE examples](examples/lse-clock/README.md).
 - All 13 families: GPIO and typed async GPIO interrupts, HSI clocks, independent
   watchdog, documented CRC16 presets, blocking/interrupt-driven UART, blocking
-  master SPI, blocking seven-bit master I2C and polling BTIM1–3 counters
+  master SPI, blocking seven-bit master I2C and polling BTIM1–3 counters.
+  BTIM1/2/3 additionally provide typed Async coalesced ARR-overflow waits across
+  all 54 existing selections; `Timer<'d, T>` still defaults to Blocking.
+  Successful reconstruction through either mode retires forgotten static IRQ
+  state. Shared L052/L083/L012 vectors dispatch each enabled owner's handler
+  without touching partner registers or changing shared gate/reset policy.
+  Native initialization/reconfiguration still generates UG and can affect
+  retained TRGO recipients. Main verification passed 16 actual ARM libraries
+  and 23 ELF links, all exit zero; four finite source/data gates passed.
+  Three existing native L010/L011 RCC warnings remain in applicable rows.
+  Independent main runtime and metadata/source reviews accepted the frozen
+  implementation. At main acceptance clean had not run; final-package completion
+  requires a separate
+  final-source 2-library/6-ELF receipt. Earlier partial/failed attempts remain
+  recorded in [the verification history](docs/btim-overflow-irq.md#verification-boundary).
+  No lossless count, stopped-clock progress, sleep/wake or hardware claim.
+  See [the overflow-event contract](docs/btim-overflow-irq.md).
 - All except L010/L011: polling window watchdog with explicit irreversible start
 - CW32F002F3P7 and CW32F002F3U7: init-only factory LSI SYSCLK with own
   31,160–34,440 Hz rate bounds, complete cold-source admission and explicit

@@ -9,6 +9,7 @@ publish = false
 [features]
 default = ["cw32l010f8p6"]
 lse-awt = []
+btim-shared = []
 cw32a030c8t7 = ["embassy-cw32/cw32a030c8t7", "cw32-metapac/cw32a030c8t7"]
 cw32f002f3p7 = ["embassy-cw32/cw32f002f3p7", "cw32-metapac/cw32f002f3p7"]
 cw32f003e4p7 = ["embassy-cw32/cw32f003e4p7", "cw32-metapac/cw32f003e4p7"]
@@ -27,6 +28,15 @@ cw32w031r8u6 = ["embassy-cw32/cw32w031r8u6", "cw32-metapac/cw32w031r8u6"]
 name = "lse_events"
 path = "src/bin/lse_events.rs"
 required-features = ["lse-awt"]
+
+[[bin]]
+name = "btim_events"
+path = "src/bin/btim_events.rs"
+
+[[bin]]
+name = "btim_shared"
+path = "src/bin/btim_shared.rs"
+required-features = ["btim-shared"]
 
 [dependencies]
 embassy-executor = { git = "https://github.com/embassy-rs/embassy", rev = "f16efeffe37581092ec184718e6fdb1620393214", features = ["platform-cortex-m", "executor-thread"] }

@@ -1,0 +1,2850 @@
+{
+  "artifact_role": "current-btim-overflow-irq-source-evidence",
+  "date": "2026-10-12",
+  "status": "accepted-main-verification-clean-pending",
+  "scope": "BTIM1/2/3 on the thirteen existing families and 54 normalized selections: internal-PCLK continuous run-mode coalesced overflow IRQs only.",
+  "path_conventions": {
+    "project": "Paths are relative to the production repository root.",
+    "external_artifact": "Vendor archive, PDF, derived text and SDK member paths identify locked external artifacts, not files redistributed by the project."
+  },
+  "identity_authority": "sources/evidence-sources.json",
+  "explanation": "docs/btim-overflow-irq.md",
+  "acceptance_boundary": {
+    "source_facts": "Own-family manuals, pinned text and SDK identities reviewed for this bounded cohort; A030 explicitly uses the shared x030 authority.",
+    "implementation": "Accepted by the original independent runtime and metadata reviews linked below, against the functional main-build snapshot. The administrative state update preserves all reviewed source facts.",
+    "verification": "Four recorded source/data gates and the full 39-command main matrix passed. Main consists of 16 rlibs and 23 real ELFs. Clean had not run at this main finalization and requires its own final receipt.",
+    "hardware": "No firmware execution, interrupt-delivery measurement or silicon validation claimed.",
+    "comparison_policy": "Current source identities and semantic fields only. No new historical output, source-tree or whole-generated-file hash dependency."
+  },
+  "external_manuals": {
+    "CW32x030_UserManual_CN_V2.5.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "pdf_sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "derived_text": {
+        "path": "CW32x030_UserManual_CN_V2.5.txt",
+        "sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe"
+      }
+    },
+    "CW32F020_UserManual_CN_V1.4.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+      "pdf_sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+      "derived_text": {
+        "path": "CW32F020_UserManual_CN_V1.4.txt",
+        "sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db"
+      }
+    },
+    "CW32F002_UserManual_CN_V1.4.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+      "pdf_sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+      "derived_text": {
+        "path": "CW32F002_UserManual_CN_V1.4.txt",
+        "sha256": "cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01"
+      }
+    },
+    "CW32F003_UserManual_CN_V2.3.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+      "pdf_sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+      "derived_text": {
+        "path": "CW32F003_UserManual_CN_V2.3.txt",
+        "sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319"
+      }
+    },
+    "CW32L031_UserManual_CN_V1.6.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+      "pdf_sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "derived_text": {
+        "path": "CW32L031_UserManual_CN_V1.6.txt",
+        "sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1"
+      }
+    },
+    "CW32R031_UserManual_CN_V1.3.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+      "pdf_sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+      "derived_text": {
+        "path": "CW32R031_UserManual_CN_V1.3.txt",
+        "sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b"
+      }
+    },
+    "CW32W031_UserManual_CN_V1.4.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+      "pdf_sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "derived_text": {
+        "path": "CW32W031_UserManual_CN_V1.4.txt",
+        "sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac"
+      }
+    },
+    "CW32L083_UserManual_CN_V2.0.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+      "pdf_sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "derived_text": {
+        "path": "CW32L083_UserManual_CN_V2.0.txt",
+        "sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564"
+      }
+    },
+    "CW32L052_UserManual_CN_V1.5.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+      "pdf_sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "derived_text": {
+        "path": "CW32L052_UserManual_CN_V1.5.txt",
+        "sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb"
+      }
+    },
+    "CW32L010_UserManual_CN_V1.2.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+      "pdf_sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "derived_text": {
+        "path": "CW32L010_UserManual_CN_V1.2.txt",
+        "sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938"
+      }
+    },
+    "CW32L011_UserManual_CN_V1.1.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+      "pdf_sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "derived_text": {
+        "path": "CW32L011_UserManual_CN_V1.1.txt",
+        "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3"
+      }
+    },
+    "CW32L012_UserManual_CN_V1.4.pdf": {
+      "artifact_role": "external-artifact",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "pdf_sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "derived_text": {
+        "path": "CW32L012_UserManual_CN_V1.4.txt",
+        "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505"
+      }
+    }
+  },
+  "external_sdks": {
+    "CW32F030": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32F030_StandardPeripheralLib_V2.2.zip",
+        "sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+        "url": "https://www.whxy.com/uploads/files/20241111/CW32F030_StandardPeripheralLib_V2.2.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32f030/Libraries/inc/cw32f030.h",
+          "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862",
+          "irq_enum_lines": {
+            "BTIM1": 87,
+            "BTIM2": 88,
+            "BTIM3": 89
+          }
+        },
+        "btim_header": {
+          "path": "cw32f030/Libraries/inc/cw32f030_btim.h",
+          "sha256": "92783f02a097d9675b5488bc397f751396e4348d1d277448bf4994761cfd72e0"
+        },
+        "btim_driver": {
+          "path": "cw32f030/Libraries/src/cw32f030_btim.c",
+          "sha256": "850e7ac645a2b3bb822c21774054bf2abff3fe2694cafd526635fa52e1de5cf3",
+          "function_lines": {
+            "BTIM_ITConfig": 112,
+            "BTIM_GetITStatus": 315,
+            "BTIM_ClearITPendingBit": 332
+          }
+        }
+      }
+    },
+    "CW32F020": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32F020_StandardPeripheralLib_V1.2.zip",
+        "sha256": "1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d",
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32f020/Libraries/inc/cw32f020.h",
+          "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f",
+          "irq_enum_lines": {
+            "BTIM1": 86,
+            "BTIM2": 87,
+            "BTIM3": 88
+          }
+        },
+        "btim_header": {
+          "path": "cw32f020/Libraries/inc/cw32f020_btim.h",
+          "sha256": "9aca1786bd52e97d632820c67afa05d4228d621ddeb3e859476a9c0eb862fdb9"
+        },
+        "btim_driver": {
+          "path": "cw32f020/Libraries/src/cw32f020_btim.c",
+          "sha256": "0ff4bff394d4695b110c5cdf936b534d17bc9c2885d4d65d727c406ad53d707f",
+          "function_lines": {
+            "BTIM_ITConfig": 113,
+            "BTIM_GetITStatus": 331,
+            "BTIM_ClearITPendingBit": 349
+          }
+        }
+      }
+    },
+    "CW32F002": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32F002_StandardPeripheralLib_V1.2.zip",
+        "sha256": "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc",
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32f002/Libraries/inc/cw32f002.h",
+          "sha256": "399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54",
+          "irq_enum_lines": {
+            "BTIM1": 55,
+            "BTIM2": 56,
+            "BTIM3": 57
+          }
+        },
+        "btim_header": {
+          "path": "cw32f002/Libraries/inc/cw32f002_btim.h",
+          "sha256": "fd91beb0d65f30eed1fff9fc223aec7e460ff59984761a7371b2cc47a300cca8"
+        },
+        "btim_driver": {
+          "path": "cw32f002/Libraries/src/cw32f002_btim.c",
+          "sha256": "56d5b81ca01e7b103c56a7607a0953869bda66be266d67597119bfa1a5f9b4ac",
+          "function_lines": {
+            "BTIM_ITConfig": 112,
+            "BTIM_GetITStatus": 316,
+            "BTIM_ClearITPendingBit": 333
+          }
+        }
+      }
+    },
+    "CW32F003": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32F003_StandardPeripheralLib_V1.7.zip",
+        "sha256": "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+        "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32f003/Libraries/inc/cw32f003.h",
+          "sha256": "1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f",
+          "irq_enum_lines": {
+            "BTIM1": 78,
+            "BTIM2": 79,
+            "BTIM3": 80
+          }
+        },
+        "btim_header": {
+          "path": "cw32f003/Libraries/inc/cw32f003_btim.h",
+          "sha256": "08148366f31274a42b0670c7a3c2d2717c69115f30020363e49bd7132a9ecc80"
+        },
+        "btim_driver": {
+          "path": "cw32f003/Libraries/src/cw32f003_btim.c",
+          "sha256": "9c91a4faa1e4718366dc82b89e357bd0d6f0012550b18f7eafee77c48ada74c3",
+          "function_lines": {
+            "BTIM_ITConfig": 112,
+            "BTIM_GetITStatus": 316,
+            "BTIM_ClearITPendingBit": 333
+          }
+        }
+      }
+    },
+    "CW32L031": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32L031_StandardPeripheralLib_V1.4.zip",
+        "sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d",
+        "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32l031/Libraries/inc/cw32l031.h",
+          "sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27",
+          "irq_enum_lines": {
+            "BTIM1": 84,
+            "BTIM2": 85,
+            "BTIM3": 86
+          }
+        },
+        "btim_header": {
+          "path": "cw32l031/Libraries/inc/cw32l031_btim.h",
+          "sha256": "6124b6bc2e043eb2a679e0ca6a03c063cb0ad94fc7a3a199cb18ac471a820603"
+        },
+        "btim_driver": {
+          "path": "cw32l031/Libraries/src/cw32l031_btim.c",
+          "sha256": "a5ba84288cd0082445b26d131492c89a929342a4fdbf49dc03b38a81f1ad3a19",
+          "function_lines": {
+            "BTIM_ITConfig": 113,
+            "BTIM_GetITStatus": 331,
+            "BTIM_ClearITPendingBit": 348
+          }
+        }
+      }
+    },
+    "CW32R031": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32R031_StandardPeripheralLib_V1.1.zip",
+        "sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082",
+        "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32r031/Libraries/inc/cw32r031.h",
+          "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385",
+          "irq_enum_lines": {
+            "BTIM1": 84,
+            "BTIM2": 85,
+            "BTIM3": 86
+          }
+        },
+        "btim_header": {
+          "path": "cw32r031/Libraries/inc/cw32r031_btim.h",
+          "sha256": "b380a557e457ba394ffa87f7836d73f2c6ff7bc5e99dc0bbdd71c9323dd2ac0a"
+        },
+        "btim_driver": {
+          "path": "cw32r031/Libraries/src/cw32r031_btim.c",
+          "sha256": "5e60d2526f0d91f28621ac2547a1e5afd3286972d25a0f5614c3c6cbb2ae7464",
+          "function_lines": {
+            "BTIM_ITConfig": 113,
+            "BTIM_GetITStatus": 331,
+            "BTIM_ClearITPendingBit": 348
+          }
+        }
+      }
+    },
+    "CW32W031": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32W031_StandardPeripheralLib_V1.3.zip",
+        "sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+        "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32w031/Libraries/inc/cw32w031.h",
+          "sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69",
+          "irq_enum_lines": {
+            "BTIM1": 79,
+            "BTIM2": 80,
+            "BTIM3": 81
+          }
+        },
+        "btim_header": {
+          "path": "cw32w031/Libraries/inc/cw32w031_btim.h",
+          "sha256": "ed7830c2fa3db3d4e06b1b08efb77b2ef4d7b4bb2041f14611b1ba839093761a"
+        },
+        "btim_driver": {
+          "path": "cw32w031/Libraries/src/cw32w031_btim.c",
+          "sha256": "e6136ba3f1b0bc98ff41a68ab8298d2e2383eb8f6bf9b6c3cf2fb7b969e1ba4a",
+          "function_lines": {
+            "BTIM_ITConfig": 112,
+            "BTIM_GetITStatus": 329,
+            "BTIM_ClearITPendingBit": 346
+          }
+        }
+      }
+    },
+    "CW32L083": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32L083_StandardPeripheralLib_V2.2.zip",
+        "sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+        "url": "https://www.whxy.com/uploads/files/20240821/CW32L083_StandardPeripheralLib_V2.2.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32l083/Libraries/inc/cw32l083.h",
+          "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5",
+          "irq_enum_lines": {
+            "BTIM1": 86,
+            "BTIM2_LPTIM1": 87,
+            "BTIM3": 88
+          }
+        },
+        "btim_header": {
+          "path": "cw32l083/Libraries/inc/cw32l083_btim.h",
+          "sha256": "6f9a046b29c45c719e6fef6a1dbe4b1fb5011cf200a1edd9a27c27903b1c9bef"
+        },
+        "btim_driver": {
+          "path": "cw32l083/Libraries/src/cw32l083_btim.c",
+          "sha256": "e732b8a3f33dbe17a2c134bba97f564b0e03e5c4f44d31acf2bc0d5ced5e031d",
+          "function_lines": {
+            "BTIM_ITConfig": 113,
+            "BTIM_GetITStatus": 316,
+            "BTIM_ClearITPendingBit": 332
+          }
+        }
+      }
+    },
+    "CW32L052": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32L052_StandardPeripheralLib_V1.4.zip",
+        "sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+        "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+          "sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1",
+          "irq_enum_lines": {
+            "BTIM1": 85,
+            "BTIM2_LPTIM": 86,
+            "BTIM3": 87
+          }
+        },
+        "btim_header": {
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_btim.h",
+          "sha256": "0fc07478153cbdb40ce456546ab1d18f5878336ef03afa1d772b81c8f5a3a66f"
+        },
+        "btim_driver": {
+          "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_btim.c",
+          "sha256": "4875c3420c12848dd3417fc98b341e6b91cbb80aa9a9da9468df814ac02b9e11",
+          "function_lines": {
+            "BTIM_ITConfig": 113,
+            "BTIM_GetITStatus": 324,
+            "BTIM_ClearITPendingBit": 341
+          }
+        }
+      }
+    },
+    "CW32L010": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32L010_StandardPeripheralLib_V1.0.9.zip",
+        "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+        "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+          "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+          "irq_enum_lines": {
+            "BTIM1": 79,
+            "BTIM2": 80,
+            "BTIM3": 81
+          }
+        },
+        "btim_header": {
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_btim.h",
+          "sha256": "e156ee79c987073517f0fd6df7deb0fe8886a2aeae7dbeb7e172f2661aaf8b50"
+        },
+        "btim_driver": {
+          "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_btim.c",
+          "sha256": "5f1fc9883ec47eb4c9805e02aaf2db62354a6b62b81adddb1d3cbf9804c79b5d",
+          "function_lines": {
+            "BTIM_ITConfig": 112,
+            "BTIM_GetITStatus": 128,
+            "BTIM_ClearITPendingBit": 144
+          }
+        }
+      }
+    },
+    "CW32L011": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32L011_StandardPeripheralLib_V1.0.3.zip",
+        "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+        "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32l011/Libraries/inc/cw32l011.h",
+          "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8",
+          "irq_enum_lines": {
+            "BTIM1": 80,
+            "BTIM2": 81,
+            "BTIM3": 82
+          }
+        },
+        "btim_header": {
+          "path": "cw32l011/Libraries/inc/cw32l011_btim.h",
+          "sha256": "028bb59c2cee0752aa456a9eded30d72328ef45e2b0ac0479d3d20339abbad01"
+        },
+        "btim_driver": {
+          "path": "cw32l011/Libraries/src/cw32l011_btim.c",
+          "sha256": "64e12480c63fc1e1e7745534a8b1cbcd5e17dfd77ee95cdde63609ae4f0e5c2f",
+          "function_lines": {
+            "BTIM_ITConfig": 112,
+            "BTIM_GetITStatus": 128,
+            "BTIM_ClearITPendingBit": 144
+          }
+        }
+      }
+    },
+    "CW32L012": {
+      "artifact_role": "external-artifact",
+      "archive": {
+        "path": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip"
+      },
+      "members": {
+        "cmsis": {
+          "path": "cw32l012/Libraries/inc/cw32l012.h",
+          "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+          "irq_enum_lines": {
+            "BTIM1": 85,
+            "BTIM2": 86,
+            "BTIM3_HALLTIM": 87
+          }
+        },
+        "btim_header": {
+          "path": "cw32l012/Libraries/inc/cw32l012_btim.h",
+          "sha256": "b3bf357bf668bccfca8881b8880135c5d1b81b030a668d17fcc6734d48dda7f9"
+        },
+        "btim_driver": {
+          "path": "cw32l012/Libraries/src/cw32l012_btim.c",
+          "sha256": "23c131602cac01d1faa0d86d44472eea15e75b3d9952ead3887d93d4d9ec6edf",
+          "function_lines": {
+            "BTIM_ITConfig": 112,
+            "BTIM_GetITStatus": 128,
+            "BTIM_ClearITPendingBit": 144
+          }
+        }
+      }
+    }
+  },
+  "register_contracts": {
+    "v1": {
+      "project_yaml": "cw32-data/registers/btim_v1.yaml",
+      "project_json": "cw32-data/data/registers/btim_v1.json",
+      "registers": {
+        "IER": {
+          "offset": 20,
+          "access": "ReadWrite",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        },
+        "ISR": {
+          "offset": 24,
+          "access": "Read",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        },
+        "ICR": {
+          "offset": 28,
+          "access": "ReadWrite",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        }
+      },
+      "overflow_enable_field": "OV",
+      "overflow_status_field": "OV",
+      "overflow_bit": 0,
+      "defined_flag_mask": 7,
+      "direct_overflow_clear_word": 6,
+      "clear_semantics": "R1W0; zero clears, one has no effect; reserved bits zero; never write ISR or read-modify-write ICR."
+    },
+    "cw32f002_v1": {
+      "project_yaml": "cw32-data/registers/btim_cw32f002_v1.yaml",
+      "project_json": "cw32-data/data/registers/btim_cw32f002_v1.json",
+      "registers": {
+        "IER": {
+          "offset": 20,
+          "access": "ReadWrite",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        },
+        "ISR": {
+          "offset": 24,
+          "access": "Read",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        },
+        "ICR": {
+          "offset": 28,
+          "access": "ReadWrite",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        }
+      },
+      "overflow_enable_field": "OV",
+      "overflow_status_field": "OV",
+      "overflow_bit": 0,
+      "defined_flag_mask": 7,
+      "direct_overflow_clear_word": 6,
+      "clear_semantics": "R1W0; zero clears, one has no effect; reserved bits zero; never write ISR or read-modify-write ICR."
+    },
+    "cw32l031_v1": {
+      "project_yaml": "cw32-data/registers/btim_cw32l031_v1.yaml",
+      "project_json": "cw32-data/data/registers/btim_cw32l031_v1.json",
+      "registers": {
+        "IER": {
+          "offset": 20,
+          "access": "ReadWrite",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        },
+        "ISR": {
+          "offset": 24,
+          "access": "Read",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        },
+        "ICR": {
+          "offset": 28,
+          "access": "ReadWrite",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        }
+      },
+      "overflow_enable_field": "OV",
+      "overflow_status_field": "OV",
+      "overflow_bit": 0,
+      "defined_flag_mask": 7,
+      "direct_overflow_clear_word": 6,
+      "clear_semantics": "R1W0; zero clears, one has no effect; reserved bits zero; never write ISR or read-modify-write ICR."
+    },
+    "cw32l052_v1": {
+      "project_yaml": "cw32-data/registers/btim_cw32l052_v1.yaml",
+      "project_json": "cw32-data/data/registers/btim_cw32l052_v1.json",
+      "registers": {
+        "IER": {
+          "offset": 20,
+          "access": "ReadWrite",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        },
+        "ISR": {
+          "offset": 24,
+          "access": "Read",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        },
+        "ICR": {
+          "offset": 28,
+          "access": "ReadWrite",
+          "fields": {
+            "OV": [
+              0,
+              1
+            ],
+            "TI": [
+              1,
+              1
+            ],
+            "TOP": [
+              2,
+              1
+            ]
+          }
+        }
+      },
+      "overflow_enable_field": "OV",
+      "overflow_status_field": "OV",
+      "overflow_bit": 0,
+      "defined_flag_mask": 7,
+      "direct_overflow_clear_word": 6,
+      "clear_semantics": "R1W0; zero clears, one has no effect; reserved bits zero; never write ISR or read-modify-write ICR."
+    },
+    "cw32l010_v1": {
+      "project_yaml": "cw32-data/registers/btim_cw32l010_v1.yaml",
+      "project_json": "cw32-data/data/registers/btim_cw32l010_v1.json",
+      "registers": {
+        "IER": {
+          "offset": 12,
+          "access": "ReadWrite",
+          "fields": {
+            "UIE": [
+              0,
+              1
+            ],
+            "TIE": [
+              6,
+              1
+            ]
+          }
+        },
+        "ISR": {
+          "offset": 16,
+          "access": "Read",
+          "fields": {
+            "UIF": [
+              0,
+              1
+            ],
+            "TIF": [
+              6,
+              1
+            ]
+          }
+        },
+        "ICR": {
+          "offset": 24,
+          "access": "ReadWrite",
+          "fields": {
+            "UIF": [
+              0,
+              1
+            ],
+            "TIF": [
+              6,
+              1
+            ]
+          }
+        },
+        "CR1": {
+          "offset": 0,
+          "access": "ReadWrite",
+          "fields": {
+            "EN": [
+              0,
+              1
+            ],
+            "UDIS": [
+              1,
+              1
+            ],
+            "URS": [
+              2,
+              1
+            ],
+            "ONESHOT": [
+              3,
+              1
+            ],
+            "UIFREMAP": [
+              11,
+              1
+            ],
+            "TOGEN": [
+              15,
+              1
+            ]
+          }
+        },
+        "CR2": {
+          "offset": 4,
+          "access": "ReadWrite",
+          "fields": {
+            "MMS": [
+              4,
+              3
+            ]
+          }
+        },
+        "EGR": {
+          "offset": 20,
+          "access": "Write",
+          "fields": {
+            "UG": [
+              0,
+              1
+            ],
+            "TG": [
+              6,
+              1
+            ]
+          }
+        }
+      },
+      "overflow_enable_field": "UIE",
+      "overflow_status_field": "UIF",
+      "overflow_bit": 0,
+      "defined_flag_mask": 65,
+      "direct_overflow_clear_word": 64,
+      "clear_semantics": "R1W0; zero clears, one has no effect; reserved bits zero; never write ISR or read-modify-write ICR."
+    },
+    "cw32l012_v1": {
+      "project_yaml": "cw32-data/registers/btim_cw32l012_v1.yaml",
+      "project_json": "cw32-data/data/registers/btim_cw32l012_v1.json",
+      "registers": {
+        "DIER": {
+          "offset": 12,
+          "access": "ReadWrite",
+          "fields": {
+            "UIE": [
+              0,
+              1
+            ],
+            "TIE": [
+              6,
+              1
+            ],
+            "UDE": [
+              8,
+              1
+            ],
+            "TDE": [
+              14,
+              1
+            ]
+          }
+        },
+        "ISR": {
+          "offset": 16,
+          "access": "Read",
+          "fields": {
+            "UIF": [
+              0,
+              1
+            ],
+            "TIF": [
+              6,
+              1
+            ]
+          }
+        },
+        "ICR": {
+          "offset": 24,
+          "access": "ReadWrite",
+          "fields": {
+            "UIF": [
+              0,
+              1
+            ],
+            "TIF": [
+              6,
+              1
+            ]
+          }
+        },
+        "CR1": {
+          "offset": 0,
+          "access": "ReadWrite",
+          "fields": {
+            "EN": [
+              0,
+              1
+            ],
+            "UDIS": [
+              1,
+              1
+            ],
+            "URS": [
+              2,
+              1
+            ],
+            "ONESHOT": [
+              3,
+              1
+            ],
+            "UIFREMAP": [
+              11,
+              1
+            ],
+            "TOGEN": [
+              15,
+              1
+            ]
+          }
+        },
+        "CR2": {
+          "offset": 4,
+          "access": "ReadWrite",
+          "fields": {
+            "MMS": [
+              4,
+              3
+            ]
+          }
+        },
+        "EGR": {
+          "offset": 20,
+          "access": "Write",
+          "fields": {
+            "UG": [
+              0,
+              1
+            ],
+            "TG": [
+              6,
+              1
+            ]
+          }
+        }
+      },
+      "overflow_enable_field": "UIE",
+      "overflow_status_field": "UIF",
+      "overflow_bit": 0,
+      "defined_flag_mask": 65,
+      "direct_overflow_clear_word": 64,
+      "clear_semantics": "R1W0; zero clears, one has no effect; reserved bits zero; never write ISR or read-modify-write ICR."
+    }
+  },
+  "families": {
+    "CW32F030": {
+      "manual": "CW32x030_UserManual_CN_V2.5.pdf",
+      "sdk": "CW32F030",
+      "ip_version": "v1",
+      "normalized_selections": [
+        "CW32F030",
+        "CW32F030C8",
+        "CW32F030C8T7",
+        "CW32F030F6",
+        "CW32F030F6P7",
+        "CW32F030F8",
+        "CW32F030F8V7",
+        "CW32F030K8",
+        "CW32F030K8T7",
+        "CW32F030K8U7"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40014800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40014900",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40014a00",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 96,
+          "pdf_one_based": 97
+        },
+        "overflow_or_uev": {
+          "printed": 199,
+          "pdf_one_based": 200
+        },
+        "enable": {
+          "printed": 214,
+          "pdf_one_based": 215
+        },
+        "status": {
+          "printed": 214,
+          "pdf_one_based": 215
+        },
+        "clear": {
+          "printed": 215,
+          "pdf_one_based": 216
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32f030.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3"
+      }
+    },
+    "CW32A030": {
+      "manual": "CW32x030_UserManual_CN_V2.5.pdf",
+      "sdk": "CW32F030",
+      "ip_version": "v1",
+      "normalized_selections": [
+        "CW32A030",
+        "CW32A030C8T7"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40014800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40014900",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40014a00",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 96,
+          "pdf_one_based": 97
+        },
+        "overflow_or_uev": {
+          "printed": 199,
+          "pdf_one_based": 200
+        },
+        "enable": {
+          "printed": 214,
+          "pdf_one_based": 215
+        },
+        "status": {
+          "printed": 214,
+          "pdf_one_based": 215
+        },
+        "clear": {
+          "printed": 215,
+          "pdf_one_based": 216
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32a030.yaml",
+      "authority_note": "Explicit shared-x030 manual names F030/A030; existing project compatibility policy uses F030 SDK. No own-A030 source was invented.",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3"
+      }
+    },
+    "CW32F020": {
+      "manual": "CW32F020_UserManual_CN_V1.4.pdf",
+      "sdk": "CW32F020",
+      "ip_version": "v1",
+      "normalized_selections": [
+        "CW32F020",
+        "CW32F020C6U7",
+        "CW32F020F6U7",
+        "CW32F020K6U7"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40014800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40014900",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40014a00",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 94,
+          "pdf_one_based": 95
+        },
+        "overflow_or_uev": {
+          "printed": 196,
+          "pdf_one_based": 197
+        },
+        "enable": {
+          "printed": 211,
+          "pdf_one_based": 212
+        },
+        "status": {
+          "printed": 211,
+          "pdf_one_based": 212
+        },
+        "clear": {
+          "printed": 212,
+          "pdf_one_based": 213
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32f020.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3"
+      }
+    },
+    "CW32F002": {
+      "manual": "CW32F002_UserManual_CN_V1.4.pdf",
+      "sdk": "CW32F002",
+      "ip_version": "cw32f002_v1",
+      "normalized_selections": [
+        "CW32F002",
+        "CW32F002F3P7",
+        "CW32F002F3U7"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40014800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40014900",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40014a00",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 72,
+          "pdf_one_based": 73
+        },
+        "overflow_or_uev": {
+          "printed": 133,
+          "pdf_one_based": 134
+        },
+        "enable": {
+          "printed": 148,
+          "pdf_one_based": 149
+        },
+        "status": {
+          "printed": 148,
+          "pdf_one_based": 149
+        },
+        "clear": {
+          "printed": 149,
+          "pdf_one_based": 150
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32f002.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3"
+      }
+    },
+    "CW32F003": {
+      "manual": "CW32F003_UserManual_CN_V2.3.pdf",
+      "sdk": "CW32F003",
+      "ip_version": "cw32f002_v1",
+      "normalized_selections": [
+        "CW32F003",
+        "CW32F003E4P7",
+        "CW32F003F4P7",
+        "CW32F003F4U7"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40014800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40014900",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40014a00",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 74,
+          "pdf_one_based": 75
+        },
+        "overflow_or_uev": {
+          "printed": 135,
+          "pdf_one_based": 136
+        },
+        "enable": {
+          "printed": 150,
+          "pdf_one_based": 151
+        },
+        "status": {
+          "printed": 150,
+          "pdf_one_based": 151
+        },
+        "clear": {
+          "printed": 151,
+          "pdf_one_based": 152
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32f003.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3"
+      }
+    },
+    "CW32L031": {
+      "manual": "CW32L031_UserManual_CN_V1.6.pdf",
+      "sdk": "CW32L031",
+      "ip_version": "cw32l031_v1",
+      "normalized_selections": [
+        "CW32L031",
+        "CW32L031C8T6",
+        "CW32L031C8U6",
+        "CW32L031F8P6",
+        "CW32L031F8U6",
+        "CW32L031K8U6",
+        "CW32L031K8V6"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40014800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40014900",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40014a00",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 91,
+          "pdf_one_based": 92
+        },
+        "overflow_or_uev": {
+          "printed": 191,
+          "pdf_one_based": 192
+        },
+        "enable": {
+          "printed": 206,
+          "pdf_one_based": 207
+        },
+        "status": {
+          "printed": 206,
+          "pdf_one_based": 207
+        },
+        "clear": {
+          "printed": 207,
+          "pdf_one_based": 208
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32l031.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3"
+      }
+    },
+    "CW32R031": {
+      "manual": "CW32R031_UserManual_CN_V1.3.pdf",
+      "sdk": "CW32R031",
+      "ip_version": "cw32l031_v1",
+      "normalized_selections": [
+        "CW32R031",
+        "CW32R031C8U6"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40014800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40014900",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40014a00",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 93,
+          "pdf_one_based": 94
+        },
+        "overflow_or_uev": {
+          "printed": 193,
+          "pdf_one_based": 194
+        },
+        "enable": {
+          "printed": 208,
+          "pdf_one_based": 209
+        },
+        "status": {
+          "printed": 208,
+          "pdf_one_based": 209
+        },
+        "clear": {
+          "printed": 209,
+          "pdf_one_based": 210
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32r031.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3"
+      }
+    },
+    "CW32W031": {
+      "manual": "CW32W031_UserManual_CN_V1.4.pdf",
+      "sdk": "CW32W031",
+      "ip_version": "cw32l031_v1",
+      "normalized_selections": [
+        "CW32W031",
+        "CW32W031R8U6"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40014800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40014900",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40014a00",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 92,
+          "pdf_one_based": 93
+        },
+        "overflow_or_uev": {
+          "printed": 192,
+          "pdf_one_based": 193
+        },
+        "enable": {
+          "printed": 208,
+          "pdf_one_based": 209
+        },
+        "status": {
+          "printed": 208,
+          "pdf_one_based": 209
+        },
+        "clear": {
+          "printed": 209,
+          "pdf_one_based": 210
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32w031.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3"
+      }
+    },
+    "CW32L083": {
+      "manual": "CW32L083_UserManual_CN_V2.0.pdf",
+      "sdk": "CW32L083",
+      "ip_version": "cw32l031_v1",
+      "normalized_selections": [
+        "CW32L083",
+        "CW32L083MCT6",
+        "CW32L083RBT6",
+        "CW32L083RCS6",
+        "CW32L083RCT6",
+        "CW32L083VCT6"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40014800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40014900",
+          "irq": "BTIM2_LPTIM1",
+          "number": 21,
+          "owners": [
+            "BTIM2",
+            "LPTIM"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40014a00",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 105,
+          "pdf_one_based": 106
+        },
+        "overflow_or_uev": {
+          "printed": 216,
+          "pdf_one_based": 217
+        },
+        "enable": {
+          "printed": 231,
+          "pdf_one_based": 232
+        },
+        "status": {
+          "printed": 231,
+          "pdf_one_based": 232
+        },
+        "clear": {
+          "printed": 232,
+          "pdf_one_based": 233
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32l083.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3"
+      }
+    },
+    "CW32L052": {
+      "manual": "CW32L052_UserManual_CN_V1.5.pdf",
+      "sdk": "CW32L052",
+      "ip_version": "cw32l052_v1",
+      "normalized_selections": [
+        "CW32L052",
+        "CW32L052C8T6",
+        "CW32L052R8S6",
+        "CW32L052R8T6"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40014800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40014900",
+          "irq": "BTIM2_LPTIM",
+          "number": 21,
+          "owners": [
+            "BTIM2",
+            "LPTIM"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40014a00",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 96,
+          "pdf_one_based": 97
+        },
+        "overflow_or_uev": {
+          "printed": 204,
+          "pdf_one_based": 205
+        },
+        "enable": {
+          "printed": 219,
+          "pdf_one_based": 220
+        },
+        "status": {
+          "printed": 219,
+          "pdf_one_based": 220
+        },
+        "clear": {
+          "printed": 220,
+          "pdf_one_based": 221
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 12,
+        "key": null,
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32l052.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3"
+      }
+    },
+    "CW32L010": {
+      "manual": "CW32L010_UserManual_CN_V1.2.pdf",
+      "sdk": "CW32L010",
+      "ip_version": "cw32l010_v1",
+      "normalized_selections": [
+        "CW32L010",
+        "CW32L010F8P6",
+        "CW32L010F8U6",
+        "CW32L010Y8M6"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40004800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40004840",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40004880",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 89,
+          "pdf_one_based": 90
+        },
+        "overflow_or_uev": {
+          "printed": 164,
+          "pdf_one_based": 165
+        },
+        "enable": {
+          "printed": 182,
+          "pdf_one_based": 183
+        },
+        "status": {
+          "printed": 183,
+          "pdf_one_based": 184
+        },
+        "clear": {
+          "printed": 183,
+          "pdf_one_based": 184
+        },
+        "cr1": {
+          "printed": 179,
+          "pdf_one_based": 180
+        },
+        "cr2_trgo": {
+          "printed": 180,
+          "pdf_one_based": 181
+        },
+        "egr": {
+          "printed": 184,
+          "pdf_one_based": 185
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 2,
+        "key": "0x5a5a0000",
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32l010.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM123"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM123"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3",
+        "enable_write_key": {
+          "field": {
+            "register": "APBEN2",
+            "field": "KEY"
+          },
+          "value": 23130
+        }
+      }
+    },
+    "CW32L011": {
+      "manual": "CW32L011_UserManual_CN_V1.1.pdf",
+      "sdk": "CW32L011",
+      "ip_version": "cw32l010_v1",
+      "normalized_selections": [
+        "CW32L011",
+        "CW32L011K8T6",
+        "CW32L011K8U6"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40004800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40004840",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40004880",
+          "irq": "BTIM3",
+          "number": 22,
+          "owners": [
+            "BTIM3"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 87,
+          "pdf_one_based": 88
+        },
+        "overflow_or_uev": {
+          "printed": 164,
+          "pdf_one_based": 165
+        },
+        "enable": {
+          "printed": 182,
+          "pdf_one_based": 183
+        },
+        "status": {
+          "printed": 183,
+          "pdf_one_based": 184
+        },
+        "clear": {
+          "printed": 183,
+          "pdf_one_based": 184
+        },
+        "cr1": {
+          "printed": 179,
+          "pdf_one_based": 180
+        },
+        "cr2_trgo": {
+          "printed": 180,
+          "pdf_one_based": 181
+        },
+        "egr": {
+          "printed": 184,
+          "pdf_one_based": 185
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 2,
+        "key": "0x5a5a0000",
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32l011.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM123"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM123"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3",
+        "enable_write_key": {
+          "field": {
+            "register": "APBEN2",
+            "field": "KEY"
+          },
+          "value": 23130
+        }
+      }
+    },
+    "CW32L012": {
+      "manual": "CW32L012_UserManual_CN_V1.4.pdf",
+      "sdk": "CW32L012",
+      "ip_version": "cw32l012_v1",
+      "normalized_selections": [
+        "CW32L012",
+        "CW32L012C8T6",
+        "CW32L012C8U6"
+      ],
+      "instances": [
+        {
+          "instance": "BTIM1",
+          "address": "0x40004800",
+          "irq": "BTIM1",
+          "number": 20,
+          "owners": [
+            "BTIM1"
+          ]
+        },
+        {
+          "instance": "BTIM2",
+          "address": "0x40004840",
+          "irq": "BTIM2",
+          "number": 21,
+          "owners": [
+            "BTIM2"
+          ]
+        },
+        {
+          "instance": "BTIM3",
+          "address": "0x40004880",
+          "irq": "BTIM3_HALLTIM",
+          "number": 22,
+          "owners": [
+            "BTIM3",
+            "HALLTIM"
+          ]
+        }
+      ],
+      "manual_pages": {
+        "irq_table": {
+          "printed": 71,
+          "pdf_one_based": 97
+        },
+        "overflow_or_uev": {
+          "printed": 190,
+          "pdf_one_based": 216
+        },
+        "enable": {
+          "printed": 207,
+          "pdf_one_based": 233
+        },
+        "status": {
+          "printed": 207,
+          "pdf_one_based": 233
+        },
+        "clear": {
+          "printed": 208,
+          "pdf_one_based": 234
+        },
+        "cr1": {
+          "printed": 204,
+          "pdf_one_based": 230
+        },
+        "cr2_trgo": {
+          "printed": 205,
+          "pdf_one_based": 231
+        },
+        "egr": {
+          "printed": 208,
+          "pdf_one_based": 234
+        }
+      },
+      "clock_group": {
+        "register": "APBEN2",
+        "offset": "0x34",
+        "bit": 2,
+        "key": "0x5a5a0000",
+        "gate_scope": "BTIM1/2/3",
+        "reset_register": "APBRST2",
+        "reset_never_written": true
+      },
+      "canonical_input": "cw32-data/inputs/cw32l012.yaml",
+      "rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "BTIM123"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "BTIM123"
+        },
+        "reset_asserted_value": false,
+        "shared_enable_group": "BTIM1-BTIM2-BTIM3",
+        "shared_reset_group": "BTIM1-BTIM2-BTIM3",
+        "enable_write_key": {
+          "field": {
+            "register": "APBEN2",
+            "field": "KEY"
+          },
+          "value": 23130
+        }
+      }
+    }
+  },
+  "shared_vectors": [
+    {
+      "btim": "BTIM2",
+      "irq": "BTIM2_LPTIM",
+      "number": 21,
+      "partner": "LPTIM",
+      "partner_address": "0x40007800",
+      "partner_enable": [
+        "APBEN1",
+        15
+      ],
+      "partner_reset": [
+        "APBRST1",
+        15
+      ],
+      "pages": {
+        "btim_register_list": {
+          "printed": 216,
+          "pdf_one_based": 217
+        },
+        "partner_register_list": {
+          "printed": 233,
+          "pdf_one_based": 234
+        },
+        "btim_gate": {
+          "printed": 82,
+          "pdf_one_based": 83
+        },
+        "btim_reset": {
+          "printed": 85,
+          "pdf_one_based": 86
+        },
+        "partner_gate": {
+          "printed": 81,
+          "pdf_one_based": 82
+        },
+        "partner_reset": {
+          "printed": 84,
+          "pdf_one_based": 85
+        },
+        "partner_ier": {
+          "printed": 238,
+          "pdf_one_based": 239
+        },
+        "partner_isr": {
+          "printed": 239,
+          "pdf_one_based": 240
+        },
+        "partner_icr": {
+          "printed": 240,
+          "pdf_one_based": 241
+        }
+      },
+      "family": "CW32L052",
+      "manual": "CW32L052_UserManual_CN_V1.5.pdf",
+      "ownership_contract": "Never read or change the partner bank; never disable/unpend shared NVIC vector; no shared BTIM reset or gate-off; dispatch all enabled partner sources through their owners.",
+      "partner_registers": {
+        "kind": "lptim",
+        "version": "cw32l010_v1",
+        "block": "LPTIM"
+      },
+      "partner_rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN1",
+          "field": "LPTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST1",
+          "field": "LPTIM"
+        },
+        "reset_asserted_value": false
+      },
+      "partner_register_contract": {
+        "IER": {
+          "offset": 8,
+          "access": "ReadWrite",
+          "fields": {
+            "CMPM": [
+              0,
+              1
+            ],
+            "ARRM": [
+              1,
+              1
+            ],
+            "EXTTRIG": [
+              2,
+              1
+            ],
+            "CMPOK": [
+              3,
+              1
+            ],
+            "ARROK": [
+              4,
+              1
+            ],
+            "UP": [
+              5,
+              1
+            ],
+            "DOWN": [
+              6,
+              1
+            ]
+          }
+        },
+        "ISR": {
+          "offset": 0,
+          "access": "Read",
+          "fields": {
+            "CMPM": [
+              0,
+              1
+            ],
+            "ARRM": [
+              1,
+              1
+            ],
+            "EXTTRIG": [
+              2,
+              1
+            ],
+            "CMPOK": [
+              3,
+              1
+            ],
+            "ARROK": [
+              4,
+              1
+            ],
+            "UP": [
+              5,
+              1
+            ],
+            "DOWN": [
+              6,
+              1
+            ],
+            "DIR": [
+              7,
+              2
+            ]
+          }
+        },
+        "ICR": {
+          "offset": 4,
+          "access": "ReadWrite",
+          "fields": {
+            "CMPM": [
+              0,
+              1
+            ],
+            "ARRM": [
+              1,
+              1
+            ],
+            "EXTTRIG": [
+              2,
+              1
+            ],
+            "CMPOK": [
+              3,
+              1
+            ],
+            "ARROK": [
+              4,
+              1
+            ],
+            "UP": [
+              5,
+              1
+            ],
+            "DOWN": [
+              6,
+              1
+            ]
+          }
+        }
+      },
+      "partner_enable_constraint": "IER writable only with LPTIM stopped; BTIM never accesses this bank."
+    },
+    {
+      "btim": "BTIM2",
+      "irq": "BTIM2_LPTIM1",
+      "number": 21,
+      "partner": "LPTIM",
+      "partner_address": "0x40007800",
+      "partner_enable": [
+        "APBEN1",
+        15
+      ],
+      "partner_reset": [
+        "APBRST1",
+        15
+      ],
+      "naming_note": "Own manual and canonical peripheral name LPTIM; own CMSIS vector name BTIM2_LPTIM1. Preserve both.",
+      "pages": {
+        "btim_register_list": {
+          "printed": 228,
+          "pdf_one_based": 229
+        },
+        "partner_register_list": {
+          "printed": 245,
+          "pdf_one_based": 246
+        },
+        "btim_gate": {
+          "printed": 88,
+          "pdf_one_based": 89
+        },
+        "btim_reset": {
+          "printed": 92,
+          "pdf_one_based": 93
+        },
+        "partner_gate": {
+          "printed": 86,
+          "pdf_one_based": 87
+        },
+        "partner_reset": {
+          "printed": 90,
+          "pdf_one_based": 91
+        },
+        "partner_ier": {
+          "printed": 250,
+          "pdf_one_based": 251
+        },
+        "partner_isr": {
+          "printed": 251,
+          "pdf_one_based": 252
+        },
+        "partner_icr": {
+          "printed": 252,
+          "pdf_one_based": 253
+        }
+      },
+      "family": "CW32L083",
+      "manual": "CW32L083_UserManual_CN_V2.0.pdf",
+      "ownership_contract": "Never read or change the partner bank; never disable/unpend shared NVIC vector; no shared BTIM reset or gate-off; dispatch all enabled partner sources through their owners.",
+      "partner_registers": {
+        "kind": "lptim",
+        "version": "cw32l083_v1",
+        "block": "LPTIM"
+      },
+      "partner_rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN1",
+          "field": "LPTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST1",
+          "field": "LPTIM"
+        },
+        "reset_asserted_value": false
+      },
+      "partner_register_contract": {
+        "IER": {
+          "offset": 8,
+          "access": "ReadWrite",
+          "fields": {
+            "CMPM": [
+              0,
+              1
+            ],
+            "ARRM": [
+              1,
+              1
+            ],
+            "EXTTRIG": [
+              2,
+              1
+            ],
+            "CMPOK": [
+              3,
+              1
+            ],
+            "ARROK": [
+              4,
+              1
+            ],
+            "UP": [
+              5,
+              1
+            ],
+            "DOWN": [
+              6,
+              1
+            ]
+          }
+        },
+        "ISR": {
+          "offset": 0,
+          "access": "Read",
+          "fields": {
+            "CMPM": [
+              0,
+              1
+            ],
+            "ARRM": [
+              1,
+              1
+            ],
+            "EXTTRIG": [
+              2,
+              1
+            ],
+            "CMPOK": [
+              3,
+              1
+            ],
+            "ARROK": [
+              4,
+              1
+            ],
+            "UP": [
+              5,
+              1
+            ],
+            "DOWN": [
+              6,
+              1
+            ],
+            "DIR": [
+              7,
+              2
+            ]
+          }
+        },
+        "ICR": {
+          "offset": 4,
+          "access": "ReadWrite",
+          "fields": {
+            "CMPM": [
+              0,
+              1
+            ],
+            "ARRM": [
+              1,
+              1
+            ],
+            "EXTTRIG": [
+              2,
+              1
+            ],
+            "CMPOK": [
+              3,
+              1
+            ],
+            "ARROK": [
+              4,
+              1
+            ],
+            "UP": [
+              5,
+              1
+            ],
+            "DOWN": [
+              6,
+              1
+            ]
+          }
+        }
+      },
+      "partner_enable_constraint": "IER writable only with LPTIM stopped; BTIM never accesses this bank."
+    },
+    {
+      "btim": "BTIM3",
+      "irq": "BTIM3_HALLTIM",
+      "number": 22,
+      "partner": "HALLTIM",
+      "partner_address": "0x40006400",
+      "partner_enable": [
+        "APBEN2",
+        12
+      ],
+      "partner_reset": [
+        "APBRST2",
+        12
+      ],
+      "partner_enable_key": 23130,
+      "pages": {
+        "btim_register_list": {
+          "printed": 203,
+          "pdf_one_based": 229
+        },
+        "partner_register_list": {
+          "printed": 420,
+          "pdf_one_based": 446
+        },
+        "btim_gate": {
+          "printed": 59,
+          "pdf_one_based": 85
+        },
+        "btim_reset": {
+          "printed": 63,
+          "pdf_one_based": 89
+        },
+        "partner_gate": {
+          "printed": 59,
+          "pdf_one_based": 85
+        },
+        "partner_reset": {
+          "printed": 63,
+          "pdf_one_based": 89
+        },
+        "partner_dier": {
+          "printed": 422,
+          "pdf_one_based": 448
+        },
+        "partner_isr": {
+          "printed": 423,
+          "pdf_one_based": 449
+        },
+        "partner_icr": {
+          "printed": 424,
+          "pdf_one_based": 450
+        }
+      },
+      "family": "CW32L012",
+      "manual": "CW32L012_UserManual_CN_V1.4.pdf",
+      "ownership_contract": "Never read or change the partner bank; never disable/unpend shared NVIC vector; no shared BTIM reset or gate-off; dispatch all enabled partner sources through their owners.",
+      "partner_registers": {
+        "kind": "halltim",
+        "version": "cw32l012_v1",
+        "block": "HALLTIM"
+      },
+      "partner_rcc_control": {
+        "controller": "SYSCTRL",
+        "bus_clock": "PCLK",
+        "enable": {
+          "register": "APBEN2",
+          "field": "HALLTIM"
+        },
+        "enable_active_value": true,
+        "reset": {
+          "register": "APBRST2",
+          "field": "HALLTIM"
+        },
+        "reset_asserted_value": false,
+        "enable_write_key": {
+          "field": {
+            "register": "APBEN2",
+            "field": "KEY"
+          },
+          "value": 23130
+        }
+      },
+      "partner_register_contract": {
+        "DIER": {
+          "offset": 4,
+          "access": "ReadWrite",
+          "fields": {
+            "CAPIE": [
+              0,
+              1
+            ],
+            "OVIE": [
+              1,
+              1
+            ],
+            "MATCHIE": [
+              2,
+              1
+            ],
+            "CAPDMA": [
+              4,
+              1
+            ],
+            "OVDMA": [
+              5,
+              1
+            ],
+            "MATCHDMA": [
+              6,
+              1
+            ],
+            "SOFTDMA": [
+              7,
+              1
+            ]
+          }
+        },
+        "ISR": {
+          "offset": 24,
+          "access": "Read",
+          "fields": {
+            "CAPF": [
+              0,
+              1
+            ],
+            "OVF": [
+              1,
+              1
+            ],
+            "MATCHF": [
+              2,
+              1
+            ]
+          }
+        },
+        "ICR": {
+          "offset": 28,
+          "access": "ReadWrite",
+          "fields": {
+            "CAPF": [
+              0,
+              1
+            ],
+            "OVF": [
+              1,
+              1
+            ],
+            "MATCHF": [
+              2,
+              1
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "cohort": {
+    "families": 13,
+    "normalized_selections": 54,
+    "chip_instance_associations": 162,
+    "distinct_btim_versions": 6,
+    "external_manual_pdf_text_pairs": 12,
+    "external_sdk_archives": 12,
+    "external_selected_sdk_members": 36
+  },
+  "runtime_source_control": "Continuous owned bit0 IRQ enable. ISR checks active+enable+flag, acknowledges only overflow and latches/wakes without masking. Wait cancellation has no writes. Constructor/Drop arm/mask with bank stopped; whole-bank initialization/final cleanup disables owned DMA requests as before.",
+  "limits": [
+    "Sticky overflow flags coalesce. No simultaneous-clear/new-event priority, lossless count, boundary timestamp or fixed interrupt latency is assumed.",
+    "Native URS=1 and UDIS=0 select overflow IRQ/DMA causes. CR2.MMS=0 forwards EGR.UG to TRGO and is not a trigger-output disconnect.",
+    "Never read or modify a shared partner bank, disable/unpend a vector, change its priority, assert BTIM shared reset or gate the BTIM group off.",
+    "No GTIM/ATIM async IRQ admission, DMA API, new trigger mode, clock-loss recovery, wall-clock deadline or sleep/wake guarantee."
+  ],
+  "independent_reviews": {
+    "runtime": {
+      "path": "docs/btim-overflow-irq-runtime-review.json",
+      "sha256": "aa24c167c74428d8bfcc335c8a5d53d980682ecc6d09edd2985019e5dcb9afb9",
+      "status": "accepted_runtime_implementation_and_main_matrix"
+    },
+    "metadata": {
+      "path": "docs/btim-overflow-irq-metadata-review.json",
+      "sha256": "dbae75b3c7ab92a7882681288783352bfc751c3d0ea10fa7411407715d425198",
+      "status": "accepted-main"
+    }
+  },
+  "main_verification": {
+    "status": "passed",
+    "commands": 39,
+    "rlibs": 16,
+    "elfs": 23,
+    "nonzero_cargo_exit_codes": 0,
+    "results": {
+      "external_artifact": "main-final/results.json",
+      "sha256": "f8210ce9b07df80aa9e2b0e87ac4b78a028ffff8f494832e8be75a0335aefc2b"
+    },
+    "summary": {
+      "external_artifact": "main-final/summary.json",
+      "sha256": "7fb16cdeada1c58ca1ce6fac20e7a543afa0cf054496b12b5f83a82f1efda649"
+    },
+    "source_data_gates": {
+      "results": {
+        "external_artifact": "data-gates-final-main/results.json",
+        "sha256": "225fe5d74e466de1a6361bed7b4a5e35aa308ec5a7d8853185b86d506796cb37"
+      },
+      "passed": [
+        {
+          "name": "btim-irq",
+          "exit_code": 0,
+          "log_sha256": "2366f9e4bab18c8896ac5764f87dfdc8c15a49744b6461ad14ea6bac1eda509b"
+        },
+        {
+          "name": "provenance",
+          "exit_code": 0,
+          "log_sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f"
+        },
+        {
+          "name": "layout",
+          "exit_code": 0,
+          "log_sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8"
+        },
+        {
+          "name": "validate",
+          "exit_code": 0,
+          "log_sha256": "ede75656b2001292bd260d75448fcb8d7ed6be25506b9fa23d1dcc1e6fe8e0e2"
+        }
+      ]
+    },
+    "unchanged_during_main": {
+      "source_files": 1353,
+      "generated_files": 905,
+      "toolchain": true
+    },
+    "warnings": {
+      "new_private_interface_warnings": 0,
+      "remaining": "Three unchanged generated native RCC_LSE_SYSCLK dead-code constants in six applicable commands; eighteen recorded diagnostics total."
+    },
+    "previous_attempt": {
+      "receipt": {
+        "external_artifact": "main-attempt-001/partial-summary.json",
+        "sha256": "f462861b8c454ce1b8f43dc26a4969e1a5956dba00baefeb38fefbe9217a298b"
+      },
+      "status": "intentionally_stopped_before_row_26_for_reviewed_warning_cleanup",
+      "completed_commands": 25,
+      "rlibs": 16,
+      "elfs": 9,
+      "cargo_failures": 0,
+      "full_acceptance": false,
+      "remaining_commands_not_run": 14,
+      "note": "An intentional recorder stop before the next Cargo invocation preserved the partial attempt. The independently reviewed State visibility-only correction was then followed by the separate complete 39-command main run."
+    },
+    "memory_label_correction": {
+      "receipt": {
+        "external_artifact": "main-elf-memory-label-correction.json",
+        "sha256": "bfb4481cf8115ed79e83fedacb145256b5bda2df0d7262404c3fb77b381cd200"
+      },
+      "affected_new_elfs": 16,
+      "original_receipts_unchanged": true,
+      "scope": "Evidence-only correction of a recorder memory-field label. Original range checks used the correct FLASH/RAM objects; separate read-only reinspection preserves every other inspection field.",
+      "source_or_cargo_change": false
+    },
+    "clean": {
+      "status": "not-run-at-main-finalization",
+      "requires_separate_final_receipt": true
+    },
+    "receipt_policy": "Hashes identify these observed review and run records only; they add no source-tree, generated-output or historical acceptance dependency to a production gate.",
+    "hardware_execution": false
+  }
+}

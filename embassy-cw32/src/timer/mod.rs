@@ -1,4 +1,4 @@
-//! Owned CW32 polling counters and source-qualified main-output PWM.
+//! Owned CW32 counters, BTIM overflow events and source-qualified main-output PWM.
 //!
 //! [`low_level::Timer`] retains the [`crate::Peri`] for a verified basic,
 //! general-purpose or advanced timer. BTIM has no PWM capability. Classic ATIM
@@ -14,8 +14,10 @@
 //! F030/A030 classic ATIM additionally provides owned complementary PWM, fixed
 //! dead time, and global MOE. Buffered ATIM provides complementary PWM and BK1 in
 //! `complementary_pwm`, with constructor-only symmetric dead time. External counter,
-//! async time driver, one-shot, interrupt and DMA are not provided. Buffered
-//! GTIM and buffered ATIM also provide owned polling capture and encoder APIs.
+//! async time driver, one-shot and DMA are not provided. Only BTIM has a typed
+//! overflow IRQ API: events coalesce, with no elapsed-time or sleep/wake promise.
+//! GTIM/ATIM interrupt APIs remain unsupported. Buffered GTIM and buffered ATIM
+//! also provide owned polling capture and encoder APIs.
 //! No silicon validation has been performed. See `docs/atim-counter-pwm.md`.
 
 use crate::PeripheralType;
@@ -46,12 +48,24 @@ pub mod simple_pwm;
 #[cfg(trigger_btim1_update)]
 pub mod trigger;
 #[cfg(btim)]
+pub use btim::OverflowInterruptHandler;
+#[cfg(btim)]
 pub(crate) use btim::impl_btim;
 
 /// Counter operations available on a verified timer, without implying capture,
 /// compare, PWM, DMA or interrupt support. The peripheral is retained by `Peri`.
 #[allow(private_bounds)]
 pub trait BasicInstance: PeripheralType + sealed::BasicInstance + 'static {}
+
+/// A BTIM qualified for owned, coalesced ARR-overflow interrupt events.
+///
+/// This capability does not imply a lossless counter, DMA, other timer events,
+/// or an Embassy global time driver. Bind all enabled sources on shared vectors.
+#[cfg(btim)]
+#[allow(private_bounds)]
+pub trait OverflowInstance: BasicInstance + sealed::OverflowInstance {
+    type Interrupt: crate::interrupt::typelevel::Interrupt;
+}
 
 pub(crate) trait CounterRegisters: Copy {
     const MIN_PERIOD: u32 = 1;
@@ -95,6 +109,15 @@ pub(crate) mod sealed {
     pub trait BasicInstance: crate::rcc::RccPeripheral {
         type CounterRegisters: super::CounterRegisters;
         const COUNTER_REGS: Self::CounterRegisters;
+        #[cfg(btim)]
+        fn overflow_state() -> Option<&'static super::btim::State> {
+            None
+        }
+    }
+    #[cfg(btim)]
+    pub trait OverflowInstance {
+        const OVERFLOW_REGS: crate::pac::btim::Btim;
+        fn state() -> &'static super::btim::State;
     }
     #[cfg(any(gtim_classic, gtim_buffered))]
     #[allow(private_bounds)]

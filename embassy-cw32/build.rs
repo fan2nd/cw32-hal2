@@ -1213,9 +1213,7 @@ fn main() {
                 }
             }
         }
-        for name in ["BTIM1", "BTIM2", "BTIM3"] {
-            out.push_str(&format!("crate::timer::impl_btim!({name});\n"));
-        }
+        generate_btim_interrupts(&mut out, btim_version);
         if dma {
             for channel in metadata.dma_channels {
                 let physical = format!("DMACHANNEL{}", channel.channel + 1);
@@ -1765,6 +1763,78 @@ fn generate_gpio(out: &mut String) {
         ));
     }
     out.push_str(&format!("pub(crate) const GPIO_AF_MASK: u32 = {af_mask};\npub(crate) const GPIO_AF_MAX: u32 = {af_max};\n"));
+}
+
+// Emit only source-qualified associations, using the selected bank's actual
+// GLOBAL link. A changed route or vector membership needs a new source review.
+fn generate_btim_interrupts(out: &mut String, version: &str) {
+    let metadata = &cw32_metapac::metadata::METADATA;
+    let mut banks: Vec<_> = metadata
+        .peripherals
+        .iter()
+        .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == "btim"))
+        .collect();
+    banks.sort_by_key(|p| p.name);
+    assert_eq!(
+        banks.iter().map(|p| p.name).collect::<Vec<_>>(),
+        ["BTIM1", "BTIM2", "BTIM3"],
+        "unreviewed BTIM bank inventory"
+    );
+    for bank in banks {
+        let regs = bank.registers.as_ref().unwrap();
+        assert_eq!(regs.version, version);
+        assert_eq!(regs.block, "Btim");
+        let number = match bank.name {
+            "BTIM1" => 20,
+            "BTIM2" => 21,
+            "BTIM3" => 22,
+            _ => unreachable!(),
+        };
+        let (expected_irq, partner) = match (metadata.line, bank.name) {
+            ("CW32L052", "BTIM2") => ("BTIM2_LPTIM", Some("LPTIM")),
+            ("CW32L083", "BTIM2") => ("BTIM2_LPTIM1", Some("LPTIM")),
+            ("CW32L012", "BTIM3") => ("BTIM3_HALLTIM", Some("HALLTIM")),
+            _ => (bank.name, None),
+        };
+        assert_eq!(bank.interrupts.len(), 1, "BTIM requires one GLOBAL link");
+        let link = &bank.interrupts[0];
+        assert_eq!(link.signal, "GLOBAL");
+        assert_eq!(link.interrupt, expected_irq, "unreviewed BTIM IRQ route");
+        let vectors: Vec<_> = metadata
+            .interrupts
+            .iter()
+            .filter(|i| i.name == link.interrupt)
+            .collect();
+        assert_eq!(vectors.len(), 1, "BTIM GLOBAL link must name one vector");
+        assert_eq!(vectors[0].number, number, "unreviewed BTIM IRQ number");
+        assert_eq!(
+            metadata
+                .interrupts
+                .iter()
+                .filter(|i| i.number == number)
+                .count(),
+            1,
+            "BTIM vector number must be unique"
+        );
+        let mut owners = Vec::new();
+        for peripheral in metadata.peripherals {
+            for irq in peripheral.interrupts {
+                if irq.interrupt == link.interrupt {
+                    assert_eq!(irq.signal, "GLOBAL");
+                    owners.push(peripheral.name);
+                }
+            }
+        }
+        owners.sort_unstable();
+        let mut expected_owners = vec![bank.name];
+        expected_owners.extend(partner);
+        expected_owners.sort_unstable();
+        assert_eq!(owners, expected_owners, "unreviewed BTIM IRQ owners");
+        out.push_str(&format!(
+            "crate::timer::impl_btim!({}, {});\n",
+            bank.name, link.interrupt
+        ));
+    }
 }
 
 // Bank order, compact state slots and complete vector memberships all come

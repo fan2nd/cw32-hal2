@@ -18,6 +18,12 @@ impl Registers for pac::btim::Btim {
         #[cfg(btim_v1)]
         self.dma().write(|v| v.0 = 0);
     }
+    fn overflow_interrupt_enabled(self) -> bool {
+        self.ier().read().ov()
+    }
+    fn enable_overflow_interrupt(self) {
+        self.ier().modify(|v| v.set_ov(true));
+    }
     fn clear_inputs(self) {
         self.acr().write(|v| v.0 = 0);
     }

@@ -24,8 +24,26 @@ impl Registers for pac::btim::Btim {
         #[cfg(btim_cw32l012_v1)]
         self.dier().write(|v| v.0 = 0); // IRQ and DMA.
     }
+    fn overflow_interrupt_enabled(self) -> bool {
+        #[cfg(btim_cw32l010_v1)]
+        {
+            self.ier().read().uie()
+        }
+        #[cfg(btim_cw32l012_v1)]
+        {
+            self.dier().read().uie()
+        }
+    }
+    fn enable_overflow_interrupt(self) {
+        #[cfg(btim_cw32l010_v1)]
+        self.ier().modify(|v| v.set_uie(true));
+        #[cfg(btim_cw32l012_v1)]
+        self.dier().modify(|v| v.set_uie(true));
+    }
     fn clear_inputs(self) {
         self.smcr().write(|v| v.0 = 0); // Internal PCLK, no slave or reset input.
+        // MMS=0 still forwards software UG to TRGO; it does not isolate a
+        // retained downstream recipient during initialization/reconfiguration.
         self.cr2().write(|v| v.0 = 0);
     }
     fn counter(self) -> u16 {
