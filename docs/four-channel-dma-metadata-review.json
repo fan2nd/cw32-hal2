@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "status": "accepted_main_software_verification_clean_pending",
+  "scope": "Independent review of native CW32L031/L052/R031/W031 DMA source evidence, current metadata, two-path generated delta, ordinary examples, ancillary capability disclosures and actual main compiler/linker artifacts.",
+  "reviewed_utc": "2026-10-12T16:03:13.177025+00:00",
+  "source_evidence": {
+    "ledger": "docs/four-channel-dma-owned-evidence.json",
+    "locked_actual_sources_verified": 54,
+    "pinned_manual_datasheet_pages_verified": 158,
+    "sdk_selected_member_archive_chains_verified": true,
+    "exact_parts": 11,
+    "empty_generic_aliases": 4,
+    "selected_safe_uart_tx_endpoints": 31,
+    "source_index": "sources/evidence-sources.json",
+    "selected_identity_rule": "All selected source-node non-consumer identity fields remain strict, including archive own identity/provenance/license and selected member extraction chains. Selected node.evidence and embedded text.evidence are mutable consumer backlinks. Unused archive member catalogs are outside this finite dependency set.",
+    "source_index_delta": "Exactly 54 selected evidence arrays received 162 references; reversal restored all 403846 baseline bytes. No immutable source identity or existing reference changed.",
+    "source_index_baseline_sha256": "3f55ef0b1409f3a16dadc832e9facd2024c986cf71d4a0376c9031f31d7ffad5"
+  },
+  "metadata_snapshot": [
+    {
+      "path": "cw32-data/register-writes.yaml",
+      "sha256": "2ce582a302759642d2ee29097dc779d5126ec85e9f3260659a0a652d8971bb5d",
+      "bytes": 33644
+    },
+    {
+      "path": "tests/verify_dma_owned_evidence.py",
+      "sha256": "77c4591ffad1574fbf67ce0d10921e026212b084eece4b86ad9723ffbee863b1",
+      "bytes": 27219
+    },
+    {
+      "path": "docs/four-channel-dma-owned-evidence.json",
+      "sha256": "813f72d8d1cef2c476d9e752c291d2204f7b08c23949fe2665ab40f02274515a",
+      "bytes": 563481
+    },
+    {
+      "path": "docs/four-channel-dma-owned.md",
+      "sha256": "ad82b78c0aad3c2e629c1a66def564e22b1f5ba60f7695162d3e345252c1da6e",
+      "bytes": 15285
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "sha256": "1b2ff09d7377f9329f47cf7849a936df85ba71f03ac68bb9c03d606964126dde",
+      "bytes": 411916
+    }
+  ],
+  "generated_delta": {
+    "baseline_files": 906,
+    "actual_files": 907,
+    "unchanged_existing_files": 905,
+    "all_54_chip_jsons_unchanged": true,
+    "added": [
+      "cw32-data/data/register-writes/dma_cw32l031_v1.json"
+    ],
+    "modified": [
+      "cw32-metapac/src/peripherals/dma_cw32l031_v1.rs"
+    ],
+    "removed": [],
+    "native_pac_change": "Existing 59414-byte prefix remains identical; only a 429-byte native ICR reset/no-op helper suffix was appended. Both helpers return 4294967295. The new JSON exactly projects the authored eight-field R1W0 command.",
+    "layout_schema_generator_changes": false
+  },
+  "source_gate_results": {
+    "production_generation": {
+      "exit_code": 0,
+      "runs": 1
+    },
+    "dma_source_projection": {
+      "exit_code": 0
+    },
+    "existing_dma_source_facts": {
+      "final_exit_code": 0,
+      "retained_prior_failures": 3
+    },
+    "provenance": {
+      "exit_code": 0
+    },
+    "capability_projection": {
+      "exit_code": 0,
+      "runs": 1
+    },
+    "capability_consistency": {
+      "exit_code": 0
+    },
+    "module_layout": {
+      "exit_code": 0
+    },
+    "acceptance_segments": [
+      "main-gates-v1",
+      "main-gates-tail-v2",
+      "main-gates-tail-v3",
+      "main-gates-tail-v4"
+    ],
+    "retained_failure_history": [
+      {
+        "attempt": "v1",
+        "error": "KeyError: id",
+        "cause": "Selected extracted text nodes referenced a parent vendor artifact, but the checker attempted to read id from the text child.",
+        "correction": "Resolve vendor source_ref against the source-index root artifact; retain exact selected-node identity comparison."
+      },
+      {
+        "attempt": "v2",
+        "error": "clock projection equality assertion",
+        "cause": "The ledger intentionally contains clock facts; the existing sidecar also contains narrative notes/evidence.",
+        "correction": "Exclude only top-level clock notes/evidence; compare all hardware, status/blocker and unknown fields strictly."
+      },
+      {
+        "attempt": "v3",
+        "error": "int(None, 0) for SVD bitOffset",
+        "cause": "L052 encodes fields with standard lsb/msb rather than bitOffset/bitWidth.",
+        "correction": "Accept exactly either complete observed pair, normalize inclusive bounds, reject other/conflicting encodings and require valid 32-bit ranges."
+      }
+    ],
+    "svd_schema_review": {
+      "whole_svd_fields_inspected": 5104,
+      "fields_parsed_by_finite_checker": 533,
+      "selected_geometry_fields_compared": 396,
+      "normalized_selected_geometry_unchanged": true
+    },
+    "final_checker_sha256": "77c4591ffad1574fbf67ce0d10921e026212b084eece4b86ad9723ffbee863b1"
+  },
+  "main_results": {
+    "planned_commands": 27,
+    "actual_terminal_commands": 27,
+    "all_exit_codes_zero": true,
+    "standalone_arm_rlibs": 6,
+    "primary_elfs": 21,
+    "dependency_hal_rlibs_separately_labeled": 21,
+    "warnings": 0,
+    "arm_command_failures": 0,
+    "source_files_stable_during_builds": 1402,
+    "generated_files_stable_during_builds": 907,
+    "toolchain_and_cargo_configuration_stable": true,
+    "actual_artifact_inspection": "Retained primary archives contain ARM relocatable objects. Actual ARM ELF reset/Thumb entry, initial stack, executable text, allocated/load ranges, active interrupt vector words/strong non-default symbols, and selected exact memory.x all pass. Retained artifact, projection and log hashes agree.",
+    "post_main_source_correspondence": "The only change after the terminal ARM matrix was the reviewed SVD field-encoding correction in tests/verify_dma_owned_evidence.py, from 9d749aa5584a7a229cabe9230e712d3ef9332259cf66570db6ec991b17b42ee1 to the final checker hash above. All compiled sources, examples, locks, configuration and generated files remain identical. Final finite source gates passed afterward."
+  },
+  "independent_external_receipts": [
+    {
+      "name": "static-review.json",
+      "sha256": "9f3690eb18dbc4d456348491332fbd95465735857d02b04a571ab8a038ea56b6"
+    },
+    {
+      "name": "source-index-review.json",
+      "sha256": "a4539774e8a5d52987c4bba84468a3e610e370ed1f28534bf9357bfb441578d0"
+    },
+    {
+      "name": "own-source-review.json",
+      "sha256": "108a69420043a582e942458ca68667b2580b0db2940702a057b06f2be282eb2e"
+    },
+    {
+      "name": "identity-projection-review.json",
+      "sha256": "b0accc8d1c1181a18085c9ac8facb37c8bc8b07857fd8249b17a04538aa3079b"
+    },
+    {
+      "name": "generated-review.json",
+      "sha256": "60b7013383a55028bf63da569f1d70e193926338ed28e9ffa18fa02e953c3cf2"
+    },
+    {
+      "name": "main-artifact-review.json",
+      "sha256": "534faaf8210a1973ece67761dd83c7b6fa47d63f54b353a4c558b99452e85577"
+    },
+    {
+      "name": "main-review.json",
+      "sha256": "268bf62deb9293678cd6dcb3082017ad8bc0375d3ff9aa146adb88f6afd3c000"
+    },
+    {
+      "name": "svd-schema-review.json",
+      "sha256": "2b84a310a42cbd848076f6b37a1dbdd63ab35efacff4c1eec5a0c4c6e0dc6b9d"
+    }
+  ],
+  "blocking_findings": [],
+  "clean_results": "Not run or accepted at this main review. Final-package acceptance requires a separate source-only clean reconstruction with two standalone ARM libraries and four ELF links.",
+  "scope_limits": [
+    "No new UART DMA RX, combined DMA UART, SPI DMA, other request consumer or borrowed hardware-request constructor.",
+    "Generic aliases remain missing-memory rejection; L031F8 UART1 safe-pin exclusions remain.",
+    "R031 whole-GPIOA and W031 RF functional handover constraints remain.",
+    "No hardware transfer, wire output, error injection, bus-drain timing, finite liveness, worst-case dynamic stack, RF continuity or electrical validation is established."
+  ],
+  "reviewer_actions": "Read-only inspection and external review receipts only; no production edits, builds, generation, source gate execution, HAL tests, probes or models by this reviewer."
+}

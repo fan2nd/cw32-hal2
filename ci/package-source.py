@@ -77,6 +77,7 @@ def required_evidence(root: Path) -> set[str]:
     required.add("docs/hse-pll-final-correspondence.json")
     required.add("docs/hse-pll-final-correspondence.md")
     required.add("docs/uart-buffered-rx-runtime-review.json")
+    required.add("docs/four-channel-dma-runtime-review.json")
     for audit in lock.get("project_audit_inputs", []):
         path = root / audit["path"]
         if path.stat().st_size != audit["bytes"] or hashlib.sha256(path.read_bytes()).hexdigest() != audit["sha256"]:

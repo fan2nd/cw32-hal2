@@ -5,7 +5,8 @@
 //! `UartTx::new_with_dma`, `UartRx::new_with_dma` and `Uart::new_with_dma`
 //! own static staging for ordinary borrowed writes and reads. RX DMA receives
 //! finite explicitly armed chunks; reception/copy/rearm gaps can lose frames.
-//! F020 adds only staged `UartTx::new_with_dma`; RX/combined DMA is excluded.
+//! F020/L031/L052/R031/W031 add only staged `UartTx::new_with_dma`;
+//! RX/combined DMA is excluded on those families.
 //! Ordinary non-DMA `Uart`/`UartRx` have no software RX buffer: service each
 //! byte promptly. `BufferedUart`/`BufferedUartRx` continuously collect through
 //! interrupts into consumed static storage, including between read calls.
@@ -28,6 +29,9 @@
 //! and clearable bits. Flush always waits for TXBUSY (buffer plus shifter) to
 //! become zero, using TC only to wake. Optional LIN, automatic baud detection,
 //! RS485 direction, loopback and UART timers remain disabled.
+//! Four-channel staged TX follows each own byte SRAM-to-TDR example: L031
+//! CN V1.6 p344, L052 CN V1.5 p381, R031 CN V1.3 p347 and W031 CN V1.4 p347;
+//! see `docs/four-channel-dma-owned.md` for their own UART1/2/3 qualification.
 //!
 //! L083 vectors are shared in pairs. Async construction requires the matching
 //! `SharedInterruptHandler<interrupt::typelevel::UART1_UART4>` (or 2/5, 3/6).
@@ -1112,6 +1116,8 @@ impl TxDma {
                 // Own manuals §18.7.1.5 (F020 §17.7.1.5, p287): close the
                 // request after DMA TC. The channel helper also required
                 // Complete STATUS and no TE; F020 §8.6/§8.8.3, pp133/136.
+                // Four-channel terminal meaning: own L031/L052/R031/W031
+                // manuals pp128/133/130/129, respectively.
                 critical_section::with(|_| regs.cr2().modify(|v| v.set_dmatx(false)));
                 // SAFETY: this same lease retained all resources continuously;
                 // clean completion and request closure precede the fence and
@@ -1161,6 +1167,7 @@ impl TxDma {
             }
             // Enable the channel before the UART request (§18.7.1.5;
             // F020 §17.7.1.5, p287 also explicitly qualifies byte SRAM-to-TDR).
+            // The four own byte-TDR examples cited above preserve this order.
             critical_section::with(|_| regs.cr2().modify(|v| v.set_dmatx(true)));
             self.complete(regs).await?;
         }
@@ -1170,7 +1177,8 @@ impl TxDma {
 
 #[cfg(uart_dma_tx)]
 impl UartTx<'static, Async> {
-    /// Create a safe staged DMA transmitter on F030/A030/L083/F020 without CTS.
+    /// Create a safe staged DMA transmitter on the qualified
+    /// F030/A030/L083/F020/L031/L052/R031/W031 families without CTS.
     ///
     /// Consumes static UART, TX pin, compatible DMA channel and SRAM staging.
     /// Short-lived peripheral reborrows are deliberately excluded. Like other

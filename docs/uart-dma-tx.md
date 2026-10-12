@@ -1,4 +1,4 @@
-# Safe staged UART TX DMA on F030/A030/L083 and exact F020 parts
+# Safe staged UART TX DMA on qualified CW32 parts
 
 `UartTx::new_with_dma` adds a TX-only, byte-oriented DMA constructor to the
 existing async UART owner. It consumes static UART and compatible DMA singleton
@@ -23,6 +23,50 @@ subject to the existing safe TX pin routes. F6 UART1 has only excluded PA14
 for TX, so it has no safe TX constructor. F020 gains no RX/combined DMA UART,
 SPI DMA or borrowed hardware-request constructor. See
 [the own-F020 contract and exact example pads](f020-dma-owned.md).
+
+## Native four-channel cohort
+
+The native L031/L052/R031/W031 TX-only scope covers exactly the eleven parts
+below. Each has 64 KiB flash and 8 KiB SRAM at
+`0x20000000..0x20002000`. Generic `cw32l031`, `cw32l052`, `cw32r031`
+and `cw32w031` compile the controller/TX surface but reject safe DMA admission
+and staging with `MissingMemoryMetadata`; they have no example linker map.
+
+The example selects the following existing safe pin/AF and channel combinations.
+Request selectors are UART1_TX=1, UART2_TX=3 and UART3_TX=5, generated from
+the qualified own-family records and usable on any physical CH1..4. The chosen
+channels exercise shared DMACH23 on CH2/3 and independent DMACH4 on CH4;
+CH1 has DMACH1. There is no CH5 or DMACH45 on this controller.
+
+| Exact feature | UART1 / CH4 | UART2 / CH2 | UART3 / CH3 |
+| --- | --- | --- | --- |
+| `cw32l031c8t6` | PA8 AF2 | PA6 AF2 | PA10 AF6 |
+| `cw32l031c8u6` | PA8 AF2 | PA6 AF2 | PA10 AF6 |
+| `cw32l031f8p6` | No safe TX pin | PA6 AF2 | PA10 AF6 |
+| `cw32l031f8u6` | No safe TX pin | PA6 AF2 | PA10 AF6 |
+| `cw32l031k8u6` | PA8 AF2 | PA6 AF2 | PA10 AF6 |
+| `cw32l031k8v6` | PA8 AF2 | PA6 AF2 | PA10 AF6 |
+| `cw32l052c8t6` | PA8 AF2 | PA6 AF2 | PA9 AF1 |
+| `cw32l052r8s6` | PA8 AF2 | PA6 AF2 | PA9 AF1 |
+| `cw32l052r8t6` | PA8 AF2 | PA6 AF2 | PA9 AF1 |
+| `cw32r031c8u6` | PA8 AF2 | PA6 AF2 | PA10 AF6 |
+| `cw32w031r8u6` | PA8 AF2 | PA6 AF2 | PA10 AF6 |
+
+L031F8P6/F8U6 UART1 has only excluded PA14 for TX; a request trait does not
+provide a safe bonded pin. PA13/PA14/PF3 exclusions stay unchanged. The L052
+UART retains its own PAC version. Each family's own UARTx contract, UART2/3
+SVD derivation and request table support its own byte SRAM-to-TDR example;
+matching register layout alone grants no peripheral-DMA qualification.
+
+Only staged TX and safe owned SRAM copying are newly qualified. There is no
+new RX/combined DMA UART, SPI DMA, other request, borrowed hardware constructor,
+buffered-plus-DMA owner, flow-controlled DMA, idle DMA, or recovery API.
+Ordinary and buffered UART owners keep their separate state and scope. R031
+GPIOA whole-bank effects remain relevant even on PA6/8/10, which avoid internal
+RF pins PA0..3; W031 GPIOA routes avoid the internal RF SPI1/GPIOB routes.
+These choices establish no RF-safe functional handover or coexistence.
+See [the independent four-family contract](four-channel-dma-owned.md) and
+[all own-source bindings](four-channel-dma-owned-evidence.json).
 
 ## Storage, startup and completion
 
@@ -119,6 +163,14 @@ CN V1.4 manual, current CN V1.3 datasheet and SDK V1.2, bound separately in
 printed p287/viewer p288 provides the byte SRAM-to-TDR setup, EN-before-DMATX
 ordering and separate TC/TXBUSY completion sequence.
 
+L031 CN V1.6, L052 CN V1.5, R031 CN V1.3 and W031 CN V1.4 are each
+bound in [the four-channel evidence](four-channel-dma-owned-evidence.json).
+Their own byte SRAM-to-TDR setup pages are printed 344/381/347/347;
+their R1W0 ICR pages are 131/136/133/132. For these four manuals printed
+pages equal zero-based PDF indices, and one-based viewer pages add one.
+Each own UARTx chapter and UART1/2/3 base/request table is required; the
+existing F020/x030/L083 records are not substituted.
+
 The selected authoritative behavior source is the shared F030/A030
 [CW32x030 User Manual CN V2.5](https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf),
 cover date 2024-09 and revision-history date 2024-07-24. Its locked identities
@@ -153,7 +205,7 @@ The STOPREQ status name at `Libraries/inc/cw32f030_dma.h:234` does not establish
 that all outstanding memory accesses have drained. Neither EN-clear nor every
 TE cause is treated as clean reclamation evidence.
 
-Existing source-qualified metadata remains unchanged:
+Existing x030 source-qualified route and memory metadata remains unchanged:
 
 - `cw32-data/dma/cw32f030.yaml` and `cw32a030.yaml` give UART2 TX request 3 on
   any of the five physical channels, with DMA_CH1 on DMACH1. The HAL consumes
@@ -197,3 +249,16 @@ had not run; final-package completion requires a separate final-source
 2-library/4-ELF clean receipt. See [the verification boundary](f020-dma-owned.md#verification-boundary)
 for the full warning/failure history and limits. This scope does not add
 F020 rows to the existing cumulative HAL recipe.
+
+The [four-channel firmware](../examples/four-channel-dma/README.md) selects the
+31 TX endpoints above using private 32-byte stages, repeated flash/local input
+longer than staging, and a separate wire flush. Stage85 main passed six
+standalone ARM library builds and 21 ELF links, all 27 commands exiting zero
+without warnings. This includes focused legacy UART RX/TX, SPI, F020 and
+buffered-UART regressions. Generation, five finite source gates and the
+capability renderer passed in documented segments; three source checker
+preparation failures remain recorded in [the verification boundary](four-channel-dma-owned.md#verification-boundary).
+At main acceptance clean had not run; final-package completion requires a
+separate final-source 2-library/4-ELF clean receipt. The cumulative HAL recipe
+is unchanged. No hardware, RF, throughput, error-drain or bounded-cancellation
+result is claimed.

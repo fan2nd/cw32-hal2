@@ -7,7 +7,11 @@ fn main() {
     let x030 = matches!(metadata.line, "CW32F030" | "CW32A030");
     // Own-family-qualified DMA controller; peripheral requests are bounded below.
     let f020 = metadata.line == "CW32F020";
-    let dma = x030 || metadata.line == "CW32L083" || f020;
+    let four_channel_dma = matches!(
+        metadata.line,
+        "CW32L031" | "CW32L052" | "CW32R031" | "CW32W031"
+    );
+    let dma = x030 || metadata.line == "CW32L083" || f020 || four_channel_dma;
     let classic_adc = matches!(
         metadata.line,
         "CW32F030"
@@ -129,6 +133,7 @@ fn main() {
         "i2c_cw32l011_v1",
         "dma_v1",
         "dma_cw32f020_v1",
+        "dma_cw32l031_v1",
         "uart_dma_tx",
         "uart_dma_rx",
         "spi_dma",
@@ -520,6 +525,9 @@ fn main() {
     if f020 {
         qualify_f020_dma();
         println!("cargo:rustc-cfg=dma_cw32f020_v1");
+    } else if four_channel_dma {
+        qualify_four_channel_dma();
+        println!("cargo:rustc-cfg=dma_cw32l031_v1");
     } else if dma {
         assert_version("DMA", "v1");
         assert_eq!(metadata.dma_channels.len(), 5);
@@ -530,13 +538,15 @@ fn main() {
         }
         println!("cargo:rustc-cfg=dma_v1");
     }
-    // Qualification is distinct from a shared register layout. F020 admits
-    // only UART TX; RX metadata is not permission to expose a safe RX owner.
+    // Qualification is distinct from a shared register layout. F020 and the
+    // four-channel cohort admit only UART TX; RX metadata is not RX admission.
     // Keep SPI's paired directions independent of the UART direction policy.
     let uart_dma_profile = match metadata.line {
         "CW32F030" | "CW32A030" => Some((3, "v1", true)),
         "CW32L083" => Some((6, "cw32l083_v1", true)),
         "CW32F020" => Some((3, "v1", false)),
+        "CW32L031" | "CW32R031" | "CW32W031" => Some((3, "cw32l031_v1", false)),
+        "CW32L052" => Some((3, "cw32l052_v1", false)),
         _ => None,
     };
     let spi_dma_profile = match metadata.line {
@@ -1285,7 +1295,8 @@ fn main() {
                 continue;
             }
             // Preserve x030's raw inventory. Other families emit only verified
-            // direction pairs: L083 UART/SPI RX+TX, F020 UART TX alone.
+            // direction pairs: L083 UART/SPI RX+TX, F020 and the four-channel
+            // cohort UART TX alone.
             for route in peripheral.dma_channels {
                 let staged_pair = uart_dma_tx_pairs
                     .iter()
@@ -1738,6 +1749,383 @@ fn qualify_f020_dma() {
         (enable_bit, enable_width, reset_bit, reset_width),
         (0, 1, 0, 1)
     );
+}
+
+// Own-source qualification for the complete native four-channel cohort. Shared
+// PAC layout is reuse, not a substitute for each family's manual qualification.
+fn qualify_four_channel_dma() {
+    use cw32_metapac::metadata::{METADATA, MemoryRegionKind, PeripheralRegisters, ir};
+
+    match (METADATA.line, METADATA.name) {
+        ("CW32L031", "CW32L031")
+        | ("CW32L052", "CW32L052")
+        | ("CW32R031", "CW32R031")
+        | ("CW32W031", "CW32W031") => assert!(METADATA.memory.is_empty()),
+        (
+            "CW32L031",
+            "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8P6" | "CW32L031F8U6" | "CW32L031K8U6"
+            | "CW32L031K8V6",
+        )
+        | ("CW32L052", "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6")
+        | ("CW32R031", "CW32R031C8U6")
+        | ("CW32W031", "CW32W031R8U6") => {
+            assert_eq!(METADATA.memory.len(), 1);
+            assert_eq!(METADATA.memory[0].len(), 2);
+            for (name, kind, address, size) in [
+                ("FLASH", MemoryRegionKind::Flash, 0, 65536),
+                ("RAM", MemoryRegionKind::Ram, 0x2000_0000, 8192),
+            ] {
+                let regions: Vec<_> = METADATA.memory[0]
+                    .iter()
+                    .filter(|region| region.kind == kind)
+                    .collect();
+                assert_eq!(regions.len(), 1);
+                assert_eq!(
+                    (regions[0].name, regions[0].address, regions[0].size),
+                    (name, address, size)
+                );
+            }
+        }
+        _ => panic!("unreviewed four-channel DMA selection"),
+    }
+    let native_version = if METADATA.line == "CW32L052" {
+        "cw32l052_v1"
+    } else {
+        "cw32l031_v1"
+    };
+    let peripheral = |name: &str| {
+        let matches: Vec<_> = METADATA
+            .peripherals
+            .iter()
+            .filter(|p| p.name == name)
+            .collect();
+        assert_eq!(
+            matches.len(),
+            1,
+            "missing or duplicate four-channel peripheral"
+        );
+        matches[0]
+    };
+    let controller = peripheral("DMA");
+    assert_eq!(controller.address, 0x4002_0000);
+    let regs = controller.registers.as_ref().unwrap();
+    assert_eq!(
+        (regs.kind, regs.version, regs.block),
+        ("dma", "cw32l031_v1", "Dma")
+    );
+    assert_eq!(METADATA.dma_channels.len(), 4);
+    assert_eq!(
+        METADATA
+            .peripherals
+            .iter()
+            .filter(|p| {
+                p.registers
+                    .as_ref()
+                    .is_some_and(|r| matches!(r.kind, "dma" | "dmachannel"))
+            })
+            .count(),
+        5
+    );
+    assert_eq!(
+        METADATA
+            .peripherals
+            .iter()
+            .filter(|p| p.name.starts_with("DMACHANNEL"))
+            .count(),
+        4
+    );
+    for (index, name, physical, address, irq, number) in [
+        (0, "DMA_CH1", "DMACHANNEL1", 0x4002_0020, "DMACH1", 9),
+        (1, "DMA_CH2", "DMACHANNEL2", 0x4002_0040, "DMACH23", 10),
+        (2, "DMA_CH3", "DMACHANNEL3", 0x4002_0060, "DMACH23", 10),
+        (3, "DMA_CH4", "DMACHANNEL4", 0x4002_0080, "DMACH4", 11),
+    ] {
+        let channel = &METADATA.dma_channels[index];
+        assert_eq!(
+            (channel.name, channel.dma, channel.channel as usize),
+            (name, "DMA", index)
+        );
+        let p = peripheral(physical);
+        assert_eq!(p.address, address);
+        let channel_regs = p.registers.as_ref().unwrap();
+        assert_eq!(
+            (channel_regs.kind, channel_regs.version, channel_regs.block),
+            ("dmachannel", "v1", "Dmachannel")
+        );
+        // Inspect each physical GLOBAL mapping: CH2/3 share IRQ10, whereas
+        // IRQ11 is native DMACH4, never DMACH45 or F020's reserved slot.
+        assert_eq!(p.interrupts.len(), 1);
+        assert_eq!(
+            (p.interrupts[0].signal, p.interrupts[0].interrupt),
+            ("GLOBAL", irq)
+        );
+        assert_eq!(
+            METADATA
+                .interrupts
+                .iter()
+                .filter(|i| i.name == irq && i.number == number)
+                .count(),
+            1
+        );
+        assert_eq!(p.rcc, controller.rcc);
+        assert_eq!(p.rcc_control, controller.rcc_control);
+    }
+    let vectors: Vec<_> = METADATA
+        .interrupts
+        .iter()
+        .filter(|i| i.name.starts_with("DMACH") || (9..=11).contains(&i.number))
+        .map(|i| (i.name, i.number))
+        .collect();
+    assert_eq!(vectors.len(), 3);
+    for expected in [("DMACH1", 9), ("DMACH23", 10), ("DMACH4", 11)] {
+        assert!(vectors.contains(&expected));
+    }
+
+    fn fields(
+        regs: &PeripheralRegisters,
+        name: &str,
+        offset: u32,
+        access: ir::Access,
+    ) -> &'static [ir::Field] {
+        let block = regs
+            .ir
+            .blocks
+            .iter()
+            .find(|b| b.name == regs.block)
+            .unwrap();
+        assert!(block.extends.is_none());
+        let item = block
+            .items
+            .iter()
+            .find(|r| r.name.eq_ignore_ascii_case(name))
+            .unwrap();
+        assert!(item.array.is_none());
+        assert_eq!(item.byte_offset, offset);
+        let ir::BlockItemInner::Register(register) = &item.inner else {
+            panic!("four-channel DMA item must be a register")
+        };
+        assert_eq!(register.access, access);
+        assert_eq!(register.bit_size, 32);
+        let fieldset = regs
+            .ir
+            .fieldsets
+            .iter()
+            .find(|f| Some(f.name) == register.fieldset)
+            .unwrap();
+        assert!(fieldset.name.eq_ignore_ascii_case(name));
+        assert!(fieldset.extends.is_none());
+        assert_eq!(fieldset.bit_size, 32);
+        fieldset.fields
+    }
+    fn field(fields: &[ir::Field], name: &str, bit: u32, width: u32, enumm: Option<&str>) {
+        let matches: Vec<_> = fields
+            .iter()
+            .filter(|f| f.name.eq_ignore_ascii_case(name))
+            .collect();
+        assert_eq!(matches.len(), 1);
+        let f = matches[0];
+        assert!(f.array.is_none());
+        assert_eq!(f.bit_size, width);
+        assert_eq!(f.enumm, enumm);
+        assert!(matches!(&f.bit_offset, ir::BitOffset::Regular(p) if p.offset == bit));
+    }
+    let controller_block = regs
+        .ir
+        .blocks
+        .iter()
+        .find(|b| b.name == regs.block)
+        .unwrap();
+    assert_eq!(controller_block.items.len(), 22);
+    for (name, offset, access) in [
+        ("ISR", 0, ir::Access::Read),
+        ("ICR", 4, ir::Access::ReadWrite),
+    ] {
+        let flags = fields(regs, name, offset, access);
+        assert_eq!(flags.len(), 8);
+        for (name, bit) in [
+            ("TC1", 0),
+            ("TE1", 1),
+            ("TC2", 4),
+            ("TE2", 5),
+            ("TC3", 8),
+            ("TE3", 9),
+            ("TC4", 12),
+            ("TE4", 13),
+        ] {
+            field(flags, name, bit, 1, None);
+        }
+    }
+    let descriptors: &[(&str, u32, &[(&str, u32, u32, Option<&str>)])] = &[
+        (
+            "CSR",
+            0,
+            &[
+                ("EN", 0, 1, None),
+                ("TCIE", 1, 1, None),
+                ("TEIE", 2, 1, None),
+                ("TRANS", 3, 1, Some("TransferMode")),
+                ("SRCINC", 4, 1, None),
+                ("DSTINC", 5, 1, None),
+                ("SIZE", 6, 2, Some("Width")),
+                ("STATUS", 8, 3, Some("Status")),
+            ],
+        ),
+        ("CNT", 4, &[("CNT", 0, 16, None), ("REPEAT", 16, 4, None)]),
+        ("SRCADDR", 8, &[("SRCADDR", 0, 32, None)]),
+        ("DSTADDR", 12, &[("DSTADDR", 0, 32, None)]),
+        (
+            "TRIG",
+            16,
+            &[
+                ("TYPE_", 0, 1, Some("Trigger")),
+                ("SOFTSRC", 1, 1, None),
+                ("HARDSRC", 2, 6, None),
+            ],
+        ),
+    ];
+    for number in 1..=4 {
+        let channel_regs = peripheral(&format!("DMACHANNEL{number}"))
+            .registers
+            .as_ref()
+            .unwrap();
+        let block = channel_regs
+            .ir
+            .blocks
+            .iter()
+            .find(|b| b.name == channel_regs.block)
+            .unwrap();
+        assert_eq!(block.items.len(), 5);
+        for &(name, offset, expected) in descriptors {
+            let typed = fields(channel_regs, name, offset, ir::Access::ReadWrite);
+            let native = fields(
+                regs,
+                &format!("{name}{number}"),
+                32 * number + offset,
+                ir::Access::ReadWrite,
+            );
+            assert_eq!(typed.len(), expected.len());
+            assert_eq!(native.len(), expected.len());
+            for &(name, bit, width, enumm) in expected {
+                field(typed, name, bit, width, enumm);
+                // The flat native controller descriptors do not carry enums;
+                // typed channel enums are separately qualified below.
+                field(native, name, bit, width, None);
+            }
+        }
+        // Each own manual agrees on these existing typed domains. STATUS2
+        // describes a stop-request error, not an acknowledgment of bus drain.
+        let enums: &[(&str, u32, &[(&str, u64)])] = &[
+            ("Width", 2, &[("Byte", 0), ("HalfWord", 1), ("Word", 2)]),
+            ("Trigger", 1, &[("Software", 0), ("Hardware", 1)]),
+            ("TransferMode", 1, &[("Bulk", 0), ("Block", 1)]),
+            (
+                "Status",
+                3,
+                &[
+                    ("Initial", 0),
+                    ("AddressOutOfRange", 1),
+                    ("Stopped", 2),
+                    ("SourceError", 3),
+                    ("DestinationError", 4),
+                    ("Complete", 5),
+                ],
+            ),
+        ];
+        for &(name, width, variants) in enums {
+            let enumm = channel_regs
+                .ir
+                .enums
+                .iter()
+                .find(|e| e.name == name)
+                .unwrap();
+            assert_eq!(enumm.bit_size, width);
+            assert_eq!(enumm.variants.len(), variants.len());
+            for &(name, value) in variants {
+                assert_eq!(
+                    enumm
+                        .variants
+                        .iter()
+                        .filter(|v| v.name == name && v.value == value)
+                        .count(),
+                    1
+                );
+            }
+        }
+    }
+    // One shared clock/reset boundary for all four channels; runtime admission
+    // retains the established clean-entry premise and never repairs dirty state.
+    let control = controller.rcc_control.as_ref().unwrap();
+    assert!(controller.rcc.is_some());
+    assert_eq!((control.controller, control.bus_clock), ("SYSCTRL", "HCLK"));
+    assert_eq!(
+        (control.enable.register, control.enable.field),
+        ("ahben", "dma")
+    );
+    assert!(control.enable_active_value && control.enable_write_key.is_none());
+    let reset = control.reset.as_ref().unwrap();
+    assert_eq!((reset.register, reset.field), ("ahbrst", "dma"));
+    assert_eq!(control.reset_asserted_value, Some(false));
+    let sysctrl = peripheral("SYSCTRL").registers.as_ref().unwrap();
+    assert_eq!(
+        (sysctrl.kind, sysctrl.version, sysctrl.block),
+        ("sysctrl", native_version, "Sysctrl")
+    );
+    assert_eq!(rcc_field(sysctrl, &control.enable), (0x30 / 4, 0, 1));
+    assert_eq!(rcc_field(sysctrl, reset), (0x40 / 4, 0, 1));
+
+    // Each own UARTx chapter and byte-SRAM-to-TDR example qualifies UART1..3.
+    // Native UART versions remain distinct; request inventory alone grants no RX.
+    assert_eq!(
+        METADATA
+            .peripherals
+            .iter()
+            .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == "uart"))
+            .count(),
+        3
+    );
+    for (name, address, irq, selector) in [
+        ("UART1", 0x4001_3800, 27, 1),
+        ("UART2", 0x4000_4400, 28, 3),
+        ("UART3", 0x4000_4800, 29, 5),
+    ] {
+        let uart = peripheral(name);
+        assert_eq!(uart.address, address);
+        let regs = uart.registers.as_ref().unwrap();
+        assert_eq!(
+            (regs.kind, regs.version, regs.block),
+            ("uart", native_version, "Uart")
+        );
+        assert_eq!(uart.interrupts.len(), 1);
+        assert_eq!(
+            (uart.interrupts[0].signal, uart.interrupts[0].interrupt),
+            ("GLOBAL", name)
+        );
+        assert_eq!(
+            METADATA
+                .interrupts
+                .iter()
+                .filter(|i| i.name == name && i.number == irq)
+                .count(),
+            1
+        );
+        let tx: Vec<_> = uart
+            .dma_channels
+            .iter()
+            .filter(|r| r.signal == "TX")
+            .collect();
+        assert_eq!(tx.len(), 1);
+        assert_eq!(tx[0].request, Some(selector));
+        let tdr = fields(regs, "TDR", 0x28, ir::Access::Write);
+        assert_eq!(tdr.len(), 1);
+        field(tdr, "TDR", 0, 9, None);
+        field(
+            fields(regs, "CR2", 4, ir::Access::ReadWrite),
+            "DMATX",
+            7,
+            1,
+            None,
+        );
+    }
 }
 
 // Restrict debug/reset/input-only pads according to each reviewed family.

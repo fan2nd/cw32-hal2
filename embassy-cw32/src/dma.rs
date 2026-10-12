@@ -1,11 +1,16 @@
-//! One-shot, interrupt-driven DMA for CW32F030/CW32A030, CW32L083 and CW32F020.
+//! One-shot, interrupt-driven DMA for CW32F030/CW32A030, CW32L083, CW32F020,
+//! CW32L031, CW32L052, CW32R031 and CW32W031.
 //!
 //! The implementation follows CW32x030 User Manual EN V1.0 §§8.4–8.8
 //! (also checked against CN V2.5), CW32L083 CN V2.0 §§8.4–8.8,
-//! and CW32F020 CN V1.4 §§8.4–8.8 (native two-channel controller).
+//! CW32F020 CN V1.4 §§8.4–8.8 (native two-channel controller), and each native
+//! four-channel family's own manual: L031 CN V1.6 pp119–134, L052 CN V1.5
+//! pp124–139, R031 CN V1.3 pp121–136 and W031 CN V1.4 pp120–135.
 //! L083 also exposes safe staged UART/SPI requests; unsafe borrowed hardware
-//! constructors remain x030-only. F020 adds safe owned copy and staged UART TX;
-//! unsafe software-copy APIs retain their existing contracts.
+//! constructors remain x030-only. F020/L031/L052/R031/W031 add safe owned copy
+//! and staged UART TX; unsafe software-copy APIs retain their existing contracts.
+//! The four-channel families share DMACH23 between CH2/3 and use independent
+//! DMACH4 for CH4. Only the selected channel's terminal flags are cleared.
 //! It uses BLOCK transfers with REPEAT=1,
 //! equal source/destination word widths and the channel's fixed priority.
 //! There is no circular mode, programmable priority, packing or burst API.
@@ -103,8 +108,10 @@ pub trait ChannelInstance: sealed::Channel + PeripheralType + 'static {
 /// Verified request route from peripheral `P`, signal `S`, to this channel.
 ///
 /// Qualified x030/L083 requests apply to their five channels; qualified F020
-/// UART TX requests apply to its two physical channels. This trait is sealed so
-/// downstream code cannot introduce an unverified request or channel route.
+/// UART TX requests apply to its two physical channels. Qualified
+/// L031/L052/R031/W031 UART TX requests apply to their four physical channels.
+/// This trait is sealed so downstream code cannot introduce an unverified
+/// request or channel route.
 #[allow(private_bounds)]
 pub trait RequestRoute<P, S>: ChannelInstance + sealed::Route<P, S> {
     /// Hardware trigger selector.
@@ -1099,9 +1106,9 @@ fn channel_regs(index: u8) -> pac::dmachannel::Dmachannel {
     match index {
         0 => pac::DMACHANNEL1,
         1 => pac::DMACHANNEL2,
-        #[cfg(dma_v1)]
+        #[cfg(any(dma_v1, dma_cw32l031_v1))]
         2 => pac::DMACHANNEL3,
-        #[cfg(dma_v1)]
+        #[cfg(any(dma_v1, dma_cw32l031_v1))]
         3 => pac::DMACHANNEL4,
         #[cfg(dma_v1)]
         4 => pac::DMACHANNEL5,
@@ -1122,12 +1129,12 @@ fn clear_flags(index: u8, complete: bool, error: bool) {
             value.set_tc2(!complete);
             value.set_te2(!error);
         }
-        #[cfg(dma_v1)]
+        #[cfg(any(dma_v1, dma_cw32l031_v1))]
         2 => {
             value.set_tc3(!complete);
             value.set_te3(!error);
         }
-        #[cfg(dma_v1)]
+        #[cfg(any(dma_v1, dma_cw32l031_v1))]
         3 => {
             value.set_tc4(!complete);
             value.set_te4(!error);
@@ -1211,9 +1218,9 @@ fn service_interrupt(index: u8) {
         let (complete, error) = match index {
             0 => (pending.tc1(), pending.te1()),
             1 => (pending.tc2(), pending.te2()),
-            #[cfg(dma_v1)]
+            #[cfg(any(dma_v1, dma_cw32l031_v1))]
             2 => (pending.tc3(), pending.te3()),
-            #[cfg(dma_v1)]
+            #[cfg(any(dma_v1, dma_cw32l031_v1))]
             3 => (pending.tc4(), pending.te4()),
             #[cfg(dma_v1)]
             4 => (pending.tc5(), pending.te5()),

@@ -6,7 +6,8 @@ by ordinary HAL initialization and returns an admitted capability. Its safe
 `&'static mut [W]` slices. Both configuration rejection and successful completion
 return the same owner type; errors and forgetting permanently retain resources.
 Supported selections are F030/A030 and L083 with generated SRAM metadata,
-plus exactly CW32F020C6U7/K6U7/F6U7. The F020 parts have 8 KiB SRAM at
+plus exactly CW32F020C6U7/K6U7/F6U7 and the eleven native four-channel
+selections listed below. The F020 parts have 8 KiB SRAM at
 `0x20000000..0x20002000`; generic `cw32f020` retains
 `MissingMemoryMetadata` rejection. F020 uses native CH1/CH2 with independent
 DMACH1/DMACH2 IRQs, not a five-channel controller view. Its own-source proof
@@ -23,6 +24,31 @@ timeout-release mechanism or claim of hardware validation. The separate
 [staged UART TX API](uart-dma-tx.md) accepts ordinary borrowed input slices
 through constructor-owned private storage; it does not change CopyChannel's
 software-copy contract. RX and SPI have separate staged lifecycle contracts.
+
+## Native four-channel cohort
+
+The additional exact selections are CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6,
+CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6. Each has
+64 KiB flash and the exact SRAM interval `0x20000000..0x20002000`.
+Generic `cw32l031`, `cw32l052`, `cw32r031` and `cw32w031` compile the
+controller surface but retain `MissingMemoryMetadata` rejection; no capacity
+is inferred from a family name. The controller has four physical channels:
+CH1/DMACH1 IRQ9, CH2 and CH3/DMACH23 IRQ10, and CH4/DMACH4 IRQ11.
+CH4 has no fifth-channel partner. A shared-vector handler records and clears
+only its own running channel's terminal flags; channel lifetime never disables
+or unpends a sibling's vector or resets/gates the shared controller.
+
+Each family's own manual independently qualifies the existing copy engine and
+its native eight-field R1W0 ICR seed. The typed all-one no-op preserves sibling
+flags and reserved bits. Layout reuse does not supply another family's proof.
+See [the four-family contract and evidence](four-channel-dma-owned.md).
+Their only new peripheral-DMA consumer is [staged byte UART TX](uart-dma-tx.md#native-four-channel-cohort),
+with all eleven package routes and the two L031 F8 UART1 exclusions retained.
+No RX/combined UART, SPI, other request or borrowed hardware constructor is
+added. Existing unsafe software-copy APIs remain available under their own
+contracts. R031 whole-GPIOA effects and W031 internal RF boundaries retain
+the existing clean-runtime/functional handover obligations; this is no RF
+handover or coexistence qualification.
 
 ## Supported platform boundary
 
@@ -182,8 +208,10 @@ Document/text SHA-256s, exact source URLs and page hashes for x030/L083 are in
 `dma-safe-owned-copy-evidence.json`, extending the existing
 `dma-owned-copy-evidence.json`. F020 has a separate
 [own-source record](f020-dma-owned-evidence.json) and
-[contract](f020-dma-owned.md); the historical tables below retain their
-original family scope. For these retained texts, printed pages equal
+[contract](f020-dma-owned.md). The four-channel cohort has its separate
+[own-source record](four-channel-dma-owned-evidence.json) and
+[contract](four-channel-dma-owned.md); the historical tables below retain
+their original family scope. For these retained texts, printed pages equal
 zero-based PDF page indices; PDF viewers showing one-based pages add one.
 
 | Claim | CW32x030 CN V2.5 | CW32L083 CN V2.0 |
@@ -205,7 +233,8 @@ These are each family's own manuals; shared register layout is not used as a
 substitute. Exact part SRAM capacity remains generated from the already-reviewed
 datasheets. The original x030/L083 safe layer introduced no metadata, register
 schema or PAC adapter. F020 adds only its native ICR command seed through
-the existing register-write schema; no schema or adapter is added.
+the existing register-write schema. The native four-channel cohort adds its
+own eight-field ICR seed through that same schema; no schema or adapter is added.
 Pinned Embassy revision
 `f16efeffe37581092ec184718e6fdb1620393214` supplies the Peri/singleton/IRQ/future
 idioms; its STM32-specific cancellation sequence is not imported as CW32 proof.
@@ -237,3 +266,15 @@ had not run; final-package completion requires a separate final-source
 2-library/4-ELF clean receipt. The [verification boundary](f020-dma-owned.md#verification-boundary)
 retains warning/failure history and the generated delta. These software
 checks do not establish hardware behavior.
+
+The [four-channel firmware](../examples/four-channel-dma/README.md) separately
+exercises all four physical channels and u8/u16/u32 copies with clean-owner
+reuse, plus the eleven exact package TX selections. Stage85 main passed six
+standalone ARM library builds and 21 ELF links, all 27 commands exiting zero
+without warnings. Generation, five finite source gates and the capability
+renderer passed in documented segments; three source checker preparation
+failures remain recorded in [the verification boundary](four-channel-dma-owned.md#verification-boundary).
+At main acceptance clean had not run; final-package completion requires a
+separate final-source 2-library/4-ELF clean receipt. Source review and compilation
+do not establish on-silicon transfer, error-time bus drain, dynamic stack bounds
+or finite liveness.

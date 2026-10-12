@@ -454,6 +454,11 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   CW32F020C6U7/K6U7/F6U7 add [native two-channel safe owned SRAM copies and
   staged byte UART TX DMA](docs/f020-dma-owned.md). Generic `cw32f020` retains
   `MissingMemoryMetadata` rejection; UART DMA RX/combined and SPI DMA remain excluded.
+- L031/L052/R031/W031 additionally: [native four-channel safe owned SRAM
+  copies and staged byte UART TX DMA](docs/four-channel-dma-owned.md) on the
+  eleven exact selections listed below. Their four generic aliases compile
+  the controller/TX surface but reject safe DMA/staging without memory metadata.
+  UART DMA RX/combined, SPI DMA and borrowed hardware requests remain excluded.
 - F002/F003/L031/R031/W031/L052/L083 additionally: blocking 12-bit ADC,
   with package-qualified analog pins and family-specific reference/supply limits.
   F002 exposes VDD reference and VDD/3 only; no TS or internal reference.
@@ -595,7 +600,8 @@ family-specific debug/reset/input-only pads and reserve radio-connected pads.
 Pull/speed capabilities vary by family. Pin routing is generated from reviewed
 metadata, not inferred from similarly named peripherals.
 
-On x030/L083 and exactly CW32F020C6U7/K6U7/F6U7, `dma::CopyChannel::new`
+On x030/L083, exactly CW32F020C6U7/K6U7/F6U7 and the eleven exact
+L031/L052/R031/W031 selections below, `dma::CopyChannel::new`
 consumes a physical DMA singleton admitted by normal HAL initialization.
 Its safe `copy` method moves the capability and two
 exclusive static SRAM buffers into `OwnedCopy`. Only clean completion returns
@@ -607,7 +613,8 @@ access remains a technically unsafe ownership escape, as in pinned chiptool.
 
 The existing unsafe `OwnedCopy::new` and borrowed `Transfer` API remain available
 for low-level integration. Raw acquisition/downgrade cannot regain safe-copy
-admission. On F030/A030/L083 and exactly CW32F020C6U7/K6U7/F6U7,
+admission. On F030/A030/L083, exactly CW32F020C6U7/K6U7/F6U7 and the
+eleven exact L031/L052/R031/W031 selections below,
 `UartTx::new_with_dma` consumes static staging, UART and channel owners, then
 accepts ordinary safe slice writes. It copies each chunk
 into private SRAM; cancellation retains the current chunk for a later write or
@@ -644,6 +651,29 @@ separate final-source 2-library/4-ELF clean receipt. See
 [the verification boundary](docs/f020-dma-owned.md#verification-boundary)
 for the preserved source-gate failures and generated delta. No hardware
 result is claimed.
+
+The native four-channel cohort is exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6,
+CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6, each with
+64 KiB flash and 8 KiB SRAM. CH1 uses DMACH1, CH2/3 share DMACH23 and
+CH4 uses DMACH4; there is no CH5. Generic `cw32l031`, `cw32l052`,
+`cw32r031` and `cw32w031` retain `MissingMemoryMetadata` rejection.
+UART1/2/3 TX uses selectors 1/3/5 on any of the four channels, subject to
+existing safe package pins. The two L031 F8 packages have no safe UART1 TX
+pad; [all eleven example routes](docs/uart-dma-tx.md#native-four-channel-cohort)
+preserve that exclusion. This adds no RX/combined DMA UART, SPI DMA, other
+peripheral request, buffered-plus-DMA owner or borrowed hardware constructor.
+Existing raw software-copy APIs keep their unsafe contracts. R031 GPIOA
+whole-bank effects and W031 internal RF boundaries remain functional handover
+limits; these MCU paths establish no RF-safe handover or coexistence.
+See [the four own-source contracts](docs/four-channel-dma-owned.md) and
+[ordinary four-channel firmware](examples/four-channel-dma/README.md).
+Stage85 main passed six standalone ARM library builds and 21 ELF links,
+all 27 commands exiting zero without warnings. Generation, five finite source
+gates and the capability renderer passed in documented segments; three source
+checker preparation failures remain recorded. At main acceptance clean had
+not run; final-package completion requires a separate final-source
+2-library/4-ELF clean receipt. See [the verification boundary](docs/four-channel-dma-owned.md#verification-boundary).
+No hardware result is claimed.
 
 F030/A030/L083 `Spi::new_with_dma` adds a safe byte `SpiBus` with two private static
 staging buffers and two admitted channels. Both clean DMA terminals and wire

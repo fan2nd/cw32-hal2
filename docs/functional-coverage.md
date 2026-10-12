@@ -134,6 +134,12 @@ still apply.
   Exactly CW32F020C6U7/K6U7/F6U7 additionally support staged byte TX only;
   generic F020 rejects safe DMA/staging with `MissingMemoryMetadata`. F020
   receives no DMA RX or combined constructor, and F6 UART1 has no safe TX pad.
+  Eleven exact L031/L052/R031/W031 selections separately add staged byte TX
+  through the native four-channel controller. Their four generic aliases reject
+  safe admission/staging without memory metadata; L031F8P6/F8U6 UART1 has no
+  safe TX pad. The complete roster and package routes are in
+  [the four-channel TX scope](uart-dma-tx.md#native-four-channel-cohort).
+  These four families receive no DMA RX/combined constructor or SPI DMA.
   No same-instance buffered-plus-DMA owner or DMA RX ring is introduced.
   Static staging/channel/UART ownership is retained across cancellation; clean
   completion permits reuse and retained RX tails, while DMA errors permanently
@@ -562,12 +568,19 @@ still apply.
   comparator API leaves the ADC external-reference gap unimplemented. Fixed
   BGR/DAC input and advanced comparator routes remain separate gaps. See
   [reference ownership and evidence](comparator-reference.md).
-- DMA on F030/A030/L083 has unsafe borrowed software copies, unsafe-entry
-  owned static SRAM copies and safe init-admitted CopyChannel copies.
+- DMA on F030/A030/L083, F020 and L031/L052/R031/W031 retains unsafe
+  borrowed software copies and unsafe-entry owned static SRAM copies.
+  Safe init-admitted CopyChannel copies require qualified exact SRAM; x030/L083
+  keep their existing selections.
   Exactly CW32F020C6U7/K6U7/F6U7 add safe CopyChannel copies on the native
   two-channel controller, with separate DMACH1/DMACH2 IRQs and qualified
   8 KiB SRAM at `0x20000000..0x20002000`. Generic F020 retains
   `MissingMemoryMetadata` rejection; this adds no borrowed hardware requests.
+  The native four-channel cohort adds exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6,
+  CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6, each with
+  64 KiB flash and 8 KiB SRAM at the same qualified SRAM interval. Their
+  four generic aliases retain missing-memory rejection. CH1 binds DMACH1,
+  CH2/3 share DMACH23 and CH4 binds DMACH4, with no fifth channel.
   L083 requires selected-part SRAM metadata. Unsafe borrowed hardware-request
   constructors remain x030-only; L083 UART/SPI RX/TX routes are exposed through
   the separately declared safe staged integration. L083 ADC/LCD/timer requests
@@ -578,9 +591,10 @@ still apply.
   forever. Safe init-admitted copies require normal reset/clean-runtime entry;
   dirty startup rejection cannot repair an arbitrary active bootloader handover.
   Safe peripheral integration covers staged F030/A030/L083 UART TX/RX and paired
-  SPI master, plus exact-part F020 staged byte UART TX, with qualified SRAM
-  and normal reset/clean-runtime entry. F020 DMA RX/combined UART, SPI and
-  other peripheral consumers remain excluded. RX gaps can lose frames; safe
+  SPI master, plus exact-part F020 and the eleven exact L031/L052/R031/W031
+  staged byte UART TX selections, with qualified SRAM and normal
+  reset/clean-runtime entry. F020 and the four-family cohort gain no DMA
+  RX/combined UART, SPI or other peripheral consumers. RX gaps can lose frames; safe
   early abort, circular operation and lossless reception remain unavailable.
   Remaining DMA-bearing families stay PAC-only. Stage84 main passed 15 actual
   ARM libraries and 16 ELF links, all 31 commands exiting zero. Generation
@@ -590,7 +604,17 @@ still apply.
   rows and all ELF links were warning-free. At main acceptance clean had not
   run; final-package completion requires a separate final-source
   2-library/4-ELF clean receipt. No silicon behavior is claimed.
-  See [the own-F020 contract](f020-dma-owned.md),
+  Stage85 main passed six standalone ARM libraries and 21 ELF links, all 27
+  commands exiting zero without warnings. Generation, five finite source gates
+  and the capability renderer passed in documented segments; three checker
+  preparation failures remain recorded. The ARM matrix preserved its 1,402-file
+  source snapshot and all 907 generated files. At main acceptance clean had not
+  run; final-package completion requires a separate final-source
+  2-library/4-ELF clean receipt. R031 whole-GPIOA effects and W031 internal RF
+  boundaries preserve existing functional handover obligations; DMA admission
+  establishes no RF-safe handover or coexistence. See
+  [the four-family contract](four-channel-dma-owned.md),
+  [the own-F020 contract](f020-dma-owned.md),
   [the DMA ownership contract](dma-owned-copy-evidence.md),
   [safe copies](dma-safe-owned-copy.md), [UART TX DMA](uart-dma-tx.md),
   [UART RX DMA](uart-dma-rx.md) and

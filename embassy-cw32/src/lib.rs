@@ -22,7 +22,7 @@ pub mod cordic;
 pub mod crc;
 #[cfg(dac_cw32l012_v1)]
 pub mod dac;
-#[cfg(any(dma_v1, dma_cw32f020_v1))]
+#[cfg(any(dma_v1, dma_cw32f020_v1, dma_cw32l031_v1))]
 pub mod dma;
 #[cfg(eau_cw32l012_v1)]
 pub mod eau;
@@ -586,7 +586,8 @@ pub struct Config {
 /// replace the existing pre-Rust bus-master/memory-ownership boundary or give
 /// safe Rust callers a hidden memory-safety obligation.
 ///
-/// On x030/L083/F020, safe static-copy admission is recorded once after clock init.
+/// On x030/L083/F020/L031/L052/R031/W031, safe static-copy admission is recorded
+/// once after clock init.
 /// An already enabled/reset-held or non-default DMA controller is rejected for
 /// safe copies without resetting it, clearing flags or treating EN=0 as a drain
 /// acknowledgment. Rejection leaves other peripherals usable; acquiring a
@@ -628,7 +629,7 @@ pub fn try_init(config: Config) -> Result<Peripherals, rcc::Error> {
     }
     #[cfg(feature = "_time-driver")]
     time_driver::init(timer_divisor)?;
-    #[cfg(any(dma_v1, dma_cw32f020_v1))]
+    #[cfg(any(dma_v1, dma_cw32f020_v1, dma_cw32l031_v1))]
     dma::init(config.rcc.timeout);
     Ok(peripherals)
 }

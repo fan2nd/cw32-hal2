@@ -1069,3 +1069,88 @@ clean had not run; final-package completion requires a separate final-source
 2-library/4-ELF clean receipt. Source qualification and linked-image
 inspection do not establish hardware transfer, wire timing, throughput or
 finite liveness. See [the verification boundary](../docs/f020-dma-owned.md#verification-boundary).
+
+## Native four-channel owned DMA and staged UART TX sources
+
+The [four-family contract](../docs/four-channel-dma-owned.md) and
+[own-source record](../docs/four-channel-dma-owned-evidence.json) independently
+bind CW32L031 CN V1.6, CW32L052 CN V1.5, CW32R031 CN V1.3 and
+CW32W031 CN V1.4 manuals, their own datasheets and SDK members. These are
+the existing locked originals; identity, URL, digest, byte size, revision,
+package/AF inventories and canonical layout reuse remain unchanged. New
+consumer evidence backlinks do not repin an original. Earlier DMA records
+and their verification receipts retain their historical family/stage scope.
+
+| Own manual | DMA IRQ | Software BLOCK / finite setup / terminal | ICR | HARDSRC / SOFTSRC | Byte SRAM-to-TDR setup |
+| --- | --- | --- | --- | --- | --- |
+| L031 CN V1.6 | 90 | 123 / 127 / 128 | 131 | 133 | 344 |
+| L052 CN V1.5 | 95 | 128 / 132 / 133 | 136 | 138 / 139 | 381 |
+| R031 CN V1.3 | 92 | 125 / 129 / 130 | 133 | 135 | 347 |
+| W031 CN V1.4 | 91 | 124 / 128 / 129 | 132 | 134 | 347 |
+
+These are printed pages, also zero-based PDF indices; one-based viewer pages
+add one. The evidence binds every own UARTx contract, UART1/2/3 base table,
+derived SVD endpoint and selector, not only the UART1 worked example.
+All four native controllers have CH1/DMACH1 IRQ9, CH2/3/DMACH23 IRQ10,
+and CH4/DMACH4 IRQ11. ISR and ICR have TC/TE pairs at bits0/1, 4/5,
+8/9 and 12/13. Own ICR reset/no-op is `0xFFFFFFFF`; typed selected-field
+writes preserve sibling flags and reserved bits. No fifth channel is inferred.
+
+The complete admitted exact cohort is CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6,
+CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6, each with
+64 KiB flash and 8 KiB SRAM. The four generic aliases retain empty memory
+and safe-admission/staging rejection. All eleven existing package route sets
+and 31 selected TX endpoints are listed in [the TX scope](../docs/uart-dma-tx.md#native-four-channel-cohort).
+L031F8P6/F8U6 have no safe UART1 TX route because their only bonded TX pad
+is excluded PA14; PA13/PA14/PF3 policy is unchanged. L052 uses its own PA9
+AF1 UART3 route. L031/R031/W031 retain the vendor spelling
+`PA10_AFx_SUART3TXD` with AFR10=6, corroborated by the own datasheet's
+UART3_TXD route, without rewriting source inventory.
+
+The only hardware-data addition is the native eight-field ICR command seed
+in `register-writes.yaml`. One ordinary generation added
+`cw32-data/data/register-writes/dma_cw32l031_v1.json` and appended the native
+ICR reset/no-op helpers to `cw32-metapac/src/peripherals/dma_cw32l031_v1.rs`,
+taking the generated inventory from 906 to 907 files. Independent generated-byte
+review accepted exactly these two paths: the other 905 existing files,
+including all 54 chip JSONs, stayed byte-identical; the native PAC's previous
+full content remained an unchanged prefix. No register layout, part, pin,
+request, vector, enum, schema or generator changed. Administrative coverage
+projections are separate from that hardware-data delta.
+
+Only safe owned SRAM copying and private-static-staging UART TX are newly
+qualified. Existing raw software-copy contracts remain; borrowed hardware
+constructors remain x030-only. New RX/combined UART, SPI, other requests,
+early abort/recovery and buffered-plus-DMA ownership remain excluded.
+TE, STATUS2, EN-clear, request closure and clock-off are not bus-drain proofs;
+errors or unconfirmed completion permanently retain resources. R031 GPIOA
+whole-bank effects and W031 internal RF boundaries preserve the existing
+functional handover obligations and establish no RF-safe coexistence.
+
+Stage85 main passed six standalone ARM library builds and 21 ELF links,
+all 27 commands exiting zero without warnings. The separately retained 21
+HAL dependency archives from ELF builds are not additional standalone library
+commands. All 1,402 source files and 907 generated files stayed unchanged
+during that ARM matrix, as did the toolchain and Cargo configuration.
+
+The seven planned non-ARM commands passed in segments: generation and DMA
+source projection in the initial segment; own DMA facts, provenance, capability
+rendering, capability consistency and module layout in the successful final
+tail. This is one generation, five finite source gates and one renderer,
+not a claim that one uninterrupted seven-command run passed. Three failed
+own-source-checker attempts remain recorded: text nodes required their parent
+artifact's ID; clock fact comparison incorrectly included narrative notes and
+consumer evidence; and L052's own SVD used standard `lsb`/`msb` fields rather
+than `bitOffset`/`bitWidth`. These were checker preparation/schema errors,
+not HAL execution or hardware failures. The corrections retained strict source
+identity and normalized hardware-fact comparisons, changed no HAL/example
+bytes or locked original facts, and supplied no runtime evidence. The final
+SVD parser correction happened after the ARM matrix and changed only the
+source checker; the successful final source tail used that corrected checker.
+
+At main acceptance clean had not run; final-package completion requires a
+separate final-source 2-library/4-ELF clean receipt. No cumulative HAL recipe
+expansion or hardware/RF execution is part of this scope. Source gates and
+linked-image inspection do not establish silicon transfer, wire timing,
+error-time drain, RF coexistence or finite liveness. See
+[the verification boundary](../docs/four-channel-dma-owned.md#verification-boundary).

@@ -1,0 +1,5512 @@
+{
+  "schema_version": 1,
+  "stage": 85,
+  "reviewed_at_utc": "2026-10-12T16:02:30.423959+00:00",
+  "status": "accepted-main",
+  "verdict": "Independent source review and direct inspection of six retained primary ARM HAL archives, 21 linked firmware ELFs, their actual Cargo JSON, HAL build-script output and selected generated inputs support main runtime acceptance. The 21 separately retained dependency HAL archives are not additional standalone commands. Source-data checks passed in documented segments after narrow checker schema corrections. Final source-only clean replay remains separate and pending.",
+  "acceptance_boundary": {
+    "static_runtime_and_examples": "accepted",
+    "main_runtime_artifacts": "accepted",
+    "main_source_gates": "accepted_in_documented_segments",
+    "clean_final_source": "pending",
+    "hardware_execution": false
+  },
+  "baseline_commit": "94697d94fba3c3285fe5a9b5d1c0ba393199e2d7",
+  "design_sha256": {
+    "runtime-design.md": "3f1b8e582d774553aa960d5157bacf4ec73a61f5e4024508d332993d7201dc4c",
+    "metadata-source-design.md": "9e3df2de4b1b9bda7358d1ea6913bd8fef1ae0c18a00ff39a3ec4fb29a77ff71",
+    "source-bindings.json": "64ea20b509c528d8b895d2bdbbf654abcca9c99b56094ec4e190b71016fbd549",
+    "verification-matrix.tsv": "7aec1351c1c37af6bc3dd3598934852839dc9488223945e890d2aa2b7ca3ddac",
+    "design-review.json": "652778d404d3d132d6878f5ce8485527319a99bb189b49b4f0b079dee322dc9e"
+  },
+  "source_freeze": [
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "16f2c041e6cc48cfe69a3808096e6fde31cc6bcc3f6f8604cb9a07c094cf54b7",
+      "bytes": 331594
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "bfa6505acfd3cf54004fc020c599abc3bc50681b071a335e113fd5463ec131b6",
+      "bytes": 40663
+    },
+    {
+      "path": "embassy-cw32/src/dma.rs",
+      "sha256": "a081e2556f7e093a65109ff4d7074a52e950aabc0f722e75ba965ecfa2ccd508",
+      "bytes": 48778
+    },
+    {
+      "path": "embassy-cw32/src/usart.rs",
+      "sha256": "e51d29f078ce07872538449a7085454b03c7869f8928b880587b57b51dee33a1",
+      "bytes": 100367
+    },
+    {
+      "path": "examples/four-channel-dma/Cargo.lock",
+      "sha256": "a9a741574b79818e835eddf444961cc8c79ff685a80eba4790715eb26403ed6c",
+      "bytes": 20545
+    },
+    {
+      "path": "examples/four-channel-dma/Cargo.toml",
+      "sha256": "ae58f6f8f2db51f231b981274714e1ea3e5a8520a0c80827c7a153c1585b9a4e",
+      "bytes": 1768
+    },
+    {
+      "path": "examples/four-channel-dma/README.md",
+      "sha256": "219d80bfa9edaf4c5a8da4398a35ea8cb122c22a342e8af7a417ac888b26ef4a",
+      "bytes": 7119
+    },
+    {
+      "path": "examples/four-channel-dma/build.rs",
+      "sha256": "3e47abf8278c08f570b982fc1f7f475c928e95b8ae1eda89245cc3407f34af13",
+      "bytes": 6032
+    },
+    {
+      "path": "examples/four-channel-dma/src/bin/owned_copy.rs",
+      "sha256": "1be2a187033c04467aaeb86f28194934b1783ae72e2069228d6ab3790216948d",
+      "bytes": 4543
+    },
+    {
+      "path": "examples/four-channel-dma/src/bin/uart_tx.rs",
+      "sha256": "d7bfc70ca5e9776783aff11244c8cea4056063f1a8c5bc5cb796b1956798e8f6",
+      "bytes": 3779
+    },
+    {
+      "path": "examples/four-channel-dma/src/lib.rs",
+      "sha256": "ea80803ed0004ac954407c18851f634af32865bec62ea81ef37049bde2a032c0",
+      "bytes": 377
+    },
+    {
+      "path": "embassy-cw32/src/spi.rs",
+      "sha256": "47f737ac82b84d1dca423d0754bc8a54b0ff60a0f1e77f2d56cff1428c91c123",
+      "bytes": 52608
+    }
+  ],
+  "main_source_manifest_sha256": "f0314b061c95fbe10185462977efc6aef197b943d3937feb8e2aedfece325753",
+  "main_source_unchanged": true,
+  "main_toolchain_and_config_unchanged": true,
+  "main_generated_files_unchanged": true,
+  "main_command_count": 27,
+  "main_primary_hal_archives": 6,
+  "main_firmware_elfs": 21,
+  "dependency_hal_archives_not_standalone": 21,
+  "warnings": 0,
+  "source_data_gates": [
+    {
+      "kind": "production_generation",
+      "exit_code": 0,
+      "log_sha256": "ece69bb4dc0e20e9f9ffa8777ff70bcf856f9542b5f148c5597b5b48149774a1",
+      "result_receipt_sha256": "208958e86b1e91342fbb3f18b099ff95a10839a5d09f9ab73a90644a7ddc4113"
+    },
+    {
+      "kind": "dma_source_projection",
+      "exit_code": 0,
+      "log_sha256": "fadea97c0a079a44f0a60d811e74a7d07567bdd5f1866e6aeb3d1f4e7564dfad",
+      "result_receipt_sha256": "208958e86b1e91342fbb3f18b099ff95a10839a5d09f9ab73a90644a7ddc4113"
+    },
+    {
+      "kind": "existing_dma_source_facts",
+      "exit_code": 0,
+      "log_sha256": "feee33908179753464cc05ce15a922e9b7752d35c4001d886243315150940db2",
+      "result_receipt_sha256": "c986464c6dc513d058615f265b761cbceb9b6eb802627a521d145bb8469a132b"
+    },
+    {
+      "kind": "provenance",
+      "exit_code": 0,
+      "log_sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f",
+      "result_receipt_sha256": "c986464c6dc513d058615f265b761cbceb9b6eb802627a521d145bb8469a132b"
+    },
+    {
+      "kind": "capability_projection",
+      "exit_code": 0,
+      "log_sha256": "4c9f141261d61ce1c36b10bb9b9b727388cd61d4f44c53509bcdc60826b048e5",
+      "result_receipt_sha256": "c986464c6dc513d058615f265b761cbceb9b6eb802627a521d145bb8469a132b"
+    },
+    {
+      "kind": "capability_consistency",
+      "exit_code": 0,
+      "log_sha256": "4c9f141261d61ce1c36b10bb9b9b727388cd61d4f44c53509bcdc60826b048e5",
+      "result_receipt_sha256": "c986464c6dc513d058615f265b761cbceb9b6eb802627a521d145bb8469a132b"
+    },
+    {
+      "kind": "module_layout",
+      "exit_code": 0,
+      "log_sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8",
+      "result_receipt_sha256": "c986464c6dc513d058615f265b761cbceb9b6eb802627a521d145bb8469a132b"
+    }
+  ],
+  "retained_failed_source_gate_attempts": [
+    {
+      "reason": "The appended native-four source check first assumed a vendor-lock child id field. It was corrected to bind the actual parent source identity.",
+      "log_sha256": "8d10beb2a2bc04dbcd647c81956165cd2326afc85dee5bbb3fdadb44744ed943"
+    },
+    {
+      "reason": "A later comparison treated clock narrative notes as hardware projection fields. It was corrected to explicitly compare every hardware field while retaining exact key and value checks.",
+      "log_sha256": "34aaa0031f7ac7b2f46b07af63881c3384e55db2c2875a447ad9444b27c704f0"
+    },
+    {
+      "reason": "The native SVD reader assumed bitOffset/bitWidth for every field. L052 contains paired lsb/msb encodings; the correction decodes that exact alternate representation while preserving name, offset, width and completeness comparisons.",
+      "log_sha256": "6c64a336c410ab821159f0fe62986c446a34ec6afed9d9750de8d3a7fd9179c4"
+    }
+  ],
+  "post_main_checker_correction": {
+    "path": "tests/verify_dma_owned_evidence.py",
+    "sha256": "77c4591ffad1574fbf67ce0d10921e026212b084eece4b86ad9723ffbee863b1",
+    "timing": "The parent-source identity and clock-field projection fixes were present before the main build freeze (checker9d749aa5584a7a229cabe9230e712d3ef9332259cf66570db6ec991b17b42ee1). Only the final SVD field-encoding parser correction was applied after the main build (checker77c4591). It does not change HAL or example code. The seven source-data commands passed in their documented segments; final clean replay must rebuild and recheck the complete final source tree.",
+    "main_build_checker_sha256": "9d749aa5584a7a229cabe9230e712d3ef9332259cf66570db6ec991b17b42ee1"
+  },
+  "static_review": {
+    "residual": "All existing HAL bodies match Stage84 after only approved build additions, two lib cfg expansions, six CH3/CH4 geometry cfg expansions, full-line comments and blank lines are removed. Other83 existing HAL inputs, including SPI, remain byte-identical.",
+    "qualified_selections": 11,
+    "generic_selections": 4,
+    "safe_example_routes": 31,
+    "ownership_and_contract_findings": {
+      "build_qualification": "Accepted: exact 11/four generic roster; scalar native IR and typed descriptors, IRQ topology, memory, RCC, TX selectors/endpoint checks; own L052 UART/SYSCTRL version distinct. Old F020 qualification, five-channel branch, request cardinality/distinctness, RX subset and pair filters preserved.",
+      "startup_and_revocation": "Accepted: init gates before descriptor inspection, retains dirty gate, excludes retained/gated requests under documented normal reset/clean runtime; no fresh snapshot upgrades Raw. Admission claimed before vector enable; rejection does not mutate registers or IRQ enable.",
+      "copy_ownership": "Accepted: exclusive static full SRAM ranges, sealed widths, count/alignment/address/nonoverlap validation before launch, Running/fence before EN; only recorded clean TC without TE plus STATUS5/SOFTSRC0 returns owners. Error/forget preserve reservation; error forgets Transfer; Drop may block indefinitely.",
+      "uart_ownership": "Accepted: baud/stage checked before admitted channel and UART setup. Private static stage receives CPU copies, InFlight installed before start, EN before DMATX, clean TC/STATUS before request close and retirement. Write/flush reap retained chunk; error permanently quarantines; pending Drop preserves config/pin/stage/channel/request/clocks.",
+      "isolation": "Accepted: UART code/cfg unchanged after full-line comments removed; Info prepare, ring detach, RXIDLE guards, no-ring RX DMA errors, lifecycle pre-MMIO inactive check and wake-after-lock preserved. Ordinary/buffered TX starts dma None. SPI source byte-identical; CH5 strict dma_v1; public hardware new_read/new_write strict cw32x030.",
+      "unsafe_api_correction": "Accepted factual listing: raw Channel::new, unsafe Transfer::new_copy and unsafe OwnedCopy::new remain exposed wherever DMA module selected, including F020/four-family cohort. Public new_read/new_write remain x030-only. Their error/forget hardware exclusivity contracts are retained, with no stop/drain proof added.",
+      "shared_vector": "Accepted: independent Running-state gate precedes MMIO; CH2 and CH3 each observe/clear only their terminal bits, TE wins, other-channel flags remain one in ICR seed. Wake occurs after critical section. No DMA clock reset/off or global NVIC unpend introduced."
+    },
+    "example_findings": "Actual source inspected. Four immediate copy calls precede awaits; same returned owners reused only after success. Separate stages/UARTs/pins/channels, flash85 and local41 byte caller buffers, flush, exact F8 and L052 cfgs."
+  },
+  "generated_native_icr": {
+    "reset_value": 4294967295,
+    "write_noop": 4294967295,
+    "zero_to_clear_fields": [
+      "TC1",
+      "TE1",
+      "TC2",
+      "TE2",
+      "TC3",
+      "TE3",
+      "TC4",
+      "TE4"
+    ],
+    "files": [
+      {
+        "path": "cw32-data/data/register-writes/dma_cw32l031_v1.json",
+        "sha256": "e5dff4712a218771d1c426a6bf1c5aabf58112b9568c79562f206e425af5b570"
+      },
+      {
+        "path": "cw32-metapac/src/peripherals/dma_cw32l031_v1.rs",
+        "sha256": "eae4d9cec8e73f98b90feccedc9f76fbcd0ed6d4d675561dc770a230b1b2801c"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "row": 1,
+      "selection": "cw32l031",
+      "kind": "rlib",
+      "target": "embassy_cw32",
+      "compiler_features": [
+        "cw32l031",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "None",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 4236988,
+        "sha256": "af8cf3ef28b752ce7421bbd8f08f8a6f98c003cfe8cbca50ab67a82cd1472e6a"
+      },
+      "cargo_json": {
+        "bytes": 75822,
+        "sha256": "8d01a979796be6b0544d12bc10883da30a8183d538dcc33da93c152e9689c3f8"
+      },
+      "generated": {
+        "bytes": 36240,
+        "sha256": "b52d187ca627c114f3abeb838a279ff42b8e710d609982623453a0d49850cc63"
+      },
+      "archive": {
+        "arm_elf_members": 8,
+        "llvm_bitcode_members": 0,
+        "classification": "standalone primary"
+      }
+    },
+    {
+      "row": 2,
+      "selection": "cw32l052",
+      "kind": "rlib",
+      "target": "embassy_cw32",
+      "compiler_features": [
+        "cw32l052",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "None",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 4921556,
+        "sha256": "e73ea6a0680e632ff97eb0bb0123055292cc198aada837dbb747e54123ff1aca"
+      },
+      "cargo_json": {
+        "bytes": 75971,
+        "sha256": "896b8929050a519cf0d9d4b4cd4adff2e19f6627ffc562cb0b19b186efdf8275"
+      },
+      "generated": {
+        "bytes": 78702,
+        "sha256": "2c2343009ca94efa228b807755fb03739ff45c39f806e11ce3cf3464b24ce628"
+      },
+      "archive": {
+        "arm_elf_members": 9,
+        "llvm_bitcode_members": 0,
+        "classification": "standalone primary"
+      }
+    },
+    {
+      "row": 3,
+      "selection": "cw32r031",
+      "kind": "rlib",
+      "target": "embassy_cw32",
+      "compiler_features": [
+        "cw32r031",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "None",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 4442108,
+        "sha256": "c115b09e6eb17698143649cd4de4f8ac5b7956fe70c3568b6c9f267990f915aa"
+      },
+      "cargo_json": {
+        "bytes": 75822,
+        "sha256": "1529fc8851d05cb82669863fda3a515dd653bd50d6fff3dc3fad3e272d70efdf"
+      },
+      "generated": {
+        "bytes": 45526,
+        "sha256": "92c15a20c2da96d577df7b29435d5ab22d8dfdc4555c05fa4ea6b2b025e59bfb"
+      },
+      "archive": {
+        "arm_elf_members": 8,
+        "llvm_bitcode_members": 0,
+        "classification": "standalone primary"
+      }
+    },
+    {
+      "row": 4,
+      "selection": "cw32w031",
+      "kind": "rlib",
+      "target": "embassy_cw32",
+      "compiler_features": [
+        "cw32w031",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "None",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 4484518,
+        "sha256": "82ea0b06d89bf91f1c82647646d21bfdae7c13a2ffec4eb0b60a14f214b83115"
+      },
+      "cargo_json": {
+        "bytes": 75822,
+        "sha256": "83b4066dc2bbcaec86d9a6e12739ec030bc1431b810875cd67521aa3ae44bcf5"
+      },
+      "generated": {
+        "bytes": 46983,
+        "sha256": "5a4837eb01ff9b2461a4aaa2a1f0486ca3d3ec2319ca1738501a615e0fe230bc"
+      },
+      "archive": {
+        "arm_elf_members": 8,
+        "llvm_bitcode_members": 0,
+        "classification": "standalone primary"
+      }
+    },
+    {
+      "row": 5,
+      "selection": "cw32l052c8t6",
+      "kind": "rlib",
+      "target": "embassy_cw32",
+      "compiler_features": [
+        "cw32l052c8t6",
+        "defmt",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 6881054,
+        "sha256": "2be44b5212c4ef78d6e474df5b620a84df09cfbf81ea9d504a47fceb1618a171"
+      },
+      "cargo_json": {
+        "bytes": 87302,
+        "sha256": "1820db0877364c537f047cf4a5696123a3e4f2968a5a31b7a64a49d9fadeefba"
+      },
+      "generated": {
+        "bytes": 132837,
+        "sha256": "0091438351db6dad4d8616e14b0395dd602128e0763fbc370829fb5454d76af0"
+      },
+      "archive": {
+        "arm_elf_members": 12,
+        "llvm_bitcode_members": 0,
+        "classification": "standalone primary"
+      }
+    },
+    {
+      "row": 6,
+      "selection": "cw32a030c8t7",
+      "kind": "rlib",
+      "target": "embassy_cw32",
+      "compiler_features": [
+        "cw32a030c8t7",
+        "defmt",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_v1",
+      "direction_cfgs": [
+        "spi_dma",
+        "uart_dma_rx",
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH45"
+        ],
+        [
+          "DMA_CH5",
+          "4",
+          "DMACH45"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "ADC_COMPLETE",
+          "ADC",
+          "COMPLETE",
+          "10"
+        ],
+        [
+          "ATIM_CH1A2A3A4_UP",
+          "ATIM",
+          "CH1A2A3A4_UP",
+          "17"
+        ],
+        [
+          "ATIM_CH1B2B3B_UP",
+          "ATIM",
+          "CH1B2B3B_UP",
+          "18"
+        ],
+        [
+          "BTIM1_UP",
+          "BTIM1",
+          "UP",
+          "11"
+        ],
+        [
+          "BTIM1_TRIG",
+          "BTIM1",
+          "TRIG",
+          "12"
+        ],
+        [
+          "BTIM2_UP",
+          "BTIM2",
+          "UP",
+          "13"
+        ],
+        [
+          "BTIM2_TRIG",
+          "BTIM2",
+          "TRIG",
+          "14"
+        ],
+        [
+          "BTIM3_UP",
+          "BTIM3",
+          "UP",
+          "15"
+        ],
+        [
+          "BTIM3_TRIG",
+          "BTIM3",
+          "TRIG",
+          "16"
+        ],
+        [
+          "GTIM1_UP",
+          "GTIM1",
+          "UP",
+          "19"
+        ],
+        [
+          "GTIM1_TRIG",
+          "GTIM1",
+          "TRIG",
+          "20"
+        ],
+        [
+          "GTIM1_CH1",
+          "GTIM1",
+          "CH1",
+          "21"
+        ],
+        [
+          "GTIM1_CH2",
+          "GTIM1",
+          "CH2",
+          "22"
+        ],
+        [
+          "GTIM1_CH3",
+          "GTIM1",
+          "CH3",
+          "23"
+        ],
+        [
+          "GTIM1_CH4",
+          "GTIM1",
+          "CH4",
+          "24"
+        ],
+        [
+          "GTIM2_UP",
+          "GTIM2",
+          "UP",
+          "25"
+        ],
+        [
+          "GTIM2_TRIG",
+          "GTIM2",
+          "TRIG",
+          "26"
+        ],
+        [
+          "GTIM2_CH1",
+          "GTIM2",
+          "CH1",
+          "27"
+        ],
+        [
+          "GTIM2_CH2",
+          "GTIM2",
+          "CH2",
+          "28"
+        ],
+        [
+          "GTIM2_CH3",
+          "GTIM2",
+          "CH3",
+          "29"
+        ],
+        [
+          "GTIM2_CH4",
+          "GTIM2",
+          "CH4",
+          "30"
+        ],
+        [
+          "GTIM3_UP",
+          "GTIM3",
+          "UP",
+          "31"
+        ],
+        [
+          "GTIM3_TRIG",
+          "GTIM3",
+          "TRIG",
+          "32"
+        ],
+        [
+          "GTIM3_CH1",
+          "GTIM3",
+          "CH1",
+          "33"
+        ],
+        [
+          "GTIM3_CH2",
+          "GTIM3",
+          "CH2",
+          "34"
+        ],
+        [
+          "GTIM3_CH3",
+          "GTIM3",
+          "CH3",
+          "35"
+        ],
+        [
+          "GTIM3_CH4",
+          "GTIM3",
+          "CH4",
+          "36"
+        ],
+        [
+          "GTIM4_UP",
+          "GTIM4",
+          "UP",
+          "37"
+        ],
+        [
+          "GTIM4_TRIG",
+          "GTIM4",
+          "TRIG",
+          "38"
+        ],
+        [
+          "GTIM4_CH1",
+          "GTIM4",
+          "CH1",
+          "39"
+        ],
+        [
+          "GTIM4_CH2",
+          "GTIM4",
+          "CH2",
+          "40"
+        ],
+        [
+          "GTIM4_CH3",
+          "GTIM4",
+          "CH3",
+          "41"
+        ],
+        [
+          "GTIM4_CH4",
+          "GTIM4",
+          "CH4",
+          "42"
+        ],
+        [
+          "SPI1_RX",
+          "SPI1",
+          "RX",
+          "6"
+        ],
+        [
+          "SPI1_TX",
+          "SPI1",
+          "TX",
+          "7"
+        ],
+        [
+          "SPI2_RX",
+          "SPI2",
+          "RX",
+          "8"
+        ],
+        [
+          "SPI2_TX",
+          "SPI2",
+          "TX",
+          "9"
+        ],
+        [
+          "UART1_RX",
+          "UART1",
+          "RX",
+          "0"
+        ],
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_RX",
+          "UART2",
+          "RX",
+          "2"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_RX",
+          "UART3",
+          "RX",
+          "4"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 7228840,
+        "sha256": "f4711c9738d25d75db82628f225362b1ebcd564f92d25ce4993cf489d7b90f51"
+      },
+      "cargo_json": {
+        "bytes": 86911,
+        "sha256": "60657b34abdb4bbaa35e36f6e9b285a1aab361b468668acb73f9e90158aebe77"
+      },
+      "generated": {
+        "bytes": 72072,
+        "sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735"
+      },
+      "archive": {
+        "arm_elf_members": 12,
+        "llvm_bitcode_members": 0,
+        "classification": "standalone primary"
+      }
+    },
+    {
+      "row": 7,
+      "selection": "cw32l031c8t6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32l031c8t6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 153052,
+        "sha256": "4313a75db3e0d21ea61ccd93fb6fe71400a7653691cc45c618dddbdf820225cb"
+      },
+      "cargo_json": {
+        "bytes": 94405,
+        "sha256": "8aefac4ff2f7ba2db009fe145a2904fff345d446f4befe8815e0fcc46adbe113"
+      },
+      "generated": {
+        "bytes": 68134,
+        "sha256": "796dbc09ce75fc29979e94303349d6cc46fd6bd43fc2fa2771d803a6f9a65daf"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 12365,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "default": false
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 31588
+          },
+          {
+            "name": ".rodata",
+            "address": 31780,
+            "bytes": 792
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 320
+          },
+          {
+            "name": ".bss",
+            "address": 536871232,
+            "bytes": 1080
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 31588,
+            "memory_bytes": 31588
+          },
+          {
+            "vaddr": 31780,
+            "paddr": 31780,
+            "file_bytes": 792,
+            "memory_bytes": 792
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 32572,
+            "file_bytes": 320,
+            "memory_bytes": 320
+          },
+          {
+            "vaddr": 536871232,
+            "paddr": 536871232,
+            "file_bytes": 0,
+            "memory_bytes": 1080
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4743328,
+        "sha256": "b3475d0c525859ec9ac862853ba3857bcafa15b985bd3e00b04e708d1fc880dc",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 8,
+      "selection": "cw32l031c8u6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32l031c8u6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 153052,
+        "sha256": "f05336238db811a52b487ff0dcc9bc29c33b2909f1762d859a683f4185c41d18"
+      },
+      "cargo_json": {
+        "bytes": 94405,
+        "sha256": "63d742a3a630a146893bc494fabf76f0b058f2e8c354c1b4b7f87c42cdc27291"
+      },
+      "generated": {
+        "bytes": 68134,
+        "sha256": "796dbc09ce75fc29979e94303349d6cc46fd6bd43fc2fa2771d803a6f9a65daf"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 12365,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "default": false
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 31588
+          },
+          {
+            "name": ".rodata",
+            "address": 31780,
+            "bytes": 792
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 320
+          },
+          {
+            "name": ".bss",
+            "address": 536871232,
+            "bytes": 1080
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 31588,
+            "memory_bytes": 31588
+          },
+          {
+            "vaddr": 31780,
+            "paddr": 31780,
+            "file_bytes": 792,
+            "memory_bytes": 792
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 32572,
+            "file_bytes": 320,
+            "memory_bytes": 320
+          },
+          {
+            "vaddr": 536871232,
+            "paddr": 536871232,
+            "file_bytes": 0,
+            "memory_bytes": 1080
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4743312,
+        "sha256": "1eff24912930cb52ee764f5bd9ce046c10e9f77486c754e18628baad9cd30eb6",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 9,
+      "selection": "cw32l031f8p6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32l031f8p6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 209048,
+        "sha256": "55794d222196ae025ac2baf6338b824a3c1fc10794fd8de36682c9187a984b71"
+      },
+      "cargo_json": {
+        "bytes": 94368,
+        "sha256": "bba87fa71ba1369672518588f286be54bea3718733354782a4009c105b815520"
+      },
+      "generated": {
+        "bytes": 40134,
+        "sha256": "87aeb120f1b9529344750c89772d7d3dc5c28fcc9bbfa05d98efa9e6934a052b"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 273,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 297,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 6473,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 6473,
+            "default": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 6473,
+            "default": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 273,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 297,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 14168
+          },
+          {
+            "name": ".rodata",
+            "address": 14360,
+            "bytes": 616
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 216
+          },
+          {
+            "name": ".bss",
+            "address": 536871128,
+            "bytes": 708
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 14168,
+            "memory_bytes": 14168
+          },
+          {
+            "vaddr": 14360,
+            "paddr": 14360,
+            "file_bytes": 616,
+            "memory_bytes": 616
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 14976,
+            "file_bytes": 216,
+            "memory_bytes": 216
+          },
+          {
+            "vaddr": 536871128,
+            "paddr": 536871128,
+            "file_bytes": 0,
+            "memory_bytes": 708
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4224752,
+        "sha256": "406e30250a2722c2c95622b51101f552fc66ecbc9de2ff9a33d5851ec387106f",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 10,
+      "selection": "cw32l031f8u6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32l031f8u6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 216620,
+        "sha256": "e4409f9d967b90f3a1a5d86ba0cf08d8613da43437e77b24fc4498272e6e7f40"
+      },
+      "cargo_json": {
+        "bytes": 94405,
+        "sha256": "d3520459f89f4d5938cdf9e65f74cbff80d1696d09110b5a36afd59b4e328245"
+      },
+      "generated": {
+        "bytes": 55613,
+        "sha256": "39ad385bfd74b2dbfad9006a8c0c23280219e3b8f857128ba410126081def7b3"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 273,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 297,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 11117,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 11117,
+            "default": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 11117,
+            "default": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 273,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 297,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 28836
+          },
+          {
+            "name": ".rodata",
+            "address": 29028,
+            "bytes": 780
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 272
+          },
+          {
+            "name": ".bss",
+            "address": 536871184,
+            "bytes": 736
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 28836,
+            "memory_bytes": 28836
+          },
+          {
+            "vaddr": 29028,
+            "paddr": 29028,
+            "file_bytes": 780,
+            "memory_bytes": 780
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 29808,
+            "file_bytes": 272,
+            "memory_bytes": 272
+          },
+          {
+            "vaddr": 536871184,
+            "paddr": 536871184,
+            "file_bytes": 0,
+            "memory_bytes": 736
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4459670,
+        "sha256": "4c727f20caed9e8cfd7722621989002b43825b25db0448b0e51ce466ea8b4381",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 11,
+      "selection": "cw32l031k8u6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32l031k8u6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 210068,
+        "sha256": "5ca2c83a9c73615aae32b4a3ed61a33812ccbfcedd33f124af6da565dd8c1f61"
+      },
+      "cargo_json": {
+        "bytes": 94368,
+        "sha256": "ae127a31a222a15d9880dfdf4225c630752ab1f1334a7e66dd11dd0da848897d"
+      },
+      "generated": {
+        "bytes": 44349,
+        "sha256": "99f139b743eeaa0653ccbf956b348d51d67615b6873c16206cc5ce2287572a01"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 7205,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "default": false
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 14900
+          },
+          {
+            "name": ".rodata",
+            "address": 15092,
+            "bytes": 656
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 264
+          },
+          {
+            "name": ".bss",
+            "address": 536871176,
+            "bytes": 1052
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 14900,
+            "memory_bytes": 14900
+          },
+          {
+            "vaddr": 15092,
+            "paddr": 15092,
+            "file_bytes": 656,
+            "memory_bytes": 656
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 15748,
+            "file_bytes": 264,
+            "memory_bytes": 264
+          },
+          {
+            "vaddr": 536871176,
+            "paddr": 536871176,
+            "file_bytes": 0,
+            "memory_bytes": 1052
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4330854,
+        "sha256": "97eb7f3488da733a643f994fb1de6d1df15b7ebe627062d649f9e940ad63e291",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 12,
+      "selection": "cw32l031k8v6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32l031k8v6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 210068,
+        "sha256": "d55f495c34630b4634a95f9422b7f7178122b4f38fa659e83e462a655681587d"
+      },
+      "cargo_json": {
+        "bytes": 94368,
+        "sha256": "74b97fede28aa06e99f6603b6b9d76c781c9449e61706bba63099c7a41a02e2c"
+      },
+      "generated": {
+        "bytes": 44349,
+        "sha256": "99f139b743eeaa0653ccbf956b348d51d67615b6873c16206cc5ce2287572a01"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 7205,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "default": false
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 14900
+          },
+          {
+            "name": ".rodata",
+            "address": 15092,
+            "bytes": 656
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 264
+          },
+          {
+            "name": ".bss",
+            "address": 536871176,
+            "bytes": 1052
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 14900,
+            "memory_bytes": 14900
+          },
+          {
+            "vaddr": 15092,
+            "paddr": 15092,
+            "file_bytes": 656,
+            "memory_bytes": 656
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 15748,
+            "file_bytes": 264,
+            "memory_bytes": 264
+          },
+          {
+            "vaddr": 536871176,
+            "paddr": 536871176,
+            "file_bytes": 0,
+            "memory_bytes": 1052
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4330854,
+        "sha256": "e846fbd5949408aba9c198c3262abee9abb34f26ed8a602918258c256ccd0bed",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 13,
+      "selection": "cw32l052c8t6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32l052c8t6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 225340,
+        "sha256": "5d18574b6584a72e389ba557db3b088a9513ae9d459ee7f14ba2ac96a5f10d04"
+      },
+      "cargo_json": {
+        "bytes": 94596,
+        "sha256": "c7f862c1f695cb45f8741a6be02468c0e9b7e71f5fc8602c436cacc423d8dfb6"
+      },
+      "generated": {
+        "bytes": 132837,
+        "sha256": "0091438351db6dad4d8616e14b0395dd602128e0763fbc370829fb5454d76af0"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 189,
+        "initial_sp": 536879104,
+        "reset_vector": 189,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 249,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 267,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 281,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 305,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 329,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 4985,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 249,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 267,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 281,
+            "default": false
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 305,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 329,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 188
+          },
+          {
+            "name": ".text",
+            "address": 188,
+            "bytes": 53328
+          },
+          {
+            "name": ".rodata",
+            "address": 53516,
+            "bytes": 936
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 324
+          },
+          {
+            "name": ".bss",
+            "address": 536871240,
+            "bytes": 1072
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 188,
+            "memory_bytes": 188
+          },
+          {
+            "vaddr": 188,
+            "paddr": 188,
+            "file_bytes": 53328,
+            "memory_bytes": 53328
+          },
+          {
+            "vaddr": 53516,
+            "paddr": 53516,
+            "file_bytes": 936,
+            "memory_bytes": 936
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 54452,
+            "file_bytes": 324,
+            "memory_bytes": 324
+          },
+          {
+            "vaddr": 536871240,
+            "paddr": 536871240,
+            "file_bytes": 0,
+            "memory_bytes": 1072
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 5317602,
+        "sha256": "407ad50f28c56195b1586864e06bdfbd8da299c5f94c277169710231f89c1601",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 14,
+      "selection": "cw32l052r8s6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32l052r8s6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 225700,
+        "sha256": "2651ae05bf9fb8f9cb283a8ee7f8e02ec115dfb74d54ad69f7e65a91bc661c63"
+      },
+      "cargo_json": {
+        "bytes": 94596,
+        "sha256": "93c9b0154730b16eac759f3ab6b56c17b5b3c7cc4fc27b084c8177d93a76d949"
+      },
+      "generated": {
+        "bytes": 142439,
+        "sha256": "19cbec1e5d93d755d278f61a599f4e7d99be635e6fb08a89e4d5f898a1e9be70"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 189,
+        "initial_sp": 536879104,
+        "reset_vector": 189,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 249,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 267,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 281,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 305,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 329,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 4985,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 249,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 267,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 281,
+            "default": false
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 305,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 329,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 188
+          },
+          {
+            "name": ".text",
+            "address": 188,
+            "bytes": 53504
+          },
+          {
+            "name": ".rodata",
+            "address": 53692,
+            "bytes": 936
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 324
+          },
+          {
+            "name": ".bss",
+            "address": 536871240,
+            "bytes": 1072
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 188,
+            "memory_bytes": 188
+          },
+          {
+            "vaddr": 188,
+            "paddr": 188,
+            "file_bytes": 53504,
+            "memory_bytes": 53504
+          },
+          {
+            "vaddr": 53692,
+            "paddr": 53692,
+            "file_bytes": 936,
+            "memory_bytes": 936
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 54628,
+            "file_bytes": 324,
+            "memory_bytes": 324
+          },
+          {
+            "vaddr": 536871240,
+            "paddr": 536871240,
+            "file_bytes": 0,
+            "memory_bytes": 1072
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 5488972,
+        "sha256": "286f0e523ace2c0eac2593083ca602899646128e49cc0ea63341eaaa4ad0f988",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 15,
+      "selection": "cw32l052r8t6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32l052r8t6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 225700,
+        "sha256": "59dec3f6650e27304ee194f97ce114a3aa4f33e3cd4c6fd0981f51ff85a56df4"
+      },
+      "cargo_json": {
+        "bytes": 94596,
+        "sha256": "763a80cdf3938b3e03817782d19a8fda1c4159c5f50d7be7e338e055965964bd"
+      },
+      "generated": {
+        "bytes": 142439,
+        "sha256": "19cbec1e5d93d755d278f61a599f4e7d99be635e6fb08a89e4d5f898a1e9be70"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 189,
+        "initial_sp": 536879104,
+        "reset_vector": 189,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 249,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 267,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 281,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 305,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 329,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 4985,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 249,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 267,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 281,
+            "default": false
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 305,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 329,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 188
+          },
+          {
+            "name": ".text",
+            "address": 188,
+            "bytes": 53504
+          },
+          {
+            "name": ".rodata",
+            "address": 53692,
+            "bytes": 936
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 324
+          },
+          {
+            "name": ".bss",
+            "address": 536871240,
+            "bytes": 1072
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 188,
+            "memory_bytes": 188
+          },
+          {
+            "vaddr": 188,
+            "paddr": 188,
+            "file_bytes": 53504,
+            "memory_bytes": 53504
+          },
+          {
+            "vaddr": 53692,
+            "paddr": 53692,
+            "file_bytes": 936,
+            "memory_bytes": 936
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 54628,
+            "file_bytes": 324,
+            "memory_bytes": 324
+          },
+          {
+            "vaddr": 536871240,
+            "paddr": 536871240,
+            "file_bytes": 0,
+            "memory_bytes": 1072
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 5488944,
+        "sha256": "04321e775062b93307cc5557f7ae5436fb5a9d02cfef16d8812fd81f6a04b4b3",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 16,
+      "selection": "cw32r031c8u6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32r031c8u6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 153016,
+        "sha256": "5f4b5356116125e3ff1a158735c7a6b3afdcc1550127c227ded09d2516576589"
+      },
+      "cargo_json": {
+        "bytes": 94405,
+        "sha256": "97f80efe7e9bfea869cb079eca6434fce35ffe31bd8da930a48243b3d51a4148"
+      },
+      "generated": {
+        "bytes": 64394,
+        "sha256": "202065ef4426cd3f4520d68f4a88ca2bc4b9dec6ddfbabfb24032c1af3c042e0"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 12365,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "default": false
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 31640
+          },
+          {
+            "name": ".rodata",
+            "address": 31832,
+            "bytes": 792
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 320
+          },
+          {
+            "name": ".bss",
+            "address": 536871232,
+            "bytes": 1080
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 31640,
+            "memory_bytes": 31640
+          },
+          {
+            "vaddr": 31832,
+            "paddr": 31832,
+            "file_bytes": 792,
+            "memory_bytes": 792
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 32624,
+            "file_bytes": 320,
+            "memory_bytes": 320
+          },
+          {
+            "vaddr": 536871232,
+            "paddr": 536871232,
+            "file_bytes": 0,
+            "memory_bytes": 1080
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4644260,
+        "sha256": "6bb92cda3cc6d996ffbd2b79b82282d859112d540657364a0b0ecfc253acd4d6",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 17,
+      "selection": "cw32w031r8u6",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32w031r8u6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 153016,
+        "sha256": "15f7c228e0936a3c853543bae125315a60f5c85ccf4acc36a1a02960dbce6c58"
+      },
+      "cargo_json": {
+        "bytes": 94405,
+        "sha256": "0eda17de64e3db1fdf28b8635864a0439f7dda227a5f2d73e10d1e75cb33ac7d"
+      },
+      "generated": {
+        "bytes": 65851,
+        "sha256": "2c1f88b6d297cbba6089dc08a91619311c228ae5610e07eec4e30c01dda8c5d5"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 12365,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 271,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 285,
+            "default": false
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 309,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 333,
+            "default": false
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 31596
+          },
+          {
+            "name": ".rodata",
+            "address": 31788,
+            "bytes": 792
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 320
+          },
+          {
+            "name": ".bss",
+            "address": 536871232,
+            "bytes": 1080
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 31596,
+            "memory_bytes": 31596
+          },
+          {
+            "vaddr": 31788,
+            "paddr": 31788,
+            "file_bytes": 792,
+            "memory_bytes": 792
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 32580,
+            "file_bytes": 320,
+            "memory_bytes": 320
+          },
+          {
+            "vaddr": 536871232,
+            "paddr": 536871232,
+            "file_bytes": 0,
+            "memory_bytes": 1080
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4687708,
+        "sha256": "024f861159bf892fb98ecc5b85016f2b00b8285ca01ceca2aa30fd922a613cc8",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 18,
+      "selection": "cw32l031f8p6",
+      "kind": "elf",
+      "target": "owned_copy",
+      "compiler_features": [
+        "cw32l031f8p6",
+        "rt"
+      ],
+      "cargo_fresh": true,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 207948,
+        "sha256": "baf409d2f3472bbb5cbc5d03128aee0e519e0af51462bfe436719a3ae492b2b2"
+      },
+      "cargo_json": {
+        "bytes": 94372,
+        "sha256": "6f097385af60725a109997e70cb7243620d23d41cba0f1f884bc9dfcaff5eb52"
+      },
+      "generated": {
+        "bytes": 40134,
+        "sha256": "87aeb120f1b9529344750c89772d7d3dc5c28fcc9bbfa05d98efa9e6934a052b"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 265,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 283,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 265,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 283,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 5917,
+            "default": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 5917,
+            "default": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 5917,
+            "default": true
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 12368
+          },
+          {
+            "name": ".rodata",
+            "address": 12560,
+            "bytes": 284
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 120
+          },
+          {
+            "name": ".bss",
+            "address": 536871032,
+            "bytes": 836
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 12368,
+            "memory_bytes": 12368
+          },
+          {
+            "vaddr": 12560,
+            "paddr": 12560,
+            "file_bytes": 284,
+            "memory_bytes": 284
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 12844,
+            "file_bytes": 120,
+            "memory_bytes": 120
+          },
+          {
+            "vaddr": 536871032,
+            "paddr": 536871032,
+            "file_bytes": 0,
+            "memory_bytes": 836
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4224752,
+        "sha256": "406e30250a2722c2c95622b51101f552fc66ecbc9de2ff9a33d5851ec387106f",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 19,
+      "selection": "cw32l052c8t6",
+      "kind": "elf",
+      "target": "owned_copy",
+      "compiler_features": [
+        "cw32l052c8t6",
+        "rt"
+      ],
+      "cargo_fresh": true,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 223156,
+        "sha256": "99fcf2555216332d720819106257c1c303ff8def88febb60387142844580ac00"
+      },
+      "cargo_json": {
+        "bytes": 94600,
+        "sha256": "abbd1e927eeba4178e3f1575eaa4d3920112c5de818be824d03b11acf358585c"
+      },
+      "generated": {
+        "bytes": 132837,
+        "sha256": "0091438351db6dad4d8616e14b0395dd602128e0763fbc370829fb5454d76af0"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 189,
+        "initial_sp": 536879104,
+        "reset_vector": 189,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 249,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 261,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 279,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 249,
+            "default": false
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 261,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 279,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 3677,
+            "default": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 3677,
+            "default": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 3677,
+            "default": true
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 188
+          },
+          {
+            "name": ".text",
+            "address": 188,
+            "bytes": 50716
+          },
+          {
+            "name": ".rodata",
+            "address": 50904,
+            "bytes": 724
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 180
+          },
+          {
+            "name": ".bss",
+            "address": 536871096,
+            "bytes": 856
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 188,
+            "memory_bytes": 188
+          },
+          {
+            "vaddr": 188,
+            "paddr": 188,
+            "file_bytes": 50716,
+            "memory_bytes": 50716
+          },
+          {
+            "vaddr": 50904,
+            "paddr": 50904,
+            "file_bytes": 724,
+            "memory_bytes": 724
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 51628,
+            "file_bytes": 180,
+            "memory_bytes": 180
+          },
+          {
+            "vaddr": 536871096,
+            "paddr": 536871096,
+            "file_bytes": 0,
+            "memory_bytes": 856
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 5317602,
+        "sha256": "407ad50f28c56195b1586864e06bdfbd8da299c5f94c277169710231f89c1601",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 20,
+      "selection": "cw32r031c8u6",
+      "kind": "elf",
+      "target": "owned_copy",
+      "compiler_features": [
+        "cw32r031c8u6",
+        "rt"
+      ],
+      "cargo_fresh": true,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 216444,
+        "sha256": "c1f4277c032783bff77850df3e70f3f9a186bc91ee7ba40b4315cceb26d76142"
+      },
+      "cargo_json": {
+        "bytes": 94409,
+        "sha256": "501b3f07d8c3ea55fff635e9333c01086b0d5f816f4d60660efce0b29f838449"
+      },
+      "generated": {
+        "bytes": 64394,
+        "sha256": "202065ef4426cd3f4520d68f4a88ca2bc4b9dec6ddfbabfb24032c1af3c042e0"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 265,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 283,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 265,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 283,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 11133,
+            "default": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 11133,
+            "default": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 11133,
+            "default": true
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 29116
+          },
+          {
+            "name": ".rodata",
+            "address": 29308,
+            "bytes": 580
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 176
+          },
+          {
+            "name": ".bss",
+            "address": 536871088,
+            "bytes": 864
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 29116,
+            "memory_bytes": 29116
+          },
+          {
+            "vaddr": 29308,
+            "paddr": 29308,
+            "file_bytes": 580,
+            "memory_bytes": 580
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 29888,
+            "file_bytes": 176,
+            "memory_bytes": 176
+          },
+          {
+            "vaddr": 536871088,
+            "paddr": 536871088,
+            "file_bytes": 0,
+            "memory_bytes": 864
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4644260,
+        "sha256": "6bb92cda3cc6d996ffbd2b79b82282d859112d540657364a0b0ecfc253acd4d6",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 21,
+      "selection": "cw32w031r8u6",
+      "kind": "elf",
+      "target": "owned_copy",
+      "compiler_features": [
+        "cw32w031r8u6",
+        "rt"
+      ],
+      "cargo_fresh": true,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 216444,
+        "sha256": "f9a58b627fa20c77831706e5daba050163cb3c84fee6c790c9a323d35e3110eb"
+      },
+      "cargo_json": {
+        "bytes": 94409,
+        "sha256": "f36ec6ac7694fbf100e56321238018ad105afe9a4528c71a1f5c10f65b087570"
+      },
+      "generated": {
+        "bytes": 65851,
+        "sha256": "2c1f88b6d297cbba6089dc08a91619311c228ae5610e07eec4e30c01dda8c5d5"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 265,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 283,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 253,
+            "default": false
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 265,
+            "default": false
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 283,
+            "default": false
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 11133,
+            "default": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 11133,
+            "default": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 11133,
+            "default": true
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 29072
+          },
+          {
+            "name": ".rodata",
+            "address": 29264,
+            "bytes": 580
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 176
+          },
+          {
+            "name": ".bss",
+            "address": 536871088,
+            "bytes": 864
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 29072,
+            "memory_bytes": 29072
+          },
+          {
+            "vaddr": 29264,
+            "paddr": 29264,
+            "file_bytes": 580,
+            "memory_bytes": 580
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 29844,
+            "file_bytes": 176,
+            "memory_bytes": 176
+          },
+          {
+            "vaddr": 536871088,
+            "paddr": 536871088,
+            "file_bytes": 0,
+            "memory_bytes": 864
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4687708,
+        "sha256": "024f861159bf892fb98ecc5b85016f2b00b8285ca01ceca2aa30fd922a613cc8",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 22,
+      "selection": "cw32f030c8t7",
+      "kind": "elf",
+      "target": "cw32-uart-dma-example",
+      "compiler_features": [
+        "cw32f030c8t7",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_v1",
+      "direction_cfgs": [
+        "spi_dma",
+        "uart_dma_rx",
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH45"
+        ],
+        [
+          "DMA_CH5",
+          "4",
+          "DMACH45"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "ADC_COMPLETE",
+          "ADC",
+          "COMPLETE",
+          "10"
+        ],
+        [
+          "ATIM_CH1A2A3A4_UP",
+          "ATIM",
+          "CH1A2A3A4_UP",
+          "17"
+        ],
+        [
+          "ATIM_CH1B2B3B_UP",
+          "ATIM",
+          "CH1B2B3B_UP",
+          "18"
+        ],
+        [
+          "BTIM1_UP",
+          "BTIM1",
+          "UP",
+          "11"
+        ],
+        [
+          "BTIM1_TRIG",
+          "BTIM1",
+          "TRIG",
+          "12"
+        ],
+        [
+          "BTIM2_UP",
+          "BTIM2",
+          "UP",
+          "13"
+        ],
+        [
+          "BTIM2_TRIG",
+          "BTIM2",
+          "TRIG",
+          "14"
+        ],
+        [
+          "BTIM3_UP",
+          "BTIM3",
+          "UP",
+          "15"
+        ],
+        [
+          "BTIM3_TRIG",
+          "BTIM3",
+          "TRIG",
+          "16"
+        ],
+        [
+          "GTIM1_UP",
+          "GTIM1",
+          "UP",
+          "19"
+        ],
+        [
+          "GTIM1_TRIG",
+          "GTIM1",
+          "TRIG",
+          "20"
+        ],
+        [
+          "GTIM1_CH1",
+          "GTIM1",
+          "CH1",
+          "21"
+        ],
+        [
+          "GTIM1_CH2",
+          "GTIM1",
+          "CH2",
+          "22"
+        ],
+        [
+          "GTIM1_CH3",
+          "GTIM1",
+          "CH3",
+          "23"
+        ],
+        [
+          "GTIM1_CH4",
+          "GTIM1",
+          "CH4",
+          "24"
+        ],
+        [
+          "GTIM2_UP",
+          "GTIM2",
+          "UP",
+          "25"
+        ],
+        [
+          "GTIM2_TRIG",
+          "GTIM2",
+          "TRIG",
+          "26"
+        ],
+        [
+          "GTIM2_CH1",
+          "GTIM2",
+          "CH1",
+          "27"
+        ],
+        [
+          "GTIM2_CH2",
+          "GTIM2",
+          "CH2",
+          "28"
+        ],
+        [
+          "GTIM2_CH3",
+          "GTIM2",
+          "CH3",
+          "29"
+        ],
+        [
+          "GTIM2_CH4",
+          "GTIM2",
+          "CH4",
+          "30"
+        ],
+        [
+          "GTIM3_UP",
+          "GTIM3",
+          "UP",
+          "31"
+        ],
+        [
+          "GTIM3_TRIG",
+          "GTIM3",
+          "TRIG",
+          "32"
+        ],
+        [
+          "GTIM3_CH1",
+          "GTIM3",
+          "CH1",
+          "33"
+        ],
+        [
+          "GTIM3_CH2",
+          "GTIM3",
+          "CH2",
+          "34"
+        ],
+        [
+          "GTIM3_CH3",
+          "GTIM3",
+          "CH3",
+          "35"
+        ],
+        [
+          "GTIM3_CH4",
+          "GTIM3",
+          "CH4",
+          "36"
+        ],
+        [
+          "GTIM4_UP",
+          "GTIM4",
+          "UP",
+          "37"
+        ],
+        [
+          "GTIM4_TRIG",
+          "GTIM4",
+          "TRIG",
+          "38"
+        ],
+        [
+          "GTIM4_CH1",
+          "GTIM4",
+          "CH1",
+          "39"
+        ],
+        [
+          "GTIM4_CH2",
+          "GTIM4",
+          "CH2",
+          "40"
+        ],
+        [
+          "GTIM4_CH3",
+          "GTIM4",
+          "CH3",
+          "41"
+        ],
+        [
+          "GTIM4_CH4",
+          "GTIM4",
+          "CH4",
+          "42"
+        ],
+        [
+          "SPI1_RX",
+          "SPI1",
+          "RX",
+          "6"
+        ],
+        [
+          "SPI1_TX",
+          "SPI1",
+          "TX",
+          "7"
+        ],
+        [
+          "SPI2_RX",
+          "SPI2",
+          "RX",
+          "8"
+        ],
+        [
+          "SPI2_TX",
+          "SPI2",
+          "TX",
+          "9"
+        ],
+        [
+          "UART1_RX",
+          "UART1",
+          "RX",
+          "0"
+        ],
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_RX",
+          "UART2",
+          "RX",
+          "2"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_RX",
+          "UART3",
+          "RX",
+          "4"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 215444,
+        "sha256": "93c54f7f80391c8925f0c24a7774e51d0ff11159f0a953ce5ae26b1c081a6253"
+      },
+      "cargo_json": {
+        "bytes": 94158,
+        "sha256": "7666e67a8e65e38771a6cd42967a477d45fcc043020dcb298080291061ccc073"
+      },
+      "generated": {
+        "bytes": 72072,
+        "sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 273,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 27144
+          },
+          {
+            "name": ".rodata",
+            "address": 27336,
+            "bytes": 716
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 268
+          },
+          {
+            "name": ".bss",
+            "address": 536871184,
+            "bytes": 668
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 27144,
+            "memory_bytes": 27144
+          },
+          {
+            "vaddr": 27336,
+            "paddr": 27336,
+            "file_bytes": 716,
+            "memory_bytes": 716
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 28052,
+            "file_bytes": 268,
+            "memory_bytes": 268
+          },
+          {
+            "vaddr": 536871184,
+            "paddr": 536871184,
+            "file_bytes": 0,
+            "memory_bytes": 668
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 5325608,
+        "sha256": "c944e01d430864052090343ed490327f6fd8315074309211562ef50561db6bec",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 23,
+      "selection": "cw32l083rbt6",
+      "kind": "elf",
+      "target": "shared_vector",
+      "compiler_features": [
+        "cw32l083rbt6",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_v1",
+      "direction_cfgs": [
+        "spi_dma",
+        "uart_dma_rx",
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH45"
+        ],
+        [
+          "DMA_CH5",
+          "4",
+          "DMACH45"
+        ]
+      ],
+      "sram": "Some((536870912, 24576))",
+      "requests": [
+        [
+          "SPI1_RX",
+          "SPI1",
+          "RX",
+          "6"
+        ],
+        [
+          "SPI1_TX",
+          "SPI1",
+          "TX",
+          "7"
+        ],
+        [
+          "SPI2_RX",
+          "SPI2",
+          "RX",
+          "8"
+        ],
+        [
+          "SPI2_TX",
+          "SPI2",
+          "TX",
+          "9"
+        ],
+        [
+          "UART1_RX",
+          "UART1",
+          "RX",
+          "0"
+        ],
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_RX",
+          "UART2",
+          "RX",
+          "2"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_RX",
+          "UART3",
+          "RX",
+          "4"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ],
+        [
+          "UART4_RX",
+          "UART4",
+          "RX",
+          "43"
+        ],
+        [
+          "UART4_TX",
+          "UART4",
+          "TX",
+          "44"
+        ],
+        [
+          "UART5_RX",
+          "UART5",
+          "RX",
+          "45"
+        ],
+        [
+          "UART5_TX",
+          "UART5",
+          "TX",
+          "46"
+        ],
+        [
+          "UART6_RX",
+          "UART6",
+          "RX",
+          "47"
+        ],
+        [
+          "UART6_TX",
+          "UART6",
+          "TX",
+          "48"
+        ]
+      ],
+      "primary": {
+        "bytes": 234156,
+        "sha256": "b669ac17d320ec0463021ad7c85c6f01e5d9bc445a229caa9ff1b3bfe1753e4b"
+      },
+      "cargo_json": {
+        "bytes": 94661,
+        "sha256": "2cf2a2d7208b92b6db700c8a31e106913ba6b78aef106faea765b36387418fc9"
+      },
+      "generated": {
+        "bytes": 200199,
+        "sha256": "179bc7cd3e8e943f0d936399f608bd0c921315b5601aca46b95c278762b24f64"
+      },
+      "memory_x": {
+        "bytes": 95,
+        "sha256": "4ad3718412ffc4e69582238b5f07a54b41d2ce7e7c3c29179aa23e7b3a2707e7"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 265,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH45",
+            "irq": 11,
+            "vector_word": 277,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART1_UART4",
+            "irq": 27,
+            "vector_word": 297,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 77316
+          },
+          {
+            "name": ".rodata",
+            "address": 77508,
+            "bytes": 1072
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 316
+          },
+          {
+            "name": ".bss",
+            "address": 536871232,
+            "bytes": 1024
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 77316,
+            "memory_bytes": 77316
+          },
+          {
+            "vaddr": 77508,
+            "paddr": 77508,
+            "file_bytes": 1072,
+            "memory_bytes": 1072
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 78580,
+            "file_bytes": 316,
+            "memory_bytes": 316
+          },
+          {
+            "vaddr": 536871232,
+            "paddr": 536871232,
+            "file_bytes": 0,
+            "memory_bytes": 1024
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 6122056,
+        "sha256": "467d68c7b7a9abc4079877b9ba0d365973e39f98510fa3464bfb23e718a4edf6",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 24,
+      "selection": "cw32l083rbt6",
+      "kind": "elf",
+      "target": "cw32-spi-dma-example",
+      "compiler_features": [
+        "cw32l083rbt6",
+        "rt"
+      ],
+      "cargo_fresh": true,
+      "controller": "dma_v1",
+      "direction_cfgs": [
+        "spi_dma",
+        "uart_dma_rx",
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH45"
+        ],
+        [
+          "DMA_CH5",
+          "4",
+          "DMACH45"
+        ]
+      ],
+      "sram": "Some((536870912, 24576))",
+      "requests": [
+        [
+          "SPI1_RX",
+          "SPI1",
+          "RX",
+          "6"
+        ],
+        [
+          "SPI1_TX",
+          "SPI1",
+          "TX",
+          "7"
+        ],
+        [
+          "SPI2_RX",
+          "SPI2",
+          "RX",
+          "8"
+        ],
+        [
+          "SPI2_TX",
+          "SPI2",
+          "TX",
+          "9"
+        ],
+        [
+          "UART1_RX",
+          "UART1",
+          "RX",
+          "0"
+        ],
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_RX",
+          "UART2",
+          "RX",
+          "2"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_RX",
+          "UART3",
+          "RX",
+          "4"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ],
+        [
+          "UART4_RX",
+          "UART4",
+          "RX",
+          "43"
+        ],
+        [
+          "UART4_TX",
+          "UART4",
+          "TX",
+          "44"
+        ],
+        [
+          "UART5_RX",
+          "UART5",
+          "RX",
+          "45"
+        ],
+        [
+          "UART5_TX",
+          "UART5",
+          "TX",
+          "46"
+        ],
+        [
+          "UART6_RX",
+          "UART6",
+          "RX",
+          "47"
+        ],
+        [
+          "UART6_TX",
+          "UART6",
+          "TX",
+          "48"
+        ]
+      ],
+      "primary": {
+        "bytes": 296928,
+        "sha256": "348756d96828e1a6f7f692d82bfdc90a98eb7aaa4934f6b66cde371539bbfc7e"
+      },
+      "cargo_json": {
+        "bytes": 93597,
+        "sha256": "8107e1a4911922634c10c7ff7f4740d818d1b1bd132320ad8ad4517ec4e5a9d0"
+      },
+      "generated": {
+        "bytes": 200199,
+        "sha256": "179bc7cd3e8e943f0d936399f608bd0c921315b5601aca46b95c278762b24f64"
+      },
+      "memory_x": {
+        "bytes": 95,
+        "sha256": "4ad3718412ffc4e69582238b5f07a54b41d2ce7e7c3c29179aa23e7b3a2707e7"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "SPI1",
+            "irq": 25,
+            "vector_word": 273,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 75924
+          },
+          {
+            "name": ".rodata",
+            "address": 76116,
+            "bytes": 1152
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 236
+          },
+          {
+            "name": ".bss",
+            "address": 536871152,
+            "bytes": 424
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 75924,
+            "memory_bytes": 75924
+          },
+          {
+            "vaddr": 76116,
+            "paddr": 76116,
+            "file_bytes": 1152,
+            "memory_bytes": 1152
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 77268,
+            "file_bytes": 236,
+            "memory_bytes": 236
+          },
+          {
+            "vaddr": 536871152,
+            "paddr": 536871152,
+            "file_bytes": 0,
+            "memory_bytes": 424
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 6122056,
+        "sha256": "467d68c7b7a9abc4079877b9ba0d365973e39f98510fa3464bfb23e718a4edf6",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 25,
+      "selection": "cw32f020f6u7",
+      "kind": "elf",
+      "target": "uart_tx",
+      "compiler_features": [
+        "cw32f020f6u7",
+        "rt"
+      ],
+      "cargo_fresh": false,
+      "controller": "dma_cw32f020_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH2"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 212228,
+        "sha256": "f6db34dad936520bbf5bea8202e730f9262aa41b27d935549f8147eef882e10f"
+      },
+      "cargo_json": {
+        "bytes": 94056,
+        "sha256": "146da3e894c8dee8eacd63d30d0b9a7f940724a563547f80b2bb0f89cd2f4673"
+      },
+      "generated": {
+        "bytes": 48491,
+        "sha256": "f8320864bc7b4e541a47a0abeafd83fc3775edc0fff5409ed9c3f0c39fb20580"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 253,
+            "strong_symbol": true
+          },
+          {
+            "name": "DMACH2",
+            "irq": 10,
+            "vector_word": 265,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 277,
+            "strong_symbol": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 301,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 20716
+          },
+          {
+            "name": ".rodata",
+            "address": 20908,
+            "bytes": 888
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 216
+          },
+          {
+            "name": ".bss",
+            "address": 536871128,
+            "bytes": 724
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 20716,
+            "memory_bytes": 20716
+          },
+          {
+            "vaddr": 20908,
+            "paddr": 20908,
+            "file_bytes": 888,
+            "memory_bytes": 888
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 21796,
+            "file_bytes": 216,
+            "memory_bytes": 216
+          },
+          {
+            "vaddr": 536871128,
+            "paddr": 536871128,
+            "file_bytes": 0,
+            "memory_bytes": 724
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4322120,
+        "sha256": "203f3270635162d2ec24fbc3b8fe2bb80190fb7354407b4a5adb405ffeaa2bb7",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 26,
+      "selection": "cw32l031c8t6",
+      "kind": "elf",
+      "target": "split",
+      "compiler_features": [
+        "cw32l031c8t6",
+        "rt"
+      ],
+      "cargo_fresh": true,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 150620,
+        "sha256": "62c325309af5736cb946d7c69ebbe18a8e7ed401472902079df1374dc83c97fd"
+      },
+      "cargo_json": {
+        "bytes": 95341,
+        "sha256": "61732e16b4630ee8838c3517e264265bd26de3d8327213719f1f816f55ec594f"
+      },
+      "generated": {
+        "bytes": 68134,
+        "sha256": "796dbc09ce75fc29979e94303349d6cc46fd6bd43fc2fa2771d803a6f9a65daf"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "strong_active_handlers": [
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 12049,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 12037,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 12037,
+            "default": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 12037,
+            "default": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 12037,
+            "default": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 12049,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 12037,
+            "default": true
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 192
+          },
+          {
+            "name": ".text",
+            "address": 192,
+            "bytes": 30248
+          },
+          {
+            "name": ".rodata",
+            "address": 30440,
+            "bytes": 740
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 224
+          },
+          {
+            "name": ".bss",
+            "address": 536871136,
+            "bytes": 464
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 192,
+            "memory_bytes": 192
+          },
+          {
+            "vaddr": 192,
+            "paddr": 192,
+            "file_bytes": 30248,
+            "memory_bytes": 30248
+          },
+          {
+            "vaddr": 30440,
+            "paddr": 30440,
+            "file_bytes": 740,
+            "memory_bytes": 740
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 31180,
+            "file_bytes": 224,
+            "memory_bytes": 224
+          },
+          {
+            "vaddr": 536871136,
+            "paddr": 536871136,
+            "file_bytes": 0,
+            "memory_bytes": 464
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 4743328,
+        "sha256": "b3475d0c525859ec9ac862853ba3857bcafa15b985bd3e00b04e708d1fc880dc",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    },
+    {
+      "row": 27,
+      "selection": "cw32l052c8t6",
+      "kind": "elf",
+      "target": "split",
+      "compiler_features": [
+        "cw32l052c8t6",
+        "rt"
+      ],
+      "cargo_fresh": true,
+      "controller": "dma_cw32l031_v1",
+      "direction_cfgs": [
+        "uart_dma_tx"
+      ],
+      "channels": [
+        [
+          "DMA_CH1",
+          "0",
+          "DMACH1"
+        ],
+        [
+          "DMA_CH2",
+          "1",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH3",
+          "2",
+          "DMACH23"
+        ],
+        [
+          "DMA_CH4",
+          "3",
+          "DMACH4"
+        ]
+      ],
+      "sram": "Some((536870912, 8192))",
+      "requests": [
+        [
+          "UART1_TX",
+          "UART1",
+          "TX",
+          "1"
+        ],
+        [
+          "UART2_TX",
+          "UART2",
+          "TX",
+          "3"
+        ],
+        [
+          "UART3_TX",
+          "UART3",
+          "TX",
+          "5"
+        ]
+      ],
+      "primary": {
+        "bytes": 222752,
+        "sha256": "11e7d240e420f7085059f042969f148c901193b6ca3033cc0cb34d16e8467264"
+      },
+      "cargo_json": {
+        "bytes": 95532,
+        "sha256": "6fb2adf632343158fc3c64add78ddd75cc1c175b1ff25c5407a1620a10729603"
+      },
+      "generated": {
+        "bytes": 132837,
+        "sha256": "0091438351db6dad4d8616e14b0395dd602128e0763fbc370829fb5454d76af0"
+      },
+      "memory_x": {
+        "bytes": 93,
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+      },
+      "elf": {
+        "entry": 189,
+        "initial_sp": 536879104,
+        "reset_vector": 189,
+        "strong_active_handlers": [
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 4593,
+            "strong_symbol": true
+          }
+        ],
+        "native_slots": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "vector_word": 4581,
+            "default": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "vector_word": 4581,
+            "default": true
+          },
+          {
+            "name": "DMACH4",
+            "irq": 11,
+            "vector_word": 4581,
+            "default": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "vector_word": 4581,
+            "default": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "vector_word": 4593,
+            "default": false
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "vector_word": 4581,
+            "default": true
+          }
+        ],
+        "allocated_sections": [
+          {
+            "name": ".vector_table",
+            "address": 0,
+            "bytes": 188
+          },
+          {
+            "name": ".text",
+            "address": 188,
+            "bytes": 51912
+          },
+          {
+            "name": ".rodata",
+            "address": 52100,
+            "bytes": 884
+          },
+          {
+            "name": ".data",
+            "address": 536870912,
+            "bytes": 228
+          },
+          {
+            "name": ".bss",
+            "address": 536871144,
+            "bytes": 456
+          }
+        ],
+        "load_segments": [
+          {
+            "vaddr": 0,
+            "paddr": 0,
+            "file_bytes": 188,
+            "memory_bytes": 188
+          },
+          {
+            "vaddr": 188,
+            "paddr": 188,
+            "file_bytes": 51912,
+            "memory_bytes": 51912
+          },
+          {
+            "vaddr": 52100,
+            "paddr": 52100,
+            "file_bytes": 884,
+            "memory_bytes": 884
+          },
+          {
+            "vaddr": 536870912,
+            "paddr": 52984,
+            "file_bytes": 228,
+            "memory_bytes": 228
+          },
+          {
+            "vaddr": 536871144,
+            "paddr": 536871144,
+            "file_bytes": 0,
+            "memory_bytes": 456
+          }
+        ]
+      },
+      "dependency_archive": {
+        "bytes": 5317602,
+        "sha256": "407ad50f28c56195b1586864e06bdfbd8da299c5f94c277169710231f89c1601",
+        "arm_elf_members": 2,
+        "llvm_bitcode_members": 1,
+        "classification": "HAL dependency, not standalone command"
+      }
+    }
+  ],
+  "inspection_method": "Read actual compiler messages and retained bytes. Independently parse ARM ELF headers, symbols, vector words, allocated sections and load segments; inspect archive members; compare HAL cfgs, selected memory, channel IRQ mapping, request traits and safe pin traits. Recorder pass flags are not used as evidence.",
+  "limitations": [
+    "No target or board execution was performed.",
+    "Generic HAL builds demonstrate the None SRAM projection and API compilation; no runtime rejection was executed.",
+    "Linked vectors and static ownership analysis do not establish hardware transfer, error-time bus drain, worst-case stack use, throughput or finite cancellation.",
+    "Drop may block indefinitely; error and forget retain resources. No new stop/drain proof is introduced.",
+    "Final source-only clean replay is not credited by this main review."
+  ]
+}
