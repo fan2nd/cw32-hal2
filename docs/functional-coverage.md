@@ -175,12 +175,21 @@ still apply.
   cancellation-safe device adapter or lossless-throughput claim follows.
 - GTIM polling capture/encoder exists across families. Buffered ATIM on
   L010/L011/L012 supports capture/encoder, complementary pairs, constructor-only
-  symmetric dead time and software BK1. ATIM capture/encoder remains limited to
-  those three families; external BK1 is qualified on L011/L012 only.
+  symmetric dead time and software BK1; external BK1 is qualified on L011/L012
+  only. Native classic ATIM capture/encoder is separately qualified on
+  F030/A030/F003/L031/R031/W031/L052/L083. Six optional independent capture
+  halves CH1A/B through CH3A/B use latest-value latches, separate capture and
+  sticky overwrite flags, native input filters and explicit acknowledgments.
+  Native CH1A/CH1B QEI supports three edge modes and ARR1..65535 with fixed
+  PRS=/1; count/direction/OVF/UNDF observations remain non-atomic and coalesced.
+  No CH4 external input, capture IRQ/DMA, lossless history, signed position,
+  index, or maximum external edge-rate guarantee is added. The new enum and
+  CAPnA/B routes reflect own-input qualification and exact package bonding,
+  independently of PWM. See [the native contract](timer-event-input.md).
   F030/A030 classic ATIM also supports optional complete A+B pairs, interior
   comparison duty, fixed symmetric dead time and explicit global MOE. It excludes
   duty endpoints, per-pair gating, brake/rearm, inversion and runtime timing
-  changes; other classic advanced modes remain unqualified. No pad-level or
+  changes; other classic output modes remain unqualified. No pad-level or
   shutdown safety guarantee is made. See [the classic contract](classic-atim-complementary-evidence.json).
 - BTIM1, BTIM2 and BTIM3 support internal-PCLK, continuous run-mode coalesced
   ARR-overflow IRQ events on all thirteen families and 54 existing selections.
@@ -195,7 +204,8 @@ still apply.
   gate/reset changes. Native UG still reaches TRGO with MMS=0, so retained
   recipients keep their functional handover contract. Other timer IRQ modes,
   DMA, one-shot, general trigger routing, lossless counts, sleep/wake and
-  clock-loss recovery remain gaps; GTIM/ATIM gain no overflow-wait API.
+  clock-loss recovery remain gaps. The following historical receipts cover
+  the earlier BTIM delivery; current GTIM/ATIM events are described separately.
   Main verification passed 16 actual ARM library builds and 23 ELF links,
   all exit zero. Four finite source/data gates passed separately; 1,353 source
   files and all 905 generated files stayed unchanged during the final matrix.
@@ -206,6 +216,24 @@ still apply.
   final-source 2-library/6-ELF receipt. Earlier partial/failed attempts retain
   their recorded scope in the linked verification history.
   See [the bounded contract and verification boundary](btim-overflow-irq.md).
+- GTIM/ATIM internal-PCLK continuous up-counters expose the existing typed
+  `Timer<T, Async>` overflow-wait API on 34 GTIM and eleven ATIM own-family
+  associations. A static latch belongs to each bank; even shared L012 GTIM34
+  dispatch keeps GTIM3 and GTIM4 independent. Inactive handlers return before
+  timer MMIO. Successful constructor reuse retires state before RCC mutation
+  after pure validation, including the direct classic complementary path.
+  Start/stop retain requests and events. Valid timing changes mask/retire the
+  overflow request and synthetic update, then restore request/running state;
+  invalid changes leave prior state unchanged. Per-owner drop does not disable
+  or unpend a shared vector. Main acceptance covers 16 actual ARM libraries,
+  27 ELF links and ten finite source/data gates. The 43 successful ARM rows
+  retain the failed M24 lockfile attempt and manifest-only continuation; the
+  ten gates retain failed D08 and the existing AF-expectation helper correction.
+  Three existing L010/L011 RCC `dead_code` warnings remain in applicable rows.
+  At main acceptance clean had not run; final-package completion requires a
+  separate final-source 2-library/6-ELF receipt. Source qualification and
+  library/ELF links do not establish hardware timing or lossless delivery.
+  See [the bounded counter-event contract](timer-event-input.md).
 - RTC Alarm A and A/B event observation exist on all eleven RTC families.
   Async waits are limited to existing L010/L011/L012 HSIOSC/LSE sources; new
   native live-LSI waits refuse with `UnsupportedAsyncAlarmSource` before RTC,

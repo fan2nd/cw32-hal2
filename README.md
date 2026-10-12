@@ -169,6 +169,24 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   recorded in [the verification history](docs/btim-overflow-irq.md#verification-boundary).
   No lossless count, stopped-clock progress, sleep/wake or hardware claim.
   See [the overflow-event contract](docs/btim-overflow-irq.md).
+- GTIM/ATIM counters add the same typed Async coalesced overflow API across
+  34 GTIM and eleven ATIM own-family/instance associations. L012 GTIM3/GTIM4
+  share GTIM34 with separate owners/handlers; GTIM1 can remain reserved for
+  Embassy time. Classic ATIM on F030/A030/F003/L031/R031/W031/L052/L083 adds
+  native polling capture for six A/B halves and CH1A/CH1B QEI, using independently
+  qualified bonded input routes. QEI count/direction/wrap observations are
+  non-atomic; capture is a latest latch with separate sticky overwrite status.
+  No capture IRQ/DMA, CH4 external input or lossless history is added.
+  Main acceptance covers 16 actual ARM libraries, 27 linked ELFs and ten
+  finite source/data gates. Three existing L010/L011 RCC `dead_code` warnings
+  remain in applicable rows. The initial static correction, failed lockfile
+  attempt and failed AF-expectation gate remain recorded in the contract.
+  At main acceptance clean had not run; final-package completion requires a
+  separate final-source 2-library/6-ELF receipt. The preceding BTIM receipts
+  retain their earlier scope. See the
+  [counter-event and native-input contract](docs/timer-event-input.md),
+  [event example](examples/timer-overflow/README.md) and
+  [native-input examples](examples/classic-atim-input/README.md).
 - All except L010/L011: polling window watchdog with explicit irreversible start
 - CW32F002F3P7 and CW32F002F3U7: init-only factory LSI SYSCLK with own
   31,160–34,440 Hz rate bounds, complete cold-source admission and explicit

@@ -35,9 +35,6 @@ impl Registers for pac::gtim::Gtim {
         self.af1().write(|v| v.0 = 0);
         self.af2().write(|v| v.0 = 0);
     }
-    fn status(self) -> u32 {
-        self.isr().read().0
-    }
     fn clear_flags(self, value: u32) {
         self.icr().write(|v| v.0 = value);
     }

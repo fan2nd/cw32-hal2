@@ -33,8 +33,8 @@ impl Registers for pac::btim::Btim {
     fn overflow_interrupt_enabled(self) -> bool {
         self.ier().read().ov()
     }
-    fn enable_overflow_interrupt(self) {
-        self.ier().modify(|v| v.set_ov(true));
+    fn set_overflow_interrupt(self, enabled: bool) {
+        self.ier().modify(|v| v.set_ov(enabled));
     }
     fn clear_inputs(self) {
         #[cfg(btim_cw32l031_v1)]

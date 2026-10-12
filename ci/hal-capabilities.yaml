@@ -565,7 +565,7 @@ functions:
       evidence:
       - path: embassy-cw32/src/timer/mod.rs
         anchor: pub trait OverflowInstance
-      - path: embassy-cw32/src/timer/btim/mod.rs
+      - path: embassy-cw32/src/timer/overflow.rs
         anchor: pub struct OverflowInterruptHandler
       - path: embassy-cw32/src/timer/low_level.rs
         anchor: pub async fn wait_overflow
@@ -606,12 +606,39 @@ functions:
       limitations:
       - No APB timer multiplier; qualified prescalers and actual clock bounds apply. BTIM shared gate/reset
         is retained.
+    - id: run_mode_overflow_irq
+      status: partial
+      scope: Owned internal-PCLK continuous up-counter with typed Async coalesced overflow waits.
+      limitations:
+      - One static latch per bank; wait_overflow and take_overflow report at least one observed wrap,
+        not wrap counts or timestamps. Repeated wraps and acknowledgment races can coalesce.
+      - Successful construction retires prior event ownership before RCC mutation after pure validation;
+        Blocking, PWM and input owners remain inactive. Invalid timing requests leave prior state unchanged.
+      - Start/stop retain requests and events; valid timing changes mask and retire synthetic updates,
+        preserving prior request and running state. Per-owner cleanup does not disable or unpend shared vectors.
+      - L012 GTIM3 and GTIM4 share GTIM34 with distinct static states and handlers; every enabled source
+        requires dispatch. A GTIM reserved for Embassy time is excluded from public ownership.
+      - Running clock, IRQ delivery and executor service are required. No sleep/wake, clock-loss recovery,
+        lossless history, external clock, capture IRQ/DMA or general trigger service is added.
+      - Main acceptance covers 16 ARM libraries, 27 ELFs and ten finite source/data gates; the failed M24
+        lockfile attempt and failed D08 expectation gate remain retained with their bounded continuations.
+        Three existing L010/L011 RCC dead_code warnings remain. At main acceptance clean had not run;
+        final-package completion needs a separate final-source two-library/six-ELF receipt. No hardware validation.
+      evidence:
+      - path: embassy-cw32/src/timer/mod.rs
+        anchor: pub trait OverflowInstance
+      - path: embassy-cw32/src/timer/overflow.rs
+        anchor: pub struct OverflowInterruptHandler
+      - path: embassy-cw32/src/timer/low_level.rs
+        anchor: pub async fn wait_overflow
+      - path: docs/timer-event-input.md
+      - path: docs/timer-event-input-source-evidence.json
     - id: irq_dma_other_counting
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.
       limitations:
-      - General counter/capture IRQ, DMA and other counting modes are absent; optional Embassy time and L010/L011
-        routes are listed separately.
+      - Counter modes beyond the separately bounded overflow API, capture IRQ, DMA and other counting modes
+        are absent; optional Embassy time and L010/L011 routes are listed separately.
     - id: main_pwm
       status: partial
       scope: Owned main-output PWM on qualified external channels.
@@ -691,12 +718,39 @@ functions:
       limitations:
       - No APB timer multiplier; qualified prescalers and actual clock bounds apply. BTIM shared gate/reset
         is retained.
+    - id: run_mode_overflow_irq
+      status: partial
+      scope: Owned internal-PCLK continuous up-counter with typed Async coalesced overflow waits.
+      limitations:
+      - One static latch per bank; wait_overflow and take_overflow report at least one observed wrap,
+        not wrap counts or timestamps. Repeated wraps and acknowledgment races can coalesce.
+      - Successful construction retires prior event ownership before RCC mutation after pure validation;
+        Blocking, PWM and input owners remain inactive. Invalid timing requests leave prior state unchanged.
+      - Start/stop retain requests and events; valid timing changes mask and retire synthetic updates,
+        preserving prior request and running state. Per-owner cleanup does not disable or unpend shared vectors.
+      - L012 GTIM3 and GTIM4 share GTIM34 with distinct static states and handlers; every enabled source
+        requires dispatch. A GTIM reserved for Embassy time is excluded from public ownership.
+      - Running clock, IRQ delivery and executor service are required. No sleep/wake, clock-loss recovery,
+        lossless history, external clock, capture IRQ/DMA or general trigger service is added.
+      - Main acceptance covers 16 ARM libraries, 27 ELFs and ten finite source/data gates; the failed M24
+        lockfile attempt and failed D08 expectation gate remain retained with their bounded continuations.
+        Three existing L010/L011 RCC dead_code warnings remain. At main acceptance clean had not run;
+        final-package completion needs a separate final-source two-library/six-ELF receipt. No hardware validation.
+      evidence:
+      - path: embassy-cw32/src/timer/mod.rs
+        anchor: pub trait OverflowInstance
+      - path: embassy-cw32/src/timer/overflow.rs
+        anchor: pub struct OverflowInterruptHandler
+      - path: embassy-cw32/src/timer/low_level.rs
+        anchor: pub async fn wait_overflow
+      - path: docs/timer-event-input.md
+      - path: docs/timer-event-input-source-evidence.json
     - id: irq_dma_other_counting
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.
       limitations:
-      - General counter/capture IRQ, DMA and other counting modes are absent; optional Embassy time and L010/L011
-        routes are listed separately.
+      - Counter modes beyond the separately bounded overflow API, capture IRQ, DMA and other counting modes
+        are absent; optional Embassy time and L010/L011 routes are listed separately.
     - id: main_pwm
       status: partial
       scope: Owned main-output PWM on qualified external channels.
@@ -717,13 +771,11 @@ functions:
       - CH3A
     - id: capture
       status: partial
-      scope: Owned polling direct external input capture.
+      scope: Owned buffered polling direct external input capture.
       limitations:
-      - Each capture is one latch; no lossless history, async or DMA. Classic encoder reload is fixed at 65535;
-        count/direction/wrap samples are non-atomic.
+      - Each capture is one latch; no lossless history, async or DMA. Count/direction/wrap samples are non-atomic.
       evidence:
       - path: embassy-cw32/src/timer/input_capture.rs
-      - path: cw32-data/classic-timer-input.yaml
       implemented_families: &id001
       - CW32L010
       - CW32L011
@@ -739,19 +791,89 @@ functions:
       - - CH4
     - id: encoder
       status: partial
-      scope: Owned polling quadrature encoder.
+      scope: Owned buffered polling quadrature encoder.
       limitations:
-      - Each capture is one latch; no lossless history, async or DMA. Classic encoder reload is fixed at 65535;
-        count/direction/wrap samples are non-atomic.
+      - Each capture is one latch; no lossless history, async or DMA. Count/direction/wrap samples are non-atomic.
       evidence:
       - path: embassy-cw32/src/timer/qei.rs
-      - path: cw32-data/classic-timer-input.yaml
       implemented_families: *id001
       pin_signal_sets:
       - - CAP1
         - CAP2
       - - CH1
         - CH2
+    - id: classic_capture
+      status: partial
+      scope: Native classic ATIM polling capture on six optional independent CH1A/B through CH3A/B halves.
+      implemented_families:
+      - CW32F030
+      - CW32A030
+      - CW32F003
+      - CW32L031
+      - CW32R031
+      - CW32W031
+      - CW32L052
+      - CW32L083
+      limitations:
+      - Own-input CAPnA/B routes and exact bonded pads grant each half independently of PWM; no CH4 input.
+      - Each half has a latest-value latch and separate sticky capture/overwrite flags. Reads do not acknowledge;
+        live observations and acknowledgment races are non-atomic and can lose/coalesce captures.
+      - Disabling a half stabilizes its latch/flags while deliberately dropping new edges. EN=0 alone does not
+        stop capture; Drop shuts down all six native BKS acceptance fields before disconnecting pads and gating.
+      - Native filter sampling derives from PCLK; nominal tick bounds do not imply per-cycle electrical timing.
+        No async capture, IRQ binding, DMA, capture prescaler, event history or maximum edge-rate guarantee.
+      - Main capture links cover all six native halves on F030C8T7, F003E4P7 and L052C8T6 as part of the
+        16-library/27-ELF main acceptance and ten finite source/data gates. At main acceptance clean had not
+        run; final-package completion requires a separate two-library/six-ELF receipt. No hardware execution.
+      facts:
+      - classic_atim_input
+      pin_signal_sets:
+      - - CAP1A
+      - - CAP1B
+      - - CAP2A
+      - - CAP2B
+      - - CAP3A
+      - - CAP3B
+      evidence:
+      - path: embassy-cw32/src/timer/input_capture.rs
+        anchor: pub struct ClassicAtimInputCapture
+      - path: cw32-data/classic-atim-input.yaml
+      - path: docs/timer-event-input.md
+      - path: docs/timer-event-input-source-evidence.json
+    - id: classic_encoder
+      status: partial
+      scope: Native classic ATIM polling quadrature on independently qualified CH1A/CH1B pins.
+      implemented_families:
+      - CW32F030
+      - CW32A030
+      - CW32F003
+      - CW32L031
+      - CW32R031
+      - CW32W031
+      - CW32L052
+      - CW32L083
+      limitations:
+      - Three native edge modes, ARR1..65535, fixed PRS=/1 and constructor-only filter/polarity configuration.
+        Count is modulo ARR+1; count, direction and native OVF/UNDF observations are non-atomic and coalesced.
+      - Native OVF/UNDF are independent of the internal counter's UIF; neither flag counts wraps. Reset races
+        external edges. No signed unbounded position, index, direction-change service or stop/resume API.
+      - Own functional phase separation is strictly greater than one TCLK pulse width and each phase pulse
+        width is strictly greater than two TCLK pulse widths; rate bounds are not per-cycle timing guarantees.
+      - Capture BKS fields stay disabled; Drop stops and disconnects native decoding, then disconnects pads.
+        Main QEI links cover all eight own-family example selections, including F003 with its GTIM reserved.
+        At main acceptance clean had not run; the final-source two-library/six-ELF receipt remains separately
+        required. No hardware execution or maximum edge rate is claimed.
+      facts:
+      - classic_atim_input
+      pin_signal_sets:
+      - - CAP1A
+        - CAP1B
+      evidence:
+      - path: embassy-cw32/src/timer/qei.rs
+        anchor: pub struct ClassicAtimQei
+      - path: cw32-data/classic-atim-input.yaml
+      - path: docs/timer-event-input.md
+      - path: docs/timer-event-input-source-evidence.json
     - id: classic_complementary_dead_time_global_enable
       status: partial
       scope: Optional complete classic A+B pairs, interior comparison duty, fixed symmetric dead time and explicit global MOE.

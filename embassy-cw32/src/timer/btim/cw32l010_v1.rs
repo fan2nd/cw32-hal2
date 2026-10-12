@@ -34,11 +34,11 @@ impl Registers for pac::btim::Btim {
             self.dier().read().uie()
         }
     }
-    fn enable_overflow_interrupt(self) {
+    fn set_overflow_interrupt(self, enabled: bool) {
         #[cfg(btim_cw32l010_v1)]
-        self.ier().modify(|v| v.set_uie(true));
+        self.ier().modify(|v| v.set_uie(enabled));
         #[cfg(btim_cw32l012_v1)]
-        self.dier().modify(|v| v.set_uie(true));
+        self.dier().modify(|v| v.set_uie(enabled));
     }
     fn clear_inputs(self) {
         self.smcr().write(|v| v.0 = 0); // Internal PCLK, no slave or reset input.

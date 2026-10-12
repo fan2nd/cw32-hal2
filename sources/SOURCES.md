@@ -1202,3 +1202,61 @@ F020 的旧 timing PDF 与当前 pinout PDF 分别绑定各自已锁身份，修
 本次实施遗漏而非原件或原冻结来源事实。主验收时 clean 尚未执行；最终
 源码包必须另有六库/六 ELF clean 收据。详细限制及独审见
 [classic-i2c-async.md](../docs/classic-i2c-async.md)，主结论分别见[运行审阅](../docs/classic-i2c-async-runtime-review.json)与[来源审阅](../docs/classic-i2c-async-metadata-review.json)。
+
+## GTIM/ATIM counter events and native classic ATIM input sources
+
+The [bounded contract](../docs/timer-event-input.md) and
+[current own-source evidence](../docs/timer-event-input-source-evidence.json)
+cover 34 GTIM and eleven ATIM family/instance overflow associations and native
+classic ATIM input qualification on F030, A030, F003, L031, R031, W031, L052 and
+L083. The source record keeps separate `counter_events` and
+`classic_atim_input` sections. Each family's own manual, datasheet and locked
+SDK provenance supplies its actual register semantics, GLOBAL vector, AF input
+cell and package bonding. Existing output routing is not input permission.
+
+The native input catalog `cw32-data/classic-atim-input.yaml` projects the direct
+`ClassicPairedV1` qualification and CAP1A/B, CAP2A/B, CAP3A/B routes onto the
+37 admitted current selections. The other 17 retain no native-classic fact;
+F002/F020 lack ATIM, while L010/L011/L012 keep their distinct buffered owners.
+All 54 selections retain their existing exact-package or common-package-alias
+policy, protected/debug/oscillator/radio exclusions, and time-driver ownership.
+Raw pad spellings such as F003 PA00 are resolved to existing canonical GPIO
+pins, never treated as new Rust identifiers or permission to use debug PA5.
+
+The own classic ATIM capture acceptance fields operate independently of EN;
+latest CCR reads, capture flags and overwrite flags have separate semantics.
+Native QEI uses SMS4/5/6, fixed PRS=/1 and distinct OVF/UNDF observations. The
+manual's phase and input pulse requirements are expressed in TCLK pulse widths,
+not silently replaced by full periods or a measured maximum edge rate.
+L012 GTIM's manual DIER name and its SDK/PAC `ier()` accessor remain an explicit
+naming difference; L012 ATIM uses `dier()`. Selective R1W0 event acknowledgments
+preserve the own masks and reserved reset-one bits.
+
+Main acceptance records 16 actual ARM libraries and 27 linked ELFs. The ten
+finite source/data gates passed through seven retained successes plus three
+successful continuation commands, with eleven actual attempts and the failed
+D08 receipt preserved. Its existing independent AF expected-route helper had
+omitted the newly approved native-input catalog. Only that helper was extended;
+full ordered actual-versus-expected equality, own-source proof, canonical facts
+and generated projections were retained. No HAL test or lifecycle probe was
+added. The ARM matrix similarly preserves the pre-compilation M24 lockfile
+failure: restoring one local time-driver forwarding feature retained the
+original pinned lockfile bytes and left the earlier 23 commands' actual inputs
+unchanged. The 43 successful rows therefore span 44 attempts and two documented
+manifest snapshots, not an uninterrupted same-tree run.
+
+One main generation produced 910 canonical files with 77 allowed metadata
+changes and 833 byte-identical files. Exact inverse checks restored prior JSON
+values/array order and Rust metadata bytes after removing only the admitted
+additions; canonical PAC register bodies and write policies stayed unchanged.
+The earlier static buffered ATIM accessor correction used its existing own
+`0x00ff3fff` clear seed, retaining the classic `write_noop()` helper without
+changing PACs or source facts. Three existing L010/L011 RCC `dead_code` warnings
+remain in applicable ARM rows.
+
+At main acceptance clean had not run; final-package completion requires a
+separate final-source 2-library/6-ELF receipt. Documentary qualification and
+ordinary compilation/linking do not establish silicon capture accuracy,
+lossless delivery, wake behavior or external timing limits. Prior BTIM/PWM/input
+histories keep their original scope. The detailed correction and acceptance
+history is in [the contract](../docs/timer-event-input.md#verification-history).

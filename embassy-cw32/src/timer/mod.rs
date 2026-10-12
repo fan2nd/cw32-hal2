@@ -1,4 +1,4 @@
-//! Owned CW32 counters, BTIM overflow events and source-qualified main-output PWM.
+//! Owned CW32 counters, coalesced overflow events and source-qualified timer I/O.
 //!
 //! [`low_level::Timer`] retains the [`crate::Peri`] for a verified basic,
 //! general-purpose or advanced timer. BTIM has no PWM capability. Classic ATIM
@@ -14,10 +14,10 @@
 //! F030/A030 classic ATIM additionally provides owned complementary PWM, fixed
 //! dead time, and global MOE. Buffered ATIM provides complementary PWM and BK1 in
 //! `complementary_pwm`, with constructor-only symmetric dead time. External counter,
-//! async time driver, one-shot and DMA are not provided. Only BTIM has a typed
-//! overflow IRQ API: events coalesce, with no elapsed-time or sleep/wake promise.
-//! GTIM/ATIM interrupt APIs remain unsupported. Buffered GTIM and buffered ATIM
-//! also provide owned polling capture and encoder APIs.
+//! async time driver, one-shot and DMA are not provided. Qualified BTIM/GTIM/ATIM
+//! counters provide typed overflow IRQs: events coalesce, without an elapsed-time
+//! or sleep/wake promise. GTIM and ATIM also provide qualified polling input APIs;
+//! classic ATIM capture has six independent A/B halves and QEI uses CH1A/CH1B.
 //! No silicon validation has been performed. See `docs/atim-counter-pwm.md`.
 
 use crate::PeripheralType;
@@ -41,6 +41,7 @@ mod input;
 #[cfg(any(gtim_classic, gtim_buffered))]
 pub mod input_capture;
 pub mod low_level;
+pub(crate) mod overflow;
 #[cfg(any(gtim_classic, gtim_buffered))]
 pub mod qei;
 #[cfg(any(gtim_classic, gtim_buffered))]
@@ -48,20 +49,18 @@ pub mod simple_pwm;
 #[cfg(trigger_btim1_update)]
 pub mod trigger;
 #[cfg(btim)]
-pub use btim::OverflowInterruptHandler;
-#[cfg(btim)]
 pub(crate) use btim::impl_btim;
+pub use overflow::OverflowInterruptHandler;
 
 /// Counter operations available on a verified timer, without implying capture,
 /// compare, PWM, DMA or interrupt support. The peripheral is retained by `Peri`.
 #[allow(private_bounds)]
 pub trait BasicInstance: PeripheralType + sealed::BasicInstance + 'static {}
 
-/// A BTIM qualified for owned, coalesced ARR-overflow interrupt events.
+/// A counter qualified for owned, coalesced ARR-overflow interrupt events.
 ///
 /// This capability does not imply a lossless counter, DMA, other timer events,
 /// or an Embassy global time driver. Bind all enabled sources on shared vectors.
-#[cfg(btim)]
 #[allow(private_bounds)]
 pub trait OverflowInstance: BasicInstance + sealed::OverflowInstance {
     type Interrupt: crate::interrupt::typelevel::Interrupt;
@@ -80,6 +79,8 @@ pub(crate) trait CounterRegisters: Copy {
     fn counter_write(self, value: u16);
     fn counter_overflow(self) -> bool;
     fn counter_clear_overflow(self);
+    fn counter_overflow_interrupt_enabled(self) -> bool;
+    fn counter_set_overflow_interrupt(self, enabled: bool);
     fn counter_disable_requests(self);
 }
 
@@ -109,15 +110,12 @@ pub(crate) mod sealed {
     pub trait BasicInstance: crate::rcc::RccPeripheral {
         type CounterRegisters: super::CounterRegisters;
         const COUNTER_REGS: Self::CounterRegisters;
-        #[cfg(btim)]
-        fn overflow_state() -> Option<&'static super::btim::State> {
+        fn overflow_state() -> Option<&'static super::overflow::State> {
             None
         }
     }
-    #[cfg(btim)]
     pub trait OverflowInstance {
-        const OVERFLOW_REGS: crate::pac::btim::Btim;
-        fn state() -> &'static super::btim::State;
+        fn state() -> &'static super::overflow::State;
     }
     #[cfg(any(gtim_classic, gtim_buffered))]
     #[allow(private_bounds)]
@@ -148,6 +146,17 @@ pub(crate) mod sealed {
     }
     #[cfg(atim_buffered)]
     pub trait TimerBreakPin<T: super::ComplementaryInstance> {
+        fn af(&self) -> u8;
+    }
+    #[cfg(atim_classic_input)]
+    pub trait ClassicAtimInputInstance {
+        const INPUT_REGS: crate::pac::atim::Atim;
+    }
+    #[cfg(atim_classic_input)]
+    pub trait ClassicAtimInputChannel {}
+    #[cfg(atim_classic_input)]
+    pub trait ClassicAtimCapturePin<T: super::ClassicAtimInputInstance, C: ClassicAtimInputChannel>
+    {
         fn af(&self) -> u8;
     }
     pub trait Channel {}
@@ -214,12 +223,25 @@ pub trait TimerPin<T: Instance, C: TimerChannel>: Pin + sealed::TimerPin<T, C> {
 // Reserving the sole GTIM leaves no public instance/pin macro invocation.
 #[cfg_attr(feature = "_time-driver", allow(unused_macros))]
 macro_rules! impl_gtim {
-    ($name:ident, $number:literal) => {
+    ($name:ident, $number:literal, $irq:ident) => {
         impl $crate::timer::sealed::BasicInstance for $crate::peripherals::$name {
             type CounterRegisters = $crate::pac::gtim::Gtim;
             const COUNTER_REGS: Self::CounterRegisters = $crate::pac::$name;
+            fn overflow_state() -> Option<&'static $crate::timer::overflow::State> {
+                Some(<Self as $crate::timer::sealed::OverflowInstance>::state())
+            }
         }
         impl $crate::timer::BasicInstance for $crate::peripherals::$name {}
+        impl $crate::timer::sealed::OverflowInstance for $crate::peripherals::$name {
+            fn state() -> &'static $crate::timer::overflow::State {
+                static STATE: $crate::timer::overflow::State =
+                    $crate::timer::overflow::State::new();
+                &STATE
+            }
+        }
+        impl $crate::timer::OverflowInstance for $crate::peripherals::$name {
+            type Interrupt = $crate::interrupt::typelevel::$irq;
+        }
         impl $crate::timer::sealed::Instance for $crate::peripherals::$name {
             type PwmRegisters = $crate::pac::gtim::Gtim;
             const REGS: $crate::pac::gtim::Gtim = $crate::pac::$name;
@@ -352,3 +374,115 @@ macro_rules! impl_timer_break_pin {
 #[cfg(atim_buffered)]
 #[allow(unused_imports)]
 pub(crate) use impl_timer_break_pin;
+
+// Each emitted association owns one exact hardware bank, even on a shared vector.
+#[cfg(atim)]
+macro_rules! impl_atim_overflow {
+    ($irq:ident) => {
+        impl $crate::timer::sealed::OverflowInstance for $crate::peripherals::ATIM {
+            fn state() -> &'static $crate::timer::overflow::State {
+                static STATE: $crate::timer::overflow::State =
+                    $crate::timer::overflow::State::new();
+                &STATE
+            }
+        }
+        impl $crate::timer::OverflowInstance for $crate::peripherals::ATIM {
+            type Interrupt = $crate::interrupt::typelevel::$irq;
+        }
+    };
+}
+#[cfg(atim)]
+pub(crate) use impl_atim_overflow;
+
+/// A classic ATIM qualified for native six-half capture and CH1A/CH1B QEI.
+#[cfg(atim_classic_input)]
+#[allow(private_bounds)]
+pub trait ClassicAtimInputInstance:
+    AdvancedInstance3Channel + sealed::ClassicAtimInputInstance
+{
+}
+
+/// A sealed native classic ATIM capture-half marker, independent of PWM channels.
+#[cfg(atim_classic_input)]
+#[allow(private_bounds)]
+pub trait ClassicAtimInputChannel: sealed::ClassicAtimInputChannel + 'static {}
+#[cfg(atim_classic_input)]
+macro_rules! classic_atim_channels {
+    ($($name:ident),*) => {$(
+        #[doc = concat!("Native classic ATIM ", stringify!($name), " input marker.")]
+        pub enum $name {}
+        impl sealed::ClassicAtimInputChannel for $name {}
+        impl ClassicAtimInputChannel for $name {}
+    )*};
+}
+#[cfg(atim_classic_input)]
+classic_atim_channels!(Ch1A, Ch1B, Ch2A, Ch2B, Ch3A, Ch3B);
+
+/// One of six independent classic ATIM external capture halves. CH4 is internal.
+#[cfg(atim_classic_input)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub enum ClassicAtimChannel {
+    /// Channel 1 A input.
+    Ch1A,
+    /// Channel 1 B input.
+    Ch1B,
+    /// Channel 2 A input.
+    Ch2A,
+    /// Channel 2 B input.
+    Ch2B,
+    /// Channel 3 A input.
+    Ch3A,
+    /// Channel 3 B input.
+    Ch3B,
+}
+#[cfg(atim_classic_input)]
+impl ClassicAtimChannel {
+    pub(crate) const fn index(self) -> usize {
+        self as usize
+    }
+}
+
+/// An independently source- and package-qualified native ATIM input route.
+#[cfg(atim_classic_input)]
+#[allow(private_bounds)]
+pub trait ClassicAtimCapturePin<T: ClassicAtimInputInstance, C: ClassicAtimInputChannel>:
+    Pin + sealed::ClassicAtimCapturePin<T, C>
+{
+}
+
+#[cfg(atim_classic_input)]
+macro_rules! impl_classic_atim_input {
+    () => {
+        impl $crate::timer::sealed::ClassicAtimInputInstance for $crate::peripherals::ATIM {
+            const INPUT_REGS: $crate::pac::atim::Atim = $crate::pac::ATIM;
+        }
+        impl $crate::timer::ClassicAtimInputInstance for $crate::peripherals::ATIM {}
+    };
+}
+#[cfg(atim_classic_input)]
+pub(crate) use impl_classic_atim_input;
+#[cfg(atim_classic_input)]
+macro_rules! impl_classic_atim_capture_pin {
+    ($instance:ident, $channel:ident, $pin:ident, $af:literal) => {
+        impl
+            $crate::timer::sealed::ClassicAtimCapturePin<
+                $crate::peripherals::$instance,
+                $crate::timer::$channel,
+            > for $crate::peripherals::$pin
+        {
+            fn af(&self) -> u8 {
+                $af
+            }
+        }
+        impl
+            $crate::timer::ClassicAtimCapturePin<
+                $crate::peripherals::$instance,
+                $crate::timer::$channel,
+            > for $crate::peripherals::$pin
+        {
+        }
+    };
+}
+#[cfg(atim_classic_input)]
+pub(crate) use impl_classic_atim_capture_pin;

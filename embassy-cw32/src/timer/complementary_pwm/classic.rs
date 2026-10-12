@@ -175,8 +175,10 @@ impl<'d, T: ComplementaryInstance> ComplementaryPwm<'d, T> {
             config.dead_time_ns,
         )?;
         let duty = timing.period() / 2;
-        critical_section::with(crate::rcc::enable_and_reset_with_cs::<T>)
-            .expect("ATIM clock gate did not enable");
+        critical_section::with(|cs| {
+            super::super::low_level::retire_overflow_state::<T>(cs);
+            crate::rcc::enable_and_reset_with_cs::<T>(cs).expect("ATIM clock gate did not enable");
+        });
         // Reset and all configuration occur with pads disconnected and MOE=0.
         pac::ATIM.cr().write(|v| *v = control(timing));
         pac::ATIM.dtr().write(|v| {
@@ -345,14 +347,16 @@ fn control(timing: Timing) -> pac::atim::regs::Cr {
 }
 impl<T: ComplementaryInstance> Drop for ComplementaryPwm<'_, T> {
     fn drop(&mut self) {
-        pac::ATIM.dtr().modify(|v| v.set_moe(false));
-        pac::ATIM.cr().write(|v| *v = control(self.timing));
-        for pin in self.pins.iter_mut().flatten() {
-            pin.set_as_disconnected();
-        }
-        // Requests remain disabled for the owner's entire lifetime.
-        pac::ATIM.dtr().write(|_| {});
-        critical_section::with(crate::rcc::disable_with_cs::<T>)
-            .expect("ATIM clock gate did not disable");
+        critical_section::with(|cs| {
+            super::super::low_level::retire_overflow_state::<T>(cs);
+            pac::ATIM.dtr().modify(|v| v.set_moe(false));
+            // Fresh stopped control also masks all requests without replaying commands.
+            pac::ATIM.cr().write(|v| *v = control(self.timing));
+            for pin in self.pins.iter_mut().flatten() {
+                pin.set_as_disconnected();
+            }
+            pac::ATIM.dtr().write(|_| {});
+            crate::rcc::disable_with_cs::<T>(cs).expect("ATIM clock gate did not disable");
+        });
     }
 }

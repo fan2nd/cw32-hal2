@@ -178,6 +178,7 @@ pub struct Peripheral {
     pub rcc_control: Option<PeripheralRccControl>,
     pub spi: Option<PeripheralSpi>,
     pub classic_timer_input: Option<PeripheralClassicTimerInput>,
+    pub classic_atim_input: Option<PeripheralClassicAtimInput>,
     pub atim_complementary: Option<PeripheralAtimComplementary>,
     pub lvd: Option<PeripheralLvd>,
     pub lcd: Option<PeripheralLcd>,
@@ -263,6 +264,11 @@ pub struct PeripheralRccWriteKey {
 pub struct PeripheralClassicTimerInput {
     pub capture_mux: &'static str,
     pub encoder_fixed_reload: Option<u16>,
+}
+
+#[derive(Debug, Eq, PartialEq, Clone)]
+pub enum PeripheralClassicAtimInput {
+    ClassicPairedV1,
 }
 
 #[derive(Debug, Eq, PartialEq, Clone)]

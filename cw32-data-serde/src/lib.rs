@@ -623,6 +623,21 @@ pub mod chip {
                     pub encoder_fixed_reload: Option<u16>,
                 }
             }
+            #[derive(Clone, Debug, Eq, PartialEq, Hash, serde::Serialize, serde::Deserialize)]
+            #[serde(try_from = "String")]
+            pub enum ClassicAtimInput {
+                ClassicPairedV1,
+            }
+            impl TryFrom<String> for ClassicAtimInput {
+                type Error = &'static str;
+
+                fn try_from(value: String) -> Result<Self, Self::Error> {
+                    match value.as_str() {
+                        "ClassicPairedV1" => Ok(Self::ClassicPairedV1),
+                        _ => Err("unknown classic ATIM input protocol"),
+                    }
+                }
+            }
             record! {
                 Pin {
                     pub pin: String,
@@ -751,6 +766,8 @@ pub mod chip {
                 pub spi: Option<peripheral::Spi>,
                 #[serde(default, skip_serializing_if = "Option::is_none")]
                 pub classic_timer_input: Option<peripheral::ClassicTimerInput>,
+                #[serde(default, skip_serializing_if = "Option::is_none")]
+                pub classic_atim_input: Option<peripheral::ClassicAtimInput>,
                 #[serde(default, skip_serializing_if = "Option::is_none")]
                 pub atim_complementary: Option<peripheral::AtimComplementary>,
                 #[serde(default, skip_serializing_if = "Option::is_none")]

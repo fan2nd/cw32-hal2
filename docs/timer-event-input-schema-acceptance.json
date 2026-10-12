@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "stage": "Stage90",
+  "reviewed_on": "2026-10-12",
+  "review_kind": "independent_actual_three_model_static_schema_review",
+  "status": "accepted_static_schema",
+  "independent_review_passed": true,
+  "blocking_findings": [],
+  "legal_clearance": false,
+  "review_independence": "Static review performed by a coordinator who did not author or edit any of the reviewed three model files or schema assertions. Separate final source and runtime reviews remain required.",
+  "scope": "Exact actual optional classic_atim_input enum field, string-only parsing and generated model correspondence; no runtime or generation acceptance.",
+  "baseline": {
+    "commit": "ce7cac624907ea08f3eff9ce3606bc5adbbda286",
+    "source_manifest_sha256": "159622ce5b5382f010b8b462c25e591c76442e54b7eb31fa637715085f0ecc8a"
+  },
+  "models": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "d67b3787e3a7bc34d2f38f5eaaa7b1f007f2c801667c50636a242ff3cc3d8628",
+      "after_sha256": "63040a64d7f07fae75a8b8636a3c28ba9cc7f5d6e3cc9d1f1e83fc906e1c5646",
+      "before_bytes": 36980,
+      "after_bytes": 37773,
+      "baseline_manifest_match": true,
+      "current_source_and_frozen_copy_match": true
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "fee884e43a76ed884c27bf2365e34de94b8da95fd704530c9ead23da14f58746",
+      "after_sha256": "c1314dc8d6b8273bee7583eb3b4178696faa738a4827d0af3b8dd54d068689c7",
+      "before_bytes": 36402,
+      "after_bytes": 37022,
+      "baseline_manifest_match": true,
+      "current_source_and_frozen_copy_match": true
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "1a7bc947aa44e8ba187b810b1af537251759e79e671f527dd12b0d0c8b1f1f6b",
+      "after_sha256": "c1228be45262b61875c3408f11d0106e7f0e63eafd1873d9f37335697b80f6ca",
+      "before_bytes": 24384,
+      "after_bytes": 24549,
+      "baseline_manifest_match": true,
+      "current_source_and_frozen_copy_match": true
+    }
+  ],
+  "schema_test_source": {
+    "path": "cw32-data-serde/tests/schema_contracts.rs",
+    "before_sha256": "6ebfa71e9c59466f9144235d1d09f5736ac2109459460c539d40f10ef061db45",
+    "after_sha256": "4c02d4be86a8fcc99ca216f083ff16b9af491b9eee2ff41eae079ccd57e82a4f",
+    "before_bytes": 22178,
+    "after_bytes": 23274,
+    "baseline_manifest_match": true,
+    "current_source_and_frozen_copy_match": true,
+    "test_count": 19,
+    "executed": false
+  },
+  "reviewed_patch": {
+    "external_artifact": "stage90-metadata-implementation",
+    "artifact_relative_path": "three-model-and-schema-assertions.patch",
+    "sha256": "f1aa13be555124153f374802bcc03fc31ea1f6d40a69753d26b379bb697ccdab",
+    "exact_regenerated_diff_match": true
+  },
+  "unchanged_enum_debug_macro": {
+    "path": "cw32-data-macros/src/lib.rs",
+    "sha256": "98997c04b49040e96913e91f5d33a01e37789daf29d6ed687977b0e2f535194f"
+  },
+  "checks": [
+    {
+      "name": "three_shape_correspondence",
+      "result": "accepted_by_static_inspection",
+      "finding": "Exactly one optional field and direct single-variant protocol enum in all three authored models; no Pin or old fact changes."
+    },
+    {
+      "name": "json_none",
+      "result": "accepted_by_static_inspection",
+      "finding": "Outer Option default and skip_serializing_if preserve omitted/null None and omit None on project serialization."
+    },
+    {
+      "name": "string_only_parser",
+      "result": "accepted_by_static_inspection",
+      "finding": "Both deserializing models derive Deserialize through TryFrom<String>; only exact ClassicPairedV1 matches. Object, Boolean, integer and other string forms cannot be admitted as that enum."
+    },
+    {
+      "name": "serialization",
+      "result": "accepted_by_static_inspection",
+      "finding": "Project model retains unit-enum Serialize, yielding the exact variant string; try_from alters deserialization only."
+    },
+    {
+      "name": "static_debug",
+      "result": "accepted_by_static_inspection",
+      "finding": "Existing unchanged EnumDebug emits EnumName::Variant for unit cases, matching the public template variant; Peripheral custom Debug adds the field at the same position."
+    },
+    {
+      "name": "public_api",
+      "result": "accepted_by_static_inspection",
+      "finding": "External Rust Peripheral literal construction must provide the new optional field; this is explicitly source-breaking, not concealed by JSON compatibility."
+    },
+    {
+      "name": "old_behavior",
+      "result": "accepted_by_static_inspection",
+      "finding": "Exact full-file diffs contain only new declarations/conversion/field/debug and assertions. Old field types/order/attributes/Pin types remain untouched."
+    },
+    {
+      "name": "test_source",
+      "result": "accepted_by_static_inspection",
+      "finding": "Assertions extend existing omission/default and enum tests; test source still has19 tests. Tests have not yet run."
+    },
+    {
+      "name": "actual_identity",
+      "result": "accepted_by_static_inspection",
+      "finding": "All four before files hash-match published89 manifest and all current after bytes equal writer frozen copies; exact regenerated patch matches."
+    },
+    {
+      "name": "parser_design_correction",
+      "result": "accepted_by_static_inspection",
+      "finding": "Derived unit enums can admit object tagging; explicit string conversion is the approved minimal implementation correction to the frozen string-only contract, not a new public shape."
+    },
+    {
+      "name": "ancestry_sequence",
+      "result": "accepted_by_static_inspection",
+      "finding": "Only after this genuine actual static review may the coordinator advance the existing schema row with full old previous_review and legal_clearance false. No new qualification/runtime acceptance follows from this receipt."
+    },
+    {
+      "name": "acceptance_boundary",
+      "result": "accepted_by_static_inspection",
+      "finding": "Generation/current projections, actual19 schema test execution, ARM runtime and main/clean acceptance remain pending."
+    }
+  ],
+  "performed": [
+    "Full actual four-file diff review",
+    "Three authored type/attribute/debug correspondence",
+    "Existing EnumDebug unit branch inspection",
+    "Whole before/current/frozen byte and hash checks",
+    "Existing19 test-source assertion review"
+  ],
+  "not_performed": [
+    "Cargo/schema test execution",
+    "Generation",
+    "HAL build or runtime execution",
+    "Hardware validation",
+    "Legal clearance"
+  ]
+}

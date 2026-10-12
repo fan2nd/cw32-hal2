@@ -154,6 +154,7 @@ fn main() {
         "atim_classic",
         "atim_buffered",
         "atim_classic_complementary",
+        "atim_classic_input",
         "atim_v1",
         "atim_cw32f003_v1",
         "atim_cw32l052_v1",
@@ -453,6 +454,31 @@ fn main() {
                 "atim_classic"
             }
         );
+    }
+    let mut classic_atim_input = false;
+    for peripheral in metadata.peripherals {
+        match &peripheral.classic_atim_input {
+            None => {}
+            Some(cw32_metapac::metadata::PeripheralClassicAtimInput::ClassicPairedV1) => {
+                assert_eq!(peripheral.name, "ATIM");
+                let regs = peripheral
+                    .registers
+                    .as_ref()
+                    .expect("ATIM input registers missing");
+                assert_eq!(regs.kind, "atim");
+                assert_eq!(regs.block, "Atim");
+                assert!(matches!(regs.version, "v1" | "cw32f003_v1" | "cw32l052_v1"));
+                assert_eq!(atim_version, Some(regs.version));
+                assert!(
+                    !classic_atim_input,
+                    "duplicate native ATIM input qualification"
+                );
+                classic_atim_input = true;
+            }
+        }
+    }
+    if classic_atim_input {
+        println!("cargo:rustc-cfg=atim_classic_input");
     }
     // GTIM versions are qualified independently of mere peripheral presence.
     let gtim_version = match metadata.line {
@@ -1343,9 +1369,10 @@ fn main() {
                 } else {
                     name[4..].parse().expect("invalid GTIM number")
                 };
+                let irq = timer_overflow_irq(peripheral);
                 out.push_str(&format!(
-                    "crate::timer::impl_gtim!({}, {});\n",
-                    name, number
+                    "crate::timer::impl_gtim!({}, {}, {});\n",
+                    name, number, irq
                 ));
                 if let Some(input) = &peripheral.classic_timer_input {
                     out.push_str(&format!(
@@ -1355,6 +1382,18 @@ fn main() {
                         input.encoder_fixed_reload
                     ));
                 }
+            }
+        }
+        if atim_version.is_some() {
+            let peripheral = metadata
+                .peripherals
+                .iter()
+                .find(|p| p.name == "ATIM")
+                .unwrap();
+            let irq = timer_overflow_irq(peripheral);
+            out.push_str(&format!("crate::timer::impl_atim_overflow!({irq});\n"));
+            if classic_atim_input {
+                out.push_str("crate::timer::impl_classic_atim_input!();\n");
             }
         }
         generate_btim_interrupts(&mut out, btim_version);
@@ -1537,6 +1576,26 @@ fn main() {
                             peripheral.name, role, pin.pin, af
                         ));
                     }
+                }
+                let classic_atim_capture_role = match pin.signal {
+                    "CAP1A" => Some("Ch1A"),
+                    "CAP1B" => Some("Ch1B"),
+                    "CAP2A" => Some("Ch2A"),
+                    "CAP2B" => Some("Ch2B"),
+                    "CAP3A" => Some("Ch3A"),
+                    "CAP3B" => Some("Ch3B"),
+                    _ => None,
+                };
+                if let Some(role) = classic_atim_capture_role {
+                    assert_eq!(peripheral.name, "ATIM");
+                    assert!(
+                        classic_atim_input,
+                        "native capture pin without ATIM protocol"
+                    );
+                    out.push_str(&format!(
+                        "crate::timer::impl_classic_atim_capture_pin!(ATIM, {}, {}, {});\n",
+                        role, pin.pin, af
+                    ));
                 }
                 if atim_version.is_some() && peripheral.name == "ATIM" {
                     let role = match pin.signal {
@@ -3307,6 +3366,77 @@ fn classic_i2c_irq(peripheral: &cw32_metapac::metadata::Peripheral) -> &'static 
 
 // Emit only source-qualified associations, using the selected bank's actual
 // GLOBAL link. A changed route or vector membership needs a new source review.
+// Each event owner gets only its own actual GLOBAL route. L012 GTIM3/4
+// retain distinct state while sharing GTIM34; no other vector owner is admitted.
+fn timer_overflow_irq(peripheral: &cw32_metapac::metadata::Peripheral) -> &'static str {
+    let metadata = &cw32_metapac::metadata::METADATA;
+    let regs = peripheral
+        .registers
+        .as_ref()
+        .expect("timer registers missing");
+    let shared = regs.kind == "gtim"
+        && regs.version == "cw32l012_v1"
+        && matches!(peripheral.name, "GTIM3" | "GTIM4");
+    let (expected_irq, number) = match peripheral.name {
+        "ATIM" => {
+            assert_eq!((regs.kind, regs.block), ("atim", "Atim"));
+            ("ATIM", 13)
+        }
+        "GTIM" => ("GTIM", 16),
+        "GTIM1" => ("GTIM1", 16),
+        "GTIM2" => ("GTIM2", 17),
+        "GTIM3" if shared => ("GTIM34", 18),
+        "GTIM4" if shared => ("GTIM34", 18),
+        "GTIM3" => ("GTIM3", 18),
+        "GTIM4" => ("GTIM4", 19),
+        _ => panic!("unqualified counter event instance"),
+    };
+    if peripheral.name != "ATIM" {
+        assert_eq!((regs.kind, regs.block), ("gtim", "Gtim"));
+    }
+    assert_eq!(
+        peripheral.interrupts.len(),
+        1,
+        "timer requires one GLOBAL link"
+    );
+    let irq = &peripheral.interrupts[0];
+    assert_eq!(irq.signal, "GLOBAL");
+    assert_eq!(irq.interrupt, expected_irq);
+    let vectors: Vec<_> = metadata
+        .interrupts
+        .iter()
+        .filter(|i| i.name == expected_irq)
+        .collect();
+    assert_eq!(vectors.len(), 1);
+    assert_eq!(vectors[0].number, number);
+    assert_eq!(
+        metadata
+            .interrupts
+            .iter()
+            .filter(|i| i.number == number)
+            .count(),
+        1
+    );
+    let mut owners = Vec::new();
+    for candidate in metadata.peripherals {
+        for link in candidate.interrupts {
+            if link.interrupt == expected_irq {
+                assert_eq!(link.signal, "GLOBAL");
+                owners.push(candidate.name);
+            }
+        }
+    }
+    owners.sort_unstable();
+    let mut expected_owners = if shared {
+        vec!["GTIM3", "GTIM4"]
+    } else {
+        vec![peripheral.name]
+    };
+    expected_owners.sort_unstable();
+    assert_eq!(owners, expected_owners, "unqualified timer vector owners");
+    irq.interrupt
+}
+
 fn generate_btim_interrupts(out: &mut String, version: &str) {
     let metadata = &cw32_metapac::metadata::METADATA;
     let mut banks: Vec<_> = metadata

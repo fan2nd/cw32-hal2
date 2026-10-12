@@ -56,9 +56,6 @@ impl Registers for pac::atim::Atim {
     fn write_counter(self, value: u16) {
         self.cnt().write(|v| v.set_cnt(value));
     }
-    fn status(self) -> u32 {
-        self.isr().read().0
-    }
     fn clear_flags(self, value: u32) {
         self.icr().write(|v| v.0 = value);
     }

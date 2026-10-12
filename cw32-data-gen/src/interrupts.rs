@@ -78,6 +78,7 @@ mod tests {
             rcc_control: None,
             spi: None,
             classic_timer_input: None,
+            classic_atim_input: None,
             atim_complementary: None,
             gpio_interrupt: None,
             gpio: None,

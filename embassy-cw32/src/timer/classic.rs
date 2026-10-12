@@ -75,6 +75,12 @@ impl CounterRegisters for pac::gtim::Gtim {
         clear.set_ov(false);
         self.icr().write_value(clear);
     }
+    fn counter_overflow_interrupt_enabled(self) -> bool {
+        self.ier().read().ov()
+    }
+    fn counter_set_overflow_interrupt(self, enabled: bool) {
+        self.ier().modify(|v| v.set_ov(enabled));
+    }
     fn counter_disable_requests(self) {
         self.ier().write(|_| {});
         // F002/F003 have no DMA register at the otherwise shared offset.

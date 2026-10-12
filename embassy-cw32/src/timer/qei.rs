@@ -195,3 +195,197 @@ impl<T: InputInstance> Drop for Qei<'_, T> {
         self.ch2.set_as_disconnected();
     }
 }
+
+#[cfg(atim_classic_input)]
+pub use super::{Ch1A, Ch1B};
+#[cfg(atim_classic_input)]
+use super::{
+    ClassicAtimCapturePin, ClassicAtimInputInstance, advanced,
+    input_capture::ClassicAtimCaptureInput, low_level::ClassicAtimFilter,
+};
+
+/// Classic ATIM quadrature modes, using the native CH1A/CH1B pair.
+/// Both direct signals determine decoding in every mode. The x2/x4 descriptions
+/// apply to valid quadrature transitions and do not imply a maximum edge rate.
+#[cfg(atim_classic_input)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub enum ClassicAtimQeiMode {
+    /// Count both CH1A edges (x2; native SMS=4).
+    Ch1A,
+    /// Count both CH1B edges (x2; native SMS=5).
+    Ch1B,
+    /// Count both edges on both phases (x4; native SMS=6).
+    Both,
+}
+
+/// Immutable classic ATIM encoder configuration.
+///
+/// Signals must meet the own-device datasheet voltage/timing limits. The native
+/// functional conditions require phase separation strictly greater than one
+/// TCLK pulse width, and each input pulse width strictly greater than two TCLK
+/// pulse widths. TCLK uses PCLK with a fixed /1 prescaler here. These are pulse
+/// widths, not complete TCLK periods; clock-rate bounds are not per-cycle timing
+/// guarantees. Filtering cannot recover missed or illegal phase transitions and
+/// does not guarantee switch debouncing.
+#[cfg(atim_classic_input)]
+#[derive(Clone, Copy)]
+pub struct ClassicAtimQeiConfig {
+    /// CH1A's weak input pull, checked by the GPIO driver.
+    pub ch1a_pull: Pull,
+    /// CH1B's weak input pull, checked by the GPIO driver.
+    pub ch1b_pull: Pull,
+    /// Count CH1A edges, CH1B edges, or both.
+    pub mode: ClassicAtimQeiMode,
+    /// Maximum count, inclusive, in 1..=65535. The count wraps modulo this value
+    /// plus one. Rejecting zero is this API's nondegenerate-period policy.
+    pub auto_reload: u16,
+    /// Native PCLK-based input filter applied equally to both phases.
+    pub filter: ClassicAtimFilter,
+    /// Invert CH1A before decoding (native CCP1A).
+    pub ch1a_inverted: bool,
+    /// Invert CH1B before decoding (native CCP1B).
+    pub ch1b_inverted: bool,
+}
+#[cfg(atim_classic_input)]
+impl Default for ClassicAtimQeiConfig {
+    fn default() -> Self {
+        Self {
+            ch1a_pull: Pull::None,
+            ch1b_pull: Pull::None,
+            mode: ClassicAtimQeiMode::Both,
+            auto_reload: u16::MAX,
+            filter: ClassicAtimFilter::NoFilter,
+            ch1a_inverted: false,
+            ch1b_inverted: false,
+        }
+    }
+}
+
+/// A classic ATIM and two independently owned native encoder phase inputs.
+///
+/// Position is the hardware count modulo ARR+1, neither signed nor unbounded.
+/// Configuration remains fixed for the owner's lifetime; no capture, index,
+/// asynchronous wait, direction-change interrupt or signed wrap accumulation is
+/// provided. Native overflow and underflow flags independently coalesce, so they
+/// cannot reconstruct the number or ordering of missed wraps.
+///
+/// Startup explicitly resets CNT after enabling the decoder, then retires its
+/// initial update/overflow/underflow flags. Edges during this observation gap are
+/// not retained history, and external transitions may already have changed the
+/// first observed count. Drop stops decoding, disconnects slave mode and all
+/// capture acceptance, disconnects the pins and then gates the timer clock.
+#[cfg(atim_classic_input)]
+pub struct ClassicAtimQei<'d, T: ClassicAtimInputInstance> {
+    inner: Timer<'d, T>,
+    ch1a: Flex<'d>,
+    ch1b: Flex<'d>,
+}
+#[cfg(atim_classic_input)]
+impl<'d, T: ClassicAtimInputInstance> ClassicAtimQei<'d, T> {
+    /// Construct and start the native decoder. Invalid clock/period configuration
+    /// panics. Each phase must have its own package-qualified pin token.
+    pub fn new(
+        tim: Peri<'d, T>,
+        ch1a: Peri<'d, impl ClassicAtimCapturePin<T, Ch1A>>,
+        ch1b: Peri<'d, impl ClassicAtimCapturePin<T, Ch1B>>,
+        config: ClassicAtimQeiConfig,
+    ) -> Self {
+        Self::try_new(tim, ch1a, ch1b, config)
+            .unwrap_or_else(|e| panic!("invalid classic ATIM encoder configuration: {}", e))
+    }
+
+    /// Validate the period and clock before GPIO preparation or timer mutation.
+    /// Tokens are consumed on error; use `reborrow()` to retain them. Unsupported
+    /// GPIO pulls still panic during preparation, before AF connection or timer
+    /// mutation. ARR=0 returns `ConfigError::InvalidPeriod`.
+    pub fn try_new(
+        tim: Peri<'d, T>,
+        ch1a: Peri<'d, impl ClassicAtimCapturePin<T, Ch1A>>,
+        ch1b: Peri<'d, impl ClassicAtimCapturePin<T, Ch1B>>,
+        config: ClassicAtimQeiConfig,
+    ) -> Result<Self, ConfigError> {
+        if config.auto_reload == 0 {
+            return Err(ConfigError::InvalidPeriod);
+        }
+        let timing = super::low_level::explicit_timing_for::<T::CounterRegisters>(
+            Prescaler::Div1,
+            u32::from(config.auto_reload) + 1,
+        )?;
+        let clock = crate::rcc::bus_frequency::<T>().ok_or(ConfigError::ClockNotInitialized)?;
+        let bounds = crate::rcc::bus_clock_bounds::<T>().ok_or(ConfigError::ClockNotInitialized)?;
+        if clock.0 == 0 || bounds.maximum().0 == 0 {
+            return Err(ConfigError::ClockNotInitialized);
+        }
+        let ch1a = ClassicAtimCaptureInput::<T, Ch1A>::from_pin(ch1a, config.ch1a_pull);
+        let ch1b = ClassicAtimCaptureInput::<T, Ch1B>::from_pin(ch1b, config.ch1b_pull);
+        let inner = Timer::new_configured(tim, clock, bounds, timing);
+        advanced::classic_input_initialize(T::INPUT_REGS, timing);
+        advanced::classic_qei_configure(T::INPUT_REGS, config);
+        let ch1a = ch1a.connect();
+        let ch1b = ch1b.connect();
+        advanced::classic_qei_start(T::INPUT_REGS);
+        Ok(Self { inner, ch1a, ch1b })
+    }
+
+    /// Read the hardware position in 0..=auto_reload. It may change independently
+    /// of separately read direction or wrap flags.
+    pub fn count(&self) -> u32 {
+        u32::from(self.inner.get_counter())
+    }
+
+    /// Read the most recently determined hardware direction. This is neither
+    /// velocity nor an atomic companion to count or wrap observations.
+    pub fn read_direction(&self) -> Direction {
+        advanced::classic_qei_direction(T::INPUT_REGS)
+    }
+
+    /// Set CNT to zero while decoding continues. A concurrent edge may occur
+    /// before or after the write; this is not a synchronized index reset.
+    pub fn reset(&mut self) {
+        self.inner.set_counter(0);
+    }
+
+    /// Number of distinct hardware positions, including zero.
+    pub fn period_ticks(&self) -> u32 {
+        self.inner.period_ticks()
+    }
+
+    /// Qualified PCLK sampling-clock envelope, before the native input filter.
+    /// It does not guarantee each pulse width or qualify an external edge rate.
+    pub fn kernel_clock_bounds(&self) -> crate::rcc::ClockBounds {
+        self.inner.kernel_clock_bounds()
+    }
+
+    /// Whether the native overflow flag (OVF) is pending. It coalesces upward
+    /// wraps and is distinct from the counter API's update-event flag (UIF).
+    pub fn is_overflow_pending(&self) -> bool {
+        advanced::classic_qei_overflow(T::INPUT_REGS)
+    }
+
+    /// Acknowledge only OVF, preserving underflow, update and capture flags.
+    /// Concurrent wraps may coalesce with this acknowledgement.
+    pub fn clear_overflow(&mut self) {
+        advanced::classic_qei_clear_overflow(T::INPUT_REGS);
+    }
+
+    /// Whether the native underflow flag (UNDF) is pending after a downward wrap.
+    /// Multiple wraps coalesce and cannot extend the position count.
+    pub fn is_underflow_pending(&self) -> bool {
+        advanced::classic_qei_underflow(T::INPUT_REGS)
+    }
+
+    /// Acknowledge only UNDF, preserving overflow, update and capture flags.
+    /// Concurrent wraps may coalesce with this acknowledgement.
+    pub fn clear_underflow(&mut self) {
+        advanced::classic_qei_clear_underflow(T::INPUT_REGS);
+    }
+}
+#[cfg(atim_classic_input)]
+impl<T: ClassicAtimInputInstance> Drop for ClassicAtimQei<'_, T> {
+    fn drop(&mut self) {
+        advanced::classic_qei_stop(T::INPUT_REGS);
+        self.ch1a.set_as_disconnected();
+        self.ch1b.set_as_disconnected();
+    }
+}

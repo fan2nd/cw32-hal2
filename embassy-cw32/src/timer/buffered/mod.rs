@@ -21,7 +21,6 @@ pub(crate) trait Registers: Copy {
     fn update(self);
     fn disable_requests(self);
     fn clear_inputs(self);
-    fn status(self) -> u32;
     fn clear_flags(self, value: u32);
     fn modes(self, pair: usize) -> u32;
     fn write_modes(self, pair: usize, value: u32);
@@ -197,10 +196,20 @@ impl CounterRegisters for pac::gtim::Gtim {
         self.write_counter(value);
     }
     fn counter_overflow(self) -> bool {
-        self.status() & 1 != 0
+        self.isr().read().uif()
     }
     fn counter_clear_overflow(self) {
-        self.clear_flags(FLAGS & !1);
+        self.icr().write(|v| {
+            *v = pac::gtim::regs::Icr::write_noop();
+            v.set_uif(false);
+        });
+    }
+    fn counter_overflow_interrupt_enabled(self) -> bool {
+        // The selected L012 GTIM PAC names this register IER, unlike ATIM DIER.
+        self.ier().read().uie()
+    }
+    fn counter_set_overflow_interrupt(self, enabled: bool) {
+        self.ier().modify(|v| v.set_uie(enabled));
     }
     fn counter_disable_requests(self) {
         self.disable_requests();

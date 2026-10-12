@@ -42,6 +42,10 @@ fn missing_options_and_default_collections_have_exact_omission_rules() {
     let p: Peripheral = read(json!({"name":"X"}));
     assert_eq!(p.address, 0);
     assert_eq!(p.spi, None);
+    assert_eq!(p.classic_atim_input, None);
+    assert_eq!(encoded(p), json!({"name":"X","address":0}));
+    let p: Peripheral = read(json!({"name":"X", "classic_atim_input":null}));
+    assert_eq!(p.classic_atim_input, None);
     assert_eq!(encoded(p), json!({"name":"X","address":0}));
     let d: peripheral::DmaChannel = read(json!({"signal":"TX", "dma":null, "request":null}));
     assert_eq!(encoded(d), json!({"signal":"TX"}));
@@ -77,6 +81,34 @@ fn omitted_required_arrays_are_errors_even_when_empty_arrays_serialize_away() {
 #[test]
 fn enum_wire_forms_defaults_and_invalid_values_are_preserved() {
     assert_eq!(encoded(chip::memory::Kind::Eeprom), json!("eeprom"));
+    assert_eq!(
+        encoded(peripheral::ClassicAtimInput::ClassicPairedV1),
+        json!("ClassicPairedV1")
+    );
+    let p: Peripheral = read(json!({"name":"ATIM", "classic_atim_input":"ClassicPairedV1"}));
+    assert_eq!(
+        p.classic_atim_input,
+        Some(peripheral::ClassicAtimInput::ClassicPairedV1)
+    );
+    assert_eq!(
+        encoded(p),
+        json!({"name":"ATIM", "address":0, "classic_atim_input":"ClassicPairedV1"})
+    );
+    for invalid in [
+        json!("ClassicPairedV2"),
+        json!("classic_paired_v1"),
+        json!({"protocol":"ClassicPairedV1"}),
+        json!({"ClassicPairedV1":null}),
+        json!(true),
+        json!(1),
+    ] {
+        assert!(
+            serde_json::from_value::<Peripheral>(
+                json!({"name":"ATIM", "classic_atim_input":invalid})
+            )
+            .is_err()
+        );
+    }
     assert_eq!(encoded(KernelClock::Clock("PCLK".into())), json!("PCLK"));
     assert_eq!(
         encoded(KernelClock::Mux(Field {

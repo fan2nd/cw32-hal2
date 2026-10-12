@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "stage": "Stage90",
+  "reviewed_on": "2026-10-12",
+  "review_kind": "independent_actual_metadata_source_projection_and_main_data_acceptance",
+  "status": "accepted_metadata_source_and_main_data",
+  "independent_review_passed": true,
+  "blocking_findings": [],
+  "legal_clearance": false,
+  "hardware_validation": false,
+  "scope": "Actual metadata models, own-source qualification, source-lock additions, authored projector/current checker, selected HAL build associations, actual generated products and the ten bounded main data commands. Runtime implementation/ARM acceptance and source-only clean reproducibility are separate reviews.",
+  "review_independence": "Reviewer did not author or edit any production file. Independent byte/value readers and inspection receipts were created outside the source tree. Generator/Cargo/data commands were executed by the coordinator; this review verified actual receipts, log identities, source snapshots and results.",
+  "design": {
+    "external_artifact": "stage90-design",
+    "artifact_relative_path": "metadata-source-design.md",
+    "sha256": "46db53481e25865805742aa028d399c3b6f7fa18ab02ca3bcccebecddb9e1e35"
+  },
+  "implementation_patch": {
+    "external_artifact": "stage90-metadata-implementation",
+    "artifact_relative_path": "implementation.patch",
+    "sha256": "ad082450f06ad9631affb886a790ef89e83b3b03043ed27126cb3d87eea37e21"
+  },
+  "models_and_owned_source_files": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "before_sha256": "d67b3787e3a7bc34d2f38f5eaaa7b1f007f2c801667c50636a242ff3cc3d8628",
+      "after_sha256": "63040a64d7f07fae75a8b8636a3c28ba9cc7f5d6e3cc9d1f1e83fc906e1c5646",
+      "bytes": 37773
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "before_sha256": "fee884e43a76ed884c27bf2365e34de94b8da95fd704530c9ead23da14f58746",
+      "after_sha256": "c1314dc8d6b8273bee7583eb3b4178696faa738a4827d0af3b8dd54d068689c7",
+      "bytes": 37022
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "before_sha256": "1a7bc947aa44e8ba187b810b1af537251759e79e671f527dd12b0d0c8b1f1f6b",
+      "after_sha256": "c1228be45262b61875c3408f11d0106e7f0e63eafd1873d9f37335697b80f6ca",
+      "bytes": 24549
+    },
+    {
+      "path": "cw32-data-serde/tests/schema_contracts.rs",
+      "before_sha256": "6ebfa71e9c59466f9144235d1d09f5736ac2109459460c539d40f10ef061db45",
+      "after_sha256": "4c02d4be86a8fcc99ca216f083ff16b9af491b9eee2ff41eae079ccd57e82a4f",
+      "bytes": 23274
+    },
+    {
+      "path": "cw32-data-gen/src/lib.rs",
+      "before_sha256": "a5bc875bf2e00a1b927bf25c41f7b63d3ecb6fddb81f5529e98c8ee5e62e58cf",
+      "after_sha256": "5911d8343475b28c8970ea157140867a405507953fa743781ca26c5cd36a14ff",
+      "bytes": 62813
+    },
+    {
+      "path": "cw32-data-gen/src/interrupts.rs",
+      "before_sha256": "3cdf098853af27f2503fd2f27f8700e7c17939e9b4f86c912f64fe616f20c29d",
+      "after_sha256": "c2b41e80fe34dd41d0a6cca0b25e17040c19e964259847756884a7f09cd459ce",
+      "bytes": 5054
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "before_sha256": "3866a6adc0175a00642dca58d8b722bc58f9b459164e0d4574525be7461ccc74",
+      "after_sha256": "2bf6fed6c42d0812295fff1559236923fe96bd817768c630e1a431bc2c9f9397",
+      "bytes": 445584
+    },
+    {
+      "path": "cw32-data/classic-atim-input.yaml",
+      "before_sha256": null,
+      "after_sha256": "906a601dadea02a1909b2ce78c37cd6c8d8cb6ddec4c8cd0c37c6e2af6811f41",
+      "bytes": 23763
+    },
+    {
+      "path": "cw32-data-gen/src/classic_atim_input.rs",
+      "before_sha256": null,
+      "after_sha256": "979e49a730d80af3fe10467a80f99779c8e5e967c8daa36981dbcde0119df115",
+      "bytes": 14350
+    },
+    {
+      "path": "docs/timer-event-input-source-evidence.json",
+      "before_sha256": null,
+      "after_sha256": "c4d5a97b27ad13cab4b465a4ec040801d6f76b015f91f0c1a1c3b222f9f077c0",
+      "bytes": 770164
+    },
+    {
+      "path": "ci/verify-timer-event-input-data.py",
+      "before_sha256": null,
+      "after_sha256": "366702e9911542405c24c976522d4d28be7b3513ed98057d78ac5bd921de4e8b",
+      "bytes": 24402
+    }
+  ],
+  "schema_acceptance": {
+    "path": "docs/timer-event-input-schema-acceptance.json",
+    "sha256": "f479a79619945e3321fea8438bab1dadfe5d15fac9b5bf43053de27570e7046a",
+    "three_shapes_match": true,
+    "string_only_try_from_contract": true,
+    "public_rust_literal_shape_changes": true,
+    "schema_tests_count": 19,
+    "schema_tests_executed_by_this_review": false
+  },
+  "schema_ancestry": {
+    "path": "docs/upstream-file-provenance.json",
+    "sha256": "5c7e1dda032087be731f27b028629ca17b3da372abad5cb55fc98e731c95d5df",
+    "entire_previous_review_preserved": true,
+    "entire_old_document_restored": true,
+    "exact_old_bytes_restored": true,
+    "previous_review_canonical_sha256": "9f43cb5a248b60a763bbdf9c948ed281a6898725d150004138bae0808ae76b3e",
+    "legal_clearance": false
+  },
+  "own_source_qualification": {
+    "canonical_source_records": 77,
+    "full_current_identity_correspondence": true,
+    "actual_source_bytes_and_sizes_verified": true,
+    "artifact_count": 45,
+    "locked_member_count": 491,
+    "new_members": 13,
+    "all_13_members_equal_locked_archive_member_bytes": true,
+    "whole_old_source_lock_parsed_value_and_order_restored": true,
+    "source_lock_serialization_note": "The appended source lock additionally renders 15 pre-existing Unicode-escaped strings as equivalent UTF-8 characters. Full parsed values and all array order remain exact; literal append-only byte preservation is not claimed.",
+    "family_qualified_route_counts": {
+      "CW32F030": 21,
+      "CW32A030": 21,
+      "CW32F003": 15,
+      "CW32L031": 21,
+      "CW32R031": 20,
+      "CW32W031": 15,
+      "CW32L052": 29,
+      "CW32L083": 44
+    },
+    "qualified_die_routes": 186,
+    "own_source_af_cells_rechecked_by_current_gate": 372,
+    "physical_pin_rows_rechecked_by_current_gate": 447,
+    "clock_page_identities_rechecked_by_current_gate": 112,
+    "sdk_semantic_references_rechecked_by_current_gate": 329,
+    "protected_authored_paths": 533,
+    "all_protected_authored_hashes_unchanged": true
+  },
+  "semantic_boundaries": [
+    "ClassicPairedV1 is a direct string-only optional enum in all three models; missing/null means None and serializer omits None. The public Rust Peripheral literal shape intentionally changes.",
+    "Own ATIM inputs use raw ATIM register identity in data and sanitized Atim identity in Rust; HAL matches the exact enum and register version.",
+    "Native CAP1A/B through CAP3A/B are independent capture routes, with no analog mux or inferred permission from output routes. CH4 external capture is excluded.",
+    "Exact selections use their own package; generic and family aliases retain the existing common-package intersection. Source permission and physical bonding remain separate checks.",
+    "F003 absent DMA fields and L052 reserved MSCR bit4 remain unnormalized. ICR reset-one reserved bits and unrelated flags remain preserved by the current register-write policy.",
+    "HAL retains safe_pin/core-pin checks and emits the native capture trait only; no generic four-channel input/output capability is granted. Exact own GLOBAL vector associations include only the reviewed shared L012 GTIM34 owners.",
+    "Current-source checker has no permanent dependency on a historical stage, checkout, accepted ZIP, or generated baseline."
+  ],
+  "generated_acceptance": {
+    "canonical_paths": 910,
+    "exact_allowed_changed_paths": 77,
+    "byte_identical_paths": 833,
+    "complete_old_json_values_and_array_order_restored": 54,
+    "qualified_selections": 37,
+    "unqualified_jsons_byte_identical": 17,
+    "added_capture_route_appearances": 669,
+    "complete_old_rust_bodies_byte_restored": 39,
+    "new_peripheral_field_literals": 1323,
+    "qualified_some_literals": 27,
+    "public_template_matches_authored_and_exact_old_inverse": true,
+    "all_54_wrapper_bytes_unchanged": true,
+    "derived_paths": 5,
+    "only_changed_derived_path": "build/provenance/reference-index.json",
+    "gtim_selected_associations": 151,
+    "atim_selected_associations": 47,
+    "independent_reader_receipt": {
+      "external_artifact": "stage90-acceptance",
+      "artifact_relative_path": "independent-metadata/main-generated-review.json",
+      "sha256": "a89d32cef65a71d325c35e950eee9bf1cff1ce6d321ec326e65a222406a5b4fc"
+    }
+  },
+  "bounded_topology_helper_correction": {
+    "path": "tests/reviewed_metadata.py",
+    "before_sha256": "0764e268d9225cb07d26c7145efe0b81f26d90b829735f2c1f7a92893a96a9aa",
+    "after_sha256": "e113e0afd3ddc49d836110cdba1b973c144b5d805693933f6a43fd790c747280",
+    "actual_failed_gate": "D08",
+    "cause": "The existing independent full-route checker had no native CAPnA/B expected projection, although generated additions matched the approved source and inverse allowance.",
+    "fix": "One strict 36-line additive expected-route projection from current hash-bound own catalog and independently projected package pins. Every old line and complete ordered equality remain unchanged.",
+    "independent_static_receipt": {
+      "external_artifact": "stage90-acceptance",
+      "artifact_relative_path": "independent-metadata/topology-repair-static-review.json",
+      "sha256": "ad9d6c85ac94c27d7ac6c56906352ea797e54edd07e0346a83f35f7262da7ea8"
+    },
+    "no_generator_input_or_output_change": true
+  },
+  "main_data_commands": {
+    "unique_successful_frozen_commands": 10,
+    "actual_attempts": 11,
+    "retained_failed_attempts": 1,
+    "selected_from_initial_source": [
+      "D01",
+      "D02",
+      "D03",
+      "D04",
+      "D05",
+      "D06",
+      "D07"
+    ],
+    "selected_after_exact_helper_correction": [
+      "D08",
+      "D09",
+      "D10"
+    ],
+    "same_whole_tree_for_all_ten": false,
+    "other_1466_source_paths_bytes_modes_identical": true,
+    "all_generated_and_derived_bytes_unchanged_between_attempt_groups": true,
+    "toolchain_unchanged": true,
+    "schema_tests_passed": 19,
+    "metadata_contracts_passed": 22,
+    "physical_pinout_tests_passed": 12,
+    "independent_svd_parity_families_passed": 13,
+    "independent_receipt": {
+      "external_artifact": "stage90-acceptance",
+      "artifact_relative_path": "independent-metadata/main-data-gate-review.json",
+      "sha256": "7e24cfafec884542c36217b4d98437833ebde7334fa12f9a5ba2f3bca6a5e00b"
+    },
+    "retained_failed_D08_receipt": {
+      "external_artifact": "stage90-acceptance",
+      "artifact_relative_path": "main-gates/D08.receipt.json",
+      "sha256": "57faf7968aad1ab545493d568101dd988b1f2cc994c9f95edb218ce7a71421ba"
+    },
+    "composite_summary": {
+      "external_artifact": "stage90-acceptance",
+      "artifact_relative_path": "main-gates-composite/summary.json",
+      "sha256": "826f808df2bf79798b66f53282a95e37d67caf99210c9ebace2f5b84526aa17a"
+    }
+  },
+  "generation": {
+    "main_generation_commands": 1,
+    "actual_exit_code": 0,
+    "source_inputs_and_toolchain_unchanged_during_generation": true,
+    "summary": {
+      "external_artifact": "stage90-acceptance",
+      "artifact_relative_path": "main-generation/summary.json",
+      "sha256": "fa89b321185e909f58c84a8e406ef936873eb5be6f04b55888aecde3276996c7"
+    },
+    "no_regeneration_for_topology_helper_correction": true
+  },
+  "additional_external_review_receipts": [
+    {
+      "external_artifact": "stage90-acceptance",
+      "artifact_relative_path": "independent-metadata/static-source-review.json",
+      "sha256": "a50345268de5e8c7ab48ed9581e296245dc1eec4a047f7ccda525d6dfc5e8c9f"
+    }
+  ],
+  "not_claimed": [
+    "Runtime implementation or ARM matrix acceptance; covered by the separate runtime review",
+    "Fresh source-only clean generation/data/build/package equivalence at issuance; to be independently reviewed after that phase",
+    "Hardware timing, wiring, silicon behavior or electrical edge throughput",
+    "Legal clearance"
+  ],
+  "post_data_source_correspondence": {
+    "isolated_example_manifest_change": {
+      "external_artifact": "stage90-acceptance",
+      "artifact_relative_path": "independent-metadata/example-manifest-correspondence.json",
+      "sha256": "9e60320f155faf1be53020d4e16689c6487212223f1f0152b8c3c4913c30bb52"
+    },
+    "all_reviewed_metadata_generator_and_data_inputs_unchanged": true,
+    "all_910_generated_and_5_derived_bytes_unchanged": true,
+    "prior_metadata_acceptance_remains_applicable": true
+  }
+}

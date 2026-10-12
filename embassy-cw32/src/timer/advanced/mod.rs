@@ -15,6 +15,8 @@ mod classic;
 use buffered as adapter;
 #[cfg(atim_classic)]
 use classic as adapter;
+#[cfg(atim_classic_input)]
+pub(crate) use classic::input::*;
 
 pub(super) trait Registers: Copy {
     const CHANNELS: usize;
@@ -27,7 +29,6 @@ pub(super) trait Registers: Copy {
     fn update(self, control: u32);
     fn counter(self) -> u16;
     fn write_counter(self, value: u16);
-    fn status(self) -> u32;
     fn clear_flags(self, value: u32);
     fn disable_requests(self);
     fn mode(self, channel: Channel) -> u8;
@@ -54,6 +55,7 @@ fn reconfigure_counter<R: Registers>(regs: R, timing: Timing) {
     let running = regs.control() & 1;
     let control = R::stopped_control(timing);
     regs.write_control(control);
+    regs.write_counter(0);
     regs.write_period(timing);
     regs.update(control);
     clear_overflow(regs);
@@ -99,10 +101,16 @@ impl CounterRegisters for pac::atim::Atim {
         reconfigure_counter(self, timing);
     }
     fn counter_start(self, timing: Timing) {
-        self.write_control(Self::stopped_control(timing) | 1);
+        let control = Self::stopped_control(timing);
+        #[cfg(atim_classic)]
+        let control = control | (u32::from(self.cr().read().uie()) << 10);
+        self.write_control(control | 1);
     }
     fn counter_stop(self, timing: Timing) {
-        self.write_control(Self::stopped_control(timing));
+        let control = Self::stopped_control(timing);
+        #[cfg(atim_classic)]
+        let control = control | (u32::from(self.cr().read().uie()) << 10);
+        self.write_control(control);
     }
     fn counter_running(self) -> bool {
         self.control() & 1 != 0
@@ -114,10 +122,46 @@ impl CounterRegisters for pac::atim::Atim {
         self.write_counter(value);
     }
     fn counter_overflow(self) -> bool {
-        self.status() & 1 != 0
+        self.isr().read().uif()
     }
     fn counter_clear_overflow(self) {
-        clear_overflow(self);
+        self.icr().write(|v| {
+            #[cfg(atim_classic)]
+            {
+                *v = pac::atim::regs::Icr::write_noop();
+            }
+            #[cfg(atim_buffered)]
+            {
+                v.0 = Self::FLAGS;
+            }
+            v.set_uif(false);
+        });
+    }
+    fn counter_overflow_interrupt_enabled(self) -> bool {
+        #[cfg(atim_classic)]
+        {
+            self.cr().read().uie()
+        }
+        #[cfg(atim_cw32l010_v1)]
+        {
+            self.ier().read().uie()
+        }
+        #[cfg(atim_cw32l012_v1)]
+        {
+            self.dier().read().uie()
+        }
+    }
+    fn counter_set_overflow_interrupt(self, enabled: bool) {
+        #[cfg(atim_classic)]
+        {
+            let mut control = classic::command_safe_control(self);
+            control.set_uie(enabled);
+            self.cr().write_value(control);
+        }
+        #[cfg(atim_cw32l010_v1)]
+        self.ier().modify(|v| v.set_uie(enabled));
+        #[cfg(atim_cw32l012_v1)]
+        self.dier().modify(|v| v.set_uie(enabled));
     }
     fn counter_disable_requests(self) {
         self.disable_requests();
@@ -165,6 +209,9 @@ impl PwmRegisters for pac::atim::Atim {
 impl super::sealed::BasicInstance for crate::peripherals::ATIM {
     type CounterRegisters = pac::atim::Atim;
     const COUNTER_REGS: Self::CounterRegisters = pac::ATIM;
+    fn overflow_state() -> Option<&'static super::overflow::State> {
+        Some(<Self as super::sealed::OverflowInstance>::state())
+    }
 }
 impl super::BasicInstance for crate::peripherals::ATIM {}
 impl super::sealed::Instance for crate::peripherals::ATIM {

@@ -201,6 +201,42 @@ def af_projection(manifest, pins):
                 source = dict(pin=route['pin'], signal=f"CH{route['channel']}", af=route['af'])
                 assert source in result[route['peripheral']]
                 result[route['peripheral']].append(dict(source, signal=f"CAP{route['channel']}"))
+    # Native ATIM inputs have their own qualified A/B routes. The available
+    # pins come from pin_projection's exact package or common-package intersection.
+    native_catalog = load('cw32-data/classic-atim-input.yaml')
+    native_versions = {family: 'v1' for family in ('CW32F030', 'CW32A030', 'CW32L031',
+                       'CW32R031', 'CW32W031', 'CW32L083')}
+    native_versions.update(CW32F003='cw32f003_v1', CW32L052='cw32l052_v1')
+    assert native_catalog['schema_version'] == 1 and set(native_catalog['profiles']) == set(native_versions)
+    native = native_catalog['profiles'].get(manifest['line'])
+    if native:
+        assert native['protocol'] == 'ClassicPairedV1'
+        assert native['register_version'] == native_versions[manifest['line']]
+        assert native['pinout'] == manifest['pinout_metadata']
+        assert hashlib.sha256((ROOT / native['pinout']).read_bytes()).hexdigest() == native['pinout_sha256']
+        assert hashlib.sha256((ROOT / native_catalog['evidence']).read_bytes()).hexdigest() == native_catalog['evidence_sha256']
+        proof = load(native_catalog['evidence'])
+        assert proof['schema_version'] == 1
+        own = proof['classic_atim_input']['families'][manifest['line']]
+        assert own['protocol'] == native['protocol'] and own['register_variant'] == native['register_version']
+        assert own['pinout']['path'] == native['pinout'] and own['pinout']['sha256'] == native['pinout_sha256']
+        qualified = {(r['pin'], r['signal'], r['af']) for r in own['routes']
+                     if r.get('input_source_qualified', False)}
+        catalog_routes = {(r['pin'], r['signal'], r['af']) for r in native['routes']}
+        assert catalog_routes == qualified and len(catalog_routes) == len(native['routes'])
+        for route in native['routes']:
+            assert re.fullmatch(r'CH[1-3][AB]', route['signal']) and 1 <= route['af'] <= 7
+            prefix = f"/classic_atim_input/families/{manifest['line']}/routes/"
+            assert route['evidence_pointer'].startswith(prefix)
+            source = own['routes'][int(route['evidence_pointer'].removeprefix(prefix))]
+            assert source.get('input_source_qualified') is True and not source['withheld_reasons']
+            assert all(source[key] == route[key] for key in ('pin', 'signal', 'af'))
+            for key in ('own_datasheet_cell', 'own_manual_cell', 'own_sdk_macro'):
+                assert all(source[key][field] == route[field] for field in ('pin', 'signal', 'af'))
+            if route['pin'] in available:
+                projected = dict(pin=route['pin'], signal='CAP' + route['signal'][2:], af=route['af'])
+                assert projected not in result.setdefault('ATIM', [])
+                result['ATIM'].append(projected)
     if manifest.get('atim_complementary_metadata'):
         complementary = load(manifest['atim_complementary_metadata'])
         assert complementary['profile'] == manifest['line']

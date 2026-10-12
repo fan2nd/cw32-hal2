@@ -386,6 +386,8 @@ pub struct Peripheral {
     pub spi: Option<PeripheralSpi>,
     pub classic_timer_input: Option<PeripheralClassicTimerInput>,
     #[serde(default)]
+    pub classic_atim_input: Option<PeripheralClassicAtimInput>,
+    #[serde(default)]
     pub atim_complementary: Option<PeripheralAtimComplementary>,
     #[serde(default)]
     pub lvd: Option<PeripheralLvd>,
@@ -449,6 +451,7 @@ impl std::fmt::Debug for Peripheral {
             .field("rcc_control", &self.rcc_control)
             .field("spi", &self.spi)
             .field("classic_timer_input", &self.classic_timer_input)
+            .field("classic_atim_input", &self.classic_atim_input)
             .field("atim_complementary", &self.atim_complementary)
             .field("lvd", &self.lvd)
             .field("lcd", &self.lcd)
@@ -535,6 +538,23 @@ pub struct PeripheralRccWriteKey {
 pub struct PeripheralClassicTimerInput {
     pub capture_mux: String,
     pub encoder_fixed_reload: Option<u16>,
+}
+
+#[derive(EnumDebug, Eq, PartialEq, Clone, Deserialize)]
+#[serde(try_from = "String")]
+pub enum PeripheralClassicAtimInput {
+    ClassicPairedV1,
+}
+
+impl TryFrom<String> for PeripheralClassicAtimInput {
+    type Error = &'static str;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        match value.as_str() {
+            "ClassicPairedV1" => Ok(Self::ClassicPairedV1),
+            _ => Err("unknown classic ATIM input protocol"),
+        }
+    }
 }
 
 #[derive(Debug, Eq, PartialEq, Clone, Deserialize)]

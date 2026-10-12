@@ -7,6 +7,7 @@ mod adc_sequence;
 pub mod af;
 mod classic_adc_scan;
 mod classic_timer_input;
+mod classic_atim_input;
 pub mod clock;
 mod comparator;
 mod crypto;
@@ -848,6 +849,7 @@ fn generate_inner(
             rcc_control: None,
             spi: None,
             classic_timer_input: None,
+            classic_atim_input: None,
             atim_complementary: None,
             lvd: None,
             lcd: None,
@@ -1031,6 +1033,7 @@ fn generate_inner(
             rtc::validate_native_live_lsi(root, chip, &input.line, &chip_core, &register_files)?;
             electrical::apply_mco(root, chip, &input.line, &mut chip_core, &register_files)?;
             classic_timer_input::apply(root, &input.line, &mut chip_core, &register_files)?;
+            classic_atim_input::apply(root, &input.line, &chip.name, &mut chip_core, &register_files)?;
             if chip_core.peripherals.iter().any(|p| p.name == "LCD") {
                 lcd::apply(root, &input.line, &mut chip_core, &register_files)?;
             }
