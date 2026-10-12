@@ -1,4 +1,4 @@
-//! I2C masters selected by verified IP: classic blocking/async, L012 blocking.
+//! Blocking/async I2C masters selected by verified classic or L012 command IP.
 #[cfg(not(i2c_cw32l012_v1))]
 mod classic;
 #[cfg(not(i2c_cw32l012_v1))]

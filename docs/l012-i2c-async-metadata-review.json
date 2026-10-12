@@ -1,0 +1,1256 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-12",
+  "verdict": "accepted-main-source-metadata-and-build-projections",
+  "scope": "Actual main source gates and finite6+6 ARM output acceptance, independent of implementation author. Final administrative correspondence and clean-package closure remain required.",
+  "baseline_commit": "fc86423618bea557c59bf0180e9fdadf80ecdd43",
+  "design": {
+    "path": "external-artifact:stage88-design/freeze.json",
+    "bytes": 1762,
+    "sha256": "d188b729e4804ecbe42187cf6a10fef803404b729b3a5a4c857efda46df06898"
+  },
+  "matrix": {
+    "path": "external-artifact:stage88-design/arm-matrix.json",
+    "bytes": 15997,
+    "sha256": "c30c83ed94b7d2a697f59ee7bc680ec6e6333b719d0c47fafb362964b68afc8a"
+  },
+  "execution_addendum": {
+    "path": "external-artifact:stage88-acceptance/build-preparation/execution-addendum.json",
+    "bytes": 3228,
+    "sha256": "07ac6ed6b42a22956d64b6d65b0a4e5952335f8e6c9c5bb5570fa0109babb6f3"
+  },
+  "static_review": {
+    "path": "external-artifact:stage88-acceptance/independent-metadata/source-r2-review.json",
+    "bytes": 6224,
+    "sha256": "003007d58c8dd06e723032d85986f619309c7c4be7ad1602ddd42d420ad98295"
+  },
+  "native_macro_review": {
+    "path": "external-artifact:stage88-acceptance/independent-metadata/native-macro-static-review.json",
+    "bytes": 1639,
+    "sha256": "81a35d3899989a03ae177a61ff9e873ed9516c487765a2a04d5c9b3f14977456"
+  },
+  "source_gate_summary": {
+    "path": "external-artifact:stage88-acceptance/main-gates/summary.json",
+    "bytes": 568,
+    "sha256": "48e9d72950c677f75bb5f7c9e6b1bac87c399472549f7367debd81099e4c3635"
+  },
+  "build_summary": {
+    "path": "external-artifact:stage88-acceptance/main/summary.json",
+    "bytes": 778,
+    "sha256": "b6504aca8e7dcedd0195feacb438807ffdf688c199d48a96840981c8adb61ef6"
+  },
+  "source_snapshot": {
+    "path": "external-artifact:stage88-acceptance/main/source-before.json",
+    "bytes": 253383,
+    "sha256": "5d3dc79be3fef859acac8a1bdc6d0fac1191b3549426289be86b325562311538"
+  },
+  "generated_snapshot": {
+    "path": "external-artifact:stage88-acceptance/main/generated-before.json",
+    "bytes": 136585,
+    "sha256": "da59b59e541b15ba0f7329ac7bae9616e85321d9af20434f250e4f3c6d5e1a3a"
+  },
+  "toolchain_identity": {
+    "path": "external-artifact:stage88-acceptance/main/toolchain-before.json",
+    "bytes": 3592,
+    "sha256": "0079ac5ce9216d6c8fae994efd59868fa20822602350baeca7fd171435343122"
+  },
+  "actual_source_gate_results": {
+    "path": "external-artifact:stage88-acceptance/main-gates/results.json",
+    "bytes": 26052,
+    "sha256": "ca04215bdf7d1066f1d88fb9a7ae108b748b19ac77cb8b2289401b059f3787e1"
+  },
+  "actual_build_results": {
+    "path": "external-artifact:stage88-acceptance/main/results.json",
+    "bytes": 1997417,
+    "sha256": "b13c54d9d893c12b777feaa96bcf92a048ee85ae8aae90c493c573f504f4e838"
+  },
+  "open_findings": [],
+  "observations": {
+    "source_commands": 6,
+    "source_command_ids": [
+      "S1",
+      "S2",
+      "S3",
+      "S4",
+      "S5",
+      "S6"
+    ],
+    "source_exit_codes": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "main_generation_runs": 0,
+    "authored_input_files": 1435,
+    "authored_inputs_stable_across_gates_and_all_rows": true,
+    "canonical_generated_files": 910,
+    "canonical_generated_matches_stage87": true,
+    "standalone_libraries": 6,
+    "linked_example_elfs": 6,
+    "separate_dependency_hal_rlibs": 6,
+    "all_receipt_bound_retained_files_rehashed": 620,
+    "all_actual_cargo_messages_and_profiles_checked": true,
+    "all_primary_artifacts_independently_parsed": true,
+    "all_irq_vectors_and_required_strong_symbols_checked": true,
+    "source_projection_changes": [
+      "build/provenance/reference-index.json"
+    ],
+    "coverage_projection_changes": [
+      "build/reports/hal-functional-coverage.json",
+      "build/reports/hal-coverage.json"
+    ],
+    "unchanged_projections": [
+      "build/provenance/source-lock.json",
+      "build/provenance/vendor-sources.json",
+      "build/provenance/SOURCE-CATALOG.md",
+      "build/reports/coverage.json"
+    ],
+    "source_index_authority_sha256": "5a82cf09477ee8ae1f2935444f6b609bdd227e92caf9fe4426f532b43d7aff9a",
+    "freshness": "E3/E4 HAL dependencies are reported fresh=true by Cargo and treated as reused cache outputs. Standalone library outputs and primary ELF commands are counted separately."
+  },
+  "rows": [
+    {
+      "row": "L1",
+      "selection": "cw32l012",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--lib",
+        "--features",
+        "cw32l012",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 5880456,
+        "cargo_compiler_artifact": {
+          "executable": null,
+          "features": [
+            "cw32l012"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/deps/libembassy_cw32-c943c02e70224f05.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "embassy-cw32/Cargo.toml",
+          "package_id": "package:embassy-cw32@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "3",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2024",
+            "kind": [
+              "lib"
+            ],
+            "name": "embassy_cw32",
+            "src_path": "embassy-cw32/src/lib.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+        "path": "external-artifact:stage88-main/01-cw32l012-embassy_cw32/libembassy_cw32.rlib",
+        "sha256": "6ff6e613def00fb5d4e0406b6cfe6476893578a9a758f39a698485eaa6c5daaa"
+      },
+      "hal_generated": {
+        "bytes": 68023,
+        "path": "external-artifact:stage88-main/01-cw32l012-embassy_cw32/out-dir/59e3c0575632a4eaa760/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "94575d14b20161518ffa7cd4acf38cd8dd3cec7f17d1219429dd82d079fd7545"
+      },
+      "hal_features": [
+        "cw32l012"
+      ],
+      "hal_cargo_fresh": false,
+      "warnings": [],
+      "native_arm_code_objects": 9
+    },
+    {
+      "row": "L2",
+      "selection": "cw32l012c8t6",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--lib",
+        "--features",
+        "cw32l012c8t6",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 6228924,
+        "cargo_compiler_artifact": {
+          "executable": null,
+          "features": [
+            "cw32l012c8t6"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/deps/libembassy_cw32-cb8c504f711295cf.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "embassy-cw32/Cargo.toml",
+          "package_id": "package:embassy-cw32@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "3",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2024",
+            "kind": [
+              "lib"
+            ],
+            "name": "embassy_cw32",
+            "src_path": "embassy-cw32/src/lib.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+        "path": "external-artifact:stage88-main/02-cw32l012c8t6-embassy_cw32/libembassy_cw32.rlib",
+        "sha256": "342eaa73a9d8c405846aa112d2a6f0b61f130c6a35bccca09a658cbfd4ebfb0e"
+      },
+      "hal_generated": {
+        "bytes": 77764,
+        "path": "external-artifact:stage88-main/02-cw32l012c8t6-embassy_cw32/out-dir/6152c58e3e34f2c0cdbf/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "24f083acaf4a23e5da8e58708afaf94de7cf879010c1f64ffffdc51fdbd6736d"
+      },
+      "hal_features": [
+        "cw32l012c8t6"
+      ],
+      "hal_cargo_fresh": false,
+      "warnings": [],
+      "native_arm_code_objects": 11
+    },
+    {
+      "row": "L3",
+      "selection": "cw32l012c8u6",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--lib",
+        "--features",
+        "cw32l012c8u6,rt,defmt",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 8384152,
+        "cargo_compiler_artifact": {
+          "executable": null,
+          "features": [
+            "cw32l012c8u6",
+            "defmt",
+            "rt"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/deps/libembassy_cw32-fd83d64d498088bd.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "embassy-cw32/Cargo.toml",
+          "package_id": "package:embassy-cw32@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "3",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2024",
+            "kind": [
+              "lib"
+            ],
+            "name": "embassy_cw32",
+            "src_path": "embassy-cw32/src/lib.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+        "path": "external-artifact:stage88-main/03-cw32l012c8u6-embassy_cw32/libembassy_cw32.rlib",
+        "sha256": "3e42b90b52c144bd1a14ba32c8eeab5d224d8189e3af04c7826e329093b946e7"
+      },
+      "hal_generated": {
+        "bytes": 77764,
+        "path": "external-artifact:stage88-main/03-cw32l012c8u6-embassy_cw32/out-dir/0e65dce9cd8ae41d02ee/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "24f083acaf4a23e5da8e58708afaf94de7cf879010c1f64ffffdc51fdbd6736d"
+      },
+      "hal_features": [
+        "cw32l012c8u6",
+        "defmt",
+        "rt"
+      ],
+      "hal_cargo_fresh": false,
+      "warnings": [],
+      "native_arm_code_objects": 16
+    },
+    {
+      "row": "L4",
+      "selection": "cw32f030c8t7",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--lib",
+        "--features",
+        "cw32f030c8t7,rt",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 5521952,
+        "cargo_compiler_artifact": {
+          "executable": null,
+          "features": [
+            "cw32f030c8t7",
+            "rt"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/deps/libembassy_cw32-8f070c5c6acce402.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "embassy-cw32/Cargo.toml",
+          "package_id": "package:embassy-cw32@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "3",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2024",
+            "kind": [
+              "lib"
+            ],
+            "name": "embassy_cw32",
+            "src_path": "embassy-cw32/src/lib.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+        "path": "external-artifact:stage88-main/04-cw32f030c8t7-embassy_cw32/libembassy_cw32.rlib",
+        "sha256": "261ef58816071645524b20041f59f3db8accf080fc0018a7e2a4c5a0b889117e"
+      },
+      "hal_generated": {
+        "bytes": 72078,
+        "path": "external-artifact:stage88-main/04-cw32f030c8t7-embassy_cw32/out-dir/d3827a0b63d27431613a/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "b111f2fed4ab87ef7e010060ba0451473b97184b886ccf15b3998763bf4ce7c0"
+      },
+      "hal_features": [
+        "cw32f030c8t7",
+        "rt"
+      ],
+      "hal_cargo_fresh": false,
+      "warnings": [],
+      "native_arm_code_objects": 10
+    },
+    {
+      "row": "L5",
+      "selection": "cw32f002f3p7",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--lib",
+        "--features",
+        "cw32f002f3p7,rt",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 3800492,
+        "cargo_compiler_artifact": {
+          "executable": null,
+          "features": [
+            "cw32f002f3p7",
+            "rt"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/deps/libembassy_cw32-94a4be5945e24ba0.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "embassy-cw32/Cargo.toml",
+          "package_id": "package:embassy-cw32@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "3",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2024",
+            "kind": [
+              "lib"
+            ],
+            "name": "embassy_cw32",
+            "src_path": "embassy-cw32/src/lib.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+        "path": "external-artifact:stage88-main/05-cw32f002f3p7-embassy_cw32/libembassy_cw32.rlib",
+        "sha256": "421280d66bcffbd6edd931d24e3dd7f3979b2b46a319d1d527b646746b08555e"
+      },
+      "hal_generated": {
+        "bytes": 36628,
+        "path": "external-artifact:stage88-main/05-cw32f002f3p7-embassy_cw32/out-dir/f9158eeb13a06f5dab72/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "066d944ecffc78f60086e6693a78b62ecf13ce92822c1ada01e6c72bf5b8face"
+      },
+      "hal_features": [
+        "cw32f002f3p7",
+        "rt"
+      ],
+      "hal_cargo_fresh": false,
+      "warnings": [],
+      "native_arm_code_objects": 6
+    },
+    {
+      "row": "L6",
+      "selection": "cw32l011k8t6",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "firmware/Cargo.toml",
+        "-p",
+        "embassy-cw32",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--lib",
+        "--features",
+        "cw32l011k8t6,rt",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 4860324,
+        "cargo_compiler_artifact": {
+          "executable": null,
+          "features": [
+            "cw32l011k8t6",
+            "rt"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/deps/libembassy_cw32-00f1389837311fe6.rmeta"
+          ],
+          "fresh": false,
+          "manifest_path": "embassy-cw32/Cargo.toml",
+          "package_id": "package:embassy-cw32@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "3",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "lib"
+            ],
+            "doc": true,
+            "doctest": true,
+            "edition": "2024",
+            "kind": [
+              "lib"
+            ],
+            "name": "embassy_cw32",
+            "src_path": "embassy-cw32/src/lib.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/libembassy_cw32.rlib",
+        "path": "external-artifact:stage88-main/06-cw32l011k8t6-embassy_cw32/libembassy_cw32.rlib",
+        "sha256": "3a200524b9c0e0e676ae9209dd95384f9145d9cb30851e85821fb556fdc11e0e"
+      },
+      "hal_generated": {
+        "bytes": 40434,
+        "path": "external-artifact:stage88-main/06-cw32l011k8t6-embassy_cw32/out-dir/1746a47bacc9a77aa72a/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "1abe407f518b6c2f722e493fa5433e9e0597db85b9213d87eece992e1b00ab82"
+      },
+      "hal_features": [
+        "cw32l011k8t6",
+        "rt"
+      ],
+      "hal_cargo_fresh": false,
+      "warnings": [
+        "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+        "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+        "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+      ],
+      "native_arm_code_objects": 10
+    },
+    {
+      "row": "E1",
+      "selection": "cw32l012c8t6",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "examples/l012-i2c/Cargo.toml",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--features",
+        "cw32l012c8t6",
+        "--bin",
+        "async_master",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 223716,
+        "cargo_compiler_artifact": {
+          "executable": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master",
+          "features": [
+            "cw32l012c8t6"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master"
+          ],
+          "fresh": false,
+          "manifest_path": "examples/l012-i2c/Cargo.toml",
+          "package_id": "package:cw32-l012-i2c-examples@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "z",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": true,
+            "doctest": false,
+            "edition": "2024",
+            "kind": [
+              "bin"
+            ],
+            "name": "async_master",
+            "src_path": "examples/l012-i2c/src/bin/async_master.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master",
+        "path": "external-artifact:stage88-main/07-cw32l012c8t6-async_master/firmware.elf",
+        "sha256": "06923772d1fd05e087fa86a6cc5f33ff2e27d7ed9c671303f3518941586f538d"
+      },
+      "hal_generated": {
+        "bytes": 77764,
+        "path": "external-artifact:stage88-main/07-cw32l012c8t6-async_master/out-dir/3cc068bd431385e5cb80/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "24f083acaf4a23e5da8e58708afaf94de7cf879010c1f64ffffdc51fdbd6736d"
+      },
+      "hal_features": [
+        "cw32l012c8t6",
+        "rt"
+      ],
+      "hal_cargo_fresh": false,
+      "warnings": [],
+      "flash_load_bytes": 59296,
+      "static_ram_span_bytes": 612,
+      "native_irq_slots": [
+        {
+          "name": "I2C1",
+          "vector_offset": 156,
+          "vector_word": 253,
+          "active_required": true
+        },
+        {
+          "name": "I2C2",
+          "vector_offset": 160,
+          "vector_word": 313,
+          "active_required": true
+        }
+      ]
+    },
+    {
+      "row": "E2",
+      "selection": "cw32l012c8u6",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "examples/l012-i2c/Cargo.toml",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--features",
+        "cw32l012c8u6",
+        "--bin",
+        "async_master",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 223712,
+        "cargo_compiler_artifact": {
+          "executable": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master",
+          "features": [
+            "cw32l012c8u6"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master"
+          ],
+          "fresh": false,
+          "manifest_path": "examples/l012-i2c/Cargo.toml",
+          "package_id": "package:cw32-l012-i2c-examples@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "z",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": true,
+            "doctest": false,
+            "edition": "2024",
+            "kind": [
+              "bin"
+            ],
+            "name": "async_master",
+            "src_path": "examples/l012-i2c/src/bin/async_master.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master",
+        "path": "external-artifact:stage88-main/08-cw32l012c8u6-async_master/firmware.elf",
+        "sha256": "5b6ab6683b26f87fee4359ba856e3a3d272c79c28a7939b0737fa532851b376a"
+      },
+      "hal_generated": {
+        "bytes": 77764,
+        "path": "external-artifact:stage88-main/08-cw32l012c8u6-async_master/out-dir/b8c58faf84999309182e/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "24f083acaf4a23e5da8e58708afaf94de7cf879010c1f64ffffdc51fdbd6736d"
+      },
+      "hal_features": [
+        "cw32l012c8u6",
+        "rt"
+      ],
+      "hal_cargo_fresh": false,
+      "warnings": [],
+      "flash_load_bytes": 59296,
+      "static_ram_span_bytes": 612,
+      "native_irq_slots": [
+        {
+          "name": "I2C1",
+          "vector_offset": 156,
+          "vector_word": 253,
+          "active_required": true
+        },
+        {
+          "name": "I2C2",
+          "vector_offset": 160,
+          "vector_word": 313,
+          "active_required": true
+        }
+      ]
+    },
+    {
+      "row": "E3",
+      "selection": "cw32l012c8t6",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "examples/l012-i2c/Cargo.toml",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--features",
+        "cw32l012c8t6",
+        "--bin",
+        "blocking_master",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 220876,
+        "cargo_compiler_artifact": {
+          "executable": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/blocking_master",
+          "features": [
+            "cw32l012c8t6"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/blocking_master"
+          ],
+          "fresh": false,
+          "manifest_path": "examples/l012-i2c/Cargo.toml",
+          "package_id": "package:cw32-l012-i2c-examples@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "z",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": true,
+            "doctest": false,
+            "edition": "2024",
+            "kind": [
+              "bin"
+            ],
+            "name": "blocking_master",
+            "src_path": "examples/l012-i2c/src/bin/blocking_master.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/blocking_master",
+        "path": "external-artifact:stage88-main/09-cw32l012c8t6-blocking_master/firmware.elf",
+        "sha256": "a24cec9282a05e5d1c13b52c92f422d685edcd781b866892603469168c8139fc"
+      },
+      "hal_generated": {
+        "bytes": 77764,
+        "path": "external-artifact:stage88-main/09-cw32l012c8t6-blocking_master/out-dir/3cc068bd431385e5cb80/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "24f083acaf4a23e5da8e58708afaf94de7cf879010c1f64ffffdc51fdbd6736d"
+      },
+      "hal_features": [
+        "cw32l012c8t6",
+        "rt"
+      ],
+      "hal_cargo_fresh": true,
+      "warnings": [],
+      "flash_load_bytes": 56496,
+      "static_ram_span_bytes": 216,
+      "native_irq_slots": [
+        {
+          "name": "I2C1",
+          "vector_offset": 156,
+          "vector_word": 2113,
+          "active_required": false
+        },
+        {
+          "name": "I2C2",
+          "vector_offset": 160,
+          "vector_word": 2113,
+          "active_required": false
+        }
+      ]
+    },
+    {
+      "row": "E4",
+      "selection": "cw32l012c8u6",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "examples/l012-i2c/Cargo.toml",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--features",
+        "cw32l012c8u6",
+        "--bin",
+        "blocking_master",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 220876,
+        "cargo_compiler_artifact": {
+          "executable": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/blocking_master",
+          "features": [
+            "cw32l012c8u6"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/blocking_master"
+          ],
+          "fresh": false,
+          "manifest_path": "examples/l012-i2c/Cargo.toml",
+          "package_id": "package:cw32-l012-i2c-examples@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "z",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": true,
+            "doctest": false,
+            "edition": "2024",
+            "kind": [
+              "bin"
+            ],
+            "name": "blocking_master",
+            "src_path": "examples/l012-i2c/src/bin/blocking_master.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/blocking_master",
+        "path": "external-artifact:stage88-main/10-cw32l012c8u6-blocking_master/firmware.elf",
+        "sha256": "76ac56b7024152d47686deb2766a8dd8b5e2c0f96c628aac45ae6855c1f8583e"
+      },
+      "hal_generated": {
+        "bytes": 77764,
+        "path": "external-artifact:stage88-main/10-cw32l012c8u6-blocking_master/out-dir/b8c58faf84999309182e/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "24f083acaf4a23e5da8e58708afaf94de7cf879010c1f64ffffdc51fdbd6736d"
+      },
+      "hal_features": [
+        "cw32l012c8u6",
+        "rt"
+      ],
+      "hal_cargo_fresh": true,
+      "warnings": [],
+      "flash_load_bytes": 56496,
+      "static_ram_span_bytes": 216,
+      "native_irq_slots": [
+        {
+          "name": "I2C1",
+          "vector_offset": 156,
+          "vector_word": 2113,
+          "active_required": false
+        },
+        {
+          "name": "I2C2",
+          "vector_offset": 160,
+          "vector_word": 2113,
+          "active_required": false
+        }
+      ]
+    },
+    {
+      "row": "E5",
+      "selection": "cw32f030c8t7",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "examples/classic-i2c/Cargo.toml",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--features",
+        "cw32f030c8t7",
+        "--bin",
+        "async_master",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 149308,
+        "cargo_compiler_artifact": {
+          "executable": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master",
+          "features": [
+            "cw32f030c8t7"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master"
+          ],
+          "fresh": false,
+          "manifest_path": "examples/classic-i2c/Cargo.toml",
+          "package_id": "package:cw32-classic-i2c-examples@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "z",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": true,
+            "doctest": false,
+            "edition": "2024",
+            "kind": [
+              "bin"
+            ],
+            "name": "async_master",
+            "src_path": "examples/classic-i2c/src/bin/async_master.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master",
+        "path": "external-artifact:stage88-main/11-cw32f030c8t7-async_master/firmware.elf",
+        "sha256": "8e5c6ea3e9e7142fff20caba1520f9b6aa2faa921b0c9644538630f06d4b7269"
+      },
+      "hal_generated": {
+        "bytes": 72078,
+        "path": "external-artifact:stage88-main/11-cw32f030c8t7-async_master/out-dir/d89f3a7fb976a2aa4f43/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "b111f2fed4ab87ef7e010060ba0451473b97184b886ccf15b3998763bf4ce7c0"
+      },
+      "hal_features": [
+        "cw32f030c8t7",
+        "rt"
+      ],
+      "hal_cargo_fresh": false,
+      "warnings": [],
+      "flash_load_bytes": 26220,
+      "static_ram_span_bytes": 660,
+      "native_irq_slots": [
+        {
+          "name": "I2C1",
+          "vector_offset": 156,
+          "vector_word": 253,
+          "active_required": true
+        },
+        {
+          "name": "I2C2",
+          "vector_offset": 160,
+          "vector_word": 345,
+          "active_required": true
+        }
+      ]
+    },
+    {
+      "row": "E6",
+      "selection": "cw32f002f3p7",
+      "command": [
+        "cargo",
+        "build",
+        "--offline",
+        "--manifest-path",
+        "examples/classic-i2c/Cargo.toml",
+        "--no-default-features",
+        "--target",
+        "thumbv6m-none-eabi",
+        "--release",
+        "--features",
+        "cw32f002f3p7",
+        "--bin",
+        "async_master",
+        "--locked",
+        "--message-format=json"
+      ],
+      "primary": {
+        "bytes": 142080,
+        "cargo_compiler_artifact": {
+          "executable": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master",
+          "features": [
+            "cw32f002f3p7"
+          ],
+          "filenames": [
+            "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master"
+          ],
+          "fresh": false,
+          "manifest_path": "examples/classic-i2c/Cargo.toml",
+          "package_id": "package:cw32-classic-i2c-examples@0.1.0",
+          "profile": {
+            "debug_assertions": false,
+            "debuginfo": 0,
+            "opt_level": "z",
+            "overflow_checks": false,
+            "test": false
+          },
+          "reason": "compiler-artifact",
+          "target": {
+            "crate_types": [
+              "bin"
+            ],
+            "doc": true,
+            "doctest": false,
+            "edition": "2024",
+            "kind": [
+              "bin"
+            ],
+            "name": "async_master",
+            "src_path": "examples/classic-i2c/src/bin/async_master.rs",
+            "test": true
+          }
+        },
+        "original_path": "external-artifact:stage88-main-arm-target/thumbv6m-none-eabi/release/async_master",
+        "path": "external-artifact:stage88-main/12-cw32f002f3p7-async_master/firmware.elf",
+        "sha256": "d987488432ac25f84f5ad4df1271c046f9a86a295f21c70819c41b62fa3e69a9"
+      },
+      "hal_generated": {
+        "bytes": 36628,
+        "path": "external-artifact:stage88-main/12-cw32f002f3p7-async_master/out-dir/77bb9b0403b3c625992a/_generated.rs",
+        "relative_to_out_dir": "_generated.rs",
+        "sha256": "066d944ecffc78f60086e6693a78b62ecf13ce92822c1ada01e6c72bf5b8face"
+      },
+      "hal_features": [
+        "cw32f002f3p7",
+        "rt"
+      ],
+      "hal_cargo_fresh": false,
+      "warnings": [],
+      "flash_load_bytes": 9776,
+      "static_ram_span_bytes": 384,
+      "native_irq_slots": [
+        {
+          "name": "I2C",
+          "vector_offset": 156,
+          "vector_word": 249,
+          "active_required": true
+        }
+      ]
+    }
+  ],
+  "acceptance_limits": [
+    "No hardware execution, electrical timing, cancellation-on-silicon or external-bus recovery claim.",
+    "Current-fact gate remains source/data/PAC only; review receipt and retained compiler-output inspection are external acceptance artifacts.",
+    "Final source-only ZIP must incorporate independently reviewed administrative additions, then fresh one-bootstrap/S2-S6 and clean3+3 with unchanged910 bytes and identical repack."
+  ],
+  "reviewer_production_commands_executed": 0,
+  "reviewer_production_files_edited": 0,
+  "source_inspection": {
+    "basis": "Independently reopened exact original bytes, seven actual SDK archive-member chains and32 page extracts during actual implementation review; these exact ten originals support source-review consumer links.",
+    "sources": [
+      {
+        "role": "sdk",
+        "source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+        "bytes": 2494783,
+        "index_pointer": "/artifacts/6",
+        "path": "CW32L012_StandardPeripheralLib_V1.0.5.zip"
+      },
+      {
+        "role": "selected_svd",
+        "source_ref": "member:cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "fda08355c30ed60204cd53b2c1ca33e6ee2233530e6cb2448522158dfc302942",
+        "bytes": 505809,
+        "index_pointer": "/artifacts/6/members/17",
+        "path": "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+        "parent_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "archive_member_chain": [
+          "IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2.pack",
+          "SVD/CW32L012.svd"
+        ]
+      },
+      {
+        "role": "device_pack",
+        "source_ref": "member:cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/WHXY.CW32L012_DFP.pdsc",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "0c88e4226659eadac050161d2b5ca3b1c4695c2793a3f609e0eb58646003657c",
+        "bytes": 3199,
+        "index_pointer": "/artifacts/6/members/18",
+        "path": "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/WHXY.CW32L012_DFP.pdsc",
+        "parent_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "archive_member_chain": [
+          "IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2.pack",
+          "WHXY.CW32L012_DFP.pdsc"
+        ]
+      },
+      {
+        "role": "device_header",
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+        "bytes": 834392,
+        "index_pointer": "/artifacts/6/members/19",
+        "path": "cw32l012/Libraries/inc/cw32l012.h",
+        "parent_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "archive_member_chain": [
+          "Libraries/inc/cw32l012.h"
+        ]
+      },
+      {
+        "role": "gpio_header",
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012_gpio.h",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "45f356e8028475c2e25d135c5fdd0b75babb6b1c83f1d5534038e9355822d717",
+        "bytes": 69670,
+        "index_pointer": "/artifacts/6/members/28",
+        "path": "cw32l012/Libraries/inc/cw32l012_gpio.h",
+        "parent_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "archive_member_chain": [
+          "Libraries/inc/cw32l012_gpio.h"
+        ]
+      },
+      {
+        "role": "i2c_sdk_header",
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012_lpi2c.h",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "47ef67bfdab9d7b6a61307c83305b4c9c55700f05072ce9c302941d619a580c4",
+        "bytes": 63276,
+        "index_pointer": "/artifacts/6/members/32",
+        "path": "cw32l012/Libraries/inc/cw32l012_lpi2c.h",
+        "parent_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "archive_member_chain": [
+          "Libraries/inc/cw32l012_lpi2c.h"
+        ]
+      },
+      {
+        "role": "sysctrl_header",
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012_sysctrl.h",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "3746c16b7a3fa72d1b43d42c080111e64faa36e8beb4b1f19c13daf3c71b993c",
+        "bytes": 53947,
+        "index_pointer": "/artifacts/6/members/38",
+        "path": "cw32l012/Libraries/inc/cw32l012_sysctrl.h",
+        "parent_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "archive_member_chain": [
+          "Libraries/inc/cw32l012_sysctrl.h"
+        ]
+      },
+      {
+        "role": "i2c_sdk_source",
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_lpi2c.c",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "026cf80a54f13bb08de55aff304c7d4fc629bb7477242ab337cabef61dc46d69",
+        "bytes": 112572,
+        "index_pointer": "/artifacts/6/members/54",
+        "path": "cw32l012/Libraries/src/cw32l012_lpi2c.c",
+        "parent_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "archive_member_chain": [
+          "Libraries/src/cw32l012_lpi2c.c"
+        ]
+      },
+      {
+        "role": "datasheet",
+        "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+        "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+        "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+        "bytes": 3003846,
+        "index_pointer": "/artifacts/24",
+        "path": "CW32L012_DataSheet_CN_V1.0.pdf"
+      },
+      {
+        "role": "manual",
+        "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+        "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+        "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+        "bytes": 18034510,
+        "index_pointer": "/artifacts/25",
+        "path": "CW32L012_UserManual_CN_V1.4.pdf"
+      }
+    ],
+    "source_count": 10,
+    "sdk_members_checked": 7,
+    "pdf_page_extracts_checked": 32,
+    "no_new_source_pins": true
+  },
+  "location_projection": {
+    "verdict": "accepted-public-location-projection-of-main-source-metadata-review",
+    "original_private_receipt": {
+      "artifact": "external-artifact:stage88-acceptance/independent-metadata/main-acceptance-review.json",
+      "bytes": 44018,
+      "sha256": "b1cd7b25db06aa9c7160fbaa99efba21af050e8fca6b17930e28f7f9bed95c22"
+    },
+    "transformation": "Only location strings changed: project-source paths are relative, target and retained outputs are explicitly external artifact labels, and Cargo local package IDs use public package identities. No command, source pin, technical fact, artifact hash, size, result or scope changed.",
+    "proof": "external-artifact:stage88-acceptance/independent-metadata/public-location-conversion.json",
+    "original_receipts_preserved": true,
+    "this_is_a_new_reviewed_projection_not_the_original_receipt_bytes": true
+  }
+}

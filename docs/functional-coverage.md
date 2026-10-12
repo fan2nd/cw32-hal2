@@ -716,8 +716,8 @@ F030/A030/F020/F002/F003/L010/L011/L031/R031/W031/L052/L083 share the
 source-qualified classic SI engine across five existing register versions and
 17 family/controller slots. Owned seven-bit async master transactions retain
 package-qualified pins and expose inherent methods plus embedded-hal-async.
-L012 remains the separate blocking command/FIFO backend. Ten-bit, slave and
-I2C DMA remain unimplemented.
+L012 has its own command/FIFO blocking and async backend, described separately
+below. Ten-bit, slave and I2C DMA remain unimplemented.
 
 Only START/address/data event waits are asynchronous. Bus-idle, STOP and cleanup
 use finite synchronous sample budgets; no built-in SI deadline exists. Live
@@ -733,3 +733,39 @@ At main acceptance clean had not run; final-package completion requires a separa
 six-library/six-ELF clean receipt. No behavioral HAL test, lifecycle probe, or
 hardware validation is claimed. See
 [classic-i2c-async.md](classic-i2c-async.md).
+
+
+## L012 command/FIFO asynchronous master
+
+CW32L012 adds owned seven-bit async master transactions on I2C1 and I2C2, including
+ordinary inherent methods and embedded-hal-async. The family alias remains a
+library selection; executable examples admit only the qualified CW32L012C8T6
+and CW32L012C8U6 packages with 64 KiB Flash and 8 KiB RAM. Both ordinary binaries
+use I2C1 PA4/PA5 AF2 and I2C2 PB0/PB1 AF8, including adjacent reads through the
+real async trait. This instantiates those routes, not every promoted AF route.
+
+TXE, RXNE and initial STOP-event waits are asynchronous and have no internal
+deadline. Initial bus-idle sampling, final STOP/idle confirmation, retirement,
+reset and Drop use finite synchronous samples. The per-instance ISR masks its
+vector and wakes; it never accesses I2C MMIO or a caller buffer. All requests
+remain disabled between waits and in blocking operation.
+
+Cancellation may drain queued/active work and preserve target effects. MEN-only
+disable precedes bounded drain; FIFO reset follows confirmed local idle, with
+held master RESET as the fallback. A later call restores configuration only from
+a confirmed stopped state. Failed shutdown/reset/configuration is sticky across
+replacement owners until chip reset. No rollback, physical bus repair or
+multi-master noninterference is promised. A read run remains limited to 256
+bytes, timing remains PCLK-only, and board rise/filter/electrical assumptions
+remain necessary. DMA, slave and ten-bit APIs, retries, new clock sources,
+low-power behavior, RF and silicon validation are outside this scope.
+
+Stage88 main execution passed six actual standalone ARM libraries, six linked
+ordinary ELFs and six finite source/data commands. All 910 generated files stayed
+unchanged. L6 (`cw32l011k8t6,rt`) retains three existing RCC warnings. Independent
+acceptance is recorded separately; at main acceptance clean had not run and
+final-package completion requires a separate final-source three-library/three-ELF
+clean receipt. No hardware result is claimed. The shared blocking/async retirement
+order corrects a source-qualification gap, not a reproduced silicon defect.
+See [the L012 contract](l012-i2c-async.md) and
+[ordinary firmware](../examples/l012-i2c/README.md).

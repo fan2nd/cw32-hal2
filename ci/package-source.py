@@ -80,6 +80,7 @@ def required_evidence(root: Path) -> set[str]:
     required.add("docs/four-channel-dma-runtime-review.json")
     required.add("docs/l012-dma-runtime-review.json")
     required.add("docs/classic-i2c-async-runtime-review.json")
+    required.add("docs/l012-i2c-async-runtime-review.json")
     for audit in lock.get("project_audit_inputs", []):
         path = root / audit["path"]
         if path.stat().st_size != audit["bytes"] or hashlib.sha256(path.read_bytes()).hexdigest() != audit["sha256"]:

@@ -83,7 +83,7 @@ def source_bytes(path, sha256, length):
         actual = hashlib.file_digest(stream, 'sha256').hexdigest()
     assert source.stat().st_size == length and actual == sha256, path
     # Archive/PDF provenance needs identity checks, not retained binary copies.
-    return source.read_bytes() if source.suffix.lower() in {'.txt', '.h', '.svd'} else b''
+    return source.read_bytes() if source.suffix.lower() in {'.txt', '.h', '.svd', '.pdsc', '.c'} else b''
 
 
 def selected_source(binding):
@@ -487,6 +487,342 @@ def classic_async_sources():
     print('PASS classic async sources: 12 families, 17 controllers, 5 IP versions and 34 exact-package routes')
 
 
+def command_pages(block):
+    """Reopen exact locked PDF pages; receipts and HAL text are not inputs."""
+    sources = {b['source_ref']: b for b in block['sources'].values()}
+    identities = {(p['source_ref'], p['pdf_page_1_based']): p for p in block['page_identities']}
+    assert len(identities) == len(block['page_identities']) == 32
+    expected = {'manual': {59, 63, 71, 524, 530, 531, 533, 536, 537, 541, 542,
+                           546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 562, 563, 564},
+                'datasheet': {5, 32, 33, 36, 37, 38}}
+    for role, printed in expected.items():
+        source = block['sources'][role]
+        assert {p['printed_page'] for p in identities.values() if p['source_ref'] == source['source_ref']} == printed
+    content = {}
+    for key, page in identities.items():
+        source = sources[page['source_ref']]
+        text = pdf_page(source['path'], page['pdf_page_1_based'])
+        assert digest(text.encode()) == page['layout_extract_sha256'], key
+        offset = 26 if source == block['sources']['manual'] else 3
+        assert page['pdf_page_1_based'] == page['printed_page'] + offset
+        assert 'CW32L012' in text and re.search(r'^\s*' + str(page['printed_page'])
+                                               + r'\s+(?:https://www\.whxy\.com)?\s*$', text, re.M)
+        content[key] = text
+    result = {}
+    for role, places in block['manual_locators'].items():
+        assert places and len({(p['source_ref'], p['pdf_page_1_based']) for p in places}) == len(places)
+        for page in places:
+            assert page == identities[page['source_ref'], page['pdf_page_1_based']]
+        result[role] = '\n'.join(content[p['source_ref'], p['pdf_page_1_based']] for p in places)
+    return result
+
+
+def command_protocol(block, raw, material):
+    words = {name: flat(text) for name, text in raw.items()}
+    clauses = {
+        'fifo_depth': ['1字节命令/发送FIFO', '1字节接收FIFO', '独立的I2C从机寄存器'],
+        'master_reset': ['I2Cx_MCR0.RESET将所有主机逻辑和寄存器重置为默认状态，I2Cx_MCR0寄存器自身除外',
+                         'R0W1', '00：PCLK'],
+        'men_disable_drain': ['I2C继续清空发送FIFO', '直到发送了STOP停止信号',
+                              'I2C将不再暂停I2C总线等待发送或接收FIFO', 'I2C自动生成STOP停止信号'],
+        'receive_commands': ['在主机接收传输的最后一个字节上发送NACK',
+                             '除非发送FIFO中的下一个命令也是接收数据命令', '（MTDR[7:0]+1）'],
+        'errors': ['I2C主机释放I2C总线', '主机在发送数据时检测到未预料的NACK',
+                   '在NACK标志被清除之前，主机不会发出新的START', '只要引脚低电平超时持续，PINLOW标志就无法清除'],
+        'arbitration': ['丢失仲裁的主机会继续输出SCL串行时钟，直到当前字节传输完成'],
+        'master_registers': ['先通过MCR0.TXFIFORST复位TXFIFO后，才能用MICR.FIFO清除',
+                             'Resetvalue:0x00007F04', 'R1W0', 'RepeatedSTART信号或STOP信号'],
+        'slave_admission': ['I2C主机逻辑独立于从机逻辑运行', 'I2C从机逻辑也独立于主机逻辑运行',
+                            'I2Cx_SCR0', 'I2Cx_SIER', 'I2Cx_SDER', 'SLVBUSY'],
+    }
+    for role, required in clauses.items():
+        for clause in required:
+            assert clause in words[role], (role, clause)
+    irq_fields = ['TXE', 'RXNE', 'PACKET', 'STOP', 'NACK', 'ARBI', 'FIFO', 'PINLOW', 'MATCH']
+    enables = re.findall(r'^\s*\d+\s+([A-Z]+)\s+RW\b', pdf_page(block['sources']['manual']['path'], 580), re.M)
+    assert set(enables) == set(irq_fields) and len(enables) == len(irq_fields)
+    p = block['protocol']
+    assert p['address_bits'] == 7 and p['receive_command_bytes'] == [1, 256]
+    assert p['transmit_fifo_entries'] == p['receive_fifo_entries'] == 1
+    assert p['receive_command_encoding'] == 'count_minus_one'
+    assert p['watermarks'] == {'TXWATER': 0, 'RXWATER': 0}
+    assert p['irq_enable_fields'] == irq_fields and p['error_fields'] == ['NACK', 'ARBI', 'FIFO', 'PINLOW']
+    assert p['idle_interrupt_enable_present'] is False and p['micr_write_noop'] == 0x7f04
+    assert p['gpio_input_selector'] == p['pin_configuration'] == 0 and p['scr2_alias_byte_offset'] == 0x24
+    assert re.search(r'^#define\s+FSL_FEATURE_I2C_FIFO_SIZEn\(x\)\s+\(1\)', material['i2c_sdk_header'], re.M)
+    sdk = flat(material['i2c_sdk_source'])
+    assert 'I2Cx->MTDR=I2C_Cmd_Rx_DataToMRDR|(rxSize-1);' in sdk
+    assert 'kRxDataCmd=I2C_MTDR_CMD(0X1U)' in flat(material['i2c_sdk_header'])
+    assert re.search(r'^#define\s+SYSCTRL_KEY\s+\(0x5A5A0000U\)', material['sysctrl_header'], re.M)
+
+
+def command_registers(fact, material):
+    version = fact['register_version']
+    source = ET.fromstring(material['selected_svd'])
+    per = {p.findtext('name'): p for p in source.findall('./peripherals/peripheral')}
+    assert per['I2C2'].get('derivedFrom') == 'I2C1'
+    registers = {r.findtext('name'): r for r in per['I2C1'].findall('./registers/register')}
+    assert len(registers) == 29
+    pac = (ROOT / f'cw32-metapac/src/peripherals/{version}.rs').read_text()
+    for ir in [current_yaml(f'cw32-data/registers/{version}.yaml'), current_json(f'cw32-data/data/registers/{version}.json')]:
+        items = named(ir['block/I2C']['items'])
+        assert set(items) == set(registers)
+        for name, reg in registers.items():
+            item = items[name]
+            offset = int(reg.findtext('addressOffset'), 0)
+            access = {'read-only': 'Read', 'write-only': 'Write', 'read-write': 'ReadWrite'}[reg.findtext('access')]
+            assert (item['byte_offset'], item.get('access', 'ReadWrite'), item.get('bit_size', 32)) == (offset, access, 32)
+            assert offset % 4 == 0 and item.get('array') is None
+            expected = {f.findtext('name'): (int(f.findtext('lsb')), int(f.findtext('msb')) - int(f.findtext('lsb')) + 1)
+                        for f in reg.findall('./fields/field')}
+            fields = ir['fieldset/' + item['fieldset']]['fields']
+            assert len(named(fields)) == len(expected)
+            assert ir['fieldset/' + item['fieldset']].get('bit_size', 32) == 32
+            assert all(f.get('array') is None and isinstance(f['bit_offset'], int)
+                       and 0 < f['bit_size'] <= 32 and 0 <= f['bit_offset'] <= 32 - f['bit_size'] for f in fields)
+            assert {f['name']: (f['bit_offset'], f['bit_size']) for f in fields} == expected, name
+            for fld, (bit, width) in expected.items():
+                macro = f'I2C_{name}_{fld}'
+                assert macro_value(material['device_header'], macro + '_Pos') == bit
+                assert macro_value(material['device_header'], macro + '_Msk') == ((1 << width) - 1) << bit
+            mode = {'Read': 'R', 'Write': 'W', 'ReadWrite': 'RW'}[access]
+            match = re.search(r'pub const fn ' + name.lower() + r'\(self\).*?Reg<regs::' + name.title()
+                              + r', crate::common::(R|W|RW)>\s*\{.*?wrapping_add\((0x[0-9a-f]+)usize\)', pac, re.S)
+            assert match and match[1] == mode and int(match[2], 16) == offset, name
+        assert items['SCR2']['byte_offset'] == items['MCR2']['byte_offset'] == 0x24
+        assert {f['name'] for f in ir['fieldset/MIER']['fields']} == set(fact['command_async_master']['protocol']['irq_enable_fields'])
+        assert field(ir, 'MRDR', 'EMPTY')['bit_offset'] == 14
+    return per
+
+
+def command_rcc_field(ir, block, reference):
+    item = named(ir['block/' + block]['items'])[reference['register']]
+    assert item.get('array') is None and item['byte_offset'] % 4 == 0
+    assert item.get('access', 'ReadWrite') == 'ReadWrite' and item.get('bit_size', 32) == 32
+    fields = ir['fieldset/' + item['fieldset']]
+    assert fields.get('bit_size', 32) == 32
+    fld = named(fields['fields'])[reference['field']]
+    assert fld.get('array') is None and isinstance(fld['bit_offset'], int)
+    assert 0 < fld['bit_size'] <= 32 and 0 <= fld['bit_offset'] <= 32 - fld['bit_size']
+    return item['byte_offset'], fld['bit_offset'], fld['bit_size']
+
+
+def command_instances(block, raw, material, svd):
+    instances = named(block['instances'])
+    assert set(instances) == {name for name in svd if name.startswith('I2C')} == {'I2C1', 'I2C2'}
+    all_irqs = [(p.findtext('name'), i.findtext('name'), int(i.findtext('value'), 0))
+                for p in svd.values() for i in p.findall('interrupt')]
+    header_irqs = {name: int(number) for name, number in re.findall(r'\b(I2C\d+)_IRQn\s*=\s*(\d+)', material['device_header'])}
+    assert header_irqs == {'I2C1': 23, 'I2C2': 24}
+    clock = named(current_yaml('cw32-data/clock/cw32l012.yaml')['peripherals'])
+    sysregs = {r.findtext('name'): r for r in svd['SYSCTRL'].findall('./registers/register')}
+    for name, address, number, bit in [('I2C1', 0x40005800, 23, 6), ('I2C2', 0x40005c00, 24, 11)]:
+        i = instances[name]
+        assert (i['register_kind'], i['register_version'], i['register_block']) == ('i2c', 'cw32l012_v1', 'I2C')
+        assert int(i['base_address'], 16) == int(svd[name].findtext('baseAddress'), 0) == macro_value(material['device_header'], name + '_BASE') == address
+        assert i['interrupt'] == {'name': name, 'number': number, 'signal': 'GLOBAL', 'shared': False, 'all_source_owners': [name]}
+        assert [(p, irq) for p, irq, n in all_irqs if n == number] == [(name, name)]
+        assert re.search(r'\b' + str(number + 16) + r'\s+' + str(number) + r'\s+可配置\s+' + name + r'\s', raw['nvic'])
+        assert i['clock']['bus'] == clock[name]['bus_clock'] == 'PCLK' and i['clock']['master_source_encoding'] == 0
+        assert clock[name]['kernel_clock'] == {'mux': {'peripheral': name, 'register': 'MCR0', 'field': 'CLKSRC'}}
+        for kind, role, register, offset, polarity, active in [('enable', 'gate', 'APBEN2', 0x34, 'active_value', True),
+                                                             ('reset', 'reset', 'APBRST2', 0x44, 'asserted_value', False)]:
+            source = i['clock'][role]
+            assert {k: source[k] for k in ['peripheral', 'register', 'field']} == clock[name][kind] == {'peripheral': 'SYSCTRL', 'register': register, 'field': name}
+            assert (source['byte_offset'], source['bit_offset'], source['bit_size'], source[polarity]) == (offset, bit, 1, active)
+            assert source['all_physical_owners'] == [name] and source['shared_group'] is None
+            assert clock[name][kind + '_' + polarity] == int(active) and clock[name].get('shared_' + kind + '_group') is None
+            reg = sysregs[register]
+            assert int(reg.findtext('addressOffset'), 0) == offset and reg.findtext('access') == 'read-write'
+            source_field, = [f for f in reg.findall('./fields/field') if f.findtext('name') == name]
+            assert int(source_field.findtext('lsb')) == int(source_field.findtext('msb')) == bit
+            assert macro_value(material['device_header'], f'SYSCTRL_{register}_{name}_Pos') == bit
+            assert macro_value(material['device_header'], f'SYSCTRL_{register}_{name}_Msk') == 1 << bit
+            for ir in [current_yaml('cw32-data/registers/sysctrl_cw32l012_v1.yaml'),
+                       current_json('cw32-data/data/registers/sysctrl_cw32l012_v1.json')]:
+                assert command_rcc_field(ir, 'SYSCTRL', clock[name][kind]) == (offset, bit, 1)
+                if kind == 'enable':
+                    assert command_rcc_field(ir, 'SYSCTRL', clock[name]['enable_write_key']['field']) == (offset, 16, 16)
+            assert re.search(r'\b' + str(bit) + r'\s+' + name + r'\s+RW\b', raw[role])
+            assert f'Addressoffset:0x{offset:X}' in flat(raw[role])
+            if kind == 'enable':
+                assert source['write_key'] == clock[name]['enable_write_key'] == {'field': {'peripheral': 'SYSCTRL', 'register': register, 'field': 'KEY'}, 'value': 0x5a5a}
+                key, = [f for f in reg.findall('./fields/field') if f.findtext('name') == 'KEY']
+                assert (int(key.findtext('lsb')), int(key.findtext('msb')), key.findtext('access')) == (16, 31, 'write-only')
+                assert macro_value(material['device_header'], 'SYSCTRL_APBEN2_KEY_Pos') == 16
+                assert macro_value(material['device_header'], 'SYSCTRL_APBEN2_KEY_Msk') == 0xffff0000
+                assert '31:16KEYWO' in flat(raw[role]) and '0x5A5A' in raw[role]
+                assert '0：禁止' in flat(raw[role]) and '1：使能' in flat(raw[role])
+                line, = [line for line in material['sysctrl_header'].splitlines() if line.startswith(f'#define __SYSCTRL_{name}_CLK_ENABLE()')]
+                assert 'REGBITS_SET(CW_SYSCTRL->APBEN2, (SYSCTRL_KEY | SYSCTRL_APB2_PERIPH_' + name + '))' in line
+            else:
+                assert source['write_key'] is None and clock[name].get('reset_write_key') is None
+                assert '0：模块处于复位状态' in flat(raw[role]) and '1：模块正常工作' in flat(raw[role])
+                assert 'Resetvalue:0x000000FF' in flat(raw[role]) and i['clock']['central_reset_register_value'] == 0xff
+    profile = current_yaml('cw32-data/inputs/cw32l012.yaml')
+    expected = {p['name'] for p in profile['chips']} | {p['name'] for p in current_yaml(profile['parts_catalog'])['parts'] if p['family'] == 'CW32L012'}
+    assert expected == set(block['chip_inventory']) == {'CW32L012', 'CW32L012C8T6', 'CW32L012C8U6'}
+    chips = [current_json(str(p.relative_to(ROOT))) for p in sorted((ROOT / 'cw32-data/data/chips').glob('*.json'))]
+    chips = [c for c in chips if c['line'] == 'CW32L012']
+    assert {c['name'] for c in chips} == expected and len(chips) == 3
+    assert profile['source']['source_ref'] == block['sources']['selected_svd']['source_ref']
+    assert profile['source']['sha256'] == block['sources']['selected_svd']['sha256']
+    for chip in chips:
+        assert (chip['family'], chip['line'], chip['die']) == ('CW32L0', 'CW32L012', 'CW32L012')
+        assert len(chip['cores']) == 1
+        core = chip['cores'][0]
+        per, irqs = named(core['peripherals']), named(core['interrupts'])
+        assert {p['name'] for p in per.values() if p['name'].startswith('I2C') or p.get('registers', {}).get('kind') == 'i2c'} == set(instances)
+        def physical(control, kind):
+            if not control.get(kind):
+                return None
+            bank = per[control['controller']]
+            regs = bank['registers']
+            ir = current_json(f'cw32-data/data/registers/{regs["kind"]}_{regs["version"]}.json')
+            offset, bit, width = command_rcc_field(ir, regs['block'], control[kind])
+            return bank['address'] + offset, bit, width
+        for name, i in instances.items():
+            p, irq = per[name], i['interrupt']
+            assert p['address'] == int(i['base_address'], 16) and p['registers'] == {'kind': 'i2c', 'version': 'cw32l012_v1', 'block': 'I2C'}
+            assert p['interrupts'] == [{'signal': 'GLOBAL', 'interrupt': name}]
+            assert irqs[name]['number'] == irq['number'] and sum(q['number'] == irq['number'] for q in irqs.values()) == 1
+            assert [(q['name'], link['signal']) for q in per.values() for link in q.get('interrupts', []) if irqs[link['interrupt']]['number'] == irq['number']] == [(name, 'GLOBAL')]
+            c = p['rcc_control']
+            assert c['controller'] == 'SYSCTRL' and c['bus_clock'] == 'PCLK' and per['SYSCTRL']['address'] == 0x40004000
+            assert per['SYSCTRL']['registers'] == {'kind': 'sysctrl', 'version': 'cw32l012_v1', 'block': 'SYSCTRL'}
+            for kind, role, polarity, active in [('enable', 'gate', 'active_value', True), ('reset', 'reset', 'asserted_value', False)]:
+                source = i['clock'][role]
+                assert c[kind] == {k: source[k] for k in ['register', 'field']}
+                assert c[kind + '_' + polarity] is active and c.get('shared_' + kind + '_group') is None
+                own = physical(c, kind)
+                assert own == (0x40004000 + source['byte_offset'], source['bit_offset'], 1)
+                owners = []
+                for q in per.values():
+                    if 'rcc_control' not in q:
+                        continue
+                    for operation in ['enable', 'reset']:
+                        other = physical(q['rcc_control'], operation)
+                        if other and other[0] == own[0] and other[1] <= own[1] < other[1] + other[2]:
+                            owners.append((q['name'], operation))
+                assert owners == [(name, kind)], (chip['name'], name, kind, owners)
+            assert c['enable_write_key'] == {'field': {'register': 'APBEN2', 'field': 'KEY'}, 'value': 0x5a5a}
+            sys_ir = current_json('cw32-data/data/registers/sysctrl_cw32l012_v1.json')
+            assert command_rcc_field(sys_ir, 'SYSCTRL', c['enable_write_key']['field']) == (0x34, 16, 16)
+            assert p['i2c_limits']['maximum_frequency_hz'] == 1000000
+    return chips
+
+
+def command_routes(block, material, chips):
+    from importlib.util import module_from_spec, spec_from_file_location
+    import sys
+    from verify_final_serial_af import pdf_cells
+    routes = current_yaml(block['route_inventory']['authored'])
+    sources = block['sources']
+    assert routes['source']['header_sha256'] == sources['gpio_header']['sha256']
+    assert routes['source']['sdk_sha256'] == sources['sdk']['sha256'] and routes['source']['sdk_url'] == sources['sdk']['url']
+    cells = pdf_cells(SOURCES / sources['datasheet']['path'], 'CW32L012')
+    selected = [r for r in routes['routes'] if r['peripheral'].startswith('I2C')]
+    assert len(selected) == 24 and block['route_inventory']['counts'] == {'I2C1': 18, 'I2C2': 6}
+    inventory = {(r['peripheral'], r['signal'], r['pin'], r['af']) for r in selected}
+    assert len(inventory) == 24
+    source_i2c = {key: cell for key, cell in cells.items() if cell['function'].startswith('I2C')}
+    assert {(r['pin'], r['af']) for r in selected} == set(source_i2c)
+    for r in selected:
+        cell = source_i2c[r['pin'], r['af']]
+        assert r['datasheet_cell'] == {k: v for k, v in cell.items() if k != 'bbox'}
+        assert cell['function'] == r['peripheral'] + '_' + r['signal']
+        line = material['gpio_header'].splitlines()[r['source_line'] - 1]
+        assert re.search(r'^#define\s+' + re.escape(r['source_macro']) + r'\(\)', line)
+        assert re.search(r'\.' + r['gpio_field'] + r'\s*=\s*' + str(r['af']) + r'\)', line)
+        assert '->' + r['gpio_register'] + '_f.' in line
+    pinout = current_yaml('cw32-data/pinouts/cw32l012.yaml')
+    assert pinout['source']['source_ref'] == sources['datasheet']['source_ref'] and pinout['source']['sha256'] == sources['datasheet']['sha256']
+    # Reuse the existing own-PDF table reader; do not infer package bonds from
+    # matching generated and authored metadata alone.
+    spec = spec_from_file_location('i2c_pinout_source_reader', ROOT / 'cw32-data/tools/extract_pinouts.py')
+    reader = module_from_spec(spec)
+    search_path = sys.path[:]
+    try:
+        sys.path.insert(0, str(ROOT / 'cw32-data/tools'))
+        spec.loader.exec_module(reader)
+    finally:
+        sys.path[:] = search_path
+    assert reader.extract_rows(SOURCES / sources['datasheet']['path'], 'CW32L012') == pinout['table_rows']
+    devices = ET.fromstring(material['device_pack']).findall('.//device')
+    device, = [d for d in devices if d.get('Dname') == 'CW32L012C8']
+    memories = {m.get('name'): (int(m.get('start'), 0), int(m.get('size'), 0)) for m in device.findall('memory')}
+    assert memories == {'IROM1': (0, 65536), 'IRAM1': (0x20000000, 8192)}
+    assert {p['part'] for p in block['representative_packages']} == {'CW32L012C8T6', 'CW32L012C8U6'}
+    for chip in chips:
+        core = chip['cores'][0]
+        actual = {(p['name'], route['signal'], route['pin'], route['af']) for p in core['peripherals'] if p['name'].startswith('I2C') for route in p['pins']}
+        pins = {p['name'] for p in core['pins']}
+        assert actual == {r for r in inventory if r[2] in pins}
+        if chip['name'] == 'CW32L012':
+            assert chip['memory'] == chip['packages'] == [] and actual == inventory
+            continue
+        pack, = chip['packages']
+        authored_pack, = [p for p in pinout['packages'] if p['name'] == chip['name']]
+        assert pack['package'] == authored_pack['package'] == authored_pack['table_column']
+        column = authored_pack['table_column']
+        source_pins = sorted([{'position': row['positions'][column], 'signals': row['signals']}
+                              for row in pinout['table_rows'] if row['positions'][column] is not None],
+                             key=lambda p: int(p['position']))
+        assert [p['position'] for p in source_pins] == [str(n) for n in range(1, 49)]
+        assert pack['pins'] == authored_pack['pins'] == source_pins
+        bonded = {s for p in pack['pins'] for s in p['signals'] if re.fullmatch(r'P[A-F]\d+', s)}
+        assert pins == bonded
+        sample, = [p for p in block['representative_packages'] if p['part'] == chip['name']]
+        path, pointer = sample['part_identity'].split('#')
+        part = at_pointer(current_yaml(path), pointer)
+        assert (part['name'], part['feature'], part['package'], part['family']) == (sample['part'], sample['feature'], sample['package'], 'CW32L012')
+        memory = [{'name': 'FLASH', 'kind': 'flash', 'address': 0, 'size': 65536}, {'name': 'RAM', 'kind': 'ram', 'address': 0x20000000, 'size': 8192}]
+        assert chip['memory'] == [memory] and part['memory'] == sample['memory'] == memory
+        assert sample['chip_metadata'] == f'cw32-data/data/chips/{chip["name"]}.json'
+        assert part['dfp_device'] == sample['device_pack_device'] == 'CW32L012C8'
+        assert {(r['peripheral'], r['pin'], r['signal'], r['af'], r['package_position']) for r in sample['routes']} == {
+            ('I2C1', 'PA4', 'SCL', 2, '14'), ('I2C1', 'PA5', 'SDA', 2, '15'),
+            ('I2C2', 'PB0', 'SCL', 8, '18'), ('I2C2', 'PB1', 'SDA', 8, '19')}
+        for r in sample['routes']:
+            assert (r['peripheral'], r['signal'], r['pin'], r['af']) in actual
+            assert r['pin'] in next(p for p in pack['pins'] if p['position'] == r['package_position'])['signals']
+            path, pointer = r['pinout_pointer'].split('#')
+            row = at_pointer(current_yaml(path), pointer)
+            assert r['pin'] in row['signals'] and row['pin_type'] == r['pin_type'] == 'I/O'
+            assert row['positions'][sample['package']] == r['package_position']
+            assert row['pdf_page_index'] + 1 == r['pinout_pdf_page_1_based']
+            page = pdf_page(sources['datasheet']['path'], r['pinout_pdf_page_1_based'])
+            assert row['source_name'] in flat(page)
+            path, pointer = r['af_pointer'].split('#')
+            af = at_pointer(current_yaml(path), pointer)
+            assert all(af[k] == r[k] for k in ['peripheral', 'pin', 'signal', 'af', 'source_macro', 'source_line'])
+
+
+def command_async_sources():
+    fact = EVIDENCE['families']['CW32L012']
+    assert 'async_master' not in fact
+    assert {f for f, p in EVIDENCE['families'].items() if 'command_async_master' in p} == {'CW32L012'}
+    block = fact['command_async_master']
+    assert block['identity_authority'] == 'sources/evidence-sources.json'
+    assert set(block['sources']) == {'sdk', 'selected_svd', 'device_pack', 'device_header', 'gpio_header',
+                                     'i2c_sdk_header', 'sysctrl_header', 'i2c_sdk_source', 'datasheet', 'manual'}
+    material = {}
+    for role, binding in block['sources'].items():
+        _, data = selected_source(binding)
+        assert 'cw32l012' in binding['path'].lower()
+        if binding['source_ref'].startswith('member:'):
+            assert binding['parent_source_ref'] == block['sources']['sdk']['source_ref']
+            material[role] = data.decode(errors='replace')
+    for existing, role in [('manual', 'manual'), ('sdk_header', 'i2c_sdk_header')]:
+        assert fact[existing] == {k: block['sources'][role][v] for k, v in [('filename', 'path'), ('sha256', 'sha256'), ('url', 'url')]}
+    raw = command_pages(block)
+    command_protocol(block, raw, material)
+    svd = command_registers(fact, material)
+    chips = command_instances(block, raw, material, svd)
+    command_routes(block, material, chips)
+    print('PASS CW32L012 command async sources: 10 locked originals, 32 page identities, 29 register layouts, 3 selections, 2 dedicated IRQs, exclusive gates/resets, 24 AF routes and 8 exact-package example routes')
+
+
 def main():
     assert len(EVIDENCE['families']) == 13 and len(EVIDENCE['registers']) == 6
     classic_fields = {'FLT': 0, 'AA': 2, 'SI': 3, 'STO': 4, 'STA': 5, 'EN': 6}
@@ -585,6 +921,7 @@ def main():
     assert re.search(r'impl Default for Micr.*?(?:Self|Micr)\(0\)', pac, re.S)
     print('PASS all 6 typed PAC variants, 13 source families, explicit MICR seed and unchanged zero Default')
     classic_async_sources()
+    command_async_sources()
 
 
 if __name__ == '__main__':

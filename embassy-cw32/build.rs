@@ -1238,16 +1238,10 @@ fn main() {
                 .filter(|p| p.name.starts_with("I2C"))
             {
                 if peripheral.registers.as_ref().unwrap().version == "cw32l012_v1" {
-                    let number: u8 = if peripheral.name == "I2C" {
-                        1
-                    } else {
-                        peripheral.name[3..]
-                            .parse()
-                            .expect("invalid I2C instance number")
-                    };
+                    let irq = command_i2c_irq(peripheral);
                     out.push_str(&format!(
                         "crate::i2c::impl_instance!({}, {});\n",
-                        peripheral.name, number
+                        peripheral.name, irq
                     ));
                 } else {
                     let irq = classic_i2c_irq(peripheral);
@@ -2915,6 +2909,201 @@ fn generate_gpio(out: &mut String) {
         ));
     }
     out.push_str(&format!("pub(crate) const GPIO_AF_MASK: u32 = {af_mask};\npub(crate) const GPIO_AF_MAX: u32 = {af_max};\n"));
+}
+
+// L012 is a separate command controller. Its own source-qualified vectors,
+// control fields and package routes must not inherit classic I2C assumptions.
+fn command_i2c_irq(peripheral: &cw32_metapac::metadata::Peripheral) -> &'static str {
+    use cw32_metapac::metadata::{METADATA, MemoryRegionKind};
+    assert_eq!(METADATA.family, "CW32L0");
+    assert_eq!(METADATA.line, "CW32L012");
+    assert!(matches!(
+        METADATA.name,
+        "CW32L012" | "CW32L012C8T6" | "CW32L012C8U6"
+    ));
+    let mut instances: Vec<_> = METADATA
+        .peripherals
+        .iter()
+        .filter(|p| {
+            p.name.starts_with("I2C") || p.registers.as_ref().is_some_and(|r| r.kind == "i2c")
+        })
+        .map(|p| p.name)
+        .collect();
+    instances.sort_unstable();
+    assert_eq!(instances, ["I2C1", "I2C2"], "unreviewed L012 I2C inventory");
+    let (address, number, bit, routes) = match peripheral.name {
+        "I2C1" => (0x4000_5800, 23, 6, [("PA4", "SCL", 2), ("PA5", "SDA", 2)]),
+        "I2C2" => (0x4000_5c00, 24, 11, [("PB0", "SCL", 8), ("PB1", "SDA", 8)]),
+        _ => panic!("unreviewed L012 I2C instance"),
+    };
+    assert_eq!(peripheral.address, address);
+    let regs = peripheral
+        .registers
+        .as_ref()
+        .expect("L012 I2C registers missing");
+    assert_eq!(
+        (regs.kind, regs.version, regs.block),
+        ("i2c", "cw32l012_v1", "I2c")
+    );
+    assert_eq!(peripheral.interrupts.len(), 1);
+    let link = &peripheral.interrupts[0];
+    assert_eq!((link.signal, link.interrupt), ("GLOBAL", peripheral.name));
+    let vectors: Vec<_> = METADATA
+        .interrupts
+        .iter()
+        .filter(|i| i.name == link.interrupt)
+        .collect();
+    assert_eq!(vectors.len(), 1, "L012 I2C GLOBAL must resolve uniquely");
+    assert_eq!(vectors[0].number, number);
+    assert_eq!(
+        METADATA
+            .interrupts
+            .iter()
+            .filter(|i| i.number == number)
+            .count(),
+        1,
+        "L012 I2C vector number has an alias"
+    );
+    let mut irq_owners = 0;
+    for owner in METADATA.peripherals {
+        for source in owner.interrupts {
+            let resolved: Vec<_> = METADATA
+                .interrupts
+                .iter()
+                .filter(|i| i.name == source.interrupt)
+                .collect();
+            assert_eq!(resolved.len(), 1, "unresolved or duplicated interrupt name");
+            if resolved[0].number == number {
+                assert_eq!(
+                    (owner.name, source.signal),
+                    (peripheral.name, "GLOBAL"),
+                    "L012 I2C IRQ has another owner or source"
+                );
+                irq_owners += 1;
+            }
+        }
+    }
+    assert_eq!(irq_owners, 1);
+    let controllers: Vec<_> = METADATA
+        .peripherals
+        .iter()
+        .filter(|p| p.name == "SYSCTRL")
+        .collect();
+    assert_eq!(controllers.len(), 1);
+    let sysctrl = controllers[0];
+    assert_eq!(sysctrl.address, 0x4000_4000);
+    let sysregs = sysctrl.registers.as_ref().unwrap();
+    assert_eq!(
+        (sysregs.kind, sysregs.version, sysregs.block),
+        ("sysctrl", "cw32l012_v1", "Sysctrl")
+    );
+    let control = peripheral
+        .rcc_control
+        .as_ref()
+        .expect("L012 I2C RCC control missing");
+    assert_eq!((control.controller, control.bus_clock), ("SYSCTRL", "PCLK"));
+    assert!(control.enable_active_value);
+    assert_eq!(control.reset_asserted_value, Some(false));
+    assert!(control.shared_enable_group.is_none() && control.shared_reset_group.is_none());
+    assert!(control.enable.register.eq_ignore_ascii_case("APBEN2"));
+    assert!(control.enable.field.eq_ignore_ascii_case(peripheral.name));
+    let reset = control.reset.as_ref().expect("L012 I2C reset missing");
+    assert!(reset.register.eq_ignore_ascii_case("APBRST2"));
+    assert!(reset.field.eq_ignore_ascii_case(peripheral.name));
+    // rcc_field returns a word offset; assert the actual byte geometry here.
+    assert_eq!(rcc_field(sysregs, &control.enable), (0x34 / 4, bit, 1));
+    assert_eq!(rcc_field(sysregs, reset), (0x44 / 4, bit, 1));
+    let key = control
+        .enable_write_key
+        .as_ref()
+        .expect("L012 I2C gate key missing");
+    assert!(key.field.register.eq_ignore_ascii_case("APBEN2"));
+    assert!(key.field.field.eq_ignore_ascii_case("KEY"));
+    assert_eq!(rcc_field(sysregs, &key.field), (0x34 / 4, 16, 16));
+    assert_eq!(key.value, 0x5a5a);
+    for (kind, target) in [("enable", &control.enable), ("reset", reset)] {
+        let (offset, target_bit, _) = rcc_field(sysregs, target);
+        let physical = sysctrl.address + u64::from(offset) * 4;
+        let mut owners = 0;
+        // Compare physical overlapping fields across every controller and both
+        // operation kinds, including differently named aliases.
+        for owner in METADATA.peripherals {
+            let Some(other) = &owner.rcc_control else {
+                continue;
+            };
+            let banks: Vec<_> = METADATA
+                .peripherals
+                .iter()
+                .filter(|p| p.name == other.controller)
+                .collect();
+            assert_eq!(banks.len(), 1);
+            let bank = banks[0];
+            for (other_kind, reference) in [
+                ("enable", Some(&other.enable)),
+                ("reset", other.reset.as_ref()),
+            ] {
+                let Some(reference) = reference else { continue };
+                let (other_offset, other_bit, width) =
+                    rcc_field(bank.registers.as_ref().unwrap(), reference);
+                if bank.address + u64::from(other_offset) * 4 == physical
+                    && u32::from(other_bit) <= u32::from(target_bit)
+                    && u32::from(target_bit) < u32::from(other_bit) + width
+                {
+                    assert_eq!(
+                        (owner.name, other_kind),
+                        (peripheral.name, kind),
+                        "L012 I2C gate/reset has an aliased physical owner"
+                    );
+                    owners += 1;
+                }
+            }
+        }
+        assert_eq!(owners, 1);
+    }
+    for (pin, signal, af) in routes {
+        assert_eq!(
+            peripheral
+                .pins
+                .iter()
+                .filter(|p| (p.pin, p.signal, p.af) == (pin, signal, Some(af)))
+                .count(),
+            1
+        );
+        assert_eq!(
+            METADATA.pins.iter().filter(|p| p.name == pin).count(),
+            1,
+            "selected L012 I2C route is not bonded"
+        );
+    }
+    if METADATA.name == "CW32L012" {
+        assert!(
+            METADATA.memory.is_empty(),
+            "family profile must not invent an executable memory map"
+        );
+    } else {
+        assert_eq!(METADATA.memory.len(), 1);
+        let memory = METADATA.memory[0];
+        assert_eq!(memory.len(), 2);
+        assert_eq!(
+            (
+                memory[0].name,
+                &memory[0].kind,
+                memory[0].address,
+                memory[0].size
+            ),
+            ("FLASH", &MemoryRegionKind::Flash, 0, 65536)
+        );
+        assert_eq!(
+            (
+                memory[1].name,
+                &memory[1].kind,
+                memory[1].address,
+                memory[1].size
+            ),
+            ("RAM", &MemoryRegionKind::Ram, 0x2000_0000, 8192)
+        );
+    }
+    link.interrupt
 }
 
 // Admit only the own-source-qualified classic families/IPs. The mask-and-wake

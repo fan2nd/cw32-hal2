@@ -1,3 +1,5 @@
+> Current lifecycle notice: the blocking and asynchronous implementation is specified by [the L012 async contract](l012-i2c-async.md). Stage88 main execution passed six standalone libraries, six linked ELFs and six finite source/data commands with all 910 generated files unchanged. Independent acceptance is recorded separately; at main acceptance clean had not run and final completion requires its separate three-library/three-ELF clean receipt. The complete original text below is retained as historical evidence. Its combined MEN-clear/FIFO-reset recovery sequence, blocking-only scope and deleted model/fixture commands are not the current implementation contract. The revised ordering addresses a source-qualification gap; it is not a claim of a reproduced silicon defect.
+
 > Historical software-verification references: HAL tests and fixture harnesses cited below were deleted on 2026-10-08. Their reported results apply to the dated source snapshot only; source facts remain unchanged. See [current HAL layout and build scope](hal-production-layout.md).
 
 # CW32L012 blocking command/FIFO I2C

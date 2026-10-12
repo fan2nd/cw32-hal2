@@ -1,3 +1,5 @@
+> Historical scope notice: this dated register-cleanup record is retained unchanged below. Subsequent lifecycle changes are specified by [the classic async contract](classic-i2c-async.md) and [the L012 async contract](l012-i2c-async.md). Stage88 main execution passed six standalone libraries, six linked ELFs and six finite source/data commands with all 910 generated files unchanged. Independent acceptance is recorded separately; at main acceptance clean had not run and final completion requires its separate three-library/three-ELF clean receipt. Historical reset/recovery word correspondence is not a current lifecycle prescription.
+
 # I2C typed PAC register cleanup
 
 Date: 2026-10-08. Scope: classic CW32 I2C and the separate CW32L012 command/FIFO

@@ -597,8 +597,21 @@ Main acceptance covers 13 standalone ARM libraries, 17 linked ELFs and six finit
 source/data commands. Final-package completion requires a separate clean receipt;
 see [the classic async contract](docs/classic-i2c-async.md).
 
-L083 UART uses partner-safe shared interrupt handlers. L012 I2C uses its own
-command/FIFO engine with bounded recovery and a 256-byte contiguous-read limit.
+L083 UART uses partner-safe shared interrupt handlers. L012 I2C separately provides
+owned seven-bit blocking and async masters using its own command/FIFO engine.
+TXE, RXNE and initial STOP-event waits use interrupts without an internal deadline;
+final idle confirmation and retirement use bounded synchronous samples. Adjacent
+reads share one receive command, with a 256-byte contiguous-read limit. Cancellation
+may drain queued work and leave target effects; reuse requires confirmed local
+shutdown/reset and checked restoration. A failed lifecycle readback remains faulted
+until chip reset. PCLK-only timing and board electrical qualification remain required.
+Stage88 main execution passed six standalone ARM libraries, six linked ELFs and
+six finite source/data commands; all 910 generated files were unchanged. L6 keeps
+three existing RCC warnings. At main acceptance clean had not run; final-package
+completion requires its separate final-source three-library/three-ELF clean receipt.
+Independent acceptance is recorded separately; no hardware result is claimed.
+See [the L012 async contract](docs/l012-i2c-async.md) and
+[ordinary two-controller examples](examples/l012-i2c/README.md).
 Package pin availability and family-specific timing/pull capabilities apply.
 SPI, I2C and watchdog support does not imply all optional peripheral modes.
 
