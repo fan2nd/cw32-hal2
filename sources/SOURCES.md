@@ -886,3 +886,93 @@ is not execution evidence.
 SOURCE2 与除数 `(1, 16400)` 对应名义日历 /32800；源和秒率仍仅有 rate-only 资格。新能力只复用已软件使能、稳定、厂校匹配的 LSI，不提供冷启动或低功耗唤醒；L010新源时间修改及全部新源异步闹钟等待明确拒绝。本批主验证已产生12个实际库和7个链接ELF，19条命令全部exit0。gen-all与8条有限source/data门分别通过，905个生成data/PAC文件路径和bytes完全不变。本批冻结实现已获运行与metadata/source独立主验收。L010/L011行保留三个既有未使用LSE常量warning头，不能称零warning。在main验收时clean尚未运行；最终包完成仍要求另行记录最终源码两库/两ELF clean收据，不得由main结果代替。
 
 首轮main在第一库遇到build.rs中非Copy access取值的E0507，未产生库；仅改为引用比较保留完整相等性后，原19行主矩阵全部通过。初次失败与修正历史保留，不改写旧stage结果，也不构成实板、连续性或计时精度验证。
+
+## Exact-eight owned LSE AWT run-mode sources
+
+The [current contract](../docs/lse-awt.md) and
+[own-source record](../docs/lse-awt-evidence.json) reuse eleven already locked
+originals: five own manuals and six own datasheets. They add evidence locators,
+not vendor revisions, selected artifacts, hardware YAML or source-sharing
+metadata. All existing source IDs, URLs, hashes and historical receipts retain
+their scope. In particular,
+[`low-power-timers-evidence.json`](../docs/low-power-timers-evidence.json)
+remains byte-for-byte historical, including its old F020/F030/A030 IP labels.
+
+The exact cohort is CW32F020C6U7, CW32F030C8T7, CW32A030C8T7,
+CW32L031C8T6, CW32L031C8U6, CW32L031F8U6, CW32R031C8U6 and CW32W031R8U6.
+Current canonical inputs already use `awt_cw32f030_v1` for F020/F030/A030 and
+`awt_cw32l031_v1` for L031/R031/W031, both with LSE=3. F002/F003 retain
+`awt_v1` and its two distinct HEX pad selectors; general aliases, unqualified
+packages, LPTIM and RTC's separate internal wake timer gain no admission.
+
+The following physical PDF pages are one-based; these manuals' printed page
+labels are PDF minus one. F030/A030 explicitly share x030 authority; each
+other family uses its own manual.
+
+| Own manual | PCLK configuration / AWT gate | Timer / CR / UD flags | GPIO FILTER / loss detector |
+| --- | --- | --- | --- |
+| `CW32x030_UserManual_CN_V2.5.pdf` | 56 / 84 | 168–169 / 173 / 174 | 158 / 60 |
+| `CW32F020_UserManual_CN_V1.4.pdf` | 54 / 82 | 165–166 / 170 / 171 | 155 / 58 |
+| `CW32L031_UserManual_CN_V1.6.pdf` | 55 / 79 | 160–161 / 165 / 166 | 142, 150 / 59 |
+| `CW32R031_UserManual_CN_V1.3.pdf` | 57 / 81 | 162–163 / 167 / 168 | 144, 152 / 61 |
+| `CW32W031_UserManual_CN_V1.4.pdf` | 56 / 80 | 161–162 / 166 / 167 | 143, 151 / 60 |
+
+These pages distinguish the independently gated PCLK configuration domain
+from the AWT counting source; bind SRC=3, MD=3, PRS1..15, EN/reload ordering,
+ARR+1 cycles and R1W0 UD/no-op63; and identify native L031/R031/W031 FILTER7
+as AWT underflow. F020/x030 FILTER tables qualify 0..6 only. The lack of a
+source-edge update acknowledgment supports local control after counting-source
+loss while CPU/PCLK/gate/reset remain operational; it is not a measured bus
+latency or fault-transition result. x030/F020 mandatory CCS remains HAL
+admission policy, not a hardware-fixed monitor claim.
+
+Exact PC14/PC15 package positions and LSE electrical conditions retain these
+own datasheet authorities. Full identities and page-text hashes are in the
+new record and existing LSE qualification.
+
+| Own datasheet | Physical PDF locators |
+| --- | --- |
+| `CW32A030_DataSheet_CN_V1.1.pdf` | 22, 27, 35, 41, 42 |
+| `CW32F030_DataSheet_CN_V1.9.pdf` | 24, 30, 38, 44, 45 |
+| `current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf` | 23, 28, 36, 42, 43 |
+| `CW32L031_DataSheet_CN_V1.9.pdf` | 26, 30, 38, 45, 46 |
+| `CW32R031_DataSheet_CN_V1.2.pdf` | 5, 9, 11, 29, 33, 42, 52, 53 |
+| `CW32W031_DataSheet_CN_V1.3.pdf` | 4, 7, 9, 30, 32, 41, 51, 52 |
+
+R031's −40–85°C row retains its own PDF5/9/11 locators; W031's retains
+PDF4/7/9 and the existing 2.0–3.6 V LDO/DCDC intersection. Typical startup
+and nominal 32768 Hz do not prove a maximum startup time or board cycle bounds.
+The active board capability must continue to cover loading, drive, amplitude,
+waveform, supply, temperature and aging.
+
+Existing `LseClock` acquisition/reacquisition can temporarily enable whole
+GPIOC for pad verification and advance retained filters/edges even before an
+error. AWT health snapshots do not perform that inspection. Retained native
+FILTER7 recipients can change or stall when AWT is replaced, reconfigured,
+stopped, dropped or loses its source; forgetting can leave them driven. This
+functional handover boundary adds no all-recipient-quiescence prerequisite or
+new bank scan. An independently owned live RTC cannot share the source owner;
+retained RTC hardware, LSE/LSI and persistent pad reservations remain untouched.
+
+Stage80 main produced 11 actual ARM libraries and 8 linked ELFs with zero
+warnings: a successful library prefix and resumed ELF tail with identical
+1,347-file source snapshots, modes/bytes and toolchain. Main generation exited
+zero; all 905 generated files, including all 54 chip records, retained identical
+paths and bytes. The four separately invoked finite gates passed, covering
+current LSE AWT source/data, full locked-source provenance, module layout and
+canonical data. Independent runtime and metadata/source reviews accepted the
+frozen main implementation.
+
+The initial RCC-name assertion failure produced no artifact. After its
+correction the 11-library prefix passed, then the first ELF attempt stopped
+for missing locked offline `cordyceps 0.3.5`. Official locked fetching preserved
+the lockfile, and only the 8-ELF tail resumed. These failures remain recorded;
+there was no single uninterrupted successful 19-row invocation.
+
+At main acceptance clean had not run; final completion requires a separate
+final-source 2-library/2-ELF receipt, its independent ordinary generation,
+whole54/905 comparison and the same four finite gates using the same absolute
+source cache. Main acceptance does not replace clean replay or publication.
+Compilation/source review cannot establish runtime loss handling, cancellation,
+detector latency, electrical validity or silicon behavior; no cumulative HAL
+recipe expansion follows.

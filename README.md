@@ -451,6 +451,27 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   with own-version prescaler handling and 215 qualified family routing entries.
   L010/L011/L012 buffered GTIM also provides counter/simple PWM, with 62 qualified
   family routes and an explicit two-tick minimum period. Mode changes restart the timer.
+- AWT families retain HSIOSC polling/IRQ events; LPTIM families retain PCLK
+  run-mode events. Exactly F020C6U7, F030C8T7, A030C8T7, L031C8T6/C8U6/F8U6,
+  R031C8U6 and W031R8U6 additionally support AWT events with an owned,
+  board-qualified `LseClock`. `new_lse` and `new_async_lse` retain SYSCTRL and
+  the source pads; `set_config` retains that source. Readiness is a snapshot,
+  independent of retained events; source loss supplies no wake and can leave
+  `wait()` pending indefinitely. Acquiring/reacquiring `LseClock` may advance
+  whole-GPIOC filters/edges, and native L031/R031/W031 FILTER7 recipients can
+  change or stall when AWT changes or stops. Drop retains LSE/pad reservations;
+  forgetting may leave AWT active, and an independently owned live RTC cannot
+  share the same source owner. No low-power wake, deadline or silicon claim.
+  See [timer scope](docs/low-power-timers.md), [owned LSE AWT contract](docs/lse-awt.md)
+  and [firmware examples](examples/low-power-timers/README.md). Stage80 main
+  produced 11 actual ARM libraries and 8 linked ELFs with zero warnings,
+  using a successful library prefix and resumed ELF tail on identical source
+  and toolchain. Generation, all four finite source/data gates and the
+  whole54/905 zero-delta comparison passed separately. Independent runtime and
+  metadata/source reviews accepted the frozen main implementation. Early
+  assertion/cache failures remain recorded in [the verification history](docs/lse-awt.md#verification-boundary).
+  At main acceptance clean had not run; final completion requires a separate
+  final-source 2-library/2-ELF clean receipt.
 - L052/L083: polling AUTOTRIM periodic down-counter on frozen raw HSIOSC,
   using source-cycle periods and qualified factory clock bounds. Calibration,
   FCAP measurement and deep-sleep timing remain unsupported; see

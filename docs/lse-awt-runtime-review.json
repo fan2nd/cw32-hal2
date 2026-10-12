@@ -1,0 +1,811 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-12",
+  "review_scope": "Independent Stage80 owned-LSE AWT runtime implementation and ordinary main build evidence",
+  "decision": "accepted_main_runtime_implementation",
+  "unresolved_runtime_blockers": [],
+  "hardware_validated": false,
+  "firmware_executed": false,
+  "clean_replay_accepted": false,
+  "publication_verified": false,
+  "design_bindings": {
+    "runtime_sha256": "802de5c4a85aa7de4880942b4e75e1844ae21a33930d844b48622813ccba053c",
+    "metadata_sha256": "ecb0efe4ad6a8e1721411fa1cb3c02ca1601bc9ef948b889bebc8f809e12695a"
+  },
+  "source_bindings": [
+    {
+      "path": "embassy-cw32/src/awt.rs",
+      "sha256": "48b3ac33f5111e811ca78e6751706b25e0fe14eb0cdd91d3bf62b0fbf627b3d7",
+      "matches_main_source_snapshot": true
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "96f2430f0000c5af05194d2b39750433b535c8300a02347e6baff27ebfd3ac0a",
+      "matches_main_source_snapshot": true
+    },
+    {
+      "path": "examples/low-power-timers/Cargo.toml",
+      "sha256": "32160514b5072a12e78264d3f1b69bff1f5617acaee415d580d265e4bcaaac7f",
+      "matches_main_source_snapshot": true
+    },
+    {
+      "path": "examples/low-power-timers/build.rs",
+      "sha256": "20d1b03eb6d3be60db2a943d1df99028144cd6c0f6c6a8c95f1752ee38990ec9",
+      "matches_main_source_snapshot": true
+    },
+    {
+      "path": "examples/low-power-timers/README.md",
+      "sha256": "74c6d47f732b146a3a55bac70f11881b5f4fda056de15f7fb86ca7ed2a1de398",
+      "matches_main_source_snapshot": true
+    },
+    {
+      "path": "examples/low-power-timers/src/bin/lse_events.rs",
+      "sha256": "0f3be41976985696dea9b14fb4972480d1ccf9d219841fd1a82610dbe49dc01d",
+      "matches_main_source_snapshot": true
+    },
+    {
+      "path": "examples/low-power-timers/src/bin/polling.rs",
+      "sha256": "e010e4a76811bee739447a75a678b9d96b95c3ea1c8fc19a1374ccbad029113b",
+      "matches_main_source_snapshot": true
+    },
+    {
+      "path": "examples/low-power-timers/src/bin/interrupt.rs",
+      "sha256": "18dbe08a8c47bce5dec120d63f167d463fb05c8fda984ce2e4fb21fb03ff9686",
+      "matches_main_source_snapshot": true
+    },
+    {
+      "sha256": "7c3f4bdd2405a891d2d2f2897c1ef7c998dcd44c75b29af41f3366576dc76acf",
+      "matches_main_source_snapshot": true,
+      "project_path": "docs/lse-awt.md",
+      "external_artifact": "main-attempt-002/source-before.json",
+      "binding_scope": "historical main-source snapshot before later status-only publication edits"
+    },
+    {
+      "sha256": "bea32d04cc38bdd5c8db0b574c3465774ab0d09846b18b77b1d96f068db138d3",
+      "matches_main_source_snapshot": true,
+      "project_path": "docs/low-power-timers.md",
+      "external_artifact": "main-attempt-002/source-before.json",
+      "binding_scope": "historical main-source snapshot before later status-only publication edits"
+    },
+    {
+      "sha256": "1cfc05eebdbce264cb3e2b588346680a70e547ceb0883842a08a0b564b0fdce9",
+      "matches_main_source_snapshot": true,
+      "project_path": "docs/lse-awt-evidence.json",
+      "external_artifact": "main-attempt-002/source-before.json",
+      "binding_scope": "historical main-source snapshot before later status-only publication edits"
+    },
+    {
+      "sha256": "57ae57ab3f92cc020e6c9ca220af97621edcddb27db5243c60b27105cb38d578",
+      "matches_main_source_snapshot": true,
+      "project_path": "ci/hal-capabilities.yaml",
+      "external_artifact": "main-attempt-002/source-before.json",
+      "binding_scope": "historical main-source snapshot before later status-only publication edits"
+    },
+    {
+      "path": "ci/verify-lse-awt-data.py",
+      "sha256": "945b86a00149318ddb808aa9ebb8de2474d1f84f6aa5ae8e6b818b6ecadf458b",
+      "matches_main_source_snapshot": true
+    }
+  ],
+  "unchanged_source_contract_helpers": [
+    {
+      "path": "embassy-cw32/src/rcc/rtc.rs",
+      "sha256": "00cbef8a3a2cca6c2376d26392b706b900e3b31315ae086366633fe01f833ead",
+      "matches_reviewed_source_contract": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/lse.rs",
+      "sha256": "a77bc8af5685310a1234106417d48fc953b7393f28a2d15f835d41f12b5a1797",
+      "matches_reviewed_source_contract": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/peripheral.rs",
+      "sha256": "92fce92a5ad9f68106dfa400ecea2e0798e3dd4204baa300e00bd8b224351284",
+      "matches_reviewed_source_contract": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/mod.rs",
+      "sha256": "7070ef0e576384b50e56f9f3845330548ccc70d2252e41609c63bf8e6f3f7dab",
+      "matches_reviewed_source_contract": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/bounds.rs",
+      "sha256": "255c7e4febce938658701dceb0e17a1a468f2d5ab424feec2986baa6bbbafbcd",
+      "matches_reviewed_source_contract": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/hsi_48mhz.rs",
+      "sha256": "793e9e5e0bb1040728da36167c43b6cf24e10f0b695b3cec6dd777daf953e4cf",
+      "matches_reviewed_source_contract": true
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l031_r031_w031.rs",
+      "sha256": "ed5cf400b830a470ee163dd96d983e26f9d1b308c427c9e35cfca860d9b5cec6",
+      "matches_reviewed_source_contract": true
+    },
+    {
+      "path": "embassy-cw32/src/rtc/mod.rs",
+      "sha256": "cc6a2394cec58d83355d36057dc9f5b4340649e140d6cf850c505aa71a3bb1c9",
+      "matches_reviewed_source_contract": true
+    },
+    {
+      "path": "embassy-cw32/src/exti/mod.rs",
+      "sha256": "13b59e661679b9d333f5219ec0d67608466d82c1ffa95ecc28aae0adca283d07",
+      "matches_reviewed_source_contract": true
+    },
+    {
+      "path": "embassy-cw32/src/gpio.rs",
+      "sha256": "b4a85ee287470620d4d91289f3bb7e2c28efe6847667dfb26a3c9c9f1a832988",
+      "matches_reviewed_source_contract": true
+    }
+  ],
+  "source_authority": {
+    "sha256": "1cfc05eebdbce264cb3e2b588346680a70e547ceb0883842a08a0b564b0fdce9",
+    "inherited_independent_own_manual_review": "Five pinned own manuals established configuration-clock separation, AWT source/order/UD semantics, source-loss limitations and GPIO FILTER7 recipients. No new electrical or silicon claim is made by this implementation.",
+    "historical_evidence": {
+      "path": "docs/low-power-timers-evidence.json",
+      "sha256": "d4bee258a4598009c0284690c1d4d2ee93e12ab82b55b92ffc13a507dc0fed68",
+      "unchanged": true
+    },
+    "project_path": "docs/lse-awt-evidence.json",
+    "external_artifact": "main-attempt-002/source-before.json",
+    "binding_scope": "Historical main-source proof bytes used by this review and final-main data gate; later status-only proof changes receive a separate final-source receipt."
+  },
+  "runtime_findings": [
+    {
+      "subject": "Additive exact-eight owned source API",
+      "result": "accepted",
+      "basis": "The two constructors retain private Option<LseClock>; old constructors pass None and keep HSIOSC. No clone/share/extract or mutation API is added."
+    },
+    {
+      "subject": "Admission and errors",
+      "result": "accepted",
+      "basis": "Reserved PRS then RCC validation preserve old precedence. One LSE health sample precedes AWT/gate writes. Gate/reset side effects are preserved; no new post-programming errors or source teardown."
+    },
+    {
+      "subject": "Local construction order",
+      "result": "accepted",
+      "basis": "Within critical section: enable gate, reject asserted reset, EN=0, mask UD, selected SRC/MD/PRS with EN=0, ARR, clear hardware/software events, install mode/local IER. NVIC enable follows successful common initialization."
+    },
+    {
+      "subject": "Immutable source and bounds",
+      "result": "accepted",
+      "basis": "set_config derives selector and rational bounds from the held root, never previous divided tick; stops/configures/clears events, retains source, leaves stopped and does not add health monitoring."
+    },
+    {
+      "subject": "Health snapshot and retained event semantics",
+      "result": "accepted",
+      "basis": "Readiness directly uses held LSE predicate or HSIEN/STABLE; no pad scan, fault/event clear, IRQ installation, recovery or wake. Retained UD is consumed independently; absent an event wait may remain pending after loss."
+    },
+    {
+      "subject": "ISR, cancellation, Drop, forgetting and reconstruction",
+      "result": "accepted",
+      "basis": "Twelve existing bodies are byte-identical. Static state owns its Waker and no source/object pointer. Drop remains local stop/mask/inactivate; safe forget and pre-write failed reconstruction preserve prior hardware/event effects; successful replacement clears old local retention."
+    },
+    {
+      "subject": "RTC, pads and downstream recipients",
+      "result": "accepted",
+      "basis": "Existing RCC/RTC/GPIO helpers are unchanged. Source/pad reservations and retained RTC consumers remain; there is no simultaneous independent RTC/AWT sharing. GPIOC acquisition and FILTER7 effects are explicit functional limitations, with no new recipient scan or hidden Rust safety prerequisite."
+    },
+    {
+      "subject": "Actual generated metadata admission",
+      "result": "accepted_after_correction",
+      "basis": "Exact identity and current LSE/AWT intersection checked in both directions, plus existing source=3/IP/pins/PCLK/reset/IRQ/IR. Gate/reset expected strings now match sanitized Rust metadata; canonical hardware data unchanged. Actual Cargo output enables awt_lse on eight exact libraries and excludes three controls."
+    },
+    {
+      "subject": "Real example integration",
+      "result": "accepted",
+      "basis": "Nondefault required-feature bin uses real RCC/LseClock acquisition, Blocking polling, unconditional Drop after a bounded iteration phase, genuine reborrow/reacquisition and typed Async AWT wait. Both constructors link. No event/deadline/low-power guarantee; old control binaries unchanged."
+    },
+    {
+      "subject": "Documentation and capability boundary",
+      "result": "accepted",
+      "basis": "Owned source, health/event independence, source-loss nonprogress, GPIOC window, FILTER7, forgetting, retained RTC and hardware limits match actual implementation. Existing bounded_api/partial remains."
+    }
+  ],
+  "unchanged_method_bodies": [
+    {
+      "method": "on_interrupt",
+      "identical_before_after": true,
+      "sha256": "01b4ec56edbb9ac07510cbdf65a52d027c0e2d4ecbc7b1602e2c46d8d7d57738"
+    },
+    {
+      "method": "wait",
+      "identical_before_after": true,
+      "sha256": "78f91f6cb8dbc0321feb2ee2e97c64d2d665826d923eb5225bb0374fc598ca43"
+    },
+    {
+      "method": "start",
+      "identical_before_after": true,
+      "sha256": "35077b8241c32ccb60de393f48bc966bbbcf85b18c5efdcbce622322ffc9dd9f"
+    },
+    {
+      "method": "stop",
+      "identical_before_after": true,
+      "sha256": "bacf90f5bbcfdf3ccb967c4fcad3680d6f17434d105167d4b4992291b822fc03"
+    },
+    {
+      "method": "is_running",
+      "identical_before_after": true,
+      "sha256": "e747f3132a60885d4300934cf9b24d0fb97b3868978a0b8296aec10f6d724878"
+    },
+    {
+      "method": "counter",
+      "identical_before_after": true,
+      "sha256": "30cf0d776f832e7e72563b418f1d1a7abdd16ed8f766f64c821b0694b3b7c03d"
+    },
+    {
+      "method": "take_elapsed",
+      "identical_before_after": true,
+      "sha256": "fa0a2b7635aab4864b4a7a246c7c7b00604eec06811721828382888fa11bdce3"
+    },
+    {
+      "method": "frequency",
+      "identical_before_after": true,
+      "sha256": "433a15be4a49cc7f20fece5d5d54a929402e58250a188f463f39adbe8fd0b460"
+    },
+    {
+      "method": "clock_bounds",
+      "identical_before_after": true,
+      "sha256": "3baaf668d2f3245a171d5dde3df356374c1215e47b1962366fa268549afa7c79"
+    },
+    {
+      "method": "period_bounds_ns",
+      "identical_before_after": true,
+      "sha256": "a09dc5b1428eaa37ad78c9a7ac88c1863706812cd49dd8be388d3f754389415f"
+    },
+    {
+      "method": "drop",
+      "identical_before_after": true,
+      "sha256": "f1f97db0cfd7ad2e22e2eeb3566df51c04bb00a685be3d19bbd656c284df15b5"
+    },
+    {
+      "method": "clear_event",
+      "identical_before_after": true,
+      "sha256": "a3f97aedd98a1f54fae6df53c790781da432d4b5a29ea951f651a1cfa9a4a4e2"
+    }
+  ],
+  "ordinary_main_verification": {
+    "successful_libraries": 11,
+    "successful_elfs": 8,
+    "warnings": 0,
+    "target": "thumbv6m-none-eabi",
+    "profile": "release",
+    "offline_locked": true,
+    "assembly": "The successful eleven-library prefix of main-attempt-002 plus the eight-ELF continuation complete the fixed nineteen-row plan on identical source/generated snapshots and toolchain. No failed command is counted as a pass.",
+    "summary": {
+      "external_artifact": "main-summary.json",
+      "sha256": "4af009cac434375f6a4ca1e2f0dff7ecc910d2a4b11a8728bf093eb4c4baeb84"
+    },
+    "independent_artifact_inspection": {
+      "external_artifact": "independent-runtime/main-evidence-inspection.json",
+      "sha256": "832391967d5816d9d9d0cc8f8750ac2aef49a8ff527fcbc99738422b6bbab180"
+    },
+    "source_snapshot_files": 1347,
+    "source_modes_bytes_equal_across_four_snapshots": true,
+    "current_source_matches_all_1347_files": true,
+    "generated_snapshot_files": 905,
+    "generated_bytes_equal_across_four_snapshots": true,
+    "toolchain_snapshots_equal": true,
+    "source_snapshot_bindings": [
+      {
+        "external_artifact": "main-attempt-002/source-before.json",
+        "sha256": "91ba2950ba36755f5b2b6a0e2b3a67460e82de1e57863f0445c2006e9d9ce197"
+      },
+      {
+        "external_artifact": "main-attempt-002/source-after.json",
+        "sha256": "91ba2950ba36755f5b2b6a0e2b3a67460e82de1e57863f0445c2006e9d9ce197"
+      },
+      {
+        "external_artifact": "main-elf-tail/source-before.json",
+        "sha256": "91ba2950ba36755f5b2b6a0e2b3a67460e82de1e57863f0445c2006e9d9ce197"
+      },
+      {
+        "external_artifact": "main-elf-tail/source-after.json",
+        "sha256": "91ba2950ba36755f5b2b6a0e2b3a67460e82de1e57863f0445c2006e9d9ce197"
+      }
+    ],
+    "toolchain_snapshot_bindings": [
+      {
+        "external_artifact": "main-attempt-002/toolchain-before.json",
+        "sha256": "9ba3050c515b5de35265b7245aceb45ed8aa19c4750710429584dfd56122a1a8"
+      },
+      {
+        "external_artifact": "main-attempt-002/toolchain-after.json",
+        "sha256": "f6c36932e842dc7c6ea78a704280f3a2fd5f459ede4991f8ab65952450e5b644"
+      },
+      {
+        "external_artifact": "main-elf-tail/toolchain-before.json",
+        "sha256": "9ba3050c515b5de35265b7245aceb45ed8aa19c4750710429584dfd56122a1a8"
+      },
+      {
+        "external_artifact": "main-elf-tail/toolchain-after.json",
+        "sha256": "f6c36932e842dc7c6ea78a704280f3a2fd5f459ede4991f8ab65952450e5b644"
+      }
+    ],
+    "toolchain": {
+      "rustc": "1.99.0 b940084d7eb6a299eb4bfeb8e34901bc051e7ac4",
+      "cargo": "1.99.0 5f94df4789f005f9a352888e8355ffc645b7ed0e",
+      "identity": {
+        "external_artifact": "main-attempt-002/toolchain-before.json",
+        "sha256": "9ba3050c515b5de35265b7245aceb45ed8aa19c4750710429584dfd56122a1a8"
+      }
+    },
+    "artifact_checks": "Independently rehashed every row receipt, log, saved artifact and package-keyed OUT_DIR file. Read archive headers. Independently parsed all eight ELF headers/sections/PT_LOAD ranges/SP/reset/entry against part memory; all seven required AWT vector words equal AWT symbols and differ from DefaultHandler.",
+    "rows": [
+      {
+        "row": 1,
+        "part": "cw32f020c6u7",
+        "kind": "rlib",
+        "features": "cw32f020c6u7,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "49d512861e2740c66931eade82ce0acd9d9514d4f832a3830be77f8bf88515e8",
+        "artifact_bytes": 4278078,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-attempt-002/01-cw32f020c6u7-lib/receipt.json",
+          "sha256": "d07ae20edcbc49e92569045e20c3ef96f801e2b14bae7b1a0626b7d1a7bcf604"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 2,
+        "part": "cw32f030c8t7",
+        "kind": "rlib",
+        "features": "cw32f030c8t7,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "f5cb9f350b98aa1869159c8d1df5af2c6adafdeb97412053a835fd98315154cb",
+        "artifact_bytes": 5180908,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-attempt-002/02-cw32f030c8t7-lib/receipt.json",
+          "sha256": "0ba666862837cd758ec88d20fb11eef94967b6de19bec1edb1e443c664f3062f"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 3,
+        "part": "cw32a030c8t7",
+        "kind": "rlib",
+        "features": "cw32a030c8t7,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "feb9b8c849d7c2fbf6b3a17fa69ea6df007c8ed6635184bdf275af5851ce7281",
+        "artifact_bytes": 5180894,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-attempt-002/03-cw32a030c8t7-lib/receipt.json",
+          "sha256": "a7aaef8c71b79d48cd9701c678f0fe1dc9ed93d33c26898d2d77a06ec6a9f221"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 4,
+        "part": "cw32l031c8t6",
+        "kind": "rlib",
+        "features": "cw32l031c8t6,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "8b26cd82c65f44077a4e38ed0577563109cd2024c7513c8c188d3ecd2faeb10b",
+        "artifact_bytes": 4329698,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-attempt-002/04-cw32l031c8t6-lib/receipt.json",
+          "sha256": "5109aa32903dedc92d878f6226cec10778460ed0dd8b93226f48c8d779e4db79"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 5,
+        "part": "cw32l031c8u6",
+        "kind": "rlib",
+        "features": "cw32l031c8u6,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "5556d6dfb89b75d78aae97158b2d71ba4d9106e78d8c4981fa7c4f0fe89ee602",
+        "artifact_bytes": 4329678,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-attempt-002/05-cw32l031c8u6-lib/receipt.json",
+          "sha256": "6d0c93f3bccb732cb49c0ee9e89d252e81455f9f0a8c74ce0cd69c6508bb29fd"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 6,
+        "part": "cw32l031f8u6",
+        "kind": "rlib",
+        "features": "cw32l031f8u6,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "f0bf4abffb36d7c73c2374f28a8eaedddb9ce3f478e55b4a6e2640412deeef68",
+        "artifact_bytes": 4061424,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-attempt-002/06-cw32l031f8u6-lib/receipt.json",
+          "sha256": "05c374f02aa18004a9d619955b20a014b154cf7b1e93f9cefbde3ce95a6c421b"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 7,
+        "part": "cw32r031c8u6",
+        "kind": "rlib",
+        "features": "cw32r031c8u6,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "5a0d00664f76977a26a976fd4bcd15973847b8fca23a93d92b6c19816fde97a0",
+        "artifact_bytes": 4233386,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-attempt-002/07-cw32r031c8u6-lib/receipt.json",
+          "sha256": "57ccb6c167ede478871f52e77c48e7b9f27f3573e0e1eb09ca62befda0373580"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 8,
+        "part": "cw32w031r8u6",
+        "kind": "rlib",
+        "features": "cw32w031r8u6,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "d1d10c0695e7b74cdada976877d60f8cf11472b028df5ac6c759d02e59410fcd",
+        "artifact_bytes": 4274694,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-attempt-002/08-cw32w031r8u6-lib/receipt.json",
+          "sha256": "739762c3b33aa9e21fad9ff19b814b346d5b33a8b626fdf22b74e5a02971b2be"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 9,
+        "part": "cw32f002f3p7",
+        "kind": "rlib",
+        "features": "cw32f002f3p7,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "7e245231d6c8c9df696c6849f112631bb43b93ccccae17405e1386e61fc962fd",
+        "artifact_bytes": 3458208,
+        "actual_hal_awt_lse_cfg": false,
+        "receipt": {
+          "external_artifact": "main-attempt-002/09-cw32f002f3p7-lib/receipt.json",
+          "sha256": "3bad8634b5212641af6428599b5304e7f378726dddaed61273e3351e5b1f745d"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 10,
+        "part": "cw32f003e4p7",
+        "kind": "rlib",
+        "features": "cw32f003e4p7,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "46059cdca78230a279e994f618dafca887e1b4f623706c924a630bf385b2031f",
+        "artifact_bytes": 3629230,
+        "actual_hal_awt_lse_cfg": false,
+        "receipt": {
+          "external_artifact": "main-attempt-002/10-cw32f003e4p7-lib/receipt.json",
+          "sha256": "f3a0fc38b4277514ff77057a8178c3345aa556ba4cb3496f919ae4110924b4d1"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 11,
+        "part": "cw32f030",
+        "kind": "rlib",
+        "features": "cw32f030,rt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "8a7b54cf8883c15ee5639322cfad362c26e73ad6a5623f74ca2a189d9598654a",
+        "artifact_bytes": 4714282,
+        "actual_hal_awt_lse_cfg": false,
+        "receipt": {
+          "external_artifact": "main-attempt-002/11-cw32f030-lib/receipt.json",
+          "sha256": "f9eeda800bcc0c4f79205a947a658e98f38e9d2ee186198d278bc8c90a4eb72c"
+        },
+        "saved_out_dir_hashes_verified": true
+      },
+      {
+        "row": 12,
+        "part": "cw32f020c6u7",
+        "kind": "elf",
+        "features": "cw32f020c6u7,lse-awt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "e609b8cfdde66de981af0c3403689c519d29f87138ffc554df67a970492e9bd7",
+        "artifact_bytes": 211116,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-elf-tail/12-cw32f020c6u7-lse_events/receipt.json",
+          "sha256": "5896dbb239461baf08452f439a4541a97ae6307178ce84796470e1a9972993f2"
+        },
+        "saved_out_dir_hashes_verified": true,
+        "bin": "lse_events",
+        "elf_entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "pt_load_memory_ranges_verified": true,
+        "awt_handler": {
+          "irq_number": 30,
+          "vector_word": 253,
+          "symbol": 253,
+          "matches_bound_symbol": true,
+          "not_default_handler": true
+        }
+      },
+      {
+        "row": 13,
+        "part": "cw32f030c8t7",
+        "kind": "elf",
+        "features": "cw32f030c8t7,lse-awt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "0ced7019a5be8f2f79a143a5eec9a00bdfc842b3f671b723969537de6980fa76",
+        "artifact_bytes": 145728,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-elf-tail/13-cw32f030c8t7-lse_events/receipt.json",
+          "sha256": "214ec60f03044255b6d64bc78bcfae1cf625da29c992aa2a0f66221291ac242f"
+        },
+        "saved_out_dir_hashes_verified": true,
+        "bin": "lse_events",
+        "elf_entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "pt_load_memory_ranges_verified": true,
+        "awt_handler": {
+          "irq_number": 30,
+          "vector_word": 253,
+          "symbol": 253,
+          "matches_bound_symbol": true,
+          "not_default_handler": true
+        }
+      },
+      {
+        "row": 14,
+        "part": "cw32a030c8t7",
+        "kind": "elf",
+        "features": "cw32a030c8t7,lse-awt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "391e34df362580241f1fd5a39a1e0fb2ac5705763691d29e901e4a14a11be4c9",
+        "artifact_bytes": 145728,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-elf-tail/14-cw32a030c8t7-lse_events/receipt.json",
+          "sha256": "f35ab74040a1386958b7102aca52b819b992600cbaf37e5d78ebfdb39be09490"
+        },
+        "saved_out_dir_hashes_verified": true,
+        "bin": "lse_events",
+        "elf_entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "pt_load_memory_ranges_verified": true,
+        "awt_handler": {
+          "irq_number": 30,
+          "vector_word": 253,
+          "symbol": 253,
+          "matches_bound_symbol": true,
+          "not_default_handler": true
+        }
+      },
+      {
+        "row": 15,
+        "part": "cw32l031c8t6",
+        "kind": "elf",
+        "features": "cw32l031c8t6,lse-awt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "c258b2472856c2b24c4926d8ffa0e18e7a9e92181738b0024484d6c56c58041b",
+        "artifact_bytes": 213768,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-elf-tail/15-cw32l031c8t6-lse_events/receipt.json",
+          "sha256": "20de9325c9f7a9c8bb34c833f93300c5db34e5a90502b13a8e3e51e403f83998"
+        },
+        "saved_out_dir_hashes_verified": true,
+        "bin": "lse_events",
+        "elf_entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "pt_load_memory_ranges_verified": true,
+        "awt_handler": {
+          "irq_number": 30,
+          "vector_word": 253,
+          "symbol": 253,
+          "matches_bound_symbol": true,
+          "not_default_handler": true
+        }
+      },
+      {
+        "row": 16,
+        "part": "cw32r031c8u6",
+        "kind": "elf",
+        "features": "cw32r031c8u6,lse-awt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "d1b3a916d110ac4531a7eece8fc9928a1b5a217d88f1960f9a2c40f1740d12df",
+        "artifact_bytes": 213732,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-elf-tail/16-cw32r031c8u6-lse_events/receipt.json",
+          "sha256": "b029b763e06c872d82bf6b2abbebc512428f94098e63d0214a4a4f82d1468e3b"
+        },
+        "saved_out_dir_hashes_verified": true,
+        "bin": "lse_events",
+        "elf_entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "pt_load_memory_ranges_verified": true,
+        "awt_handler": {
+          "irq_number": 30,
+          "vector_word": 253,
+          "symbol": 253,
+          "matches_bound_symbol": true,
+          "not_default_handler": true
+        }
+      },
+      {
+        "row": 17,
+        "part": "cw32w031r8u6",
+        "kind": "elf",
+        "features": "cw32w031r8u6,lse-awt",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "4a4cd1f1db5c79bd275350707aa3310b4b827e5e09cb61217dccf51137d3352a",
+        "artifact_bytes": 213732,
+        "actual_hal_awt_lse_cfg": true,
+        "receipt": {
+          "external_artifact": "main-elf-tail/17-cw32w031r8u6-lse_events/receipt.json",
+          "sha256": "915e3c3c25defaf6b455276b3e16b7944494d3b81345af20116fc1e7f1963444"
+        },
+        "saved_out_dir_hashes_verified": true,
+        "bin": "lse_events",
+        "elf_entry": 193,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "pt_load_memory_ranges_verified": true,
+        "awt_handler": {
+          "irq_number": 30,
+          "vector_word": 253,
+          "symbol": 253,
+          "matches_bound_symbol": true,
+          "not_default_handler": true
+        }
+      },
+      {
+        "row": 18,
+        "part": "cw32f002f3p7",
+        "kind": "elf",
+        "features": "cw32f002f3p7",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "0bcf0cac204ab7898b5d4ace615f665653d9f3f0a5bae5f91ce3e354349b4bf2",
+        "artifact_bytes": 203512,
+        "actual_hal_awt_lse_cfg": false,
+        "receipt": {
+          "external_artifact": "main-elf-tail/18-cw32f002f3p7-polling/receipt.json",
+          "sha256": "0b83d43c134562361c1cfa6da182acf653e608f345f26ff74a866116866e96cf"
+        },
+        "saved_out_dir_hashes_verified": true,
+        "bin": "polling",
+        "elf_entry": 189,
+        "initial_sp": 536872960,
+        "reset_vector": 189,
+        "pt_load_memory_ranges_verified": true,
+        "awt_handler": null
+      },
+      {
+        "row": 19,
+        "part": "cw32f003e4p7",
+        "kind": "elf",
+        "features": "cw32f003e4p7",
+        "exit_code": 0,
+        "warnings": 0,
+        "artifact_sha256": "7af7e57a02955550ebe305cfba3c2f85f6fd81d6d1dfc1556d41e97b4bc05620",
+        "artifact_bytes": 139644,
+        "actual_hal_awt_lse_cfg": false,
+        "receipt": {
+          "external_artifact": "main-elf-tail/19-cw32f003e4p7-interrupt/receipt.json",
+          "sha256": "ad6fe50fded739269860924a9b671ceb003188b66d472b355da3743221be230a"
+        },
+        "saved_out_dir_hashes_verified": true,
+        "bin": "interrupt",
+        "elf_entry": 189,
+        "initial_sp": 536873984,
+        "reset_vector": 189,
+        "pt_load_memory_ranges_verified": true,
+        "awt_handler": {
+          "irq_number": 30,
+          "vector_word": 249,
+          "symbol": 249,
+          "matches_bound_symbol": true,
+          "not_default_handler": true
+        }
+      }
+    ]
+  },
+  "finite_source_data_evidence": {
+    "results": {
+      "external_artifact": "data-gates-final-main/results.json",
+      "sha256": "aef3a69175d8154ad5a187f166f0aab316cd28b46b59e41c6621519bc74734d4"
+    },
+    "gates": [
+      {
+        "name": "lse-awt",
+        "exit_code": 0,
+        "recorded_log_sha256": "7f26c9e790a57b8e07295986aa4729beab78f216f39f5ccb9e35e41c1d2eb9dc",
+        "read_back_log_sha256": "7f26c9e790a57b8e07295986aa4729beab78f216f39f5ccb9e35e41c1d2eb9dc",
+        "log_hash_matches": true
+      },
+      {
+        "name": "provenance",
+        "exit_code": 0,
+        "recorded_log_sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f",
+        "read_back_log_sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f",
+        "log_hash_matches": true
+      },
+      {
+        "name": "layout",
+        "exit_code": 0,
+        "recorded_log_sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8",
+        "read_back_log_sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8",
+        "log_hash_matches": true
+      },
+      {
+        "name": "validate",
+        "exit_code": 0,
+        "recorded_log_sha256": "ede75656b2001292bd260d75448fcb8d7ed6be25506b9fa23d1dcc1e6fe8e0e2",
+        "read_back_log_sha256": "ede75656b2001292bd260d75448fcb8d7ed6be25506b9fa23d1dcc1e6fe8e0e2",
+        "log_hash_matches": true
+      }
+    ],
+    "awt_source_data": {
+      "external_artifact": "data-gates-final-main/lse-awt.json",
+      "sha256": "7f26c9e790a57b8e07295986aa4729beab78f216f39f5ccb9e35e41c1d2eb9dc"
+    },
+    "generation": {
+      "external_artifact": "generation-attempt-001/receipt.json",
+      "sha256": "709ddf63cd8e25cbe945c845e08a921d8a9ab382d267394b1ee9a7db454ce87a"
+    },
+    "whole_generated_comparison": {
+      "external_artifact": "generation-attempt-001/generated-comparison.json",
+      "sha256": "68a7cfb2ee8e6df34f55fb1a357692623be86981f7f946bb14b5005230747828"
+    },
+    "generation_scope_note": "Generation predates the two-literal HAL build assertion correction; authored hardware/generator inputs and all 905 generated bytes remain unchanged. Corrected source received fresh main builds and all four finite gates."
+  },
+  "preserved_failed_attempts": [
+    {
+      "external_artifact": "main-attempt-001/summary.json",
+      "sha256": "b52a5d6c9f4fb69e86db9d2bb6d9d629b0c0d3a0749b883781a5ecd9eca12c5b",
+      "exit_code": 101,
+      "successful_artifacts": 0,
+      "cause": "New HAL build assertion used canonical uppercase RCC register/field names rather than sanitized Rust metadata.",
+      "resolution": "Only two expected tuples changed to apben2/awt and apbrst2/awt; actual generated metadata independently reviewed for all admitted parts and controls; corrected libraries and ELFs passed."
+    },
+    {
+      "external_artifact": "main-attempt-002/summary.json",
+      "sha256": "123665a9d63513d064be365ae8afe17b1a86517323f6b77a600e90d4ea71a514",
+      "failed_row": 12,
+      "exit_code": 101,
+      "cause": "Offline cache lacked locked cordyceps 0.3.5; no ELF compilation occurred.",
+      "resolution": "Official locked dependency fetch restored the cache without changing the lock; eight ELF rows then completed on identical source/toolchain.",
+      "dependency_restore": {
+        "external_artifact": "dependency-recovery/official-fetch-attempt-001.json",
+        "sha256": "418e20abde721df48080c04183cbcdc600ccd4fbaccc97d8381ed2a011df2dd9"
+      }
+    }
+  ],
+  "reviewer_operations": "Read-only source/manual/metadata/diff/artifact inspection and external review artifact writing. This reviewer did not run Cargo, generation, finite project gates, HAL models/tests/probes or firmware.",
+  "limits": [
+    "Compile/link and static review do not execute source loss, cancellation, forgetting, IRQ races or detector latency.",
+    "Board electrical/per-cycle declarations remain application qualifications, not measurements.",
+    "No LSI, low-speed LPTIM, source-sharing framework, runtime clock recovery, sleep/deep-sleep or time-driver admission.",
+    "This is main runtime acceptance only; final-source clean 2-library/2-ELF replay, final packaging and publication require separate receipts."
+  ],
+  "source_binding_policy": "Runtime/build/example/checker paths bind their actual current implementation bytes at main acceptance. Documentation/capability/proof records labeled external_artifact bind the historical main-source snapshot and are not represented as final publication bytes. Subsequent status-only edits and final-source clean replay require their own correspondence record."
+}

@@ -177,6 +177,7 @@ case "${1:-help}" in
     python3 tests/verify_rcc_operating_envelope.py
     python3 ci/verify-f020-lse-data.py --sources "$CW32_SOURCES" --out build/audit/f020-lse.json
     python3 ci/verify-l031-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l031-lse.json
+    python3 ci/verify-lse-awt-data.py --sources "$CW32_SOURCES" --data cw32-data/data --out build/audit/lse-awt.json
     python3 ci/verify-l052-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l052-lse.json
     python3 ci/verify-l083-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l083-lse.json
     python3 ci/verify-l010-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l010-lse.json

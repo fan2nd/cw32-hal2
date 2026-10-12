@@ -521,17 +521,45 @@ still apply.
   [safe copies](dma-safe-owned-copy.md), [UART TX DMA](uart-dma-tx.md),
   [UART RX DMA](uart-dma-rx.md) and
   [SPI DMA](spi-dma.md).
+- AWT retains HSIOSC polling and IRQ-backed coalesced events on its eight
+  families; LPTIM retains PCLK run-mode events on L010/L011/L012/L052/L083.
+  Only CW32F020C6U7, CW32F030C8T7, CW32A030C8T7, CW32L031C8T6,
+  CW32L031C8U6, CW32L031F8U6, CW32R031C8U6 and CW32W031R8U6 additionally
+  admit `new_lse`/`new_async_lse` with a real held `LseClock`. The current
+  canonical AWT IPs are `awt_cw32f030_v1` for F020/F030/A030 and
+  `awt_cw32l031_v1` for L031/R031/W031; F002/F003 keep `awt_v1` and their
+  HEX selectors. Generic aliases and other packages gain no LSE AWT API.
+  `set_config` preserves the source; readiness is only a current predicate
+  snapshot, independent of UD/software event retention. A retained event can
+  survive source loss, while a wait without an event can remain pending forever
+  because loss provides no driver wake. LseClock acquisition/reacquisition can
+  temporarily enable whole GPIOC and advance retained filters/edges even before
+  an error; AWT health checks do not open GPIO banks. L031/R031/W031 FILTER7
+  uses AWT underflow, so takeover, reconfiguration, stopping, Drop and source
+  loss can change or stall inherited filtering. Forgetting can leave counting
+  and IRQs active. Drop/error retain source enables, faults and pad reservations;
+  this API cannot share the source with an independently owned live RTC.
+  No low-power wake, monotonic deadline, automatic fallback or hardware
+  validation follows. Stage80 main produced 11 actual ARM libraries and 8
+  linked ELFs with zero warnings, from a successful library prefix and resumed
+  ELF tail on identical source/toolchain. Generation, four finite source/data
+  gates and the whole54/905 zero-delta comparison passed separately. Independent
+  runtime and metadata/source reviews accepted the frozen main implementation;
+  early assertion/cache failures remain recorded. At main acceptance clean had
+  not run; final completion requires a separate final-source 2-library/2-ELF
+  clean receipt. See [the LSE AWT contract](lse-awt.md) and
+  [the existing timer contracts](low-power-timers.md).
 - The optional Embassy time driver reserves the whole GTIM/GTIM1 plus IRQ and
   requires continuous run mode and service strictly within 32768 actual ticks.
   HSI budgets are <31.207619 ms at ±5% or <32.125490 ms at ±2%; qualified HSE uses
   its own bounds. Flash stalls, debugger stops and deep sleep can lose elapsed
   time. These are required bounds, not measured latency guarantees.
-- Owned MCO is one partial SYSCTRL mode only for exact CW32F030C8T7,
-  with PA8/MCO/AF4 as its sole qualified selection. Generic F030/C8, other
-  F030 packages, A030 and F020 remain outside the API. The existing inventory's
-  required-signal filter reports that exact selection without promoting family
-  AF discovery. Holding real SYSCTRL and PA8 selects immutable initialized HCLK
-  or PCLK with /1, /2, /8, /64, /128, /256, /512 or /1024. Published cycle-qualified
+- Owned MCO is one partial SYSCTRL mode for exactly CW32F030C8T7,
+  CW32F030K8T7, CW32F030K8U7 and CW32A030C8T7, each on PA8/MCO/AF4.
+  Generic family/density aliases and every other package remain outside the
+  API. The required-signal filter does not promote family AF discovery to
+  package qualification. Holding real SYSCTRL and PA8 selects immutable
+  initialized HCLK or PCLK with /1, /2, /8, /64, /128, /256, /512 or /1024. Published cycle-qualified
   bounds, source-compatible explicit board conditions and exact maximum-rate
   division must pass. Rate-only PLL/LSI roots are rejected. The 20 MHz and
   0 < load <= 50 pF policies do not establish the vendor table's loaded duty or
@@ -540,12 +568,14 @@ still apply.
   observations and forgotten output remain functional limits. Live safe RTC
   clock ownership is excluded by SYSCTRL; forgotten hardware is not permanently
   excluded. There is no source/divider mutation, oscillator or bus-clock change,
-  recovery, other package or hardware-validation claim. Main verification passed
-  five actual ARM library builds and three ordinary firmware links with no warnings,
+  recovery, other package or hardware-validation claim. Historical Stage76
+  C8T7-only main verification passed five actual ARM library builds and three
+  ordinary firmware links with no warnings,
   plus generation, the full projection comparison, 19 schema contracts and eight
   finite source/data gates. At main acceptance clean had not run; final-package
-  completion requires a separate clean 1-library/1-HCLK-ELF receipt. The local
-  recipe remains separate from these results. See [the full contract](f030-owned-mco.md).
+  completion required a separate clean 1-library/1-HCLK-ELF receipt. These
+  historical results do not certify the later four-part scope. The local
+  recipe remains separate from these results. See [the current MCO contract](f030-owned-mco.md).
 - RF remains explicitly user-deferred on R031/W031.
 
 Every row has `hardware_validated: false`. This tool performs no compilation,

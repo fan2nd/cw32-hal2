@@ -19,8 +19,32 @@ fn main() {
     fs::write(out.join("memory.x"), memory).unwrap();
     println!("cargo:rustc-link-search={}", out.display());
     println!("cargo:rustc-link-arg=-Tlink.x");
-    for cfg in ["example_awt", "example_l052", "example_l083"] {
+    for cfg in [
+        "example_awt",
+        "example_lse_awt",
+        "example_l052",
+        "example_l083",
+    ] {
         println!("cargo:rustc-check-cfg=cfg({cfg})");
+    }
+    let lse_awt = matches!(
+        metadata.name,
+        "CW32F020C6U7"
+            | "CW32F030C8T7"
+            | "CW32A030C8T7"
+            | "CW32L031C8T6"
+            | "CW32L031C8U6"
+            | "CW32L031F8U6"
+            | "CW32R031C8U6"
+            | "CW32W031R8U6"
+    );
+    assert!(
+        env::var_os("CARGO_FEATURE_LSE_AWT").is_none() || lse_awt,
+        "lse-awt requires an exact package qualified for owned LSE AWT; selected {}",
+        metadata.name
+    );
+    if lse_awt {
+        println!("cargo:rustc-cfg=example_lse_awt");
     }
     if metadata.peripherals.iter().any(|p| p.name == "AWT") {
         println!("cargo:rustc-cfg=example_awt");

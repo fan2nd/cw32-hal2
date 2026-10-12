@@ -60,6 +60,7 @@ fn main() {
         "rtc_alarm_direct_access",
         "rtc_native_live_lsi",
         "awt",
+        "awt_lse",
         "autotrim",
         "lptim",
         "lcd",
@@ -916,6 +917,7 @@ fn main() {
     generate_time_driver(&mut out, time_driver);
     generate_gpio_interrupts(&mut out);
     generate_electrical(&mut out);
+    qualify_awt_lse();
     generate_mco(&mut out, time_driver);
     generate_lvd_ir(&mut out);
     if flash_storage {
@@ -1859,6 +1861,149 @@ fn generate_gpio_interrupts(out: &mut String) {
         impls,
     )
     .unwrap();
+}
+
+// Exact owned-LSE AWT admission reuses current LSE and AWT metadata. It must
+// remain closed when another package or another timer later gains LSE support.
+fn qualify_awt_lse() {
+    use cw32_metapac::metadata::{METADATA, ir};
+
+    let expected = match METADATA.name {
+        "CW32F020C6U7" => Some(("CW32F020", "cw32f030_v1")),
+        "CW32F030C8T7" => Some(("CW32F030", "cw32f030_v1")),
+        "CW32A030C8T7" => Some(("CW32A030", "cw32f030_v1")),
+        "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" => Some(("CW32L031", "cw32l031_v1")),
+        "CW32R031C8U6" => Some(("CW32R031", "cw32l031_v1")),
+        "CW32W031R8U6" => Some(("CW32W031", "cw32l031_v1")),
+        _ => None,
+    };
+    let sysctrl = METADATA
+        .peripherals
+        .iter()
+        .find(|p| p.name == "SYSCTRL")
+        .expect("missing SYSCTRL for AWT source admission");
+    let lse = sysctrl
+        .clock_limits
+        .as_ref()
+        .and_then(|c| c.lse_configuration.as_ref());
+    let awts: Vec<_> = METADATA
+        .peripherals
+        .iter()
+        .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == "awt"))
+        .collect();
+    assert!(
+        awts.len() <= 1,
+        "owned LSE AWT requires one standalone timer"
+    );
+    let declared = lse.and_then(|c| c.awt_source);
+    assert_eq!(
+        declared.is_some(),
+        expected.is_some(),
+        "exact LSE AWT source qualification missing or unexpected"
+    );
+    assert_eq!(
+        lse.is_some() && !awts.is_empty(),
+        expected.is_some(),
+        "standalone AWT/LSE intersection changed; review exact admission"
+    );
+    let Some((line, version)) = expected else {
+        return;
+    };
+    assert_eq!(METADATA.line, line);
+    assert_eq!(declared, Some(3));
+    let lse = lse.unwrap();
+    assert!(lse.startup_consumers.is_none() && lse.native_low_power.is_none());
+    assert_eq!((lse.nominal_hz, lse.maximum_hz), (32_768, 1_000_000));
+    for (signal, pin) in [("LSE_IN", "PC14"), ("LSE_OUT", "PC15")] {
+        let routes: Vec<_> = sysctrl.pins.iter().filter(|p| p.signal == signal).collect();
+        assert_eq!(routes.len(), 1);
+        assert_eq!((routes[0].pin, routes[0].af), (pin, None));
+        assert_eq!(METADATA.pins.iter().filter(|p| p.name == pin).count(), 1);
+    }
+    let awt = awts[0];
+    assert_eq!((awt.name, awt.address), ("AWT", 0x4001_4c00));
+    let regs = awt.registers.as_ref().unwrap();
+    assert_eq!(
+        (regs.kind, regs.version, regs.block),
+        ("awt", version, "Awt")
+    );
+    let control = awt.rcc_control.as_ref().expect("AWT configuration clock");
+    assert_eq!((control.controller, control.bus_clock), ("SYSCTRL", "PCLK"));
+    assert_eq!(
+        (control.enable.register, control.enable.field),
+        ("apben2", "awt")
+    );
+    assert!(control.enable_active_value && control.enable_write_key.is_none());
+    let reset = control.reset.as_ref().expect("AWT reset metadata");
+    assert_eq!((reset.register, reset.field), ("apbrst2", "awt"));
+    assert_eq!(control.reset_asserted_value, Some(false));
+    assert_eq!(awt.interrupts.len(), 1);
+    assert_eq!(
+        (awt.interrupts[0].signal, awt.interrupts[0].interrupt),
+        ("GLOBAL", "AWT")
+    );
+    assert_eq!(
+        METADATA
+            .interrupts
+            .iter()
+            .filter(|i| i.name == "AWT" && i.number == 30)
+            .count(),
+        1
+    );
+
+    let block = regs
+        .ir
+        .blocks
+        .iter()
+        .find(|b| b.name == regs.block)
+        .unwrap();
+    let cr = block
+        .items
+        .iter()
+        .find(|r| r.name.eq_ignore_ascii_case("CR"))
+        .unwrap();
+    assert_eq!(cr.byte_offset, 0);
+    assert!(cr.array.is_none());
+    let ir::BlockItemInner::Register(cr) = &cr.inner else {
+        panic!("AWT CR must be a register");
+    };
+    assert_eq!(cr.access, ir::Access::ReadWrite);
+    assert_eq!(cr.bit_size, 32);
+    let fields = regs
+        .ir
+        .fieldsets
+        .iter()
+        .find(|f| Some(f.name) == cr.fieldset)
+        .unwrap();
+    for (name, offset, width) in [("SRC", 8, 3), ("PRS", 4, 4), ("MD", 1, 2), ("EN", 0, 1)] {
+        let field = fields
+            .fields
+            .iter()
+            .find(|f| f.name.eq_ignore_ascii_case(name))
+            .unwrap();
+        assert!(field.array.is_none());
+        assert_eq!(field.bit_size, width);
+        assert!(matches!(&field.bit_offset, ir::BitOffset::Regular(p) if p.offset == offset));
+        if name == "SRC" {
+            let source = regs
+                .ir
+                .enums
+                .iter()
+                .find(|e| Some(e.name) == field.enumm)
+                .unwrap();
+            assert_eq!(source.bit_size, 3);
+            assert_eq!(
+                source
+                    .variants
+                    .iter()
+                    .filter(|v| v.name.eq_ignore_ascii_case("LSE") && v.value == 3)
+                    .count(),
+                1
+            );
+            assert_eq!(source.variants.iter().filter(|v| v.value == 3).count(), 1);
+        }
+    }
+    println!("cargo:rustc-cfg=awt_lse");
 }
 
 // Exact-part MCO admission, independent of family-wide alternate-function lists.

@@ -1,0 +1,567 @@
+{
+  "schema_version": 1,
+  "reviewed_on": "2026-10-12",
+  "status": "accepted_main_finite_metadata_source_review",
+  "scope": "Exact-eight owned LSE standalone AWT run-mode source admission, existing IR/data correspondence, current evidence, capability declarations and ordinary example integration. Runtime lifetime/IRQ implementation has a separate independent review.",
+  "review_boundary": "Read-only source, data, documents, artifact and receipt inspection. No project checker, generator, Cargo command, runtime test, probe or hardware operation was executed by this reviewer. Successful commands below were executed by the implementation coordinator and their retained receipts and bytes were independently inspected.",
+  "base_commit": "cef6b753ef6d83b552016a59ce2fed452184b24b",
+  "qualified_parts": [
+    "CW32F020C6U7",
+    "CW32F030C8T7",
+    "CW32A030C8T7",
+    "CW32L031C8T6",
+    "CW32L031C8U6",
+    "CW32L031F8U6",
+    "CW32R031C8U6",
+    "CW32W031R8U6"
+  ],
+  "own_source_review": {
+    "hardware_originals_directly_rehashed": 43,
+    "consumed_manuals": 5,
+    "consumed_datasheets": 6,
+    "consumed_original_and_text_pairs_verified": 11,
+    "source_page_hashes_verified": 97,
+    "current_lock_source_ids_urls_original_and_text_hashes_preserved": true,
+    "f020_datasheet_path": "current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+    "facts": [
+      "Own pin tables and current qualification establish the exact eight package/pad/electrical rows. Crystal uses PC14 and PC15; bypass uses PC14. W031 retains the 2000..3600mV intersection.",
+      "F020/F030/A030 use existing awt_cw32f030_v1; L031/R031/W031 use existing awt_cw32l031_v1; both already define LSE=3. F002/F003 awt_v1 retains independent HEX_PB0=2 and HEX_PB1=3 without LSE.",
+      "Each own manual establishes the distinct PCLK configuration domain, APBEN2.AWT configuration gate, active-low APBRST2.AWT reset, IRQ30, Timer=3, PRS1..15, EN/ARR sequence and UD R1W0 with no-op seed63.",
+      "The manuals do not describe an LSE-edge acknowledgment for these local AWT accesses. Local control after counting-source loss is a bounded inference requiring working CPU/PCLK/gate/reset, not a measured silicon timing guarantee.",
+      "L031/R031/W031 FILTER7 consumes standalone AWT underflow. Classic FILTER7 is not qualified. Existing GPIOC acquisition/reacquisition can advance retained filters/edges; health observations do not add a bank scan.",
+      "Readiness, retained UD, CNT samples and elapsed wall time remain distinct. Loss supplies no guaranteed AWT wake, fallback or continued event, and waits can remain pending indefinitely.",
+      "Classic required-write-one CCS tables govern current HAL admission while their narratives retain software enable prerequisites; this is not a hardware-fixed detector claim."
+    ]
+  },
+  "metadata_and_scope_review": {
+    "exact_part_positive_and_inverse_admission": true,
+    "capability_claimed_part_set_equals_exact_eight": true,
+    "private_cfg": "awt_lse",
+    "new_hardware_schema": false,
+    "canonical_hardware_and_models_changed": false,
+    "source_registry_or_global_sharing_added": false,
+    "current_checker_has_no_historical_passing_receipt_dependency": true,
+    "current_checker_has_no_hal_runtime_source_string_assertions": true,
+    "source_index_delta_at_main": "Exactly eleven evidence-array appends. Removing those appends restores the published baseline bytes; existing fields, IDs, pins and historical project records are unchanged.",
+    "build_delta_at_main": "Only private cfg registration, one qualifier invocation and new exact admission function; all earlier build-script bytes are preserved.",
+    "entrypoint_delta": "One finite current-fact command appended to d audit-current. No aggregate HAL matrix or recipe expansion.",
+    "historical_timer_evidence": {
+      "path": "docs/low-power-timers-evidence.json",
+      "sha256": "d4bee258a4598009c0284690c1d4d2ee93e12ab82b55b92ffc13a507dc0fed68",
+      "unchanged": true
+    }
+  },
+  "ordinary_example_review": {
+    "manifest": "examples/low-power-timers/Cargo.toml",
+    "bin": "lse_events",
+    "marker_feature": "lse-awt",
+    "required_feature_is_nondefault": true,
+    "existing_polling_interrupt_sources_unchanged": true,
+    "sequence": "A real Blocking owner polls for bounded iterations using reborrowed AWT/SYSCTRL/pads, then always drops. It reacquires LseClock and constructs the typed-IRQ Async owner.",
+    "limitations": "Board conditions are illustrative declarations requiring actual qualification. Neither iteration bounds nor successful compilation prove event arrival, handover execution, source-loss handling or a deadline."
+  },
+  "observed_main_verification": {
+    "status": "passed",
+    "libraries": 11,
+    "elfs": 8,
+    "warnings": 0,
+    "source_file_count": 1347,
+    "generated_file_count": 905,
+    "source_modes_and_bytes_identical_across_successful_prefix_and_tail": true,
+    "generated_snapshots_identical_across_successful_prefix_and_tail": true,
+    "toolchain_snapshots_identical_across_successful_prefix_and_tail": true,
+    "current_source_matches_main_snapshot": true,
+    "retained_artifact_log_and_out_dir_hashes_independently_verified": true,
+    "elf_arm_headers_independently_verified": 8,
+    "rows": [
+      {
+        "row": 1,
+        "selection": "cw32f020c6u7,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 1 receipt",
+          "sha256": "d07ae20edcbc49e92569045e20c3ef96f801e2b14bae7b1a0626b7d1a7bcf604"
+        },
+        "outputs": [
+          {
+            "sha256": "49d512861e2740c66931eade82ce0acd9d9514d4f832a3830be77f8bf88515e8",
+            "bytes": 4278078
+          }
+        ]
+      },
+      {
+        "row": 2,
+        "selection": "cw32f030c8t7,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 2 receipt",
+          "sha256": "0ba666862837cd758ec88d20fb11eef94967b6de19bec1edb1e443c664f3062f"
+        },
+        "outputs": [
+          {
+            "sha256": "f5cb9f350b98aa1869159c8d1df5af2c6adafdeb97412053a835fd98315154cb",
+            "bytes": 5180908
+          }
+        ]
+      },
+      {
+        "row": 3,
+        "selection": "cw32a030c8t7,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 3 receipt",
+          "sha256": "a7aaef8c71b79d48cd9701c678f0fe1dc9ed93d33c26898d2d77a06ec6a9f221"
+        },
+        "outputs": [
+          {
+            "sha256": "feb9b8c849d7c2fbf6b3a17fa69ea6df007c8ed6635184bdf275af5851ce7281",
+            "bytes": 5180894
+          }
+        ]
+      },
+      {
+        "row": 4,
+        "selection": "cw32l031c8t6,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 4 receipt",
+          "sha256": "5109aa32903dedc92d878f6226cec10778460ed0dd8b93226f48c8d779e4db79"
+        },
+        "outputs": [
+          {
+            "sha256": "8b26cd82c65f44077a4e38ed0577563109cd2024c7513c8c188d3ecd2faeb10b",
+            "bytes": 4329698
+          }
+        ]
+      },
+      {
+        "row": 5,
+        "selection": "cw32l031c8u6,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 5 receipt",
+          "sha256": "6d0c93f3bccb732cb49c0ee9e89d252e81455f9f0a8c74ce0cd69c6508bb29fd"
+        },
+        "outputs": [
+          {
+            "sha256": "5556d6dfb89b75d78aae97158b2d71ba4d9106e78d8c4981fa7c4f0fe89ee602",
+            "bytes": 4329678
+          }
+        ]
+      },
+      {
+        "row": 6,
+        "selection": "cw32l031f8u6,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 6 receipt",
+          "sha256": "05c374f02aa18004a9d619955b20a014b154cf7b1e93f9cefbde3ce95a6c421b"
+        },
+        "outputs": [
+          {
+            "sha256": "f0bf4abffb36d7c73c2374f28a8eaedddb9ce3f478e55b4a6e2640412deeef68",
+            "bytes": 4061424
+          }
+        ]
+      },
+      {
+        "row": 7,
+        "selection": "cw32r031c8u6,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 7 receipt",
+          "sha256": "57ccb6c167ede478871f52e77c48e7b9f27f3573e0e1eb09ca62befda0373580"
+        },
+        "outputs": [
+          {
+            "sha256": "5a0d00664f76977a26a976fd4bcd15973847b8fca23a93d92b6c19816fde97a0",
+            "bytes": 4233386
+          }
+        ]
+      },
+      {
+        "row": 8,
+        "selection": "cw32w031r8u6,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 8 receipt",
+          "sha256": "739762c3b33aa9e21fad9ff19b814b346d5b33a8b626fdf22b74e5a02971b2be"
+        },
+        "outputs": [
+          {
+            "sha256": "d1d10c0695e7b74cdada976877d60f8cf11472b028df5ac6c759d02e59410fcd",
+            "bytes": 4274694
+          }
+        ]
+      },
+      {
+        "row": 9,
+        "selection": "cw32f002f3p7,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 9 receipt",
+          "sha256": "3bad8634b5212641af6428599b5304e7f378726dddaed61273e3351e5b1f745d"
+        },
+        "outputs": [
+          {
+            "sha256": "7e245231d6c8c9df696c6849f112631bb43b93ccccae17405e1386e61fc962fd",
+            "bytes": 3458208
+          }
+        ]
+      },
+      {
+        "row": 10,
+        "selection": "cw32f003e4p7,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 10 receipt",
+          "sha256": "f3a0fc38b4277514ff77057a8178c3345aa556ba4cb3496f919ae4110924b4d1"
+        },
+        "outputs": [
+          {
+            "sha256": "46059cdca78230a279e994f618dafca887e1b4f623706c924a630bf385b2031f",
+            "bytes": 3629230
+          }
+        ]
+      },
+      {
+        "row": 11,
+        "selection": "cw32f030,rt",
+        "kind": "rlib",
+        "bin": null,
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 11 receipt",
+          "sha256": "f9eeda800bcc0c4f79205a947a658e98f38e9d2ee186198d278bc8c90a4eb72c"
+        },
+        "outputs": [
+          {
+            "sha256": "8a7b54cf8883c15ee5639322cfad362c26e73ad6a5623f74ca2a189d9598654a",
+            "bytes": 4714282
+          }
+        ]
+      },
+      {
+        "row": 12,
+        "selection": "cw32f020c6u7,lse-awt",
+        "kind": "elf",
+        "bin": "lse_events",
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 12 receipt",
+          "sha256": "5896dbb239461baf08452f439a4541a97ae6307178ce84796470e1a9972993f2"
+        },
+        "outputs": [
+          {
+            "sha256": "e609b8cfdde66de981af0c3403689c519d29f87138ffc554df67a970492e9bd7",
+            "bytes": 211116
+          }
+        ]
+      },
+      {
+        "row": 13,
+        "selection": "cw32f030c8t7,lse-awt",
+        "kind": "elf",
+        "bin": "lse_events",
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 13 receipt",
+          "sha256": "214ec60f03044255b6d64bc78bcfae1cf625da29c992aa2a0f66221291ac242f"
+        },
+        "outputs": [
+          {
+            "sha256": "0ced7019a5be8f2f79a143a5eec9a00bdfc842b3f671b723969537de6980fa76",
+            "bytes": 145728
+          }
+        ]
+      },
+      {
+        "row": 14,
+        "selection": "cw32a030c8t7,lse-awt",
+        "kind": "elf",
+        "bin": "lse_events",
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 14 receipt",
+          "sha256": "f35ab74040a1386958b7102aca52b819b992600cbaf37e5d78ebfdb39be09490"
+        },
+        "outputs": [
+          {
+            "sha256": "391e34df362580241f1fd5a39a1e0fb2ac5705763691d29e901e4a14a11be4c9",
+            "bytes": 145728
+          }
+        ]
+      },
+      {
+        "row": 15,
+        "selection": "cw32l031c8t6,lse-awt",
+        "kind": "elf",
+        "bin": "lse_events",
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 15 receipt",
+          "sha256": "20de9325c9f7a9c8bb34c833f93300c5db34e5a90502b13a8e3e51e403f83998"
+        },
+        "outputs": [
+          {
+            "sha256": "c258b2472856c2b24c4926d8ffa0e18e7a9e92181738b0024484d6c56c58041b",
+            "bytes": 213768
+          }
+        ]
+      },
+      {
+        "row": 16,
+        "selection": "cw32r031c8u6,lse-awt",
+        "kind": "elf",
+        "bin": "lse_events",
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 16 receipt",
+          "sha256": "b029b763e06c872d82bf6b2abbebc512428f94098e63d0214a4a4f82d1468e3b"
+        },
+        "outputs": [
+          {
+            "sha256": "d1b3a916d110ac4531a7eece8fc9928a1b5a217d88f1960f9a2c40f1740d12df",
+            "bytes": 213732
+          }
+        ]
+      },
+      {
+        "row": 17,
+        "selection": "cw32w031r8u6,lse-awt",
+        "kind": "elf",
+        "bin": "lse_events",
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 17 receipt",
+          "sha256": "915e3c3c25defaf6b455276b3e16b7944494d3b81345af20116fc1e7f1963444"
+        },
+        "outputs": [
+          {
+            "sha256": "4a4cd1f1db5c79bd275350707aa3310b4b827e5e09cb61217dccf51137d3352a",
+            "bytes": 213732
+          }
+        ]
+      },
+      {
+        "row": 18,
+        "selection": "cw32f002f3p7",
+        "kind": "elf",
+        "bin": "polling",
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 18 receipt",
+          "sha256": "0b83d43c134562361c1cfa6da182acf653e608f345f26ff74a866116866e96cf"
+        },
+        "outputs": [
+          {
+            "sha256": "0bcf0cac204ab7898b5d4ace615f665653d9f3f0a5bae5f91ce3e354349b4bf2",
+            "bytes": 203512
+          }
+        ]
+      },
+      {
+        "row": 19,
+        "selection": "cw32f003e4p7",
+        "kind": "elf",
+        "bin": "interrupt",
+        "exit_code": 0,
+        "warnings": 0,
+        "external_artifact": {
+          "label": "Stage80 main row 19 receipt",
+          "sha256": "ad6fe50fded739269860924a9b671ceb003188b66d472b355da3743221be230a"
+        },
+        "outputs": [
+          {
+            "sha256": "7af7e57a02955550ebe305cfba3c2f85f6fd81d6d1dfc1556d41e97b4bc05620",
+            "bytes": 139644
+          }
+        ]
+      }
+    ],
+    "summary": {
+      "external_artifact": {
+        "label": "Stage80 finite main summary",
+        "sha256": "4af009cac434375f6a4ca1e2f0dff7ecc910d2a4b11a8728bf093eb4c4baeb84"
+      }
+    },
+    "generation": {
+      "executions": 1,
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": {
+          "label": "Stage80 ordinary main generation",
+          "sha256": "709ddf63cd8e25cbe945c845e08a921d8a9ab382d267394b1ee9a7db454ce87a"
+        }
+      }
+    },
+    "generated_comparison": {
+      "expected_files": 905,
+      "actual_files": 905,
+      "normalized_chip_records": 54,
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "external_only": true,
+      "receipt": {
+        "external_artifact": {
+          "label": "Stage80 external whole54/905 byte comparison",
+          "sha256": "68a7cfb2ee8e6df34f55fb1a357692623be86981f7f946bb14b5005230747828"
+        }
+      }
+    },
+    "finite_gates": [
+      {
+        "name": "lse-awt",
+        "exit_code": 0,
+        "external_artifact": {
+          "label": "Stage80 final main lse-awt gate log",
+          "sha256": "7f26c9e790a57b8e07295986aa4729beab78f216f39f5ccb9e35e41c1d2eb9dc"
+        }
+      },
+      {
+        "name": "provenance",
+        "exit_code": 0,
+        "external_artifact": {
+          "label": "Stage80 final main provenance gate log",
+          "sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f"
+        }
+      },
+      {
+        "name": "layout",
+        "exit_code": 0,
+        "external_artifact": {
+          "label": "Stage80 final main layout gate log",
+          "sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8"
+        }
+      },
+      {
+        "name": "validate",
+        "exit_code": 0,
+        "external_artifact": {
+          "label": "Stage80 final main validate gate log",
+          "sha256": "ede75656b2001292bd260d75448fcb8d7ed6be25506b9fa23d1dcc1e6fe8e0e2"
+        }
+      }
+    ],
+    "full_provenance_scope": {
+      "hardware_originals": 43,
+      "required_source_files": 551,
+      "discovery_html_omitted": 2
+    },
+    "main_source_manifest": {
+      "external_artifact": {
+        "label": "Stage80 main reviewed source manifest",
+        "sha256": "91ba2950ba36755f5b2b6a0e2b3a67460e82de1e57863f0445c2006e9d9ce197"
+      }
+    }
+  },
+  "corrected_failures_preserved": [
+    {
+      "event": "Initial first library failed because the new build assertion used canonical JSON uppercase RCC names instead of sanitized Rust metadata lowercase names.",
+      "successful_artifacts": 0,
+      "resolution": "Changed only the new enable/reset assertion tuples to apben2/awt and apbrst2/awt after independent inspection of all eight actual Rust metadata includes.",
+      "record": {
+        "external_artifact": {
+          "label": "Stage80 preserved initial build failure",
+          "sha256": "b52a5d6c9f4fb69e86db9d2bb6d9d629b0c0d3a0749b883781a5ecd9eca12c5b"
+        }
+      }
+    },
+    {
+      "event": "After all eleven libraries passed, the first offline example could not find the already-locked cordyceps 0.3.5 crate.",
+      "elf_artifacts_before_resolution": 0,
+      "resolution": "Official cargo fetch --locked restored missing dependencies; the example lock hash was unchanged, then all eight planned ELF links passed.",
+      "record": {
+        "external_artifact": {
+          "label": "Stage80 locked dependency restoration",
+          "sha256": "418e20abde721df48080c04183cbcdc600ccd4fbaccc97d8381ed2a011df2dd9"
+        }
+      }
+    }
+  ],
+  "excluded_claims": [
+    "Hardware validation or runtime execution",
+    "Sleep/wake or monotonic/deadline guarantee",
+    "LSI/HSE/HEX AWT API extension",
+    "LPTIM low-speed source qualification",
+    "Independent simultaneous RTC/AWT source ownership",
+    "Lossless event counting",
+    "Global clock sharing or recovery",
+    "New canonical hardware/schema qualification"
+  ],
+  "clean_replay": {
+    "status": "not_yet_reviewed",
+    "planned_libraries": 2,
+    "planned_elfs": 2,
+    "selections": [
+      "cw32f030c8t7",
+      "cw32l031c8t6"
+    ],
+    "separate_final_source_receipt_required": true
+  },
+  "publication_status": "not_established_by_this_review",
+  "hardware_validated": false,
+  "blockers": [],
+  "current_functional_source_sha256": {
+    "embassy-cw32/build.rs": "96f2430f0000c5af05194d2b39750433b535c8300a02347e6baff27ebfd3ac0a",
+    "embassy-cw32/src/awt.rs": "48b3ac33f5111e811ca78e6751706b25e0fe14eb0cdd91d3bf62b0fbf627b3d7",
+    "ci/verify-lse-awt-data.py": "945b86a00149318ddb808aa9ebb8de2474d1f84f6aa5ae8e6b818b6ecadf458b",
+    "d": "71f2876d4a30a39829eeb180aee09cc68c95a777e236d031545686afaff99146",
+    "examples/low-power-timers/Cargo.toml": "32160514b5072a12e78264d3f1b69bff1f5617acaee415d580d265e4bcaaac7f",
+    "examples/low-power-timers/build.rs": "20d1b03eb6d3be60db2a943d1df99028144cd6c0f6c6a8c95f1752ee38990ec9",
+    "examples/low-power-timers/src/bin/lse_events.rs": "0f3be41976985696dea9b14fb4972480d1ccf9d219841fd1a82610dbe49dc01d"
+  },
+  "main_input_snapshot_identity": {
+    "external_artifact": {
+      "label": "Stage80 frozen 1347-file main source snapshot before final acceptance annotations",
+      "sha256": "91ba2950ba36755f5b2b6a0e2b3a67460e82de1e57863f0445c2006e9d9ce197"
+    },
+    "interpretation": "Main proof and documentation identities are historical verification snapshot identities. Final main-accepted status annotations and review references may change current documentation without changing the reviewed hardware/source facts or functional code. No final current-document hash or self-referential proof/review hash is asserted here."
+  },
+  "main_proof_snapshot_identity": {
+    "external_artifact": {
+      "label": "Stage80 LSE AWT proof at successful main verification before acceptance annotations",
+      "sha256": "1cfc05eebdbce264cb3e2b588346680a70e547ceb0883842a08a0b564b0fdce9"
+    },
+    "interpretation": "Historical main input, not a hash assertion about the final status-annotated current proof."
+  }
+}

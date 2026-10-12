@@ -847,9 +847,23 @@ functions:
     modes:
     - id: bounded_api
       status: partial
-      scope: HSIOSC polling and IRQ-backed async coalesced events in run mode.
+      scope: HSIOSC polling and IRQ-backed async coalesced events in run mode; owned board-qualified LSE additionally on exactly CW32F020C6U7, CW32F030C8T7, CW32A030C8T7, CW32L031C8T6, CW32L031C8U6, CW32L031F8U6, CW32R031C8U6 and CW32W031R8U6.
       limitations:
-      - No low-speed source, deep-sleep wake or Embassy time driver.
+      - LSE construction consumes a genuine LseClock retaining SYSCTRL and PC14, plus PC15 in crystal mode. Generic aliases, other packages, F002/F003, LPTIM and RTC-internal AWT gain no LSE AWT API. Existing HSIOSC constructors and F002/F003 HEX selectors are unchanged.
+      - Private awt_lse admission checks the exact eight against existing qualification and typed LSE=3 in cw32f030_v1 or cw32l031_v1. No hardware schema, source-sharing owner or source mutation API is added. set_config stops and retains the selected source and its rational root bounds.
+      - ClockNotReady is a pre-AWT-write constructor admission observation. is_clock_ready is a snapshot of the existing selected-source predicate, not continuous monitoring, frequency measurement or a guarantee of a later edge. Qualified monitor policies remain source-specific.
+      - Retained software or hardware UD is consumed independently of health. A pre-fault event can be returned after loss; without an event wait may remain pending indefinitely. Source loss supplies no driver wake or automatic AWT fallback; a deadline needs an independently waking valid source.
+      - AWT configuration access depends on operational CPU/PCLK, gate and reset domains, independently of the selected counting source. EN and CNT observations do not establish source health, count progress or wall-clock passage.
+      - Existing LseClock acquisition/reacquisition may temporarily open whole GPIOC for pad inspection, advancing retained filters and armed edges even before an error. Restoring its gate does not undo progress. AWT admission/readiness does not inspect pads or open GPIO banks.
+      - On L031/R031/W031, retained GPIOA/B/C/F FILTER7 uses AWT underflow; takeover, source/period changes, start/stop, Drop, forgetting and source loss can alter or stall filtering and external reactions. Classic FILTER7 is unqualified. No new recipient-bank scan or all-recipient-quiescence precondition is imposed.
+      - Drop stops AWT, masks its local event and clears active without gating/resetting, stopping LSE/LSI, releasing pads, clearing source faults or disabling/unpending NVIC. Forgetting may leave counting/IRQs active. Successful reconstruction clears old events; a pre-write failure preserves them.
+      - A live Rtc already consumes its CalendarClock and cannot share the same LseClock owner. Dropped/forgotten RTC hardware and other retained LSE consumers remain untouched. No source extraction, fault recovery, low-power wake, Embassy time driver or hardware-validation claim.
+      - Stage80 main produced 11 actual ARM libraries and 8 linked ELFs with zero warnings, from a successful library prefix and resumed ELF tail on identical source/toolchain. Generation, four finite source/data gates and the whole54/905 zero-delta comparison passed separately; independent runtime and metadata/source reviews accepted the frozen main implementation.
+      - The first RCC-name assertion failure produced no artifact. After correction the 11-library prefix passed, then a missing locked offline dependency stopped the first ELF; official locked fetching preserved the lockfile and only the 8-ELF tail resumed. Failures remain recorded, not replaced by a claim of one uninterrupted successful 19-row run. At main acceptance clean had not run; final completion requires a separate final-source 2-library/2-ELF clean receipt. Compilation does not establish runtime or silicon behavior.
+      evidence:
+      - path: docs/lse-awt.md
+      - path: docs/low-power-timers.md
+      - path: cw32-data/lse-qualified.yaml
   lptim:
     register_kinds:
     - lptim
