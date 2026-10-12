@@ -1,0 +1,1413 @@
+{
+  "schema_version": 1,
+  "stage": 89,
+  "date": "2026-10-12",
+  "status": "own_source_facts_and_implementation_requirements",
+  "scope": "IRQ-assisted full-duplex u8 SPI master on ten own-source-qualified families and fourteen physical instances. Source facts and bounded implementation requirements only; no build, runtime-test, hardware, electrical or throughput acceptance is recorded here.",
+  "source_authority": "sources/evidence-sources.json",
+  "design_evidence": [
+    {
+      "path": "external-artifact:stage89-design/freeze.json",
+      "sha256": "ff380c4fa9c40eae131a802245b7f8359ae221439c430f0a32cd7efd0dd4d360",
+      "bytes": 1816
+    },
+    {
+      "path": "external-artifact:stage89-design/source-audit.md",
+      "sha256": "304c8678c27af7b30e1a3ea1b67873247cf220004f81376de16614ca757dbcec",
+      "bytes": 19750
+    },
+    {
+      "path": "external-artifact:stage89-design/source-identities.json",
+      "sha256": "f1d1c888adece2e0aabb2274221f7cc7448f4af3db6ab4c1e401c45a89eca9a6",
+      "bytes": 118004
+    },
+    {
+      "path": "external-artifact:stage89-design/runtime-design.md",
+      "sha256": "58445b45abdb9c3fa9b8c01355921040df33946f24756c1552b1b7a5c814050c",
+      "bytes": 26590
+    },
+    {
+      "path": "external-artifact:stage89-design/selection-inventory.json",
+      "sha256": "cad287a6d778a6618759b6d44e4707bdc9ed35bf694f925038653e7ee0c6a1e5",
+      "bytes": 270645
+    }
+  ],
+  "capability": {
+    "cfg": "spi_async_pio",
+    "positive_families": [
+      "CW32F020",
+      "CW32F002",
+      "CW32F003",
+      "CW32L010",
+      "CW32L011",
+      "CW32L012",
+      "CW32L031",
+      "CW32R031",
+      "CW32W031",
+      "CW32L052"
+    ],
+    "disjoint_cfg": "spi_dma",
+    "preserved_dma_families": [
+      "CW32F030",
+      "CW32A030",
+      "CW32L083"
+    ],
+    "family_count": 10,
+    "instance_count": 14,
+    "selected_chip_selectors": 36,
+    "exact_package_selectors": 26,
+    "low_power_entry_or_wake": false,
+    "new_dma_support": false,
+    "new_register_or_gpio_or_rcc_model": false
+  },
+  "families": [
+    {
+      "family": "CW32F020",
+      "spi_register_kind": "spi",
+      "spi_register_version": "v1",
+      "instances": [
+        {
+          "name": "SPI1",
+          "address": "0x40013000",
+          "global_interrupt": "SPI1",
+          "nvic_number": 25
+        },
+        {
+          "name": "SPI2",
+          "address": "0x40003800",
+          "global_interrupt": "SPI2",
+          "nvic_number": 26
+        }
+      ],
+      "selector_count": 4,
+      "manual_source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf"
+    },
+    {
+      "family": "CW32F002",
+      "spi_register_kind": "spi",
+      "spi_register_version": "cw32f002_v1",
+      "instances": [
+        {
+          "name": "SPI",
+          "address": "0x40013000",
+          "global_interrupt": "SPI",
+          "nvic_number": 25
+        }
+      ],
+      "selector_count": 3,
+      "manual_source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf"
+    },
+    {
+      "family": "CW32F003",
+      "spi_register_kind": "spi",
+      "spi_register_version": "cw32f002_v1",
+      "instances": [
+        {
+          "name": "SPI",
+          "address": "0x40013000",
+          "global_interrupt": "SPI",
+          "nvic_number": 25
+        }
+      ],
+      "selector_count": 4,
+      "manual_source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf"
+    },
+    {
+      "family": "CW32L010",
+      "spi_register_kind": "spi",
+      "spi_register_version": "cw32l010_v1",
+      "instances": [
+        {
+          "name": "SPI",
+          "address": "0x40000800",
+          "global_interrupt": "SPI",
+          "nvic_number": 25
+        }
+      ],
+      "selector_count": 4,
+      "manual_source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf"
+    },
+    {
+      "family": "CW32L011",
+      "spi_register_kind": "spi",
+      "spi_register_version": "cw32l010_v1",
+      "instances": [
+        {
+          "name": "SPI",
+          "address": "0x40000800",
+          "global_interrupt": "SPI",
+          "nvic_number": 25
+        }
+      ],
+      "selector_count": 3,
+      "manual_source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf"
+    },
+    {
+      "family": "CW32L012",
+      "spi_register_kind": "spi",
+      "spi_register_version": "cw32l012_v1",
+      "instances": [
+        {
+          "name": "SPI1",
+          "address": "0x40000800",
+          "global_interrupt": "SPI1",
+          "nvic_number": 25
+        },
+        {
+          "name": "SPI2",
+          "address": "0x40000400",
+          "global_interrupt": "SPI23",
+          "nvic_number": 26
+        },
+        {
+          "name": "SPI3",
+          "address": "0x40003400",
+          "global_interrupt": "SPI23",
+          "nvic_number": 26
+        }
+      ],
+      "selector_count": 3,
+      "manual_source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf"
+    },
+    {
+      "family": "CW32L031",
+      "spi_register_kind": "spi",
+      "spi_register_version": "cw32l031_v1",
+      "instances": [
+        {
+          "name": "SPI1",
+          "address": "0x40013000",
+          "global_interrupt": "SPI1",
+          "nvic_number": 25
+        }
+      ],
+      "selector_count": 7,
+      "manual_source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf"
+    },
+    {
+      "family": "CW32R031",
+      "spi_register_kind": "spi",
+      "spi_register_version": "cw32l031_v1",
+      "instances": [
+        {
+          "name": "SPI1",
+          "address": "0x40013000",
+          "global_interrupt": "SPI1",
+          "nvic_number": 25
+        }
+      ],
+      "selector_count": 2,
+      "manual_source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf"
+    },
+    {
+      "family": "CW32W031",
+      "spi_register_kind": "spi",
+      "spi_register_version": "cw32l031_v1",
+      "instances": [
+        {
+          "name": "SPI1",
+          "address": "0x40013000",
+          "global_interrupt": "SPI1",
+          "nvic_number": 25
+        }
+      ],
+      "selector_count": 2,
+      "manual_source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf"
+    },
+    {
+      "family": "CW32L052",
+      "spi_register_kind": "spi",
+      "spi_register_version": "cw32l031_v1",
+      "instances": [
+        {
+          "name": "SPI1",
+          "address": "0x40013000",
+          "global_interrupt": "SPI1",
+          "nvic_number": 25
+        },
+        {
+          "name": "SPI2",
+          "address": "0x40003800",
+          "global_interrupt": "SPI2",
+          "nvic_number": 26
+        }
+      ],
+      "selector_count": 4,
+      "manual_source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf"
+    }
+  ],
+  "primary_manuals": [
+    {
+      "family": "CW32F020",
+      "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+      "filename": "CW32F020_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+      "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+      "bytes": 9120176,
+      "printed_pages": [
+        94,
+        313,
+        314,
+        315,
+        327,
+        329,
+        330,
+        331
+      ],
+      "pdf_pages_1_based": [
+        95,
+        314,
+        315,
+        316,
+        328,
+        330,
+        331,
+        332
+      ],
+      "sections": [
+        {
+          "section": "18.3.8",
+          "printed_page": 313,
+          "pdf_page_1_based": 314
+        },
+        {
+          "section": "18.3.9",
+          "printed_page": 314,
+          "pdf_page_1_based": 315
+        },
+        {
+          "section": "18.4",
+          "printed_page": 315,
+          "pdf_page_1_based": 316
+        },
+        {
+          "section": "18.8.4",
+          "printed_page": 329,
+          "pdf_page_1_based": 330
+        },
+        {
+          "section": "18.8.5",
+          "printed_page": 330,
+          "pdf_page_1_based": 331
+        },
+        {
+          "section": "18.8.6",
+          "printed_page": 331,
+          "pdf_page_1_based": 332
+        },
+        {
+          "section": "18.8.7",
+          "printed_page": 331,
+          "pdf_page_1_based": 332
+        }
+      ],
+      "en_disable": {
+        "pdf_page_1_based": 328,
+        "printed_page": 327,
+        "register": "CR1",
+        "bit": 6,
+        "semantics": "RW; zero disables module; one enables. No SPI-chapter idle-only restriction found for the disable write. Not an acknowledged successful wire completion."
+      },
+      "irq_vector": [
+        {
+          "pdf_page_1_based": 95,
+          "printed_page": 94,
+          "entries": [
+            "41        25          \u53ef\u914d\u7f6e     SPI1      SPI1 \u5168\u5c40\u4e2d\u65ad      0x0000 00A4",
+            "42        26          \u53ef\u914d\u7f6e     SPI2      SPI2 \u5168\u5c40\u4e2d\u65ad      0x0000 00A8"
+          ]
+        }
+      ],
+      "text": {
+        "source_ref": "text:CW32F020_UserManual_CN_V1.4.txt",
+        "filename": "CW32F020_UserManual_CN_V1.4.txt",
+        "sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db",
+        "bytes": 1282599
+      }
+    },
+    {
+      "family": "CW32F002",
+      "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+      "filename": "CW32F002_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F002_UserManual_CN_V1.4.pdf",
+      "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+      "bytes": 7846423,
+      "printed_pages": [
+        72,
+        245,
+        246,
+        247,
+        255,
+        258,
+        259,
+        260
+      ],
+      "pdf_pages_1_based": [
+        73,
+        246,
+        247,
+        248,
+        256,
+        259,
+        260,
+        261
+      ],
+      "sections": [
+        {
+          "section": "16.3.8",
+          "printed_page": 245,
+          "pdf_page_1_based": 246
+        },
+        {
+          "section": "16.3.9",
+          "printed_page": 246,
+          "pdf_page_1_based": 247
+        },
+        {
+          "section": "16.4",
+          "printed_page": 247,
+          "pdf_page_1_based": 248
+        },
+        {
+          "section": "16.7.4",
+          "printed_page": 258,
+          "pdf_page_1_based": 259
+        },
+        {
+          "section": "16.7.5",
+          "printed_page": 259,
+          "pdf_page_1_based": 260
+        },
+        {
+          "section": "16.7.6",
+          "printed_page": 260,
+          "pdf_page_1_based": 261
+        },
+        {
+          "section": "16.7.7",
+          "printed_page": 260,
+          "pdf_page_1_based": 261
+        }
+      ],
+      "en_disable": {
+        "pdf_page_1_based": 256,
+        "printed_page": 255,
+        "register": "CR1",
+        "bit": 6,
+        "semantics": "RW; zero disables module; one enables. No SPI-chapter idle-only restriction found for the disable write. Not an acknowledged successful wire completion."
+      },
+      "irq_vector": [
+        {
+          "pdf_page_1_based": 73,
+          "printed_page": 72,
+          "entries": [
+            "41        25          \u53ef\u914d\u7f6e     SPI       SPI \u5168\u5c40\u4e2d\u65ad    0x0000 00A4"
+          ]
+        }
+      ],
+      "text": {
+        "source_ref": "text:CW32F002_UserManual_CN_V1.4.txt",
+        "filename": "CW32F002_UserManual_CN_V1.4.txt",
+        "sha256": "cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01",
+        "bytes": 1040538
+      }
+    },
+    {
+      "family": "CW32F003",
+      "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+      "filename": "CW32F003_UserManual_CN_V2.3.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32F003_UserManual_CN_V2.3.pdf",
+      "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+      "bytes": 8723015,
+      "printed_pages": [
+        74,
+        304,
+        305,
+        306,
+        314,
+        317,
+        318,
+        319
+      ],
+      "pdf_pages_1_based": [
+        75,
+        305,
+        306,
+        307,
+        315,
+        318,
+        319,
+        320
+      ],
+      "sections": [
+        {
+          "section": "17.3.8",
+          "printed_page": 304,
+          "pdf_page_1_based": 305
+        },
+        {
+          "section": "17.3.9",
+          "printed_page": 305,
+          "pdf_page_1_based": 306
+        },
+        {
+          "section": "17.4",
+          "printed_page": 306,
+          "pdf_page_1_based": 307
+        },
+        {
+          "section": "17.7.4",
+          "printed_page": 317,
+          "pdf_page_1_based": 318
+        },
+        {
+          "section": "17.7.5",
+          "printed_page": 318,
+          "pdf_page_1_based": 319
+        },
+        {
+          "section": "17.7.6",
+          "printed_page": 319,
+          "pdf_page_1_based": 320
+        },
+        {
+          "section": "17.7.7",
+          "printed_page": 319,
+          "pdf_page_1_based": 320
+        }
+      ],
+      "en_disable": {
+        "pdf_page_1_based": 315,
+        "printed_page": 314,
+        "register": "CR1",
+        "bit": 6,
+        "semantics": "RW; zero disables module; one enables. No SPI-chapter idle-only restriction found for the disable write. Not an acknowledged successful wire completion."
+      },
+      "irq_vector": [
+        {
+          "pdf_page_1_based": 75,
+          "printed_page": 74,
+          "entries": [
+            "41        25          \u53ef\u914d\u7f6e     SPI       SPI \u5168\u5c40\u4e2d\u65ad    0x0000 00A4"
+          ]
+        }
+      ],
+      "text": {
+        "source_ref": "text:CW32F003_UserManual_CN_V2.3.txt",
+        "filename": "CW32F003_UserManual_CN_V2.3.txt",
+        "sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319",
+        "bytes": 1218133
+      }
+    },
+    {
+      "family": "CW32L010",
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "filename": "CW32L010_UserManual_CN_V1.2.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260626/CW32L010_UserManual_CN_V1.2.pdf",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "bytes": 15074519,
+      "printed_pages": [
+        89,
+        443,
+        444,
+        445,
+        455,
+        457,
+        458,
+        459
+      ],
+      "pdf_pages_1_based": [
+        90,
+        444,
+        445,
+        446,
+        456,
+        458,
+        459,
+        460
+      ],
+      "sections": [
+        {
+          "section": "17.3.8",
+          "printed_page": 443,
+          "pdf_page_1_based": 444
+        },
+        {
+          "section": "17.3.9",
+          "printed_page": 444,
+          "pdf_page_1_based": 445
+        },
+        {
+          "section": "17.4",
+          "printed_page": 445,
+          "pdf_page_1_based": 446
+        },
+        {
+          "section": "17.7.5",
+          "printed_page": 457,
+          "pdf_page_1_based": 458
+        },
+        {
+          "section": "17.7.6",
+          "printed_page": 458,
+          "pdf_page_1_based": 459
+        },
+        {
+          "section": "17.7.7",
+          "printed_page": 459,
+          "pdf_page_1_based": 460
+        },
+        {
+          "section": "17.7.8",
+          "printed_page": 459,
+          "pdf_page_1_based": 460
+        }
+      ],
+      "en_disable": {
+        "pdf_page_1_based": 456,
+        "printed_page": 455,
+        "register": "CR2",
+        "bit": 0,
+        "semantics": "RW; zero disables module; one enables. No SPI-chapter idle-only restriction found for the disable write. Not an acknowledged successful wire completion."
+      },
+      "irq_vector": [
+        {
+          "pdf_page_1_based": 90,
+          "printed_page": 89,
+          "entries": [
+            "41       25      \u53ef\u914d\u7f6e    SPI                  SPI \u5168\u5c40\u4e2d\u65ad        0x0000 00A4"
+          ]
+        }
+      ],
+      "text": {
+        "source_ref": "text:CW32L010_UserManual_CN_V1.2.txt",
+        "filename": "CW32L010_UserManual_CN_V1.2.txt",
+        "sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938",
+        "bytes": 1653688
+      }
+    },
+    {
+      "family": "CW32L011",
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "filename": "CW32L011_UserManual_CN_V1.1.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260602/CW32L011_UserManual_CN_V1.1.pdf",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "bytes": 15199549,
+      "printed_pages": [
+        87,
+        445,
+        446,
+        447,
+        457,
+        459,
+        460,
+        461
+      ],
+      "pdf_pages_1_based": [
+        88,
+        446,
+        447,
+        448,
+        458,
+        460,
+        461,
+        462
+      ],
+      "sections": [
+        {
+          "section": "17.3.8",
+          "printed_page": 445,
+          "pdf_page_1_based": 446
+        },
+        {
+          "section": "17.3.9",
+          "printed_page": 446,
+          "pdf_page_1_based": 447
+        },
+        {
+          "section": "17.4",
+          "printed_page": 447,
+          "pdf_page_1_based": 448
+        },
+        {
+          "section": "17.7.5",
+          "printed_page": 459,
+          "pdf_page_1_based": 460
+        },
+        {
+          "section": "17.7.6",
+          "printed_page": 460,
+          "pdf_page_1_based": 461
+        },
+        {
+          "section": "17.7.7",
+          "printed_page": 461,
+          "pdf_page_1_based": 462
+        },
+        {
+          "section": "17.7.8",
+          "printed_page": 461,
+          "pdf_page_1_based": 462
+        }
+      ],
+      "en_disable": {
+        "pdf_page_1_based": 458,
+        "printed_page": 457,
+        "register": "CR2",
+        "bit": 0,
+        "semantics": "RW; zero disables module; one enables. No SPI-chapter idle-only restriction found for the disable write. Not an acknowledged successful wire completion."
+      },
+      "irq_vector": [
+        {
+          "pdf_page_1_based": 88,
+          "printed_page": 87,
+          "entries": [
+            "41       25      \u53ef\u914d\u7f6e    SPI                  SPI \u5168\u5c40\u4e2d\u65ad        0x0000 00A4"
+          ]
+        }
+      ],
+      "text": {
+        "source_ref": "text:CW32L011_UserManual_CN_V1.1.txt",
+        "filename": "CW32L011_UserManual_CN_V1.1.txt",
+        "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3",
+        "bytes": 1667087
+      }
+    },
+    {
+      "family": "CW32L012",
+      "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+      "filename": "CW32L012_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "bytes": 18034510,
+      "printed_pages": [
+        71,
+        506,
+        507,
+        508,
+        518,
+        520,
+        521,
+        522
+      ],
+      "pdf_pages_1_based": [
+        97,
+        532,
+        533,
+        534,
+        544,
+        546,
+        547,
+        548
+      ],
+      "sections": [
+        {
+          "section": "22.3.8",
+          "printed_page": 506,
+          "pdf_page_1_based": 532
+        },
+        {
+          "section": "22.3.9",
+          "printed_page": 507,
+          "pdf_page_1_based": 533
+        },
+        {
+          "section": "22.4",
+          "printed_page": 508,
+          "pdf_page_1_based": 534
+        },
+        {
+          "section": "22.7.5",
+          "printed_page": 520,
+          "pdf_page_1_based": 546
+        },
+        {
+          "section": "22.7.6",
+          "printed_page": 521,
+          "pdf_page_1_based": 547
+        },
+        {
+          "section": "22.7.7",
+          "printed_page": 522,
+          "pdf_page_1_based": 548
+        },
+        {
+          "section": "22.7.8",
+          "printed_page": 522,
+          "pdf_page_1_based": 548
+        }
+      ],
+      "en_disable": {
+        "pdf_page_1_based": 544,
+        "printed_page": 518,
+        "register": "CR2",
+        "bit": 0,
+        "semantics": "RW; zero disables module; one enables. No SPI-chapter idle-only restriction found for the disable write. Not an acknowledged successful wire completion."
+      },
+      "irq_vector": [
+        {
+          "pdf_page_1_based": 97,
+          "printed_page": 71,
+          "entries": [
+            "41          25         \u53ef\u914d\u7f6e          SPI1       SPI1 \u5168\u5c40\u4e2d\u65ad           0x0000 00A4",
+            "42          26         \u53ef\u914d\u7f6e         SPI2/3     SPI2/3 \u5168\u5c40\u4e2d\u65ad          0x0000 00A8"
+          ]
+        }
+      ],
+      "text": {
+        "source_ref": "text:CW32L012_UserManual_CN_V1.4.txt",
+        "filename": "CW32L012_UserManual_CN_V1.4.txt",
+        "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505",
+        "bytes": 1558649
+      }
+    },
+    {
+      "family": "CW32L031",
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "filename": "CW32L031_UserManual_CN_V1.6.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "bytes": 9976689,
+      "printed_pages": [
+        91,
+        372,
+        373,
+        374,
+        386,
+        388,
+        389,
+        390
+      ],
+      "pdf_pages_1_based": [
+        92,
+        373,
+        374,
+        375,
+        387,
+        389,
+        390,
+        391
+      ],
+      "sections": [
+        {
+          "section": "19.3.8",
+          "printed_page": 372,
+          "pdf_page_1_based": 373
+        },
+        {
+          "section": "19.3.9",
+          "printed_page": 373,
+          "pdf_page_1_based": 374
+        },
+        {
+          "section": "19.4",
+          "printed_page": 374,
+          "pdf_page_1_based": 375
+        },
+        {
+          "section": "19.8.4",
+          "printed_page": 388,
+          "pdf_page_1_based": 389
+        },
+        {
+          "section": "19.8.5",
+          "printed_page": 389,
+          "pdf_page_1_based": 390
+        },
+        {
+          "section": "19.8.6",
+          "printed_page": 390,
+          "pdf_page_1_based": 391
+        },
+        {
+          "section": "19.8.7",
+          "printed_page": 390,
+          "pdf_page_1_based": 391
+        }
+      ],
+      "en_disable": {
+        "pdf_page_1_based": 387,
+        "printed_page": 386,
+        "register": "CR1",
+        "bit": 6,
+        "semantics": "RW; zero disables module; one enables. No SPI-chapter idle-only restriction found for the disable write. Not an acknowledged successful wire completion."
+      },
+      "irq_vector": [
+        {
+          "pdf_page_1_based": 92,
+          "printed_page": 91,
+          "entries": [
+            "41       25      \u53ef\u914d\u7f6e    SPI                  SPI \u5168\u5c40\u4e2d\u65ad        0x0000 00A4"
+          ]
+        }
+      ],
+      "text": {
+        "source_ref": "text:CW32L031_UserManual_CN_V1.6.txt",
+        "filename": "CW32L031_UserManual_CN_V1.6.txt",
+        "sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1",
+        "bytes": 1443523
+      }
+    },
+    {
+      "family": "CW32R031",
+      "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+      "filename": "CW32R031_UserManual_CN_V1.3.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+      "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+      "bytes": 11821621,
+      "printed_pages": [
+        93,
+        375,
+        376,
+        377,
+        389,
+        391,
+        392,
+        393
+      ],
+      "pdf_pages_1_based": [
+        94,
+        376,
+        377,
+        378,
+        390,
+        392,
+        393,
+        394
+      ],
+      "sections": [
+        {
+          "section": "19.3.8",
+          "printed_page": 375,
+          "pdf_page_1_based": 376
+        },
+        {
+          "section": "19.3.9",
+          "printed_page": 376,
+          "pdf_page_1_based": 377
+        },
+        {
+          "section": "19.4",
+          "printed_page": 377,
+          "pdf_page_1_based": 378
+        },
+        {
+          "section": "19.8.4",
+          "printed_page": 391,
+          "pdf_page_1_based": 392
+        },
+        {
+          "section": "19.8.5",
+          "printed_page": 392,
+          "pdf_page_1_based": 393
+        },
+        {
+          "section": "19.8.6",
+          "printed_page": 393,
+          "pdf_page_1_based": 394
+        },
+        {
+          "section": "19.8.7",
+          "printed_page": 393,
+          "pdf_page_1_based": 394
+        }
+      ],
+      "en_disable": {
+        "pdf_page_1_based": 390,
+        "printed_page": 389,
+        "register": "CR1",
+        "bit": 6,
+        "semantics": "RW; zero disables module; one enables. No SPI-chapter idle-only restriction found for the disable write. Not an acknowledged successful wire completion."
+      },
+      "irq_vector": [
+        {
+          "pdf_page_1_based": 94,
+          "printed_page": 93,
+          "entries": [
+            "41       25     \u53ef\u914d\u7f6e     SPI                  SPI \u5168\u5c40\u4e2d\u65ad        0x0000 00A4"
+          ]
+        }
+      ],
+      "text": {
+        "source_ref": "text:CW32R031_UserManual_CN_V1.3.txt",
+        "filename": "CW32R031_UserManual_CN_V1.3.txt",
+        "sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b",
+        "bytes": 1579725
+      }
+    },
+    {
+      "family": "CW32W031",
+      "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+      "filename": "CW32W031_UserManual_CN_V1.4.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+      "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "bytes": 11750733,
+      "printed_pages": [
+        92,
+        375,
+        376,
+        377,
+        389,
+        391,
+        392,
+        393
+      ],
+      "pdf_pages_1_based": [
+        93,
+        376,
+        377,
+        378,
+        390,
+        392,
+        393,
+        394
+      ],
+      "sections": [
+        {
+          "section": "19.3.8",
+          "printed_page": 375,
+          "pdf_page_1_based": 376
+        },
+        {
+          "section": "19.3.9",
+          "printed_page": 376,
+          "pdf_page_1_based": 377
+        },
+        {
+          "section": "19.4",
+          "printed_page": 377,
+          "pdf_page_1_based": 378
+        },
+        {
+          "section": "19.8.4",
+          "printed_page": 391,
+          "pdf_page_1_based": 392
+        },
+        {
+          "section": "19.8.5",
+          "printed_page": 392,
+          "pdf_page_1_based": 393
+        },
+        {
+          "section": "19.8.6",
+          "printed_page": 393,
+          "pdf_page_1_based": 394
+        },
+        {
+          "section": "19.8.7",
+          "printed_page": 393,
+          "pdf_page_1_based": 394
+        }
+      ],
+      "en_disable": {
+        "pdf_page_1_based": 390,
+        "printed_page": 389,
+        "register": "CR1",
+        "bit": 6,
+        "semantics": "RW; zero disables module; one enables. No SPI-chapter idle-only restriction found for the disable write. Not an acknowledged successful wire completion."
+      },
+      "irq_vector": [
+        {
+          "pdf_page_1_based": 93,
+          "printed_page": 92,
+          "entries": [
+            "41       25     \u53ef\u914d\u7f6e     SPI                  SPI \u5168\u5c40\u4e2d\u65ad        0x0000 00A4"
+          ]
+        }
+      ],
+      "text": {
+        "source_ref": "text:CW32W031_UserManual_CN_V1.4.txt",
+        "filename": "CW32W031_UserManual_CN_V1.4.txt",
+        "sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac",
+        "bytes": 1516397
+      }
+    },
+    {
+      "family": "CW32L052",
+      "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+      "filename": "CW32L052_UserManual_CN_V1.5.pdf",
+      "url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "bytes": 12894348,
+      "printed_pages": [
+        96,
+        409,
+        410,
+        411,
+        423,
+        425,
+        426,
+        427
+      ],
+      "pdf_pages_1_based": [
+        97,
+        410,
+        411,
+        412,
+        424,
+        426,
+        427,
+        428
+      ],
+      "sections": [
+        {
+          "section": "20.3.8",
+          "printed_page": 409,
+          "pdf_page_1_based": 410
+        },
+        {
+          "section": "20.3.9",
+          "printed_page": 410,
+          "pdf_page_1_based": 411
+        },
+        {
+          "section": "20.4",
+          "printed_page": 411,
+          "pdf_page_1_based": 412
+        },
+        {
+          "section": "20.8.4",
+          "printed_page": 425,
+          "pdf_page_1_based": 426
+        },
+        {
+          "section": "20.8.5",
+          "printed_page": 426,
+          "pdf_page_1_based": 427
+        },
+        {
+          "section": "20.8.6",
+          "printed_page": 427,
+          "pdf_page_1_based": 428
+        },
+        {
+          "section": "20.8.7",
+          "printed_page": 427,
+          "pdf_page_1_based": 428
+        }
+      ],
+      "en_disable": {
+        "pdf_page_1_based": 424,
+        "printed_page": 423,
+        "register": "CR1",
+        "bit": 6,
+        "semantics": "RW; zero disables module; one enables. No SPI-chapter idle-only restriction found for the disable write. Not an acknowledged successful wire completion."
+      },
+      "irq_vector": [
+        {
+          "pdf_page_1_based": 97,
+          "printed_page": 96,
+          "entries": [
+            "41       25      \u53ef\u914d\u7f6e     SPI1                 SPI1 \u5168\u5c40\u4e2d\u65ad         0x0000 00A4",
+            "42       26      \u53ef\u914d\u7f6e     SPI2                 SPI2 \u5168\u5c40\u4e2d\u65ad         0x0000 00A8"
+          ]
+        }
+      ],
+      "text": {
+        "source_ref": "text:CW32L052_UserManual_CN_V1.5.txt",
+        "filename": "CW32L052_UserManual_CN_V1.5.txt",
+        "sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb",
+        "bytes": 1650171
+      }
+    }
+  ],
+  "sdk_irq_headers": [
+    {
+      "family": "CW32F020",
+      "source_ref": "member:cw32f020/Libraries/inc/cw32f020.h",
+      "path": "cw32f020/Libraries/inc/cw32f020.h",
+      "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f",
+      "bytes": 632223,
+      "archive_source_ref": "vendor:CW32F020_StandardPeripheralLib_V1.2.zip",
+      "url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "archive_sha256": "1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d",
+      "irq_declarations": [
+        {
+          "line": 91,
+          "declaration": "SPI1_IRQn                 =  25,              /*!< 25 SPI1 Interrupt                                                         */"
+        },
+        {
+          "line": 92,
+          "declaration": "SPI2_IRQn                 =  26,              /*!< 26 SPI2 Interrupt                                                         */"
+        }
+      ]
+    },
+    {
+      "family": "CW32F002",
+      "source_ref": "member:cw32f002/Libraries/inc/cw32f002.h",
+      "path": "cw32f002/Libraries/inc/cw32f002.h",
+      "sha256": "399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54",
+      "bytes": 365735,
+      "archive_source_ref": "vendor:CW32F002_StandardPeripheralLib_V1.2.zip",
+      "url": "https://www.whxy.com/uploads/files/20240115/CW32F002_StandardPeripheralLib_V1.2.zip",
+      "archive_sha256": "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc",
+      "irq_declarations": [
+        {
+          "line": 59,
+          "declaration": "SPI_IRQn                  =  25,              /*!< 25 SPI Interrupt                                                          */"
+        }
+      ]
+    },
+    {
+      "family": "CW32F003",
+      "source_ref": "member:cw32f003/Libraries/inc/cw32f003.h",
+      "path": "cw32f003/Libraries/inc/cw32f003.h",
+      "sha256": "1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f",
+      "bytes": 369370,
+      "archive_source_ref": "vendor:CW32F003_StandardPeripheralLib_V1.7.zip",
+      "url": "https://www.whxy.com/uploads/files/20250606/CW32F003_StandardPeripheralLib_V1.7.zip",
+      "archive_sha256": "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+      "irq_declarations": [
+        {
+          "line": 82,
+          "declaration": "SPI_IRQn                  =  25,              /*!< 25 SPI Interrupt                                                          */"
+        }
+      ]
+    },
+    {
+      "family": "CW32L010",
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "path": "cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+      "bytes": 540100,
+      "archive_source_ref": "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "url": "https://www.whxy.com/uploads/files/20260806/CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "archive_sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+      "irq_declarations": [
+        {
+          "line": 83,
+          "declaration": "SPI_IRQn                  =  25,              /*!< 25 SPI Interrupt                                                          */"
+        }
+      ]
+    },
+    {
+      "family": "CW32L011",
+      "source_ref": "member:cw32l011/Libraries/inc/cw32l011.h",
+      "path": "cw32l011/Libraries/inc/cw32l011.h",
+      "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8",
+      "bytes": 594153,
+      "archive_source_ref": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "url": "https://www.whxy.com/uploads/files/20251016/CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "archive_sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+      "irq_declarations": [
+        {
+          "line": 84,
+          "declaration": "SPI_IRQn                  =  25,              /*!< 25 SPI Interrupt                                                          */"
+        }
+      ]
+    },
+    {
+      "family": "CW32L012",
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+      "path": "cw32l012/Libraries/inc/cw32l012.h",
+      "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+      "bytes": 834392,
+      "archive_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "archive_sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+      "irq_declarations": [
+        {
+          "line": 90,
+          "declaration": "SPI1_IRQn                 =  25,              /*!< 25 SPI1 Interrupt                                                         */"
+        },
+        {
+          "line": 91,
+          "declaration": "SPI23_IRQn                =  26,              /*!< 26 SPI23 Interrupt                                                        */"
+        }
+      ]
+    },
+    {
+      "family": "CW32L031",
+      "source_ref": "member:cw32l031/Libraries/inc/cw32l031.h",
+      "path": "cw32l031/Libraries/inc/cw32l031.h",
+      "sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27",
+      "bytes": 573927,
+      "archive_source_ref": "vendor:CW32L031_StandardPeripheralLib_V1.4.zip",
+      "url": "https://www.whxy.com/uploads/files/20250721/CW32L031_StandardPeripheralLib_V1.4.zip",
+      "archive_sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d",
+      "irq_declarations": [
+        {
+          "line": 88,
+          "declaration": "SPI1_IRQn                 =  25,              /*!< 25 SPI1 Interrupt                                                         */"
+        }
+      ]
+    },
+    {
+      "family": "CW32R031",
+      "source_ref": "member:cw32r031/Libraries/inc/cw32r031.h",
+      "path": "cw32r031/Libraries/inc/cw32r031.h",
+      "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385",
+      "bytes": 573927,
+      "archive_source_ref": "vendor:CW32R031_StandardPeripheralLib_V1.1.zip",
+      "url": "https://www.whxy.com/uploads/files/20240115/CW32R031_StandardPeripheralLib_V1.1.zip",
+      "archive_sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082",
+      "irq_declarations": [
+        {
+          "line": 88,
+          "declaration": "SPI1_IRQn                 =  25,              /*!< 25 SPI1 Interrupt                                                         */"
+        }
+      ]
+    },
+    {
+      "family": "CW32W031",
+      "source_ref": "member:cw32w031/Libraries/inc/cw32w031.h",
+      "path": "cw32w031/Libraries/inc/cw32w031.h",
+      "sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69",
+      "bytes": 485814,
+      "archive_source_ref": "vendor:CW32W031_StandardPeripheralLib_V1.3.zip",
+      "url": "https://www.whxy.com/uploads/files/20240119/CW32W031_StandardPeripheralLib_V1.3.zip",
+      "archive_sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+      "irq_declarations": [
+        {
+          "line": 83,
+          "declaration": "SPI1_IRQn = 25,            /*!< 25 SPI1 Interrupt                                                         */"
+        }
+      ]
+    },
+    {
+      "family": "CW32L052",
+      "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+      "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+      "sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1",
+      "bytes": 826882,
+      "archive_source_ref": "vendor:CW32L052_StandardPeripheralLib_V1.4.zip",
+      "url": "https://www.whxy.com/uploads/files/20260309/CW32L052_StandardPeripheralLib_V1.4.zip",
+      "archive_sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+      "irq_declarations": [
+        {
+          "line": 90,
+          "declaration": "SPI1_IRQn                 =  25,              /*!< 25 SPI1 Interrupt                                                         */"
+        },
+        {
+          "line": 91,
+          "declaration": "SPI2_IRQn                 =  26,              /*!< 26 SPI2 Interrupt                                                         */"
+        }
+      ]
+    }
+  ],
+  "register_semantics": {
+    "ier": {
+      "txe": 0,
+      "rxne": 1,
+      "ssf": 2,
+      "ssr": 3,
+      "ud": 4,
+      "ov": 5,
+      "sserr": 6,
+      "modf": 7
+    },
+    "isr": {
+      "txe": 0,
+      "rxne": 1,
+      "ssf": 2,
+      "ssr": 3,
+      "ud": 4,
+      "ov": 5,
+      "sserr": 6,
+      "modf": 7,
+      "busy": 8,
+      "access": "read_only"
+    },
+    "icr": {
+      "semantics": "R1W0; no W1C SPI clearing",
+      "write_noop": 255,
+      "reserved_bits": "31:8 remain zero",
+      "flush_bit": 0,
+      "flush_zero": "destructively empties transmit buffer and shift register and sets TXE",
+      "rxne_zero": "clears receive-ready flag",
+      "normal_ready_service": "write DR consumes TXE; read DR consumes RXNE; no ICR write needed",
+      "command_policy": "Start from existing typed Icr::write_noop(), issue explicit W0 commands, never ICR read-modify-write; whole clear only disabled initialization or existing destructive PIO error recovery."
+    },
+    "layouts": [
+      {
+        "versions": [
+          "v1",
+          "cw32f002_v1",
+          "cw32l031_v1"
+        ],
+        "ier_offset": 4,
+        "isr_offset": 16,
+        "icr_offset": 20,
+        "dr_offset": 24,
+        "enable_register": "CR1",
+        "enable_bit": 6
+      },
+      {
+        "versions": [
+          "cw32l010_v1",
+          "cw32l012_v1"
+        ],
+        "ier_offset": 16,
+        "isr_offset": 20,
+        "icr_offset": 24,
+        "dr_offset": 28,
+        "enable_register": "CR2",
+        "enable_bit": 0
+      }
+    ],
+    "data_width": "u8 API uses WIDTH=7 and existing 32-bit typed DR accesses to its 16-bit field, not unreviewed raw byte MMIO.",
+    "wire_completion": "Every successful awaited operation, including flush, requires no error, TXE=1 and BUSY=0. TXE alone is only transmit-buffer availability.",
+    "busy_notification": "No BUSY-clear IRQ exists in any of the five actual SPI IP versions. Finishing cooperatively self-wakes; overall completion is not time-bounded.",
+    "en_disable": "Own manuals define EN read/write, zero disabling the module; no idle-only restriction is stated. Destructive PIO teardown may truncate a frame and is not acknowledged successful wire completion. Native CR1 configuration requires CR2.EN=0.",
+    "mode_fault": "Own manuals specify EN clearing and explicitly allow normal transfer after re-enable while MODF remains sticky until W0 clear. No automatic clearing of MSTR, SSI, width or baud configuration is specified; retain existing PIO disable/clear/re-enable recovery.",
+    "overrun": "A new frame overwrites unread DR contents; clearing OV does not recover lost bytes.",
+    "slave_only_errors": "UD/SSERR are described for slave operation; unexpected observed errors are still reported under master operation."
+  },
+  "implementation_requirements": {
+    "public_api": "Ordinary-lifetime Spi<Async,Master>::new_async/try_new_async and inherent/trait read, write, transfer, transfer_in_place, flush for u8; no static buffers or DMA tokens.",
+    "one_frame": "At most one CPU-written frame outstanding; owner phase persists before DR write; next byte waits until prior RX is consumed.",
+    "interrupt": "Static active guard, owned waker and scalar error/wait state only. ISR masks local notification and wakes; never stores owner/future/caller pointers or accesses DR.",
+    "per_poll_budget": "At most one DR read, one DR write and bounded scalar/caller-byte work; no old unbounded blocking wait loop inside async operations.",
+    "cancellation": "Future cancellation masks only local IER and removes waiter; retains pending byte/wire phase. Forgotten future stays pointer-safe; subsequent methods first settle/discard predecessor data.",
+    "chip_select": "Keep original external GPIO CS selection until successful flush; no generic SpiDevice cancellation-safety claim.",
+    "destructive_drop": "Ordinary borrowed PIO owner uses inactive ISR fence before EN=0, existing finite gate helper and pin disconnect; possible truncation, no successful-flush claim, no DMA-style pin/clock retention.",
+    "reacquisition": "Both new async and existing blocking constructors fence forgotten static PIO state before pin mutation and existing own-instance reset/configuration. Existing finite gate failure panic remains; no reset_checked or new terminal fault state.",
+    "shared_spi23": "SPI2/SPI3 own GLOBAL routes both use SPI23/IRQ26. Handle only active clocked instances, preserve peer IER/data/state, never disable or unpend shared NVIC during local lifecycle steps.",
+    "errors": "Latch/report before destructive existing PIO recovery; retain existing error priority. Earlier received bytes remain visible. No retransmission or external-device recovery implied.",
+    "configuration_and_blocking": "Empty async calls settle predecessor work. Blocking/configuration methods on the new async owner reject unresolved pending work rather than bypassing it. Existing frequency, sampling, pin and configuration policies stay in force.",
+    "w031": "Only already-owned ordinary SPI1 controller byte requests within existing RCC/pin ownership contracts. Same SPI1 supplies internal RF host; no RF access, reset, commands, state inspection, arbitration or continuity qualification is added."
+  },
+  "w031_existing_contract": {
+    "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+    "filename": "CW32W031_DataSheet_CN_V1.3.pdf",
+    "url": "https://www.whxy.com/uploads/files/20251230/CW32W031_DataSheet_CN_V1.3.pdf",
+    "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c",
+    "bytes": 3301754,
+    "sections": [
+      "4.4.4"
+    ],
+    "printed_pages": [
+      13
+    ],
+    "pdf_pages_1_based": [
+      14
+    ],
+    "text": {
+      "source_ref": "text:CW32W031_DataSheet_CN_V1.3.txt",
+      "filename": "CW32W031_DataSheet_CN_V1.3.txt",
+      "sha256": "8b766288a879c9ec4fae74a26ed40d58b18676d29531442ab981da4e346542fb",
+      "bytes": 213856
+    },
+    "existing_project_contracts": [
+      "docs/qualified-w031-lsi-sysclk.md",
+      "cw32-data/af/cw32w031-serial.yaml"
+    ],
+    "restriction": "External SPI is unavailable while RF is in use. Internal RF host uses the same SPI1 and GPIOB functions; preserve existing whole-GPIOB effects and no new RF entitlement."
+  },
+  "existing_evidence_retained": [
+    "docs/spi-register-write-evidence.json",
+    "docs/spi-clock-source-policy.json",
+    "docs/remaining-spi-classic-i2c.md",
+    "docs/l031-shared-serial.md",
+    "docs/spi-dma.md",
+    "docs/spi-dma-evidence.json",
+    "docs/l083-peripheral-dma.md"
+  ],
+  "verification_boundary": {
+    "builds_recorded": 0,
+    "tests_or_probes_recorded": 0,
+    "firmware_execution": false,
+    "electrical_validation": false,
+    "note": "Actual implementation acceptance and command/artifact receipts are separate. This source document must not be read as pending or completed acceptance."
+  }
+}

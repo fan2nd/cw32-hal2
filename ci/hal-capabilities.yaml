@@ -245,14 +245,52 @@ functions:
     modes:
     - id: bounded_api
       status: partial
-      scope: Blocking master with owned, package-qualified routes; F030/A030/L083 additionally support staged byte async DMA.
+      scope: Blocking master with owned, package-qualified routes; byte async master uses separately qualified IRQ PIO or staged DMA.
       limitations:
       - Clock/electrical bounds apply; slave and advanced protocol modes are absent.
+      - The ten IRQ PIO families share a constructor/Drop lifecycle fence with blocking owners; ordinary blocking data/error/divider behavior remains separate.
     - id: slave_async
       status: unimplemented
-      scope: No slave API; F030/A030/L083 master async byte bus is declared separately under safe_peripheral_dma.
+      scope: No slave API; master async byte buses are declared separately under async_pio and safe_peripheral_dma.
       limitations:
-      - Exact slave/advanced hardware mode audit remains per instance; async master is limited to F030/A030/L083 staged DMA.
+      - Exact slave/advanced hardware mode audit remains per instance; neither master backend admits slave operation.
+    - id: async_pio
+      status: partial
+      scope: Ordinary-borrowed IRQ PIO full-duplex byte master on fourteen SPI instances across F020/F002/F003/L010/L011/L012/L031/R031/W031/L052.
+      limitations:
+      - Explicit spi_async_pio qualification is disjoint from F030/A030/L083 spi_dma; existing package routes, clock bounds and blocking word widths remain authoritative.
+      - All five async SpiBus byte methods keep at most one frame outstanding and at most one DR read and one DR write per poll; the ISR has no driver/future/caller-buffer pointers and never accesses DR.
+      - Final error-free TXE=1/BUSY=0 is required; the BUSY tail self-wakes and consumes CPU with no built-in deadline, finite-liveness or low-power guarantee.
+      - Cancelled/forgotten operations retain pending frame settlement; keep the original CS selected and successfully flush before deselecting or changing devices/configuration.
+      - Errors use disabled destructive PIO recovery; driver Drop and forgotten-owner reconstruction can truncate work and are never successful wire completion.
+      - Synchronous calls first attempt bounded settlement and may report PioBusy; set_config reports Busy without consuming a pending hardware error.
+      - Blocking and async constructors/Drop on these ten families fence stale static interest before pin/reset/gate changes. An inactive instance is skipped before ISR MMIO.
+      - L012 SPI2/SPI3 require the complete SPI23 shared handler, isolated register banks and no shared NVIC disable/unpend. An unowned peer must already be quiescent or externally handled.
+      - W031 external SPI is unavailable during internal RF use; existing SPI1/GPIOB ownership restrictions remain. No RF coexistence or continuity claim.
+      - No DMA, staging, wider async words, automatic CS, generic cancellation-safe SpiDevice, early-abort acknowledgment, throughput or hardware-validation guarantee.
+      - Main validation passed 14 standalone ARM libraries and 19 linked ELFs, all 33 exits zero, plus seven finite source/data commands. Main ran no canonical generation and all 910 generated files stayed unchanged.
+      - L010F8P6 library/async/blocking rows and L011K8T6 library/async rows each retain three existing unused RCC LSE-constant warnings; the other 12 libraries and 16 ELFs were warning-free.
+      - Independent runtime and source/metadata reviews accepted the frozen implementation. At main acceptance clean had not run; final-package completion requires a separate final-source 2-library/5-ELF replay and seven commands including one generation bootstrap. No hardware behavior is established.
+      implemented_families:
+      - CW32F020
+      - CW32F002
+      - CW32F003
+      - CW32L010
+      - CW32L011
+      - CW32L012
+      - CW32L031
+      - CW32R031
+      - CW32W031
+      - CW32L052
+      pins_all:
+      - SCK
+      - MOSI
+      - MISO
+      evidence:
+      - path: embassy-cw32/src/spi.rs
+        anchor: pub fn try_new_async
+      - path: docs/spi-async-pio.md
+      - path: examples/spi-async/src/bin/async_master.rs
     - id: safe_peripheral_dma
       status: experimental_partial
       scope: Safe F030/A030/L083 paired full-duplex master byte DMA and async SpiBus with private static TX/RX SRAM staging.

@@ -146,6 +146,28 @@ still apply.
   quarantine resources. FE/PE reports promptly but recovery awaits the old count.
   RX gaps can lose frames without overrun detection. No DMA RTS/CTS, continuous
   RX, safe early abort, bounded liveness or zero-copy guarantee.
+- F020/F002/F003/L010/L011/L012/L031/R031/W031/L052 SPI adds ordinary-borrowed
+  IRQ PIO byte async master on fourteen family/controller pairs, across the
+  existing 36 selectors. All five async `SpiBus<u8>` methods use at most one
+  outstanding frame and one DR read/write per poll; only task context accesses
+  caller buffers or DR. Final TXE/BUSY checks self-wake without a deadline or
+  low-power guarantee. Cancellation/forget requires keeping the original CS
+  selected through a successful flush; errors and destructive driver Drop do
+  not establish successful wire completion. Common blocking constructor/Drop
+  code on these ten families also fences forgotten async state. L012 SPI2/SPI3
+  require the full SPI23 handler and isolate each register bank, including an
+  inactive or blocking peer. W031 keeps the existing internal-RF/external-SPI
+  ownership exclusion. No wider async words, DMA admission, new routes or
+  automatic CS/device cancellation guarantee is added. Main validation passed
+  14 standalone ARM libraries and 19 linked ELFs, all 33 exits zero, plus seven
+  source/data commands. No canonical generation ran; all 910 generated files
+  stayed unchanged. Three existing RCC LSE-constant warnings remain in each
+  L010F8P6 library/async/blocking row and L011K8T6 library/async row; the other
+  12 libraries and 16 ELFs were warning-free. Independent runtime and
+  source/metadata reviews accepted the frozen implementation. At main acceptance
+  clean had not run; final-package completion requires its separate final-source
+  2-library/5-ELF replay and seven commands including one generation bootstrap.
+  No hardware result is claimed. See [the contract](spi-async-pio.md).
 - F030/A030/L083 SPI additionally supports a safe staged byte async bus with private
   TX/RX SRAM and two admitted DMA channels. Both clean terminals plus wire idle
   precede success. Cancellation requires preserving the original CS selection

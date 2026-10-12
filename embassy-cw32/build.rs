@@ -139,6 +139,7 @@ fn main() {
         "uart_dma_tx",
         "uart_dma_rx",
         "spi_dma",
+        "spi_async_pio",
         "adc_cw32l010_v1",
         "adc_cw32l011_v1",
         "adc_cw32l012_v1",
@@ -560,6 +561,84 @@ fn main() {
         "CW32L083" => Some("cw32l031_v1"),
         _ => None,
     };
+    // Own-manual IRQ byte-master qualification is separate from DMA admission.
+    // Consume the existing SPI/IRQ facts; shared IP alone grants no capability.
+    let spi_async_pio_profile: Option<(&str, &[(&str, &str, u32)])> = match metadata.line {
+        "CW32F002" | "CW32F003" => Some(("cw32f002_v1", &[("SPI", "SPI", 25)])),
+        "CW32F020" => Some(("v1", &[("SPI1", "SPI1", 25), ("SPI2", "SPI2", 26)])),
+        "CW32L031" | "CW32R031" | "CW32W031" => Some(("cw32l031_v1", &[("SPI1", "SPI1", 25)])),
+        "CW32L052" => Some(("cw32l031_v1", &[("SPI1", "SPI1", 25), ("SPI2", "SPI2", 26)])),
+        "CW32L010" | "CW32L011" => Some(("cw32l010_v1", &[("SPI", "SPI", 25)])),
+        "CW32L012" => Some((
+            "cw32l012_v1",
+            &[
+                ("SPI1", "SPI1", 25),
+                ("SPI2", "SPI23", 26),
+                ("SPI3", "SPI23", 26),
+            ],
+        )),
+        _ => None,
+    };
+    if let Some((version, instances)) = spi_async_pio_profile {
+        assert!(spi && spi_dma_profile.is_none());
+        let actual_instances = metadata
+            .peripherals
+            .iter()
+            .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == "spi"))
+            .count();
+        assert_eq!(
+            actual_instances,
+            instances.len(),
+            "unreviewed IRQ SPI inventory"
+        );
+        for &(name, irq_name, irq_number) in instances {
+            let peripheral = metadata
+                .peripherals
+                .iter()
+                .find(|p| p.name == name)
+                .expect("qualified IRQ SPI instance is missing");
+            let registers = peripheral
+                .registers
+                .as_ref()
+                .expect("qualified IRQ SPI registers are missing");
+            assert_eq!(
+                (registers.kind, registers.version, registers.block),
+                ("spi", version, "Spi")
+            );
+            assert_eq!(
+                peripheral.interrupts.len(),
+                1,
+                "unreviewed IRQ SPI source count"
+            );
+            let irq = &peripheral.interrupts[0];
+            assert_eq!((irq.signal, irq.interrupt), ("GLOBAL", irq_name));
+            let vector = metadata
+                .interrupts
+                .iter()
+                .find(|i| i.name == irq.interrupt)
+                .expect("qualified IRQ SPI vector is missing");
+            assert_eq!(vector.number, irq_number);
+            // L012 SPI2/3 share SPI23; every other admitted SPI vector is dedicated.
+            let mut actual_peers: Vec<_> = metadata
+                .peripherals
+                .iter()
+                .filter(|p| p.interrupts.iter().any(|i| i.interrupt == irq.interrupt))
+                .map(|p| p.name)
+                .collect();
+            let mut expected_peers: Vec<_> = instances
+                .iter()
+                .filter(|(_, expected_irq, _)| *expected_irq == irq_name)
+                .map(|(name, _, _)| *name)
+                .collect();
+            actual_peers.sort_unstable();
+            expected_peers.sort_unstable();
+            assert_eq!(
+                actual_peers, expected_peers,
+                "unreviewed IRQ SPI shared vector"
+            );
+        }
+        println!("cargo:rustc-cfg=spi_async_pio");
+    }
     let qualify_requests = |prefix: &str, count: u8, version: &str, signals: &[&str]| {
         assert!(dma, "staged requests require a qualified DMA controller");
         let mut pairs = Vec::new();

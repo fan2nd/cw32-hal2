@@ -1,5 +1,12 @@
 # Typed SPI register operations
 
+The equivalence statements below record the typed-register cleanup snapshot.
+Current [IRQ PIO byte async](spi-async-pio.md) adds ordered status rechecks and
+local ready/error interrupt arming, and changes the ten-family common
+constructor/Drop lifecycle fence. It retains the typed DR width, error priority
+and disabled-clear policy described here; the historical before/after source
+identities do not certify the later async implementation.
+
 The blocking SPI driver now keeps ISR reads in the generated `pac::spi::regs::Isr`
 value and consumes `txe`, `rxne`, `ud`, `ov`, `sserr`, `modf`, and `busy` directly.
 It no longer maintains a second set of hardware bit masks. The existing

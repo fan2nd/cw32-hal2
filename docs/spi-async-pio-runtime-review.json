@@ -1,0 +1,3142 @@
+{
+  "schema_version": 1,
+  "stage": 89,
+  "date": "2026-10-12",
+  "status": "accepted-main-runtime-review-clean-replay-pending",
+  "scope": "Independent actual implementation review plus inspection of the completed ordinary main build and finite source/data receipts. This is main acceptance only.",
+  "design_freeze": {
+    "external_artifact": "Stage89 approved design freeze",
+    "sha256": "ff380c4fa9c40eae131a802245b7f8359ae221439c430f0a32cd7efd0dd4d360"
+  },
+  "source_snapshot": {
+    "external_artifact": "main/source-before.json",
+    "sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+    "files": 1447,
+    "before_after_identical": true,
+    "current_files_verified_against_snapshot": 1447
+  },
+  "reviewed_source_files": [
+    {
+      "bytes": 75491,
+      "mode": 420,
+      "path": "embassy-cw32/src/spi.rs",
+      "sha256": "0122f3da422ca869a70c0367685f8922e9b7a1fe98f251556f3bdbc086a8a493"
+    },
+    {
+      "bytes": 363650,
+      "mode": 420,
+      "path": "embassy-cw32/build.rs",
+      "sha256": "32a4c70b2f8c891b2baa5680dbef68eb9d6100f55d60a9ea24145612dee6cf1a"
+    },
+    {
+      "bytes": 38,
+      "mode": 420,
+      "path": "examples/spi-async/.cargo/config.toml",
+      "sha256": "2572d9e73c593bd47d7535b401f1133f8f9bf345faf44505b3317342679aeb91"
+    },
+    {
+      "bytes": 20585,
+      "mode": 420,
+      "path": "examples/spi-async/Cargo.lock",
+      "sha256": "a52a70e205cfefaf99703ed9867891d4d1614419da6d5271f12a266ec01f0e01"
+    },
+    {
+      "bytes": 1760,
+      "mode": 420,
+      "path": "examples/spi-async/Cargo.toml",
+      "sha256": "9a8d7e7c67e1dfa619a8db8487dbeafce2ba09d013100fa50bea2dfc3a7d7244"
+    },
+    {
+      "bytes": 7344,
+      "mode": 420,
+      "path": "examples/spi-async/README.md",
+      "sha256": "7cfadaec186e6930f16f6011055c055abdac109d9d137dda4a5bb177a8f625ab"
+    },
+    {
+      "bytes": 9346,
+      "mode": 420,
+      "path": "examples/spi-async/build.rs",
+      "sha256": "eee6a29526285d830225591ba8a5488e7bfe44f49d849c0d2f441349b5c89236"
+    },
+    {
+      "bytes": 4389,
+      "mode": 420,
+      "path": "examples/spi-async/src/bin/async_master.rs",
+      "sha256": "790d1c978691e689b53f7e38cce92ae1a741606fc04c923cab4d3243553447ee"
+    },
+    {
+      "bytes": 3321,
+      "mode": 420,
+      "path": "examples/spi-async/src/bin/blocking_master.rs",
+      "sha256": "561cf6b4a0cb7113c4df712e03cae2a1790ccc075260c313a41310356962eb81"
+    },
+    {
+      "bytes": 2278,
+      "mode": 420,
+      "path": "examples/spi-async/src/lib.rs",
+      "sha256": "6d570662241c20c8ccad902b89ec37cae9545e2f9fa4b794320334341d4c423a"
+    },
+    {
+      "bytes": 12875,
+      "mode": 420,
+      "path": "docs/spi-async-pio.md",
+      "sha256": "bbc1317d70154869d9a5441d8a22e1fc3bf8e81a21d129a58616b5c7c5c883e7"
+    },
+    {
+      "bytes": 137254,
+      "mode": 420,
+      "path": "ci/hal-capabilities.yaml",
+      "sha256": "e8ad4649f4bcad4732fa64574d24a58b7a3deaf7d8dabf1a838c89930d7d6d5b"
+    }
+  ],
+  "runtime_findings": [
+    {
+      "id": "positive_disjoint_qualification",
+      "source": "embassy-cw32/build.rs:559",
+      "status": "accepted",
+      "finding": "Ten-family explicit SPI kind/version/instance/IRQ/peer qualification; old F030/A030/L083 DMA remains separate."
+    },
+    {
+      "id": "retained_ownership",
+      "source": "embassy-cw32/src/spi.rs:249",
+      "status": "accepted",
+      "finding": "Ordinary borrowed peripheral/pins retained; only phase lives in owner; static state holds active/error/waker only."
+    },
+    {
+      "id": "unpolled_empty_cancel_forget",
+      "source": "embassy-cw32/src/spi.rs:1031",
+      "status": "accepted",
+      "finding": "Unpolled calls have no side effects; all polled entries including empties settle retained work; cancelled/forgotten RX is discarded before new index zero."
+    },
+    {
+      "id": "frame_record_before_write",
+      "source": "embassy-cw32/src/spi.rs:1287",
+      "status": "accepted",
+      "finding": "AwaitRx is recorded before DR write, and no next frame launches before preceding RX is consumed."
+    },
+    {
+      "id": "bounded_poll_work",
+      "source": "embassy-cw32/src/spi.rs:1239",
+      "status": "accepted",
+      "finding": "At most one DR read and one DR write per poll, with one shared read budget for predecessor/preparation/current receive and no buffer-length loop."
+    },
+    {
+      "id": "bounded_preparation",
+      "source": "embassy-cw32/src/spi.rs:1205",
+      "status": "accepted",
+      "finding": "Masked error-first idle checks precede width restoration and RXNE-gated stale drain; no old unbounded prepare/wait loop in async polls."
+    },
+    {
+      "id": "wake_ordering",
+      "source": "embassy-cw32/src/spi.rs:882",
+      "status": "accepted",
+      "finding": "Register waiter, mask, observe error/readiness, arm exact wait/error sources, recheck; ready-over-budget work self-wakes."
+    },
+    {
+      "id": "isr_lifecycle_isolation",
+      "source": "embassy-cw32/src/spi.rs:974",
+      "status": "accepted",
+      "finding": "Active guard before MMIO, bounded ISR/IER snapshots, first-error latch, local mask and wake outside borrow; no ISR DR or caller access."
+    },
+    {
+      "id": "wire_completion",
+      "source": "embassy-cw32/src/spi.rs:1051",
+      "status": "accepted",
+      "finding": "Successful final result requires consumed RX and masked error-free TXE=1/BUSY=0; BUSY self-wakes with no deadline or low-power claim."
+    },
+    {
+      "id": "hardware_error_ordering",
+      "source": "embassy-cw32/src/spi.rs:1014",
+      "status": "accepted",
+      "finding": "First latched error retained; ModeFault/Overrun/ChipSelectFault/Underrun snapshot priority preserved; task uses disabled destructive recovery and returns error."
+    },
+    {
+      "id": "synchronous_guards",
+      "source": "embassy-cw32/src/spi.rs:1064",
+      "status": "accepted",
+      "finding": "Generic blocking entry including empties first makes bounded settlement; pending reports PioBusy before new data."
+    },
+    {
+      "id": "set_config_retention",
+      "source": "embassy-cw32/src/spi.rs:379",
+      "status": "accepted",
+      "finding": "Busy guard preserves pending errors without recovery/ICR/configuration writes; second error-aware check after validation."
+    },
+    {
+      "id": "forgotten_owner_fence",
+      "source": "embassy-cw32/src/spi.rs:301",
+      "status": "accepted",
+      "finding": "Pure preflight precedes stale-state retirement; retirement precedes Flex pin mutation/reset/configuration; blocking replacement remains inactive."
+    },
+    {
+      "id": "borrowed_drop",
+      "source": "embassy-cw32/src/spi.rs:466",
+      "status": "accepted",
+      "finding": "Local mask/inactive fence precedes disable/gate/disconnect; no PIO leaked pins, RX/BUSY wait or graceful completion claim."
+    },
+    {
+      "id": "spi23_binding",
+      "source": "embassy-cw32/src/spi.rs:950",
+      "status": "accepted",
+      "finding": "Full SPI23 association required for both SPI2 and SPI3; dispatch both, skip inactive before MMIO, no shared disable/unpend."
+    },
+    {
+      "id": "examples_and_contract",
+      "source": "examples/spi-async/src/bin/async_master.rs:45",
+      "status": "accepted",
+      "finding": "All five real byte trait methods and empty forms; exact selected packages; both SPI23 peers alive; error paths keep CS selected; no hardware claim."
+    }
+  ],
+  "preserved_byte_spans": [
+    {
+      "name": "dma_core",
+      "start_anchor": "#[cfg(spi_dma)]\nstruct InterruptState {",
+      "exclusive_end_anchor": "/// Supported SPI frame types:",
+      "baseline_bytes": 19010,
+      "current_bytes": 19010,
+      "baseline_sha256": "864cd04469d0ada86966bf4873ac286144fabcdaf3b0bd355047c74b848245d9",
+      "current_sha256": "864cd04469d0ada86966bf4873ac286144fabcdaf3b0bd355047c74b848245d9",
+      "byte_identical": true
+    },
+    {
+      "name": "dma_drop_retention",
+      "start_anchor": "        #[cfg(spi_dma)]\n        if let Some(dma) = self.dma.as_mut() {",
+      "exclusive_end_anchor": "        self.peripheral.info.enable(false);",
+      "baseline_bytes": 727,
+      "current_bytes": 727,
+      "baseline_sha256": "e5e3afcf79a61ccad0c94dd11bf7afecb7e9153449738276dfd3fb3450e0a9f3",
+      "current_sha256": "e5e3afcf79a61ccad0c94dd11bf7afecb7e9153449738276dfd3fb3450e0a9f3",
+      "byte_identical": true
+    },
+    {
+      "name": "word_api",
+      "start_anchor": "/// Supported SPI frame types:",
+      "exclusive_end_anchor": "#[derive(Clone, Copy)]\npub(crate) struct AnySpi",
+      "baseline_bytes": 1868,
+      "current_bytes": 1868,
+      "baseline_sha256": "2f34c741a10ee5145306512ec4c96d8d82651e033027a05d184e8b2535e6b43e",
+      "current_sha256": "2f34c741a10ee5145306512ec4c96d8d82651e033027a05d184e8b2535e6b43e",
+      "byte_identical": true
+    },
+    {
+      "name": "clock_configuration_clear",
+      "start_anchor": "#[derive(Debug, Clone, Copy, PartialEq, Eq)]\nstruct Prescaler {",
+      "exclusive_end_anchor": "impl<M: PeriMode> Spi",
+      "baseline_bytes": 6109,
+      "current_bytes": 6109,
+      "baseline_sha256": "23912bdd944f3f95b04780e0d63ec96190f94d2da7c7817c75f3ccd51c320191",
+      "current_sha256": "23912bdd944f3f95b04780e0d63ec96190f94d2da7c7817c75f3ccd51c320191",
+      "byte_identical": true
+    },
+    {
+      "name": "blocking_status_prepare_exchange",
+      "start_anchor": "    fn status(&mut self)",
+      "exclusive_end_anchor": "    fn pio_transfer<W",
+      "baseline_bytes": 1809,
+      "current_bytes": 1809,
+      "baseline_sha256": "4b1e11b1da57143abb9a9cfffc1ff868b1750316c613b1763fa0e8f99456e2b2",
+      "current_sha256": "4b1e11b1da57143abb9a9cfffc1ff868b1750316c613b1763fa0e8f99456e2b2",
+      "byte_identical": true
+    },
+    {
+      "name": "error_priority",
+      "start_anchor": "fn decode_error(",
+      "exclusive_end_anchor": "\n}\n",
+      "baseline_bytes": 332,
+      "current_bytes": 332,
+      "baseline_sha256": "c6eb8d10a3fad6e58a180f8b6e9d7ac13f6191174c521f1c57c0495393fd674a",
+      "current_sha256": "c6eb8d10a3fad6e58a180f8b6e9d7ac13f6191174c521f1c57c0495393fd674a",
+      "byte_identical": true
+    }
+  ],
+  "old_dma_scope": "F030/A030/L083 DMA core, constructor/API and retention branch preserved; new PIO required handler is cfg-gated away. No new DMA qualification.",
+  "blocking_scope": "Common ten-family constructor/Drop lifecycle fences intentionally change; ordinary blocking data/error/divider behavior is retained.",
+  "lock_review": {
+    "old_root": {
+      "name": "cw32-spi-dma-example",
+      "version": "0.1.0",
+      "dependencies": [
+        "cortex-m",
+        "cortex-m-rt",
+        "cw32-metapac",
+        "embassy-cw32",
+        "embassy-executor",
+        "embedded-hal-async"
+      ]
+    },
+    "new_root": {
+      "name": "cw32-spi-async-examples",
+      "version": "0.1.0",
+      "dependencies": [
+        "cortex-m",
+        "cortex-m-rt",
+        "cw32-metapac",
+        "embassy-cw32",
+        "embassy-executor",
+        "embedded-hal 1.0.0",
+        "embedded-hal-async"
+      ]
+    },
+    "non_root_package_count": 89,
+    "non_root_packages_equal": true,
+    "cargo_resolution_performed": false
+  },
+  "main_builds": {
+    "status": "passed",
+    "standalone_arm_rlibs": 14,
+    "real_linked_arm_elfs": 19,
+    "dependency_hal_rlibs_not_extra_standalone_rows": 19,
+    "all_exit_codes_zero": true,
+    "all_independent_raw_artifact_checks_passed": true,
+    "results": {
+      "external_artifact": "main/results.json",
+      "sha256": "d7e83df392139dddf144e8b5f64d01ad21e4a8b17608ef5192705802bb255be1"
+    },
+    "planned_matrix": {
+      "external_artifact": "main/planned-matrix.json",
+      "sha256": "2549ed2046def04ebcbc71b963633dac73c0744b7eaf0f45668c7c86abcc0ff5"
+    },
+    "summary": {
+      "external_artifact": "main/summary.json",
+      "sha256": "c51603e1fb5dac1c136b64e7d6b87ef8ba16d9c1b3cc9a2b639a0ba505b9b128"
+    },
+    "rows": [
+      {
+        "id": 1,
+        "frozen_id": "L01",
+        "kind": "rlib",
+        "selection": "cw32f020c6u7",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "08ae17c6943375cdd57797bb967f97c5ecb41d445bd23dfa26527b8847a55096",
+          "cargo.stderr.log": "1bf284acc680e56a24086e39995a2013f6be953f78d0c054b1465b3c9288fae3"
+        },
+        "receipt": {
+          "external_artifact": "01-cw32f020c6u7-embassy_cw32/receipt.json",
+          "sha256": "655fcf7d139998cf7af371f04e2dad531317ed2417778e3751ec845a7dc82eb8"
+        },
+        "artifact": {
+          "external_artifact": "01-cw32f020c6u7-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "fc8820058c925695cdf382057751ce88e1ca7eabb62fe50e13276f25707dde02",
+          "bytes": 5029356
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 12
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 2,
+        "frozen_id": "L02",
+        "kind": "rlib",
+        "selection": "cw32f002f3p7",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "0f4cfdfc5cb16afa74000d0a14f2a35590d3ae531b4ab5e7a09c379ab0464f2d",
+          "cargo.stderr.log": "a9b0557af67e411cbb357e547be6abc216eb5856d7824104f5f5d5d39f18fac1"
+        },
+        "receipt": {
+          "external_artifact": "02-cw32f002f3p7-embassy_cw32/receipt.json",
+          "sha256": "def8ca203f75493361127253c9ae55e17bc813dae5c1921907ecab729388a528"
+        },
+        "artifact": {
+          "external_artifact": "02-cw32f002f3p7-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "9d2605c0cea450854edf2120d868c5b85f31a63703ea7fe7649aed019685ce1c",
+          "bytes": 4934654
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 9
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 3,
+        "frozen_id": "L03",
+        "kind": "rlib",
+        "selection": "cw32f003e4p7",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "c5c4a2c4f95e28ce546342573f7e1f995631ed815e222b7c7bdfca6133164559",
+          "cargo.stderr.log": "2a55ac8f234b53586cc2e075f5ab9d8caa1486d2c5f5c83b0f6627175a68c3b3"
+        },
+        "receipt": {
+          "external_artifact": "03-cw32f003e4p7-embassy_cw32/receipt.json",
+          "sha256": "d02b976a09737098d690bb02c5fb8a0b9077e9afd2fe3d2fc2db13299faf5a0b"
+        },
+        "artifact": {
+          "external_artifact": "03-cw32f003e4p7-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "e804e358215203832dfda10633be31232cce06a7c3023dc81843bbda4557f2d3",
+          "bytes": 4114890
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 9
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 4,
+        "frozen_id": "L04",
+        "kind": "rlib",
+        "selection": "cw32l010f8p6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "000fe55753f49df7e2fb5252650bd9a37375c062bc15464cce38ff3b211a19a8",
+          "cargo.stderr.log": "61b33b6fc42ca0415205884a8187840c5a0bc4b71031d02f90b909c9191ae315"
+        },
+        "receipt": {
+          "external_artifact": "04-cw32l010f8p6-embassy_cw32/receipt.json",
+          "sha256": "5303a3d707b63648dce4c26a0b3efc0dc079cd315adc8c70948114f79b0ee669"
+        },
+        "artifact": {
+          "external_artifact": "04-cw32l010f8p6-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "ec56d326309cbed90b6d8fffcd59031d521340077fd7871914fa00c3eee2138e",
+          "bytes": 4893556
+        },
+        "raw_warning_count": 3,
+        "raw_warnings": [
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 269,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_LSE_EDGES: u16 = 128;"
+                ]
+              }
+            ]
+          },
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 270,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_LSI_CYCLES: u16 = 256;"
+                ]
+              }
+            ]
+          },
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 271,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_MARGIN_LSE_EDGES: u16 = 1;"
+                ]
+              }
+            ]
+          }
+        ],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 12
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 5,
+        "frozen_id": "L05",
+        "kind": "rlib",
+        "selection": "cw32l011k8t6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "4a77c78c91292dbaeb46719a54ae77230990eec06658432f64880ae03cdefba0",
+          "cargo.stderr.log": "d1afed32a7827e1e78032b5d4c9dfc0a7ea111f78b27af62522657c9004f5df4"
+        },
+        "receipt": {
+          "external_artifact": "05-cw32l011k8t6-embassy_cw32/receipt.json",
+          "sha256": "dce940360391797a7354ddf60b77b5cfc99e65ae2eed542731f777eb51a089f0"
+        },
+        "artifact": {
+          "external_artifact": "05-cw32l011k8t6-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "6b0ef427004b968b402ca725968031bd552f33963524b47a96abf84c87a0175b",
+          "bytes": 6296028
+        },
+        "raw_warning_count": 3,
+        "raw_warnings": [
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 308,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_LSE_EDGES: u16 = 128;"
+                ]
+              }
+            ]
+          },
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 309,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_LSI_CYCLES: u16 = 256;"
+                ]
+              }
+            ]
+          },
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 310,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_MARGIN_LSE_EDGES: u16 = 1;"
+                ]
+              }
+            ]
+          }
+        ],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 12
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 6,
+        "frozen_id": "L06",
+        "kind": "rlib",
+        "selection": "cw32l012c8t6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "f4cfcedf436848aa0f2ecb9e71d96bab9d360aff57ebc566e79d721617d8934d",
+          "cargo.stderr.log": "a8410e514a74abab42b35294585d49a8ed22e098b5677ac9f1e3bc5d0f91412d"
+        },
+        "receipt": {
+          "external_artifact": "06-cw32l012c8t6-embassy_cw32/receipt.json",
+          "sha256": "b2a509e8da05123a8f487e5de183264e2f5586f65dcb1f7c332e1cdca10672bd"
+        },
+        "artifact": {
+          "external_artifact": "06-cw32l012c8t6-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "b653a2be4d919786297b22b13818853a566773882ca423de9f861a30e7799133",
+          "bytes": 8547430
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 18
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 7,
+        "frozen_id": "L07",
+        "kind": "rlib",
+        "selection": "cw32l031c8t6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "007aa11256b972743e5e9de4aea8d20dfa5f602793d134b4b36ab1d5164117df",
+          "cargo.stderr.log": "ed5f2853747daa155e191be2ae268a7157c9eacc9a67bcdd2f946257cf845a9e"
+        },
+        "receipt": {
+          "external_artifact": "07-cw32l031c8t6-embassy_cw32/receipt.json",
+          "sha256": "3c22a3dfb4515b8abee5dc16aa198e1552b02bb9b1622539b38da1aa35b176a9"
+        },
+        "artifact": {
+          "external_artifact": "07-cw32l031c8t6-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "34bf35c2d73536f759404aa40a15f530ec080a43b0e6d42e2561807bba654dd5",
+          "bytes": 5073844
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 12
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 8,
+        "frozen_id": "L08",
+        "kind": "rlib",
+        "selection": "cw32r031c8u6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "2ed97536907ebacb185971af103876fe694b599e814b3c0fa095afcce81c1013",
+          "cargo.stderr.log": "c6f78074850a2f980ccbaaafa2ae17cb0b4f49d2b6b825d286d2d2dc625e1d39"
+        },
+        "receipt": {
+          "external_artifact": "08-cw32r031c8u6-embassy_cw32/receipt.json",
+          "sha256": "f64d1d1f6cad224bdc038be99a29c7292833047d5c2df3fbef37d0e0582ec261"
+        },
+        "artifact": {
+          "external_artifact": "08-cw32r031c8u6-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "bdcc31aec0e357346f48587ddc3507d9926d7768cc791334ed9d394d4dff576b",
+          "bytes": 4980238
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 12
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 9,
+        "frozen_id": "L09",
+        "kind": "rlib",
+        "selection": "cw32w031r8u6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "f1ebba35d03f09aa728e770498bc808529c2bd0afae9a94e217c7f13fa38ca76",
+          "cargo.stderr.log": "64851586e0dbf716d1cbd415eb1bfb33d3442e255da819fcc1a77d4944a71c4d"
+        },
+        "receipt": {
+          "external_artifact": "09-cw32w031r8u6-embassy_cw32/receipt.json",
+          "sha256": "4523a595a29302d7412f18f60f544ac4084ec0a955b39d957be308aa9d94bbb5"
+        },
+        "artifact": {
+          "external_artifact": "09-cw32w031r8u6-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "f23f5de38a6901032f5cb411d2bd2fec3cde36b78e73537eff4c1ee189d2dd51",
+          "bytes": 5018680
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 12
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 10,
+        "frozen_id": "L10",
+        "kind": "rlib",
+        "selection": "cw32l052c8t6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "7b7fabd1bd0fee7d1a178b08725f0f4b825daad3cd88b171b3b3fd57f6b8a757",
+          "cargo.stderr.log": "33b56fb68ba7b41bd53efd672334fc89fc421cb1f8d447a897ab745245d30b3d"
+        },
+        "receipt": {
+          "external_artifact": "10-cw32l052c8t6-embassy_cw32/receipt.json",
+          "sha256": "9985ed514680f88d3d6f945bd9f2ec5e6fff6bb1eec359b8a12150e51b564dc7"
+        },
+        "artifact": {
+          "external_artifact": "10-cw32l052c8t6-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "cc082da05b1c1cacacb424cd82c172f8beba6325afeab7c75f5a6b301cb07192",
+          "bytes": 7394846
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 13
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 11,
+        "frozen_id": "L11",
+        "kind": "rlib",
+        "selection": "cw32f030c8t7",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "438d71992b65ddac3b52b170c451d8332861b7295411e517651e0c6fae92addb",
+          "cargo.stderr.log": "ff720d1c9bead7a9ee76394fa9dfbc2b2e8658718be9e06dec44e83411d94ec4"
+        },
+        "receipt": {
+          "external_artifact": "11-cw32f030c8t7-embassy_cw32/receipt.json",
+          "sha256": "3ac870bbaef3fc72042fd3231309dc2fd88f1215de234620c6ad3019d022412d"
+        },
+        "artifact": {
+          "external_artifact": "11-cw32f030c8t7-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "bb8527d9f1ccf0d031f7427fcd4bae1e34d42222306ddad3ef8bfee97cc73a10",
+          "bytes": 5524734
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 12
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 12,
+        "frozen_id": "L12",
+        "kind": "rlib",
+        "selection": "cw32a030c8t7",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "1e20c4927bac65c1273daaf2c3ab8ff70b577ad35b78aea19a9a6a9866ebbae3",
+          "cargo.stderr.log": "8ba8583310faac4dc31697f66fa41d400bb1656a5bc59164866aaa1c6ed1f3ca"
+        },
+        "receipt": {
+          "external_artifact": "12-cw32a030c8t7-embassy_cw32/receipt.json",
+          "sha256": "6df0303c7c8de27c515f4a51762ea5bd0fa470fa59ccd992e528937cc4bacd50"
+        },
+        "artifact": {
+          "external_artifact": "12-cw32a030c8t7-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "f0929879f4e6f62b0333f51f583e87319ae80525db33ec57ada2ffaf964ca691",
+          "bytes": 7384468
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 12
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 13,
+        "frozen_id": "L13",
+        "kind": "rlib",
+        "selection": "cw32l083rct6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "32d2a38fb8570c4f378b6dc7daf1ac9d30da266d2a22cefa45cc6367f262ef26",
+          "cargo.stderr.log": "1d2943aa31212bc911e05f677995855df2c7d6438b4bdcf05cb3b8002c9c963d"
+        },
+        "receipt": {
+          "external_artifact": "13-cw32l083rct6-embassy_cw32/receipt.json",
+          "sha256": "0780e42834644ae88230baca76691452a17bb7c9401b3c1fb1c0a1a72b8b417a"
+        },
+        "artifact": {
+          "external_artifact": "13-cw32l083rct6-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "45d435d3f7f78568dc1d42cf83def06842876567f7b0cc450fba26fa3ad89c04",
+          "bytes": 8340550
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 13
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 14,
+        "frozen_id": "L14",
+        "kind": "rlib",
+        "selection": "cw32l012",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "8a76a91b85386fac82ae5c5ef570fd0cd492ae6dfd7f2ff21d5d6bc791415e59",
+          "cargo.stderr.log": "5c751f52641e7cdba45b30964360e62e13d0355b25a9caa5160f2e6cc0e197eb"
+        },
+        "receipt": {
+          "external_artifact": "14-cw32l012-embassy_cw32/receipt.json",
+          "sha256": "9f76bed005f31c01e02660eab5a5ff02eca5821c46d31b549182f1a6469f2ef3"
+        },
+        "artifact": {
+          "external_artifact": "14-cw32l012-embassy_cw32/libembassy_cw32.rlib",
+          "sha256": "293d162663ad1370d87f788f7c00bcae6b9a08899c0a85f2b013dee774a3a722",
+          "bytes": 6032014
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ar archive",
+          "elf_member_machines": {
+            "40": 11
+          },
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 15,
+        "frozen_id": "E01",
+        "kind": "elf",
+        "selection": "cw32f020c6u7",
+        "target": "async_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "8d5d25e740d6b0027ea70ae9e87e6543627da1541ced75d396a338ba0eba3320",
+          "cargo.stderr.log": "c27bfabbc95dd4ff0c6745f759178b7c4da81d23056620cf58c99f112d63152b"
+        },
+        "receipt": {
+          "external_artifact": "15-cw32f020c6u7-async_master/receipt.json",
+          "sha256": "95142d18076737514e21a08f766026789fca2e2a8b5db5a2f68ed1472b92c7bc"
+        },
+        "artifact": {
+          "external_artifact": "15-cw32f020c6u7-async_master/firmware.elf",
+          "sha256": "f0a5da36cc9812fce2f8f9163f19323710ddd7cf41e39fa51779e0e80bac38b1",
+          "bytes": 216372
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 193,
+          "flash_image_extent": 26376,
+          "flash_limit": 32768,
+          "static_ram_extent": 564,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 25208,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 772,
+              "address": 25400
+            },
+            {
+              "name": ".data",
+              "bytes": 204,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 356,
+              "address": 536871120
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            },
+            {
+              "name": "SPI2",
+              "irq_number": 26,
+              "vector_word": 277,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 25208,
+              "memsz": 25208
+            },
+            {
+              "vaddr": 25400,
+              "paddr": 25400,
+              "filesz": 772,
+              "memsz": 772
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 26172,
+              "filesz": 204,
+              "memsz": 204
+            },
+            {
+              "vaddr": 536871120,
+              "paddr": 536871120,
+              "filesz": 0,
+              "memsz": 356
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 16,
+        "frozen_id": "E02",
+        "kind": "elf",
+        "selection": "cw32f002f3p7",
+        "target": "async_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "8deb4e8e6dd488a120c6a8e59006189271ed4aae323cfbe8b243e58c25484469",
+          "cargo.stderr.log": "98f9e64c27b2e2b6bf91a101144e18c09db53bcd65cc77f481216a0007f62eb9"
+        },
+        "receipt": {
+          "external_artifact": "16-cw32f002f3p7-async_master/receipt.json",
+          "sha256": "e20b8df5988aa4172539c042ab6a0e23cda5a2391dd9b2ae4a33db45860dd2f9"
+        },
+        "artifact": {
+          "external_artifact": "16-cw32f002f3p7-async_master/firmware.elf",
+          "sha256": "4ecc8bbe80fb0bd4ba0e9e2ecc331dcc27d1c825a4e504482a3e8411a0ad2ae0",
+          "bytes": 209244
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536872960,
+          "reset": 189,
+          "flash_image_extent": 9536,
+          "flash_limit": 16384,
+          "static_ram_extent": 348,
+          "ram_limit": 2048,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 188,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 9000,
+              "address": 188
+            },
+            {
+              "name": ".rodata",
+              "bytes": 272,
+              "address": 9188
+            },
+            {
+              "name": ".data",
+              "bytes": 76,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 268,
+              "address": 536870992
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI",
+              "irq_number": 25,
+              "vector_word": 249,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 188,
+              "memsz": 188
+            },
+            {
+              "vaddr": 188,
+              "paddr": 188,
+              "filesz": 9000,
+              "memsz": 9000
+            },
+            {
+              "vaddr": 9188,
+              "paddr": 9188,
+              "filesz": 272,
+              "memsz": 272
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 9460,
+              "filesz": 76,
+              "memsz": 76
+            },
+            {
+              "vaddr": 536870992,
+              "paddr": 536870992,
+              "filesz": 0,
+              "memsz": 268
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 17,
+        "frozen_id": "E03",
+        "kind": "elf",
+        "selection": "cw32f003e4p7",
+        "target": "async_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "8319ce3d197044d9bd70f368f91e88a67b0c2d79762d2de54cb8e1fa1af93ad9",
+          "cargo.stderr.log": "6bd01311294358f6c55776b4ba4308b3df8e962033b06266d8aaa32ace09369f"
+        },
+        "receipt": {
+          "external_artifact": "17-cw32f003e4p7-async_master/receipt.json",
+          "sha256": "4a28270a976ff1a02aa9947a4d0f97693977baa4fbee0db25773bbcf51876d15"
+        },
+        "artifact": {
+          "external_artifact": "17-cw32f003e4p7-async_master/firmware.elf",
+          "sha256": "6bb70bb8d49e639cff823f168486eefb91b68c2278678286164c392b09a232a7",
+          "bytes": 209316
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536873984,
+          "reset": 189,
+          "flash_image_extent": 9536,
+          "flash_limit": 20480,
+          "static_ram_extent": 348,
+          "ram_limit": 3072,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 188,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 9000,
+              "address": 188
+            },
+            {
+              "name": ".rodata",
+              "bytes": 272,
+              "address": 9188
+            },
+            {
+              "name": ".data",
+              "bytes": 76,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 268,
+              "address": 536870992
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI",
+              "irq_number": 25,
+              "vector_word": 249,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 188,
+              "memsz": 188
+            },
+            {
+              "vaddr": 188,
+              "paddr": 188,
+              "filesz": 9000,
+              "memsz": 9000
+            },
+            {
+              "vaddr": 9188,
+              "paddr": 9188,
+              "filesz": 272,
+              "memsz": 272
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 9460,
+              "filesz": 76,
+              "memsz": 76
+            },
+            {
+              "vaddr": 536870992,
+              "paddr": 536870992,
+              "filesz": 0,
+              "memsz": 268
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 18,
+        "frozen_id": "E04",
+        "kind": "elf",
+        "selection": "cw32l010f8p6",
+        "target": "async_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "e4a6c90dc2d7e23d99a2548fdadc33bbadccec8b490d9713b7aebac61f354b19",
+          "cargo.stderr.log": "61a571e4bbc96a5a070e164ce60ea2219bb424f3676f335c3a2d0933ed90dc96"
+        },
+        "receipt": {
+          "external_artifact": "18-cw32l010f8p6-async_master/receipt.json",
+          "sha256": "3d38d0566e966c645f756ff5a8bde57fa0c6122b92698b60892f7ff939ebb2cf"
+        },
+        "artifact": {
+          "external_artifact": "18-cw32l010f8p6-async_master/firmware.elf",
+          "sha256": "495de113206318950dce6d6a68c2b1816cd777417d58ae880c16774b39d47eb9",
+          "bytes": 216876
+        },
+        "raw_warning_count": 3,
+        "raw_warnings": [
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 269,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_LSE_EDGES: u16 = 128;"
+                ]
+              }
+            ]
+          },
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 270,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_LSI_CYCLES: u16 = 256;"
+                ]
+              }
+            ]
+          },
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 271,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_MARGIN_LSE_EDGES: u16 = 1;"
+                ]
+              }
+            ]
+          }
+        ],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536875008,
+          "reset": 193,
+          "flash_image_extent": 37312,
+          "flash_limit": 65536,
+          "static_ram_extent": 412,
+          "ram_limit": 4096,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 36584,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 404,
+              "address": 36776
+            },
+            {
+              "name": ".data",
+              "bytes": 132,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 276,
+              "address": 536871048
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI",
+              "irq_number": 25,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 36584,
+              "memsz": 36584
+            },
+            {
+              "vaddr": 36776,
+              "paddr": 36776,
+              "filesz": 404,
+              "memsz": 404
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 37180,
+              "filesz": 132,
+              "memsz": 132
+            },
+            {
+              "vaddr": 536871048,
+              "paddr": 536871048,
+              "filesz": 0,
+              "memsz": 276
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 19,
+        "frozen_id": "E05",
+        "kind": "elf",
+        "selection": "cw32l011k8t6",
+        "target": "async_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "c6dd508d7301e555ea8823269478ff2923907a7a9cf5701781d09c3579d5a249",
+          "cargo.stderr.log": "7377746266ade4c14d7922468f4cb766700d7811a39f05705f634c19437523b0"
+        },
+        "receipt": {
+          "external_artifact": "19-cw32l011k8t6-async_master/receipt.json",
+          "sha256": "87aa451e875d208df851809164d33d8cb081f4ceade532974ba78b3bfc7c4e1e"
+        },
+        "artifact": {
+          "external_artifact": "19-cw32l011k8t6-async_master/firmware.elf",
+          "sha256": "f79189ea7cdc4365976311ef9e9e8be5ba1081926ed6dd423ebaa3a0ef0c09d2",
+          "bytes": 217976
+        },
+        "raw_warning_count": 3,
+        "raw_warnings": [
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 308,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_LSE_EDGES: u16 = 128;"
+                ]
+              }
+            ]
+          },
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 309,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_LSI_CYCLES: u16 = 256;"
+                ]
+              }
+            ]
+          },
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 310,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_MARGIN_LSE_EDGES: u16 = 1;"
+                ]
+              }
+            ]
+          }
+        ],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536877056,
+          "reset": 193,
+          "flash_image_extent": 37768,
+          "flash_limit": 65536,
+          "static_ram_extent": 412,
+          "ram_limit": 6144,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 36920,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 524,
+              "address": 37112
+            },
+            {
+              "name": ".data",
+              "bytes": 132,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 276,
+              "address": 536871048
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI",
+              "irq_number": 25,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 36920,
+              "memsz": 36920
+            },
+            {
+              "vaddr": 37112,
+              "paddr": 37112,
+              "filesz": 524,
+              "memsz": 524
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 37636,
+              "filesz": 132,
+              "memsz": 132
+            },
+            {
+              "vaddr": 536871048,
+              "paddr": 536871048,
+              "filesz": 0,
+              "memsz": 276
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 20,
+        "frozen_id": "E06",
+        "kind": "elf",
+        "selection": "cw32l012c8t6",
+        "target": "async_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "ee7f905f0507baa759bedeb892674113bd426357d2743e255a6522f34fe401a8",
+          "cargo.stderr.log": "abcb25355fca9f41df9cd2ee6b2a635fbf5554f7303c2626960c1dba5c0c2b16"
+        },
+        "receipt": {
+          "external_artifact": "20-cw32l012c8t6-async_master/receipt.json",
+          "sha256": "861e479c8e97cfed18b938f67886e94b6673d737b4d5fcafd795e855d953e2d7"
+        },
+        "artifact": {
+          "external_artifact": "20-cw32l012c8t6-async_master/firmware.elf",
+          "sha256": "face27f8867104e43a16416d60b79d54919bb04aaa0ac0ecca652254f463be97",
+          "bytes": 224680
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 193,
+          "flash_image_extent": 56512,
+          "flash_limit": 65536,
+          "static_ram_extent": 676,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 55148,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 944,
+              "address": 55340
+            },
+            {
+              "name": ".data",
+              "bytes": 228,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 444,
+              "address": 536871144
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            },
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 277,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 55148,
+              "memsz": 55148
+            },
+            {
+              "vaddr": 55340,
+              "paddr": 55340,
+              "filesz": 944,
+              "memsz": 944
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 56284,
+              "filesz": 228,
+              "memsz": 228
+            },
+            {
+              "vaddr": 536871144,
+              "paddr": 536871144,
+              "filesz": 0,
+              "memsz": 444
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 21,
+        "frozen_id": "E07",
+        "kind": "elf",
+        "selection": "cw32l031c8t6",
+        "target": "async_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "ad4c543818dc7c27f419a066544db629a7bca859840528b9c135c963b24bb734",
+          "cargo.stderr.log": "8d6f46f5d132421f16338e354348be3d9d2c30fcde035e3ca8c799f195c75436"
+        },
+        "receipt": {
+          "external_artifact": "21-cw32l031c8t6-async_master/receipt.json",
+          "sha256": "c029b38b9e7fa4708ccd5b0a64ae26c0362a7ff4ed1876a3f5b25058d96b135d"
+        },
+        "artifact": {
+          "external_artifact": "21-cw32l031c8t6-async_master/firmware.elf",
+          "sha256": "692c523fd9c69218cf758876f1c4fdc7e08af285226f1079db3914f73f549731",
+          "bytes": 151672
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 193,
+          "flash_image_extent": 27980,
+          "flash_limit": 65536,
+          "static_ram_extent": 488,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 26960,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 636,
+              "address": 27152
+            },
+            {
+              "name": ".data",
+              "bytes": 192,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 296,
+              "address": 536871104
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 26960,
+              "memsz": 26960
+            },
+            {
+              "vaddr": 27152,
+              "paddr": 27152,
+              "filesz": 636,
+              "memsz": 636
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 27788,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 536871104,
+              "paddr": 536871104,
+              "filesz": 0,
+              "memsz": 296
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 22,
+        "frozen_id": "E08",
+        "kind": "elf",
+        "selection": "cw32r031c8u6",
+        "target": "async_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "76f464d1c30d94114cf8d92f25360ffe980df0d4b4561bf66fc4e43dea1f66ce",
+          "cargo.stderr.log": "620ba6c6a550fd0804b645571e992701c7ec6482228edd2d021e435de47c0eb8"
+        },
+        "receipt": {
+          "external_artifact": "22-cw32r031c8u6-async_master/receipt.json",
+          "sha256": "004bff16da28030d2322b9379491dc0411880576fe97da594cce685d9467b8d0"
+        },
+        "artifact": {
+          "external_artifact": "22-cw32r031c8u6-async_master/firmware.elf",
+          "sha256": "5f101dcdc317e09fbdf52bc8e87aec12b58a306d2b8f47c5ed17bb4dc4cf75a2",
+          "bytes": 151564
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 193,
+          "flash_image_extent": 27944,
+          "flash_limit": 65536,
+          "static_ram_extent": 488,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 26924,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 636,
+              "address": 27116
+            },
+            {
+              "name": ".data",
+              "bytes": 192,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 296,
+              "address": 536871104
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 26924,
+              "memsz": 26924
+            },
+            {
+              "vaddr": 27116,
+              "paddr": 27116,
+              "filesz": 636,
+              "memsz": 636
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 27752,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 536871104,
+              "paddr": 536871104,
+              "filesz": 0,
+              "memsz": 296
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 23,
+        "frozen_id": "E09",
+        "kind": "elf",
+        "selection": "cw32w031r8u6",
+        "target": "async_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "b126e0ec7f393ed7066d3f27a64fac98b783b085dc7087cbb0dfac0defc1500f",
+          "cargo.stderr.log": "b259e31391da07f7f6fd63d3b7264084189104ede99d110cceb3af5572467bd7"
+        },
+        "receipt": {
+          "external_artifact": "23-cw32w031r8u6-async_master/receipt.json",
+          "sha256": "0dd5b4edd263856bb5a69eb4a1a2ba24f900d53834277a179eca98051c06d9c6"
+        },
+        "artifact": {
+          "external_artifact": "23-cw32w031r8u6-async_master/firmware.elf",
+          "sha256": "469fdde26bfd1f7f5e8afce29d0d3e066552140ef467f1093c1ce708e359fc63",
+          "bytes": 151564
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 193,
+          "flash_image_extent": 27928,
+          "flash_limit": 65536,
+          "static_ram_extent": 488,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 26908,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 636,
+              "address": 27100
+            },
+            {
+              "name": ".data",
+              "bytes": 192,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 296,
+              "address": 536871104
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 26908,
+              "memsz": 26908
+            },
+            {
+              "vaddr": 27100,
+              "paddr": 27100,
+              "filesz": 636,
+              "memsz": 636
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 27736,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 536871104,
+              "paddr": 536871104,
+              "filesz": 0,
+              "memsz": 296
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 24,
+        "frozen_id": "E10",
+        "kind": "elf",
+        "selection": "cw32l052c8t6",
+        "target": "async_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "4cb62576e9595f365424787ae318c74960a511a183d2edafa9e12e94e90bd209",
+          "cargo.stderr.log": "b2ddc91ad256a2aaa43a1e32de1a57de81bfe4cdeaf24d308599e88bad236cfc"
+        },
+        "receipt": {
+          "external_artifact": "24-cw32l052c8t6-async_master/receipt.json",
+          "sha256": "2a8be35ea5a0ecfe8113624cd8015ee2493f84e14a530dcfb6437deac8ca2104"
+        },
+        "artifact": {
+          "external_artifact": "24-cw32l052c8t6-async_master/firmware.elf",
+          "sha256": "358c96d8b0be747a8d79c303b0572ec54af9581218026d85030e86bba2529b6a",
+          "bytes": 224704
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 189,
+          "flash_image_extent": 47992,
+          "flash_limit": 65536,
+          "static_ram_extent": 584,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 188,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 46724,
+              "address": 188
+            },
+            {
+              "name": ".rodata",
+              "bytes": 868,
+              "address": 46912
+            },
+            {
+              "name": ".data",
+              "bytes": 212,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 368,
+              "address": 536871128
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 249,
+              "strong_symbol_match": true
+            },
+            {
+              "name": "SPI2",
+              "irq_number": 26,
+              "vector_word": 273,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 188,
+              "memsz": 188
+            },
+            {
+              "vaddr": 188,
+              "paddr": 188,
+              "filesz": 46724,
+              "memsz": 46724
+            },
+            {
+              "vaddr": 46912,
+              "paddr": 46912,
+              "filesz": 868,
+              "memsz": 868
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 47780,
+              "filesz": 212,
+              "memsz": 212
+            },
+            {
+              "vaddr": 536871128,
+              "paddr": 536871128,
+              "filesz": 0,
+              "memsz": 368
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 25,
+        "frozen_id": "E11",
+        "kind": "elf",
+        "selection": "cw32f002f3p7",
+        "target": "blocking_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "d5bfd38691fcad06ffc66e52e300c7a472d49fdfd199f7eba0fe4c2e0422003d",
+          "cargo.stderr.log": "bd49985af6c77c8bc2ba6883a7b8e0337ce75fba9d18a6071a64a0c5a07d10ab"
+        },
+        "receipt": {
+          "external_artifact": "25-cw32f002f3p7-blocking_master/receipt.json",
+          "sha256": "db03f80192c8add1885daed98b1c380c622d484b0f1e583a97a652fedab10998"
+        },
+        "artifact": {
+          "external_artifact": "25-cw32f002f3p7-blocking_master/firmware.elf",
+          "sha256": "9b2fcf148a619e9cd4206e70c7750c3443bb79512d69b1b048a08a5bafc18c29",
+          "bytes": 206044
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536872960,
+          "reset": 189,
+          "flash_image_extent": 7536,
+          "flash_limit": 16384,
+          "static_ram_extent": 80,
+          "ram_limit": 2048,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 188,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 7016,
+              "address": 188
+            },
+            {
+              "name": ".rodata",
+              "bytes": 256,
+              "address": 7204
+            },
+            {
+              "name": ".data",
+              "bytes": 76,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 4,
+              "address": 536870988
+            }
+          ],
+          "required_vectors": [],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 188,
+              "memsz": 188
+            },
+            {
+              "vaddr": 188,
+              "paddr": 188,
+              "filesz": 7016,
+              "memsz": 7016
+            },
+            {
+              "vaddr": 7204,
+              "paddr": 7204,
+              "filesz": 256,
+              "memsz": 256
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 7460,
+              "filesz": 76,
+              "memsz": 76
+            },
+            {
+              "vaddr": 536870988,
+              "paddr": 536870988,
+              "filesz": 0,
+              "memsz": 4
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 26,
+        "frozen_id": "E12",
+        "kind": "elf",
+        "selection": "cw32l010f8p6",
+        "target": "blocking_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "7fc80294df4110cb199e670ddaec1397022e67587abcc69bb5b7c987b6be48c0",
+          "cargo.stderr.log": "2dc1543045e3eb1498a821888bdcf1b65b1f03ffbe887d479055dbf0951cbcdb"
+        },
+        "receipt": {
+          "external_artifact": "26-cw32l010f8p6-blocking_master/receipt.json",
+          "sha256": "2cf623676fe68cef0c5f56b8f96d052a97c9b7d961b4f253ceee76b7d644352f"
+        },
+        "artifact": {
+          "external_artifact": "26-cw32l010f8p6-blocking_master/firmware.elf",
+          "sha256": "f16842137a4185f259a111e6d593d0b5a8b8e35fe0fd3683083dd4e329aa6e46",
+          "bytes": 213524
+        },
+        "raw_warning_count": 3,
+        "raw_warnings": [
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 269,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_LSE_EDGES: u16 = 128;"
+                ]
+              }
+            ]
+          },
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 270,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_LSI_CYCLES: u16 = 256;"
+                ]
+              }
+            ]
+          },
+          {
+            "code": "dead_code",
+            "message": "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used",
+            "primary_locations": [
+              {
+                "generated_file": "_generated.rs",
+                "line": 271,
+                "source_text": [
+                  "pub(crate) const RCC_LSE_SYSCLK_MARGIN_LSE_EDGES: u16 = 1;"
+                ]
+              }
+            ]
+          }
+        ],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536875008,
+          "reset": 193,
+          "flash_image_extent": 35316,
+          "flash_limit": 65536,
+          "static_ram_extent": 144,
+          "ram_limit": 4096,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 34604,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 388,
+              "address": 34796
+            },
+            {
+              "name": ".data",
+              "bytes": 132,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 12,
+              "address": 536871044
+            }
+          ],
+          "required_vectors": [],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 34604,
+              "memsz": 34604
+            },
+            {
+              "vaddr": 34796,
+              "paddr": 34796,
+              "filesz": 388,
+              "memsz": 388
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 35184,
+              "filesz": 132,
+              "memsz": 132
+            },
+            {
+              "vaddr": 536871044,
+              "paddr": 536871044,
+              "filesz": 0,
+              "memsz": 12
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 27,
+        "frozen_id": "E13",
+        "kind": "elf",
+        "selection": "cw32l012c8t6",
+        "target": "blocking_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "c0ea2dd4caa56d2b5f6fd5670046c3ef97caa6f776c4c29a3d087eec91492644",
+          "cargo.stderr.log": "0f7548f669d0f036b7213be4fe423c7ef50c93363dea4b7a7ffa323089674e1a"
+        },
+        "receipt": {
+          "external_artifact": "27-cw32l012c8t6-blocking_master/receipt.json",
+          "sha256": "be014e7bd6fdbbd11b4ea34dd22f809b7a6f41f3531a57655ac47103ff1cf17a"
+        },
+        "artifact": {
+          "external_artifact": "27-cw32l012c8t6-blocking_master/firmware.elf",
+          "sha256": "3458d578261b42ef5dfb7c0fc1cb237759c132402232e08ad5f3c303bc7ddcd0",
+          "bytes": 220852
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 193,
+          "flash_image_extent": 53800,
+          "flash_limit": 65536,
+          "static_ram_extent": 240,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 52476,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 904,
+              "address": 52668
+            },
+            {
+              "name": ".data",
+              "bytes": 228,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 12,
+              "address": 536871140
+            }
+          ],
+          "required_vectors": [],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 52476,
+              "memsz": 52476
+            },
+            {
+              "vaddr": 52668,
+              "paddr": 52668,
+              "filesz": 904,
+              "memsz": 904
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 53572,
+              "filesz": 228,
+              "memsz": 228
+            },
+            {
+              "vaddr": 536871140,
+              "paddr": 536871140,
+              "filesz": 0,
+              "memsz": 12
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 28,
+        "frozen_id": "E14",
+        "kind": "elf",
+        "selection": "cw32l052c8t6",
+        "target": "blocking_master",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "016da97632f8f8794cbd9e72a1d8430d0957d0587fa15ddead8e12ed985c787e",
+          "cargo.stderr.log": "419d6a98b3e05ce765ff587a2fc00749331137e411466c5e5891d2affa241b7d"
+        },
+        "receipt": {
+          "external_artifact": "28-cw32l052c8t6-blocking_master/receipt.json",
+          "sha256": "26ffc0ad79526ff28e67fecd0fbb2854e3a13a1e31810b685557554fccea6dd5"
+        },
+        "artifact": {
+          "external_artifact": "28-cw32l052c8t6-blocking_master/firmware.elf",
+          "sha256": "cb6116ef736acc3ec71ba7e9bbb3638dc4920ad74bc494cc41ca2aa7f42586fe",
+          "bytes": 220956
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 189,
+          "flash_image_extent": 45464,
+          "flash_limit": 65536,
+          "static_ram_extent": 240,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 188,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 44236,
+              "address": 188
+            },
+            {
+              "name": ".rodata",
+              "bytes": 828,
+              "address": 44424
+            },
+            {
+              "name": ".data",
+              "bytes": 212,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 24,
+              "address": 536871128
+            }
+          ],
+          "required_vectors": [],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 188,
+              "memsz": 188
+            },
+            {
+              "vaddr": 188,
+              "paddr": 188,
+              "filesz": 44236,
+              "memsz": 44236
+            },
+            {
+              "vaddr": 44424,
+              "paddr": 44424,
+              "filesz": 828,
+              "memsz": 828
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 45252,
+              "filesz": 212,
+              "memsz": 212
+            },
+            {
+              "vaddr": 536871128,
+              "paddr": 536871128,
+              "filesz": 0,
+              "memsz": 24
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 29,
+        "frozen_id": "E15",
+        "kind": "elf",
+        "selection": "cw32f030c8t7",
+        "target": "blocking",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "71f3bbef3cb87c5565aa942b59af689956e928a5ffa4f81623edd7b3b95e3b31",
+          "cargo.stderr.log": "9f357ba06746c1d27bfa4036faf49fdd3daea1af0b5f7ba2c0fc1454df86b593"
+        },
+        "receipt": {
+          "external_artifact": "29-cw32f030c8t7-blocking/receipt.json",
+          "sha256": "553d001012498eed83e56d55cea15244ec64bd76f260632d1065d4201a52fccd"
+        },
+        "artifact": {
+          "external_artifact": "29-cw32f030c8t7-blocking/firmware.elf",
+          "sha256": "7d0b520f5b982457ad86d9edac3131cb7eb661342a916e79fc27eab016ba0914",
+          "bytes": 934852
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 193,
+          "flash_image_extent": 25232,
+          "flash_limit": 65536,
+          "static_ram_extent": 280,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 23936,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 836,
+              "address": 24128
+            },
+            {
+              "name": ".data",
+              "bytes": 268,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 12,
+              "address": 536871180
+            }
+          ],
+          "required_vectors": [],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 23936,
+              "memsz": 23936
+            },
+            {
+              "vaddr": 24128,
+              "paddr": 24128,
+              "filesz": 836,
+              "memsz": 836
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 24964,
+              "filesz": 268,
+              "memsz": 268
+            },
+            {
+              "vaddr": 536871180,
+              "paddr": 536871180,
+              "filesz": 0,
+              "memsz": 12
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 30,
+        "frozen_id": "E16",
+        "kind": "elf",
+        "selection": "cw32f030c8t7",
+        "target": "cw32-spi-dma-example",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "2989a86a1b0de0313bb4e8b2fe61f9ada7d2fed60764f26ced15be4254b664ac",
+          "cargo.stderr.log": "1038de9f01c17920dd4ce76f19e95ed7750a4ebc7b3c85fe5470b463c79d6367"
+        },
+        "receipt": {
+          "external_artifact": "30-cw32f030c8t7-cw32-spi-dma-example/receipt.json",
+          "sha256": "5d8cded15f6430a7bf509781406707b96ad32ed8b6079452cf99bce8b14d2036"
+        },
+        "artifact": {
+          "external_artifact": "30-cw32f030c8t7-cw32-spi-dma-example/firmware.elf",
+          "sha256": "5c51f663a92ed42a8a1987c24807d490cea2ea0a067cffdcdd525e32f3c5e95b",
+          "bytes": 214564
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 193,
+          "flash_image_extent": 29112,
+          "flash_limit": 65536,
+          "static_ram_extent": 652,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 27836,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 848,
+              "address": 28028
+            },
+            {
+              "name": ".data",
+              "bytes": 236,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 412,
+              "address": 536871152
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 273,
+              "strong_symbol_match": true
+            },
+            {
+              "name": "DMACH23",
+              "irq_number": 10,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 27836,
+              "memsz": 27836
+            },
+            {
+              "vaddr": 28028,
+              "paddr": 28028,
+              "filesz": 848,
+              "memsz": 848
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 28876,
+              "filesz": 236,
+              "memsz": 236
+            },
+            {
+              "vaddr": 536871152,
+              "paddr": 536871152,
+              "filesz": 0,
+              "memsz": 412
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 31,
+        "frozen_id": "E17",
+        "kind": "elf",
+        "selection": "cw32a030c8t7",
+        "target": "cw32-spi-dma-example",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "5d69ebd821a0cdcb003f8779de9d768aecb9c96fe77cb130bc20315fb71e6dd8",
+          "cargo.stderr.log": "1038de9f01c17920dd4ce76f19e95ed7750a4ebc7b3c85fe5470b463c79d6367"
+        },
+        "receipt": {
+          "external_artifact": "31-cw32a030c8t7-cw32-spi-dma-example/receipt.json",
+          "sha256": "943c5299162d1287b780d8b01bb0c42e695f894e5091b4819a323c13f538fb9c"
+        },
+        "artifact": {
+          "external_artifact": "31-cw32a030c8t7-cw32-spi-dma-example/firmware.elf",
+          "sha256": "b684aaedc96a5dd827f979e440310661a54701fd0e247044d7e7513ebe93eba0",
+          "bytes": 214564
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536879104,
+          "reset": 193,
+          "flash_image_extent": 29112,
+          "flash_limit": 65536,
+          "static_ram_extent": 652,
+          "ram_limit": 8192,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 27836,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 848,
+              "address": 28028
+            },
+            {
+              "name": ".data",
+              "bytes": 236,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 412,
+              "address": 536871152
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 273,
+              "strong_symbol_match": true
+            },
+            {
+              "name": "DMACH23",
+              "irq_number": 10,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 27836,
+              "memsz": 27836
+            },
+            {
+              "vaddr": 28028,
+              "paddr": 28028,
+              "filesz": 848,
+              "memsz": 848
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 28876,
+              "filesz": 236,
+              "memsz": 236
+            },
+            {
+              "vaddr": 536871152,
+              "paddr": 536871152,
+              "filesz": 0,
+              "memsz": 412
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 32,
+        "frozen_id": "E18",
+        "kind": "elf",
+        "selection": "cw32l083rct6",
+        "target": "cw32-spi-dma-example",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "8f7f13292eff7a16f8517461405a6c04fc2eb654677dceeecd46973fd0e2a076",
+          "cargo.stderr.log": "021c85e40f79864aa0435b8ab950b308113d983b25d5d520f941321a8c400e90"
+        },
+        "receipt": {
+          "external_artifact": "32-cw32l083rct6-cw32-spi-dma-example/receipt.json",
+          "sha256": "033c6ae1c37e135f76bff0a6fb269b21eae7617db7ec96ddef351de702702256"
+        },
+        "artifact": {
+          "external_artifact": "32-cw32l083rct6-cw32-spi-dma-example/firmware.elf",
+          "sha256": "648974f89932396912b504b5c079b94e968a3c5c021c8fc4f52ceca79ceb9d9f",
+          "bytes": 296928
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536895488,
+          "reset": 193,
+          "flash_image_extent": 77504,
+          "flash_limit": 262144,
+          "static_ram_extent": 664,
+          "ram_limit": 24576,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 75924,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 1152,
+              "address": 76116
+            },
+            {
+              "name": ".data",
+              "bytes": 236,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 424,
+              "address": 536871152
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 273,
+              "strong_symbol_match": true
+            },
+            {
+              "name": "DMACH23",
+              "irq_number": 10,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 75924,
+              "memsz": 75924
+            },
+            {
+              "vaddr": 76116,
+              "paddr": 76116,
+              "filesz": 1152,
+              "memsz": 1152
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 77268,
+              "filesz": 236,
+              "memsz": 236
+            },
+            {
+              "vaddr": 536871152,
+              "paddr": 536871152,
+              "filesz": 0,
+              "memsz": 424
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      },
+      {
+        "id": 33,
+        "frozen_id": "E19",
+        "kind": "elf",
+        "selection": "cw32l083rct6",
+        "target": "spi2_flash_id",
+        "exit_code": 0,
+        "source_snapshot_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+        "raw_logs_sha256": {
+          "cargo.jsonl": "291f2e395d0504c183ed9c4cda4d7e6e2b6373e6c6e50124129930c4feca4edc",
+          "cargo.stderr.log": "209eb669ef53a793d83b0ed9f5d3e54273a16edfa1ccd55e120cb1e1232befd7"
+        },
+        "receipt": {
+          "external_artifact": "33-cw32l083rct6-spi2_flash_id/receipt.json",
+          "sha256": "c018cb162d37f78bdd4f98f5fcd927c0928e7d796f1a0e3d700bccf7044f87f2"
+        },
+        "artifact": {
+          "external_artifact": "33-cw32l083rct6-spi2_flash_id/firmware.elf",
+          "sha256": "849a2088e2360c15913c11cf5aa71a8db7992301f1bb8a2f9f02c69da4eac869",
+          "bytes": 296488
+        },
+        "raw_warning_count": 0,
+        "raw_warnings": [],
+        "raw_stderr_diagnostic_lines": [],
+        "actual_artifact_inspection": {
+          "format": "ELF32 little-endian ARM ET_EXEC",
+          "initial_sp": 536895488,
+          "reset": 193,
+          "flash_image_extent": 76152,
+          "flash_limit": 262144,
+          "static_ram_extent": 568,
+          "ram_limit": 24576,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "bytes": 192,
+              "address": 0
+            },
+            {
+              "name": ".text",
+              "bytes": 74648,
+              "address": 192
+            },
+            {
+              "name": ".rodata",
+              "bytes": 1076,
+              "address": 74840
+            },
+            {
+              "name": ".data",
+              "bytes": 236,
+              "address": 536870912
+            },
+            {
+              "name": ".bss",
+              "bytes": 328,
+              "address": 536871152
+            }
+          ],
+          "required_vectors": [
+            {
+              "name": "SPI2",
+              "irq_number": 26,
+              "vector_word": 273,
+              "strong_symbol_match": true
+            },
+            {
+              "name": "DMACH45",
+              "irq_number": 11,
+              "vector_word": 253,
+              "strong_symbol_match": true
+            }
+          ],
+          "load_ranges": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 74648,
+              "memsz": 74648
+            },
+            {
+              "vaddr": 74840,
+              "paddr": 74840,
+              "filesz": 1076,
+              "memsz": 1076
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 75916,
+              "filesz": 236,
+              "memsz": 236
+            },
+            {
+              "vaddr": 536871152,
+              "paddr": 536871152,
+              "filesz": 0,
+              "memsz": 328
+            }
+          ],
+          "failures": []
+        },
+        "failures": []
+      }
+    ]
+  },
+  "diagnostics": {
+    "warnings": 15,
+    "warning_rows": [
+      "L04",
+      "L05",
+      "E04",
+      "E05",
+      "E12"
+    ],
+    "warnings_per_affected_row": 3,
+    "codes": [
+      "dead_code"
+    ],
+    "symbols": [
+      "RCC_LSE_SYSCLK_LSE_EDGES",
+      "RCC_LSE_SYSCLK_LSI_CYCLES",
+      "RCC_LSE_SYSCLK_MARGIN_LSE_EDGES"
+    ],
+    "attribution": "Existing generated RCC LSE constants on L010/L011; no SPI PIO diagnostic. Other 28 rows have zero compiler warnings. Raw Cargo JSON and stderr were both inspected.",
+    "errors": 0
+  },
+  "source_data_gates": {
+    "status": "passed",
+    "actual_commands": 7,
+    "canonical_generation_runs": 0,
+    "records": [
+      {
+        "id": "S01",
+        "command": [
+          "python3",
+          "tests/verify_spi_clock_bounds.py"
+        ],
+        "exit_code": 0,
+        "status": "passed",
+        "logs": [
+          {
+            "external_artifact": "main-gates/01-S01.stdout.log",
+            "bytes": 1151,
+            "sha256": "665040b9cd61def80dc3314e2b236b4aedf71e2de20da5917519c52cb71985dd"
+          },
+          {
+            "external_artifact": "main-gates/01-S01.stderr.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "S02",
+        "command": [
+          "python3",
+          "tests/verify_spi_register_writes.py"
+        ],
+        "exit_code": 0,
+        "status": "passed",
+        "logs": [
+          {
+            "external_artifact": "main-gates/02-S02.stdout.log",
+            "bytes": 1606,
+            "sha256": "d487b12c7d018a969384b390f8441d5d4458423122e0b2bda1b4f58821b5c816"
+          },
+          {
+            "external_artifact": "main-gates/02-S02.stderr.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "S03",
+        "command": [
+          "python3",
+          "cw32-data/tools/source_provenance.py",
+          "--root",
+          ".",
+          "--write"
+        ],
+        "exit_code": 0,
+        "status": "passed",
+        "logs": [
+          {
+            "external_artifact": "main-gates/03-S03.stdout.log",
+            "bytes": 103,
+            "sha256": "1797f76d84dff411c98a12a6f1477e19374d69a0e214a728932b432ed94073b0"
+          },
+          {
+            "external_artifact": "main-gates/03-S03.stderr.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "S04",
+        "command": [
+          "python3",
+          "cw32-data/tools/source_provenance.py",
+          "--root",
+          ".",
+          "--sources",
+          "$CW32_SOURCES"
+        ],
+        "exit_code": 0,
+        "status": "passed",
+        "logs": [
+          {
+            "external_artifact": "main-gates/04-S04.stdout.log",
+            "bytes": 494,
+            "sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f"
+          },
+          {
+            "external_artifact": "main-gates/04-S04.stderr.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "S05",
+        "command": [
+          "python3",
+          "ci/update-functional-coverage.py"
+        ],
+        "exit_code": 0,
+        "status": "passed",
+        "logs": [
+          {
+            "external_artifact": "main-gates/05-S05.stdout.log",
+            "bytes": 238,
+            "sha256": "23c6ff828c1b241bf5387fab4737f7e750a17ce35c9bc4a8b4bab1031d923a0e"
+          },
+          {
+            "external_artifact": "main-gates/05-S05.stderr.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "S06",
+        "command": [
+          "python3",
+          "ci/update-functional-coverage.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "status": "passed",
+        "logs": [
+          {
+            "external_artifact": "main-gates/06-S06.stdout.log",
+            "bytes": 238,
+            "sha256": "23c6ff828c1b241bf5387fab4737f7e750a17ce35c9bc4a8b4bab1031d923a0e"
+          },
+          {
+            "external_artifact": "main-gates/06-S06.stderr.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      },
+      {
+        "id": "S07",
+        "command": [
+          "python3",
+          "tests/test_module_layout.py"
+        ],
+        "exit_code": 0,
+        "status": "passed",
+        "logs": [
+          {
+            "external_artifact": "main-gates/07-S07.stdout.log",
+            "bytes": 127,
+            "sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8"
+          },
+          {
+            "external_artifact": "main-gates/07-S07.stderr.log",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        ]
+      }
+    ]
+  },
+  "identity_boundaries": {
+    "source_before_after_identical": true,
+    "source_manifest_sha256": "45deb028246e03cfab4d6c5ef6784c6afedcf0fb8486a3c0df9d482822457b10",
+    "canonical_generated_files": 910,
+    "generated_before_after_identical": true,
+    "generated_manifest_sha256": "da59b59e541b15ba0f7329ac7bae9616e85321d9af20434f250e4f3c6d5e1a3a",
+    "toolchain_before_after_identical": true,
+    "toolchain_manifest_sha256": "e30aac452384d4c4ce169b3cf48a23ceae13edc8ab421c76f3c3b8d77d78f811",
+    "cargo_configs_unchanged": true
+  },
+  "clean_replay": {
+    "status": "pending-at-main-acceptance",
+    "required_standalone_rlibs": 2,
+    "required_real_linked_elfs": 5,
+    "required_finite_commands_including_bootstrap": 7,
+    "required_generation_runs": 1,
+    "required_generated_equal_files": 910
+  },
+  "limitations": [
+    "No firmware was flashed or executed.",
+    "No HAL tests, synthetic lifecycle probes, host models or new aggregate CI matrix were added or executed as part of this review.",
+    "The seven recorded source/data commands are the existing approved finite gates, not on-silicon behavior tests.",
+    "ELF static RAM extent includes linked allocation/alignment, not measured dynamic stack high-water.",
+    "Build success does not prove hardware IRQ timing, throughput, electrical behavior, graceful early abort, RF coexistence, low-power behavior or finite liveness.",
+    "Successful flush is required before changing CS after cancellation; error recovery, Drop and reconstruction remain destructive."
+  ],
+  "blockers": []
+}

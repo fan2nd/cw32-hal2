@@ -2,6 +2,12 @@
 
 # Remaining SPI and classic I2C adapters
 
+This document records the original blocking-adapter scope and its dated
+verification. Current SPI additionally has the [IRQ PIO byte async
+contract](spi-async-pio.md); the common blocking constructor/Drop lifecycle fence
+on that cohort also changed. The original source proofs and historical absence
+of async below describe that earlier snapshot, not current capability.
+
 Implementation scope: blocking full-duplex SPI master on F002/F003,
 L010/L011/L012, and blocking seven-bit state-code I2C master on F002/F003 and
 L010/L011. This is a source-reviewed software implementation with host models

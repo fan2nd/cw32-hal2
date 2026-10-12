@@ -20,14 +20,20 @@
 //! original device selected and await a successful `flush` before changing CS.
 //! Generic device adapters that release CS on cancellation are not covered.
 //! See `docs/spi-dma.md` for the paired lifecycle and hardware-validation limits.
+//! The remaining families provide interrupt-driven byte masters with
+//! `Spi::new_async`. Their ISR never accesses caller memory or DR. Cancellation
+//! leaves at most one frame to settle: preserve CS and successfully flush before
+//! changing it. Dropping an unfinished PIO owner is destructive teardown, not
+//! successful wire completion. See `docs/spi-async-pio.md`.
 #[cfg(spi_dma)]
+use crate::dma;
+#[cfg(any(spi_dma, spi_async_pio))]
 use crate::{
-    dma,
     interrupt::typelevel::{Binding, Handler, Interrupt},
     mode::Async,
 };
 use core::marker::PhantomData;
-#[cfg(spi_dma)]
+#[cfg(any(spi_dma, spi_async_pio))]
 use core::{
     cell::RefCell,
     task::{Context, Poll, Waker},
@@ -114,6 +120,10 @@ pub enum Error {
     Underrun,
     /// Chip select changed during a frame (normally a slave-only error).
     ChipSelectFault,
+    /// A synchronous call cannot settle a cancelled/forgotten async PIO frame.
+    /// Keep the original CS selected and await a successful async flush.
+    #[cfg(spi_async_pio)]
+    PioBusy,
     /// A DMA channel reported an error or ambiguous terminal state.
     #[cfg(spi_dma)]
     Dma(dma::Error),
@@ -131,6 +141,8 @@ impl core::fmt::Display for Error {
             Self::Overrun => "SPI receive overrun",
             Self::Underrun => "SPI transmit underrun",
             Self::ChipSelectFault => "SPI chip-select fault",
+            #[cfg(spi_async_pio)]
+            Self::PioBusy => "SPI async frame is still pending",
             #[cfg(spi_dma)]
             Self::Dma(_) => "SPI DMA transfer failed",
             #[cfg(spi_dma)]
@@ -149,6 +161,8 @@ impl embedded_hal::spi::Error for Error {
             Self::Overrun => ErrorKind::Overrun,
             Self::ChipSelectFault => ErrorKind::ChipSelectFault,
             Self::Underrun => ErrorKind::Other,
+            #[cfg(spi_async_pio)]
+            Self::PioBusy => ErrorKind::Other,
             #[cfg(spi_dma)]
             Self::Dma(_) | Self::DmaBusy | Self::DmaQuarantined => ErrorKind::Other,
         }
@@ -239,6 +253,8 @@ pub struct Spi<'d, M: PeriMode, CM: CommunicationMode = Master> {
     miso: Option<Flex<'d>>,
     #[cfg(spi_dma)]
     dma: Option<SpiDma>,
+    #[cfg(spi_async_pio)]
+    pio: Option<PioPhase>,
     sck_af: u8,
     miso_af: u8,
     word_bits: u8,
@@ -298,6 +314,11 @@ impl<'d, M: PeriMode> Spi<'d, M, Master> {
         let info = peripheral.info;
         let prescaler = info.validate_config(kernel_clock, &config)?;
 
+        // A safely reborrowed token can replace a forgotten async owner. Fence
+        // its static ISR before Flex changes pins or RCC resets the controller.
+        #[cfg(spi_async_pio)]
+        info.pio_state().deactivate(info.regs);
+
         // GPIO Flex begins disconnected. Configure the SPI idle level before
         // connecting the SCK alternate function to the physical output.
         let mut sck = Flex::new(sck);
@@ -317,6 +338,8 @@ impl<'d, M: PeriMode> Spi<'d, M, Master> {
             miso: Some(miso),
             #[cfg(spi_dma)]
             dma: None,
+            #[cfg(spi_async_pio)]
+            pio: None,
             sck_af,
             miso_af,
             word_bits: 8,
@@ -354,6 +377,14 @@ impl<M: PeriMode> Spi<'_, M, Master> {
     /// Changing CPOL can change the physical SCK level. Keep all external chip
     /// selects inactive while changing configuration.
     pub fn set_config(&mut self, config: &Config) -> Result<(), ConfigError> {
+        #[cfg(spi_async_pio)]
+        if self.pio.is_some() {
+            // Configuration cannot consume a hardware error through recovery.
+            // Keep it sticky for a transfer/flush and leave configuration intact.
+            if !matches!(self.poll_pio_settle(None, &mut false), Poll::Ready(Ok(()))) {
+                return Err(ConfigError::Busy);
+            }
+        }
         #[cfg(spi_dma)]
         self.check_dma().map_err(|error| match error {
             Error::DmaBusy => ConfigError::Busy,
@@ -363,6 +394,16 @@ impl<M: PeriMode> Spi<'_, M, Master> {
             .peripheral
             .info
             .validate_config(self.kernel_clock, config)?;
+        #[cfg(spi_async_pio)]
+        let status = if self.pio.is_some() {
+            // Recheck after validation too: a newly observed error must remain
+            // available to flush, not be erased by configure's disabled clear.
+            self.pio_observe(None, PioWait::Idle)
+                .map_err(|_| ConfigError::Busy)?
+        } else {
+            self.peripheral.info.regs.isr().read()
+        };
+        #[cfg(not(spi_async_pio))]
         let status = self.peripheral.info.regs.isr().read();
         if status.busy() || !status.txe() {
             return Err(ConfigError::Busy);
@@ -414,6 +455,8 @@ impl<M: PeriMode> Spi<'_, M, Master> {
 
     /// Wait for the transmit buffer and shift register to become empty.
     pub fn blocking_flush(&mut self) -> Result<(), Error> {
+        #[cfg(spi_async_pio)]
+        self.check_pio()?;
         #[cfg(spi_dma)]
         self.check_dma()?;
         self.wait_idle()
@@ -422,6 +465,13 @@ impl<M: PeriMode> Spi<'_, M, Master> {
 
 impl<M: PeriMode, CM: CommunicationMode> Drop for Spi<'_, M, CM> {
     fn drop(&mut self) {
+        // No ISR may read this bank after its clock is gated. PIO owns no DMA
+        // memory lease; unfinished wire work may be truncated by this teardown.
+        #[cfg(spi_async_pio)]
+        self.peripheral
+            .info
+            .pio_state()
+            .deactivate(self.peripheral.info.regs);
         #[cfg(spi_dma)]
         if let Some(dma) = self.dma.as_mut() {
             let settled = matches!(
@@ -704,6 +754,8 @@ impl<M: PeriMode> Spi<'_, M, Master> {
     }
 
     fn pio_transfer<W: Word>(&mut self, read: &mut [W], write: &[W]) -> Result<(), Error> {
+        #[cfg(spi_async_pio)]
+        self.check_pio()?;
         #[cfg(spi_dma)]
         self.check_dma()?;
         let count = read.len().max(write.len());
@@ -721,6 +773,8 @@ impl<M: PeriMode> Spi<'_, M, Master> {
     }
 
     fn pio_transfer_in_place<W: Word>(&mut self, words: &mut [W]) -> Result<(), Error> {
+        #[cfg(spi_async_pio)]
+        self.check_pio()?;
         #[cfg(spi_dma)]
         self.check_dma()?;
         if words.is_empty() {
@@ -745,6 +799,534 @@ fn decode_error(status: pac::spi::regs::Isr) -> Option<Error> {
         Some(Error::Underrun)
     } else {
         None
+    }
+}
+
+// IRQ PIO is positively qualified independently of the existing DMA path.
+// Only the task accesses DR or caller memory. An abandoned future leaves this
+// owner-local phase, never an address into that future, for the next entry.
+#[cfg(spi_async_pio)]
+#[derive(Clone, Copy, Eq, PartialEq)]
+enum PioPhase {
+    Idle,
+    AwaitRx,
+    Finishing,
+}
+
+#[cfg(spi_async_pio)]
+struct PioInterruptState {
+    active: bool,
+    error: Option<Error>,
+    waker: Option<Waker>,
+}
+
+#[cfg(spi_async_pio)]
+pub(crate) struct PioState {
+    inner: critical_section::Mutex<RefCell<PioInterruptState>>,
+}
+
+#[cfg(spi_async_pio)]
+#[derive(Clone, Copy)]
+enum PioWait {
+    Tx,
+    Rx,
+    Idle,
+}
+
+#[cfg(spi_async_pio)]
+impl PioWait {
+    fn ready(self, status: pac::spi::regs::Isr) -> bool {
+        match self {
+            Self::Tx => status.txe(),
+            Self::Rx => status.rxne(),
+            Self::Idle => status.txe() && !status.busy(),
+        }
+    }
+}
+
+#[cfg(spi_async_pio)]
+impl PioState {
+    pub(crate) const fn new() -> Self {
+        Self {
+            inner: critical_section::Mutex::new(RefCell::new(PioInterruptState {
+                active: false,
+                error: None,
+                waker: None,
+            })),
+        }
+    }
+
+    fn deactivate(&self, regs: pac::spi::Spi) {
+        critical_section::with(|cs| {
+            let mut inner = self.inner.borrow(cs).borrow_mut();
+            // An inactive bank may be clock-gated. Only a live owner authorizes
+            // peripheral MMIO; a shared vector is never disabled or unpended.
+            if inner.active {
+                regs.ier().write(|_| {});
+            }
+            inner.active = false;
+            inner.waker = None;
+            inner.error = None;
+        });
+    }
+
+    fn cancel_wait(&self, regs: pac::spi::Spi) {
+        critical_section::with(|cs| {
+            let mut inner = self.inner.borrow(cs).borrow_mut();
+            regs.ier().write(|_| {});
+            inner.waker = None;
+            // Keep the first error and the owner's outstanding frame intact.
+        });
+    }
+
+    fn observe(
+        &self,
+        regs: pac::spi::Spi,
+        cx: Option<&mut Context<'_>>,
+        wait: PioWait,
+    ) -> Result<pac::spi::regs::Isr, Error> {
+        let arm = cx.is_some();
+        critical_section::with(|cs| {
+            let mut inner = self.inner.borrow(cs).borrow_mut();
+            // Register before either software or hardware completion checks.
+            if let Some(cx) = cx {
+                if !inner
+                    .waker
+                    .as_ref()
+                    .is_some_and(|w| w.will_wake(cx.waker()))
+                {
+                    inner.waker = Some(cx.waker().clone());
+                }
+            } else {
+                inner.waker = None;
+            }
+            // Mask before the final snapshot as well as before changing waits.
+            // A critical section alone does not stop peripheral flag changes.
+            regs.ier().write(|_| {});
+            let mut status = regs.isr().read();
+            if let Some(error) = inner.error.or_else(|| decode_error(status)) {
+                inner.error = Some(error);
+                return Err(error);
+            }
+            if arm && !wait.ready(status) {
+                regs.ier().write(|v| {
+                    v.set_txe(matches!(wait, PioWait::Tx));
+                    v.set_rxne(matches!(wait, PioWait::Rx));
+                    v.set_modf(true);
+                    v.set_ov(true);
+                    v.set_sserr(true);
+                    v.set_ud(true);
+                });
+                // Recheck after arming: readiness may precede IRQ delivery.
+                status = regs.isr().read();
+                if let Some(error) = decode_error(status) {
+                    inner.error = Some(error);
+                    regs.ier().write(|_| {});
+                    return Err(error);
+                }
+            }
+            if wait.ready(status) {
+                regs.ier().write(|_| {});
+                inner.waker = None;
+            }
+            Ok(status)
+        })
+    }
+}
+
+/// Dedicated SPI interrupt handler for the qualified byte PIO master.
+/// L012 SPI2/SPI3 constructors require the complete `SharedInterruptHandler`
+/// instead. The ISR never reads DR or stores a caller-buffer/future pointer.
+#[cfg(spi_async_pio)]
+pub struct InterruptHandler<T: Instance>(PhantomData<T>);
+
+#[cfg(spi_async_pio)]
+impl<T: Instance> Handler<T::Interrupt> for InterruptHandler<T> {
+    unsafe fn on_interrupt() {
+        dispatch_pio_interrupt(T::regs(), T::pio_state());
+    }
+}
+
+/// Complete L012 SPI2/SPI3 handler. Bind it once to the actual `SPI23` vector;
+/// either instance's constructor accepts that binding. Inactive members are
+/// skipped before MMIO, and one owner's teardown never disables the peer's IRQ.
+/// An externally owned inactive peer must have its interrupt source quiescent.
+#[cfg(all(spi_async_pio, spi_cw32l012_v1))]
+pub struct SharedInterruptHandler<I: Interrupt>(PhantomData<I>);
+
+#[cfg(all(spi_async_pio, spi_cw32l012_v1))]
+impl Handler<crate::interrupt::typelevel::SPI23>
+    for SharedInterruptHandler<crate::interrupt::typelevel::SPI23>
+{
+    unsafe fn on_interrupt() {
+        dispatch_pio_interrupt(
+            pac::SPI2,
+            <crate::peripherals::SPI2 as sealed::Instance>::pio_state(),
+        );
+        dispatch_pio_interrupt(
+            pac::SPI3,
+            <crate::peripherals::SPI3 as sealed::Instance>::pio_state(),
+        );
+    }
+}
+
+#[cfg(spi_async_pio)]
+fn dispatch_pio_interrupt(regs: pac::spi::Spi, state: &PioState) {
+    let waker = critical_section::with(|cs| {
+        let mut inner = state.inner.borrow(cs).borrow_mut();
+        if !inner.active {
+            return None;
+        }
+        let status = regs.isr().read();
+        let enabled = regs.ier().read();
+        let pending = (enabled.txe() && status.txe())
+            || (enabled.rxne() && status.rxne())
+            || (enabled.modf() && status.modf())
+            || (enabled.ov() && status.ov())
+            || (enabled.sserr() && status.sserr())
+            || (enabled.ud() && status.ud());
+        if !pending {
+            return None;
+        }
+        if let Some(error) = decode_error(status) {
+            inner.error.get_or_insert(error);
+        }
+        // Retain ready flags and data for the task; one notification suffices.
+        regs.ier().write(|_| {});
+        inner.waker.take()
+    });
+    if let Some(waker) = waker {
+        waker.wake();
+    }
+}
+
+#[cfg(spi_async_pio)]
+impl<M: PeriMode> Spi<'_, M, Master> {
+    fn pio_observe(
+        &self,
+        cx: Option<&mut Context<'_>>,
+        wait: PioWait,
+    ) -> Result<pac::spi::regs::Isr, Error> {
+        let info = self.peripheral.info;
+        info.pio_state().observe(info.regs, cx, wait)
+    }
+
+    fn recover_pio(&mut self, error: Error) -> Error {
+        let info = self.peripheral.info;
+        critical_section::with(|cs| {
+            let mut inner = info.pio_state().inner.borrow(cs).borrow_mut();
+            info.regs.ier().write(|_| {});
+            inner.waker = None;
+            // Capture the error before destructive recovery. This neither
+            // retries the byte nor proves the failed transaction completed.
+            self.pio = Some(PioPhase::Idle);
+            info.enable(false);
+            info.clear();
+            info.enable(true);
+            inner.error = None;
+        });
+        error
+    }
+
+    fn poll_pio_settle(
+        &mut self,
+        mut cx: Option<&mut Context<'_>>,
+        read_used: &mut bool,
+    ) -> Poll<Result<(), Error>> {
+        if self.pio == Some(PioPhase::AwaitRx) {
+            let status = self.pio_observe(cx.as_deref_mut(), PioWait::Rx)?;
+            if !status.rxne() {
+                return Poll::Pending;
+            }
+            if *read_used {
+                if let Some(cx) = cx {
+                    cx.waker().wake_by_ref();
+                }
+                return Poll::Pending;
+            }
+            let _ = self.peripheral.info.regs.dr().read().dr();
+            *read_used = true;
+            self.pio = Some(PioPhase::Finishing);
+        }
+        let status = self.pio_observe(cx.as_deref_mut(), PioWait::Idle)?;
+        if status.txe() && !status.busy() {
+            self.pio = Some(PioPhase::Idle);
+            Poll::Ready(Ok(()))
+        } else {
+            // BUSY has no completion IRQ. No finite-liveness or sleep claim.
+            if let Some(cx) = cx {
+                cx.waker().wake_by_ref();
+            }
+            Poll::Pending
+        }
+    }
+
+    fn check_pio(&mut self) -> Result<(), Error> {
+        if self.pio.is_none() {
+            return Ok(());
+        }
+        match self.poll_pio_settle(None, &mut false) {
+            Poll::Ready(Ok(())) => Ok(()),
+            Poll::Ready(Err(error)) => Err(self.recover_pio(error)),
+            Poll::Pending => Err(Error::PioBusy),
+        }
+    }
+}
+
+#[cfg(spi_async_pio)]
+struct PioGuard<'a, 'd> {
+    driver: &'a mut Spi<'d, Async, Master>,
+}
+
+#[cfg(spi_async_pio)]
+impl Drop for PioGuard<'_, '_> {
+    fn drop(&mut self) {
+        let info = self.driver.peripheral.info;
+        info.pio_state().cancel_wait(info.regs);
+    }
+}
+
+#[cfg(spi_async_pio)]
+enum PioBuffers<'a> {
+    Separate { read: &'a mut [u8], write: &'a [u8] },
+    InPlace(&'a mut [u8]),
+}
+
+#[cfg(spi_async_pio)]
+impl PioBuffers<'_> {
+    fn len(&self) -> usize {
+        match self {
+            Self::Separate { read, write } => read.len().max(write.len()),
+            Self::InPlace(words) => words.len(),
+        }
+    }
+    fn transmit(&self, index: usize) -> u8 {
+        match self {
+            Self::Separate { write, .. } => write.get(index).copied().unwrap_or(0),
+            Self::InPlace(words) => words[index],
+        }
+    }
+    fn receive(&mut self, index: usize, byte: u8) {
+        match self {
+            Self::Separate { read, .. } => {
+                if let Some(destination) = read.get_mut(index) {
+                    *destination = byte;
+                }
+            }
+            Self::InPlace(words) => words[index] = byte,
+        }
+    }
+}
+
+#[cfg(spi_async_pio)]
+impl<'d> Spi<'d, Async, Master> {
+    /// Create a qualified interrupt-driven byte master, panicking on invalid
+    /// configuration. Use `try_new_async` for the checked constructor.
+    pub fn new_async<T: Instance>(
+        peripheral: Peri<'d, T>,
+        sck: Peri<'d, impl SckPin<T>>,
+        mosi: Peri<'d, impl MosiPin<T>>,
+        miso: Peri<'d, impl MisoPin<T>>,
+        irqs: impl Binding<T::Interrupt, T::InterruptHandler> + 'd,
+        config: Config,
+    ) -> Self {
+        Self::try_new_async(peripheral, sck, mosi, miso, irqs, config)
+            .unwrap_or_else(|error| panic!("invalid SPI configuration: {}", error))
+    }
+
+    /// Create a byte master without DMA or static transfer storage. L012 SPI2
+    /// and SPI3 require the complete `SharedInterruptHandler<SPI23>` binding.
+    /// Tokens are consumed on error; preflight failure leaves hardware intact.
+    ///
+    /// Cancellation/forget can leave one frame outstanding. Preserve the
+    /// original CS selection and successfully await `flush` before changing it.
+    /// Dropping the driver is bounded destructive teardown and may truncate a
+    /// frame. Neither an error nor Drop is successful wire completion.
+    pub fn try_new_async<T: Instance>(
+        peripheral: Peri<'d, T>,
+        sck: Peri<'d, impl SckPin<T>>,
+        mosi: Peri<'d, impl MosiPin<T>>,
+        miso: Peri<'d, impl MisoPin<T>>,
+        _irqs: impl Binding<T::Interrupt, T::InterruptHandler> + 'd,
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let mut spi = Self::new_inner(peripheral, sck, mosi, miso, config)?;
+        spi.pio = Some(PioPhase::Idle);
+        critical_section::with(|cs| {
+            let mut inner = T::pio_state().inner.borrow(cs).borrow_mut();
+            inner.error = None;
+            inner.waker = None;
+            inner.active = true;
+        });
+        // Shared vectors stay enabled. Never clear the partner's pending IRQ.
+        unsafe { T::Interrupt::enable() };
+        Ok(spi)
+    }
+
+    /// Clock max(read.len(), write.len()) bytes, padding TX with zeroes and
+    /// discarding excess RX. Completed caller bytes remain visible on failure.
+    /// After cancellation, preserve CS and successfully flush before changing it.
+    pub async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), Error> {
+        self.run_pio(PioBuffers::Separate { read, write }).await
+    }
+
+    /// Replace each byte after its received frame is observed. Earlier bytes
+    /// can remain replaced on cancellation/error; preserve CS until flush.
+    pub async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), Error> {
+        self.run_pio(PioBuffers::InPlace(words)).await
+    }
+
+    /// Transmit bytes and drain every received frame. Cancellation requires
+    /// keeping the original CS selected until a successful `flush`.
+    pub async fn write(&mut self, words: &[u8]) -> Result<(), Error> {
+        self.transfer(&mut [], words).await
+    }
+
+    /// Receive bytes while transmitting zeroes. Cancellation requires keeping
+    /// the original CS selected until a successful `flush`.
+    pub async fn read(&mut self, words: &mut [u8]) -> Result<(), Error> {
+        self.transfer(words, &[]).await
+    }
+
+    /// Discard a cancelled frame's RX and await error-free TXE with BUSY clear.
+    /// The BUSY tail cooperatively self-wakes; there is no built-in deadline.
+    /// Error recovery may truncate failed work and is never successful flush.
+    pub async fn flush(&mut self) -> Result<(), Error> {
+        let guard = PioGuard { driver: self };
+        core::future::poll_fn(
+            |cx| match guard.driver.poll_pio_settle(Some(cx), &mut false) {
+                Poll::Ready(Err(error)) => Poll::Ready(Err(guard.driver.recover_pio(error))),
+                other => other,
+            },
+        )
+        .await
+    }
+
+    fn poll_pio_prepare(
+        &mut self,
+        cx: &mut Context<'_>,
+        read_used: &mut bool,
+    ) -> Poll<Result<(), Error>> {
+        // Do not call prepare::<u8>(): its wait_idle loop is unbounded. Width
+        // changes and stale RX draining share this poll's one-read budget.
+        let status = self.pio_observe(Some(cx), PioWait::Idle)?;
+        if !status.txe() || status.busy() {
+            cx.waker().wake_by_ref();
+            return Poll::Pending;
+        }
+        if self.word_bits != 8 {
+            self.peripheral.info.enable(false);
+            self.peripheral.info.regs.cr1().modify(|v| v.set_width(7));
+            self.peripheral.info.enable(true);
+            self.word_bits = 8;
+        }
+        let status = self.pio_observe(Some(cx), PioWait::Idle)?;
+        if !status.txe() || status.busy() {
+            cx.waker().wake_by_ref();
+            return Poll::Pending;
+        }
+        if status.rxne() {
+            if *read_used {
+                cx.waker().wake_by_ref();
+                return Poll::Pending;
+            }
+            let _ = self.peripheral.info.regs.dr().read().dr();
+            *read_used = true;
+        }
+        Poll::Ready(Ok(()))
+    }
+
+    async fn run_pio(&mut self, mut buffers: PioBuffers<'_>) -> Result<(), Error> {
+        let guard = PioGuard { driver: self };
+        let count = buffers.len();
+        let mut settled = false;
+        let mut prepared = false;
+        let mut index = 0;
+        core::future::poll_fn(|cx| {
+            let result = (|| {
+                // This one budget covers abandoned RX, stale preparation RX,
+                // and the current operation. A poll writes at most one frame.
+                let mut read_used = false;
+                if !settled {
+                    match guard.driver.poll_pio_settle(Some(cx), &mut read_used) {
+                        Poll::Ready(Ok(())) => settled = true,
+                        other => return other,
+                    }
+                }
+                if count == 0 {
+                    return Poll::Ready(Ok(()));
+                }
+                if !prepared {
+                    match guard.driver.poll_pio_prepare(cx, &mut read_used) {
+                        Poll::Ready(Ok(())) => prepared = true,
+                        other => return other,
+                    }
+                }
+                if guard.driver.pio == Some(PioPhase::AwaitRx) {
+                    let status = guard.driver.pio_observe(Some(cx), PioWait::Rx)?;
+                    if !status.rxne() {
+                        return Poll::Pending;
+                    }
+                    if read_used {
+                        cx.waker().wake_by_ref();
+                        return Poll::Pending;
+                    }
+                    let byte = guard.driver.peripheral.info.regs.dr().read().dr() as u8;
+                    read_used = true;
+                    guard.driver.pio = Some(PioPhase::Finishing);
+                    buffers.receive(index, byte);
+                    index += 1;
+                }
+                if index == count {
+                    return guard.driver.poll_pio_settle(Some(cx), &mut read_used);
+                }
+                let status = guard.driver.pio_observe(Some(cx), PioWait::Tx)?;
+                if !status.txe() {
+                    return Poll::Pending;
+                }
+                let byte = buffers.transmit(index);
+                // Retained marker precedes DR. No await exists in this command.
+                guard.driver.pio = Some(PioPhase::AwaitRx);
+                guard
+                    .driver
+                    .peripheral
+                    .info
+                    .regs
+                    .dr()
+                    .write(|v| v.set_dr(u16::from(byte)));
+                let status = guard.driver.pio_observe(Some(cx), PioWait::Rx)?;
+                if status.rxne() {
+                    // Already ready, but never consume a second frame/read or
+                    // launch another byte in this poll. The ISR is one-shot.
+                    cx.waker().wake_by_ref();
+                }
+                Poll::Pending
+            })();
+            match result {
+                Poll::Ready(Err(error)) => Poll::Ready(Err(guard.driver.recover_pio(error))),
+                other => other,
+            }
+        })
+        .await
+    }
+}
+
+#[cfg(spi_async_pio)]
+impl embedded_hal_async::spi::SpiBus<u8> for Spi<'_, Async, Master> {
+    async fn read(&mut self, words: &mut [u8]) -> Result<(), Error> {
+        self.read(words).await
+    }
+    async fn write(&mut self, words: &[u8]) -> Result<(), Error> {
+        self.write(words).await
+    }
+    async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), Error> {
+        self.transfer(read, write).await
+    }
+    async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), Error> {
+        self.transfer_in_place(words).await
+    }
+    async fn flush(&mut self) -> Result<(), Error> {
+        self.flush().await
     }
 }
 
@@ -1313,6 +1895,15 @@ pub(crate) struct Info {
     pub(crate) maximum_frequency: u32,
     pub(crate) minimum_divisor: u16,
     pub(crate) rcc: crate::rcc::RccInfo,
+    #[cfg(spi_async_pio)]
+    pub(crate) pio_state: fn() -> &'static PioState,
+}
+
+#[cfg(spi_async_pio)]
+impl Info {
+    fn pio_state(&self) -> &'static PioState {
+        (self.pio_state)()
+    }
 }
 
 pub(crate) mod sealed {
@@ -1322,10 +1913,12 @@ pub(crate) mod sealed {
     {
         const MAX_FREQUENCY: u32;
         const MIN_DIVISOR: u16;
-        #[cfg(spi_dma)]
+        #[cfg(any(spi_dma, spi_async_pio))]
         fn regs() -> pac::spi::Spi;
         #[cfg(spi_dma)]
         fn state() -> &'static State;
+        #[cfg(spi_async_pio)]
+        fn pio_state() -> &'static PioState;
     }
     pub trait SckPin<T: super::Instance> {
         fn af(&self) -> u8;
@@ -1346,9 +1939,12 @@ pub(crate) mod sealed {
 /// A verified SPI instance. Implementations are generated only for supported chips.
 #[allow(private_bounds)]
 pub trait Instance: sealed::Instance {
-    /// Metadata-derived SPI error vector for the x030 staged DMA path.
-    #[cfg(spi_dma)]
+    /// Metadata-derived SPI GLOBAL vector for the qualified async path.
+    #[cfg(any(spi_dma, spi_async_pio))]
     type Interrupt: Interrupt;
+    /// Complete required PIO handler; L012 SPI2/SPI3 use the shared SPI23 group.
+    #[cfg(spi_async_pio)]
+    type InterruptHandler: Handler<Self::Interrupt>;
 }
 /// Verified SCK alternate-function route for an SPI instance.
 #[allow(private_bounds)]
@@ -1366,7 +1962,7 @@ macro_rules! impl_instance {
         impl $crate::spi::sealed::Instance for $crate::peripherals::$name {
             const MAX_FREQUENCY: u32 = $maximum_frequency;
             const MIN_DIVISOR: u16 = $minimum_divisor;
-            #[cfg(spi_dma)]
+            #[cfg(any(spi_dma, spi_async_pio))]
             fn regs() -> $crate::pac::spi::Spi {
                 $crate::pac::$name
             }
@@ -1375,10 +1971,17 @@ macro_rules! impl_instance {
                 static STATE: $crate::spi::State = $crate::spi::State::new();
                 &STATE
             }
+            #[cfg(spi_async_pio)]
+            fn pio_state() -> &'static $crate::spi::PioState {
+                static STATE: $crate::spi::PioState = $crate::spi::PioState::new();
+                &STATE
+            }
         }
         impl $crate::spi::Instance for $crate::peripherals::$name {
-            #[cfg(spi_dma)]
+            #[cfg(any(spi_dma, spi_async_pio))]
             type Interrupt = $crate::interrupt::typelevel::$irq;
+            #[cfg(spi_async_pio)]
+            $crate::spi::pio_interrupt_handler!($irq);
         }
         impl From<$crate::peripherals::$name> for $crate::spi::AnySpi {
             fn from(_: $crate::peripherals::$name) -> Self {
@@ -1388,6 +1991,8 @@ macro_rules! impl_instance {
                     maximum_frequency: <$crate::peripherals::$name>::MAX_FREQUENCY,
                     minimum_divisor: <$crate::peripherals::$name>::MIN_DIVISOR,
                     rcc: <$crate::peripherals::$name as $crate::rcc::SealedRccPeripheral>::RCC_INFO,
+                    #[cfg(spi_async_pio)]
+                    pio_state: <$crate::peripherals::$name>::pio_state,
                 };
                 Self { info: &INFO }
             }
@@ -1395,6 +2000,21 @@ macro_rules! impl_instance {
     };
 }
 pub(crate) use impl_instance;
+
+// Match the actual metadata vector, not a register version or instance alias.
+#[cfg(spi_async_pio)]
+macro_rules! pio_interrupt_handler {
+    (SPI23) => {
+        type InterruptHandler =
+            $crate::spi::SharedInterruptHandler<$crate::interrupt::typelevel::SPI23>;
+    };
+    ($irq:ident) => {
+        type InterruptHandler = $crate::spi::InterruptHandler<Self>;
+    };
+}
+#[cfg(spi_async_pio)]
+pub(crate) use pio_interrupt_handler;
+
 macro_rules! impl_pin {
     ($signal:ident, $instance:ident, $pin:ident, $af:literal) => {
         impl $crate::spi::sealed::$signal<$crate::peripherals::$instance>

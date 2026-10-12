@@ -2,6 +2,12 @@
 
 # Source-qualified SPI master clock bounds
 
+The clock policies below remain current. Statements about unchanged transfer,
+async and lifecycle behavior describe the original clock-bounds change. The
+later [IRQ PIO byte async contract](spi-async-pio.md) retains these frequency,
+divider and electrical limits and separately documents its constructor/Drop
+changes and verification boundary.
+
 The SPI divider solver consumes `Clocks::pclk_bounds()` and preserves its exact
 source numerator and cumulative hardware divider. It chooses the fastest
 supported SPI divisor for which the upper SCK endpoint is no greater than both

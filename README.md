@@ -700,6 +700,32 @@ not run; final-package completion requires a separate final-source
 2-library/4-ELF clean receipt. See [the verification boundary](docs/four-channel-dma-owned.md#verification-boundary).
 No hardware result is claimed.
 
+F020/F002/F003/L010/L011/L012/L031/R031/W031/L052 additionally provide
+ordinary-borrowed `Spi<'d, Async, Master>::new_async` / `try_new_async` and all
+five async byte `SpiBus` methods on their fourteen SPI instances. This IRQ PIO
+path keeps at most one frame outstanding; the task accesses DR and caller
+buffers, while the ISR only records errors, masks local notification and wakes.
+Each async poll performs at most one DR read and one DR write. BUSY has no
+completion interrupt, so the final wire-idle wait self-wakes and consumes CPU;
+there is no built-in deadline or low-power guarantee. Preserve the original CS
+selection after cancellation and successfully flush before changing devices.
+Driver Drop and forgotten-owner reconstruction are destructive, not successful
+wire completion. The ten-family common blocking constructor/Drop path also gains
+the lifecycle fence needed to retire a forgotten async owner; ordinary blocking
+data/error/divider behavior remains separate. L012 requires the full SPI23
+handler for SPI2/SPI3; W031 external SPI cannot coexist with internal RF use.
+See [the IRQ PIO contract](docs/spi-async-pio.md) and
+[ordinary firmware examples](examples/spi-async/README.md). Main validation passed
+14 standalone ARM libraries and 19 linked ELFs, all 33 commands exiting zero,
+plus seven finite source/data commands. No canonical generation ran; all 910
+generated files remained unchanged. The L010F8P6 library, async and blocking rows
+and the L011K8T6 library and async rows each retain three existing RCC LSE-constant
+warnings; the other 12 libraries and 16 ELFs were warning-free. Independent
+runtime and source/metadata reviews accepted the frozen implementation. At main
+acceptance clean had not run; final-package completion requires a separate
+final-source two-library/five-ELF replay and seven commands including its one
+generation bootstrap. These results establish no hardware behavior.
+
 F030/A030/L083 `Spi::new_with_dma` adds a safe byte `SpiBus` with two private static
 staging buffers and two admitted channels. Both clean DMA terminals and wire
 idle precede success. Cancellation retains the active chunk: keep the original

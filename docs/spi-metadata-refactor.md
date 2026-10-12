@@ -1,5 +1,11 @@
 # Source-owned SPI limits and direct peripheral operations
 
+The equivalence and verification statements below belong to the 2026-10-08
+metadata refactor. Current [IRQ PIO byte async](spi-async-pio.md) consumes the
+same hardware facts but adds an explicit runtime qualification and a common
+constructor/Drop lifecycle fence on ten families. This historical refactor's
+source identities and build counts are not evidence of that later change.
+
 The 2026-10-08 refactor changes where existing verified SPI facts are stored and
 how the HAL consumes them. It does not change the qualified clock envelope,
 conservative electrical choices, register encodings, or supported public SPI API.
