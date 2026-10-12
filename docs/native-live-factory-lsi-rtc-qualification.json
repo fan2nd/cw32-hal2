@@ -1,0 +1,535 @@
+{
+  "schema_version": 1,
+  "scope": "Exact-seven native live factory-LSI RTC source and programmable division qualification; no SYSCLK admission, monitor qualification or new generated metadata.",
+  "implementation_acceptance": {
+    "status": "accepted_main",
+    "scope": "Main-bound implementation acceptance. This update changes acceptance status and result references only; all reviewed policy, source and qualification facts remain unchanged.",
+    "reviewed_qualification_sha256": "d9dc16e24dc2870bcb67d80e2c86bd1a339d4ea85963291fc06d20d1da1ab44d",
+    "independent_reviews": [
+      {
+        "path": "docs/native-live-factory-lsi-rtc-metadata-review.json",
+        "sha256": "7ab66c3bfafd0e6aa1fcdbae74bf59e0eed1682d2aaf636c5f598ae54cbfdff8",
+        "verdict": "accepted_main_source_metadata_correspondence"
+      },
+      {
+        "path": "docs/native-live-factory-lsi-rtc-runtime-review.json",
+        "sha256": "a13f9c3eb9bc941c0ba11fa03f2ebaf5ee481881fffc0fc05ca2471b5d56195d",
+        "verdict": "accepted_main_runtime_and_12_library_7_elf_matrix"
+      }
+    ],
+    "main": {
+      "attempt": 2,
+      "library_rows": 12,
+      "linked_elf_rows": 7,
+      "all_exit_codes_zero": true,
+      "source_unchanged_during_matrix": true,
+      "generated_unchanged_during_matrix": true,
+      "results": {
+        "kind": "external_artifact",
+        "path": "cw32-stage79-acceptance/main-attempt-002/results.json",
+        "sha256": "25447630bd2d7c7a8e56ba03cda9cf42f7741eb0b9ee2fab05ce8fd8300fe0e2"
+      },
+      "summary": {
+        "kind": "external_artifact",
+        "path": "cw32-stage79-acceptance/main-attempt-002/summary.json",
+        "sha256": "ef775fc02fa8bd148c05a660b2085b760eb21c713a8c52059dad4630656cc204"
+      }
+    },
+    "source_data_gates": {
+      "commands": 8,
+      "all_exit_codes_zero": true,
+      "results": {
+        "kind": "external_artifact",
+        "path": "cw32-stage79-acceptance/data-gates-attempt-001/results.json",
+        "sha256": "9ec9f4bd3e37b18671fcf4ae6d8e1e18281fa98decb1d5705681b57af1e09a16"
+      }
+    },
+    "generated_correspondence": {
+      "paths": 905,
+      "changed": 0,
+      "added": 0,
+      "removed": 0,
+      "allowed_delta": [],
+      "comparison": {
+        "kind": "external_artifact",
+        "path": "cw32-stage79-acceptance/generation-attempt-001/generated-comparison.json",
+        "sha256": "cbc33c88c7d143e62b6315bc7dc7acfb920c4b7613209351ea578dc6e01f6823"
+      }
+    },
+    "clean_replay": "not_run_at_main_acceptance_requires_separate_final_source_receipt",
+    "hardware_validation": "not_performed"
+  },
+  "policy": {
+    "schema_version": 1,
+    "source_authority": "sources/evidence-sources.json",
+    "evidence": "docs/native-live-factory-lsi-rtc-qualification.json",
+    "envelope_policy": "cw32-data/lsi-sysclk-qualified.yaml",
+    "qualification": {
+      "source": "LSI",
+      "source_encoding": 2,
+      "prescaler_first": 1,
+      "prescaler_second": 16400,
+      "calendar_divisor": 32800,
+      "admission": "live_factory_reuse_only",
+      "source_identity": "independent_of_sysclk",
+      "factory_read_width_bits": 16,
+      "factory_erased_raw_halfword": 65535,
+      "factory_zero_valid": true,
+      "software_lsien_required": true,
+      "stable_required": true,
+      "masked_factory_trim_match_required": true,
+      "oscillator_writes": "forbidden",
+      "rate_only": true,
+      "cycle_timing_qualified": false,
+      "attach_compensation_enabled": false,
+      "initialization_compensation": "all_zero",
+      "initialization": "unset_and_stopped_only",
+      "l010_running_set_datetime": "UnqualifiedWriteTiming",
+      "async_alarm_wait": "UnsupportedAsyncAlarmSource",
+      "rtc_domain_loss": "ClockDomainUnavailable",
+      "domain_loss_cleanup": "suppress_further_key_writes",
+      "source_switch": "verify_source_before_reducing_first_divisor"
+    },
+    "families": {
+      "CW32L010": {
+        "exact_parts": [
+          {
+            "name": "CW32L010F8P6",
+            "package": "TSSOP20"
+          },
+          {
+            "name": "CW32L010F8U6",
+            "package": "QFN20"
+          },
+          {
+            "name": "CW32L010Y8M6",
+            "package": "SOP16"
+          }
+        ],
+        "rtc_version": "cw32l010_v1",
+        "sysctrl_version": "cw32l010_v1",
+        "envelope_pointer": "/families/CW32L010/lsi_sysclk",
+        "trim_bit_size": 10
+      },
+      "CW32L011": {
+        "exact_parts": [
+          {
+            "name": "CW32L011K8T6",
+            "package": "LQFP32"
+          },
+          {
+            "name": "CW32L011K8U6",
+            "package": "QFN32"
+          }
+        ],
+        "rtc_version": "cw32l011_v1",
+        "sysctrl_version": "cw32l011_v1",
+        "envelope_pointer": "/families/CW32L011/lsi_sysclk",
+        "trim_bit_size": 10
+      },
+      "CW32L012": {
+        "exact_parts": [
+          {
+            "name": "CW32L012C8T6",
+            "package": "LQFP48"
+          },
+          {
+            "name": "CW32L012C8U6",
+            "package": "QFN48"
+          }
+        ],
+        "rtc_version": "cw32l012_v1",
+        "sysctrl_version": "cw32l012_v1",
+        "envelope_pointer": "/families/CW32L012/lsi_sysclk",
+        "trim_bit_size": 9
+      }
+    }
+  },
+  "families": {
+    "CW32L010": {
+      "sources": {
+        "rm": {
+          "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+          "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+          "provenance_status": "selected",
+          "pdf_pages_1_based": [
+            54,
+            56,
+            68,
+            69,
+            70,
+            72,
+            140,
+            142,
+            143,
+            145,
+            151,
+            152,
+            153,
+            154,
+            161
+          ],
+          "printed_pages": [
+            53,
+            55,
+            67,
+            68,
+            69,
+            71,
+            139,
+            141,
+            142,
+            144,
+            150,
+            151,
+            152,
+            153,
+            160
+          ],
+          "fact_pages": {
+            "lsi_startup": 54,
+            "factory_calibration": 56,
+            "software_enable_and_requests": [
+              68,
+              69
+            ],
+            "lsi_fields": 72,
+            "division": 140,
+            "initialization": 142,
+            "access": 143,
+            "compensation": 145,
+            "key_start": 151,
+            "source_wait": 152,
+            "awt_source": 153,
+            "prescaler": 154,
+            "compensation_fields": 161,
+            "rtclpm": 70
+          }
+        },
+        "ds": {
+          "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+          "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+          "provenance_status": "selected",
+          "pdf_pages_1_based": [
+            8,
+            32,
+            43
+          ],
+          "printed_pages": [
+            7,
+            31,
+            42
+          ],
+          "fact_pages": {
+            "conditions": 32,
+            "lsi": 43,
+            "parts": 8
+          }
+        },
+        "rtc_header": {
+          "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_rtc.h",
+          "artifact_ref": "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+          "sha256": "c8ce6f4e0c89cad7ddf3963abf69dd1692052a32b18d3f5c54eaf73dedde881e",
+          "role": "corroborating_source_encoding_only"
+        }
+      },
+      "calibration": {
+        "address": 1050562,
+        "read_width_bits": 16,
+        "trim_bit_size": 10,
+        "trim_mask": 1023,
+        "reject_raw_erased_before_mask": true,
+        "zero_valid": true
+      },
+      "source_encoding": {
+        "0": "LSE",
+        "1": "HSE",
+        "2": "LSI",
+        "3": "HSIOSC"
+      },
+      "rate_reference": "cw32-data/lsi-sysclk-qualified.yaml#/families/CW32L010/lsi_sysclk",
+      "calendar_rate_ratio": {
+        "minimum": [
+          31816,
+          32800
+        ],
+        "nominal": [
+          32800,
+          32800
+        ],
+        "maximum": [
+          33784,
+          32800
+        ]
+      },
+      "access": {
+        "stopped": "direct_after_unlock_wait_still_required",
+        "running_timing_registers": [
+          "DATE",
+          "TIME",
+          "AWTARR"
+        ],
+        "running_timing_protocol": "ACCESS_WINDOW_one_second",
+        "running_other_registers": "direct_after_unlock",
+        "access_window_fields": true
+      }
+    },
+    "CW32L011": {
+      "sources": {
+        "rm": {
+          "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+          "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+          "provenance_status": "selected",
+          "pdf_pages_1_based": [
+            52,
+            54,
+            66,
+            67,
+            70,
+            140,
+            142,
+            143,
+            145,
+            151,
+            152,
+            153,
+            154,
+            161
+          ],
+          "printed_pages": [
+            51,
+            53,
+            65,
+            66,
+            69,
+            139,
+            141,
+            142,
+            144,
+            150,
+            151,
+            152,
+            153,
+            160
+          ],
+          "fact_pages": {
+            "lsi_startup": 52,
+            "factory_calibration": 54,
+            "software_enable_and_requests": [
+              66,
+              67
+            ],
+            "lsi_fields": 70,
+            "division": 140,
+            "initialization": 142,
+            "access": 143,
+            "compensation": 145,
+            "key_start": 151,
+            "source_wait": 152,
+            "awt_source": 153,
+            "prescaler": 154,
+            "compensation_fields": 161
+          }
+        },
+        "ds": {
+          "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+          "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+          "provenance_status": "selected",
+          "pdf_pages_1_based": [
+            8,
+            39,
+            51
+          ],
+          "printed_pages": [
+            5,
+            36,
+            48
+          ],
+          "fact_pages": {
+            "conditions": 39,
+            "lsi": 51,
+            "parts": 8
+          }
+        },
+        "rtc_header": {
+          "source_ref": "member:cw32l011/Libraries/inc/cw32l011_rtc.h",
+          "artifact_ref": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+          "sha256": "6aff7c14860f4aa866fa4054ebc1a7fd1d1c008252f3bec14bc4f8c0cf33e1ec",
+          "role": "corroborating_source_encoding_only"
+        }
+      },
+      "calibration": {
+        "address": 1050562,
+        "read_width_bits": 16,
+        "trim_bit_size": 10,
+        "trim_mask": 1023,
+        "reject_raw_erased_before_mask": true,
+        "zero_valid": true
+      },
+      "source_encoding": {
+        "0": "LSE",
+        "1": "HSE",
+        "2": "LSI",
+        "3": "HSIOSC"
+      },
+      "rate_reference": "cw32-data/lsi-sysclk-qualified.yaml#/families/CW32L011/lsi_sysclk",
+      "calendar_rate_ratio": {
+        "minimum": [
+          29520,
+          32800
+        ],
+        "nominal": [
+          32800,
+          32800
+        ],
+        "maximum": [
+          41000,
+          32800
+        ]
+      },
+      "access": {
+        "stopped": "direct_after_unlock_wait_still_required",
+        "running_timing_registers": [
+          "DATE",
+          "TIME",
+          "AWTARR"
+        ],
+        "running_timing_protocol": "WAIT_direct_WAIT",
+        "running_other_registers": "direct_after_unlock",
+        "access_window_fields": false
+      }
+    },
+    "CW32L012": {
+      "sources": {
+        "rm": {
+          "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+          "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+          "provenance_status": "selected",
+          "pdf_pages_1_based": [
+            58,
+            59,
+            71,
+            72,
+            75,
+            191,
+            193,
+            194,
+            196,
+            201,
+            202,
+            203,
+            204,
+            211
+          ],
+          "printed_pages": [
+            32,
+            33,
+            45,
+            46,
+            49,
+            165,
+            167,
+            168,
+            170,
+            175,
+            176,
+            177,
+            178,
+            185
+          ],
+          "fact_pages": {
+            "lsi_startup": 58,
+            "factory_calibration": 59,
+            "software_enable_and_requests": [
+              71,
+              72
+            ],
+            "lsi_fields": 75,
+            "division": 191,
+            "initialization": 193,
+            "access": 194,
+            "compensation": 196,
+            "key_start": 201,
+            "source_wait": 202,
+            "awt_source": 203,
+            "prescaler": 204,
+            "compensation_fields": 211
+          }
+        },
+        "ds": {
+          "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+          "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+          "provenance_status": "selected",
+          "pdf_pages_1_based": [
+            8,
+            47,
+            58
+          ],
+          "printed_pages": [
+            5,
+            44,
+            55
+          ],
+          "fact_pages": {
+            "conditions": 47,
+            "lsi": 58,
+            "parts": 8
+          }
+        },
+        "rtc_header": {
+          "source_ref": "member:cw32l012/Libraries/inc/cw32l012_rtc.h",
+          "artifact_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "sha256": "faf8a50f1ff9b19cda2995ff05d0cfb010fb8203ae45407e7541352f85b9ffeb",
+          "role": "corroborating_source_encoding_only"
+        }
+      },
+      "calibration": {
+        "address": 1050562,
+        "read_width_bits": 16,
+        "trim_bit_size": 9,
+        "trim_mask": 511,
+        "reject_raw_erased_before_mask": true,
+        "zero_valid": true
+      },
+      "source_encoding": {
+        "0": "LSE",
+        "1": "HSE",
+        "2": "LSI",
+        "3": "HSIOSC"
+      },
+      "rate_reference": "cw32-data/lsi-sysclk-qualified.yaml#/families/CW32L012/lsi_sysclk",
+      "calendar_rate_ratio": {
+        "minimum": [
+          29520,
+          32800
+        ],
+        "nominal": [
+          32800,
+          32800
+        ],
+        "maximum": [
+          36080,
+          32800
+        ]
+      },
+      "access": {
+        "stopped": "direct_after_unlock_wait_still_required",
+        "running_timing_registers": [
+          "DATE",
+          "TIME",
+          "AWTARR"
+        ],
+        "running_timing_protocol": "WAIT_direct_WAIT",
+        "running_other_registers": "direct_after_unlock",
+        "access_window_fields": false
+      }
+    }
+  },
+  "known_limits": [
+    "L011 DS factory -10/+25% remains the full 29520..41000 Hz envelope; RM +/-10% warning, 30..36 kHz adjustment range and 0.4% steps conflict with DS 0.16% steps. No arbitrary trim, universal monitor legality or strict-cycle claim.",
+    "L010 running DATE/TIME/AWTARR ACCESS must complete within one second; a finite MMIO poll count or rate-only source bound is not an execution-time proof. New-source running set_datetime refuses before RTC writes. Existing HSIOSC/LSE behavior is outside this change.",
+    "New-source async waiting refuses at first execution before RTC, NVIC, ACTIVE, WAKER or cleanup state. Existing peripheral async metadata is unchanged.",
+    "Domain observations use existing read-only gate/reset predicates. Observed loss suppresses subsequent KEY writes, and partial initialization may remain. No rollback, recovery, guaranteed relock, source-loss interrupt or sleep promise.",
+    "Stopped access still requires WAIT synchronization. SOURCE/PSC changes can affect downstream outputs before START; existing external-recipient conditions remain."
+  ]
+}

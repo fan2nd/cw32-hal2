@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "stage": 79,
+  "review": "independent actual-source and metadata correspondence",
+  "verdict": "accepted_main_source_metadata_correspondence",
+  "blocking_findings": [],
+  "scope": "Main-bound source/metadata acceptance only. Runtime safety has a separate independent reviewer. Clean replay and hardware validation are not established by this receipt.",
+  "source_freeze": {
+    "manifest": {
+      "kind": "external_artifact",
+      "path": "cw32-stage79-acceptance/main-attempt-002/source-before.json"
+    },
+    "sha256": "f81d78abf7bc23143461353460f7414469fa8d9508fb29a9fa215157222dbed0",
+    "source_files": 1341,
+    "before_after_equal": true,
+    "current_all_files_match": true
+  },
+  "reviewed_files": [
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "6eb5aec4674cb4034065145dbcb8d7802da3912db72273c1b5abe9cfb383ddb0"
+    },
+    {
+      "path": "cw32-data-gen/src/rtc.rs",
+      "sha256": "f21c4ca5bd8de1d5950ba5e9bb6934ff0cabdd022b5b90c57cfd8a9a417b9b1e"
+    },
+    {
+      "path": "cw32-data-gen/src/lib.rs",
+      "sha256": "a5bc875bf2e00a1b927bf25c41f7b63d3ecb6fddb81f5529e98c8ee5e62e58cf"
+    },
+    {
+      "path": "cw32-data/rtc-live-lsi-qualified.yaml",
+      "sha256": "7e2b8c490d7060213cec3366032da64ee68df9820ba4156ad6502c976e991a25"
+    },
+    {
+      "path": "cw32-data/tools/verify_native_live_lsi_rtc.py",
+      "sha256": "4639ecf7b51cca7d0b88392a5ec5e08f2796b9423b3cfd45c623f200842bc136"
+    },
+    {
+      "path": "docs/native-live-factory-lsi-rtc-qualification.json",
+      "sha256": "d9dc16e24dc2870bcb67d80e2c86bd1a339d4ea85963291fc06d20d1da1ab44d"
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "sha256": "c7394cb9e4811f89ba500bc48d1c34034fb17687d83d559aa2f16a112a69982c"
+    },
+    {
+      "path": "sources/SOURCES.md",
+      "sha256": "6dace88a5c93cdb1b8d8d243f642551519c856e6a6056ccc607ee9e2a04653ac"
+    }
+  ],
+  "design_inputs": {
+    "metadata_v2_sha256": "dfda3a4461bb73378c0088cd3caacb13d8cdaa3b756b11248df623b4111cb013",
+    "runtime_v3_sha256": "5e9962f9f4f5978e2e72274583f2389c2a1ab81bf2b31a40426d9c6df45d6873"
+  },
+  "checks": [
+    {
+      "id": "own_original_source_identity_and_pages",
+      "status": "pass",
+      "evidence": {
+        "kind": "external_artifact",
+        "path": "cw32-stage79-acceptance/independent-metadata/current-source-review.json"
+      },
+      "conclusion": "Six own PDFs, three SDK archives and three RTC headers match current locks; selected own pages independently reread. Source2, programmable /32800, trim10/10/9, exact7 packages, full family rate envelopes and ACCESS distinctions agree."
+    },
+    {
+      "id": "append_only_source_index",
+      "status": "pass",
+      "conclusion": "Nine existing artifact/member records, eighteen evidence appends, exact-byte reversal to original, installed after identity verified."
+    },
+    {
+      "id": "current_policy_proof_checker",
+      "status": "pass",
+      "conclusion": "Current policy/proof exact facts and own-source binding checked. The checker validates current source originals and all54 inputs, exact family access objects and own SDK member role. No historical default-byte authority, HAL test, model or framework introduced."
+    },
+    {
+      "id": "validation_only_generator",
+      "status": "pass",
+      "conclusion": "validate_native_live_lsi takes an immutable core and runs after lsi::apply. It enforces policy, proof identity, exact name/package/family/IP, raw SOURCE geometry, HSIOSC preservation and the existing independent LSI envelope without adding transported data."
+    },
+    {
+      "id": "separate_hal_capability",
+      "status": "pass",
+      "conclusion": "The build guard admits only the seven exact identities with matching package, own RTC/SYSCTRL metadata, lsi_sysclk and rcc_lse availability, current envelope and field geometry. It emits source2 and divisors1/16400/32800. Generic and other identities cannot gain the cfg from SYSCLK or IP alone."
+    },
+    {
+      "id": "three_models_and_all905",
+      "status": "pass",
+      "conclusion": "Three metadata model files remain byte-identical. Direct independent comparison of current 905 generated paths to the original baseline ZIP gives identical membership and bytes. All54 records retain the exact7/3 generic/44 other boundary and old HSIOSC profiles."
+    },
+    {
+      "id": "actual_main_outdirs",
+      "status": "pass",
+      "evidence": {
+        "kind": "external_artifact",
+        "path": "cw32-stage79-acceptance/independent-metadata/main-outdir-review.json"
+      },
+      "conclusion": "All19 main rows inspected from actual Cargo messages and retained OUT_DIRs. Cfg, source/envelope/divisor constants and old default source data agree. All19 artifact/log/outdir hashes verify. All7 actual memory.x files match current own memory data."
+    },
+    {
+      "id": "finite_eight_source_data_gates",
+      "status": "pass",
+      "conclusion": "The eight approved commands all exit0 with log hashes independently verified. The build-only reference comparison correction does not change their source/data inputs."
+    },
+    {
+      "id": "source_scope",
+      "status": "pass",
+      "conclusion": "Final source manifest has17 changed and5 added production files, no removal, no changed metadata model or HAL test, no new HAL Cargo feature or CI job, and no change to the three existing electrical/LSI/HSIOSC catalogs."
+    }
+  ],
+  "resolved_findings": [
+    {
+      "issue": "Checker did not bind proof.access or exact own SDK header identity/role.",
+      "resolution": "Narrow checker-v2 assertions added and inspected before main data gates.",
+      "final_checker_sha256": "4639ecf7b51cca7d0b88392a5ec5e08f2796b9423b3cfd45c623f200842bc136"
+    },
+    {
+      "issue": "Main attempt001 failed at build.rs:5082 with E0507 from moving non-Copy Access.",
+      "resolution": "Exact single-hunk reference comparison preserves validation semantics; main attempt002 repeats and passes all19 rows.",
+      "patch": {
+        "kind": "external_artifact",
+        "path": "cw32-stage79-acceptance/corrections/noncopy-access/correction.patch"
+      },
+      "patch_sha256": "a1869a9e653621b02f3502a30a37c9190ab46d92bfb4e022050ff5bfc0dc958a"
+    }
+  ],
+  "models": [
+    {
+      "path": "cw32-data-serde/src/lib.rs",
+      "sha256": "d67b3787e3a7bc34d2f38f5eaaa7b1f007f2c801667c50636a242ff3cc3d8628",
+      "unchanged_from_published_baseline": true
+    },
+    {
+      "path": "cw32-metapac-gen/src/data.rs",
+      "sha256": "fee884e43a76ed884c27bf2365e34de94b8da95fd704530c9ead23da14f58746",
+      "unchanged_from_published_baseline": true
+    },
+    {
+      "path": "cw32-metapac-gen/res/src/metadata.rs",
+      "sha256": "1a7bc947aa44e8ba187b810b1af537251759e79e671f527dd12b0d0c8b1f1f6b",
+      "unchanged_from_published_baseline": true
+    }
+  ],
+  "generated": {
+    "paths": 905,
+    "changed": 0,
+    "added": 0,
+    "removed": 0,
+    "allowed_delta": [],
+    "direct_independent_report": {
+      "kind": "external_artifact",
+      "path": "cw32-stage79-acceptance/independent-metadata/generated-data-review.json"
+    }
+  },
+  "qualification_counts": {
+    "all_current_chips": 54,
+    "qualified_exact": 7,
+    "excluded_native_generic": 3,
+    "excluded_other": 44
+  },
+  "main": {
+    "attempt": 2,
+    "library_rows": 12,
+    "linked_elf_rows": 7,
+    "all_exit_codes_zero": true,
+    "source_unchanged": true,
+    "generated_unchanged": true,
+    "actual_outdir_rows_reviewed": 19,
+    "actual_memory_files_reviewed": 7,
+    "warnings": "Only the three generated unused RCC_LSE_SYSCLK_* constants on L010/L011 rows; no new native RTC diagnostic."
+  },
+  "result_bindings": [
+    {
+      "path": "cw32-stage79-acceptance/generation-attempt-001/receipt.json",
+      "sha256": "422b27236bfa12e612f1ccce819cba0e8ad893f7979e9cad6962ffc09ab5d4d1",
+      "kind": "external_artifact"
+    },
+    {
+      "path": "cw32-stage79-acceptance/generation-attempt-001/generated-comparison.json",
+      "sha256": "cbc33c88c7d143e62b6315bc7dc7acfb920c4b7613209351ea578dc6e01f6823",
+      "kind": "external_artifact"
+    },
+    {
+      "path": "cw32-stage79-acceptance/data-gates-attempt-001/results.json",
+      "sha256": "9ec9f4bd3e37b18671fcf4ae6d8e1e18281fa98decb1d5705681b57af1e09a16",
+      "kind": "external_artifact"
+    },
+    {
+      "path": "cw32-stage79-acceptance/data-gates-attempt-001/native-live-lsi-rtc.json",
+      "sha256": "1c2fb590571a30dae7045bf82a1f292e800d3698084fe60ed8a7e0bf8980ac61",
+      "kind": "external_artifact"
+    },
+    {
+      "path": "cw32-stage79-acceptance/main-attempt-002/results.json",
+      "sha256": "25447630bd2d7c7a8e56ba03cda9cf42f7741eb0b9ee2fab05ce8fd8300fe0e2",
+      "kind": "external_artifact"
+    },
+    {
+      "path": "cw32-stage79-acceptance/main-attempt-002/summary.json",
+      "sha256": "ef775fc02fa8bd148c05a660b2085b760eb21c713a8c52059dad4630656cc204",
+      "kind": "external_artifact"
+    },
+    {
+      "path": "cw32-stage79-acceptance/main-attempt-002/source-before.json",
+      "sha256": "f81d78abf7bc23143461353460f7414469fa8d9508fb29a9fa215157222dbed0",
+      "kind": "external_artifact"
+    },
+    {
+      "path": "cw32-stage79-acceptance/main-attempt-002/source-after.json",
+      "sha256": "f81d78abf7bc23143461353460f7414469fa8d9508fb29a9fa215157222dbed0",
+      "kind": "external_artifact"
+    },
+    {
+      "path": "cw32-stage79-acceptance/independent-metadata/current-source-review.json",
+      "sha256": "583ab7d3227516d6346c59cc80784b63aca0620dc4590fecae6e32cef59ca773",
+      "kind": "external_artifact"
+    },
+    {
+      "path": "cw32-stage79-acceptance/independent-metadata/generated-data-review.json",
+      "sha256": "dfbf1c50e19ad3f0e103f21c02b6aef15ff653c89e4475f279498ed18bcc2750",
+      "kind": "external_artifact"
+    },
+    {
+      "path": "cw32-stage79-acceptance/independent-metadata/main-outdir-review.json",
+      "sha256": "3e47ab7a7ddaee66b19e424b89e4df8302084f195e7635dee758fbe5ae5219d0",
+      "kind": "external_artifact"
+    }
+  ],
+  "clean_replay": "not_yet_reviewed",
+  "hardware_validation": "not_performed",
+  "reviewer_execution": "Read-only inspection/hash/byte correspondence and report writing only; no Cargo, generation, gate, test, probe, hardware or source edits by this reviewer."
+}

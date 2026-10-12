@@ -1,0 +1,674 @@
+{
+  "title": "Stage79 independent native live factory-LSI RTC runtime and main-build review",
+  "schema_version": 1,
+  "decision": "accepted_main_runtime_and_12_library_7_elf_matrix",
+  "review_date_utc": "2026-10-12T10:07:25.377521+00:00",
+  "scope": {
+    "parts": [
+      "CW32L010F8P6",
+      "CW32L010F8U6",
+      "CW32L010Y8M6",
+      "CW32L011K8T6",
+      "CW32L011K8U6",
+      "CW32L012C8T6",
+      "CW32L012C8U6"
+    ],
+    "runtime_design_sha256": "5e9962f9f4f5978e2e72274583f2389c2a1ab81bf2b31a40426d9c6df45d6873",
+    "metadata_design_sha256": "dfda3a4461bb73378c0088cd3caacb13d8cdaa3b756b11248df623b4111cb013",
+    "main_source_manifest_sha256": "f81d78abf7bc23143461353460f7414469fa8d9508fb29a9fa215157222dbed0",
+    "runtime_diff_sha256": "478e4e7e8202b7b3c79260960c68b8398e8a5e704f224fd9627654b0d1d16543",
+    "hal_build_rs_sha256": "6eb5aec4674cb4034065145dbcb8d7802da3912db72273c1b5abe9cfb383ddb0",
+    "main_summary_sha256": "ef775fc02fa8bd148c05a660b2085b760eb21c713a8c52059dad4630656cc204"
+  },
+  "evidence_references": [
+    {
+      "external_artifact": "independent-runtime/main-runtime-receipt.json",
+      "sha256": "e599bc148384cf557bf036a9b04bc17cc0abd662a1566c8bece9978fe0fcc6ec",
+      "purpose": "original actual-byte main receipt"
+    },
+    {
+      "external_artifact": "independent-runtime/static-runtime-review.json",
+      "sha256": "e1b1a7c7c229a48d7be21d1450a9613a57736e36d78dcc0cf97f3e333729efc2",
+      "purpose": "original frozen runtime static receipt"
+    },
+    {
+      "external_artifact": "main-attempt-002/source-before.json",
+      "sha256": "f81d78abf7bc23143461353460f7414469fa8d9508fb29a9fa215157222dbed0",
+      "purpose": "1341-file main source freeze"
+    },
+    {
+      "external_artifact": "main-attempt-002/summary.json",
+      "sha256": "ef775fc02fa8bd148c05a660b2085b760eb21c713a8c52059dad4630656cc204",
+      "purpose": "terminal 19-command main result"
+    },
+    {
+      "external_artifact": "runtime-implementation/runtime-implementation.diff",
+      "sha256": "478e4e7e8202b7b3c79260960c68b8398e8a5e704f224fd9627654b0d1d16543",
+      "purpose": "five runtime file baseline diff"
+    },
+    {
+      "external_artifact": "source-navigation-proposal/navigation.patch",
+      "sha256": "e358df6dc6c61b1024dcfc69c29426c6ed3f349ffa7f692dfaf3cbd47e29f316",
+      "purpose": "pure navigation/count update"
+    }
+  ],
+  "reviewed_implementation_files": [
+    {
+      "path": "embassy-cw32/src/rcc/rtc.rs",
+      "group": "runtime",
+      "sha256": "00cbef8a3a2cca6c2376d26392b706b900e3b31315ae086366633fe01f833ead",
+      "bytes": 18571
+    },
+    {
+      "path": "embassy-cw32/src/rcc/mod.rs",
+      "group": "runtime",
+      "sha256": "7070ef0e576384b50e56f9f3845330548ccc70d2252e41609c63bf8e6f3f7dab",
+      "bytes": 6762
+    },
+    {
+      "path": "embassy-cw32/src/rtc/mod.rs",
+      "group": "runtime",
+      "sha256": "cc6a2394cec58d83355d36057dc9f5b4340649e140d6cf850c505aa71a3bb1c9",
+      "bytes": 48839
+    },
+    {
+      "path": "embassy-cw32/src/rtc/alarm.rs",
+      "group": "runtime",
+      "sha256": "53f76c7b3e25e307cd33e396f2a35c346e6a4090dd6b68aea83f23cfcefaf44c",
+      "bytes": 12505
+    },
+    {
+      "path": "embassy-cw32/src/rtc/alarm_interrupt.rs",
+      "group": "runtime",
+      "sha256": "32032429d73e0a5ba441e1e8743aba89111327e84d0f28dd70468c88c92ed8ea",
+      "bytes": 4206
+    },
+    {
+      "path": "examples/rtc-calendar/Cargo.toml",
+      "group": "examples",
+      "sha256": "bae01aa862efd6f6d74faecd3fff49044c7d50c7ce4a220815b6aa64ece7d308",
+      "bytes": 3510
+    },
+    {
+      "path": "examples/rtc-calendar/build.rs",
+      "group": "examples",
+      "sha256": "795def0388be7f2e9f79f1e746e4f0824dadb7f979a93712ceed84faf5760a09",
+      "bytes": 1699
+    },
+    {
+      "path": "examples/rtc-calendar/src/bin/live_lsi_calendar.rs",
+      "group": "examples",
+      "sha256": "2eec5f6e2ae4418ac735321d76b7f4da6c898e0b2dd387b0eeb89ae77393f4bb",
+      "bytes": 1186
+    },
+    {
+      "path": "README.md",
+      "group": "ancillary",
+      "sha256": "a70beff67fd4621acd4bc1ca64133f637a5e1dd57ca06adcb390771f493eb0f4",
+      "bytes": 47827
+    },
+    {
+      "path": "ci/hal-capabilities.yaml",
+      "group": "ancillary",
+      "sha256": "8c1fcada006bbf0b979a80755fa64a2b804fe629a49e26070834e4db2f3ba329",
+      "bytes": 103353
+    },
+    {
+      "path": "docs/functional-coverage.md",
+      "group": "ancillary",
+      "sha256": "0600160551a7ecc93627f6d5b74bcaed54b692f07e8102702735a3de3296e84a",
+      "bytes": 39896
+    },
+    {
+      "path": "docs/native-live-factory-lsi-rtc.md",
+      "group": "ancillary",
+      "sha256": "a908abfef4341647679ea34aa75f77778e875028aabf0d3d4d6451313bf90184",
+      "bytes": 13246
+    },
+    {
+      "path": "embassy-cw32/src/rcc/bounds.rs",
+      "group": "ancillary",
+      "sha256": "255c7e4febce938658701dceb0e17a1a468f2d5ab424feec2986baa6bbbafbcd",
+      "bytes": 13967
+    },
+    {
+      "path": "examples/rtc-calendar/README.md",
+      "group": "ancillary",
+      "sha256": "48dc00ee5717a6121d8983b6395649d6433220a2e9835e5deb4def00b14c6172",
+      "bytes": 4810
+    }
+  ],
+  "static_findings": [
+    {
+      "name": "read_only_native_lease",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rcc/rtc.rs"
+      ],
+      "finding": "NotInitialized precedes acquisition; own halfword u16 max rejects; local typed setter normalizes; one critical section reads CR1, LSI, LSI, CR1; calibration errors precede enable/readiness errors; no writes or poll loop."
+    },
+    {
+      "name": "repeated_readiness",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rcc/rtc.rs"
+      ],
+      "finding": "Every native Lsi is_ready call repeats the same factory comparison and four hardware samples; retained source loss maps through existing ClockNotReady."
+    },
+    {
+      "name": "ownership_and_api",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rcc/rtc.rs",
+        "embassy-cw32/src/rcc/mod.rs"
+      ],
+      "finding": "Unique Peri<SYSCTRL>, no clone or drop mutation; native one-argument constructor, unchanged native default HSIOSC and classic two-argument constructor; cfg-qualified enum arm and conversion."
+    },
+    {
+      "name": "rate_only_fraction",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rcc/rtc.rs",
+        "embassy-cw32/src/rcc/bounds.rs"
+      ],
+      "finding": "Uses shared RCC_LSI constants and ClockBounds::lsi, not HSI Instance constants or selected SYSCLK; /32800 retains rate_only; strict duration guards and arithmetic unchanged."
+    },
+    {
+      "name": "domain_helper_and_old_zero_mmio",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/mod.rs"
+      ],
+      "finding": "Reads existing RccInfo is_enabled then reset_asserted only when concrete native_lsi=true; false returns immediately. Gate acknowledgement behavior is unchanged."
+    },
+    {
+      "name": "attach_and_identity",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/mod.rs"
+      ],
+      "finding": "After gate enable, concrete source/access observations are guarded; SOURCE2, exact 1/16400 pair and disabled compensation are required; alternate pair cannot pass. Attach has no KEY, reset, source, flag or calendar mutation."
+    },
+    {
+      "name": "unset_and_start",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/mod.rs"
+      ],
+      "finding": "L010 independently guards START and CR0/CR2/COMP/IER samples; moves sole DATE observation after ACCESS-free and WAIT. L011/L012 guard both controls/ISR observations around WAIT. H24 write uses fresh zero control, preserving START=0 until final explicit START."
+    },
+    {
+      "name": "source_before_divisor",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/mod.rs"
+      ],
+      "finding": "Incoming PSC read bracketed before staged_first calculation; staged first uses widened u16 and max; staged PSC acknowledged, source readiness resampled, SOURCE2 written and acknowledged before final divisors. Persistent available-domain SOURCE0 yields WriteFailure without final PSC/H24/DATE/TIME/START."
+    },
+    {
+      "name": "poll_error_precedence",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/mod.rs"
+      ],
+      "finding": "Each new-source poll captures guard failure and stops via true sentinel, then performs final domain check and prioritizes retained error before original result; no sentinel may acknowledge a write."
+    },
+    {
+      "name": "guarded_calendar_operations",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/mod.rs"
+      ],
+      "finding": "START and repeated snapshots are bracketed; WAIT guarded; repeated snapshot guard lies in original critical section and precedes decode; exhausted retries recheck domain. DATE/TIME writes each bracketed; WAIT and pair readbacks guarded."
+    },
+    {
+      "name": "l010_write_refusal",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/mod.rs"
+      ],
+      "finding": "After existing read-only check_clock, check_write_mode and check_access_free, native L010 returns UnqualifiedWriteTiming before wait_load, KEY, ACCESS, DATE or TIME."
+    },
+    {
+      "name": "direct_correction",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/mod.rs"
+      ],
+      "finding": "L011/L012 retain stop/WAIT/write/restart, guard saved format and each control write/readback, and return through explicit cleanup. No ACCESS/WINDOW use is introduced."
+    },
+    {
+      "name": "synchronous_alarms",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/alarm.rs"
+      ],
+      "finding": "Permission/format/status tuples guard before interpretation; ALARMA, CR2 and ICR writes guard before/after; existing readbacks guard. CR2 update uses guarded saved typed value. Four fixed operations use guarded unlock/explicit finish in original critical section."
+    },
+    {
+      "name": "unlock_and_all_failure_cleanup",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/mod.rs",
+        "embassy-cw32/src/rtc/alarm.rs"
+      ],
+      "finding": "Constructor checks before both original KEY writes and after second; failures create no guard. All three normal native scopes capture result, suppress relock on domain error, otherwise finish explicitly. Finish suppresses Drop before checks and prioritizes cleanup domain failure. Fallback Drop stops remaining writes after observed loss; old false flags keep exact old writes and zero new status reads."
+    },
+    {
+      "name": "async_and_forgotten_guard",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rtc/alarm_interrupt.rs"
+      ],
+      "finding": "Only diff is leading four-line cfg-qualified refusal. New source installs no wait state. Old setup, ACTIVE/WAKER, ISR, pending poll, Unlocked calls and WaitGuard Drop are byte-identical; forgotten old guard behavior is preserved, not repaired or upgraded."
+    },
+    {
+      "name": "legacy_compatibility",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "embassy-cw32/src/rcc/rtc.rs",
+        "embassy-cw32/src/rcc/mod.rs",
+        "embassy-cw32/src/rtc/mod.rs",
+        "embassy-cw32/src/rtc/alarm.rs",
+        "embassy-cw32/src/rtc/alarm_interrupt.rs"
+      ],
+      "finding": "Old HSI/LSE/classic branches retain register operation order; added false domain calls do no MMIO. Baseline native HSI constructor, classic constructor, LSE implementation, default aliases and bounds functional bytes preserved. Public enum shape change is explicitly documented."
+    },
+    {
+      "name": "ordinary_example",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "examples/rtc-calendar/Cargo.toml",
+        "examples/rtc-calendar/build.rs",
+        "examples/rtc-calendar/src/bin/live_lsi_calendar.rs"
+      ],
+      "finding": "Feature/bin are bounded to exact seven; hsi marker retained. Default HSI init, read-only LSI lease, explicit stopped-unset date and black_box(now,bounds) loop; no peripheral extras, oscillator mutation, async, strict duration calls or hardware claim."
+    },
+    {
+      "name": "public_scope",
+      "status": "pass_static_inspection",
+      "source_paths": [
+        "README.md",
+        "ci/hal-capabilities.yaml",
+        "docs/functional-coverage.md",
+        "docs/native-live-factory-lsi-rtc.md",
+        "embassy-cw32/src/rcc/bounds.rs",
+        "examples/rtc-calendar/README.md",
+        "sources/SOURCES.md"
+      ],
+      "finding": "Installed ancillary text matches the design boundary. Its build and clean status was pending in the main build source freeze. Actual main evidence is accepted by this receipt; the separate final-source clean replay remains pending. Hardware remains unverified."
+    }
+  ],
+  "main_evidence": {
+    "command_count": 19,
+    "library_count": 12,
+    "elf_count": 7,
+    "all_exit_codes_zero": true,
+    "target": "thumbv6m-none-eabi",
+    "offline_locked_no_default_features": true,
+    "source_files_independently_rehashed": 1341,
+    "source_before_after_identical": true,
+    "generated_files_before_after_identical": 905,
+    "toolchain_before_after_identical": true,
+    "retained_log_files_rehashed": 38,
+    "retained_out_dir_files_rehashed": 74,
+    "artifacts_matched_to_cargo_messages": true,
+    "rlib_arm_relocatable_members_verified": true,
+    "elf_thumb_entry_vectors_flash_ram_segments_verified": true,
+    "native_cfg_exact7_only_in_reviewed_matrix": true,
+    "four_rtc_constants_exact7_only": true,
+    "own_lsi_envelope_constants_verified": true,
+    "native_hsi_default_and_classic_divisor_facts_preserved": true,
+    "rows": [
+      {
+        "row": 1,
+        "kind": "rlib",
+        "part": "cw32l010f8p6",
+        "bin": null,
+        "features": "cw32l010f8p6,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "01-cw32l010f8p6-lib/libembassy_cw32.rlib",
+          "bytes": 4381076,
+          "sha256": "6c890d53f0f5df7b526152a7d41737fa700c0d3df1f4a1eb71a3158ef590b8e3"
+        },
+        "warnings": 3
+      },
+      {
+        "row": 2,
+        "kind": "rlib",
+        "part": "cw32l010f8u6",
+        "bin": null,
+        "features": "cw32l010f8u6,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "02-cw32l010f8u6-lib/libembassy_cw32.rlib",
+          "bytes": 4381130,
+          "sha256": "6fa893ae8daad95406229046303a22aee848f8c15722cfc5875ab4ac20affdeb"
+        },
+        "warnings": 3
+      },
+      {
+        "row": 3,
+        "kind": "rlib",
+        "part": "cw32l010y8m6",
+        "bin": null,
+        "features": "cw32l010y8m6,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "03-cw32l010y8m6-lib/libembassy_cw32.rlib",
+          "bytes": 4328376,
+          "sha256": "f82fd7d0f23a46aa48bc44ff8b94ea0a455d42b078c38e8ea30185edfce1c1e6"
+        },
+        "warnings": 3
+      },
+      {
+        "row": 4,
+        "kind": "rlib",
+        "part": "cw32l011k8t6",
+        "bin": null,
+        "features": "cw32l011k8t6,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "04-cw32l011k8t6-lib/libembassy_cw32.rlib",
+          "bytes": 4499614,
+          "sha256": "c36086eed353dd7c50ab7a03b9a06976c3c0a0861682c0728f79dee9db8d2966"
+        },
+        "warnings": 3
+      },
+      {
+        "row": 5,
+        "kind": "rlib",
+        "part": "cw32l011k8u6",
+        "bin": null,
+        "features": "cw32l011k8u6,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "05-cw32l011k8u6-lib/libembassy_cw32.rlib",
+          "bytes": 4499746,
+          "sha256": "3f28e77b5f251b3d35dab637624ddd7beaeccdea74adc2f376ae4fc86a615cd9"
+        },
+        "warnings": 3
+      },
+      {
+        "row": 6,
+        "kind": "rlib",
+        "part": "cw32l012c8t6",
+        "bin": null,
+        "features": "cw32l012c8t6,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "06-cw32l012c8t6-lib/libembassy_cw32.rlib",
+          "bytes": 5571854,
+          "sha256": "52fa3f4ff2d961b7718bb8cbe75a222b7c13e12b0153666198285c08464db6fd"
+        },
+        "warnings": 0
+      },
+      {
+        "row": 7,
+        "kind": "rlib",
+        "part": "cw32l012c8u6",
+        "bin": null,
+        "features": "cw32l012c8u6,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "07-cw32l012c8u6-lib/libembassy_cw32.rlib",
+          "bytes": 5570332,
+          "sha256": "3f62cf4cbb8fecf0613feb5472aa469175f726a16281ce7c76b480fb5b713caf"
+        },
+        "warnings": 0
+      },
+      {
+        "row": 8,
+        "kind": "rlib",
+        "part": "cw32l011k8t6",
+        "bin": null,
+        "features": "cw32l011k8t6,rt,defmt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "08-cw32l011k8t6-lib/libembassy_cw32.rlib",
+          "bytes": 9912574,
+          "sha256": "6f45ae78b926a137c5a48b4a9e9dc4b710f6cfe3e25473a6fe1229ed0d47b897"
+        },
+        "warnings": 3
+      },
+      {
+        "row": 9,
+        "kind": "rlib",
+        "part": "cw32l010",
+        "bin": null,
+        "features": "cw32l010,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "09-cw32l010-lib/libembassy_cw32.rlib",
+          "bytes": 4057354,
+          "sha256": "159e795b6a8aad9810b6a6cc69ac21f676c2ef5c2c1152892fb3303349827521"
+        },
+        "warnings": 0
+      },
+      {
+        "row": 10,
+        "kind": "rlib",
+        "part": "cw32l011",
+        "bin": null,
+        "features": "cw32l011,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "10-cw32l011-lib/libembassy_cw32.rlib",
+          "bytes": 4231430,
+          "sha256": "08c9df6650d63391f4b073490cbf59a97eb16f0bfd9102361cba0baaba8878cd"
+        },
+        "warnings": 0
+      },
+      {
+        "row": 11,
+        "kind": "rlib",
+        "part": "cw32l012",
+        "bin": null,
+        "features": "cw32l012,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "11-cw32l012-lib/libembassy_cw32.rlib",
+          "bytes": 5228740,
+          "sha256": "c2c9e9b4aea6af84a7e6f2b4e763681603fae516ea10a14cc06aa31fdad0184c"
+        },
+        "warnings": 0
+      },
+      {
+        "row": 12,
+        "kind": "rlib",
+        "part": "cw32f030c8t7",
+        "bin": null,
+        "features": "cw32f030c8t7,rt",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "12-cw32f030c8t7-lib/libembassy_cw32.rlib",
+          "bytes": 5169256,
+          "sha256": "31f76b3b747bfa7a67a7e567c75dbe9e0f4e8e83cf59f6b799f6b80fe597da2c"
+        },
+        "warnings": 0
+      },
+      {
+        "row": 13,
+        "kind": "elf",
+        "part": "cw32l010f8p6",
+        "bin": "live_lsi_calendar",
+        "features": "cw32l010f8p6,native-lsi-source",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "13-cw32l010f8p6-live_lsi_calendar/firmware.elf",
+          "bytes": 211896,
+          "sha256": "eb1a89696b6ab781eb34eb1a1da3f7a8832b4413e6e676ccd8f98ef61a3cefcb"
+        },
+        "warnings": 3
+      },
+      {
+        "row": 14,
+        "kind": "elf",
+        "part": "cw32l011k8t6",
+        "bin": "live_lsi_calendar",
+        "features": "cw32l011k8t6,native-lsi-source",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "14-cw32l011k8t6-live_lsi_calendar/firmware.elf",
+          "bytes": 212680,
+          "sha256": "ca80cf20a1dfae5b8921300950e1a0c73cec817ad9412aa944e943a8f338d370"
+        },
+        "warnings": 3
+      },
+      {
+        "row": 15,
+        "kind": "elf",
+        "part": "cw32l012c8t6",
+        "bin": "live_lsi_calendar",
+        "features": "cw32l012c8t6,native-lsi-source",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "15-cw32l012c8t6-live_lsi_calendar/firmware.elf",
+          "bytes": 217184,
+          "sha256": "9bf9d3134d25bc31c89433cc144294fbcbc7602a757ba5dc0e61ec4dfd245734"
+        },
+        "warnings": 0
+      },
+      {
+        "row": 16,
+        "kind": "elf",
+        "part": "cw32l010f8p6",
+        "bin": "hsi_calendar",
+        "features": "cw32l010f8p6",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "16-cw32l010f8p6-hsi_calendar/firmware.elf",
+          "bytes": 211712,
+          "sha256": "ccb53ad8147105c86b822927025b28d3350c92ee7cf06a9de5d1cbbccf0a214a"
+        },
+        "warnings": 3
+      },
+      {
+        "row": 17,
+        "kind": "elf",
+        "part": "cw32l011k8t6",
+        "bin": "hsi_calendar",
+        "features": "cw32l011k8t6",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "17-cw32l011k8t6-hsi_calendar/firmware.elf",
+          "bytes": 212692,
+          "sha256": "852e382969eb5d49376115c8f7e4bbc2d00edb513da5ab60f6a1e7b1678545ad"
+        },
+        "warnings": 3
+      },
+      {
+        "row": 18,
+        "kind": "elf",
+        "part": "cw32l012c8t6",
+        "bin": "hsi_calendar",
+        "features": "cw32l012c8t6",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "18-cw32l012c8t6-hsi_calendar/firmware.elf",
+          "bytes": 217196,
+          "sha256": "df6f3e689e1e8e383fb6333c71e9e20ca02ec6243cf42fa9eef15b2376bdb4f7"
+        },
+        "warnings": 0
+      },
+      {
+        "row": 19,
+        "kind": "elf",
+        "part": "cw32f030c8t7",
+        "bin": "preserve_calendar",
+        "features": "cw32f030c8t7",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "19-cw32f030c8t7-preserve_calendar/firmware.elf",
+          "bytes": 210224,
+          "sha256": "59b0318b26851c81a41a6ec82fbd4f98eb8186430fbaaf6837c53676da26dfcf"
+        },
+        "warnings": 0
+      }
+    ],
+    "artifact_detail": "Complete per-artifact ARM archive members and ELF segment/vector geometry are retained in the hash-bound external original main receipt."
+  },
+  "warnings": {
+    "rows_with_warnings": 10,
+    "warnings_per_affected_row": 3,
+    "messages": [
+      "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+      "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+      "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+    ],
+    "warning_free_claim": false
+  },
+  "prior_failed_attempt": {
+    "external_artifact": "main-attempt-001",
+    "exit_code": 101,
+    "successful_runtime_artifacts": 0,
+    "cause": "Build-script E0507 from moving a non-Copy ir::Access value through a shared reference.",
+    "correction": "Reference-comparison-only build.rs correction. The five runtime source hashes did not change.",
+    "retained_as_failure": true
+  },
+  "source_scope": {
+    "delta_from_previous_published_source": {
+      "added": [
+        "cw32-data/rtc-live-lsi-qualified.yaml",
+        "cw32-data/tools/verify_native_live_lsi_rtc.py",
+        "docs/native-live-factory-lsi-rtc-qualification.json",
+        "docs/native-live-factory-lsi-rtc.md",
+        "examples/rtc-calendar/src/bin/live_lsi_calendar.rs"
+      ],
+      "removed": [],
+      "changed": [
+        "README.md",
+        "ci/hal-capabilities.yaml",
+        "cw32-data-gen/src/lib.rs",
+        "cw32-data-gen/src/rtc.rs",
+        "docs/functional-coverage.md",
+        "embassy-cw32/build.rs",
+        "embassy-cw32/src/rcc/bounds.rs",
+        "embassy-cw32/src/rcc/mod.rs",
+        "embassy-cw32/src/rcc/rtc.rs",
+        "embassy-cw32/src/rtc/alarm.rs",
+        "embassy-cw32/src/rtc/alarm_interrupt.rs",
+        "embassy-cw32/src/rtc/mod.rs",
+        "examples/rtc-calendar/Cargo.toml",
+        "examples/rtc-calendar/README.md",
+        "examples/rtc-calendar/build.rs",
+        "sources/SOURCES.md",
+        "sources/evidence-sources.json"
+      ]
+    },
+    "source_navigation": {
+      "path": "sources/SOURCES.md",
+      "sha256": "6dace88a5c93cdb1b8d8d243f642551519c856e6a6056ccc607ee9e2a04653ac",
+      "reviewed_as": "pure current-source documentation and navigation",
+      "authored_yaml_count": 297,
+      "register_yaml_count": 137,
+      "other_yaml_count": 160,
+      "direct_count": 286,
+      "indirect_count": 11
+    }
+  },
+  "limitations": [
+    "The separate final-source clean replay is pending and is not included in this main acceptance.",
+    "No hardware was executed or validated. Build/link results do not demonstrate RTC operation, timing, oscillator accuracy or board qualification.",
+    "Finite readiness and domain samples do not establish continuous health, elapsed-time progression, arbitrary bus-corruption safety, domain recovery or rollback.",
+    "L010 new-source set_datetime and all new-source async waits remain explicitly refused. Ordinary-POR LSI startup and low-power retention/wake are outside this capability.",
+    "Own source/page and generated-data qualification has a separate independent metadata review."
+  ],
+  "review_method": {
+    "source_and_baseline_diff_inspected": true,
+    "actual_artifact_and_log_bytes_inspected": true,
+    "read_only_artifact_archive_elf_parsing": true,
+    "reviewer_ran_cargo": false,
+    "reviewer_ran_generation": false,
+    "reviewer_ran_hal_tests_probes_or_register_models": false,
+    "production_files_edited_by_reviewer": false
+  },
+  "publication_review": {
+    "self_contained_static_findings": 18,
+    "original_external_receipt_hash_preserved": true,
+    "machine_absolute_paths_removed": true,
+    "engineering_relative_paths_only": true,
+    "reviewer_approved_exact_public_bytes": true
+  }
+}

@@ -1,6 +1,8 @@
 //! Owned blocking whole-second calendars for all eleven RTC-bearing families.
 //!
-//! L010/L011/L012 select frozen HSIOSC or an owned, qualified LSE.
+//! L010/L011/L012 select frozen HSIOSC or an owned, qualified LSE. Exactly
+//! qualified packages also admit a live factory-LSI source independent of SYSCLK,
+//! with fixed /32800 division and rate-only bounds. Acquisition never starts LSI.
 //! Prescalers and tick bounds follow the actual held source. The eight
 //! classic families support a verified factory-trim LSI capability; its
 //! nominal rate is 32800/32768 calendar ticks per SI second, with the own RC
@@ -17,7 +19,9 @@
 //! owner's explicitly requested scope. These roots are not all runtime-checked;
 //! owning the RTC and oscillator pads alone does not own other timer or output
 //! recipients. This functional limit adds no safe-Rust memory-safety obligation.
-//! Weekly Alarm A and A/B event flags are supported; run-mode async waits are limited to L010/L011/L012.
+//! Weekly Alarm A and A/B event flags are supported; run-mode async waits are
+//! limited to HSIOSC/LSE on L010/L011/L012. Native LSI refuses async waiting and
+//! L010 running calendar writes; stopped-unset initialization remains supported.
 //! No compensation, subseconds, low-power or battery guarantee.
 //! Sources and unsupported boundaries: docs/rtc-remaining-evidence.json.
 mod alarm;
@@ -72,6 +76,10 @@ pub enum RtcError {
     /// A retained peripheral interrupt is already enabled; it is left untouched.
     InterruptInUse,
     ClockGateTimeout,
+    /// The new native-LSI RTC domain was observed gated or held in reset.
+    /// Hardware may remain unlocked or partially configured; no repair occurs.
+    ClockDomainUnavailable,
+    /// The held source lost readiness, including native LSI factory-trim compatibility.
     ClockNotReady,
     IncompatibleClock,
     /// L010 RTCLPM prevents synchronized writes. It is never changed here.
@@ -81,6 +89,10 @@ pub enum RtcError {
     AlreadyConfigured,
     /// Another ACCESS transaction was already active; it is left untouched.
     AccessInUse,
+    /// L010 native-LSI calendar writes lack a qualified one-second ACCESS bound.
+    UnqualifiedWriteTiming,
+    /// Native live-LSI supports synchronous alarm operations only.
+    UnsupportedAsyncAlarmSource,
     SynchronizationTimeout,
     ReadFailure,
     WriteFailure,
@@ -128,6 +140,8 @@ impl<'d> Rtc<'d> {
         let clock = clock.into();
         let config = config.validate()?;
         enable_gate(config)?;
+        #[cfg(rtc_native_live_lsi)]
+        check_native_lsi_rtc_domain(matches!(&clock, CalendarClock::Lsi(_)))?;
         check_clock(&clock)?;
         read_calendar(&clock, config)?;
         check_clock(&clock)?;
@@ -142,6 +156,9 @@ impl<'d> Rtc<'d> {
     /// Existing compensation/event/interrupt configuration causes an error.
     /// L011/L012 also reject pending event flags and drain WAIT before reading
     /// DATE; retained flags are never cleared to manufacture an unset calendar.
+    /// Native LSI on L010 also drains WAIT before DATE, and verifies SOURCE=2
+    /// before lowering its first prescaler. Native LSI must already be live at
+    /// factory trim; initialization never starts or calibrates that oscillator.
     /// Inactive alarm matches and AWT reload are preserved. Source and format
     /// are configured without peripheral reset or clearing flags. Failure can
     /// leave partial configuration; use borrowed tokens if retry is required.
@@ -175,6 +192,122 @@ impl<'d> Rtc<'d> {
         let clock = clock.into();
         let config = config.validate()?;
         enable_gate(config)?;
+        #[cfg(rtc_native_live_lsi)]
+        if matches!(&clock, CalendarClock::Lsi(_)) {
+            check_native_lsi_rtc_domain(true)?;
+            let ready = clock.is_ready();
+            check_native_lsi_rtc_domain(true)?;
+            if !ready {
+                return Err(RtcError::ClockNotReady);
+            }
+            check_write_mode()?;
+            #[cfg(any(rtc_cw32l011_v1, rtc_cw32l012_v1))]
+            {
+                check_native_unset_controls(true)?;
+                wait_load(config, true)?;
+                check_native_lsi_rtc_domain(true)?;
+                let ready = clock.is_ready();
+                check_native_lsi_rtc_domain(true)?;
+                if !ready {
+                    return Err(RtcError::ClockNotReady);
+                }
+                check_native_unset_controls(true)?;
+            }
+            #[cfg(rtc_cw32l010_v1)]
+            {
+                check_native_lsi_rtc_domain(true)?;
+                let running = pac::RTC.cr0().read().start();
+                check_native_lsi_rtc_domain(true)?;
+                if running {
+                    return Err(RtcError::AlreadyRunning);
+                }
+                check_native_lsi_rtc_domain(true)?;
+                let (mut controls, cr2, compensation, ier) = (
+                    pac::RTC.cr0().read(),
+                    pac::RTC.cr2().read(),
+                    compensation(),
+                    pac::RTC.ier().read(),
+                );
+                check_native_lsi_rtc_domain(true)?;
+                controls.set_h24(false);
+                if controls.0 != 0 || cr2.0 != 0 || compensation != 0 || ier.0 != 0 {
+                    return Err(RtcError::AlreadyConfigured);
+                }
+                check_access_free(true)?;
+                wait_load(config, true)?;
+                check_native_lsi_rtc_domain(true)?;
+                let ready = clock.is_ready();
+                check_native_lsi_rtc_domain(true)?;
+                if !ready {
+                    return Err(RtcError::ClockNotReady);
+                }
+            }
+            // All three own WAIT protocols exclude DATE during an active load,
+            // including L010 while stopped and therefore outside ACCESS.
+            check_native_lsi_rtc_domain(true)?;
+            let date = pac::RTC.date().read();
+            check_native_lsi_rtc_domain(true)?;
+            if date.0 != 0 {
+                return Err(RtcError::AlreadyConfigured);
+            }
+            let mut guard = Unlocked::new_native_lsi()?;
+            let result = (|| {
+                initialize_native_source(&clock, config)?;
+                check_native_lsi_rtc_domain(true)?;
+                pac::RTC.cr0().write(|w| w.set_h24(true));
+                check_native_lsi_rtc_domain(true)?;
+                check_clock(&clock)?;
+                check_native_lsi_rtc_domain(true)?;
+                let h24 = pac::RTC.cr0().read().h24();
+                check_native_lsi_rtc_domain(true)?;
+                if !h24 {
+                    return Err(RtcError::WriteFailure);
+                }
+                write_stopped(&clock, config, datetime, true)?;
+                check_native_lsi_rtc_domain(true)?;
+                let mut control = pac::RTC.cr0().read();
+                check_native_lsi_rtc_domain(true)?;
+                control.set_start(true);
+                check_native_lsi_rtc_domain(true)?;
+                pac::RTC.cr0().write_value(control);
+                check_native_lsi_rtc_domain(true)?;
+                let mut domain_error = None;
+                let result = poll(
+                    config.timeout,
+                    || {
+                        if let Err(error) = check_native_lsi_rtc_domain(true) {
+                            domain_error = Some(error);
+                            return true;
+                        }
+                        let running = pac::RTC.cr0().read().start();
+                        if let Err(error) = check_native_lsi_rtc_domain(true) {
+                            domain_error = Some(error);
+                            return true;
+                        }
+                        running
+                    },
+                    RtcError::WriteFailure,
+                );
+                let final_domain = check_native_lsi_rtc_domain(true);
+                if let Some(error) = domain_error {
+                    return Err(error);
+                }
+                final_domain?;
+                result
+            })();
+            if matches!(result, Err(RtcError::ClockDomainUnavailable)) {
+                guard.suppress_relock = true;
+                return Err(RtcError::ClockDomainUnavailable);
+            }
+            guard.finish_native_lsi()?;
+            result?;
+            check_clock(&clock)?;
+            return Ok(Self {
+                _rtc: rtc,
+                clock,
+                config,
+            });
+        }
         if !clock.is_ready() {
             return Err(RtcError::ClockNotReady);
         }
@@ -183,12 +316,12 @@ impl<'d> Rtc<'d> {
         {
             // Own WAIT protocol excludes DATE/TIME/AWTARR access during load.
             // Read controls first, then inspect DATE only after synchronization.
-            check_native_unset_controls()?;
-            wait_load(config)?;
+            check_native_unset_controls(false)?;
+            wait_load(config, false)?;
             if !clock.is_ready() {
                 return Err(RtcError::ClockNotReady);
             }
-            check_native_unset_controls()?;
+            check_native_unset_controls(false)?;
             if pac::RTC.date().read().0 != 0 {
                 return Err(RtcError::AlreadyConfigured);
             }
@@ -208,8 +341,8 @@ impl<'d> Rtc<'d> {
             {
                 return Err(RtcError::AlreadyConfigured);
             }
-            check_access_free()?;
-            wait_load(config)?;
+            check_access_free(false)?;
+            wait_load(config, false)?;
             if !clock.is_ready() {
                 return Err(RtcError::ClockNotReady);
             }
@@ -262,6 +395,7 @@ impl<'d> Rtc<'d> {
     /// F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6,
     /// CW32W031R8U6, CW32L052C8T6/R8S6/R8T6 or CW32L083RBT6/RCT6/RCS6/MCT6/VCT6
     /// factory-LSI bounds qualify rate only under every SYSCLK.
+    /// The exact native live-LSI packages have the same rate-only limitation.
     pub const fn source_clock_bounds(&self) -> ClockBounds {
         self.clock.bounds()
     }
@@ -271,6 +405,9 @@ impl<'d> Rtc<'d> {
     /// CW32W031R8U6, CW32L052C8T6/R8S6/R8T6 or CW32L083RBT6/RCT6/RCS6/MCT6/VCT6
     /// factory-LSI bounds remain rate-only after division under every SYSCLK;
     /// check `has_cycle_timing_bounds()` before using strict duration methods.
+    /// Native live-LSI uses /32800 for nominal 1 Hz, retaining its own fractional
+    /// rate envelope. Whole-Hz endpoints round outward to 0 and 2; these are not
+    /// individual-period bounds and strict duration methods remain unavailable.
     pub const fn calendar_tick_bounds(&self) -> ClockBounds {
         self.clock
             .bounds()
@@ -282,14 +419,108 @@ impl<'d> Rtc<'d> {
     /// DATE/TIME are written and read back in a fixed-size critical section.
     /// L011/L012 explicitly stop START, drain WAIT and verify both writes before
     /// restarting; an error can leave them stopped. TIME clears subseconds.
-    /// ACCESS and write protection are restored on every exit. No failure is
-    /// rolled back, and event timing can change. Debugger/NMI stalls are outside
+    /// L010 native live-LSI returns `UnqualifiedWriteTiming` before unlock or
+    /// ACCESS; its running transaction lacks a reviewed execution-duration proof.
+    /// Native LSI checks its gate/reset domain around direct operations and
+    /// explicit relocking. Observed loss returns `ClockDomainUnavailable` and
+    /// can leave hardware unlocked or partially written. Other sources retain
+    /// their existing ACCESS and write-protection cleanup. No failure is rolled
+    /// back, and event timing can change. Debugger/NMI stalls are outside
     /// the documented one-second transaction bound; do not single-step a write.
     pub fn set_datetime(&mut self, datetime: DateTime) -> Result<(), RtcError> {
         check_clock(&self.clock)?;
         check_write_mode()?;
-        check_access_free()?;
-        wait_load(self.config)?;
+        #[cfg(rtc_native_live_lsi)]
+        let native_lsi = matches!(&self.clock, CalendarClock::Lsi(_));
+        #[cfg(not(rtc_native_live_lsi))]
+        let native_lsi = false;
+        check_access_free(native_lsi)?;
+        #[cfg(all(rtc_cw32l010_v1, rtc_native_live_lsi))]
+        if native_lsi {
+            return Err(RtcError::UnqualifiedWriteTiming);
+        }
+        #[cfg(all(any(rtc_cw32l011_v1, rtc_cw32l012_v1), rtc_native_live_lsi))]
+        if native_lsi {
+            wait_load(self.config, true)?;
+            check_clock(&self.clock)?;
+            let mut guard = Unlocked::new_native_lsi()?;
+            let result = (|| {
+                check_native_lsi_rtc_domain(true)?;
+                let old = pac::RTC.cr0().read();
+                check_native_lsi_rtc_domain(true)?;
+                check_native_lsi_rtc_domain(true)?;
+                let mut control = pac::RTC.cr0().read();
+                check_native_lsi_rtc_domain(true)?;
+                control.set_start(false);
+                check_native_lsi_rtc_domain(true)?;
+                pac::RTC.cr0().write_value(control);
+                check_native_lsi_rtc_domain(true)?;
+                let mut domain_error = None;
+                let result = poll(
+                    self.config.timeout,
+                    || {
+                        if let Err(error) = check_native_lsi_rtc_domain(true) {
+                            domain_error = Some(error);
+                            return true;
+                        }
+                        let running = pac::RTC.cr0().read().start();
+                        if let Err(error) = check_native_lsi_rtc_domain(true) {
+                            domain_error = Some(error);
+                            return true;
+                        }
+                        !running
+                    },
+                    RtcError::WriteFailure,
+                );
+                let final_domain = check_native_lsi_rtc_domain(true);
+                if let Some(error) = domain_error {
+                    return Err(error);
+                }
+                final_domain?;
+                result?;
+                wait_load(self.config, true)?;
+                check_clock(&self.clock)?;
+                write_stopped(&self.clock, self.config, datetime, old.h24())?;
+                check_native_lsi_rtc_domain(true)?;
+                let mut control = pac::RTC.cr0().read();
+                check_native_lsi_rtc_domain(true)?;
+                control.set_start(true);
+                check_native_lsi_rtc_domain(true)?;
+                pac::RTC.cr0().write_value(control);
+                check_native_lsi_rtc_domain(true)?;
+                let mut domain_error = None;
+                let result = poll(
+                    self.config.timeout,
+                    || {
+                        if let Err(error) = check_native_lsi_rtc_domain(true) {
+                            domain_error = Some(error);
+                            return true;
+                        }
+                        let running = pac::RTC.cr0().read().start();
+                        if let Err(error) = check_native_lsi_rtc_domain(true) {
+                            domain_error = Some(error);
+                            return true;
+                        }
+                        running
+                    },
+                    RtcError::WriteFailure,
+                );
+                let final_domain = check_native_lsi_rtc_domain(true);
+                if let Some(error) = domain_error {
+                    return Err(error);
+                }
+                final_domain?;
+                result?;
+                check_clock(&self.clock)
+            })();
+            if matches!(result, Err(RtcError::ClockDomainUnavailable)) {
+                guard.suppress_relock = true;
+                return Err(RtcError::ClockDomainUnavailable);
+            }
+            guard.finish_native_lsi()?;
+            return result;
+        }
+        wait_load(self.config, false)?;
         check_clock(&self.clock)?;
         #[cfg(any(rtc_cw32l011_v1, rtc_cw32l012_v1))]
         {
@@ -301,7 +532,7 @@ impl<'d> Rtc<'d> {
                 || !pac::RTC.cr0().read().start(),
                 RtcError::WriteFailure,
             )?;
-            wait_load(self.config)?;
+            wait_load(self.config, false)?;
             check_clock(&self.clock)?;
             write_stopped(&self.clock, self.config, datetime, old.h24())?;
             pac::RTC.cr0().modify(|w| w.set_start(true));
@@ -350,7 +581,7 @@ impl<'d> Rtc<'d> {
                 check_clock_source(&self.clock)?;
                 write_pair(&self.clock, datetime, pac::RTC.cr0().read().h24())
             })?;
-            wait_load(self.config)?;
+            wait_load(self.config, false)?;
             check_clock(&self.clock)
         }
     }
@@ -388,6 +619,18 @@ fn enable_gate(config: RtcConfig) -> Result<(), RtcError> {
         RtcError::ClockGateTimeout,
     )
 }
+fn check_native_lsi_rtc_domain(native_lsi: bool) -> Result<(), RtcError> {
+    if native_lsi {
+        use crate::rcc::SealedRccPeripheral;
+        let info = RTC::RCC_INFO;
+        let enabled = info.is_enabled();
+        let reset_asserted = info.reset_asserted();
+        if !enabled || reset_asserted {
+            return Err(RtcError::ClockDomainUnavailable);
+        }
+    }
+    Ok(())
+}
 fn check_write_mode() -> Result<(), RtcError> {
     #[cfg(rtc_cw32l010_v1)]
     if pac::SYSCTRL.cr2().read().rtclpm() {
@@ -395,7 +638,21 @@ fn check_write_mode() -> Result<(), RtcError> {
     }
     Ok(())
 }
-fn check_access_free() -> Result<(), RtcError> {
+fn check_access_free(native_lsi: bool) -> Result<(), RtcError> {
+    #[cfg(rtc_native_live_lsi)]
+    if native_lsi {
+        #[cfg(rtc_cw32l010_v1)]
+        {
+            check_native_lsi_rtc_domain(true)?;
+            let access = pac::RTC.cr1().read().access();
+            check_native_lsi_rtc_domain(true)?;
+            if access {
+                return Err(RtcError::AccessInUse);
+            }
+        }
+        return Ok(());
+    }
+    let _ = native_lsi;
     #[cfg(not(any(rtc_cw32l011_v1, rtc_cw32l012_v1)))]
     if pac::RTC.cr1().read().access() {
         return Err(RtcError::AccessInUse);
@@ -412,7 +669,34 @@ fn load_ready() -> bool {
         true
     }
 }
-fn wait_load(config: RtcConfig) -> Result<(), RtcError> {
+fn wait_load(config: RtcConfig, native_lsi: bool) -> Result<(), RtcError> {
+    #[cfg(rtc_native_live_lsi)]
+    if native_lsi {
+        let mut domain_error = None;
+        let result = poll(
+            config.timeout,
+            || {
+                if let Err(error) = check_native_lsi_rtc_domain(true) {
+                    domain_error = Some(error);
+                    return true;
+                }
+                let ready = !pac::RTC.cr1().read().wait();
+                if let Err(error) = check_native_lsi_rtc_domain(true) {
+                    domain_error = Some(error);
+                    return true;
+                }
+                ready
+            },
+            RtcError::SynchronizationTimeout,
+        );
+        let final_domain = check_native_lsi_rtc_domain(true);
+        if let Some(error) = domain_error {
+            return Err(error);
+        }
+        final_domain?;
+        return result;
+    }
+    let _ = native_lsi;
     poll(config.timeout, load_ready, RtcError::SynchronizationTimeout)
 }
 fn compensation() -> u32 {
@@ -426,7 +710,28 @@ fn compensation() -> u32 {
     }
 }
 #[cfg(any(rtc_cw32l011_v1, rtc_cw32l012_v1))]
-fn check_native_unset_controls() -> Result<(), RtcError> {
+fn check_native_unset_controls(native_lsi: bool) -> Result<(), RtcError> {
+    #[cfg(rtc_native_live_lsi)]
+    if native_lsi {
+        check_native_lsi_rtc_domain(true)?;
+        let (mut controls, cr2, compensation, ier, isr) = (
+            pac::RTC.cr0().read(),
+            pac::RTC.cr2().read(),
+            compensation(),
+            pac::RTC.ier().read(),
+            pac::RTC.isr().read(),
+        );
+        check_native_lsi_rtc_domain(true)?;
+        if controls.start() {
+            return Err(RtcError::AlreadyRunning);
+        }
+        controls.set_h24(false);
+        if controls.0 != 0 || cr2.0 != 0 || compensation != 0 || ier.0 != 0 || isr.0 != 0 {
+            return Err(RtcError::AlreadyConfigured);
+        }
+        return Ok(());
+    }
+    let _ = native_lsi;
     let mut controls = pac::RTC.cr0().read();
     if controls.start() {
         return Err(RtcError::AlreadyRunning);
@@ -443,8 +748,13 @@ fn check_native_unset_controls() -> Result<(), RtcError> {
     Ok(())
 }
 /// Called only while the RTC is unlocked, stopped and explicitly owned for
-/// initialization. L011/L012 have no ACCESS field; all writes are direct.
-#[cfg(any(rtc_cw32l011_v1, rtc_cw32l012_v1))]
+/// initialization. L011/L012 have no ACCESS field. L010's native-LSI call is
+/// stopped, so its own direct-access exception needs no ACCESS transaction.
+#[cfg(any(
+    rtc_cw32l011_v1,
+    rtc_cw32l012_v1,
+    all(rtc_cw32l010_v1, rtc_native_live_lsi)
+))]
 fn initialize_native_source(clock: &CalendarClock<'_>, config: RtcConfig) -> Result<(), RtcError> {
     let (first, second) = clock.prescalers();
     if clock
@@ -453,6 +763,109 @@ fn initialize_native_source(clock: &CalendarClock<'_>, config: RtcConfig) -> Res
         .maximum_exceeds(1_000_000)
     {
         return Err(RtcError::IncompatibleClock);
+    }
+    #[cfg(rtc_native_live_lsi)]
+    if matches!(clock, CalendarClock::Lsi(_)) {
+        check_native_lsi_rtc_domain(true)?;
+        let mut staged = pac::RTC.psc().read();
+        check_native_lsi_rtc_domain(true)?;
+        let staged_first = first.max(u16::from(staged.psc1()) + 1);
+        staged.set_psc1((staged_first - 1) as u8);
+        check_native_lsi_rtc_domain(true)?;
+        pac::RTC.psc().write_value(staged);
+        check_native_lsi_rtc_domain(true)?;
+        let mut domain_error = None;
+        let result = poll(
+            config.timeout,
+            || {
+                if let Err(error) = check_native_lsi_rtc_domain(true) {
+                    domain_error = Some(error);
+                    return true;
+                }
+                let value = pac::RTC.psc().read();
+                if let Err(error) = check_native_lsi_rtc_domain(true) {
+                    domain_error = Some(error);
+                    return true;
+                }
+                value.psc1() == staged.psc1()
+            },
+            RtcError::WriteFailure,
+        );
+        let final_domain = check_native_lsi_rtc_domain(true);
+        if let Some(error) = domain_error {
+            return Err(error);
+        }
+        final_domain?;
+        result?;
+        check_native_lsi_rtc_domain(true)?;
+        let ready = clock.is_ready();
+        check_native_lsi_rtc_domain(true)?;
+        if !ready {
+            return Err(RtcError::ClockNotReady);
+        }
+        check_native_lsi_rtc_domain(true)?;
+        pac::RTC.cr1().write(|w| w.set_source(clock.source()));
+        check_native_lsi_rtc_domain(true)?;
+        let mut domain_error = None;
+        let result = poll(
+            config.timeout,
+            || {
+                if let Err(error) = check_native_lsi_rtc_domain(true) {
+                    domain_error = Some(error);
+                    return true;
+                }
+                let source = pac::RTC.cr1().read().source();
+                if let Err(error) = check_native_lsi_rtc_domain(true) {
+                    domain_error = Some(error);
+                    return true;
+                }
+                source == clock.source()
+            },
+            RtcError::WriteFailure,
+        );
+        let final_domain = check_native_lsi_rtc_domain(true);
+        if let Some(error) = domain_error {
+            return Err(error);
+        }
+        final_domain?;
+        result?;
+        check_native_lsi_rtc_domain(true)?;
+        let ready = clock.is_ready();
+        check_native_lsi_rtc_domain(true)?;
+        if !ready {
+            return Err(RtcError::ClockNotReady);
+        }
+        // SOURCE=2 has acknowledged before the final first divisor can fall.
+        check_native_lsi_rtc_domain(true)?;
+        pac::RTC.psc().write(|w| {
+            w.set_psc1((first - 1) as u8);
+            w.set_psc2(second - 1);
+        });
+        check_native_lsi_rtc_domain(true)?;
+        let mut domain_error = None;
+        let result = poll(
+            config.timeout,
+            || {
+                if let Err(error) = check_native_lsi_rtc_domain(true) {
+                    domain_error = Some(error);
+                    return true;
+                }
+                let prescalers = pac::RTC.psc().read();
+                if let Err(error) = check_native_lsi_rtc_domain(true) {
+                    domain_error = Some(error);
+                    return true;
+                }
+                u16::from(prescalers.psc1()) + 1 == first && prescalers.psc2() + 1 == second
+            },
+            RtcError::WriteFailure,
+        );
+        let final_domain = check_native_lsi_rtc_domain(true);
+        if let Some(error) = domain_error {
+            return Err(error);
+        }
+        final_domain?;
+        result?;
+        return check_clock_source(clock);
     }
     let mut staged = pac::RTC.psc().read();
     let staged_first = first.max(u16::from(staged.psc1()) + 1);
@@ -494,6 +907,34 @@ fn initialize_native_source(clock: &CalendarClock<'_>, config: RtcConfig) -> Res
     check_clock_source(clock)
 }
 fn check_clock_source(clock: &CalendarClock<'_>) -> Result<(), RtcError> {
+    #[cfg(rtc_native_live_lsi)]
+    if matches!(clock, CalendarClock::Lsi(_)) {
+        check_native_lsi_rtc_domain(true)?;
+        let (ready, source, prescalers, compensation) = (
+            clock.is_ready(),
+            pac::RTC.cr1().read().source(),
+            pac::RTC.psc().read(),
+            pac::RTC.compcfr1().read(),
+        );
+        check_native_lsi_rtc_domain(true)?;
+        if !ready {
+            return Err(RtcError::ClockNotReady);
+        }
+        let first = u32::from(prescalers.psc1()) + 1;
+        let second = prescalers.psc2() + 1;
+        if source != clock.source()
+            || (first, second)
+                != (
+                    u32::from(crate::RCC_NATIVE_LSI_RTC_FIRST_DIVISOR),
+                    crate::RCC_NATIVE_LSI_RTC_SECOND_DIVISOR,
+                )
+            || clock.bounds().divided_by(first).maximum_exceeds(1_000_000)
+            || compensation.en()
+        {
+            return Err(RtcError::IncompatibleClock);
+        }
+        return Ok(());
+    }
     if !clock.is_ready() {
         return Err(RtcError::ClockNotReady);
     }
@@ -534,13 +975,55 @@ fn check_clock_source(clock: &CalendarClock<'_>) -> Result<(), RtcError> {
 }
 fn check_clock(clock: &CalendarClock<'_>) -> Result<(), RtcError> {
     check_clock_source(clock)?;
-    check_access_free()
+    #[cfg(rtc_native_live_lsi)]
+    if matches!(clock, CalendarClock::Lsi(_)) {
+        return check_access_free(true);
+    }
+    check_access_free(false)
 }
 fn read_calendar(clock: &CalendarClock<'_>, config: RtcConfig) -> Result<DateTime, RtcError> {
+    #[cfg(rtc_native_live_lsi)]
+    if matches!(clock, CalendarClock::Lsi(_)) {
+        check_native_lsi_rtc_domain(true)?;
+        let running = pac::RTC.cr0().read().start();
+        check_native_lsi_rtc_domain(true)?;
+        if !running {
+            return Err(RtcError::NotRunning);
+        }
+        wait_load(config, true)?;
+        check_clock(clock)?;
+        for _ in 0..config.read_retries {
+            let snapshot = critical_section::with(|_| -> Result<_, RtcError> {
+                check_native_lsi_rtc_domain(true)?;
+                let control = pac::RTC.cr0().read();
+                let t1 = pac::RTC.time().read();
+                let d1 = pac::RTC.date().read();
+                let t2 = pac::RTC.time().read();
+                let d2 = pac::RTC.date().read();
+                let t3 = pac::RTC.time().read();
+                let ready = load_ready();
+                check_native_lsi_rtc_domain(true)?;
+                Ok(
+                    (ready && control.start() && t1 == t2 && t2 == t3 && d1 == d2).then_some((
+                        d1,
+                        t1,
+                        control.h24(),
+                    )),
+                )
+            })?;
+            if let Some((date, time, h24)) = snapshot {
+                let value = decode(date, time, h24)?;
+                check_clock(clock)?;
+                return Ok(value);
+            }
+        }
+        check_native_lsi_rtc_domain(true)?;
+        return Err(RtcError::ReadFailure);
+    }
     if !pac::RTC.cr0().read().start() {
         return Err(RtcError::NotRunning);
     }
-    wait_load(config)?;
+    wait_load(config, false)?;
     check_clock(clock)?;
     for _ in 0..config.read_retries {
         let snapshot = critical_section::with(|_| {
@@ -570,13 +1053,52 @@ fn write_stopped(
     datetime: DateTime,
     h24: bool,
 ) -> Result<(), RtcError> {
+    #[cfg(rtc_native_live_lsi)]
+    if matches!(clock, CalendarClock::Lsi(_)) {
+        check_clock_source(clock)?;
+        let (date, time) = encode(datetime, h24);
+        check_native_lsi_rtc_domain(true)?;
+        pac::RTC.date().write_value(date);
+        check_native_lsi_rtc_domain(true)?;
+        wait_load(config, true)?;
+        check_clock_source(clock)?;
+        check_native_lsi_rtc_domain(true)?;
+        pac::RTC.time().write_value(time);
+        check_native_lsi_rtc_domain(true)?;
+        wait_load(config, true)?;
+        check_clock_source(clock)?;
+        let mut domain_error = None;
+        let result = poll(
+            config.timeout,
+            || {
+                if let Err(error) = check_native_lsi_rtc_domain(true) {
+                    domain_error = Some(error);
+                    return true;
+                }
+                let (read_date, read_time) = (pac::RTC.date().read(), pac::RTC.time().read());
+                if let Err(error) = check_native_lsi_rtc_domain(true) {
+                    domain_error = Some(error);
+                    return true;
+                }
+                read_date == date && read_time == time
+            },
+            RtcError::WriteFailure,
+        );
+        let final_domain = check_native_lsi_rtc_domain(true);
+        if let Some(error) = domain_error {
+            return Err(error);
+        }
+        final_domain?;
+        result?;
+        return check_clock_source(clock);
+    }
     check_clock_source(clock)?;
     let (date, time) = encode(datetime, h24);
     pac::RTC.date().write_value(date);
-    wait_load(config)?;
+    wait_load(config, false)?;
     check_clock_source(clock)?;
     pac::RTC.time().write_value(time);
-    wait_load(config)?;
+    wait_load(config, false)?;
     check_clock_source(clock)?;
     poll(
         config.timeout,
@@ -598,17 +1120,53 @@ fn write_pair(clock: &CalendarClock<'_>, datetime: DateTime, h24: bool) -> Resul
         check_clock_source(clock)
     }
 }
-struct Unlocked;
+struct Unlocked {
+    native_lsi: bool,
+    suppress_relock: bool,
+}
 impl Unlocked {
     fn new() -> Self {
         pac::RTC.key().write(|w| w.set_key(0xca));
         pac::RTC.key().write(|w| w.set_key(0x53));
-        Self
+        Self {
+            native_lsi: false,
+            suppress_relock: false,
+        }
+    }
+    #[cfg(rtc_native_live_lsi)]
+    fn new_native_lsi() -> Result<Self, RtcError> {
+        check_native_lsi_rtc_domain(true)?;
+        pac::RTC.key().write(|w| w.set_key(0xca));
+        check_native_lsi_rtc_domain(true)?;
+        pac::RTC.key().write(|w| w.set_key(0x53));
+        check_native_lsi_rtc_domain(true)?;
+        Ok(Self {
+            native_lsi: true,
+            suppress_relock: false,
+        })
+    }
+    #[cfg(rtc_native_live_lsi)]
+    fn finish_native_lsi(&mut self) -> Result<(), RtcError> {
+        self.suppress_relock = true;
+        check_native_lsi_rtc_domain(true)?;
+        pac::RTC.key().write(|w| w.set_key(0xca));
+        check_native_lsi_rtc_domain(true)?;
+        pac::RTC.key().write(|w| w.set_key(0));
+        check_native_lsi_rtc_domain(true)
     }
 }
 impl Drop for Unlocked {
     fn drop(&mut self) {
+        if self.suppress_relock {
+            return;
+        }
+        if self.native_lsi && check_native_lsi_rtc_domain(true).is_err() {
+            return;
+        }
         pac::RTC.key().write(|w| w.set_key(0xca));
+        if self.native_lsi && check_native_lsi_rtc_domain(true).is_err() {
+            return;
+        }
         pac::RTC.key().write(|w| w.set_key(0));
     }
 }

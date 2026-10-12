@@ -120,8 +120,31 @@ still apply.
   changes; other classic advanced modes remain unqualified. No pad-level or
   shutdown safety guarantee is made. See [the classic contract](classic-atim-complementary-evidence.json).
 - RTC Alarm A and A/B event observation exist on all eleven RTC families.
-  Async waits are limited to L010/L011/L012. Alarm B mask programming remains
-  source-disputed; observing Alarm B flags does not resolve its polarity.
+  Async waits are limited to existing L010/L011/L012 HSIOSC/LSE sources; new
+  native live-LSI waits refuse with `UnsupportedAsyncAlarmSource` before RTC,
+  NVIC or waiter state changes. Alarm B mask programming remains source-disputed;
+  observing Alarm B flags does not resolve its polarity.
+- Native live factory-LSI RTC covers exactly CW32L010F8P6/F8U6/Y8M6,
+  CW32L011K8T6/K8U6 and CW32L012C8T6/C8U6. Read-only `LsiClock` acquisition
+  requires already software-enabled/stable own factory trim; it owns SYSCTRL
+  independently of selected SYSCLK. SOURCE2 and exact divisors `(1, 16400)`
+  yield calendar /32800, nominal 1 Hz with own rate-only ranges 0.97–1.03,
+  0.90–1.25 and 0.90–1.10 Hz. Ordinary POR startup, watchdog preparation,
+  cycle-period bounds, sleep/retention/wake and continuous health are excluded.
+  Preserved attachment and explicit stopped-unset initialization use guarded
+  register-domain observations; domain loss returns `ClockDomainUnavailable`
+  and suppresses later KEY cleanup after that loss. L010 new-LSI correction
+  refuses with `UnqualifiedWriteTiming` before KEY/ACCESS writes. Synchronous
+  direct alarms remain available. Generic native HSIOSC aliases and default
+  constructors retain behavior; exhaustive exact-seven `CalendarClock`
+  matches must add `Lsi`. Stage79 main verification passed twelve actual
+  libraries and seven ELF links, all with exit zero. Generation, eight finite
+  source/data gates and the 905-file zero-delta comparison passed separately.
+  Independent main runtime and source/metadata reviews accepted the frozen
+  implementation. Three existing LSE-constant warning headers remain in
+  L010/L011 rows. At main acceptance clean had not run; final-package completion
+  requires a separate final-source two-library/two-ELF clean receipt.
+  See the [source contract](native-live-factory-lsi-rtc.md).
 - L012 IR attaches while preserving its disputed MOD selector. R031 IR has no
   qualified output pin because its only documented route is debug PA13.
 - Direct crystal/bypass HSE is qualified on F020/F030/A030/L010/L011/L012/L031/
@@ -153,7 +176,7 @@ still apply.
   `Config.lse=None` preserves inherited LSE. Shared ADC work-gate and HSE GPIOF
   windows can advance activity, including PF3 LSI_OUT. Both PB11 AF4 and PF3 AF2
   remain complete metadata routes; the scalar PB11 anchor is nonexhaustive.
-  Native RTC keeps strict raw 96 MHz HSIOSC, while ADC/PWM cycle timing and the
+  Default native RTC keeps strict raw 96 MHz HSIOSC, while ADC/PWM cycle timing and the
   fixed 1 MHz time driver refuse the rate-only system tree. Generic L012 remains
   excluded; its historical Stage75 L011 exclusion is not a current blanket
   exclusion or rewritten acceptance claim. Main verification passed seven actual libraries,
@@ -169,7 +192,7 @@ still apply.
   HSEEN/HSECCS/LSECCS=0 and HSI/LSI entry exclude cold startup and monitoring.
   No LSI/request/IWDT operation creates admission. Restored RTC inspection
   rejects SOURCE1 and requires actual raw PSC1 ≥97 plus original factory-ready
-  HSI for SOURCE3; native RTC remains raw 96 MHz HSIOSC. The RM ±10%
+  HSI for SOURCE3; default native RTC remains raw 96 MHz HSIOSC. The RM ±10%
   adjustment warning remains alongside the DS −10/+25% factory envelope.
   No new direct LSI_OUT pad or GPIO/UART/LPTIM/IWDT inspection is introduced.
   ADC/PWM strict timing and the fixed 1 MHz time driver refuse rate-only LSI.

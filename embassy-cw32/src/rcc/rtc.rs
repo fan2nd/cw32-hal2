@@ -1,11 +1,10 @@
 //! Lifetime-held calendar sources. Acquisition never changes oscillator trim.
 use super::ClockBounds;
 use crate::{
-    pac,
+    Peri, pac,
     peripherals::{RTC, SYSCTRL},
     rtc::sealed::Instance,
     time::Hertz,
-    Peri,
 };
 
 #[non_exhaustive]
@@ -13,7 +12,7 @@ use crate::{
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum RtcClockError {
     NotInitialized,
-    /// Enabled oscillator did not report stable within the poll budget.
+    /// Oscillator is not enabled/stable, or did not stabilize within its poll budget.
     NotReady,
     InvalidTimeout,
     /// Factory calibration storage is erased or current LSI trim differs.
@@ -75,8 +74,14 @@ impl<'d> HsiOscClock<'d> {
     }
 }
 
-#[cfg(any(rtc_v1, rtc_cw32f020_v1, rtc_cw32l031_v1, rtc_cw32l052_v1))]
-/// Shared LSI with verified, unchanged factory trim and bounded startup polling.
+#[cfg(any(
+    rtc_v1,
+    rtc_cw32f020_v1,
+    rtc_cw32l031_v1,
+    rtc_cw32l052_v1,
+    rtc_native_live_lsi
+))]
+/// Shared LSI with verified, unchanged factory trim.
 ///
 /// This capability requires factory trim already loaded. On F020/F030/A030
 /// and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6, CW32W031R8U6 or
@@ -100,6 +105,13 @@ impl<'d> HsiOscClock<'d> {
 /// strict cycle durations. Excluded L031, generic R031/W031/L052/L083
 /// and board LSE retain their prior qualification; nominal calendar ticks
 /// remain 32800/32768.
+///
+/// Exactly CW32L010F8P6/F8U6/Y8M6, CW32L011K8T6/K8U6 and
+/// CW32L012C8T6/C8U6 instead acquire an already software-enabled, stable LSI
+/// with `new(sysctrl)`. That native constructor is read-only: it never starts,
+/// trims or waits for LSI. It is independent of SYSCLK and owns no pads.
+/// Native bounds are rate-only and the fixed calendar divisor is 32800.
+/// Drop or forgetting a borrowed capability does not stop the shared source.
 pub struct LsiClock<'d> {
     _sysctrl: Peri<'d, SYSCTRL>,
 }
@@ -158,12 +170,78 @@ impl<'d> LsiClock<'d> {
     }
 }
 
+#[cfg(rtc_native_live_lsi)]
+impl<'d> LsiClock<'d> {
+    /// Acquire the live factory-calibrated source without changing hardware.
+    /// Board startup or a bootloader must already have established this state;
+    /// ordinary POR and cold LSI startup are outside this capability.
+    pub fn new(sysctrl: Peri<'d, SYSCTRL>) -> Result<Self, RtcClockError> {
+        if super::try_clocks().is_none() {
+            return Err(RtcClockError::NotInitialized);
+        }
+        Self::inspect_native_source()?;
+        Ok(Self { _sysctrl: sysctrl })
+    }
+    pub const fn frequency(&self) -> Hertz {
+        Hertz(crate::RCC_LSI_NOMINAL_HZ)
+    }
+    /// Factory average-rate envelope, never individual-cycle timing bounds.
+    pub const fn bounds(&self) -> ClockBounds {
+        ClockBounds::lsi()
+    }
+    pub(crate) const fn prescalers(&self) -> (u16, u32) {
+        (
+            crate::RCC_NATIVE_LSI_RTC_FIRST_DIVISOR,
+            crate::RCC_NATIVE_LSI_RTC_SECOND_DIVISOR,
+        )
+    }
+    pub(crate) const fn calendar_divisor(&self) -> u32 {
+        crate::RCC_NATIVE_LSI_RTC_CALENDAR_DIVISOR
+    }
+    pub(crate) fn source(&self) -> crate::rtc::Source {
+        crate::RCC_NATIVE_LSI_RTC_SOURCE
+    }
+    pub(crate) fn is_ready(&self) -> bool {
+        Self::inspect_native_source().is_ok()
+    }
+    fn inspect_native_source() -> Result<(), RtcClockError> {
+        critical_section::with(|_| {
+            // This reviewed factory halfword is normalized by the own PAC's
+            // ten-bit (L010/L011) or nine-bit (L012) field, only in local memory.
+            let factory = unsafe {
+                core::ptr::read_volatile(crate::RCC_LSI_FACTORY_TRIM_ADDRESS as *const u16)
+            };
+            if factory == u16::MAX {
+                return Err(RtcClockError::IncompatibleCalibration);
+            }
+            let mut calibration = pac::sysctrl::regs::Lsi::default();
+            calibration.set_trim(factory);
+            let before = pac::SYSCTRL.cr1().read();
+            let first = pac::SYSCTRL.lsi().read();
+            let second = pac::SYSCTRL.lsi().read();
+            let after = pac::SYSCTRL.cr1().read();
+            if first.trim() != calibration.trim() || second.trim() != calibration.trim() {
+                return Err(RtcClockError::IncompatibleCalibration);
+            }
+            if !before.lsien() || !after.lsien() || !first.stable() || !second.stable() {
+                return Err(RtcClockError::NotReady);
+            }
+            Ok(())
+        })
+    }
+}
+
 #[cfg(rcc_lse)]
 /// Source ownership for the explicitly qualified exact LSE packages.
 /// Selecting LSE keeps its board-qualified envelope conditional on source health.
 /// No RTC fallback to LSI, elapsed-time continuity or fault recovery is promised.
+/// Exact native live-LSI packages also expose `Lsi`; exhaustive matches must
+/// include that variant. The native `new(sysctrl)` default remains HSIOSC.
 pub enum CalendarClock<'d> {
-    #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+    #[cfg(any(
+        rtc_native_live_lsi,
+        not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))
+    ))]
     Lsi(LsiClock<'d>),
     #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
     HsiOsc(HsiOscClock<'d>),
@@ -183,7 +261,10 @@ impl<'d> CalendarClock<'d> {
     }
     pub const fn frequency(&self) -> Hertz {
         match self {
-            #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+            #[cfg(any(
+                rtc_native_live_lsi,
+                not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))
+            ))]
             Self::Lsi(c) => c.frequency(),
             #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
             Self::HsiOsc(c) => c.frequency(),
@@ -194,7 +275,10 @@ impl<'d> CalendarClock<'d> {
     /// Preserves the selected source's rate-only or cycle-timing qualification.
     pub const fn bounds(&self) -> ClockBounds {
         match self {
-            #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+            #[cfg(any(
+                rtc_native_live_lsi,
+                not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))
+            ))]
             Self::Lsi(c) => c.bounds(),
             #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
             Self::HsiOsc(c) => c.bounds(),
@@ -203,7 +287,10 @@ impl<'d> CalendarClock<'d> {
     }
     pub(crate) const fn calendar_divisor(&self) -> u32 {
         match self {
-            #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+            #[cfg(any(
+                rtc_native_live_lsi,
+                not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))
+            ))]
             Self::Lsi(c) => c.calendar_divisor(),
             #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
             Self::HsiOsc(c) => c.calendar_divisor(),
@@ -214,6 +301,8 @@ impl<'d> CalendarClock<'d> {
     pub(crate) const fn prescalers(&self) -> (u16, u32) {
         match self {
             Self::HsiOsc(c) => c.prescalers(),
+            #[cfg(rtc_native_live_lsi)]
+            Self::Lsi(c) => c.prescalers(),
             Self::Lse(_) => (
                 crate::RCC_LSE_RTC_FIRST_DIVISOR,
                 crate::RCC_LSE_RTC_SECOND_DIVISOR,
@@ -222,7 +311,10 @@ impl<'d> CalendarClock<'d> {
     }
     pub(crate) fn source(&self) -> crate::rtc::Source {
         match self {
-            #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+            #[cfg(any(
+                rtc_native_live_lsi,
+                not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))
+            ))]
             Self::Lsi(c) => c.source(),
             #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
             Self::HsiOsc(c) => c.source(),
@@ -231,7 +323,10 @@ impl<'d> CalendarClock<'d> {
     }
     pub(crate) fn is_ready(&self) -> bool {
         match self {
-            #[cfg(not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1)))]
+            #[cfg(any(
+                rtc_native_live_lsi,
+                not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))
+            ))]
             Self::Lsi(c) => c.is_ready(),
             #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
             Self::HsiOsc(c) => c.is_ready(),
@@ -239,7 +334,13 @@ impl<'d> CalendarClock<'d> {
         }
     }
 }
-#[cfg(all(rcc_lse, not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))))]
+#[cfg(all(
+    rcc_lse,
+    any(
+        rtc_native_live_lsi,
+        not(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))
+    )
+))]
 impl<'d> From<LsiClock<'d>> for CalendarClock<'d> {
     fn from(clock: LsiClock<'d>) -> Self {
         Self::Lsi(clock)

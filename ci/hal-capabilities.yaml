@@ -642,7 +642,7 @@ functions:
     modes:
     - id: calendar
       status: partial
-      scope: Blocking calendar with preserved-state attach and explicit cold initialization.
+      scope: Blocking calendar with preserved-state attach and explicit stopped-unset initialization.
       limitations:
       - Native L010/L011/L012 retain qualified HSIOSC and support held LSE on seven exact packages.
         Classic RTCs use pretrimmed LSI, with held LSE on the previous sixteen exact x030/F020/L031/R031/W031/L052/L083 packages.
@@ -651,6 +651,33 @@ functions:
         L011/L012 additionally require own factory_trim matching at 0x001007C2 with 41000/36080 Hz bounds.
         Native LSE uses SOURCE0 and PSC1=0/PSC2=0x3fff; later RTC activation retains the explicit downstream handover.
         No UTC precision, compensation, subseconds, continuous progression or retention guarantee.
+      - Native live factory-LSI RTC additionally covers exactly CW32L010F8P6/F8U6/Y8M6,
+        CW32L011K8T6/K8U6 and CW32L012C8T6/C8U6, independently of SYSCLK. Generic native aliases
+        remain HSIOSC. Read-only one-argument LsiClock acquisition requires software LSIEN, STABLE
+        and typed own factory-trim equality; it never starts/trims LSI or manipulates IWDT.
+        SOURCE2 and fixed divisors 1/16400 give calendar divisor 32800. Own source rates are
+        31816..33784, 29520..41000 and 29520..36080 Hz respectively; divided rates remain rate-only.
+        Strict duration helpers reject these bounds; the L011 RM adjustment warning remains unresolved.
+      - Native live-LSI attach preserves retained state and requires the exact divisor pair with
+        compensation disabled. Stopped-unset initialization drains WAIT before DATE and confirms
+        SOURCE2 before reducing PSC1. Existing downstream-recipient functional handover applies.
+        Observed closed-gate/asserted-reset state returns ClockDomainUnavailable and suppresses later
+        KEY cleanup after that loss; no rollback, relock or domain recovery is promised.
+      - L010 live-LSI set_datetime returns UnqualifiedWriteTiming before KEY/ACCESS writes.
+        Synchronous direct alarms remain available; new-source async waits refuse before registration.
+        Native default HSIOSC and old LSE constructors retain behavior, but downstream exhaustive
+        CalendarClock matches must add the native Lsi arm. No ordinary-POR startup, sleep, retention,
+        wake, continuous health or accuracy guarantee. Stage79 main verification passed 12 actual
+        libraries and 7 ELF links with all 19 exits zero. Generation, eight finite source/data gates
+        and the 905-file zero-delta comparison passed separately. Independent main runtime and
+        source/metadata reviews accepted the frozen implementation. Three existing unused LSE-constant
+        warning headers remain in L010/L011 rows. At main acceptance clean had not run; final-package
+        completion requires a separate final-source 2-library/2-ELF clean receipt. Hardware is unverified.
+      evidence:
+      - path: embassy-cw32/src/rcc/rtc.rs
+        anchor: pub struct LsiClock
+      - path: cw32-data/rtc-live-lsi-qualified.yaml
+      - path: docs/native-live-factory-lsi-rtc.md
     - id: alarm_a
       status: partial
       scope: Typed recurring weekly Alarm A configuration and enable.
@@ -682,7 +709,8 @@ functions:
       scope: Scoped run-mode async A/B alarm waits.
       limitations:
       - Requires an already enabled alarm; classic WINDOW/ACCESS families have no async wait API; no low-power
-        wake guarantee.
+        wake guarantee. Native live-LSI sources return UnsupportedAsyncAlarmSource at first poll before
+        RTC/NVIC/waiter state changes; existing HSIOSC/LSE async behavior is unchanged.
       implemented_families: *id001
       evidence:
       - path: embassy-cw32/src/rtc/alarm_interrupt.rs
@@ -1170,7 +1198,8 @@ functions:
         GPIO or dormant UART/LPTIM/GPIO inspection. Inherited unmonitored LSE remains protected.
         After the real RTC configuration-gate window restores, SOURCE1 refuses and SOURCE3
         requires original factory-ready raw HSI plus actual PSC1 raw>=97, divisor>=98.
-        Widen before adding one; raw255 remains divisor256. Native RTC retains raw96MHz HSIOSC.
+        Widen before adding one; raw255 remains divisor256. Default native RTC retains raw96MHz HSIOSC;
+        the separately owned live-LSI RTC source does not depend on selected SYSCLK.
         Necessary RTC/ADC/VC windows can advance work; restoration cannot undo progress.
       - Exact L011 preserves all non-owned source/policy bits and proves Flash gate/reset
         access around every read/write. Final dividers and latency are set under factory HSI;

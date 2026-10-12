@@ -53,6 +53,10 @@ impl Rtc<'_> {
         alarm: Alarm,
         _irq: impl Binding<RTC, AlarmInterruptHandler>,
     ) -> Result<(), RtcError> {
+        #[cfg(rtc_native_live_lsi)]
+        if matches!(&self.clock, crate::rcc::CalendarClock::Lsi(_)) {
+            return Err(RtcError::UnsupportedAsyncAlarmSource);
+        }
         check_clock(&self.clock)?;
         check_write_mode()?;
         if !pac::RTC.cr0().read().start() {

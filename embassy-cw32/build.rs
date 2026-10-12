@@ -58,6 +58,7 @@ fn main() {
         "ir_invert",
         "rtc",
         "rtc_alarm_direct_access",
+        "rtc_native_live_lsi",
         "awt",
         "autotrim",
         "lptim",
@@ -969,6 +970,7 @@ fn main() {
     }
     generate_lcd(&mut out);
     generate_rtc(&mut out);
+    generate_native_live_lsi_rtc(&mut out);
     for pin in metadata.pins {
         if safe_pin(pin.name) {
             let port = pin.name.as_bytes()[1] - b'A';
@@ -4995,6 +4997,130 @@ fn generate_lcd(out: &mut String) {
         .unwrap();
     }
     out.push_str("_ => unreachable!(\"unsupported LCD pin\"), } }\n");
+}
+
+// This RTC capability is independently qualified. A live-LSI SYSCLK profile,
+// matching IP version, or runtime SYSCLK selection alone never grants it.
+fn generate_native_live_lsi_rtc(out: &mut String) {
+    use cw32_metapac::metadata::{ir, METADATA};
+    use std::fmt::Write;
+    let exact = match METADATA.name {
+        "CW32L010F8P6" => Some(("CW32L010", "TSSOP20")),
+        "CW32L010F8U6" => Some(("CW32L010", "QFN20")),
+        "CW32L010Y8M6" => Some(("CW32L010", "SOP16")),
+        "CW32L011K8T6" => Some(("CW32L011", "LQFP32")),
+        "CW32L011K8U6" => Some(("CW32L011", "QFN32")),
+        "CW32L012C8T6" => Some(("CW32L012", "LQFP48")),
+        "CW32L012C8U6" => Some(("CW32L012", "QFN48")),
+        _ => None,
+    };
+    let native_ip = METADATA.peripherals.iter().filter_map(|p| p.registers.as_ref()).any(|r|
+        matches!(r.kind, "rtc" | "sysctrl")
+            && matches!(r.version, "cw32l010_v1" | "cw32l011_v1" | "cw32l012_v1"));
+    let family = match METADATA.line {
+        "CW32L010" => Some(("cw32l010_v1", 10, 31816, 33784, (1620, 5500))),
+        "CW32L011" => Some(("cw32l011_v1", 10, 29520, 41000, (1700, 5500))),
+        "CW32L012" => Some(("cw32l012_v1", 9, 29520, 36080, (1700, 5500))),
+        _ => None,
+    };
+    if family.is_none() && exact.is_none() && !native_ip { return; }
+    let (version, trim, minimum, maximum, supply) = family.expect("native RTC IP/part family mismatch");
+    assert!(native_ip);
+    assert_eq!(METADATA.family, "CW32L0");
+    assert!(exact.is_some_and(|(line, _)| line == METADATA.line) || METADATA.name == METADATA.line,
+        "native RTC family/name mismatch");
+    // Packages are deliberately absent from the transported metadata model.
+    // Validate the current generated chip input without adding a model field.
+    let path = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap())
+        .join("../cw32-data/data/chips").join(format!("{}.json", METADATA.name));
+    println!("cargo:rerun-if-changed={}", path.display());
+    let chip: serde_json::Value = serde_json::from_slice(&fs::read(&path)
+        .expect("native RTC current chip JSON must exist")).expect("invalid native RTC chip JSON");
+    assert_eq!(chip["name"], METADATA.name);
+    assert_eq!(chip["line"], METADATA.line);
+    assert_eq!(chip["family"], METADATA.family);
+    let packages = chip["packages"].as_array().expect("native RTC package inventory required");
+    if let Some((_, package)) = exact {
+        assert_eq!(packages.len(), 1);
+        assert_eq!(packages[0]["name"], METADATA.name);
+        assert_eq!(packages[0]["package"], package);
+    } else {
+        assert!(packages.is_empty(), "generic native RTC must remain package-neutral");
+    }
+    let owner = |name, kind, block, address| {
+        let owners: Vec<_> = METADATA.peripherals.iter().filter(|p| p.name == name).collect();
+        assert_eq!(owners.len(), 1, "native RTC owner must be unique");
+        let p = owners[0];
+        let r = p.registers.as_ref().expect("native RTC registers required");
+        assert_eq!(p.address, address);
+        assert_eq!((r.kind, r.version, r.block), (kind, version, block));
+        p
+    };
+    let rtc = owner("RTC", "rtc", "Rtc", 0x40004400);
+    let sysctrl = owner("SYSCTRL", "sysctrl", "Sysctrl", 0x40004000);
+    assert_eq!(METADATA.peripherals.iter().filter(|p| p.clock_limits.is_some()).count(), 1);
+    let clock = sysctrl.clock_limits.as_ref().expect("native RTC oscillator facts required");
+    assert_eq!(clock.lsi_sysclk.is_some(), exact.is_some());
+    assert_eq!(clock.lse_configuration.is_some(), exact.is_some(), "native source enum requires existing rcc_lse admission");
+    let old = rtc.rtc_calendar.as_ref().unwrap();
+    assert_eq!((old.source, old.source_encoding), ("HSIOSC", 3));
+    assert_eq!(old.factory_trim_address, clock.factory_hsi_trim_address);
+    assert_eq!(old.nominal_hz, clock.hsi_frequency_hz);
+    assert_eq!(old.calendar_divisor, clock.hsi_frequency_hz);
+    assert_eq!((old.prescaler_first, old.prescaler_second),
+        (if METADATA.line == "CW32L010" { 60 } else { 120 }, 400000));
+    let field = |p: &cw32_metapac::metadata::Peripheral, reg: &str, offset, name: &str, bit, width, access| {
+        let regs = p.registers.as_ref().unwrap();
+        let blocks: Vec<_> = regs.ir.blocks.iter().filter(|b| b.name == regs.block).collect();
+        assert_eq!(blocks.len(), 1);
+        let items: Vec<_> = blocks[0].items.iter().filter(|r| r.name.eq_ignore_ascii_case(reg)).collect();
+        assert_eq!(items.len(), 1);
+        let item = items[0];
+        assert_eq!(item.byte_offset, offset);
+        assert!(item.array.is_none());
+        let ir::BlockItemInner::Register(r) = &item.inner else { panic!("native RTC control must be a register") };
+        assert_eq!((r.bit_size, &r.access), (32, &access));
+        let fieldsets: Vec<_> = regs.ir.fieldsets.iter().filter(|f| Some(f.name) == r.fieldset).collect();
+        assert_eq!(fieldsets.len(), 1);
+        let fields: Vec<_> = fieldsets[0].fields.iter().filter(|f| f.name.eq_ignore_ascii_case(name)).collect();
+        assert_eq!(fields.len(), 1);
+        assert_eq!(fields[0].bit_size, width);
+        assert!(fields[0].array.is_none());
+        if p.name == "RTC" && reg == "CR1" && name == "SOURCE" { assert!(fields[0].enumm.is_none()); }
+        assert!(matches!(&fields[0].bit_offset, ir::BitOffset::Regular(p) if p.offset == bit));
+    };
+    for (reg, offset, name, bit, width) in [
+        ("KEY", 0, "KEY", 0, 8), ("CR0", 4, "START", 7, 1), ("CR0", 4, "H24", 3, 1),
+        ("CR1", 8, "SOURCE", 8, 3), ("CR1", 8, "WAIT", 2, 1),
+        ("PSC", 64, "PSC1", 20, 8), ("PSC", 64, "PSC2", 0, 20),
+        ("COMPCFR1", 16, "EN", 15, 1),
+    ] {
+        field(rtc, reg, offset, name, bit, width,
+            if reg == "KEY" { ir::Access::Write } else { ir::Access::ReadWrite });
+    }
+    let cr1 = rtc.registers.as_ref().unwrap().ir.fieldsets.iter()
+        .find(|f| f.name.eq_ignore_ascii_case("CR1")).unwrap();
+    for (name, bit) in [("ACCESS", 0), ("WINDOW", 1)] {
+        assert_eq!(cr1.fields.iter().any(|f| f.name.eq_ignore_ascii_case(name)), METADATA.line == "CW32L010");
+        if METADATA.line == "CW32L010" { field(rtc, "CR1", 8, name, bit, 1, ir::Access::ReadWrite); }
+    }
+    for (reg, offset, name, bit, width) in [
+        ("CR1", 4, "LSIEN", 3, 1), ("LSI", 32, "TRIM", 0, trim),
+        ("LSI", 32, "WAITCYCLE", 10, 2), ("LSI", 32, "STABLE", 15, 1),
+    ] { field(sysctrl, reg, offset, name, bit, width, ir::Access::ReadWrite); }
+    let Some(lsi) = clock.lsi_sysclk.as_ref() else { return; };
+    assert!(exact.is_some());
+    assert_eq!((lsi.nominal_hz, lsi.minimum_hz, lsi.maximum_hz, lsi.supply_mv,
+        lsi.temperature_c, lsi.factory_trim_address),
+        (32800, minimum, maximum, supply, (-40, 85), 0x001007c2));
+    assert_eq!(lsi.rtc_allowed_sources, &[0, 1, 2, 3]);
+    assert!(lsi.maximum_hz <= 1_000_000);
+    assert_eq!(lsi.nominal_hz, 1 * 16400 * 2);
+    println!("cargo:rustc-cfg=rtc_native_live_lsi");
+    writeln!(out, "pub(crate) const RCC_NATIVE_LSI_RTC_SOURCE: u8 = 2;").unwrap();
+    writeln!(out, "pub(crate) const RCC_NATIVE_LSI_RTC_FIRST_DIVISOR: u16 = 1;").unwrap();
+    writeln!(out, "pub(crate) const RCC_NATIVE_LSI_RTC_SECOND_DIVISOR: u32 = 16400;").unwrap();
+    writeln!(out, "pub(crate) const RCC_NATIVE_LSI_RTC_CALENDAR_DIVISOR: u32 = 32800;").unwrap();
 }
 
 fn generate_rtc(out: &mut String) {

@@ -9,13 +9,16 @@
 //! F020/F030/A030, CW32F002F3P7/F3U7, CW32F003F4P7/F4U7/E4P7 and exactly
 //! CW32L031C8T6/C8U6/F8U6, CW32R031C8U6, CW32W031R8U6 and
 //! CW32L052C8T6/R8S6/R8T6, CW32L083RBT6/RCT6/RCS6/MCT6/VCT6 and
-//! CW32L010F8P6/F8U6/Y8M6 have
-//! factory-LSI rate envelopes under their own source
-//! conditions, without strict cycle-duration bounds. Their RTC LSI aliases,
-//! where present, remain rate-only under every SYSCLK. Generic
-//! F002/F003/L010/L031/R031/W031/L052/L083 aliases and other unlisted packages
-//! gain no factory-LSI SYSCLK qualification. Exact L010 admits only an already
-//! live factory-matching LSI; its independent raw-HSI RTC remains cycle-qualified.
+//! CW32L010F8P6/F8U6/Y8M6, CW32L011K8T6/K8U6 and CW32L012C8T6/C8U6 have
+//! factory-LSI rate envelopes under their own source conditions, without strict
+//! cycle-duration bounds. Their RTC LSI sources, where qualified, remain
+//! rate-only under every SYSCLK. The exact-seven native live-LSI RTC capability
+//! reuses that own envelope independently of SYSCLK and divides it by 32800;
+//! its nominal one-second transitions do not qualify individual periods.
+//! Generic F002/F003/L010/L011/L012/L031/R031/W031/L052/L083 aliases and other
+//! unlisted packages gain no factory-LSI SYSCLK qualification. Exact native
+//! L010/L011/L012 LSI acquisition requires an already live factory-matching
+//! source; the separate raw-HSI RTC source remains cycle-qualified.
 use crate::time::Hertz;
 
 /// Qualified ambient-temperature interval for the factory HSI error bound.
@@ -24,7 +27,8 @@ pub const HSI_BOUND_TEMPERATURE_C: (i16, i16) = crate::RCC_HSI_TEMPERATURE_RANGE
 pub const HSI_BOUND_SUPPLY_MV: (u16, u16) = crate::RCC_HSI_SUPPLY_RANGE_MV;
 const HSI_ERROR_PERCENT: u32 = crate::RCC_HSI_ERROR_PERCENT;
 
-// RTC identity comes from its own semantic source, independently of SYSCLK.
+// These Instance facts describe the default RTC source, independently of SYSCLK.
+// Native facts stay HSIOSC; the separately held native LSI variant uses lsi().
 // Compare independently generated facts only when they describe the same root.
 #[cfg(rtc)]
 const _: () = {
@@ -87,7 +91,9 @@ impl ClockBounds {
             supply_mv: HSI_BOUND_SUPPLY_MV,
         }
     }
-    /// Factory-LSI rate envelope for the specifically qualified SYSCLK families.
+    /// Own factory-LSI rate envelope shared by specifically qualified SYSCLK
+    /// families and the exact-seven native live-LSI RTC source. Always rate-only,
+    /// including native calendar division by 32800 under an HSI CPU clock.
     #[cfg(rcc_lsi_sysclk)]
     pub(crate) const fn lsi() -> Self {
         Self {

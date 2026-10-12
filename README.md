@@ -239,7 +239,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   or IWDT operation prepares admission. Running consumers and observers may
   progress, including watchdog reset; necessary whole-bank windows can advance
   unrelated events. New-target `Config.lse=Some(_)` is refused; inherited LSE
-  and old HSI/HSE/LSE contracts are preserved. Native RTC retains strict raw-HSI
+  and old HSI/HSE/LSE contracts are preserved. Default native RTC retains strict raw-HSI
   bounds; ADC and buffered complementary PWM return cycle-qualification errors.
   Main eight-library/seven-ELF verification, six finite source/data/layout
   gates and independent runtime/metadata reviews passed. The main logs retain
@@ -257,7 +257,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   parameter/request or IWDT operation prepares admission. `Config.lse` must
   be `None`; inherited LSE remains protected. Shared ADC work-gate inspection
   and HSE GPIOF windows can advance activity, including PF3 LSI_OUT effects.
-  PB11 AF4 and PF3 AF2 are both retained routes. Native RTC keeps raw 96 MHz
+  PB11 AF4 and PF3 AF2 are both retained routes. Default native RTC keeps raw 96 MHz
   HSIOSC; ADC/PWM cycle timing and the fixed 1 MHz time driver reject the
   rate-only system tree. Main verification passed seven actual libraries, six
   linked ELFs and six finite source/data gates, with independent runtime and
@@ -274,7 +274,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   and LSECCS must all be zero, with HSI or LSI entry. Ordinary POR, cold startup,
   automatic-only request and new monitors are excluded. RTC SOURCE1 refuses
   after its real restored configuration-gate window; SOURCE3 requires original
-  factory-ready raw HSI and actual PSC1 raw ≥97. Native RTC stays raw 96 MHz
+  factory-ready raw HSI and actual PSC1 raw ≥97. Default native RTC stays raw 96 MHz
   HSIOSC. The DS −10/+25% factory envelope does not withdraw the RM ±10%
   calibration-adjustment warning or qualify cycle timing. Main verification passed
   seven actual libraries and seven linked ELFs, all with exit zero; generation
@@ -465,14 +465,30 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - All eleven RTC-bearing families: bounded whole-second calendar with preserving
   attachment and explicit initialization. L010 retains frozen HSIOSC and adds
   held LSE on its three qualified exact packages; L011/L012 retain frozen HSIOSC
-  and add native LSE on their four exact qualified packages.
+  and add native LSE on their four exact qualified packages. These same seven
+  exact native parts additionally admit an independently owned, already-live
+  factory-LSI source with read-only acquisition, SOURCE2 and exact `(1, 16400)`
+  divisors. Its calendar /32800 bounds remain rate-only under every SYSCLK;
+  generic native aliases remain HSIOSC. L010 new-LSI `set_datetime` refuses
+  before KEY/ACCESS writes; guarded domain errors can leave partial state.
+  New-source async waits refuse before registration, while synchronous direct
+  alarms remain supported. Downstream exhaustive `CalendarClock` matches must
+  add the native `Lsi` arm. Stage79 main verification passed twelve actual
+  libraries and seven ELF links, all with exit zero. Generation, eight finite
+  source/data gates and the 905-file zero-delta comparison passed separately.
+  Independent main runtime and source/metadata reviews accepted the frozen
+  implementation. Three existing LSE-constant warning headers remain in
+  L010/L011 rows. At main acceptance clean had not run; final-package completion
+  requires a separate final-source two-library/two-ELF clean receipt. See the
+  [native live-LSI contract](docs/native-live-factory-lsi-rtc.md) and
+  [ordinary firmware example](examples/rtc-calendar/README.md).
   Classic families normally retain preconfigured factory-trim LSI and its exact
   32800/32768 rate and tolerance. Twenty-three qualified LSE packages can hold an
   explicitly initialized LSE source. The previous sixteen retain their monitor
   checks; native L010/L011/L012 check their selected fault-detection contract around
   calendar operations, with no progression guarantee under `StartupOnly`. Typed weekly Alarm A programming and A/B
-  event status/acknowledgement are supported; L010/L011/L012 also have scoped
-  run-mode async waits. Alarm B mask programming remains contradictory in the
+  event status/acknowledgement are supported; existing L010/L011/L012 HSIOSC/LSE
+  sources also have scoped run-mode async waits. Alarm B mask programming remains contradictory in the
   own manuals/SDKs. No low-power wake or precision wall-clock promise.
   See [RTC source and lifecycle evidence](docs/rtc-remaining-calendar.md) and
   [alarm/event scope](docs/rtc-alarms.md).

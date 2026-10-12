@@ -8,6 +8,7 @@ publish = false
 [features]
 default = ["cw32f030c8t7"]
 hsi-source = []
+native-lsi-source = []
 cw32a030c8t7 = ["embassy-cw32/cw32a030c8t7", "cw32-metapac/cw32a030c8t7"]
 cw32f020c6u7 = ["embassy-cw32/cw32f020c6u7", "cw32-metapac/cw32f020c6u7"]
 cw32f020f6u7 = ["embassy-cw32/cw32f020f6u7", "cw32-metapac/cw32f020f6u7"]
@@ -44,6 +45,11 @@ cw32l083rct6 = ["embassy-cw32/cw32l083rct6", "cw32-metapac/cw32l083rct6"]
 cw32l083vct6 = ["embassy-cw32/cw32l083vct6", "cw32-metapac/cw32l083vct6"]
 cw32r031c8u6 = ["embassy-cw32/cw32r031c8u6", "cw32-metapac/cw32r031c8u6"]
 cw32w031r8u6 = ["embassy-cw32/cw32w031r8u6", "cw32-metapac/cw32w031r8u6"]
+
+[[bin]]
+name = "live_lsi_calendar"
+path = "src/bin/live_lsi_calendar.rs"
+required-features = ["native-lsi-source"]
 
 [dependencies]
 embassy-cw32 = { path = "../../embassy-cw32", default-features = false, features = ["rt"] }

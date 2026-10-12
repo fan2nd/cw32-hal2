@@ -1,0 +1,62 @@
+schema_version: 1
+source_authority: sources/evidence-sources.json
+evidence: docs/native-live-factory-lsi-rtc-qualification.json
+envelope_policy: cw32-data/lsi-sysclk-qualified.yaml
+qualification:
+  source: LSI
+  source_encoding: 2
+  prescaler_first: 1
+  prescaler_second: 16400
+  calendar_divisor: 32800
+  admission: live_factory_reuse_only
+  source_identity: independent_of_sysclk
+  factory_read_width_bits: 16
+  factory_erased_raw_halfword: 65535
+  factory_zero_valid: true
+  software_lsien_required: true
+  stable_required: true
+  masked_factory_trim_match_required: true
+  oscillator_writes: forbidden
+  rate_only: true
+  cycle_timing_qualified: false
+  attach_compensation_enabled: false
+  initialization_compensation: all_zero
+  initialization: unset_and_stopped_only
+  l010_running_set_datetime: UnqualifiedWriteTiming
+  async_alarm_wait: UnsupportedAsyncAlarmSource
+  rtc_domain_loss: ClockDomainUnavailable
+  domain_loss_cleanup: suppress_further_key_writes
+  source_switch: verify_source_before_reducing_first_divisor
+families:
+  CW32L010:
+    exact_parts:
+    - name: CW32L010F8P6
+      package: TSSOP20
+    - name: CW32L010F8U6
+      package: QFN20
+    - name: CW32L010Y8M6
+      package: SOP16
+    rtc_version: cw32l010_v1
+    sysctrl_version: cw32l010_v1
+    envelope_pointer: /families/CW32L010/lsi_sysclk
+    trim_bit_size: 10
+  CW32L011:
+    exact_parts:
+    - name: CW32L011K8T6
+      package: LQFP32
+    - name: CW32L011K8U6
+      package: QFN32
+    rtc_version: cw32l011_v1
+    sysctrl_version: cw32l011_v1
+    envelope_pointer: /families/CW32L011/lsi_sysclk
+    trim_bit_size: 10
+  CW32L012:
+    exact_parts:
+    - name: CW32L012C8T6
+      package: LQFP48
+    - name: CW32L012C8U6
+      package: QFN48
+    rtc_version: cw32l012_v1
+    sysctrl_version: cw32l012_v1
+    envelope_pointer: /families/CW32L012/lsi_sysclk
+    trim_bit_size: 9

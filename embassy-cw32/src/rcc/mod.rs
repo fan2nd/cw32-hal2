@@ -97,7 +97,13 @@ pub use rtc::LseClock;
 mod rtc;
 #[cfg(any(rtc_cw32l010_v1, rtc_cw32l011_v1, rtc_cw32l012_v1))]
 pub use rtc::HsiOscClock;
-#[cfg(any(rtc_v1, rtc_cw32f020_v1, rtc_cw32l031_v1, rtc_cw32l052_v1))]
+#[cfg(any(
+    rtc_v1,
+    rtc_cw32f020_v1,
+    rtc_cw32l031_v1,
+    rtc_cw32l052_v1,
+    rtc_native_live_lsi
+))]
 pub use rtc::LsiClock;
 #[cfg(rtc)]
 pub use rtc::{CalendarClock, RtcClockError};

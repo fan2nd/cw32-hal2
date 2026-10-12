@@ -1,5 +1,8 @@
 //! Weekly alarm matches and retained event flags.
-use super::{DayOfWeek, Rtc, RtcConfig, RtcError, Unlocked, bcd, check_clock, check_write_mode};
+use super::{
+    DayOfWeek, Rtc, RtcConfig, RtcError, Unlocked, bcd, check_clock, check_native_lsi_rtc_domain,
+    check_write_mode,
+};
 use crate::pac;
 
 /// One of the two independently enabled weekly comparators.
@@ -73,15 +76,37 @@ impl Rtc<'_> {
     pub fn set_alarm_a(&mut self, config: AlarmAConfig) -> Result<(), RtcError> {
         let config = config.validate()?;
         let alarm = Alarm::A;
+        #[cfg(rtc_native_live_lsi)]
+        let native_lsi = matches!(&self.clock, crate::rcc::CalendarClock::Lsi(_));
+        #[cfg(not(rtc_native_live_lsi))]
+        let native_lsi = false;
         alarm_access(&self.clock, self.config, || {
-            if interrupt_enabled(alarm) {
-                return Err(RtcError::InterruptInUse);
-            }
-            if enabled(alarm) {
-                return Err(RtcError::AlarmAlreadyEnabled);
-            }
+            let h24 = if native_lsi {
+                check_native_lsi_rtc_domain(true)?;
+                let (ier, cr2, h24) = (
+                    pac::RTC.ier().read(),
+                    pac::RTC.cr2().read(),
+                    pac::RTC.cr0().read().h24(),
+                );
+                check_native_lsi_rtc_domain(true)?;
+                if ier.alarma() {
+                    return Err(RtcError::InterruptInUse);
+                }
+                if cr2.alarmaen() {
+                    return Err(RtcError::AlarmAlreadyEnabled);
+                }
+                h24
+            } else {
+                if interrupt_enabled(alarm) {
+                    return Err(RtcError::InterruptInUse);
+                }
+                if enabled(alarm) {
+                    return Err(RtcError::AlarmAlreadyEnabled);
+                }
+                pac::RTC.cr0().read().h24()
+            };
             let hour = config.hour.unwrap_or(0);
-            let hour = if pac::RTC.cr0().read().h24() {
+            let hour = if h24 {
                 bcd(hour)
             } else {
                 bcd(if hour % 12 == 0 { 12 } else { hour % 12 }) | if hour >= 12 { 0x20 } else { 0 }
@@ -107,8 +132,13 @@ impl Rtc<'_> {
                 value.set_seconden(config.second.is_none());
                 value.set_weekmask(config.days.0);
             }
+            check_native_lsi_rtc_domain(native_lsi)?;
             pac::RTC.alarma().write_value(value);
-            if pac::RTC.alarma().read() != value {
+            check_native_lsi_rtc_domain(native_lsi)?;
+            check_native_lsi_rtc_domain(native_lsi)?;
+            let observed = pac::RTC.alarma().read();
+            check_native_lsi_rtc_domain(native_lsi)?;
+            if observed != value {
                 return Err(RtcError::WriteFailure);
             }
             Ok(())
@@ -123,6 +153,27 @@ impl Rtc<'_> {
     pub fn set_alarm_a_enabled(&mut self, enable: bool) -> Result<(), RtcError> {
         let alarm = Alarm::A;
         alarm_access(&self.clock, self.config, || {
+            #[cfg(rtc_native_live_lsi)]
+            if matches!(&self.clock, crate::rcc::CalendarClock::Lsi(_)) {
+                check_native_lsi_rtc_domain(true)?;
+                let (ier, mut cr2) = (pac::RTC.ier().read(), pac::RTC.cr2().read());
+                check_native_lsi_rtc_domain(true)?;
+                if ier.alarma() {
+                    return Err(RtcError::InterruptInUse);
+                }
+                cr2.set_alarmaen(enable);
+                check_native_lsi_rtc_domain(true)?;
+                pac::RTC.cr2().write_value(cr2);
+                check_native_lsi_rtc_domain(true)?;
+                check_native_lsi_rtc_domain(true)?;
+                let observed = pac::RTC.cr2().read().alarmaen();
+                check_native_lsi_rtc_domain(true)?;
+                return if observed == enable {
+                    Ok(())
+                } else {
+                    Err(RtcError::WriteFailure)
+                };
+            }
             if interrupt_enabled(alarm) {
                 return Err(RtcError::InterruptInUse);
             }
@@ -138,11 +189,19 @@ impl Rtc<'_> {
     /// Read one alarm's enable, interrupt enable and sticky match flag.
     /// Classic families use a bounded WINDOW/ACCESS transaction even for status.
     pub fn alarm_status(&mut self, alarm: Alarm) -> Result<AlarmStatus, RtcError> {
+        #[cfg(rtc_native_live_lsi)]
+        let native_lsi = matches!(&self.clock, crate::rcc::CalendarClock::Lsi(_));
+        #[cfg(not(rtc_native_live_lsi))]
+        let native_lsi = false;
         alarm_access(&self.clock, self.config, || {
+            check_native_lsi_rtc_domain(native_lsi)?;
+            let (enabled, interrupt_enabled, pending) =
+                (enabled(alarm), interrupt_enabled(alarm), pending(alarm));
+            check_native_lsi_rtc_domain(native_lsi)?;
             Ok(AlarmStatus {
-                enabled: enabled(alarm),
-                interrupt_enabled: interrupt_enabled(alarm),
-                pending: pending(alarm),
+                enabled,
+                interrupt_enabled,
+                pending,
             })
         })
     }
@@ -153,6 +212,10 @@ impl Rtc<'_> {
     /// be lost; a match after the write may already have reasserted the flag.
     /// Success means the bounded access completed, not that the flag stayed low.
     pub fn clear_alarm(&mut self, alarm: Alarm) -> Result<(), RtcError> {
+        #[cfg(rtc_native_live_lsi)]
+        let native_lsi = matches!(&self.clock, crate::rcc::CalendarClock::Lsi(_));
+        #[cfg(not(rtc_native_live_lsi))]
+        let native_lsi = false;
         alarm_access(&self.clock, self.config, || {
             // Every own manual specifies ICR reset/read-one seed 0x0000_007f.
             // Preserve reserved bit 5 at its documented reset value, and write
@@ -162,7 +225,9 @@ impl Rtc<'_> {
                 Alarm::A => clear.set_alarma(false),
                 Alarm::B => clear.set_alarmb(false),
             }
+            check_native_lsi_rtc_domain(native_lsi)?;
             pac::RTC.icr().write_value(clear);
+            check_native_lsi_rtc_domain(native_lsi)?;
             Ok(())
         })
     }
@@ -227,6 +292,22 @@ fn alarm_access<T>(
         // DATE/TIME/AWTARR synchronization protocol, including on L010.
         let result = critical_section::with(|_| {
             check_clock(clock)?;
+            #[cfg(rtc_native_live_lsi)]
+            if matches!(clock, crate::rcc::CalendarClock::Lsi(_)) {
+                let mut unlock = Unlocked::new_native_lsi()?;
+                let result = (|| {
+                    super::check_clock_source(clock)?;
+                    let value = f()?;
+                    super::check_clock_source(clock)?;
+                    Ok(value)
+                })();
+                if matches!(result, Err(RtcError::ClockDomainUnavailable)) {
+                    unlock.suppress_relock = true;
+                    return Err(RtcError::ClockDomainUnavailable);
+                }
+                unlock.finish_native_lsi()?;
+                return result;
+            }
             let _unlock = Unlocked::new();
             super::check_clock_source(clock)?;
             let value = f()?;

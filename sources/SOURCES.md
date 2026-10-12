@@ -13,16 +13,16 @@ L010/L011 软件 ADC 中断单次与顺序扫描沿用既有 YAML。其 EOS/EOC�
 
 ## 当前文件级来源覆盖
 
-只统计 `cw32-data/` 内的 296 份 authored YAML：137 份寄存器定义 + 159 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；新增 `mco-qualified.yaml` 直接引用既有 x030 RM、F030 DS 与三个 SDK 成员，仅投影精确 C8T7 的 MCO 事实和 PA8 AF4；主动 LSE 的 `lse-qualified.yaml` 直接记录二十三个精确料号/封装的原厂文档 ID、SHA、PDF 页码与书页；完整清单及各族来源见末节。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
+只统计 `cw32-data/` 内的 297 份 authored YAML：137 份寄存器定义 + 160 份其他数据；不含 `cw32-data/data/` 等生成目录。此前新增 `af/cw32f030-atim-complementary.yaml` 与 `af/cw32a030-atim-complementary.yaml`，两份均保留自己的 DS 单元格、共享 x030 RM 单元格及精确 SDK 宏/行号。L010/L011 与 L052/L083 HSE、UART/SPI DMA 和当前异步 ADC 沿用已有硬件 YAML；新增 `mco-qualified.yaml` 直接引用既有 x030 RM、F030 DS 与三个 SDK 成员，仅投影精确 C8T7 的 MCO 事实和 PA8 AF4；主动 LSE 的 `lse-qualified.yaml` 直接记录二十三个精确料号/封装的原厂文档 ID、SHA、PDF 页码与书页；完整清单及各族来源见末节。以下四类按顺序互斥，每个文件只计一次。定位可为“官方文档 ID + 章节/页码”，也可为“锁定 SDK 成员 + 宏/行号/SVD 寄存器名”；“直接”表示文件中至少有一处这样的定位，或寄存器基线经既有 canonical/input 映射能定位原 SVD。人工覆盖不因基线可定位而自动通过审查。
 
 | 归类 | 文件数 | 边界 |
 | --- | ---: | --- |
 | 可直接定位原件中的内容 | 286 | 137 份寄存器有既有 canonical/input → 官方 SVD 结构来源；149 份其他 YAML 至少有文档章节/页码、SDK 符号/行号等入口。 |
-| 经明确引用的审阅记录可找到原件与章节/页码 | 10 | 下列十个根级能力文件；正文已摘出其中部分精确引文。 |
+| 经明确引用的审阅记录可找到原件与章节/页码 | 11 | 下列十一个根级能力文件；正文已摘出其中部分精确引文。 |
 | 只找到原文件，未找到上述内容定位 | 0 | 指整个文件没有任何内容定位；不表示每条事实都已有章节。 |
 | 连原文件都无法确定 | 0 | 仅表示这次文件级来源链检查没有遇到此类文件。 |
 
-第二类是 `adc-sequences.yaml`、`classic-adc-scans.yaml`、`classic-timer-input.yaml`、`crypto.yaml`、`lcd.yaml`、`lvd-ir.yaml`、`ram-parity.yaml`、`rtc-alarms.yaml`、`rtc-calendar.yaml`、`spi.yaml`。这组计数不是逐字段覆盖率，也不是重新完成硬件审查；一份文件里可以同时有已定位的内容和仍待补全的人工修正/电气条件。
+第二类是 `adc-sequences.yaml`、`classic-adc-scans.yaml`、`classic-timer-input.yaml`、`crypto.yaml`、`lcd.yaml`、`lvd-ir.yaml`、`ram-parity.yaml`、`rtc-alarms.yaml`、`rtc-calendar.yaml`、`spi.yaml`、`rtc-live-lsi-qualified.yaml`。这组计数不是逐字段覆盖率，也不是重新完成硬件审查；一份文件里可以同时有已定位的内容和仍待补全的人工修正/电气条件。
 
 优先检查的边界：`field-access.yaml` 的 UIFCPY 已直接写明 L010/L011 RM §11.9.8（书页 184 / PDF 185）、§13.9.13（276 / 277），以及 L012 RM §14.10.8（208 / 234）、§16.10.13（303 / 329）；RAM 项经明确的同族审阅记录定位。`register-writes.yaml` 的逐命令语义、RCC 的派生文本行号、`electrical.yaml` 的 ADC 限值仍须保留各自 claim 与原文的关系，不能由上述“文件至少一处有定位”推定全部覆盖。
 
@@ -873,3 +873,16 @@ checker failures and the first main diagnostic correction remain in external
 history. At main acceptance clean had not run; completion requires a separate
 final-source two-library/two-ELF receipt. The unchanged cumulative local recipe
 is not execution evidence.
+
+
+## Native exact7 live factory-LSI RTC
+
+`rtc-live-lsi-qualified.yaml` 通过 [自身来源记录](../docs/native-live-factory-lsi-rtc-qualification.json) 定位三个原生族的现有锁定原件；复用已审厂校频率边界，不改默认 HSIOSC `rtc-calendar.yaml`。精确范围为 L010F8P6/F8U6/Y8M6、L011K8T6/K8U6、L012C8T6/C8U6。
+
+- L010 CN RM1.2：书页139的分频、142的停止/运行访问条件、151的 SOURCE/WAIT/ACCESS、153的 PSC；CN DS1.3书页42为厂校 LSI 范围。
+- L011 CN RM1.1：书页139的分频、142的直接访问、151的 SOURCE/WAIT、153的 PSC；CN DS1.1书页48为 −10/+25% 厂校范围，RM的调整警告仍保留。
+- L012 CN RM1.4：书页165的分频、168的直接访问、176的 SOURCE/WAIT、178的 PSC；CN DS1.0书页55为厂校范围。各自 SDK 的 `rtc.h` 仅佐证源编码，不替代手册。
+
+SOURCE2 与除数 `(1, 16400)` 对应名义日历 /32800；源和秒率仍仅有 rate-only 资格。新能力只复用已软件使能、稳定、厂校匹配的 LSI，不提供冷启动或低功耗唤醒；L010新源时间修改及全部新源异步闹钟等待明确拒绝。本批主验证已产生12个实际库和7个链接ELF，19条命令全部exit0。gen-all与8条有限source/data门分别通过，905个生成data/PAC文件路径和bytes完全不变。本批冻结实现已获运行与metadata/source独立主验收。L010/L011行保留三个既有未使用LSE常量warning头，不能称零warning。在main验收时clean尚未运行；最终包完成仍要求另行记录最终源码两库/两ELF clean收据，不得由main结果代替。
+
+首轮main在第一库遇到build.rs中非Copy access取值的E0507，未产生库；仅改为引用比较保留完整相等性后，原19行主矩阵全部通过。初次失败与修正历史保留，不改写旧stage结果，也不构成实板、连续性或计时精度验证。
