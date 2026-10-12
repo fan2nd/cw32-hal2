@@ -231,6 +231,67 @@ impl RccInfo {
         Ok(())
     }
 
+    /// Reset an exclusively owned, locally stopped classic I2C instance.
+    ///
+    /// The caller must establish physical reset-bit exclusivity from metadata,
+    /// confirm local disable and STO=0, and keep the gate enabled throughout.
+    /// Call outside a critical section so both acknowledgement loops leave
+    /// interrupts available. Any error requires terminal caller fault handling
+    /// without further peripheral MMIO, including after failed reset release.
+    #[cfg(not(i2c_cw32l012_v1))]
+    pub(crate) fn reset_checked(self, attempts: u32) -> Result<(), ClockError> {
+        if attempts == 0 || !self.policy.allow_reset {
+            return Err(ClockError);
+        }
+        let Some((offset, bit)) = self.reset else {
+            return Err(ClockError);
+        };
+        if !self.is_enabled() {
+            return Err(ClockError);
+        }
+
+        let reset = self.register(offset);
+        let mask = 1 << bit;
+        // Reset registers are unkeyed. Preserve every neighboring bit.
+        critical_section::with(|_| {
+            reset.modify(|value| {
+                if self.reset_asserted {
+                    *value |= mask;
+                } else {
+                    *value &= !mask;
+                }
+            });
+        });
+        let mut assertion_confirmed = false;
+        for _ in 0..attempts {
+            if self.reset_asserted() {
+                assertion_confirmed = true;
+                break;
+            }
+        }
+
+        // Always attempt release once, even when assertion did not acknowledge.
+        critical_section::with(|_| {
+            reset.modify(|value| {
+                if self.reset_asserted {
+                    *value &= !mask;
+                } else {
+                    *value |= mask;
+                }
+            });
+        });
+        for _ in 0..attempts {
+            if !self.reset_asserted() {
+                return if assertion_confirmed {
+                    Ok(())
+                } else {
+                    Err(ClockError)
+                };
+            }
+        }
+        Err(ClockError)
+    }
+
     /// Retained groups never gate off, including their last tracked owner.
     pub(crate) fn disable_with_cs(self, _cs: CriticalSection<'_>) -> Result<(), ClockError> {
         self.disable_with_cs_readback(_cs, self.policy.disable_readback)

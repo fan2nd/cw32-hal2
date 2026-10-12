@@ -1,0 +1,1070 @@
+{
+  "schema_version": 1,
+  "stage": 87,
+  "status": "accepted_main_source_and_metadata",
+  "reviewed_utc": "2026-10-12T18:20:10.843361+00:00",
+  "scope": "Independent review of the actual classic I2C source/checker implementation, retained existing typed-register coverage, original-source relationships, current data/PAC projection and genuine main command/artifact results. This records the historical main acceptance point; final-source clean acceptance is separate.",
+  "reviewed_files_at_main_source_gate": [
+    {
+      "path": "tests/verify_i2c_typed_registers.py",
+      "sha256": "09f72aeb66133f495799876f2e5a737c056b47c5e665b9f98d48d44f2127c39f",
+      "bytes": 36532
+    },
+    {
+      "path": "docs/i2c-typed-register-evidence.json",
+      "sha256": "a43b657d61de336157efc8c31cc1101295e189938569d0b08137aeb3b8bed528",
+      "bytes": 238078
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "sha256": "348555f8204e911a4808cf71c73c8eb0e026110db56d6cb2d82a89d08f58595b",
+      "bytes": 432195
+    }
+  ],
+  "source_facts": {
+    "classic_families": 12,
+    "classic_controllers": 17,
+    "classic_register_versions": 5,
+    "existing_families_retained": 13,
+    "existing_register_versions_retained": 6,
+    "current_chip_and_profile_artifacts": 51,
+    "exact_package_routes": 34,
+    "locked_source_identities_inspected": 90,
+    "canonical_generated_files_unchanged": 910,
+    "generated_data_files": 421,
+    "generated_pac_files": 489,
+    "L012_new_async_evidence": false,
+    "source_lock_authority": "sources/evidence-sources.json",
+    "typed_evidence_authority": "docs/i2c-typed-register-evidence.json",
+    "source_refs_inspected": [
+      "member:cw32f002/IdeSupport/MDK/WHXY.CW32F002_DFP.1.0.2/SVD/CW32F002.svd",
+      "member:cw32f002/Libraries/inc/cw32f002.h",
+      "member:cw32f002/Libraries/inc/cw32f002_gpio.h",
+      "member:cw32f002/Libraries/inc/cw32f002_i2c.h",
+      "member:cw32f003/IdeSupport/MDK/WHXY.CW32F003_DFP.1.0.2/SVD/CW32F003.svd",
+      "member:cw32f003/Libraries/inc/cw32f003.h",
+      "member:cw32f003/Libraries/inc/cw32f003_gpio.h",
+      "member:cw32f003/Libraries/inc/cw32f003_i2c.h",
+      "member:cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/SVD/CW32F020.svd",
+      "member:cw32f020/Libraries/inc/cw32f020.h",
+      "member:cw32f020/Libraries/inc/cw32f020_gpio.h",
+      "member:cw32f020/Libraries/inc/cw32f020_i2c.h",
+      "member:cw32f030/IdeSupport/EWARM/arm/config/debugger/CW/CW32F030.svd",
+      "member:cw32f030/Libraries/inc/cw32f030.h",
+      "member:cw32f030/Libraries/inc/cw32f030_gpio.h",
+      "member:cw32f030/Libraries/inc/cw32f030_i2c.h",
+      "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP.1.0.2/WHXY.CW32L010_DFP/SVD/CW32L010.svd",
+      "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+      "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_i2c.h",
+      "member:cw32l011/IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/SVD/CW32L011.svd",
+      "member:cw32l011/Libraries/inc/cw32l011.h",
+      "member:cw32l011/Libraries/inc/cw32l011_gpio.h",
+      "member:cw32l011/Libraries/inc/cw32l011_i2c.h",
+      "member:cw32l031/IdeSupport/EWARM/arm/config/debugger/WHXY/CW32L031.svd",
+      "member:cw32l031/Libraries/inc/cw32l031.h",
+      "member:cw32l031/Libraries/inc/cw32l031_gpio.h",
+      "member:cw32l031/Libraries/inc/cw32l031_i2c.h",
+      "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/SVD/CW32L052.svd",
+      "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+      "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gpio.h",
+      "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_i2c.h",
+      "member:cw32l083/IdeSupport/MDK/WHXY.CW32L083_DFP.1.0.9/SVD/CW32L083.svd",
+      "member:cw32l083/Libraries/inc/cw32l083.h",
+      "member:cw32l083/Libraries/inc/cw32l083_gpio.h",
+      "member:cw32l083/Libraries/inc/cw32l083_i2c.h",
+      "member:cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/SVD/CW32R031.svd",
+      "member:cw32r031/Libraries/inc/cw32r031.h",
+      "member:cw32r031/Libraries/inc/cw32r031_gpio.h",
+      "member:cw32r031/Libraries/inc/cw32r031_i2c.h",
+      "member:cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/SVD/CW32W031.svd",
+      "member:cw32w031/Libraries/inc/cw32w031.h",
+      "member:cw32w031/Libraries/inc/cw32w031_gpio.h",
+      "member:cw32w031/Libraries/inc/cw32w031_i2c.h",
+      "text:CW32F002_UserManual_CN_V1.4.txt",
+      "text:CW32F003_UserManual_CN_V2.3.txt",
+      "text:CW32F020_UserManual_CN_V1.4.txt",
+      "text:CW32L010_UserManual_CN_V1.2.txt",
+      "text:CW32L011_UserManual_CN_V1.1.txt",
+      "text:CW32L031_UserManual_CN_V1.6.txt",
+      "text:CW32L052_UserManual_CN_V1.5.txt",
+      "text:CW32L083_UserManual_CN_V2.0.txt",
+      "text:CW32R031_UserManual_CN_V1.3.txt",
+      "text:CW32W031_UserManual_CN_V1.4.txt",
+      "text:CW32x030_UserManual_CN_V2.5.txt",
+      "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+      "vendor:CW32F002_DataSheet_CN_V1.2.pdf",
+      "vendor:CW32F002_StandardPeripheralLib_V1.2.zip",
+      "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+      "vendor:CW32F003_DataSheet_CN_V1.9.pdf",
+      "vendor:CW32F003_StandardPeripheralLib_V1.7.zip",
+      "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+      "vendor:CW32F020_DataSheet_CN_V1.3.pdf",
+      "vendor:CW32F020_StandardPeripheralLib_V1.2.zip",
+      "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+      "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+      "vendor:CW32F030_StandardPeripheralLib_V2.2.zip",
+      "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+      "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+      "vendor:CW32L031_StandardPeripheralLib_V1.4.zip",
+      "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+      "vendor:CW32L052_StandardPeripheralLib_V1.4.zip",
+      "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+      "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "vendor:CW32L083_StandardPeripheralLib_V2.2.zip",
+      "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+      "vendor:CW32R031_StandardPeripheralLib_V1.1.zip",
+      "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+      "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+      "vendor:CW32W031_StandardPeripheralLib_V1.3.zip",
+      "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+      "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+      "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf"
+    ],
+    "source_identity_result": "Every listed identity resolved to its exact existing source-lock node, parent and archive member chain where applicable. Cached SHA256 and byte lengths matched. Selected own-source passages and all final exact-package pinout/AF/header relations were inspected. No source identity was repinned."
+  },
+  "source_conclusions": [
+    "Every selected source resolves by exact nested lock pointer, parent ID, path, URL, SHA256, byte length and member chain; cached bytes match. The normal provenance gate remains responsible for archive/text derivation verification.",
+    "Read each own manual’s SI W0/W1 and hold/advance ordering, STA software clear, STO hardware clear and W0 no-action, transient/no-interrupt F8, arbitration 38/68/78/B0 and bus-error-specific disable/re-enable recovery. No generic EN-toggle FSM or electrical guarantee is inferred.",
+    "Complete own register lists and current authored/generated layouts establish nine offsets, all classic field widths/access, 27 lossless status encodings, and GPIO selectors only on L010/L011. No local IRQ-enable, FIFO/DMA or STOP-completion register is invented.",
+    "Original SVD declarations, own NVIC/header names and current metadata agree on dedicated IRQ23/24 ownership. Singleton devices retain no invented I2C2.",
+    "Own gate/reset initialization and reset-default passages match the exclusive physical SYSCTRL gate/reset fields across all 51 current chip/profile artifacts. L010/L011 alone use the APBEN2 KEY; their APBRST2 is unkeyed. Bus and kernel remain PCLK.",
+    "All 34 final exact-part pin/AF/signal/package-position routes match their own bounded PDF page, authored pinout and AF pointers, selected GPIO macro, and current generated metadata. L010F8P6 and L083RCT6 remain the exact selected parts.",
+    "The checker checks current source/data/PAC facts only. No HAL source-string tests, behavioral models, fake registers, mutation fixtures, stage-history acceptance gate, new framework or canonical generator change is added.",
+    "All old checker function bodies remain unchanged except one terminal classic-source call in main, retaining complete L012 checks and 13-family/six-version coverage."
+  ],
+  "checker_review": {
+    "path": "tests/verify_i2c_typed_registers.py",
+    "sha256": "09f72aeb66133f495799876f2e5a737c056b47c5e665b9f98d48d44f2127c39f",
+    "old_function_bodies_retained": true,
+    "main_change_to_old_checks": "One final call to classic_async_sources after all preexisting checks.",
+    "L012_checks": "Own command/control/status/receive/MICR facts, write-noop and reset seeds, seven R1W0 fields and unchanged zero Default retained.",
+    "new_scope": "Current own manuals/SVD/header, authored clocks/registers/pins/parts, generated chip/PAC and complete current cohort inventory.",
+    "exclusions": [
+      "No HAL source-string assertions",
+      "No behavioral model or fake MMIO/registers",
+      "No mutation fixture or new test framework",
+      "No historical production-snapshot acceptance gate",
+      "No data/PAC generation in main source commands"
+    ]
+  },
+  "resolved_findings": [
+    {
+      "id": "IM1",
+      "finding": "The first checker used broad generated family as an exact source-cohort key.",
+      "resolution": "Use chip.line, verify family/line/die against authored profiles and require the complete current profile-plus-catalog chip set."
+    },
+    {
+      "id": "IM2",
+      "finding": "The first checker indexed L083 pinout positions by display package instead of table column.",
+      "resolution": "Resolve the exact authored package and validate table_column independently of display identity."
+    },
+    {
+      "id": "IM3",
+      "finding": "Frozen F002/F003 PA5 AF3 SCL routes were physical routes but excluded by the existing safe HAL policy because PA5 is SWCLK. Their composite PDF row names also interleave table columns.",
+      "resolution": "Root-approved PB1 AF3 SCL with unchanged PA6 AF3 SDA replaces only the selected example/evidence routes. F002 TSSOP20 PB1 pin6; F003 TSSOP24 PB1 pin8. Existing canonical routes and safe-pin policy remain unchanged."
+    },
+    {
+      "id": "IM4",
+      "finding": "The first implementation supplied only F020 timing’s resolved PDF binding and required timing and pinout source_refs to be equal. The frozen design already recorded both correct distinct scalar references.",
+      "resolution": "Add the separately resolved, already-locked current pinout PDF artifact40 and resolve each purpose by its own exact source_ref. Retain timing artifact17 and all existing scalar references/pages. No frozen F020 pinout scalar or source identity is changed."
+    }
+  ],
+  "design_preservation": {
+    "original_freeze_sha256": "5829ccffb1ba337902cdc44b28d9b528aa76037a51f8fbf772cea3d020ac888b",
+    "original_metadata_design_sha256": "61a7b4276e52661bde29115e298df3de6ffdbe55fff2f8f864ac883760b67c2f",
+    "original_source_bindings_sha256": "c62681bbcc6676b2589241533f827198512c295ac6ece6941572692cd5a68c6a",
+    "rewritten": false,
+    "precise_correction": "The frozen PA5 selected example routes for F002/F003 are superseded by existing safe PB1 AF3 SCL routes, retaining PA6 AF3 SDA. The frozen F020 timing and pinout source_refs were already distinct and correct; the implementation had omitted a resolved current pinout binding and incorrectly required equality. Only that implementation error was corrected."
+  },
+  "preservation": {
+    "schema_version_retained": 1,
+    "new_async_blocks": 12,
+    "source_index_suffix_arrays_at_main_gate": 90,
+    "all_preexisting_evidence_and_identity_fields_preserved": true,
+    "JSON_inverses_restore_prior_bytes": true,
+    "independent_reverse_patches_restore_three_prior_files_exactly": true,
+    "canonical_register_pin_clock_source_inputs_changed": false,
+    "canonical_generated_hash_differences": 0,
+    "project_audit_inputs_added": false,
+    "runtime_review_vendor_consumer_links_fabricated": false
+  },
+  "main_commands": {
+    "count": 6,
+    "all_exit_zero": true,
+    "hardware_source_provenance_scope": {
+      "required_originals": 43,
+      "required_source_files": 551,
+      "catalogued_originals": 45,
+      "complete_hardware": true,
+      "complete_manifest": false,
+      "omitted_discovery_pages": 2
+    },
+    "details": [
+      {
+        "command": [
+          "python3",
+          "cw32-data/tools/source_provenance.py",
+          "--root",
+          ".",
+          "--write"
+        ],
+        "exit_code": 0,
+        "script_sha256": "fbeb2fbabcca131babcc66de410dd2f0f5cc127a60e03e90c2b1e82ed170f066",
+        "source_snapshot_sha256": "1302351d516ff1b1821cddae2af182aa61effb1e7008eeb7e6eb63932c73b5a5",
+        "start_utc": "2026-10-12T18:02:53.684207+00:00",
+        "end_utc": "2026-10-12T18:03:07.232365+00:00",
+        "log_hashes_verified": true
+      },
+      {
+        "command": [
+          "python3",
+          "tests/verify_i2c_typed_registers.py"
+        ],
+        "exit_code": 0,
+        "script_sha256": "09f72aeb66133f495799876f2e5a737c056b47c5e665b9f98d48d44f2127c39f",
+        "source_snapshot_sha256": "1302351d516ff1b1821cddae2af182aa61effb1e7008eeb7e6eb63932c73b5a5",
+        "start_utc": "2026-10-12T18:03:07.232790+00:00",
+        "end_utc": "2026-10-12T18:03:19.289955+00:00",
+        "log_hashes_verified": true
+      },
+      {
+        "command": [
+          "python3",
+          "cw32-data/tools/source_provenance.py",
+          "--root",
+          ".",
+          "--sources",
+          "<locked-source-cache>"
+        ],
+        "exit_code": 0,
+        "script_sha256": "fbeb2fbabcca131babcc66de410dd2f0f5cc127a60e03e90c2b1e82ed170f066",
+        "source_snapshot_sha256": "1302351d516ff1b1821cddae2af182aa61effb1e7008eeb7e6eb63932c73b5a5",
+        "start_utc": "2026-10-12T18:03:19.290447+00:00",
+        "end_utc": "2026-10-12T18:03:32.313594+00:00",
+        "log_hashes_verified": true
+      },
+      {
+        "command": [
+          "python3",
+          "ci/update-functional-coverage.py"
+        ],
+        "exit_code": 0,
+        "script_sha256": "1c256f5e99781b410a4a44046dfd7c4390e71c32de3493e012e5f84c9b93809d",
+        "source_snapshot_sha256": "1302351d516ff1b1821cddae2af182aa61effb1e7008eeb7e6eb63932c73b5a5",
+        "start_utc": "2026-10-12T18:03:32.314334+00:00",
+        "end_utc": "2026-10-12T18:03:35.397446+00:00",
+        "log_hashes_verified": true
+      },
+      {
+        "command": [
+          "python3",
+          "ci/update-functional-coverage.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "script_sha256": "1c256f5e99781b410a4a44046dfd7c4390e71c32de3493e012e5f84c9b93809d",
+        "source_snapshot_sha256": "1302351d516ff1b1821cddae2af182aa61effb1e7008eeb7e6eb63932c73b5a5",
+        "start_utc": "2026-10-12T18:03:35.397947+00:00",
+        "end_utc": "2026-10-12T18:03:38.314475+00:00",
+        "log_hashes_verified": true
+      },
+      {
+        "command": [
+          "python3",
+          "tests/test_module_layout.py"
+        ],
+        "exit_code": 0,
+        "script_sha256": "ec4751fae2ffbf29c824bed74b3653b84f930122080de44cd2632dd23450d19c",
+        "source_snapshot_sha256": "1302351d516ff1b1821cddae2af182aa61effb1e7008eeb7e6eb63932c73b5a5",
+        "start_utc": "2026-10-12T18:03:38.315240+00:00",
+        "end_utc": "2026-10-12T18:03:38.535672+00:00",
+        "log_hashes_verified": true
+      }
+    ]
+  },
+  "main_artifacts": {
+    "standalone_ARM_libraries": 13,
+    "linked_ARM_ELFs": 17,
+    "async_ELFs": 12,
+    "blocking_ELFs": 5,
+    "dependency_HAL_rlibs_not_counted_as_standalone": 17,
+    "all_selected_command_exits_zero": true,
+    "all_retained_artifact_hashes_and_lengths_verified": true,
+    "all_ELFs_are_ARM": true,
+    "captured_HAL_projections_verified": 30,
+    "L012_retained_backend_library_row": 13,
+    "classic_generated_RCC_reset_permission_confirmed": true,
+    "matrix": [
+      {
+        "row": 1,
+        "kind": "rlib",
+        "selection": "cw32f030c8t7",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "850d956255940ecf1669deb653c75bf304e6d0611c2ced3dd4c62bf580606f1b",
+        "artifacts": [
+          {
+            "sha256": "12c157913b4f94f6e321f17799f0badc295fe5bbaeee0fa655dc0d1f14de7eed",
+            "bytes": 7381864,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:03.269898+00:00"
+      },
+      {
+        "row": 2,
+        "kind": "rlib",
+        "selection": "cw32a030c8t7",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "f155dfd129421cfb2a494633220c7edae6545a6788b096d2f7fd967b360cd9ec",
+        "artifacts": [
+          {
+            "sha256": "f9d97ebe0019689d7b9a1ca42f15b11ddf504e38c25a4fcb3daed0107476cda4",
+            "bytes": 7381808,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:08.613239+00:00"
+      },
+      {
+        "row": 3,
+        "kind": "rlib",
+        "selection": "cw32f020c6u7",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "cf5a7ac209f95cdb316a532fce2fe6b11a5a6947d60ee9c5d61cce77da435e73",
+        "artifacts": [
+          {
+            "sha256": "fab3b06a059efc17e35af2ec9629dfe9b25cfc5798e905c1b952d6f62732c351",
+            "bytes": 6391110,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:13.376616+00:00"
+      },
+      {
+        "row": 4,
+        "kind": "rlib",
+        "selection": "cw32f002f3p7",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "8cc7253266b8c3df02f8dbcef310c8fc502e07066da9ad5e3e39c6f64f16f65d",
+        "artifacts": [
+          {
+            "sha256": "cc41e03d8387d4cf6e1ad5a97285dbe909dfc6149684208a495ac3aa11e763b2",
+            "bytes": 4776252,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:17.346001+00:00"
+      },
+      {
+        "row": 5,
+        "kind": "rlib",
+        "selection": "cw32f003e4p7",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "a67816fe1c9e71011844b1c55099437ff6b89df64c02150d85da05a17f541b2c",
+        "artifacts": [
+          {
+            "sha256": "0cb58c7d4059d4153057ccaa0380fe469f57e46ab3f59768e3d670b06c0415b0",
+            "bytes": 5001250,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:21.605732+00:00"
+      },
+      {
+        "row": 6,
+        "kind": "rlib",
+        "selection": "cw32l010f8p6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "8749f145f5b98c8385809f11b0ef92b7e000909160a9ca940a46f076d3adc463",
+        "artifacts": [
+          {
+            "sha256": "e4c9fcce2444b374ade37272089b7c829fdf64ca9a5ce67f178d72a1c8f5c7ec",
+            "bytes": 5916220,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:26.255177+00:00"
+      },
+      {
+        "row": 7,
+        "kind": "rlib",
+        "selection": "cw32l011k8t6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "d0669366f644f74aa572cac7cde85fec2fcd83425a36ce3a1d5f1c7722dc0027",
+        "artifacts": [
+          {
+            "sha256": "f7e649ac5660bc4c2508de92d8563f8c7421207faf16b626ac3a5646db41274c",
+            "bytes": 6163782,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:31.424886+00:00"
+      },
+      {
+        "row": 8,
+        "kind": "rlib",
+        "selection": "cw32l031c8t6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "843573719e0c1f572e653a4bb5b209a86929f4eccfbd223ee1c5efbd008521a6",
+        "artifacts": [
+          {
+            "sha256": "0cf740a5a47df2bb61b1cd630be0984b25403e6f881fc0b3a404b39a20ef4880",
+            "bytes": 6420214,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:36.661403+00:00"
+      },
+      {
+        "row": 9,
+        "kind": "rlib",
+        "selection": "cw32r031c8u6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "2e2cdddb80b48debea0db60b2417fd7addc42076e68e39e03bbe916b62bacba6",
+        "artifacts": [
+          {
+            "sha256": "a9090ff73eca7c937c5697bad9d8ffbd581ede7bfd59f6456af72afae8425799",
+            "bytes": 6253108,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:42.178760+00:00"
+      },
+      {
+        "row": 10,
+        "kind": "rlib",
+        "selection": "cw32w031r8u6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "fd388b03e50fc555813fe35ceeef3fae99beb0a4988e902f24e8212130e9c6d7",
+        "artifacts": [
+          {
+            "sha256": "2e2701b27b07ea8da94d1309295c11c7a924d453a4c0790fd16dc71b41dee9b8",
+            "bytes": 6309734,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:47.728196+00:00"
+      },
+      {
+        "row": 11,
+        "kind": "rlib",
+        "selection": "cw32l052c8t6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "adae7dde28c77d6d5a39dea2cbaf0ceac4a2f48739c8588a617df2ab633e94ea",
+        "artifacts": [
+          {
+            "sha256": "8310b518e19e6f8b5874afbc82d2969723ee20fc2435211f9dcf2d7a86e67f87",
+            "bytes": 7262784,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:51:53.985631+00:00"
+      },
+      {
+        "row": 12,
+        "kind": "rlib",
+        "selection": "cw32l083rct6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "7dba28b75580e3b63565dd1255bbc299359fd4ae637cea119101badc0f0fabd1",
+        "artifacts": [
+          {
+            "sha256": "c32715efdee11269ef757063f10f33426b8fba9f3a89cb5a0e114f445331ee9a",
+            "bytes": 8337694,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:52:00.215804+00:00"
+      },
+      {
+        "row": 13,
+        "kind": "rlib",
+        "selection": "cw32l012c8t6",
+        "target": "embassy_cw32",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+        "receipt_sha256": "c99aa29296e54a3810b444695dab81b4b6879ae7f41f20dd7408001684d9b389",
+        "artifacts": [
+          {
+            "sha256": "94b1defc8135962fb051a57bdbcd68b8767e78a1ade564506ee3753b38ecbc3a",
+            "bytes": 8159780,
+            "format": "ar RLIB",
+            "opt_level": "3"
+          }
+        ],
+        "end_utc": "2026-10-12T17:52:05.288801+00:00"
+      },
+      {
+        "row": 14,
+        "kind": "elf",
+        "selection": "cw32f030c8t7",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "509c9fd2d3a1bc5d86f9764e2eccf0e426bbe3fc383350cd09c5db39f0f5d6a8",
+        "artifacts": [
+          {
+            "sha256": "8e5c6ea3e9e7142fff20caba1520f9b6aa2faa921b0c9644538630f06d4b7269",
+            "bytes": 149308,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:14.053843+00:00"
+      },
+      {
+        "row": 15,
+        "kind": "elf",
+        "selection": "cw32a030c8t7",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "7817e874da6415ba2a41e12c3338bb240cabc4565319bd93b805665a033c3dfc",
+        "artifacts": [
+          {
+            "sha256": "2da000576f69ebe7f0907814ce68293db76d0a8b87f7ec021f031ab358eeaae4",
+            "bytes": 149308,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:18.000813+00:00"
+      },
+      {
+        "row": 16,
+        "kind": "elf",
+        "selection": "cw32f020c6u7",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "e46fa96589f06e4cef67fd7b7876f5f57b812e9db3d51411190be92a6824cef9",
+        "artifacts": [
+          {
+            "sha256": "3d717d39263273ea06584c0da783d053d28eb085fe79a979c8efacd3217bbc30",
+            "bytes": 214712,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:21.744720+00:00"
+      },
+      {
+        "row": 17,
+        "kind": "elf",
+        "selection": "cw32f002f3p7",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "17be2dfc88c56641cd4b782714384933eb29a2170ca0af4682ad8b50d9c2e495",
+        "artifacts": [
+          {
+            "sha256": "d987488432ac25f84f5ad4df1271c046f9a86a295f21c70819c41b62fa3e69a9",
+            "bytes": 142080,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:09.925113+00:00"
+      },
+      {
+        "row": 18,
+        "kind": "elf",
+        "selection": "cw32f003e4p7",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "df23ae747a96299b0b6710b490c1ce1db13195ac5276ef7423fd282893ea380f",
+        "artifacts": [
+          {
+            "sha256": "4523184a6487bab1a37e8eb7273b8771bfc95bd074cc0484498a2e4b10bbd5b1",
+            "bytes": 142104,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:25.956628+00:00"
+      },
+      {
+        "row": 19,
+        "kind": "elf",
+        "selection": "cw32l010f8p6",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "e1aa0d9c4cfd566b7277991183e9c43371670110973d1c77693d5074abd72114",
+        "artifacts": [
+          {
+            "sha256": "213717b8bcf2d508a26ffa9f98772a282ff26b15b48a2ea7bf4c7c4ddac95149",
+            "bytes": 215432,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:31.204985+00:00"
+      },
+      {
+        "row": 20,
+        "kind": "elf",
+        "selection": "cw32l011k8t6",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "093905c4be562db9873d9eccab595ca2e54a1bd2d75e46a15866822f4be65dda",
+        "artifacts": [
+          {
+            "sha256": "f2fa467074c3c2ffe9b67ca9f71fc7da8d82fb2cbacd7fe1f879b415027ad7f9",
+            "bytes": 216552,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:36.362417+00:00"
+      },
+      {
+        "row": 21,
+        "kind": "elf",
+        "selection": "cw32l031c8t6",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "395129c47150fb7fe72e4be689bf9b4c56d097e43a50c095f229f4bd49bd808a",
+        "artifacts": [
+          {
+            "sha256": "fc48494edaafab2db3d13f293043bb2edbd9032356e53318999a10332d8e5e30",
+            "bytes": 215708,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:40.839188+00:00"
+      },
+      {
+        "row": 22,
+        "kind": "elf",
+        "selection": "cw32r031c8u6",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "f049271442f2931783f8c24103e07f148c5496e3ce4904dd1cbaa61623d5a6e6",
+        "artifacts": [
+          {
+            "sha256": "93195bffa7759bbdd8511b26ea8bc3a896db55e9cfd527bcf0e894758ff8dfe6",
+            "bytes": 215612,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:45.700578+00:00"
+      },
+      {
+        "row": 23,
+        "kind": "elf",
+        "selection": "cw32w031r8u6",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "1b147bc668a63eed915f020d590b43bab782b7ea7af108cc34c0f6174f874a05",
+        "artifacts": [
+          {
+            "sha256": "5587de00a82acd84eeda85b3016a5b306c6f79b4f0d16a9aeee138194d35c6fd",
+            "bytes": 215612,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:50.666814+00:00"
+      },
+      {
+        "row": 24,
+        "kind": "elf",
+        "selection": "cw32l052c8t6",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "f0bfd7d8693349a53d5a30f0b0c50b940a01e52d827262a3252cbd155528f055",
+        "artifacts": [
+          {
+            "sha256": "6732051971d63b048215cda56487a828441c6b332bc49e23ed98647b64a214e6",
+            "bytes": 222944,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:14:55.705784+00:00"
+      },
+      {
+        "row": 25,
+        "kind": "elf",
+        "selection": "cw32l083rct6",
+        "target": "async_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "0ef037d0b6ccc7237c7150f359a875e27ce10a499a7ce3f3635fc524657901e3",
+        "artifacts": [
+          {
+            "sha256": "48434c909ccf37ea672db56904e6504c05e87ad99bf37e9beabe74c5fbaff0b4",
+            "bytes": 227788,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:15:02.018668+00:00"
+      },
+      {
+        "row": 26,
+        "kind": "elf",
+        "selection": "cw32f030c8t7",
+        "target": "blocking_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "69de8981813e84baac2236426a7163ac4d976a7db064c10236d69824c70b593b",
+        "artifacts": [
+          {
+            "sha256": "1d8370aaa968ecc2e3f1373b41ab0860647b50c34f7bf7b3d1685dc4c12e5143",
+            "bytes": 211356,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:15:02.543829+00:00"
+      },
+      {
+        "row": 27,
+        "kind": "elf",
+        "selection": "cw32f002f3p7",
+        "target": "blocking_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "4b91f0fad842ffe70b984869e71e6889c7207dbde1b9267e6559e2568daa8b6d",
+        "artifacts": [
+          {
+            "sha256": "21633457e615e3da1b6ed6603cb2111eb69d919fefc1fafb57e4f57cf14cff0a",
+            "bytes": 204652,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:15:02.901015+00:00"
+      },
+      {
+        "row": 28,
+        "kind": "elf",
+        "selection": "cw32l010f8p6",
+        "target": "blocking_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "cc34e66748df3696f6f2cac5d53da9e67e5d3dbb8a8790af67330b95e0b28836",
+        "artifacts": [
+          {
+            "sha256": "d72f326e979aa37f2c108a301e095c9b049e422d4d489356356b08d9f55cb3d4",
+            "bytes": 212628,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:15:03.493025+00:00"
+      },
+      {
+        "row": 29,
+        "kind": "elf",
+        "selection": "cw32l011k8t6",
+        "target": "blocking_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "d5b95f8e6eedc91b6fb0b6cbe1414108a42fb5b4f14f8cc9d68112e6ff6543ed",
+        "artifacts": [
+          {
+            "sha256": "ed9e8ae4eaf16259c8f238cb92da62efac2d88f116034a707e5a22cf6202873f",
+            "bytes": 213752,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:15:04.153435+00:00"
+      },
+      {
+        "row": 30,
+        "kind": "elf",
+        "selection": "cw32l083rct6",
+        "target": "blocking_master",
+        "exit_code": 0,
+        "inspection_passed": true,
+        "source_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+        "receipt_sha256": "3bb3d831b7b70d37ca9c8af3b98bee7b2c89bbd00ed0392bc72762390d2f3575",
+        "artifacts": [
+          {
+            "sha256": "c6293f3f34d8ac057e959c335b4cf739f036661b9150f6efb1e3f9e8708dab91",
+            "bytes": 158848,
+            "format": "ELF32 ARM",
+            "opt_level": "z"
+          }
+        ],
+        "end_utc": "2026-10-12T18:15:04.973731+00:00"
+      }
+    ]
+  },
+  "source_snapshot_correspondence": {
+    "identical_whole_tree_snapshot_claimed": false,
+    "library_snapshot_sha256": "6536dcb32a5fe7f32ce9573a6a49d37606704962d4f03b3bc78aff1290b925e7",
+    "source_gate_snapshot_sha256": "1302351d516ff1b1821cddae2af182aa61effb1e7008eeb7e6eb63932c73b5a5",
+    "final_example_snapshot_sha256": "b4722bf492d4013025228a1af12c918b1c06ebbf5a4fcc7ef0e7d2c76177c417",
+    "library_correspondence": "All13 standalone libraries use the separate unchanged firmware workspace, opt-level3 and unchanged HAL/build-script/generated inputs. The reviewed three metadata/checker changes and standalone example files do not change those compiled library inputs.",
+    "final_example_correspondence": "All17 final ELF links use the final own example workspace with opt-level z. The earlier three successful s-profile ELFs are historical and excluded from the final17.",
+    "source_gate_correspondence": "All six source gates passed after final metadata/checker corrections. The only changes between that snapshot and final example snapshot are F002-selected startup expressions in the two example binaries and release opt-level s-to-z in the standalone example Cargo.toml. Source facts, checker, canonical inputs, generated data and module membership are unchanged.",
+    "library_to_example_changed_paths": [
+      "docs/i2c-typed-register-evidence.json",
+      "examples/classic-i2c/Cargo.toml",
+      "examples/classic-i2c/README.md",
+      "examples/classic-i2c/src/bin/async_master.rs",
+      "examples/classic-i2c/src/bin/blocking_master.rs",
+      "examples/classic-i2c/src/lib.rs",
+      "sources/evidence-sources.json",
+      "tests/verify_i2c_typed_registers.py"
+    ],
+    "source_gate_to_example_changed_paths": [
+      "examples/classic-i2c/Cargo.toml",
+      "examples/classic-i2c/src/bin/async_master.rs",
+      "examples/classic-i2c/src/bin/blocking_master.rs"
+    ],
+    "final_compiled_input_hashes": [
+      {
+        "path": "embassy-cw32/src/i2c/classic.rs",
+        "sha256": "4238dc06841099ec86befb66f785e9918775ad6cc710b7d0fb7368b92fae5980"
+      },
+      {
+        "path": "embassy-cw32/src/rcc/peripheral.rs",
+        "sha256": "f018b32cef12c075b36ae8bd60f845d52b8f30859c20da237b5ab31f4acf4e8f"
+      },
+      {
+        "path": "embassy-cw32/build.rs",
+        "sha256": "1590854925bbee3377cf1a48673ee20f48b81a5cd6e0a13ed670d317e9a79556"
+      },
+      {
+        "path": "firmware/Cargo.toml",
+        "sha256": "23221cbaa66e57abb6d6f0151c0ece923587cd20ae297d01cb19514fc401d813"
+      },
+      {
+        "path": "firmware/Cargo.lock",
+        "sha256": "d8a7337b8da9342c9190af55a4e76113004ce4ce434218be51a93d0d9510c9af"
+      },
+      {
+        "path": "examples/classic-i2c/Cargo.toml",
+        "sha256": "90340d27eefd91de86bbdf6e9063e155334e35f90088559804938913c5d59fcc"
+      },
+      {
+        "path": "examples/classic-i2c/src/lib.rs",
+        "sha256": "26a977f06436c09ac85dbc887bd284667c8c4a12cad39887ce8d3eaee3b23776"
+      },
+      {
+        "path": "examples/classic-i2c/src/bin/async_master.rs",
+        "sha256": "78e3fbf2742fd7d6b21c199835f8a387a989d5d98237911f93cfe202ebebdf42"
+      },
+      {
+        "path": "examples/classic-i2c/src/bin/blocking_master.rs",
+        "sha256": "3ca60bf107d9db4dfd1b1c8bb5445f3f4ffbcf394a96645fc8bb9b5c8706e6dc"
+      }
+    ]
+  },
+  "retained_history": {
+    "failed_attempts": 4,
+    "failure_categories": [
+      "Initial F002 compilation selected PA5, which is excluded by maintained safe-pin policy as SWCLK.",
+      "Three later F002 links overflowed the real 16KiB FLASH before the final size profile."
+    ],
+    "failed_attempts_counted_as_passes": false,
+    "memory_or_device_substituted": false,
+    "all_four_ordinary_transaction_forms_retained": true,
+    "prior_successful_s_profile_ELFs_counted_in_final17": false
+  },
+  "warnings": {
+    "families": [
+      "CW32L010",
+      "CW32L011"
+    ],
+    "existing_warning_messages": [
+      "constant RCC_LSE_SYSCLK_LSE_EDGES is never used",
+      "constant RCC_LSE_SYSCLK_LSI_CYCLES is never used",
+      "constant RCC_LSE_SYSCLK_MARGIN_LSE_EDGES is never used"
+    ],
+    "new_warning_kinds_reported": false
+  },
+  "limits": [
+    "No hardware or electrical validation.",
+    "F8, SI0, STO0 and arbitrary EN disable are not global bus-idle or wire-recovery guarantees.",
+    "Checked exclusive reset establishes only local reinitialization under the reviewed runtime policy.",
+    "Ten-bit, slave, DMA, automatic retry and L012 async support are excluded.",
+    "This accepted main review is immutable historical evidence. Administrative proof/index/status closure and final-source clean acceptance are recorded separately."
+  ],
+  "clean_status_at_main_acceptance": "not_started; a separate final-source six-library/six-ELF clean receipt and source checks remain required",
+  "vendor_evidence_consumer": {
+    "path": "docs/classic-i2c-async-metadata-review.json",
+    "source_refs": [
+      "member:cw32f002/IdeSupport/MDK/WHXY.CW32F002_DFP.1.0.2/SVD/CW32F002.svd",
+      "member:cw32f002/Libraries/inc/cw32f002.h",
+      "member:cw32f002/Libraries/inc/cw32f002_gpio.h",
+      "member:cw32f002/Libraries/inc/cw32f002_i2c.h",
+      "member:cw32f003/IdeSupport/MDK/WHXY.CW32F003_DFP.1.0.2/SVD/CW32F003.svd",
+      "member:cw32f003/Libraries/inc/cw32f003.h",
+      "member:cw32f003/Libraries/inc/cw32f003_gpio.h",
+      "member:cw32f003/Libraries/inc/cw32f003_i2c.h",
+      "member:cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/SVD/CW32F020.svd",
+      "member:cw32f020/Libraries/inc/cw32f020.h",
+      "member:cw32f020/Libraries/inc/cw32f020_gpio.h",
+      "member:cw32f020/Libraries/inc/cw32f020_i2c.h",
+      "member:cw32f030/IdeSupport/EWARM/arm/config/debugger/CW/CW32F030.svd",
+      "member:cw32f030/Libraries/inc/cw32f030.h",
+      "member:cw32f030/Libraries/inc/cw32f030_gpio.h",
+      "member:cw32f030/Libraries/inc/cw32f030_i2c.h",
+      "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/IDEsupport/MDK/WHXY.CW32L010_DFP.1.0.2/WHXY.CW32L010_DFP/SVD/CW32L010.svd",
+      "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+      "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_i2c.h",
+      "member:cw32l011/IDEsupport/MDK/WHXY.CW32L011_DFP.1.0.1/SVD/CW32L011.svd",
+      "member:cw32l011/Libraries/inc/cw32l011.h",
+      "member:cw32l011/Libraries/inc/cw32l011_gpio.h",
+      "member:cw32l011/Libraries/inc/cw32l011_i2c.h",
+      "member:cw32l031/IdeSupport/EWARM/arm/config/debugger/WHXY/CW32L031.svd",
+      "member:cw32l031/Libraries/inc/cw32l031.h",
+      "member:cw32l031/Libraries/inc/cw32l031_gpio.h",
+      "member:cw32l031/Libraries/inc/cw32l031_i2c.h",
+      "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/SVD/CW32L052.svd",
+      "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+      "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gpio.h",
+      "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_i2c.h",
+      "member:cw32l083/IdeSupport/MDK/WHXY.CW32L083_DFP.1.0.9/SVD/CW32L083.svd",
+      "member:cw32l083/Libraries/inc/cw32l083.h",
+      "member:cw32l083/Libraries/inc/cw32l083_gpio.h",
+      "member:cw32l083/Libraries/inc/cw32l083_i2c.h",
+      "member:cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/SVD/CW32R031.svd",
+      "member:cw32r031/Libraries/inc/cw32r031.h",
+      "member:cw32r031/Libraries/inc/cw32r031_gpio.h",
+      "member:cw32r031/Libraries/inc/cw32r031_i2c.h",
+      "member:cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/SVD/CW32W031.svd",
+      "member:cw32w031/Libraries/inc/cw32w031.h",
+      "member:cw32w031/Libraries/inc/cw32w031_gpio.h",
+      "member:cw32w031/Libraries/inc/cw32w031_i2c.h",
+      "text:CW32F002_UserManual_CN_V1.4.txt",
+      "text:CW32F003_UserManual_CN_V2.3.txt",
+      "text:CW32F020_UserManual_CN_V1.4.txt",
+      "text:CW32L010_UserManual_CN_V1.2.txt",
+      "text:CW32L011_UserManual_CN_V1.1.txt",
+      "text:CW32L031_UserManual_CN_V1.6.txt",
+      "text:CW32L052_UserManual_CN_V1.5.txt",
+      "text:CW32L083_UserManual_CN_V2.0.txt",
+      "text:CW32R031_UserManual_CN_V1.3.txt",
+      "text:CW32W031_UserManual_CN_V1.4.txt",
+      "text:CW32x030_UserManual_CN_V2.5.txt",
+      "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+      "vendor:CW32F002_DataSheet_CN_V1.2.pdf",
+      "vendor:CW32F002_StandardPeripheralLib_V1.2.zip",
+      "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+      "vendor:CW32F003_DataSheet_CN_V1.9.pdf",
+      "vendor:CW32F003_StandardPeripheralLib_V1.7.zip",
+      "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+      "vendor:CW32F020_DataSheet_CN_V1.3.pdf",
+      "vendor:CW32F020_StandardPeripheralLib_V1.2.zip",
+      "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+      "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+      "vendor:CW32F030_StandardPeripheralLib_V2.2.zip",
+      "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+      "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+      "vendor:CW32L031_StandardPeripheralLib_V1.4.zip",
+      "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+      "vendor:CW32L052_StandardPeripheralLib_V1.4.zip",
+      "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+      "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "vendor:CW32L083_StandardPeripheralLib_V2.2.zip",
+      "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+      "vendor:CW32R031_StandardPeripheralLib_V1.1.zip",
+      "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+      "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+      "vendor:CW32W031_StandardPeripheralLib_V1.3.zip",
+      "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+      "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+      "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf"
+    ],
+    "basis": "Only the actual90 original/derived source identities inspected in this review. The runtime review is not attached to these sources merely for packaging."
+  },
+  "open_findings": [],
+  "hardware_execution": false,
+  "reviewer_executed_builds_or_checks": false
+}

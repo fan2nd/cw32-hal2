@@ -587,6 +587,16 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   Every half-boundary must be serviced within 32768 actual ticks; Flash stalls,
   debugger halts and deep sleep cannot preserve elapsed-time accuracy.
 
+Classic F030/A030/F020/F002/F003/L010/L011/L031/R031/W031/L052/L083 I2C
+adds owned seven-bit async master transactions alongside blocking operation.
+SI phases use IRQ wakeups; bus-idle, STOP and cleanup have synchronous finite
+sample budgets, and SI waits have no built-in deadline. Cancelled operations
+can leave target-side effects; checked local reset enables later reuse only
+after confirmed shutdown. A readback failure remains faulted until chip reset.
+Main acceptance covers 13 standalone ARM libraries, 17 linked ELFs and six finite
+source/data commands. Final-package completion requires a separate clean receipt;
+see [the classic async contract](docs/classic-i2c-async.md).
+
 L083 UART uses partner-safe shared interrupt handlers. L012 I2C uses its own
 command/FIFO engine with bounded recovery and a 256-byte contiguous-read limit.
 Package pin availability and family-specific timing/pull capabilities apply.

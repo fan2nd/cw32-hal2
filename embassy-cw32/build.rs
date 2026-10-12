@@ -1237,17 +1237,25 @@ fn main() {
                 .iter()
                 .filter(|p| p.name.starts_with("I2C"))
             {
-                let number: u8 = if peripheral.name == "I2C" {
-                    1
+                if peripheral.registers.as_ref().unwrap().version == "cw32l012_v1" {
+                    let number: u8 = if peripheral.name == "I2C" {
+                        1
+                    } else {
+                        peripheral.name[3..]
+                            .parse()
+                            .expect("invalid I2C instance number")
+                    };
+                    out.push_str(&format!(
+                        "crate::i2c::impl_instance!({}, {});\n",
+                        peripheral.name, number
+                    ));
                 } else {
-                    peripheral.name[3..]
-                        .parse()
-                        .expect("invalid I2C instance number")
-                };
-                out.push_str(&format!(
-                    "crate::i2c::impl_instance!({}, {});\n",
-                    peripheral.name, number
-                ));
+                    let irq = classic_i2c_irq(peripheral);
+                    out.push_str(&format!(
+                        "crate::i2c::impl_instance!({}, {});\n",
+                        peripheral.name, irq
+                    ));
+                }
             }
         }
         if gtim_version.is_some() {
@@ -2907,6 +2915,126 @@ fn generate_gpio(out: &mut String) {
         ));
     }
     out.push_str(&format!("pub(crate) const GPIO_AF_MASK: u32 = {af_mask};\npub(crate) const GPIO_AF_MAX: u32 = {af_max};\n"));
+}
+
+// Admit only the own-source-qualified classic families/IPs. The mask-and-wake
+// protocol needs a physically exclusive vector and reset, including aliases.
+fn classic_i2c_irq(peripheral: &cw32_metapac::metadata::Peripheral) -> &'static str {
+    use cw32_metapac::metadata::METADATA;
+    let (version, instances): (&str, &[&str]) = match METADATA.line {
+        "CW32F030" | "CW32A030" | "CW32F020" => ("v1", &["I2C1", "I2C2"]),
+        "CW32F002" | "CW32F003" => ("cw32f002_v1", &["I2C"]),
+        "CW32L010" => ("cw32l010_v1", &["I2C1"]),
+        "CW32L011" => ("cw32l011_v1", &["I2C"]),
+        "CW32L031" | "CW32R031" | "CW32W031" => ("cw32l031_v1", &["I2C1"]),
+        "CW32L052" | "CW32L083" => ("cw32l031_v1", &["I2C1", "I2C2"]),
+        _ => panic!("unreviewed classic I2C family"),
+    };
+    let regs = peripheral
+        .registers
+        .as_ref()
+        .expect("I2C registers missing");
+    assert_eq!(regs.kind, "i2c");
+    assert_eq!(regs.version, version, "unreviewed classic I2C IP");
+    assert_eq!(regs.block, "I2c");
+    let mut actual: Vec<_> = METADATA
+        .peripherals
+        .iter()
+        .filter(|p| p.registers.as_ref().is_some_and(|r| r.kind == "i2c"))
+        .map(|p| p.name)
+        .collect();
+    actual.sort_unstable();
+    assert_eq!(actual, instances, "unreviewed classic I2C inventory");
+    assert!(instances.contains(&peripheral.name));
+    assert_eq!(
+        peripheral.interrupts.len(),
+        1,
+        "classic I2C needs one dedicated GLOBAL link"
+    );
+    let link = &peripheral.interrupts[0];
+    assert_eq!(link.signal, "GLOBAL");
+    let vectors: Vec<_> = METADATA
+        .interrupts
+        .iter()
+        .filter(|i| i.name == link.interrupt)
+        .collect();
+    assert_eq!(vectors.len(), 1, "classic I2C GLOBAL must resolve uniquely");
+    let number = vectors[0].number;
+    assert_eq!(
+        METADATA
+            .interrupts
+            .iter()
+            .filter(|i| i.number == number)
+            .count(),
+        1,
+        "classic I2C vector number has an alias"
+    );
+    let mut sources = 0;
+    for owner in METADATA.peripherals {
+        for source in owner.interrupts {
+            let resolved: Vec<_> = METADATA
+                .interrupts
+                .iter()
+                .filter(|i| i.name == source.interrupt)
+                .collect();
+            if source.interrupt == link.interrupt || resolved.iter().any(|i| i.number == number) {
+                assert_eq!(
+                    owner.name, peripheral.name,
+                    "classic I2C IRQ has another owner"
+                );
+                assert_eq!(
+                    source.signal, "GLOBAL",
+                    "classic I2C IRQ has another source"
+                );
+                sources += 1;
+            }
+        }
+    }
+    assert_eq!(sources, 1, "classic I2C IRQ must have exactly one source");
+    let sysctrl = METADATA
+        .peripherals
+        .iter()
+        .find(|p| p.name == "SYSCTRL")
+        .unwrap()
+        .registers
+        .as_ref()
+        .unwrap();
+    let control = peripheral
+        .rcc_control
+        .as_ref()
+        .expect("classic I2C RCC metadata missing");
+    assert_eq!(control.controller, "SYSCTRL");
+    assert!(
+        control.shared_reset_group.is_none(),
+        "classic I2C reset is shared"
+    );
+    assert_eq!(control.reset_asserted_value, Some(false));
+    let reset = control.reset.as_ref().expect("classic I2C reset missing");
+    let (offset, bit, width) = rcc_field(sysctrl, reset);
+    assert_eq!(width, 1);
+    for owner in METADATA.peripherals {
+        let Some(other) = &owner.rcc_control else {
+            continue;
+        };
+        let Some(other_reset) = &other.reset else {
+            continue;
+        };
+        if other.controller != control.controller {
+            continue;
+        }
+        let (other_offset, other_bit, other_width) = rcc_field(sysctrl, other_reset);
+        if other_offset == offset
+            && u32::from(other_bit) <= u32::from(bit)
+            && u32::from(bit) < u32::from(other_bit) + other_width
+        {
+            assert_eq!(
+                owner.name, peripheral.name,
+                "classic I2C reset has an aliased physical owner"
+            );
+            assert!(other.shared_reset_group.is_none());
+        }
+    }
+    link.interrupt
 }
 
 // Emit only source-qualified associations, using the selected bank's actual

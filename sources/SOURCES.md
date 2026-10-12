@@ -1181,3 +1181,24 @@ SDK 清中断 helper 的掩码域及 flag stride 错误保留原文，不作为�
 事务回滚保留旧 907 产物；只显式标记两条历史 path/hash 并在 checker 精确逆还原。
 随后 checker 把 CSRCADDR 误纳 CSR 前缀，改为严格 CSR/CSR1..4 匹配后通过。
 原失败与修正记录保留，未改变锁定身份、旧历史、原件或运行算法。
+
+## 经典 I2C 异步主机来源
+
+Stage87 仅为既有十二个非 L012 家族增加 SI 中断等待的七位主机接口；
+五种既有寄存器版本、十七个家族/控制器实例、独占 IRQ23/24 与各自
+APBRST 位按本族手册、SVD 和设备头文件核对，不借用 L012 命令/FIFO 语义。
+来源继续记录在 [i2c-typed-register-evidence.json](../docs/i2c-typed-register-evidence.json)；
+原始锁、旧证据、寄存器 YAML 和引脚数据不因此改写。
+
+各自 SI W0 推进、STO 硬件清零且写零无动作、F8 无中断及仲裁丢失状态
+决定异步等待与有限同步 STOP 的边界。任意 EN 关闭不是隐藏状态机复位
+证明；确认关闭且无待决 STOP 后，复用先走自身独占复位位的断言/解除
+读回，再配置本地时钟。该事实不证明物理总线恢复、其他主机不受影响或
+目标设备无副作用。主验收已覆盖十三个实际 ARM 库、十七个最终 z-profile
+ELF 与六项有限来源/数据命令，910 个生成文件字节保持不变。L010/L011
+保留三类既有 RCC warning；历史失败不计通过。F002/F003 例程使用自身
+已公开安全路由 PB1 SCL AF3 / PA6 SDA AF3，保留 PA5 的 debug 排除策略。
+F020 的旧 timing PDF 与当前 pinout PDF 分别绑定各自已锁身份，修正的是
+本次实施遗漏而非原件或原冻结来源事实。主验收时 clean 尚未执行；最终
+源码包必须另有六库/六 ELF clean 收据。详细限制及独审见
+[classic-i2c-async.md](../docs/classic-i2c-async.md)，主结论分别见[运行审阅](../docs/classic-i2c-async-runtime-review.json)与[来源审阅](../docs/classic-i2c-async-metadata-review.json)。

@@ -4,12 +4,15 @@
 This checks source documents and generated data/PAC only. It contains no HAL
 register model, fake MMIO engine, compile fixture, or firmware execution.
 """
+from functools import lru_cache
 import hashlib
 import json
 import os
 from pathlib import Path
 import re
 import subprocess
+from urllib.parse import urlparse
+import xml.etree.ElementTree as ET
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +42,449 @@ def field(ir, register, name):
 
 def flat(text):
     return re.sub(r'\s+', '', text)
+
+
+# This extension checks current selected vendor sources and authored/generated
+# metadata. Review receipts and historical production snapshots are not inputs.
+CLASSIC_FAMILIES = {'CW32F030', 'CW32A030', 'CW32F002', 'CW32F003', 'CW32F020',
+                    'CW32L031', 'CW32R031', 'CW32W031', 'CW32L052', 'CW32L083',
+                    'CW32L010', 'CW32L011'}
+TYPED_EVIDENCE = 'docs/i2c-typed-register-evidence.json'
+TYPED_CHECKER = 'tests/verify_i2c_typed_registers.py'
+
+
+@lru_cache(maxsize=None)
+def current_json(path):
+    return json.loads((ROOT / path).read_text())
+
+
+@lru_cache(maxsize=None)
+def current_yaml(path):
+    return yaml.safe_load((ROOT / path).read_text())
+
+
+def at_pointer(value, pointer):
+    for key in pointer.strip('/').split('/'):
+        key = key.replace('~1', '/').replace('~0', '~')
+        value = value[int(key)] if isinstance(value, list) else value[key]
+    return value
+
+
+def named(entries):
+    result = {item['name']: item for item in entries}
+    assert len(result) == len(entries), 'duplicate metadata name'
+    return result
+
+
+@lru_cache(maxsize=None)
+def source_bytes(path, sha256, length):
+    source = SOURCES / path
+    with source.open('rb') as stream:
+        actual = hashlib.file_digest(stream, 'sha256').hexdigest()
+    assert source.stat().st_size == length and actual == sha256, path
+    # Archive/PDF provenance needs identity checks, not retained binary copies.
+    return source.read_bytes() if source.suffix.lower() in {'.txt', '.h', '.svd'} else b''
+
+
+def selected_source(binding):
+    index = current_json('sources/evidence-sources.json')
+    keys = binding['index_pointer'].strip('/').split('/')
+    assert keys[:1] == ['artifacts'] and keys[1].isdigit(), binding
+    node = at_pointer(index, binding['index_pointer'])
+    parent = index['artifacts'][int(keys[1])]
+    kind, path = binding['source_ref'].split(':', 1)
+    expected_tail = ([] if kind == 'vendor' else ['text'] if kind == 'text'
+                     else ['members', keys[-1]] if kind == 'member' else None)
+    assert expected_tail is not None and keys[2:] == expected_tail, binding
+    assert node['path'] == path == binding['path'], binding
+    assert node['sha256'] == binding['sha256'] and node['bytes'] == binding['bytes'], binding
+    assert parent['url'] == binding['url'], binding
+    url = urlparse(parent['url'])
+    assert url.scheme == 'https' and url.hostname == 'www.whxy.com', binding
+    if kind == 'vendor':
+        assert parent['id'] == binding['source_ref'], binding
+    else:
+        assert parent['id'] == binding['parent_source_ref'], binding
+    if kind == 'member':
+        assert node['members'] == binding['archive_member_chain'], binding
+        assert keys[-1].isdigit() and binding['archive_member_chain'], binding
+    # Each child resolves its own parent, not an unrelated parent carrying the
+    # same digest or URL. The ordinary provenance gate verifies archive extraction.
+    for consumer in [TYPED_EVIDENCE, TYPED_CHECKER]:
+        assert node['evidence'].count(consumer) == 1, (binding['source_ref'], consumer)
+    data = source_bytes(path, node['sha256'], node['bytes'])
+    return node, data
+
+
+@lru_cache(maxsize=None)
+def pdf_page(path, number):
+    return subprocess.check_output(['pdftotext', '-f', str(number), '-l', str(number),
+                                    '-layout', str(SOURCES / path), '-']).decode()
+
+
+def bounded_pages(text, locators, family):
+    pages = text.split('\f')
+    result = []
+    for locator in locators:
+        page = pages[locator['pdf_page_1_based'] - 1]
+        assert family in page, (family, locator)
+        assert re.search(r'\b' + str(locator['printed_page']) + r'\s*/', page), (family, locator)
+        result.append(page)
+    return '\n'.join(result)
+
+
+def macro_value(header, name):
+    match = re.search(r'^#define\s+' + re.escape(name)
+                      + r'\s+\(?((?:0x)?[0-9A-Fa-f]+)UL\)?', header, re.M)
+    assert match, name
+    return int(match[1], 16 if match[1].startswith('0x') else 10)
+
+
+def classic_protocol(family, block, text):
+    locators = block['manual_locators']
+    raw = {name: bounded_pages(text, places, family) for name, places in locators.items()}
+    # x in multi-controller register prose is a documented placeholder.
+    words = {name: flat(value).replace('I2Cx', 'I2C') for name, value in raw.items()}
+    control, status = words['control'], words['status_codes']
+    for clause in ['W0：清除I2C中断标志并使状态机执行下一个动作W1：无功能',
+                   '在SI被清0之前，SCL低电平周期延长，传输暂停',
+                   '在软件清除SI前，软件应该准备好合适的寄存器设置',
+                   '在SI被清除后，I2C总线将会根据寄存器设置执行相应的操作',
+                   '需要用户手动清除STA', 'W0：清零STA',
+                   'W0：无功能W1：向总线发送STOP停止信号',
+                   '硬件会在完成STOP信号发送后自动对STO清0',
+                   '0：在应答阶段发送NACK', '1：在应答阶段发送ACK']:
+        assert clause in control, (family, clause)
+    for clause in ['0xF8除外', '同时产生中断请求', 'SI为0清除该标志位']:
+        assert clause in words['interrupt_behavior'], (family, clause)
+    for clause in ['SI还没有被置位，无中断产生',
+                   '这种情况在其它状态和I2C模块还未开始执行串行传输之前出现',
+                   '设备立即被切换到未寻址从机接收模式，释放SDA和SCL',
+                   '将I2C_DR寄存器清零', '置位STO位并清除SI位',
+                   '控制器并不会将STOP信号实际发送到总线上',
+                   '依次设置I2C_CR.EN为0和1', '然后设置SI为0清除SI位']:
+        assert clause in status, (family, clause)
+    arbitration = words['arbitration_and_sync']
+    assert '丢失仲裁的主机会立即切换到未被寻址的从机状态' in arbitration, family
+    assert '丢失仲裁的主机会继续输出SCL串行时钟，直到当前字节传输完成' in arbitration, family
+    for code in ['38', '68', '78', 'B0']:
+        rows = [flat(line) for line in raw['status_codes'].splitlines() if re.search(r'\b'+code+r'H\b', line)]
+        assert any('丢失仲裁' in line for line in rows), (family, code)
+    assert all(term in words['master_state_diagram'] for term in
+               ['STO=1，SI=0，发STOP', 'F8H', '短时的过渡状态，0xF8', '不会产生中断']), family
+    for clause in ['fSCL=fPCLK/8/(BRR+1)', 'BRR有效范围为1~255', '主机时应设置EN为1']:
+        assert clause in words['baud_clock'], (family, clause)
+    for clause in ['BRR的值小于或等于9', 'I2C_CR.FLT为1', 'BRR的值大于9', 'I2C_CR.FLT为0']:
+        assert clause in words['filter'], (family, clause)
+    init = words['master_initialization']
+    gate = block['instances'][0]['clock']['gate']['register']
+    reset = block['instances'][0]['clock']['reset']['register']
+    # The own initialization sequence is evidence for module reset. It is not
+    # evidence that arbitrary EN=0 clears the FSM or releases physical lines.
+    steps = [f'步骤2：设置SYSCTRL_{gate}.I2C为1',
+             f'步骤3：向SYSCTRL_{reset}.I2C依次写入0、1',
+             '步骤4：配置I2C_BRR', '步骤5：设置I2C_BRREN为1',
+             '步骤6：设置I2C_CR.EN为1']
+    positions = [init.find(step) for step in steps]
+    assert all(pos >= 0 for pos in positions) and positions == sorted(positions), (family, steps)
+    assert block['irq_contract'] == {
+        'peripheral_local_enable_present': False, 'flag': 'CR.SI',
+        'clear': 'write_zero_after_preparing_next_action',
+        'stop_completion_interrupt': False, 'shared_i2c_vectors': []}
+    return raw
+
+
+def classic_registers(family, fact, block, raw):
+    version = fact['register_version']
+    authored = current_yaml(f'cw32-data/registers/{version}.yaml')
+    generated = current_json(f'cw32-data/data/registers/{version}.json')
+    offsets = {'BRREN': 0, 'BRR': 4, 'CR': 8, 'DR': 12, 'ADDR0': 16,
+               'STAT': 20, 'ADDR1': 32, 'ADDR2': 36, 'MATCH': 40}
+    listed = re.findall(r'I2Cx?_(\w+)\s+I2Cx?_BASE\s*\+\s*(0x[0-9A-Fa-f]+)', raw['register_list'])
+    assert len(listed) == 9 and {name: int(value, 16) for name, value in listed} == offsets, family
+    # Complete register list and exact CR fieldset exclude fictional local IER,
+    # FIFO, DMA, or STOP-completion registers without reading HAL source text.
+    expected = {'BRREN': {'EN': (0, 1)}, 'BRR': {'BRR': (0, 8)},
+                'CR': {'FLT': (0, 1), 'AA': (2, 1), 'SI': (3, 1),
+                       'STO': (4, 1), 'STA': (5, 1), 'EN': (6, 1)},
+                'DR': {'DR': (0, 8)}, 'ADDR0': {'GC': (0, 1), 'ADDR0': (1, 7)},
+                'STAT': {'STAT': (0, 8)}, 'ADDR1': {'ADDR1': (1, 7)},
+                'ADDR2': {'ADDR2': (1, 7)},
+                'MATCH': {'ADDR0': (0, 1), 'ADDR1': (1, 1), 'ADDR2': (2, 1)}}
+    mux = family in {'CW32L010', 'CW32L011'}
+    assert block['gpio_input_mux']['present'] == fact['gpio_input_selectors'] == mux
+    if mux:
+        expected['CR'].update({'SCLINSRC': (8, 3), 'SDAINSRC': (11, 3)})
+        assert block['gpio_input_mux']['GPIO_encoding'] == 0
+    page_numbers = sorted({p['pdf_page_1_based'] for role in
+                           ['baud_registers', 'control', 'status_register', 'address_match_registers']
+                           for p in block['manual_locators'][role]})
+    text = selected_source(block['sources']['manual_text'])[1].decode()
+    register_text = '\n'.join(text.split('\f')[n - 1] for n in page_numbers)
+    headings = list(re.finditer(r'^\s*\d+\.\d+\.\d+\s+I2Cx?_(\w+)\b', register_text, re.M))
+    sections = {m[1]: register_text[m.end():headings[i + 1].start() if i + 1 < len(headings) else None]
+                for i, m in enumerate(headings)}
+    assert set(sections) == set(offsets), (family, set(sections))
+    baseline = {'BRREN': 0, 'BRR': 0, 'CR': 0, 'DR': 0, 'STAT': 0xf8}
+    assert {name: block['reset_baseline'][name] for name in baseline} == baseline
+    pac = (ROOT / f'cw32-metapac/src/peripherals/{version}.rs').read_text()
+    for register, offset in offsets.items():
+        access = 'Read' if register in {'STAT', 'MATCH'} else 'ReadWrite'
+        section = sections[register]
+        actual_fields = {name: (int(lo or hi), int(hi) - int(lo or hi) + 1)
+                         for hi, lo, name, permission in re.findall(
+                             r'^\s*(\d+)(?::(\d+))?\s+([A-Z][A-Z0-9]+)\s+(RW|RO)\b', section, re.M)
+                         if name != 'RFU'}
+        assert actual_fields == expected[register], (family, register, actual_fields)
+        permissions = re.findall(r'^\s*\d+(?::\d+)?\s+[A-Z][A-Z0-9]+\s+(RW|RO)\b', section, re.M)
+        assert set(permissions) == ({'RO'} if access == 'Read' else {'RW'}), (family, register)
+        assert re.search(r'Address\s+offset:\s*0x0*' + format(offset, 'x') + r'\b', section, re.I)
+        if register in baseline:
+            assert f'Resetvalue:0x{baseline[register]:08X}' in flat(section), (family, register)
+        for ir in [authored, generated]:
+            items = named(ir['block/I2C']['items'])
+            assert set(items) == set(offsets), (family, version)
+            item = items[register]
+            assert (item['byte_offset'], item.get('access', 'ReadWrite'), item.get('bit_size', 32),
+                    item['fieldset']) == (offset, access, 32, register), (family, register)
+            fields = ir['fieldset/' + register]['fields']
+            assert {f['name']: (f['bit_offset'], f['bit_size']) for f in fields} == expected[register]
+        method = register.lower() + ('_' if register == 'MATCH' else '')
+        rust_type = register.title()
+        match = re.search(r'pub const fn ' + method + r'\(self\).*?Reg<regs::' + rust_type
+                          + r', crate::common::(R|RW)>\s*\{.*?wrapping_add\((0x[0-9a-f]+)usize\)', pac, re.S)
+        assert match and match[1] == ('R' if access == 'Read' else 'RW') and int(match[2], 16) == offset
+    variants = EVIDENCE['registers'][version]['variants']
+    for ir in [authored, generated]:
+        assert {v['name']: v['value'] for v in ir['enum/Status']['variants']} == variants
+        assert ir['enum/Status']['bit_size'] == 8 and field(ir, 'STAT', 'STAT')['enum'] == 'Status'
+    assert 'pub struct Status(u8);' in pac
+    assert re.search(r'fn from_bits\(val: u8\) -> Status\s*\{\s*Self\(val & 0xff\)', pac)
+    assert re.search(r'fn to_bits\(self\) -> u8\s*\{\s*self\.0', pac)
+
+
+def classic_instances(family, fact, block, material, raw, chips):
+    svd = ET.fromstring(material['selected_svd'])
+    peripherals = {p.findtext('name'): p for p in svd.findall('./peripherals/peripheral')}
+    all_irqs = [(p.findtext('name'), i.findtext('name'), int(i.findtext('value'), 0))
+                for p in peripherals.values() for i in p.findall('interrupt')]
+    instances = named(block['instances'])
+    assert {name for name in peripherals if name.startswith('I2C')} == set(instances), family
+    own_clock = current_yaml(next(iter(instances.values()))['clock']['authored_metadata'])
+    authored = named(own_clock['peripherals'])
+    header = material['device_header']
+    irq_header = {name: int(number) for name, number in re.findall(r'\b(I2C\d*)_IRQn\s*=\s*(\d+)', header)}
+    assert set(irq_header) == set(instances), family
+    for name, instance in instances.items():
+        irq, = instance['interrupts']
+        assert instance['register_version'] == fact['register_version']
+        assert int(peripherals[name].findtext('baseAddress'), 0) == int(instance['base_address'], 16)
+        assert macro_value(header, name + '_BASE') == int(instance['base_address'], 16)
+        assert irq_header[name] == irq['number'] and irq['name'] == name and irq['signal'] == 'GLOBAL'
+        owners = [{'peripheral': p, 'interrupt': i} for p, i, n in all_irqs if n == irq['number']]
+        assert owners == irq['source_svd_all_owners'] == [{'peripheral': name, 'interrupt': name}]
+        assert irq['shared'] is False
+        manual_name = instance['manual_name']
+        assert manual_name == (name if len(instances) == 2 else 'I2C')
+        assert re.search(r'\b' + str(irq['number'] + 16) + r'\s+' + str(irq['number'])
+                         + r'\s+可配置\s+' + manual_name + r'\s', raw['nvic']), (family, name)
+        assert f'{manual_name}_BASE={instance["base_address"]}' in flat(raw['register_list']), (family, name)
+        clock, authored_clock = instance['clock'], authored[name]
+        assert clock['bus'] == clock['kernel'] == authored_clock['bus_clock'] == 'PCLK'
+        assert authored_clock['kernel_clock'] == {'clock': 'PCLK'}
+        for kind, source_key, polarity in [('enable', 'gate', 'active_value'), ('reset', 'reset', 'asserted_value')]:
+            source = clock[source_key]
+            expected_field = {key: source[key] for key in ['peripheral', 'register', 'field']}
+            assert authored_clock[kind] == expected_field
+            assert authored_clock[kind + '_' + polarity] == source[polarity] == (1 if kind == 'enable' else 0)
+            assert authored_clock.get(kind + '_write_key') == source['write_key']
+            assert authored_clock.get('shared_' + kind + '_group') is None
+            physical = instance['rcc_ownership'][kind]
+            assert physical['shared_group'] is None and physical['all_physical_owners'] == [name]
+            assert (physical['bit_offset'], physical['bit_size']) == (source['bit'], 1)
+            own_field = instance['header_rcc_field']
+            assert own_field == ('I2C' if family == 'CW32L011' else source['field'])
+            macro = 'SYSCTRL_' + source['register'] + '_' + own_field
+            assert macro_value(header, macro + '_Pos') == source['bit']
+            assert macro_value(header, macro + '_Msk') == 1 << source['bit']
+            manual = raw[source_key]
+            assert re.search(r'\b' + str(source['bit']) + r'\s+' + manual_name + r'\s+RW\b', manual)
+            assert re.search(r'Address\s+offset:\s*0x0*' + format(physical['sysctrl_byte_offset'], 'x') + r'\b', manual, re.I)
+            if kind == 'reset':
+                assert '0：模块处于复位状态' in flat(manual) and '1：模块正常工作' in flat(manual)
+                assert source['write_key'] is None and not re.search(r'\bKEY\s+WO\b', manual)
+            else:
+                assert '0：关闭' in flat(manual) and '1：使能' in flat(manual)
+                keyed = family in {'CW32L010', 'CW32L011'}
+                assert (source['write_key'] is not None) == keyed
+                assert ('0x5A5A' in manual) == keyed
+                if keyed:
+                    assert source['write_key'] == {'field': {'peripheral': 'SYSCTRL', 'register': source['register'], 'field': 'KEY'}, 'value': 0x5a5a}
+                    assert re.search(r'31:16\s+KEY\s+WO', manual)
+    if len(instances) == 1:
+        assert not any(number == 24 for _, _, number in all_irqs), family
+    # Inspect every current exact-chip and family-profile artifact in this family.
+    assert chips, family
+    for path, chip in chips:
+        profile = current_yaml(f'cw32-data/inputs/{family.lower()}.yaml')
+        assert chip['line'] == family == profile['line']
+        assert chip['family'] == profile['family'] and chip['die'] == profile['die']
+        for core in chip['cores']:
+            per = named(core['peripherals'])
+            current = {name: p for name, p in per.items() if p.get('registers', {}).get('kind') == 'i2c'}
+            assert set(current) == set(instances), path
+            irq_table = named(core['interrupts'])
+            sysctrl = per['SYSCTRL']['registers']
+            sys_ir = current_json(f'cw32-data/data/registers/sysctrl_{sysctrl["version"]}.json')
+            sys_items = named(sys_ir['block/' + sysctrl['block']]['items'])
+            def physical_field(control, kind):
+                fld = control.get(kind)
+                if not fld or control['controller'] != 'SYSCTRL':
+                    return None
+                item = sys_items[fld['register']]
+                bits = field(sys_ir, item['fieldset'], fld['field'])
+                return item['byte_offset'], bits['bit_offset'], bits['bit_size']
+            for name, instance in instances.items():
+                p = current[name]
+                assert p['registers'] == {'kind': 'i2c', 'version': fact['register_version'][4:], 'block': 'I2C'}
+                assert p['address'] == int(instance['base_address'], 16)
+                assert p['interrupts'] == [{'signal': 'GLOBAL', 'interrupt': name}]
+                assert irq_table[name]['number'] == instance['interrupts'][0]['number']
+                assert [q['name'] for q in per.values() for i in q.get('interrupts', [])
+                        if irq_table[i['interrupt']]['number'] == irq_table[name]['number']] == [name]
+                control = p['rcc_control']
+                assert control['controller'] == 'SYSCTRL' and control['bus_clock'] == 'PCLK'
+                assert p['rcc']['bus_clock'] == p['rcc']['kernel_clock'] == 'PCLK'
+                for kind, source_key, polarity in [('enable', 'gate', 'active_value'), ('reset', 'reset', 'asserted_value')]:
+                    source = instance['clock'][source_key]
+                    fld = {k: source[k] for k in ['register', 'field']}
+                    assert control[kind] == p['rcc'][kind] == fld
+                    assert control[kind + '_' + polarity] == bool(source[polarity])
+                    key = source['write_key']
+                    expected_key = None if key is None else {'field': {k: key['field'][k] for k in ['register', 'field']}, 'value': key['value']}
+                    assert control.get(kind + '_write_key') == expected_key
+                    if key is not None:
+                        assert field(sys_ir, source['register'], 'KEY')['bit_offset'] == 16
+                        assert field(sys_ir, source['register'], 'KEY')['bit_size'] == 16
+                    assert control.get('shared_' + kind + '_group') is None
+                    expected = instance['rcc_ownership'][kind]
+                    physical = physical_field(control, kind)
+                    assert physical == (expected['sysctrl_byte_offset'], expected['bit_offset'], expected['bit_size'])
+                    owners = sorted(q['name'] for q in per.values()
+                                    if 'rcc_control' in q and physical_field(q['rcc_control'], kind) == physical)
+                    assert owners == expected['all_physical_owners'] == [name], (path, name, kind, owners)
+                assert p['i2c_limits']['maximum_frequency_hz'] == block['timing_evidence']['maximum_scl_hz'] == 1000000
+
+
+def classic_routes(family, block, material):
+    package = block['representative_package']
+    chip = current_json(package['chip_metadata'])
+    part_path, pointer = package['part_identity'].split('#', 1)
+    part = at_pointer(current_yaml(part_path), pointer)
+    assert (part['name'], part['feature'], part['family'], part['package']) == (
+        package['part'], package['feature'], family, package['package'])
+    assert chip['name'] == package['part'] and chip['line'] == family
+    profile = current_yaml(f'cw32-data/inputs/{family.lower()}.yaml')
+    assert chip['family'] == profile['family'] and chip['die'] == profile['die']
+    pack, = chip['packages']
+    assert pack['name'] == package['part'] and pack['package'] == package['package']
+    peripherals = named(chip['cores'][0]['peripherals'])
+    timing_ds = block['sources']['datasheet']
+    assert block['timing_evidence']['datasheet']['source_ref'] == timing_ds['source_ref']
+    # F020's already-locked timing PDF differs from its current pinout PDF.
+    # Resolve each purpose by exact identity; neither version is substituted.
+    ds, = [binding for binding in block['sources'].values()
+           if binding['source_ref'] == package['pinout_source_ref']]
+    for number in block['timing_evidence']['datasheet']['pdf_pages_1_based']:
+        timing = flat(pdf_page(timing_ds['path'], number))
+        assert family in timing and 'Fast-modePlus' in timing and ('1Mbit/s' in timing or '1Mbits/s' in timing), family
+    seen = set()
+    for route in package['routes']:
+        key = (route['peripheral'], route['signal'])
+        assert key not in seen
+        seen.add(key)
+        target = {k: route[k] for k in ['pin', 'af', 'signal']}
+        assert target in peripherals[route['peripheral']]['pins']
+        physical = next(p for p in pack['pins'] if p['position'] == route['package_position'])
+        assert route['pin'] in physical['signals']
+        path, pointer = route['pinout_pointer'].split('#', 1)
+        pinout = current_yaml(path)
+        row = at_pointer(pinout, pointer)
+        assert pinout['source']['source_ref'] == ds['source_ref'] and pinout['source']['sha256'] == ds['sha256']
+        authored_package, = [p for p in pinout['packages'] if p['name'] == package['part']]
+        assert authored_package['package'] == package['package']
+        column = authored_package['table_column']
+        assert column in pinout['table_columns']
+        assert column == package.get('pinout_table_column', package['package'])
+        assert row['positions'][column] == route['package_position']
+        assert route['pin'] in row['signals'] and row['pin_type'] == route['pin_type'] == 'I/O'
+        assert row['pdf_page_index'] + 1 == route['pinout_pdf_page_1_based']
+        source_page = pdf_page(ds['path'], route['pinout_pdf_page_1_based'])
+        assert family in source_page and row['source_name'] in flat(source_page)
+        for evidence in route['af_evidence']:
+            authored = current_yaml(evidence['path'])
+            af = at_pointer(authored, evidence['pointer'])
+            assert all(af[k] == route[k] for k in ['peripheral', 'signal', 'pin', 'af'])
+            assert af['source_macro'] == evidence['source_macro'] and af['source_line'] == evidence['source_line']
+            source = authored['source']
+            assert source['header_sha256'] == block['sources']['gpio_header']['sha256']
+            assert source['sdk_url'] == block['sources']['sdk']['url'] and source['sdk_sha256'] == block['sources']['sdk']['sha256']
+            line = material['gpio_header'].splitlines()[af['source_line'] - 1]
+            assert re.search(r'^#define\s+' + re.escape(af['source_macro']) + r'\(\)', line)
+            assert re.search(r'\.' + af['gpio_field'] + r'\s*=\s*' + str(route['af']) + r'\)', line)
+            assert '->' + af['gpio_register'] + '_f.' in line
+    assert seen == {(i['name'], signal) for i in block['instances'] for signal in ['SCL', 'SDA']}
+    return len(seen)
+
+
+def classic_async_sources():
+    families = {name: fact for name, fact in EVIDENCE['families'].items() if 'async_master' in fact}
+    assert set(families) == CLASSIC_FAMILIES and 'async_master' not in EVIDENCE['families']['CW32L012']
+    chips = {family: [] for family in families}
+    for path in sorted((ROOT / 'cw32-data/data/chips').glob('*.json')):
+        chip = current_json(str(path.relative_to(ROOT)))
+        if chip['line'] in chips:
+            chips[chip['line']].append((str(path.relative_to(ROOT)), chip))
+    # Broad family (for example CW32F0) is distinct from the exact source line.
+    # Derive the complete current inventory from authored profiles and parts.
+    for family, entries in chips.items():
+        profile = current_yaml(f'cw32-data/inputs/{family.lower()}.yaml')
+        assert profile['line'] == family
+        catalog = current_yaml(profile['parts_catalog'])['parts']
+        expected = {p['name'] for p in profile['chips']} | {
+            p['name'] for p in catalog if p['family'] == family}
+        assert {chip['name'] for _, chip in entries} == expected, family
+        assert all(Path(path).stem == chip['name'] for path, chip in entries), family
+    slots, routes, versions = 0, 0, set()
+    for family, fact in families.items():
+        block = fact['async_master']
+        assert block['identity_authority'] == 'sources/evidence-sources.json'
+        material = {}
+        for role, binding in block['sources'].items():
+            _, data = selected_source(binding)
+            if not binding['source_ref'].startswith('vendor:'):
+                material[role] = data.decode(errors='replace')
+            authority = ('cw32f030' if family == 'CW32A030' and role in
+                         {'sdk', 'device_header', 'i2c_sdk_header', 'gpio_header', 'selected_svd'} else
+                         'cw32x030' if family in {'CW32F030', 'CW32A030'} and role in
+                         {'manual', 'manual_text'} else family.lower())
+            assert authority in binding['path'].lower(), (family, role)
+            if binding['source_ref'].startswith('member:'):
+                assert binding['parent_source_ref'] == block['sources']['sdk']['source_ref'], (family, role)
+        assert block['sources']['manual_text']['parent_source_ref'] == block['sources']['manual']['source_ref']
+        for existing, role in [('manual', 'manual'), ('sdk_header', 'i2c_sdk_header')]:
+            assert fact[existing]['filename'] == block['sources'][role]['path']
+            assert fact[existing]['sha256'] == block['sources'][role]['sha256']
+            assert fact[existing]['url'] == block['sources'][role]['url']
+        raw = classic_protocol(family, block, material['manual_text'])
+        classic_registers(family, fact, block, raw)
+        classic_instances(family, fact, block, material, raw, chips[family])
+        routes += classic_routes(family, block, material)
+        slots += len(block['instances'])
+        versions.add(fact['register_version'])
+        print(f'PASS {family}: own classic async protocol, dedicated IRQ, exclusive reset and exact-package routes')
+    assert slots == 17 and len(versions) == 5 and routes == 34
+    print('PASS classic async sources: 12 families, 17 controllers, 5 IP versions and 34 exact-package routes')
 
 
 def main():
@@ -138,6 +584,7 @@ def main():
         assert re.search(rf'pub const fn {method}\(\) -> Self\s*\{{\s*Self\(32516\)', code), method
     assert re.search(r'impl Default for Micr.*?(?:Self|Micr)\(0\)', pac, re.S)
     print('PASS all 6 typed PAC variants, 13 source families, explicit MICR seed and unchanged zero Default')
+    classic_async_sources()
 
 
 if __name__ == '__main__':

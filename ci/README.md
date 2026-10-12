@@ -530,3 +530,27 @@ and a CSR prefix also matched CSRCADDR. The precise corrections preserve full
 source identity and all five CSR access assertions; no original or hardware
 fact was changed. At main acceptance clean had not run; final-package completion
 requires a separate final-source two-library/four-ELF clean receipt.
+
+## Classic I2C finite asynchronous verification
+
+Stage87 main acceptance has 13 actual standalone ARM library builds and 17 ELF
+links: twelve ordinary async examples and five blocking examples. The 13 firmware
+libraries were retained with independently verified unchanged compiler inputs; all
+17 final examples were linked with release `opt-level = "z"`. These are explicit
+source/profile correspondences, not a claim of one whole-tree build snapshot.
+The earlier PA5 compile failure and three Flash-overflow links are preserved;
+three earlier successful `s`-profile ELFs are historical and excluded from the
+final 17. L010/L011 retain three existing RCC warning kinds, with no new warning
+kinds. At main acceptance clean had not run; final-package completion requires
+separate final-source six-library/six-ELF receipts. These are not additions to a
+cumulative recipe. Main reuses the existing shared target and retains each actual artifact
+and OUT_DIR before the next feature selection. Clean uses distinct fresh source,
+host-generation and ARM target directories.
+
+Main passed six finite current-fact/provenance/capability/layout commands without
+data/PAC generation. Their snapshot precedes only the independently reviewed
+example startup/profile changes; source facts and checker bytes are identical. After genuine main reviews are installed, two provenance
+commands close their administrative references. Clean performs one bootstrap
+plus five finite commands. All 910 generated files must retain their exact
+baseline bytes. No aggregate suite, hosted CI, HAL model or hardware run is
+part of this acceptance. See [the contract](../docs/classic-i2c-async.md).

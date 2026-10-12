@@ -1,4 +1,4 @@
-//! Blocking I2C drivers selected by the verified peripheral IP version.
+//! I2C masters selected by verified IP: classic blocking/async, L012 blocking.
 #[cfg(not(i2c_cw32l012_v1))]
 mod classic;
 #[cfg(not(i2c_cw32l012_v1))]

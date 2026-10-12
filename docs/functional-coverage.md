@@ -709,3 +709,27 @@ source identity and all five CSR access assertions; no original or hardware
 fact was changed. At main acceptance clean had not run; final-package completion
 requires a separate final-source two-library/four-ELF clean receipt.
 See [the own-L012 contract](l012-dma-owned.md) and [ordinary firmware](../examples/l012-dma/README.md).
+
+## Classic I2C asynchronous master
+
+F030/A030/F020/F002/F003/L010/L011/L031/R031/W031/L052/L083 share the
+source-qualified classic SI engine across five existing register versions and
+17 family/controller slots. Owned seven-bit async master transactions retain
+package-qualified pins and expose inherent methods plus embedded-hal-async.
+L012 remains the separate blocking command/FIFO backend. Ten-bit, slave and
+I2C DMA remain unimplemented.
+
+Only START/address/data event waits are asynchronous. Bus-idle, STOP and cleanup
+use finite synchronous sample budgets; no built-in SI deadline exists. Live
+arbitration never authorizes STOP, and cancellation makes no rollback or physical
+bus-repair promise. Verified local shutdown permits checked exclusive reset and
+configuration before reuse; failed readback is sticky across reconstruction.
+Main acceptance covers 13 actual standalone ARM libraries and 17 linked ELFs,
+with six finite source/data commands passed and all 910 generated files unchanged.
+The final example profile is size-optimized `z`; the libraries retain their
+separate firmware profile. Earlier failed attempts and superseded example links
+remain historical evidence. L010/L011 retain three existing RCC warnings each.
+At main acceptance clean had not run; final-package completion requires a separate
+six-library/six-ELF clean receipt. No behavioral HAL test, lifecycle probe, or
+hardware validation is claimed. See
+[classic-i2c-async.md](classic-i2c-async.md).

@@ -287,12 +287,40 @@ functions:
       status: partial
       scope: Blocking seven-bit master with owned pins.
       limitations:
-      - Bounded timing/electrical contracts; ten-bit, slave and async APIs absent.
-    - id: ten_bit_slave_async
-      status: unimplemented
-      scope: No maintained HAL API declaration for this mode.
+      - Bounded timing/electrical contracts; ten-bit and slave APIs remain absent.
+    - id: async_master
+      status: partial
+      scope: Owned classic seven-bit master with interrupt-driven SI phases and embedded-hal-async transactions.
+      implemented_families:
+      - CW32F030
+      - CW32A030
+      - CW32F020
+      - CW32F002
+      - CW32F003
+      - CW32L010
+      - CW32L011
+      - CW32L031
+      - CW32R031
+      - CW32W031
+      - CW32L052
+      - CW32L083
+      pins_all:
+      - SCL
+      - SDA
       limitations:
-      - No ten-bit, slave or async API; advanced mode hardware must be checked per IP.
+      - Initial idle, STOP and cleanup use finite synchronous sample budgets; SI awaits have no built-in deadline.
+      - Cancellation can truncate bytes and preserve target effects; no physical bus-repair or multi-master noninterference guarantee.
+      - Reuse requires confirmed local shutdown and checked exclusive reset; failed readback faults the instance until chip reset.
+      - L012 command/FIFO async is not included. No slave, ten-bit, retry or peripheral DMA support is implied.
+      - Main accepted thirteen standalone ARM libraries, seventeen final z-profile ELFs and six finite source/data commands; all 910 generated files unchanged. Main acceptance precedes the separate final-source six-library/six-ELF clean receipt; no hardware claim.
+      evidence:
+      - path: embassy-cw32/src/i2c/classic.rs
+      - path: docs/classic-i2c-async.md
+    - id: ten_bit_slave
+      status: unimplemented
+      scope: No maintained ten-bit addressing or slave API.
+      limitations:
+      - Advanced mode hardware must be checked per IP; the classic async master does not provide these modes.
     - id: safe_peripheral_dma
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.
