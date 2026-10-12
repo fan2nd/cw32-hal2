@@ -1,0 +1,1669 @@
+{
+  "stage": 83,
+  "date": "2026-10-12",
+  "artifact_role": "independent-buffered-uart-source-metadata-review",
+  "status": "accepted-main",
+  "open_blockers": [],
+  "review_scope": "Actual frozen implementation source/data/docs, finite focused gate receipts, real ARM HAL library archives and linked application ELF artifacts. Runtime lifecycle is reviewed separately; no hardware execution is claimed.",
+  "accepted_baseline_commit": "980a38547b0f1913ec0c526ef5983fe86b1f90bd",
+  "actual_main_libraries": 13,
+  "actual_main_firmware_elfs": 11,
+  "actual_main_focused_gates": 5,
+  "source_files": 1380,
+  "generated_files": 905,
+  "reviewed_main_identity": {
+    "source_before": {
+      "external_artifact": "stage83-acceptance/main/source-before.json",
+      "sha256": "08915f7220ed54bd610de7771a7b897c25529b349899c3cf8d1cfb2e7f67b082",
+      "bytes": 216993
+    },
+    "source_after": {
+      "external_artifact": "stage83-acceptance/main/source-after.json",
+      "sha256": "08915f7220ed54bd610de7771a7b897c25529b349899c3cf8d1cfb2e7f67b082",
+      "bytes": 216993
+    },
+    "source_before_after_equal": true,
+    "generated_before": {
+      "external_artifact": "stage83-acceptance/main/generated-before.json",
+      "sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98",
+      "bytes": 135799
+    },
+    "generated_after": {
+      "external_artifact": "stage83-acceptance/main/generated-after.json",
+      "sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98",
+      "bytes": 135799
+    },
+    "generated_before_after_equal": true,
+    "generated_complete_set_equal_to_stage82": true,
+    "main_hardware_generation_runs": 0
+  },
+  "reviewed_source_inputs": [
+    {
+      "path": "tests/verify_buffered_uart_sources.py",
+      "bytes": 34119,
+      "sha256": "cc396b14aa82247725b21677b9d84de5a8f00634f56f2afe09781724eb296d22"
+    },
+    {
+      "path": "docs/uart-buffered-rx-evidence.json",
+      "bytes": 194222,
+      "sha256": "bad2be9fc60d74bf098656e69884c106e45926fbf2bd8bf9301278b20d5405d3"
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "bytes": 394380,
+      "sha256": "b518e3b5545e577d1f6768ec9df18567b86abf9b1dc0e08d376c7e5e9290016b"
+    },
+    {
+      "path": "tests/verify_native_uart_idle_sources.py",
+      "bytes": 16628,
+      "sha256": "10f7fa08a0c5bc6864d4612679a79f662a0da6b0c58a22caa8fb76ccfdcb2997"
+    },
+    {
+      "path": "docs/uart-buffered-rx.md",
+      "bytes": 13414,
+      "sha256": "0a8976c82338893fd93d8b65c29828184c73f7cc20074fe47beae6732d8a3201"
+    },
+    {
+      "path": "ci/hal-capabilities.yaml",
+      "bytes": 113839,
+      "sha256": "470206af22e19b4b16aeff5c27fa0bc337fc49ebbaeb86efb6608dc4a48f4ee6"
+    },
+    {
+      "path": "README.md",
+      "bytes": 52701,
+      "sha256": "c93083a636ee5c936ae21397de71a9c651eb7429cef52a8b33e4818d30950703"
+    },
+    {
+      "path": "docs/functional-coverage.md",
+      "bytes": 46105,
+      "sha256": "d6066e2a8502edfd055d391a67f0a78336a48f1d4e872b5600ac64fdf5e22df5"
+    },
+    {
+      "path": "docs/uart-idle.md",
+      "bytes": 5865,
+      "sha256": "41e339e7c5f339a876f87771806165249a88089cf7a2da60d69fb2ca3befbd86"
+    },
+    {
+      "path": "docs/uart-flow-control.md",
+      "bytes": 6896,
+      "sha256": "372b097b0a26d6df05a502009846318103a1381733f313512c0e98600a779304"
+    },
+    {
+      "path": "examples/uart-flow-control/README.md",
+      "bytes": 2875,
+      "sha256": "451e9e18e63a1cd593c5ea6e028bcbf6315727bb6bee7a8498dbb2d1ed93a5b4"
+    },
+    {
+      "path": "examples/uart-buffered/Cargo.lock",
+      "bytes": 20779,
+      "sha256": "a6a1bec09663b32e7a4789d46a73732c2ef5cd2003508f0e4b9cc2d145e5f072"
+    },
+    {
+      "path": "examples/uart-buffered/Cargo.toml",
+      "bytes": 1937,
+      "sha256": "f0eab5fe7202591f51135432278fee5ce29d9dd25c033d2782b80cebdc12470a"
+    },
+    {
+      "path": "examples/uart-buffered/README.md",
+      "bytes": 6816,
+      "sha256": "1872f8c3f8e47148d73a87c42023161c4d6138c0b5556f29808f14752ac20950"
+    },
+    {
+      "path": "examples/uart-buffered/build.rs",
+      "bytes": 1373,
+      "sha256": "769b3658ac53300972f8d82537f583a97d36f194613b689f85d3938fe13714bc"
+    },
+    {
+      "path": "examples/uart-buffered/src/bin/flow_control.rs",
+      "bytes": 1089,
+      "sha256": "fe9043c5ba98995c813b8258afa39616e1b494500face2a17140cbc56a79e54d"
+    },
+    {
+      "path": "examples/uart-buffered/src/bin/receive.rs",
+      "bytes": 905,
+      "sha256": "4779a7f6180ae4f84c7967e97b9f1598ce046cd3778e533531df813f69d8c204"
+    },
+    {
+      "path": "examples/uart-buffered/src/bin/rx_only.rs",
+      "bytes": 787,
+      "sha256": "b0dca12a975ecb20b68cc1763e624c58775f5d405667f537c724e0ecbfdca7a0"
+    },
+    {
+      "path": "examples/uart-buffered/src/bin/shared_vector.rs",
+      "bytes": 1424,
+      "sha256": "0af698059882bf19da53bcfe3c4f317b1c8816cc42ca4ceb41bd37cfb19727be"
+    },
+    {
+      "path": "examples/uart-buffered/src/bin/split.rs",
+      "bytes": 1504,
+      "sha256": "b4e5b22a94480cb0b7997fe213e2f509a10a428716ba3b57105dd4e7d3882bd7"
+    },
+    {
+      "path": "examples/uart-buffered/src/lib.rs",
+      "bytes": 3114,
+      "sha256": "1ebb641d8aaa036e85135a5d25843466beee8678206a755f5ffc5ae9a8c0778d"
+    }
+  ],
+  "static_review": {
+    "external_artifact": "stage83-acceptance/independent-metadata/static-review.json",
+    "sha256": "6eb749ee104279c7084d8e3cbcd5fe3bf8990b7000f853bc790546bc22f3b66e",
+    "bytes": 10422
+  },
+  "static_review_explanation": {
+    "external_artifact": "stage83-acceptance/independent-metadata/static-review.md",
+    "sha256": "e1f1da33ea3d2b44a6c5a77ea3631b34e7aaed2a0d26f5b234aea1e046d4a497",
+    "bytes": 6012
+  },
+  "main_build_observations": {
+    "external_artifact": "stage83-acceptance/independent-metadata/main-artifact-observations.json",
+    "sha256": "99ff6b5b7a56e04e525cacb011c904251ed8cfdb060ed6455d71cf197034287e",
+    "bytes": 21545
+  },
+  "actual_matrix_receipts": [
+    {
+      "external_artifact": "stage83-acceptance/main/planned-matrix.json",
+      "sha256": "4448cba562c3c0033f89a21d70bb8922782a4079c0328803c7a28cfd316c7dc4",
+      "bytes": 4340
+    },
+    {
+      "external_artifact": "stage83-acceptance/main/results.json",
+      "sha256": "f606621052f6583cc86cbccb2b9e74003688d4792a8329fa42d28ce9b55f93e7",
+      "bytes": 459828
+    },
+    {
+      "external_artifact": "stage83-acceptance/main/summary.json",
+      "sha256": "38f6bf28bbfc84a4c762145770f00c8f87a30346460f6a0319343c691fd5e1ad",
+      "bytes": 847
+    },
+    {
+      "external_artifact": "stage83-acceptance/main/toolchain-before.json",
+      "sha256": "9ba3050c515b5de35265b7245aceb45ed8aa19c4750710429584dfd56122a1a8",
+      "bytes": 864
+    },
+    {
+      "external_artifact": "stage83-acceptance/main/toolchain-after.json",
+      "sha256": "f6c36932e842dc7c6ea78a704280f3a2fd5f459ede4991f8ab65952450e5b644",
+      "bytes": 864
+    }
+  ],
+  "toolchain": {
+    "rustc": "1.99.0 b940084d7 2026-09-28",
+    "cargo": "1.99.0 5f94df478 2026-08-27",
+    "target": "thumbv6m-none-eabi",
+    "before_after_identity_equal": true,
+    "build_mode": "release, locked, offline, no default features; one shared main target used serially; artifacts and OUT_DIR retained per row"
+  },
+  "source_facts": {
+    "external_identity_hash_size_matches": 111,
+    "source_index_arrays_append_only": 111,
+    "new_consumer_references": 222,
+    "families": 13,
+    "selections": 54,
+    "family_instances": 39,
+    "register_versions": 7,
+    "package_filtered_uart_routes": 2649,
+    "example_rows": 9,
+    "distinct_selected_signal_routes": 19,
+    "exact_example_features": 8,
+    "explicit_example_bins": 5,
+    "identical_existing_nonroot_lock_records": 90,
+    "full_own_receive_tables_including_continuations": true,
+    "native_ore_ne_and_oversampling": true,
+    "l052_rfu_reserved_bit_preserved": true,
+    "a030_shared_authority_exception_preserved": true,
+    "l011_selected_own_revision_preserved": true,
+    "l083_all_pairs_and_six_gate_reset_sources": true,
+    "finite_checker_not_runtime_simulation": true,
+    "native_idle_checker_exact_one_literal_change": true,
+    "dma_declaration_unchanged": true,
+    "seven_ancillary_paths_match_reviewed_proposal": true
+  },
+  "source_index_change": {
+    "selected_identities": 111,
+    "consumer_references_appended": 222,
+    "changed_arrays": 111,
+    "all_previous_bytes_preserved_after_removing_only_appended_fragments": true,
+    "identity_url_provenance_extraction_policy_changed": false,
+    "review_backlinks_not_preclaimed": true
+  },
+  "consumed_source_identities": [
+    {
+      "source_ref": "vendor:CW32F030_StandardPeripheralLib_V2.2.zip",
+      "index_pointer": "/artifacts/3",
+      "sha256": "7c431df43d7075b817a51d818ea4c9aba55f83b7c9c77bf0065976758954b780",
+      "bytes": 8457933
+    },
+    {
+      "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+      "index_pointer": "/artifacts/36",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "bytes": 9989317
+    },
+    {
+      "source_ref": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+      "index_pointer": "/artifacts/12",
+      "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+      "bytes": 2692267
+    },
+    {
+      "source_ref": "member:cw32f030/Libraries/inc/cw32f030.h",
+      "index_pointer": "/artifacts/3/members/3",
+      "sha256": "7060347a4cb18d8550708ce8c488cdbdb8e58c0e9d6ecf6f1e6467e139328862",
+      "bytes": 695293
+    },
+    {
+      "source_ref": "member:cw32f030/Libraries/inc/cw32f030_uart.h",
+      "index_pointer": "/artifacts/3/members/18",
+      "sha256": "c46d116b1d34343bc1ab5100c9bf5fce3a650642c2a3a1fe62db9d8806e97aae",
+      "bytes": 13394
+    },
+    {
+      "source_ref": "member:cw32f030/Libraries/src/cw32f030_uart.c",
+      "index_pointer": "/artifacts/3/members/32",
+      "sha256": "69b062544d4e5fb16927d6388412a0ca0ddb752d17821e35dfcf3f23d982cd0d",
+      "bytes": 17870
+    },
+    {
+      "source_ref": "member:cw32f030/Libraries/inc/cw32f030_gpio.h",
+      "index_pointer": "/artifacts/3/members/10",
+      "sha256": "3ffe458a615f2dd099c6a14283e0438cfece2260444f4167a4c05c62930abe2e",
+      "bytes": 79215
+    },
+    {
+      "source_ref": "text:CW32x030_UserManual_CN_V2.5.txt",
+      "index_pointer": "/artifacts/36/text",
+      "sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe",
+      "bytes": 1521355
+    },
+    {
+      "source_ref": "text:CW32A030_DataSheet_CN_V1.1.txt",
+      "index_pointer": "/artifacts/12/text",
+      "sha256": "87c782da759a6893bca9f773a474a7b0445f77cd51d86d9cb2d2d8b8de8d05b9",
+      "bytes": 188529
+    },
+    {
+      "source_ref": "vendor:CW32F002_StandardPeripheralLib_V1.2.zip",
+      "index_pointer": "/artifacts/0",
+      "sha256": "108b6e1483669933e789c6868cf0a595ebba6bc4b77f78f5a45bb8bc96cbeffc",
+      "bytes": 1736578
+    },
+    {
+      "source_ref": "vendor:CW32F002_UserManual_CN_V1.4.pdf",
+      "index_pointer": "/artifacts/14",
+      "sha256": "e453b3f82d9d180a86cd5f7cb18d858d7f228afc8101d87c700ca9d5c02d5add",
+      "bytes": 7846423
+    },
+    {
+      "source_ref": "vendor:CW32F002_DataSheet_CN_V1.2.pdf",
+      "index_pointer": "/artifacts/13",
+      "sha256": "6d0c5c37d069e5b4e33d394b0be6c53938868e9375e7b4bbbbdd40d62bb9d506",
+      "bytes": 2250121
+    },
+    {
+      "source_ref": "member:cw32f002/Libraries/inc/cw32f002.h",
+      "index_pointer": "/artifacts/0/members/2",
+      "sha256": "399bd239233b4128480a3961f0885d29c2d40e1cede983a1343df958e6878d54",
+      "bytes": 365735
+    },
+    {
+      "source_ref": "member:cw32f002/Libraries/inc/cw32f002_uart.h",
+      "index_pointer": "/artifacts/0/members/15",
+      "sha256": "0c86efe39e08c3c97e66118e01a889d5d61bcfc522a1edbce2212c5356085f9b",
+      "bytes": 13374
+    },
+    {
+      "source_ref": "member:cw32f002/Libraries/src/cw32f002_uart.c",
+      "index_pointer": "/artifacts/0/members/27",
+      "sha256": "4031b9740d1a7f6425edd2144199fb4b3dfa7b00472d150e69960f33577a0e89",
+      "bytes": 16637
+    },
+    {
+      "source_ref": "member:cw32f002/Libraries/inc/cw32f002_gpio.h",
+      "index_pointer": "/artifacts/0/members/8",
+      "sha256": "12ab69693119a4fe4c731bb1545f5a9e6954f1e83ba6ed0c7da3d759a2d05b63",
+      "bytes": 35110
+    },
+    {
+      "source_ref": "text:CW32F002_UserManual_CN_V1.4.txt",
+      "index_pointer": "/artifacts/14/text",
+      "sha256": "cd75f94d8fcf3901a870e23ed53312fdaf0290af011f0dc5b446862a60ca8d01",
+      "bytes": 1040538
+    },
+    {
+      "source_ref": "text:CW32F002_DataSheet_CN_V1.2.txt",
+      "index_pointer": "/artifacts/13/text",
+      "sha256": "78fb075e343dd0e2e14c83079a8e255f000cff4bae631262679ac209123d7f67",
+      "bytes": 161613
+    },
+    {
+      "source_ref": "vendor:CW32F003_StandardPeripheralLib_V1.7.zip",
+      "index_pointer": "/artifacts/1",
+      "sha256": "fc2d753bfeaa0300d73b67f4c2d4f912cd065e6cb6d465935a1ad161bdd57333",
+      "bytes": 1966998
+    },
+    {
+      "source_ref": "vendor:CW32F003_UserManual_CN_V2.3.pdf",
+      "index_pointer": "/artifacts/16",
+      "sha256": "0fa58dac223add7f2ac1ee714a7df7db4e414e0f193601b80dda96a948bfc738",
+      "bytes": 8723015
+    },
+    {
+      "source_ref": "vendor:CW32F003_DataSheet_CN_V1.9.pdf",
+      "index_pointer": "/artifacts/15",
+      "sha256": "5fe15321b3963472c2629030767cf61a0ce36063815b54add74025b5b13b95dd",
+      "bytes": 2302996
+    },
+    {
+      "source_ref": "member:cw32f003/Libraries/inc/cw32f003.h",
+      "index_pointer": "/artifacts/1/members/2",
+      "sha256": "1f5a25d0c56de46e3333f98ad4135f0691da7d6fd7020b48cec83c5550a32a0f",
+      "bytes": 369370
+    },
+    {
+      "source_ref": "member:cw32f003/Libraries/inc/cw32f003_uart.h",
+      "index_pointer": "/artifacts/1/members/15",
+      "sha256": "d75572002fa307b1c21fa752704e984ca6a3b8c094db2a5c3521bc12721fcfcb",
+      "bytes": 13374
+    },
+    {
+      "source_ref": "member:cw32f003/Libraries/src/cw32f003_uart.c",
+      "index_pointer": "/artifacts/1/members/27",
+      "sha256": "48246ec7c7f31a8f80cc08533aefbf24c8a2e4ba304377894ccf2a769230fc6a",
+      "bytes": 16621
+    },
+    {
+      "source_ref": "member:cw32f003/Libraries/inc/cw32f003_gpio.h",
+      "index_pointer": "/artifacts/1/members/8",
+      "sha256": "f4970bcdfb6da3403aa0d43e13ca1acfc82f3e3f19e2d2b557806ee456df5ce1",
+      "bytes": 36609
+    },
+    {
+      "source_ref": "text:CW32F003_UserManual_CN_V2.3.txt",
+      "index_pointer": "/artifacts/16/text",
+      "sha256": "6cd08ff0ceb389b28f720dad580d03dc4d898329cea7cb75c4f2ba7ae1d68319",
+      "bytes": 1218133
+    },
+    {
+      "source_ref": "text:CW32F003_DataSheet_CN_V1.9.txt",
+      "index_pointer": "/artifacts/15/text",
+      "sha256": "1c78a99eee262f3fb85457ffe171f0a92f0979cc847d2ba72e880305ff955580",
+      "bytes": 177725
+    },
+    {
+      "source_ref": "vendor:CW32F020_StandardPeripheralLib_V1.2.zip",
+      "index_pointer": "/artifacts/2",
+      "sha256": "1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d",
+      "bytes": 2214134
+    },
+    {
+      "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+      "index_pointer": "/artifacts/18",
+      "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+      "bytes": 9120176
+    },
+    {
+      "source_ref": "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+      "index_pointer": "/artifacts/40",
+      "sha256": "1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0",
+      "bytes": 3084660
+    },
+    {
+      "source_ref": "member:cw32f020/Libraries/inc/cw32f020.h",
+      "index_pointer": "/artifacts/2/members/2",
+      "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f",
+      "bytes": 632223
+    },
+    {
+      "source_ref": "member:cw32f020/Libraries/inc/cw32f020_uart.h",
+      "index_pointer": "/artifacts/2/members/17",
+      "sha256": "be03af90b5c4c7d2431e28d29e7dda7ae9f44ffe610de7a272d7afed491fbb48",
+      "bytes": 12677
+    },
+    {
+      "source_ref": "member:cw32f020/Libraries/src/cw32f020_uart.c",
+      "index_pointer": "/artifacts/2/members/31",
+      "sha256": "ed93f8f63e13580c8cffe8541681a9d14c91d8bea6c37b295537c7bb1ead266f",
+      "bytes": 17899
+    },
+    {
+      "source_ref": "member:cw32f020/Libraries/inc/cw32f020_gpio.h",
+      "index_pointer": "/artifacts/2/members/9",
+      "sha256": "eccc3bb68452d2e3218397b2a795c4330e4a3d9b5a76481de128655e4602874d",
+      "bytes": 67369
+    },
+    {
+      "source_ref": "text:CW32F020_UserManual_CN_V1.4.txt",
+      "index_pointer": "/artifacts/18/text",
+      "sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db",
+      "bytes": 1282599
+    },
+    {
+      "source_ref": "text:current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+      "index_pointer": "/artifacts/40/text",
+      "sha256": "c561aa8acbafc12cd6ac39fc0595f58a168b02dfda301b90df4fdd067a69d233",
+      "bytes": 206743
+    },
+    {
+      "source_ref": "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+      "index_pointer": "/artifacts/19",
+      "sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2",
+      "bytes": 3467588
+    },
+    {
+      "source_ref": "text:CW32F030_DataSheet_CN_V1.9.txt",
+      "index_pointer": "/artifacts/19/text",
+      "sha256": "7c4d70098481fb58e0924901dbbe24cb88cf445689efaf718410617b37f4e5bf",
+      "bytes": 237459
+    },
+    {
+      "source_ref": "vendor:CW32L010_StandardPeripheralLib_V1.0.9.zip",
+      "index_pointer": "/artifacts/4",
+      "sha256": "84dbbeb8b684d0435ef9f926df8b899ceeb1d7bfd7767145b1e4f7e22210c716",
+      "bytes": 2442266
+    },
+    {
+      "source_ref": "vendor:CW32L010_UserManual_CN_V1.2.pdf",
+      "index_pointer": "/artifacts/21",
+      "sha256": "b66ae2b2837cf22aede7f19312b82659ea10f96960bfe7965de8733bb72513fa",
+      "bytes": 15074519
+    },
+    {
+      "source_ref": "vendor:CW32L010_DataSheet_CN_V1.3.pdf",
+      "index_pointer": "/artifacts/20",
+      "sha256": "6fbefd334a86a1fafbec8ead5b6bd44dc99dfe564b604f69ec1edaa4ec789b86",
+      "bytes": 3467805
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010.h",
+      "index_pointer": "/artifacts/4/members/2",
+      "sha256": "28c3feca7a8930afd2452a598e1753d2782bdbb120fc8e66e64a6d807674730b",
+      "bytes": 540100
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_uart.h",
+      "index_pointer": "/artifacts/4/members/16",
+      "sha256": "04d759fa0cb30c7036f69eca6865914e52ff17ca8ce39d255567de0599604e58",
+      "bytes": 15591
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/src/cw32l010_uart.c",
+      "index_pointer": "/artifacts/4/members/31",
+      "sha256": "e1e4ec5ba2c819a2eb7a12ff645bc7ce291a30bb69ad62e07018fac003dae8ed",
+      "bytes": 21000
+    },
+    {
+      "source_ref": "member:cw32l010/CW32L010_StandardPeripheralLib_V1.0.9/Libraries/inc/cw32l010_gpio.h",
+      "index_pointer": "/artifacts/4/members/7",
+      "sha256": "1ec5958352e78cfdb050b4e648373ed25f2befc01d6724602b0e69c4d098969e",
+      "bytes": 28798
+    },
+    {
+      "source_ref": "text:CW32L010_UserManual_CN_V1.2.txt",
+      "index_pointer": "/artifacts/21/text",
+      "sha256": "bdb75c6169f4a65b69b71e2481138552e8b058c54972d437198b9f104f67d938",
+      "bytes": 1653688
+    },
+    {
+      "source_ref": "text:CW32L010_DataSheet_CN_V1.3.txt",
+      "index_pointer": "/artifacts/20/text",
+      "sha256": "ba32a6838b5375c7a4d0225d9aeed6ebcad964e5668080ee87c8ddac1036595f",
+      "bytes": 188029
+    },
+    {
+      "source_ref": "vendor:CW32L011_StandardPeripheralLib_V1.0.3.zip",
+      "index_pointer": "/artifacts/5",
+      "sha256": "76adfe39360eb1d05ef58c25f26a8c1f99f2bc2f8fef677214aaca85cffc679e",
+      "bytes": 1808978
+    },
+    {
+      "source_ref": "vendor:CW32L011_UserManual_CN_V1.1.pdf",
+      "index_pointer": "/artifacts/23",
+      "sha256": "b245887e9037caf267f739e25bd3c354c2579d23315fc06389e055f371159f4f",
+      "bytes": 15199549
+    },
+    {
+      "source_ref": "vendor:CW32L011_DataSheet_CN_V1.1.pdf",
+      "index_pointer": "/artifacts/22",
+      "sha256": "0b7414049824881920fc38f829029e3ba0af88feb4536fb27351df0d60f688a5",
+      "bytes": 2687011
+    },
+    {
+      "source_ref": "member:cw32l011/Libraries/inc/cw32l011.h",
+      "index_pointer": "/artifacts/5/members/5",
+      "sha256": "2ae110a7a35e26be4816f6eeb615152eb52469da095d8d7a282df4aa80d946b8",
+      "bytes": 594153
+    },
+    {
+      "source_ref": "member:cw32l011/Libraries/inc/cw32l011_uart.h",
+      "index_pointer": "/artifacts/5/members/19",
+      "sha256": "9e658501b0fc851f2269b9535f8fa427b77110ed6ae585e6b36f286d2ce0a10e",
+      "bytes": 16734
+    },
+    {
+      "source_ref": "member:cw32l011/Libraries/src/cw32l011_uart.c",
+      "index_pointer": "/artifacts/5/members/35",
+      "sha256": "d3e5e9dfa1be93bfc072b794d28e05aa9a31ddf6def64343ed634f4bb6dd3aeb",
+      "bytes": 22154
+    },
+    {
+      "source_ref": "member:cw32l011/Libraries/inc/cw32l011_gpio.h",
+      "index_pointer": "/artifacts/5/members/10",
+      "sha256": "d78a3f5f0c4c04e7f948189b70a4e7ffe18025c98cc48418676ab1fa6ec8b78b",
+      "bytes": 52548
+    },
+    {
+      "source_ref": "text:CW32L011_UserManual_CN_V1.1.txt",
+      "index_pointer": "/artifacts/23/text",
+      "sha256": "769027b68733112f564acc1e00b86dd5e58d0b0b981aeba954e8ea0e71e42ee3",
+      "bytes": 1667087
+    },
+    {
+      "source_ref": "text:CW32L011_DataSheet_CN_V1.1.txt",
+      "index_pointer": "/artifacts/22/text",
+      "sha256": "f8429daa0082c24f2d191855d6405d38cc1994c8d468827cb402bc6effc1ea6c",
+      "bytes": 157393
+    },
+    {
+      "source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "index_pointer": "/artifacts/6",
+      "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+      "bytes": 2494783
+    },
+    {
+      "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+      "index_pointer": "/artifacts/25",
+      "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+      "bytes": 18034510
+    },
+    {
+      "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+      "index_pointer": "/artifacts/24",
+      "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+      "bytes": 3003846
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+      "index_pointer": "/artifacts/6/members/19",
+      "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+      "bytes": 834392
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_uart.h",
+      "index_pointer": "/artifacts/6/members/39",
+      "sha256": "689975d2980e5748dde9ddf419b57fa27621617126bd7652f65e186a69d8e5c2",
+      "bytes": 20037
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/src/cw32l012_uart.c",
+      "index_pointer": "/artifacts/6/members/60",
+      "sha256": "49199142bb1e564d0edc297a08bf5e2b138b96111b9fc42b81539419c051c065",
+      "bytes": 40247
+    },
+    {
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_gpio.h",
+      "index_pointer": "/artifacts/6/members/28",
+      "sha256": "45f356e8028475c2e25d135c5fdd0b75babb6b1c83f1d5534038e9355822d717",
+      "bytes": 69670
+    },
+    {
+      "source_ref": "text:CW32L012_UserManual_CN_V1.4.txt",
+      "index_pointer": "/artifacts/25/text",
+      "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505",
+      "bytes": 1558649
+    },
+    {
+      "source_ref": "text:CW32L012_DataSheet_CN_V1.0.txt",
+      "index_pointer": "/artifacts/24/text",
+      "sha256": "00ba7e2c9d26a8ce5a4eaa4cc2e7790773c427b13a4d491838622041abfa8b0a",
+      "bytes": 190981
+    },
+    {
+      "source_ref": "vendor:CW32L031_StandardPeripheralLib_V1.4.zip",
+      "index_pointer": "/artifacts/7",
+      "sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d",
+      "bytes": 1822564
+    },
+    {
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "index_pointer": "/artifacts/27",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "bytes": 9976689
+    },
+    {
+      "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+      "index_pointer": "/artifacts/26",
+      "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855",
+      "bytes": 3461718
+    },
+    {
+      "source_ref": "member:cw32l031/Libraries/inc/cw32l031.h",
+      "index_pointer": "/artifacts/7/members/2",
+      "sha256": "573ce4c0e812dd8c4d5f985b3a40791eafb1346833fc780d2e1ccb3cf43bcb27",
+      "bytes": 573927
+    },
+    {
+      "source_ref": "member:cw32l031/Libraries/inc/cw32l031_uart.h",
+      "index_pointer": "/artifacts/7/members/17",
+      "sha256": "6fe63dd031a8a18cb90d8192c33c85c547630760a19c889f644c6c0c68b91c9b",
+      "bytes": 15550
+    },
+    {
+      "source_ref": "member:cw32l031/Libraries/src/cw32l031_uart.c",
+      "index_pointer": "/artifacts/7/members/35",
+      "sha256": "e0a7c855829d4d222a84c384def93adbb96c4be29c8cf60f5570dc7ce8e0fe50",
+      "bytes": 22500
+    },
+    {
+      "source_ref": "member:cw32l031/Libraries/inc/cw32l031_gpio.h",
+      "index_pointer": "/artifacts/7/members/9",
+      "sha256": "3fd23de982d603dcfc4516dd6ef2202014934164aac351053f79b0aef5b575b7",
+      "bytes": 79188
+    },
+    {
+      "source_ref": "text:CW32L031_UserManual_CN_V1.6.txt",
+      "index_pointer": "/artifacts/27/text",
+      "sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1",
+      "bytes": 1443523
+    },
+    {
+      "source_ref": "text:CW32L031_DataSheet_CN_V1.9.txt",
+      "index_pointer": "/artifacts/26/text",
+      "sha256": "60ac2bf5a0e8eedaa8f7a386024b0ef9b240616ca3874ff054335f9d8390ab19",
+      "bytes": 235791
+    },
+    {
+      "source_ref": "vendor:CW32L052_StandardPeripheralLib_V1.4.zip",
+      "index_pointer": "/artifacts/8",
+      "sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f",
+      "bytes": 2248859
+    },
+    {
+      "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+      "index_pointer": "/artifacts/29",
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "bytes": 12894348
+    },
+    {
+      "source_ref": "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+      "index_pointer": "/artifacts/28",
+      "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f",
+      "bytes": 2962980
+    },
+    {
+      "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052.h",
+      "index_pointer": "/artifacts/8/members/2",
+      "sha256": "7cb4bd657920b5a5d278e3afd3962f3060ea5fd401391225bd7a0c97d8b68ba1",
+      "bytes": 826882
+    },
+    {
+      "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_uart.h",
+      "index_pointer": "/artifacts/8/members/19",
+      "sha256": "74b7386d7f44c4676505c21bc5ac78180775c21dbcf67f18a4157b4bdea78a67",
+      "bytes": 15390
+    },
+    {
+      "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_uart.c",
+      "index_pointer": "/artifacts/8/members/39",
+      "sha256": "4cb850d1c762fe86e87aa6f3212b71238455df94e6fc1278c1b255f916921b50",
+      "bytes": 22225
+    },
+    {
+      "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_gpio.h",
+      "index_pointer": "/artifacts/8/members/9",
+      "sha256": "59f0d8904b2724ddbc137287d80f83297eb903e1909763e84cf11c157514bc18",
+      "bytes": 114560
+    },
+    {
+      "source_ref": "text:CW32L052_UserManual_CN_V1.5.txt",
+      "index_pointer": "/artifacts/29/text",
+      "sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb",
+      "bytes": 1650171
+    },
+    {
+      "source_ref": "text:CW32L052_DataSheet_CN_V1.3.txt",
+      "index_pointer": "/artifacts/28/text",
+      "sha256": "8b1d9ac2caafd9e81dc5292f68bf1b1b04f0fef5a612bf1271edc9b77067be7c",
+      "bytes": 229508
+    },
+    {
+      "source_ref": "vendor:CW32L083_StandardPeripheralLib_V2.2.zip",
+      "index_pointer": "/artifacts/9",
+      "sha256": "2d58765568d8dd8a218b52e4650aa6e5bd4f2e4b5f386196bae637dfc0b3fe73",
+      "bytes": 2307769
+    },
+    {
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "index_pointer": "/artifacts/31",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "bytes": 11981462
+    },
+    {
+      "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "index_pointer": "/artifacts/30",
+      "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+      "bytes": 2900110
+    },
+    {
+      "source_ref": "member:cw32l083/Libraries/inc/cw32l083.h",
+      "index_pointer": "/artifacts/9/members/4",
+      "sha256": "06f2ff9963b2a1d5d9a5ef3533bc4a8d803d60b15bccacbe6add915f5ad041a5",
+      "bytes": 884832
+    },
+    {
+      "source_ref": "member:cw32l083/Libraries/inc/cw32l083_uart.h",
+      "index_pointer": "/artifacts/9/members/22",
+      "sha256": "aaecdff0c6d1ac9814fed8f9ecc5cb5d010266e985acfcecda298685a82ab374",
+      "bytes": 13364
+    },
+    {
+      "source_ref": "member:cw32l083/Libraries/src/cw32l083_uart.c",
+      "index_pointer": "/artifacts/9/members/44",
+      "sha256": "218df44964661652d7f1afeec6f5388135a47dc716681a6c2b93dc43b6344520",
+      "bytes": 19255
+    },
+    {
+      "source_ref": "member:cw32l083/Libraries/inc/cw32l083_gpio.h",
+      "index_pointer": "/artifacts/9/members/12",
+      "sha256": "fd987e9c1ba1514d278b06613e2604eff30e5e12e0a07f2c8ccd29fa307f75fb",
+      "bytes": 148488
+    },
+    {
+      "source_ref": "text:CW32L083_UserManual_CN_V2.0.txt",
+      "index_pointer": "/artifacts/31/text",
+      "sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564",
+      "bytes": 1673767
+    },
+    {
+      "source_ref": "text:CW32L083_DataSheet_CN_V1.9.txt",
+      "index_pointer": "/artifacts/30/text",
+      "sha256": "2124f5c492e1d58b51674805b2d8a58f82b2ce462c8b73beaba63c6d93780220",
+      "bytes": 262150
+    },
+    {
+      "source_ref": "vendor:CW32R031_StandardPeripheralLib_V1.1.zip",
+      "index_pointer": "/artifacts/10",
+      "sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082",
+      "bytes": 1868935
+    },
+    {
+      "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+      "index_pointer": "/artifacts/33",
+      "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+      "bytes": 11821621
+    },
+    {
+      "source_ref": "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+      "index_pointer": "/artifacts/32",
+      "sha256": "88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805",
+      "bytes": 3113158
+    },
+    {
+      "source_ref": "member:cw32r031/Libraries/inc/cw32r031.h",
+      "index_pointer": "/artifacts/10/members/2",
+      "sha256": "b01fb95cf3ab03855f83df0f5e9683878b7387066bc122d2743451c02397d385",
+      "bytes": 573927
+    },
+    {
+      "source_ref": "member:cw32r031/Libraries/inc/cw32r031_uart.h",
+      "index_pointer": "/artifacts/10/members/17",
+      "sha256": "6929dde7817c1ab016c4d9dffdb8a295bd7d8e33f527ac0d91d7ac9842588819",
+      "bytes": 15550
+    },
+    {
+      "source_ref": "member:cw32r031/Libraries/src/cw32r031_uart.c",
+      "index_pointer": "/artifacts/10/members/32",
+      "sha256": "121370be08784b0f892a82a652434b6e0c7452788735923bcc639185ea16e365",
+      "bytes": 22500
+    },
+    {
+      "source_ref": "member:cw32r031/Libraries/inc/cw32r031_gpio.h",
+      "index_pointer": "/artifacts/10/members/9",
+      "sha256": "ebd615d243577417faa4e8d0546b3d72236f932fc64e1a57a27b239a82becc24",
+      "bytes": 79114
+    },
+    {
+      "source_ref": "text:CW32R031_UserManual_CN_V1.3.txt",
+      "index_pointer": "/artifacts/33/text",
+      "sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b",
+      "bytes": 1579725
+    },
+    {
+      "source_ref": "text:CW32R031_DataSheet_CN_V1.2.txt",
+      "index_pointer": "/artifacts/32/text",
+      "sha256": "59496e16c1815fd3dc33d5b556b54db5adc04a9c358dce102dc9f9adff04fce8",
+      "bytes": 209324
+    },
+    {
+      "source_ref": "vendor:CW32W031_StandardPeripheralLib_V1.3.zip",
+      "index_pointer": "/artifacts/11",
+      "sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337",
+      "bytes": 2091903
+    },
+    {
+      "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+      "index_pointer": "/artifacts/35",
+      "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "bytes": 11750733
+    },
+    {
+      "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+      "index_pointer": "/artifacts/34",
+      "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c",
+      "bytes": 3301754
+    },
+    {
+      "source_ref": "member:cw32w031/Libraries/inc/cw32w031.h",
+      "index_pointer": "/artifacts/11/members/2",
+      "sha256": "164a3a23edd474b51d9c23de4bc7d4560d281effd44d15e86e30b3170c5bff69",
+      "bytes": 485814
+    },
+    {
+      "source_ref": "member:cw32w031/Libraries/inc/cw32w031_uart.h",
+      "index_pointer": "/artifacts/11/members/17",
+      "sha256": "14967f7106fe76f64029a673eb1f5bf7d00b9705fac88744940a255b071ff607",
+      "bytes": 13883
+    },
+    {
+      "source_ref": "member:cw32w031/Libraries/src/cw32w031_uart.c",
+      "index_pointer": "/artifacts/11/members/32",
+      "sha256": "18946ce7b16ee1c62cb374fefe68a1733734253677e1c30fa7d1f22daa7c4a51",
+      "bytes": 22424
+    },
+    {
+      "source_ref": "member:cw32w031/Libraries/inc/cw32w031_gpio.h",
+      "index_pointer": "/artifacts/11/members/9",
+      "sha256": "1f6cca798e50442f8a268e50254b2150a8ba22f9889f6bbbf1c3834f840c7fdc",
+      "bytes": 60533
+    },
+    {
+      "source_ref": "text:CW32W031_UserManual_CN_V1.4.txt",
+      "index_pointer": "/artifacts/35/text",
+      "sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac",
+      "bytes": 1516397
+    },
+    {
+      "source_ref": "text:CW32W031_DataSheet_CN_V1.3.txt",
+      "index_pointer": "/artifacts/34/text",
+      "sha256": "8b766288a879c9ec4fae74a26ed40d58b18676d29531442ab981da4e346542fb",
+      "bytes": 213856
+    },
+    {
+      "source_ref": "member:cw32l083/Libraries/inc/cw32l083_rcc.h",
+      "index_pointer": "/artifacts/9/members/19",
+      "sha256": "f2229ea4528f2c3d8d5d59db036cfa2aa248a312c6cf94d5fbe58e4798f04ebf",
+      "bytes": 37433
+    }
+  ],
+  "capability_review": {
+    "buffered_status": "partial",
+    "buffered_families": [
+      "CW32A030",
+      "CW32F002",
+      "CW32F003",
+      "CW32F020",
+      "CW32F030",
+      "CW32L010",
+      "CW32L011",
+      "CW32L012",
+      "CW32L031",
+      "CW32L052",
+      "CW32L083",
+      "CW32R031",
+      "CW32W031"
+    ],
+    "buffered_rx_required": true,
+    "finite_idle_families": [
+      "CW32L010",
+      "CW32L011",
+      "CW32L012"
+    ],
+    "dma_current_declaration_unchanged": true,
+    "ordinary_no_buffer_language_narrowed": true,
+    "software_hardware_limits_explicit": true,
+    "capability_not_derived_from_build_totals": true
+  },
+  "checker_review": {
+    "reads_hal_implementation_text": false,
+    "models_runtime_or_irq_timing": false,
+    "injects_or_mutates_fixtures": false,
+    "permanent_historical_source_or_generated_hash_gate": false,
+    "recurses_aggregate_validation": false,
+    "complete_own_receive_tables_and_native_continuations": true,
+    "current_canonical_generated_semantics_checked": true,
+    "native_idle_only_changed_status_literal": true,
+    "development_alias_correction": {
+      "reason": "Own L031 LINEN/BRKLEN control spellings differ from canonical normalized names outside this receive-source equality boundary.",
+      "reviewed_resolution": "Full own IER/ISR/ICR/RDR and RXEN/OVER checks; full canonical YAML/JSON profiles remain strict.",
+      "required_receive_obligations_preserved": true,
+      "retained_development_results": [
+        "failed initial candidate",
+        "passed final candidate"
+      ],
+      "counts_as_final_acceptance_gate": false
+    }
+  },
+  "actual_focused_gates": [
+    {
+      "name": "buffered-uart",
+      "exit_code": 0,
+      "external_artifact": "stage83-acceptance/main-gates/buffered-uart.log",
+      "log_sha256": "5fcfd2c43a6af41d39731836cba1fc98d77fcb9f22860994edf4df09ee0ad0b1"
+    },
+    {
+      "name": "native-uart-idle",
+      "exit_code": 0,
+      "external_artifact": "stage83-acceptance/main-gates/native-uart-idle.log",
+      "log_sha256": "71fd8c3b5b3d7f81a4264b307abe32f08af1d3776474353f97ea42d08246a19b"
+    },
+    {
+      "name": "provenance",
+      "exit_code": 0,
+      "external_artifact": "stage83-acceptance/main-gates/provenance.log",
+      "log_sha256": "369960758c4b75e0f9cbf40b35086b699b5a1e3033fff4f87a3143b42321258f"
+    },
+    {
+      "name": "coverage",
+      "exit_code": 0,
+      "external_artifact": "stage83-acceptance/main-gates/coverage.log",
+      "log_sha256": "463ff25b80a0dc31f4ccb7173196ce83ec37f26c532ab60e7d3e7ebc14e8298d"
+    },
+    {
+      "name": "layout",
+      "exit_code": 0,
+      "external_artifact": "stage83-acceptance/main-gates/layout.log",
+      "log_sha256": "006fde5f4bae8c292f315e127762ccd7590cef2068b5b8371969dbb10d88b4f8"
+    }
+  ],
+  "provenance_gate_scope": {
+    "scope": "hardware",
+    "complete_hardware": true,
+    "required_originals": 43,
+    "required_source_files": 551,
+    "complete_manifest": false,
+    "omitted_optional_discovery": [
+      "vendor:a030-official-manuals.html",
+      "vendor:a030-official-sdk.html"
+    ],
+    "not_claimed_as_complete_discovery_archive": true
+  },
+  "artifact_inspection": {
+    "actual_cargo_compiler_artifact_filenames_verified": true,
+    "artifact_and_log_hashes_verified": true,
+    "actual_rlibs_have_arm_elf_objects": true,
+    "all_elfs_are_32_bit_little_endian_arm_executables": true,
+    "all_reset_vectors_thumb_and_match_entry": true,
+    "all_required_irq_vectors_match_nondefault_bound_symbols": true,
+    "all_elf_load_ranges_fit_selected_flash_ram": true,
+    "all_11_emitted_memory_scripts_match_exact_package_metadata": true,
+    "all_selected_hal_out_dir_files_retained_and_hash_verified": true,
+    "l012_library_features_include_defmt": true,
+    "regression_native_idle_l012_receive": true,
+    "regression_l083_dma_shared_vector_and_three_dma_handlers": true
+  },
+  "main_rows": [
+    {
+      "row": 1,
+      "selection": "cw32f030c8t7",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32f030c8t7,rt",
+      "artifact": "01-cw32f030c8t7-lib/libembassy_cw32.rlib",
+      "sha256": "493d21c8ed4d7c5b704fc73d66b76a61340da8769c98cddf9a9354f58acca851",
+      "bytes": 5351752,
+      "receipt_sha256": "e12ae8ed6ca224a2f6615819f6515846ef052101606c9092c017e64b3b797f69",
+      "warnings": [],
+      "retained_out_dir_files": 2,
+      "arm_elf_objects": 11
+    },
+    {
+      "row": 2,
+      "selection": "cw32a030c8t7",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32a030c8t7,rt",
+      "artifact": "02-cw32a030c8t7-lib/libembassy_cw32.rlib",
+      "sha256": "b9945fc2a2ad3ed4407c74a61a67e46cad6d260a963ad75164694e5bf4a6367f",
+      "bytes": 5351924,
+      "receipt_sha256": "5aba2bfe22481bb20e4cdae03860bea61010b55f08cd09a00c565691e0286059",
+      "warnings": [],
+      "retained_out_dir_files": 2,
+      "arm_elf_objects": 11
+    },
+    {
+      "row": 3,
+      "selection": "cw32f020c6u7",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32f020c6u7,rt",
+      "artifact": "03-cw32f020c6u7-lib/libembassy_cw32.rlib",
+      "sha256": "0cd889b0b1bd8518a4bb7cf1fad11de89f0c7e1b311e02dcafb4f89618e21e4d",
+      "bytes": 4449292,
+      "receipt_sha256": "d22c1d4ef9280c3c12b40d8b2d9ee58f932235c0bfd4666edcfc338d097552fc",
+      "warnings": [],
+      "retained_out_dir_files": 2,
+      "arm_elf_objects": 10
+    },
+    {
+      "row": 4,
+      "selection": "cw32f002f3p7",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32f002f3p7,rt",
+      "artifact": "04-cw32f002f3p7-lib/libembassy_cw32.rlib",
+      "sha256": "12641f2ba505b07f973bb699aa69eaad7b041a56f049857e1b6620b1f666ba62",
+      "bytes": 3636678,
+      "receipt_sha256": "bb90d0167772e7ecfbba2ec7f1824750493c1d1c4caebfd2810770eb896ea8a9",
+      "warnings": [],
+      "retained_out_dir_files": 2,
+      "arm_elf_objects": 7
+    },
+    {
+      "row": 5,
+      "selection": "cw32f003e4p7",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32f003e4p7,rt",
+      "artifact": "05-cw32f003e4p7-lib/libembassy_cw32.rlib",
+      "sha256": "57be8b3d3319e1b7bf3706216fead09b8ce5d2f349260f2609b314ffa85a67be",
+      "bytes": 3803790,
+      "receipt_sha256": "e8247eec4a53961f77f1974e343b4077931a62b41e918c2a005c6a03ba26d363",
+      "warnings": [],
+      "retained_out_dir_files": 2,
+      "arm_elf_objects": 8
+    },
+    {
+      "row": 6,
+      "selection": "cw32l031c8t6",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l031c8t6,rt",
+      "artifact": "06-cw32l031c8t6-lib/libembassy_cw32.rlib",
+      "sha256": "bc1d8526662b65d408613fe12eecdb6a31e96142ac50acc07ec7b810c1b34b97",
+      "bytes": 4495076,
+      "receipt_sha256": "756290d41012b1f7b58e104a96e420f625b6c2715867ebef93e6b8f371745640",
+      "warnings": [],
+      "retained_out_dir_files": 2,
+      "arm_elf_objects": 10
+    },
+    {
+      "row": 7,
+      "selection": "cw32r031c8u6",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32r031c8u6,rt",
+      "artifact": "07-cw32r031c8u6-lib/libembassy_cw32.rlib",
+      "sha256": "697441338d0745d23aba421c678feeb2268e2d9668fea5808041dec39cb66016",
+      "bytes": 4399334,
+      "receipt_sha256": "b7e87d98a5174ed6fd4f186af4aa478cb0f87e8e24d98373ea6671778b51743f",
+      "warnings": [],
+      "retained_out_dir_files": 2,
+      "arm_elf_objects": 10
+    },
+    {
+      "row": 8,
+      "selection": "cw32w031r8u6",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32w031r8u6,rt",
+      "artifact": "08-cw32w031r8u6-lib/libembassy_cw32.rlib",
+      "sha256": "e10b3dd59b6c82d729760bc9eae9b92ee928eaf3f822b96a78ea2e5658fa32c4",
+      "bytes": 4440132,
+      "receipt_sha256": "db73e8c38c00c530bc5a71e401e1f784ba691a8df2d05d91dd63557f98574fd4",
+      "warnings": [],
+      "retained_out_dir_files": 2,
+      "arm_elf_objects": 10
+    },
+    {
+      "row": 9,
+      "selection": "cw32l052c8t6",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l052c8t6,rt",
+      "artifact": "09-cw32l052c8t6-lib/libembassy_cw32.rlib",
+      "sha256": "946a5f785e4c9c2dc5831a3c736f1ce5412e44c9dc1fb1659636394a18a34b19",
+      "bytes": 5050078,
+      "receipt_sha256": "bd23af699c3ee7a2bf7eb94ccf3aefa30bfe3cab3a1b0c5bea74c335e9fc7637",
+      "warnings": [],
+      "retained_out_dir_files": 2,
+      "arm_elf_objects": 12
+    },
+    {
+      "row": 10,
+      "selection": "cw32l083rct6",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l083rct6,rt",
+      "artifact": "10-cw32l083rct6-lib/libembassy_cw32.rlib",
+      "sha256": "491ada719245ade479df3389f0805724aa1a0c9c60679f72100d0fa78cd640c9",
+      "bytes": 6099852,
+      "receipt_sha256": "33583be641e6899e0b9586c582070202f32bada4d3579d43089d733632c2b220",
+      "warnings": [],
+      "retained_out_dir_files": 3,
+      "arm_elf_objects": 13
+    },
+    {
+      "row": 11,
+      "selection": "cw32l010f8p6",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l010f8p6,rt",
+      "artifact": "11-cw32l010f8p6-lib/libembassy_cw32.rlib",
+      "sha256": "80e7dce43ce04fe70edc52c303fe0a57a66b11d096f5fb97a27f62e1d4d13f6b",
+      "bytes": 4576860,
+      "receipt_sha256": "d12c245e4b57abd58f0753a64458e1876af116cb359e2055e9865cc81993b1ad",
+      "warnings": [
+        "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+        "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+        "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+      ],
+      "retained_out_dir_files": 4,
+      "arm_elf_objects": 11
+    },
+    {
+      "row": 12,
+      "selection": "cw32l011k8t6",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l011k8t6,rt",
+      "artifact": "12-cw32l011k8t6-lib/libembassy_cw32.rlib",
+      "sha256": "905f084cb4892a87a2216a96e72762ae337d3e0cc83d3e8823505ef86dcecc3d",
+      "bytes": 4690154,
+      "receipt_sha256": "66344265b54ac6893d21e1cfa49b6a161e5bc4ccfc9ce4cae8635f07fe5a5a0d",
+      "warnings": [
+        "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+        "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+        "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+      ],
+      "retained_out_dir_files": 4,
+      "arm_elf_objects": 11
+    },
+    {
+      "row": 13,
+      "selection": "cw32l012c8t6",
+      "kind": "rlib",
+      "target": "embassy-cw32",
+      "manifest": "firmware/Cargo.toml",
+      "features": "cw32l012c8t6,rt,defmt",
+      "artifact": "13-cw32l012c8t6-lib/libembassy_cw32.rlib",
+      "sha256": "c6dfe5cc762400a198782514704af2980f8e2b6d44375c3129a53b88d344707a",
+      "bytes": 7854094,
+      "receipt_sha256": "7bda2d9b0ae23e12df3e66f093a2ee9a0537d6e2b7f82fc9951d570b1c14846a",
+      "warnings": [],
+      "retained_out_dir_files": 3,
+      "arm_elf_objects": 12
+    },
+    {
+      "row": 14,
+      "selection": "cw32f030c8t7",
+      "kind": "elf",
+      "target": "receive",
+      "manifest": "examples/uart-buffered/Cargo.toml",
+      "features": "cw32f030c8t7",
+      "artifact": "14-cw32f030c8t7-receive/firmware.elf",
+      "sha256": "7017030f1242f99e0e16e4537ef4d41bb02f918b3ace58e7962f78d307afcbe6",
+      "bytes": 213124,
+      "receipt_sha256": "1ea4503bca00426b0df57bc772972105c63cdb7fee7079f4c8ddbbfe82b695e6",
+      "warnings": [],
+      "retained_out_dir_files": 3,
+      "memory_script": "14-cw32f030c8t7-receive/out-dir/bbd592c62441/memory.x",
+      "memory_script_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+      "flash_limit": 65536,
+      "flash_load_end_exclusive": 26164,
+      "ram_limit": 8192,
+      "static_ram_extent": 644,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 24952,
+      "initial_sp": 536879104,
+      "reset_vector": 193,
+      "irq_vectors": [
+        {
+          "name": "UART2",
+          "irq": 28,
+          "vector_offset": 176,
+          "vector_word": 8413
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    },
+    {
+      "row": 15,
+      "selection": "cw32f002f3p7",
+      "kind": "elf",
+      "target": "receive",
+      "manifest": "examples/uart-buffered/Cargo.toml",
+      "features": "cw32f002f3p7",
+      "artifact": "15-cw32f002f3p7-receive/firmware.elf",
+      "sha256": "57b0af4c277573ddd1e5b5658077a33c97f666b9d393a48561b3e8e5e387f222",
+      "bytes": 206752,
+      "receipt_sha256": "b44a8da35e07744a0343673889139e34124d9f9a2920f0f678d7123562b918cb",
+      "warnings": [],
+      "retained_out_dir_files": 3,
+      "memory_script": "15-cw32f002f3p7-receive/out-dir/bbd592c62441/memory.x",
+      "memory_script_sha256": "8a134ce5a9a5bd4efb8975b096a87691bce23a80aace4e387642395c10230a07",
+      "flash_limit": 16384,
+      "flash_load_end_exclusive": 15276,
+      "ram_limit": 2048,
+      "static_ram_extent": 404,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 14572,
+      "initial_sp": 536872960,
+      "reset_vector": 189,
+      "irq_vectors": [
+        {
+          "name": "UART1",
+          "irq": 27,
+          "vector_offset": 172,
+          "vector_word": 5121
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    },
+    {
+      "row": 16,
+      "selection": "cw32l031c8t6",
+      "kind": "elf",
+      "target": "split",
+      "manifest": "examples/uart-buffered/Cargo.toml",
+      "features": "cw32l031c8t6",
+      "artifact": "16-cw32l031c8t6-split/firmware.elf",
+      "sha256": "b1de8987cdf601e47da1000f0af3b78355e8d9f256259c1f5d39c2dceb77c9de",
+      "bytes": 149516,
+      "receipt_sha256": "30e3a0ed6d2f53633acefdc3791aedfe1beb3a418a33ab374c11438362e3c115",
+      "warnings": [],
+      "retained_out_dir_files": 3,
+      "memory_script": "16-cw32l031c8t6-split/out-dir/bbd592c62441/memory.x",
+      "memory_script_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+      "flash_limit": 65536,
+      "flash_load_end_exclusive": 29648,
+      "ram_limit": 8192,
+      "static_ram_extent": 552,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 28620,
+      "initial_sp": 536879104,
+      "reset_vector": 193,
+      "irq_vectors": [
+        {
+          "name": "UART2",
+          "irq": 28,
+          "vector_offset": 176,
+          "vector_word": 10837
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    },
+    {
+      "row": 17,
+      "selection": "cw32l052c8t6",
+      "kind": "elf",
+      "target": "rx_only",
+      "manifest": "examples/uart-buffered/Cargo.toml",
+      "features": "cw32l052c8t6",
+      "artifact": "17-cw32l052c8t6-rx_only/firmware.elf",
+      "sha256": "5aca9c620cc2a39e3a338b37326ee5e3ede6c26a9a6c5e7d4d72bdf0be8d9934",
+      "bytes": 220816,
+      "receipt_sha256": "406892f8aabe1dd557eaa409864cc6f22a3bc92db2a073ba44f568957b31aba6",
+      "warnings": [],
+      "retained_out_dir_files": 3,
+      "memory_script": "17-cw32l052c8t6-rx_only/out-dir/bbd592c62441/memory.x",
+      "memory_script_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+      "flash_limit": 65536,
+      "flash_load_end_exclusive": 49788,
+      "ram_limit": 8192,
+      "static_ram_extent": 416,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 48752,
+      "initial_sp": 536879104,
+      "reset_vector": 189,
+      "irq_vectors": [
+        {
+          "name": "UART2",
+          "irq": 28,
+          "vector_offset": 176,
+          "vector_word": 2193
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    },
+    {
+      "row": 18,
+      "selection": "cw32l083rct6",
+      "kind": "elf",
+      "target": "receive",
+      "manifest": "examples/uart-buffered/Cargo.toml",
+      "features": "cw32l083rct6",
+      "artifact": "18-cw32l083rct6-receive/firmware.elf",
+      "sha256": "efa2e5e879f2fb4948911f9a85e2554990b55eeff95d2bdf166f692130c9059b",
+      "bytes": 230076,
+      "receipt_sha256": "56088e87c9e81f3d38002a52e8ed523d7ac9a51af7fddc433bff2143788c8c19",
+      "warnings": [],
+      "retained_out_dir_files": 4,
+      "memory_script": "18-cw32l083rct6-receive/out-dir/bbd592c62441/memory.x",
+      "memory_script_sha256": "382dd9cbb0b41ff04f8c42aa7bc9f91c43b6401e0b27bfe4ac6a581e0319062e",
+      "flash_limit": 262144,
+      "flash_load_end_exclusive": 74616,
+      "ram_limit": 24576,
+      "static_ram_extent": 696,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 73052,
+      "initial_sp": 536895488,
+      "reset_vector": 193,
+      "irq_vectors": [
+        {
+          "name": "UART1_UART4",
+          "irq": 27,
+          "vector_offset": 172,
+          "vector_word": 3973
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    },
+    {
+      "row": 19,
+      "selection": "cw32l010f8p6",
+      "kind": "elf",
+      "target": "flow_control",
+      "manifest": "examples/uart-buffered/Cargo.toml",
+      "features": "cw32l010f8p6",
+      "artifact": "19-cw32l010f8p6-flow_control/firmware.elf",
+      "sha256": "a5b69b4eb35e063a6f93bcf26fd8c01c518b1e2de8d8ee517534e0d22f4d07e2",
+      "bytes": 212272,
+      "receipt_sha256": "0caa061cdf384d5b6257d81f4bc39b59040c3bd3bc4ba3594f2a2b32a7865fad",
+      "warnings": [
+        "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+        "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+        "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+      ],
+      "retained_out_dir_files": 5,
+      "memory_script": "19-cw32l010f8p6-flow_control/out-dir/bbd592c62441/memory.x",
+      "memory_script_sha256": "4b9f47e1a23cf36589dc5a3be0b68acff633880dbec554ac1d089aa611e959ee",
+      "flash_limit": 65536,
+      "flash_load_end_exclusive": 37780,
+      "ram_limit": 4096,
+      "static_ram_extent": 468,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 37016,
+      "initial_sp": 536875008,
+      "reset_vector": 193,
+      "irq_vectors": [
+        {
+          "name": "UART2",
+          "irq": 28,
+          "vector_offset": 176,
+          "vector_word": 2649
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    },
+    {
+      "row": 20,
+      "selection": "cw32l011k8t6",
+      "kind": "elf",
+      "target": "rx_only",
+      "manifest": "examples/uart-buffered/Cargo.toml",
+      "features": "cw32l011k8t6",
+      "artifact": "20-cw32l011k8t6-rx_only/firmware.elf",
+      "sha256": "92781a59b7289708fa18df3cf01dfc09ff2b68eacb2c081c9ef9f56c96e07f2c",
+      "bytes": 212056,
+      "receipt_sha256": "3482bccf74571973325886808ee5d647c600806c7d9b4feaa353f3b3efb60332",
+      "warnings": [
+        "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+        "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+        "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+      ],
+      "retained_out_dir_files": 5,
+      "memory_script": "20-cw32l011k8t6-rx_only/out-dir/bbd592c62441/memory.x",
+      "memory_script_sha256": "4a0a3bbecf653ad536fb04acdf085d0cd62a166e2ac3932d76a9cb5fb277c04f",
+      "flash_limit": 65536,
+      "flash_load_end_exclusive": 36184,
+      "ram_limit": 6144,
+      "static_ram_extent": 404,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 35372,
+      "initial_sp": 536877056,
+      "reset_vector": 193,
+      "irq_vectors": [
+        {
+          "name": "UART3",
+          "irq": 29,
+          "vector_offset": 180,
+          "vector_word": 2101
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    },
+    {
+      "row": 21,
+      "selection": "cw32l012c8t6",
+      "kind": "elf",
+      "target": "split",
+      "manifest": "examples/uart-buffered/Cargo.toml",
+      "features": "cw32l012c8t6",
+      "artifact": "21-cw32l012c8t6-split/firmware.elf",
+      "sha256": "b3336b27951b0d9d920add3386a16ad4b27821ed8d38256a5e5952aba4a58cfd",
+      "bytes": 217928,
+      "receipt_sha256": "244f6fa8c5a463a6d97acf9da828c65aa8f6fc547c078725ea652d669818eec4",
+      "warnings": [],
+      "retained_out_dir_files": 4,
+      "memory_script": "21-cw32l012c8t6-split/out-dir/bbd592c62441/memory.x",
+      "memory_script_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+      "flash_limit": 65536,
+      "flash_load_end_exclusive": 58684,
+      "ram_limit": 8192,
+      "static_ram_extent": 540,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 57640,
+      "initial_sp": 536879104,
+      "reset_vector": 193,
+      "irq_vectors": [
+        {
+          "name": "UART1",
+          "irq": 27,
+          "vector_offset": 172,
+          "vector_word": 3145
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    },
+    {
+      "row": 22,
+      "selection": "cw32l083rct6",
+      "kind": "elf",
+      "target": "shared_vector",
+      "manifest": "examples/uart-buffered/Cargo.toml",
+      "features": "cw32l083rct6",
+      "artifact": "22-cw32l083rct6-shared_vector/firmware.elf",
+      "sha256": "a8764174e8298eb4a272fa7142ae188b8d7737b933a4d27b525dae3822ec38f2",
+      "bytes": 231196,
+      "receipt_sha256": "a167af8d4b68f478410ce625a45aa9bea35a5e2accb6606b399280b17f5f83d8",
+      "warnings": [],
+      "retained_out_dir_files": 4,
+      "memory_script": "22-cw32l083rct6-shared_vector/out-dir/bbd592c62441/memory.x",
+      "memory_script_sha256": "382dd9cbb0b41ff04f8c42aa7bc9f91c43b6401e0b27bfe4ac6a581e0319062e",
+      "flash_limit": 262144,
+      "flash_load_end_exclusive": 75720,
+      "ram_limit": 24576,
+      "static_ram_extent": 1040,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 74156,
+      "initial_sp": 536895488,
+      "reset_vector": 193,
+      "irq_vectors": [
+        {
+          "name": "UART1_UART4",
+          "irq": 27,
+          "vector_offset": 172,
+          "vector_word": 4505
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    },
+    {
+      "row": 23,
+      "selection": "cw32l012c8t6",
+      "kind": "elf",
+      "target": "receive",
+      "manifest": "examples/uart-idle/Cargo.toml",
+      "features": "cw32l012c8t6",
+      "artifact": "23-cw32l012c8t6-receive/firmware.elf",
+      "sha256": "79ca9658e1f421a33c37d30bc7ad9e1050c0ffdf6818d57eb786b57cec24de86",
+      "bytes": 217656,
+      "receipt_sha256": "a32da0b7ab51f26663cec453578923fcb9fd129d1a96f1f7603325a2541b3e18",
+      "warnings": [],
+      "retained_out_dir_files": 4,
+      "memory_script": "23-cw32l012c8t6-receive/out-dir/65fc2e6d0518/memory.x",
+      "memory_script_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+      "flash_limit": 65536,
+      "flash_load_end_exclusive": 58172,
+      "ram_limit": 8192,
+      "static_ram_extent": 468,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 57120,
+      "initial_sp": 536879104,
+      "reset_vector": 193,
+      "irq_vectors": [
+        {
+          "name": "UART1",
+          "irq": 27,
+          "vector_offset": 172,
+          "vector_word": 2609
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    },
+    {
+      "row": 24,
+      "selection": "cw32l083rct6",
+      "kind": "elf",
+      "target": "shared_vector",
+      "manifest": "examples/uart-dma/Cargo.toml",
+      "features": "cw32l083rct6",
+      "artifact": "24-cw32l083rct6-shared_vector/firmware.elf",
+      "sha256": "9c212bc38c7a02f8abd1256a7b198615d23cea1777ee00ecc5fa0235cb6810a1",
+      "bytes": 234156,
+      "receipt_sha256": "a54546a1056bbcb8b153cf9384c72ed468d5135cc1e37eb207547bd070547f59",
+      "warnings": [],
+      "retained_out_dir_files": 4,
+      "memory_script": "24-cw32l083rct6-shared_vector/out-dir/3facfc6d0dde/memory.x",
+      "memory_script_sha256": "382dd9cbb0b41ff04f8c42aa7bc9f91c43b6401e0b27bfe4ac6a581e0319062e",
+      "flash_limit": 262144,
+      "flash_load_end_exclusive": 78896,
+      "ram_limit": 24576,
+      "static_ram_extent": 1344,
+      "static_ram_is_not_dynamic_stack_proof": true,
+      "text_bytes": 77316,
+      "initial_sp": 536895488,
+      "reset_vector": 193,
+      "irq_vectors": [
+        {
+          "name": "DMACH1",
+          "irq": 9,
+          "vector_offset": 100,
+          "vector_word": 253
+        },
+        {
+          "name": "DMACH23",
+          "irq": 10,
+          "vector_offset": 104,
+          "vector_word": 265
+        },
+        {
+          "name": "DMACH45",
+          "irq": 11,
+          "vector_offset": 108,
+          "vector_word": 277
+        },
+        {
+          "name": "UART1_UART4",
+          "irq": 27,
+          "vector_offset": 172,
+          "vector_word": 297
+        }
+      ],
+      "all_loads_within_selected_banks": true
+    }
+  ],
+  "warnings": {
+    "new_uart_warnings": [],
+    "existing_native_rcc_warnings": [
+      "RCC_LSE_SYSCLK_LSE_EDGES",
+      "RCC_LSE_SYSCLK_LSI_CYCLES",
+      "RCC_LSE_SYSCLK_MARGIN_LSE_EDGES"
+    ],
+    "affected_main_rows": [
+      11,
+      12,
+      19,
+      20
+    ],
+    "warnings_per_affected_row": 3
+  },
+  "f002_fit": {
+    "flash_capacity_bytes": 16384,
+    "actual_flash_load_end_exclusive": 15276,
+    "ram_capacity_bytes": 2048,
+    "static_ram_extent_bytes": 404,
+    "initial_stack_pointer": 536872960,
+    "memory_not_enlarged": true,
+    "runtime_stack_use_not_established": true
+  },
+  "baseline_preservation": {
+    "source_paths": 1367,
+    "missing_paths": [],
+    "changed_existing_paths": [
+      "README.md",
+      "ci/hal-capabilities.yaml",
+      "docs/functional-coverage.md",
+      "docs/uart-flow-control.md",
+      "docs/uart-idle.md",
+      "embassy-cw32/src/usart.rs",
+      "examples/uart-flow-control/README.md",
+      "sources/evidence-sources.json",
+      "tests/verify_native_uart_idle_sources.py"
+    ],
+    "all_other_baseline_bytes_equal": true,
+    "canonical_generator_model_schema_build_script_bytes_equal": true,
+    "generated_paths": 905,
+    "generated_added": [],
+    "generated_removed": [],
+    "generated_changed": [],
+    "comparison_is_external_stage_receipt_not_permanent_production_gate": true
+  },
+  "clean_at_this_review": {
+    "status": "not-yet-run-or-reviewed",
+    "required_actual_libraries": 3,
+    "required_actual_firmware_elfs": 3,
+    "required_focused_gates": 5,
+    "single_necessary_bootstrap_only_if_generated_absent": true,
+    "requires_final_packaged_source_and_separate_fresh_target": true,
+    "main_artifacts_do_not_count_as_clean": true
+  },
+  "limits": [
+    "Static source review and a source-checker pass do not establish runtime execution.",
+    "13 exact selection library builds do not mean every one of 54 selections or all routes was built.",
+    "No silicon loss rate, interrupt saturation, RTS timing, throughput, runtime stack depth or bounded completion qualification.",
+    "Software BufferOverflow and native ORE are distinct; ten families can overwrite RDR silently before ISR service.",
+    "RTS follows hardware RC rather than software ring occupancy.",
+    "Accepted-main does not imply clean acceptance or publication."
+  ],
+  "review_actions": {
+    "production_writes": false,
+    "new_builds_or_gate_runs": false,
+    "generation": false,
+    "hal_tests": false,
+    "runtime_models_or_probes": false,
+    "hardware_execution": false,
+    "artifact_bytes_inspected": true
+  }
+}

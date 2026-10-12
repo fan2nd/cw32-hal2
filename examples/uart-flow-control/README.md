@@ -3,6 +3,10 @@
 These are standalone Cortex-M0+ applications. They link against the real HAL,
 PAC, Cortex-M runtime and pinned Embassy executor. They are not tests or mocks.
 They have been built and linked, not flashed or executed on a board.
+These historical results cover ordinary unbuffered owners. The separate
+[`uart-buffered` applications](../uart-buffered/README.md) exercise the Stage83
+extension described in the [buffered receive contract](../../docs/uart-buffered-rx.md);
+its accepted main results and final-source clean requirement are recorded separately.
 
 Choose one exact package feature and one binary:
 
@@ -45,3 +49,5 @@ Hardware RTS reflects the single receive register. It is not a software FIFO or
 an application-level packet credit. The peer must obey its documented timing;
 extra in-flight frames can still be lost. CTS can pause a write/flush forever.
 Stopping a transmitter without flushing can truncate an in-flight frame.
+Buffered owners also use that hardware RC signal; RTS is not a watermark for
+their software ring.

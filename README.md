@@ -535,12 +535,31 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   unbounded; NorFlash/Multiwrite power-loss guarantees are not implemented.
 
 - All 13 families: package-qualified blocking/async UART RTS+CTS, TX+CTS and
-  RX+RTS constructors; no software receive FIFO or lossless-flow guarantee
-- L010/L011/L012: finite async `read_until_idle` on owned UART RX and combined
-  UART. A full buffer or observed native RXIDLE returns the received count;
-  co-latched RC is consumed before idle with best-effort boundary assignment.
-  No software ring, numeric timeout or lossless-packet guarantee follows.
-  Main verification passed six actual ARM libraries, five ELF links and four
+  RX+RTS constructors. These ordinary owners have no software receive FIFO or
+  lossless-flow guarantee.
+- All 13 families and 54 existing selections: direct `BufferedUartRx`
+  and `BufferedUart` owners collect RX through IRQs into consumed static bounded
+  storage, including between reads. Exact inherent reads and one-byte async
+  trait reads preserve the queued prefix before the first error; later observed
+  input is discarded until that error is consumed. Empty reads preserve errors.
+  Ten families can silently overwrite RDR before ISR service; native ORE on
+  L010/L011/L012 and software overflow do not provide an exact loss count.
+  Hardware RTS reflects RC, not ring fullness. No buffered idle or DMA ring.
+  Stage83 main verification passed thirteen actual ARM libraries, eleven ELF
+  links and five focused source/data gates. Independent main runtime and
+  metadata/source reviews accepted the frozen implementation. Three existing
+  native L010/L011 RCC LSE-constant warnings remain in each applicable row.
+  Main ran no hardware generation; all 905 generated files stayed unchanged.
+  At main acceptance clean had not run; final-package completion requires a
+  separate final-source three-library/three-ELF clean receipt and five focused
+  gates. No hardware result is claimed.
+  See the [buffered receive contract](docs/uart-buffered-rx.md).
+- L010/L011/L012: finite async `read_until_idle` on ordinary owned UART RX and
+  combined UART. A full buffer or observed native RXIDLE returns the received
+  count; co-latched RC is consumed before idle with best-effort boundary assignment.
+  This ordinary idle API adds no software ring, numeric timeout or
+  lossless-packet guarantee.
+  Stage82 main verification passed six actual ARM libraries, five ELF links and four
   finite source/data gates. Three existing native L010/L011 RCC LSE-constant
   warnings remain in applicable rows. At main acceptance clean had not run;
   completion requires a separate final-source two-library/two-ELF receipt.
@@ -595,7 +614,7 @@ prepares once and supports both directions through ordinary split halves. Line
 errors report promptly, but recovery must await the old count; receive/rearm/copy
 gaps may lose frames with no overrun indication. See [RX and shared lifetime
 scope](docs/uart-dma-rx.md). No borrowed zero-copy, safe early-abort, DMA RTS/CTS
-or circular reception is provided by these UART APIs. L083 UART1–6 and SPI1–2
+or circular reception is provided by these UART DMA APIs. L083 UART1–6 and SPI1–2
 use independently [qualified staged requests](docs/l083-peripheral-dma.md);
 unsafe borrowed hardware-request constructors remain x030-only.
 See [UART TX scope and evidence](docs/uart-dma-tx.md),

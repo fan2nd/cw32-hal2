@@ -3,11 +3,16 @@
 Main verification passed six actual ARM libraries, five ELF links and four
 finite source/data gates. At main acceptance clean had not run; final-package
 completion requires a separate final-source two-library/two-ELF clean receipt.
+These are the historical Stage82 main results, not verification of the Stage83
+[buffered receive extension](uart-buffered-rx.md), whose separate main results
+and final-source clean requirement are recorded in its own verification boundary.
 
 `UartRx<Async>::read_until_idle` and the combined `Uart<Async>` method are available
 on the existing L010/L011/L012 UART register versions. All ten current selections
 retain their existing pin, clock and peripheral restrictions. Other families,
 DMA reception and programmable TIMOV receive timers are outside this API.
+These methods remain on ordinary owners; `BufferedUartRx` and `BufferedUart`
+expose no idle method or idle-marker queue.
 
 ## Operation and boundary
 
@@ -39,8 +44,11 @@ is promised. Prompt per-byte executor service remains necessary.
 
 ## Ownership and cancellation
 
-The ISR only samples status/enables, masks the pending direction and wakes its
-task. It never reads RDR, acknowledges ICR or holds a caller-buffer pointer.
+For these ordinary owners without a ring, the ISR only samples status/enables,
+masks the pending direction and wakes its task. That no-ring path never reads
+RDR or acknowledges ICR, and holds no caller-buffer pointer. The separate
+buffered path collects and acknowledges observed receive data in the ISR;
+both paths wake outside the lifecycle critical section.
 Wait registration precedes arming and status recheck. Dropping a pending wait
 masks RX/error/idle enables while retaining unread data and flags. Forgetting can
 leave enables and a task waker registered; a subsequent enabled RX event masks

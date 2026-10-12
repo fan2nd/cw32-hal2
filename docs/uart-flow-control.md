@@ -6,6 +6,12 @@ changes two existing authored files: the UART module and the HAL build script.
 No authored register, generated PAC, chip metadata, RCC, IRQ or clock data changes
 are needed. RF functionality remains deferred.
 
+This document records the original ordinary flow-control extension and its
+verification scope. Its constructors and examples remain unbuffered. The
+separate Stage83 [buffered receive extension](uart-buffered-rx.md) reuses these
+qualified RTS/CTS roles; its accepted main results and final-source clean
+requirement are recorded separately from the historical build results below.
+
 ## API and ownership
 
 Following embassy-stm32 at commit
@@ -63,9 +69,13 @@ No new interrupt source is introduced.
 RTS is active low when RC=0 and rises when a frame sets RC. Existing receive
 code reads RDR and then acknowledges only the observed RC/error flags through
 `Icr::write_noop()` and the existing typed R1W0 writes. That acknowledgement
-permits another frame. Read cancellation keeps unread hardware data and RC
-intact, so RTS remains controlled by the hardware receive state. Existing
-wakers, event masking and cancel/drop lifetimes are unchanged.
+permits another frame. Ordinary no-ring read cancellation keeps unread hardware
+data and RC intact, so RTS remains controlled by the hardware receive state.
+The ordinary path retains its receive readiness, one-shot event masking and
+cancel/drop semantics; ISR wakes now occur outside the lifecycle critical
+section. A buffered owner continues ISR collection and acknowledgment between
+reads and through cancellation. Its RTS still follows hardware RC, not software
+ring occupancy, even while the ring is full or a pending error causes discards.
 
 ## Source and verification scope
 
@@ -93,8 +103,9 @@ firmware execution, flashing or silicon/electrical validation are claimed.
 
 ## Remaining limitations
 
-Hardware flow control has one receive register and no software queue. It cannot
-promise lossless reception if a peer ignores RTS, sends additional in-flight
+Hardware flow control has one receive register; these ordinary constructors
+provide no software queue. It cannot promise lossless reception if a peer
+ignores RTS, sends additional in-flight
 frames, or violates the hardware's timing. The earlier lack-of-overrun-reporting
 limits on non-L010/L011/L012 UARTs still apply. CTS can stall blocking or async
 writes/flush indefinitely. Cancelling a write/flush does not retract queued

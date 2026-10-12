@@ -5,15 +5,21 @@
 //! `UartTx::new_with_dma`, `UartRx::new_with_dma` and `Uart::new_with_dma`
 //! own static staging for ordinary borrowed writes and reads. RX DMA receives
 //! finite explicitly armed chunks; reception/copy/rearm gaps can lose frames.
-//! Without DMA there is no software RX buffer: service each byte promptly.
+//! Ordinary non-DMA `Uart`/`UartRx` have no software RX buffer: service each
+//! byte promptly. `BufferedUart`/`BufferedUartRx` continuously collect through
+//! interrupts into consumed static storage, including between read calls.
+//! A full software ring preserves its prefix and reports `BufferOverflow`;
+//! later observations are discarded until the pending error is read.
 //! L010/L011/L012 support finite async `read_until_idle` into a caller buffer
 //! and expose noise and overrun errors. Idle boundaries are best-effort under
-//! service delay; there is no continuous collector between calls. Other
+//! service delay; ordinary idle reads do not collect between calls. Other
 //! supported UARTs have no overrun flag and can silently overwrite an unread
 //! frame. No throughput guarantee follows.
 //! Hardware RTS/CTS is available through owned, package-checked flow-control pins.
-//! Continuous/ring reception, RX DMA on L010/L011/L012, synchronous mode,
-//! LSI/deep-sleep UART, and custom nine-bit data are not exposed.
+//! Buffered collection depends on interrupt progress; hardware RTS does not
+//! reflect software occupancy. Buffered idle markers, DMA rings, RX DMA on
+//! L010/L011/L012, synchronous mode, LSI/deep-sleep UART, and custom nine-bit
+//! data are not exposed.
 //!
 //! Register semantics follow each family's official manual and SDK. See
 //! `docs/remaining-uart-implementation.md`, `docs/f020-serial-compatibility.md`
@@ -31,8 +37,8 @@
 //! must quiesce or service that source before the HAL enables the shared vector.
 //! This driver never resets or clears another owner's UART to establish that.
 
-use core::cell::Cell;
-use core::future::Future;
+use core::cell::{Cell, RefCell};
+use core::future::{Future, poll_fn};
 use core::marker::PhantomData;
 use core::pin::Pin as FuturePin;
 use core::task::{Context, Poll};
@@ -136,6 +142,8 @@ pub enum ConfigError {
     InvalidTolerance,
     /// The selected CTS pin does not support the requested pull resistor.
     UnsupportedCtsPull,
+    /// The supplied software receive ring has zero capacity.
+    RxBufferEmpty,
     /// DMA staging must be nonempty, bounded and wholly inside qualified SRAM.
     #[cfg(uart_dma)]
     DmaBuffer(crate::dma::ConfigError),
@@ -155,6 +163,8 @@ pub enum Error {
     Parity,
     /// Invalid stop bit / frame structure.
     Framing,
+    /// A clean ISR-observed byte could not enter the full software receive ring.
+    BufferOverflow,
     /// DMA failed or its completion could not be verified; resources are retained.
     #[cfg(uart_dma)]
     Dma(crate::dma::Error),
@@ -164,7 +174,7 @@ pub enum Error {
     /// A previous error permanently quarantined this direction's DMA resources.
     #[cfg(uart_dma)]
     DmaQuarantined,
-    /// Noise was detected. L010/L012 do not report it at fourfold oversampling.
+    /// Noise was detected. L010/L011/L012 report it only at 16x/8x sampling.
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
     Noise,
     /// An unread frame was overwritten by a newer frame; receive data was lost.
@@ -177,6 +187,7 @@ impl core::fmt::Display for Error {
         f.write_str(match self {
             Self::Parity => "UART parity error",
             Self::Framing => "UART frame error",
+            Self::BufferOverflow => "UART software receive buffer overflow",
             #[cfg(uart_dma)]
             Self::Dma(_) => "UART DMA transfer failed",
             #[cfg(uart_dma)]
@@ -202,6 +213,7 @@ impl core::fmt::Display for ConfigError {
             Self::BaudrateError => "UART baud-rate rounding exceeds the configured tolerance",
             Self::InvalidTolerance => "UART baud-rate tolerance exceeds 100 percent",
             Self::UnsupportedCtsPull => "UART CTS pin does not support the requested pull",
+            Self::RxBufferEmpty => "UART receive buffer is empty",
             #[cfg(uart_dma)]
             Self::DmaBuffer(_) => "UART DMA staging buffer is invalid",
             #[cfg(uart_dma)]
@@ -216,6 +228,7 @@ impl core::error::Error for ConfigError {}
 impl embedded_io::Error for Error {
     fn kind(&self) -> embedded_io::ErrorKind {
         match self {
+            Self::BufferOverflow => embedded_io::ErrorKind::Other,
             #[cfg(uart_dma)]
             Self::DmaBusy | Self::DmaQuarantined | Self::Dma(_) => embedded_io::ErrorKind::Other,
             _ => embedded_io::ErrorKind::InvalidData,
@@ -342,6 +355,9 @@ impl Info {
         T::Interrupt::disable();
         let state = T::state();
         critical_section::with(|cs| {
+            // Safe token reborrows can outlive a forgotten buffered owner.
+            // Retire its static storage before resetting any hardware state.
+            *state.rx_ring.borrow(cs).borrow_mut() = None;
             state.lifecycle.borrow(cs).set(Lifecycle::new());
             self.rcc
                 .enable_and_reset_with_cs(cs)
@@ -381,6 +397,11 @@ impl Info {
                     Direction::Tx => w.set_ctsen(false),
                     Direction::Rx => w.set_rtsen(false),
                 });
+            }
+            if let Direction::Rx = direction {
+                // RX sources are masked and nonretained RX/RTS disabled before
+                // detaching storage. Ordinary and DMA receivers have no ring.
+                *state.rx_ring.borrow(cs).borrow_mut() = None;
             }
             state.lifecycle.borrow(cs).set(owners);
             // A retained direction owns its clock and configuration forever,
@@ -425,6 +446,7 @@ pub(crate) struct State {
     // The same critical section covers ownership, shared register updates,
     // IRQ dispatch and final clock gating, including abandoned DMA halves.
     lifecycle: critical_section::Mutex<Cell<Lifecycle>>,
+    rx_ring: critical_section::Mutex<RefCell<Option<RxRing>>>,
 }
 impl State {
     pub(crate) const fn new() -> Self {
@@ -432,6 +454,7 @@ impl State {
             tx_waker: AtomicWaker::new(),
             rx_waker: AtomicWaker::new(),
             lifecycle: critical_section::Mutex::new(Cell::new(Lifecycle::new())),
+            rx_ring: critical_section::Mutex::new(RefCell::new(None)),
         }
     }
     fn activate(&self, direction: Direction) {
@@ -444,6 +467,17 @@ impl State {
             self.lifecycle.borrow(cs).set(owners);
         });
     }
+}
+
+// The static slice is moved here once, never copied or lifetime-erased. Every
+// field and byte access is protected by the lifecycle critical section.
+struct RxRing {
+    buffer: &'static mut [u8],
+    read: usize,
+    write: usize,
+    len: usize,
+    error: Option<Error>,
+    waiting: bool,
 }
 
 /// Handler for a UART with its own vector. Bind it with `bind_interrupts!`.
@@ -532,6 +566,323 @@ pub struct UartRx<'d, M: Mode> {
     dma: Option<RxDma>,
     actual_baudrate: u32,
     _mode: PhantomData<M>,
+}
+
+/// Owned UART receiver with continuous interrupt-driven software buffering.
+///
+/// Consumes a nonempty static mutable slice, including on configuration error.
+/// Its bytes are not initialized by the HAL, and its storage is never returned,
+/// including on Drop or successful reconstruction after a forgotten owner.
+/// Any nonzero capacity is accepted, including one byte. Peripheral and pin
+/// borrows need not be static; the ISR retains only the static ring storage.
+///
+/// Collection starts during construction and continues between reads while
+/// interrupts can run. Software overflow and line errors preserve the queued
+/// clean prefix, then report the first pending error. Later ISR observations
+/// are discarded until that error is consumed. This is an ordering of software
+/// observations: a frame already in RDR can be collected after error recovery.
+/// Hardware RTS reflects RDR occupancy, not the software ring's free capacity.
+///
+/// Inherent reads fill the requested slice; async trait reads return one byte
+/// for a nonempty slice. Empty reads consume neither queued bytes nor errors.
+///
+/// Buffering is not lossless: ten families have no hardware overrun flag, and
+/// even native L010/L011/L012 flags can coalesce. There is no packet boundary,
+/// idle method, timeout, DMA ring, loss count or throughput guarantee. Forgetting
+/// the owner can leave collection running forever with valid static storage.
+pub struct BufferedUartRx<'d> {
+    info: Info,
+    state: &'static State,
+    _pin: Flex<'d>,
+    _rts: Option<Flex<'d>>,
+    actual_baudrate: u32,
+}
+
+/// Owned UART with ordinary async TX and continuous IRQ-buffered RX.
+///
+/// The consumed static receive storage and error/recovery limits are those of
+/// [`BufferedUartRx`]. Split the real TX and RX owners to use them concurrently.
+pub struct BufferedUart<'d> {
+    tx: UartTx<'d, Async>,
+    rx: BufferedUartRx<'d>,
+}
+
+impl<'d> BufferedUartRx<'d> {
+    /// Start continuous IRQ reception using a consumed nonempty static ring.
+    /// Rejected inputs, including the ring, are consumed. See [`BufferedUartRx`].
+    pub fn new<T: Instance, RX: RxPin<T>>(
+        _peri: Peri<'d, T>,
+        rx: Peri<'d, RX>,
+        _irq: impl Binding<T::Interrupt, T::InterruptHandler>,
+        buffer: &'static mut [u8],
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let rx = Self::new_inner::<T, RX>(rx, None, buffer, config)?;
+        unsafe { T::Interrupt::enable() };
+        Ok(rx)
+    }
+
+    /// Start continuous IRQ reception with active-low hardware RTS.
+    /// RTS follows hardware RDR occupancy, not software ring fullness. Rejected
+    /// inputs, including the static ring, are consumed. See [`BufferedUartRx`].
+    pub fn new_with_rts<T: Instance, RX: RxPin<T>, RTS: RtsPin<T>>(
+        _peri: Peri<'d, T>,
+        rx: Peri<'d, RX>,
+        rts: Peri<'d, RTS>,
+        _irq: impl Binding<T::Interrupt, T::InterruptHandler>,
+        buffer: &'static mut [u8],
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let rx = Self::new_inner::<T, RX>(
+            rx,
+            Some((rts.into(), <RTS as sealed::Pin<T, sealed::Rts>>::AF)),
+            buffer,
+            config,
+        )?;
+        unsafe { T::Interrupt::enable() };
+        Ok(rx)
+    }
+
+    fn from_pin<T: Instance, RX: RxPin<T>>(
+        pin: Peri<'d, RX>,
+        rts: Option<(Peri<'d, AnyPin>, u8)>,
+        info: Info,
+        actual: u32,
+        pull: Pull,
+    ) -> Self {
+        let mut pin = Flex::new(pin);
+        pin.set_as_af(<RX as sealed::Pin<T, sealed::Rx>>::AF, false, pull);
+        let rts = rts.map(|(pin, af)| {
+            let mut pin = Flex::new(pin);
+            pin.set_as_af(af, true, Pull::None);
+            pin
+        });
+        // Ownership is published only after every pin and owner value exists.
+        Self {
+            info,
+            state: T::state(),
+            _pin: pin,
+            _rts: rts,
+            actual_baudrate: actual,
+        }
+    }
+
+    fn install_ring(&self, cs: critical_section::CriticalSection<'_>, buffer: &'static mut [u8]) {
+        *self.state.rx_ring.borrow(cs).borrow_mut() = Some(RxRing {
+            buffer,
+            read: 0,
+            write: 0,
+            len: 0,
+            error: None,
+            waiting: false,
+        });
+        let mut owners = self.state.lifecycle.borrow(cs).get();
+        owners.rx_live = true;
+        self.state.lifecycle.borrow(cs).set(owners);
+    }
+
+    fn new_inner<T: Instance, RX: RxPin<T>>(
+        rx: Peri<'d, RX>,
+        rts: Option<(Peri<'d, AnyPin>, u8)>,
+        buffer: &'static mut [u8],
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let baud = configured_baud::<T>(config)?;
+        if buffer.is_empty() {
+            return Err(ConfigError::RxBufferEmpty);
+        }
+        let info = T::info();
+        info.prepare::<T>(config, baud);
+        let rx = Self::from_pin::<T, RX>(rx, rts, info, baud.actual, config.rx_pull);
+        critical_section::with(|cs| {
+            rx.install_ring(cs, buffer);
+            info.regs.cr2().modify(|w| w.set_rtsen(rx._rts.is_some()));
+            info.regs.cr1().modify(|w| w.set_rxen(true));
+            info.regs
+                .ier()
+                .modify(|w| WaitEvent::Receive.set_enabled(w, true));
+        });
+        Ok(rx)
+    }
+
+    fn poll_read_byte(&mut self, cx: &mut Context<'_>) -> Poll<Result<u8, Error>> {
+        // Register before checking: arrivals before this point are retained;
+        // arrivals after the empty check see waiting=true and this task's waker.
+        self.state.rx_waker.register(cx.waker());
+        critical_section::with(|cs| {
+            let mut ring = self.state.rx_ring.borrow(cs).borrow_mut();
+            let ring = ring.as_mut().expect("buffered UART receiver has no ring");
+            if ring.len != 0 {
+                let byte = ring.buffer[ring.read];
+                ring.read = if ring.read == ring.buffer.len() - 1 {
+                    0
+                } else {
+                    ring.read + 1
+                };
+                ring.len -= 1;
+                ring.waiting = false;
+                Poll::Ready(Ok(byte))
+            } else if let Some(error) = ring.error.take() {
+                ring.waiting = false;
+                Poll::Ready(Err(error))
+            } else {
+                ring.waiting = true;
+                Poll::Pending
+            }
+        })
+    }
+
+    /// Receive exactly `buffer.len()` bytes from the continuously collected ring.
+    ///
+    /// Empty reads return without consuming bytes/errors, registering a waker
+    /// or touching hardware. Cancellation or error can leave a filled prefix;
+    /// those bytes are not put back, and errors carry no partial count. The
+    /// queued clean prefix is returned before its pending discontinuity error.
+    /// Later ISR observations are discarded until a nonempty read consumes that
+    /// error; recovery does not establish a wire-time or packet boundary.
+    ///
+    /// Canceling or forgetting a pending read leaves collection active and no
+    /// pointer to caller memory in the ISR. One stale task wake may remain.
+    pub async fn read(&mut self, buffer: &mut [u8]) -> Result<(), Error> {
+        for byte in buffer {
+            *byte = poll_fn(|cx| self.poll_read_byte(cx)).await?;
+        }
+        Ok(())
+    }
+
+    /// Baud rate after divider rounding, excluding oscillator tolerance.
+    pub fn actual_baudrate(&self) -> u32 {
+        self.actual_baudrate
+    }
+}
+
+impl<'d> BufferedUart<'d> {
+    /// Create ordinary async TX and continuously IRQ-buffered RX.
+    /// Rejected inputs, including the static ring, are consumed. See [`BufferedUartRx`].
+    pub fn new<T: Instance, TX: TxPin<T>, RX: RxPin<T>>(
+        peri: Peri<'d, T>,
+        tx: Peri<'d, TX>,
+        rx: Peri<'d, RX>,
+        _irq: impl Binding<T::Interrupt, T::InterruptHandler>,
+        buffer: &'static mut [u8],
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let uart = Self::new_inner(peri, tx, rx, None, None, buffer, config)?;
+        unsafe { T::Interrupt::enable() };
+        Ok(uart)
+    }
+
+    /// Create buffered RX and ordinary async TX with active-low RTS and CTS.
+    /// RTS does not reflect software ring fullness. CTS can stall TX forever.
+    /// Rejected inputs, including the static ring, are consumed. See [`BufferedUartRx`].
+    pub fn new_with_rtscts<
+        T: Instance,
+        TX: TxPin<T>,
+        RX: RxPin<T>,
+        RTS: RtsPin<T>,
+        CTS: CtsPin<T>,
+    >(
+        peri: Peri<'d, T>,
+        tx: Peri<'d, TX>,
+        rx: Peri<'d, RX>,
+        rts: Peri<'d, RTS>,
+        cts: Peri<'d, CTS>,
+        _irq: impl Binding<T::Interrupt, T::InterruptHandler>,
+        buffer: &'static mut [u8],
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let uart = Self::new_inner(
+            peri,
+            tx,
+            rx,
+            Some((rts.into(), <RTS as sealed::Pin<T, sealed::Rts>>::AF)),
+            Some((cts.into(), <CTS as sealed::Pin<T, sealed::Cts>>::AF)),
+            buffer,
+            config,
+        )?;
+        unsafe { T::Interrupt::enable() };
+        Ok(uart)
+    }
+
+    fn new_inner<T: Instance, TX: TxPin<T>, RX: RxPin<T>>(
+        _peri: Peri<'d, T>,
+        tx: Peri<'d, TX>,
+        rx: Peri<'d, RX>,
+        rts: Option<(Peri<'d, AnyPin>, u8)>,
+        cts: Option<(Peri<'d, AnyPin>, u8)>,
+        buffer: &'static mut [u8],
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let baud = configured_baud::<T>(config)?;
+        if buffer.is_empty() {
+            return Err(ConfigError::RxBufferEmpty);
+        }
+        validate_cts_pull(cts.as_ref().map(|(pin, _)| &**pin), config.cts_pull)?;
+        let info = T::info();
+        info.prepare::<T>(config, baud);
+        let rx = BufferedUartRx::from_pin::<T, RX>(rx, rts, info, baud.actual, config.rx_pull);
+        let mut tx = UartTx::from_pin::<T, TX>(tx, info, baud.actual);
+        tx._cts = cts.map(|(pin, af)| {
+            let mut pin = Flex::new(pin);
+            pin.set_as_af(af, false, config.cts_pull);
+            pin
+        });
+        critical_section::with(|cs| {
+            rx.install_ring(cs, buffer);
+            info.regs.cr2().modify(|w| {
+                w.set_rtsen(rx._rts.is_some());
+                w.set_ctsen(tx._cts.is_some());
+            });
+            info.regs.cr1().modify(|w| {
+                w.set_rxen(true);
+                w.set_txen(true);
+            });
+            info.regs
+                .ier()
+                .modify(|w| WaitEvent::Receive.set_enabled(w, true));
+        });
+        Ok(Self { tx, rx })
+    }
+
+    /// Receive exactly the requested bytes. See [`BufferedUartRx::read`] for
+    /// empty reads, partial cancellation and prefix-before-error recovery.
+    pub async fn read(&mut self, buffer: &mut [u8]) -> Result<(), Error> {
+        self.rx.read(buffer).await
+    }
+    /// Queue bytes through ordinary async TX; cancellation may leave a sent prefix.
+    pub async fn write(&mut self, buffer: &[u8]) -> Result<(), Error> {
+        self.tx.write(buffer).await
+    }
+    /// Wait until the transmit buffer and shift register are empty.
+    pub async fn flush(&mut self) -> Result<(), Error> {
+        self.tx.flush().await
+    }
+    /// Queue bytes with blocking status checks; call `blocking_flush` for wire completion.
+    pub fn blocking_write(&mut self, buffer: &[u8]) -> Result<(), Error> {
+        self.tx.blocking_write(buffer)
+    }
+    /// Wait for all queued transmit data to leave the wire.
+    pub fn blocking_flush(&mut self) -> Result<(), Error> {
+        self.tx.blocking_flush()
+    }
+    /// Baud rate after divider rounding, excluding oscillator tolerance.
+    pub fn actual_baudrate(&self) -> u32 {
+        self.tx.actual_baudrate()
+    }
+    /// Split into independent ordinary TX and buffered RX ownership.
+    pub fn split(self) -> (UartTx<'d, Async>, BufferedUartRx<'d>) {
+        (self.tx, self.rx)
+    }
+    /// Borrow the disjoint TX and buffered RX halves to use concurrently.
+    pub fn split_ref(&mut self) -> (&mut UartTx<'d, Async>, &mut BufferedUartRx<'d>) {
+        (&mut self.tx, &mut self.rx)
+    }
+}
+
+impl Drop for BufferedUartRx<'_> {
+    fn drop(&mut self) {
+        self.info.shutdown(self.state, Direction::Rx, false);
+    }
 }
 
 impl<'d> Uart<'d, Blocking> {
@@ -1727,11 +2078,21 @@ pub(crate) fn disable_interrupt<I: Interrupt>() {
 }
 
 fn dispatch_interrupt(regs: pac::uart::Uart, state: &State) {
-    critical_section::with(|cs| {
-        if state.lifecycle.borrow(cs).get().live() {
-            on_interrupt(regs, state);
+    let (wake_rx, wake_tx) = critical_section::with(|cs| {
+        let owners = state.lifecycle.borrow(cs).get();
+        if !owners.live() {
+            return (false, false);
         }
+        on_interrupt(regs, state, owners, cs)
     });
+    // No waker runs under the lifecycle lock or an outstanding ring borrow.
+    // A stale wake after intervening teardown grants no register/storage access.
+    if wake_rx {
+        state.rx_waker.wake();
+    }
+    if wake_tx {
+        state.tx_waker.wake();
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -1875,40 +2236,69 @@ fn receive_observed(
     Ok(data)
 }
 
-fn on_interrupt(regs: pac::uart::Uart, state: &State) {
-    let (rx_pending, tx_pending) = critical_section::with(|_| {
-        let enabled = regs.ier().read();
-        let status = regs.isr().read();
-        let rx_pending = (status.rc() && enabled.rc())
-            || (status.fe() && enabled.fe())
-            || (status.pe() && enabled.pe());
-        #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
-        let rx_pending = rx_pending
-            || (status.ne() && enabled.ne())
-            || (status.ore() && enabled.ore())
-            || (status.rxidle() && enabled.rxidle());
-        let tx_pending = (status.txe() && enabled.txe()) || (status.tc() && enabled.tc());
-        // Reuse the sampled IER value. Only this driver's pending direction is
-        // masked; all auxiliary and foreign interrupt enables are preserved.
-        let mut next = enabled;
+fn on_interrupt(
+    regs: pac::uart::Uart,
+    state: &State,
+    owners: Lifecycle,
+    cs: critical_section::CriticalSection<'_>,
+) -> (bool, bool) {
+    let enabled = regs.ier().read();
+    let status = regs.isr().read();
+    let rx_data_pending = (status.rc() && enabled.rc())
+        || (status.fe() && enabled.fe())
+        || (status.pe() && enabled.pe());
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    let rx_data_pending = rx_data_pending
+        || (status.ne() && enabled.ne())
+        || (status.ore() && enabled.ore());
+    let rx_pending = rx_data_pending;
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    let rx_pending = rx_pending || (status.rxidle() && enabled.rxidle());
+    let tx_pending = (status.txe() && enabled.txe()) || (status.tc() && enabled.tc());
+    // Reuse the sampled IER. Buffered RX stays armed, while ordinary/DMA RX
+    // keeps its one-shot masking and leaves RDR/status intact for its waiter.
+    let mut next = enabled;
+    let mut ring = state.rx_ring.borrow(cs).borrow_mut();
+    let wake_rx = if let Some(ring) = ring.as_mut() {
+        if owners.rx_live && rx_data_pending {
+            // Exactly one receive observation per dispatch, even when full or
+            // an error is pending. Drain/acknowledge before applying the barrier.
+            let observation = receive_observed(regs, status, false);
+            if ring.error.is_none() {
+                match observation {
+                    Ok(Some(byte)) if ring.len < ring.buffer.len() => {
+                        ring.buffer[ring.write] = byte;
+                        ring.write = if ring.write == ring.buffer.len() - 1 {
+                            0
+                        } else {
+                            ring.write + 1
+                        };
+                        ring.len += 1;
+                    }
+                    Ok(Some(_)) => ring.error = Some(Error::BufferOverflow),
+                    Ok(None) => {}
+                    Err(error) => ring.error = Some(error),
+                }
+            }
+        }
+        if owners.rx_live && ring.waiting && (ring.len != 0 || ring.error.is_some()) {
+            ring.waiting = false;
+            true
+        } else {
+            false
+        }
+    } else {
         if rx_pending {
             WaitEvent::Receive.set_enabled(&mut next, false);
         }
-        if tx_pending {
-            next.set_txe(false);
-            next.set_tc(false);
-        }
-        regs.ier().write_value(next);
-        (rx_pending, tx_pending)
-    });
-    // Leave status and RX data intact for the waiting task. One-shot enables
-    // avoid an IRQ storm while the executor has not had a chance to run yet.
-    if rx_pending {
-        state.rx_waker.wake();
-    }
+        rx_pending
+    };
     if tx_pending {
-        state.tx_waker.wake();
+        next.set_txe(false);
+        next.set_tc(false);
     }
+    regs.ier().write_value(next);
+    (wake_rx, tx_pending)
 }
 
 struct Wait<'a> {
@@ -2004,6 +2394,47 @@ macro_rules! impl_read {
     )+ };
 }
 impl_read!(Uart, UartRx);
+
+impl embedded_io::ErrorType for BufferedUartRx<'_> {
+    type Error = Error;
+}
+impl embedded_io::ErrorType for BufferedUart<'_> {
+    type Error = Error;
+}
+impl embedded_io_async::Read for BufferedUartRx<'_> {
+    async fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error> {
+        if buf.is_empty() {
+            return Ok(0);
+        }
+        self.read(&mut buf[..1]).await?;
+        Ok(1)
+    }
+}
+impl embedded_io_async::Read for BufferedUart<'_> {
+    async fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error> {
+        if buf.is_empty() {
+            return Ok(0);
+        }
+        self.rx.read(&mut buf[..1]).await?;
+        Ok(1)
+    }
+}
+impl embedded_io::Write for BufferedUart<'_> {
+    fn write(&mut self, buf: &[u8]) -> Result<usize, Error> {
+        embedded_io::Write::write(&mut self.tx, buf)
+    }
+    fn flush(&mut self) -> Result<(), Error> {
+        embedded_io::Write::flush(&mut self.tx)
+    }
+}
+impl embedded_io_async::Write for BufferedUart<'_> {
+    async fn write(&mut self, buf: &[u8]) -> Result<usize, Error> {
+        embedded_io_async::Write::write(&mut self.tx, buf).await
+    }
+    async fn flush(&mut self) -> Result<(), Error> {
+        embedded_io_async::Write::flush(&mut self.tx).await
+    }
+}
 
 fn configure(regs: pac::uart::Uart, config: Config, baud: Baud) {
     regs.ier().write(|w| {

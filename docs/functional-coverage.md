@@ -96,14 +96,34 @@ still apply.
   interrupt needs a separately owned lifetime and terminal-fault policy. See
   [L010/L011](adc-low-async.md) and [remaining async ADC scope](adc-remaining-async.md).
   Continuous scans, hardware-triggered scans and safe ADC DMA remain absent.
-- UART blocking/async and qualified RTS/CTS constructors exist. Pin availability
-  differs by instance and exact selection; no software FIFO or throughput claim.
+- UART ordinary blocking/async and qualified RTS/CTS constructors exist. Pin
+  availability differs by instance and exact selection; these ordinary owners
+  have no software FIFO or throughput guarantee.
+  Direct `BufferedUartRx`/`BufferedUart` owners separately collect
+  continuously through IRQs into consumed static bounded storage on all thirteen
+  families and 54 existing selections. Exact inherent reads and one-byte async
+  trait reads drain the retained clean prefix before returning the first error;
+  later ISR observations are discarded until the error is consumed. Empty reads
+  preserve bytes/errors. Ten families can silently overwrite RDR before ISR
+  service; native ORE and software overflow do not count every lost frame.
+  Hardware RTS follows RC, not software occupancy. No buffered idle or DMA ring,
+  lossless guarantee or hardware timing qualification. Stage83 main verification
+  passed thirteen actual ARM libraries, eleven ELF links and five focused
+  source/data gates; independent main runtime and metadata/source reviews
+  accepted the frozen implementation. Three existing native L010/L011 RCC
+  LSE-constant warnings remain in each applicable row. Main ran no hardware
+  generation, and all 905 generated files stayed unchanged. At main acceptance
+  clean had not run; final-package completion requires a separate final-source
+  three-library/three-ELF clean receipt and five focused gates. See
+  [the buffered receive contract](uart-buffered-rx.md).
   L010/L011/L012 additionally expose finite async native idle reception with
-  ordinary caller slices. Buffer-full or observed RXIDLE returns a count;
-  simultaneous RC is consumed before idle, without exact packet attribution.
+  ordinary `UartRx<Async>`/`Uart<Async>` owners and caller slices. Buffer-full or
+  observed RXIDLE returns a count; simultaneous RC is consumed before idle,
+  without exact packet attribution.
   First nonempty poll discards only stale idle, preserving unread bytes/errors;
-  service delays can still overrun RDR. No numeric timeout or software ring.
-  Main verification passed six actual ARM libraries, five ELF links and four
+  service delays can still overrun RDR. This idle API adds no numeric timeout or
+  software ring.
+  Stage82 main verification passed six actual ARM libraries, five ELF links and four
   finite source/data gates. Three existing native L010/L011 RCC LSE-constant
   warnings remain in applicable rows. At main acceptance clean had not run;
   final-package completion requires a separate final-source two-library/

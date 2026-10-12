@@ -263,7 +263,7 @@ def main():
     assert idle['status'] == 'partial' and set(idle['implemented_families']) == FAMILIES
     assert idle['pins_all'] == ['RX']
     assert {item['path'] for item in idle['evidence']} >= {'embassy-cw32/src/usart.rs', 'docs/uart-idle.md'}
-    assert modes['buffered_ring_receive']['status'] == 'unimplemented'
+    assert modes['buffered_ring_receive']['status'] == 'partial'
     print('PASS native UART idle: 27 own locked identities; 3 families, 10 selections, 8 instances, 2 register versions')
     print(f'PASS native RXIDLE/TIMOV, RDR/RC, R1W0, RCC and {route_count} package-filtered UART routes; split coverage declarations')
     print('Source/data verification only; runtime lifecycle and hardware behavior require separate review/evidence.')

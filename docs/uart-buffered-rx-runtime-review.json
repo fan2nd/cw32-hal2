@@ -1,0 +1,2096 @@
+{
+  "stage": 83,
+  "review_date": "2026-10-12",
+  "status": "accepted-main",
+  "verdict": "Accepted: independent actual production runtime/example inspection and independent verification of all 13 retained ARM HAL rlibs, 11 retained ARM firmware ELFs and five focused main source/data gate receipts. No unresolved implementation or main-artifact blocker remains. Clean final-source acceptance is pending.",
+  "baseline": {
+    "stage": 82,
+    "published_commit": "980a38547b0f1913ec0c526ef5983fe86b1f90bd",
+    "runtime_sha256": "f08f6fe860b7dd509287945ebc86729a951ad3aee92dc747921823524ed32ef8",
+    "remote_verification": "Retained remote-publication receipt read; this reviewer did not perform a new network publication check."
+  },
+  "source_freeze": [
+    {
+      "path": "embassy-cw32/src/usart.rs",
+      "bytes": 99191,
+      "sha256": "fbabff7f98aeeb303ae09ff27c53c057cfb397b551bdadb998e62b78e8d7d08d"
+    },
+    {
+      "path": "examples/uart-buffered/Cargo.lock",
+      "bytes": 20779,
+      "sha256": "a6a1bec09663b32e7a4789d46a73732c2ef5cd2003508f0e4b9cc2d145e5f072"
+    },
+    {
+      "path": "examples/uart-buffered/Cargo.toml",
+      "bytes": 1937,
+      "sha256": "f0eab5fe7202591f51135432278fee5ce29d9dd25c033d2782b80cebdc12470a"
+    },
+    {
+      "path": "examples/uart-buffered/README.md",
+      "bytes": 6816,
+      "sha256": "1872f8c3f8e47148d73a87c42023161c4d6138c0b5556f29808f14752ac20950"
+    },
+    {
+      "path": "examples/uart-buffered/build.rs",
+      "bytes": 1373,
+      "sha256": "769b3658ac53300972f8d82537f583a97d36f194613b689f85d3938fe13714bc"
+    },
+    {
+      "path": "examples/uart-buffered/src/bin/flow_control.rs",
+      "bytes": 1089,
+      "sha256": "fe9043c5ba98995c813b8258afa39616e1b494500face2a17140cbc56a79e54d"
+    },
+    {
+      "path": "examples/uart-buffered/src/bin/receive.rs",
+      "bytes": 905,
+      "sha256": "4779a7f6180ae4f84c7967e97b9f1598ce046cd3778e533531df813f69d8c204"
+    },
+    {
+      "path": "examples/uart-buffered/src/bin/rx_only.rs",
+      "bytes": 787,
+      "sha256": "b0dca12a975ecb20b68cc1763e624c58775f5d405667f537c724e0ecbfdca7a0"
+    },
+    {
+      "path": "examples/uart-buffered/src/bin/shared_vector.rs",
+      "bytes": 1424,
+      "sha256": "0af698059882bf19da53bcfe3c4f317b1c8816cc42ca4ceb41bd37cfb19727be"
+    },
+    {
+      "path": "examples/uart-buffered/src/bin/split.rs",
+      "bytes": 1504,
+      "sha256": "b4e5b22a94480cb0b7997fe213e2f509a10a428716ba3b57105dd4e7d3882bd7"
+    },
+    {
+      "path": "examples/uart-buffered/src/lib.rs",
+      "bytes": 3114,
+      "sha256": "1ebb641d8aaa036e85135a5d25843466beee8678206a755f5ffc5ae9a8c0778d"
+    }
+  ],
+  "source_identity_receipt": {
+    "external_artifact": "cw32-stage83-acceptance/independent-runtime/source-identity.json",
+    "sha256": "57b51bf978b9aabea9e6b1c35f15eac03aae83783875e419b41ddf4e104016de"
+  },
+  "examples_source_facts": {
+    "external_artifact": "cw32-stage83-acceptance/independent-runtime/examples-source-facts.json",
+    "sha256": "2da2eccacf9e96556a7a8ef6ee25dcc5afcc9d85a710f4e4c9c759ea26d7955e"
+  },
+  "cases": [
+    {
+      "case": "Direct owners and lifetime authority",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        571,
+        608
+      ],
+      "result": "accepted by static inspection",
+      "finding": "BufferedUartRx owns Info, static State and Flex RX/optional RTS directly; no nested ordinary RX, DMA field, erased lifetime or owner/caller pointer. BufferedUart contains this RX and ordinary UartTx<Async>. The consumed static slice is moved once into per-instance state; peripheral/pin borrows keep the existing d lifetime."
+    },
+    {
+      "case": "Static storage and bounded capacity",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        443,
+        480,
+        670,
+        681,
+        708,
+        731,
+        2266,
+        2281
+      ],
+      "result": "accepted by static inspection",
+      "finding": "Mutex<RefCell<Option<RxRing>>> protects all slice accesses and indices. Constructor rejects zero. Capacity one uses index zero for both cursors; occupancy distinguishes full/empty. Advance compares capacity minus one before addition. Push occurs only below capacity and increments once; pop occurs only above zero and decrements once. No sentinel slot, sequence counter, mask or unchecked read+len sum. Dropping the reference never frees caller-owned static bytes."
+    },
+    {
+      "case": "Preflight and rejected construction",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        613,
+        643,
+        684,
+        704,
+        762,
+        844,
+        2002,
+        2066
+      ],
+      "result": "accepted by static inspection",
+      "finding": "configured_baud including existing RX pull checks precedes the zero-length check and optional CTS validation. Every returned configuration error occurs before prepare, GPIO, ring publication, enable or acknowledgment; optional token erasure does no MMIO. Rejected new inputs are consumed. An earlier forgotten collector remains active on preflight failure."
+    },
+    {
+      "case": "Publish before collection and earliest interrupt",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        350,
+        368,
+        646,
+        704,
+        807,
+        844,
+        1297,
+        1311,
+        2439,
+        2575
+      ],
+      "result": "accepted by static inspection",
+      "finding": "prepare retires old ring and lifecycle before RCC reset/configure. RX Flex/RTS and optional TX/CTS owners exist before ring publication. Within one critical section install_ring publishes ring and rx_live, then local flow control, RX/TX enables and receive IER. RX-only never enables TX. Shared-vector early dispatch after TX activation sees clocked, configured registers with local sources masked; RX cannot be serviced before ring installation. Dedicated NVIC is enabled only afterward; no post-activation unpend."
+    },
+    {
+      "case": "One snapshot and bounded ISR observation",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        2080,
+        2095,
+        2239,
+        2301
+      ],
+      "result": "accepted by static inspection",
+      "finding": "Inactive lifecycle returns before IER/ISR MMIO. Active dispatch samples IER once and ISR once and calls receive_observed at most once, only for enabled data/error readiness and live buffered RX. No drain loop exists. The same sampled status determines RC/RDR access, ICR acknowledgment and error. TX readiness uses the same observation; final sampled IER is written once."
+    },
+    {
+      "case": "Own-family receive semantics and native idle separation",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        2117,
+        2157,
+        2167,
+        2236,
+        2247,
+        2266
+      ],
+      "result": "accepted by static inspection",
+      "finding": "Existing receive_event, receive_observed and typed ICR write_noop command path are byte-identical to Stage82. RDR is read only for sampled RC, including error or overflow observations; error-only snapshots do not read RDR. Non-native families retain PE/FE only; native L010/L011/L012 retain ORE, PE, FE, NE priority. Buffered call passes acknowledge_idle=false, preserves idle/auxiliary/TC/CTS command fields and never enables RXIDLE. Existing seven-profile no-op authority is the accepted source design, not newly inferred hardware evidence."
+    },
+    {
+      "case": "Overflow and first-error barrier",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        715,
+        730,
+        2263,
+        2282
+      ],
+      "result": "accepted by static inspection",
+      "finding": "Clean full-ring byte latches BufferOverflow without overwriting any queued byte. A sampled hardware error omits its byte and wins over fullness for that observation. An already pending error prevents every append, regardless of freed space or a later higher-priority fault, but hardware drain/ack still happens. Consumer first returns each retained clean byte, then takes one error only when empty. Later ISR observations can append, including data physically received earlier but not yet observed; no wire-time resynchronization is claimed."
+    },
+    {
+      "case": "Error-only IRQ and simultaneous receive/TX",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        2245,
+        2301
+      ],
+      "result": "accepted by static inspection",
+      "finding": "Enabled FE/PE/native NE/ORE can service the ring without RC and latch the hardware error. Readiness never fabricates a byte. Buffered RX retains sampled receive enables while full or error-pending; ordinary TX masking only clears TXE/TC. Co-observed TX and RX can both arrange wakes without clobbering unrelated IER fields."
+    },
+    {
+      "case": "Wake races and critical-section bounds",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        708,
+        732,
+        2080,
+        2095,
+        2261,
+        2301
+      ],
+      "result": "accepted by static inspection",
+      "finding": "poll_read_byte registers before checking. Earlier or intervening arrivals are retained and found; arrival after empty check observes waiting=true under the same lock and wakes. First ready transition clears waiting, so further retained arrivals need no repeated wake. Each consumer lock copies one byte. on_interrupt returns booleans after its RefMut drops; dispatch wakes only after the outer critical_section::with returns. No ring borrow crosses await or wake."
+    },
+    {
+      "case": "Exact reads, trait reads and empty reads",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        735,
+        750,
+        847,
+        850,
+        2398,
+        2420
+      ],
+      "result": "accepted by static inspection",
+      "finding": "Inherent read awaits a one-byte pop per destination slot, then assigns without another suspension point. Partial completion before Pending/error remains in caller memory; no rollback or partial count. Trait reads use only buf[..1] and return one; empty inherent/trait paths skip polling, waker registration, queue/error consumption and MMIO. A Pending one-byte trait read has consumed neither byte nor error."
+    },
+    {
+      "case": "Cancellation, forget and moves",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        593,
+        608,
+        708,
+        750
+      ],
+      "result": "accepted by static inspection",
+      "finding": "No future Drop manipulates RX enables, no stack pointer enters static state, and ownership movement changes no ISR destination. Canceling or forgetting a pending read leaves collection live; waiting and the cloned waker may cause one stale wake, after which waiting clears. A subsequent poll registers the new waker. Forgetting the owner leaks valid static storage and pin/clock ownership; bounded prefix/error state remains safe indefinitely."
+    },
+    {
+      "case": "Split ownership and TX cancellation",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        759,
+        884,
+        1276,
+        1294,
+        1314,
+        1363,
+        2174,
+        2178,
+        2304,
+        2347,
+        2422,
+        2436
+      ],
+      "result": "accepted by static inspection",
+      "finding": "split moves actual independent TX/RX halves and split_ref returns disjoint mutable borrows; combined owner has no Drop. TX has dma=None from UartTx::from_pin. Writes, flushes and traits forward to established TX. TX Wait arming/drop only affects its own TX bit; TC no-op clear preserves RX flags. Canceling or dropping a TX operation cannot mask or detach the collector."
+    },
+    {
+      "case": "RX/TX teardown orders",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        371,
+        419,
+        882,
+        885,
+        1953,
+        1992
+      ],
+      "result": "accepted by static inspection",
+      "finding": "RX shutdown masks receive events, disables nonretained RX/RTS, removes ring, then publishes lifecycle within the same lock; Flex drops later. TX shutdown never removes ring and preserves RX bits. Either split-half drop order leaves the other live with its clock/configuration, and only the final unretained owner gates its instance. Shared NVIC is never disabled. DMA retain=true still preserves its enable/pin/channel/clock rules and owns no ring."
+    },
+    {
+      "case": "Stale-ring reconstruction through all constructor classes",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        350,
+        368,
+        888,
+        1053,
+        1185,
+        1215,
+        1219,
+        1271,
+        1314,
+        1331,
+        1633,
+        1658,
+        1673,
+        1718,
+        1722,
+        1775,
+        1894,
+        1910
+      ],
+      "result": "accepted by static inspection",
+      "finding": "All ordinary blocking/async full/TX-only/RX-only and flow-control constructors reach existing prepare after preflight; admitted DMA TX/RX/full constructors also reach it. prepare first removes rx_ring and resets lifecycle without unclocked UART MMIO, then performs existing local RCC/configure. Safe reborrow reconstruction after forgetting an owner retires the old ring and waiter flag for every class. No old buffer is returned, and a new waiter replaces an old dormant waker."
+    },
+    {
+      "case": "All L083 shared pairs and inactive partner",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        313,
+        340,
+        350,
+        419,
+        483,
+        535,
+        2080,
+        2095
+      ],
+      "result": "accepted by static inspection",
+      "finding": "UART1/4, UART2/5 and UART3/6 remain distinct complete group bindings. Each pair sequentially dispatches each own State with at most one observation. The active guard is before MMIO, including after final local drop with a pending vector. prepare/drop never disable or unpend a shared vector and reset/gate only their own Info. Two buffered rings or buffered plus ordinary/DMA partners select per-instance policy. External unowned-partner quiescence remains required; the HAL does not touch an inactive partner to enforce it."
+    },
+    {
+      "case": "Ordinary fixed/native-idle/DMA dispatch equivalence",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        2098,
+        2236,
+        2239,
+        2301,
+        2304,
+        2396
+      ],
+      "result": "accepted by static inspection",
+      "finding": "No-ring RX predicate remains (RC&&RC-enable)||(FE&&FE-enable)||(PE&&PE-enable), plus native NE/ORE/RXIDLE status&&enable terms. It invokes the same Receive.set_enabled(false), masks the same receive group, preserves RDR/status, and returns the same RX wake condition. TX predicate remains enabled TXE or TC and masks both. ReceiveErrors still forces RC disabled for DMA error-only waits, so ordinary/DMA dispatch never steals DMA RDR. Only intentional old-path wake placement changes to after the outer lock. Existing native idle windows, error priority, empty/cancel/forgotten-wait retirement, DMA phases and retention are byte-identical."
+    },
+    {
+      "case": "Public enum and API boundaries",
+      "path": "embassy-cw32/src/usart.rs",
+      "lines": [
+        125,
+        237,
+        571,
+        886,
+        2398,
+        2436
+      ],
+      "result": "accepted by static inspection",
+      "finding": "RxBufferEmpty and BufferOverflow are unconditional exhaustive-enum additions with specified displays; BufferOverflow maps to Other while old mappings remain unchanged. Native Noise docs include L011. No buffered blocking Read, BufRead, ReadReady, idle, timeout, zero-copy, reclamation, conversion or DMA API is introduced. Hardware throughput, precise chronology, loss counts and lossless RTS are explicitly excluded."
+    }
+  ],
+  "example_findings": [
+    "Exactly eight chip features forward to HAL/PAC, default is empty, autobins=false and five explicit bins are declared; flow_control/shared_vector require their exact L010/L083 features.",
+    "build.rs rejects zero/multiple selected features and requires one current exact metadata memory map. It accepts FLASH/RAM banks, emits memory.x and -Tlink.x; F002 remains 16384/2048 bytes. Actual fit and load ranges require retained ELF receipts.",
+    "All nine selected source routes, alternate functions, pad positions, memory maps, vector numbers and generated PAC enum entries were independently compared against current exact-chip JSON/PAC. The L083 real dual app binds UART1_UART4 once and owns UART1 and UART4 with separate singleton rings.",
+    "All active receivers consume checked cortex_m::singleton! 64-byte static rings, while ordinary local caller chunks are 16 bytes. No handwritten unsafe static reference, IRQ injection or synthetic lifecycle fixture appears.",
+    "receive, flow_control and shared_vector use exact read echo loops; split and rx_only use embedded_io_async::Read and honor returned count. L031 split moves halves; L012 split_ref borrows halves; join operates concurrent TX and RX.",
+    "L052 RX-only directly owns RTS; L011 RX-only directly constructs without RTS. Read errors are exposed through black_box; echo applications report receive error and continue. Exact partial chunks are discarded on error. RTS/CTS, wire-level and collection limits are documented.",
+    "All non-root lock package records including duplicate crate versions are identical and in the same order as the existing uart-idle lock. Only root example identity/direct embedded-io-async edge differ. No new HAL dependency or hardware/build-script change accompanies runtime support."
+  ],
+  "baseline_textual_equivalence": [
+    {
+      "region": "ordinary_blocking_async_dma_and_preflight",
+      "baseline_lines": [
+        537,
+        1729
+      ],
+      "reviewed_lines": [
+        888,
+        2080
+      ],
+      "identical": true,
+      "bytes": 47451,
+      "sha256": "386db6b105c6bfa0aeb9945483a9f99ac5b6269fc6941128a3c5aab283405aed"
+    },
+    {
+      "region": "direction_wait_events_receive_snapshot",
+      "baseline_lines": [
+        1737,
+        1878
+      ],
+      "reviewed_lines": [
+        2098,
+        2239
+      ],
+      "identical": true,
+      "bytes": 4524,
+      "sha256": "0db95d52e5acfd1ddb8567bc20efe9a721f143065e0ce8b4da792578f7573f71"
+    },
+    {
+      "region": "ordinary_wait_future_and_traits",
+      "baseline_lines": [
+        1914,
+        2006
+      ],
+      "reviewed_lines": [
+        2304,
+        2396
+      ],
+      "identical": true,
+      "bytes": 3690,
+      "sha256": "3f140392676cabaf147e114a9536fac3fff9fd6b70602e4dd1c50769bf7314f4"
+    },
+    {
+      "region": "configure",
+      "baseline_lines": [
+        2008,
+        2145
+      ],
+      "reviewed_lines": [
+        2439,
+        2576
+      ],
+      "identical": true,
+      "bytes": 4459,
+      "sha256": "43083773e3e9b5300919258691efec0b6ab10fdc6e46636f16774c780593d05e"
+    }
+  ],
+  "unchanged_support_and_regressions": [
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "596d0c61c48db771e1e130a7225335d488ce9d652330e1da0d490b97032d5478",
+      "identical_to_published82": true
+    },
+    {
+      "path": "embassy-cw32/Cargo.toml",
+      "sha256": "a92755f6305d4eb50b010df6834fb8b85ded3fec086081d2b291b3c93478c700",
+      "identical_to_published82": true
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "63c0550836e312ea655f8cad2000320f331a48044288b44aa0be8e7da90039ed",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-idle/Cargo.toml",
+      "sha256": "0ac81a82a4865fd13a5ab309d08a4c0e5093eaa82e582e120b9eae7519824698",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-idle/build.rs",
+      "sha256": "8233c8da57e7eee0bb33f289a0ebf09d720e97d40313f48a4f15a6e0bc276486",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-idle/Cargo.lock",
+      "sha256": "60d3fb0447f0992ccc429d1e6123a6f58e92b604bff63fc45b4bc53df6ede7b8",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-idle/src/lib.rs",
+      "sha256": "5e9971caaa431dc445f912963c5095d4787c21aecd696d41ac6a9dda62b92438",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-idle/src/bin/receive.rs",
+      "sha256": "0f94df1dd189b8befec7b4075a2f5a04620f6662066df9906181e34e0aada143",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-idle/src/bin/split.rs",
+      "sha256": "0286137e3c8ead55c09c14b562eaa6c25e2aa689d2ce421dfda1d57acb87ef2f",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-dma/Cargo.toml",
+      "sha256": "003a6928b63d92e539040ddfef2428d91625dede8115bde3f4b0218b3955ef12",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-dma/build.rs",
+      "sha256": "3bd1328f6dca882d476359d798beeaa0428348447777365fb548bbd5981a6837",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-dma/Cargo.lock",
+      "sha256": "8296245e7e947234a51602b65ec100388d579b6a36f26436c5ff71d046e8426d",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-dma/src/main.rs",
+      "sha256": "16893ea6b1298c75db84bc805ddab4678704706618fa8cdecdda273c68f5f00a",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-dma/src/bin/shared_vector.rs",
+      "sha256": "1ee1fdcf0ff4f31aac1f96089447999d402798f7221beecf30befe57568fa0d7",
+      "identical_to_published82": true
+    },
+    {
+      "path": "examples/uart-dma/src/bin/receive_only.rs",
+      "sha256": "94e7f540bc669aa0dc9dbe6d391315c14b200123029bb8c6040dce81d511c05c",
+      "identical_to_published82": true
+    }
+  ],
+  "consumed_external_artifacts": [
+    {
+      "external_artifact": "cw32-stage83-design/runtime-design.md",
+      "sha256": "5a1c77306d9d02c40123c2f04c9681b4647121c507393b5bb7ef51f96fd65960"
+    },
+    {
+      "external_artifact": "cw32-stage83-design/metadata-source-design.md",
+      "sha256": "ec17fb0e68c5eec46a8ec89f44a621949244ef9cbc2b1aaf181f2452f5eb419e"
+    },
+    {
+      "external_artifact": "cw32-stage83-design/independent-design-review.md",
+      "sha256": "32bcad11a402ea22a6fee2d26b014e724de11acaa5b0e6e8392127bfe8d17096"
+    },
+    {
+      "external_artifact": "cw32-stage83-design/independent-design-review.json",
+      "sha256": "1d07e1a5b9a24564eb2cbc95f8628dc5fb538778fd33314348dd0224cc7af127"
+    },
+    {
+      "external_artifact": "cw32-stage83-design/independent-metadata/report.md",
+      "sha256": "08edaa16deb218c809f61ce8a29baf1a6418cf1585203c4e77a260bc44514cb6"
+    },
+    {
+      "external_artifact": "cw32-stage83-design/source-bindings.json",
+      "sha256": "d776a22e9745791bb79e5c4288ad99fe15b847ebffa16f94d41176e1aa1e780c"
+    },
+    {
+      "external_artifact": "cw32-stage83-design/verification-matrix.tsv",
+      "sha256": "fd6cedfbbd2316a5433cddc03b74722356bbc8d5061ca96961342ffb604973d1"
+    },
+    {
+      "external_artifact": "cw32-stage83-acceptance/baseline/published82-remote-verification.json",
+      "sha256": "aa720d48d9d9564b9d1f0fbe9f3462d66b80fd3e1863a755ccbbf50bd1bd994e"
+    },
+    {
+      "external_artifact": "cw32-stage83-acceptance/runtime-implementation/usart.baseline.rs",
+      "sha256": "f08f6fe860b7dd509287945ebc86729a951ad3aee92dc747921823524ed32ef8"
+    },
+    {
+      "external_artifact": "cw32-stage83-acceptance/runtime-implementation/runtime.diff",
+      "sha256": "dd4d8186e394f15995ba1bf05f88f3a135854a62dcdc0e9512fe9a08fd09974a"
+    },
+    {
+      "external_artifact": "cw32-stage83-acceptance/examples-implementation/manifest.json",
+      "sha256": "f51075cc08228b17e8156733bcec5fa388a6edf0642ade5685c597511fa24f08"
+    },
+    {
+      "external_artifact": "cw32-stage83-acceptance/examples-implementation/actual-proposed-vectors.json",
+      "sha256": "eea9adbb744a6b8b216c54976cd987f06f4fcacbbf278c1d842efcfe2871edf2"
+    }
+  ],
+  "source_authority_boundary": "Runtime uses byte-identical own-family register/receive helpers. This review consumed accepted independent source-design conclusions and current generated/canonical example routes; it did not re-read the 111 external vendor source artifacts and does not claim such consumption.",
+  "pending_acceptance": {
+    "clean": "Fresh final-source 3 rlibs plus 3 buffered ELF links and five focused gates, separate target, same exact tuples and 905 unchanged generated hardware files",
+    "publication": "Not established by this runtime review."
+  },
+  "actions_performed": [
+    "Read frozen design and independent design/source reviews",
+    "Read actual frozen runtime and all ten ordinary example files",
+    "Compare unchanged source regions and support/regression paths to retained published Stage82 bytes/hashes",
+    "Compare exact-chip example route/memory/vector source facts",
+    "Write external independent review artifacts only",
+    "Independently parsed retained main Cargo JSON and all actual ARM archive/ELF bytes",
+    "Recomputed artifact/log/OUT_DIR hashes, memory scripts, load ranges and raw vector-to-symbol bindings",
+    "Verified actual main source/generated/toolchain before/after identities and all five focused gate log receipts"
+  ],
+  "actions_not_performed": [
+    "Production edits",
+    "Cargo or build/link rerun by this reviewer",
+    "HAL tests, behavioral model, temporal probe, IRQ injection or synthetic fixture",
+    "Hardware generation by this reviewer",
+    "Silicon execution",
+    "Publication"
+  ],
+  "blockers": [],
+  "limitations": [
+    "Static source review and build/link receipt inspection do not execute temporal interleavings.",
+    "The ten non-native families may silently overwrite RDR before ISR service; native errors and acknowledgment can coalesce.",
+    "Silicon loss rate, interrupt saturation, RTS timing, throughput, dynamic stack depth and exact loss chronology remain unmeasured.",
+    "Clean final-source acceptance is pending and must retain the unchanged reviewed runtime/example hashes."
+  ],
+  "actual_main_libraries": 13,
+  "actual_main_firmware_elfs": 11,
+  "open_blockers": [],
+  "main_artifact_acceptance": {
+    "stage": 83,
+    "phase": "main",
+    "status": "actual_retained_artifacts_independently_verified",
+    "source_files": 1380,
+    "generated_files": 905,
+    "source_before_after_equal": true,
+    "generated_before_after_equal": true,
+    "toolchain_before_after_equal": true,
+    "frozen_runtime_and_examples_match": true,
+    "rlibs": 13,
+    "elfs": 11,
+    "rows": [
+      {
+        "row": 1,
+        "selection": "cw32f030c8t7",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32f030c8t7,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/01-cw32f030c8t7-lib/libembassy_cw32.rlib",
+          "bytes": 5351752,
+          "sha256": "493d21c8ed4d7c5b704fc73d66b76a61340da8769c98cddf9a9354f58acca851"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 2,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/01-cw32f030c8t7-lib/receipt.json",
+          "sha256": "e12ae8ed6ca224a2f6615819f6515846ef052101606c9092c017e64b3b797f69"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 11
+      },
+      {
+        "row": 2,
+        "selection": "cw32a030c8t7",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32a030c8t7,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/02-cw32a030c8t7-lib/libembassy_cw32.rlib",
+          "bytes": 5351924,
+          "sha256": "b9945fc2a2ad3ed4407c74a61a67e46cad6d260a963ad75164694e5bf4a6367f"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 2,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/02-cw32a030c8t7-lib/receipt.json",
+          "sha256": "5aba2bfe22481bb20e4cdae03860bea61010b55f08cd09a00c565691e0286059"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 11
+      },
+      {
+        "row": 3,
+        "selection": "cw32f020c6u7",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32f020c6u7,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/03-cw32f020c6u7-lib/libembassy_cw32.rlib",
+          "bytes": 4449292,
+          "sha256": "0cd889b0b1bd8518a4bb7cf1fad11de89f0c7e1b311e02dcafb4f89618e21e4d"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 2,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/03-cw32f020c6u7-lib/receipt.json",
+          "sha256": "d22c1d4ef9280c3c12b40d8b2d9ee58f932235c0bfd4666edcfc338d097552fc"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 10
+      },
+      {
+        "row": 4,
+        "selection": "cw32f002f3p7",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32f002f3p7,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/04-cw32f002f3p7-lib/libembassy_cw32.rlib",
+          "bytes": 3636678,
+          "sha256": "12641f2ba505b07f973bb699aa69eaad7b041a56f049857e1b6620b1f666ba62"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 2,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/04-cw32f002f3p7-lib/receipt.json",
+          "sha256": "bb90d0167772e7ecfbba2ec7f1824750493c1d1c4caebfd2810770eb896ea8a9"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 7
+      },
+      {
+        "row": 5,
+        "selection": "cw32f003e4p7",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32f003e4p7,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/05-cw32f003e4p7-lib/libembassy_cw32.rlib",
+          "bytes": 3803790,
+          "sha256": "57be8b3d3319e1b7bf3706216fead09b8ce5d2f349260f2609b314ffa85a67be"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 2,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/05-cw32f003e4p7-lib/receipt.json",
+          "sha256": "e8247eec4a53961f77f1974e343b4077931a62b41e918c2a005c6a03ba26d363"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 8
+      },
+      {
+        "row": 6,
+        "selection": "cw32l031c8t6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32l031c8t6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/06-cw32l031c8t6-lib/libembassy_cw32.rlib",
+          "bytes": 4495076,
+          "sha256": "bc1d8526662b65d408613fe12eecdb6a31e96142ac50acc07ec7b810c1b34b97"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 2,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/06-cw32l031c8t6-lib/receipt.json",
+          "sha256": "756290d41012b1f7b58e104a96e420f625b6c2715867ebef93e6b8f371745640"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 10
+      },
+      {
+        "row": 7,
+        "selection": "cw32r031c8u6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32r031c8u6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/07-cw32r031c8u6-lib/libembassy_cw32.rlib",
+          "bytes": 4399334,
+          "sha256": "697441338d0745d23aba421c678feeb2268e2d9668fea5808041dec39cb66016"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 2,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/07-cw32r031c8u6-lib/receipt.json",
+          "sha256": "b7e87d98a5174ed6fd4f186af4aa478cb0f87e8e24d98373ea6671778b51743f"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 10
+      },
+      {
+        "row": 8,
+        "selection": "cw32w031r8u6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32w031r8u6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/08-cw32w031r8u6-lib/libembassy_cw32.rlib",
+          "bytes": 4440132,
+          "sha256": "e10b3dd59b6c82d729760bc9eae9b92ee928eaf3f822b96a78ea2e5658fa32c4"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 2,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/08-cw32w031r8u6-lib/receipt.json",
+          "sha256": "db73e8c38c00c530bc5a71e401e1f784ba691a8df2d05d91dd63557f98574fd4"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 10
+      },
+      {
+        "row": 9,
+        "selection": "cw32l052c8t6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32l052c8t6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/09-cw32l052c8t6-lib/libembassy_cw32.rlib",
+          "bytes": 5050078,
+          "sha256": "946a5f785e4c9c2dc5831a3c736f1ce5412e44c9dc1fb1659636394a18a34b19"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 2,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/09-cw32l052c8t6-lib/receipt.json",
+          "sha256": "bd23af699c3ee7a2bf7eb94ccf3aefa30bfe3cab3a1b0c5bea74c335e9fc7637"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 12
+      },
+      {
+        "row": 10,
+        "selection": "cw32l083rct6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32l083rct6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/10-cw32l083rct6-lib/libembassy_cw32.rlib",
+          "bytes": 6099852,
+          "sha256": "491ada719245ade479df3389f0805724aa1a0c9c60679f72100d0fa78cd640c9"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 3,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/10-cw32l083rct6-lib/receipt.json",
+          "sha256": "33583be641e6899e0b9586c582070202f32bada4d3579d43089d733632c2b220"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 13
+      },
+      {
+        "row": 11,
+        "selection": "cw32l010f8p6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32l010f8p6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/11-cw32l010f8p6-lib/libembassy_cw32.rlib",
+          "bytes": 4576860,
+          "sha256": "80e7dce43ce04fe70edc52c303fe0a57a66b11d096f5fb97a27f62e1d4d13f6b"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 4,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/11-cw32l010f8p6-lib/receipt.json",
+          "sha256": "d12c245e4b57abd58f0753a64458e1876af116cb359e2055e9865cc81993b1ad"
+        },
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "arm_elf_object_members": 11
+      },
+      {
+        "row": 12,
+        "selection": "cw32l011k8t6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32l011k8t6,rt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/12-cw32l011k8t6-lib/libembassy_cw32.rlib",
+          "bytes": 4690154,
+          "sha256": "905f084cb4892a87a2216a96e72762ae337d3e0cc83d3e8823505ef86dcecc3d"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 4,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/12-cw32l011k8t6-lib/receipt.json",
+          "sha256": "66344265b54ac6893d21e1cfa49b6a161e5bc4ccfc9ce4cae8635f07fe5a5a0d"
+        },
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "arm_elf_object_members": 11
+      },
+      {
+        "row": 13,
+        "selection": "cw32l012c8t6",
+        "kind": "rlib",
+        "target": "embassy_cw32",
+        "features": "cw32l012c8t6,rt,defmt",
+        "manifest": "firmware/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/13-cw32l012c8t6-lib/libembassy_cw32.rlib",
+          "bytes": 7854094,
+          "sha256": "c6dfe5cc762400a198782514704af2980f8e2b6d44375c3129a53b88d344707a"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "3",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 3,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/13-cw32l012c8t6-lib/receipt.json",
+          "sha256": "7bda2d9b0ae23e12df3e66f093a2ee9a0537d6e2b7f82fc9951d570b1c14846a"
+        },
+        "warnings": [],
+        "arm_elf_object_members": 12
+      },
+      {
+        "row": 14,
+        "selection": "cw32f030c8t7",
+        "kind": "elf",
+        "target": "receive",
+        "features": "cw32f030c8t7",
+        "manifest": "examples/uart-buffered/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/14-cw32f030c8t7-receive/firmware.elf",
+          "bytes": 213124,
+          "sha256": "7017030f1242f99e0e16e4537ef4d41bb02f918b3ace58e7962f78d307afcbe6"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 3,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/14-cw32f030c8t7-receive/receipt.json",
+          "sha256": "1ea4503bca00426b0df57bc772972105c63cdb7fee7079f4c8ddbbfe82b695e6"
+        },
+        "warnings": [],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "text_bytes": 24952,
+          "vector_bytes": 192,
+          "handlers": [
+            {
+              "name": "UART2",
+              "irq_number": 28,
+              "vector_byte_offset": 176,
+              "raw_vector_word": 8413,
+              "raw_vector_hex": "dd200000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 26164,
+          "ram_static_end_offset": 644,
+          "flash_capacity": 65536,
+          "ram_capacity": 8192,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/14-cw32f030c8t7-receive/out-dir/bbd592c62441/memory.x",
+            "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4,
+              "payload_sha256": "0ff6b9a139720e609ad12f9fdc981bd51bf3c6db4bfe49926173c745faf6c502"
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 24952,
+              "memsz": 24952,
+              "flags": 5,
+              "payload_sha256": "7daab9eba5d9d91684a7ca4323ead0c8b8d4abc5e4ba121c8ecf8ea5e6d7080f"
+            },
+            {
+              "vaddr": 25144,
+              "paddr": 25144,
+              "filesz": 752,
+              "memsz": 752,
+              "flags": 4,
+              "payload_sha256": "6c17db70f9aa7c2a79b93f7552fc335549e5187176c5487b3f00b1a82153aaf1"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 25896,
+              "filesz": 268,
+              "memsz": 268,
+              "flags": 6,
+              "payload_sha256": "457508ae0deb5a21c7a7e3424eaf801d676f47359c934b7b001dddd3823abce2"
+            },
+            {
+              "vaddr": 536871184,
+              "paddr": 536871184,
+              "filesz": 0,
+              "memsz": 372,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      },
+      {
+        "row": 15,
+        "selection": "cw32f002f3p7",
+        "kind": "elf",
+        "target": "receive",
+        "features": "cw32f002f3p7",
+        "manifest": "examples/uart-buffered/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/15-cw32f002f3p7-receive/firmware.elf",
+          "bytes": 206752,
+          "sha256": "57b0af4c277573ddd1e5b5658077a33c97f666b9d393a48561b3e8e5e387f222"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 3,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/15-cw32f002f3p7-receive/receipt.json",
+          "sha256": "b44a8da35e07744a0343673889139e34124d9f9a2920f0f678d7123562b918cb"
+        },
+        "warnings": [],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 189,
+          "initial_sp": 536872960,
+          "text_bytes": 14572,
+          "vector_bytes": 188,
+          "handlers": [
+            {
+              "name": "UART1",
+              "irq_number": 27,
+              "vector_byte_offset": 172,
+              "raw_vector_word": 5121,
+              "raw_vector_hex": "01140000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 15276,
+          "ram_static_end_offset": 404,
+          "flash_capacity": 16384,
+          "ram_capacity": 2048,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/15-cw32f002f3p7-receive/out-dir/bbd592c62441/memory.x",
+            "sha256": "8a134ce5a9a5bd4efb8975b096a87691bce23a80aace4e387642395c10230a07"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 188,
+              "memsz": 188,
+              "flags": 4,
+              "payload_sha256": "fadd223fec5c5578f6e53e10cf9e91a491014d2e1a3a05cc518375908c8f7578"
+            },
+            {
+              "vaddr": 188,
+              "paddr": 188,
+              "filesz": 14572,
+              "memsz": 14572,
+              "flags": 5,
+              "payload_sha256": "e84a1b48484cea0ed5f70d22dd910f6ba4ec9da331806b90129a612176e75836"
+            },
+            {
+              "vaddr": 14760,
+              "paddr": 14760,
+              "filesz": 408,
+              "memsz": 408,
+              "flags": 4,
+              "payload_sha256": "1e47641f6e2bee8688b4c76c3dfdbdb48ab7861ac387a9499ac1a0ec22659abf"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 15168,
+              "filesz": 108,
+              "memsz": 108,
+              "flags": 6,
+              "payload_sha256": "13e93b32b6971c6b24ec7dd929fb8715a723020fce8db5a02d4a00ae9d84f075"
+            },
+            {
+              "vaddr": 536871024,
+              "paddr": 536871024,
+              "filesz": 0,
+              "memsz": 292,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      },
+      {
+        "row": 16,
+        "selection": "cw32l031c8t6",
+        "kind": "elf",
+        "target": "split",
+        "features": "cw32l031c8t6",
+        "manifest": "examples/uart-buffered/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/16-cw32l031c8t6-split/firmware.elf",
+          "bytes": 149516,
+          "sha256": "b1de8987cdf601e47da1000f0af3b78355e8d9f256259c1f5d39c2dceb77c9de"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 3,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/16-cw32l031c8t6-split/receipt.json",
+          "sha256": "30e3a0ed6d2f53633acefdc3791aedfe1beb3a418a33ab374c11438362e3c115"
+        },
+        "warnings": [],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "text_bytes": 28620,
+          "vector_bytes": 192,
+          "handlers": [
+            {
+              "name": "UART2",
+              "irq_number": 28,
+              "vector_byte_offset": 176,
+              "raw_vector_word": 10837,
+              "raw_vector_hex": "552a0000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 29648,
+          "ram_static_end_offset": 552,
+          "flash_capacity": 65536,
+          "ram_capacity": 8192,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/16-cw32l031c8t6-split/out-dir/bbd592c62441/memory.x",
+            "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4,
+              "payload_sha256": "7d92e84dc2d2ab1b584894bb8e9828450f6526eb2c95c210685af64aedc399b1"
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 28620,
+              "memsz": 28620,
+              "flags": 5,
+              "payload_sha256": "8c85ae8b9ee43ccd29980223f90c2784ccd97efe758247d3e180b59a28b7ce09"
+            },
+            {
+              "vaddr": 28812,
+              "paddr": 28812,
+              "filesz": 676,
+              "memsz": 676,
+              "flags": 4,
+              "payload_sha256": "84a7761017f9bdedd9c93f542dc3252714009ba86c3aaa44cfc017cbf45dcba5"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 29488,
+              "filesz": 160,
+              "memsz": 160,
+              "flags": 6,
+              "payload_sha256": "0c115860d28d15fc183342d1ed9167e4eb60e604f74885dffac20f9688910697"
+            },
+            {
+              "vaddr": 536871072,
+              "paddr": 536871072,
+              "filesz": 0,
+              "memsz": 392,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      },
+      {
+        "row": 17,
+        "selection": "cw32l052c8t6",
+        "kind": "elf",
+        "target": "rx_only",
+        "features": "cw32l052c8t6",
+        "manifest": "examples/uart-buffered/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/17-cw32l052c8t6-rx_only/firmware.elf",
+          "bytes": 220816,
+          "sha256": "5aca9c620cc2a39e3a338b37326ee5e3ede6c26a9a6c5e7d4d72bdf0be8d9934"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 3,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/17-cw32l052c8t6-rx_only/receipt.json",
+          "sha256": "406892f8aabe1dd557eaa409864cc6f22a3bc92db2a073ba44f568957b31aba6"
+        },
+        "warnings": [],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 189,
+          "initial_sp": 536879104,
+          "text_bytes": 48752,
+          "vector_bytes": 188,
+          "handlers": [
+            {
+              "name": "UART2",
+              "irq_number": 28,
+              "vector_byte_offset": 176,
+              "raw_vector_word": 2193,
+              "raw_vector_hex": "91080000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 49788,
+          "ram_static_end_offset": 416,
+          "flash_capacity": 65536,
+          "ram_capacity": 8192,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/17-cw32l052c8t6-rx_only/out-dir/bbd592c62441/memory.x",
+            "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 188,
+              "memsz": 188,
+              "flags": 4,
+              "payload_sha256": "3d0d6474a238674bac8273a47f4e2741a48d6cf299af78e4215f586c66a56703"
+            },
+            {
+              "vaddr": 188,
+              "paddr": 188,
+              "filesz": 48752,
+              "memsz": 48752,
+              "flags": 5,
+              "payload_sha256": "2a146ed10d2f8ea130826b3b334086b8b02fca0d4af39cf6f8dafeef568cbc3f"
+            },
+            {
+              "vaddr": 48940,
+              "paddr": 48940,
+              "filesz": 684,
+              "memsz": 684,
+              "flags": 4,
+              "payload_sha256": "a36de63f69b34de515529a6da3bcb6bfff913d66385a3da78b2d43a9cb103288"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 49624,
+              "filesz": 164,
+              "memsz": 164,
+              "flags": 6,
+              "payload_sha256": "8189f17a942902ac15d1afe9e899cd4e22b89cef012b82508adde37f28fa68b0"
+            },
+            {
+              "vaddr": 536871080,
+              "paddr": 536871080,
+              "filesz": 0,
+              "memsz": 248,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      },
+      {
+        "row": 18,
+        "selection": "cw32l083rct6",
+        "kind": "elf",
+        "target": "receive",
+        "features": "cw32l083rct6",
+        "manifest": "examples/uart-buffered/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/18-cw32l083rct6-receive/firmware.elf",
+          "bytes": 230076,
+          "sha256": "efa2e5e879f2fb4948911f9a85e2554990b55eeff95d2bdf166f692130c9059b"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 4,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/18-cw32l083rct6-receive/receipt.json",
+          "sha256": "56088e87c9e81f3d38002a52e8ed523d7ac9a51af7fddc433bff2143788c8c19"
+        },
+        "warnings": [],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 193,
+          "initial_sp": 536895488,
+          "text_bytes": 73052,
+          "vector_bytes": 192,
+          "handlers": [
+            {
+              "name": "UART1_UART4",
+              "irq_number": 27,
+              "vector_byte_offset": 172,
+              "raw_vector_word": 3973,
+              "raw_vector_hex": "850f0000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 74616,
+          "ram_static_end_offset": 696,
+          "flash_capacity": 262144,
+          "ram_capacity": 24576,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/18-cw32l083rct6-receive/out-dir/bbd592c62441/memory.x",
+            "sha256": "382dd9cbb0b41ff04f8c42aa7bc9f91c43b6401e0b27bfe4ac6a581e0319062e"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4,
+              "payload_sha256": "27957f2ca76539eb030d21ad8aded91ff90084d62820e500519f86a8b3b76617"
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 73052,
+              "memsz": 73052,
+              "flags": 5,
+              "payload_sha256": "bec210daec06cc9f20411f45cfaa06f4bd0bf4f813ff5939af0c456222f8feb7"
+            },
+            {
+              "vaddr": 73244,
+              "paddr": 73244,
+              "filesz": 1056,
+              "memsz": 1056,
+              "flags": 4,
+              "payload_sha256": "a6b93404453e7ec7e759a33fd24170b53a37c5ba13ea95ca8513fa73d20e4cc5"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 74300,
+              "filesz": 316,
+              "memsz": 316,
+              "flags": 6,
+              "payload_sha256": "e73c532a2d2e0fdd33918e6eb6fe8fed0c99ee0d8e38f1fa07ab05645360a279"
+            },
+            {
+              "vaddr": 536871232,
+              "paddr": 536871232,
+              "filesz": 0,
+              "memsz": 376,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      },
+      {
+        "row": 19,
+        "selection": "cw32l010f8p6",
+        "kind": "elf",
+        "target": "flow_control",
+        "features": "cw32l010f8p6",
+        "manifest": "examples/uart-buffered/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/19-cw32l010f8p6-flow_control/firmware.elf",
+          "bytes": 212272,
+          "sha256": "a5b69b4eb35e063a6f93bcf26fd8c01c518b1e2de8d8ee517534e0d22f4d07e2"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 5,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/19-cw32l010f8p6-flow_control/receipt.json",
+          "sha256": "0caa061cdf384d5b6257d81f4bc39b59040c3bd3bc4ba3594f2a2b32a7865fad"
+        },
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 193,
+          "initial_sp": 536875008,
+          "text_bytes": 37016,
+          "vector_bytes": 192,
+          "handlers": [
+            {
+              "name": "UART2",
+              "irq_number": 28,
+              "vector_byte_offset": 176,
+              "raw_vector_word": 2649,
+              "raw_vector_hex": "590a0000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 37780,
+          "ram_static_end_offset": 468,
+          "flash_capacity": 65536,
+          "ram_capacity": 4096,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/19-cw32l010f8p6-flow_control/out-dir/bbd592c62441/memory.x",
+            "sha256": "4b9f47e1a23cf36589dc5a3be0b68acff633880dbec554ac1d089aa611e959ee"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4,
+              "payload_sha256": "8db69609567a87a1e2274c9b0f80d20d4475d38726d7bec1a2ea1aa78a47d9ee"
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 37016,
+              "memsz": 37016,
+              "flags": 5,
+              "payload_sha256": "4bb3f402d607062f85010409ceabfc7048891aec97277d9d9c9ca392a42b6c14"
+            },
+            {
+              "vaddr": 37208,
+              "paddr": 37208,
+              "filesz": 408,
+              "memsz": 408,
+              "flags": 4,
+              "payload_sha256": "8a01e7558ffd39f72d1d21de49f242cec5e794148652b74388b85c40bcfe76ff"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 37616,
+              "filesz": 164,
+              "memsz": 164,
+              "flags": 6,
+              "payload_sha256": "8189f17a942902ac15d1afe9e899cd4e22b89cef012b82508adde37f28fa68b0"
+            },
+            {
+              "vaddr": 536871080,
+              "paddr": 536871080,
+              "filesz": 0,
+              "memsz": 300,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      },
+      {
+        "row": 20,
+        "selection": "cw32l011k8t6",
+        "kind": "elf",
+        "target": "rx_only",
+        "features": "cw32l011k8t6",
+        "manifest": "examples/uart-buffered/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/20-cw32l011k8t6-rx_only/firmware.elf",
+          "bytes": 212056,
+          "sha256": "92781a59b7289708fa18df3cf01dfc09ff2b68eacb2c081c9ef9f56c96e07f2c"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 5,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/20-cw32l011k8t6-rx_only/receipt.json",
+          "sha256": "3482bccf74571973325886808ee5d647c600806c7d9b4feaa353f3b3efb60332"
+        },
+        "warnings": [
+          "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+          "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+          "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+        ],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 193,
+          "initial_sp": 536877056,
+          "text_bytes": 35372,
+          "vector_bytes": 192,
+          "handlers": [
+            {
+              "name": "UART3",
+              "irq_number": 29,
+              "vector_byte_offset": 180,
+              "raw_vector_word": 2101,
+              "raw_vector_hex": "35080000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 36184,
+          "ram_static_end_offset": 404,
+          "flash_capacity": 65536,
+          "ram_capacity": 6144,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/20-cw32l011k8t6-rx_only/out-dir/bbd592c62441/memory.x",
+            "sha256": "4a0a3bbecf653ad536fb04acdf085d0cd62a166e2ac3932d76a9cb5fb277c04f"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4,
+              "payload_sha256": "05a821fc36db20ad7871cb41f6d5c134d2cde2860817ec22107f18b47ec06c69"
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 35372,
+              "memsz": 35372,
+              "flags": 5,
+              "payload_sha256": "741ddbf644cf46444881bbc790578250c177ffe2a69180791704ab7c0386a8e2"
+            },
+            {
+              "vaddr": 35564,
+              "paddr": 35564,
+              "filesz": 456,
+              "memsz": 456,
+              "flags": 4,
+              "payload_sha256": "d547e11a8b48efcef4bc4669a66c06215149c663c75c88a4fe3018e1a6a23ee5"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 36020,
+              "filesz": 164,
+              "memsz": 164,
+              "flags": 6,
+              "payload_sha256": "8189f17a942902ac15d1afe9e899cd4e22b89cef012b82508adde37f28fa68b0"
+            },
+            {
+              "vaddr": 536871080,
+              "paddr": 536871080,
+              "filesz": 0,
+              "memsz": 236,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      },
+      {
+        "row": 21,
+        "selection": "cw32l012c8t6",
+        "kind": "elf",
+        "target": "split",
+        "features": "cw32l012c8t6",
+        "manifest": "examples/uart-buffered/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/21-cw32l012c8t6-split/firmware.elf",
+          "bytes": 217928,
+          "sha256": "b3336b27951b0d9d920add3386a16ad4b27821ed8d38256a5e5952aba4a58cfd"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 4,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/21-cw32l012c8t6-split/receipt.json",
+          "sha256": "244f6fa8c5a463a6d97acf9da828c65aa8f6fc547c078725ea652d669818eec4"
+        },
+        "warnings": [],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "text_bytes": 57640,
+          "vector_bytes": 192,
+          "handlers": [
+            {
+              "name": "UART1",
+              "irq_number": 27,
+              "vector_byte_offset": 172,
+              "raw_vector_word": 3145,
+              "raw_vector_hex": "490c0000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 58684,
+          "ram_static_end_offset": 540,
+          "flash_capacity": 65536,
+          "ram_capacity": 8192,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/21-cw32l012c8t6-split/out-dir/bbd592c62441/memory.x",
+            "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4,
+              "payload_sha256": "fe25651fd16e6720814d9d168b73e629ef598ceda1425f66d48d3b6dd78fb441"
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 57640,
+              "memsz": 57640,
+              "flags": 5,
+              "payload_sha256": "d88fcb2cc619d0dcf181e8deae6cc4ffb31601af622877c995a44ee1d88bcc28"
+            },
+            {
+              "vaddr": 57832,
+              "paddr": 57832,
+              "filesz": 688,
+              "memsz": 688,
+              "flags": 4,
+              "payload_sha256": "7c8d974cd5036edbed9588697029098cdbcd30601c2830f9563428bbc13e419e"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 58520,
+              "filesz": 164,
+              "memsz": 164,
+              "flags": 6,
+              "payload_sha256": "8189f17a942902ac15d1afe9e899cd4e22b89cef012b82508adde37f28fa68b0"
+            },
+            {
+              "vaddr": 536871080,
+              "paddr": 536871080,
+              "filesz": 0,
+              "memsz": 372,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      },
+      {
+        "row": 22,
+        "selection": "cw32l083rct6",
+        "kind": "elf",
+        "target": "shared_vector",
+        "features": "cw32l083rct6",
+        "manifest": "examples/uart-buffered/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/22-cw32l083rct6-shared_vector/firmware.elf",
+          "bytes": 231196,
+          "sha256": "a8764174e8298eb4a272fa7142ae188b8d7737b933a4d27b525dae3822ec38f2"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 4,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/22-cw32l083rct6-shared_vector/receipt.json",
+          "sha256": "a167af8d4b68f478410ce625a45aa9bea35a5e2accb6606b399280b17f5f83d8"
+        },
+        "warnings": [],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 193,
+          "initial_sp": 536895488,
+          "text_bytes": 74156,
+          "vector_bytes": 192,
+          "handlers": [
+            {
+              "name": "UART1_UART4",
+              "irq_number": 27,
+              "vector_byte_offset": 172,
+              "raw_vector_word": 4505,
+              "raw_vector_hex": "99110000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 75720,
+          "ram_static_end_offset": 1040,
+          "flash_capacity": 262144,
+          "ram_capacity": 24576,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/22-cw32l083rct6-shared_vector/out-dir/bbd592c62441/memory.x",
+            "sha256": "382dd9cbb0b41ff04f8c42aa7bc9f91c43b6401e0b27bfe4ac6a581e0319062e"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4,
+              "payload_sha256": "bceefad5a99781fbfc000b4b947c7c11bb2bf77f4874be4cd63940c52dcc42a6"
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 74156,
+              "memsz": 74156,
+              "flags": 5,
+              "payload_sha256": "09476fe0b10f94cb0414e4ad6a1a01062526cd9bd058d19e3d1af15fff3496e3"
+            },
+            {
+              "vaddr": 74348,
+              "paddr": 74348,
+              "filesz": 1056,
+              "memsz": 1056,
+              "flags": 4,
+              "payload_sha256": "58ae5bf9557b5a91300e73dfe7857d82ed9735b976cb703b001815ca81fc793e"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 75404,
+              "filesz": 316,
+              "memsz": 316,
+              "flags": 6,
+              "payload_sha256": "e73c532a2d2e0fdd33918e6eb6fe8fed0c99ee0d8e38f1fa07ab05645360a279"
+            },
+            {
+              "vaddr": 536871232,
+              "paddr": 536871232,
+              "filesz": 0,
+              "memsz": 720,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      },
+      {
+        "row": 23,
+        "selection": "cw32l012c8t6",
+        "kind": "elf",
+        "target": "receive",
+        "features": "cw32l012c8t6",
+        "manifest": "examples/uart-idle/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/23-cw32l012c8t6-receive/firmware.elf",
+          "bytes": 217656,
+          "sha256": "79ca9658e1f421a33c37d30bc7ad9e1050c0ffdf6818d57eb786b57cec24de86"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 4,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/23-cw32l012c8t6-receive/receipt.json",
+          "sha256": "a32da0b7ab51f26663cec453578923fcb9fd129d1a96f1f7603325a2541b3e18"
+        },
+        "warnings": [],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "text_bytes": 57120,
+          "vector_bytes": 192,
+          "handlers": [
+            {
+              "name": "UART1",
+              "irq_number": 27,
+              "vector_byte_offset": 172,
+              "raw_vector_word": 2609,
+              "raw_vector_hex": "310a0000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 58172,
+          "ram_static_end_offset": 468,
+          "flash_capacity": 65536,
+          "ram_capacity": 8192,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/23-cw32l012c8t6-receive/out-dir/65fc2e6d0518/memory.x",
+            "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4,
+              "payload_sha256": "60dca5c9044c968ea594456921a0f5348badeff945d3e9410af7948df67f5fb8"
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 57120,
+              "memsz": 57120,
+              "flags": 5,
+              "payload_sha256": "a94360fbe323ea2e4af4c2463822e82e9ca6294db32d59aef56b788c56c4cb00"
+            },
+            {
+              "vaddr": 57312,
+              "paddr": 57312,
+              "filesz": 696,
+              "memsz": 696,
+              "flags": 4,
+              "payload_sha256": "8b0e57d19f8e18f74a41d4d8a0c2a755191883ac54cd2b2881158070cf9db5b2"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 58008,
+              "filesz": 164,
+              "memsz": 164,
+              "flags": 6,
+              "payload_sha256": "8189f17a942902ac15d1afe9e899cd4e22b89cef012b82508adde37f28fa68b0"
+            },
+            {
+              "vaddr": 536871080,
+              "paddr": 536871080,
+              "filesz": 0,
+              "memsz": 300,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      },
+      {
+        "row": 24,
+        "selection": "cw32l083rct6",
+        "kind": "elf",
+        "target": "shared_vector",
+        "features": "cw32l083rct6",
+        "manifest": "examples/uart-dma/Cargo.toml",
+        "exit_code": 0,
+        "artifact": {
+          "external_artifact": "cw32-stage83-acceptance/main/24-cw32l083rct6-shared_vector/firmware.elf",
+          "bytes": 234156,
+          "sha256": "9c212bc38c7a02f8abd1256a7b198615d23cea1777ee00ecc5fa0235cb6810a1"
+        },
+        "cargo_target_fresh": false,
+        "actual_cargo_profile": {
+          "opt_level": "s",
+          "debuginfo": 0,
+          "debug_assertions": false,
+          "overflow_checks": false,
+          "test": false
+        },
+        "retained_out_dir_files": 4,
+        "receipt": {
+          "external_artifact": "cw32-stage83-acceptance/main/24-cw32l083rct6-shared_vector/receipt.json",
+          "sha256": "a54546a1056bbcb8b153cf9384c72ed468d5135cc1e37eb207547bd070547f59"
+        },
+        "warnings": [],
+        "elf": {
+          "format": "32-bit little-endian ARM",
+          "entry": 193,
+          "initial_sp": 536895488,
+          "text_bytes": 77316,
+          "vector_bytes": 192,
+          "handlers": [
+            {
+              "name": "DMACH1",
+              "irq_number": 9,
+              "vector_byte_offset": 100,
+              "raw_vector_word": 253,
+              "raw_vector_hex": "fd000000",
+              "matches_nondefault_bound_symbol": true
+            },
+            {
+              "name": "DMACH23",
+              "irq_number": 10,
+              "vector_byte_offset": 104,
+              "raw_vector_word": 265,
+              "raw_vector_hex": "09010000",
+              "matches_nondefault_bound_symbol": true
+            },
+            {
+              "name": "DMACH45",
+              "irq_number": 11,
+              "vector_byte_offset": 108,
+              "raw_vector_word": 277,
+              "raw_vector_hex": "15010000",
+              "matches_nondefault_bound_symbol": true
+            },
+            {
+              "name": "UART1_UART4",
+              "irq_number": 27,
+              "vector_byte_offset": 172,
+              "raw_vector_word": 297,
+              "raw_vector_hex": "29010000",
+              "matches_nondefault_bound_symbol": true
+            }
+          ],
+          "flash_load_end": 78896,
+          "ram_static_end_offset": 1344,
+          "flash_capacity": 262144,
+          "ram_capacity": 24576,
+          "memory_script": {
+            "external_artifact": "cw32-stage83-acceptance/main/24-cw32l083rct6-shared_vector/out-dir/3facfc6d0dde/memory.x",
+            "sha256": "382dd9cbb0b41ff04f8c42aa7bc9f91c43b6401e0b27bfe4ac6a581e0319062e"
+          },
+          "load_segments": [
+            {
+              "vaddr": 0,
+              "paddr": 0,
+              "filesz": 192,
+              "memsz": 192,
+              "flags": 4,
+              "payload_sha256": "04da74e1ecbe571ac6e66bb4cec4c0fd8ffc47b81e73d127f1df9ddcea9fa911"
+            },
+            {
+              "vaddr": 192,
+              "paddr": 192,
+              "filesz": 77316,
+              "memsz": 77316,
+              "flags": 5,
+              "payload_sha256": "5ce72aa2b7c411c4d9ccd53269c3de7562f690d8618b62932701cd3f16313c6c"
+            },
+            {
+              "vaddr": 77508,
+              "paddr": 77508,
+              "filesz": 1072,
+              "memsz": 1072,
+              "flags": 4,
+              "payload_sha256": "d29ceb33c5d9041ec8753dc3cbe95b107646c8608619acea0d5c78ae550cd13e"
+            },
+            {
+              "vaddr": 536870912,
+              "paddr": 78580,
+              "filesz": 316,
+              "memsz": 316,
+              "flags": 6,
+              "payload_sha256": "e73c532a2d2e0fdd33918e6eb6fe8fed0c99ee0d8e38f1fa07ab05645360a279"
+            },
+            {
+              "vaddr": 536871232,
+              "paddr": 536871232,
+              "filesz": 0,
+              "memsz": 1024,
+              "flags": 6,
+              "payload_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            }
+          ],
+          "limit": "Static load ranges exclude dynamic stack-depth proof; no hardware execution."
+        }
+      }
+    ],
+    "five_gate_exit_codes": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "gate_receipts": {
+      "external_artifact": "cw32-stage83-acceptance/main-gates/results.json",
+      "sha256": "ca2dbda803dfe7d53e6b95fe0e5dd540f5e9f6219adaa0cb2a01054e3f64a875"
+    },
+    "source_receipt": {
+      "external_artifact": "cw32-stage83-acceptance/main/source-after.json",
+      "sha256": "08915f7220ed54bd610de7771a7b897c25529b349899c3cf8d1cfb2e7f67b082"
+    },
+    "generated_receipt": {
+      "external_artifact": "cw32-stage83-acceptance/main/generated-after.json",
+      "sha256": "3d804f4d320c880cd09bf10addd23afe6ddf14b3e5dada78cb00846604fb0b98"
+    },
+    "toolchain_receipt": {
+      "external_artifact": "cw32-stage83-acceptance/main/toolchain-after.json",
+      "sha256": "f6c36932e842dc7c6ea78a704280f3a2fd5f459ede4991f8ab65952450e5b644"
+    },
+    "result_receipt": {
+      "external_artifact": "cw32-stage83-acceptance/main/results.json",
+      "sha256": "f606621052f6583cc86cbccb2b9e74003688d4792a8329fa42d28ce9b55f93e7"
+    },
+    "summary_receipt": {
+      "external_artifact": "cw32-stage83-acceptance/main/summary.json",
+      "sha256": "38f6bf28bbfc84a4c762145770f00c8f87a30346460f6a0319343c691fd5e1ad"
+    },
+    "review_method": "Read-only parsing and hashes of retained Cargo JSON, archives, ELF bytes and generated build output; no build or runtime test rerun.",
+    "generated_files_identical_to_stage82_baseline": true
+  },
+  "static_review_receipt": {
+    "external_artifact": "cw32-stage83-acceptance/independent-runtime/static-review.json",
+    "sha256": "1d979aa962838193f2f69c76f771d41e6df2dbcef374e7c4bed7e45f56fbe4b1"
+  },
+  "main_independent_artifact_review": {
+    "external_artifact": "cw32-stage83-acceptance/independent-runtime/main-artifact-review.json",
+    "sha256": "8c7008b5c49e60c0f3cabeb39c00c83a8e2b5d50b952d7ebda17c69d4d4e2679"
+  },
+  "main_findings": [
+    "All 24 actual rows match the exact frozen feature/manifest/target/bin tuples, including L012 library rt,defmt. Cargo JSON identifies one real selected artifact per row and reports build-finished success. All retained artifact/log/OUT_DIR hashes were independently recomputed.",
+    "All 13 retained HAL rlibs are actual archives containing ARM ELF object members, not PAC-only or check artifacts. Library release opt-level is the unchanged firmware workspace default 3; example release opt-level is s, matching their existing/new explicit profiles.",
+    "All 11 retained ELFs are 32-bit little-endian ARM with valid Thumb reset/entry, initial stack pointer inside the selected RAM endpoint, bounded PT_LOAD virtual/load ranges, actual emitted memory.x matching exact-chip FLASH/RAM and non-default required vector words matching linked symbols. Raw vector bytes were independently read.",
+    "The L083 buffered dual application has a real UART1_UART4 vector. The existing L083 staged-DMA regression also retains DMACH1, DMACH23 and DMACH45 non-default vectors. Existing L012 ordinary native-idle regression links on the same inspected runtime.",
+    "F002 buffered receive fits actual 16 KiB FLASH and 2 KiB RAM: highest flash load end is 15276 bytes and static RAM segment end is 404 bytes from RAM origin. This is static allocation/load-range evidence, not dynamic stack-depth or hardware validation.",
+    "Main before/after source snapshots are equal (1380 packaged source paths), all 905 generated hardware paths are equal before/after and identical to retained Stage82 baseline, and actual toolchain before/after identities agree. Reviewed runtime and ten example hashes match the build snapshot.",
+    "All five separately named final main source/data gates exited zero with retained matching log hashes. Only three existing unused RCC constants are warned for each L010/L011 library and selected example row; no new UART warning appears."
+  ]
+}
