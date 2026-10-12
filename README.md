@@ -454,6 +454,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   CW32F020C6U7/K6U7/F6U7 add [native two-channel safe owned SRAM copies and
   staged byte UART TX DMA](docs/f020-dma-owned.md). Generic `cw32f020` retains
   `MissingMemoryMetadata` rejection; UART DMA RX/combined and SPI DMA remain excluded.
+- L012 additionally: [native four-channel owned SRAM copies and staged UART TX](docs/l012-dma-owned.md) on C8T6/C8U6; generic safe admission remains rejected.
 - L031/L052/R031/W031 additionally: [native four-channel safe owned SRAM
   copies and staged byte UART TX DMA](docs/four-channel-dma-owned.md) on the
   eleven exact selections listed below. Their four generic aliases compile
@@ -601,7 +602,8 @@ Pull/speed capabilities vary by family. Pin routing is generated from reviewed
 metadata, not inferred from similarly named peripherals.
 
 On x030/L083, exactly CW32F020C6U7/K6U7/F6U7 and the eleven exact
-L031/L052/R031/W031 selections below, `dma::CopyChannel::new`
+L031/L052/R031/W031 selections below, plus CW32L012C8T6/C8U6,
+`dma::CopyChannel::new`
 consumes a physical DMA singleton admitted by normal HAL initialization.
 Its safe `copy` method moves the capability and two
 exclusive static SRAM buffers into `OwnedCopy`. Only clean completion returns
@@ -614,7 +616,7 @@ access remains a technically unsafe ownership escape, as in pinned chiptool.
 The existing unsafe `OwnedCopy::new` and borrowed `Transfer` API remain available
 for low-level integration. Raw acquisition/downgrade cannot regain safe-copy
 admission. On F030/A030/L083, exactly CW32F020C6U7/K6U7/F6U7 and the
-eleven exact L031/L052/R031/W031 selections below,
+eleven exact L031/L052/R031/W031 selections below and CW32L012C8T6/C8U6,
 `UartTx::new_with_dma` consumes static staging, UART and channel owners, then
 accepts ordinary safe slice writes. It copies each chunk
 into private SRAM; cancellation retains the current chunk for a later write or
@@ -696,7 +698,8 @@ models and compile-contract harnesses have been removed. No firmware is flashed
 or executed. See `docs/hal-production-layout.md` for the upstream layout mapping
 and the historical verification boundary.
 Unsupported scope includes additional ADC/timer modes, peripheral DMA beyond
-staged x030/L083 UART TX/RX and SPI master plus exact-part F020 UART TX,
+staged x030/L083 UART TX/RX and SPI master plus qualified exact-part
+F020/L031/L052/R031/W031/L012 UART TX,
 external/PLL modes beyond each explicitly qualified family/source and low-power policy. Check the coverage ledger before selecting a device/API.
 
 Exactly CW32F030C8T7, CW32F030K8T7, CW32F030K8U7 and CW32A030C8T7
@@ -801,3 +804,32 @@ Stage20 adds qualified UART RTS/CTS constructors and buffered timer capture/enco
 Stage21 adds source-qualified Alarm A programming, A/B event handling and scoped async waits on the direct-access RTC variants. See [verification and limits](docs/hal-stage21-verification.md).
 
 Native CW32L010/L011/L012 LSE/calendar qualification and functional handover limits: [qualified-l010-lse.md](docs/qualified-l010-lse.md). The new two-family [own-source contract](docs/qualified-l011-l012-lse.md) retains bounded functional exclusions. Normal crystal, bypass and preserved HSI calendar examples are in [examples/l010-lse-clock](examples/l010-lse-clock).
+
+## Native L012 owned DMA
+
+Exactly CW32L012C8T6/C8U6 add owned static-SRAM copies and staged byte UART TX.
+Each has 64 KiB Flash and 8 KiB SRAM; generic `cw32l012` retains safe admission
+and staging rejection for missing memory metadata. Its native descriptor has
+separate programmed CNT and current CCNT, and RESTART/SRCLOAD/DSTLOAD stay
+zero. CH1/2 share DMACH12 IRQ9 and CH3/4 share DMACH34 IRQ10; IRQ11 is CORDIC.
+UART1/2/3 use PA9/PA7/PA8 AF1 respectively on both packages. Only clean own
+TC without TE plus STATUS5 permits request closure and staging reuse; software
+copy additionally requires SOFTSRC0. Errors permanently retain resources,
+forget leaks and Drop may wait indefinitely. Flush separately waits for TXBUSY0.
+
+Native PAC SIZE/STATUS/TRANS/TYPE fields become typed enums; CCNT register
+handles become read-only and CSR TC/TE setters are removed. STATUS stays RW.
+Existing callers of these PAC fields must use the corrected types/access.
+No DMA RX/combined UART, SPI, other hardware request or early-abort API is added.
+Stage86 main passed four standalone ARM libraries and eleven ELF links,
+all fifteen commands exiting zero with no warnings. The 1,413 authored files,
+910 generated files, toolchain and Cargo configuration stayed unchanged.
+Generation and the DMA projection check passed in one successful segment;
+the own-source checker, provenance, renderer, consistency and layout checks
+passed in a separate five-command tail. Two earlier preparation failures are
+preserved: current provenance misread retained historical source identities,
+and a CSR prefix also matched CSRCADDR. The precise corrections preserve full
+source identity and all five CSR access assertions; no original or hardware
+fact was changed. At main acceptance clean had not run; final-package completion
+requires a separate final-source two-library/four-ELF clean receipt.
+See [the own-L012 contract](docs/l012-dma-owned.md) and [ordinary firmware](examples/l012-dma/README.md).

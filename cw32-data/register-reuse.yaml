@@ -306,11 +306,20 @@ groups:
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
     fields and access. No approximate or semantic merging.
 - canonical: dma_cw32l012_v1.yaml
-  canonical_ir_sha256: e4039fc4a523c25a070848611e2ad1518d680d75add5d69ff6615415e0b20193
+  canonical_ir_sha256: 6e7c35beb6f39d80978403693ee1ebdffa6572664cdd754db7630d01d1a08454
   source_versions:
   - dma_cw32l012_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
     fields and access. No approximate or semantic merging.
+  canonical_ir_history:
+  - canonical: dma_cw32l012_v1.yaml
+    before_sha256: e4039fc4a523c25a070848611e2ad1518d680d75add5d69ff6615415e0b20193
+    after_sha256: 6e7c35beb6f39d80978403693ee1ebdffa6572664cdd754db7630d01d1a08454
+    evidence: docs/l012-dma-owned-evidence.json
+    reason: 'Own CW32L012 manual CN V1.4 sections 8.8.3/8.8.4/8.8.8, PDF pages 145-149/printed pages 119-123:
+      CCNT1..4 Read corrections; original SVD/header remain RW. All prior history, source reuse membership,
+      register offsets and field spans are preserved.'
+
 - canonical: dma_cw32l031_v1.yaml
   canonical_ir_sha256: 9e06241626d430459a4f9a43cb9971dd1bca6041952d8f2b4e63b120c0e5653e
   source_versions:
@@ -328,11 +337,41 @@ groups:
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
     fields and access. No approximate or semantic merging.
 - canonical: dmachannel_cw32l012_v1.yaml
-  canonical_ir_sha256: f867f1b3f66921075be362a2390099b273dcb0145ec4232ca98e317a167061cd
+  canonical_ir_sha256: d5ed3603e8440a64d1ecb839cfc7dd9b8ecf554390b0579439936e52d5227334
   source_versions:
   - dmachannel_cw32l012_v1.yaml
   basis: Exact equality of the complete normalized IR including names, descriptions, offsets, widths,
     fields and access. No approximate or semantic merging.
+  canonical_ir_history:
+  - canonical: dmachannel_cw32l012_v1.yaml
+    before_sha256: f867f1b3f66921075be362a2390099b273dcb0145ec4232ca98e317a167061cd
+    after_sha256: d5ed3603e8440a64d1ecb839cfc7dd9b8ecf554390b0579439936e52d5227334
+    evidence: docs/l012-dma-owned-evidence.json
+    reason: 'Own CW32L012 manual CN V1.4 sections 8.8.3/8.8.4/8.8.8, PDF pages 145-149/printed pages 119-123:
+      four native enum definitions and field associations, and CCNT Read correction. All prior history,
+      source reuse membership, register offsets and field spans are preserved.'
+    added_enums:
+    - enum/TransferMode
+    - enum/Width
+    - enum/Status
+    - enum/Trigger
+    field_associations:
+    - - fieldset/CSR
+      - TRANS
+      - TransferMode
+    - - fieldset/CSR
+      - SIZE
+      - Width
+    - - fieldset/CSR
+      - STATUS
+      - Status
+    - - fieldset/TRIG
+      - TYPE
+      - Trigger
+  post_import_curation: Reapply the four own-source TransferMode/Width/Status/Trigger enum definitions and
+    CSR.TRANS/CSR.SIZE/CSR.STATUS/TRIG.TYPE associations from docs/l012-dma-owned-evidence.json only after
+    reviewing raw SVD import candidates. Preserve native L012 geometry and the reviewed CCNT access correction.
+
 - canonical: dmachannel_v1.yaml
   canonical_ir_sha256: 4211c1dfc859294539ebb3777eecb1cb1703cb7c81edbbaded9fbd47810e1114
   source_versions:

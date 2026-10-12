@@ -262,3 +262,32 @@ At main acceptance clean had not run; final-package completion requires a
 separate final-source 2-library/4-ELF clean receipt. The cumulative HAL recipe
 is unchanged. No hardware, RF, throughput, error-drain or bounded-cancellation
 result is claimed.
+
+## Native L012 owned DMA
+
+Exactly CW32L012C8T6/C8U6 add owned static-SRAM copies and staged byte UART TX.
+Each has 64 KiB Flash and 8 KiB SRAM; generic `cw32l012` retains safe admission
+and staging rejection for missing memory metadata. Its native descriptor has
+separate programmed CNT and current CCNT, and RESTART/SRCLOAD/DSTLOAD stay
+zero. CH1/2 share DMACH12 IRQ9 and CH3/4 share DMACH34 IRQ10; IRQ11 is CORDIC.
+UART1/2/3 use PA9/PA7/PA8 AF1 respectively on both packages. Only clean own
+TC without TE plus STATUS5 permits request closure and staging reuse; software
+copy additionally requires SOFTSRC0. Errors permanently retain resources,
+forget leaks and Drop may wait indefinitely. Flush separately waits for TXBUSY0.
+
+Native PAC SIZE/STATUS/TRANS/TYPE fields become typed enums; CCNT register
+handles become read-only and CSR TC/TE setters are removed. STATUS stays RW.
+Existing callers of these PAC fields must use the corrected types/access.
+No DMA RX/combined UART, SPI, other hardware request or early-abort API is added.
+Stage86 main passed four standalone ARM libraries and eleven ELF links,
+all fifteen commands exiting zero with no warnings. The 1,413 authored files,
+910 generated files, toolchain and Cargo configuration stayed unchanged.
+Generation and the DMA projection check passed in one successful segment;
+the own-source checker, provenance, renderer, consistency and layout checks
+passed in a separate five-command tail. Two earlier preparation failures are
+preserved: current provenance misread retained historical source identities,
+and a CSR prefix also matched CSRCADDR. The precise corrections preserve full
+source identity and all five CSR access assertions; no original or hardware
+fact was changed. At main acceptance clean had not run; final-package completion
+requires a separate final-source two-library/four-ELF clean receipt.
+See [the own-L012 contract](l012-dma-owned.md) and [ordinary firmware](../examples/l012-dma/README.md).

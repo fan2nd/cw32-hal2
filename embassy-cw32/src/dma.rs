@@ -1,24 +1,28 @@
 //! One-shot, interrupt-driven DMA for CW32F030/CW32A030, CW32L083, CW32F020,
-//! CW32L031, CW32L052, CW32R031 and CW32W031.
+//! CW32L031, CW32L052, CW32R031, CW32W031 and CW32L012.
 //!
 //! The implementation follows CW32x030 User Manual EN V1.0 §§8.4–8.8
 //! (also checked against CN V2.5), CW32L083 CN V2.0 §§8.4–8.8,
 //! CW32F020 CN V1.4 §§8.4–8.8 (native two-channel controller), and each native
 //! four-channel family's own manual: L031 CN V1.6 pp119–134, L052 CN V1.5
-//! pp124–139, R031 CN V1.3 pp121–136 and W031 CN V1.4 pp120–135.
+//! pp124–139, R031 CN V1.3 pp121–136 and W031 CN V1.4 pp120–135. Native L012
+//! follows CN V1.4 §§8.1–8.8 / EN V1.0 §§8.1–8.8 and the UART TX example in
+//! CN §21.7.1.5 (printed 474) / EN §21.7.1.5 (printed 520).
 //! L083 also exposes safe staged UART/SPI requests; unsafe borrowed hardware
-//! constructors remain x030-only. F020/L031/L052/R031/W031 add safe owned copy
+//! constructors remain x030-only. F020/L031/L052/R031/W031/L012 add safe owned copy
 //! and staged UART TX; unsafe software-copy APIs retain their existing contracts.
-//! The four-channel families share DMACH23 between CH2/3 and use independent
-//! DMACH4 for CH4. Only the selected channel's terminal flags are cleared.
+//! L031/L052/R031/W031 share DMACH23 between CH2/3 and use independent DMACH4
+//! for CH4. L012 pairs CH1/2 on DMACH12 and CH3/4 on DMACH34; IRQ11 is CORDIC.
+//! Only the selected channel's terminal flags are cleared.
 //! It uses BLOCK transfers with REPEAT=1,
 //! equal source/destination word widths and the channel's fixed priority.
-//! There is no circular mode, programmable priority, packing or burst API.
+//! L012 explicitly disables RESTART, SRCLOAD and DSTLOAD for each one-shot
+//! launch. There is no circular mode, programmable priority, packing or burst API.
 //!
 //! # Cancellation limitation
 //!
-//! These manuals do not document an acknowledgment that clearing CSR.EN has drained
-//! an in-flight bus access. This driver therefore does **not** treat EN readback
+//! These manuals, including L012, do not document an acknowledgment that clearing
+//! CSR.EN has drained an in-flight bus access. This driver therefore does **not** treat EN readback
 //! as a cancellation guarantee. Dropping a transfer waits for its completion or
 //! transfer-error indication before disabling the channel and releasing its
 //! buffer borrow. A hardware-request transfer may block forever in Drop if its
@@ -109,7 +113,7 @@ pub trait ChannelInstance: sealed::Channel + PeripheralType + 'static {
 ///
 /// Qualified x030/L083 requests apply to their five channels; qualified F020
 /// UART TX requests apply to its two physical channels. Qualified
-/// L031/L052/R031/W031 UART TX requests apply to their four physical channels.
+/// L031/L052/R031/W031/L012 UART TX requests apply to their four physical channels.
 /// This trait is sealed so downstream code cannot introduce an unverified
 /// request or channel route.
 #[allow(private_bounds)]
@@ -223,6 +227,8 @@ impl<'d> Channel<'d> {
     ///
     /// Shared vectors require all used channel handlers in `bind_interrupts!`:
     /// `DMACH23 => dma::InterruptHandler<DMA_CH2>, dma::InterruptHandler<DMA_CH3>;`
+    /// On L012, bind CH1/2 together on `DMACH12` and CH3/4 on `DMACH34` when
+    /// both siblings are used.
     /// This is the raw integration handle: acquiring it permanently revokes
     /// safe-copy admission for this channel. Use [`CopyChannel::new`] for safe
     /// owned SRAM copies. All transfer constructors on this raw path are unsafe.
@@ -321,6 +327,8 @@ impl CopyChannel {
     /// This uses admission recorded by normal HAL initialization, never a fresh
     /// EN/STATUS snapshot. Rejection returns the singleton without touching DMA
     /// registers, flags, its clock/reset, or the interrupt enable state.
+    /// Bind every used sibling on a shared vector; L012 pairs CH1/2 on
+    /// `DMACH12` and CH3/4 on `DMACH34`.
     pub fn new<T: ChannelInstance>(
         channel: Peri<'static, T>,
         _irq: impl Binding<T::Interrupt, InterruptHandler<T>> + 'static,
@@ -446,6 +454,8 @@ impl Channel<'static> {
     // static source, endpoint, clocks and channel before this call, including
     // on panic/forget, until a clean completion has been retired. A live owner
     // leaves a cancelled operation running; no task-local Transfer is created.
+    // L012's SRAM-byte-to-TDR profile uses SIZE for memory width. The pointer
+    // carries the established endpoint address, not a byte-MMIO access license.
     #[cfg(any(uart_dma_tx, spi_dma))]
     pub(crate) unsafe fn start_write(
         &mut self,
@@ -683,9 +693,18 @@ impl<'a> Transfer<'a> {
         self.outcome().is_none()
     }
 
-    /// Number of words not yet transferred, sampled from CNT.
+    /// Number of words not yet transferred, sampled from native CCNT on L012
+    /// and CNT on the other supported controllers. With REPEAT=1 this is a
+    /// sampled word count, not proof of completion or drained bus accesses.
     pub fn get_remaining_transfers(&self) -> u16 {
-        channel_regs(self.index).cnt().read().cnt()
+        #[cfg(dma_cw32l012_v1)]
+        {
+            channel_regs(self.index).ccnt().read().ccnt()
+        }
+        #[cfg(not(dma_cw32l012_v1))]
+        {
+            channel_regs(self.index).cnt().read().cnt()
+        }
     }
 
     /// Drain to completion/error, including with CPU interrupts masked.
@@ -1079,11 +1098,17 @@ pub(crate) fn init(attempts: u32) {
             let default = pac::DMA.isr().read().0 == 0
                 && (0..crate::DMA_CHANNEL_COUNT as u8).all(|index| {
                     let regs = channel_regs(index);
-                    regs.csr().read().0 == 0
+                    let descriptor_default = regs.csr().read().0 == 0
                         && regs.cnt().read().0 == 0
                         && regs.srcaddr().read().srcaddr() == 0
                         && regs.dstaddr().read().dstaddr() == 0
-                        && regs.trig().read().0 == 0
+                        && regs.trig().read().0 == 0;
+                    #[cfg(dma_cw32l012_v1)]
+                    let descriptor_default = descriptor_default
+                        && regs.ccnt().read().0 == 0
+                        && regs.csrcaddr().read().csrcaddr() == 0
+                        && regs.cdstaddr().read().cdstaddr() == 0;
+                    descriptor_default
                 });
             if default {
                 Admission::Available
@@ -1106,9 +1131,9 @@ fn channel_regs(index: u8) -> pac::dmachannel::Dmachannel {
     match index {
         0 => pac::DMACHANNEL1,
         1 => pac::DMACHANNEL2,
-        #[cfg(any(dma_v1, dma_cw32l031_v1))]
+        #[cfg(any(dma_v1, dma_cw32l031_v1, dma_cw32l012_v1))]
         2 => pac::DMACHANNEL3,
-        #[cfg(any(dma_v1, dma_cw32l031_v1))]
+        #[cfg(any(dma_v1, dma_cw32l031_v1, dma_cw32l012_v1))]
         3 => pac::DMACHANNEL4,
         #[cfg(dma_v1)]
         4 => pac::DMACHANNEL5,
@@ -1129,12 +1154,12 @@ fn clear_flags(index: u8, complete: bool, error: bool) {
             value.set_tc2(!complete);
             value.set_te2(!error);
         }
-        #[cfg(any(dma_v1, dma_cw32l031_v1))]
+        #[cfg(any(dma_v1, dma_cw32l031_v1, dma_cw32l012_v1))]
         2 => {
             value.set_tc3(!complete);
             value.set_te3(!error);
         }
-        #[cfg(any(dma_v1, dma_cw32l031_v1))]
+        #[cfg(any(dma_v1, dma_cw32l031_v1, dma_cw32l012_v1))]
         3 => {
             value.set_tc4(!complete);
             value.set_te4(!error);
@@ -1188,6 +1213,13 @@ fn start_transfer(index: u8, plan: Plan) -> Result<(), ConfigError> {
             v.set_size(plan.size);
             v.set_srcinc(plan.source_inc);
             v.set_dstinc(plan.destination_inc);
+            #[cfg(dma_cw32l012_v1)]
+            {
+                // Native one-shot profile: no automatic restart or address reload.
+                v.set_restart(false);
+                v.set_srcload(false);
+                v.set_dstload(false);
+            }
             v.set_en(true);
         });
         if plan.request.is_none() {
@@ -1218,9 +1250,9 @@ fn service_interrupt(index: u8) {
         let (complete, error) = match index {
             0 => (pending.tc1(), pending.te1()),
             1 => (pending.tc2(), pending.te2()),
-            #[cfg(any(dma_v1, dma_cw32l031_v1))]
+            #[cfg(any(dma_v1, dma_cw32l031_v1, dma_cw32l012_v1))]
             2 => (pending.tc3(), pending.te3()),
-            #[cfg(any(dma_v1, dma_cw32l031_v1))]
+            #[cfg(any(dma_v1, dma_cw32l031_v1, dma_cw32l012_v1))]
             3 => (pending.tc4(), pending.te4()),
             #[cfg(dma_v1)]
             4 => (pending.tc5(), pending.te5()),

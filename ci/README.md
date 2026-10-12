@@ -498,3 +498,35 @@ required clean scope was one F030C8T7 release library and one HCLK ELF. Keep
 that historical 5/3 main and 1/1 clean scope distinct from Stage77's accepted
 7/5 main and separately required 2/2 clean. Missing private historical archives/receipts cannot be
 recreated by the public source commit.
+
+## L012 native DMA finite verification
+
+Stage86 uses an external fixed matrix: main four standalone ARM libraries and
+11 ELF links; final-source clean two standalone libraries and four ELF links.
+Main passed all fifteen commands with no warnings, preserving 1,413 source
+and 910 generated files plus toolchain/configuration identity. At main acceptance
+clean had not run; final completion requires its separate two-library/four-ELF
+receipt. Each phase has seven finite commands: ordinary
+`./d gen-all`, DMA projection check, existing own-DMA source checker,
+43-hardware-original provenance, capability rendering, capability consistency
+and module layout. No cumulative recipe is expanded or executed.
+
+Actual main generated scope is 907 to 910 files, with exactly twelve added/changed
+native L012 products and all 54 chip JSONs unchanged. Main reuses the single
+shared ARM target, preserving each real artifact and OUT_DIR before reuse;
+clean extracts the final source package and uses separate fresh generation and
+ARM targets. Compiler/linker and source evidence do not establish hardware
+transfer, error drain, throughput or finite liveness. See
+[the native contract](../docs/l012-dma-owned.md).
+
+Stage86 main passed four standalone ARM libraries and eleven ELF links,
+all fifteen commands exiting zero with no warnings. The 1,413 authored files,
+910 generated files, toolchain and Cargo configuration stayed unchanged.
+Generation and the DMA projection check passed in one successful segment;
+the own-source checker, provenance, renderer, consistency and layout checks
+passed in a separate five-command tail. Two earlier preparation failures are
+preserved: current provenance misread retained historical source identities,
+and a CSR prefix also matched CSRCADDR. The precise corrections preserve full
+source identity and all five CSR access assertions; no original or hardware
+fact was changed. At main acceptance clean had not run; final-package completion
+requires a separate final-source two-library/four-ELF clean receipt.

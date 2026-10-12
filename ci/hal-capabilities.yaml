@@ -164,7 +164,7 @@ functions:
         qualification; per-instance hardware presence is not universally asserted.
     - id: safe_peripheral_dma
       status: experimental_partial
-      scope: Safe F030/A030/L083 staged TX, finite-chunk RX and combined split TX/RX DMA; exact-part F020 and eleven exact L031/L052/R031/W031 selections add staged byte TX only.
+      scope: Safe F030/A030/L083 staged TX, finite-chunk RX and combined split TX/RX DMA; exact-part F020, eleven exact L031/L052/R031/W031 selections and exact L012 C8T6/C8U6 add staged byte TX only.
       limitations:
       - F030/A030/L083 with qualified SRAM metadata and clean startup admission; static UART/channel/staging owners are consumed.
       - CPU copy per byte and possible chunk gaps; write completes memory-to-TDR transfer and flush separately waits for the wire.
@@ -181,7 +181,21 @@ functions:
       - CW32L052
       - CW32R031
       - CW32W031
+      - CW32L012
       overrides:
+      - families: [CW32L012]
+        scope: Safe staged byte UART TX only on exact L012 C8T6/C8U6.
+        limitations:
+        - Only CW32L012C8T6/C8U6 have qualified 64 KiB Flash and 8 KiB SRAM; generic cw32l012 rejects safe copy/staging without memory metadata.
+        - Native CH1/2 share DMACH12 IRQ9 and CH3/4 share DMACH34 IRQ10; IRQ11 remains CORDIC. No channel five or sibling flag clearing.
+        - Startup observes all eight channel registers; RESTART/SRCLOAD/DSTLOAD remain zero and remaining count reads CCNT.
+        - Normal clean-runtime admission, permanent raw revocation, error quarantine, forget leaks and potentially unbounded Drop remain.
+        - Native PAC typed enums, five read-only CCNT handles and ten removed TC/TE setters change source compatibility; STATUS remains RW.
+        - Stage86 main passed 4 standalone ARM libraries and 11 ELF links, all 15 exiting zero without warnings; 1413 source files and 910 generated files stayed unchanged.
+        - Generation and five finite gates plus one renderer passed in segments; two source-record/checker preparation failures remain preserved. No hardware result is claimed.
+        - At main acceptance clean had not run; final-package completion requires its separate final-source 2-library/4-ELF clean receipt.
+        - UART1/2/3 TX use PA9/PA7/PA8 AF1 and request selectors 1/3/5; private staging isolates caller slices. Flush separately waits for TXBUSY0.
+        - No L012 DMA RX/combined UART, SPI, other requests, borrowed hardware constructor, buffered-plus-DMA owner, early abort or finite-liveness guarantee.
       - families: [CW32F020]
         scope: Safe staged byte UART TX with ordinary caller slices on exactly CW32F020C6U7/K6U7/F6U7; no RX or combined DMA constructor.
         limitations:
@@ -219,6 +233,7 @@ functions:
       - path: docs/uart-dma-rx.md
       - path: docs/f020-dma-owned.md
       - path: docs/four-channel-dma-owned.md
+      - path: docs/l012-dma-owned.md
       facts:
       - dma_channels
   spi:
@@ -1163,7 +1178,7 @@ functions:
       status: experimental_partial
       scope: Unsafe borrowed-buffer software copy, blocking or IRQ-driven future; x030 also supports hardware requests.
       limitations:
-      - F030/A030/L083, F020 and L031/L052/R031/W031 expose software copy; hardware-request constructors remain x030-only. Caller must retain forgotten borrows and enforce hardware exclusivity.
+      - F030/A030/L083, F020, L031/L052/R031/W031 and L012 expose software copy; hardware-request constructors remain x030-only. Caller must retain forgotten borrows and enforce hardware exclusivity.
       - Drop waits for completion/error and can block forever; error or EN-clear does not prove bus drain or permit buffer reuse. No safe early abort.
       implemented_families: &id002
       - CW32A030
@@ -1174,11 +1189,12 @@ functions:
       - CW32L052
       - CW32R031
       - CW32W031
+      - CW32L012
     - id: unsafe_owned_copy
       status: experimental_partial
       scope: Owned static-buffer software copy with unsafe entry.
       limitations:
-      - F030/A030/L083, F020 and L031/L052/R031/W031; verified SRAM metadata required. Clean completion returns buffers; errors reserve resources; forget leaks. Ownership
+      - F030/A030/L083, F020, L031/L052/R031/W031 and L012; verified SRAM metadata required. Clean completion returns buffers; errors reserve resources; forget leaks. Ownership
         does not make the constructor safe or permit abort.
       implemented_families: *id002
     - id: safe_owned_copy
@@ -1197,7 +1213,19 @@ functions:
       - CW32L052
       - CW32R031
       - CW32W031
+      - CW32L012
       overrides:
+      - families: [CW32L012]
+        scope: Safe init-admitted native L012 owned static-SRAM copies.
+        limitations:
+        - Only CW32L012C8T6/C8U6 have qualified 64 KiB Flash and 8 KiB SRAM; generic cw32l012 rejects safe copy/staging without memory metadata.
+        - Native CH1/2 share DMACH12 IRQ9 and CH3/4 share DMACH34 IRQ10; IRQ11 remains CORDIC. No channel five or sibling flag clearing.
+        - Startup observes all eight channel registers; RESTART/SRCLOAD/DSTLOAD remain zero and remaining count reads CCNT.
+        - Normal clean-runtime admission, permanent raw revocation, error quarantine, forget leaks and potentially unbounded Drop remain.
+        - Native PAC typed enums, five read-only CCNT handles and ten removed TC/TE setters change source compatibility; STATUS remains RW.
+        - Stage86 main passed 4 standalone ARM libraries and 11 ELF links, all 15 exiting zero without warnings; 1413 source files and 910 generated files stayed unchanged.
+        - Generation and five finite gates plus one renderer passed in segments; two source-record/checker preparation failures remain preserved. No hardware result is claimed.
+        - At main acceptance clean had not run; final-package completion requires its separate final-source 2-library/4-ELF clean receipt.
       - families: [CW32F020]
         scope: Safe init-admitted native two-channel CopyChannel SRAM copies on exactly CW32F020C6U7/K6U7/F6U7.
         limitations:
@@ -1225,11 +1253,12 @@ functions:
       - path: docs/dma-safe-owned-copy.md
       - path: docs/f020-dma-owned.md
       - path: docs/four-channel-dma-owned.md
+      - path: docs/l012-dma-owned.md
     - id: hardware_request_transfer
       status: unimplemented
       scope: Unsafe hardware-request transfer API; no peripheral lifecycle wrapper.
       limitations:
-      - Only x030 exposes unsafe borrowed hardware constructors. L083 UART/SPI RX/TX and F020/L031/L052/R031/W031 UART TX routes serve only their separately declared safe staged integration.
+      - Only x030 exposes unsafe borrowed hardware constructors. L083 UART/SPI RX/TX and F020/L031/L052/R031/W031/L012 UART TX routes serve only their separately declared safe staged integration.
       overrides:
       - families: [CW32A030, CW32F030]
         status: experimental_partial
@@ -1238,7 +1267,7 @@ functions:
         - Caller owns peripheral lifecycle, outstanding accesses and forgotten borrows; no safe cancellation.
     - id: safe_peripheral_dma
       status: experimental_partial
-      scope: Safe admitted F030/A030/L083 UART TX/RX and paired SPI master byte requests; exact-part F020 and eleven exact L031/L052/R031/W031 selections add UART TX only, with private static SRAM staging.
+      scope: Safe admitted F030/A030/L083 UART TX/RX and paired SPI master byte requests; exact-part F020, eleven exact L031/L052/R031/W031 selections and exact L012 C8T6/C8U6 add UART TX only, with private static SRAM staging.
       limitations:
       - Limited to F030/A030/L083 UART TX/RX and SPI master with qualified SRAM and normal reset/clean-runtime entry; L083 ADC/LCD/timer requests remain outside this HAL scope.
       - Ordinary caller slices use private chunks; each split half retains its own lease, and clean completion permits reuse or RX tail delivery.
@@ -1253,7 +1282,21 @@ functions:
       - CW32L052
       - CW32R031
       - CW32W031
+      - CW32L012
       overrides:
+      - families: [CW32L012]
+        scope: Safe staged byte UART TX only on exact L012 C8T6/C8U6.
+        limitations:
+        - Only CW32L012C8T6/C8U6 have qualified 64 KiB Flash and 8 KiB SRAM; generic cw32l012 rejects safe copy/staging without memory metadata.
+        - Native CH1/2 share DMACH12 IRQ9 and CH3/4 share DMACH34 IRQ10; IRQ11 remains CORDIC. No channel five or sibling flag clearing.
+        - Startup observes all eight channel registers; RESTART/SRCLOAD/DSTLOAD remain zero and remaining count reads CCNT.
+        - Normal clean-runtime admission, permanent raw revocation, error quarantine, forget leaks and potentially unbounded Drop remain.
+        - Native PAC typed enums, five read-only CCNT handles and ten removed TC/TE setters change source compatibility; STATUS remains RW.
+        - Stage86 main passed 4 standalone ARM libraries and 11 ELF links, all 15 exiting zero without warnings; 1413 source files and 910 generated files stayed unchanged.
+        - Generation and five finite gates plus one renderer passed in segments; two source-record/checker preparation failures remain preserved. No hardware result is claimed.
+        - At main acceptance clean had not run; final-package completion requires its separate final-source 2-library/4-ELF clean receipt.
+        - UART1/2/3 TX use PA9/PA7/PA8 AF1 and request selectors 1/3/5; private staging isolates caller slices. Flush separately waits for TXBUSY0.
+        - No L012 DMA RX/combined UART, SPI, other requests, borrowed hardware constructor, buffered-plus-DMA owner, early abort or finite-liveness guarantee.
       - families: [CW32F020]
         scope: Safe staged byte UART TX only on exactly CW32F020C6U7/K6U7/F6U7, through native CH1/CH2.
         limitations:
@@ -1286,6 +1329,7 @@ functions:
       - path: docs/spi-dma.md
       - path: docs/f020-dma-owned.md
       - path: docs/four-channel-dma-owned.md
+      - path: docs/l012-dma-owned.md
     - id: circular_scatter
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

@@ -22,7 +22,7 @@ pub mod cordic;
 pub mod crc;
 #[cfg(dac_cw32l012_v1)]
 pub mod dac;
-#[cfg(any(dma_v1, dma_cw32f020_v1, dma_cw32l031_v1))]
+#[cfg(any(dma_v1, dma_cw32f020_v1, dma_cw32l031_v1, dma_cw32l012_v1))]
 pub mod dma;
 #[cfg(eau_cw32l012_v1)]
 pub mod eau;
@@ -629,7 +629,7 @@ pub fn try_init(config: Config) -> Result<Peripherals, rcc::Error> {
     }
     #[cfg(feature = "_time-driver")]
     time_driver::init(timer_divisor)?;
-    #[cfg(any(dma_v1, dma_cw32f020_v1, dma_cw32l031_v1))]
+    #[cfg(any(dma_v1, dma_cw32f020_v1, dma_cw32l031_v1, dma_cw32l012_v1))]
     dma::init(config.rcc.timeout);
     Ok(peripherals)
 }

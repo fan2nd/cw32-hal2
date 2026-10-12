@@ -5,7 +5,7 @@
 //! `UartTx::new_with_dma`, `UartRx::new_with_dma` and `Uart::new_with_dma`
 //! own static staging for ordinary borrowed writes and reads. RX DMA receives
 //! finite explicitly armed chunks; reception/copy/rearm gaps can lose frames.
-//! F020/L031/L052/R031/W031 add only staged `UartTx::new_with_dma`;
+//! F020/L031/L052/R031/W031/L012 add only staged `UartTx::new_with_dma`;
 //! RX/combined DMA is excluded on those families.
 //! Ordinary non-DMA `Uart`/`UartRx` have no software RX buffer: service each
 //! byte promptly. `BufferedUart`/`BufferedUartRx` continuously collect through
@@ -32,6 +32,8 @@
 //! Four-channel staged TX follows each own byte SRAM-to-TDR example: L031
 //! CN V1.6 p344, L052 CN V1.5 p381, R031 CN V1.3 p347 and W031 CN V1.4 p347;
 //! see `docs/four-channel-dma-owned.md` for their own UART1/2/3 qualification.
+//! L012 uses its own CN V1.4 p474 byte SRAM-to-TDR example and native paired
+//! DMACH12/DMACH34 vectors; see `docs/l012-dma-owned.md`.
 //!
 //! L083 vectors are shared in pairs. Async construction requires the matching
 //! `SharedInterruptHandler<interrupt::typelevel::UART1_UART4>` (or 2/5, 3/6).
@@ -1178,7 +1180,7 @@ impl TxDma {
 #[cfg(uart_dma_tx)]
 impl UartTx<'static, Async> {
     /// Create a safe staged DMA transmitter on the qualified
-    /// F030/A030/L083/F020/L031/L052/R031/W031 families without CTS.
+    /// F030/A030/L083/F020/L031/L052/R031/W031/L012 families without CTS.
     ///
     /// Consumes static UART, TX pin, compatible DMA channel and SRAM staging.
     /// Short-lived peripheral reborrows are deliberately excluded. Like other

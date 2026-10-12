@@ -413,3 +413,551 @@ for part in four['exact_parts'] + four['generic_aliases']:
         assert af_row.split()[route['af']] == route['peripheral'] + '_TXD', (part['feature'], route)
 assert selected_count == 31
 print('PASS: four own native DMA manuals/SDKs, 54 locked source identities, native ICR seed/PAC, shared CH2/3 and CH4 topology, 11 exact SRAM parts, four empty generics and 31 TX routes; source facts only')
+
+# L012 has distinct native registers, current counts and paired IRQs. Bind its
+# originals separately from the reviewed corrections and generated projections.
+l012 = load(ROOT / 'docs/l012-dma-owned-evidence.json')
+assert l012['schema_version'] == 1
+assert len(l012['families']) == 1
+family = l012['families'][0]
+assert family['family'] == 'CW32L012'
+l012_features = {'cw32l012c8t6', 'cw32l012c8u6'}
+assert len(l012['exact_parts']) == 2
+assert {p['feature'] for p in l012['exact_parts']} == l012_features
+assert len(l012['generic_aliases']) == 1
+assert l012['generic_aliases'][0]['feature'] == 'cw32l012'
+l012_pointers = {'/artifacts/6'} | {
+    f'/artifacts/6/members/{i}' for i in (17, 18, 19, 25, 28, 38, 39, 47, 60)
+} | {f'/artifacts/{i}{suffix}' for i in (24, 25, 42) for suffix in ('', '/text')}
+assert len(l012['sources']) == 16
+assert {s['source_index_pointer'] for s in l012['sources']} == l012_pointers
+l012_bytes = {}
+for source in l012['sources']:
+    pointer = source['source_index_pointer']
+    pin = four_index(pointer)
+    artifact = lock['artifacts'][int(pointer.split('/')[2])]
+    identity = source['identity']
+    if pointer == '/artifacts/42':
+        # These retained superseded identities are not current source inputs.
+        # Reverse only their explicit historical key labels before the same
+        # full-node equality; no original pin-history field is omitted.
+        identity = json.loads(json.dumps(identity))
+        assert len(identity['pin_history']) == 2
+        for historical in identity['pin_history']:
+            assert set(historical) == {
+                'historical_path', 'historical_sha256', 'bytes', 'changed_utc', 'reason'
+            }
+            historical['path'] = historical.pop('historical_path')
+            historical['sha256'] = historical.pop('historical_sha256')
+    observed = {k: v for k, v in pin.items() if k != 'evidence'
+                and not (k == 'members' and pointer == '/artifacts/6')}
+    expected = {k: v for k, v in identity.items() if k != 'evidence'}
+    for value in (observed, expected):
+        if 'text' in value:
+            value['text'] = {k: v for k, v in value['text'].items() if k != 'evidence'}
+    # Optional consumer backlinks are the only mutable selected-node property.
+    # In particular the EN manual's pin_history and legal provenance stay bound.
+    assert observed == expected, source['source_ref']
+    assert source['official_url'] == artifact['url']
+    if '/members/' in pointer:
+        assert source['source_ref'] == 'member:' + identity['path']
+        assert source['archive_source_ref'] == artifact['id']
+    elif pointer.endswith('/text'):
+        assert source['source_ref'] == 'text:' + identity['path']
+    elif not pointer.endswith('/text'):
+        assert source['source_ref'] == artifact['id']
+    assert identity['path'] not in l012_bytes
+    raw = (SOURCES / identity['path']).read_bytes()
+    assert len(raw) == identity['bytes'] and digest(raw) == identity['sha256'], identity['path']
+    l012_bytes[identity['path']] = raw
+    if '/members/' in pointer:
+        payload = (SOURCES / artifact['path']).read_bytes()
+        for member in identity['members']:
+            with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+                payload = archive.read(member)
+        assert payload == raw, identity['path']
+assert len(l012_bytes) == 16
+
+l012_pages = {}
+for kind, page_delta in [('manual', 25), ('datasheet', 2), ('english_manual', 25)]:
+    source = next(s for s in l012['sources'] if s['source_ref'] == family[kind + '_source_ref'])
+    assert source['identity']['path'] == family[kind]
+    assert source['identity']['text']['path'] == family[kind + '_text_path']
+    pages = l012_bytes[family[kind + '_text_path']].decode().split('\f')
+    records = family[kind + '_pages']
+    assert len({p['pdf_page_index'] for p in records}) == len(records)
+    for page in records:
+        assert page['pdf_page_index'] == page['printed_page'] + page_delta
+        assert page['pdf_viewer_page'] == page['pdf_page_index'] + 1
+        assert digest(pages[page['pdf_page_index']].encode()) == page['extracted_page_utf8_sha256'], (kind, page)
+    l012_pages[kind] = pages
+
+manual = l012_pages['manual']
+for claim, numbers in family['manual_page_claims'].items():
+    assert numbers == [p['pdf_page_index'] for p in family['manual_pages'] if claim in p['claims']], claim
+# Exact coordinates differ from the older four-family manuals.
+assert {p['pdf_page_index'] for p in family['manual_pages']} >= {
+    81, 82, 85, 86, 95, 96, 142, 143, 144, 145, 146, 147, 148,
+    494, 499, 505, 507, 510, 512, 513,
+}
+assert {p['pdf_page_index'] for p in family['datasheet_pages']} >= {7, 35, 36, 38}
+assert {p['pdf_page_index'] for p in family['english_manual_pages']} >= set(range(149, 160)) | {540, 545}
+four_tokens(manual[145], ['13 TE RO', '12 TC RO', '11 RESTART RW', '10:8 STATUS RW',
+            '000：初始状态', '001：传输错误，传输地址超出寻址范围', '010：传输错误，传输停止请求引起中止',
+            '011：传输错误，访问传输来源地址出错', '100：传输错误，访问传输目的地址出错', '101：传输完成',
+            '00：位宽为 8 比特，自增量为 1', '01：位宽为 16 比特，自增量为 2', '10：位宽为 32 比特，自增量为 4',
+            '位宽配置仅对存储器（FLASH、RAM）有效', '0：批量传输（BULK）', '1：块传输（BLOCK）'], 'L012 CSR')
+four_tokens(manual[144], ['15 DSTLOAD RW', '14 SRCLOAD RW', 'Reset value: 0xFFFF FFFF',
+            '保留位，请保持默认值', 'W0：清除', 'W1：无功能'], 'L012 ICR/reload')
+four_tokens(manual[146], ['y = 1~4', '7:2 HARDSRC RW', 'R0：传输已完成', 'R1：传输正在进行中',
+            'W0：无功能', 'W1：立即触发该通道启动传输', '0：软件触发模式', '1：硬件触发模式'], 'L012 TRIG')
+four_tokens(manual[147], ['19:16 REPEAT RW', '15:0 CNT RW', 'REPEAT 只可设置为 1',
+            'REPEAT 不可设置为 0', 'CNT×REPEAT'], 'L012 configured count')
+four_tokens(manual[148], ['Address offset: 0x14 + 32×y', '19:16 CREPEAT RO', '15:0 CCNT RO',
+            '31:0 CSRCADDR RO', '31:0 CDSTADDR RO'], 'L012 current state')
+four_tokens(l012_pages['english_manual'][154], ['13 TE RO', '12 TC RO', '10:8 STATUS RW',
+            '101: Transfer completed', 'Bit width configuration is only valid for memory'], 'L012 EN CSR')
+four_tokens(l012_pages['english_manual'][159], ['19:16 CREPEAT RO', '15:0 CCNT RO',
+            '31:0 CSRCADDR RO', '31:0 CDSTADDR RO'], 'L012 EN current state')
+
+l012_svd = ET.fromstring(l012_bytes[family['svd_path']])
+assert l012_svd.findtext('name') == 'CW32L012'
+l012_peripherals = {p.findtext('name'): p for p in l012_svd.findall('peripherals/peripheral')}
+geometry = {p['name']: p for p in family['svd_geometry']}
+assert len(geometry) == len(family['svd_geometry']) == 9
+assert set(geometry) == {'DMA', 'SYSCTRL', 'UART1', 'UART2', 'UART3'} | {f'DMACHANNEL{i}' for i in range(1, 5)}
+l012_registers = {}
+for name, expected in geometry.items():
+    peripheral = l012_peripherals[name]
+    parent = ('DMACHANNEL1' if name in ('DMACHANNEL2', 'DMACHANNEL3', 'DMACHANNEL4')
+              else 'UART1' if name in ('UART2', 'UART3') else None)
+    assert peripheral.get('derivedFrom') == expected['derived_from'] == parent
+    assert int(peripheral.findtext('baseAddress'), 0) == expected['base']
+    assert [{'name': i.findtext('name'), 'number': int(i.findtext('value'), 0)}
+            for i in peripheral.findall('interrupt')] == expected['interrupts']
+    owner = l012_peripherals[parent] if parent else peripheral
+    if parent:
+        assert peripheral.find('registers') is None and owner.get('derivedFrom') is None
+    observed = []
+    for register in owner.findall('registers/register'):
+        if name == 'SYSCTRL' and register.findtext('name') not in ('AHBEN', 'APBEN1', 'AHBRST', 'APBRST1'):
+            continue
+        if name.startswith('UART') and register.findtext('name') not in ('CR1', 'CR2', 'TDR', 'IER', 'ISR'):
+            continue
+        assert register.get('derivedFrom') is None
+        fields = register.findall('fields/field')
+        for field in fields:
+            assert field.get('derivedFrom') is None
+            assert {k for k in ('lsb', 'msb', 'bitOffset', 'bitWidth', 'bitRange')
+                    if field.find(k) is not None} == {'lsb', 'msb'}
+            assert field.findtext('access') in ('read-only', 'read-write', 'write-only')
+        record = four_svd_register(register)
+        record['access'] = register.findtext('access')
+        assert record['access'] in ('read-only', 'read-write', 'write-only')
+        observed.append(record)
+    key = 'selected_registers' if name == 'SYSCTRL' or name.startswith('UART') else 'registers'
+    assert observed == expected[key], ('L012 original SVD', name)
+    assert len({r['name'] for r in observed}) == len(observed)
+    l012_registers[name] = {r['name']: r for r in observed}
+
+l012_offsets = dict(zip(('CSR', 'CNT', 'SRCADDR', 'DSTADDR', 'TRIG', 'CCNT', 'CSRCADDR', 'CDSTADDR'), range(0, 32, 4)))
+l012_flags = {f'{kind}{i}': (4 * (i - 1) + bit, 1)
+              for i in range(1, 5) for kind, bit in [('TC', 0), ('TE', 1)]}
+l012_vectors = {'DMACH12': 9, 'DMACH34': 10, 'UART1': 27, 'UART2': 28, 'UART3': 29}
+l012_channel_vectors = [('DMACH12', 9), ('DMACH12', 9), ('DMACH34', 10), ('DMACH34', 10)]
+assert geometry['DMA']['base'] == 0x40020000
+assert {r['name']: r['offset'] for r in l012_registers['DMA'].values()} == {
+    'ISR': 0, 'ICR': 4, **{f'{r}{i}': 32 * i + offset for i in range(1, 5) for r, offset in l012_offsets.items()}}
+for i in range(1, 5):
+    name = f'DMACHANNEL{i}'
+    assert geometry[name]['base'] == 0x40020000 + 32 * i
+    vector, number = l012_channel_vectors[i - 1]
+    assert geometry[name]['interrupts'] == [{'name': vector, 'number': number}]
+    assert {r['name']: r['offset'] for r in l012_registers[name].values()} == l012_offsets
+
+l012_ir = {}
+for version, block, peripheral in [('dmachannel_cw32l012_v1', 'DMACHANNEL', 'DMACHANNEL1'),
+                                   ('dma_cw32l012_v1', 'DMA', 'DMA')]:
+    authored = load(ROOT / f'cw32-data/registers/{version}.yaml')
+    generated = load(ROOT / f'cw32-data/data/registers/{version}.json')
+    assert authored == generated == load(ROOT / f'cw32-data/data/registers/{version}.yaml')
+    l012_ir[version] = generated
+    assert {k for k in generated if k.startswith('block/')} == {'block/' + block}
+    reuse = next(g for g in load(ROOT / 'cw32-data/register-reuse.yaml')['groups'] if g['canonical'] == version + '.yaml')
+    assert reuse['source_versions'] == [version + '.yaml']
+    assert digest(json.dumps(generated, sort_keys=True, separators=(',', ':')).encode()) == reuse['canonical_ir_sha256']
+    update = next(u for u in l012['canonical_ir_updates'] if u['canonical'] == version + '.yaml')
+    assert update['after_sha256'] == reuse['canonical_ir_sha256']
+    items = generated['block/' + block]['items']
+    originals = l012_registers[peripheral]
+    assert len(items) == len(originals) and {r['name'] for r in items} == set(originals)
+    assert {k for k in generated if k.startswith('fieldset/')} == {'fieldset/' + r for r in originals}
+    for item in items:
+        original = originals[item['name']]
+        assert item['byte_offset'] == original['offset']
+        assert item['fieldset'] == item['name'] and 'array' not in item
+        assert item.get('bit_size', 32) == 32
+        fields = generated['fieldset/' + item['fieldset']]['fields']
+        assert len(fields) == len(original['fields'])
+        assert {f['name']: (f['bit_offset'], f['bit_size']) for f in fields} == {
+            f['name']: (f['bit_offset'], f['bit_size']) for f in original['fields']}
+        corrected = item['name'].startswith('CCNT')
+        expected_access = 'Read' if corrected else {'read-only': 'Read', 'read-write': 'ReadWrite'}[original['access']]
+        assert item.get('access', 'ReadWrite') == expected_access
+        if corrected:
+            assert original['access'] == 'read-write'
+            assert {f['name']: f['access'] for f in original['fields']} == {'CCNT': 'read-write', 'CREPEAT': 'read-write'}
+        if re.fullmatch(r'CSR[1-4]?', item['name']):
+            access = {f['name']: f['access'] for f in original['fields']}
+            assert access['TC'] == access['TE'] == 'read-only' and access['STATUS'] == 'read-write'
+
+channel_ir = l012_ir['dmachannel_cw32l012_v1']
+native = l012_ir['dma_cw32l012_v1']
+for fieldset in ('ISR', 'ICR'):
+    assert {f['name']: (f['bit_offset'], f['bit_size']) for f in native['fieldset/' + fieldset]['fields']} == l012_flags
+for field, (bit, width) in l012_flags.items():
+    assert re.search(rf'(?m)^\s*{bit}\s+{field}\s+R1W0\b', manual[144]), field
+assert {f['name']: (f['bit_offset'], f['bit_size']) for f in channel_ir['fieldset/CSR']['fields']} == {
+    'EN': (0, 1), 'TCIE': (1, 1), 'TEIE': (2, 1), 'TRANS': (3, 1), 'SRCINC': (4, 1), 'DSTINC': (5, 1),
+    'SIZE': (6, 2), 'STATUS': (8, 3), 'RESTART': (11, 1), 'TC': (12, 1), 'TE': (13, 1), 'SRCLOAD': (14, 1), 'DSTLOAD': (15, 1)}
+expected_enums = {
+    'TransferMode': {'bit_size': 1, 'variants': {'BULK': 0, 'BLOCK': 1}},
+    'Width': {'bit_size': 2, 'variants': {'BYTE': 0, 'HALF_WORD': 1, 'WORD': 2}},
+    'Status': {'bit_size': 3, 'variants': {'INITIAL': 0, 'ADDRESS_OUT_OF_RANGE': 1, 'STOPPED': 2,
+                                       'SOURCE_ERROR': 3, 'DESTINATION_ERROR': 4, 'COMPLETE': 5}},
+    'Trigger': {'bit_size': 1, 'variants': {'SOFTWARE': 0, 'HARDWARE': 1}},
+}
+assert l012['native_enums'] == expected_enums
+assert {k for k in channel_ir if k.startswith('enum/')} == {'enum/' + n for n in expected_enums}
+assert not any(k.startswith('enum/') for k in native)
+for name, expected in expected_enums.items():
+    enum = channel_ir['enum/' + name]
+    assert enum['bit_size'] == expected['bit_size']
+    assert len(enum['variants']) == len(expected['variants'])
+    assert {v['name']: v['value'] for v in enum['variants']} == expected['variants']
+associations = {('CSR', 'TRANS'): 'TransferMode', ('CSR', 'SIZE'): 'Width',
+                ('CSR', 'STATUS'): 'Status', ('TRIG', 'TYPE'): 'Trigger'}
+assert {(key.split('/')[1], f['name']): f['enum'] for key, value in channel_ir.items()
+        if key.startswith('fieldset/') for f in value['fields'] if 'enum' in f} == associations
+assert {tuple(a) for a in l012['field_associations']} == {(f'fieldset/{s}', f, e) for (s, f), e in associations.items()}
+overrides = [o for o in load(ROOT / 'cw32-data/inputs/cw32l012.yaml')['register_overrides']
+             if o['block'] in ('DMA', 'DMACHANNEL')]
+assert overrides == l012['register_access_corrections'] and len(overrides) == 5
+assert {(o['block'], o['register'], o['expected_access'], o['access']) for o in overrides} == {
+    ('DMACHANNEL', 'CCNT', 'ReadWrite', 'Read'),
+    *{('DMA', f'CCNT{i}', 'ReadWrite', 'Read') for i in range(1, 5)},
+}
+manual_source = next(s for s in l012['sources'] if s['source_ref'] == family['manual_source_ref'])
+for override in overrides:
+    four_tokens(override['evidence'], ['8.8.8', '123', '149', manual_source['identity']['sha256'],
+                'SVD', 'CMSIS', 'RW', 'RO'], ('L012 access correction', override['register']))
+
+assert set(l012['field_access_restrictions']) == set(l012_ir)
+for version, expected in l012['field_access_restrictions'].items():
+    restrictions = load(ROOT / 'cw32-data/field-access.yaml')['registers'][version]
+    assert restrictions == expected
+    block, suffixes = ('DMA', ('1', '2', '3', '4')) if version == 'dma_cw32l012_v1' else ('DMACHANNEL', ('',))
+    assert len(restrictions) == 2 * len(suffixes)
+    assert {(r['block'], r['register'], r['fieldset'], r['field'], r['bit_offset'], r['bit_size'])
+            for r in restrictions} == {(block, 'CSR' + s, 'CSR' + s, f, bit, 1)
+                                      for s in suffixes for f, bit in [('TC', 12), ('TE', 13)]}
+    assert load(ROOT / f'cw32-data/data/field-access/{version}.json') == {
+        'schema_version': 1, 'registers': {version: restrictions}}
+    pac = (ROOT / f'cw32-metapac/src/peripherals/{version}.rs').read_text()
+    for suffix in suffixes:
+        csr = re.search(rf'\bimpl Csr{suffix} \{{(.*?)\n    \}}', pac, re.S)
+        assert csr, (version, suffix)
+        for field in ('tc', 'te'):
+            assert len(re.findall(rf'pub const fn {field}\(&self\) -> bool', csr[1])) == 1
+            assert not re.search(rf'\bfn set_{field}\(', csr[1])
+        assert len(re.findall(r'pub const fn set_status\(', csr[1])) == 1
+        register = 'ccnt' + suffix
+        assert len(re.findall(rf'pub const fn {register}\(self\) -> crate::common::Reg<regs::Ccnt{suffix}, crate::common::R>', pac)) == 1
+    if version == 'dmachannel_cw32l012_v1':
+        for (fieldset, field), enum in associations.items():
+            field = 'type_' if field == 'TYPE' else field.lower()
+            assert len(re.findall(rf'pub const fn {field}\(&self\) -> super::vals::{enum}\b', pac)) == 1
+            assert len(re.findall(rf'pub const fn set_{field}\(&mut self, val: super::vals::{enum}\)', pac)) == 1
+
+seed = l012['native_icr_seed']
+commands = load(ROOT / 'cw32-data/register-writes.yaml')['registers']['dma_cw32l012_v1']
+assert len(commands) == 1
+command = commands[0]
+assert command == {k: v for k, v in seed.items() if k not in ('register_version', 'per_channel_clear_commands')}
+assert seed['register_version'] == 'dma_cw32l012_v1'
+assert command['block'] == 'DMA' and command['register'] == command['fieldset'] == 'ICR'
+assert command['reset_value'] == command['write_noop'] == 0xffffffff
+assert command['zero_to_clear_fields'] == [f'{kind}{i}' for i in range(1, 5) for kind in ('TC', 'TE')]
+assert load(ROOT / 'cw32-data/data/register-writes/dma_cw32l012_v1.json') == {
+    'schema_version': 1, 'registers': {'dma_cw32l012_v1': commands}}
+assert [v['physical_channel'] for v in seed['per_channel_clear_commands']] == [1, 2, 3, 4]
+for values in seed['per_channel_clear_commands']:
+    i = values['physical_channel']
+    for key, bits in [('tc_only', [4 * (i - 1)]), ('te_only', [4 * (i - 1) + 1]), ('both', [4 * (i - 1), 4 * (i - 1) + 1])]:
+        assert int(values[key], 16) == 0xffffffff ^ sum(1 << bit for bit in bits)
+pac = (ROOT / 'cw32-metapac/src/peripherals/dma_cw32l012_v1.rs').read_text()
+assert pac.count('impl regs::Icr {') == 1
+icr_helpers = pac.split('impl regs::Icr {', 1)[1]
+for helper in ('reset_value', 'write_noop'):
+    assert re.search(rf'pub const fn {helper}\(\) -> Self\s*\{{\s*Self\(4294967295\)\s*\}}', icr_helpers)
+assert re.search(r'impl Default for Icr \{.*?fn default\(\) -> Icr\s*\{\s*Icr\(0\)', pac, re.S)
+
+dma_header_path = 'cw32l012/Libraries/inc/cw32l012_dma.h'
+dma_header = l012_bytes[dma_header_path].decode()
+# The own SDK uses literal first values followed by implicit successors. This
+# finite extraction never treats the Stage85 shifted request macros as L012.
+l012_sdk_enums = {}
+for body, name in re.findall(r'typedef\s+enum\s*\{([^{}]*)\}\s*(DMA_\w+TypeDef)\s*;', dma_header, re.S):
+    value = -1
+    values = {}
+    body = re.sub(r'//[^\n]*|/\*.*?\*/', '', body, flags=re.S)
+    for entry in body.split(','):
+        if not entry.strip():
+            continue
+        match = re.fullmatch(r'\s*(DMA_\w+)(?:\s*=\s*(0x[0-9a-fA-F]+|[0-9]+))?\s*', entry)
+        assert match, (name, entry)
+        value = int(match[2], 0) if match[2] else value + 1
+        assert match[1] not in values
+        values[match[1]] = value
+    assert name not in l012_sdk_enums
+    l012_sdk_enums[name] = values
+for name, values in {
+    'DMA_ChannelTypeDef': {f'DMA_CHANNEL_{i}': i - 1 for i in range(1, 5)},
+    'DMA_DataSizeTypeDef': {'DMA_DATA_SIZE_8BITS': 0, 'DMA_DATA_SIZE_16BITS': 1, 'DMA_DATA_SIZE_32BITS': 2},
+    'DMA_ModeTypeDef': {'DMA_MODE_BULK': 0, 'DMA_MODE_BLOCK': 1},
+    'DMA_TriggerTypeDef': {'DMA_TRIGGER_SOFTWARE': 0, 'DMA_TRIGGER_HARDWARE': 1},
+    'DMA_StatusTypeDef': {'DMA_STATUS_IDLE': 0, 'DMA_STATUS_ERROR_ADDR': 1, 'DMA_STATUS_ERROR_STOP': 2,
+                          'DMA_STATUS_ERROR_SRC': 3, 'DMA_STATUS_ERROR_DST': 4, 'DMA_STATUS_COMPLETE': 5},
+}.items():
+    assert l012_sdk_enums[name] == values
+
+for symbol in family['sdk_symbols']:
+    lines = l012_bytes[symbol['path']].decode().splitlines()
+    assert lines[symbol['line'] - 1].strip() == symbol['text'].strip(), symbol
+cmsis = l012_bytes['cw32l012/Libraries/inc/cw32l012.h'].decode()
+for register in ['CCNT', 'CCNT1', 'CCNT2', 'CCNT3', 'CCNT4']:
+    assert len(re.findall(rf'__IOM\s+uint32_t\s+{register}\s*;', cmsis)) == 1, register
+assert len(re.findall(r'__IOM\s+uint32_t\s+CREPEAT\s*:\s*4\s*;', cmsis)) == 5
+assert len(re.findall(r'__IOM\s+uint32_t\s+CCNT\s*:\s*16\s*;', cmsis)) == 5
+for name, bit in [('TCIE', 1), ('TEIE', 2)]:
+    assert re.search(rf'#define\s+DMA_CSR1_{name}_Pos\s+\({bit}UL\)', cmsis)
+for field, (bit, width) in l012_flags.items():
+    assert re.search(rf'#define\s+DMA_ICR_{field}_Pos\s+\({bit}UL\)', cmsis)
+four_tokens(dma_header, ['#define DMA_INTERRUPT_TC DMA_CSR1_TCIE_Msk',
+            '#define DMA_INTERRUPT_TE DMA_CSR1_TEIE_Msk'], 'L012 SDK interrupt mask domain')
+dma_source = l012_bytes['cw32l012/Libraries/src/cw32l012_dma.c'].decode()
+four_tokens(dma_source, ['*DMA_ICR &= ~(interrupt_type << channel);',
+            '*DMA_CNTy(channel) = (transfer_size & 0xFFFF);'], 'L012 rejected SDK helpers')
+assert len(l012['conflicts']) == 4
+assert {c['id'] for c in l012['conflicts']} == {
+    'current-count-access', 'mixed-csr-access-loss', 'sdk-clear-helper', 'sdk-config-channel-repeat'}
+
+sidecar = load(ROOT / family['dma_metadata_path'])
+assert sidecar['family'] == 'CW32L012'
+assert sidecar['core_dma_channels'] == expected_channels
+assert sidecar['channel_details'] == family['physical_channels']
+assert len(family['physical_channels']) == 4
+for index, channel in enumerate(family['physical_channels']):
+    assert channel['physical_channel'] == index + 1
+    assert channel['name'] == f'DMA_CH{index + 1}'
+    assert channel['register_peripheral'] == f'DMACHANNEL{index + 1}'
+    assert (channel['interrupt'], channel['interrupt_number']) == l012_channel_vectors[index]
+requests = sidecar['requests']
+tx_requests = [r for r in requests if r['peripheral'] in ('UART1', 'UART2', 'UART3') and r['signal'] == 'TX']
+assert tx_requests == family['qualified_tx_requests']
+assert [r for r in requests if r not in tx_requests] == family['unqualified_inventory_only']
+assert [(r['peripheral'], r['request']) for r in tx_requests] == [('UART1', 1), ('UART2', 3), ('UART3', 5)]
+assert len(requests) == 64 and [r['request'] for r in requests] == list(range(64))
+assert l012_sdk_enums['DMA_TriggerSourceTypeDef'] == {r['sdk']['symbol']: r['request'] for r in requests}
+for request in requests:
+    assert request['channels'] == [c['name'] for c in expected_channels] and request['dma'] == 'DMA'
+    assert request['sdk']['encoding'] == 'unshifted_enum'
+    assert request['sdk']['raw_value'] == request['request']
+    assert request['manual']['pdf_page_index'] == 146 and request['manual']['printed_page'] == 121
+    assert int(request['manual']['binary'], 2) == request['request']
+    four_tokens(manual[146], [request['manual']['binary'] + '：' + request['manual']['description']], request['sdk']['symbol'])
+    assert re.match(r'\s*' + re.escape(request['sdk']['symbol']) + r'\b', dma_header.splitlines()[request['sdk']['line'] - 1])
+assert sidecar['request_register'] == {'peripheral_kind': 'dmachannel', 'register': 'TRIG', 'field': 'HARDSRC', 'bit_offset': 2, 'bit_size': 6}
+assert sidecar['excluded_sdk_requests'] == []
+assert sidecar['peripheral_dma_channels'] == {
+    name: [{'signal': r['signal'], 'dma': r['dma'], 'request': r['request']} for r in requests if r['peripheral'] == name]
+    for name in {r['peripheral'] for r in requests}}
+
+clock_names = {'DMA', 'GPIOA', 'UART1', 'UART2', 'UART3'}
+clocks = load(ROOT / family['clock_metadata_path'])['peripherals']
+clock_facts = [{k: v for k, v in c.items() if k not in ('notes', 'evidence')}
+               for c in clocks if c['name'] in clock_names]
+assert clock_facts == family['clocks'] and len(clock_facts) == 5
+assert {c['name'] for c in clock_facts} == clock_names
+sysctrl_ir = load(ROOT / 'cw32-data/data/registers/sysctrl_cw32l012_v1.json')
+for register, offset, page in [('AHBEN', 0x30, 81), ('APBEN1', 0x38, 82), ('AHBRST', 0x40, 85), ('APBRST1', 0x48, 86)]:
+    original = l012_registers['SYSCTRL'][register]
+    assert original['offset'] == offset and original['access'] == 'read-write'
+    item = next(r for r in sysctrl_ir['block/SYSCTRL']['items'] if r['name'] == register)
+    assert item['byte_offset'] == offset and item.get('access', 'ReadWrite') == 'ReadWrite'
+    assert {f['name']: (f['bit_offset'], f['bit_size']) for f in sysctrl_ir['fieldset/' + register]['fields']} == {
+        f['name']: (f['bit_offset'], f['bit_size']) for f in original['fields']}
+    fields = {f['name']: f for f in original['fields']}
+    if register in ('AHBEN', 'APBEN1'):
+        assert (fields['KEY']['bit_offset'], fields['KEY']['bit_size'], fields['KEY']['access']) == (16, 16, 'write-only')
+        four_tokens(manual[page], ['31:16 KEY WO', 'KEY 为 0x5A5A', '0：禁止', '1：使能'], register)
+    else:
+        assert 'KEY' not in fields
+        four_tokens(manual[page], ['0：模块处于复位状态', '1：模块正常工作'], register)
+    for name, bit in ({'DMA': 0, 'GPIOA': 4} if register.startswith('AHB') else {'UART1': 3, 'UART2': 4, 'UART3': 8}).items():
+        assert (fields[name]['bit_offset'], fields[name]['bit_size'], fields[name]['access']) == (bit, 1, 'read-write')
+        four_tokens(manual[page], [f'{bit} {name} RW'], (register, name))
+for clock in clock_facts:
+    name = clock['name']
+    uart = name.startswith('UART')
+    enable, reset = ('APBEN1', 'APBRST1') if uart else ('AHBEN', 'AHBRST')
+    assert clock['enable'] == {'peripheral': 'SYSCTRL', 'register': enable, 'field': name}
+    assert clock['reset'] == {'peripheral': 'SYSCTRL', 'register': reset, 'field': name}
+    assert clock['enable_active_value'] == 1 and clock['reset_asserted_value'] == 0
+    assert clock['enable_write_key'] == {'field': {'peripheral': 'SYSCTRL', 'register': enable, 'field': 'KEY'}, 'value': 0x5a5a}
+    assert clock['bus_clock'] == ('PCLK' if uart else 'HCLK')
+    if uart:
+        assert clock['status'] == 'partial'
+        assert clock['kernel_clock'] == {'mux': {'peripheral': name, 'register': 'CR1', 'field': 'SOURCE'}}
+        assert clock['kernel_sources'] == ['PCLK', 'LSE', 'LSI']
+    if name == 'DMA':
+        assert clock['shared_enable_group'] == clock['shared_reset_group'] == 'DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4'
+
+uart_ir = load(ROOT / 'cw32-data/data/registers/uart_cw32l012_v1.json')
+for i, base in [(1, 0x40000c00), (2, 0x40001000), (3, 0x40002000)]:
+    name = f'UART{i}'
+    assert geometry[name]['base'] == base
+    assert geometry[name]['interrupts'] == [{'name': name, 'number': 26 + i}]
+    assert set(l012_registers[name]) == {'CR1', 'CR2', 'TDR', 'IER', 'ISR'}
+    for register, original in l012_registers[name].items():
+        item = next(r for r in uart_ir['block/UART']['items'] if r['name'] == register)
+        assert item['byte_offset'] == original['offset']
+        assert item.get('access', 'ReadWrite') == {'read-only': 'Read', 'write-only': 'Write', 'read-write': 'ReadWrite'}[original['access']]
+        fields = uart_ir['fieldset/' + item['fieldset']]['fields']
+        assert len(fields) == len(original['fields'])
+        assert {f['name']: (f['bit_offset'], f['bit_size']) for f in fields} == {
+            f['name']: (f['bit_offset'], f['bit_size']) for f in original['fields']}
+tdr = l012_registers['UART1']['TDR']
+assert tdr['offset'] == 0x28 and tdr['access'] == 'write-only'
+assert {f['name']: (f['bit_offset'], f['bit_size'], f['access']) for f in tdr['fields']} == {
+    'TDR': (0, 9, 'write-only'), 'IDLE': (9, 1, 'write-only'), 'BREAK': (10, 1, 'write-only')}
+four_tokens(manual[507], ['Address offset: 0x04', '7 DMATX RW'], 'L012 UART CR2')
+four_tokens(manual[510], ['UARTx_TDR', 'Address offset: 0x28', '8:0 TDR WO'], 'L012 UART TDR')
+four_tokens(manual[512], ['Address offset: 0x1C', '14 TXBUSY RO'], 'L012 wire completion')
+four_tokens(manual[505], ['13:12 SOURCE RW', '00：UCLK 来自 PCLK', '01：UCLK 来自 PCLK',
+            '10：UCLK 来自 LSE', '11：UCLK 来自 LSI'], 'L012 local UART clock')
+assert {v['name']: v['value'] for v in uart_ir['enum/Source']['variants']} == {'PCLK': 0, 'PCLK_ALT': 1, 'LSE': 2, 'LSI': 3}
+four_tokens(manual[494], ['UARTx_CR2.DMATX 为 1', 'UARTx_TDR', 'DMA_ISR.TCy', 'UARTx_ISR.TXBUSY'], 'L012 UART DMA')
+tx = four_compact(manual[499])
+four_tokens(tx, ['PA09', 'SRAM', 'uint8_t SendBuff[100]', 'DMA_SRCADDR1 = (uint32_t) SendBuff',
+            'DMA_DSTADDR1 = (uint32_t) &UART1_TDR', 'DMA_CSR1.SRCINC 为 1', 'DMA_CSR1.DSTINC 为 0',
+            'DMA_CNT1 写入 0x10064', 'DMA_CSR1.SIZE 为 0', 'DMA_CSR1.TRANS 为 1',
+            'DMA_TRIG1. HARDSRC 为 0x01'], 'L012 SRAM-byte TX example')
+ordered = ['DMA_CSR1.EN 为 1', 'UART1_CR2.DMATX 为 1', 'DMA_ISR.TC1 变为 1',
+           'UART1_CR2.DMATX 为 0', 'UART1_ISR.TXBUSY 变为 0']
+positions = [tx.index(four_compact(token)) for token in ordered]
+assert positions == sorted(positions)
+for number, name in [(9, 'DMA1/2'), (10, 'DMA3/4')]:
+    assert re.search(rf'(?m)^\s*{number + 16}\s+{number}\s+可配置\s+{name}\b', manual[95]), name
+for number, name in [(27, 'UART1'), (28, 'UART2'), (29, 'UART3')]:
+    assert re.search(rf'(?m)^\s*{number + 16}\s+{number}\s+可配置\s+{name}\b', manual[96]), name
+
+pdsc_path = next(path for path in l012_bytes if path.endswith('.pdsc'))
+pdsc = ET.fromstring(l012_bytes[pdsc_path])
+devices = pdsc.findall(".//device[@Dname='CW32L012C8']")
+assert len(devices) == 1
+assert {m.get('name'): (int(m.get('start'), 0), int(m.get('size'), 0), m.get('access'))
+        for m in devices[0].findall('memory')} == {
+    'IROM1': (0, 0x10000, 'rx'), 'IRAM1': (0x20000000, 0x2000, 'rw')}
+datasheet = l012_pages['datasheet']
+four_tokens(datasheet[7], ['CW32L012C8T6', 'CW32L012C8U6', 'FLASH 64KB', 'SRAM 8KB', 'LQFP48', 'QFN48'], 'L012 exact parts')
+parts = load(ROOT / 'cw32-data/parts.yaml')['parts']
+assert {p['feature'] for p in parts if p['family'] == 'CW32L012'} == l012_features
+pinout = load(ROOT / 'cw32-data/pinouts/cw32l012.yaml')
+af_routes = load(ROOT / 'cw32-data/af/cw32l012-serial.yaml')['routes']
+selected_count = 0
+for part in l012['exact_parts'] + l012['generic_aliases']:
+    chip = load(ROOT / part['metadata_path'])
+    assert chip['name'].lower() == part['feature'] and chip['line'] == 'CW32L012'
+    assert chip['memory'] == part['memory']
+    assert len(chip['cores']) == 1
+    core = chip['cores'][0]
+    assert core['dma_channels'] == part['dma_channels'] == expected_channels
+    instances = [p for p in core['peripherals'] if p['name'] == 'DMA' or p['name'].startswith('DMACHANNEL')]
+    assert instances == part['dma_instances'] and len(instances) == 5
+    for instance in instances:
+        name = instance['name']
+        assert name in geometry and instance['address'] == geometry[name]['base']
+        assert instance['registers'] == {'block': 'DMA' if name == 'DMA' else 'DMACHANNEL',
+                                         'kind': 'dma' if name == 'DMA' else 'dmachannel', 'version': 'cw32l012_v1'}
+        assert instance['interrupts'] == [{'interrupt': i['name'], 'signal': 'GLOBAL'} for i in geometry[name]['interrupts']]
+        assert instance['rcc'] == instances[0]['rcc'] and instance['rcc_control'] == instances[0]['rcc_control']
+    vectors = [v for v in core['interrupts'] if v['name'].startswith('DMA') or v['name'].startswith('UART')]
+    assert vectors == part['dma_uart_vectors']
+    assert len(vectors) == 5 and {v['name']: v['number'] for v in vectors} == l012_vectors
+    assert [v for v in core['interrupts'] if v['number'] == 11] == [{'name': 'CORDIC', 'number': 11}]
+    for name in clock_names:
+        peripheral = next(p for p in core['peripherals'] if p['name'] == name)
+        clock = next(c for c in clock_facts if c['name'] == name)
+        control = peripheral['rcc_control']
+        assert control['controller'] == 'SYSCTRL' and control['bus_clock'] == clock['bus_clock']
+        for key in ('enable', 'reset'):
+            assert control[key] == {k: v for k, v in clock[key].items() if k != 'peripheral'}
+        assert control['enable_active_value'] is True and control['reset_asserted_value'] is False
+        assert control['enable_write_key'] == {'field': {'register': clock['enable']['register'], 'field': 'KEY'}, 'value': 0x5a5a}
+        assert 'reset_write_key' not in control
+    if part['feature'] == 'cw32l012':
+        assert part['memory'] == [] and chip['packages'] == []
+        continue
+    assert part['flash_interval'] == [0, 0x10000]
+    assert part['sram_interval'] == [0x20000000, 0x20002000]
+    assert part['memory'] == [[{'address': 0, 'kind': 'flash', 'name': 'FLASH', 'size': 65536},
+                              {'address': 0x20000000, 'kind': 'ram', 'name': 'RAM', 'size': 8192}]]
+    authored_part = next(p for p in parts if p['feature'] == part['feature'])
+    assert authored_part['memory'] == part['memory'][0] and authored_part['package'] == part['package']
+    assert part['package'] == ('LQFP48' if part['feature'] == 'cw32l012c8t6' else 'QFN48')
+    assert len(chip['packages']) == 1
+    package = chip['packages'][0]
+    assert package['package'] == part['package']
+    bonded = {signal: pin['position'] for pin in package['pins'] for signal in pin['signals']}
+    assert part['datasheet_product'] == chip['name']
+    assert part['datasheet_product_pdf_page_index'] == 7
+    assert part['datasheet_pad_column'] == (0 if part['package'] == 'LQFP48' else 1)
+    assert part['safe_uart1_tx_available'] is True
+    routes = part['selected_example_tx_routes']
+    assert len(routes) == 3
+    assert {(r['peripheral'], r['pin'], r['af'], r['package_pad']) for r in routes} == {
+        ('UART1', 'PA9', 1, '30'), ('UART2', 'PA7', 1, '17'), ('UART3', 'PA8', 1, '29')}
+    for route in routes:
+        selected_count += 1
+        uart = next(p for p in core['peripherals'] if p['name'] == route['peripheral'])
+        assert uart['registers'] == {'block': 'UART', 'kind': 'uart', 'version': 'cw32l012_v1'}
+        assert uart['address'] == geometry[uart['name']]['base']
+        assert {'signal': 'TX', 'pin': route['pin'], 'af': 1} in uart['pins']
+        assert bonded[route['pin']] == route['package_pad']
+        assert [r for r in uart['dma_channels'] if r['signal'] == 'TX'] == [route['request']]
+        assert route['request'] == {'dma': 'DMA', 'request': {'UART1': 1, 'UART2': 3, 'UART3': 5}[uart['name']], 'signal': 'TX'}
+        assert route['tdr_address'] == uart['address'] + 0x28
+        assert route['uart_irq'] == uart['interrupts'] == [{'interrupt': uart['name'], 'signal': 'GLOBAL'}]
+        assert (route['dma_channel'], route['dma_irq']) == {
+            'UART1': ('DMA_CH1', 'DMACH12'), 'UART2': ('DMA_CH2', 'DMACH12'), 'UART3': ('DMA_CH4', 'DMACH34')}[uart['name']]
+        pin = route['pin'][:2] + route['pin'][2:].zfill(2)
+        assert route['datasheet_af_pdf_page_index'] == family['gpioa_af_table_pdf_page_index'] == 38
+        af_row = next(line for line in datasheet[38].splitlines() if re.match(rf'\s*{pin}\b', line))
+        assert af_row.split()[1] == uart['name'] + '_TXD'
+        page = route['datasheet_pad_pdf_page_index']
+        assert page == (35 if pin == 'PA07' else 36)
+        pad_row = next(line for line in datasheet[page].splitlines() if re.search(rf'\b{pin}\b', line))
+        assert pad_row.split()[:6] == [route['package_pad'], route['package_pad'], pin, 'I/O', 'TTa', '-']
+        rows = [r for r in pinout['table_rows'] if route['pin'] in r['signals']]
+        assert len(rows) == 1 and rows[0]['positions'][part['package']] == route['package_pad']
+        assert rows[0]['source_name'] == pin and rows[0]['pin_type'] == 'I/O' and rows[0]['pdf_page_index'] == page
+        authored_routes = [r for r in af_routes if (r['peripheral'], r['signal'], r['pin'], r['af']) == (uart['name'], 'TX', route['pin'], 1)]
+        assert len(authored_routes) == 1
+        authored_route = authored_routes[0]
+        gpio_line = l012_bytes['cw32l012/Libraries/inc/cw32l012_gpio.h'].decode().splitlines()[authored_route['source_line'] - 1]
+        assert authored_route['source_macro'] == f'{pin}_AFx_{uart["name"]}TXD'
+        assert re.search(r'#define\s+' + re.escape(authored_route['source_macro']) + r'\b', gpio_line)
+        four_tokens(gpio_line, [f'CW_GPIOA->{authored_route["gpio_register"]}_f.PIN{int(pin[2:])} = 1'], (part['feature'], pin))
+assert selected_count == 6
+print('PASS: L012 16 locked own identities and nested bytes, native enums/CCNT corrections/ten RO fields/ICR PAC, paired IRQs, 64 source request facts, two exact 8 KiB parts and six selected TX routes; no HAL execution')

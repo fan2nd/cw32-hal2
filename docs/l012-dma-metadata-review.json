@@ -1,0 +1,378 @@
+{
+  "review": "CW32L012 Stage86 independent metadata/source review",
+  "status": "accepted at main: actual own-source identities, authored metadata, corrected static checker, generated/PAC projection, and completed main software evidence; clean remains pending at this historical acceptance point",
+  "date_utc": "2026-10-12",
+  "design_freeze_sha256": "eef697a5de2111548977994c3b2e67c339c28e2a4ef4a6fd20ee0bf8728c2f13",
+  "source_schema_addendum_sha256": "9ac09b7dc3fb8948e60a15e3997be341831e1b724a616c6cad630deea31bb5aa",
+  "source_design_review_sha256": "092ee4b96929695ef5c9647c9cfdbd649a23ebd887d195d0f7604fc8e71c9250",
+  "production_edits_by_reviewer": false,
+  "generation_cargo_tests_by_reviewer": false,
+  "hardware_validation": false,
+  "blockers": [],
+  "qualified_parts": [
+    "CW32L012C8T6",
+    "CW32L012C8U6"
+  ],
+  "source_review": {
+    "own_locked_source_nodes": 16,
+    "selected_sdk_member_chains": 9,
+    "bound_manual_datasheet_page_hashes": 42,
+    "selected_resolved_svd_peripherals": 9,
+    "selected_resolved_register_views": 85,
+    "sdk_line_locators": 41,
+    "identity_policy": "Every selected source-node field is bound except approved consumer evidence and the SDK parent outer member directory. Each selected member chain is independently byte-verified. English historical pin fields are losslessly relabeled and restored before full-node comparison.",
+    "source_consumer_delta": "Exact approved frozen design consumer append reconstruction matches the whole source index. All prior consumer arrays and all identity, provenance, license and historical fields are retained.",
+    "final_corrected_evidence_full_identity_matches": true
+  },
+  "authored_review": {
+    "register_versions": [
+      "dma_cw32l012_v1",
+      "dmachannel_cw32l012_v1"
+    ],
+    "whole_register_read_corrections": [
+      "DMACHANNEL.CCNT",
+      "DMA.CCNT1",
+      "DMA.CCNT2",
+      "DMA.CCNT3",
+      "DMA.CCNT4"
+    ],
+    "original_count_access": "Own original SVD and CMSIS header remain RW, while own CN manual 8.8.8 says RO. The five explicit expected-ReadWrite overrides record that conflict.",
+    "getter_only_fields": "Exactly TC and TE on native channel CSR and four aggregate CSR views; their original source access is RO. STATUS remains writable.",
+    "enums": "TransferMode BULK0/BLOCK1, Width BYTE0/HALF_WORD1/WORD2, Status INITIAL0/ADDRESS_OUT_OF_RANGE1/STOPPED2/SOURCE_ERROR3/DESTINATION_ERROR4/COMPLETE5, Trigger SOFTWARE0/HARDWARE1. SIZE3 and STATUS6/7 remain reserved.",
+    "icr": "Native reset/no-op 0xffffffff; zero-to-clear fields TC/TE at 0/1,4/5,8/9,12/13. Own manual authority avoids SDK helper stride/mask-domain error.",
+    "geometry": "All existing registers, offsets, field spans, native RESTART/SRCLOAD/DSTLOAD and current address registers are preserved.",
+    "reuse": "137 groups, all existing membership/history/template counts unchanged; exactly two canonical hash/history changes and one native enum recuration reminder."
+  },
+  "qualification_review": {
+    "sram_interval": [
+      536870912,
+      536879104
+    ],
+    "flash_interval": [
+      0,
+      65536
+    ],
+    "generic_alias": "Inventory only, not an exact SRAM-qualified part.",
+    "dma_geometry": "Controller 0x40020000; four channel bases 0x40020020/40/60/80, stride0x20, eight native registers; paired IRQ9 and10.",
+    "uart": "Own UART1/2/3 TX requests1/3/5; selected PA9/PA7/PA8 AF1 at pads30/17/29 on both packages; TDR base+0x28, DMATX CR2 bit7, TXBUSY ISR bit14.",
+    "rcc": "Native keyed AHBEN/APBEN1 gates; unkeyed active-low resets; local UART CR1.SOURCE retained.",
+    "limits": "UART1 has the explicit own manual byte-SRAM DMA example. UART2/3 share the documented UARTx layout and request table. DMA completion is distinct from wire completion. No hardware or timing behavior was observed."
+  },
+  "checker_static_review": {
+    "file": "tests/verify_dma_owned_evidence.py",
+    "prior_415_lines_preserved": true,
+    "bounded_extension_only": true,
+    "full_source_identity_and_selected_chain_strictness": true,
+    "actual_original_coordinate_and_access_checks": true,
+    "named_direct_inheritance_preserves_child_bases_and_irqs": true,
+    "unshifted_implicit_sdk_enum_checked": true,
+    "manual_page_coordinate_maps_checked": true,
+    "authored_generated_pac_projections_separate": true,
+    "hal_behavior_string_tests": false,
+    "synthetic_models_or_fixture_mutations": false,
+    "permanent_historical_project_hash_gate": false,
+    "execution_status": "Actual corrected source checker exit 0 confirmed from retained Cargo-independent source-command receipt and stdout; reviewer executed no checker, Cargo, generation or tests.",
+    "sha256": "70dc58827a5de9113d5a397f53b2e583c4b3d180f3e17ae00070499865b05319",
+    "corrections_reviewed": [
+      {
+        "scope": "Lossless historical field labels and their exact inverse before full identity comparison",
+        "external_artifact": "cw32-stage86-acceptance/history-identity-correction/correction.patch",
+        "patch_sha256": "b25933a539bd9707ecb305cf55fb2c6f76a48510179428c9a7f0df0d348162e9"
+      },
+      {
+        "scope": "CSR full-name selector excludes CSRCADDR and retains CSR/CSR1..4; other bounded prefix selectors reviewed",
+        "patch_sha256": "60404498618f69a12f9b94d892814a828f313309db73de8ebe192d6588344783"
+      }
+    ]
+  },
+  "generated_review": {
+    "status": "accepted after coordinator ordinary generation",
+    "before_count": 907,
+    "after_count": 910,
+    "changed_or_added_paths": [
+      {
+        "path": "cw32-data/data/field-access/dma_cw32l012_v1.json",
+        "before_sha256": null,
+        "after_sha256": "73025506f4280d93f91a11ce15684c5732cf00c53dff6145a5d58852ec2ecb00",
+        "before_bytes": null,
+        "after_bytes": 5542
+      },
+      {
+        "path": "cw32-data/data/field-access/dmachannel_cw32l012_v1.json",
+        "before_sha256": null,
+        "after_sha256": "ff5c15c836014992d1e1b5eead69a7e116da28ecf9fa21b4477d589fdda8189d",
+        "before_bytes": null,
+        "after_bytes": 1461
+      },
+      {
+        "path": "cw32-data/data/register-writes/dma_cw32l012_v1.json",
+        "before_sha256": null,
+        "after_sha256": "dec688fd3ac7e31ef9f248d3eb33a3eae61c23eb4a0d0eaa536251dd64047780",
+        "before_bytes": null,
+        "after_bytes": 872
+      },
+      {
+        "path": "cw32-data/data/registers/dma_cw32l012_v1.json",
+        "before_sha256": "46790df7b1b7445ac2428458389e0819538f7d7606ba23bb08f1e9edeefc392b",
+        "after_sha256": "672789881032f926d1cac387a66448aa1dfde0bf2c7b3700dccf18b9fd6609f2",
+        "before_bytes": 23550,
+        "after_bytes": 23654
+      },
+      {
+        "path": "cw32-data/data/registers/dma_cw32l012_v1.yaml",
+        "before_sha256": "734f2d87fd0d6b8214b333df3298b1d118c303c579143b413fa4409288395574",
+        "after_sha256": "320c760d92b97c9471ba556b7cd15287b80837980d145d950a1e83340ce344d4",
+        "before_bytes": 15375,
+        "after_bytes": 15443
+      },
+      {
+        "path": "cw32-data/data/registers/dmachannel_cw32l012_v1.json",
+        "before_sha256": "1b9c36beb6517758e4cad5a66049c71e35182b0abe307533078a7a833aa238d4",
+        "after_sha256": "ad9c8da5b1d73088915cbb33d496c46d8cf2b205e759cea85f99d360051b21c5",
+        "before_bytes": 5305,
+        "after_bytes": 7092
+      },
+      {
+        "path": "cw32-data/data/registers/dmachannel_cw32l012_v1.yaml",
+        "before_sha256": "6f2bf87b6359faa0418c4d667b57511ad1af6a4983b745207f33a1878646eefb",
+        "after_sha256": "ce04afd81cfc014309d50eb539e5f45c1f015e16dffa632c62f044c782d20473",
+        "before_bytes": 3471,
+        "after_bytes": 4661
+      },
+      {
+        "path": "cw32-data/data/reports/CW32L012.json",
+        "before_sha256": "c4dd4262d932dbd76a5248a2c73a4db482c7f43c3c52ddccb55f86dca1c8ea54",
+        "after_sha256": "545c8945b034f6bf9b6eba2b9e97ae78f36ae29e5ec5cf69892caf125d5382c7",
+        "before_bytes": 7335,
+        "after_bytes": 9996
+      },
+      {
+        "path": "cw32-metapac/src/peripherals/dma_cw32l012_v1.rs",
+        "before_sha256": "d5f71f3ed6f88b614fe1e5e91d0ca14bb53d444a39133fdfce4ecfb5f620bcca",
+        "after_sha256": "476328c8921dd921423babfd3d0d5ab2c5ace8e8e0813f0c810031e953c9d079",
+        "before_bytes": 89306,
+        "after_bytes": 88091
+      },
+      {
+        "path": "cw32-metapac/src/peripherals/dmachannel_cw32l012_v1.rs",
+        "before_sha256": "cb2300c51ab358026f0e8c9ce64194afb5cccb2310c5a7145454c3f4fac81532",
+        "after_sha256": "c274fea1d89a4b8afc059095036c23300beb4a4f51837d29064485345719ff97",
+        "before_bytes": 20248,
+        "after_bytes": 24140
+      },
+      {
+        "path": "cw32-metapac/src/registers/dma_cw32l012_v1.rs",
+        "before_sha256": "a4980c6a76473669da4d7912bcbe7453f6265f60c908d9c33e3cc67db7ea0797",
+        "after_sha256": "034fde380529f1350aab60ee5f07a2ba27a1d56650de32acf7ea365c1a4fd727",
+        "before_bytes": 55993,
+        "after_bytes": 55973
+      },
+      {
+        "path": "cw32-metapac/src/registers/dmachannel_cw32l012_v1.rs",
+        "before_sha256": "3de8a9ee13691de150d7a2683ac29a93f0a3737a19f8356018d61a08aa0420c5",
+        "after_sha256": "6c58c4c5b5fc478e7d067b660df05c6edf15aa8f03dd24ca4946ccc08a5bd9bc",
+        "before_bytes": 12624,
+        "after_bytes": 15895
+      }
+    ],
+    "exact_frozen_twelve_path_whitelist": true,
+    "three_native_sidecars_added": true,
+    "removed_paths": [],
+    "all_54_generated_chip_jsons_byte_identical": true,
+    "all_201_chip_pac_metadata_vector_products_byte_identical": true,
+    "all_other_products_byte_identical": true,
+    "authored_generated_json_yaml_agree": true,
+    "canonical_ir_hashes": [
+      {
+        "canonical": "dma_cw32l012_v1.yaml",
+        "actual_generated_before_sha256": "e4039fc4a523c25a070848611e2ad1518d680d75add5d69ff6615415e0b20193",
+        "actual_generated_after_sha256": "6e7c35beb6f39d80978403693ee1ebdffa6572664cdd754db7630d01d1a08454",
+        "evidence_history_matches_generated_hashes": true,
+        "ledger_hash_matches_generated": true,
+        "authored_and_generated_json_yaml_semantically_equal": true
+      },
+      {
+        "canonical": "dmachannel_cw32l012_v1.yaml",
+        "actual_generated_before_sha256": "f867f1b3f66921075be362a2390099b273dcb0145ec4232ca98e317a167061cd",
+        "actual_generated_after_sha256": "d5ed3603e8440a64d1ecb839cfc7dd9b8ecf554390b0579439936e52d5227334",
+        "evidence_history_matches_generated_hashes": true,
+        "ledger_hash_matches_generated": true,
+        "authored_and_generated_json_yaml_semantically_equal": true
+      }
+    ],
+    "pac": "Exactly five native current-count MMIO handles use R; TC/TE getters remain and exactly ten setters are removed; STATUS setters remain; channel field getters/setters use the four native enums. The zero Icr Default remains distinct from the native all-ones reset/no-op helpers.",
+    "embedded_ir": "The two sanitized IR projections carry the five corrected Read accesses and the channel enums/associations. They do not claim to represent detached field setter restrictions or command helper seeds.",
+    "profile_report": "Only five approved CCNT ReadWrite-to-Read applied_errata entries were added; all other report content is unchanged."
+  },
+  "proof_boundary": "Actual source, authored/generated/PAC projection and completed main software evidence are reviewed here. Clean final-source qualification is separate and was pending at this historical main acceptance point.",
+  "reviewed_authored_files": [
+    {
+      "path": "cw32-data/registers/dmachannel_cw32l012_v1.yaml",
+      "bytes": 4661,
+      "sha256": "29f01041f6a50ebd78baaf105365dc5d2ae6ee3246229f6748b398685a655763"
+    },
+    {
+      "path": "cw32-data/registers/dma_cw32l012_v1.yaml",
+      "bytes": 15443,
+      "sha256": "320c760d92b97c9471ba556b7cd15287b80837980d145d950a1e83340ce344d4"
+    },
+    {
+      "path": "cw32-data/inputs/cw32l012.yaml",
+      "bytes": 6830,
+      "sha256": "fd6b2e585c875c3521874a2da92380bf95fbd03886f833659692bd42df51d353"
+    },
+    {
+      "path": "cw32-data/field-access.yaml",
+      "bytes": 29191,
+      "sha256": "77cb7d68672bbee48c7e69b6dfe22d9f832a9b22249b3bbb07acf41c77f7cee3"
+    },
+    {
+      "path": "cw32-data/register-writes.yaml",
+      "bytes": 34321,
+      "sha256": "507e1442b75863dd8e47c90d179f415af0bf349791e478eccdfb074ba61b73f2"
+    },
+    {
+      "path": "cw32-data/register-reuse.yaml",
+      "bytes": 85392,
+      "sha256": "992284e1e242772969fdf73031a506147e590c154177af4a720f17e22e247c3f"
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "bytes": 421067,
+      "sha256": "e3c4ba3e15c9cb2bf42a5b4fbd1ca0f2823f68bae9a56c5da355d1a09de9e9f1"
+    },
+    {
+      "path": "docs/l012-dma-owned-evidence.json",
+      "bytes": 236875,
+      "sha256": "8a116c2df87ae32fd2541a5df14c4808edd8f63504855049eb5e903cff42086d"
+    }
+  ],
+  "implementation_acceptance_scope": "Current implementation, actual generated outputs and completed main evidence are accepted independently of the earlier frozen design review. Final status documentation is separately reviewed. This receipt does not pre-approve clean results or claim hardware validation.",
+  "external_review_artifacts": [
+    {
+      "external_artifact": "cw32-stage86-acceptance/independent-metadata/source-identity-observations.json",
+      "sha256": "e7838ca33d99caf6617157927f61cc2b1e509000bb5295e335ba3d51c634a310"
+    },
+    {
+      "external_artifact": "cw32-stage86-acceptance/independent-metadata/authored-observations.json",
+      "sha256": "fa228b5b7ff82170311a9d15f2984f81ac6c69efc10521b5d49aed29dd709f14"
+    },
+    {
+      "external_artifact": "cw32-stage86-acceptance/independent-metadata/history-correction-review.json",
+      "sha256": "9c52dff43a27e47d8cada603c555c562112106d7fdf02ae0d20ddd21e82a3858"
+    },
+    {
+      "external_artifact": "cw32-stage86-acceptance/independent-metadata/generated-observations.json",
+      "sha256": "bad6652c72153f83bf497852f41379e3e394531b98d83def9ad2e6441fa430aa"
+    },
+    {
+      "external_artifact": "cw32-stage86-acceptance/independent-metadata/canonical-hash-observations.json",
+      "sha256": "731e8a6b16e53949f2abe5c5bf4d94921c6528268f300a1886a736b274e24341"
+    }
+  ],
+  "main_acceptance": {
+    "status": "accepted",
+    "completed_commands": 15,
+    "standalone_arm_rlibs": 4,
+    "arm_executables": 11,
+    "warnings": 0,
+    "copied_receipt_file_references_verified": 948,
+    "arm_object_counts_in_standalone_rlibs": [
+      9,
+      10,
+      10,
+      10
+    ],
+    "source_files": 1413,
+    "generated_files": 910,
+    "source_generated_toolchain_config_unchanged": true,
+    "all_source_and_generated_snapshot_hashes_match_reviewed_current_bytes": true,
+    "successful_source_commands": [
+      {
+        "kind": "production_generation",
+        "exit_code": 0,
+        "log_hashes_match": true
+      },
+      {
+        "kind": "dma_source_projection",
+        "exit_code": 0,
+        "log_hashes_match": true
+      },
+      {
+        "kind": "dma_source_facts",
+        "exit_code": 0,
+        "log_hashes_match": true
+      },
+      {
+        "kind": "provenance",
+        "exit_code": 0,
+        "log_hashes_match": true
+      },
+      {
+        "kind": "capability_projection",
+        "exit_code": 0,
+        "log_hashes_match": true
+      },
+      {
+        "kind": "capability_consistency",
+        "exit_code": 0,
+        "log_hashes_match": true
+      },
+      {
+        "kind": "module_layout",
+        "exit_code": 0,
+        "log_hashes_match": true
+      }
+    ],
+    "source_gate_segment_note": "Seven successful commands comprise the first two main-gates-v2 results plus all five main-gates-tail-v3 results. Two earlier failures remain retained; the failed first generation was not installed, and the CSR-selector failure did not represent a hardware fact error.",
+    "proof_boundary": "Actual retained source, projection, logs, archive members, executable headers and main receipt were read. Compilation/linking and source inspection are not MCU, wire, latency, fault-drain or finite-liveness validation.",
+    "clean_status": "not run at main acceptance; separate final-source clean evidence required",
+    "artifacts": [
+      {
+        "external_artifact": "cw32-stage86-acceptance/main/summary.json",
+        "sha256": "e1cece8313ba1565123baef047a85d16b5c391c5b8817eea92ae204f95049ea0"
+      },
+      {
+        "external_artifact": "cw32-stage86-acceptance/main/results.json",
+        "sha256": "eefe7ecd309ffa541dcf8ff583d37e9fc4ca41c929c32b283eb95d29806431c5"
+      },
+      {
+        "external_artifact": "cw32-stage86-acceptance/main/source-before.json",
+        "sha256": "43dc04e763b59f24ef2a8016198400add00b4df909ab7b3f4b2a561811fc7494"
+      },
+      {
+        "external_artifact": "cw32-stage86-acceptance/main/source-after.json",
+        "sha256": "43dc04e763b59f24ef2a8016198400add00b4df909ab7b3f4b2a561811fc7494"
+      },
+      {
+        "external_artifact": "cw32-stage86-acceptance/main/generated-before.json",
+        "sha256": "da59b59e541b15ba0f7329ac7bae9616e85321d9af20434f250e4f3c6d5e1a3a"
+      },
+      {
+        "external_artifact": "cw32-stage86-acceptance/main/generated-after.json",
+        "sha256": "da59b59e541b15ba0f7329ac7bae9616e85321d9af20434f250e4f3c6d5e1a3a"
+      },
+      {
+        "external_artifact": "cw32-stage86-acceptance/main-gates-v2/results.json",
+        "sha256": "605c1c68b02e649dda168b7f9db72b3773f613866e540a31e8399d204b858e4a"
+      },
+      {
+        "external_artifact": "cw32-stage86-acceptance/main-gates-tail-v3/results.json",
+        "sha256": "9181fca2e718f4e1dadecbb350aada3bab12fc6437fce6f489a07b6b64b56213"
+      },
+      {
+        "external_artifact": "cw32-stage86-acceptance/independent-metadata/main-acceptance-observations.json",
+        "sha256": "5618138dac9ae1f56236bfe03077cf84aff4ea7a3d582d1299c913fb89587b80"
+      }
+    ]
+  },
+  "final_main_status_patch_review": {
+    "status": "accepted",
+    "external_artifact": "cw32-stage86-acceptance/final-state/final-main-status.patch",
+    "sha256": "ec606659764d3c8ea4ca012e969cf1bfa58b578155baf67ce3678c6e6856f750",
+    "path_count": 9,
+    "source_evidence_only_status_changed": true,
+    "reviewed_source_evidence_after_status_sha256": "8a203fd383513993c48941afd556a23e774cbb9c887d42b2de8ef9162d7a5d4d",
+    "qualification": "Counts and status match actual main records. Source consumer additions for this independent review are justified by actual original inspection. No runtime/generated/input hardware facts change. Clean remains a separate required final-source result."
+  }
+}

@@ -1154,3 +1154,30 @@ expansion or hardware/RF execution is part of this scope. Source gates and
 linked-image inspection do not establish silicon transfer, wire timing,
 error-time drain, RF coexistence or finite liveness. See
 [the verification boundary](../docs/four-channel-dma-owned.md#verification-boundary).
+
+
+## L012 原生 DMA 复制和 UART TX 资格
+
+本批仅 CW32L012C8T6/C8U6，沿用自身 CN RM V1.4、DS CN V1.0、SDK V1.0.5
+及已锁 EN RM V1.0 作佐证。DMA 寄存器定位 CN PDF143–149 对应书页117–123；
+UART 字节 SRAM 到 TDR 示例 CN PDF500 / 书页474，UART 基址/CR2/TDR/ISR
+与各自 SVD/CMSIS 对应。两包 64 KiB Flash / 8 KiB SRAM，PA9/PA7/PA8 AF1
+为 UART1/2/3 TX；通用别名无安全内存资格。锁定原件、许可和旧证据不改。
+
+五个 CCNT 原 SVD/header RW 与手册 RO 的冲突按既有寄存器覆盖修正；
+十个 CSR TC/TE 字段原 SVD/header 已 RO，补既有访问 sidecar 是恢复导入遗漏，
+不是原厂勘误。STATUS 保持 RW。新增原生枚举及 ICR 全一 R1W0 seed 均来自本族。
+SDK 清中断 helper 的掩码域及 flag stride 错误保留原文，不作为实现模板。
+原生 PAC 类型和可写接口变化须由使用方迁移，不能用适配层重新暴露错误写权限。
+
+主 4 个独立 ARM 库 / 11 ELF 已全部 exit0、零 warning，1413 源文件与工具链未漂移。
+实际生成 907→910，仅十二条本族输出差量，54 chip JSON 不变；
+原件引用的新增消费链接可逆，当前来源门不依赖历史全文件摘要。
+详见[本族合同](../docs/l012-dma-owned.md)与[逐项证据](../docs/l012-dma-owned-evidence.json)。
+
+主验收时 clean 尚未运行，最终包需独立 2 库 / 4 ELF 与来源检查收据。
+七项非 ARM 命令分段成功：第二次 gen 与 DMA 投影先过，随后五项尾门通过。
+首次 gen 因新证据把 EN 旧 pin_history 当成当前原件引用而被 provenance 拒绝，
+事务回滚保留旧 907 产物；只显式标记两条历史 path/hash 并在 checker 精确逆还原。
+随后 checker 把 CSRCADDR 误纳 CSR 前缀，改为严格 CSR/CSR1..4 匹配后通过。
+原失败与修正记录保留，未改变锁定身份、旧历史、原件或运行算法。
