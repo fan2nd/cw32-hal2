@@ -17,7 +17,10 @@ for key, source in e['sources'].items():
     pin = next(a for a in lock['artifacts'] if a['id'] == source['source_ref'])
     assert all(source[k] == pin[k] for k in ('path', 'url', 'sha256', 'bytes'))
     assert digest((SOURCES / source['path']).read_bytes()) == source['sha256']
-    assert source['text'] == pin['text']
+    # Consumer backlinks grow independently of the locked text identity.
+    assert {k: v for k, v in source['text'].items() if k != 'evidence'} == {
+        k: v for k, v in pin['text'].items() if k != 'evidence'
+    }
     raw = (SOURCES / source['text']['path']).read_bytes()
     assert digest(raw) == source['text']['sha256']
     if '8.8.3' not in source['sections']:

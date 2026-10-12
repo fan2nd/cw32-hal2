@@ -5,6 +5,7 @@
 //! `UartTx::new_with_dma`, `UartRx::new_with_dma` and `Uart::new_with_dma`
 //! own static staging for ordinary borrowed writes and reads. RX DMA receives
 //! finite explicitly armed chunks; reception/copy/rearm gaps can lose frames.
+//! F020 adds only staged `UartTx::new_with_dma`; RX/combined DMA is excluded.
 //! Ordinary non-DMA `Uart`/`UartRx` have no software RX buffer: service each
 //! byte promptly. `BufferedUart`/`BufferedUartRx` continuously collect through
 //! interrupts into consumed static storage, including between read calls.
@@ -145,10 +146,10 @@ pub enum ConfigError {
     /// The supplied software receive ring has zero capacity.
     RxBufferEmpty,
     /// DMA staging must be nonempty, bounded and wholly inside qualified SRAM.
-    #[cfg(uart_dma)]
+    #[cfg(any(uart_dma_tx, uart_dma_rx))]
     DmaBuffer(crate::dma::ConfigError),
     /// Normal HAL startup did not admit this one-time safe DMA channel.
-    #[cfg(uart_dma)]
+    #[cfg(any(uart_dma_tx, uart_dma_rx))]
     DmaChannel(crate::dma::CopyChannelError),
     /// Pull-down is unavailable on every reviewed L012 UART RX route.
     #[cfg(cw32l012)]
@@ -166,13 +167,13 @@ pub enum Error {
     /// A clean ISR-observed byte could not enter the full software receive ring.
     BufferOverflow,
     /// DMA failed or its completion could not be verified; resources are retained.
-    #[cfg(uart_dma)]
+    #[cfg(any(uart_dma_tx, uart_dma_rx))]
     Dma(crate::dma::Error),
     /// A previous staged chunk is running. An inherent async operation can settle it.
-    #[cfg(uart_dma)]
+    #[cfg(any(uart_dma_tx, uart_dma_rx))]
     DmaBusy,
     /// A previous error permanently quarantined this direction's DMA resources.
-    #[cfg(uart_dma)]
+    #[cfg(any(uart_dma_tx, uart_dma_rx))]
     DmaQuarantined,
     /// Noise was detected. L010/L011/L012 report it only at 16x/8x sampling.
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
@@ -188,11 +189,11 @@ impl core::fmt::Display for Error {
             Self::Parity => "UART parity error",
             Self::Framing => "UART frame error",
             Self::BufferOverflow => "UART software receive buffer overflow",
-            #[cfg(uart_dma)]
+            #[cfg(any(uart_dma_tx, uart_dma_rx))]
             Self::Dma(_) => "UART DMA transfer failed",
-            #[cfg(uart_dma)]
+            #[cfg(any(uart_dma_tx, uart_dma_rx))]
             Self::DmaBusy => "UART DMA chunk is still running",
-            #[cfg(uart_dma)]
+            #[cfg(any(uart_dma_tx, uart_dma_rx))]
             Self::DmaQuarantined => "UART DMA resources are quarantined",
 
             #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
@@ -214,9 +215,9 @@ impl core::fmt::Display for ConfigError {
             Self::InvalidTolerance => "UART baud-rate tolerance exceeds 100 percent",
             Self::UnsupportedCtsPull => "UART CTS pin does not support the requested pull",
             Self::RxBufferEmpty => "UART receive buffer is empty",
-            #[cfg(uart_dma)]
+            #[cfg(any(uart_dma_tx, uart_dma_rx))]
             Self::DmaBuffer(_) => "UART DMA staging buffer is invalid",
-            #[cfg(uart_dma)]
+            #[cfg(any(uart_dma_tx, uart_dma_rx))]
             Self::DmaChannel(_) => "UART DMA channel admission failed",
             #[cfg(cw32l012)]
             Self::UnsupportedRxPull => "UART RX pull-down is unavailable on this device",
@@ -229,7 +230,7 @@ impl embedded_io::Error for Error {
     fn kind(&self) -> embedded_io::ErrorKind {
         match self {
             Self::BufferOverflow => embedded_io::ErrorKind::Other,
-            #[cfg(uart_dma)]
+            #[cfg(any(uart_dma_tx, uart_dma_rx))]
             Self::DmaBusy | Self::DmaQuarantined | Self::Dma(_) => embedded_io::ErrorKind::Other,
             _ => embedded_io::ErrorKind::InvalidData,
         }
@@ -551,7 +552,7 @@ pub struct UartTx<'d, M: Mode> {
     state: &'static State,
     _pin: Option<Flex<'d>>,
     _cts: Option<Flex<'d>>,
-    #[cfg(uart_dma)]
+    #[cfg(uart_dma_tx)]
     dma: Option<TxDma>,
     actual_baudrate: u32,
     _mode: PhantomData<M>,
@@ -562,7 +563,7 @@ pub struct UartRx<'d, M: Mode> {
     state: &'static State,
     _pin: Option<Flex<'d>>,
     _rts: Option<Flex<'d>>,
-    #[cfg(uart_dma)]
+    #[cfg(uart_dma_rx)]
     dma: Option<RxDma>,
     actual_baudrate: u32,
     _mode: PhantomData<M>,
@@ -1054,7 +1055,7 @@ impl<'d, M: Mode> Uart<'d, M> {
 
 // The lease belongs to the driver, never to an operation future. Only Idle
 // permits staging access. A forgotten waiter leaves InFlight intact.
-#[cfg(uart_dma)]
+#[cfg(uart_dma_tx)]
 #[derive(Clone, Copy, Eq, PartialEq)]
 enum TxDmaPhase {
     Idle,
@@ -1062,7 +1063,7 @@ enum TxDmaPhase {
     Quarantined,
 }
 
-#[cfg(uart_dma)]
+#[cfg(uart_dma_tx)]
 struct TxDma {
     channel: crate::dma::Channel<'static>,
     staging: &'static mut [u8],
@@ -1070,7 +1071,7 @@ struct TxDma {
     phase: TxDmaPhase,
 }
 
-#[cfg(uart_dma)]
+#[cfg(uart_dma_tx)]
 impl TxDma {
     fn validate_staging(staging: &[u8]) -> Result<(), crate::dma::ConfigError> {
         use crate::dma::ConfigError;
@@ -1108,8 +1109,9 @@ impl TxDma {
                 Poll::Ready(Err(Error::Dma(error)))
             }
             Poll::Ready(Ok(())) => {
-                // Own manual §18.7.1.5: close the request after DMA TC. The
-                // channel helper also required Complete STATUS and no TE.
+                // Own manuals §18.7.1.5 (F020 §17.7.1.5, p287): close the
+                // request after DMA TC. The channel helper also required
+                // Complete STATUS and no TE; F020 §8.6/§8.8.3, pp133/136.
                 critical_section::with(|_| regs.cr2().modify(|v| v.set_dmatx(false)));
                 // SAFETY: this same lease retained all resources continuously;
                 // clean completion and request closure precede the fence and
@@ -1157,7 +1159,8 @@ impl TxDma {
                 self.phase = TxDmaPhase::Quarantined;
                 return Err(Error::DmaQuarantined);
             }
-            // The channel is enabled before the UART request (§18.7.1.5).
+            // Enable the channel before the UART request (§18.7.1.5;
+            // F020 §17.7.1.5, p287 also explicitly qualifies byte SRAM-to-TDR).
             critical_section::with(|_| regs.cr2().modify(|v| v.set_dmatx(true)));
             self.complete(regs).await?;
         }
@@ -1165,9 +1168,9 @@ impl TxDma {
     }
 }
 
-#[cfg(uart_dma)]
+#[cfg(uart_dma_tx)]
 impl UartTx<'static, Async> {
-    /// Create a safe staged DMA transmitter on F030/A030/L083 without CTS.
+    /// Create a safe staged DMA transmitter on F030/A030/L083/F020 without CTS.
     ///
     /// Consumes static UART, TX pin, compatible DMA channel and SRAM staging.
     /// Short-lived peripheral reborrows are deliberately excluded. Like other
@@ -1274,7 +1277,7 @@ impl<'d> UartTx<'d, Async> {
     /// Cancellation can leave a transmitted prefix and a running staged chunk.
     /// A later write/flush first waits for that chunk's clean completion.
     pub async fn write(&mut self, buffer: &[u8]) -> Result<(), Error> {
-        #[cfg(uart_dma)]
+        #[cfg(uart_dma_tx)]
         if let Some(dma) = self.dma.as_mut() {
             return dma.write(self.info.regs, buffer).await;
         }
@@ -1286,7 +1289,7 @@ impl<'d> UartTx<'d, Async> {
     }
     /// Wait until the last queued byte has finished transmission.
     pub async fn flush(&mut self) -> Result<(), Error> {
-        #[cfg(uart_dma)]
+        #[cfg(uart_dma_tx)]
         if let Some(dma) = self.dma.as_mut() {
             dma.complete(self.info.regs).await?;
         }
@@ -1304,7 +1307,7 @@ impl<'d, M: Mode> UartTx<'d, M> {
             state: T::state(),
             _pin: Some(pin),
             _cts: None,
-            #[cfg(uart_dma)]
+            #[cfg(uart_dma_tx)]
             dma: None,
             actual_baudrate: actual,
             _mode: PhantomData,
@@ -1337,7 +1340,7 @@ impl<'d, M: Mode> UartTx<'d, M> {
     /// Queue bytes with CPU writes and blocking status checks.
     /// A DMA owner first reaps clean completion, or returns DmaBusy/quarantine.
     pub fn blocking_write(&mut self, buffer: &[u8]) -> Result<(), Error> {
-        #[cfg(uart_dma)]
+        #[cfg(uart_dma_tx)]
         if let Some(dma) = self.dma.as_mut() {
             dma.check_complete(self.info.regs)?;
         }
@@ -1352,7 +1355,7 @@ impl<'d, M: Mode> UartTx<'d, M> {
     /// Wait for the transmit buffer and shift register to empty.
     /// A DMA owner first reaps clean completion, or returns DmaBusy/quarantine.
     pub fn blocking_flush(&mut self) -> Result<(), Error> {
-        #[cfg(uart_dma)]
+        #[cfg(uart_dma_tx)]
         if let Some(dma) = self.dma.as_mut() {
             dma.check_complete(self.info.regs)?;
         }
@@ -1365,7 +1368,7 @@ impl<'d, M: Mode> UartTx<'d, M> {
 
 // RX staging is never reborrowed while DMA may write it. The exclusive static
 // reference is consumed once; only a positively retired Ready chunk is copied.
-#[cfg(uart_dma)]
+#[cfg(uart_dma_rx)]
 #[derive(Clone, Copy)]
 enum RxDmaPhase {
     Idle,
@@ -1381,7 +1384,7 @@ enum RxDmaPhase {
     Quarantined,
 }
 
-#[cfg(uart_dma)]
+#[cfg(uart_dma_rx)]
 struct RxDma {
     channel: crate::dma::Channel<'static>,
     staging: *mut u8,
@@ -1391,7 +1394,7 @@ struct RxDma {
     phase: RxDmaPhase,
 }
 
-#[cfg(uart_dma)]
+#[cfg(uart_dma_rx)]
 impl RxDma {
     fn new(
         channel: crate::dma::Channel<'static>,
@@ -1617,7 +1620,7 @@ impl RxDma {
     }
 }
 
-#[cfg(uart_dma)]
+#[cfg(uart_dma_rx)]
 impl UartRx<'static, Async> {
     /// Create a safe finite-chunk DMA receiver on F030/A030/L083 without RTS.
     ///
@@ -1659,7 +1662,7 @@ impl UartRx<'static, Async> {
     }
 }
 
-#[cfg(uart_dma)]
+#[cfg(all(uart_dma_tx, uart_dma_rx))]
 impl Uart<'static, Async> {
     /// Create both DMA directions with one UART configuration, then use split
     /// or split_ref for concurrent writes and finite-chunk reads.
@@ -1782,7 +1785,7 @@ impl<'d> UartRx<'d, Async> {
     /// On L010/L011/L012, even an empty read masks an abandoned RX/idle wait's
     /// interrupt enables; it does not clear receive flags or consume data.
     pub async fn read(&mut self, buffer: &mut [u8]) -> Result<(), Error> {
-        #[cfg(uart_dma)]
+        #[cfg(uart_dma_rx)]
         if let Some(dma) = self.dma.as_mut() {
             return dma.read(self.info.regs, self.state, buffer).await;
         }
@@ -1884,7 +1887,7 @@ impl<'d, M: Mode> UartRx<'d, M> {
             state: T::state(),
             _pin: Some(pin),
             _rts: None,
-            #[cfg(uart_dma)]
+            #[cfg(uart_dma_rx)]
             dma: None,
             actual_baudrate: actual,
             _mode: PhantomData,
@@ -1920,7 +1923,7 @@ impl<'d, M: Mode> UartRx<'d, M> {
     fn check_read(&mut self) -> Result<(), Error> {
         #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
         retire_receive_wait(self.info.regs);
-        #[cfg(uart_dma)]
+        #[cfg(uart_dma_rx)]
         if let Some(dma) = self.dma.as_mut() {
             dma.check_complete(self.info.regs, self.state)?;
         }
@@ -1930,7 +1933,7 @@ impl<'d, M: Mode> UartRx<'d, M> {
     /// pending returns DmaBusy, clean staged bytes are copied before CPU reads.
     pub fn blocking_read(&mut self, buffer: &mut [u8]) -> Result<(), Error> {
         self.check_read()?;
-        #[cfg(uart_dma)]
+        #[cfg(uart_dma_rx)]
         let buffer = if let Some(dma) = self.dma.as_mut() {
             let copied = dma.copy_ready(buffer);
             &mut buffer[copied..]
@@ -1952,10 +1955,11 @@ impl<'d, M: Mode> UartRx<'d, M> {
 
 impl<M: Mode> Drop for UartTx<'_, M> {
     fn drop(&mut self) {
-        #[cfg(uart_dma)]
+        #[cfg(uart_dma_tx)]
         if let Some(dma) = self.dma.as_mut() {
             if dma.check_complete(self.info.regs).is_err() {
-                // EN-clear/TE is not a memory reclamation proof. Retain the
+                // EN-clear/TE is not a memory reclamation proof, including
+                // F020 STATUS2 (stop-request error, §8.8.3 p136). Retain the
                 // static channel/staging/pins and leave UART/DMA clocks and
                 // request configuration intact. The DMA ISR remains able to
                 // record and mask its own terminal source independently.
@@ -1971,7 +1975,7 @@ impl<M: Mode> Drop for UartTx<'_, M> {
 }
 impl<M: Mode> Drop for UartRx<'_, M> {
     fn drop(&mut self) {
-        #[cfg(uart_dma)]
+        #[cfg(uart_dma_rx)]
         if let Some(dma) = self.dma.as_mut() {
             // An error return alone does not decide lifetime: a line-error
             // chunk may already have retired cleanly, whereas an unresolved
@@ -2110,7 +2114,7 @@ enum WaitEvent {
     Receive,
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
     ReceiveUntilIdle,
-    #[cfg(uart_dma)]
+    #[cfg(uart_dma_rx)]
     ReceiveErrors,
 }
 
@@ -2119,7 +2123,7 @@ impl WaitEvent {
         match self {
             Self::TxReady => ier.set_txe(enabled),
             Self::TxComplete => ier.set_tc(enabled),
-            #[cfg(uart_dma)]
+            #[cfg(uart_dma_rx)]
             Self::ReceiveErrors => {
                 ier.set_rc(false);
                 ier.set_fe(enabled);
@@ -2151,7 +2155,7 @@ impl WaitEvent {
             Self::Receive => receive_event(status),
             #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
             Self::ReceiveUntilIdle => receive_event(status) || status.rxidle(),
-            #[cfg(uart_dma)]
+            #[cfg(uart_dma_rx)]
             Self::ReceiveErrors => status.pe() || status.fe(),
         }
     }

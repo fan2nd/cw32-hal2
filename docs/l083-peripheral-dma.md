@@ -11,8 +11,9 @@ accepted L083 software-copy implementation or from a shared register layout.
 `embassy-cw32/build.rs` contains one bounded staged profile policy. It verifies
 native DMA/DMACHANNEL `v1`, UART `cw32l083_v1` and SPI `cw32l031_v1`, and requires
 one unremapped, unrestricted DMA RX and TX route for each admitted instance.
-The UART/SPI route sets generate `uart_dma` and `spi_dma`; internal request
-launch/retirement machinery requires either capability. These mark qualified
+The UART/SPI route sets generate `uart_dma_tx`, `uart_dma_rx` and `spi_dma`;
+internal request launch/retirement machinery uses the corresponding
+directional or SPI capability. These mark qualified
 driver support, not hardware absence on other families. The typed PAC versions
 and metadata-derived clock, pin and interrupt facts are preserved. No adapter,
 family list throughout runtime, or new register/schema representation is used.

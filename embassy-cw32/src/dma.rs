@@ -1,9 +1,11 @@
-//! One-shot, interrupt-driven DMA for CW32F030/CW32A030 and CW32L083.
+//! One-shot, interrupt-driven DMA for CW32F030/CW32A030, CW32L083 and CW32F020.
 //!
 //! The implementation follows CW32x030 User Manual EN V1.0 §§8.4–8.8
-//! (also checked against CN V2.5) and CW32L083 CN V2.0 §§8.4–8.8.
+//! (also checked against CN V2.5), CW32L083 CN V2.0 §§8.4–8.8,
+//! and CW32F020 CN V1.4 §§8.4–8.8 (native two-channel controller).
 //! L083 also exposes safe staged UART/SPI requests; unsafe borrowed hardware
-//! constructors remain x030-only.
+//! constructors remain x030-only. F020 adds safe owned copy and staged UART TX;
+//! unsafe software-copy APIs retain their existing contracts.
 //! It uses BLOCK transfers with REPEAT=1,
 //! equal source/destination word widths and the channel's fixed priority.
 //! There is no circular mode, programmable priority, packing or burst API.
@@ -100,8 +102,8 @@ pub trait ChannelInstance: sealed::Channel + PeripheralType + 'static {
 
 /// Verified request route from peripheral `P`, signal `S`, to this channel.
 ///
-/// Qualified x030 and L083 request tables apply to all five channels. This trait
-/// is sealed so
+/// Qualified x030/L083 requests apply to their five channels; qualified F020
+/// UART TX requests apply to its two physical channels. This trait is sealed so
 /// downstream code cannot introduce an unverified request or channel route.
 #[allow(private_bounds)]
 pub trait RequestRoute<P, S>: ChannelInstance + sealed::Route<P, S> {
@@ -121,7 +123,7 @@ macro_rules! impl_channel {
 }
 pub(crate) use impl_channel;
 
-#[cfg(any(uart_dma, spi_dma))]
+#[cfg(any(uart_dma_tx, uart_dma_rx, spi_dma))]
 macro_rules! impl_request {
     ($name:ident, $peripheral:ident, $signal:ident, $number:expr) => {
         impl $crate::dma::Request {
@@ -145,7 +147,7 @@ macro_rules! impl_request {
         }
     };
 }
-#[cfg(any(uart_dma, spi_dma))]
+#[cfg(any(uart_dma_tx, uart_dma_rx, spi_dma))]
 pub(crate) use impl_request;
 
 /// A supported DMA word. Only `u8`, `u16` and `u32` implement this trait.
@@ -388,7 +390,7 @@ impl Channel<'static> {
     // Both directions must be admitted before either is claimed. Only the
     // startup-owned software capability is consulted; no fresh hardware
     // snapshot or partial admission can manufacture a safe owner.
-    #[cfg(any(uart_dma, spi_dma))]
+    #[cfg(any(all(uart_dma_tx, uart_dma_rx), spi_dma))]
     pub(crate) fn new_admitted_pair<T: ChannelInstance, R: ChannelInstance>(
         _tx: Peri<'static, T>,
         _rx: Peri<'static, R>,
@@ -437,7 +439,7 @@ impl Channel<'static> {
     // static source, endpoint, clocks and channel before this call, including
     // on panic/forget, until a clean completion has been retired. A live owner
     // leaves a cancelled operation running; no task-local Transfer is created.
-    #[cfg(any(uart_dma, spi_dma))]
+    #[cfg(any(uart_dma_tx, spi_dma))]
     pub(crate) unsafe fn start_write(
         &mut self,
         request: Request,
@@ -462,7 +464,7 @@ impl Channel<'static> {
     // completion has been retired. `destination` must cover `len` writable
     // bytes in previously validated SRAM; no CPU access or reference to those
     // bytes is allowed while DMA may write. Launch only from an idle lease.
-    #[cfg(any(uart_dma, spi_dma))]
+    #[cfg(any(uart_dma_rx, spi_dma))]
     pub(crate) unsafe fn start_read(
         &mut self,
         request: Request,
@@ -484,7 +486,7 @@ impl Channel<'static> {
 
     // None is a single nonblocking observation for blocking methods and Drop;
     // async callers register with the same critical-section protocol as Transfer.
-    #[cfg(any(uart_dma, spi_dma))]
+    #[cfg(any(uart_dma_tx, uart_dma_rx, spi_dma))]
     pub(crate) fn poll_hardware_complete(
         &mut self,
         cx: Option<&mut Context<'_>>,
@@ -531,7 +533,7 @@ impl Channel<'static> {
 
     // Only after poll_hardware_complete returned clean success and the owner
     // closed the peripheral request. Error/abandoned owners never call this.
-    #[cfg(any(uart_dma, spi_dma))]
+    #[cfg(any(uart_dma_tx, uart_dma_rx, spi_dma))]
     pub(crate) unsafe fn retire_hardware(&mut self) {
         fence(Ordering::SeqCst);
         critical_section::with(|cs| {
@@ -1097,8 +1099,11 @@ fn channel_regs(index: u8) -> pac::dmachannel::Dmachannel {
     match index {
         0 => pac::DMACHANNEL1,
         1 => pac::DMACHANNEL2,
+        #[cfg(dma_v1)]
         2 => pac::DMACHANNEL3,
+        #[cfg(dma_v1)]
         3 => pac::DMACHANNEL4,
+        #[cfg(dma_v1)]
         4 => pac::DMACHANNEL5,
         _ => unreachable!("unverified DMA channel"),
     }
@@ -1117,14 +1122,17 @@ fn clear_flags(index: u8, complete: bool, error: bool) {
             value.set_tc2(!complete);
             value.set_te2(!error);
         }
+        #[cfg(dma_v1)]
         2 => {
             value.set_tc3(!complete);
             value.set_te3(!error);
         }
+        #[cfg(dma_v1)]
         3 => {
             value.set_tc4(!complete);
             value.set_te4(!error);
         }
+        #[cfg(dma_v1)]
         4 => {
             value.set_tc5(!complete);
             value.set_te5(!error);
@@ -1203,8 +1211,11 @@ fn service_interrupt(index: u8) {
         let (complete, error) = match index {
             0 => (pending.tc1(), pending.te1()),
             1 => (pending.tc2(), pending.te2()),
+            #[cfg(dma_v1)]
             2 => (pending.tc3(), pending.te3()),
+            #[cfg(dma_v1)]
             3 => (pending.tc4(), pending.te4()),
+            #[cfg(dma_v1)]
             4 => (pending.tc5(), pending.te5()),
             _ => unreachable!("unverified DMA channel"),
         };

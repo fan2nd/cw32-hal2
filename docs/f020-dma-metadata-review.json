@@ -1,0 +1,1850 @@
+{
+  "schema_version": 1,
+  "stage": 84,
+  "date": "2026-10-12",
+  "artifact_role": "independent-main-F020-source-metadata-generated-artifact-review",
+  "status": "accepted-main",
+  "open_blockers": [],
+  "scope": "Native F020 two-channel DMA source data and command seed, exact-part safe owned SRAM copy and staged byte UART TX scope, complete generated delta, capability projections and retained actual main ARM artifacts. Runtime lifecycle has a separate review. Final-source clean acceptance remains pending.",
+  "review_method": "Independent read-only inspection of pinned original/member/text bytes, own source pages, production data, exact diffs, retained Cargo JSON/OUT_DIR records, ARM object archives and ELF bytes. No reviewer-run generation, Cargo, production source gate, HAL test, synthetic probe/model, firmware or hardware execution.",
+  "approved_design_sha256": "308f94c71fdd037ba4ef7ea88512a1a3e4ae99d4af6aa3ee2f7be09f7fd65622",
+  "frozen_source_bindings_sha256": "a5a99408227d4604e1c5090b577458c6c1d21930efaf6773ebf48880ad5d2fa6",
+  "consumed_sources": [
+    {
+      "source_ref": "vendor:CW32F020_StandardPeripheralLib_V1.2.zip",
+      "index_pointer": "/artifacts/2",
+      "path": "CW32F020_StandardPeripheralLib_V1.2.zip",
+      "official_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d",
+      "bytes": 2214134,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "member:cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/SVD/CW32F020.svd",
+      "index_pointer": "/artifacts/2/members/0",
+      "path": "cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/SVD/CW32F020.svd",
+      "official_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "e2e0bd198e6c39aa0807ad10080a26b9bccc4a4718eea5dd0d54a13630101f98",
+      "bytes": 356006,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "member:cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/WHXY.CW32F020_DFP.pdsc",
+      "index_pointer": "/artifacts/2/members/1",
+      "path": "cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/WHXY.CW32F020_DFP.pdsc",
+      "official_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "0f52e575b13726a6ba68150fbf0fd761cc057ddee43141e68dc2acdcc9c7c910",
+      "bytes": 4026,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "member:cw32f020/Libraries/inc/cw32f020.h",
+      "index_pointer": "/artifacts/2/members/2",
+      "path": "cw32f020/Libraries/inc/cw32f020.h",
+      "official_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "6ec6fad0aaa2e6811c372bec0956d83425352640db9c6b415ed11cb0ed41502f",
+      "bytes": 632223,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "member:cw32f020/Libraries/inc/cw32f020_dma.h",
+      "index_pointer": "/artifacts/2/members/7",
+      "path": "cw32f020/Libraries/inc/cw32f020_dma.h",
+      "official_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "9dcc8e777c11a8f0fe033c3d874ddce0d3328842b90d606ef9ade9668b2f8086",
+      "bytes": 14523,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "member:cw32f020/Libraries/inc/cw32f020_gpio.h",
+      "index_pointer": "/artifacts/2/members/9",
+      "path": "cw32f020/Libraries/inc/cw32f020_gpio.h",
+      "official_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "eccc3bb68452d2e3218397b2a795c4330e4a3d9b5a76481de128655e4602874d",
+      "bytes": 67369,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "member:cw32f020/Libraries/inc/cw32f020_uart.h",
+      "index_pointer": "/artifacts/2/members/17",
+      "path": "cw32f020/Libraries/inc/cw32f020_uart.h",
+      "official_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "be03af90b5c4c7d2431e28d29e7dda7ae9f44ffe610de7a272d7afed491fbb48",
+      "bytes": 12677,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "member:cw32f020/Libraries/src/cw32f020_uart.c",
+      "index_pointer": "/artifacts/2/members/31",
+      "path": "cw32f020/Libraries/src/cw32f020_uart.c",
+      "official_url": "https://www.whxy.com/uploads/files/20240115/CW32F020_StandardPeripheralLib_V1.2.zip",
+      "sha256": "ed93f8f63e13580c8cffe8541681a9d14c91d8bea6c37b295537c7bb1ead266f",
+      "bytes": 17899,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+      "index_pointer": "/artifacts/18",
+      "path": "CW32F020_UserManual_CN_V1.4.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+      "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed",
+      "bytes": 9120176,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "text:CW32F020_UserManual_CN_V1.4.txt",
+      "index_pointer": "/artifacts/18/text",
+      "path": "CW32F020_UserManual_CN_V1.4.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32F020_UserManual_CN_V1.4.pdf",
+      "sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db",
+      "bytes": 1282599,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+      "index_pointer": "/artifacts/40",
+      "path": "current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20251230/CW32F020_DataSheet_CN_V1.3.pdf",
+      "sha256": "1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0",
+      "bytes": 3084660,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "text:current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+      "index_pointer": "/artifacts/40/text",
+      "path": "current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20251230/CW32F020_DataSheet_CN_V1.3.pdf",
+      "sha256": "c561aa8acbafc12cd6ac39fc0595f58a168b02dfda301b90df4fdd067a69d233",
+      "bytes": 206743,
+      "review_use": "Own F020 source facts, current datasheet facts or direct SDK archive/member corroboration."
+    },
+    {
+      "source_ref": "vendor:CW32x030_UserManual_CN_V2.5.pdf",
+      "index_pointer": "/artifacts/36",
+      "path": "CW32x030_UserManual_CN_V2.5.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "sha256": "1afd49261f0f0689af8cb8ebf1b0ac1c00e3209b20d3c722106707ff4a10bdd2",
+      "bytes": 9989317,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "text:CW32x030_UserManual_CN_V2.5.txt",
+      "index_pointer": "/artifacts/36/text",
+      "path": "CW32x030_UserManual_CN_V2.5.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf",
+      "sha256": "23935a54e976c25acfacd689818f272db88b579fc8f15363c2732c12da8773fe",
+      "bytes": 1521355,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "vendor:CW32x030_UserManual_EN_V1.0.pdf",
+      "index_pointer": "/artifacts/37",
+      "path": "CW32x030_UserManual_EN_V1.0.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf",
+      "sha256": "22eda878089565b7609f42215253227bb8e7b8072ea0378eae8a5ad489e3e3ec",
+      "bytes": 10769744,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "text:CW32x030_UserManual_EN_V1.0.txt",
+      "index_pointer": "/artifacts/37/text",
+      "path": "CW32x030_UserManual_EN_V1.0.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_EN_V1.0.pdf",
+      "sha256": "6df7cd462a95f66028dc9dda01652240a6c1d20e892f37fc928f9d9b4f031f6f",
+      "bytes": 1738995,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+      "index_pointer": "/artifacts/27",
+      "path": "CW32L031_UserManual_CN_V1.6.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760",
+      "bytes": 9976689,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "text:CW32L031_UserManual_CN_V1.6.txt",
+      "index_pointer": "/artifacts/27/text",
+      "path": "CW32L031_UserManual_CN_V1.6.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32L031_UserManual_CN_V1.6.pdf",
+      "sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1",
+      "bytes": 1443523,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+      "index_pointer": "/artifacts/29",
+      "path": "CW32L052_UserManual_CN_V1.5.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+      "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41",
+      "bytes": 12894348,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "text:CW32L052_UserManual_CN_V1.5.txt",
+      "index_pointer": "/artifacts/29/text",
+      "path": "CW32L052_UserManual_CN_V1.5.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32L052_UserManual_CN_V1.5.pdf",
+      "sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb",
+      "bytes": 1650171,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "vendor:CW32L083_UserManual_CN_V2.0.pdf",
+      "index_pointer": "/artifacts/31",
+      "path": "CW32L083_UserManual_CN_V2.0.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "9930bf1755f3bbf8933163c2d0da57fd9a4f3250a358a4c0bfc75ed4eda3a0a3",
+      "bytes": 11981462,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "text:CW32L083_UserManual_CN_V2.0.txt",
+      "index_pointer": "/artifacts/31/text",
+      "path": "CW32L083_UserManual_CN_V2.0.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32L083_UserManual_CN_V2.0.pdf",
+      "sha256": "6abc933b3ed02659347ee557f47549e4c93c5de890530b950b20535b56a56564",
+      "bytes": 1673767,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+      "index_pointer": "/artifacts/33",
+      "path": "CW32R031_UserManual_CN_V1.3.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+      "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb",
+      "bytes": 11821621,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "text:CW32R031_UserManual_CN_V1.3.txt",
+      "index_pointer": "/artifacts/33/text",
+      "path": "CW32R031_UserManual_CN_V1.3.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32R031_UserManual_CN_V1.3.pdf",
+      "sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b",
+      "bytes": 1579725,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+      "index_pointer": "/artifacts/35",
+      "path": "CW32W031_UserManual_CN_V1.4.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+      "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9",
+      "bytes": 11750733,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "text:CW32W031_UserManual_CN_V1.4.txt",
+      "index_pointer": "/artifacts/35/text",
+      "path": "CW32W031_UserManual_CN_V1.4.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20240920/CW32W031_UserManual_CN_V1.4.pdf",
+      "sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac",
+      "bytes": 1516397,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "vendor:CW32F030_DataSheet_CN_V1.9.pdf",
+      "index_pointer": "/artifacts/19",
+      "path": "CW32F030_DataSheet_CN_V1.9.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf",
+      "sha256": "04ef91434320e5d05a3b6690fead0fedb31a7d9bad28c96b655a6e13a22e46b2",
+      "bytes": 3467588,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "text:CW32F030_DataSheet_CN_V1.9.txt",
+      "index_pointer": "/artifacts/19/text",
+      "path": "CW32F030_DataSheet_CN_V1.9.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20251229/CW32F030_DataSheet_CN_V1.9.pdf",
+      "sha256": "7c4d70098481fb58e0924901dbbe24cb88cf445689efaf718410617b37f4e5bf",
+      "bytes": 237459,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "vendor:CW32A030_DataSheet_CN_V1.1.pdf",
+      "index_pointer": "/artifacts/12",
+      "path": "CW32A030_DataSheet_CN_V1.1.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf",
+      "sha256": "690433f36376352ee342ae3e2aa76786f2e7e59892a2519411f2754ac32c33a9",
+      "bytes": 2692267,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "text:CW32A030_DataSheet_CN_V1.1.txt",
+      "index_pointer": "/artifacts/12/text",
+      "path": "CW32A030_DataSheet_CN_V1.1.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20251230/CW32A030_DataSheet_CN_V1.1.pdf",
+      "sha256": "87c782da759a6893bca9f773a474a7b0445f77cd51d86d9cb2d2d8b8de8d05b9",
+      "bytes": 188529,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "vendor:CW32L083_DataSheet_CN_V1.9.pdf",
+      "index_pointer": "/artifacts/30",
+      "path": "CW32L083_DataSheet_CN_V1.9.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+      "sha256": "852f772e9174cb76bf0f475f31f1e275254f8fe176bd3e7ad60d00b41db9509e",
+      "bytes": 2900110,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    },
+    {
+      "source_ref": "text:CW32L083_DataSheet_CN_V1.9.txt",
+      "index_pointer": "/artifacts/30/text",
+      "path": "CW32L083_DataSheet_CN_V1.9.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20251229/CW32L083_DataSheet_CN_V1.9.pdf",
+      "sha256": "2124f5c492e1d58b51674805b2d8a58f82b2ce462c8b73beaba63c6d93780220",
+      "bytes": 262150,
+      "review_use": "Identity-only review of the existing historical DMA checker comparison; no new family behavior qualification."
+    }
+  ],
+  "own_F020_identity_count": 12,
+  "own_SDK_archive_chains_verified": 7,
+  "own_manual_pages_reviewed": [
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 24,
+      "pdf_viewer_page": 25,
+      "sha256": "fa1ef213151411adeaddb88fb67be7283b9f15a928ca7f39fbee79e8c333dd3e",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 26,
+      "pdf_viewer_page": 27,
+      "sha256": "a97352aff2f378dda470884535481ca0baeaf827bf315752d3970c775799c16e",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 30,
+      "pdf_viewer_page": 31,
+      "sha256": "7c5822d8e803d4b304725b9672f6fb281f9c48cf4e2a292134aac4cf0aef9910",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 79,
+      "pdf_viewer_page": 80,
+      "sha256": "5905f80c9edca0769065f604d60495085fba240b00abdc10829e666ac92b9b5b",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 82,
+      "pdf_viewer_page": 83,
+      "sha256": "deffb327be991902bd75606499215968f6ab0219d6d23b361346a3b551bea153",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 93,
+      "pdf_viewer_page": 94,
+      "sha256": "b96a41172bf3372680506c06d7cfafc0e4a9ec6957776d62aaeb6428c3133960",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 94,
+      "pdf_viewer_page": 95,
+      "sha256": "e69b664708432d71feac640857d6f1c7e0a653335e6dc48569ce6cc80ece0738",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 122,
+      "pdf_viewer_page": 123,
+      "sha256": "5f20006dc4e61348cbb1af09db0cccbbdc70a95c80d46b7ac8b00cfa55326e4d",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 123,
+      "pdf_viewer_page": 124,
+      "sha256": "1b78a08dc4a87ba3145c9e5a988aa7a967e15388fbf621eae55a7d47b94c8b0d",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 124,
+      "pdf_viewer_page": 125,
+      "sha256": "bf7b21b89c1e26aa1372fb6fef49c81c2f33c908cf846aa5b6126b93e6d4412f",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 125,
+      "pdf_viewer_page": 126,
+      "sha256": "9d7a43518f9a26d850cfcd88efff0979299545655e67149cb5f6188b5e2eb2af",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 126,
+      "pdf_viewer_page": 127,
+      "sha256": "c150e54cc2c8a2530014540609c01bcee665e9b9feb6be7af3c8338112538390",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 128,
+      "pdf_viewer_page": 129,
+      "sha256": "92c1c3a8b10f6dbf31f638343556a8d68867b5708802ff267239a24e59a838af",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 132,
+      "pdf_viewer_page": 133,
+      "sha256": "09688ffdf7b6202dfbec3f958c8f3bcfff54496624074aca8761fb83ffdadcf2",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 133,
+      "pdf_viewer_page": 134,
+      "sha256": "b540059ce31fc15648ffa75f6706c9bdcf6709286fef0c0e896c1a3e5b257468",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 134,
+      "pdf_viewer_page": 135,
+      "sha256": "d25bc6a0461b94e32a0020127228e91be7804a530bf68d994360a7576ebb65ac",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 135,
+      "pdf_viewer_page": 136,
+      "sha256": "5d3716e399f55b718bdb35a7976a837be8b695f2171d4191fd6269ce79ba156f",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 136,
+      "pdf_viewer_page": 137,
+      "sha256": "01e0a6348b8481d91a6d1db4f5617f87bfb1962dce23691369db4b4e772003b6",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 137,
+      "pdf_viewer_page": 138,
+      "sha256": "e349a99ac70ae71a8ae0e0037bce0d10402af3652e8a319a875b6d92b3af0348",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 138,
+      "pdf_viewer_page": 139,
+      "sha256": "b1cba6daf44331c52c0de9cfb7aa8f0880371fd38c0dde5fb0a70dea28f1a47b",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 275,
+      "pdf_viewer_page": 276,
+      "sha256": "512af0f58abb8132b5864cca4b21e66db598a53de00a03708a74837e96c1266a",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 282,
+      "pdf_viewer_page": 283,
+      "sha256": "ef9a3637b5d9bfe38553966af1e6ffcbe0b28c8ba8420f8b081c581b0a579628",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 287,
+      "pdf_viewer_page": 288,
+      "sha256": "4bd2d1662c425fb2dba4778445da6831e70132c1d03728333f4ee7bf4ee0186b",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 292,
+      "pdf_viewer_page": 293,
+      "sha256": "077f132356104b333c41eaa2cf78b87f9a2ce0c8b0821ac68991465185b12460",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 294,
+      "pdf_viewer_page": 295,
+      "sha256": "f74d89df06f7070305516b640586bf2e40cff53f602f136555ce11147a1925b8",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 295,
+      "pdf_viewer_page": 296,
+      "sha256": "67403f2c3140f893332de88ff302b7c0ad597693d9a4653d1a02f85328ee857b",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    },
+    {
+      "source_text": "CW32F020_UserManual_CN_V1.4.txt",
+      "printed_page": 297,
+      "pdf_viewer_page": 298,
+      "sha256": "b9fef3d4b1f9d177622d37e3e0204d50579f1ff94b40b79ec6cf115f345cf73b",
+      "matches_evidence": true,
+      "matches_frozen_design": true
+    }
+  ],
+  "current_datasheet_pages_reviewed": [
+    {
+      "source_text": "current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+      "printed_page": 7,
+      "pdf_viewer_page": 8,
+      "sha256": "e4f2961e39c04479798077bc2ac7cc3c41bb8d96f1457edcbf37c819597b1f5c",
+      "matches_evidence": true,
+      "matches_frozen_design": null
+    },
+    {
+      "source_text": "current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+      "printed_page": 22,
+      "pdf_viewer_page": 23,
+      "sha256": "3dda240b8cbac28c08575a79a7c6aac0d003cfb71e472f5fcb4457a2932150c7",
+      "matches_evidence": true,
+      "matches_frozen_design": null
+    },
+    {
+      "source_text": "current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+      "printed_page": 23,
+      "pdf_viewer_page": 24,
+      "sha256": "25ba9ad98764b107d8ca8e8d01edeeb24c58df8077f83ecfe6ef8bb4a70bd6f2",
+      "matches_evidence": true,
+      "matches_frozen_design": null
+    },
+    {
+      "source_text": "current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+      "printed_page": 24,
+      "pdf_viewer_page": 25,
+      "sha256": "2482c55448f4043e232b85be4371bd829f94b7dbdee23b2f9d970549ce1469de",
+      "matches_evidence": true,
+      "matches_frozen_design": null
+    },
+    {
+      "source_text": "current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+      "printed_page": 26,
+      "pdf_viewer_page": 27,
+      "sha256": "5f81a481713e6511058f34941e53a4f425b21e06e138715717b3e39a7bb8982e",
+      "matches_evidence": true,
+      "matches_frozen_design": null
+    }
+  ],
+  "source_data_findings": {
+    "native_ICR": {
+      "block": "DMA",
+      "register": "ICR",
+      "fieldset": "ICR",
+      "reset_value": 4294967295,
+      "write_noop": 4294967295,
+      "zero_to_clear_fields": [
+        "TC1",
+        "TE1",
+        "TC2",
+        "TE2"
+      ],
+      "prior_byte_prefix_unchanged": true,
+      "prior_parsed_records_unchanged": true,
+      "append_bytes": 462
+    },
+    "source_index_appends": {
+      "reviewed_before_sha256": "d616d1f91552c8efe197429eed6f1dc474f134690795b3ca3df1882d7d3fe9a3",
+      "reviewed_after_sha256": "1f33a2e8a9dfe9289a66760f18598f5e08d8b652f2f74f8fc37365e6746a3890",
+      "appended_references": 26,
+      "existing_nodes": 12,
+      "removing_only_appended_bytes_restores_all_400620_baseline_bytes": true,
+      "all_old_identity_fields_keys_and_history_preserved": true,
+      "review_backlink_note": "This binds the source-data implementation index before this review is itself indexed. Later review-only backlinks require a separate final-source correspondence record."
+    },
+    "unaltered_production_geometry_schema_and_generators": true,
+    "own_source_interpretation": [
+      "Exactly CH1/CH2; DMA base 0x40020000; channel bases 0x40020020 and 0x40020040; independent DMACH1 IRQ9 and DMACH2 IRQ10; IRQ11 reserved.",
+      "Own UM p135 establishes ICR reset/no-op 0xFFFFFFFF and four R1W0 fields TC1/TE1/TC2/TE2 at bits0/1/4/5.",
+      "Own UM p287 explicitly establishes byte SRAM-to-TDR BLOCK, REPEAT1, source increment, fixed destination, channel EN before DMATX and TC before closing DMATX. Wire completion separately requires TXBUSY0.",
+      "Current Rev1.3 datasheet and own UM establish exact 8 KiB SRAM at0x20000000 for C6/K6/F6; generic metadata has no SRAM and retains safe admission/staging rejection.",
+      "F6 UART1 has only PA14 for TX and remains excluded from safe TxPin. C6/K6 examples use UART1 PA8 AF2 + UART2 PA2 AF2; F6 examples use UART2 PA6 AF2 + UART3 PA2 AF1.",
+      "TE, STATUS2 stop request, EN clear and request closure provide no error-time bus-drain proof. Permanent owner retention is an explicit runtime obligation; source review does not prove liveness."
+    ]
+  },
+  "generated_delta": {
+    "baseline_path_count": 905,
+    "current_path_count": 906,
+    "added": [
+      "cw32-data/data/register-writes/dma_cw32f020_v1.json"
+    ],
+    "removed": [],
+    "changed": [
+      "cw32-metapac/src/peripherals/dma_cw32f020_v1.rs"
+    ],
+    "existing_exact_byte_unchanged_count": 904,
+    "chip_json_count": 54,
+    "all_chip_json_exact_bytes_unchanged": true,
+    "native_helper_review": {
+      "old_native_pac_bytes_preserved": 30884,
+      "append_bytes": 429,
+      "old_default_remains_zero": true,
+      "reset_and_write_noop_value": 4294967295,
+      "native_icr_layout_accessors_and_all_other_code_unchanged": true,
+      "native_json_exact_projection_of_authored_seed": true,
+      "zero_to_clear_fields": [
+        "TC1",
+        "TE1",
+        "TC2",
+        "TE2"
+      ],
+      "zero_to_clear_bits": [
+        0,
+        1,
+        4,
+        5
+      ],
+      "symbolic_command_consequences": {
+        "CH1_TC": "0xFFFFFFFE",
+        "CH1_TE": "0xFFFFFFFD",
+        "CH1_both": "0xFFFFFFFC",
+        "CH2_TC": "0xFFFFFFEF",
+        "CH2_TE": "0xFFFFFFDF",
+        "CH2_both": "0xFFFFFFCF"
+      },
+      "review_note": "Existing scalar setters only alter the selected bit. Appended helper returns all ones, so other channel bits/reserved bits retain ones. Runtime clear_flags reads no ICR value, starts from write_noop, applies only its selected channel setters, then write_value. Full runtime review remains separate."
+    }
+  },
+  "capability_projection": {
+    "detail_sha256": "ab11d392ca7897f925c40849ebaf377c8509045670afd3792843548834ce5d13",
+    "summary_sha256": "ac6337344a68d6490fc2dc2a4b548c67045f5f11d2557f7cd76afea8477adba9",
+    "inventory_fingerprint": "e14238c645716539072461120e431ecf15a8a8c93cf9da1532cc794eee1871cf",
+    "inputs_hash_verified": 570,
+    "rows": 2129,
+    "F020_scoped_rows": 9,
+    "F020_UART1_pin_eligible_parts": [
+      "CW32F020C6U7",
+      "CW32F020K6U7"
+    ],
+    "F020_SPI_DMA_status": "unimplemented",
+    "all_hardware_validated_false": true,
+    "pin_and_hardware_route_facts_are_not_runtime_admission": true
+  },
+  "main_validation": {
+    "actual_ARM_library_archives": 15,
+    "actual_linked_ELFs": 16,
+    "all_31_commands_exit_zero": true,
+    "ordinary_generation_runs": 1,
+    "capability_renderer_runs": 1,
+    "successful_existing_source_gates": 5,
+    "gate_names": [
+      "pinned DMA source re-extraction",
+      "existing DMA own-source/PAC facts",
+      "source provenance",
+      "capability consistency",
+      "module layout"
+    ],
+    "initial_failures_preserved": true,
+    "recovery_details": [
+      "Two absent derived source-cache manifests reconstructed from existing source-lock metadata; no original source substitution.",
+      "Existing historical DMA checker previously compared growing consumer backlinks as text identity. Approved narrow fix excludes only top-level evidence while preserving all other dictionary keys/values, original pins and all fact assertions. All eleven historical original/text pairs were independently hashed; ten differed only in backlinks."
+    ],
+    "source_files_at_build": 1391,
+    "source_before_after_sha256": "039791708326ef22585686dc07dad3772fb4e90dc6b101574b0e2dc87e17aa2f",
+    "all_source_generated_toolchain_before_after_bytes_equal": true,
+    "only_post_build_source_change": "tests/verify_dma_owned_evidence.py at approved SHA-256 63d64531c789b5d718cc5478150a66bd990342e2e4bd61512d5170917688f865; HAL/example/generated bytes remain those built.",
+    "retained_OUT_DIR_and_build_output_files_hash_verified": 1670,
+    "actual_artifacts": [
+      {
+        "selection": "cw32f020c6u7",
+        "target": "embassy_cw32",
+        "features": "cw32f020c6u7,rt",
+        "kind": "rlib",
+        "bytes": 4708488,
+        "sha256": "81639e0b5ba5f5065d8acccda83071b8e2d62a966f4a97f5a1bacaa0c48a41f0",
+        "arm_relocatable_object_count": 10,
+        "hal_generated_sha256": "d787bbf6d3b58926a9d05fcf00c19a1765368aa2ee176a844388abefe9953fe7",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": false
+        }
+      },
+      {
+        "selection": "cw32f020c6u7",
+        "target": "embassy_cw32",
+        "features": "cw32f020c6u7,rt,defmt",
+        "kind": "rlib",
+        "bytes": 6230000,
+        "sha256": "28f9f1b98a11d1cdd9147865b45da1f1cbbcdaaa8d83e49e3becdfd345a0859b",
+        "arm_relocatable_object_count": 12,
+        "hal_generated_sha256": "d787bbf6d3b58926a9d05fcf00c19a1765368aa2ee176a844388abefe9953fe7",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": false
+        }
+      },
+      {
+        "selection": "cw32f020k6u7",
+        "target": "embassy_cw32",
+        "features": "cw32f020k6u7,rt",
+        "kind": "rlib",
+        "bytes": 4474026,
+        "sha256": "fa763fa38fd71bfd1455a973109d5dda7a520b890404213d380f660b2793b3b0",
+        "arm_relocatable_object_count": 9,
+        "hal_generated_sha256": "f1f259d04f7097bef92a89a37624fb22de35f0dde49d48b3c6477928317156ee",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": false
+        }
+      },
+      {
+        "selection": "cw32f020k6u7",
+        "target": "embassy_cw32",
+        "features": "cw32f020k6u7,rt,defmt",
+        "kind": "rlib",
+        "bytes": 5851938,
+        "sha256": "3fced2f85d6be40574b1e710f74edd189e93a1fd79dc42e26c0cb062331b544f",
+        "arm_relocatable_object_count": 11,
+        "hal_generated_sha256": "f1f259d04f7097bef92a89a37624fb22de35f0dde49d48b3c6477928317156ee",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": false
+        }
+      },
+      {
+        "selection": "cw32f020f6u7",
+        "target": "embassy_cw32",
+        "features": "cw32f020f6u7,rt",
+        "kind": "rlib",
+        "bytes": 4340012,
+        "sha256": "6aebdeec8f41ee501f58025233df4835b5ee92195e4ac447ff984a87df4b6039",
+        "arm_relocatable_object_count": 9,
+        "hal_generated_sha256": "f8320864bc7b4e541a47a0abeafd83fc3775edc0fff5409ed9c3f0c39fb20580",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": true
+        }
+      },
+      {
+        "selection": "cw32f020f6u7",
+        "target": "embassy_cw32",
+        "features": "cw32f020f6u7,rt,defmt",
+        "kind": "rlib",
+        "bytes": 5608298,
+        "sha256": "fd682e7391418d1ac86670856daf534acea92359e94b0fdb530c469cf524ca2d",
+        "arm_relocatable_object_count": 11,
+        "hal_generated_sha256": "f8320864bc7b4e541a47a0abeafd83fc3775edc0fff5409ed9c3f0c39fb20580",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": true
+        }
+      },
+      {
+        "selection": "cw32f020",
+        "target": "embassy_cw32",
+        "features": "cw32f020,rt",
+        "kind": "rlib",
+        "bytes": 4334552,
+        "sha256": "975946c69e8f6615aedad321fc20be5b020a8e52de9640bfca22eef4a3c895e1",
+        "arm_relocatable_object_count": 9,
+        "hal_generated_sha256": "8898907d0c62c25ef94c3beafb2b5baf1398ab9d65f488eec0877c3f84b6ed1e",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "None",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": false
+        }
+      },
+      {
+        "selection": "cw32f020",
+        "target": "embassy_cw32",
+        "features": "cw32f020,rt,defmt",
+        "kind": "rlib",
+        "bytes": 5597532,
+        "sha256": "da41e021690b14c05e978fe8ff46a3333ac3fb025061cbcea3b94fb76ddb0935",
+        "arm_relocatable_object_count": 11,
+        "hal_generated_sha256": "8898907d0c62c25ef94c3beafb2b5baf1398ab9d65f488eec0877c3f84b6ed1e",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "None",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": false
+        }
+      },
+      {
+        "selection": "cw32f030c8t7",
+        "target": "embassy_cw32",
+        "features": "cw32f030c8t7,rt,defmt",
+        "kind": "rlib",
+        "bytes": 7227764,
+        "sha256": "a05dbd0a506902e0925b505d73fccb8d8d73a3b09a8559744f308b4bc51738e0",
+        "arm_relocatable_object_count": 12,
+        "hal_generated_sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32a030c8t7",
+        "target": "embassy_cw32",
+        "features": "cw32a030c8t7,rt,defmt",
+        "kind": "rlib",
+        "bytes": 7227660,
+        "sha256": "d48ae39267883c91347a58140e9c5619843ed138d139350a1288adc2246fa508",
+        "arm_relocatable_object_count": 12,
+        "hal_generated_sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32l083rbt6",
+        "target": "embassy_cw32",
+        "features": "cw32l083rbt6,rt,defmt",
+        "kind": "rlib",
+        "bytes": 8172502,
+        "sha256": "c37c8fdb13858f6358c6d04a69c390433922ba66e44e91dd66a082209ce1bafa",
+        "arm_relocatable_object_count": 13,
+        "hal_generated_sha256": "179bc7cd3e8e943f0d936399f608bd0c921315b5601aca46b95c278762b24f64",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32l083mct6",
+        "target": "embassy_cw32",
+        "features": "cw32l083mct6,rt,defmt",
+        "kind": "rlib",
+        "bytes": 8484274,
+        "sha256": "779489e5ab8c77d69321903c7c391045e3cd055918eb5d6b76be0ded7f66595d",
+        "arm_relocatable_object_count": 13,
+        "hal_generated_sha256": "e81495642f75ad630403f13ef358b782eafdaea8c7375bfeff70dcb167e04ef9",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32l010f8p6",
+        "target": "embassy_cw32",
+        "features": "cw32l010f8p6,rt,defmt",
+        "kind": "rlib",
+        "bytes": 5755896,
+        "sha256": "73f2a905547948fa7c6d885eb304a2b0890bb192a3d2ba57d0a9d9e88e0d4fe0",
+        "arm_relocatable_object_count": 11,
+        "hal_generated_sha256": "18e0e53fda75cf3092e059fab50c45f7093d66705f995f37e7d4b3a0a43f37f2",
+        "dma_cfgs": []
+      },
+      {
+        "selection": "cw32l011k8t6",
+        "target": "embassy_cw32",
+        "features": "cw32l011k8t6,rt,defmt",
+        "kind": "rlib",
+        "bytes": 5987962,
+        "sha256": "75bdcdf4ff0a86e654b10767e1c81e536e032d6a85c4cb8c885b0188d0119651",
+        "arm_relocatable_object_count": 11,
+        "hal_generated_sha256": "284a57029cb84b8c07beae2914768ce330121734d4bdd141d58e7278136bf147",
+        "dma_cfgs": []
+      },
+      {
+        "selection": "cw32l012c8t6",
+        "target": "embassy_cw32",
+        "features": "cw32l012c8t6,rt,defmt",
+        "kind": "rlib",
+        "bytes": 7854306,
+        "sha256": "c1ad16b1ebb2081b01845b2bb1844348c6f5b43d525c35143722e5d8d156b014",
+        "arm_relocatable_object_count": 12,
+        "hal_generated_sha256": "e7473d76b96f7edbad876c60bf195dda3deb7b53e9d3f14db8bf1e521f9211fc",
+        "dma_cfgs": []
+      },
+      {
+        "selection": "cw32f020c6u7",
+        "target": "owned_copy",
+        "features": "cw32f020c6u7",
+        "kind": "elf",
+        "bytes": 213232,
+        "sha256": "c1ac15a0ea61e5848fc42247dd70056cd09447d0e4ced8feb7f76279882c003b",
+        "text_bytes": 24000,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "word": 253,
+            "strong": true
+          },
+          {
+            "name": "DMACH2",
+            "irq": 10,
+            "word": 265,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871804,
+        "flash_image_end_exclusive": 25048,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+        "reserved_vectors_verified": [
+          {
+            "irq_number": 11,
+            "meaning": "F020 reserved IRQ11 is zero; no third DMA vector",
+            "word": 0
+          }
+        ],
+        "hal_generated_sha256": "d787bbf6d3b58926a9d05fcf00c19a1765368aa2ee176a844388abefe9953fe7",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": false
+        }
+      },
+      {
+        "selection": "cw32f020c6u7",
+        "target": "uart_tx",
+        "features": "cw32f020c6u7",
+        "kind": "elf",
+        "bytes": 215000,
+        "sha256": "300a7d386d8c54bb90fe4bf6d9e7b9b6be8528ecb7c5c74dbf2106bea2eae8a6",
+        "text_bytes": 26040,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "word": 253,
+            "strong": true
+          },
+          {
+            "name": "DMACH2",
+            "irq": 10,
+            "word": 265,
+            "strong": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "word": 277,
+            "strong": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "word": 301,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871916,
+        "flash_image_end_exclusive": 27396,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+        "reserved_vectors_verified": [
+          {
+            "irq_number": 11,
+            "meaning": "F020 reserved IRQ11 is zero; no third DMA vector",
+            "word": 0
+          }
+        ],
+        "hal_generated_sha256": "d787bbf6d3b58926a9d05fcf00c19a1765368aa2ee176a844388abefe9953fe7",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": false
+        }
+      },
+      {
+        "selection": "cw32f020k6u7",
+        "target": "owned_copy",
+        "features": "cw32f020k6u7",
+        "kind": "elf",
+        "bytes": 210652,
+        "sha256": "90a78d0a282944d4ba995cde4c4b92762bcee2114decae5b381fe6ee1e059a14",
+        "text_bytes": 18768,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "word": 253,
+            "strong": true
+          },
+          {
+            "name": "DMACH2",
+            "irq": 10,
+            "word": 265,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871740,
+        "flash_image_end_exclusive": 19756,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+        "reserved_vectors_verified": [
+          {
+            "irq_number": 11,
+            "meaning": "F020 reserved IRQ11 is zero; no third DMA vector",
+            "word": 0
+          }
+        ],
+        "hal_generated_sha256": "f1f259d04f7097bef92a89a37624fb22de35f0dde49d48b3c6477928317156ee",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": false
+        }
+      },
+      {
+        "selection": "cw32f020k6u7",
+        "target": "uart_tx",
+        "features": "cw32f020k6u7",
+        "kind": "elf",
+        "bytes": 212228,
+        "sha256": "c23ac3a3281e404c323be315f338a9472ecb8569f9f65fd28a34bc0e648d4be6",
+        "text_bytes": 20724,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "word": 253,
+            "strong": true
+          },
+          {
+            "name": "DMACH2",
+            "irq": 10,
+            "word": 265,
+            "strong": true
+          },
+          {
+            "name": "UART1",
+            "irq": 27,
+            "word": 277,
+            "strong": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "word": 301,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871852,
+        "flash_image_end_exclusive": 22020,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+        "reserved_vectors_verified": [
+          {
+            "irq_number": 11,
+            "meaning": "F020 reserved IRQ11 is zero; no third DMA vector",
+            "word": 0
+          }
+        ],
+        "hal_generated_sha256": "f1f259d04f7097bef92a89a37624fb22de35f0dde49d48b3c6477928317156ee",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": false
+        }
+      },
+      {
+        "selection": "cw32f020f6u7",
+        "target": "owned_copy",
+        "features": "cw32f020f6u7",
+        "kind": "elf",
+        "bytes": 210652,
+        "sha256": "a4b668fa62b9fe32272d0dc7a2b683ed955d3c976652a1a6f71ed5a625dcdf60",
+        "text_bytes": 18768,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "word": 253,
+            "strong": true
+          },
+          {
+            "name": "DMACH2",
+            "irq": 10,
+            "word": 265,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871740,
+        "flash_image_end_exclusive": 19756,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+        "reserved_vectors_verified": [
+          {
+            "irq_number": 11,
+            "meaning": "F020 reserved IRQ11 is zero; no third DMA vector",
+            "word": 0
+          }
+        ],
+        "hal_generated_sha256": "f8320864bc7b4e541a47a0abeafd83fc3775edc0fff5409ed9c3f0c39fb20580",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": true
+        }
+      },
+      {
+        "selection": "cw32f020f6u7",
+        "target": "uart_tx",
+        "features": "cw32f020f6u7",
+        "kind": "elf",
+        "bytes": 212228,
+        "sha256": "f6db34dad936520bbf5bea8202e730f9262aa41b27d935549f8147eef882e10f",
+        "text_bytes": 20716,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "word": 253,
+            "strong": true
+          },
+          {
+            "name": "DMACH2",
+            "irq": 10,
+            "word": 265,
+            "strong": true
+          },
+          {
+            "name": "UART2",
+            "irq": 28,
+            "word": 277,
+            "strong": true
+          },
+          {
+            "name": "UART3",
+            "irq": 29,
+            "word": 301,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871852,
+        "flash_image_end_exclusive": 22012,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+        "reserved_vectors_verified": [
+          {
+            "irq_number": 11,
+            "meaning": "F020 reserved IRQ11 is zero; no third DMA vector",
+            "word": 0
+          }
+        ],
+        "hal_generated_sha256": "f8320864bc7b4e541a47a0abeafd83fc3775edc0fff5409ed9c3f0c39fb20580",
+        "dma_cfgs": [
+          "dma_cw32f020_v1",
+          "uart_dma_tx"
+        ],
+        "F020_generated_admission": {
+          "memory": "Some((536870912, 8192))",
+          "channels": [
+            "DMA_CH1, 0, DMACH1",
+            "DMA_CH2, 1, DMACH2"
+          ],
+          "requests": [
+            "UART1_TX, UART1, TX, 1",
+            "UART2_TX, UART2, TX, 3",
+            "UART3_TX, UART3, TX, 5"
+          ],
+          "f6_uart1_has_no_safe_TxPin": true
+        }
+      },
+      {
+        "selection": "cw32f030c8t7",
+        "target": "dma_owned_copy",
+        "features": "fixed HAL dependency cw32f030c8t7",
+        "kind": "elf",
+        "bytes": 877812,
+        "sha256": "d0c7ff507ff0f6cb5d3a0b15d8607e6565d6176c97edf88ddf20a1bf82d183d6",
+        "text_bytes": 24012,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "word": 253,
+            "strong": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "word": 265,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871796,
+        "flash_image_end_exclusive": 25132,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "92b34973f192a55f018207e059a3cc13335408e19f40680a9bec2cfc110f2be4",
+        "reserved_vectors_verified": [],
+        "hal_generated_sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32l083rbt6",
+        "target": "cw32-l083-dma-example",
+        "features": "cw32l083rbt6",
+        "kind": "elf",
+        "bytes": 230588,
+        "sha256": "b7f0a16486cce3b5599afc516c9734ea7baf1735cf68a4a7f2e1f07703a860b5",
+        "text_bytes": 72244,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "word": 253,
+            "strong": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "word": 265,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871808,
+        "flash_image_end_exclusive": 73668,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "4ad3718412ffc4e69582238b5f07a54b41d2ce7e7c3c29179aa23e7b3a2707e7",
+        "reserved_vectors_verified": [],
+        "hal_generated_sha256": "179bc7cd3e8e943f0d936399f608bd0c921315b5601aca46b95c278762b24f64",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32f030c8t7",
+        "target": "cw32-uart-dma-tx-example",
+        "features": "cw32f030c8t7",
+        "kind": "elf",
+        "bytes": 212692,
+        "sha256": "90a831eb28e9574feb4cd0ca936e0acffb5f14353676e4b7440a5ec18970708e",
+        "text_bytes": 24260,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "UART2",
+            "irq": 28,
+            "word": 409,
+            "strong": true
+          },
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "word": 253,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871476,
+        "flash_image_end_exclusive": 25548,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "reserved_vectors_verified": [],
+        "hal_generated_sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32f030c8t7",
+        "target": "cw32-uart-dma-example",
+        "features": "cw32f030c8t7",
+        "kind": "elf",
+        "bytes": 215444,
+        "sha256": "93c54f7f80391c8925f0c24a7774e51d0ff11159f0a953ce5ae26b1c081a6253",
+        "text_bytes": 27144,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "UART2",
+            "irq": 28,
+            "word": 273,
+            "strong": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "word": 253,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871852,
+        "flash_image_end_exclusive": 28320,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "reserved_vectors_verified": [],
+        "hal_generated_sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32l083rbt6",
+        "target": "shared_vector",
+        "features": "cw32l083rbt6",
+        "kind": "elf",
+        "bytes": 234156,
+        "sha256": "b669ac17d320ec0463021ad7c85c6f01e5d9bc445a229caa9ff1b3bfe1753e4b",
+        "text_bytes": 77316,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "UART1_UART4",
+            "irq": 27,
+            "word": 297,
+            "strong": true
+          },
+          {
+            "name": "DMACH1",
+            "irq": 9,
+            "word": 253,
+            "strong": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "word": 265,
+            "strong": true
+          },
+          {
+            "name": "DMACH45",
+            "irq": 11,
+            "word": 277,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536872256,
+        "flash_image_end_exclusive": 78896,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "4ad3718412ffc4e69582238b5f07a54b41d2ce7e7c3c29179aa23e7b3a2707e7",
+        "reserved_vectors_verified": [],
+        "hal_generated_sha256": "179bc7cd3e8e943f0d936399f608bd0c921315b5601aca46b95c278762b24f64",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32f030c8t7",
+        "target": "cw32-spi-dma-example",
+        "features": "cw32f030c8t7",
+        "kind": "elf",
+        "bytes": 214564,
+        "sha256": "5c51f663a92ed42a8a1987c24807d490cea2ea0a067cffdcdd525e32f3c5e95b",
+        "text_bytes": 27836,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "SPI1",
+            "irq": 25,
+            "word": 273,
+            "strong": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "word": 253,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871564,
+        "flash_image_end_exclusive": 29112,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "reserved_vectors_verified": [],
+        "hal_generated_sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32l083rbt6",
+        "target": "cw32-spi-dma-example",
+        "features": "cw32l083rbt6",
+        "kind": "elf",
+        "bytes": 296928,
+        "sha256": "348756d96828e1a6f7f692d82bfdc90a98eb7aaa4934f6b66cde371539bbfc7e",
+        "text_bytes": 75924,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "SPI1",
+            "irq": 25,
+            "word": 273,
+            "strong": true
+          },
+          {
+            "name": "DMACH23",
+            "irq": 10,
+            "word": 253,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871576,
+        "flash_image_end_exclusive": 77504,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "4ad3718412ffc4e69582238b5f07a54b41d2ce7e7c3c29179aa23e7b3a2707e7",
+        "reserved_vectors_verified": [],
+        "hal_generated_sha256": "179bc7cd3e8e943f0d936399f608bd0c921315b5601aca46b95c278762b24f64",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32l012c8t6",
+        "target": "receive",
+        "features": "cw32l012c8t6",
+        "kind": "elf",
+        "bytes": 217656,
+        "sha256": "79ca9658e1f421a33c37d30bc7ad9e1050c0ffdf6818d57eb786b57cec24de86",
+        "text_bytes": 57120,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "UART1",
+            "irq": 27,
+            "word": 2609,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871380,
+        "flash_image_end_exclusive": 58172,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "reserved_vectors_verified": [],
+        "hal_generated_sha256": "e7473d76b96f7edbad876c60bf195dda3deb7b53e9d3f14db8bf1e521f9211fc",
+        "dma_cfgs": []
+      },
+      {
+        "selection": "cw32f030c8t7",
+        "target": "receive",
+        "features": "cw32f030c8t7",
+        "kind": "elf",
+        "bytes": 213124,
+        "sha256": "7017030f1242f99e0e16e4537ef4d41bb02f918b3ace58e7962f78d307afcbe6",
+        "text_bytes": 24952,
+        "initial_sp": 536879104,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "UART2",
+            "irq": 28,
+            "word": 8413,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871556,
+        "flash_image_end_exclusive": 26164,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "reserved_vectors_verified": [],
+        "hal_generated_sha256": "02f5feae06133da000ab395df0e886da8fb8a6c10395ddac3f0e9a6d603e0735",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      },
+      {
+        "selection": "cw32l083rct6",
+        "target": "shared_vector",
+        "features": "cw32l083rct6",
+        "kind": "elf",
+        "bytes": 231196,
+        "sha256": "a8764174e8298eb4a272fa7142ae188b8d7737b933a4d27b525dae3822ec38f2",
+        "text_bytes": 74156,
+        "initial_sp": 536895488,
+        "reset_vector": 193,
+        "required_strong_handlers": [
+          {
+            "name": "UART1_UART4",
+            "irq": 27,
+            "word": 4505,
+            "strong": true
+          }
+        ],
+        "highest_allocated_ram_address_exclusive": 536871952,
+        "flash_image_end_exclusive": 75720,
+        "all_allocated_sections_and_PT_LOAD_ranges_fit": true,
+        "linker_memory_sha256": "382dd9cbb0b41ff04f8c42aa7bc9f91c43b6401e0b27bfe4ac6a581e0319062e",
+        "reserved_vectors_verified": [],
+        "hal_generated_sha256": "1dfe17a49a648a08a1349b6412df6254fe9abaa2e31f4932c2c875b91fb3a97e",
+        "dma_cfgs": [
+          "dma_v1",
+          "uart_dma_tx",
+          "uart_dma_rx",
+          "spi_dma"
+        ]
+      }
+    ]
+  },
+  "reviewed_production_inputs": [
+    {
+      "project_path": "README.md",
+      "bytes": 54196,
+      "sha256": "87f102163c4ee30304d646b9e34487ddd4acad42e2192bcb606649a157750b37"
+    },
+    {
+      "project_path": "ci/hal-capabilities.yaml",
+      "bytes": 117843,
+      "sha256": "0b008e0d8cdfb66a48077a91553a31e0ae27b1816f954c9bdc64665f8059540c"
+    },
+    {
+      "project_path": "cw32-data/data/register-writes/dma_cw32f020_v1.json",
+      "bytes": 648,
+      "sha256": "1dccd127e5593d8d43994f3b3fd999aa14fb0f0e6107868c88637fa7871e4360"
+    },
+    {
+      "project_path": "cw32-data/register-writes.yaml",
+      "bytes": 32499,
+      "sha256": "e6968efcaf32ca7010925df53cecab11aacaeeb0317f9f71f2a1dbe8801e3d28"
+    },
+    {
+      "project_path": "cw32-metapac/src/peripherals/dma_cw32f020_v1.rs",
+      "bytes": 31313,
+      "sha256": "4a3d587db686c187b6c209320ff7694601ea277bc8cc3ed2e439168f6f8ddd75"
+    },
+    {
+      "project_path": "docs/dma-safe-owned-copy.md",
+      "bytes": 14896,
+      "sha256": "49d2d5a407340ae68195f781e9315183b7bdddbfad3897ef676786e0aadcabdf"
+    },
+    {
+      "project_path": "docs/f020-dma-owned-evidence.json",
+      "bytes": 39473,
+      "sha256": "01e890d08ce4a8c4e1f17852abbc93704fb47cf033dc6a6e2fdaeaaaf9069442"
+    },
+    {
+      "project_path": "docs/f020-dma-owned.md",
+      "bytes": 7913,
+      "sha256": "6768846d4d5c2f7c0d850eb12f29b145cc6d3e5772028b601f49590076bc1db5"
+    },
+    {
+      "project_path": "docs/functional-coverage.md",
+      "bytes": 47381,
+      "sha256": "b87761fb85bbaa463866284d871b2143ed7f6c08a778bdc669c81cc28de95e96"
+    },
+    {
+      "project_path": "docs/l083-peripheral-dma.md",
+      "bytes": 7577,
+      "sha256": "9d5099696c55425abda6cac66f3a27283fadb0261016274746b49a561375a3b1"
+    },
+    {
+      "project_path": "docs/uart-dma-tx.md",
+      "bytes": 12994,
+      "sha256": "70ad5c5759551f8a39a2f9109e9248fcec00125a13d5c51dc8dcefd118ab8c2e"
+    },
+    {
+      "project_path": "embassy-cw32/build.rs",
+      "bytes": 317905,
+      "sha256": "210ef28c4f977be7c0ca5a406835b5a367406eb0931038963571440c12053e78"
+    },
+    {
+      "project_path": "embassy-cw32/src/dma.rs",
+      "bytes": 48174,
+      "sha256": "d3f9bb869dbabe5fdf5108cc2991e6a63fc1a96f8168882eb681d30570071e8b"
+    },
+    {
+      "project_path": "embassy-cw32/src/lib.rs",
+      "bytes": 40605,
+      "sha256": "14bfb638b43c9c1bf128e0fcd94c2bfe69c4193b1399b0962c7a56b232a53a58"
+    },
+    {
+      "project_path": "embassy-cw32/src/usart.rs",
+      "bytes": 99829,
+      "sha256": "a28de7ff47cc991224745bf0d609d19c0eedc0d621837d39c9f3730179454827"
+    },
+    {
+      "project_path": "examples/f020-dma/Cargo.lock",
+      "bytes": 20537,
+      "sha256": "fb7ef2c4b1b077e02244874f60d080ab7ffc9a6e01c0a4c656ac482ce41cea28"
+    },
+    {
+      "project_path": "examples/f020-dma/Cargo.toml",
+      "bytes": 1168,
+      "sha256": "ef5a2405fc2a2a5f388fb627a928a249fdef60aaae97d3b4dabadff524adf72b"
+    },
+    {
+      "project_path": "examples/f020-dma/README.md",
+      "bytes": 5556,
+      "sha256": "45912a374f1f0f4e15d42e2f8b0532bf513c6ad0fa02234857531041cac07c65"
+    },
+    {
+      "project_path": "examples/f020-dma/build.rs",
+      "bytes": 1972,
+      "sha256": "b48f7aa7e4de4bd951ef61b2672bd0b5c9afb2e6a5f3b82d91fbb27d90c7f98f"
+    },
+    {
+      "project_path": "examples/f020-dma/src/bin/owned_copy.rs",
+      "bytes": 3759,
+      "sha256": "260a9d97dfd71a5b8e731319136a7b0fa7889461ecc6cd71c5cb28c9f27e5049"
+    },
+    {
+      "project_path": "examples/f020-dma/src/bin/uart_tx.rs",
+      "bytes": 2759,
+      "sha256": "024d3b57659312087bc3e1840b0e49904065eee116891ddbb633aacf17313c70"
+    },
+    {
+      "project_path": "examples/f020-dma/src/lib.rs",
+      "bytes": 385,
+      "sha256": "83221e2e936c9b005f66e81a8173bffc07a896755a3d745b3dd0dd0f51140943"
+    },
+    {
+      "project_path": "sources/SOURCES.md",
+      "bytes": 136121,
+      "sha256": "4c735925ed534c27274f6ee76c5e028af85f289e2b9dcb95003411d82ce5d8e7"
+    },
+    {
+      "project_path": "sources/evidence-sources.json",
+      "bytes": 401718,
+      "sha256": "1f33a2e8a9dfe9289a66760f18598f5e08d8b652f2f74f8fc37365e6746a3890"
+    },
+    {
+      "project_path": "tests/verify_dma_owned_evidence.py",
+      "bytes": 4835,
+      "sha256": "63d64531c789b5d718cc5478150a66bd990342e2e4bd61512d5170917688f865"
+    }
+  ],
+  "claim_limits": [
+    "Acceptance is source/build/linked-artifact qualification only; no silicon transfer, wire timing, throughput or finite liveness is claimed.",
+    "Runtime ownership, cancellation, retention and interrupt behavior require the separate runtime review.",
+    "Final source-only package, regenerated clean tree, two clean ARM libraries and four clean ELF links remain pending.",
+    "Package signal eligibility and raw metadata RX routes are hardware inventory facts, not F020 RX or generic-memory admission. No F020 RX/combined UART, SPI DMA, extra request, raw borrowed hardware or buffered-plus-DMA extension is admitted."
+  ]
+}

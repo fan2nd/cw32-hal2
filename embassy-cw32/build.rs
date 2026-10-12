@@ -6,8 +6,8 @@ fn main() {
     let time_driver = select_time_driver();
     let x030 = matches!(metadata.line, "CW32F030" | "CW32A030");
     // Own-family-qualified DMA controller; peripheral requests are bounded below.
-    let dma = x030 || metadata.line == "CW32L083";
     let f020 = metadata.line == "CW32F020";
+    let dma = x030 || metadata.line == "CW32L083" || f020;
     let classic_adc = matches!(
         metadata.line,
         "CW32F030"
@@ -128,7 +128,9 @@ fn main() {
         "i2c_cw32l010_v1",
         "i2c_cw32l011_v1",
         "dma_v1",
-        "uart_dma",
+        "dma_cw32f020_v1",
+        "uart_dma_tx",
+        "uart_dma_rx",
         "spi_dma",
         "adc_cw32l010_v1",
         "adc_cw32l011_v1",
@@ -515,7 +517,10 @@ fn main() {
             flash_storage_size = Some(flash.size);
         }
     }
-    if dma {
+    if f020 {
+        qualify_f020_dma();
+        println!("cargo:rustc-cfg=dma_cw32f020_v1");
+    } else if dma {
         assert_version("DMA", "v1");
         assert_eq!(metadata.dma_channels.len(), 5);
         for (index, channel) in metadata.dma_channels.iter().enumerate() {
@@ -525,18 +530,23 @@ fn main() {
         }
         println!("cargo:rustc-cfg=dma_v1");
     }
-    // Qualification is distinct from a shared register layout. Only these
-    // reviewed profiles may expose staged UART/SPI DMA; other DMA-v1 users
-    // cannot acquire the capability from their IP version alone. See
-    // docs/l083-peripheral-dma.md for the own-family source contract.
-    let staged_profile = match metadata.line {
-        "CW32F030" | "CW32A030" => Some((3, "v1", "v1")),
-        "CW32L083" => Some((6, "cw32l083_v1", "cw32l031_v1")),
+    // Qualification is distinct from a shared register layout. F020 admits
+    // only UART TX; RX metadata is not permission to expose a safe RX owner.
+    // Keep SPI's paired directions independent of the UART direction policy.
+    let uart_dma_profile = match metadata.line {
+        "CW32F030" | "CW32A030" => Some((3, "v1", true)),
+        "CW32L083" => Some((6, "cw32l083_v1", true)),
+        "CW32F020" => Some((3, "v1", false)),
         _ => None,
     };
-    let qualify_requests = |prefix: &str, count: u8, version: &str| {
+    let spi_dma_profile = match metadata.line {
+        "CW32F030" | "CW32A030" => Some("v1"),
+        "CW32L083" => Some("cw32l031_v1"),
+        _ => None,
+    };
+    let qualify_requests = |prefix: &str, count: u8, version: &str, signals: &[&str]| {
         assert!(dma, "staged requests require a qualified DMA controller");
-        let mut names = Vec::new();
+        let mut pairs = Vec::new();
         for index in 1..=count {
             let name = format!("{prefix}{index}");
             assert_version(&name, version);
@@ -545,8 +555,11 @@ fn main() {
                 .iter()
                 .find(|p| p.name == name)
                 .unwrap();
-            assert_eq!(peripheral.dma_channels.len(), 2);
-            for signal in ["RX", "TX"] {
+            if matches!(metadata.line, "CW32F030" | "CW32A030" | "CW32L083") {
+                assert_eq!(peripheral.dma_channels.len(), 2);
+            }
+            let mut selectors = Vec::new();
+            for &signal in signals {
                 let routes: Vec<_> = peripheral
                     .dma_channels
                     .iter()
@@ -564,29 +577,63 @@ fn main() {
                 assert!(
                     route.channel.is_none() && route.dmamux.is_none() && route.remap.is_empty()
                 );
-                assert!(route.request.is_some_and(|request| request < 64));
+                let request = route.request.expect("DMA request missing");
+                assert!(request < 64);
+                assert!(!selectors.contains(&request));
+                selectors.push(request);
+                pairs.push((peripheral.name, route.signal));
             }
-            assert_ne!(
-                peripheral.dma_channels[0].request,
-                peripheral.dma_channels[1].request
-            );
-            names.push(name);
         }
-        names
+        pairs
     };
-    let (uart_dma_peripherals, spi_dma_peripherals) =
-        if let Some((uarts, uart_ip, spi_ip)) = staged_profile {
+    let (uart_dma_tx_pairs, uart_dma_rx_pairs) =
+        if let Some((uarts, uart_ip, receive)) = uart_dma_profile {
             (
-                qualify_requests("UART", uarts, uart_ip),
-                qualify_requests("SPI", 2, spi_ip),
+                qualify_requests("UART", uarts, uart_ip, &["TX"]),
+                if receive {
+                    qualify_requests("UART", uarts, uart_ip, &["RX"])
+                } else {
+                    Vec::new()
+                },
             )
         } else {
             (Vec::new(), Vec::new())
         };
-    if !uart_dma_peripherals.is_empty() {
-        println!("cargo:rustc-cfg=uart_dma");
+    // RX deliberately reuses TxDma::validate_staging. An RX-only profile needs
+    // separate review; it must not accidentally compile without that helper.
+    assert!(
+        uart_dma_rx_pairs
+            .iter()
+            .all(|(name, _)| { uart_dma_tx_pairs.contains(&(*name, "TX")) })
+    );
+    for &(name, _) in &uart_dma_rx_pairs {
+        let peripheral = metadata
+            .peripherals
+            .iter()
+            .find(|p| p.name == name)
+            .unwrap();
+        let request = |signal| {
+            peripheral
+                .dma_channels
+                .iter()
+                .find(|route| route.signal == signal)
+                .unwrap()
+                .request
+        };
+        assert_ne!(request("RX"), request("TX"));
     }
-    if !spi_dma_peripherals.is_empty() {
+    let spi_dma_pairs = if let Some(version) = spi_dma_profile {
+        qualify_requests("SPI", 2, version, &["RX", "TX"])
+    } else {
+        Vec::new()
+    };
+    if !uart_dma_tx_pairs.is_empty() {
+        println!("cargo:rustc-cfg=uart_dma_tx");
+    }
+    if !uart_dma_rx_pairs.is_empty() {
+        println!("cargo:rustc-cfg=uart_dma_rx");
+    }
+    if !spi_dma_pairs.is_empty() {
         println!("cargo:rustc-cfg=spi_dma");
     }
     let selected: &[&str] = match metadata.line {
@@ -1237,21 +1284,20 @@ fn main() {
             if Some(peripheral.name) == time_driver {
                 continue;
             }
-            let staged_peripheral = uart_dma_peripherals
-                .iter()
-                .chain(&spi_dma_peripherals)
-                .any(|name| name == peripheral.name);
-            // Preserve the existing x030 raw inventory; L083 adds only the
-            // qualified UART/SPI RX/TX subset, never ADC/LCD or timer requests.
-            if x030 || staged_peripheral {
-                for route in peripheral.dma_channels {
-                    if route.dma == Some("DMA") {
-                        let request = route.request.expect("DMA request missing");
-                        out.push_str(&format!(
-                            "crate::dma::impl_request!({}_{}, {}, {}, {});\n",
-                            peripheral.name, route.signal, peripheral.name, route.signal, request
-                        ));
-                    }
+            // Preserve x030's raw inventory. Other families emit only verified
+            // direction pairs: L083 UART/SPI RX+TX, F020 UART TX alone.
+            for route in peripheral.dma_channels {
+                let staged_pair = uart_dma_tx_pairs
+                    .iter()
+                    .chain(&uart_dma_rx_pairs)
+                    .chain(&spi_dma_pairs)
+                    .any(|&(name, signal)| name == peripheral.name && signal == route.signal);
+                if (x030 || staged_pair) && route.dma == Some("DMA") {
+                    let request = route.request.expect("DMA request missing");
+                    out.push_str(&format!(
+                        "crate::dma::impl_request!({}_{}, {}, {}, {});\n",
+                        peripheral.name, route.signal, peripheral.name, route.signal, request
+                    ));
                 }
             }
             for pin in peripheral.pins {
@@ -1451,6 +1497,247 @@ fn main() {
     )
     .unwrap();
     println!("cargo:rerun-if-changed=build.rs");
+}
+
+// F020 UM CN1.4 pp93–94/134–138: qualify its native two-channel controller
+// and the typed channel view before exposing any safe DMA capability.
+fn qualify_f020_dma() {
+    use cw32_metapac::metadata::{METADATA, MemoryRegionKind, PeripheralRegisters, ir};
+
+    assert_eq!(METADATA.line, "CW32F020");
+    match METADATA.name {
+        "CW32F020" => assert!(METADATA.memory.is_empty()),
+        "CW32F020C6U7" | "CW32F020K6U7" | "CW32F020F6U7" => {
+            assert_eq!(METADATA.memory.len(), 1);
+            let ram: Vec<_> = METADATA.memory[0]
+                .iter()
+                .filter(|region| region.kind == MemoryRegionKind::Ram)
+                .collect();
+            assert_eq!(ram.len(), 1);
+            assert_eq!((ram[0].address, ram[0].size), (0x2000_0000, 8192));
+        }
+        _ => panic!("unreviewed F020 DMA selection"),
+    }
+    let peripheral = |name: &str| {
+        METADATA
+            .peripherals
+            .iter()
+            .find(|p| p.name == name)
+            .expect("missing F020 DMA peripheral")
+    };
+    let controller = peripheral("DMA");
+    assert_eq!(controller.address, 0x4002_0000);
+    let regs = controller.registers.as_ref().unwrap();
+    assert_eq!(
+        (regs.kind, regs.version, regs.block),
+        ("dma", "cw32f020_v1", "Dma")
+    );
+    assert_eq!(METADATA.dma_channels.len(), 2);
+    assert_eq!(
+        METADATA
+            .peripherals
+            .iter()
+            .filter(|p| {
+                p.registers
+                    .as_ref()
+                    .is_some_and(|r| matches!(r.kind, "dma" | "dmachannel"))
+            })
+            .count(),
+        3
+    );
+    for (index, name, physical, address, irq, number) in [
+        (0, "DMA_CH1", "DMACHANNEL1", 0x4002_0020, "DMACH1", 9),
+        (1, "DMA_CH2", "DMACHANNEL2", 0x4002_0040, "DMACH2", 10),
+    ] {
+        let channel = &METADATA.dma_channels[index];
+        assert_eq!(
+            (channel.name, channel.dma, channel.channel as usize),
+            (name, "DMA", index)
+        );
+        let p = peripheral(physical);
+        assert_eq!(p.address, address);
+        let channel_regs = p.registers.as_ref().unwrap();
+        assert_eq!(
+            (channel_regs.kind, channel_regs.version, channel_regs.block),
+            ("dmachannel", "v1", "Dmachannel")
+        );
+        // The physical channel's GLOBAL mapping is authoritative, not DMA's
+        // root DMACH1 mapping; CH2 has its own IRQ10.
+        assert_eq!(p.interrupts.len(), 1);
+        assert_eq!(
+            (p.interrupts[0].signal, p.interrupts[0].interrupt),
+            ("GLOBAL", irq)
+        );
+        assert_eq!(
+            METADATA
+                .interrupts
+                .iter()
+                .filter(|i| i.name == irq && i.number == number)
+                .count(),
+            1
+        );
+        assert_eq!(p.rcc_control, controller.rcc_control);
+    }
+    assert!(!METADATA.interrupts.iter().any(|i| {
+        i.number == 11 || (i.name.starts_with("DMACH") && !matches!(i.name, "DMACH1" | "DMACH2"))
+    }));
+
+    fn fields(
+        regs: &PeripheralRegisters,
+        name: &str,
+        offset: u32,
+        access: ir::Access,
+    ) -> &'static [ir::Field] {
+        let block = regs
+            .ir
+            .blocks
+            .iter()
+            .find(|b| b.name == regs.block)
+            .unwrap();
+        let item = block
+            .items
+            .iter()
+            .find(|r| r.name.eq_ignore_ascii_case(name))
+            .unwrap();
+        assert!(item.array.is_none());
+        assert_eq!(item.byte_offset, offset);
+        let ir::BlockItemInner::Register(register) = &item.inner else {
+            panic!("F020 DMA item must be a register")
+        };
+        assert_eq!(register.access, access);
+        assert_eq!(register.bit_size, 32);
+        let fieldset = regs
+            .ir
+            .fieldsets
+            .iter()
+            .find(|f| Some(f.name) == register.fieldset)
+            .unwrap();
+        assert!(fieldset.name.eq_ignore_ascii_case(name));
+        assert_eq!(fieldset.bit_size, 32);
+        fieldset.fields
+    }
+    for (name, offset, access) in [
+        ("ISR", 0, ir::Access::Read),
+        ("ICR", 4, ir::Access::ReadWrite),
+    ] {
+        let fields = fields(regs, name, offset, access);
+        assert_eq!(fields.len(), 4);
+        for (name, bit) in [("TC1", 0), ("TE1", 1), ("TC2", 4), ("TE2", 5)] {
+            let field = fields
+                .iter()
+                .find(|f| f.name.eq_ignore_ascii_case(name))
+                .unwrap();
+            assert!(field.array.is_none());
+            assert_eq!(field.bit_size, 1);
+            assert!(matches!(&field.bit_offset, ir::BitOffset::Regular(p) if p.offset == bit));
+        }
+    }
+    for physical in ["DMACHANNEL1", "DMACHANNEL2"] {
+        let regs = peripheral(physical).registers.as_ref().unwrap();
+        let block = regs
+            .ir
+            .blocks
+            .iter()
+            .find(|b| b.name == regs.block)
+            .unwrap();
+        assert_eq!(block.items.len(), 5);
+        let descriptors: &[(&str, u32, &[(&str, u32, u32, Option<&str>)])] = &[
+            (
+                "CSR",
+                0,
+                &[
+                    ("EN", 0, 1, None),
+                    ("TCIE", 1, 1, None),
+                    ("TEIE", 2, 1, None),
+                    ("TRANS", 3, 1, Some("TransferMode")),
+                    ("SRCINC", 4, 1, None),
+                    ("DSTINC", 5, 1, None),
+                    ("SIZE", 6, 2, Some("Width")),
+                    ("STATUS", 8, 3, Some("Status")),
+                ],
+            ),
+            ("CNT", 4, &[("CNT", 0, 16, None), ("REPEAT", 16, 4, None)]),
+            ("SRCADDR", 8, &[("SRCADDR", 0, 32, None)]),
+            ("DSTADDR", 12, &[("DSTADDR", 0, 32, None)]),
+            (
+                "TRIG",
+                16,
+                &[
+                    ("TYPE_", 0, 1, Some("Trigger")),
+                    ("SOFTSRC", 1, 1, None),
+                    ("HARDSRC", 2, 6, None),
+                ],
+            ),
+        ];
+        for &(name, offset, expected) in descriptors {
+            let fields = fields(regs, name, offset, ir::Access::ReadWrite);
+            assert_eq!(fields.len(), expected.len());
+            for &(name, bit, width, enumm) in expected {
+                let field = fields
+                    .iter()
+                    .find(|f| f.name.eq_ignore_ascii_case(name))
+                    .unwrap();
+                assert!(field.array.is_none());
+                assert_eq!(field.bit_size, width);
+                assert_eq!(field.enumm, enumm);
+                assert!(matches!(&field.bit_offset, ir::BitOffset::Regular(p) if p.offset == bit));
+            }
+        }
+        // Existing common typed enums are admitted against F020's own manual,
+        // including STATUS2 as an error description, never a drain proof.
+        let enums: &[(&str, u32, &[(&str, u64)])] = &[
+            ("Width", 2, &[("Byte", 0), ("HalfWord", 1), ("Word", 2)]),
+            ("Trigger", 1, &[("Software", 0), ("Hardware", 1)]),
+            ("TransferMode", 1, &[("Bulk", 0), ("Block", 1)]),
+            (
+                "Status",
+                3,
+                &[
+                    ("Initial", 0),
+                    ("AddressOutOfRange", 1),
+                    ("Stopped", 2),
+                    ("SourceError", 3),
+                    ("DestinationError", 4),
+                    ("Complete", 5),
+                ],
+            ),
+        ];
+        for &(name, width, variants) in enums {
+            let enumm = regs.ir.enums.iter().find(|e| e.name == name).unwrap();
+            assert_eq!(enumm.bit_size, width);
+            assert_eq!(enumm.variants.len(), variants.len());
+            for &(name, value) in variants {
+                assert_eq!(
+                    enumm
+                        .variants
+                        .iter()
+                        .filter(|v| v.name == name && v.value == value)
+                        .count(),
+                    1
+                );
+            }
+        }
+    }
+    // Reuse the shared RCC metadata/IR boundary. No DMA-local gate or reset
+    // implementation is introduced, and admission never resets dirty state.
+    let control = controller.rcc_control.as_ref().unwrap();
+    assert_eq!((control.controller, control.bus_clock), ("SYSCTRL", "HCLK"));
+    assert_eq!(
+        (control.enable.register, control.enable.field),
+        ("ahben", "dma")
+    );
+    assert!(control.enable_active_value && control.enable_write_key.is_none());
+    let reset = control.reset.as_ref().unwrap();
+    assert_eq!((reset.register, reset.field), ("ahbrst", "dma"));
+    assert_eq!(control.reset_asserted_value, Some(false));
+    let sysctrl = peripheral("SYSCTRL").registers.as_ref().unwrap();
+    assert_eq!(sysctrl.version, "cw32f020_v1");
+    let (_, enable_bit, enable_width) = rcc_field(sysctrl, &control.enable);
+    let (_, reset_bit, reset_width) = rcc_field(sysctrl, reset);
+    assert_eq!(
+        (enable_bit, enable_width, reset_bit, reset_width),
+        (0, 1, 0, 1)
+    );
 }
 
 // Restrict debug/reset/input-only pads according to each reviewed family.

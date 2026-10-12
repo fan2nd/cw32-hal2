@@ -1,4 +1,4 @@
-# Safe staged UART TX DMA on F030/A030/L083
+# Safe staged UART TX DMA on F030/A030/L083 and exact F020 parts
 
 `UartTx::new_with_dma` adds a TX-only, byte-oriented DMA constructor to the
 existing async UART owner. It consumes static UART and compatible DMA singleton
@@ -14,6 +14,15 @@ private staging and their addresses never reach DMA. This implementation does
 not expose an arbitrary peripheral register, DMA request number or raw pointer
 through a new safe API. Matching pins and `dma::RequestRoute<T, signal::TX>` come
 from the existing authored/generated routing data.
+
+F020 admission is limited to CW32F020C6U7/K6U7/F6U7, with 8 KiB SRAM at
+`0x20000000..0x20002000`; generic `cw32f020` rejects safe DMA and staging with
+`MissingMemoryMetadata`. Native CH1/CH2 use separate DMACH1/DMACH2 IRQs.
+Generated UART1_TX/2_TX/3_TX selectors 1/3/5 work on either physical channel,
+subject to the existing safe TX pin routes. F6 UART1 has only excluded PA14
+for TX, so it has no safe TX constructor. F020 gains no RX/combined DMA UART,
+SPI DMA or borrowed hardware-request constructor. See
+[the own-F020 contract and exact example pads](f020-dma-owned.md).
 
 ## Storage, startup and completion
 
@@ -60,8 +69,10 @@ The state belongs to the UART owner, not only to an async future's destructor:
   remainder is not sent. The caller's input never became a DMA address.
 - A later write or flush waits for the retained chunk's existing outcome.
   Clean completion allows reuse; a replacement cannot overwrite staging while
-  that chunk remains active. Even an empty async write settles previous work.
-  This is normal-completion reaping, not abort.
+  that chunk remains active. An empty inherent async write also awaits the
+  old chunk; empty async trait Write makes the existing nonblocking
+  observation and returns zero or the current busy/error. This is
+  normal-completion reaping, not abort.
 - TE, TE+TC or inconsistent completion permanently quarantines the DMA lease.
   A later TC does not rehabilitate it. Transfer/flush calls return an error;
   no staging reuse, channel restart or safe resource return is available.
@@ -87,18 +98,26 @@ alive. Rust permits [forgotten futures](https://doc.rust-lang.org/core/mem/fn.fo
 so static private storage is the lifetime boundary even when cleanup is skipped.
 
 This TX API introduces no CTS constructor, circular mode, borrowed zero-copy or
-safe early-abort guarantee. [Staged RX and combined TX/RX](uart-dma-rx.md) extend
+safe early-abort guarantee. On F030/A030/L083,
+[staged RX and combined TX/RX](uart-dma-rx.md) extend
 the same ownership model with per-direction live/retained state; an abandoned
 half preserves its live peer and both retained halves preserve UART clocks. L083 UART1–6 use the same staged contract with independently reviewed own-family
 request and terminal evidence; see [L083 qualification](l083-peripheral-dma.md).
 The existing non-DMA UART constructors and low-level unsafe DMA APIs retain
-their separate scope.
+their separate scope. DMA constructors prepare the UART with no RX ring;
+there is no buffered-plus-DMA constructor or owner conversion for the same
+UART. Stage83 buffered ownership and Stage82 native idle support retain
+their independent scope; F020 gains no `read_until_idle`.
 
 ## Own-source evidence
 
 L083 uses its own CN V2.0 manual and exact-part 24 KiB SRAM metadata, documented
 in [the L083 source qualification](l083-peripheral-dma.md). The x030 sources and
-page references below retain their original family scope.
+page references below retain their original family scope. F020 uses its own
+CN V1.4 manual, current CN V1.3 datasheet and SDK V1.2, bound separately in
+[its evidence record](f020-dma-owned-evidence.json). In particular, own
+printed p287/viewer p288 provides the byte SRAM-to-TDR setup, EN-before-DMATX
+ordering and separate TC/TXBUSY completion sequence.
 
 The selected authoritative behavior source is the shared F030/A030
 [CW32x030 User Manual CN V2.5](https://www.whxy.com/uploads/files/20240920/CW32x030_UserManual_CN_V2.5.pdf),
@@ -164,6 +183,17 @@ Affected x030/L083 builds, other no-DMA UART profiles and
 the existing safe CopyChannel firmware remain regression scope. Source review
 must also cover persistent state, error precedence, cancelled/forgotten writes,
 all blocking/async/trait entry points, and teardown. Build receipts belong to
-the exact source snapshot that was checked; this document is not a declaration
-that those checks or any silicon run have passed. No HAL test/harness, synthetic
+the exact source snapshot that was checked; the Stage84 outcomes below do
+not establish a silicon run. No HAL test/harness, synthetic
 register model, firmware execution, throughput or liveness result is supplied.
+
+The [separate F020 firmware](../examples/f020-dma/README.md) selects UART1/PA8
+and UART2/PA2 on C6/K6, UART2/PA6 and UART3/PA2 on F6, and both physical
+DMA vectors. Stage84 main passed 15 actual ARM libraries and 16 ELF links;
+all F020 rows and all ELF links were warning-free. Generation and five finite
+source gates passed in documented segments, and independent runtime and
+metadata/source reviews accepted the main work. At main acceptance clean
+had not run; final-package completion requires a separate final-source
+2-library/4-ELF clean receipt. See [the verification boundary](f020-dma-owned.md#verification-boundary)
+for the full warning/failure history and limits. This scope does not add
+F020 rows to the existing cumulative HAL recipe.

@@ -5,7 +5,12 @@ by ordinary HAL initialization and returns an admitted capability. Its safe
 `copy(source, destination)` method consumes that capability and two exclusive
 `&'static mut [W]` slices. Both configuration rejection and successful completion
 return the same owner type; errors and forgetting permanently retain resources.
-The supported families remain F030/A030 and L083, with generated SRAM metadata.
+Supported selections are F030/A030 and L083 with generated SRAM metadata,
+plus exactly CW32F020C6U7/K6U7/F6U7. The F020 parts have 8 KiB SRAM at
+`0x20000000..0x20002000`; generic `cw32f020` retains
+`MissingMemoryMetadata` rejection. F020 uses native CH1/CH2 with independent
+DMACH1/DMACH2 IRQs, not a five-channel controller view. Its own-source proof
+and TX-only peripheral scope are in [F020 owned DMA](f020-dma-owned.md).
 The word type is sealed to u8/u16/u32. Separate [L083 staged UART/SPI APIs](l083-peripheral-dma.md)
 qualify only their RX/TX hardware requests; unsafe borrowed hardware constructors
 remain x030-only.
@@ -77,7 +82,7 @@ to `Owned` once and enables only its bound real vector; failure returns the
 unused singleton and changes no hardware state.
 
 RCC reset polarity and enable identities come from the existing central
-source-qualified metadata. For both native profiles, AHBEN.DMA=1 enables the
+source-qualified metadata. For all admitted profiles, AHBEN.DMA=1 enables the
 configuration/working clock and AHBRST.DMA=0 asserts reset. Shared DMA reset and
 clock-disable policy are already disabled in generated RCC controls. No safe
 copy, completion, Drop, error, or last-owner action resets/gates the controller.
@@ -173,9 +178,12 @@ and independently prove error-time quiescence before reuse.
 
 ## Own-manual evidence
 
-Document/text SHA-256s, exact source URLs and page hashes are in
+Document/text SHA-256s, exact source URLs and page hashes for x030/L083 are in
 `dma-safe-owned-copy-evidence.json`, extending the existing
-`dma-owned-copy-evidence.json`. For these retained texts, printed pages equal
+`dma-owned-copy-evidence.json`. F020 has a separate
+[own-source record](f020-dma-owned-evidence.json) and
+[contract](f020-dma-owned.md); the historical tables below retain their
+original family scope. For these retained texts, printed pages equal
 zero-based PDF page indices; PDF viewers showing one-based pages add one.
 
 | Claim | CW32x030 CN V2.5 | CW32L083 CN V2.0 |
@@ -195,8 +203,10 @@ zero-based PDF page indices; PDF viewers showing one-based pages add one.
 
 These are each family's own manuals; shared register layout is not used as a
 substitute. Exact part SRAM capacity remains generated from the already-reviewed
-datasheets. No metadata, register schema or PAC adapter was introduced by this
-safe layer. Pinned Embassy revision
+datasheets. The original x030/L083 safe layer introduced no metadata, register
+schema or PAC adapter. F020 adds only its native ICR command seed through
+the existing register-write schema; no schema or adapter is added.
+Pinned Embassy revision
 `f16efeffe37581092ec184718e6fdb1620393214` supplies the Peri/singleton/IRQ/future
 idioms; its STM32-specific cancellation sequence is not imported as CW32 proof.
 
@@ -217,3 +227,13 @@ commands, code snapshots, exit status and linked ELF hashes outside the source
 package. Existing source/data/PAC evidence validators are retained. No HAL test,
 mock register bank, synthetic API compile probe, firmware execution, flash,
 silicon, throughput or liveness claim is made.
+
+The [F020 firmware](../examples/f020-dma/README.md) has separate owned-copy
+and staged-TX binaries for each of the three exact parts. Stage84 main passed
+15 actual ARM library builds and 16 ELF links; generation and five finite
+source gates passed in documented segments. Independent runtime and
+metadata/source reviews accepted the main work. At main acceptance clean
+had not run; final-package completion requires a separate final-source
+2-library/4-ELF clean receipt. The [verification boundary](f020-dma-owned.md#verification-boundary)
+retains warning/failure history and the generated delta. These software
+checks do not establish hardware behavior.

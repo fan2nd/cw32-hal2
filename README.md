@@ -450,7 +450,10 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   unsafe borrowed DMA, owned static-SRAM software copies and
   [safe staged UART TX DMA](docs/uart-dma-tx.md) plus [finite-chunk RX and split
   full-duplex DMA](docs/uart-dma-rx.md) with ordinary caller slices
-- F020 additionally: blocking 12-bit ADC and GTIM counter/simple PWM
+- F020 additionally: blocking 12-bit ADC and GTIM counter/simple PWM; exactly
+  CW32F020C6U7/K6U7/F6U7 add [native two-channel safe owned SRAM copies and
+  staged byte UART TX DMA](docs/f020-dma-owned.md). Generic `cw32f020` retains
+  `MissingMemoryMetadata` rejection; UART DMA RX/combined and SPI DMA remain excluded.
 - F002/F003/L031/R031/W031/L052/L083 additionally: blocking 12-bit ADC,
   with package-qualified analog pins and family-specific reference/supply limits.
   F002 exposes VDD reference and VDD/3 only; no TS or internal reference.
@@ -592,8 +595,9 @@ family-specific debug/reset/input-only pads and reserve radio-connected pads.
 Pull/speed capabilities vary by family. Pin routing is generated from reviewed
 metadata, not inferred from similarly named peripherals.
 
-x030/L083 `dma::CopyChannel::new` consumes a physical DMA singleton admitted by
-normal HAL initialization. Its safe `copy` method moves the capability and two
+On x030/L083 and exactly CW32F020C6U7/K6U7/F6U7, `dma::CopyChannel::new`
+consumes a physical DMA singleton admitted by normal HAL initialization.
+Its safe `copy` method moves the capability and two
 exclusive static SRAM buffers into `OwnedCopy`. Only clean completion returns
 them; errors permanently consume the owners because TE does not prove bus
 quiescence. Forgetting leaks them, and Drop may wait forever if hardware stalls.
@@ -603,13 +607,15 @@ access remains a technically unsafe ownership escape, as in pinned chiptool.
 
 The existing unsafe `OwnedCopy::new` and borrowed `Transfer` API remain available
 for low-level integration. Raw acquisition/downgrade cannot regain safe-copy
-admission. F030/A030/L083 `UartTx::new_with_dma` consumes static staging, UART and
-channel owners, then accepts ordinary safe slice writes. It copies each chunk
+admission. On F030/A030/L083 and exactly CW32F020C6U7/K6U7/F6U7,
+`UartTx::new_with_dma` consumes static staging, UART and channel owners, then
+accepts ordinary safe slice writes. It copies each chunk
 into private SRAM; cancellation retains the current chunk for a later write or
 flush to reap cleanly, while errors permanently quarantine resources. Chunk
 gaps and retained-resource costs apply. `flush` separately waits for the wire.
-`UartRx::new_with_dma` receives finite chunks into its own static SRAM; cancellation
-retains the chunk and later reads preserve clean surplus bytes. `Uart::new_with_dma`
+On F030/A030/L083, `UartRx::new_with_dma` receives finite chunks into its own
+static SRAM; cancellation retains the chunk and later reads preserve clean
+surplus bytes. `Uart::new_with_dma`
 prepares once and supports both directions through ordinary split halves. Line
 errors report promptly, but recovery must await the old count; receive/rearm/copy
 gaps may lose frames with no overrun indication. See [RX and shared lifetime
@@ -619,6 +625,25 @@ use independently [qualified staged requests](docs/l083-peripheral-dma.md);
 unsafe borrowed hardware-request constructors remain x030-only.
 See [UART TX scope and evidence](docs/uart-dma-tx.md),
 `docs/dma-safe-owned-copy.md` and the underlying `docs/dma-owned-copy-evidence.md`.
+
+F020 uses its native two-channel controller and independent DMACH1/DMACH2 IRQs.
+The three exact parts have 8 KiB SRAM at `0x20000000..0x20002000`; generic F020
+cannot admit safe DMA or staging. UART1/2/3 TX routes remain package-qualified:
+F6 UART1 has no safe TX pad because PA14 remains excluded. F020 gains no
+UART DMA RX, combined UART DMA, SPI DMA or borrowed hardware-request API.
+DMA UART construction does not install an RX ring or combine with a buffered
+owner on the same UART. See [the own-F020 contract](docs/f020-dma-owned.md) and
+[ordinary F020 firmware](examples/f020-dma/README.md). Stage84 main passed
+15 actual ARM library builds and 16 ELF links; all 31 commands exited zero.
+Generation and the five finite source gates passed in documented segments,
+and independent runtime and metadata/source reviews accepted the main work.
+Only the L010F8P6 and L011K8T6 library rows emitted warnings, three existing
+RCC constants each; all F020 rows and all ELF links were warning-free.
+At main acceptance clean had not run; final-package completion requires a
+separate final-source 2-library/4-ELF clean receipt. See
+[the verification boundary](docs/f020-dma-owned.md#verification-boundary)
+for the preserved source-gate failures and generated delta. No hardware
+result is claimed.
 
 F030/A030/L083 `Spi::new_with_dma` adds a safe byte `SpiBus` with two private static
 staging buffers and two admitted channels. Both clean DMA terminals and wire
@@ -640,7 +665,8 @@ then links the source-qualified firmware groups listed in that script. HAL unit/
 models and compile-contract harnesses have been removed. No firmware is flashed
 or executed. See `docs/hal-production-layout.md` for the upstream layout mapping
 and the historical verification boundary.
-Unsupported scope includes additional ADC/timer modes, peripheral DMA beyond staged x030/L083 UART TX/RX and SPI master,
+Unsupported scope includes additional ADC/timer modes, peripheral DMA beyond
+staged x030/L083 UART TX/RX and SPI master plus exact-part F020 UART TX,
 external/PLL modes beyond each explicitly qualified family/source and low-power policy. Check the coverage ledger before selecting a device/API.
 
 Exactly CW32F030C8T7, CW32F030K8T7, CW32F030K8U7 and CW32A030C8T7

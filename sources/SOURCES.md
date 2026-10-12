@@ -1016,3 +1016,56 @@ These earlier results and the complete final rerun remain recorded in
 [the verification history](../docs/btim-overflow-irq.md#verification-boundary).
 Source provenance and software builds do not establish interrupt execution,
 sleep/wake, fault recovery or silicon behavior.
+
+## Exact-part F020 owned DMA and staged UART TX sources
+
+The [F020 contract](../docs/f020-dma-owned.md) and
+[own-source record](../docs/f020-dma-owned-evidence.json) qualify native
+CH1/CH2 safe owned SRAM copies and staged byte UART TX only on
+CW32F020C6U7/K6U7/F6U7. They reuse locked F020 originals and do not
+replace earlier x030/L083 records or infer F020 behavior from those families.
+
+- `CW32F020_UserManual_CN_V1.4.pdf`, SHA-256
+  `279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed`:
+  own printed pp93–94 bind independent DMACH1 IRQ9 and DMACH2 IRQ10;
+  pp124–126, 128, 132–138 bind software/hardware BLOCK, request routing,
+  clean TC, STATUS5, software SOFTSRC and native two-channel registers.
+  ICR p135 supplies the four-field R1W0 reset/no-op seed `0xFFFFFFFF`
+  added through the existing `register-writes.yaml` schema. UART pp282/287
+  supply the byte TDR handshake, EN-before-DMATX sequence and separate
+  wire completion. One-based PDF viewer pages equal these printed pages + 1.
+- `current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf`, printed Rev1.3,
+  SHA-256 `1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0`:
+  printed p7 binds the exact three parts to 32 KiB flash and 8 KiB SRAM.
+  Its own package pad tables and the pinned SDK AF macros bind the example
+  routes; the older same-named root file with printed Rev1.2 is not substituted.
+- `CW32F020_StandardPeripheralLib_V1.2.zip`, SHA-256
+  `1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d`:
+  its bound CMSIS, DMA/GPIO/UART headers, UART implementation and native
+  SVD provide corroboration. Stale SDK extra-channel aliases or Channel2/3
+  comments do not override the two-channel manual and independent IRQs.
+
+The record retains exact source/member identities, official URLs and own
+page locators. Generic `cw32f020` has no SRAM metadata and retains
+`MissingMemoryMetadata` rejection. F6 UART1 still has no safe TX pad;
+PA13/PA14/PF3 exclusions remain. No F020 DMA RX, combined UART, SPI, other
+peripheral consumers or borrowed hardware-request API is qualified.
+TE, EN-clear and request closure alone provide no bus-drain proof;
+errors and inconsistent completion permanently retain the owners.
+
+Stage84 main passed 15 actual ARM library builds and 16 ELF links, all 31
+commands exiting zero on an unchanged 1,391-file source snapshot. Only the
+L010F8P6 and L011K8T6 library rows emitted three existing RCC-constant
+warnings each; all F020 rows and all ELF links were warning-free.
+One ordinary generation produced 906 generated files: the native ICR JSON
+was added, the native DMA PAC helper file changed, and the other 904 existing
+files, including all 54 chip JSON files, remained byte-identical. The
+capability renderer and five finite source gates passed in documented
+segments. Initial missing-cache-manifest and mutable-backlink comparison
+failures remain recorded; the approved checker-only correction after ARM
+builds changed no HAL or example bytes. Independent actual-main runtime
+and metadata/source reviews accepted the bounded work. At main acceptance
+clean had not run; final-package completion requires a separate final-source
+2-library/4-ELF clean receipt. Source qualification and linked-image
+inspection do not establish hardware transfer, wire timing, throughput or
+finite liveness. See [the verification boundary](../docs/f020-dma-owned.md#verification-boundary).

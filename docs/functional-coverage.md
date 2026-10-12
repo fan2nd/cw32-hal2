@@ -131,6 +131,10 @@ still apply.
   See [the finite idle contract](uart-idle.md).
   F030/A030/L083 additionally have safe staged TX DMA, finite-chunk RX and combined
   split full-duplex DMA with ordinary caller slices and separate wire flush.
+  Exactly CW32F020C6U7/K6U7/F6U7 additionally support staged byte TX only;
+  generic F020 rejects safe DMA/staging with `MissingMemoryMetadata`. F020
+  receives no DMA RX or combined constructor, and F6 UART1 has no safe TX pad.
+  No same-instance buffered-plus-DMA owner or DMA RX ring is introduced.
   Static staging/channel/UART ownership is retained across cancellation; clean
   completion permits reuse and retained RX tails, while DMA errors permanently
   quarantine resources. FE/PE reports promptly but recovery awaits the old count.
@@ -560,6 +564,10 @@ still apply.
   [reference ownership and evidence](comparator-reference.md).
 - DMA on F030/A030/L083 has unsafe borrowed software copies, unsafe-entry
   owned static SRAM copies and safe init-admitted CopyChannel copies.
+  Exactly CW32F020C6U7/K6U7/F6U7 add safe CopyChannel copies on the native
+  two-channel controller, with separate DMACH1/DMACH2 IRQs and qualified
+  8 KiB SRAM at `0x20000000..0x20002000`. Generic F020 retains
+  `MissingMemoryMetadata` rejection; this adds no borrowed hardware requests.
   L083 requires selected-part SRAM metadata. Unsafe borrowed hardware-request
   constructors remain x030-only; L083 UART/SPI RX/TX routes are exposed through
   the separately declared safe staged integration. L083 ADC/LCD/timer requests
@@ -570,9 +578,20 @@ still apply.
   forever. Safe init-admitted copies require normal reset/clean-runtime entry;
   dirty startup rejection cannot repair an arbitrary active bootloader handover.
   Safe peripheral integration covers staged F030/A030/L083 UART TX/RX and paired
-  SPI master with qualified SRAM and normal reset/clean-runtime entry. RX gaps can lose frames; safe early abort, circular operation and
-  lossless reception remain unavailable. Other DMA-bearing families
-  remain PAC-only. See [the DMA ownership contract](dma-owned-copy-evidence.md),
+  SPI master, plus exact-part F020 staged byte UART TX, with qualified SRAM
+  and normal reset/clean-runtime entry. F020 DMA RX/combined UART, SPI and
+  other peripheral consumers remain excluded. RX gaps can lose frames; safe
+  early abort, circular operation and lossless reception remain unavailable.
+  Remaining DMA-bearing families stay PAC-only. Stage84 main passed 15 actual
+  ARM libraries and 16 ELF links, all 31 commands exiting zero. Generation
+  and five finite source gates passed in documented segments; independent
+  runtime and metadata/source reviews accepted the main work. Only L010F8P6
+  and L011K8T6 library rows emitted three existing RCC warnings each; F020
+  rows and all ELF links were warning-free. At main acceptance clean had not
+  run; final-package completion requires a separate final-source
+  2-library/4-ELF clean receipt. No silicon behavior is claimed.
+  See [the own-F020 contract](f020-dma-owned.md),
+  [the DMA ownership contract](dma-owned-copy-evidence.md),
   [safe copies](dma-safe-owned-copy.md), [UART TX DMA](uart-dma-tx.md),
   [UART RX DMA](uart-dma-rx.md) and
   [SPI DMA](spi-dma.md).
