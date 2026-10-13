@@ -1,0 +1,219 @@
+{
+  "stage": 92,
+  "status": "accepted_main_runtime_and_artifact_review",
+  "scope": "Five classic families, fourteen exact selections, unchanged staged receive algorithms, eight standalone HAL libraries and twenty-one linked application ELFs.",
+  "parent_source_commit": "961476b035d24ccd4c5cdc8b9bc910afbf412b6c",
+  "parent_source_tree": "a3562f74172f2831765a073cacd61944baa38d22",
+  "reviewed_at_utc": "2026-10-13T06:23:41.121552+00:00",
+  "static_review": {
+    "external_artifact": "stage92/independent-review/runtime-static/runtime-static-review.json",
+    "sha256": "f7fca0db2fc881f7ae881df14b34f08159c806e94f469caf83ab7fdedcbc353a",
+    "bytes": 147100
+  },
+  "production_source_bindings": [
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "d36734471a35d7b07611c90c971867d78cd2127c03cf286c1b6b09b116a8f77c",
+      "bytes": 376930
+    },
+    {
+      "path": "embassy-cw32/src/usart.rs",
+      "sha256": "41831bba7f8b781270fdda128593718d67450a049d0a720d9559400bdf2eb2f3",
+      "bytes": 100895
+    },
+    {
+      "path": "embassy-cw32/src/dma.rs",
+      "sha256": "d91e8a90754c500fb62f2a7f998b80d589fb4613e8ff908ced59d1f1eeac15b2",
+      "bytes": 50640
+    },
+    {
+      "path": "examples/uart-dma/Cargo.toml",
+      "sha256": "15061d0a52ea6fcccc530c99326f75ebb8751d696c1c07eab7bb48511d19f0ef",
+      "bytes": 2711
+    },
+    {
+      "path": "examples/uart-dma/build.rs",
+      "sha256": "d9cfdc25e57951945df89ceab78f99d8136ac5eefe5804386bfeb2ea192cd725",
+      "bytes": 4562
+    },
+    {
+      "path": "examples/uart-dma/src/main.rs",
+      "sha256": "56f3d81aee1bd59f03b843435e98b73db128708a73f6c29230b528f46ed6f396",
+      "bytes": 2771
+    },
+    {
+      "path": "examples/uart-dma/src/bin/receive_only.rs",
+      "sha256": "b56e16761d91ad41740dbb81832df8f8867096418ea698955c69e9ad57ce2bd0",
+      "bytes": 1932
+    },
+    {
+      "path": "examples/uart-dma/README.md",
+      "sha256": "d1655d093e420b768c2fa6505f646b227971650aa97ba517ba1c4985c959e502",
+      "bytes": 6501
+    }
+  ],
+  "main_summary": {
+    "external_artifact": "stage92/main/summary.json",
+    "sha256": "38f0dc69b3f9f80c19eacc31a9ef5e0a84710b0fd5238d1904491aa7b9970f2b",
+    "bytes": 921
+  },
+  "source_manifest": {
+    "external_artifact": "stage92/main/source-before.json",
+    "sha256": "49720a0e8aceaaa4bc3543146f8a503c29c67a1b34039e43282302dc6f2ba6e7",
+    "bytes": 260558
+  },
+  "generated_manifest": {
+    "external_artifact": "stage92/main/generated-before.json",
+    "sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3",
+    "bytes": 136585
+  },
+  "counts": {
+    "standalone_rlibs": 8,
+    "linked_elfs": 21,
+    "dependency_hal_archives_counted_as_standalone": 0,
+    "canonical_generated_files_unchanged": 910,
+    "warnings": 0,
+    "errors": 0,
+    "failed_main_builds": 0
+  },
+  "source_gate_boundary": {
+    "original_D01": {
+      "status": "failed_before_checker_correction",
+      "receipt": {
+        "external_artifact": "stage92/main-gates/D01.receipt.json",
+        "sha256": "48bd90cb222558f8e3b290682ae85e78f8c3483550562c12b47a168daf98a4d0",
+        "bytes": 2681
+      },
+      "cause": "Evidence checker expected a full SDK AF pin field where the native SDK uses the reviewed local field name; original failed attempt retained.",
+      "runtime_algorithm_change": false
+    },
+    "corrected_current_passes": [
+      {
+        "id": "D01",
+        "status": "passed",
+        "receipt": {
+          "external_artifact": "stage92/main-gates-continuation/D01.receipt.json",
+          "sha256": "1698cb0928c07f1d8fc12decb92855422c2bcae18534660b5378465c01847a00",
+          "bytes": 2744
+        },
+        "script_sha256": "4efe45617f447002898dbf17fc632fedfd1aeddfc655b9a7d070c5ea746538b5"
+      },
+      {
+        "id": "D02",
+        "status": "passed",
+        "receipt": {
+          "external_artifact": "stage92/main-gates-continuation/D02.receipt.json",
+          "sha256": "6beade049427aeb01a193881e04def98c7dc397ed45401e68b006dbf1179304e",
+          "bytes": 2653
+        },
+        "script_sha256": "fbeb2fbabcca131babcc66de410dd2f0f5cc127a60e03e90c2b1e82ed170f066"
+      }
+    ]
+  },
+  "limitations": [
+    "This accepts the fixed main build/artifact matrix only. Fresh clean replay and final release packaging have separate acceptance obligations.",
+    "No hardware execution, throughput, losslessness, bounded recovery, early abort or RF coexistence result is claimed.",
+    "The reviewer ran no Cargo builds, generation, source gates, tests, synthetic runtime probes or production edits.",
+    "Generic aliases remain a source/metadata rejection obligation; no extra alias builds were added.",
+    "Cargo fresh flags are retained as cache metadata; they do not count dependency archives as standalone builds or establish per-object recompilation."
+  ],
+  "blockers": [],
+  "design_bindings": {
+    "runtime-design.md": "a1214998edf0f937350f124ee45111cd11c33ae43052bfaba70058f7c7086063",
+    "metadata-source-design.md": "9306082f50c802cc4679db29a50ecdc060393ea9793ded6295fa93a3dbf134b0",
+    "freeze.json": "ca937ca3c11229418f7fb64daa061466f20d6bc51d70f8bc2901fdb1695298c4",
+    "main-build-matrix.tsv": "643d99aeaaaaf9309b38a599b508648748ef2f18a865c77312494d23a7bf1fef",
+    "clean-build-matrix.tsv": "7ca9f89bcda0b5709a1c53759cdbec12726c20af0892c0ff29bc027deaa5a3af"
+  },
+  "expanded_review": {
+    "external_artifact": "stage92/independent-review/runtime-main/main-runtime-review-expanded.json",
+    "sha256": "01ffddb04f1484049c6c31749cc031bae8a6c9e9352932bed7e2c9b3630decc3",
+    "bytes": 101920
+  },
+  "verified_behavior": [
+    "Only the three reviewed receive-policy literals change functional HAL code; static implementation hashes remain unchanged.",
+    "Actual emitted UART RX route traits are admitted for the five classic families. The L012 representative has TX only and no native RX DMA cfg or RX route traits. New classic SPI DMA remains excluded.",
+    "Every retained executable has real ARM executable sections, qualified Flash load addresses and SRAM writable placement, matching strong selected UART/DMA vector symbols and disjoint private singleton staging in SRAM.",
+    "All fourteen new-package combined links, five standalone family links, the L031F8U6 UART1 receive-only edge, F030 combined and L083 shared-vector links are actual artifacts.",
+    "Independent archive inspection establishes actual ARM code in eight standalone libraries. Dependency HAL archives are not counted as additional commands.",
+    "The accepted static ownership, cancellation, quarantine and shared-IRQ analysis remains bound to the unchanged implementation."
+  ],
+  "emitted_family_profiles": [
+    {
+      "feature": "cw32f020c6u7",
+      "uart_dma_tx": true,
+      "uart_dma_rx": true,
+      "spi_dma": false,
+      "uart_rx_route_count": 3
+    },
+    {
+      "feature": "cw32l031f8u6",
+      "uart_dma_tx": true,
+      "uart_dma_rx": true,
+      "spi_dma": false,
+      "uart_rx_route_count": 3
+    },
+    {
+      "feature": "cw32l052c8t6",
+      "uart_dma_tx": true,
+      "uart_dma_rx": true,
+      "spi_dma": false,
+      "uart_rx_route_count": 3
+    },
+    {
+      "feature": "cw32r031c8u6",
+      "uart_dma_tx": true,
+      "uart_dma_rx": true,
+      "spi_dma": false,
+      "uart_rx_route_count": 3
+    },
+    {
+      "feature": "cw32w031r8u6",
+      "uart_dma_tx": true,
+      "uart_dma_rx": true,
+      "spi_dma": false,
+      "uart_rx_route_count": 3
+    },
+    {
+      "feature": "cw32f030c8t7",
+      "uart_dma_tx": true,
+      "uart_dma_rx": true,
+      "spi_dma": true,
+      "uart_rx_route_count": 3
+    },
+    {
+      "feature": "cw32l083rct6",
+      "uart_dma_tx": true,
+      "uart_dma_rx": true,
+      "spi_dma": true,
+      "uart_rx_route_count": 6
+    },
+    {
+      "feature": "cw32l012c8t6",
+      "uart_dma_tx": true,
+      "uart_dma_rx": false,
+      "spi_dma": false,
+      "uart_rx_route_count": 0
+    }
+  ],
+  "independent_artifact_inspection": {
+    "standalone_archive_ARM_code_member_counts": [
+      10,
+      10,
+      10,
+      10,
+      10,
+      10,
+      11,
+      11
+    ],
+    "elf_count": 21,
+    "executable_section_bytes_min": 15172,
+    "executable_section_bytes_max": 77316,
+    "private_staging_allocations": 39,
+    "all_stages_disjoint_and_in_qualified_SRAM": true,
+    "all_allocated_sections_and_load_segments_in_qualified_memory": true,
+    "all_required_IRQ_slots_match_strong_executable_symbols": true,
+    "per_row_artifact_hashes_vectors_sections_staging_and_commands": "See the hash-bound expanded_review external artifact."
+  }
+}

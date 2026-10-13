@@ -1,6 +1,12 @@
 # Safe staged UART RX and split full-duplex DMA
 
-F030/A030/L083 expose `UartRx::new_with_dma` and `Uart::new_with_dma`. The existing
+F030/A030/L083 and fourteen exact F020/L031/L052/R031/W031 parts expose
+`UartRx::new_with_dma` and `Uart::new_with_dma`. The classic extension uses the
+existing receive algorithm and [each family's own byte-RDR qualification](classic-uart-dma-rx.md).
+L012 remains TX-only for UART DMA. Stage92 main passed eight standalone ARM
+libraries and 21 ELF links without warnings; independent runtime and metadata/source reviews accepted the bounded main result.
+At main acceptance final capability reports and the separate two-library/three-ELF
+clean replay had not run. Prior copy/TX receipts do not verify this extension. The existing
 `UartRx` owns the receive lease, while the combined constructor prepares the
 UART once and builds its existing TX/RX halves. `split` and `split_ref` remain
 the concurrent interface. Standalone and combined constructors require static
@@ -55,8 +61,11 @@ clean DMA completion and DMARX closure. An invalid clean chunk retires safely
 but is discarded; an unreported error is returned. A new error after the final
 snapshot remains for the next reception. There are no per-byte error tags.
 
-The SDK confirms that reading RDR does not clear RC. Therefore stale RC after
-DMA is acknowledged with the generated R1W0 no-op command and never read as an
+Each qualified family's own SDK confirms that reading RDR does not clear RC.
+The five classic families expose FE/PE/RC without ORE/NE; their own-source
+locators and selected typed ICR no-op values are recorded in
+[classic RX evidence](classic-uart-dma-rx.md#positive-own-source-receive-authority).
+Therefore stale RC after DMA is acknowledged with the generated R1W0 no-op command and never read as an
 extra byte. Selected RX acknowledgments preserve TX/CTS and reserved fields.
 No line-error path treats a UART flag, EN=0, cleared DMARX, zero count, TE or a
 stop-request status as proof that DMA bus accesses drained.
@@ -92,13 +101,19 @@ controller clock and other channels are never reset/gated by this lifecycle.
 
 This is finite explicitly armed reception, not continuous/circular/ring/idle-line
 RX. Frames may be overwritten or lost during executor, copy and rearm gaps.
-F030/A030/L083 have no overrun indication, so no lossless, throughput, bounded-liveness
-or early-abort claim is made. No safe return of consumed static resources
+These qualified UARTs have no overrun indication, so no lossless, throughput,
+bounded-liveness or early-abort claim is made. No safe return of consumed static resources
 or RTS/CTS DMA is introduced. L083 UART1–6 are independently qualified in
 [the own-family source record](l083-peripheral-dma.md), including the shared
 UART vectors and all five exact parts.
 
 ## Own-source evidence
+
+The five classic families have independent positive byte-RDR, software RC-clear,
+FE/PE and package evidence in [classic RX](classic-uart-dma-rx.md) and its
+[source ledger](classic-uart-dma-rx-evidence.json). Existing pin exclusions
+remain: F020F6U7/L031F8P6 have no safe UART1 direction, while L031F8U6 has
+UART1 RX-only on PA9/AF2 or PC15/AF6, with no safe UART1 TX.
 
 L083 RX and shared UART interrupt evidence is documented separately in
 [L083 staged peripheral DMA](l083-peripheral-dma.md); the following x030
@@ -141,6 +156,9 @@ and [async Read contract](https://docs.rs/embedded-io-async/0.7.0/embedded_io_as
 for immediate empty and short-read requirements.
 
 [Real full-duplex and standalone RX firmware](../examples/uart-dma/README.md)
-uses exact F030C8T7/A030C8T7 and all five L083 selections. ARM compile/link receipts and separate
-source review establish only their stated scope, not hardware execution or error
-injection. No HAL tests, synthetic register models or negative harnesses are added.
+uses exact F030C8T7/A030C8T7, all five L083 selections and the fourteen
+classic selections above. Their separate [Stage92 main results](classic-uart-dma-rx.md#application-and-verification-boundary)
+cover fourteen combined and five selected standalone classic images. Earlier ARM
+compile/link receipts retain only their recorded scope, not hardware
+execution or error injection. No HAL tests, synthetic register models or
+negative harnesses are added.

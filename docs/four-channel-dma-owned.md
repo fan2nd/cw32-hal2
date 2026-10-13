@@ -1,10 +1,16 @@
 # Native four-channel owned DMA source evidence
 
-This records the bounded CW32L031/L052/R031/W031 own-source qualification for
-finite, permanently owned SRAM copying and staged byte UART TX on eleven exact
+This records the historical Stage85 own-source qualification for
+CW32L031/L052/R031/W031: finite, permanently owned SRAM copying and staged byte UART TX on eleven exact
 parts. The four generic aliases have no exact memory bounds and remain refused
-for safe admission. The evidence does not qualify UART DMA RX, combined RX/TX
-constructors, SPI, RF access or any other DMA consumer.
+for safe admission. The Stage85 evidence does not qualify UART DMA RX or
+combined RX/TX.
+Stage92 separately extends [finite RX and combined/split DMA](classic-uart-dma-rx.md)
+on these eleven parts, using positive own-source RX evidence and the existing
+runtime algorithm. Its eight-library/21-ELF main passed without warnings;
+independent runtime and metadata/source reviews accepted the bounded main result. At that main acceptance final capability
+reports and the separate two-library/three-ELF clean replay had not run.
+SPI, RF access and other DMA consumers remain outside this qualification.
 
 The native ICR seed, generated helpers and finite source checks are complete.
 Main software verification and independent actual-implementation reviews are
@@ -231,13 +237,21 @@ no new RF/SPI path. Existing whole-GPIOB/RCC limits remain. Additional DMA bus
 traffic can change CPU/host service despite unchanged RFCLK. No RF page, register,
 command, mode, power, reset or IRQ/event read/clear is part of this qualification.
 
-UART_RX, SPI_RX/TX, timers, ADC and L052's extra SPI2/GTIM3/LCD requests remain
-inventory-only. No RX-only or combined DMA constructors, SPI DMA, low-power DMA,
+Stage85 left UART_RX inventory-only; [Stage92 classic RX](classic-uart-dma-rx.md)
+separately qualifies finite UART RX-only and combined/split DMA. L031F8U6
+UART1 supports RX-only on PA9/AF2 or PC15/AF6 despite its absent TX route;
+L031F8P6 UART1 has neither safe direction. SPI_RX/TX, timers, ADC and L052's
+extra SPI2/GTIM3/LCD requests remain inventory-only. No SPI DMA, low-power DMA,
 circular mode, borrowed-buffer DMA, direct caller-Flash DMA or arbitrary endpoint
-is qualified. Existing x030/L083 RX/TX/SPI, F020 TX, idle and buffered-RX guards
-retain their independent scope.
+is qualified. Existing x030/L083 RX/TX/SPI, idle and buffered-RX guards retain
+their independent scope.
 
 ## Verification boundary
+
+These results belong to Stage85 copy/TX, including its recorded source-gate
+failures and generated delta. They do not verify Stage92 RX; its separate
+[main results and remaining verification](classic-uart-dma-rx.md#application-and-verification-boundary)
+retain their own receipts.
 
 The existing [source checker](../tests/verify_dma_owned_evidence.py) retains its
 previous checks and adds finite current facts: exact own source bytes and archive

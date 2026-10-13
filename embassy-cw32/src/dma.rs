@@ -9,8 +9,9 @@
 //! follows CN V1.4 §§8.1–8.8 / EN V1.0 §§8.1–8.8 and the UART TX example in
 //! CN §21.7.1.5 (printed 474) / EN §21.7.1.5 (printed 520).
 //! L083 also exposes safe staged UART/SPI requests; unsafe borrowed hardware
-//! constructors remain x030-only. F020/L031/L052/R031/W031/L012 add safe owned copy
-//! and staged UART TX; unsafe software-copy APIs retain their existing contracts.
+//! constructors remain x030-only. F020/L031/L052/R031/W031 add safe owned copy
+//! and staged UART TX/RX; L012 adds owned copy and staged UART TX only.
+//! Unsafe software-copy APIs retain their existing contracts.
 //! L031/L052/R031/W031 share DMACH23 between CH2/3 and use independent DMACH4
 //! for CH4. L012 pairs CH1/2 on DMACH12 and CH3/4 on DMACH34; IRQ11 is CORDIC.
 //! Only the selected channel's terminal flags are cleared.
@@ -112,8 +113,9 @@ pub trait ChannelInstance: sealed::Channel + PeripheralType + 'static {
 /// Verified request route from peripheral `P`, signal `S`, to this channel.
 ///
 /// Qualified x030/L083 requests apply to their five channels; qualified F020
-/// UART TX requests apply to its two physical channels. Qualified
-/// L031/L052/R031/W031/L012 UART TX requests apply to their four physical channels.
+/// UART TX/RX requests apply to its two physical channels. Qualified
+/// L031/L052/R031/W031 UART TX/RX and L012 UART TX requests apply to their
+/// four physical channels.
 /// This trait is sealed so downstream code cannot introduce an unverified
 /// request or channel route.
 #[allow(private_bounds)]

@@ -1,12 +1,15 @@
 # F020 owned DMA source evidence
 
-This records own-family source facts for the bounded F020 DMA extension:
-two native channels, finite static-owned SRAM copying, and staged byte UART TX
+This records the historical Stage84 own-family source facts for the bounded
+F020 DMA extension: two native channels, finite static-owned SRAM copying, and staged byte UART TX
 on `cw32f020c6u7`, `cw32f020k6u7`, and `cw32f020f6u7`. It supplies source evidence
 and the native ICR command seed. Actual main software verification is
 summarized in [Verification boundary](#verification-boundary), with separate
 implementation and acceptance receipts. No transfer on hardware or wire
-output is claimed.
+output is claimed. Stage92 separately extends finite RX and combined/split
+UART DMA on the same three exact parts, using the existing runtime algorithm;
+see [the current classic RX contract and verification](classic-uart-dma-rx.md).
+The Stage84 source and review records below retain their copy/TX scope.
 
 The source identities, page hashes, decoded facts and remaining obligations are
 in [f020-dma-owned-evidence.json](f020-dma-owned-evidence.json). The originals are
@@ -124,10 +127,18 @@ the pinned SDK GPIO macros. UM p137 and existing metadata give UART1_TX1,
 UART2_TX3 and UART3_TX5, each selectable by either physical channel. Route
 metadata does not override package exclusions: F6's only UART1 TX candidate is
 PA14 and remains excluded from safe TxPin. PA13/PA14/PF3 exclusions are retained.
-This work admits no F020 UART DMA RX, combined DMA UART, SPI DMA, other requests,
-borrowed hardware-request constructors or buffered-plus-DMA owner.
+Stage84 admitted only copy/TX. Current [Stage92 RX qualification](classic-uart-dma-rx.md)
+adds finite UART RX and combined/split DMA without changing these historical
+proofs. F6 UART1 has no safe RX either. SPI DMA, other requests, borrowed
+hardware-request constructors and buffered-plus-DMA ownership remain excluded.
 
 ## Verification boundary
+
+The following results belong to Stage84 copy/TX and do not verify Stage92 RX.
+The extension's separate eight-library/21-ELF main passed without warnings;
+its independent runtime and metadata/source reviews accepted the bounded main result. At that main acceptance final capability
+reports and the two-library/three-ELF clean replay had not run. See the separate
+[Stage92 verification boundary](classic-uart-dma-rx.md#application-and-verification-boundary).
 
 The source receipt verifies original/member/text identities, source-page
 identities, current metadata correspondence, the one native seed, and reversible

@@ -570,15 +570,15 @@ fn main() {
         }
         println!("cargo:rustc-cfg=dma_v1");
     }
-    // Qualification is distinct from a shared register layout. F020 and the
-    // four-channel cohort and L012 admit only UART TX. RX inventory is not admission.
+    // Qualification is distinct from a shared register layout. The five classic
+    // families have own RX evidence; L012 remains TX-only. Inventory is not admission.
     // Keep SPI's paired directions independent of the UART direction policy.
     let uart_dma_profile = match metadata.line {
         "CW32F030" | "CW32A030" => Some((3, "v1", true)),
         "CW32L083" => Some((6, "cw32l083_v1", true)),
-        "CW32F020" => Some((3, "v1", false)),
-        "CW32L031" | "CW32R031" | "CW32W031" => Some((3, "cw32l031_v1", false)),
-        "CW32L052" => Some((3, "cw32l052_v1", false)),
+        "CW32F020" => Some((3, "v1", true)),
+        "CW32L031" | "CW32R031" | "CW32W031" => Some((3, "cw32l031_v1", true)),
+        "CW32L052" => Some((3, "cw32l052_v1", true)),
         "CW32L012" => Some((3, "cw32l012_v1", false)),
         _ => None,
     };
@@ -1422,8 +1422,8 @@ fn main() {
                 continue;
             }
             // Preserve x030's raw inventory. Other families emit only verified
-            // direction pairs: L083 UART/SPI RX+TX, F020 and the four-channel
-            // cohort plus L012 UART TX alone.
+            // direction pairs: L083 UART/SPI RX+TX, the five classic families
+            // UART RX+TX, and L012 UART TX alone.
             for route in peripheral.dma_channels {
                 let staged_pair = uart_dma_tx_pairs
                     .iter()
@@ -2220,8 +2220,8 @@ fn qualify_four_channel_dma() {
     assert_eq!(rcc_field(sysctrl, &control.enable), (0x30 / 4, 0, 1));
     assert_eq!(rcc_field(sysctrl, reset), (0x40 / 4, 0, 1));
 
-    // Each own UARTx chapter and byte-SRAM-to-TDR example qualifies UART1..3.
-    // Native UART versions remain distinct; request inventory alone grants no RX.
+    // Each own UARTx chapter and byte-SRAM/TDR example qualifies UART1..3 TX.
+    // Separate own RX qualification covers RDR; native UART versions stay distinct.
     assert_eq!(
         METADATA
             .peripherals

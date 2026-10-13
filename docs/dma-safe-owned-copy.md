@@ -11,7 +11,9 @@ selections listed below, plus CW32L012C8T6/C8U6. The F020 parts have 8 KiB SRAM 
 `0x20000000..0x20002000`; generic `cw32f020` retains
 `MissingMemoryMetadata` rejection. F020 uses native CH1/CH2 with independent
 DMACH1/DMACH2 IRQs, not a five-channel controller view. Its own-source proof
-and TX-only peripheral scope are in [F020 owned DMA](f020-dma-owned.md).
+and historical copy/TX scope are in [F020 owned DMA](f020-dma-owned.md).
+[Classic finite UART RX](classic-uart-dma-rx.md) separately extends peripheral
+RX/combined scope without changing this software-copy contract.
 The word type is sealed to u8/u16/u32. Separate [L083 staged UART/SPI APIs](l083-peripheral-dma.md)
 qualify only their RX/TX hardware requests; unsafe borrowed hardware constructors
 remain x030-only.
@@ -42,11 +44,12 @@ Each family's own manual independently qualifies the existing copy engine and
 its native eight-field R1W0 ICR seed. The typed all-one no-op preserves sibling
 flags and reserved bits. Layout reuse does not supply another family's proof.
 See [the four-family contract and evidence](four-channel-dma-owned.md).
-Their only new peripheral-DMA consumer is [staged byte UART TX](uart-dma-tx.md#native-four-channel-cohort),
-with all eleven package routes and the two L031 F8 UART1 exclusions retained.
-No RX/combined UART, SPI, other request or borrowed hardware constructor is
-added. Existing unsafe software-copy APIs remain available under their own
-contracts. R031 whole-GPIOA effects and W031 internal RF boundaries retain
+Their Stage85 peripheral qualification was [staged byte UART TX](uart-dma-tx.md#native-four-channel-cohort).
+Stage92 separately adds [finite RX and combined/split UART DMA](classic-uart-dma-rx.md).
+The two L031 F8 packages retain their UART1 TX exclusions; F8U6 permits
+UART1 RX-only while F8P6 has neither safe direction. No SPI, other request or
+borrowed hardware constructor is added. Existing unsafe software-copy APIs
+remain available under their own contracts. R031 whole-GPIOA effects and W031 internal RF boundaries retain
 the existing clean-runtime/functional handover obligations; this is no RF
 handover or coexistence qualification.
 

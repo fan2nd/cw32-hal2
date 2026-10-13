@@ -164,9 +164,9 @@ functions:
         qualification; per-instance hardware presence is not universally asserted.
     - id: safe_peripheral_dma
       status: experimental_partial
-      scope: Safe F030/A030/L083 staged TX, finite-chunk RX and combined split TX/RX DMA; exact-part F020, eleven exact L031/L052/R031/W031 selections and exact L012 C8T6/C8U6 add staged byte TX only.
+      scope: Safe staged TX, finite RX and combined/split UART DMA on F030/A030/L083 and fourteen exact F020/L031/L052/R031/W031 parts; exact L012 C8T6/C8U6 remain UART TX-only.
       limitations:
-      - F030/A030/L083 with qualified SRAM metadata and clean startup admission; static UART/channel/staging owners are consumed.
+      - Every admitted profile requires qualified SRAM and normal reset/clean-runtime startup; static UART/channel/staging owners are consumed. Generic classic aliases retain MissingMemoryMetadata rejection.
       - CPU copy per byte and possible chunk gaps; write completes memory-to-TDR transfer and flush separately waits for the wire.
       - Cancellation retains each direction's current chunk; clean RX tails remain available, and TE or ambiguous completion permanently quarantines resources.
       - RX gaps may lose frames with no overrun indication; FE/PE reports promptly but recovery waits for the old DMA count.
@@ -197,32 +197,40 @@ functions:
         - UART1/2/3 TX use PA9/PA7/PA8 AF1 and request selectors 1/3/5; private staging isolates caller slices. Flush separately waits for TXBUSY0.
         - No L012 DMA RX/combined UART, SPI, other requests, borrowed hardware constructor, buffered-plus-DMA owner, early abort or finite-liveness guarantee.
       - families: [CW32F020]
-        scope: Safe staged byte UART TX with ordinary caller slices on exactly CW32F020C6U7/K6U7/F6U7; no RX or combined DMA constructor.
+        scope: Safe staged byte UART TX, finite RX and combined/split DMA on exactly CW32F020C6U7/K6U7/F6U7, through native CH1/CH2.
         limitations:
-        - Exact 8 KiB SRAM at 0x20000000..0x20002000 and clean init admission are required; generic cw32f020 rejects safe DMA/staging with MissingMemoryMetadata.
-        - Native CH1/CH2 use independent DMACH1/DMACH2 IRQs; UART1/2/3 TX selectors 1/3/5 come from qualified metadata.
-        - Existing safe TX pad exclusions apply; F6 UART1 has no usable TX pad because its only TX route is excluded PA14.
-        - Static UART/channel/staging owners are consumed; cancellation retains the current chunk, and TE or inconsistent completion permanently quarantines them.
-        - Each byte is copied into private staging; chunk gaps remain, write retires memory-to-TDR work, and flush separately waits for the wire.
-        - No DMA RX/combined UART, SPI, other peripheral requests, raw borrowed hardware extension, buffered-plus-DMA owner, flow control, early abort or finite-liveness guarantee.
-        - Stage84 main passed 15 actual ARM library builds and 16 ELF links, all 31 commands exiting zero; generation and five finite source gates passed in documented segments.
-        - Independent runtime and metadata/source reviews accepted the main work. Only L010F8P6/L011K8T6 library rows emitted three existing RCC warnings each; all F020 rows and ELF links were warning-free.
-        - At main acceptance clean had not run; final-package completion requires a separate final-source 2-library/4-ELF clean receipt. No hardware result is claimed.
+        - Exact 8 KiB SRAM at 0x20000000..0x20002000 and normal reset/clean-runtime admission are required; generic cw32f020 rejects safe DMA/staging with MissingMemoryMetadata.
+        - Native CH1/CH2 use independent DMACH1/DMACH2 IRQs. UART1/2/3 RX selectors 0/2/4 and TX selectors 1/3/5 may use either channel, subject to safe package pins.
+        - F6 UART1 has no safe RX or TX; PA13/PA14/PF3 remain excluded. Combined UART requires distinct safe TX/RX pins, distinct admitted channels and independent exclusive static stages.
+        - Own CN1.4 p288 qualifies byte RDR-to-SRAM DMA; own SDK requires software RC clear. FE/PE/RC have no ORE/NE indication; typed ICR no-op preserves unrelated fields.
+        - Static UART/channel/staging owners survive cancellation and forget. Clean retirement requires recorded TC without TE plus STATUS5, request closure and fencing before staged-byte access; DMA faults permanently quarantine affected resources.
+        - FE/PE returns promptly while an invalid pending chunk remains running; later inherent recovery awaits its old count. Clean RX tails remain available. CPU copies and chunk/rearm gaps can lose frames without a loss count.
+        - TX completion retires memory-to-TDR work; flush separately waits for the wire. No SPI or additional peripheral DMA consumers, new raw hardware requests, buffered-plus-DMA owner, RTS/CTS or idle/circular DMA, early abort, zero-copy or finite-liveness guarantee.
+        - Historical Stage84 copy/TX main passed 15 ARM libraries and 16 ELF links, all 31 exiting zero; generation and five finite source gates passed in documented segments. These results do not verify Stage92 RX.
+        - Independent Stage84 runtime and metadata/source reviews accepted that copy/TX main. Only L010F8P6/L011K8T6 library rows emitted three existing RCC warnings each; all F020 rows and ELF links were warning-free.
+        - At Stage84 main acceptance its separate final-source 2-library/4-ELF clean receipt had not run. No hardware result is claimed.
+        - Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without warnings. Both finite source checks passed after the preserved initial D01 PIN/AFR comparison failure and checker-only correction.
+        - Independent Stage92 runtime and metadata/source reviews accepted the bounded main result. Main ran no canonical data generation and all 910 generated files stayed unchanged; UART/DMA runtime algorithms remain unchanged.
+        - At Stage92 main acceptance final capability reports and the separate final-source 2-library/3-ELF clean replay had not run. No hardware result is claimed.
       - families: [CW32L031, CW32L052, CW32R031, CW32W031]
-        scope: Safe staged byte UART TX only on eleven exact native four-channel selections; no RX or combined DMA constructor.
+        scope: Safe staged byte UART TX, finite RX and combined/split DMA on eleven exact native four-channel selections.
         limitations:
-        - Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6; each has 64 KiB flash and 8 KiB SRAM at 0x20000000..0x20002000.
-        - Generic cw32l031/cw32l052/cw32r031/cw32w031 compile the controller/TX surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.
-        - CH1 uses DMACH1 IRQ9, CH2/3 share DMACH23 IRQ10 and CH4 uses DMACH4 IRQ11; no CH5. Typed native eight-field R1W0 commands preserve siblings and reserved bits.
+        - Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6; each has 64 KiB Flash and 8 KiB SRAM at 0x20000000..0x20002000.
+        - Generic cw32l031/cw32l052/cw32r031/cw32w031 compile the controller/UART DMA surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.
+        - CH1 uses DMACH1 IRQ9, CH2/3 share DMACH23 IRQ10 and CH4 uses DMACH4 IRQ11; no CH5. Both shared handlers service only their own channel; typed native R1W0 commands preserve siblings and reserved bits.
         - Normal reset/clean-runtime entry and conservative one-time admission apply. Dirty state is rejected without reset/recovery; raw acquisition permanently revokes safe admission.
-        - UART1/2/3 TX selectors 1/3/5 may use any CH1..4, subject to existing package-safe pins. L031F8P6/F8U6 UART1 has only excluded PA14; PA13/PA14/PF3 remain excluded.
-        - All eleven package routes are in docs/uart-dma-tx.md; the example uses CH2/3 for UART2/3 and CH4 for UART1 where safe. L052 UART3 is PA9 AF1; other cohort parts use PA10 AF6.
-        - Static UART/channel/staging owners are consumed; cancellation retains the current chunk. Only recorded TC without TE plus STATUS5 permits request closure, fencing and staging reuse; errors permanently quarantine resources.
-        - Each byte is CPU-copied into private staging; chunk gaps remain, write retires memory-to-TDR work, and flush separately waits for the wire.
-        - No new DMA RX/combined UART, SPI, other requests, borrowed hardware constructors, buffered-plus-DMA owner, DMA flow control/idle, early abort or finite-liveness guarantee.
+        - UART1/2/3 RX selectors 0/2/4 and TX selectors 1/3/5 may use any CH1..4, subject to safe package pins. Combined UART requires distinct TX/RX pins, distinct channels and independent exclusive static stages.
+        - L031F8P6 UART1 has no safe RX/TX; L031F8U6 UART1 permits RX-only on PA9/AF2 or PC15/AF6 with no safe TX. PA13/PA14/PF3 remain excluded.
+        - Each own manual supplies byte RDR-to-SRAM DMA and FE/PE/RC without ORE/NE; each own SDK requires software RC clear. The current classic RX contract binds the complete package routes and typed ICR no-op seeds.
+        - Static UART/channel/staging owners survive cancellation and forget; clean RX tails remain available. Clean retirement requires recorded TC without TE plus STATUS5, request closure and fencing before staging reuse; DMA faults permanently quarantine resources.
+        - FE/PE returns promptly but recovery may wait indefinitely for the old DMA count. CPU copies and chunk/rearm gaps can lose frames without a loss count; TX flush separately waits for the wire.
+        - No SPI or additional peripheral DMA consumers, new raw hardware requests, buffered-plus-DMA owner, RTS/CTS or idle/circular DMA, early abort, zero-copy or finite-liveness guarantee.
         - R031 whole-GPIOA effects and W031 internal RF boundaries preserve existing functional handover obligations; no RF-safe handover/coexistence claim.
-        - Stage85 main passed six standalone ARM library builds and 21 ELF links, all 27 commands exiting zero without warnings; generation, five finite source gates and the capability renderer passed in documented segments.
-        - Three source checker preparation failures remain recorded; their corrections changed no HAL or example bytes. At main acceptance clean had not run; final-package completion requires a separate final-source 2-library/4-ELF clean receipt. No hardware result is claimed.
+        - Historical Stage85 copy/TX main passed six ARM libraries and 21 ELF links, all 27 exiting zero without warnings; generation, five finite source gates and the renderer passed in documented segments. These results do not verify Stage92 RX.
+        - Three Stage85 source-checker preparation failures remain recorded; corrections changed no HAL/example bytes. At that main acceptance its separate final-source 2-library/4-ELF clean receipt had not run. No hardware result is claimed.
+        - Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without warnings. Both finite source checks passed after the preserved initial D01 PIN/AFR comparison failure and checker-only correction.
+        - Independent Stage92 runtime and metadata/source reviews accepted the bounded main result. Main ran no canonical data generation and all 910 generated files stayed unchanged; UART/DMA runtime algorithms remain unchanged.
+        - At Stage92 main acceptance final capability reports and the separate final-source 2-library/3-ELF clean replay had not run. No hardware result is claimed.
       pins_any:
       - TX
       - RX
@@ -231,6 +239,8 @@ functions:
         anchor: pub fn new_with_dma
       - path: docs/uart-dma-tx.md
       - path: docs/uart-dma-rx.md
+      - path: docs/classic-uart-dma-rx.md
+      - path: docs/classic-uart-dma-rx-evidence.json
       - path: docs/f020-dma-owned.md
       - path: docs/four-channel-dma-owned.md
       - path: docs/l012-dma-owned.md
@@ -1497,9 +1507,9 @@ functions:
         - Caller owns peripheral lifecycle, outstanding accesses and forgotten borrows; no safe cancellation.
     - id: safe_peripheral_dma
       status: experimental_partial
-      scope: Safe admitted F030/A030/L083 UART TX/RX and paired SPI master byte requests; exact-part F020, eleven exact L031/L052/R031/W031 selections and exact L012 C8T6/C8U6 add UART TX only, with private static SRAM staging.
+      scope: Safe staged UART TX/RX on F030/A030/L083 and fourteen exact F020/L031/L052/R031/W031 parts; paired SPI master stays F030/A030/L083-only and exact L012 C8T6/C8U6 UART stays TX-only.
       limitations:
-      - Limited to F030/A030/L083 UART TX/RX and SPI master with qualified SRAM and normal reset/clean-runtime entry; L083 ADC/LCD/timer requests remain outside this HAL scope.
+      - Qualified SRAM, private static staging and normal reset/clean-runtime entry are required for every admitted profile; L083 ADC/LCD/timer and other unqualified peripheral requests remain outside this HAL scope.
       - Ordinary caller slices use private chunks; each split half retains its own lease, and clean completion permits reuse or RX tail delivery.
       - TE or inconsistent completion permanently retains affected resources; RX gaps may lose frames, with no safe early abort, continuous RX, zero-copy or finite-liveness guarantee.
       - SPI additionally requires both channel terminals and wire idle; cancellation requires preserving CS through a successful flush.
@@ -1528,34 +1538,47 @@ functions:
         - UART1/2/3 TX use PA9/PA7/PA8 AF1 and request selectors 1/3/5; private staging isolates caller slices. Flush separately waits for TXBUSY0.
         - No L012 DMA RX/combined UART, SPI, other requests, borrowed hardware constructor, buffered-plus-DMA owner, early abort or finite-liveness guarantee.
       - families: [CW32F020]
-        scope: Safe staged byte UART TX only on exactly CW32F020C6U7/K6U7/F6U7, through native CH1/CH2.
+        scope: Safe staged byte UART TX, finite RX and combined/split DMA on exactly CW32F020C6U7/K6U7/F6U7, through native CH1/CH2.
         limitations:
-        - Qualified exact 8 KiB SRAM and clean init admission are required; generic cw32f020 rejects safe DMA/staging with MissingMemoryMetadata.
-        - UART1/2/3 TX routes use either channel, subject to safe package pins; F6 UART1 has no safe TX pad.
-        - Private static staging retains cancelled chunks; clean TC without TE plus STATUS5 precedes request closure, fencing and reuse. Flush separately waits for the wire.
-        - Errors/inconsistent completion permanently retain staging/channel/UART/pin/clocks. No F020 DMA RX/combined UART, SPI, other requests, buffered-plus-DMA owner or borrowed hardware-request API.
-        - Chunk gaps, CPU copies and unbounded waits remain. Stage84 main passed 15 ARM libraries and 16 ELF links plus generation and five finite source gates in documented segments.
-        - At main acceptance clean had not run; final-package completion requires a separate final-source 2-library/4-ELF clean receipt. No hardware result is claimed.
+        - Exact 8 KiB SRAM at 0x20000000..0x20002000 and normal reset/clean-runtime admission are required; generic cw32f020 rejects safe DMA/staging with MissingMemoryMetadata.
+        - Native CH1/CH2 use independent DMACH1/DMACH2 IRQs. UART1/2/3 RX selectors 0/2/4 and TX selectors 1/3/5 may use either channel, subject to safe package pins.
+        - F6 UART1 has no safe RX or TX; PA13/PA14/PF3 remain excluded. Combined UART requires distinct safe TX/RX pins, distinct admitted channels and independent exclusive static stages.
+        - Own CN1.4 p288 qualifies byte RDR-to-SRAM DMA; own SDK requires software RC clear. FE/PE/RC have no ORE/NE indication; typed ICR no-op preserves unrelated fields.
+        - Static UART/channel/staging owners survive cancellation and forget. Clean retirement requires recorded TC without TE plus STATUS5, request closure and fencing before staged-byte access; DMA faults permanently quarantine affected resources.
+        - FE/PE returns promptly while an invalid pending chunk remains running; later inherent recovery awaits its old count. Clean RX tails remain available. CPU copies and chunk/rearm gaps can lose frames without a loss count.
+        - TX completion retires memory-to-TDR work; flush separately waits for the wire. No SPI or additional peripheral DMA consumers, new raw hardware requests, buffered-plus-DMA owner, RTS/CTS or idle/circular DMA, early abort, zero-copy or finite-liveness guarantee.
+        - Historical Stage84 copy/TX main passed 15 ARM libraries and 16 ELF links, all 31 exiting zero; generation and five finite source gates passed in documented segments. These results do not verify Stage92 RX.
+        - Independent Stage84 runtime and metadata/source reviews accepted that copy/TX main. Only L010F8P6/L011K8T6 library rows emitted three existing RCC warnings each; all F020 rows and ELF links were warning-free.
+        - At Stage84 main acceptance its separate final-source 2-library/4-ELF clean receipt had not run. No hardware result is claimed.
+        - Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without warnings. Both finite source checks passed after the preserved initial D01 PIN/AFR comparison failure and checker-only correction.
+        - Independent Stage92 runtime and metadata/source reviews accepted the bounded main result. Main ran no canonical data generation and all 910 generated files stayed unchanged; UART/DMA runtime algorithms remain unchanged.
+        - At Stage92 main acceptance final capability reports and the separate final-source 2-library/3-ELF clean replay had not run. No hardware result is claimed.
       - families: [CW32L031, CW32L052, CW32R031, CW32W031]
-        scope: Safe staged byte UART TX only on eleven exact native four-channel selections; no RX or combined DMA constructor.
+        scope: Safe staged byte UART TX, finite RX and combined/split DMA on eleven exact native four-channel selections.
         limitations:
-        - Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6; each has 64 KiB flash and 8 KiB SRAM at 0x20000000..0x20002000.
-        - Generic cw32l031/cw32l052/cw32r031/cw32w031 compile the controller/TX surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.
-        - CH1 uses DMACH1 IRQ9, CH2/3 share DMACH23 IRQ10 and CH4 uses DMACH4 IRQ11; no CH5. Typed native eight-field R1W0 commands preserve siblings and reserved bits.
+        - Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6; each has 64 KiB Flash and 8 KiB SRAM at 0x20000000..0x20002000.
+        - Generic cw32l031/cw32l052/cw32r031/cw32w031 compile the controller/UART DMA surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.
+        - CH1 uses DMACH1 IRQ9, CH2/3 share DMACH23 IRQ10 and CH4 uses DMACH4 IRQ11; no CH5. Both shared handlers service only their own channel; typed native R1W0 commands preserve siblings and reserved bits.
         - Normal reset/clean-runtime entry and conservative one-time admission apply. Dirty state is rejected without reset/recovery; raw acquisition permanently revokes safe admission.
-        - UART1/2/3 TX selectors 1/3/5 may use any CH1..4, subject to existing package-safe pins. L031F8P6/F8U6 UART1 has only excluded PA14; PA13/PA14/PF3 remain excluded.
-        - All eleven package routes are in docs/uart-dma-tx.md; the example uses CH2/3 for UART2/3 and CH4 for UART1 where safe. L052 UART3 is PA9 AF1; other cohort parts use PA10 AF6.
-        - Static UART/channel/staging owners are consumed; cancellation retains the current chunk. Only recorded TC without TE plus STATUS5 permits request closure, fencing and staging reuse; errors permanently quarantine resources.
-        - Each byte is CPU-copied into private staging; chunk gaps remain, write retires memory-to-TDR work, and flush separately waits for the wire.
-        - No new DMA RX/combined UART, SPI, other requests, borrowed hardware constructors, buffered-plus-DMA owner, DMA flow control/idle, early abort or finite-liveness guarantee.
+        - UART1/2/3 RX selectors 0/2/4 and TX selectors 1/3/5 may use any CH1..4, subject to safe package pins. Combined UART requires distinct TX/RX pins, distinct channels and independent exclusive static stages.
+        - L031F8P6 UART1 has no safe RX/TX; L031F8U6 UART1 permits RX-only on PA9/AF2 or PC15/AF6 with no safe TX. PA13/PA14/PF3 remain excluded.
+        - Each own manual supplies byte RDR-to-SRAM DMA and FE/PE/RC without ORE/NE; each own SDK requires software RC clear. The current classic RX contract binds the complete package routes and typed ICR no-op seeds.
+        - Static UART/channel/staging owners survive cancellation and forget; clean RX tails remain available. Clean retirement requires recorded TC without TE plus STATUS5, request closure and fencing before staging reuse; DMA faults permanently quarantine resources.
+        - FE/PE returns promptly but recovery may wait indefinitely for the old DMA count. CPU copies and chunk/rearm gaps can lose frames without a loss count; TX flush separately waits for the wire.
+        - No SPI or additional peripheral DMA consumers, new raw hardware requests, buffered-plus-DMA owner, RTS/CTS or idle/circular DMA, early abort, zero-copy or finite-liveness guarantee.
         - R031 whole-GPIOA effects and W031 internal RF boundaries preserve existing functional handover obligations; no RF-safe handover/coexistence claim.
-        - Stage85 main passed six standalone ARM library builds and 21 ELF links, all 27 commands exiting zero without warnings; generation, five finite source gates and the capability renderer passed in documented segments.
-        - Three source checker preparation failures remain recorded; their corrections changed no HAL or example bytes. At main acceptance clean had not run; final-package completion requires a separate final-source 2-library/4-ELF clean receipt. No hardware result is claimed.
+        - Historical Stage85 copy/TX main passed six ARM libraries and 21 ELF links, all 27 exiting zero without warnings; generation, five finite source gates and the renderer passed in documented segments. These results do not verify Stage92 RX.
+        - Three Stage85 source-checker preparation failures remain recorded; corrections changed no HAL/example bytes. At that main acceptance its separate final-source 2-library/4-ELF clean receipt had not run. No hardware result is claimed.
+        - Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without warnings. Both finite source checks passed after the preserved initial D01 PIN/AFR comparison failure and checker-only correction.
+        - Independent Stage92 runtime and metadata/source reviews accepted the bounded main result. Main ran no canonical data generation and all 910 generated files stayed unchanged; UART/DMA runtime algorithms remain unchanged.
+        - At Stage92 main acceptance final capability reports and the separate final-source 2-library/3-ELF clean replay had not run. No hardware result is claimed.
       evidence:
       - path: embassy-cw32/src/usart.rs
         anchor: pub fn new_with_dma
       - path: docs/uart-dma-tx.md
       - path: docs/uart-dma-rx.md
+      - path: docs/classic-uart-dma-rx.md
+      - path: docs/classic-uart-dma-rx-evidence.json
       - path: docs/spi-dma.md
       - path: docs/f020-dma-owned.md
       - path: docs/four-channel-dma-owned.md

@@ -138,15 +138,19 @@ still apply.
   See [the finite idle contract](uart-idle.md).
   F030/A030/L083 additionally have safe staged TX DMA, finite-chunk RX and combined
   split full-duplex DMA with ordinary caller slices and separate wire flush.
-  Exactly CW32F020C6U7/K6U7/F6U7 additionally support staged byte TX only;
-  generic F020 rejects safe DMA/staging with `MissingMemoryMetadata`. F020
-  receives no DMA RX or combined constructor, and F6 UART1 has no safe TX pad.
-  Eleven exact L031/L052/R031/W031 selections separately add staged byte TX
-  through the native four-channel controller. Their four generic aliases reject
-  safe admission/staging without memory metadata; L031F8P6/F8U6 UART1 has no
-  safe TX pad. The complete roster and package routes are in
-  [the four-channel TX scope](uart-dma-tx.md#native-four-channel-cohort).
-  These four families receive no DMA RX/combined constructor or SPI DMA.
+  Exactly CW32F020C6U7/K6U7/F6U7 and eleven exact L031/L052/R031/W031
+  selections have staged byte TX and [finite RX/combined split DMA](classic-uart-dma-rx.md).
+  The three F020 parts use native CH1/CH2 with separate vectors; the eleven
+  four-channel parts retain CH2/3 sharing DMACH23. All five generic aliases
+  reject safe DMA/staging with `MissingMemoryMetadata`. F020F6U7/L031F8P6
+  have no safe UART1 RX/TX. L031F8U6 has UART1 RX-only on PA9/AF2 or PC15/AF6
+  despite its absent safe TX pad. The complete roster and own-source RX
+  qualification are in [classic UART DMA RX](classic-uart-dma-rx.md); the
+  [existing TX routes](uart-dma-tx.md#native-four-channel-cohort) remain.
+  These five classic families gain no SPI DMA; L012 UART DMA remains TX-only.
+  Stage92 main passed eight standalone ARM libraries and 21 ELF links without
+  warnings; independent runtime and metadata/source reviews accepted the bounded main result. At main acceptance final capability
+  reports and the separate final-source two-library/three-ELF clean replay had not run.
   No same-instance buffered-plus-DMA owner or DMA RX ring is introduced.
   Static staging/channel/UART ownership is retained across cancellation; clean
   completion permits reuse and retained RX tails, while DMA errors permanently
@@ -648,20 +652,26 @@ still apply.
   forever. Safe init-admitted copies require normal reset/clean-runtime entry;
   dirty startup rejection cannot repair an arbitrary active bootloader handover.
   Safe peripheral integration covers staged F030/A030/L083 UART TX/RX and paired
-  SPI master, plus exact-part F020 and the eleven exact L031/L052/R031/W031
-  staged byte UART TX selections and exact L012 C8T6/C8U6, with qualified SRAM and normal
-  reset/clean-runtime entry. F020, L012 and the four-family cohort gain no DMA
-  RX/combined UART, SPI or other peripheral consumers. RX gaps can lose frames; safe
-  early abort, circular operation and lossless reception remain unavailable.
-  Other unqualified DMA consumers remain PAC-only. Stage84 main passed 15 actual
-  ARM libraries and 16 ELF links, all 31 commands exiting zero. Generation
+  SPI master, plus finite staged UART TX/RX and combined/split owners on the
+  fourteen exact F020/L031/L052/R031/W031 parts. Exact L012 C8T6/C8U6 remain
+  UART TX-only. Qualified SRAM and normal reset/clean-runtime entry are required.
+  The five classic families gain no SPI or other peripheral DMA consumers.
+  Their own byte-RDR examples, software RC clear and FE/PE without ORE/NE
+  qualify finite RX; chunk gaps can lose frames without an overrun count.
+  Safe early abort, circular operation and lossless reception remain unavailable.
+  Stage92 RX/combined main passed eight libraries and 21 ELF links without
+  warnings; independent runtime and metadata/source reviews accepted the bounded main result. At main acceptance final capability
+  reports and separate two-library/three-ELF clean replay had not run.
+  Other unqualified DMA consumers remain PAC-only. Historical Stage84 copy/TX
+  main passed 15 actual ARM libraries and 16 ELF links, all 31 commands exiting zero. Generation
   and five finite source gates passed in documented segments; independent
   runtime and metadata/source reviews accepted the main work. Only L010F8P6
   and L011K8T6 library rows emitted three existing RCC warnings each; F020
   rows and all ELF links were warning-free. At main acceptance clean had not
   run; final-package completion requires a separate final-source
   2-library/4-ELF clean receipt. No silicon behavior is claimed.
-  Stage85 main passed six standalone ARM libraries and 21 ELF links, all 27
+  Historical Stage85 copy/TX main passed six standalone ARM libraries and 21
+  ELF links, all 27
   commands exiting zero without warnings. Generation, five finite source gates
   and the capability renderer passed in documented segments; three checker
   preparation failures remain recorded. The ARM matrix preserved its 1,402-file
@@ -827,9 +837,25 @@ order corrects a source-qualification gap, not a reproduced silicon defect.
 See [the L012 contract](l012-i2c-async.md) and
 [ordinary firmware](../examples/l012-i2c/README.md).
 
+## Stage92 classic UART DMA receive extension
+
+The current extension adds finite RX and combined/split UART DMA to exactly
+three F020 and eleven L031/L052/R031/W031 parts using the existing receive
+engine. Generic SRAM rejection, all safe-pin filters and L012 TX-only DMA
+remain. The [contract and own-source evidence](classic-uart-dma-rx.md) record
+main verification of eight standalone ARM libraries and 21 ELF links, all 29
+commands exiting zero without warnings. Both finite source checks passed after
+the preserved initial D01 PIN/AFR comparison failure and its checker-only
+correction. Main ran no canonical data generation; all 910 canonical generated files
+stayed unchanged. Independent runtime and metadata/source reviews accepted the bounded main
+result. At main acceptance
+final capability reports and separate final-source two-library/three-ELF clean
+replay had not run. The UART/DMA runtime algorithms are unchanged; no hardware
+or all-DMA-complete claim follows.
+
 ## Fixed baseline and final 54-selection reconciliation
 
-The agreed baseline contains these ten bounded deliveries. Earlier accepted
+The Stage91 agreed baseline contains these ten bounded deliveries. Earlier accepted
 stages retain their original source, main, clean and publication receipts; the
 table does not turn those historical builds into new Stage91 commands.
 

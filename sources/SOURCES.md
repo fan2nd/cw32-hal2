@@ -1052,8 +1052,10 @@ replace earlier x030/L083 records or infer F020 behavior from those families.
 The record retains exact source/member identities, official URLs and own
 page locators. Generic `cw32f020` has no SRAM metadata and retains
 `MissingMemoryMetadata` rejection. F6 UART1 still has no safe TX pad;
-PA13/PA14/PF3 exclusions remain. No F020 DMA RX, combined UART, SPI, other
-peripheral consumers or borrowed hardware-request API is qualified.
+PA13/PA14/PF3 exclusions remain. This Stage84 record qualified no RX/combined
+UART. The separate [Stage92 classic RX record](../docs/classic-uart-dma-rx.md)
+now supplies its own receive qualification; SPI, other peripheral consumers
+and borrowed hardware-request APIs remain excluded.
 TE, EN-clear and request closure alone provide no bus-drain proof;
 errors and inconsistent completion permanently retain the owners.
 
@@ -1122,10 +1124,11 @@ full content remained an unchanged prefix. No register layout, part, pin,
 request, vector, enum, schema or generator changed. Administrative coverage
 projections are separate from that hardware-data delta.
 
-Only safe owned SRAM copying and private-static-staging UART TX are newly
-qualified. Existing raw software-copy contracts remain; borrowed hardware
-constructors remain x030-only. New RX/combined UART, SPI, other requests,
-early abort/recovery and buffered-plus-DMA ownership remain excluded.
+This Stage85 record qualified owned SRAM copying and private-staging UART TX.
+[Stage92 classic RX](../docs/classic-uart-dma-rx.md) separately supplies finite
+RX/combined qualification. Existing raw software-copy contracts remain; borrowed
+hardware constructors remain x030-only. SPI, other requests, early abort/recovery
+and buffered-plus-DMA ownership remain excluded.
 TE, STATUS2, EN-clear, request closure and clock-off are not bus-drain proofs;
 errors or unconfirmed completion permanently retain resources. R031 GPIOA
 whole-bank effects and W031 internal RF boundaries preserve the existing
@@ -1159,6 +1162,27 @@ linked-image inspection do not establish silicon transfer, wire timing,
 error-time drain, RF coexistence or finite liveness. See
 [the verification boundary](../docs/four-channel-dma-owned.md#verification-boundary).
 
+
+## Stage92 classic finite UART DMA RX sources
+
+The [classic RX contract](../docs/classic-uart-dma-rx.md) and
+[own-source ledger](../docs/classic-uart-dma-rx-evidence.json) add positive
+byte-RDR, software-only RC-clear, FE/PE-without-ORE/NE and package qualification
+for fourteen exact F020/L031/L052/R031/W031 parts. Own manual receive examples
+are F020 CN1.4 p288, L031 CN1.6 p345, L052 CN1.5 p382, R031 CN1.3 p348 and
+W031 CN1.4 p348; printed pages equal zero-based PDF indices. The ledger retains
+the selected original/member/text identities and complete safe RX/TX routes.
+L031F8U6 has UART1 RX-only on PA9/AF2 or PC15/AF6 without a safe TX route.
+Generic SRAM rejection, native channel/vector topology and PA13/PA14/PF3
+exclusions remain. L012 UART DMA remains TX-only. The Stage84/85 results above
+are historical copy/TX receipts, not Stage92 RX acceptance. Stage92 main passed
+eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without
+warnings. Both finite source checks passed after the preserved initial D01
+PIN/AFR comparison failure and checker-only correction. All 910 canonical
+generated files stayed unchanged; main ran no canonical data generation. Independent
+runtime and metadata/source reviews accepted the bounded main result. At main acceptance final capability reports
+and the separate final-source two-library/three-ELF clean replay had not run.
+No hardware result is claimed.
 
 ## L012 原生 DMA 复制和 UART TX 资格
 

@@ -1,0 +1,506 @@
+{
+  "schema_version": 1,
+  "stage": 92,
+  "status": "accepted_main_source_metadata_review_clean_and_final_reports_pending",
+  "reviewed_utc": "2026-10-13T06:24:57.547915+00:00",
+  "scope": "Finite staged byte UART RX and existing combined/split DMA on fourteen exact F020/L031/L052/R031/W031 parts. Source/data/PAC facts, current declarations and actual main compiler receipts; runtime lifecycle review is separate.",
+  "reviewer_role": "Independent source/metadata reviewer",
+  "project_inputs": [
+    {
+      "artifact": "project:tests/verify_dma_owned_evidence.py",
+      "sha256": "4efe45617f447002898dbf17fc632fedfd1aeddfc655b9a7d070c5ea746538b5",
+      "bytes": 95489
+    },
+    {
+      "artifact": "project:docs/classic-uart-dma-rx-evidence.json",
+      "sha256": "83c9f45402d6a43fe6e1cf6e545581965a88f384f5bdeada90c7d2fd3bc81021",
+      "bytes": 162585
+    },
+    {
+      "artifact": "project:sources/evidence-sources.json",
+      "sha256": "f058d39d5aa39a21db46a7ca90f0ab8218e0c422776517dd88686fe6583ffee1",
+      "bytes": 449796
+    },
+    {
+      "artifact": "project:ci/hal-capabilities.yaml",
+      "sha256": "936a519d5cdcc6c01dea00026a311d7c0af481066840923276f14f63552e176f",
+      "bytes": 152051
+    },
+    {
+      "artifact": "project:examples/uart-dma/Cargo.toml",
+      "sha256": "15061d0a52ea6fcccc530c99326f75ebb8751d696c1c07eab7bb48511d19f0ef",
+      "bytes": 2711
+    }
+  ],
+  "source_qualification": {
+    "own_families": 5,
+    "source_nodes": 55,
+    "selected_member_byte_chains": 30,
+    "page_hashes": 140,
+    "exact_parts": [
+      "cw32f020c6u7",
+      "cw32f020f6u7",
+      "cw32f020k6u7",
+      "cw32l031c8t6",
+      "cw32l031c8u6",
+      "cw32l031f8p6",
+      "cw32l031f8u6",
+      "cw32l031k8u6",
+      "cw32l031k8v6",
+      "cw32l052c8t6",
+      "cw32l052r8s6",
+      "cw32l052r8t6",
+      "cw32r031c8u6",
+      "cw32w031r8u6"
+    ],
+    "uart_rows": 42,
+    "safe_direction_routes": 459,
+    "distinct_pin_pairs": 1449,
+    "source_index_consumer_appends": 66,
+    "proof_reverse_nodes": 55,
+    "checker_reverse_nodes_before": 70,
+    "checker_reverse_nodes_after": 81,
+    "inverse_restores_exact_prior_index_sha256": "e1d4a5f94565a09f784fcaf589d27b4ef56b7d9542f280e5e84c169adc10a865",
+    "facts": [
+      "Each family supplies its own byte RDR-to-SRAM example, software-only RC clear, complete ISR fields with PE/FE but no ORE/NE, and native RX selectors 0/2/4.",
+      "Selected authored/generated/PAC geometry, access, 32-bit CPU representation and typed ICR no-op seeds match qualified own authorities.",
+      "The pre-existing 23-view DMA STATUS SVD-RO/manual-RW discrepancy is explicitly bound; no canonical access correction was introduced.",
+      "Each exact part has 8 KiB SRAM. Generic aliases retain empty memory metadata and MissingMemoryMetadata rejection.",
+      "Complete safe route/pad projection retains L031F8U6 UART1 RX-only, unavailable UART1 on F020F6U7/L031F8P6, PA13/PA14/PF3 exclusions and W031 UART3 PA2/AF5 own-datasheet authority.",
+      "Old checker bytes and historical Stage84/85 copy/TX proof and acceptance bytes are preserved. No HAL string tests, fixture mutation, synthetic model or runtime gate was added."
+    ]
+  },
+  "current_declarations": {
+    "status": "experimental_partial",
+    "changed_modes": [
+      "uart.safe_peripheral_dma",
+      "dma.safe_peripheral_dma"
+    ],
+    "L012": "TX-only; overrides unchanged",
+    "old_x030_L083_support": "retained",
+    "new_contract_and_ledger": "present in both mode-level evidence lists",
+    "scope_limits": "Finite RX/combined; no continuous, idle, circular, flow-controlled, borrowed hardware or other peripheral expansion.",
+    "F01_F02": "Pending at main acceptance; no fresh rendered report result claimed."
+  },
+  "actual_main_acceptance": {
+    "standalone_library_commands": 8,
+    "elf_commands": 21,
+    "total_commands": 29,
+    "all_exit_zero": true,
+    "compiler_warnings": 0,
+    "compiler_errors": 0,
+    "exact_frozen_commands_verified": true,
+    "retained_artifact_hashes_and_ARM_headers_verified": true,
+    "standalone_archive_ARM_objects_excluding_metadata": 82,
+    "authored_source_files_unchanged": 1475,
+    "canonical_generated_files_unchanged": 910,
+    "generation_runs": 0,
+    "dependency_archives_counted_as_standalone": false,
+    "rows": [
+      {
+        "id": "M01",
+        "kind": "rlib",
+        "feature": "cw32f020c6u7",
+        "bin": null,
+        "artifact": {
+          "label": "Stage92 main M01/libembassy_cw32.rlib",
+          "sha256": "fd7569ee4597e57349ace44608d0ab2ba0320879e7b502f51fcc789a2503b776",
+          "bytes": 5120946
+        }
+      },
+      {
+        "id": "M02",
+        "kind": "rlib",
+        "feature": "cw32l031f8u6",
+        "bin": null,
+        "artifact": {
+          "label": "Stage92 main M02/libembassy_cw32.rlib",
+          "sha256": "8bc28257500b601fc26a2742883d4b68c5061cb1d9d587501e0f5139be4f7115",
+          "bytes": 5067640
+        }
+      },
+      {
+        "id": "M03",
+        "kind": "rlib",
+        "feature": "cw32l052c8t6",
+        "bin": null,
+        "artifact": {
+          "label": "Stage92 main M03/libembassy_cw32.rlib",
+          "sha256": "92734a7e82cab247802e905885d0f9a9d8c5b9a97f1e457e66a6d0ba9a25f02e",
+          "bytes": 5902682
+        }
+      },
+      {
+        "id": "M04",
+        "kind": "rlib",
+        "feature": "cw32r031c8u6",
+        "bin": null,
+        "artifact": {
+          "label": "Stage92 main M04/libembassy_cw32.rlib",
+          "sha256": "556c01bcdd68bc25f18dcd2e8d2571c3a5052a09d24093e823d3e021581e7908",
+          "bytes": 5252094
+        }
+      },
+      {
+        "id": "M05",
+        "kind": "rlib",
+        "feature": "cw32w031r8u6",
+        "bin": null,
+        "artifact": {
+          "label": "Stage92 main M05/libembassy_cw32.rlib",
+          "sha256": "d479b72dfa3408104395395559fbe47cc7d26de33d17a474ec736781d1652f55",
+          "bytes": 5282660
+        }
+      },
+      {
+        "id": "M06",
+        "kind": "rlib",
+        "feature": "cw32f030c8t7",
+        "bin": null,
+        "artifact": {
+          "label": "Stage92 main M06/libembassy_cw32.rlib",
+          "sha256": "23767682cbe60bd3a703d1db809fbd87735c78b2f7866e84da92b866479c18c9",
+          "bytes": 5721838
+        }
+      },
+      {
+        "id": "M07",
+        "kind": "rlib",
+        "feature": "cw32l083rct6",
+        "bin": null,
+        "artifact": {
+          "label": "Stage92 main M07/libembassy_cw32.rlib",
+          "sha256": "02ec6763eefc725904c3e3047edbc7af5a14cb4cc69bd8e90ee7218d984cd955",
+          "bytes": 6684644
+        }
+      },
+      {
+        "id": "M08",
+        "kind": "rlib",
+        "feature": "cw32l012c8t6",
+        "bin": null,
+        "artifact": {
+          "label": "Stage92 main M08/libembassy_cw32.rlib",
+          "sha256": "8404541c8fc724bfd3f6dcf5777483690298126276aba60d5d0e4f9dc70321d0",
+          "bytes": 6639014
+        }
+      },
+      {
+        "id": "M09",
+        "kind": "elf",
+        "feature": "cw32f020c6u7",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M09/firmware.elf",
+          "sha256": "e2a32d75df3f595d798b5541d7074babc5b7b9cadfcc23e2c89424236b91307f",
+          "bytes": 149564
+        }
+      },
+      {
+        "id": "M10",
+        "kind": "elf",
+        "feature": "cw32f020k6u7",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M10/firmware.elf",
+          "sha256": "8ddda0f528cbccf2c4b10baceac14a979306e0b3681f2a415b8c973fdfb7d4d0",
+          "bytes": 212480
+        }
+      },
+      {
+        "id": "M11",
+        "kind": "elf",
+        "feature": "cw32f020f6u7",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M11/firmware.elf",
+          "sha256": "467a5d22af2995b8cda3b5989193a24b389af0cca18beed355fc745c4ea3d62b",
+          "bytes": 212480
+        }
+      },
+      {
+        "id": "M12",
+        "kind": "elf",
+        "feature": "cw32l031c8t6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M12/firmware.elf",
+          "sha256": "770de2fc631242d203c752bf216fe7e7ddd524dc8be87ff1905ac640f0b6658a",
+          "bytes": 152496
+        }
+      },
+      {
+        "id": "M13",
+        "kind": "elf",
+        "feature": "cw32l031c8u6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M13/firmware.elf",
+          "sha256": "cf6321b082a9351664c521a56a514ae56f9bde65d69ec5cc01eeeef714216e3d",
+          "bytes": 152496
+        }
+      },
+      {
+        "id": "M14",
+        "kind": "elf",
+        "feature": "cw32l031f8p6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M14/firmware.elf",
+          "sha256": "f08bc5dd1ce46aa6ccd3bfd34b110b54cdb57737cab49771ca546e499597e888",
+          "bytes": 209396
+        }
+      },
+      {
+        "id": "M15",
+        "kind": "elf",
+        "feature": "cw32l031f8u6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M15/firmware.elf",
+          "sha256": "231f593d8eabfd534e30d5db4c899bd3514eb47937d9a8a83a8536c086accd55",
+          "bytes": 151392
+        }
+      },
+      {
+        "id": "M16",
+        "kind": "elf",
+        "feature": "cw32l031k8u6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M16/firmware.elf",
+          "sha256": "fb3f7caef68f00c7cf55788818d46514fa4205cb32edfd662842aa7979905e2a",
+          "bytes": 209396
+        }
+      },
+      {
+        "id": "M17",
+        "kind": "elf",
+        "feature": "cw32l031k8v6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M17/firmware.elf",
+          "sha256": "2660f5b38fb4dec82fd0b69bda2255e657b83c169b6e9df4685cdcdf3ea6fb01",
+          "bytes": 209396
+        }
+      },
+      {
+        "id": "M18",
+        "kind": "elf",
+        "feature": "cw32l052c8t6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M18/firmware.elf",
+          "sha256": "1b3d5bee7921a60ace0970f7910a8c2579b206c9753deeafcc5d561f41d796a6",
+          "bytes": 224664
+        }
+      },
+      {
+        "id": "M19",
+        "kind": "elf",
+        "feature": "cw32l052r8s6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M19/firmware.elf",
+          "sha256": "8afee8a42fc72a56faffca78971572e4e771ad86d524c30b356572fc5c240b0e",
+          "bytes": 225024
+        }
+      },
+      {
+        "id": "M20",
+        "kind": "elf",
+        "feature": "cw32l052r8t6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M20/firmware.elf",
+          "sha256": "a5181e4dc599219e34d490193c17e39d6ea1d0f0ebecc73406a40a871f378149",
+          "bytes": 225012
+        }
+      },
+      {
+        "id": "M21",
+        "kind": "elf",
+        "feature": "cw32r031c8u6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M21/firmware.elf",
+          "sha256": "a155a183bc81c2b768c3cbdcf49485eb08ace18dcbc62c28fafc58237d472a6f",
+          "bytes": 152496
+        }
+      },
+      {
+        "id": "M22",
+        "kind": "elf",
+        "feature": "cw32w031r8u6",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M22/firmware.elf",
+          "sha256": "3da3ea91407bc468816e3ff6489f5469f2882cd88c8b87902a870c136ecefa2f",
+          "bytes": 152496
+        }
+      },
+      {
+        "id": "M23",
+        "kind": "elf",
+        "feature": "cw32f020c6u7",
+        "bin": "receive_only",
+        "artifact": {
+          "label": "Stage92 main M23/firmware.elf",
+          "sha256": "54998e993ab77104269613253405fd55ac00afbead0c31353eb37ecff01bb0c2",
+          "bytes": 147248
+        }
+      },
+      {
+        "id": "M24",
+        "kind": "elf",
+        "feature": "cw32l031f8u6",
+        "bin": "receive_only",
+        "artifact": {
+          "label": "Stage92 main M24/firmware.elf",
+          "sha256": "c1e035673c89116f1834ee8061729efce3ced18948df8c20cc1f9787a39abb6c",
+          "bytes": 149032
+        }
+      },
+      {
+        "id": "M25",
+        "kind": "elf",
+        "feature": "cw32l052c8t6",
+        "bin": "receive_only",
+        "artifact": {
+          "label": "Stage92 main M25/firmware.elf",
+          "sha256": "265fbd8a10e037fb47b28be4c35f3b751443feecb3b6899029f50a36953cc752",
+          "bytes": 222304
+        }
+      },
+      {
+        "id": "M26",
+        "kind": "elf",
+        "feature": "cw32r031c8u6",
+        "bin": "receive_only",
+        "artifact": {
+          "label": "Stage92 main M26/firmware.elf",
+          "sha256": "2e149d060b76333354c03cb4393283ac72898086a2669f15b6295d210d8af279",
+          "bytes": 150248
+        }
+      },
+      {
+        "id": "M27",
+        "kind": "elf",
+        "feature": "cw32w031r8u6",
+        "bin": "receive_only",
+        "artifact": {
+          "label": "Stage92 main M27/firmware.elf",
+          "sha256": "f116d17d4c7ef76c8a96c94b12fda5f68a2baabab3c546c86f5dc63ea080d38b",
+          "bytes": 150208
+        }
+      },
+      {
+        "id": "M28",
+        "kind": "elf",
+        "feature": "cw32f030c8t7",
+        "bin": "cw32-uart-dma-example",
+        "artifact": {
+          "label": "Stage92 main M28/firmware.elf",
+          "sha256": "93c54f7f80391c8925f0c24a7774e51d0ff11159f0a953ce5ae26b1c081a6253",
+          "bytes": 215444
+        }
+      },
+      {
+        "id": "M29",
+        "kind": "elf",
+        "feature": "cw32l083rct6",
+        "bin": "shared_vector",
+        "artifact": {
+          "label": "Stage92 main M29/firmware.elf",
+          "sha256": "9c212bc38c7a02f8abd1256a7b198615d23cea1777ee00ecc5fa0235cb6810a1",
+          "bytes": 234156
+        }
+      }
+    ],
+    "source_gates": {
+      "N01": "One successful navigation refresh; not repeated after checker-only correction.",
+      "D01": "Initial exit 1 preserved; corrected checker attempt exited 0.",
+      "D02": "Exit 0; hardware scope covers 43 required originals and 564 required source files. Two discovery-only HTML omissions are explicit.",
+      "external_recorder": "One pre-command failure preserved. The 305 evidence documents are a subset of all 504 inputs, each bound to successful N01 hashes; four navigation projections and exact checker-only source delta preserved."
+    }
+  },
+  "external_acceptance_bindings": [
+    {
+      "artifact": "Stage92 main/summary.json",
+      "sha256": "38f0dc69b3f9f80c19eacc31a9ef5e0a84710b0fd5238d1904491aa7b9970f2b",
+      "bytes": 921
+    },
+    {
+      "artifact": "Stage92 main/results.json",
+      "sha256": "ebc18c8dbb102c747f6a61830a86053f9e949407b84fb691737d05250fff24f5",
+      "bytes": 13591893
+    },
+    {
+      "artifact": "Stage92 main/source-before.json",
+      "sha256": "49720a0e8aceaaa4bc3543146f8a503c29c67a1b34039e43282302dc6f2ba6e7",
+      "bytes": 260558
+    },
+    {
+      "artifact": "Stage92 main/source-after.json",
+      "sha256": "49720a0e8aceaaa4bc3543146f8a503c29c67a1b34039e43282302dc6f2ba6e7",
+      "bytes": 260558
+    },
+    {
+      "artifact": "Stage92 main/generated-before.json",
+      "sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3",
+      "bytes": 136585
+    },
+    {
+      "artifact": "Stage92 main/generated-after.json",
+      "sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3",
+      "bytes": 136585
+    },
+    {
+      "artifact": "Stage92 main-navigation/N01.receipt.json",
+      "sha256": "e33577a4c8b82e1963e15895889201c96c3cbf55e8fe2095d9b6e530d6638ebc",
+      "bytes": 2506
+    },
+    {
+      "artifact": "Stage92 main-gates/D01.receipt.json",
+      "sha256": "48bd90cb222558f8e3b290682ae85e78f8c3483550562c12b47a168daf98a4d0",
+      "bytes": 2681
+    },
+    {
+      "artifact": "Stage92 main-gates-continuation/D01.receipt.json",
+      "sha256": "1698cb0928c07f1d8fc12decb92855422c2bcae18534660b5378465c01847a00",
+      "bytes": 2744
+    },
+    {
+      "artifact": "Stage92 main-gates-continuation/D02.receipt.json",
+      "sha256": "6beade049427aeb01a193881e04def98c7dc397ed45401e68b006dbf1179304e",
+      "bytes": 2653
+    },
+    {
+      "artifact": "Stage92 main-gates-continuation/checker-fix-correspondence.json",
+      "sha256": "5d73e60460615c67af09bf496e95fe8d9cb011a26cfad7ea1eff72a3e958a887",
+      "bytes": 64093
+    },
+    {
+      "artifact": "Stage92 independent-review/metadata-static/metadata-static-review.json",
+      "sha256": "33736966c3f90e4bbc62a41d84c0d23081b9799bfd5100e25b3b645da2bc82a1",
+      "bytes": 10689
+    },
+    {
+      "artifact": "Stage92 independent-review/metadata-static/sdk-af-field-correction-review.json",
+      "sha256": "e2b02042f2e638eeb5b6c9ea1450c45b5533bdce962c02cf4c833ecc34a123cb",
+      "bytes": 3584
+    },
+    {
+      "artifact": "Stage92 independent-review/metadata-main/source-continuation-review.json",
+      "sha256": "3953502001aea1b83e795504d7fbf420a6b1a19125cb0af19c3e73edeb4d1edb",
+      "bytes": 7248
+    }
+  ],
+  "limits": [
+    "Main-only acceptance. Fresh clean generation, two-library/three-ELF replay, final source identity and packaging require separate evidence.",
+    "F01/F02 reports follow final status/review installation and are pending here.",
+    "Source qualification and compile/link evidence do not prove runtime races, hardware transfer, losslessness, throughput, bus-drain timing or bounded liveness.",
+    "No hardware was executed; no all-DMA-complete claim."
+  ],
+  "blockers": []
+}

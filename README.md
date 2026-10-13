@@ -20,6 +20,15 @@ size-profile correction. At main acceptance clean replay and final54 report
 binding had not run; final completion requires their separate receipts.
 These software results are not hardware validation.
 
+Stage92 extends [finite staged UART RX and combined/split DMA](docs/classic-uart-dma-rx.md)
+to fourteen exact F020/L031/L052/R031/W031 parts using their own byte-RDR
+evidence and the existing receive algorithm. L012 remains TX-only for UART DMA.
+Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29
+commands exiting zero without warnings. Independent runtime and metadata/source reviews accepted the bounded main
+result. At main acceptance, final capability reports and the separate
+final-source two-library/three-ELF clean replay had not run.
+Historical copy/TX results below do not verify the RX extension.
+
 ## Workspace
 
 - `cw32-data/`: curated versioned register YAML, chip/source manifests, verified
@@ -477,13 +486,15 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - F020 additionally: blocking 12-bit ADC and GTIM counter/simple PWM; exactly
   CW32F020C6U7/K6U7/F6U7 add [native two-channel safe owned SRAM copies and
   staged byte UART TX DMA](docs/f020-dma-owned.md). Generic `cw32f020` retains
-  `MissingMemoryMetadata` rejection; UART DMA RX/combined and SPI DMA remain excluded.
+  `MissingMemoryMetadata` rejection. [Finite RX and combined/split UART DMA](docs/classic-uart-dma-rx.md)
+  are separately qualified on these exact parts; SPI DMA remains excluded.
 - L012 additionally: [native four-channel owned SRAM copies and staged UART TX](docs/l012-dma-owned.md) on C8T6/C8U6; generic safe admission remains rejected.
 - L031/L052/R031/W031 additionally: [native four-channel safe owned SRAM
   copies and staged byte UART TX DMA](docs/four-channel-dma-owned.md) on the
   eleven exact selections listed below. Their four generic aliases compile
-  the controller/TX surface but reject safe DMA/staging without memory metadata.
-  UART DMA RX/combined, SPI DMA and borrowed hardware requests remain excluded.
+  the controller/UART DMA surface but reject safe DMA/staging without memory metadata.
+  [Finite RX and combined/split UART DMA](docs/classic-uart-dma-rx.md) extend those
+  eleven exact parts; SPI DMA and borrowed hardware requests remain excluded.
 - F002/F003/L031/R031/W031/L052/L083 additionally: blocking 12-bit ADC,
   with package-qualified analog pins and family-specific reference/supply limits.
   F002 exposes VDD reference and VDD/3 only; no TS or internal reference.
@@ -671,7 +682,8 @@ accepts ordinary safe slice writes. It copies each chunk
 into private SRAM; cancellation retains the current chunk for a later write or
 flush to reap cleanly, while errors permanently quarantine resources. Chunk
 gaps and retained-resource costs apply. `flush` separately waits for the wire.
-On F030/A030/L083, `UartRx::new_with_dma` receives finite chunks into its own
+On F030/A030/L083 and the fourteen exact F020/L031/L052/R031/W031 parts,
+`UartRx::new_with_dma` receives finite chunks into its own
 static SRAM; cancellation retains the chunk and later reads preserve clean
 surplus bytes. `Uart::new_with_dma`
 prepares once and supports both directions through ordinary split halves. Line
@@ -686,13 +698,15 @@ See [UART TX scope and evidence](docs/uart-dma-tx.md),
 
 F020 uses its native two-channel controller and independent DMACH1/DMACH2 IRQs.
 The three exact parts have 8 KiB SRAM at `0x20000000..0x20002000`; generic F020
-cannot admit safe DMA or staging. UART1/2/3 TX routes remain package-qualified:
-F6 UART1 has no safe TX pad because PA14 remains excluded. F020 gains no
-UART DMA RX, combined UART DMA, SPI DMA or borrowed hardware-request API.
+cannot admit safe DMA or staging. UART1/2/3 TX and RX routes remain
+package-qualified: F6 UART1 has no safe direction, and PA14 remains excluded.
+[Stage92 finite RX and combined/split DMA](docs/classic-uart-dma-rx.md) use
+RX selectors 0/2/4 and existing TX selectors 1/3/5 on either native channel.
+SPI DMA and borrowed hardware-request APIs remain excluded.
 DMA UART construction does not install an RX ring or combine with a buffered
 owner on the same UART. See [the own-F020 contract](docs/f020-dma-owned.md) and
-[ordinary F020 firmware](examples/f020-dma/README.md). Stage84 main passed
-15 actual ARM library builds and 16 ELF links; all 31 commands exited zero.
+[ordinary F020 copy/TX firmware](examples/f020-dma/README.md). The historical
+Stage84 copy/TX main passed 15 actual ARM library builds and 16 ELF links; all 31 commands exited zero.
 Generation and the five finite source gates passed in documented segments,
 and independent runtime and metadata/source reviews accepted the main work.
 Only the L010F8P6 and L011K8T6 library rows emitted warnings, three existing
@@ -708,17 +722,20 @@ CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6, each with
 64 KiB flash and 8 KiB SRAM. CH1 uses DMACH1, CH2/3 share DMACH23 and
 CH4 uses DMACH4; there is no CH5. Generic `cw32l031`, `cw32l052`,
 `cw32r031` and `cw32w031` retain `MissingMemoryMetadata` rejection.
-UART1/2/3 TX uses selectors 1/3/5 on any of the four channels, subject to
-existing safe package pins. The two L031 F8 packages have no safe UART1 TX
-pad; [all eleven example routes](docs/uart-dma-tx.md#native-four-channel-cohort)
-preserve that exclusion. This adds no RX/combined DMA UART, SPI DMA, other
-peripheral request, buffered-plus-DMA owner or borrowed hardware constructor.
+UART1/2/3 TX uses selectors 1/3/5 and RX uses 0/2/4 on any of the four
+channels, subject to existing safe package pins. The two L031 F8 packages have
+no safe UART1 TX pad; [all eleven TX example routes](docs/uart-dma-tx.md#native-four-channel-cohort)
+preserve that exclusion. L031F8U6 UART1 permits RX-only on PA9/AF2 or PC15/AF6;
+L031F8P6 has no safe UART1 RX. Combined UART requires distinct safe TX/RX pins
+and distinct channel owners. No SPI DMA, other peripheral request,
+buffered-plus-DMA owner or borrowed hardware constructor is added.
 Existing raw software-copy APIs keep their unsafe contracts. R031 GPIOA
 whole-bank effects and W031 internal RF boundaries remain functional handover
 limits; these MCU paths establish no RF-safe handover or coexistence.
 See [the four own-source contracts](docs/four-channel-dma-owned.md) and
 [ordinary four-channel firmware](examples/four-channel-dma/README.md).
-Stage85 main passed six standalone ARM library builds and 21 ELF links,
+The historical Stage85 copy/TX main passed six standalone ARM library builds
+and 21 ELF links,
 all 27 commands exiting zero without warnings. Generation, five finite source
 gates and the capability renderer passed in documented segments; three source
 checker preparation failures remain recorded. At main acceptance clean had

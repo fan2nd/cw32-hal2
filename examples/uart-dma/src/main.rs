@@ -8,10 +8,17 @@ use embassy_cw32::{
 use embassy_executor::Spawner;
 use embassy_futures::join::join;
 
-#[cfg(not(example_l083))]
+#[cfg(not(any(example_l083, example_f020)))]
 hal::bind_interrupts!(struct Irqs {
     UART2 => usart::InterruptHandler<peripherals::UART2>;
     DMACH23 => dma::InterruptHandler<peripherals::DMA_CH2>, dma::InterruptHandler<peripherals::DMA_CH3>;
+});
+
+#[cfg(example_f020)]
+hal::bind_interrupts!(struct Irqs {
+    UART2 => usart::InterruptHandler<peripherals::UART2>;
+    DMACH2 => dma::InterruptHandler<peripherals::DMA_CH2>;
+    DMACH1 => dma::InterruptHandler<peripherals::DMA_CH1>;
 });
 
 #[cfg(example_l083)]
@@ -25,16 +32,22 @@ async fn main(_spawner: Spawner) {
     let p = hal::init(Default::default());
     let tx_staging = cortex_m::singleton!(: [u8; 32] = [0; 32]).unwrap();
     let rx_staging = cortex_m::singleton!(: [u8; 32] = [0; 32]).unwrap();
-    #[cfg(not(example_l083))]
+    #[cfg(not(any(example_l083, example_f020, example_four_channel)))]
     let (tx_pin, rx_pin) = (p.PA2, p.PA3);
-    #[cfg(example_l083)]
+    #[cfg(any(example_l083, example_f020, example_four_channel))]
     let (tx_pin, rx_pin) = (p.PA6, p.PA7);
+    #[cfg(not(any(example_f020, example_four_channel)))]
+    let (tx_dma, rx_dma) = (p.DMA_CH2, p.DMA_CH3);
+    #[cfg(example_f020)]
+    let (tx_dma, rx_dma) = (p.DMA_CH2, p.DMA_CH1);
+    #[cfg(example_four_channel)]
+    let (tx_dma, rx_dma) = (p.DMA_CH3, p.DMA_CH2);
     let mut uart = Uart::new_with_dma(
         p.UART2,
         tx_pin,
         rx_pin,
-        p.DMA_CH2,
-        p.DMA_CH3,
+        tx_dma,
+        rx_dma,
         Irqs,
         tx_staging,
         rx_staging,

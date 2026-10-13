@@ -1,12 +1,12 @@
 //! UART with Embassy-style owned pins, typed interrupts and split halves.
 //!
 //! Both blocking and interrupt-driven async transfers are implemented. Async
-//! transfers normally use one interrupt/wakeup per byte. On F030/A030/L083,
-//! `UartTx::new_with_dma`, `UartRx::new_with_dma` and `Uart::new_with_dma`
-//! own static staging for ordinary borrowed writes and reads. RX DMA receives
-//! finite explicitly armed chunks; reception/copy/rearm gaps can lose frames.
-//! F020/L031/L052/R031/W031/L012 add only staged `UartTx::new_with_dma`;
-//! RX/combined DMA is excluded on those families.
+//! transfers normally use one interrupt/wakeup per byte. On F030/A030/L083
+//! and F020/L031/L052/R031/W031, `UartTx::new_with_dma`,
+//! `UartRx::new_with_dma` and `Uart::new_with_dma` own static staging for
+//! ordinary borrowed writes and reads. RX DMA receives finite explicitly armed
+//! chunks; reception/copy/rearm gaps can lose frames. L012 supports only staged
+//! `UartTx::new_with_dma`; native RX/combined DMA remains excluded.
 //! Ordinary non-DMA `Uart`/`UartRx` have no software RX buffer: service each
 //! byte promptly. `BufferedUart`/`BufferedUartRx` continuously collect through
 //! interrupts into consumed static storage, including between read calls.
@@ -32,6 +32,9 @@
 //! Four-channel staged TX follows each own byte SRAM-to-TDR example: L031
 //! CN V1.6 p344, L052 CN V1.5 p381, R031 CN V1.3 p347 and W031 CN V1.4 p347;
 //! see `docs/four-channel-dma-owned.md` for their own UART1/2/3 qualification.
+//! Finite staged RX additionally follows each own byte RDR-to-SRAM example:
+//! F020 CN V1.4 p288, L031 CN V1.6 p345, L052 CN V1.5 p382, R031 CN V1.3
+//! p348 and W031 CN V1.4 p348; see `docs/classic-uart-dma-rx.md`.
 //! L012 uses its own CN V1.4 p474 byte SRAM-to-TDR example and native paired
 //! DMACH12/DMACH34 vectors; see `docs/l012-dma-owned.md`.
 //!
@@ -1489,7 +1492,7 @@ impl RxDma {
                     Poll::Ready(Err(Error::Dma(error)))
                 }
                 Poll::Ready(Ok(())) => {
-                    // Own manual p350: EN before DMARX, then close DMARX only
+                    // x030 p350 and each qualified own RX example: EN before DMARX; close only
                     // after clean DMA TC. A UART error alone is never a drain.
                     regs.cr2().modify(|w| w.set_dmarx(false));
                     let status = regs.isr().read();
@@ -1632,7 +1635,10 @@ impl RxDma {
 
 #[cfg(uart_dma_rx)]
 impl UartRx<'static, Async> {
-    /// Create a safe finite-chunk DMA receiver on F030/A030/L083 without RTS.
+    /// Create a safe finite-chunk DMA receiver without RTS.
+    ///
+    /// Qualified families are F030/A030/L083 and F020/L031/L052/R031/W031;
+    /// each selected package still requires safe RX pins and SRAM metadata.
     ///
     /// Consumes static UART, RX pin, an admitted compatible channel and private
     /// SRAM staging of 1..=65535 bytes. Rejected inputs are consumed. Ordinary

@@ -20,16 +20,18 @@ F020 admission is limited to CW32F020C6U7/K6U7/F6U7, with 8 KiB SRAM at
 `MissingMemoryMetadata`. Native CH1/CH2 use separate DMACH1/DMACH2 IRQs.
 Generated UART1_TX/2_TX/3_TX selectors 1/3/5 work on either physical channel,
 subject to the existing safe TX pin routes. F6 UART1 has only excluded PA14
-for TX, so it has no safe TX constructor. F020 gains no RX/combined DMA UART,
-SPI DMA or borrowed hardware-request constructor. See
+for TX, so it has no safe TX constructor. Stage92 separately extends
+[finite RX and combined/split DMA](classic-uart-dma-rx.md) on the three exact
+parts, subject to safe receive pins; F6 UART1 has no safe RX either. SPI DMA
+and borrowed hardware-request constructors remain excluded. See
 [the own-F020 contract and exact example pads](f020-dma-owned.md).
 
 ## Native four-channel cohort
 
-The native L031/L052/R031/W031 TX-only scope covers exactly the eleven parts
+The native L031/L052/R031/W031 staged TX scope covers exactly the eleven parts
 below. Each has 64 KiB flash and 8 KiB SRAM at
 `0x20000000..0x20002000`. Generic `cw32l031`, `cw32l052`, `cw32r031`
-and `cw32w031` compile the controller/TX surface but reject safe DMA admission
+and `cw32w031` compile the controller/UART DMA surface but reject safe DMA admission
 and staging with `MissingMemoryMetadata`; they have no example linker map.
 
 The example selects the following existing safe pin/AF and channel combinations.
@@ -58,9 +60,12 @@ UART retains its own PAC version. Each family's own UARTx contract, UART2/3
 SVD derivation and request table support its own byte SRAM-to-TDR example;
 matching register layout alone grants no peripheral-DMA qualification.
 
-Only staged TX and safe owned SRAM copying are newly qualified. There is no
-new RX/combined DMA UART, SPI DMA, other request, borrowed hardware constructor,
-buffered-plus-DMA owner, flow-controlled DMA, idle DMA, or recovery API.
+The original Stage85 qualification covered staged TX and owned SRAM copying.
+Stage92 separately adds [finite RX and combined/split UART DMA](classic-uart-dma-rx.md)
+on these eleven exact parts. L031F8U6 UART1 permits RX-only on PA9/AF2 or
+PC15/AF6 despite its absent safe TX route; L031F8P6 UART1 has neither direction.
+No SPI DMA, other request, borrowed hardware constructor, buffered-plus-DMA
+owner, flow-controlled DMA, idle DMA or recovery API is added.
 Ordinary and buffered UART owners keep their separate state and scope. R031
 GPIOA whole-bank effects remain relevant even on PA6/8/10, which avoid internal
 RF pins PA0..3; W031 GPIOA routes avoid the internal RF SPI1/GPIOB routes.
@@ -142,8 +147,8 @@ alive. Rust permits [forgotten futures](https://doc.rust-lang.org/core/mem/fn.fo
 so static private storage is the lifetime boundary even when cleanup is skipped.
 
 This TX API introduces no CTS constructor, circular mode, borrowed zero-copy or
-safe early-abort guarantee. On F030/A030/L083,
-[staged RX and combined TX/RX](uart-dma-rx.md) extend
+safe early-abort guarantee. On F030/A030/L083 and the fourteen exact classic
+parts above, [staged RX and combined TX/RX](uart-dma-rx.md) extend
 the same ownership model with per-direction live/retained state; an abandoned
 half preserves its live peer and both retained halves preserve UART clocks. L083 UART1–6 use the same staged contract with independently reviewed own-family
 request and terminal evidence; see [L083 qualification](l083-peripheral-dma.md).
@@ -262,6 +267,14 @@ At main acceptance clean had not run; final-package completion requires a
 separate final-source 2-library/4-ELF clean receipt. The cumulative HAL recipe
 is unchanged. No hardware, RF, throughput, error-drain or bounded-cancellation
 result is claimed.
+
+Stage92 RX/combined verification is separate from the Stage84/85 TX results
+above. Its eight-library/21-ELF main passed without warnings, and both finite
+source checks passed after the preserved initial D01 checker failure. Independent
+runtime and metadata/source reviews accepted the bounded main result. At main acceptance final capability reports and
+the separate final-source two-library/three-ELF clean replay had not run; see
+[the Stage92 verification boundary](classic-uart-dma-rx.md#application-and-verification-boundary).
+No hardware result is claimed.
 
 ## Native L012 owned DMA
 
