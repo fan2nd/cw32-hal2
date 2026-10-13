@@ -14,17 +14,22 @@
 //! L010/L011, and L012 has a linear even-divider field. WIDTH=bits-1,
 //! ICR flags clear on writing zero, and BUSY must clear before returning.
 //!
-//! Blocking full-duplex master is available on all supported backends. F030/A030/L083
-//! additionally expose staged byte DMA through `Spi::new_with_dma` and async
-//! `SpiBus<u8>`. DMA never accesses caller slices. After cancellation, keep the
-//! original device selected and await a successful `flush` before changing CS.
-//! Generic device adapters that release CS on cancellation are not covered.
-//! See `docs/spi-dma.md` for the paired lifecycle and hardware-validation limits.
-//! The remaining families provide interrupt-driven byte masters with
-//! `Spi::new_async`. Their ISR never accesses caller memory or DR. Cancellation
-//! leaves at most one frame to settle: preserve CS and successfully flush before
-//! changing it. Dropping an unfinished PIO owner is destructive teardown, not
-//! successful wire completion. See `docs/spi-async-pio.md`.
+//! Blocking full-duplex master is available on all supported backends.
+//! F030/A030/F020/L031/L052/L083/R031/W031 expose staged byte DMA through
+//! `Spi::new_with_dma`. Independently qualified families expose interrupt-driven
+//! byte masters through `Spi::new_async`, including F020/L031/L052/R031/W031.
+//! The constructor fixes each owner's backend; both use the same async
+//! `SpiBus<u8>` methods. A static PIO owner still uses PIO, and separate
+//! controllers can use different backends. L012 SPI remains PIO-only.
+//!
+//! DMA never accesses caller slices. PIO ISRs never access caller memory or DR.
+//! Cancellation leaves the current private DMA chunk or at most one PIO frame
+//! to settle: preserve the original CS selection and successfully flush before
+//! changing it. Generic device adapters that release CS on cancellation are
+//! not covered. Dropping an unfinished PIO owner is destructive teardown, not
+//! successful wire completion; unresolved DMA owners retain their resources.
+//! See `docs/spi-dma.md` and `docs/spi-async-pio.md` for the distinct lifecycles
+//! and hardware-validation limits.
 #[cfg(spi_dma)]
 use crate::dma;
 #[cfg(any(spi_dma, spi_async_pio))]
@@ -934,16 +939,21 @@ impl PioState {
     }
 }
 
-/// Dedicated SPI interrupt handler for the qualified byte PIO master.
+/// Dedicated SPI interrupt handler for the constructor-selected async backend.
+/// DMA owners also require both DMA channel handlers. Each backend checks its
+/// own active state before MMIO; an inactive backend never touches the bank.
 /// L012 SPI2/SPI3 constructors require the complete `SharedInterruptHandler`
 /// instead. The ISR never reads DR or stores a caller-buffer/future pointer.
-#[cfg(spi_async_pio)]
+#[cfg(any(spi_async_pio, spi_dma))]
 pub struct InterruptHandler<T: Instance>(PhantomData<T>);
 
-#[cfg(spi_async_pio)]
+#[cfg(any(spi_async_pio, spi_dma))]
 impl<T: Instance> Handler<T::Interrupt> for InterruptHandler<T> {
     unsafe fn on_interrupt() {
+        #[cfg(spi_async_pio)]
         dispatch_pio_interrupt(T::regs(), T::pio_state());
+        #[cfg(spi_dma)]
+        dispatch_dma_interrupt(T::regs(), T::state());
     }
 }
 
@@ -1122,6 +1132,7 @@ impl PioBuffers<'_> {
 impl<'d> Spi<'d, Async, Master> {
     /// Create a qualified interrupt-driven byte master, panicking on invalid
     /// configuration. Use `try_new_async` for the checked constructor.
+    /// The owner uses PIO even when its lifetime is static or DMA is available.
     pub fn new_async<T: Instance>(
         peripheral: Peri<'d, T>,
         sck: Peri<'d, impl SckPin<T>>,
@@ -1137,6 +1148,7 @@ impl<'d> Spi<'d, Async, Master> {
     /// Create a byte master without DMA or static transfer storage. L012 SPI2
     /// and SPI3 require the complete `SharedInterruptHandler<SPI23>` binding.
     /// Tokens are consumed on error; preflight failure leaves hardware intact.
+    /// Borrowed owners remain supported on families that also qualify for DMA.
     ///
     /// Cancellation/forget can leave one frame outstanding. Preserve the
     /// original CS selection and successfully await `flush` before changing it.
@@ -1163,35 +1175,7 @@ impl<'d> Spi<'d, Async, Master> {
         Ok(spi)
     }
 
-    /// Clock max(read.len(), write.len()) bytes, padding TX with zeroes and
-    /// discarding excess RX. Completed caller bytes remain visible on failure.
-    /// After cancellation, preserve CS and successfully flush before changing it.
-    pub async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), Error> {
-        self.run_pio(PioBuffers::Separate { read, write }).await
-    }
-
-    /// Replace each byte after its received frame is observed. Earlier bytes
-    /// can remain replaced on cancellation/error; preserve CS until flush.
-    pub async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), Error> {
-        self.run_pio(PioBuffers::InPlace(words)).await
-    }
-
-    /// Transmit bytes and drain every received frame. Cancellation requires
-    /// keeping the original CS selected until a successful `flush`.
-    pub async fn write(&mut self, words: &[u8]) -> Result<(), Error> {
-        self.transfer(&mut [], words).await
-    }
-
-    /// Receive bytes while transmitting zeroes. Cancellation requires keeping
-    /// the original CS selected until a successful `flush`.
-    pub async fn read(&mut self, words: &mut [u8]) -> Result<(), Error> {
-        self.transfer(words, &[]).await
-    }
-
-    /// Discard a cancelled frame's RX and await error-free TXE with BUSY clear.
-    /// The BUSY tail cooperatively self-wakes; there is no built-in deadline.
-    /// Error recovery may truncate failed work and is never successful flush.
-    pub async fn flush(&mut self) -> Result<(), Error> {
+    async fn flush_pio(&mut self) -> Result<(), Error> {
         let guard = PioGuard { driver: self };
         core::future::poll_fn(
             |cx| match guard.driver.poll_pio_settle(Some(cx), &mut false) {
@@ -1311,8 +1295,78 @@ impl<'d> Spi<'d, Async, Master> {
     }
 }
 
-#[cfg(spi_async_pio)]
-impl embedded_hal_async::spi::SpiBus<u8> for Spi<'_, Async, Master> {
+#[cfg(any(spi_async_pio, spi_dma))]
+impl<'d> Spi<'d, Async, Master> {
+    /// Clock `max(read.len(), write.len())` bytes, padding TX with zeroes and
+    /// discarding excess RX. The constructor-selected backend remains fixed.
+    /// PIO exposes received bytes individually; DMA exposes completed chunks.
+    /// Earlier results can remain visible on failure or cancellation.
+    ///
+    /// Empty calls also settle prior work. After cancellation, preserve the
+    /// original CS selection and successfully flush before changing it.
+    pub async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), Error> {
+        #[cfg(spi_dma)]
+        if self.dma.is_some() {
+            return self.transfer_dma(read, write).await;
+        }
+        #[cfg(spi_async_pio)]
+        if self.pio.is_some() {
+            return self.run_pio(PioBuffers::Separate { read, write }).await;
+        }
+        unreachable!("async SPI owner has no installed backend")
+    }
+
+    /// Transmit each original byte and replace it with received data. PIO
+    /// replaces one byte at a time; DMA replaces each chunk only after clean
+    /// paired completion and wire idle. Earlier results may remain visible on
+    /// failure or cancellation. Empty calls also settle prior work.
+    /// Preserve the original CS selection until a successful flush.
+    pub async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), Error> {
+        #[cfg(spi_dma)]
+        if self.dma.is_some() {
+            return self.transfer_in_place_dma(words).await;
+        }
+        #[cfg(spi_async_pio)]
+        if self.pio.is_some() {
+            return self.run_pio(PioBuffers::InPlace(words)).await;
+        }
+        unreachable!("async SPI owner has no installed backend")
+    }
+
+    /// Transmit bytes and drain every received frame, settling prior work even
+    /// when empty. After cancellation, keep the original CS selection until a
+    /// successful `flush`.
+    pub async fn write(&mut self, words: &[u8]) -> Result<(), Error> {
+        self.transfer(&mut [], words).await
+    }
+
+    /// Receive bytes while transmitting zeroes, settling prior work even when
+    /// empty. After cancellation, keep the original CS selection until a
+    /// successful `flush`.
+    pub async fn read(&mut self, words: &mut [u8]) -> Result<(), Error> {
+        self.transfer(words, &[]).await
+    }
+
+    /// Discard abandoned RX and await error-free TXE with BUSY clear using the
+    /// installed backend. PIO error recovery may truncate failed work; DMA
+    /// errors permanently quarantine the paired resources. Neither error nor
+    /// Drop proves that CS can safely change. There is no timeout or guarantee
+    /// of finite completion.
+    pub async fn flush(&mut self) -> Result<(), Error> {
+        #[cfg(spi_dma)]
+        if self.dma.is_some() {
+            return self.flush_dma().await;
+        }
+        #[cfg(spi_async_pio)]
+        if self.pio.is_some() {
+            return self.flush_pio().await;
+        }
+        unreachable!("async SPI owner has no installed backend")
+    }
+}
+
+#[cfg(any(spi_async_pio, spi_dma))]
+impl<'d> embedded_hal_async::spi::SpiBus<u8> for Spi<'d, Async, Master> {
     async fn read(&mut self, words: &mut [u8]) -> Result<(), Error> {
         self.read(words).await
     }
@@ -1411,45 +1465,36 @@ impl State {
     }
 }
 
-/// x030 SPI error handler for staged DMA. Bind together with both DMA handlers.
-/// The handler latches errors and wakes the owner; it never reads DR, flushes,
-/// resets, disables SPI, or accesses transfer storage.
 #[cfg(spi_dma)]
-pub struct InterruptHandler<T: Instance>(PhantomData<T>);
-
-#[cfg(spi_dma)]
-impl<T: Instance> Handler<T::Interrupt> for InterruptHandler<T> {
-    unsafe fn on_interrupt() {
-        let waker = critical_section::with(|cs| {
-            let mut inner = T::state().inner.borrow(cs).borrow_mut();
-            if !inner.active {
-                return None;
-            }
-            let regs = T::regs();
-            let status = regs.isr().read();
-            let enabled = regs.ier().read();
-            let error = if enabled.modf() && status.modf() {
-                Some(Error::ModeFault)
-            } else if enabled.ov() && status.ov() {
-                Some(Error::Overrun)
-            } else if enabled.sserr() && status.sserr() {
-                Some(Error::ChipSelectFault)
-            } else if enabled.ud() && status.ud() {
-                Some(Error::Underrun)
-            } else {
-                None
-            };
-            if let Some(error) = error {
-                inner.error.get_or_insert(error);
-                regs.ier().write(|_| {});
-                inner.waker.take()
-            } else {
-                None
-            }
-        });
-        if let Some(waker) = waker {
-            waker.wake();
+fn dispatch_dma_interrupt(regs: pac::spi::Spi, state: &State) {
+    let waker = critical_section::with(|cs| {
+        let mut inner = state.inner.borrow(cs).borrow_mut();
+        if !inner.active {
+            return None;
         }
+        let status = regs.isr().read();
+        let enabled = regs.ier().read();
+        let error = if enabled.modf() && status.modf() {
+            Some(Error::ModeFault)
+        } else if enabled.ov() && status.ov() {
+            Some(Error::Overrun)
+        } else if enabled.sserr() && status.sserr() {
+            Some(Error::ChipSelectFault)
+        } else if enabled.ud() && status.ud() {
+            Some(Error::Underrun)
+        } else {
+            None
+        };
+        if let Some(error) = error {
+            inner.error.get_or_insert(error);
+            regs.ier().write(|_| {});
+            inner.waker.take()
+        } else {
+            None
+        }
+    });
+    if let Some(waker) = waker {
+        waker.wake();
     }
 }
 
@@ -1462,16 +1507,49 @@ enum DmaPhase {
     Quarantined,
 }
 
+// Own the original static RX allocation without retaining a Rust reference
+// while DMA may write it. Moving this owner never moves the allocation.
+#[cfg(spi_dma)]
+struct OwnedRxStaging {
+    ptr: *mut u8,
+    _ownership: PhantomData<&'static mut [u8]>,
+}
+
+#[cfg(spi_dma)]
+impl OwnedRxStaging {
+    fn new(staging: &'static mut [u8]) -> Self {
+        Self {
+            ptr: staging.as_mut_ptr(),
+            _ownership: PhantomData,
+        }
+    }
+
+    // Returning the address does not grant access to the bytes. Callers must
+    // retain the paired DMA lease and observe its existing access protocol.
+    fn as_ptr(&self) -> *mut u8 {
+        self.ptr
+    }
+}
+
+// SAFETY: construction consumes exclusive static byte storage. This non-Copy
+// owner contains no thread-affine state; moving it preserves the allocation's
+// address and ownership, including while the paired DMA lease is outstanding.
+#[cfg(spi_dma)]
+unsafe impl Send for OwnedRxStaging {}
+// SAFETY: shared access only copies the raw address; it cannot read or mutate
+// the allocation through a safe API. SpiDma permits CPU RX access only through
+// an exclusive borrow after fenced pair retirement. Its ISRs never dereference
+// this pointer. No Rust reference to the bytes is retained during DMA writes.
+#[cfg(spi_dma)]
+unsafe impl Sync for OwnedRxStaging {}
+
 #[cfg(spi_dma)]
 struct SpiDma {
     tx: dma::Channel<'static>,
     rx: dma::Channel<'static>,
     tx_staging: &'static mut [u8],
-    // Retain exclusive allocation ownership without manufacturing a reference
-    // while the device can write. A slice is formed only after pair retirement.
-    rx_staging: *mut u8,
+    rx_staging: OwnedRxStaging,
     capacity: usize,
-    _rx_ownership: PhantomData<&'static mut [u8]>,
     tx_request: dma::Request,
     rx_request: dma::Request,
     state: &'static State,
@@ -1592,7 +1670,7 @@ impl SpiDma {
                 .start_read(
                     self.rx_request,
                     regs.dr().as_ptr().cast::<u8>(),
-                    self.rx_staging,
+                    self.rx_staging.as_ptr(),
                     count,
                 )
                 .and_then(|()| {
@@ -1615,12 +1693,13 @@ impl SpiDma {
         Ok(())
     }
 
-    fn copy_rx(&self, destination: &mut [u8]) {
+    fn copy_rx(&mut self, destination: &mut [u8]) {
         debug_assert!(self.phase == DmaPhase::Idle);
         debug_assert!(destination.len() <= self.capacity);
         // SAFETY: successful paired retirement fenced all writes and closed
         // requests. CPU owns these bytes again, with no yield before copying.
-        let received = unsafe { core::slice::from_raw_parts(self.rx_staging, destination.len()) };
+        let received =
+            unsafe { core::slice::from_raw_parts(self.rx_staging.as_ptr(), destination.len()) };
         destination.copy_from_slice(received);
     }
 }
@@ -1641,7 +1720,9 @@ impl<M: PeriMode> Spi<'_, M, Master> {
 
 #[cfg(spi_dma)]
 impl Spi<'static, Async, Master> {
-    /// Create an F030/A030/L083 full-duplex byte bus with safe staged DMA.
+    /// Create a qualified full-duplex byte bus with safe staged DMA.
+    /// Available on F030/A030/F020/L031/L052/L083/R031/W031; where PIO is also
+    /// qualified, this constructor selects DMA for this owner permanently.
     ///
     /// Consumes whole static SPI/pin/channel owners and two nonoverlapping
     /// static SRAM slices of 1..=65535 bytes. Inputs remain consumed on error;
@@ -1696,9 +1777,8 @@ impl Spi<'static, Async, Master> {
             tx,
             rx,
             tx_staging,
-            rx_staging: rx_staging.as_mut_ptr(),
+            rx_staging: OwnedRxStaging::new(rx_staging),
             capacity,
-            _rx_ownership: PhantomData,
             tx_request: TXD::REQUEST,
             rx_request: RXD::REQUEST,
             state: T::state(),
@@ -1713,12 +1793,12 @@ impl Spi<'static, Async, Master> {
         unsafe { T::Interrupt::enable() };
         Ok(spi)
     }
+}
 
-    /// Clock `max(read.len(), write.len())` bytes, zero-padding TX and discarding
-    /// excess RX. Completed chunks may be visible if a later chunk fails.
-    /// After cancellation, preserve CS and successfully flush before changing it.
-    pub async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), Error> {
-        self.flush().await?;
+#[cfg(spi_dma)]
+impl<'d> Spi<'d, Async, Master> {
+    async fn transfer_dma(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), Error> {
+        self.flush_dma().await?;
         let count = read.len().max(write.len());
         let capacity = self.dma.as_ref().unwrap().capacity;
         for offset in (0..count).step_by(capacity) {
@@ -1731,11 +1811,11 @@ impl Spi<'static, Async, Master> {
                 dma.tx_staging[..write_len].copy_from_slice(&write[offset..offset + write_len]);
             }
             dma.start(self.peripheral.info.regs, len)?;
-            self.flush().await?;
+            self.flush_dma().await?;
             let read_len = read.len().saturating_sub(offset).min(len);
             if read_len != 0 {
                 self.dma
-                    .as_ref()
+                    .as_mut()
                     .unwrap()
                     .copy_rx(&mut read[offset..offset + read_len]);
             }
@@ -1743,39 +1823,21 @@ impl Spi<'static, Async, Master> {
         Ok(())
     }
 
-    /// Replace each chunk only after clean paired DMA and wire completion.
-    /// Cancellation leaves the active chunk running in private storage. Preserve
-    /// CS and successfully flush before selecting another device.
-    pub async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), Error> {
-        self.flush().await?;
+    async fn transfer_in_place_dma(&mut self, words: &mut [u8]) -> Result<(), Error> {
+        self.flush_dma().await?;
         let capacity = self.dma.as_ref().unwrap().capacity;
         for chunk in words.chunks_mut(capacity) {
             self.prepare_dma()?;
             let dma = self.dma.as_mut().unwrap();
             dma.tx_staging[..chunk.len()].copy_from_slice(chunk);
             dma.start(self.peripheral.info.regs, chunk.len())?;
-            self.flush().await?;
-            self.dma.as_ref().unwrap().copy_rx(chunk);
+            self.flush_dma().await?;
+            self.dma.as_mut().unwrap().copy_rx(chunk);
         }
         Ok(())
     }
 
-    /// Write bytes while draining every RX frame through private DMA staging.
-    /// After cancellation, preserve CS and successfully flush before changing it.
-    pub async fn write(&mut self, words: &[u8]) -> Result<(), Error> {
-        self.transfer(&mut [], words).await
-    }
-
-    /// Read bytes while transmitting zeroes. After cancellation, preserve CS and
-    /// successfully flush before changing it.
-    pub async fn read(&mut self, words: &mut [u8]) -> Result<(), Error> {
-        self.transfer(words, &[]).await
-    }
-
-    /// Reap/discard any cancelled chunk and wait for wire idle, including for
-    /// empty operations. An error permanently poisons the bus and cannot prove
-    /// CS may safely change. There is no timeout or finite-liveness guarantee.
-    pub async fn flush(&mut self) -> Result<(), Error> {
+    async fn flush_dma(&mut self) -> Result<(), Error> {
         core::future::poll_fn(|cx| {
             self.dma
                 .as_mut()
@@ -1800,25 +1862,6 @@ impl Spi<'static, Async, Master> {
             v.set_dmatx(false);
         });
         Ok(())
-    }
-}
-
-#[cfg(spi_dma)]
-impl embedded_hal_async::spi::SpiBus<u8> for Spi<'static, Async, Master> {
-    async fn read(&mut self, words: &mut [u8]) -> Result<(), Error> {
-        self.read(words).await
-    }
-    async fn write(&mut self, words: &[u8]) -> Result<(), Error> {
-        self.write(words).await
-    }
-    async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), Error> {
-        self.transfer(read, write).await
-    }
-    async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), Error> {
-        self.transfer_in_place(words).await
-    }
-    async fn flush(&mut self) -> Result<(), Error> {
-        self.flush().await
     }
 }
 

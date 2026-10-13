@@ -1387,3 +1387,378 @@ for kind in ('uart', 'dma'):
     l012_override = next(o for o in mode['overrides'] if o['families'] == ['CW32L012'])
     assert 'TX only' in l012_override['scope'] and 'No L012 DMA RX/combined UART' in ' '.join(l012_override['limitations'])
 print('PASS: classic UART RX: 55 exact own-source nodes/member chains, 140 pages, full ISR/typed ICR PAC and native two/four-channel requests, fourteen exact SRAM parts, 459 safe routes/1449 distinct-pin pairs and empty generics; source/declaration facts only')
+
+# Finite classic SPI endpoint qualification. The own SPI chapters and paired
+# examples supply the endpoint authority; the preceding native DMA checks retain
+# their exact 23 manual-qualified STATUS access views. No HAL text is consumed.
+spi_path = 'docs/classic-spi-dma-evidence.json'
+spi = load(ROOT / spi_path)
+assert spi['schema_version'] == 1
+assert set(spi['families']) == set(spi['scope']['families']) == classic_families
+assert spi['scope']['exact_part_count'] == len(spi['exact_parts']) == 14
+assert {p['feature'] for p in spi['exact_parts']} == classic_features
+assert spi['scope']['family_instance_count'] == 7
+assert spi['scope']['selected_part_instance_route_count'] == 20
+assert spi['excluded_safe_pins'] == ['PA13', 'PA14', 'PF3']
+assert spi['text_extractor'] == lock['text_extractor']
+assert spi['text_extractor']['program'] == 'pdftotext'
+assert spi['text_extractor']['arguments'] == ['-layout', '-enc', 'UTF-8']
+spi_pointers = set()
+for sdk, manual, datasheet, members in [
+    (2, 18, 40, [0, 7]), (7, 27, 26, [0, 7, 34]),
+    (8, 29, 28, [0, 7, 38]), (10, 33, 32, [0, 7, 31]),
+    (11, 35, 34, [0, 7, 31]),
+]:
+    spi_pointers.add(f'/artifacts/{sdk}')
+    spi_pointers.update(f'/artifacts/{sdk}/members/{i}' for i in members)
+    spi_pointers.update(f'/artifacts/{i}{suffix}' for i in (manual, datasheet) for suffix in ('', '/text'))
+assert len(spi['sources']) == len(spi_pointers) == 39
+assert {s['index_pointer'] for s in spi['sources'].values()} == spi_pointers
+contract = spi['source_index_append_plan']
+assert contract['new_consumer'] == spi_path and contract['checker_extension'] == classic_checker
+assert len(contract['bound_source_refs']) == 39 and set(contract['bound_source_refs']) == set(spi['sources'])
+assert {ref for family in spi['families'].values() for ref in family['sources'].values()} == set(spi['sources'])
+spi_bytes = {}
+for ref, source in spi['sources'].items():
+    pointer = source['index_pointer']
+    pin = four_index(pointer)
+    artifact = lock['artifacts'][int(pointer.split('/')[2])]
+    observed = {k: v for k, v in pin.items() if k != 'evidence'
+                and not (k == 'members' and ref.startswith('vendor:'))}
+    if 'text' in observed:
+        observed['text'] = {k: v for k, v in observed['text'].items() if k != 'evidence'}
+    assert observed == source['identity'], ref
+    assert {k: source[k] for k in ('path', 'sha256', 'bytes')} == {
+        k: pin[k] for k in ('path', 'sha256', 'bytes')}
+    assert source['official_url'] == artifact['url']
+    assert pin['evidence'].count(spi_path) == pin['evidence'].count(classic_checker) == 1
+    if '/members/' in pointer:
+        assert ref == 'member:' + pin['path'] and 'id' not in pin
+        assert source['archive_member_chain'] == pin['members']
+    elif pointer.endswith('/text'):
+        assert ref == 'text:' + pin['path'] and 'id' not in pin
+    else:
+        assert ref == artifact['id']
+    raw = (SOURCES / pin['path']).read_bytes()
+    assert len(raw) == source['bytes'] and digest(raw) == source['sha256'], ref
+    assert pin['path'] not in spi_bytes
+    spi_bytes[pin['path']] = raw
+    if '/members/' in pointer:
+        payload = (SOURCES / artifact['path']).read_bytes()
+        for member in source['archive_member_chain']:
+            with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+                payload = archive.read(member)
+        assert payload == raw, ref
+spi_reverse = set()
+checker_reverse = set()
+for index, artifact in enumerate(lock['artifacts']):
+    nodes = [(f'/artifacts/{index}', artifact)]
+    nodes += [(f'/artifacts/{index}/members/{i}', member) for i, member in enumerate(artifact.get('members', []))]
+    if 'text' in artifact:
+        nodes.append((f'/artifacts/{index}/text', artifact['text']))
+    for pointer, node in nodes:
+        for consumer, reverse in ((spi_path, spi_reverse), (classic_checker, checker_reverse)):
+            assert node.get('evidence', []).count(consumer) <= 1
+            if consumer in node.get('evidence', []):
+                reverse.add(pointer)
+assert spi_reverse == spi_pointers
+# Existing index consumers plus this finite extension, derived from current
+# ledgers rather than from an immutable historical source-index digest.
+assert checker_reverse == (classic_pointers | l012_pointers | spi_pointers
+                           | {s['source_index_pointer'] for s in four['sources']})
+
+facts = spi['shared_facts']
+spi_offsets = {'CR1': 0, 'IER': 4, 'CR2': 8, 'SSI': 12, 'ISR': 16, 'ICR': 20, 'DR': 24}
+spi_flags = {name: [bit, 1] for bit, name in enumerate(
+    ['TXE', 'RXNE', 'SSF', 'SSR', 'UD', 'OV', 'SSERR', 'MODF', 'BUSY', 'SSLVL'])}
+assert facts['spi_register_offsets'] == spi_offsets
+assert facts['isr_fields'] == spi_flags
+assert facts['request_gates'] == {'DMARX': [16, 1], 'DMATX': [17, 1]}
+assert facts['error_fields'] == ['UD', 'OV', 'SSERR', 'MODF']
+assert facts['spi_icr_noop'] == 255 and facts['destructive_icr_field'] == 'FLUSH'
+assert facts['dma_icr_noop'] == 0xffffffff
+assert facts['dma_fields'] == {'STATUS': [8, 3], 'REPEAT': [16, 4], 'CNT': [0, 16], 'HARDSRC': [2, 6]}
+assert facts['complete_status'] == 5 and facts['error_statuses'] == [1, 2, 3, 4]
+assert (facts['example_width'], facts['example_dma_size'], facts['example_count'],
+        facts['example_repeat'], facts['cpu_mmio_bits']) == (7, 0, 100, 1, 32)
+assert len(spi['source_discrepancies']) == 2
+spi_status = spi['source_discrepancies'][0]
+for key in ('id', 'families', 'own_svd_access', 'own_manual_access', 'current_ir_access', 'field', 'selected_register_views'):
+    assert spi_status[key] == status_discrepancy[key]
+assert status_access_views == spi_status['selected_register_views'] == 23
+typo = spi['source_discrepancies'][1]
+assert typo['id'] == 'paired-example-dstinc-typo' and set(typo['families']) == classic_families
+assert (typo['literal'], typo['register']) == ('DMA_CS2.DSTINC', 'DMA_CSR2.DSTINC')
+spi_pages = {}
+spi_instance_count = spi_page_count = 0
+for name, family in spi['families'].items():
+    refs = family['sources']
+    assert set(refs) == {'sdk', 'svd', 'dma_header', 'manual', 'manual_text', 'datasheet', 'datasheet_text'} | (
+        set() if name == 'CW32F020' else {'spi_driver'})
+    inputs = {kind: spi['sources'][ref] for kind, ref in refs.items()}
+    assert inputs['sdk']['identity']['family'] == name
+    assert all(name.lower() in source['path'].lower() for source in inputs.values())
+    assert family['page_index_rule'] == 'printed page = zero-based PDF index; viewer page = index+1'
+    for kind in ('manual', 'datasheet'):
+        assert inputs[kind]['identity']['text']['path'] == inputs[kind + '_text']['path']
+        pages = spi_bytes[inputs[kind + '_text']['path']].decode().split('\f')
+        spi_pages[name, kind] = pages
+        assert {int(n) for n in family[kind + '_page_utf8_sha256']} == {
+            n for numbers in family[kind + '_claim_pages'].values() for n in numbers}
+        for number, sha in family[kind + '_page_utf8_sha256'].items():
+            assert digest(pages[int(number)].encode()) == sha, (name, kind, number)
+            spi_page_count += 1
+    manual = spi_pages[name, 'manual']
+    claims = family['manual_claim_pages']
+    text = {claim: '\n'.join(manual[n] for n in numbers) for claim, numbers in claims.items()}
+    count = 2 if name in {'CW32F020', 'CW32L052'} else 1
+    channels = 2 if name == 'CW32F020' else 4
+    assert family['physical_channels'] == list(range(1, channels + 1))
+    assert len(family['instances']) == count
+    expected_names = [f'SPI{i}' for i in range(1, count + 1)]
+    assert [i['name'] for i in family['instances']] == expected_names
+    example_name = 'SPI1' if count == 2 else 'SPI'
+    chapter_name = 'SPIx' if count == 2 else 'SPI'
+    example = four_compact(text['example'])
+    four_tokens(example, ['工作于主机模式', '全双工', 'SRAM', 'uint8_t SendBuff[100]', 'uint8_t RecvBuff[100]',
+        f'{example_name}_CR1.MODE 为 0x0', f'{example_name}_CR1.MSTR 为 1', f'{example_name}_CR1.WIDTH 为 0x7',
+        'DMA_SRCADDR1=(uint32_t)SendBuff', f'DMA_DSTADDR1=(uint32_t)&{example_name}_DR',
+        f'DMA_SRCADDR2=(uint32_t)&{example_name}_DR', 'DMA_DSTADDR2=(uint32_t)RecvBuff',
+        'DMA_CSR1.SRCINC 为 1', 'DMA_CSR1.DSTINC 为 0', 'DMA_CSR2.SRCINC 为 0',
+        'DMA_CS2.DSTINC 为 1', 'DMA_TRIG1.HardSrc 为 0x7', 'DMA_TRIG2.HardSrc 为 0x6'], (name, 'paired byte example'))
+    for number in (1, 2):
+        four_tokens(example, [f'DMA_CNT{number} 写入 0x10064', f'DMA_CSR{number}.SIZE 为 0',
+            f'DMA_CSR{number}.TRANS 为 1', f'DMA_TRIG{number}.Type 为 1'], (name, number, 'byte BLOCK/REPEAT1'))
+    sequence = [f'{example_name}_SSI.SSI 为 0', 'DMA_CSR1.EN 为 1', 'DMA_CSR2.EN 为 1',
+        f'{example_name}_CR1.DMATX 为 1', f'{example_name}_CR1.DMARX 为 1',
+        'DMA_ISR.TC1 变为 1', 'DMA_ISR.TC2 变为 1',
+        f'{example_name}_CR1.DMATX 为 0', f'{example_name}_CR1.DMARX 为 0',
+        f'{example_name}_ISR.BUSY 变为 0', f'{example_name}_SSI.SSI 为 1']
+    positions = [example.index(four_compact(token)) for token in sequence]
+    assert positions == sorted(positions), (name, 'both terminals/gates/wire idle/SSI order')
+    four_tokens(text['dma'], [f'{chapter_name}_CR1.DMATX 为 1', f'{chapter_name}_CR1.DMARX 为 1',
+        '当发送缓冲区为空时，产生 DMA 请求', '当接收缓冲区非空时，产生 DMA 请求',
+        f'传输到 {chapter_name}_DR 寄存器', f'从 {chapter_name}_DR 寄存器传输到指定的存储区',
+        'DMA_ISR.TCy', f'{chapter_name}_ISR.BUSY'], (name, 'request handshake'))
+    four_tokens(text['ready'], [f'读 {chapter_name}_DR 寄存器的同时将清除 {chapter_name}_ISR.RXNE 标志位',
+        '该标志为 0 时，才可拉高 CS 信号'], (name, 'RXNE read clear and wire idle'))
+    four_tokens(text['error'], [f'{chapter_name}_CR1.EN 被清零', 'SPI 被强制关闭',
+        '新接收到的数据将覆盖缓冲器中原有的数据', '从机模式下的从机选择错误', '从机模式下的发送缓冲下溢'], (name, 'errors'))
+    four_tokens(text['isr'], [f'{bit} {field} RO' for field, (bit, _) in spi_flags.items()] +
+        ['对 DR 寄存器的读操作或对 ICR.RXNE 写 0 均可以清除'], (name, 'complete ISR'))
+    four_tokens(text['irq'], ['IER.' + field for field in list(spi_flags)[:8]], (name, 'eight interrupt sources'))
+    four_tokens(text['gate'], ['16 DMARX RW', '17 DMATX RW', '13:10 WIDTH RW'], (name, 'CR1 gates/width'))
+    four_tokens(text['icr_dr'], ['Address offset: 0x14', 'Reset value: 0x0000 00FF', 'W1：无功能',
+        '0 FLUSH R1W0', '清空发送缓冲区和移位寄存器', 'Address offset: 0x18', '15:0 DR RW'] +
+        [f'{bit} {field} R1W0' for field, (bit, _) in spi_flags.items() if 1 <= bit <= 7], (name, 'ICR/DR'))
+    four_tokens(text['terminal'], ['数据传输全部正确完成', 'TEIE', 'TCIE'], (name, 'DMA terminal'))
+    four_tokens(text['status'], ['10:8 STATUS RW', '000：初始状态', '001：传输错误，传输地址超出寻址范围',
+        '010：传输错误，传输停止请求引起中止', '011：传输错误，访问传输来源地址出错',
+        '100：传输错误，访问传输目的地址出错', '101：传输完成', '00：8 比特', 'DSTINC'], (name, 'DMA STATUS and byte width'))
+    four_tokens(text['dma_count'], ['19:16 REPEAT RW', '15:0 CNT RW'], (name, 'DMA finite count/repeat'))
+    four_tokens(text['dma_icr'], ['Reset value: 0xFFFF FFFF', 'W0：清除', 'W1：无功能'], (name, 'DMA ICR'))
+    four_tokens(text['sram'], ['8KB', 'SRAM', '0x2000 0000'], (name, 'own SRAM'))
+    four_tokens(text['cpu_mmio_width'], ['32bit'], (name, 'CPU MMIO width'))
+    if 'spi_driver' in refs:
+        lines = spi_bytes[inputs['spi_driver']['path']].decode().splitlines()
+        assert len(family['sdk_rxne_read_clear']) == 1
+        observed = family['sdk_rxne_read_clear'][0]
+        assert lines[observed['line'] - 1].strip() == observed['text']
+        four_tokens(observed['text'], ['RXNE标志位也可以通过读SPIx_DR寄存器来清除'], (name, 'SDK RXNE'))
+    svd = ET.fromstring(spi_bytes[inputs['svd']['path']])
+    peripherals = {p.findtext('name'): p for p in svd.findall('peripherals/peripheral')}
+    assert {p for p in peripherals if p.startswith('SPI')} == set(expected_names)
+    for instance in family['instances']:
+        number = int(instance['name'][-1])
+        base = 0x40013000 if number == 1 else 0x40003800
+        assert instance == {'name': f'SPI{number}', 'manual_name': f'SPI{number}' if count == 2 else 'SPI',
+            'base': f'0x{base:08x}', 'dr': f'0x{base + 24:08x}', 'rx_request': 4 + 2 * number,
+            'tx_request': 5 + 2 * number, 'irq': 24 + number}
+        original = peripherals[instance['name']]
+        assert int(original.findtext('baseAddress'), 0) == base
+        assert [(i.findtext('name'), int(i.findtext('value'), 0)) for i in original.findall('interrupt')] == [(instance['name'], instance['irq'])]
+        assert original.get('derivedFrom') == ('SPI1' if number == 2 else None)
+        if number == 2:
+            assert original.find('registers') is None
+        four_tokens(text['base'], [f'{instance["manual_name"]}_BASE = 0x{base:08x}'], (name, 'own base'))
+        spi_instance_count += 1
+    version = 'spi_' + family['spi_register_version']
+    assert version == ('spi_v1' if name == 'CW32F020' else 'spi_cw32l031_v1')
+    ir = load(ROOT / f'cw32-data/data/registers/{version}.json')
+    assert ir == load(ROOT / f'cw32-data/registers/{version}.yaml')
+    own_registers = {r.findtext('name'): r for r in peripherals['SPI1'].findall('registers/register')}
+    own = {register: four_svd_register(r) for register, r in own_registers.items()}
+    items = {r['name']: r for r in ir['block/SPI']['items']}
+    assert set(items) == set(own) == set(spi_offsets)
+    pac = (ROOT / f'cw32-metapac/src/peripherals/{version}.rs').read_text()
+    for register, item in items.items():
+        assert item['byte_offset'] == own[register]['offset'] == spi_offsets[register]
+        access = own_registers[register].findtext('access')
+        assert item.get('access', 'ReadWrite') == {'read-only': 'Read', 'read-write': 'ReadWrite'}[access]
+        fields = {f['name']: [f['bit_offset'], f['bit_size']] for f in ir['fieldset/' + item['fieldset']]['fields']}
+        assert fields == {f['name']: [f['bit_offset'], f['bit_size']] for f in own[register]['fields']}
+        if register == 'ISR':
+            assert fields == spi_flags
+        if register == 'IER':
+            assert fields == {f: v for f, v in spi_flags.items() if v[0] <= 7}
+        if register == 'CR1':
+            assert {f: fields[f] for f in ('DMARX', 'DMATX')} == facts['request_gates']
+        accessor = re.search(rf'pub const fn {register.lower()}\(self\) -> ([^\n]+)\s*\{{\s*unsafe \{{ crate::common::Reg::from_ptr\(self.ptr.wrapping_add\((0x[0-9a-f]+)usize\)', pac)
+        assert accessor and int(accessor[2], 16) == item['byte_offset']
+        handle = re.search(r'crate::common::Reg<regs::(\w+), crate::common::(\w+)>', accessor[1])
+        assert handle and handle[2] == ('R' if access == 'read-only' else 'RW')
+        assert re.search(rf'pub struct {handle[1]}\(pub u32\);', pac)
+        field_code = pac.split('impl ' + handle[1] + ' {', 1)[1].split('\n    impl ', 1)[0]
+        for field in ir['fieldset/' + item['fieldset']]['fields']:
+            own_field = next(f for f in own[register]['fields'] if f['name'] == field['name'])
+            assert field.get('access', item.get('access', 'ReadWrite')) == {
+                'read-only': 'Read', 'read-write': 'ReadWrite'}[own_field['access'] or access]
+            getter = re.search(rf'pub const fn {field["name"].lower()}\(&self\) -> \w+\s*\{{\s*let val = \(self.0 >> (\d+)usize\) & (0x[0-9a-f]+);', field_code)
+            assert getter and (int(getter[1]), int(getter[2], 16)) == (field['bit_offset'], (1 << field['bit_size']) - 1)
+    commands = load(ROOT / 'cw32-data/register-writes.yaml')['registers'][version]
+    assert len(commands) == 1
+    assert commands[0]['reset_value'] == commands[0]['write_noop'] == 255
+    assert commands[0]['zero_to_clear_fields'] == ['FLUSH', 'RXNE', 'SSF', 'SSR', 'UD', 'OV', 'SSERR', 'MODF']
+    assert load(ROOT / f'cw32-data/data/register-writes/{version}.json') == {'schema_version': 1, 'registers': {version: commands}}
+    helpers = pac.split('impl regs::Icr {', 1)[1]
+    for helper in ('reset_value', 'write_noop'):
+        assert re.search(rf'pub const fn {helper}\(\) -> Self\s*\{{\s*Self\(255\)\s*\}}', helpers)
+    # The same selected own SVD was fully compared to native DMA IR/PAC above;
+    # rebind its physical topology and SPI request records to this endpoint proof.
+    assert inputs['svd']['identity'] == classic['sources'][classic['families'][name]['sources']['svd']]['identity']
+    sidecar = load(ROOT / f'cw32-data/dma/{name.lower()}.yaml')
+    assert sidecar['core_dma_channels'] == classic_channels[name]
+    assert {p for p in peripherals if p.startswith('DMACHANNEL')} == {f'DMACHANNEL{i}' for i in range(1, channels + 1)}
+    vectors = [('DMACH1', 9), ('DMACH2', 10)] if channels == 2 else [('DMACH1', 9), ('DMACH23', 10), ('DMACH23', 10), ('DMACH4', 11)]
+    for number, channel in enumerate(sidecar['channel_details'], 1):
+        assert channel['physical_channel'] == number and channel['name'] == f'DMA_CH{number}'
+        assert (channel['interrupt'], channel['interrupt_number']) == vectors[number - 1]
+        original = peripherals[f'DMACHANNEL{number}']
+        assert int(original.findtext('baseAddress'), 0) == 0x40020000 + 32 * number
+        assert [(i.findtext('name'), int(i.findtext('value'), 0)) for i in original.findall('interrupt')] == [vectors[number - 1]]
+    requests = [r for r in sidecar['requests'] if r['peripheral'].startswith('SPI')]
+    assert requests == family['spi_requests']
+    assert [(r['peripheral'], r['signal'], r['request']) for r in requests] == [
+        (f'SPI{i}', signal, 4 + 2 * i + offset) for i in range(1, count + 1) for signal, offset in [('RX', 0), ('TX', 1)]]
+    header = spi_bytes[inputs['dma_header']['path']].decode().splitlines()
+    for request in requests:
+        assert set(request) == {'peripheral', 'signal', 'dma', 'request', 'channels', 'sdk', 'manual', 'evidence'}
+        assert request['dma'] == 'DMA' and request['channels'] == [f'DMA_CH{i}' for i in range(1, channels + 1)]
+        assert request['sdk']['encoding'] == 'shifted_left_2_define'
+        assert request['sdk']['raw_value'] == request['request'] << 2
+        assert int(request['manual']['binary'], 2) == request['request']
+        assert request['manual']['pdf_page_index'] == request['manual']['printed_page'] == claims['selectors'][0]
+        four_tokens(text['selectors'], [request['manual']['binary'] + '：' + request['manual']['description']], (name, 'own request selector'))
+        line = header[request['sdk']['line'] - 1]
+        match = re.search(rf"#define\s+{request['sdk']['symbol']}\s+\(uint32_t\)\(0x([0-9a-f]+)UL\s*<<\s*2\)", line, re.I)
+        assert match and int(match[1], 16) == request['request'], (name, line)
+    assert family['maximum_sck_hz'] == 12000000
+    assert family['minimum_divisor'] == (2 if name == 'CW32F020' else 4)
+assert spi_instance_count == 7 and spi_page_count == 105
+
+spi_route_count = 0
+clock_profiles = load(ROOT / 'cw32-data/spi.yaml')['profiles']
+clock_policy = load(ROOT / 'docs/spi-clock-source-policy.json')['families']
+for part in spi['exact_parts']:
+    feature, name = part['feature'], part['family']
+    family = spi['families'][name]
+    authored = next(p for p in parts if p['feature'] == feature)
+    assert authored['family'] == name and authored['package'] == part['package']
+    chip = load(ROOT / f'cw32-data/data/chips/{feature.upper()}.json')
+    memory = [{'address': 0, 'kind': 'flash', 'name': 'FLASH', 'size': 32768 if name == 'CW32F020' else 65536},
+              {'address': 0x20000000, 'kind': 'ram', 'name': 'RAM', 'size': 8192}]
+    assert chip['memory'] == [part['memory']] == [authored['memory']] == [memory]
+    assert chip['line'] == name and chip['name'] == feature.upper()
+    assert len(chip['cores']) == len(chip['packages']) == 1
+    core, package = chip['cores'][0], chip['packages'][0]
+    assert core['dma_channels'] == classic_channels[name]
+    af, pinout = load(ROOT / family['af_path']), load(ROOT / family['pinout_path'])
+    source = spi['sources'][family['sources']['datasheet']]
+    for declaration in (af['datasheet'], pinout['source']):
+        assert declaration['source_ref'] == family['sources']['datasheet']
+        assert declaration['url'] == source['official_url'] and declaration['sha256'] == source['sha256']
+    own_package = next(p for p in pinout['packages'] if feature.upper() in p['documented_orderable_parts'])
+    assert package['package'] == own_package['package'] == part['package']
+    assert package['pins'] == own_package['pins']
+    assert own_package['flash_bytes'] == memory[0]['size'] and own_package['ram_bytes'] == 8192
+    bonded = {signal: p['position'] for p in package['pins'] for signal in p['signals']}
+    datasheet = spi_pages[name, 'datasheet']
+    product_page = datasheet[family['datasheet_claim_pages']['memory'][0]]
+    product_row = next(line for line in product_page.splitlines() if '外设' in line and name in line)
+    products = re.findall(r'CW32[A-Z0-9]+', product_row)
+    product = next(p for p in products if feature.upper().startswith(p))
+    for label, size in [('FLASH', memory[0]['size'] // 1024), ('SRAM', 8)]:
+        row = next(line for line in product_page.splitlines() if label + '（K' in line)
+        assert [int(n) for n in re.findall(r'\d+', row)][products.index(product)] == size
+    expected_instances = {i['name'] for i in family['instances']}
+    assert len(part['selected_routes']) == len(expected_instances)
+    assert {r['instance'] for r in part['selected_routes']} == expected_instances
+    assert {p['name'] for p in core['peripherals'] if p.get('registers', {}).get('kind') == 'spi'} == expected_instances
+    for route in part['selected_routes']:
+        spi_name = route['instance']
+        number = int(spi_name[-1])
+        peripheral = next(p for p in core['peripherals'] if p['name'] == spi_name)
+        assert peripheral['registers'] == {'block': 'SPI', 'kind': 'spi', 'version': family['spi_register_version']}
+        assert peripheral['address'] == (0x40013000 if number == 1 else 0x40003800)
+        assert peripheral['interrupts'] == [{'interrupt': spi_name, 'signal': 'GLOBAL'}]
+        assert {'name': spi_name, 'number': 24 + number} in core['interrupts']
+        assert peripheral['dma_channels'] == [{'dma': 'DMA', 'request': 4 + 2 * number + offset, 'signal': signal}
+                                               for signal, offset in [('RX', 0), ('TX', 1)]]
+        limits = {'maximum_frequency': 12000000, 'minimum_divisor': family['minimum_divisor']}
+        assert peripheral['spi'] == clock_profiles[name]['peripherals'][spi_name] == limits
+        assert clock_policy[name]['maximum_sck_hz'] == 12000000 and clock_policy[name]['minimum_divisor'] == family['minimum_divisor']
+        assert not {p['pin'] for p in peripheral['pins']} & set(spi['excluded_safe_pins'])
+        expected_pins = {'sck': 'PA5', 'mosi': 'PA7', 'miso': 'PA6'} if number == 1 else {'sck': 'PA2', 'mosi': 'PA1', 'miso': 'PA0'}
+        assert set(route['bonded_pad_source_pages']) == set(expected_pins.values())
+        for signal, pin in expected_pins.items():
+            assert route[signal] == f'{pin}/AF5@{bonded[pin]}'
+            assert {'pin': pin, 'signal': signal.upper(), 'af': 5} in peripheral['pins']
+            authored_routes = [r for r in af['routes'] if (r['peripheral'], r['signal'], r['pin'], r['af']) == (spi_name, signal.upper(), pin, 5)]
+            assert len(authored_routes) == 1
+            row = next(row for row in pinout['table_rows'] if pin in row['signals'])
+            page = route['bonded_pad_source_pages'][pin]
+            assert row['pdf_page_index'] == page and page in family['datasheet_claim_pages']['bonding']
+            assert row['positions'][own_package['table_column']] == bonded[pin]
+            source_pin = pin[:2] + pin[2:].zfill(2)
+            pad_row = next(line for line in datasheet[page].splitlines() if re.search(rf'\b{source_pin}\b', line))
+            pads = pad_row.split(source_pin, 1)[0].split()
+            assert pads[pinout['table_columns'].index(own_package['table_column'])] == bonded[pin]
+            af_page = datasheet[family['datasheet_claim_pages']['af'][0]]
+            header = next(line for line in af_page.splitlines() if '功能 5' in line)
+            af_row = next(line for line in af_page.splitlines() if re.match(rf'\s*{source_pin}\b', line))
+            columns = [(int(m[1]), m.start() + len(m[0]) / 2) for m in re.finditer(r'功能\s+(\d)', header)]
+            source_name = spi_name if len(expected_instances) == 2 else 'SPI'
+            match = re.search(source_name + '_' + signal.upper(), af_row)
+            assert match and min(columns, key=lambda col: abs(col[1] - (match.start() + match.end()) / 2))[0] == 5
+        spi_route_count += 1
+assert spi_route_count == 20
+for name in classic_families:
+    generic = load(ROOT / f'cw32-data/data/chips/{name}.json')
+    assert generic['memory'] == generic['packages'] == []
+    assert generic['cores'][0]['dma_channels'] == classic_channels[name]
+four_tokens(spi_pages['CW32W031', 'datasheet'][13], ['4.4.4', 'RF',
+    '当使用射频功能时，芯片外部引脚的 SPI 功能不可用'], ('CW32W031', 'RF exclusion'))
+
+# These are declarations only; links, ownership, cancellation, wakeup and silicon
+# behavior require independent acceptance and are never inferred from HAL text.
+manifest = tomllib.loads((ROOT / 'examples/spi-dma/Cargo.toml').read_text())
+assert manifest['package']['name'] == 'cw32-spi-dma-example' and manifest['package'].get('autobins', True)
+representatives = {'cw32f020c6u7', 'cw32l031c8t6', 'cw32l052c8t6', 'cw32r031c8u6', 'cw32w031r8u6'}
+assert {f for f in manifest['features'] if f.startswith('cw32')} == old_features | representatives
+for feature in old_features | representatives:
+    assert {f'embassy-cw32/{feature}', f'cw32-metapac/{feature}'} <= set(manifest['features'][feature])
+    assert ('l083' in manifest['features'][feature]) == feature.startswith('cw32l083')
+    assert ('spi2-example' in manifest['features'][feature]) == (feature.startswith('cw32l083') or feature in {'cw32f020c6u7', 'cw32l052c8t6'})
+assert manifest['features']['l083'] == manifest['features']['spi2-example'] == []
+assert manifest['bin'] == [{'name': 'spi2_flash_id', 'path': 'src/bin/spi2_flash_id.rs', 'required-features': ['spi2-example']}]
+assert (ROOT / 'examples/spi-dma/src/main.rs').is_file()
+assert (ROOT / 'examples/spi-dma/src/bin/spi2_flash_id.rs').is_file()
+assert manifest['dependencies']['embassy-executor']['rev'] == 'f16efeffe37581092ec184718e6fdb1620393214'
+mode = next(m for m in capabilities['functions']['spi']['modes'] if m['id'] == 'safe_peripheral_dma')
+assert mode['status'] == 'experimental_partial'
+assert set(mode['implemented_families']) == classic_families | {'CW32F030', 'CW32A030', 'CW32L083'}
+assert mode['pins_all'] == ['SCK', 'MOSI', 'MISO']
+assert 'dma_channels' in mode['facts']
+pio_mode = next(m for m in capabilities['functions']['spi']['modes'] if m['id'] == 'async_pio')
+assert classic_families | {'CW32L012'} <= set(pio_mode['implemented_families'])
+print('PASS: classic SPI: 39 own-source nodes and exact backlinks, 105 semantic pages, seven own instances/byte endpoints, native DMA topology and preserved 23 STATUS access views, fourteen exact SRAM parts/twenty selected AF5 triples, empty generics and example/capability declarations; no HAL execution')

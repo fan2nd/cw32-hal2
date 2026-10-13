@@ -1,0 +1,676 @@
+{
+  "schema_version": 1,
+  "stage": 93,
+  "reviewed_utc": "2026-10-13T08:17:40.144827+00:00",
+  "decision": "accepted_main",
+  "accepted_scope": "Independent source, metadata, current checker/declarations and actual main compiler-output review for bounded F020/L031/L052/R031/W031 SPI DMA coexistence. Separate runtime ownership review remains its own authority.",
+  "review_method": "Independently inspected current project text, own source bytes/manuals/SVDs/headers/datasheets, exact ZIP-member payloads, parsed metadata/PAC/declarations, and actual recorded main outputs. No project gate, build, generation, firmware, synthetic probe or lifecycle model was executed by this reviewer.",
+  "implementation_inputs": [
+    {
+      "path": "README.md",
+      "bytes": 67618,
+      "sha256": "198598f989c917e6ebfdf2369ba3855577ab37fd690c0324d68cd21afeea6b75"
+    },
+    {
+      "path": "ci/hal-capabilities.yaml",
+      "bytes": 157907,
+      "sha256": "10a18ecf8528cc86e0ee8ccf2998bca760b8ee2387e8e8d8b9e030583708eb96"
+    },
+    {
+      "path": "docs/f020-dma-owned.md",
+      "bytes": 11826,
+      "sha256": "537d01a2cc9bb98f4e90d8eb5dd981fd03d29f964b9d7d3129e1b14afc2291ff"
+    },
+    {
+      "path": "docs/four-channel-dma-owned.md",
+      "bytes": 19493,
+      "sha256": "4c6d22e71362074cfe096f2732df9b1314abd2b4f467a941220e6c718d022817"
+    },
+    {
+      "path": "docs/spi-async-pio.md",
+      "bytes": 15703,
+      "sha256": "d7369e4a6bbbc66e9d899d1c2ef14acbd85cfdb7122bccc9da9e732f235b6d2c"
+    },
+    {
+      "path": "docs/spi-dma.md",
+      "bytes": 15432,
+      "sha256": "742e068a01b3a1d94c330f28e6c5ab7dadc8df5bdf038b9dcee8f8d4c740febc"
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "bytes": 377994,
+      "sha256": "6d8b4624a4f1db5ea3650791a444bedb79c3c72afb2168049f3836bc8a6b1b86"
+    },
+    {
+      "path": "embassy-cw32/src/spi.rs",
+      "bytes": 76800,
+      "sha256": "92fed04a0ffd31915ad58a3d2e3ebe2cd2dbfacb2158da68d96ae19adcdeb2a5"
+    },
+    {
+      "path": "examples/spi-dma/Cargo.toml",
+      "bytes": 2137,
+      "sha256": "06ae4282e52adf656731fc3b05ecb75c441520252e7df980af642446c2e956cf"
+    },
+    {
+      "path": "examples/spi-dma/README.md",
+      "bytes": 6359,
+      "sha256": "68da7635336eabf342d29b4974a2e62e5061a9ba5d0a69e073ef26eeaa557c52"
+    },
+    {
+      "path": "examples/spi-dma/build.rs",
+      "bytes": 2885,
+      "sha256": "03e3cec91fa5a75635e65405ce49ff51b46002ee4269c48ef4dd1cdd10698c38"
+    },
+    {
+      "path": "examples/spi-dma/src/bin/spi2_flash_id.rs",
+      "bytes": 3011,
+      "sha256": "8b47accbea57115298418bf5ed3e42175622a48e780f29ad2fc1576c4500000b"
+    },
+    {
+      "path": "examples/spi-dma/src/main.rs",
+      "bytes": 3469,
+      "sha256": "cad8e8a4974a6b36f59835feb848df1f058c33a35258a7947320f299dc794a3a"
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "bytes": 451866,
+      "sha256": "2d5bdb1d7eb0c4da94815e3bc6d90412f1bbd84b590537d2875b0f4a9646a9f9"
+    },
+    {
+      "path": "tests/verify_dma_owned_evidence.py",
+      "bytes": 123327,
+      "sha256": "0553dbbefc6bcdfb03974ade7f157a58f93b3f15b4afbdc85719fa8b23a1c261"
+    },
+    {
+      "path": "docs/classic-spi-dma-evidence.json",
+      "bytes": 107873,
+      "sha256": "cafc5119d584e037dbbe499e036d490efbeb3e15e80bbf7a49f3bb895c8889b2"
+    }
+  ],
+  "source_identity": {
+    "authority": {
+      "path": "sources/evidence-sources.json",
+      "bytes": 451866,
+      "sha256": "2d5bdb1d7eb0c4da94815e3bc6d90412f1bbd84b590537d2875b0f4a9646a9f9"
+    },
+    "ledger": {
+      "path": "docs/classic-spi-dma-evidence.json",
+      "bytes": 107873,
+      "sha256": "cafc5119d584e037dbbe499e036d490efbeb3e15e80bbf7a49f3bb895c8889b2"
+    },
+    "selected_own_nodes": [
+      {
+        "source_ref": "vendor:CW32F020_StandardPeripheralLib_V1.2.zip",
+        "index_pointer": "/artifacts/2",
+        "path": "CW32F020_StandardPeripheralLib_V1.2.zip",
+        "bytes": 2214134,
+        "sha256": "1d77fece47a0c615c8ae51374ea946b17ab489042222f33e38d93e6969945b5d"
+      },
+      {
+        "source_ref": "member:cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/SVD/CW32F020.svd",
+        "index_pointer": "/artifacts/2/members/0",
+        "path": "cw32f020/IdeSupport/MDK/WHXY.CW32F020_DFP.1.0.2/SVD/CW32F020.svd",
+        "bytes": 356006,
+        "sha256": "e2e0bd198e6c39aa0807ad10080a26b9bccc4a4718eea5dd0d54a13630101f98"
+      },
+      {
+        "source_ref": "member:cw32f020/Libraries/inc/cw32f020_dma.h",
+        "index_pointer": "/artifacts/2/members/7",
+        "path": "cw32f020/Libraries/inc/cw32f020_dma.h",
+        "bytes": 14523,
+        "sha256": "9dcc8e777c11a8f0fe033c3d874ddce0d3328842b90d606ef9ade9668b2f8086"
+      },
+      {
+        "source_ref": "vendor:CW32L031_StandardPeripheralLib_V1.4.zip",
+        "index_pointer": "/artifacts/7",
+        "path": "CW32L031_StandardPeripheralLib_V1.4.zip",
+        "bytes": 1822564,
+        "sha256": "ef955869214dc80400c0b572f71f2ca54d8a76d89b5ed2756003477a11425e0d"
+      },
+      {
+        "source_ref": "member:cw32l031/IdeSupport/EWARM/arm/config/debugger/WHXY/CW32L031.svd",
+        "index_pointer": "/artifacts/7/members/0",
+        "path": "cw32l031/IdeSupport/EWARM/arm/config/debugger/WHXY/CW32L031.svd",
+        "bytes": 352897,
+        "sha256": "f8044dc562825ce49a32f7cfa19df1b09e0f60daebe61e4c91c7e973670be815"
+      },
+      {
+        "source_ref": "member:cw32l031/Libraries/inc/cw32l031_dma.h",
+        "index_pointer": "/artifacts/7/members/7",
+        "path": "cw32l031/Libraries/inc/cw32l031_dma.h",
+        "bytes": 13301,
+        "sha256": "511e22a90d8965051c4166242a182f51c502b696e05b60e766eee803349dc86e"
+      },
+      {
+        "source_ref": "member:cw32l031/Libraries/src/cw32l031_spi.c",
+        "index_pointer": "/artifacts/7/members/34",
+        "path": "cw32l031/Libraries/src/cw32l031_spi.c",
+        "bytes": 14073,
+        "sha256": "c456b382f940ee220a70009faf89b7dd8f065e0c1a68595b60e846dc2d8cdf66"
+      },
+      {
+        "source_ref": "vendor:CW32L052_StandardPeripheralLib_V1.4.zip",
+        "index_pointer": "/artifacts/8",
+        "path": "CW32L052_StandardPeripheralLib_V1.4.zip",
+        "bytes": 2248859,
+        "sha256": "d05a1ff5749ad8c06a51ad8a34d53bc85e30b1350478bcabc2858c2e58d8fa1f"
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/SVD/CW32L052.svd",
+        "index_pointer": "/artifacts/8/members/0",
+        "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/IdeSupport/MDK/WHXY.CW32L052_DFP.1.0.0/SVD/CW32L052.svd",
+        "bytes": 493621,
+        "sha256": "78920e75111aa9845d9f66a2f305f96ec5577cde8c52543f0fa1d708e53867c7"
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_dma.h",
+        "index_pointer": "/artifacts/8/members/7",
+        "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/inc/cw32l052_dma.h",
+        "bytes": 16804,
+        "sha256": "c137e7b6502d54ff9fcb50f954dcddac2758ce8803c189c4bf78f6401fc74693"
+      },
+      {
+        "source_ref": "member:cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_spi.c",
+        "index_pointer": "/artifacts/8/members/38",
+        "path": "cw32l052/CW32L052_StandardPeripheralLib_V1.4/Libraries/src/cw32l052_spi.c",
+        "bytes": 14372,
+        "sha256": "b31f1e2b7661177036d9f3aa316e24a96b74473df992d6f14095ee3754c6c0b5"
+      },
+      {
+        "source_ref": "vendor:CW32R031_StandardPeripheralLib_V1.1.zip",
+        "index_pointer": "/artifacts/10",
+        "path": "CW32R031_StandardPeripheralLib_V1.1.zip",
+        "bytes": 1868935,
+        "sha256": "cec9df232d64b53b638c8a372f50fde1fd677f72c04bb3ae467b8138d8433082"
+      },
+      {
+        "source_ref": "member:cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/SVD/CW32R031.svd",
+        "index_pointer": "/artifacts/10/members/0",
+        "path": "cw32r031/IdeSupport/MDK/WHXY.CW32R031_DFP.1.0.2/SVD/CW32R031.svd",
+        "bytes": 352726,
+        "sha256": "0d9273507521d7f63e7614e9ddd445a315ea3206689c86fad9f45b60a44e656a"
+      },
+      {
+        "source_ref": "member:cw32r031/Libraries/inc/cw32r031_dma.h",
+        "index_pointer": "/artifacts/10/members/7",
+        "path": "cw32r031/Libraries/inc/cw32r031_dma.h",
+        "bytes": 13301,
+        "sha256": "a7bff2258f4fc6254448714c53bb3a724a2d6e08f94c1f8a957cc1208f05bae8"
+      },
+      {
+        "source_ref": "member:cw32r031/Libraries/src/cw32r031_spi.c",
+        "index_pointer": "/artifacts/10/members/31",
+        "path": "cw32r031/Libraries/src/cw32r031_spi.c",
+        "bytes": 14073,
+        "sha256": "363dd2fc7378677e34876369d5f37bb5e5f5377eee5439c9e32c09796c75fcb7"
+      },
+      {
+        "source_ref": "vendor:CW32W031_StandardPeripheralLib_V1.3.zip",
+        "index_pointer": "/artifacts/11",
+        "path": "CW32W031_StandardPeripheralLib_V1.3.zip",
+        "bytes": 2091903,
+        "sha256": "1010176816766d025c84babf84ffdf2ee03c5687d2a29133267d0013a1970337"
+      },
+      {
+        "source_ref": "member:cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/SVD/CW32W031.svd",
+        "index_pointer": "/artifacts/11/members/0",
+        "path": "cw32w031/IdeSupport/MDK/WHXY.CW32W031_DFP.1.0.2/SVD/CW32W031.svd",
+        "bytes": 353017,
+        "sha256": "7b3f7cd1e1e9b311f8bf6da711b9af0a144040883a231dfcc93b9cd2bafe84d0"
+      },
+      {
+        "source_ref": "member:cw32w031/Libraries/inc/cw32w031_dma.h",
+        "index_pointer": "/artifacts/11/members/7",
+        "path": "cw32w031/Libraries/inc/cw32w031_dma.h",
+        "bytes": 11810,
+        "sha256": "95bc8a7190176c7ea1ad78c365c217073233413a7f126a8ec5addfc51c0a3adf"
+      },
+      {
+        "source_ref": "member:cw32w031/Libraries/src/cw32w031_spi.c",
+        "index_pointer": "/artifacts/11/members/31",
+        "path": "cw32w031/Libraries/src/cw32w031_spi.c",
+        "bytes": 13982,
+        "sha256": "0062878431df00f7f8fb5fec930cce235d0d0da50cee16d46f4944b69821e2db"
+      },
+      {
+        "source_ref": "vendor:CW32F020_UserManual_CN_V1.4.pdf",
+        "index_pointer": "/artifacts/18",
+        "path": "CW32F020_UserManual_CN_V1.4.pdf",
+        "bytes": 9120176,
+        "sha256": "279521eaf7d32b241e614a9553044a4d99c1e7ca2566efa3b0fdd2b66c106eed"
+      },
+      {
+        "source_ref": "text:CW32F020_UserManual_CN_V1.4.txt",
+        "index_pointer": "/artifacts/18/text",
+        "path": "CW32F020_UserManual_CN_V1.4.txt",
+        "bytes": 1282599,
+        "sha256": "58ad895fc33053e13b025d49845d798e29509777227b65acada449fabf8d83db"
+      },
+      {
+        "source_ref": "vendor:CW32L031_DataSheet_CN_V1.9.pdf",
+        "index_pointer": "/artifacts/26",
+        "path": "CW32L031_DataSheet_CN_V1.9.pdf",
+        "bytes": 3461718,
+        "sha256": "90525f4085d00e9d586a991c24f2e4398d92a41e6cc1402c413e963423a35855"
+      },
+      {
+        "source_ref": "text:CW32L031_DataSheet_CN_V1.9.txt",
+        "index_pointer": "/artifacts/26/text",
+        "path": "CW32L031_DataSheet_CN_V1.9.txt",
+        "bytes": 235791,
+        "sha256": "60ac2bf5a0e8eedaa8f7a386024b0ef9b240616ca3874ff054335f9d8390ab19"
+      },
+      {
+        "source_ref": "vendor:CW32L031_UserManual_CN_V1.6.pdf",
+        "index_pointer": "/artifacts/27",
+        "path": "CW32L031_UserManual_CN_V1.6.pdf",
+        "bytes": 9976689,
+        "sha256": "4288cfd97b56385059c5a283f69972047af4773ef8bbc4d8b51d8155fb17a760"
+      },
+      {
+        "source_ref": "text:CW32L031_UserManual_CN_V1.6.txt",
+        "index_pointer": "/artifacts/27/text",
+        "path": "CW32L031_UserManual_CN_V1.6.txt",
+        "bytes": 1443523,
+        "sha256": "20693bba6fba49bb8af4686a0b6d115dda9ff804dd5b7359a8fd6cc7595a10d1"
+      },
+      {
+        "source_ref": "vendor:CW32L052_DataSheet_CN_V1.3.pdf",
+        "index_pointer": "/artifacts/28",
+        "path": "CW32L052_DataSheet_CN_V1.3.pdf",
+        "bytes": 2962980,
+        "sha256": "f03e2c3545b52942b576f669e3de69e1962631834ef6a01e51b45996fbeb3e7f"
+      },
+      {
+        "source_ref": "text:CW32L052_DataSheet_CN_V1.3.txt",
+        "index_pointer": "/artifacts/28/text",
+        "path": "CW32L052_DataSheet_CN_V1.3.txt",
+        "bytes": 229508,
+        "sha256": "8b1d9ac2caafd9e81dc5292f68bf1b1b04f0fef5a612bf1271edc9b77067be7c"
+      },
+      {
+        "source_ref": "vendor:CW32L052_UserManual_CN_V1.5.pdf",
+        "index_pointer": "/artifacts/29",
+        "path": "CW32L052_UserManual_CN_V1.5.pdf",
+        "bytes": 12894348,
+        "sha256": "4bac53df4db69a3b76c833cb14dd45b0e5c7f9884506c83a5cda6ea00a859f41"
+      },
+      {
+        "source_ref": "text:CW32L052_UserManual_CN_V1.5.txt",
+        "index_pointer": "/artifacts/29/text",
+        "path": "CW32L052_UserManual_CN_V1.5.txt",
+        "bytes": 1650171,
+        "sha256": "2a244927cb0e7eadbe25a6b376f9c02bf70e59ff188555f9335a2bda65cc38cb"
+      },
+      {
+        "source_ref": "vendor:CW32R031_DataSheet_CN_V1.2.pdf",
+        "index_pointer": "/artifacts/32",
+        "path": "CW32R031_DataSheet_CN_V1.2.pdf",
+        "bytes": 3113158,
+        "sha256": "88759314fa4cf8b6caf7098df4829489179e27aa3752a13de85ce955b29c5805"
+      },
+      {
+        "source_ref": "text:CW32R031_DataSheet_CN_V1.2.txt",
+        "index_pointer": "/artifacts/32/text",
+        "path": "CW32R031_DataSheet_CN_V1.2.txt",
+        "bytes": 209324,
+        "sha256": "59496e16c1815fd3dc33d5b556b54db5adc04a9c358dce102dc9f9adff04fce8"
+      },
+      {
+        "source_ref": "vendor:CW32R031_UserManual_CN_V1.3.pdf",
+        "index_pointer": "/artifacts/33",
+        "path": "CW32R031_UserManual_CN_V1.3.pdf",
+        "bytes": 11821621,
+        "sha256": "fbee9b6942be9fa09f00c946705644d5356c4249f3e2280e3dfe5f0cb342eddb"
+      },
+      {
+        "source_ref": "text:CW32R031_UserManual_CN_V1.3.txt",
+        "index_pointer": "/artifacts/33/text",
+        "path": "CW32R031_UserManual_CN_V1.3.txt",
+        "bytes": 1579725,
+        "sha256": "b6c5793f898d32bd3d78f46e5836c8be4834edea2fda1ab148506a4f967a2a4b"
+      },
+      {
+        "source_ref": "vendor:CW32W031_DataSheet_CN_V1.3.pdf",
+        "index_pointer": "/artifacts/34",
+        "path": "CW32W031_DataSheet_CN_V1.3.pdf",
+        "bytes": 3301754,
+        "sha256": "45ec43e6370956d09f9b9aa4c0f6c83fb0661f576d2d2bf64e0a6d7c4e203d3c"
+      },
+      {
+        "source_ref": "text:CW32W031_DataSheet_CN_V1.3.txt",
+        "index_pointer": "/artifacts/34/text",
+        "path": "CW32W031_DataSheet_CN_V1.3.txt",
+        "bytes": 213856,
+        "sha256": "8b766288a879c9ec4fae74a26ed40d58b18676d29531442ab981da4e346542fb"
+      },
+      {
+        "source_ref": "vendor:CW32W031_UserManual_CN_V1.4.pdf",
+        "index_pointer": "/artifacts/35",
+        "path": "CW32W031_UserManual_CN_V1.4.pdf",
+        "bytes": 11750733,
+        "sha256": "b6973677946a9332b0e5b3e954119768aa40469d44140a73e18648e9419bedc9"
+      },
+      {
+        "source_ref": "text:CW32W031_UserManual_CN_V1.4.txt",
+        "index_pointer": "/artifacts/35/text",
+        "path": "CW32W031_UserManual_CN_V1.4.txt",
+        "bytes": 1516397,
+        "sha256": "43bd22fded19932bdb90b071bc5c6d64ef00c2532968e5eabd77b59dc9a8b4ac"
+      },
+      {
+        "source_ref": "vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+        "index_pointer": "/artifacts/40",
+        "path": "current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf",
+        "bytes": 3084660,
+        "sha256": "1e330d800f10114c654b97cbd45b64d56a99c3cb39138d4ef20de3c12968dab0"
+      },
+      {
+        "source_ref": "text:current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+        "index_pointer": "/artifacts/40/text",
+        "path": "current-datasheets/CW32F020_DataSheet_CN_V1.3.txt",
+        "bytes": 206743,
+        "sha256": "c561aa8acbafc12cd6ac39fc0595f58a168b02dfda301b90df4fdd067a69d233"
+      }
+    ],
+    "verified_original_text_member_nodes": 39,
+    "verified_archive_member_chains": 14,
+    "verified_manual_and_datasheet_page_hashes": 105,
+    "text_extractor_bound": {
+      "program": "pdftotext",
+      "arguments": [
+        "-layout",
+        "-enc",
+        "UTF-8"
+      ],
+      "verified_version": "25.03.0",
+      "policy": "Derived text must match the pinned SHA-256 exactly; another Poppler version may work only if output is byte-identical."
+    },
+    "source_index_delta": {
+      "new_ledger_backlinks": 39,
+      "new_checker_backlinks": 4,
+      "checker_reverse_set_size": 85,
+      "ledger_forward_reverse_pointer_sets_exact": true,
+      "removing_recorded_appends_restores_original_bytes": true,
+      "original_sha256": "f058d39d5aa39a21db46a7ca90f0ab8218e0c422776517dd88686fe6583ffee1",
+      "vendor_identities_licenses_provenance_and_previous_evidence_preserved": true
+    }
+  },
+  "source_facts": {
+    "families": [
+      "CW32F020",
+      "CW32L031",
+      "CW32L052",
+      "CW32R031",
+      "CW32W031"
+    ],
+    "family_instance_pairs": 7,
+    "exact_parts": 14,
+    "selected_package_instance_routes": 20,
+    "qualification": "Each own manual supplies paired finite full-duplex master byte DMA: WIDTH7, both SIZE0, fixed DR endpoints, incrementing SRAM arrays, hardware BLOCK, REPEAT1 and paired clean terminal/request-close/BUSY-idle sequence. Own selectors are SPI1 RX/TX6/7 and F020/L052 SPI2 RX/TX8/9. No UART analogy or shared-IP-only admission is used.",
+    "registers_and_irqs": "Seven own SPI instances, DR+0x18, CR1 DMARX16/DMATX17, SPI vectors25/26. F020 has native CH1/CH2 IRQ9/10; four-channel families have CH1/CH2+3/CH4 IRQ9/10/11. Full ISR/IER and typed R1W0 ICR/no-op0xff fields match own SVD/manual/current IR/PAC.",
+    "semantic_limits": "DR read clears RXNE; MODF forces EN off and OV overwrites unread DR. Own TC/noTE/STATUS5 terminal proof does not turn EN-clear, gate closure, reset, timeout or BUSY0 after error into memory-drain evidence. BUSY supplies no clear interrupt or finite-liveness promise.",
+    "status_access_exception": {
+      "own_svd": "read-only",
+      "own_manual": "RW",
+      "accepted_ir": "ReadWrite",
+      "selected_views": 23,
+      "canonical_schema_changed": false
+    },
+    "vendor_example_typo": "All five own paired examples spell DMA_CS2.DSTINC; the ledger records the literal typo and independently binds actual DMA_CSR2.DSTINC geometry.",
+    "memory_and_routes": "All 14 exact parts retain 8 KiB SRAM; three F020 parts retain 32 KiB Flash and eleven others 64 KiB. All twenty chosen triples match own package bonding and AF5. Five generic aliases retain empty memory/package metadata. Existing pin exclusions and clock limits remain.",
+    "rf": "W031 external SPI remains unavailable during internal RF use. R031 whole-GPIOA and W031 GPIOB handover limits persist; no RF arbitration/coexistence is qualified."
+  },
+  "checker_and_declaration_review": {
+    "existing_checker_retained_as_exact_prefix": true,
+    "bounded_extension_only": true,
+    "hal_text_runtime_oracle_added": false,
+    "schema_assumptions_closed": [
+      "Nested parent/member/text identity and exact member-chain representations",
+      "Both current SVD field encodings and 23-view STATUS exception",
+      "Current SPI PAC accessor/getter/typed-command shape",
+      "Actual product/bonding/AF text columns and normalized SPIx/sole-SPI naming",
+      "Current manifest feature/bin/marker dependency mapping and capability declaration schema"
+    ],
+    "current_scope": "Independent PIO and DMA qualifications coexist on five new families. Old DMA cohorts, borrowed PIO construction, static staging/admission and all L012 exclusions remain.",
+    "uart_preservation": "No UART source or runtime algorithm changes. Only two obsolete SPI-exclusion sentences in UART capability limitations were reconciled; unrelated UART contracts remain unchanged.",
+    "auto_traits": "The approved final RX-storage correction and public documentation disclose Send/Sync derivation, its effect on existing DMA cohorts, exclusive post-retirement RX copying and the absence of a universal Send-future claim. Unsafe-trait soundness is covered by the separate runtime review."
+  },
+  "actual_finite_gates": {
+    "navigation_commands": 1,
+    "source_data_commands": 5,
+    "all_exit_codes_zero": true,
+    "original_receipts_and_log_hashes_verified": true,
+    "commands": [
+      {
+        "id": "N01",
+        "command": "python3 cw32-data/tools/source_provenance.py --root . --write",
+        "exit_code": 0,
+        "script_sha256": "fbeb2fbabcca131babcc66de410dd2f0f5cc127a60e03e90c2b1e82ed170f066"
+      },
+      {
+        "id": "D01",
+        "command": "python3 tests/verify_dma_owned_evidence.py",
+        "exit_code": 0,
+        "script_sha256": "0553dbbefc6bcdfb03974ade7f157a58f93b3f15b4afbdc85719fa8b23a1c261"
+      },
+      {
+        "id": "D02",
+        "command": "python3 tests/verify_spi_clock_bounds.py",
+        "exit_code": 0,
+        "script_sha256": "187c3a7f8fe210a8c580447d0a2740fa76ed56cded77c1686c3565af64997ebe"
+      },
+      {
+        "id": "D03",
+        "command": "python3 tests/verify_spi_register_writes.py",
+        "exit_code": 0,
+        "script_sha256": "ff9486c6213b81ed9943a78014c01d2e9b4c0e74e85a64008832174f060f50b0"
+      },
+      {
+        "id": "D04",
+        "command": "python3 tests/test_dma_metadata.py DmaMetadataTests.test_exact_profile_coverage DmaMetadataTests.test_every_generated_chip_reference DmaMetadataTests.test_request_numbers_do_not_cross_families DmaMetadataTests.test_irq_sharing",
+        "exit_code": 0,
+        "script_sha256": "59de44edaca68968c040900f1940065025068199358287e4ccda759d9c185039"
+      },
+      {
+        "id": "D05",
+        "command": "python3 cw32-data/tools/source_provenance.py --root . --sources $CW32_SOURCES",
+        "exit_code": 0,
+        "script_sha256": "fbeb2fbabcca131babcc66de410dd2f0f5cc127a60e03e90c2b1e82ed170f066"
+      }
+    ],
+    "canonical_generation_runs": 0,
+    "navigation_changes": [
+      "build/provenance/reference-index.json"
+    ],
+    "other_three_navigation_views_unchanged": true,
+    "source_fact_scope": "D05 verified complete required hardware-source scope; its two A030 discovery HTML omissions remain explicit, so complete full-manifest acquisition is not claimed.",
+    "new_ledger_navigation": {
+      "source_count": 566,
+      "evidence_document_count": 306,
+      "unresolved_references": [],
+      "current_ledger_sha256": "cafc5119d584e037dbbe499e036d490efbeb3e15e80bbf7a49f3bb895c8889b2",
+      "current_ledger_references": 142,
+      "current_ledger_citation_pointers": 66,
+      "current_ledger_exact_39_source_set": true,
+      "authority_sha256": "2d5bdb1d7eb0c4da94815e3bc6d90412f1bbd84b590537d2875b0f4a9646a9f9"
+    }
+  },
+  "actual_main": {
+    "authority": "main-recovered/results.json and main-recovered/summary.json in the external acceptance receipt set",
+    "standalone_arm_rlibs": 13,
+    "linked_release_elfs": 24,
+    "dependent_hal_rlibs": 24,
+    "dependent_archives_count_as_extra_commands": false,
+    "total_actual_cargo_invocations": 37,
+    "all_exit_codes_zero": true,
+    "source_files": 1478,
+    "canonical_files": 910,
+    "source_and_canonical_unchanged": true,
+    "rust_cargo_environment_unchanged": true,
+    "external_recorders": "Retention recorders were corrected under separate exact-byte review after ENOSPC; this is preserved chronology, not an unchanged-recorder claim.",
+    "frozen_command_tuples_and_actual_retained_hashes_verified": true,
+    "emitted_hal_outputs_reviewed": 37,
+    "five_new_representative_direction_associations": 14,
+    "generated_cfg_scope": "Five new families emit both spi_async_pio and spi_dma; old F030/A030/L083 emit DMA only; other five PIO families emit PIO only. L012 has no SPI DMA associations and retains UART TX-only.",
+    "retained_artifact_inspection": "Selected and dependent artifact hashes, actual generated HAL/request rows, captured build-script cfg output, ARM ELF headers and exact emitted linker memory were checked independently. Full runtime/ELF lifecycle interpretation remains in the separate runtime review.",
+    "warning_count": 12,
+    "warning_rows": [
+      "M11",
+      "M12",
+      "M32",
+      "M33"
+    ],
+    "warning_messages": [
+      "constant `RCC_LSE_SYSCLK_LSE_EDGES` is never used",
+      "constant `RCC_LSE_SYSCLK_LSI_CYCLES` is never used",
+      "constant `RCC_LSE_SYSCLK_MARGIN_LSE_EDGES` is never used"
+    ],
+    "recovery": {
+      "original_attempt_cargo_invocations": 16,
+      "original_retention_failure_row": "M16",
+      "cause": "No space left on device during compiler-output retention after Cargo exited zero",
+      "original_failed_summary_preserved": true,
+      "accepted_prefix": "M01–M15 reused with identical receipts/artifacts",
+      "m16": "Original successful Cargo outputs retained and inspected after verified disk recovery; no Cargo rerun",
+      "continuation": "Exactly M17–M37, 21 new Cargo invocations",
+      "independent_correspondence_checks": {
+        "original_receipt": true,
+        "original_json": true,
+        "original_stderr": true,
+        "original_status_remains_failed": true,
+        "no_m16_cargo_rerun": true,
+        "prefix_receipts_byte_identical": true
+      }
+    }
+  },
+  "external_artifacts": [
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/results.json",
+      "bytes": 17067679,
+      "sha256": "2fa98910720367a3f7499a397bab8a007a90b4c6856c1d96844e79b8e1531074"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/summary.json",
+      "bytes": 1455,
+      "sha256": "19d4e31fb539f798738ae622a4a27fc7e4798e857fd83c55534c8c3ce48a974f"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/source-before.json",
+      "bytes": 261111,
+      "sha256": "60a9b05f67d4444693d6ed48581b8bc53e4b1adaf54b373a0bbb81c25c33b1b0"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/source-after.json",
+      "bytes": 261111,
+      "sha256": "60a9b05f67d4444693d6ed48581b8bc53e4b1adaf54b373a0bbb81c25c33b1b0"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/generated-before.json",
+      "bytes": 136585,
+      "sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/generated-after.json",
+      "bytes": 136585,
+      "sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/toolchain-before.json",
+      "bytes": 5836,
+      "sha256": "e2cbfbdc8deaebf7d09e8972b0e7f6e78fbe03a2302d776c9414caa89fb08f50"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/toolchain-after.json",
+      "bytes": 5836,
+      "sha256": "e2cbfbdc8deaebf7d09e8972b0e7f6e78fbe03a2302d776c9414caa89fb08f50"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/original-toolchain.json",
+      "bytes": 5602,
+      "sha256": "7d5ef062aab589d0090909e8f8e92e71ceb431d19685b68730f52f58d72e7c26"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/recovery-provenance.json",
+      "bytes": 101203,
+      "sha256": "bce879c8ee5eac4cea344925b891f8789207e02e1bff0153838baed5fd8fa5c7"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main-recovered/approved-recovery.json",
+      "bytes": 3222,
+      "sha256": "97ffad6f330d10660796329ac69b069df3b5342248481c291be4e8679ab22c89"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main/summary.json",
+      "bytes": 830,
+      "sha256": "cd1c08323625fdfe899f314f34f0b0eadaf28c6322f11950c6391c97cdd3d5df"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main/M16/receipt.json",
+      "bytes": 161299,
+      "sha256": "c34c4c57e14c85dd06ba08390dc7c508784ec27b302669b30007ed029b4fe0d1"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "main/M16/recorder-error.log",
+      "bytes": 843,
+      "sha256": "6a3df105372ba1e4d00318d5f6f4d1e989c83bdfa91230eac337d7c99c602bc8"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "disk-recovery/result.json",
+      "bytes": 421,
+      "sha256": "74f98d6f1a2dbc79a951e52c5322f51cee43e812b892868ed98560082481101b"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "independent-review/runtime-main/retention-recovery-review.json",
+      "bytes": 2847,
+      "sha256": "a55c7c516a5f3525fbcc88d000a779925d54bee7dcbb085e4016403dd560fefe"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "independent-review/metadata-static/metadata-static-review.json",
+      "bytes": 9262,
+      "sha256": "aaf0a3c4de1b798527f7f30ce58c9bdd27dc9ac4c91d312efe8cd4856b2739f9"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "independent-review/metadata-main/gate-inspection.json",
+      "bytes": 3730,
+      "sha256": "87a857cb13c3cbd315ba446fa6b75f7cd304edb796613b034409d6146b5b6705"
+    },
+    {
+      "artifact_set": "Stage93 external acceptance receipts",
+      "path": "independent-review/metadata-main/main-artifact-inspection.json",
+      "bytes": 51610,
+      "sha256": "2a1ba8989c01fea1cd5e108e48a7b1590cdacf5c8ca2f8d29222a38615743500"
+    }
+  ],
+  "blocking_findings": [],
+  "clean_replay": {
+    "status": "not_run_at_main_acceptance",
+    "required": "Separate final-source reconstruction with one ordinary canonical bootstrap, planned finite gates, two standalone ARM libraries and six linked ELFs, plus independent acceptance."
+  },
+  "final_capability_rendering_and_source_packaging": "pending_at_main_acceptance",
+  "hardware_validation": "not_run",
+  "limits": [
+    "No hardware DMA retirement, interrupt/lost-wake behavior, cancellation/forget interleavings, wire timing, throughput, power or RF coexistence is established.",
+    "Links and source facts do not prove a dynamically executed mixed-backend workload.",
+    "Main acceptance does not replace final-source clean replay or publication.",
+    "Subsequent purely administrative status/review/packaging edits must preserve the reviewed hardware facts, checker, runtime, example, dependency and canonical bytes."
+  ]
+}

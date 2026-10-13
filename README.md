@@ -487,14 +487,18 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   CW32F020C6U7/K6U7/F6U7 add [native two-channel safe owned SRAM copies and
   staged byte UART TX DMA](docs/f020-dma-owned.md). Generic `cw32f020` retains
   `MissingMemoryMetadata` rejection. [Finite RX and combined/split UART DMA](docs/classic-uart-dma-rx.md)
-  are separately qualified on these exact parts; SPI DMA remains excluded.
+  are separately qualified on these exact parts. The Stage93 [SPI1/SPI2 DMA
+  extension](docs/spi-dma.md) passed its separate main software verification;
+  its final-source clean replay had not run at main acceptance.
 - L012 additionally: [native four-channel owned SRAM copies and staged UART TX](docs/l012-dma-owned.md) on C8T6/C8U6; generic safe admission remains rejected.
 - L031/L052/R031/W031 additionally: [native four-channel safe owned SRAM
   copies and staged byte UART TX DMA](docs/four-channel-dma-owned.md) on the
   eleven exact selections listed below. Their four generic aliases compile
   the controller/UART DMA surface but reject safe DMA/staging without memory metadata.
   [Finite RX and combined/split UART DMA](docs/classic-uart-dma-rx.md) extend those
-  eleven exact parts; SPI DMA and borrowed hardware requests remain excluded.
+  eleven exact parts. The Stage93 [SPI1 and L052 SPI2 DMA extension](docs/spi-dma.md)
+  passed its separate main software verification; its final-source clean replay
+  had not run at main acceptance. Borrowed hardware requests remain excluded.
 - F002/F003/L031/R031/W031/L052/L083 additionally: blocking 12-bit ADC,
   with package-qualified analog pins and family-specific reference/supply limits.
   F002 exposes VDD reference and VDD/3 only; no TS or internal reference.
@@ -702,7 +706,9 @@ cannot admit safe DMA or staging. UART1/2/3 TX and RX routes remain
 package-qualified: F6 UART1 has no safe direction, and PA14 remains excluded.
 [Stage92 finite RX and combined/split DMA](docs/classic-uart-dma-rx.md) use
 RX selectors 0/2/4 and existing TX selectors 1/3/5 on either native channel.
-SPI DMA and borrowed hardware-request APIs remain excluded.
+Stage93 SPI1/SPI2 paired DMA has separate main software acceptance as scoped
+below; its final-source clean replay had not run at main acceptance.
+Borrowed hardware-request APIs remain excluded.
 DMA UART construction does not install an RX ring or combine with a buffered
 owner on the same UART. See [the own-F020 contract](docs/f020-dma-owned.md) and
 [ordinary F020 copy/TX firmware](examples/f020-dma/README.md). The historical
@@ -727,8 +733,10 @@ channels, subject to existing safe package pins. The two L031 F8 packages have
 no safe UART1 TX pad; [all eleven TX example routes](docs/uart-dma-tx.md#native-four-channel-cohort)
 preserve that exclusion. L031F8U6 UART1 permits RX-only on PA9/AF2 or PC15/AF6;
 L031F8P6 has no safe UART1 RX. Combined UART requires distinct safe TX/RX pins
-and distinct channel owners. No SPI DMA, other peripheral request,
-buffered-plus-DMA owner or borrowed hardware constructor is added.
+and distinct channel owners. Stage93 SPI1 and L052 SPI2 paired DMA has separate
+main software acceptance as scoped below; its final-source clean replay had not
+run at main acceptance. No other peripheral request,
+buffered-plus-DMA UART owner or borrowed hardware constructor is added.
 Existing raw software-copy APIs keep their unsafe contracts. R031 GPIOA
 whole-bank effects and W031 internal RF boundaries remain functional handover
 limits; these MCU paths establish no RF-safe handover or coexistence.
@@ -745,9 +753,10 @@ No hardware result is claimed.
 
 F020/F002/F003/L010/L011/L012/L031/R031/W031/L052 additionally provide
 ordinary-borrowed `Spi<'d, Async, Master>::new_async` / `try_new_async` and all
-five async byte `SpiBus` methods on their fourteen SPI instances. This IRQ PIO
-path keeps at most one frame outstanding; the task accesses DR and caller
-buffers, while the ISR only records errors, masks local notification and wakes.
+five async byte `SpiBus` methods on their fourteen SPI instances. The Stage93
+F020/L031/L052/R031/W031 DMA extension preserves these borrowed PIO constructors
+and fixes each owner's backend at construction. This IRQ PIO path keeps at most
+one frame outstanding; the task accesses DR and caller buffers, while the ISR only records errors, masks local notification and wakes.
 Each async poll performs at most one DR read and one DR write. BUSY has no
 completion interrupt, so the final wire-idle wait self-wakes and consumes CPU;
 there is no built-in deadline or low-power guarantee. Preserve the original CS
@@ -758,8 +767,9 @@ the lifecycle fence needed to retire a forgotten async owner; ordinary blocking
 data/error/divider behavior remains separate. L012 requires the full SPI23
 handler for SPI2/SPI3; W031 external SPI cannot coexist with internal RF use.
 See [the IRQ PIO contract](docs/spi-async-pio.md) and
-[ordinary firmware examples](examples/spi-async/README.md). Main validation passed
-14 standalone ARM libraries and 19 linked ELFs, all 33 commands exiting zero,
+[ordinary firmware examples](examples/spi-async/README.md). Historical Stage89
+main validation passed 14 standalone ARM libraries and 19 linked ELFs,
+all 33 commands exiting zero,
 plus seven finite source/data commands. No canonical generation ran; all 910
 generated files remained unchanged. The L010F8P6 library, async and blocking rows
 and the L011K8T6 library and async rows each retain three existing RCC LSE-constant
@@ -769,14 +779,46 @@ acceptance clean had not run; final-package completion requires a separate
 final-source two-library/five-ELF replay and seven commands including its one
 generation bootstrap. These results establish no hardware behavior.
 
-F030/A030/L083 `Spi::new_with_dma` adds a safe byte `SpiBus` with two private static
-staging buffers and two admitted channels. Both clean DMA terminals and wire
-idle precede success. Cancellation retains the active chunk: keep the original
-CS selection and await successful `flush` before changing devices. DMA/SPI errors
-permanently retain the pair. Chunk gaps, copies and receive-overrun risk under
-contention remain; generic cancellation-safe `SpiDevice` composition and silicon
-validation are not claimed. See [SPI DMA lifecycle and evidence](docs/spi-dma.md)
-and the genuine [x030/L083 firmware examples](examples/spi-dma/README.md).
+Stage93 main software verification passed thirteen standalone ARM libraries
+and twenty-four linked ELFs, with all 37 Cargo invocations exiting zero. The
+extension adds F020 SPI1/SPI2, L031 SPI1, L052 SPI1/SPI2, R031 SPI1 and W031 SPI1
+to the existing F030/A030/L083 staged DMA cohort: five new families, seven new
+family/controller pairs, fourteen exact parts and twenty selected
+package/controller routes. The full DMA scope is eight families and thirteen
+family/controller pairs. Five finite source/data gates and the separate source
+navigation refresh passed; no canonical generation ran and all 910 generated
+files stayed unchanged. Independent runtime and metadata/source reviews accepted
+the bounded main result. The original M16 Cargo link passed but artifact
+retention failed with ENOSPC; reviewed recovery preserved that failure, reused
+M01–M15, retained the original M16 outputs without rerunning Cargo and built only
+M17–M37. L010F8P6/L011K8T6 library and async-PIO ELF rows each retain three existing
+unused RCC LSE-constant warnings; the other eleven libraries and twenty-two ELFs
+were warning-free. At main acceptance the separate final-source two-library/
+six-ELF clean replay had not run. See [the main verification and recovery
+boundary](docs/spi-dma.md); historical receipts above do not validate this change,
+and no hardware result is claimed.
+
+`Spi<'static, Async, Master>::new_with_dma` consumes static SPI/pin owners,
+two private static staging buffers and two admitted channels. One common
+lifetime-generic async `SpiBus<u8>` surface dispatches to the constructor's
+installed PIO or DMA backend; it adds no borrowed DMA construction or backend
+switching. The five newly dual-capable families gain the existing DMA-gated
+variants in the already `#[non_exhaustive]` `ConfigError` and `Error` enums.
+PIO signatures remain; the conditional public variant set expands.
+
+Both clean DMA terminals and wire idle precede success. Cancellation retains
+the active chunk: keep the original CS selection and await successful `flush`
+before changing devices. DMA/SPI errors permanently retain the pair, while PIO
+keeps its destructive error recovery and Drop. F020's two channels permit one
+permanently admitted pair, so SPI1/SPI2 DMA examples are separate deployments;
+clean Drop does not restore admission. Exact SRAM, package pins and clock
+limits remain required. L012 SPI DMA stays unqualified and its UART RX RC/ORE
+proof stays blocked. R031 GPIOA handover limits remain; W031 external SPI
+remains unavailable during internal RF use. No RF coexistence is established.
+Chunk gaps, copies and receive-overrun risk under contention remain; generic
+cancellation-safe `SpiDevice` composition and silicon validation are not claimed.
+See [SPI DMA lifecycle and evidence](docs/spi-dma.md) and the ordinary
+[staged SPI firmware examples](examples/spi-dma/README.md).
 
 ```sh
 cargo check -p embassy-cw32 --no-default-features --features cw32f030c8t7,rt \
@@ -790,9 +832,10 @@ models and compile-contract harnesses have been removed. No firmware is flashed
 or executed. See `docs/hal-production-layout.md` for the upstream layout mapping
 and the historical verification boundary.
 Unsupported scope includes additional ADC/timer modes, peripheral DMA beyond
-staged x030/L083 UART TX/RX and SPI master plus qualified exact-part
-F020/L031/L052/R031/W031/L012 UART TX,
-external/PLL modes beyond each explicitly qualified family/source and low-power policy. Check the coverage ledger before selecting a device/API.
+the separately declared staged UART and SPI profiles (including the Stage93
+five-family SPI extension with main software acceptance), external/PLL modes beyond each explicitly
+qualified family/source and low-power policy. Check the coverage ledger before
+selecting a device/API.
 
 Exactly CW32F030C8T7, CW32F030K8T7, CW32F030K8U7 and CW32A030C8T7
 provide immutable owned HCLK/PCLK output on PA8 AF4 through `rcc::Mco`, retaining

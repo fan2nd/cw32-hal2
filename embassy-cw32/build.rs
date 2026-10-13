@@ -583,8 +583,9 @@ fn main() {
         _ => None,
     };
     let spi_dma_profile = match metadata.line {
-        "CW32F030" | "CW32A030" => Some("v1"),
-        "CW32L083" => Some("cw32l031_v1"),
+        "CW32F030" | "CW32A030" | "CW32F020" => Some((2, "v1")),
+        "CW32L083" | "CW32L052" => Some((2, "cw32l031_v1")),
+        "CW32L031" | "CW32R031" | "CW32W031" => Some((1, "cw32l031_v1")),
         _ => None,
     };
     // Own-manual IRQ byte-master qualification is separate from DMA admission.
@@ -606,7 +607,7 @@ fn main() {
         _ => None,
     };
     if let Some((version, instances)) = spi_async_pio_profile {
-        assert!(spi && spi_dma_profile.is_none());
+        assert!(spi);
         let actual_instances = metadata
             .peripherals
             .iter()
@@ -743,8 +744,34 @@ fn main() {
         };
         assert_ne!(request("RX"), request("TX"));
     }
-    let spi_dma_pairs = if let Some(version) = spi_dma_profile {
-        qualify_requests("SPI", 2, version, &["RX", "TX"])
+    let spi_dma_pairs = if let Some((count, version)) = spi_dma_profile {
+        let pairs = qualify_requests("SPI", count, version, &["RX", "TX"]);
+        if matches!(
+            metadata.line,
+            "CW32F020" | "CW32L031" | "CW32L052" | "CW32R031" | "CW32W031"
+        ) {
+            for index in 1..=count {
+                let name = format!("SPI{index}");
+                let peripheral = metadata
+                    .peripherals
+                    .iter()
+                    .find(|p| p.name == name)
+                    .unwrap();
+                assert_eq!(peripheral.dma_channels.len(), 2);
+                for (signal, selector) in [
+                    ("RX", 4 + 2 * u32::from(index)),
+                    ("TX", 5 + 2 * u32::from(index)),
+                ] {
+                    let route = peripheral
+                        .dma_channels
+                        .iter()
+                        .find(|route| route.signal == signal)
+                        .unwrap();
+                    assert_eq!(route.request, Some(selector));
+                }
+            }
+        }
+        pairs
     } else {
         Vec::new()
     };
@@ -1422,8 +1449,8 @@ fn main() {
                 continue;
             }
             // Preserve x030's raw inventory. Other families emit only verified
-            // direction pairs: L083 UART/SPI RX+TX, the five classic families
-            // UART RX+TX, and L012 UART TX alone.
+            // direction pairs: L083 and the five classic families UART/SPI
+            // RX+TX, and L012 UART TX alone.
             for route in peripheral.dma_channels {
                 let staged_pair = uart_dma_tx_pairs
                     .iter()

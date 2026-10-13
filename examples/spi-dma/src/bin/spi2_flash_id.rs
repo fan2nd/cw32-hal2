@@ -8,6 +8,21 @@ use embassy_cw32::{
 };
 use embassy_executor::Spawner;
 
+#[cfg(feature = "cw32f020c6u7")]
+hal::bind_interrupts!(struct Irqs {
+    SPI2 => spi::InterruptHandler<peripherals::SPI2>;
+    DMACH1 => dma::InterruptHandler<peripherals::DMA_CH1>;
+    DMACH2 => dma::InterruptHandler<peripherals::DMA_CH2>;
+});
+
+#[cfg(feature = "cw32l052c8t6")]
+hal::bind_interrupts!(struct Irqs {
+    SPI2 => spi::InterruptHandler<peripherals::SPI2>;
+    DMACH1 => dma::InterruptHandler<peripherals::DMA_CH1>;
+    DMACH4 => dma::InterruptHandler<peripherals::DMA_CH4>;
+});
+
+#[cfg(feature = "l083")]
 hal::bind_interrupts!(struct Irqs {
     SPI2 => spi::InterruptHandler<peripherals::SPI2>;
     DMACH45 => dma::InterruptHandler<peripherals::DMA_CH4>, dma::InterruptHandler<peripherals::DMA_CH5>;
@@ -18,14 +33,24 @@ async fn main(_spawner: Spawner) {
     let p = hal::init(Default::default());
     let tx = cortex_m::singleton!(: [u8; 16] = [0; 16]).unwrap();
     let rx = cortex_m::singleton!(: [u8; 24] = [0; 24]).unwrap();
-    let mut cs = Output::new(p.PB0, Level::High, Speed::Default);
+    #[cfg(feature = "cw32f020c6u7")]
+    let cs_speed = Speed::High;
+    #[cfg(not(feature = "cw32f020c6u7"))]
+    let cs_speed = Speed::Default;
+    let mut cs = Output::new(p.PB0, Level::High, cs_speed);
+    #[cfg(feature = "cw32f020c6u7")]
+    let (tx_channel, rx_channel) = (p.DMA_CH2, p.DMA_CH1);
+    #[cfg(feature = "cw32l052c8t6")]
+    let (tx_channel, rx_channel) = (p.DMA_CH4, p.DMA_CH1);
+    #[cfg(feature = "l083")]
+    let (tx_channel, rx_channel) = (p.DMA_CH5, p.DMA_CH4);
     let mut bus = spi::Spi::new_with_dma(
         p.SPI2,
         p.PA2,
         p.PA1,
         p.PA0,
-        p.DMA_CH5,
-        p.DMA_CH4,
+        tx_channel,
+        rx_channel,
         Irqs,
         tx,
         rx,

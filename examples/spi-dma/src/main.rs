@@ -9,6 +9,14 @@ use embassy_cw32::{
 use embassy_executor::Spawner;
 use embedded_hal_async::spi::SpiBus;
 
+#[cfg(feature = "cw32f020c6u7")]
+hal::bind_interrupts!(struct Irqs {
+    SPI1 => spi::InterruptHandler<peripherals::SPI1>;
+    DMACH1 => dma::InterruptHandler<peripherals::DMA_CH1>;
+    DMACH2 => dma::InterruptHandler<peripherals::DMA_CH2>;
+});
+
+#[cfg(not(feature = "cw32f020c6u7"))]
 hal::bind_interrupts!(struct Irqs {
     SPI1 => spi::InterruptHandler<peripherals::SPI1>;
     DMACH23 => dma::InterruptHandler<peripherals::DMA_CH2>, dma::InterruptHandler<peripherals::DMA_CH3>;
@@ -39,18 +47,30 @@ async fn main(_spawner: Spawner) {
     let p = hal::init(Default::default());
     let tx = cortex_m::singleton!(: [u8; 16] = [0; 16]).unwrap();
     let rx = cortex_m::singleton!(: [u8; 24] = [0; 24]).unwrap();
-    #[cfg(feature = "l083")]
-    let cs_speed = Speed::Default;
-    #[cfg(not(feature = "l083"))]
+    #[cfg(any(
+        feature = "cw32f030c8t7",
+        feature = "cw32a030c8t7",
+        feature = "cw32f020c6u7"
+    ))]
     let cs_speed = Speed::High;
+    #[cfg(not(any(
+        feature = "cw32f030c8t7",
+        feature = "cw32a030c8t7",
+        feature = "cw32f020c6u7"
+    )))]
+    let cs_speed = Speed::Default;
     let mut cs = Output::new(p.PB0, Level::High, cs_speed);
+    #[cfg(feature = "cw32f020c6u7")]
+    let (tx_channel, rx_channel) = (p.DMA_CH2, p.DMA_CH1);
+    #[cfg(not(feature = "cw32f020c6u7"))]
+    let (tx_channel, rx_channel) = (p.DMA_CH3, p.DMA_CH2);
     let mut bus = spi::Spi::new_with_dma(
         p.SPI1,
         p.PA5,
         p.PA7,
         p.PA6,
-        p.DMA_CH3,
-        p.DMA_CH2,
+        tx_channel,
+        rx_channel,
         Irqs,
         tx,
         rx,
@@ -58,8 +78,9 @@ async fn main(_spawner: Spawner) {
     )
     .unwrap();
 
-    // RX channel 2 has higher hardware priority than TX channel 3. This helps
-    // arbitration but is not a proof of lossless performance at the chosen SCK.
+    // RX has higher hardware priority: CH1 before TX CH2 on F020, otherwise
+    // CH2 before TX CH3. This helps arbitration but is not a proof of lossless
+    // performance at the chosen SCK.
     loop {
         cs.set_low();
         exchange(&mut bus).await;

@@ -1,0 +1,3419 @@
+{
+  "schema_version": 1,
+  "stage": 93,
+  "review_role": "independent_runtime_build_example_and_actual_main_artifacts",
+  "reviewed_utc": "2026-10-13T08:16:13.102988+00:00",
+  "verdict": "accepted_actual_main",
+  "scope": "Five-family staged SPI DMA coexistence, preserved PIO and existing DMA backends, ordinary example adaptations, and the complete actual main ARM matrix.",
+  "source_files": [
+    {
+      "path": "embassy-cw32/build.rs",
+      "bytes": 377994,
+      "mode": 420,
+      "sha256": "6d8b4624a4f1db5ea3650791a444bedb79c3c72afb2168049f3836bc8a6b1b86"
+    },
+    {
+      "path": "embassy-cw32/src/spi.rs",
+      "bytes": 76800,
+      "mode": 420,
+      "sha256": "92fed04a0ffd31915ad58a3d2e3ebe2cd2dbfacb2158da68d96ae19adcdeb2a5"
+    },
+    {
+      "path": "embassy-cw32/src/dma.rs",
+      "bytes": 50640,
+      "mode": 420,
+      "sha256": "d91e8a90754c500fb62f2a7f998b80d589fb4613e8ff908ced59d1f1eeac15b2"
+    },
+    {
+      "path": "embassy-cw32/Cargo.toml",
+      "bytes": 4012,
+      "mode": 420,
+      "sha256": "a92755f6305d4eb50b010df6834fb8b85ded3fec086081d2b291b3c93478c700"
+    },
+    {
+      "path": "examples/spi-dma/Cargo.toml",
+      "bytes": 2137,
+      "mode": 420,
+      "sha256": "06ae4282e52adf656731fc3b05ecb75c441520252e7df980af642446c2e956cf"
+    },
+    {
+      "path": "examples/spi-dma/Cargo.lock",
+      "bytes": 20559,
+      "mode": 420,
+      "sha256": "3cb7bd88a578d24881bd02a8263d92f1897a7d237976a001f47c6b7ee3dc31f5"
+    },
+    {
+      "path": "examples/spi-dma/build.rs",
+      "bytes": 2885,
+      "mode": 420,
+      "sha256": "03e3cec91fa5a75635e65405ce49ff51b46002ee4269c48ef4dd1cdd10698c38"
+    },
+    {
+      "path": "examples/spi-dma/src/main.rs",
+      "bytes": 3469,
+      "mode": 420,
+      "sha256": "cad8e8a4974a6b36f59835feb848df1f058c33a35258a7947320f299dc794a3a"
+    },
+    {
+      "path": "examples/spi-dma/src/bin/spi2_flash_id.rs",
+      "bytes": 3011,
+      "mode": 420,
+      "sha256": "8b47accbea57115298418bf5ed3e42175622a48e780f29ad2fc1576c4500000b"
+    },
+    {
+      "path": "examples/spi-async/Cargo.toml",
+      "bytes": 1760,
+      "mode": 420,
+      "sha256": "9a8d7e7c67e1dfa619a8db8487dbeafce2ba09d013100fa50bea2dfc3a7d7244"
+    },
+    {
+      "path": "examples/spi-async/Cargo.lock",
+      "bytes": 20585,
+      "mode": 420,
+      "sha256": "a52a70e205cfefaf99703ed9867891d4d1614419da6d5271f12a266ec01f0e01"
+    },
+    {
+      "path": "examples/spi-async/build.rs",
+      "bytes": 9346,
+      "mode": 420,
+      "sha256": "eee6a29526285d830225591ba8a5488e7bfe44f49d849c0d2f441349b5c89236"
+    },
+    {
+      "path": "examples/spi-async/src/bin/async_master.rs",
+      "bytes": 4389,
+      "mode": 420,
+      "sha256": "790d1c978691e689b53f7e38cce92ae1a741606fc04c923cab4d3243553447ee"
+    },
+    {
+      "path": "examples/spi-async/src/bin/blocking_master.rs",
+      "bytes": 3321,
+      "mode": 420,
+      "sha256": "561cf6b4a0cb7113c4df712e03cae2a1790ccc075260c313a41310356962eb81"
+    },
+    {
+      "path": "docs/spi-dma.md",
+      "bytes": 15432,
+      "mode": 420,
+      "sha256": "742e068a01b3a1d94c330f28e6c5ab7dadc8df5bdf038b9dcee8f8d4c740febc"
+    },
+    {
+      "path": "docs/toolchain.json",
+      "bytes": 551,
+      "mode": 420,
+      "sha256": "16338ce6cbfae130bf9f47e6d406203100d5dc55d9912dbdf6f247cb43570cc8"
+    }
+  ],
+  "source_review": {
+    "conclusion": "No unresolved runtime, build-qualification or example-source finding.",
+    "actual_spi_sha256": "92fed04a0ffd31915ad58a3d2e3ebe2cd2dbfacb2158da68d96ae19adcdeb2a5",
+    "coverage": [
+      "Independent PIO qualification plus explicit new DMA controller counts and exact RX/TX selectors",
+      "Borrowed PIO constructors and static-only DMA constructor resources, sequential admission and consumed-on-error behavior",
+      "Single lifetime-generic async method/trait surface, fixed owner-local dispatch, and settlement before every empty operation",
+      "One dedicated handler with separately active-guarded PIO/DMA dispatch and unchanged native L012 SPI23 handling",
+      "Unchanged bounded PIO poll, wake, preparation, cancellation, sticky configuration-error and destructive recovery rules",
+      "Paired private staging, RX-first arm/request order, complete dual terminal proof, error-free wire idle and fenced retirement before CPU RX visibility",
+      "Common PIO-before-DMA blocking guards and bounded Drop with unresolved DMA resources retained",
+      "Exact feature, native channel/vector, AF5 pin, PB0 CS, family speed, workload and metadata-linker adaptations"
+    ],
+    "closed_finding": {
+      "description": "New DMA cfg initially suppressed automatic Send/Sync for existing PIO and blocking owners through a private raw pointer.",
+      "resolution": "Independently reviewed private non-Copy OwnedRxStaging consumes exclusive static byte storage, alone carries justified Send/Sync, and keeps outer fields compiler checked. Private RX copy and both callers now require mutable pair access after successful retirement.",
+      "correction_patch_sha256": "c477149dd1b59ef3489e4005428b52fcf05feebfefc2da80e5c9bf80997c39b1",
+      "compatibility": "Restores prior PIO/blocking availability on new DMA families and positively permits existing F030/A030/L083 DMA/blocking owners to satisfy these traits, subject to other fields and borrow lifetimes. It does not make borrowed owners static or every enclosing future Send.",
+      "safety_basis": [
+        "Moving bookkeeping preserves uniquely owned static allocation and hardware endpoint addresses",
+        "Shared safe access does not dereference RX storage; every CPU RX copy uses an exclusive borrow",
+        "Interrupts retain synchronized state and owned Wakers, never driver, future or buffer pointers",
+        "Existing paired terminal, wire-idle and fenced retirement requirements remain before temporary CPU slices",
+        "Cancellation, unresolved Drop and forget retain allocations, channel admission, pins and required clock state"
+      ],
+      "public_contract_path": "docs/spi-dma.md",
+      "public_contract_patch_sha256": "d481c98854028863017abc50fe8d04d8843bd2bdcd804e01e40dd53634bb738c"
+    },
+    "byte_preservation_qualification": "Lifecycle order, checks and conditions remain preserved. DMA ownership representation, constructor initialization and private copy receiver/callers have the precise approved correction above; these bodies are not claimed byte-identical.",
+    "open_findings": []
+  },
+  "actual_main": {
+    "authority_label": "main-recovered",
+    "status": "passed_and_independently_reviewed",
+    "actual_cargo_invocations": 37,
+    "standalone_arm_rlibs": 13,
+    "arm_elf_links": 24,
+    "dependent_hal_archives": 24,
+    "dependent_archives_are_not_standalone_invocations": true,
+    "standalone_arm_code_objects": 126,
+    "selected_artifact_fresh_false": 37,
+    "selected_artifact_fresh_true": 0,
+    "freshness_meaning": "Actual Cargo cache metadata only; no claim about every dependency recompiling.",
+    "matrix": {
+      "new_dma_elfs": 7,
+      "existing_dma_elfs": 4,
+      "pio_async_elfs": 10,
+      "blocking_elfs": 3
+    },
+    "target": "thumbv6m-none-eabi",
+    "release": true,
+    "offline": true,
+    "locked": true,
+    "serial_shared_target": "build/hal-target",
+    "source_files": 1478,
+    "canonical_files": 910,
+    "source_before_after_sha256": "60a9b05f67d4444693d6ed48581b8bc53e4b1adaf54b373a0bbb81c25c33b1b0",
+    "canonical_before_after_sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3",
+    "toolchain_before_after_sha256": "e2cbfbdc8deaebf7d09e8972b0e7f6e78fbe03a2302d776c9414caa89fb08f50",
+    "source_before_after_byte_equal": true,
+    "canonical_before_after_byte_equal": true,
+    "toolchain_before_after_byte_equal": true,
+    "main_canonical_generation_runs": 0,
+    "independent_inspection": [
+      "Exact frozen command, feature/package/bin selection and actual successful Cargo JSON terminal",
+      "Retained selected and dependent HAL artifact hashes, distinct host/target OUT_DIR hashes and actual generated SPI/DMA associations",
+      "Direct ARM archive object and ELF header/section/load-range decoding",
+      "Actual native IRQ vector words matched to strong bound symbols, including F020 separate DMA vectors, L052 DMACH4 and L012 SPI23",
+      "Exact metadata-derived Flash/SRAM map, initial stack/reset vectors, real emitted -Tlink.x and target link.x/memory.x",
+      "Full authored/canonical/toolchain before-after correspondence"
+    ],
+    "compiler_diagnostics": {
+      "errors": 0,
+      "warnings": 12,
+      "warning_rows": [
+        "M11",
+        "M12",
+        "M32",
+        "M33"
+      ],
+      "warning_description": "Three unused generated RCC constants per row: RCC_LSE_SYSCLK_LSE_EDGES, RCC_LSE_SYSCLK_LSI_CYCLES, RCC_LSE_SYSCLK_MARGIN_LSE_EDGES. Retained as emitted; no suppression or unrelated source fix."
+    },
+    "artifact_findings": [],
+    "rows": [
+      {
+        "row": "M01",
+        "kind": "rlib",
+        "feature": "cw32f020c6u7",
+        "bin": "",
+        "artifact_label": "main-recovered/M01/libembassy_cw32.rlib",
+        "artifact_sha256": "953d59a7c1247e14e2b47a133e2395733716805e4ad4c526c5123013df75f15f",
+        "artifact_bytes": 5244272,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f020c6u7",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f020c6u7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32f020_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_dma",
+          "spi_v1"
+        ],
+        "generated_hal_sha256": "b8eb8edc388008a958a77d50d82bfd5201b4455cc7fac54f3137416ca8a577b1",
+        "binary": {
+          "arm_code_objects": 10,
+          "executable_section_bytes": 75562
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M01/receipt.json",
+        "receipt_sha256": "941af09e3a70a94f75ad9e0a3da26478edf0e84141b619b2f1347efaae2f3b91",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M02",
+        "kind": "rlib",
+        "feature": "cw32l031c8t6",
+        "bin": "",
+        "artifact_label": "main-recovered/M02/libembassy_cw32.rlib",
+        "artifact_sha256": "5059c29f12f49017e849489d6a1e117783f81442589835639a96c16aeb491234",
+        "artifact_bytes": 5452536,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l031c8t6",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l031c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "d31465cd72120c8ac31dab508cd0197f1715ab0c10084a969d34ab8db16e2975",
+        "binary": {
+          "arm_code_objects": 10,
+          "executable_section_bytes": 93496
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M02/receipt.json",
+        "receipt_sha256": "33461e08314ee433ba578ce4d313cfd0bf12a783d8d69fdbd356907338ab9648",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M03",
+        "kind": "rlib",
+        "feature": "cw32l052c8t6",
+        "bin": "",
+        "artifact_label": "main-recovered/M03/libembassy_cw32.rlib",
+        "artifact_sha256": "8e02a36d8f0a2bdbc5e7b08345432540cd842b8539bf6884949134ab4ab49dfc",
+        "artifact_bytes": 6027360,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l052c8t6",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l052c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "b5e6b3546cf761e13e6482514658d87528933c7a25319760b1eaf91476a282ba",
+        "binary": {
+          "arm_code_objects": 10,
+          "executable_section_bytes": 123946
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M03/receipt.json",
+        "receipt_sha256": "997cbd4c8384cb9f6c6db984af8a2243cc9ce0983fac2d16fe4e68275a3cbb75",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M04",
+        "kind": "rlib",
+        "feature": "cw32r031c8u6",
+        "bin": "",
+        "artifact_label": "main-recovered/M04/libembassy_cw32.rlib",
+        "artifact_sha256": "e7bdece50b958bcfe0334cdff17f2cc6d422b423459d462a577b535f5793642e",
+        "artifact_bytes": 5371212,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32r031c8u6",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32r031c8u6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "ce65cd2bc57a99362bec64d197f034f59e729f08c10d666e03c7e73f7431a08d",
+        "binary": {
+          "arm_code_objects": 10,
+          "executable_section_bytes": 93146
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M04/receipt.json",
+        "receipt_sha256": "e81a4977405f8da02c975c99faa21ce86b78da0638e42a76289bf9e394e9f929",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M05",
+        "kind": "rlib",
+        "feature": "cw32w031r8u6",
+        "bin": "",
+        "artifact_label": "main-recovered/M05/libembassy_cw32.rlib",
+        "artifact_sha256": "74e710e6fc49fde8ba520d5dfe95410dbbbdea16096ce9d3152c44a73eda3667",
+        "artifact_bytes": 5392120,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32w031r8u6",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32w031r8u6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "3fdee331e4cb639853b0e9b2c891d842c86200d91e33ec76b4ba20f253c7337c",
+        "binary": {
+          "arm_code_objects": 10,
+          "executable_section_bytes": 93588
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M05/receipt.json",
+        "receipt_sha256": "8b0829ebe29bfd7b7f6ae89ff063b55d46693570e6ea9eabba2fb4c940984d8c",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M06",
+        "kind": "rlib",
+        "feature": "cw32f030c8t7",
+        "bin": "",
+        "artifact_label": "main-recovered/M06/libembassy_cw32.rlib",
+        "artifact_sha256": "eee9c36279c73141963165e0b6d2d5ec1e872c5a0fd7e9593b27a57df8b03de2",
+        "artifact_bytes": 5734844,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f030c8t7",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f030c8t7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_v1",
+          "spi",
+          "spi_dma",
+          "spi_v1"
+        ],
+        "generated_hal_sha256": "be22f4c0ebebca72c22f154fa8091c20f593774a201ee57638db7565d2d61e3a",
+        "binary": {
+          "arm_code_objects": 10,
+          "executable_section_bytes": 81162
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M06/receipt.json",
+        "receipt_sha256": "94dfd89717fac50e7978ff2de652b29b4e34cee9cf7eac3f1a065b35356cc019",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M07",
+        "kind": "rlib",
+        "feature": "cw32a030c8t7",
+        "bin": "",
+        "artifact_label": "main-recovered/M07/libembassy_cw32.rlib",
+        "artifact_sha256": "48362cc6db803da353350a6065394816998d7698140442dc1e51b88824639ed0",
+        "artifact_bytes": 5734826,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32a030c8t7",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32a030c8t7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_v1",
+          "spi",
+          "spi_dma",
+          "spi_v1"
+        ],
+        "generated_hal_sha256": "be22f4c0ebebca72c22f154fa8091c20f593774a201ee57638db7565d2d61e3a",
+        "binary": {
+          "arm_code_objects": 10,
+          "executable_section_bytes": 81162
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M07/receipt.json",
+        "receipt_sha256": "03145a775426df51522d9363b56fc87fa068ffec803b480721e0d1f729cf58e6",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M08",
+        "kind": "rlib",
+        "feature": "cw32l083rbt6",
+        "bin": "",
+        "artifact_label": "main-recovered/M08/libembassy_cw32.rlib",
+        "artifact_sha256": "96c892fd8c4194436505071210e7eac1a9e9c97fa37bc9dbe1a8bdf98707f3b9",
+        "artifact_bytes": 6698432,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l083rbt6",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l083rbt6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_v1",
+          "spi",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "761a39a852ab9a3a7409d8bb2f4dfd3a302d4978e7e5367053ffb487198c08e0",
+        "binary": {
+          "arm_code_objects": 11,
+          "executable_section_bytes": 150028
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M08/receipt.json",
+        "receipt_sha256": "e38880fff023dbb39ae22faf06fde5d1b0ec3eba45004d3186c4832ea01098c4",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M09",
+        "kind": "rlib",
+        "feature": "cw32f002f3p7",
+        "bin": "",
+        "artifact_label": "main-recovered/M09/libembassy_cw32.rlib",
+        "artifact_sha256": "b4072f022bea0fa8ac4339a37b663f3e8e1d316d7903a4aa9c5526ad1b7aa48f",
+        "artifact_bytes": 3946300,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f002f3p7",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f002f3p7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "spi",
+          "spi_async_pio",
+          "spi_cw32f002_v1"
+        ],
+        "generated_hal_sha256": "1bb26fdaa5d04952d63ee8474d759bf83ff869cee6220a35de0050c22f9b6fe8",
+        "binary": {
+          "arm_code_objects": 7,
+          "executable_section_bytes": 47040
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M09/receipt.json",
+        "receipt_sha256": "e94440541a7f4d94ec3b345ea5c4cac4442f720559de2f7566ff1b10de4f7be0",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M10",
+        "kind": "rlib",
+        "feature": "cw32f003e4p7",
+        "bin": "",
+        "artifact_label": "main-recovered/M10/libembassy_cw32.rlib",
+        "artifact_sha256": "69a8dad9fae4d34050ee9f6e0ba937202bfa3a272f854e3500f1e018124d7e0b",
+        "artifact_bytes": 4306790,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f003e4p7",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f003e4p7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "spi",
+          "spi_async_pio",
+          "spi_cw32f002_v1"
+        ],
+        "generated_hal_sha256": "f3cab7a0583559bd1cf27b5b9596fb8258a2cb2a6d16567850bfdc92dd7044e8",
+        "binary": {
+          "arm_code_objects": 7,
+          "executable_section_bytes": 53632
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M10/receipt.json",
+        "receipt_sha256": "911a78636b061aa771f9514852821e6feb958bbc2d7a5eb2442bd36443d156c7",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M11",
+        "kind": "rlib",
+        "feature": "cw32l010f8p6",
+        "bin": "",
+        "artifact_label": "main-recovered/M11/libembassy_cw32.rlib",
+        "artifact_sha256": "b2f691c36c10794cc4b107ca6577f44c365ff24527902d81658054ea511ccaa5",
+        "artifact_bytes": 4915278,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l010f8p6",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l010f8p6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l010_v1"
+        ],
+        "generated_hal_sha256": "3b01e5b59eed44eb4f2adf3bccc276a2f96a5174f54470770744ef1b1f9ce7f4",
+        "binary": {
+          "arm_code_objects": 10,
+          "executable_section_bytes": 96976
+        },
+        "warnings": 3,
+        "errors": 0,
+        "receipt_label": "main-recovered/M11/receipt.json",
+        "receipt_sha256": "8c18c2ebdd605e59beb161ae89be777a24ef24f8b0b5c71bf8ccbf86537eb8e5",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M12",
+        "kind": "rlib",
+        "feature": "cw32l011k8t6",
+        "bin": "",
+        "artifact_label": "main-recovered/M12/libembassy_cw32.rlib",
+        "artifact_sha256": "d9f88fd4c286390bbdb030a25d2bd76d61e67e30a5ef9c131ce2f7f23ad26336",
+        "artifact_bytes": 5027474,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l011k8t6",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l011k8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l010_v1"
+        ],
+        "generated_hal_sha256": "cf2a5a387b533b48cd506c4a2b7a81b3a645fca197a62131b4b7cc7bc0fc90c1",
+        "binary": {
+          "arm_code_objects": 10,
+          "executable_section_bytes": 97074
+        },
+        "warnings": 3,
+        "errors": 0,
+        "receipt_label": "main-recovered/M12/receipt.json",
+        "receipt_sha256": "ff07372000d3cb5d6251f8e1274f5a7705544154a2e499ef2027297f05183ab3",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M13",
+        "kind": "rlib",
+        "feature": "cw32l012c8t6",
+        "bin": "",
+        "artifact_label": "main-recovered/M13/libembassy_cw32.rlib",
+        "artifact_sha256": "510be5c7e06f5619a04ebb229baf1a5454ee0a8f910c14bffb4f152c88271d9c",
+        "artifact_bytes": 6646888,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l012_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l012_v1"
+        ],
+        "generated_hal_sha256": "2f4dc99e3e51fdb995ba7b48266a9c059e828b6bbd25740f10bee35865447dc3",
+        "binary": {
+          "arm_code_objects": 11,
+          "executable_section_bytes": 135838
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M13/receipt.json",
+        "receipt_sha256": "262861bad182e45ac0fbf4e95476c44abb82fcfce70b27ce73d0a448394c935b",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M14",
+        "kind": "elf",
+        "feature": "cw32f020c6u7",
+        "bin": "cw32-spi-dma-example",
+        "artifact_label": "main-recovered/M14/firmware.elf",
+        "artifact_sha256": "0a12e422e96d7bef27e47be1de7472f62f3763fd66175e083e6c68bb30a4ea14",
+        "artifact_bytes": 215880,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f020c6u7",
+          "spi2-example"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f020c6u7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32f020_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_dma",
+          "spi_v1"
+        ],
+        "generated_hal_sha256": "b8eb8edc388008a958a77d50d82bfd5201b4455cc7fac54f3137416ca8a577b1",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 277,
+              "symbol": 277,
+              "binding": 1
+            },
+            {
+              "name": "DMACH1",
+              "irq": 9,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            },
+            {
+              "name": "DMACH2",
+              "irq": 10,
+              "word": 265,
+              "symbol": 265,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 32768
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 31640,
+          "ram_static_end": 536871556,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 30392
+            },
+            {
+              "name": ".rodata",
+              "address": 30584,
+              "bytes": 852
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 204
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 31648,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871120,
+              "bytes": 436
+            },
+            {
+              "name": ".uninit",
+              "address": 536871556,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M14/receipt.json",
+        "receipt_sha256": "57560abafa8ceddbb6762f77fa633312ef1f5eac47c05e1782b1944abcaf8cf1",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M15",
+        "kind": "elf",
+        "feature": "cw32l031c8t6",
+        "bin": "cw32-spi-dma-example",
+        "artifact_label": "main-recovered/M15/firmware.elf",
+        "artifact_sha256": "05259d46ed1b9df1c727a001790ca2d477a2d9c738bbf69ef9e9e8c22489ae64",
+        "artifact_bytes": 218680,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l031c8t6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l031c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "d31465cd72120c8ac31dab508cd0197f1715ab0c10084a969d34ab8db16e2975",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 273,
+              "symbol": 273,
+              "binding": 1
+            },
+            {
+              "name": "DMACH23",
+              "irq": 10,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 36332,
+          "ram_static_end": 536871576,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 35184
+            },
+            {
+              "name": ".rodata",
+              "address": 35376,
+              "bytes": 748
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 208
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 36352,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871120,
+              "bytes": 456
+            },
+            {
+              "name": ".uninit",
+              "address": 536871576,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M15/receipt.json",
+        "receipt_sha256": "3e17d1b4934cf88496f6eedb987efbe01bbb158314e22dd2f33e899c06c0824f",
+        "actual_cargo_execution": "original successful prefix invocation"
+      },
+      {
+        "row": "M16",
+        "kind": "elf",
+        "feature": "cw32l052c8t6",
+        "bin": "cw32-spi-dma-example",
+        "artifact_label": "main-recovered/M16/firmware.elf",
+        "artifact_sha256": "9be5faa9ef4645839d73c59928295336e9e63bcef592e61faf65bf49f1a32333",
+        "artifact_bytes": 225276,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l052c8t6",
+          "spi2-example"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l052c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "b5e6b3546cf761e13e6482514658d87528933c7a25319760b1eaf91476a282ba",
+        "binary": {
+          "machine": 40,
+          "entry": 189,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 269,
+              "symbol": 269,
+              "binding": 1
+            },
+            {
+              "name": "DMACH23",
+              "irq": 10,
+              "word": 249,
+              "symbol": 249,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 58056,
+          "ram_static_end": 536871576,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 188
+            },
+            {
+              "name": ".text",
+              "address": 188,
+              "bytes": 56764
+            },
+            {
+              "name": ".rodata",
+              "address": 56952,
+              "bytes": 892
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 212
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 58080,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871128,
+              "bytes": 448
+            },
+            {
+              "name": ".uninit",
+              "address": 536871576,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M16/receipt.json",
+        "receipt_sha256": "b4e285276d6fdbc249c97c84f892313aaa1bce244a9394dcd2a0dd0543b11d82",
+        "actual_cargo_execution": "original successful invocation; retention recovered without rerun"
+      },
+      {
+        "row": "M17",
+        "kind": "elf",
+        "feature": "cw32r031c8u6",
+        "bin": "cw32-spi-dma-example",
+        "artifact_label": "main-recovered/M17/firmware.elf",
+        "artifact_sha256": "ae6ff4941eedccd7ef7de72c234daeb8ca57979a9ca7fe3e351ea22863e0938d",
+        "artifact_bytes": 218644,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32r031c8u6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32r031c8u6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "ce65cd2bc57a99362bec64d197f034f59e729f08c10d666e03c7e73f7431a08d",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 273,
+              "symbol": 273,
+              "binding": 1
+            },
+            {
+              "name": "DMACH23",
+              "irq": 10,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 36384,
+          "ram_static_end": 536871576,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 35236
+            },
+            {
+              "name": ".rodata",
+              "address": 35428,
+              "bytes": 748
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 208
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 36384,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871120,
+              "bytes": 456
+            },
+            {
+              "name": ".uninit",
+              "address": 536871576,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M17/receipt.json",
+        "receipt_sha256": "6732d6d9ab5f96cff712da050a8b17eefc64963c374d8b4fef8b8879941e2e94",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M18",
+        "kind": "elf",
+        "feature": "cw32w031r8u6",
+        "bin": "cw32-spi-dma-example",
+        "artifact_label": "main-recovered/M18/firmware.elf",
+        "artifact_sha256": "438051192a7c84bc06fe4049e09b3dff286dcd0db19ebeeb46cd6b37d70a5b6b",
+        "artifact_bytes": 218644,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32w031r8u6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32w031r8u6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "3fdee331e4cb639853b0e9b2c891d842c86200d91e33ec76b4ba20f253c7337c",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 273,
+              "symbol": 273,
+              "binding": 1
+            },
+            {
+              "name": "DMACH23",
+              "irq": 10,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 36340,
+          "ram_static_end": 536871576,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 35192
+            },
+            {
+              "name": ".rodata",
+              "address": 35384,
+              "bytes": 748
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 208
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 36352,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871120,
+              "bytes": 456
+            },
+            {
+              "name": ".uninit",
+              "address": 536871576,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M18/receipt.json",
+        "receipt_sha256": "f0260a78493b3b0aae8b19b562bbfad48944d9dd7de8b21664782d6b2ac234ad",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M19",
+        "kind": "elf",
+        "feature": "cw32f020c6u7",
+        "bin": "spi2_flash_id",
+        "artifact_label": "main-recovered/M19/firmware.elf",
+        "artifact_sha256": "189ce19679ca2ad8343766b099b2df10584032d7c9c5ded1352b795f9c560253",
+        "artifact_bytes": 215304,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f020c6u7",
+          "spi2-example"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f020c6u7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32f020_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_dma",
+          "spi_v1"
+        ],
+        "generated_hal_sha256": "b8eb8edc388008a958a77d50d82bfd5201b4455cc7fac54f3137416ca8a577b1",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI2",
+              "irq": 26,
+              "word": 277,
+              "symbol": 277,
+              "binding": 1
+            },
+            {
+              "name": "DMACH1",
+              "irq": 9,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            },
+            {
+              "name": "DMACH2",
+              "irq": 10,
+              "word": 265,
+              "symbol": 265,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 32768
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 30040,
+          "ram_static_end": 536871460,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 28864
+            },
+            {
+              "name": ".rodata",
+              "address": 29056,
+              "bytes": 780
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 204
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 30048,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871120,
+              "bytes": 340
+            },
+            {
+              "name": ".uninit",
+              "address": 536871460,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M19/receipt.json",
+        "receipt_sha256": "7f69ae97530287f60f010dfb903aeb5bbf8b1c34222fe31442171b4ed5630364",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M20",
+        "kind": "elf",
+        "feature": "cw32l052c8t6",
+        "bin": "spi2_flash_id",
+        "artifact_label": "main-recovered/M20/firmware.elf",
+        "artifact_sha256": "9e5c8d2fed5f8876740f34cee7dea6857f892d6efa30ec490df21c198d0a6bbb",
+        "artifact_bytes": 224832,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l052c8t6",
+          "spi2-example"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l052c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "b5e6b3546cf761e13e6482514658d87528933c7a25319760b1eaf91476a282ba",
+        "binary": {
+          "machine": 40,
+          "entry": 189,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI2",
+              "irq": 26,
+              "word": 273,
+              "symbol": 273,
+              "binding": 1
+            },
+            {
+              "name": "DMACH1",
+              "irq": 9,
+              "word": 249,
+              "symbol": 249,
+              "binding": 1
+            },
+            {
+              "name": "DMACH4",
+              "irq": 11,
+              "word": 261,
+              "symbol": 261,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 56552,
+          "ram_static_end": 536871480,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 188
+            },
+            {
+              "name": ".text",
+              "address": 188,
+              "bytes": 55336
+            },
+            {
+              "name": ".rodata",
+              "address": 55524,
+              "bytes": 816
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 212
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 56576,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871128,
+              "bytes": 352
+            },
+            {
+              "name": ".uninit",
+              "address": 536871480,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M20/receipt.json",
+        "receipt_sha256": "a0589abdcf8c6a784f73043cce8c1cca97e2f29f9c161046e4167b6c1e5784ca",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M21",
+        "kind": "elf",
+        "feature": "cw32f030c8t7",
+        "bin": "cw32-spi-dma-example",
+        "artifact_label": "main-recovered/M21/firmware.elf",
+        "artifact_sha256": "2effe8c94ffc11f6a589dba991403f8ed9800dfe927aac09ace2385d1a31a576",
+        "artifact_bytes": 214528,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f030c8t7"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f030c8t7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_v1",
+          "spi",
+          "spi_dma",
+          "spi_v1"
+        ],
+        "generated_hal_sha256": "be22f4c0ebebca72c22f154fa8091c20f593774a201ee57638db7565d2d61e3a",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 273,
+              "symbol": 273,
+              "binding": 1
+            },
+            {
+              "name": "DMACH23",
+              "irq": 10,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 29352,
+          "ram_static_end": 536871588,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 28076
+            },
+            {
+              "name": ".rodata",
+              "address": 28268,
+              "bytes": 848
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 236
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 29376,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871152,
+              "bytes": 436
+            },
+            {
+              "name": ".uninit",
+              "address": 536871588,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M21/receipt.json",
+        "receipt_sha256": "05942f5c3aa7f983f25908c296c3d8883cb81a56d40b24c803444765654977ba",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M22",
+        "kind": "elf",
+        "feature": "cw32a030c8t7",
+        "bin": "cw32-spi-dma-example",
+        "artifact_label": "main-recovered/M22/firmware.elf",
+        "artifact_sha256": "d158487a0cd37a03a805cf13df442432e945e88e205f16086f782d223015157d",
+        "artifact_bytes": 214528,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32a030c8t7"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32a030c8t7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_v1",
+          "spi",
+          "spi_dma",
+          "spi_v1"
+        ],
+        "generated_hal_sha256": "be22f4c0ebebca72c22f154fa8091c20f593774a201ee57638db7565d2d61e3a",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 273,
+              "symbol": 273,
+              "binding": 1
+            },
+            {
+              "name": "DMACH23",
+              "irq": 10,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 29352,
+          "ram_static_end": 536871588,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 28076
+            },
+            {
+              "name": ".rodata",
+              "address": 28268,
+              "bytes": 848
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 236
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 29376,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871152,
+              "bytes": 436
+            },
+            {
+              "name": ".uninit",
+              "address": 536871588,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M22/receipt.json",
+        "receipt_sha256": "5b2b93257aaf42a04dc703e23e5e84882d4e3c50ed51a52dbf02eaae4ea16c0a",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M23",
+        "kind": "elf",
+        "feature": "cw32l083rbt6",
+        "bin": "cw32-spi-dma-example",
+        "artifact_label": "main-recovered/M23/firmware.elf",
+        "artifact_sha256": "751dcd64568063e3717ce647735111182d1ad259740832813a8b12cdc6697084",
+        "artifact_bytes": 296920,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l083rbt6",
+          "l083",
+          "spi2-example"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l083rbt6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_v1",
+          "spi",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "761a39a852ab9a3a7409d8bb2f4dfd3a302d4978e7e5367053ffb487198c08e0",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536895488,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 273,
+              "symbol": 273,
+              "binding": 1
+            },
+            {
+              "name": "DMACH23",
+              "irq": 10,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 131072
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 24576
+            }
+          ],
+          "flash_load_end": 77756,
+          "ram_static_end": 536871600,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 76176
+            },
+            {
+              "name": ".rodata",
+              "address": 76368,
+              "bytes": 1152
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 236
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 77760,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871152,
+              "bytes": 448
+            },
+            {
+              "name": ".uninit",
+              "address": 536871600,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "4ad3718412ffc4e69582238b5f07a54b41d2ce7e7c3c29179aa23e7b3a2707e7",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M23/receipt.json",
+        "receipt_sha256": "1671f91750d334d269e29a8435b575fec74c1e2b4c97cca8c4b3695173644339",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M24",
+        "kind": "elf",
+        "feature": "cw32l083rbt6",
+        "bin": "spi2_flash_id",
+        "artifact_label": "main-recovered/M24/firmware.elf",
+        "artifact_sha256": "16cd6ce0b6e54dc00b887c92747f8f6e05423a895f74d2154e06427368ec3aae",
+        "artifact_bytes": 296488,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l083rbt6",
+          "l083",
+          "spi2-example"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l083rbt6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_v1",
+          "spi",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "761a39a852ab9a3a7409d8bb2f4dfd3a302d4978e7e5367053ffb487198c08e0",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536895488,
+          "vectors": [
+            {
+              "name": "SPI2",
+              "irq": 26,
+              "word": 273,
+              "symbol": 273,
+              "binding": 1
+            },
+            {
+              "name": "DMACH45",
+              "irq": 11,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 131072
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 24576
+            }
+          ],
+          "flash_load_end": 76428,
+          "ram_static_end": 536871504,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 74924
+            },
+            {
+              "name": ".rodata",
+              "address": 75116,
+              "bytes": 1076
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 236
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 76448,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871152,
+              "bytes": 352
+            },
+            {
+              "name": ".uninit",
+              "address": 536871504,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "4ad3718412ffc4e69582238b5f07a54b41d2ce7e7c3c29179aa23e7b3a2707e7",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M24/receipt.json",
+        "receipt_sha256": "0f5b0ffda1edf921bbc5538ff25fee38282f95a4cfa9bf8f5f609c124ce85c30",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M25",
+        "kind": "elf",
+        "feature": "cw32f020c6u7",
+        "bin": "async_master",
+        "artifact_label": "main-recovered/M25/firmware.elf",
+        "artifact_sha256": "e24b5c05400b4310bbe06745ce8941f96c4c9111cc5b6457694bd5712929c47c",
+        "artifact_bytes": 219760,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f020c6u7"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f020c6u7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32f020_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_dma",
+          "spi_v1"
+        ],
+        "generated_hal_sha256": "b8eb8edc388008a958a77d50d82bfd5201b4455cc7fac54f3137416ca8a577b1",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            },
+            {
+              "name": "SPI2",
+              "irq": 26,
+              "word": 289,
+              "symbol": 289,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 32768
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 30184,
+          "ram_static_end": 536871580,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 28984
+            },
+            {
+              "name": ".rodata",
+              "address": 29176,
+              "bytes": 772
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 236
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 30208,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871152,
+              "bytes": 428
+            },
+            {
+              "name": ".uninit",
+              "address": 536871580,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M25/receipt.json",
+        "receipt_sha256": "4dccca673fa303d1cafb0648df2cdbd18b420ef6bab9866cd1f975e96e2f6d09",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M26",
+        "kind": "elf",
+        "feature": "cw32l031c8t6",
+        "bin": "async_master",
+        "artifact_label": "main-recovered/M26/firmware.elf",
+        "artifact_sha256": "5e0cc3e3674be51515a57e23a8ab29fa066d4b504755babbef6192dcfd6c54c6",
+        "artifact_bytes": 220284,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l031c8t6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l031c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "d31465cd72120c8ac31dab508cd0197f1715ab0c10084a969d34ab8db16e2975",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 31612,
+          "ram_static_end": 536871456,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 30576
+            },
+            {
+              "name": ".rodata",
+              "address": 30768,
+              "bytes": 636
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 208
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 31616,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871120,
+              "bytes": 336
+            },
+            {
+              "name": ".uninit",
+              "address": 536871456,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M26/receipt.json",
+        "receipt_sha256": "a00f226dd5738cc43b434bbf165e4b36edc610c1b36c6607448ad788a2432e19",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M27",
+        "kind": "elf",
+        "feature": "cw32l052c8t6",
+        "bin": "async_master",
+        "artifact_label": "main-recovered/M27/firmware.elf",
+        "artifact_sha256": "398005b20fbf82c32c31e85b701591a551b85f7a393dfe4c553617d2ef8f8b6e",
+        "artifact_bytes": 228056,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l052c8t6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l052c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "b5e6b3546cf761e13e6482514658d87528933c7a25319760b1eaf91476a282ba",
+        "binary": {
+          "machine": 40,
+          "entry": 189,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 249,
+              "symbol": 249,
+              "binding": 1
+            },
+            {
+              "name": "SPI2",
+              "irq": 26,
+              "word": 285,
+              "symbol": 285,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 51776,
+          "ram_static_end": 536871600,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 188
+            },
+            {
+              "name": ".text",
+              "address": 188,
+              "bytes": 50476
+            },
+            {
+              "name": ".rodata",
+              "address": 50664,
+              "bytes": 868
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 244
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 51776,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871160,
+              "bytes": 440
+            },
+            {
+              "name": ".uninit",
+              "address": 536871600,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M27/receipt.json",
+        "receipt_sha256": "e4b4a56610658399bff05259d9345b7f1204b067e57a2365d8faffc2afa0f670",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M28",
+        "kind": "elf",
+        "feature": "cw32r031c8u6",
+        "bin": "async_master",
+        "artifact_label": "main-recovered/M28/firmware.elf",
+        "artifact_sha256": "95fba6ab3facf5fc97eaf5be9c20036b266d7f74a938e82ef37073656301adb0",
+        "artifact_bytes": 220164,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32r031c8u6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32r031c8u6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "ce65cd2bc57a99362bec64d197f034f59e729f08c10d666e03c7e73f7431a08d",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 31576,
+          "ram_static_end": 536871456,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 30540
+            },
+            {
+              "name": ".rodata",
+              "address": 30732,
+              "bytes": 636
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 208
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 31584,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871120,
+              "bytes": 336
+            },
+            {
+              "name": ".uninit",
+              "address": 536871456,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M28/receipt.json",
+        "receipt_sha256": "0a54ee7df1f9c458205599b743b92f6d360b1580f015fb840e8e7d660d92afe3",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M29",
+        "kind": "elf",
+        "feature": "cw32w031r8u6",
+        "bin": "async_master",
+        "artifact_label": "main-recovered/M29/firmware.elf",
+        "artifact_sha256": "4dcbbb2e3fa3b480c1075f4ec186041be397ff0ba8db64d44bba74efc2fa16dd",
+        "artifact_bytes": 220164,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32w031r8u6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32w031r8u6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "3fdee331e4cb639853b0e9b2c891d842c86200d91e33ec76b4ba20f253c7337c",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 31560,
+          "ram_static_end": 536871456,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 30524
+            },
+            {
+              "name": ".rodata",
+              "address": 30716,
+              "bytes": 636
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 208
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 31584,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871120,
+              "bytes": 336
+            },
+            {
+              "name": ".uninit",
+              "address": 536871456,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M29/receipt.json",
+        "receipt_sha256": "499a8a851d288e40f19ed06e8feafeaf194d4274b2b1be5d2e2be3e08959837f",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M30",
+        "kind": "elf",
+        "feature": "cw32f002f3p7",
+        "bin": "async_master",
+        "artifact_label": "main-recovered/M30/firmware.elf",
+        "artifact_sha256": "37efad3eaea35448ec5cc9209aa361f60b141bb4ceb1935d9ac2e1e2dc01b061",
+        "artifact_bytes": 209432,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f002f3p7"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f002f3p7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "spi",
+          "spi_async_pio",
+          "spi_cw32f002_v1"
+        ],
+        "generated_hal_sha256": "1bb26fdaa5d04952d63ee8474d759bf83ff869cee6220a35de0050c22f9b6fe8",
+        "binary": {
+          "machine": 40,
+          "entry": 189,
+          "sp": 536872960,
+          "vectors": [
+            {
+              "name": "SPI",
+              "irq": 25,
+              "word": 249,
+              "symbol": 249,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 16384
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 2048
+            }
+          ],
+          "flash_load_end": 9640,
+          "ram_static_end": 536871260,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 188
+            },
+            {
+              "name": ".text",
+              "address": 188,
+              "bytes": 9104
+            },
+            {
+              "name": ".rodata",
+              "address": 9292,
+              "bytes": 272
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 76
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 9664,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536870992,
+              "bytes": 268
+            },
+            {
+              "name": ".uninit",
+              "address": 536871260,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "8a134ce5a9a5bd4efb8975b096a87691bce23a80aace4e387642395c10230a07",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M30/receipt.json",
+        "receipt_sha256": "0a4a36d19b49fe73203fca14320efc7772d144233be9d5dc6f03fda67219da99",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M31",
+        "kind": "elf",
+        "feature": "cw32f003e4p7",
+        "bin": "async_master",
+        "artifact_label": "main-recovered/M31/firmware.elf",
+        "artifact_sha256": "854869f14e58ef0417d5f1b42e3c52d70b571be6ee83bd0dd452e8b1be17b565",
+        "artifact_bytes": 209504,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f003e4p7"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f003e4p7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "spi",
+          "spi_async_pio",
+          "spi_cw32f002_v1"
+        ],
+        "generated_hal_sha256": "f3cab7a0583559bd1cf27b5b9596fb8258a2cb2a6d16567850bfdc92dd7044e8",
+        "binary": {
+          "machine": 40,
+          "entry": 189,
+          "sp": 536873984,
+          "vectors": [
+            {
+              "name": "SPI",
+              "irq": 25,
+              "word": 249,
+              "symbol": 249,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 20480
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 3072
+            }
+          ],
+          "flash_load_end": 9640,
+          "ram_static_end": 536871260,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 188
+            },
+            {
+              "name": ".text",
+              "address": 188,
+              "bytes": 9104
+            },
+            {
+              "name": ".rodata",
+              "address": 9292,
+              "bytes": 272
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 76
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 9664,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536870992,
+              "bytes": 268
+            },
+            {
+              "name": ".uninit",
+              "address": 536871260,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "51a09a3ba8eaf2843fe33235d60bcbefa9ab36b38daa3375e4eacd6dde9b0038",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M31/receipt.json",
+        "receipt_sha256": "98d5621c978725c6b82a4e60962c6d2119ce3bc51ff4473afe01ed341f3de2ee",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M32",
+        "kind": "elf",
+        "feature": "cw32l010f8p6",
+        "bin": "async_master",
+        "artifact_label": "main-recovered/M32/firmware.elf",
+        "artifact_sha256": "64434f180d0f7ca139034e8fd27f7d4c7b439f930ad0ac424fb0c9fb5be484b1",
+        "artifact_bytes": 217064,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l010f8p6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l010f8p6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l010_v1"
+        ],
+        "generated_hal_sha256": "3b01e5b59eed44eb4f2adf3bccc276a2f96a5174f54470770744ef1b1f9ce7f4",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536875008,
+          "vectors": [
+            {
+              "name": "SPI",
+              "irq": 25,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 4096
+            }
+          ],
+          "flash_load_end": 37412,
+          "ram_static_end": 536871324,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 36684
+            },
+            {
+              "name": ".rodata",
+              "address": 36876,
+              "bytes": 404
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 132
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 37440,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871048,
+              "bytes": 276
+            },
+            {
+              "name": ".uninit",
+              "address": 536871324,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "4b9f47e1a23cf36589dc5a3be0b68acff633880dbec554ac1d089aa611e959ee",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 3,
+        "errors": 0,
+        "receipt_label": "main-recovered/M32/receipt.json",
+        "receipt_sha256": "7ce843eb2e185c5866762ff4b8b7ee208941b59b128f7056e48f6d25f9da8a74",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M33",
+        "kind": "elf",
+        "feature": "cw32l011k8t6",
+        "bin": "async_master",
+        "artifact_label": "main-recovered/M33/firmware.elf",
+        "artifact_sha256": "6c785eb8ee548474f774d5259386ecab8c5b8933c6d347982ebfa4ff52f1a9ff",
+        "artifact_bytes": 218164,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l011k8t6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l011k8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l010_v1"
+        ],
+        "generated_hal_sha256": "cf2a5a387b533b48cd506c4a2b7a81b3a645fca197a62131b4b7cc7bc0fc90c1",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536877056,
+          "vectors": [
+            {
+              "name": "SPI",
+              "irq": 25,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 6144
+            }
+          ],
+          "flash_load_end": 37868,
+          "ram_static_end": 536871324,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 37020
+            },
+            {
+              "name": ".rodata",
+              "address": 37212,
+              "bytes": 524
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 132
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 37888,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871048,
+              "bytes": 276
+            },
+            {
+              "name": ".uninit",
+              "address": 536871324,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "4a0a3bbecf653ad536fb04acdf085d0cd62a166e2ac3932d76a9cb5fb277c04f",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 3,
+        "errors": 0,
+        "receipt_label": "main-recovered/M33/receipt.json",
+        "receipt_sha256": "004b6c7349927b71c2cc3a445d4288db5ae720f3d17ecb7e405919aad69106ed",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M34",
+        "kind": "elf",
+        "feature": "cw32l012c8t6",
+        "bin": "async_master",
+        "artifact_label": "main-recovered/M34/firmware.elf",
+        "artifact_sha256": "7f51dd58098ff64088bbc934702dc9eb8ff55ea681e0b786a6886e3f480382ad",
+        "artifact_bytes": 224868,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l012c8t6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l012_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l012_v1"
+        ],
+        "generated_hal_sha256": "2f4dc99e3e51fdb995ba7b48266a9c059e828b6bbd25740f10bee35865447dc3",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [
+            {
+              "name": "SPI1",
+              "irq": 25,
+              "word": 253,
+              "symbol": 253,
+              "binding": 1
+            },
+            {
+              "name": "SPI23",
+              "irq": 26,
+              "word": 277,
+              "symbol": 277,
+              "binding": 1
+            }
+          ],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 56600,
+          "ram_static_end": 536871588,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 55236
+            },
+            {
+              "name": ".rodata",
+              "address": 55428,
+              "bytes": 944
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 228
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 56608,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871144,
+              "bytes": 444
+            },
+            {
+              "name": ".uninit",
+              "address": 536871588,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M34/receipt.json",
+        "receipt_sha256": "eae4c43e2a9c51016bb4051eff1014b9bd2f55b4f1c5f2422e3719251918f1b3",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M35",
+        "kind": "elf",
+        "feature": "cw32f020c6u7",
+        "bin": "blocking_master",
+        "artifact_label": "main-recovered/M35/firmware.elf",
+        "artifact_sha256": "bac164b07d9cd9d95679cc64ef604601547ac56c4c771141a43adfb8a0edb75a",
+        "artifact_bytes": 213632,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32f020c6u7"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32f020c6u7",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32f020_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_dma",
+          "spi_v1"
+        ],
+        "generated_hal_sha256": "b8eb8edc388008a958a77d50d82bfd5201b4455cc7fac54f3137416ca8a577b1",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 32768
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 25392,
+          "ram_static_end": 536871128,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 24264
+            },
+            {
+              "name": ".rodata",
+              "address": 24456,
+              "bytes": 732
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 204
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 25408,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871116,
+              "bytes": 12
+            },
+            {
+              "name": ".uninit",
+              "address": 536871128,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M35/receipt.json",
+        "receipt_sha256": "f7f69a7622e6515eb1dac4a5da8049721fe5859a18434772c10f01b37aaab7f3",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M36",
+        "kind": "elf",
+        "feature": "cw32l031c8t6",
+        "bin": "blocking_master",
+        "artifact_label": "main-recovered/M36/firmware.elf",
+        "artifact_sha256": "6eb5cad39e222ac02f71bf9a47792000f985b41308c4a8a00e4d15001e31b08f",
+        "artifact_bytes": 149716,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l031c8t6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l031c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l031_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l031_v1",
+          "spi_dma"
+        ],
+        "generated_hal_sha256": "d31465cd72120c8ac31dab508cd0197f1715ab0c10084a969d34ab8db16e2975",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 27452,
+          "ram_static_end": 536871136,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 26472
+            },
+            {
+              "name": ".rodata",
+              "address": 26664,
+              "bytes": 596
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 192
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 27456,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871104,
+              "bytes": 32
+            },
+            {
+              "name": ".uninit",
+              "address": 536871136,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M36/receipt.json",
+        "receipt_sha256": "94a87fe20e51eb7068c58b71bf4db3a2c70c255b37a28e49beaa1e9ec82d11fa",
+        "actual_cargo_execution": "successful continuation invocation"
+      },
+      {
+        "row": "M37",
+        "kind": "elf",
+        "feature": "cw32l012c8t6",
+        "bin": "blocking_master",
+        "artifact_label": "main-recovered/M37/firmware.elf",
+        "artifact_sha256": "0eb3dac7127c95b38679aadc3c9b99ec403f865fafb85a0a1d327cce6f0e29cb",
+        "artifact_bytes": 220852,
+        "cargo_fresh": false,
+        "artifact_features": [
+          "cw32l012c8t6"
+        ],
+        "compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "hal_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "spi_dma_cfgs": [
+          "dma_cw32l012_v1",
+          "spi",
+          "spi_async_pio",
+          "spi_cw32l012_v1"
+        ],
+        "generated_hal_sha256": "2f4dc99e3e51fdb995ba7b48266a9c059e828b6bbd25740f10bee35865447dc3",
+        "binary": {
+          "machine": 40,
+          "entry": 193,
+          "sp": 536879104,
+          "vectors": [],
+          "memory": [
+            {
+              "address": 0,
+              "kind": "flash",
+              "name": "FLASH",
+              "size": 65536
+            },
+            {
+              "address": 536870912,
+              "kind": "ram",
+              "name": "RAM",
+              "size": 8192
+            }
+          ],
+          "flash_load_end": 53800,
+          "ram_static_end": 536871152,
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 52476
+            },
+            {
+              "name": ".rodata",
+              "address": 52668,
+              "bytes": 904
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 228
+            },
+            {
+              "name": ".gnu.sgstubs",
+              "address": 53824,
+              "bytes": 0
+            },
+            {
+              "name": ".bss",
+              "address": 536871140,
+              "bytes": 12
+            },
+            {
+              "name": ".uninit",
+              "address": 536871152,
+              "bytes": 0
+            }
+          ],
+          "linker_memory_sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+          "target_linker_sha256": "a197347e133fa2b77d40c9cf69eb73de256e757e9250e8bf25aa83444fd5dd23"
+        },
+        "warnings": 0,
+        "errors": 0,
+        "receipt_label": "main-recovered/M37/receipt.json",
+        "receipt_sha256": "f7d9b2a96e88e6c1d03aa77b5d407a3bd11a383b40cc0520e040d9e29516ddef",
+        "actual_cargo_execution": "successful continuation invocation"
+      }
+    ],
+    "dependent_archive_format": {
+      "archives": 24,
+      "arm_elf_metadata_members": 48,
+      "llvm_bitcode_members": 24,
+      "unrecognized_members": 0,
+      "qualification": "Direct retained member magic/ELF-machine inspection. Bitcode target was not independently decoded; exact target/features come from actual Cargo messages and the associated linked ARM ELFs."
+    }
+  },
+  "retention_failure_and_recovery": {
+    "original_authority_label": "main",
+    "original_status": "failed_retention_attempt_preserved",
+    "failed_row": "M16",
+    "original_cargo_exit_code": 0,
+    "original_cargo_build_finished_success": true,
+    "cause": "ENOSPC while retaining outputs after successful compilation; no compiler failure was reclassified.",
+    "original_summary_sha256": "cd1c08323625fdfe899f314f34f0b0eadaf28c6322f11950c6391c97cdd3d5df",
+    "original_m16_receipt_sha256": "c34c4c57e14c85dd06ba08390dc7c508784ec27b302669b30007ed029b4fe0d1",
+    "original_m16_cargo_json_sha256": "24ecdcf8731cacb86a6d3429681d1332d010a2a521e4543871db2c50a586629c",
+    "reused_original_rows": "M01-M15",
+    "artifact_recovered_without_cargo_rerun": [
+      "M16"
+    ],
+    "new_cargo_rows": "M17-M37",
+    "new_cargo_invocations": 21,
+    "recovery_proof": "Original successful Cargo logs and exact selected output tuple, unchanged source/toolchain/config, original retained output correspondence, and no intervening Cargo build before M16 recovery. Both original and recovered evidence remain retained.",
+    "deduplication": "Receipt-backed immutable evidence copies were consolidated only after full-byte/hash/mode equality; live Cargo files and original M16 evidence were excluded. Future retention first creates independent verified blobs, then links immutable retained copies.",
+    "deduplication_reclaimed_allocated_bytes": 10100518912,
+    "deduplication_plan_sha256": "05aecf2c26ab4464a27f6bc54ae62bd95da0f33804818c1d1cac00769410289a",
+    "recovery_review_label": "independent-review/runtime-main/retention-recovery-review.json",
+    "recovery_review_sha256": "a55c7c516a5f3525fbcc88d000a779925d54bee7dcbb085e4016403dd560fefe"
+  },
+  "supporting_execution": {
+    "navigation": {
+      "label": "main-navigation/N01.receipt.json",
+      "executed": 1,
+      "exit_code": 0
+    },
+    "finite_factual_commands": {
+      "label": "main-gates",
+      "executed": 5,
+      "all_exit_codes": 0,
+      "canonical_generation": 0,
+      "interpretation": "Source facts and current metadata checks; not a runtime lifecycle proof."
+    }
+  },
+  "clean_replay_at_review": {
+    "status": "pending_separate_final_source_replay",
+    "accepted": false,
+    "required_for_completion": true,
+    "planned_standalone_rlibs": 2,
+    "planned_elf_links": 6
+  },
+  "limits": [
+    "This record accepts actual main source/build/artifact evidence, not later final-source packaging or clean replay.",
+    "No silicon or firmware execution was performed.",
+    "Software checks and linking do not establish DMA bus retirement on silicon, lost-wake/cancellation interleavings, wire timing, throughput, power, RF coexistence or finite liveness.",
+    "ELF memory placement is a link-time fact, not measured stack usage.",
+    "No dynamically exercised mixed PIO/DMA hardware workload is claimed.",
+    "L012 SPI DMA and its separate UART RX qualification remain excluded."
+  ],
+  "external_artifact_labels": "Labels identify separately retained acceptance artifacts; they are not source-archive paths or embedded absolute workspace locations."
+}

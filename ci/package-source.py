@@ -117,6 +117,8 @@ def required_evidence(root: Path) -> set[str]:
     required.add("docs/adc-l012-adc2-async-source-review.json")
     required.add("docs/classic-uart-dma-rx-runtime-review.json")
     required.add("docs/classic-uart-dma-rx-source-review.json")
+    required.add("docs/classic-spi-dma-runtime-review.json")
+    required.add("docs/classic-spi-dma-source-review.json")
     return required
 
 

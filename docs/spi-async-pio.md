@@ -3,12 +3,16 @@
 F020, F002, F003, L010, L011, L012, L031, R031, W031 and L052 provide
 `Spi<'d, Async, Master>::new_async` and `try_new_async` with ordinary borrowed
 peripheral/pin owners and caller buffers. This is an explicitly qualified
-interrupt-assisted PIO implementation. F030/A030/L083 retain their separate
-six-instance [staged DMA API and lifecycle](spi-dma.md).
+interrupt-assisted PIO implementation. F020/L031/L052/R031/W031 additionally
+have the Stage93 [staged DMA extension](spi-dma.md), whose separate main software
+verification and independent runtime and metadata/source reviews accepted the
+bounded change. Its final-source clean replay had not run at main acceptance.
+Their PIO constructors remain borrowed; each constructor fixes its owner's
+backend. F030/A030/L083 retain their six existing DMA instances.
 
-Independent runtime and source/metadata reviews accepted the frozen
-implementation. Main verification passed fourteen standalone ARM libraries,
-nineteen linked ELFs and seven finite source/data commands. At main acceptance
+Historical Stage89 runtime and source/metadata reviews accepted that frozen
+PIO implementation. Its main verification passed fourteen standalone ARM
+libraries, nineteen linked ELFs and seven finite source/data commands. At main acceptance
 the separate final-source clean replay had not run; it remains required for
 final-package completion. These software results do not establish hardware
 behavior. See the [verification boundary](#source-evidence-and-verification-boundary).
@@ -27,9 +31,12 @@ behavior. See the [verification boundary](#source-evidence-and-verification-boun
 These are fourteen family/controller pairs across ten families, 36 existing
 chip selectors and 26 exact packages. Package pin availability still governs
 construction; a family alias is not a fabricated exact package or memory map.
-The existing DMA cohort remains three families and six family/controller pairs.
-`spi_async_pio` and `spi_dma` qualification are explicit and disjoint; having
-no DMA implementation does not automatically admit an IRQ PIO family.
+Stage93 adds seven DMA family/controller pairs on F020/L031/L052/R031/W031,
+bringing the DMA cohort to eight families and thirteen pairs, with separate main
+software acceptance and a final-source clean replay still unrun at that point.
+`spi_async_pio` and `spi_dma` are independently qualified and coexist
+on those five families. Neither qualification implies the other. F030/A030/L083
+remain DMA-only; F002/F003/L010/L011/L012 remain PIO-only.
 
 The constructors take the peripheral, SCK, MOSI, MISO, typed IRQ binding and
 `Config`, in that order. `try_new_async` validates before changing peripheral
@@ -38,6 +45,21 @@ invalid-configuration convention. The owner retains its `Peri<'d, T>` and all
 three `Flex<'d>` pins. No `'static` tokens, DMA channels or private staging
 buffers are required. The binding must satisfy the instance's required handler,
 including the full L012 shared handler described below.
+
+The common lifetime-generic async methods and `SpiBus<u8>` implementation
+select the backend installed by the constructor. Static PIO tokens still select
+PIO through `new_async`; DMA still requires `new_with_dma` with all static
+resources. No backend-switching API or borrowed DMA constructor is introduced.
+The dedicated `InterruptHandler` retains its public binding shape and dispatches
+to separate PIO/DMA states with active-before-MMIO guards. L012's shared PIO
+handler remains PIO-only.
+
+The five dual-capable families gain the existing DMA-gated variants in the
+already `#[non_exhaustive]` enums:
+`ConfigError::{DmaBuffer, DmaChannel, DmaQuarantined}` and
+`Error::{Dma, DmaBusy, DmaQuarantined}`. External matches
+already require a fallback; cfg-specific/in-crate exhaustive handling may need
+updates. The preserved PIO signatures do not imply an unchanged variant set.
 
 Inherent `read`, `write`, `transfer`, `transfer_in_place` and `flush` implement
 `embedded_hal_async::spi::SpiBus<u8>`. `transfer` clocks the larger slice length,
@@ -57,7 +79,8 @@ automatic retransmission or new device adapter.
 The [clock bounds](spi-clock-bounds.md), sampling-delay meanings, pull
 restrictions and safe package routes remain authoritative. L010/L011/L012 use
 their actual typed register layouts and enable placement. No new frequency,
-DMA/ADC trigger, route, package or low-power qualification follows.
+ADC trigger, route, package or low-power qualification follows from PIO.
+The bounded Stage93 DMA extension has its own source and verification scope.
 
 ## Task work, interrupts and completion
 
@@ -185,6 +208,13 @@ whole-GPIOB effects during existing clock inspection. This API adds no RF access
 reset, inspection, arbitration, coexistence, continuity or internal-pad entitlement.
 
 ## Source evidence and verification boundary
+
+Stage93 coexistence has separate main software acceptance. Its final-source
+clean replay had not run at main acceptance. These receipts remain separate
+from the Stage89 results below; those historical reviews, source identities
+and counts do not accept the current coexistence change.
+L012 SPI DMA remains unqualified and L012 UART RX remains blocked on its
+separate RC/ORE proof. Neither qualification is reopened here.
 
 [Own-family evidence](spi-async-pio-evidence.json) records the pinned source
 identities and status, interrupt, enable, error, ICR/DR and W031 ownership

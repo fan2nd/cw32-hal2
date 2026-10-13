@@ -1,11 +1,111 @@
-# Safe staged F030/A030/L083 SPI DMA
+# Safe staged classic SPI DMA
 
-F030/A030/L083 `Spi<'static, Async, Master>::new_with_dma` consumes whole static SPI,
+Stage93 main software verification and independent runtime and metadata/source
+reviews accepted the bounded F020/L031/L052/R031/W031 extension to the existing
+F030/A030/L083 staged SPI DMA scope. Main produced thirteen standalone ARM
+libraries and twenty-four linked ELFs in 37 actual Cargo invocations, all exiting
+zero. The twenty-four dependent HAL archives retained with those ELFs are not
+additional standalone library commands. Five finite source/data gates and a
+separate source-navigation refresh passed. Main ran no canonical generation;
+all 1,478 frozen source files, all 910 generated files and the recorded toolchain
+were unchanged through the main run.
+
+The first main attempt stopped while retaining M16 artifacts with ENOSPC after
+Cargo had already linked successfully. Reviewed immutable-artifact deduplication
+and recovery preserved the failed attempt and reused verified M01–M15. M16's
+original outputs were retained without another Cargo invocation; only M17–M37
+ran during the continuation. The accepted main result binds that recovered
+37-row record, not a clean rerun or an erased failure. L010F8P6 and L011K8T6
+library and async-PIO ELF rows each retained three existing unused RCC LSE
+constants; the other eleven libraries and twenty-two ELFs were warning-free.
+
+Main used the explicitly recorded Rust/Cargo 1.99.0 toolchain and the separate
+project source and external vendor-evidence roots. At main acceptance final
+capability reports and the separate final-source two-library/six-ELF clean replay
+had not run; final-package completion requires their own receipts against the
+final documented source. These main receipts remain bound to their frozen main
+inputs. Earlier SPI and DMA receipts retain their dated scope; no hardware
+result is claimed.
+
+`Spi<'static, Async, Master>::new_with_dma` consumes whole static SPI,
 SCK/MOSI/MISO, two admitted DMA-channel tokens, and two exclusive static SRAM
 slices. Its ordinary borrowed `transfer`, `transfer_in_place`, `read`, `write`
 and `flush` methods implement `embedded_hal_async::spi::SpiBus<u8>`. Caller
-memory is never a DMA endpoint. This is a source/build-qualified subset, not a
-silicon, throughput or generic device-adapter cancellation qualification.
+memory is never a DMA endpoint. Neither source evidence nor software validation
+qualifies silicon, throughput or generic device-adapter cancellation behavior.
+
+## Current scope and backend choice
+
+The five-family extension is seven new family/controller pairs, fourteen exact
+memory-qualified parts and twenty selected exact-part/controller routes. With
+F030/A030/L083, the staged DMA cohort has eight families and thirteen
+family/controller pairs. The new routes use the existing classic CR1 request
+gates and typed DR endpoint; each family's own sources supply the byte-DMA
+qualification recorded in [the current evidence ledger](classic-spi-dma-evidence.json).
+
+| New family | SPI instances | RX/TX selectors | Physical DMA channels / vectors |
+| --- | --- | --- | --- |
+| F020 | SPI1, SPI2 | SPI1 6/7; SPI2 8/9 | CH1/DMACH1, CH2/DMACH2 |
+| L031, R031, W031 | SPI1 | 6/7 | CH1/DMACH1, CH2+CH3/DMACH23, CH4/DMACH4 |
+| L052 | SPI1, SPI2 | SPI1 6/7; SPI2 8/9 | CH1/DMACH1, CH2+CH3/DMACH23, CH4/DMACH4 |
+
+The exact parts are `cw32f020c6u7`, `cw32f020k6u7`, `cw32f020f6u7`,
+`cw32l031c8t6`, `cw32l031c8u6`, `cw32l031f8p6`, `cw32l031f8u6`,
+`cw32l031k8u6`, `cw32l031k8v6`, `cw32l052c8t6`, `cw32l052r8s6`,
+`cw32l052r8t6`, `cw32r031c8u6` and `cw32w031r8u6`. All retain 8 KiB SRAM at
+`[0x20000000,0x20002000)`; F020 retains 32 KiB Flash and the other eleven parts
+64 KiB. Generic aliases retain `MissingMemoryMetadata` safe-staging/admission
+rejection. No alias memory map or package route is invented.
+
+The selected SPI1 triple is PA5/PA7/PA6 and SPI2 is PA2/PA1/PA0, in
+SCK/MOSI/MISO order, all AF5. The ledger binds all twenty exact package routes;
+this does not newly audit every alternative AF permutation. CS is separately
+owned bonded GPIO. The representative DMA examples use PB0 for both binaries;
+PB0 is absent on F020F6U7 and L031F8P6/F8U6, which require a bonded alternative
+such as PB1 in a future application. The existing maximum SCK is 12 MHz, with
+minimum divisor 2 on F020 and 4 on L031/L052/R031/W031.
+
+F020 has only two DMA channels. One full-duplex DMA owner consumes both;
+SPI1 and SPI2 DMA examples are separate firmware deployments. Clean Drop does
+not restore one-time channel admission. PIO on another controller remains
+useful while the pair is reserved. Four-channel shared-vector handlers preserve
+each sibling's independent flags and waiter; no fifth channel is available.
+
+F020/L031/L052/R031/W031 retain ordinary-borrowed `new_async` / `try_new_async`
+[IRQ PIO construction](spi-async-pio.md) alongside static `new_with_dma`.
+The constructor fixes the backend for that owner. One lifetime-generic async
+method/trait surface dispatches to the installed backend; it does not switch
+backends, relax static DMA ownership or admit two owners of one controller.
+Different controllers may use different backends. The dedicated public
+`InterruptHandler` keeps its binding shape and dispatches to separate PIO and
+DMA states, each checking its active guard before MMIO.
+
+On the five newly dual-capable families, the already `#[non_exhaustive]`
+`ConfigError` and `Error` enums gain their existing DMA-gated variants:
+`ConfigError::{DmaBuffer, DmaChannel, DmaQuarantined}` and
+`Error::{Dma, DmaBusy, DmaQuarantined}`. Valid external matches already need a
+fallback; in-crate exhaustive/cfg-specific matches and explicit DMA handling may
+need updates. Preserved PIO signatures do not mean an unchanged public variant
+set. F030/A030/L083 remain DMA-only; the five other PIO families remain PIO-only.
+
+A private owner of the original static RX allocation preserves automatic
+`Send`/`Sync` derivation for existing PIO and blocking owners when DMA becomes
+available. The same correction also permits existing F030/A030/L083 DMA and
+blocking owners to satisfy these traits, subject to their other fields and
+borrow lifetimes. Only the private storage token has explicit trait proofs;
+`Spi` and `SpiDma` remain compiler checked. Moving an owner does not move its
+static allocation or end a transfer, and shared access exposes no RX bytes.
+CPU RX copying still needs exclusive access after both fenced retirements.
+This does not make a borrowed owner static or promise that every operation
+future is `Send`.
+
+L012 SPI DMA remains unqualified: native CR2 gates, byte endpoint/descriptors
+and the complete shared DMA-aware SPI23 binding need a separate qualification.
+Its PIO SPI1/SPI2/SPI3 and shared SPI23 handler remain unchanged. L012 UART RX
+remains blocked on its separate RC/ORE proof; this extension does not reopen it.
+R031 whole-GPIOA handover and W031 GPIOB/SPI1 ownership restrictions remain.
+W031 external SPI is unavailable while internal RF uses SPI1. DMA and PA routing
+provide no RF arbitration, coexistence, continuity or RF access.
 
 ## Chip select and cancellation
 
@@ -35,9 +135,9 @@ any destination reference while DMA may write. Only successful paired
 retirement permits a temporary CPU read slice and caller-buffer copy. The
 private unsafe `Channel::start_read` accepts a pointer/count for the same reason.
 
-Channels use existing one-time `Channel::new_admitted`; no raw-channel upgrade,
-new request table, RCC layer or register adapter is introduced. Constructor
-errors consume inputs, and failure admitting the second channel can consume
+Channels use existing sequential one-time `Channel::new_admitted` calls;
+there is no atomic pair-admission promise, raw-channel upgrade, new request
+table, RCC layer or register adapter. Constructor errors consume inputs, and failure admitting the second channel can consume
 the first admission without starting either transfer. The existing generated
 request routes and SPI GLOBAL interrupt facts supply selectors and bindings.
 Normal reset/clean-runtime HAL initialization is required; dirty startup is
@@ -91,8 +191,11 @@ poisoned pair masks SPI IER, deactivates the static SPI ISR guard, and forgets
 both DMA/storage owners and all three AF pins, returning before SPI disable or
 RCC gating. Static DMA handlers may still record/mask their own terminals.
 Forgetting the driver also retains all static resources. Clean Drop follows
-the original disable/gate/pin-disconnect path. No public free/split/raw
-conversion, buffer recovery or DMA-to-PIO conversion is offered.
+the original disable/gate/pin-disconnect path without restoring channel
+admission. A PIO owner's Drop is destructive teardown without
+DMA retention, and PIO errors use their existing destructive recovery; they do
+not enter DMA quarantine. No public free/split/raw conversion, buffer recovery
+or DMA-to-PIO conversion is offered.
 
 ## Data behavior and costs
 
@@ -112,6 +215,15 @@ excessive SCK or competing DMA traffic can cause overrun. Clock bounds do not
 prove lossless reception. No bounded completion time or safe early abort exists.
 
 ## Primary evidence
+
+The [five-family current evidence ledger](classic-spi-dma-evidence.json) binds
+the selected own manuals, SVD/header data and package datasheets for the
+Stage93 extension. Each own manual supplies paired byte master DMA, DR-read
+RXNE clearing, native request selectors and the terminal/request-close/BUSY-idle
+sequence. Shared register layouts and historical UART DMA acceptance are not
+substitutes for those SPI facts. Stage93 has its separate bounded main software
+acceptance described above; its final-source clean replay had not run at main
+acceptance. The following x030/L083 source history retains its original scope.
 
 L083 SPI1/SPI2 use their own CN V2.0 manual paired byte-DMA sequence and error
 semantics, as recorded in [L083 qualification](l083-peripheral-dma.md). The

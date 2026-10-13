@@ -9,7 +9,16 @@ implementation and acceptance receipts. No transfer on hardware or wire
 output is claimed. Stage92 separately extends finite RX and combined/split
 UART DMA on the same three exact parts, using the existing runtime algorithm;
 see [the current classic RX contract and verification](classic-uart-dma-rx.md).
-The Stage84 source and review records below retain their copy/TX scope.
+Stage93 separately adds SPI1/SPI2 paired byte DMA on these three exact parts;
+its main software verification and independent runtime and metadata/source
+reviews accepted the bounded change. At main acceptance its separate final-source
+two-library/six-ELF clean replay had not run. See [the current SPI contract and
+main verification](spi-dma.md) and [own SPI evidence](classic-spi-dma-evidence.json).
+Both native channels are
+consumed by one SPI pair, so SPI1/SPI2 DMA examples are separate deployments;
+clean Drop does not restore channel admission. Borrowed IRQ PIO remains
+available. The Stage84 source and review records below retain their copy/TX
+scope and do not verify Stage93.
 
 The source identities, page hashes, decoded facts and remaining obligations are
 in [f020-dma-owned-evidence.json](f020-dma-owned-evidence.json). The originals are
@@ -129,8 +138,11 @@ metadata does not override package exclusions: F6's only UART1 TX candidate is
 PA14 and remains excluded from safe TxPin. PA13/PA14/PF3 exclusions are retained.
 Stage84 admitted only copy/TX. Current [Stage92 RX qualification](classic-uart-dma-rx.md)
 adds finite UART RX and combined/split DMA without changing these historical
-proofs. F6 UART1 has no safe RX either. SPI DMA, other requests, borrowed
-hardware-request constructors and buffered-plus-DMA ownership remain excluded.
+proofs. F6 UART1 has no safe RX either. Stage93 SPI1/SPI2 uses its separate
+own-source qualification and separate main software acceptance; its final-source
+clean replay had not run at main acceptance. Other requests,
+borrowed hardware-request constructors and buffered-plus-DMA UART ownership
+remain excluded.
 
 ## Verification boundary
 
