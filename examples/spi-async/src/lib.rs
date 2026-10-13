@@ -35,6 +35,7 @@ macro_rules! primary_pins {
         #[cfg(any(
             feature = "cw32f020c6u7",
             feature = "cw32l012c8t6",
+            feature = "cw32l012c8u6",
             feature = "cw32l031c8t6",
             feature = "cw32r031c8u6",
             feature = "cw32w031r8u6",
@@ -49,7 +50,8 @@ macro_rules! primary_pins {
 #[cfg(any(
     feature = "cw32f020c6u7",
     feature = "cw32l052c8t6",
-    feature = "cw32l012c8t6"
+    feature = "cw32l012c8t6",
+    feature = "cw32l012c8u6"
 ))]
 #[macro_export]
 macro_rules! secondary_pins {
@@ -59,7 +61,7 @@ macro_rules! secondary_pins {
 }
 
 /// L012's third bus shares SPI23 with SPI2, but owns separate pins and CS.
-#[cfg(feature = "cw32l012c8t6")]
+#[cfg(any(feature = "cw32l012c8t6", feature = "cw32l012c8u6"))]
 #[macro_export]
 macro_rules! tertiary_pins {
     ($p:ident) => {

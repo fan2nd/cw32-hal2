@@ -37,6 +37,9 @@ All pins are separate within a row. The CS column is GPIO, not hardware NSS.
 | cw32l012c8t6 | LQFP48; 64/8 KiB | SPI1 | PA5 | PA7 | PA6 | 3 | PB0 |
 | same | same | SPI2 | PA2 | PA1 | PA0 | 8 | PB1 |
 | same | same | SPI3 | PA9 | PA11 | PA10 | 8 | PB2 |
+| cw32l012c8u6 | QFN48; 64/8 KiB | SPI1 | PA5 | PA7 | PA6 | 3 | PB0 |
+| same | same | SPI2 | PA2 | PA1 | PA0 | 8 | PB1 |
+| same | same | SPI3 | PA9 | PA11 | PA10 | 8 | PB2 |
 | cw32l031c8t6 | LQFP48; 64/8 KiB | SPI1 | PA5 | PA7 | PA6 | 5 | PB0 |
 | cw32r031c8u6 | QFN48; 64/8 KiB | SPI1 | PA5 | PA7 | PA6 | 5 | PB0 |
 | cw32w031r8u6 | QFN64; 64/8 KiB | SPI1 | PA5 | PA7 | PA6 | 5 | PB0 |
@@ -54,6 +57,14 @@ No route disables debug, reset or oscillator functions. L010 uses PA3 for MISO
 and PA6 for MOSI; PA7/PA8 remain SWD, PA0/PA1 remain available to the HSE wiring,
 and PB0/PB1 remain available to the LSE wiring. Do not substitute L011's route.
 F002/F003 likewise retain their different PA2/PA5 SWD assignment.
+
+L012 C8T6 and C8U6 each select their own exact feature and metadata name;
+C8U6 does not enable C8T6 as an alias. L012's own CN datasheet V1.0 Table 5-3,
+printed p36 / PDF index38, supplies the selected AFs. Table 5-2, printed
+pp32–34 / PDF indices34–36, supplies the same selected positions on both
+packages: SPI1 SCK/MOSI/MISO pads15/17/16 and CS pad18; SPI2 pads12/11/10 and
+CS pad19; SPI3 pads30/32/31 and CS pad20. GPIO CS does not qualify hardware
+NSS. The generated pin metadata does not itself contain physical pad numbers.
 
 W031's internal RF host uses the same SPI1 controller. This external SPI
 application requires RF not in use; safe external pad names do not create
@@ -94,7 +105,7 @@ completion indefinitely; this example adds no timeout or throughput promise.
 
 ## Build
 
-Select exactly one of the ten exact features above. A family alias, a
+Select exactly one of the eleven exact features above. A family alias, a
 package-less memory-size alias, or multiple selections cannot substitute for
 one of these packages. `build.rs` checks the selected chip name, family, SPI IP,
 all controller addresses and IRQ owners, selected signal/AF pins, distinct CS
@@ -124,3 +135,15 @@ Both bin names are explicit manifest targets. Builds only compile and link;
 no flashing, execution or connected-device transaction is implied. Actual
 acceptance commands, results and ELF section sizes belong to the separate
 build receipts rather than this example's source.
+
+The finite Stage94 main matrix includes `async_master` for exact C8T6 and
+C8U6, retaining all three PIO buses and the complete SPI23 binding. Both
+continue to use `try_new_async`; adding native DMA support does not change
+that constructor's backend. C8U6's `blocking_master` route cfgs are widened
+consistently with the new feature, preserving `try_new_blocking` and its
+existing behavior. No C8U6 blocking ELF is selected in the Stage94 main or
+clean matrices, so this feature-consistency change makes no new blocking
+acceptance claim. The existing lockfile and release profile are unchanged.
+The separate [native L012 DMA companion](../l012-spi-dma/README.md) supplies
+the four staged DMA/PIO deployments; its build receipts do not establish
+execution or acceptance of this crate's blocking binary.

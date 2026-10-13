@@ -8,7 +8,13 @@ have the Stage93 [staged DMA extension](spi-dma.md), whose separate main softwar
 verification and independent runtime and metadata/source reviews accepted the
 bounded change. Its final-source clean replay had not run at main acceptance.
 Their PIO constructors remain borrowed; each constructor fixes its owner's
-backend. F030/A030/L083 retain their six existing DMA instances.
+backend. Stage94 adds native DMA on exactly L012 C8T6/C8U6 SPI1/SPI2/SPI3
+while preserving these borrowed PIO constructors. Its six-library/fifteen-ELF
+main and five finite source/declaration commands passed, with independent
+runtime/source acceptance. At main acceptance the separate final-source
+two-library/six-ELF clean replay had not run; its own receipt remains required.
+F030/A030/L083 retain their six existing DMA instances. No Stage94 hardware
+result is claimed.
 
 Historical Stage89 runtime and source/metadata reviews accepted that frozen
 PIO implementation. Its main verification passed fourteen standalone ARM
@@ -34,9 +40,12 @@ construction; a family alias is not a fabricated exact package or memory map.
 Stage93 adds seven DMA family/controller pairs on F020/L031/L052/R031/W031,
 bringing the DMA cohort to eight families and thirteen pairs, with separate main
 software acceptance and a final-source clean replay still unrun at that point.
+Stage94 adds L012's three DMA pairs, for nine DMA families and sixteen pairs.
 `spi_async_pio` and `spi_dma` are independently qualified and coexist
-on those five families. Neither qualification implies the other. F030/A030/L083
-remain DMA-only; F002/F003/L010/L011/L012 remain PIO-only.
+on those five families and L012. Neither qualification implies the other.
+F030/A030/L083 remain DMA-only; F002/F003/L010/L011 remain PIO-only. Generic
+`cw32l012` compiles the surface but cannot acquire safe DMA staging or admission
+without exact memory metadata; its existing PIO scope is unchanged.
 
 The constructors take the peripheral, SCK, MOSI, MISO, typed IRQ binding and
 `Config`, in that order. `try_new_async` validates before changing peripheral
@@ -50,11 +59,15 @@ The common lifetime-generic async methods and `SpiBus<u8>` implementation
 select the backend installed by the constructor. Static PIO tokens still select
 PIO through `new_async`; DMA still requires `new_with_dma` with all static
 resources. No backend-switching API or borrowed DMA constructor is introduced.
-The dedicated `InterruptHandler` retains its public binding shape and dispatches
-to separate PIO/DMA states with active-before-MMIO guards. L012's shared PIO
-handler remains PIO-only.
+Dedicated aliases still resolve to `InterruptHandler<T>` and dispatch to
+separate PIO/DMA states with active-before-MMIO guards. The DMA constructor
+now requires `Binding<T::Interrupt, T::InterruptHandler>`, as PIO already does.
+Generic wrappers constrained only by `Binding<T::Interrupt, InterruptHandler<T>>`
+may need that associated-handler bound or an appropriate associated-type
+equality. Concrete classic bindings alone do not prove generic source
+compatibility. L012's shared handler dispatches both backends as described below.
 
-The five dual-capable families gain the existing DMA-gated variants in the
+The six dual-capable families gain the existing DMA-gated variants in the
 already `#[non_exhaustive]` enums:
 `ConfigError::{DmaBuffer, DmaChannel, DmaQuarantined}` and
 `Error::{Dma, DmaBusy, DmaQuarantined}`. External matches
@@ -80,7 +93,8 @@ The [clock bounds](spi-clock-bounds.md), sampling-delay meanings, pull
 restrictions and safe package routes remain authoritative. L010/L011/L012 use
 their actual typed register layouts and enable placement. No new frequency,
 ADC trigger, route, package or low-power qualification follows from PIO.
-The bounded Stage93 DMA extension has its own source and verification scope.
+The bounded Stage93 classic and Stage94 native DMA extensions have separate
+source and verification scopes.
 
 ## Task work, interrupts and completion
 
@@ -187,10 +201,16 @@ is introduced.
 
 ## L012 SPI23 and W031 ownership
 
-L012 SPI2 and SPI3 share the actual `SPI23` vector. Both constructors require
-`SharedInterruptHandler<interrupt::typelevel::SPI23>` through their required
-instance handler. The binding must dispatch both real instances; a binding that
-services only one member does not satisfy either shared constructor.
+L012 SPI2 and SPI3 share the actual `SPI23` vector. Both PIO and DMA
+constructors require `SharedInterruptHandler<interrupt::typelevel::SPI23>`
+through their required instance handler. The binding must dispatch PIO2, DMA2,
+PIO3 and DMA3, in that order where compiled. A binding that services only one
+member does not satisfy either shared constructor. Each backend checks its
+own active guard before MMIO; an inactive backend cannot mask the active one.
+The supported pairs are PIO2+PIO3, DMA2+PIO3, PIO2+DMA3 and DMA2+DMA3. Four
+physical channels permit at most two reserved full-duplex DMA pairs. Sequential
+one-time channel admission and clean Drop never provide channel re-admission.
+SPI1 keeps its dedicated IRQ25 handler; SPI23 is IRQ26.
 
 Construction, cancellation, reconfiguration and Drop never disable or unpend
 SPI23. Each operation masks and changes only its own register bank; an inactive,
@@ -213,8 +233,16 @@ Stage93 coexistence has separate main software acceptance. Its final-source
 clean replay had not run at main acceptance. These receipts remain separate
 from the Stage89 results below; those historical reviews, source identities
 and counts do not accept the current coexistence change.
-L012 SPI DMA remains unqualified and L012 UART RX remains blocked on its
-separate RC/ORE proof. Neither qualification is reopened here.
+Stage94 native SPI DMA and shared PIO/DMA dispatch passed main
+six-library/fifteen-ELF verification and five finite source/declaration commands,
+with independent runtime/source acceptance. At main acceptance the final-source
+clean two-library/six-ELF replay had not run; final completion requires its
+separate receipt. Its native evidence is separate from this historical PIO record. L012 UART RX remains blocked on its
+separate RC/ORE proof. PIO cancellation, destructive recovery and Drop remain
+separate from DMA cancellation and unresolved Drop, which retain the whole
+pair, staging, SPI, pins and clocks. In either backend, keep the original CS
+selected until a successful flush; neither provides generic cancellation-safe
+`SpiDevice` composition or hardware validation.
 
 [Own-family evidence](spi-async-pio-evidence.json) records the pinned source
 identities and status, interrupt, enable, error, ICR/DR and W031 ownership

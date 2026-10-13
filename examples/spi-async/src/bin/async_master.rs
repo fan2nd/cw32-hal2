@@ -36,7 +36,7 @@ hal::bind_interrupts!(struct Irqs {
     SPI => spi::InterruptHandler<hal::peripherals::SPI>;
 });
 
-#[cfg(feature = "cw32l012c8t6")]
+#[cfg(any(feature = "cw32l012c8t6", feature = "cw32l012c8u6"))]
 hal::bind_interrupts!(struct Irqs {
     SPI1 => spi::InterruptHandler<hal::peripherals::SPI1>;
     SPI23 => spi::SharedInterruptHandler<hal::interrupt::typelevel::SPI23>;
@@ -71,7 +71,8 @@ async fn main(_spawner: embassy_executor::Spawner) {
     #[cfg(any(
         feature = "cw32f020c6u7",
         feature = "cw32l052c8t6",
-        feature = "cw32l012c8t6"
+        feature = "cw32l012c8t6",
+        feature = "cw32l012c8u6"
     ))]
     let (mut secondary, mut secondary_cs) = {
         let (peripheral, sck, mosi, miso, cs) = examples::secondary_pins!(p);
@@ -80,7 +81,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
             .unwrap_or_else(|_| examples::halt());
         (bus, cs)
     };
-    #[cfg(feature = "cw32l012c8t6")]
+    #[cfg(any(feature = "cw32l012c8t6", feature = "cw32l012c8u6"))]
     let (mut tertiary, mut tertiary_cs) = {
         let (peripheral, sck, mosi, miso, cs) = examples::tertiary_pins!(p);
         let cs = Output::new(cs, Level::High, examples::cs_speed());
@@ -101,7 +102,8 @@ async fn main(_spawner: embassy_executor::Spawner) {
         #[cfg(any(
             feature = "cw32f020c6u7",
             feature = "cw32l052c8t6",
-            feature = "cw32l012c8t6"
+            feature = "cw32l012c8t6",
+            feature = "cw32l012c8u6"
         ))]
         {
             secondary_cs.set_low();
@@ -111,7 +113,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
             secondary_cs.set_high();
             core::hint::black_box(samples);
         }
-        #[cfg(feature = "cw32l012c8t6")]
+        #[cfg(any(feature = "cw32l012c8t6", feature = "cw32l012c8u6"))]
         {
             tertiary_cs.set_low();
             let samples = exchange(&mut tertiary)

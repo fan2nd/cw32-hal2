@@ -1,4 +1,21 @@
-# Safe staged classic SPI DMA
+# Safe staged SPI DMA
+
+Stage94 adds native L012 SPI1/SPI2/SPI3 on exactly CW32L012C8T6 and
+CW32L012C8U6 to the existing classic profiles. The implementation scope is
+finite full-duplex eight-bit master DMA with two exclusive static SRAM stages.
+Stage94 main passed six standalone ARM libraries and fifteen ELF links in
+21 accepted Cargo rows, all exiting zero, plus five finite source/declaration
+commands. Independent runtime and metadata/source reviews accepted the bounded
+implementation. At main acceptance the final-source two-library/six-ELF clean
+replay had not run; final completion requires its separate receipt.
+The first M07 ELF link failed with a 2,752-byte Flash overflow after all six
+standalone libraries passed. The reviewed native companion-only release
+profile correction from opt-level s to z preserves the 64 KiB Flash limit and
+all five async methods. That failed attempt remains part of the record; the
+21 accepted rows are not the total number of attempts. Native L012 builds
+have a recorded new dead_code warning for new_admitted_pair; no warning-free
+claim is made. No hardware execution or measurement is claimed. The Stage93 record below
+retains its historical source and acceptance boundary.
 
 Stage93 main software verification and independent runtime and metadata/source
 reviews accepted the bounded F020/L031/L052/R031/W031 extension to the existing
@@ -38,8 +55,8 @@ qualifies silicon, throughput or generic device-adapter cancellation behavior.
 
 The five-family extension is seven new family/controller pairs, fourteen exact
 memory-qualified parts and twenty selected exact-part/controller routes. With
-F030/A030/L083, the staged DMA cohort has eight families and thirteen
-family/controller pairs. The new routes use the existing classic CR1 request
+F030/A030/L083, Stage93 covered eight families and thirteen
+family/controller pairs. Those classic routes use the existing CR1 request
 gates and typed DR endpoint; each family's own sources supply the byte-DMA
 qualification recorded in [the current evidence ledger](classic-spi-dma-evidence.json).
 
@@ -76,17 +93,22 @@ F020/L031/L052/R031/W031 retain ordinary-borrowed `new_async` / `try_new_async`
 The constructor fixes the backend for that owner. One lifetime-generic async
 method/trait surface dispatches to the installed backend; it does not switch
 backends, relax static DMA ownership or admit two owners of one controller.
-Different controllers may use different backends. The dedicated public
-`InterruptHandler` keeps its binding shape and dispatches to separate PIO and
-DMA states, each checking its active guard before MMIO.
+Different controllers may use different backends. Dedicated interrupt aliases
+still resolve to `InterruptHandler<T>` and dispatch to separate PIO and DMA
+states, each checking its active guard before MMIO. The DMA constructor now
+requires `Binding<T::Interrupt, T::InterruptHandler>`. A downstream generic
+wrapper constrained only by `Binding<T::Interrupt, InterruptHandler<T>>` may
+need the associated-handler bound or an appropriate associated-type equality.
+Preserved concrete classic bindings do not prove universal generic source
+compatibility.
 
-On the five newly dual-capable families, the already `#[non_exhaustive]`
+On the five Stage93 dual-capable families and now L012, the already `#[non_exhaustive]`
 `ConfigError` and `Error` enums gain their existing DMA-gated variants:
 `ConfigError::{DmaBuffer, DmaChannel, DmaQuarantined}` and
 `Error::{Dma, DmaBusy, DmaQuarantined}`. Valid external matches already need a
 fallback; in-crate exhaustive/cfg-specific matches and explicit DMA handling may
 need updates. Preserved PIO signatures do not mean an unchanged public variant
-set. F030/A030/L083 remain DMA-only; the five other PIO families remain PIO-only.
+set. F030/A030/L083 remain DMA-only; F002/F003/L010/L011 remain PIO-only.
 
 A private owner of the original static RX allocation preserves automatic
 `Send`/`Sync` derivation for existing PIO and blocking owners when DMA becomes
@@ -99,10 +121,57 @@ CPU RX copying still needs exclusive access after both fenced retirements.
 This does not make a borrowed owner static or promise that every operation
 future is `Send`.
 
-L012 SPI DMA remains unqualified: native CR2 gates, byte endpoint/descriptors
-and the complete shared DMA-aware SPI23 binding need a separate qualification.
-Its PIO SPI1/SPI2/SPI3 and shared SPI23 handler remain unchanged. L012 UART RX
-remains blocked on its separate RC/ORE proof; this extension does not reopen it.
+## Native L012 scope and shared interrupts
+
+L012 adds one family, three family/controller pairs, two exact parts and six
+selected part/controller routes, bringing the declared DMA cohort to nine
+families and sixteen pairs. Both exact parts have 64 KiB Flash and 8 KiB SRAM
+at `[0x20000000,0x20002000)`. Generic `cw32l012` exposes the compile surface but
+retains `MissingMemoryMetadata` safe staging and clean-init admission rejection.
+Compiling that alias does not execute or demonstrate the rejection.
+
+| Controller | RX/TX selectors | Fixed DR address | SCK/MOSI/MISO | AFs | Separate example CS |
+| --- | --- | --- | --- | --- | --- |
+| SPI1 | 6/7 | `0x4000081c` | PA5/PA7/PA6 | 3/3/3 | PB0 |
+| SPI2 | 8/9 | `0x4000041c` | PA2/PA1/PA0 | 8/8/8 | PB1 |
+| SPI3 | 10/11 | `0x4000341c` | PA9/PA11/PA10 | 8/8/8 | PB2 |
+
+Native DMA has four physical channels: CH1/2 share DMACH12 IRQ9 and CH3/4
+share DMACH34 IRQ10; IRQ11 remains CORDIC. At most two full-duplex DMA owners
+can coexist. A third controller may use borrowed PIO. Every owner retains its
+pair; dropping one does not admit its channels for another owner. The
+[native example deployments](../examples/l012-spi-dma/README.md) are separate
+firmware images, preserve all constructed bus/CS owners and exercise both
+mixed PIO/DMA peers and two simultaneous reserved DMA pairs.
+
+SPI1 uses `InterruptHandler<SPI1>` on IRQ25. SPI2/SPI3 require the complete
+`SharedInterruptHandler<interrupt::typelevel::SPI23>` on IRQ26 through
+`T::InterruptHandler` for both PIO and DMA construction. A single-member
+SPI23 handler does not satisfy this bound. The shared handler visits PIO2,
+DMA2, PIO3 and DMA3, with each backend's active guard checked before MMIO.
+PIO2+PIO3, DMA2+PIO3, PIO2+DMA3 and DMA2+DMA3 are supported owner combinations.
+An inactive, unconstructed, blocking or dropped peer is skipped even when its
+bank is gated. No owner teardown disables or unpends SPI23 or either shared
+DMA vector, changes a sibling bank or acknowledges its flags. An externally
+owned inactive peer must keep its own interrupt sources quiescent or handled.
+
+Native request operations modify only CR2 DMARX/DMATX and preserve sampled EN
+and unrelated bits; classic requests remain in CR1. This is an ordinary RMW,
+not an atomicity guarantee against MODF autonomously clearing EN. Native DMA
+uses TYPE1, BLOCK/TRANS1, SIZE0 and REPEAT1 reloaded for every chunk, with
+RESTART/SRCLOAD/DSTLOAD false. SIZE selects byte SRAM elements; the fixed typed
+DR address carried by a private pointer does not permit CPU byte MMIO or claim
+byte peripheral accesses. CPU accesses remain typed. Native DR reads clear
+RXNE and writes clear TXE. Sticky MODF/OV/SSERR/UD is observed without a live
+DR read, ICR clear, FLUSH or disable; MODF may stop progress and quarantine.
+
+The existing 24 MHz maximum and even divisors 2..256 are unchanged. Existing
+whole-bank GPIO handover, package bonding and MISO pull-down rejection apply.
+The [native source ledger](l012-spi-dma-evidence.json) binds L012's own normative
+sources. No native SDK SPI DMA cookbook was identified; RX-first arm/request
+order is a conservative engineering choice, not a quoted native master recipe.
+L012 UART stays TX-only. Its separate RX/combined RC/ORE proof remains blocked.
+
 R031 whole-GPIOA handover and W031 GPIOB/SPI1 ownership restrictions remain.
 W031 external SPI is unavailable while internal RF uses SPI1. DMA and PA routing
 provide no RF arbitration, coexistence, continuity or RF access.
@@ -156,8 +225,9 @@ The persistent state belongs to the driver, not an operation future:
 RX and TX use equal nonzero byte counts, fixed typed DR endpoints, incrementing
 memory, REPEAT=1 and hardware BLOCK mode. RX is armed before TX with request
 gates closed. DMARX is opened before DMATX after both descriptors are ready.
-That RX-ready-first choice is a conservative inference; the manual's example
-uses TX-channel, RX-channel, TX-request, RX-request order instead.
+That RX-ready-first choice is a conservative inference. The classic manual's
+example uses TX-channel, RX-channel, TX-request, RX-request order instead;
+L012's native normative facts do not supply an SDK paired-master cookbook.
 
 Both channels are polled even when either is pending, so both register owned
 wakers and either DMA error is detected promptly. SPI error polling and the
@@ -215,6 +285,21 @@ excessive SCK or competing DMA traffic can cause overrun. Clock bounds do not
 prove lossless reception. No bounded completion time or safe early abort exists.
 
 ## Primary evidence
+
+Stage94's [native source ledger](l012-spi-dma-evidence.json) records own-source
+facts separately from runtime and compiler/linker acceptance. Its main matrix
+is six standalone libraries plus fifteen ELF links (21 accepted matrix rows),
+with zero canonical generation. The final-source clean matrix is two native
+libraries plus six native ELF links (eight Cargo invocations), preceded by one
+existing generation bootstrap; all 910 canonical generated files must match
+main by path and bytes. Dependent HAL archives do not add library commands.
+Stage94 main and five finite commands passed, with independent runtime/source
+acceptance as described above. At main acceptance the separate final-source
+clean replay had not run; its own receipt remains required. These checks cannot
+execute hardware cancellation, error drain, IRQ races, generic rejection, data
+integrity or throughput; runtime/source review and hardware evidence remain
+separate. Historical Stage86/89/93 proofs are not rewritten or reused as new
+acceptance.
 
 The [five-family current evidence ledger](classic-spi-dma-evidence.json) binds
 the selected own manuals, SVD/header data and package datasheets for the

@@ -1,0 +1,3817 @@
+{
+  "schema_version": 1,
+  "stage": 94,
+  "purpose": "Normative native L012 SPI DMA source facts and implementation requirements; not a software acceptance receipt or hardware result.",
+  "scope": {
+    "family": "CW32L012",
+    "controllers": [
+      "SPI1",
+      "SPI2",
+      "SPI3"
+    ],
+    "exact_parts": [
+      "CW32L012C8T6",
+      "CW32L012C8U6"
+    ],
+    "generic_compile_only": [
+      "CW32L012"
+    ],
+    "family_count": 1,
+    "family_instance_count": 3,
+    "exact_part_count": 2,
+    "selected_part_instance_route_count": 6,
+    "mode": "Finite full-duplex u8 master with paired exclusive static SRAM stages",
+    "uart_dma_rx_qualified": false
+  },
+  "text_extractor": {
+    "program": "pdftotext",
+    "arguments": [
+      "-layout",
+      "-enc",
+      "UTF-8"
+    ],
+    "verified_version": "25.03.0",
+    "policy": "Derived text must match the pinned SHA-256 exactly; another Poppler version may work only if output is byte-identical."
+  },
+  "page_hash_convention": "SHA256 of UTF-8 text.split('\\f')[pdf_page_index]; printed and viewer coordinates are explicit per page, not an inferred global offset. Single-page clock-extractor hashes retain their separate meaning.",
+  "sources": [
+    {
+      "source_index_pointer": "/artifacts/6",
+      "source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "official_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "identity": {
+        "kind": "sdk",
+        "family": "CW32L012",
+        "path": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "sha256": "8b0a4c0ee865642d08f353aec98906c900a8b10f672120e649e6b1bf5e29c18f",
+        "bytes": 2494783,
+        "id": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip",
+        "license": {
+          "status": "whole_archive_redistribution_not_verified",
+          "bundle_raw": false,
+          "bundle_derived_text": false,
+          "inspected": [
+            "archive file inventory for LICENSE/COPYING",
+            "top-level README/release notes where present",
+            "cw32l012/Libraries/inc/cw32l012.h",
+            "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+            "cw32l012/Libraries/src/cw32l012_adc.c"
+          ],
+          "license_filenames_in_outer_archive": [],
+          "header_notice": "SPDX Apache-2.0 in selected CMSIS header; scope is that component only",
+          "vendor_driver_notice": "Vendor programming-example use/customization grant with warranty disclaimer; it is not treated as verified permission to redistribute the complete SDK.",
+          "svd_notice": "No explicit redistribution grant established for the selected SVD.",
+          "note": "Retain component notices when legally permitted reuse is separately reviewed. Do not relabel vendor material under this project license."
+        },
+        "provenance": {
+          "filename": "CW32L012_StandardPeripheralLib_V1.0.5.zip",
+          "filename_version": "1.0.5",
+          "printed_revision": null,
+          "publication_date": null,
+          "publication_date_basis": null,
+          "cover_date": null,
+          "revision_history_date": null,
+          "acquired_date": null,
+          "acquisition_evidence": null,
+          "chip_scope": [
+            "CW32L012"
+          ],
+          "status": "selected",
+          "reviewed_on": "2026-10-08",
+          "generator_svd_path": "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+          "generator_header_path": "cw32l012/Libraries/inc/cw32l012.h",
+          "sdk_version_note": "Archive filename is a release label; a selected header/SVD component version is not the SDK release version.",
+          "revision_evidence": {
+            "status": "unknown; no release-wide printed version/date established by inspected top-level readme/header/SVD notices"
+          }
+        }
+      }
+    },
+    {
+      "source_index_pointer": "/artifacts/24",
+      "source_ref": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+      "identity": {
+        "kind": "pdf",
+        "path": "CW32L012_DataSheet_CN_V1.0.pdf",
+        "url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+        "sha256": "08a605fe8843d1eefa2b1115474b5a74df2833068f0ad6f35225e4f39377da76",
+        "bytes": 3003846,
+        "text": {
+          "path": "CW32L012_DataSheet_CN_V1.0.txt",
+          "sha256": "00ba7e2c9d26a8ce5a4eaa4cc2e7790773c427b13a4d491838622041abfa8b0a",
+          "bytes": 190981
+        },
+        "id": "vendor:CW32L012_DataSheet_CN_V1.0.pdf",
+        "license": {
+          "status": "redistribution_not_verified",
+          "bundle_raw": false,
+          "bundle_derived_text": false,
+          "inspected": "cover and copyright/legal notice pages of exact locked PDF",
+          "notice": "Vendor copyright/all rights reserved; no explicit redistribution grant established.",
+          "evidence_pdf_pages_1_based": [
+            1
+          ]
+        },
+        "provenance": {
+          "filename": "CW32L012_DataSheet_CN_V1.0.pdf",
+          "filename_version": "1.0",
+          "printed_revision": "1.0",
+          "publication_date": "2025-07",
+          "publication_date_basis": "cover month (revision-history date separately retained)",
+          "cover_date": "2025-07",
+          "revision_history_date": "2025-07-16",
+          "acquired_date": null,
+          "acquisition_evidence": null,
+          "chip_scope": [
+            "CW32L012"
+          ],
+          "status": "selected",
+          "reviewed_on": "2026-10-08",
+          "revision_evidence": {
+            "pdf_page_1_based": 1,
+            "location": "cover; repeated page footers"
+          },
+          "revision_history_evidence": {
+            "pdf_page_1_based": 82,
+            "printed_page": 0,
+            "location": "final revision-history table"
+          },
+          "pdf_page_count": 82
+        }
+      }
+    },
+    {
+      "source_index_pointer": "/artifacts/24/text",
+      "source_ref": "text:CW32L012_DataSheet_CN_V1.0.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20250717/CW32L012_DataSheet_CN_V1.0.pdf",
+      "identity": {
+        "path": "CW32L012_DataSheet_CN_V1.0.txt",
+        "sha256": "00ba7e2c9d26a8ce5a4eaa4cc2e7790773c427b13a4d491838622041abfa8b0a",
+        "bytes": 190981
+      }
+    },
+    {
+      "source_index_pointer": "/artifacts/25",
+      "source_ref": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "identity": {
+        "kind": "pdf",
+        "path": "CW32L012_UserManual_CN_V1.4.pdf",
+        "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+        "sha256": "a9e54694a26f03c1f3e3041f40844900168ca2b8e6142f3328671b92e6b7a340",
+        "bytes": 18034510,
+        "text": {
+          "path": "CW32L012_UserManual_CN_V1.4.txt",
+          "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505",
+          "bytes": 1558649
+        },
+        "id": "vendor:CW32L012_UserManual_CN_V1.4.pdf",
+        "license": {
+          "status": "redistribution_not_verified",
+          "bundle_raw": false,
+          "bundle_derived_text": false,
+          "inspected": "cover and copyright/legal notice pages of exact locked PDF",
+          "notice": "Vendor copyright/all rights reserved; no explicit redistribution grant established.",
+          "evidence_pdf_pages_1_based": [
+            1,
+            2
+          ]
+        },
+        "provenance": {
+          "filename": "CW32L012_UserManual_CN_V1.4.pdf",
+          "filename_version": "1.4",
+          "printed_revision": "1.4",
+          "publication_date": "2026-06",
+          "publication_date_basis": "cover month (revision-history date separately retained)",
+          "cover_date": "2026-06",
+          "revision_history_date": "2026-06-03",
+          "acquired_date": null,
+          "acquisition_evidence": null,
+          "chip_scope": [
+            "CW32L012"
+          ],
+          "status": "selected",
+          "reviewed_on": "2026-10-08",
+          "revision_evidence": {
+            "pdf_page_1_based": 1,
+            "location": "cover; repeated page footers"
+          },
+          "revision_history_evidence": {
+            "pdf_page_1_based": 698,
+            "printed_page": 4,
+            "location": "final revision-history table"
+          },
+          "pdf_page_count": 698
+        }
+      }
+    },
+    {
+      "source_index_pointer": "/artifacts/25/text",
+      "source_ref": "text:CW32L012_UserManual_CN_V1.4.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_CN_V1.4.pdf",
+      "identity": {
+        "path": "CW32L012_UserManual_CN_V1.4.txt",
+        "sha256": "57f16772d6cfdb8055f8f2f91b5fed7257a963aa36c648293eb23762a6757505",
+        "bytes": 1558649
+      }
+    },
+    {
+      "source_index_pointer": "/artifacts/42",
+      "source_ref": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+      "official_url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_EN_V1.0.pdf",
+      "identity": {
+        "kind": "pdf",
+        "path": "CW32L012_UserManual_EN_V1.0.pdf",
+        "url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_EN_V1.0.pdf",
+        "sha256": "f56d5ed899dd090b469fac6a09084aab9f5068ae3b56cf7562b83997bd2f1088",
+        "bytes": 19538580,
+        "text": {
+          "path": "CW32L012_UserManual_EN_V1.0.txt",
+          "sha256": "4b4413bdc5c57d7c0f23b5c949a66e10997b0adf6b087cea8d08b125b5320737",
+          "bytes": 1851856
+        },
+        "id": "vendor:CW32L012_UserManual_EN_V1.0.pdf",
+        "license": {
+          "status": "redistribution_not_verified",
+          "bundle_raw": false,
+          "bundle_derived_text": false,
+          "inspected": "cover and copyright/legal notice of exact PDF",
+          "notice": "Vendor retains copyright; no redistribution grant established.",
+          "evidence_pdf_pages_1_based": [
+            1,
+            2
+          ]
+        },
+        "provenance": {
+          "filename": "CW32L012_UserManual_EN_V1.0.pdf",
+          "filename_version": "1.0",
+          "printed_revision": "1.0",
+          "publication_date": "2026-06",
+          "publication_date_basis": "Current cover month; final history still records initial release 2026-01-16.",
+          "cover_date": "2026-06",
+          "revision_history_date": "2026-01-16",
+          "acquired_date": "2026-10-09",
+          "acquisition_evidence": "docs/l012-english-source-update.json",
+          "chip_scope": [
+            "CW32L012"
+          ],
+          "status": "corroborating-language-edition",
+          "reviewed_on": "2026-10-09",
+          "revision_evidence": {
+            "pdf_page_1_based": 1,
+            "location": "cover and repeated footers"
+          },
+          "revision_history_evidence": {
+            "pdf_page_1_based": 759,
+            "printed_page": 733,
+            "location": "final revision-history table"
+          },
+          "pdf_page_count": 759,
+          "previous_snapshot_ref": "docs/l012-english-source-refresh-review.json#/previous_locked_artifact"
+        },
+        "pin_history": [
+          {
+            "bytes": 19634820,
+            "changed_utc": "2026-10-09",
+            "reason": "Superseded selected source identity retained for historical provenance and distribution exclusion; exact current-source refresh independently reviewed.",
+            "historical_path": "CW32L012_UserManual_EN_V1.0.pdf",
+            "historical_sha256": "5e4937c3c93855d13befb1a88bf6f7572f460c46552db26393bf760a88761459"
+          },
+          {
+            "bytes": 1865125,
+            "changed_utc": "2026-10-09",
+            "reason": "Superseded selected source identity retained for historical provenance and distribution exclusion; exact current-source refresh independently reviewed.",
+            "historical_path": "CW32L012_UserManual_EN_V1.0.txt",
+            "historical_sha256": "a4d540ab2d7000652866b0570de8d826286b5f5a482cf87583c1d2ce0d8c3cb4"
+          }
+        ]
+      }
+    },
+    {
+      "source_index_pointer": "/artifacts/42/text",
+      "source_ref": "text:CW32L012_UserManual_EN_V1.0.txt",
+      "official_url": "https://www.whxy.com/uploads/files/20260603/CW32L012_UserManual_EN_V1.0.pdf",
+      "identity": {
+        "path": "CW32L012_UserManual_EN_V1.0.txt",
+        "sha256": "4b4413bdc5c57d7c0f23b5c949a66e10997b0adf6b087cea8d08b125b5320737",
+        "bytes": 1851856
+      }
+    },
+    {
+      "source_index_pointer": "/artifacts/6/members/17",
+      "source_ref": "member:cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+      "official_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "identity": {
+        "path": "cw32l012/IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2/SVD/CW32L012.svd",
+        "members": [
+          "IDEsupport/MDK/WHXY.CW32L012_DFP.1.0.2.pack",
+          "SVD/CW32L012.svd"
+        ],
+        "sha256": "fda08355c30ed60204cd53b2c1ca33e6ee2233530e6cb2448522158dfc302942",
+        "bytes": 505809
+      },
+      "archive_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip"
+    },
+    {
+      "source_index_pointer": "/artifacts/6/members/19",
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+      "official_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "identity": {
+        "path": "cw32l012/Libraries/inc/cw32l012.h",
+        "members": [
+          "Libraries/inc/cw32l012.h"
+        ],
+        "sha256": "3758779c7b9e60fda1aa80dfd2848b6986074d91a6763076fa6777d55b1ad000",
+        "bytes": 834392
+      },
+      "archive_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip"
+    },
+    {
+      "source_index_pointer": "/artifacts/6/members/25",
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_dma.h",
+      "official_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "identity": {
+        "path": "cw32l012/Libraries/inc/cw32l012_dma.h",
+        "members": [
+          "Libraries/inc/cw32l012_dma.h"
+        ],
+        "sha256": "9e2a583ca75e8528b69d3063c6e06b14e36a00604e7486fcd9628c2284bf0e00",
+        "bytes": 10233
+      },
+      "archive_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip"
+    },
+    {
+      "source_index_pointer": "/artifacts/6/members/28",
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_gpio.h",
+      "official_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "identity": {
+        "path": "cw32l012/Libraries/inc/cw32l012_gpio.h",
+        "members": [
+          "Libraries/inc/cw32l012_gpio.h"
+        ],
+        "sha256": "45f356e8028475c2e25d135c5fdd0b75babb6b1c83f1d5534038e9355822d717",
+        "bytes": 69670
+      },
+      "archive_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip"
+    },
+    {
+      "source_index_pointer": "/artifacts/6/members/37",
+      "source_ref": "member:cw32l012/Libraries/inc/cw32l012_spi.h",
+      "official_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "identity": {
+        "path": "cw32l012/Libraries/inc/cw32l012_spi.h",
+        "members": [
+          "Libraries/inc/cw32l012_spi.h"
+        ],
+        "sha256": "ffb034d68a720d99930ed6ba8b62041f753eb5b8d99ba4757811d5be33197c27",
+        "bytes": 13912
+      },
+      "archive_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip"
+    },
+    {
+      "source_index_pointer": "/artifacts/6/members/47",
+      "source_ref": "member:cw32l012/Libraries/src/cw32l012_dma.c",
+      "official_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "identity": {
+        "path": "cw32l012/Libraries/src/cw32l012_dma.c",
+        "members": [
+          "Libraries/src/cw32l012_dma.c"
+        ],
+        "sha256": "43381185ea6c8051e44c10591a3e05229a32b94f82eeca82adb5606236028fc4",
+        "bytes": 6251
+      },
+      "archive_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip"
+    },
+    {
+      "source_index_pointer": "/artifacts/6/members/71",
+      "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+      "official_url": "https://www.whxy.com/uploads/files/20260701/CW32L012_StandardPeripheralLib_V1.0.5.zip",
+      "identity": {
+        "path": "cw32l012/Libraries/src/cw32l012_spi.c",
+        "members": [
+          "Libraries/src/cw32l012_spi.c"
+        ],
+        "sha256": "07ca98f3632d00f88c9f41320f891f9602224b5de4d795f292ebefc8d65c0856",
+        "bytes": 14669
+      },
+      "archive_source_ref": "vendor:CW32L012_StandardPeripheralLib_V1.0.5.zip"
+    }
+  ],
+  "page_records": [
+    {
+      "text_path": "CW32L012_DataSheet_CN_V1.0.txt",
+      "pdf_page_index": 7,
+      "pdf_viewer_page": 8,
+      "printed_page": 5,
+      "extracted_page_utf8_sha256": "d9e9b2f37a9f31b651f4fdf1f23a148b13c10962783315f47b2b1c3c9249790a",
+      "claims": [
+        "table3-1 both exact packages3SPI64KiB/8KiB"
+      ]
+    },
+    {
+      "text_path": "CW32L012_DataSheet_CN_V1.0.txt",
+      "pdf_page_index": 29,
+      "pdf_viewer_page": 30,
+      "printed_page": 27,
+      "extracted_page_utf8_sha256": "e2ddc2c45e6deead1cb7a281d2a4d06ca07721c96275a1be1a72510741edb818",
+      "claims": [
+        "SPI master frequency policy"
+      ]
+    },
+    {
+      "text_path": "CW32L012_DataSheet_CN_V1.0.txt",
+      "pdf_page_index": 34,
+      "pdf_viewer_page": 35,
+      "printed_page": 32,
+      "extracted_page_utf8_sha256": "909fc8ca6839368a60960e9c4d8e064363bfdb7834971f5a90a6b5d2f359e2b5",
+      "claims": [
+        "table5-2 PA0/1/2 bonding"
+      ]
+    },
+    {
+      "text_path": "CW32L012_DataSheet_CN_V1.0.txt",
+      "pdf_page_index": 35,
+      "pdf_viewer_page": 36,
+      "printed_page": 33,
+      "extracted_page_utf8_sha256": "752700a1712b9162feee7b83c86448c16bae9d266eb5242e706dec7a870d9cff",
+      "claims": [
+        "table5-2 PA5/6/7 and PB0/1/2 bonding"
+      ]
+    },
+    {
+      "text_path": "CW32L012_DataSheet_CN_V1.0.txt",
+      "pdf_page_index": 36,
+      "pdf_viewer_page": 37,
+      "printed_page": 34,
+      "extracted_page_utf8_sha256": "5d93cb12727255e66074151013651d7c3192900c27768884d6144520685e37c4",
+      "claims": [
+        "table5-2 PA9/10/11 bonding"
+      ]
+    },
+    {
+      "text_path": "CW32L012_DataSheet_CN_V1.0.txt",
+      "pdf_page_index": 38,
+      "pdf_viewer_page": 39,
+      "printed_page": 36,
+      "extracted_page_utf8_sha256": "db1feb1505af8d98c244d64072311f23ec0b2d2195ff55427ecb5fd6ac7f5b4b",
+      "claims": [
+        "table5-3 nine selected SPI AF cells"
+      ]
+    },
+    {
+      "text_path": "CW32L012_DataSheet_CN_V1.0.txt",
+      "pdf_page_index": 40,
+      "pdf_viewer_page": 41,
+      "printed_page": 38,
+      "extracted_page_utf8_sha256": "11ebbbf53198ad8b7398f52246db6a22ffe9225dab47897478ced7eb57657422",
+      "claims": [
+        "memory map SRAM/Flash/SPI bases"
+      ]
+    },
+    {
+      "text_path": "CW32L012_DataSheet_CN_V1.0.txt",
+      "pdf_page_index": 70,
+      "pdf_viewer_page": 71,
+      "printed_page": 68,
+      "extracted_page_utf8_sha256": "aff5b6c3f68e2d3292018f41b2603f23fa49e5e0f2916e3259fd29156c68d17f",
+      "claims": [
+        "retained electrical policy no reinterpretation"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 38,
+      "pdf_viewer_page": 39,
+      "printed_page": 13,
+      "extracted_page_utf8_sha256": "dd0e83e9b46e9f00d2b136514c03a68e0f46b99dc2bbc2f3c7b649bc7877d07f",
+      "claims": [
+        "2.7 32-bit peripheral access and required clocks"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 81,
+      "pdf_viewer_page": 82,
+      "printed_page": 56,
+      "extracted_page_utf8_sha256": "dad99e307ae58910b25598fd07e28acc99f9f3a6351497be8c6f0d1cc0c23750",
+      "claims": [
+        "SYSCTRL AHB clock gating"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 82,
+      "pdf_viewer_page": 83,
+      "printed_page": 57,
+      "extracted_page_utf8_sha256": "c9b55074c9b210a7ddf246ec62d02c20038c2a8ff03eadb04d2dca0dfd248604",
+      "claims": [
+        "SYSCTRL APB keyed independent SPI1/2/3 gates"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 85,
+      "pdf_viewer_page": 86,
+      "printed_page": 60,
+      "extracted_page_utf8_sha256": "4fa791e29859c57ae4048c936d33211f93c8369ee040f76d646f58ac57e62d86",
+      "claims": [
+        "SYSCTRL AHB reset"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 86,
+      "pdf_viewer_page": 87,
+      "printed_page": 61,
+      "extracted_page_utf8_sha256": "c08f88ac28c24f7758317e5f6862d5606f50c2671f57f345f60e567355a763fd",
+      "claims": [
+        "SYSCTRL independent active-low SPI1/2/3 resets"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 95,
+      "pdf_viewer_page": 96,
+      "printed_page": 70,
+      "extracted_page_utf8_sha256": "e8747ccf2c231c0183c143c626d2133f549deb44df45ed3bd7317bfa390c33a6",
+      "claims": [
+        "table5-1 DMA IRQ9/10 and CORDIC11"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 96,
+      "pdf_viewer_page": 97,
+      "printed_page": 71,
+      "extracted_page_utf8_sha256": "43329cc21a93c8d89311820033cfa1ab89d5bfa874d6403f81ed7bc6940a8761",
+      "claims": [
+        "table5-1 SPI1 IRQ25 SPI23 IRQ26"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 132,
+      "pdf_viewer_page": 133,
+      "printed_page": 107,
+      "extracted_page_utf8_sha256": "af3a79946c3732ddc878c76a51c1aee37d0a976a981fdbaf25bb1b3cf4fa6cfa",
+      "claims": [
+        "8.2 four independent channels"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 138,
+      "pdf_viewer_page": 139,
+      "printed_page": 113,
+      "extracted_page_utf8_sha256": "3c304cad1e58e13ff6e034009e7f26bed37a85e2e5ff209f8f5cb3fc72d6355e",
+      "claims": [
+        "8.4.4 one BLOCK per hardware request"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 139,
+      "pdf_viewer_page": 140,
+      "printed_page": 114,
+      "extracted_page_utf8_sha256": "8e4e3d9089585c7489499d7db317eff427d6e651340fbce20fa8ee1ef7d387f5",
+      "claims": [
+        "8.4.5 hardware BULK is not selected"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 140,
+      "pdf_viewer_page": 141,
+      "printed_page": 115,
+      "extracted_page_utf8_sha256": "651a547da3fc9f4d6e16901dc96ada5de71cdd5e1a47cded839d8ae23ed96d1d",
+      "claims": [
+        "8.5 widths, REPEAT reload, finite count, fixed priority, restart exclusions"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 141,
+      "pdf_viewer_page": 142,
+      "printed_page": 116,
+      "extracted_page_utf8_sha256": "84671598a3b41eaeeaa06a4d7ad62252174363406409f98a7ca8876e8968746c",
+      "claims": [
+        "8.6 clean TC and transfer error meaning"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 142,
+      "pdf_viewer_page": 143,
+      "printed_page": 117,
+      "extracted_page_utf8_sha256": "4a6642e8e7fbdbd0959c2271cf390782f455658a94f2980ddc8df5b137c2955d",
+      "claims": [
+        "8.7 DMA register layout"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 143,
+      "pdf_viewer_page": 144,
+      "printed_page": 118,
+      "extracted_page_utf8_sha256": "e44e0133ec8246ec96228fa216b5b7270fee7bcc4b31ea231e9686a7f3e809f8",
+      "claims": [
+        "8.8.1 native ISR"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 144,
+      "pdf_viewer_page": 145,
+      "printed_page": 119,
+      "extracted_page_utf8_sha256": "3f99ba22460617aa3da9359db7676b8f9fc00bab23f82f817de115230ec05b0c",
+      "claims": [
+        "8.8.2 R1W0 native ICR and 8.8.3 CSR upper fields"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 145,
+      "pdf_viewer_page": 146,
+      "printed_page": 120,
+      "extracted_page_utf8_sha256": "dd8db70904486075528f76f6c774198dbd4bf3e594a2f2a3351fbbad09617541",
+      "claims": [
+        "8.8.3 memory-only SIZE (FLASH/RAM), TC/TE RO, STATUS RW and complete5"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 146,
+      "pdf_viewer_page": 147,
+      "printed_page": 121,
+      "extracted_page_utf8_sha256": "014f379c5250bb0d36110fd8cde95f117493339747380cbd9556b07f027ef496",
+      "claims": [
+        "8.8.4 six SPI selectors all y=1..4 hardware trigger"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 147,
+      "pdf_viewer_page": 148,
+      "printed_page": 122,
+      "extracted_page_utf8_sha256": "c1f207daab1d59967b24d79f5e8cd3c493dbfe82bf4f04a1fc7b5f2772fbe435",
+      "claims": [
+        "8.8.5 REPEAT1 and CNT16; SRC/DST32"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 148,
+      "pdf_viewer_page": 149,
+      "printed_page": 123,
+      "extracted_page_utf8_sha256": "d459a777f3c4d633599d103d15e9ec6cfa125c6bf5ab0f96ff9aeda3d80f1e24",
+      "claims": [
+        "8.8.8 CCNT/CREPEAT RO and current addresses"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 531,
+      "pdf_viewer_page": 532,
+      "printed_page": 506,
+      "extracted_page_utf8_sha256": "5ce984dc3291f31e5d5b9dac1d9a823ab1a028b31e2f3da14e19f56149816e33",
+      "claims": [
+        "22.3.8 DR RXNE/TXE side effects and master BUSY idle"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 532,
+      "pdf_viewer_page": 533,
+      "printed_page": 507,
+      "extracted_page_utf8_sha256": "2adfc82a90ac28877b59112115935cf4deb1c5213b7cee013e6ab5f70a133d29",
+      "claims": [
+        "22.3.9 MODF/OV/SSERR/UD sticky errors"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 533,
+      "pdf_viewer_page": 534,
+      "printed_page": 508,
+      "extracted_page_utf8_sha256": "f2724e363eef3b10b3027379c80bc37ee81f04c86db55dd9976c844063d0aa75",
+      "claims": [
+        "22.4 table22-3 IRQ sources, DR read clear, no BUSY IRQ"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 541,
+      "pdf_viewer_page": 542,
+      "printed_page": 516,
+      "extracted_page_utf8_sha256": "8fb8bd7651983c2f346ea0da72c81b4650a066505c6349a0d09c045974afe980",
+      "claims": [
+        "22.7.1 CR1 MODE/BR geometry"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 542,
+      "pdf_viewer_page": 543,
+      "printed_page": 517,
+      "extracted_page_utf8_sha256": "a0937ff0755b1b3ebb7de8252af9bce724cae751bb4513e252b360e180af1427",
+      "claims": [
+        "22.7.1 WIDTH7/MSTR1/SSM1 and CR1 disabled-only"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 543,
+      "pdf_viewer_page": 544,
+      "printed_page": 518,
+      "extracted_page_utf8_sha256": "2d0aac021405f783d464e190eb1362d086b02548286e34a7c802676c0f92bdff",
+      "claims": [
+        "22.7.2 CR2 EN/DMARX/DMATX and CR3"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 544,
+      "pdf_viewer_page": 545,
+      "printed_page": 519,
+      "extracted_page_utf8_sha256": "f67d68da5ba5615253ce131ef69617aea0a5f8ba8ee618ff4017450cde83673e",
+      "claims": [
+        "22.7.4 SSI0:1 at0x0c for full native SPI geometry"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 545,
+      "pdf_viewer_page": 546,
+      "printed_page": 520,
+      "extracted_page_utf8_sha256": "fc5852adb9745fcc8420b0b3fb8ed2e4967e02f06182cc56d43b04fc236a0677",
+      "claims": [
+        "22.7.5 IER error bits"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 546,
+      "pdf_viewer_page": 547,
+      "printed_page": 521,
+      "extracted_page_utf8_sha256": "3bcec44ad565023804482b92bc7ee8cb27481d84ef75eb912efd6b0806070ab0",
+      "claims": [
+        "22.7.6 ISR RO and RXNE read-clear"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_CN_V1.4.txt",
+      "pdf_page_index": 547,
+      "pdf_viewer_page": 548,
+      "printed_page": 522,
+      "extracted_page_utf8_sha256": "fcc8839033eede7336fdac5080d6a4ec7ad5a867466b4ef2740250be53720c8e",
+      "claims": [
+        "22.7.7 R1W0 ICR destructive FLUSH and 22.7.8 DR16 at0x1c"
+      ]
+    },
+    {
+      "text_path": "CW32L012_UserManual_EN_V1.0.txt",
+      "pdf_page_index": 154,
+      "pdf_viewer_page": 155,
+      "printed_page": 129,
+      "extracted_page_utf8_sha256": "77ad5ed890e88c2a8b4b76d12f60afed2dac6bc5bb2b1390cf56b4d776331c46",
+      "claims": [
+        "8.8.3 independent memory-only width corroboration"
+      ]
+    }
+  ],
+  "native_register_geometry": {
+    "spi_cw32l012_v1": {
+      "registers": [
+        {
+          "name": "CR1",
+          "byte_offset": 0,
+          "fieldset": "CR1"
+        },
+        {
+          "name": "CR2",
+          "byte_offset": 4,
+          "fieldset": "CR2"
+        },
+        {
+          "name": "CR3",
+          "byte_offset": 8,
+          "fieldset": "CR3"
+        },
+        {
+          "name": "SSI",
+          "byte_offset": 12,
+          "fieldset": "SSI"
+        },
+        {
+          "name": "IER",
+          "byte_offset": 16,
+          "fieldset": "IER"
+        },
+        {
+          "name": "ISR",
+          "byte_offset": 20,
+          "access": "Read",
+          "fieldset": "ISR"
+        },
+        {
+          "name": "ICR",
+          "byte_offset": 24,
+          "fieldset": "ICR"
+        },
+        {
+          "name": "DR",
+          "byte_offset": 28,
+          "fieldset": "DR"
+        }
+      ],
+      "fields": {
+        "fieldset/CR1": [
+          {
+            "name": "MSTR",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "SSM",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "CPHA",
+            "bit_offset": 2,
+            "bit_size": 1
+          },
+          {
+            "name": "CPOL",
+            "bit_offset": 3,
+            "bit_size": 1
+          },
+          {
+            "name": "LSBF",
+            "bit_offset": 7,
+            "bit_size": 1
+          },
+          {
+            "name": "WIDTH",
+            "bit_offset": 8,
+            "bit_size": 4
+          },
+          {
+            "name": "GAP",
+            "bit_offset": 12,
+            "bit_size": 4
+          },
+          {
+            "name": "MODE",
+            "bit_offset": 16,
+            "bit_size": 2
+          },
+          {
+            "name": "FLTEN",
+            "bit_offset": 18,
+            "bit_size": 1
+          },
+          {
+            "name": "MISOHD",
+            "bit_offset": 19,
+            "bit_size": 1
+          },
+          {
+            "name": "SMP",
+            "bit_offset": 20,
+            "bit_size": 1
+          },
+          {
+            "name": "BR",
+            "bit_offset": 24,
+            "bit_size": 7
+          }
+        ],
+        "fieldset/CR2": [
+          {
+            "name": "EN",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "DMARX",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "DMATX",
+            "bit_offset": 2,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/CR3": [
+          {
+            "name": "HDOE",
+            "bit_offset": 0,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/DR": [
+          {
+            "name": "DR",
+            "bit_offset": 0,
+            "bit_size": 16
+          }
+        ],
+        "fieldset/ICR": [
+          {
+            "name": "FLUSH",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "RXNE",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "SSF",
+            "bit_offset": 2,
+            "bit_size": 1
+          },
+          {
+            "name": "SSR",
+            "bit_offset": 3,
+            "bit_size": 1
+          },
+          {
+            "name": "UD",
+            "bit_offset": 4,
+            "bit_size": 1
+          },
+          {
+            "name": "OV",
+            "bit_offset": 5,
+            "bit_size": 1
+          },
+          {
+            "name": "SSERR",
+            "bit_offset": 6,
+            "bit_size": 1
+          },
+          {
+            "name": "MODF",
+            "bit_offset": 7,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/IER": [
+          {
+            "name": "TXE",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "RXNE",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "SSF",
+            "bit_offset": 2,
+            "bit_size": 1
+          },
+          {
+            "name": "SSR",
+            "bit_offset": 3,
+            "bit_size": 1
+          },
+          {
+            "name": "UD",
+            "bit_offset": 4,
+            "bit_size": 1
+          },
+          {
+            "name": "OV",
+            "bit_offset": 5,
+            "bit_size": 1
+          },
+          {
+            "name": "SSERR",
+            "bit_offset": 6,
+            "bit_size": 1
+          },
+          {
+            "name": "MODF",
+            "bit_offset": 7,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/ISR": [
+          {
+            "name": "TXE",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "RXNE",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "SSF",
+            "bit_offset": 2,
+            "bit_size": 1
+          },
+          {
+            "name": "SSR",
+            "bit_offset": 3,
+            "bit_size": 1
+          },
+          {
+            "name": "UD",
+            "bit_offset": 4,
+            "bit_size": 1
+          },
+          {
+            "name": "OV",
+            "bit_offset": 5,
+            "bit_size": 1
+          },
+          {
+            "name": "SSERR",
+            "bit_offset": 6,
+            "bit_size": 1
+          },
+          {
+            "name": "MODF",
+            "bit_offset": 7,
+            "bit_size": 1
+          },
+          {
+            "name": "BUSY",
+            "bit_offset": 8,
+            "bit_size": 1
+          },
+          {
+            "name": "SSLVL",
+            "bit_offset": 9,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/SSI": [
+          {
+            "name": "SSI",
+            "bit_offset": 0,
+            "bit_size": 1
+          }
+        ]
+      }
+    },
+    "dmachannel_cw32l012_v1": {
+      "registers": [
+        {
+          "name": "CSR",
+          "byte_offset": 0,
+          "fieldset": "CSR"
+        },
+        {
+          "name": "CNT",
+          "byte_offset": 4,
+          "fieldset": "CNT"
+        },
+        {
+          "name": "SRCADDR",
+          "byte_offset": 8,
+          "fieldset": "SRCADDR"
+        },
+        {
+          "name": "DSTADDR",
+          "byte_offset": 12,
+          "fieldset": "DSTADDR"
+        },
+        {
+          "name": "TRIG",
+          "byte_offset": 16,
+          "fieldset": "TRIG"
+        },
+        {
+          "name": "CCNT",
+          "byte_offset": 20,
+          "access": "Read",
+          "fieldset": "CCNT"
+        },
+        {
+          "name": "CSRCADDR",
+          "byte_offset": 24,
+          "access": "Read",
+          "fieldset": "CSRCADDR"
+        },
+        {
+          "name": "CDSTADDR",
+          "byte_offset": 28,
+          "access": "Read",
+          "fieldset": "CDSTADDR"
+        }
+      ],
+      "fields": {
+        "fieldset/CCNT": [
+          {
+            "name": "CCNT",
+            "bit_offset": 0,
+            "bit_size": 16
+          },
+          {
+            "name": "CREPEAT",
+            "bit_offset": 16,
+            "bit_size": 4
+          }
+        ],
+        "fieldset/CDSTADDR": [
+          {
+            "name": "CDSTADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/CNT": [
+          {
+            "name": "CNT",
+            "bit_offset": 0,
+            "bit_size": 16
+          },
+          {
+            "name": "REPEAT",
+            "bit_offset": 16,
+            "bit_size": 4
+          }
+        ],
+        "fieldset/CSR": [
+          {
+            "name": "EN",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "TCIE",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "TEIE",
+            "bit_offset": 2,
+            "bit_size": 1
+          },
+          {
+            "name": "TRANS",
+            "bit_offset": 3,
+            "bit_size": 1,
+            "enum": "TransferMode"
+          },
+          {
+            "name": "SRCINC",
+            "bit_offset": 4,
+            "bit_size": 1
+          },
+          {
+            "name": "DSTINC",
+            "bit_offset": 5,
+            "bit_size": 1
+          },
+          {
+            "name": "SIZE",
+            "bit_offset": 6,
+            "bit_size": 2,
+            "enum": "Width"
+          },
+          {
+            "name": "STATUS",
+            "bit_offset": 8,
+            "bit_size": 3,
+            "enum": "Status"
+          },
+          {
+            "name": "RESTART",
+            "bit_offset": 11,
+            "bit_size": 1
+          },
+          {
+            "name": "TC",
+            "bit_offset": 12,
+            "bit_size": 1
+          },
+          {
+            "name": "TE",
+            "bit_offset": 13,
+            "bit_size": 1
+          },
+          {
+            "name": "SRCLOAD",
+            "bit_offset": 14,
+            "bit_size": 1
+          },
+          {
+            "name": "DSTLOAD",
+            "bit_offset": 15,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/CSRCADDR": [
+          {
+            "name": "CSRCADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/DSTADDR": [
+          {
+            "name": "DSTADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/SRCADDR": [
+          {
+            "name": "SRCADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/TRIG": [
+          {
+            "name": "TYPE",
+            "bit_offset": 0,
+            "bit_size": 1,
+            "enum": "Trigger"
+          },
+          {
+            "name": "SOFTSRC",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "HARDSRC",
+            "bit_offset": 2,
+            "bit_size": 6
+          }
+        ]
+      }
+    },
+    "dma_cw32l012_v1": {
+      "registers": [
+        {
+          "name": "ISR",
+          "byte_offset": 0,
+          "access": "Read",
+          "fieldset": "ISR"
+        },
+        {
+          "name": "ICR",
+          "byte_offset": 4,
+          "fieldset": "ICR"
+        },
+        {
+          "name": "CSR1",
+          "byte_offset": 32,
+          "fieldset": "CSR1"
+        },
+        {
+          "name": "CNT1",
+          "byte_offset": 36,
+          "fieldset": "CNT1"
+        },
+        {
+          "name": "SRCADDR1",
+          "byte_offset": 40,
+          "fieldset": "SRCADDR1"
+        },
+        {
+          "name": "DSTADDR1",
+          "byte_offset": 44,
+          "fieldset": "DSTADDR1"
+        },
+        {
+          "name": "TRIG1",
+          "byte_offset": 48,
+          "fieldset": "TRIG1"
+        },
+        {
+          "name": "CCNT1",
+          "byte_offset": 52,
+          "access": "Read",
+          "fieldset": "CCNT1"
+        },
+        {
+          "name": "CSRCADDR1",
+          "byte_offset": 56,
+          "access": "Read",
+          "fieldset": "CSRCADDR1"
+        },
+        {
+          "name": "CDSTADDR1",
+          "byte_offset": 60,
+          "access": "Read",
+          "fieldset": "CDSTADDR1"
+        },
+        {
+          "name": "CSR2",
+          "byte_offset": 64,
+          "fieldset": "CSR2"
+        },
+        {
+          "name": "CNT2",
+          "byte_offset": 68,
+          "fieldset": "CNT2"
+        },
+        {
+          "name": "SRCADDR2",
+          "byte_offset": 72,
+          "fieldset": "SRCADDR2"
+        },
+        {
+          "name": "DSTADDR2",
+          "byte_offset": 76,
+          "fieldset": "DSTADDR2"
+        },
+        {
+          "name": "TRIG2",
+          "byte_offset": 80,
+          "fieldset": "TRIG2"
+        },
+        {
+          "name": "CCNT2",
+          "byte_offset": 84,
+          "access": "Read",
+          "fieldset": "CCNT2"
+        },
+        {
+          "name": "CSRCADDR2",
+          "byte_offset": 88,
+          "access": "Read",
+          "fieldset": "CSRCADDR2"
+        },
+        {
+          "name": "CDSTADDR2",
+          "byte_offset": 92,
+          "access": "Read",
+          "fieldset": "CDSTADDR2"
+        },
+        {
+          "name": "CSR3",
+          "byte_offset": 96,
+          "fieldset": "CSR3"
+        },
+        {
+          "name": "CNT3",
+          "byte_offset": 100,
+          "fieldset": "CNT3"
+        },
+        {
+          "name": "SRCADDR3",
+          "byte_offset": 104,
+          "fieldset": "SRCADDR3"
+        },
+        {
+          "name": "DSTADDR3",
+          "byte_offset": 108,
+          "fieldset": "DSTADDR3"
+        },
+        {
+          "name": "TRIG3",
+          "byte_offset": 112,
+          "fieldset": "TRIG3"
+        },
+        {
+          "name": "CCNT3",
+          "byte_offset": 116,
+          "access": "Read",
+          "fieldset": "CCNT3"
+        },
+        {
+          "name": "CSRCADDR3",
+          "byte_offset": 120,
+          "access": "Read",
+          "fieldset": "CSRCADDR3"
+        },
+        {
+          "name": "CDSTADDR3",
+          "byte_offset": 124,
+          "access": "Read",
+          "fieldset": "CDSTADDR3"
+        },
+        {
+          "name": "CSR4",
+          "byte_offset": 128,
+          "fieldset": "CSR4"
+        },
+        {
+          "name": "CNT4",
+          "byte_offset": 132,
+          "fieldset": "CNT4"
+        },
+        {
+          "name": "SRCADDR4",
+          "byte_offset": 136,
+          "fieldset": "SRCADDR4"
+        },
+        {
+          "name": "DSTADDR4",
+          "byte_offset": 140,
+          "fieldset": "DSTADDR4"
+        },
+        {
+          "name": "TRIG4",
+          "byte_offset": 144,
+          "fieldset": "TRIG4"
+        },
+        {
+          "name": "CCNT4",
+          "byte_offset": 148,
+          "access": "Read",
+          "fieldset": "CCNT4"
+        },
+        {
+          "name": "CSRCADDR4",
+          "byte_offset": 152,
+          "access": "Read",
+          "fieldset": "CSRCADDR4"
+        },
+        {
+          "name": "CDSTADDR4",
+          "byte_offset": 156,
+          "access": "Read",
+          "fieldset": "CDSTADDR4"
+        }
+      ],
+      "fields": {
+        "fieldset/CCNT1": [
+          {
+            "name": "CCNT",
+            "bit_offset": 0,
+            "bit_size": 16
+          },
+          {
+            "name": "CREPEAT",
+            "bit_offset": 16,
+            "bit_size": 4
+          }
+        ],
+        "fieldset/CCNT2": [
+          {
+            "name": "CCNT",
+            "bit_offset": 0,
+            "bit_size": 16
+          },
+          {
+            "name": "CREPEAT",
+            "bit_offset": 16,
+            "bit_size": 4
+          }
+        ],
+        "fieldset/CCNT3": [
+          {
+            "name": "CCNT",
+            "bit_offset": 0,
+            "bit_size": 16
+          },
+          {
+            "name": "CREPEAT",
+            "bit_offset": 16,
+            "bit_size": 4
+          }
+        ],
+        "fieldset/CCNT4": [
+          {
+            "name": "CCNT",
+            "bit_offset": 0,
+            "bit_size": 16
+          },
+          {
+            "name": "CREPEAT",
+            "bit_offset": 16,
+            "bit_size": 4
+          }
+        ],
+        "fieldset/CDSTADDR1": [
+          {
+            "name": "CDSTADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/CDSTADDR2": [
+          {
+            "name": "CDSTADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/CDSTADDR3": [
+          {
+            "name": "CDSTADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/CDSTADDR4": [
+          {
+            "name": "CDSTADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/CNT1": [
+          {
+            "name": "CNT",
+            "bit_offset": 0,
+            "bit_size": 16
+          },
+          {
+            "name": "REPEAT",
+            "bit_offset": 16,
+            "bit_size": 4
+          }
+        ],
+        "fieldset/CNT2": [
+          {
+            "name": "CNT",
+            "bit_offset": 0,
+            "bit_size": 16
+          },
+          {
+            "name": "REPEAT",
+            "bit_offset": 16,
+            "bit_size": 4
+          }
+        ],
+        "fieldset/CNT3": [
+          {
+            "name": "CNT",
+            "bit_offset": 0,
+            "bit_size": 16
+          },
+          {
+            "name": "REPEAT",
+            "bit_offset": 16,
+            "bit_size": 4
+          }
+        ],
+        "fieldset/CNT4": [
+          {
+            "name": "CNT",
+            "bit_offset": 0,
+            "bit_size": 16
+          },
+          {
+            "name": "REPEAT",
+            "bit_offset": 16,
+            "bit_size": 4
+          }
+        ],
+        "fieldset/CSR1": [
+          {
+            "name": "EN",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "TCIE",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "TEIE",
+            "bit_offset": 2,
+            "bit_size": 1
+          },
+          {
+            "name": "TRANS",
+            "bit_offset": 3,
+            "bit_size": 1
+          },
+          {
+            "name": "SRCINC",
+            "bit_offset": 4,
+            "bit_size": 1
+          },
+          {
+            "name": "DSTINC",
+            "bit_offset": 5,
+            "bit_size": 1
+          },
+          {
+            "name": "SIZE",
+            "bit_offset": 6,
+            "bit_size": 2
+          },
+          {
+            "name": "STATUS",
+            "bit_offset": 8,
+            "bit_size": 3
+          },
+          {
+            "name": "RESTART",
+            "bit_offset": 11,
+            "bit_size": 1
+          },
+          {
+            "name": "TC",
+            "bit_offset": 12,
+            "bit_size": 1
+          },
+          {
+            "name": "TE",
+            "bit_offset": 13,
+            "bit_size": 1
+          },
+          {
+            "name": "SRCLOAD",
+            "bit_offset": 14,
+            "bit_size": 1
+          },
+          {
+            "name": "DSTLOAD",
+            "bit_offset": 15,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/CSR2": [
+          {
+            "name": "EN",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "TCIE",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "TEIE",
+            "bit_offset": 2,
+            "bit_size": 1
+          },
+          {
+            "name": "TRANS",
+            "bit_offset": 3,
+            "bit_size": 1
+          },
+          {
+            "name": "SRCINC",
+            "bit_offset": 4,
+            "bit_size": 1
+          },
+          {
+            "name": "DSTINC",
+            "bit_offset": 5,
+            "bit_size": 1
+          },
+          {
+            "name": "SIZE",
+            "bit_offset": 6,
+            "bit_size": 2
+          },
+          {
+            "name": "STATUS",
+            "bit_offset": 8,
+            "bit_size": 3
+          },
+          {
+            "name": "RESTART",
+            "bit_offset": 11,
+            "bit_size": 1
+          },
+          {
+            "name": "TC",
+            "bit_offset": 12,
+            "bit_size": 1
+          },
+          {
+            "name": "TE",
+            "bit_offset": 13,
+            "bit_size": 1
+          },
+          {
+            "name": "SRCLOAD",
+            "bit_offset": 14,
+            "bit_size": 1
+          },
+          {
+            "name": "DSTLOAD",
+            "bit_offset": 15,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/CSR3": [
+          {
+            "name": "EN",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "TCIE",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "TEIE",
+            "bit_offset": 2,
+            "bit_size": 1
+          },
+          {
+            "name": "TRANS",
+            "bit_offset": 3,
+            "bit_size": 1
+          },
+          {
+            "name": "SRCINC",
+            "bit_offset": 4,
+            "bit_size": 1
+          },
+          {
+            "name": "DSTINC",
+            "bit_offset": 5,
+            "bit_size": 1
+          },
+          {
+            "name": "SIZE",
+            "bit_offset": 6,
+            "bit_size": 2
+          },
+          {
+            "name": "STATUS",
+            "bit_offset": 8,
+            "bit_size": 3
+          },
+          {
+            "name": "RESTART",
+            "bit_offset": 11,
+            "bit_size": 1
+          },
+          {
+            "name": "TC",
+            "bit_offset": 12,
+            "bit_size": 1
+          },
+          {
+            "name": "TE",
+            "bit_offset": 13,
+            "bit_size": 1
+          },
+          {
+            "name": "SRCLOAD",
+            "bit_offset": 14,
+            "bit_size": 1
+          },
+          {
+            "name": "DSTLOAD",
+            "bit_offset": 15,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/CSR4": [
+          {
+            "name": "EN",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "TCIE",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "TEIE",
+            "bit_offset": 2,
+            "bit_size": 1
+          },
+          {
+            "name": "TRANS",
+            "bit_offset": 3,
+            "bit_size": 1
+          },
+          {
+            "name": "SRCINC",
+            "bit_offset": 4,
+            "bit_size": 1
+          },
+          {
+            "name": "DSTINC",
+            "bit_offset": 5,
+            "bit_size": 1
+          },
+          {
+            "name": "SIZE",
+            "bit_offset": 6,
+            "bit_size": 2
+          },
+          {
+            "name": "STATUS",
+            "bit_offset": 8,
+            "bit_size": 3
+          },
+          {
+            "name": "RESTART",
+            "bit_offset": 11,
+            "bit_size": 1
+          },
+          {
+            "name": "TC",
+            "bit_offset": 12,
+            "bit_size": 1
+          },
+          {
+            "name": "TE",
+            "bit_offset": 13,
+            "bit_size": 1
+          },
+          {
+            "name": "SRCLOAD",
+            "bit_offset": 14,
+            "bit_size": 1
+          },
+          {
+            "name": "DSTLOAD",
+            "bit_offset": 15,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/CSRCADDR1": [
+          {
+            "name": "CSRCADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/CSRCADDR2": [
+          {
+            "name": "CSRCADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/CSRCADDR3": [
+          {
+            "name": "CSRCADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/CSRCADDR4": [
+          {
+            "name": "CSRCADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/DSTADDR1": [
+          {
+            "name": "DSTADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/DSTADDR2": [
+          {
+            "name": "DSTADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/DSTADDR3": [
+          {
+            "name": "DSTADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/DSTADDR4": [
+          {
+            "name": "DSTADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/ICR": [
+          {
+            "name": "TC1",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "TE1",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "TC2",
+            "bit_offset": 4,
+            "bit_size": 1
+          },
+          {
+            "name": "TE2",
+            "bit_offset": 5,
+            "bit_size": 1
+          },
+          {
+            "name": "TC3",
+            "bit_offset": 8,
+            "bit_size": 1
+          },
+          {
+            "name": "TE3",
+            "bit_offset": 9,
+            "bit_size": 1
+          },
+          {
+            "name": "TC4",
+            "bit_offset": 12,
+            "bit_size": 1
+          },
+          {
+            "name": "TE4",
+            "bit_offset": 13,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/ISR": [
+          {
+            "name": "TC1",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "TE1",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "TC2",
+            "bit_offset": 4,
+            "bit_size": 1
+          },
+          {
+            "name": "TE2",
+            "bit_offset": 5,
+            "bit_size": 1
+          },
+          {
+            "name": "TC3",
+            "bit_offset": 8,
+            "bit_size": 1
+          },
+          {
+            "name": "TE3",
+            "bit_offset": 9,
+            "bit_size": 1
+          },
+          {
+            "name": "TC4",
+            "bit_offset": 12,
+            "bit_size": 1
+          },
+          {
+            "name": "TE4",
+            "bit_offset": 13,
+            "bit_size": 1
+          }
+        ],
+        "fieldset/SRCADDR1": [
+          {
+            "name": "SRCADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/SRCADDR2": [
+          {
+            "name": "SRCADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/SRCADDR3": [
+          {
+            "name": "SRCADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/SRCADDR4": [
+          {
+            "name": "SRCADDR",
+            "bit_offset": 0,
+            "bit_size": 32
+          }
+        ],
+        "fieldset/TRIG1": [
+          {
+            "name": "TYPE",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "SOFTSRC",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "HARDSRC",
+            "bit_offset": 2,
+            "bit_size": 6
+          }
+        ],
+        "fieldset/TRIG2": [
+          {
+            "name": "TYPE",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "SOFTSRC",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "HARDSRC",
+            "bit_offset": 2,
+            "bit_size": 6
+          }
+        ],
+        "fieldset/TRIG3": [
+          {
+            "name": "TYPE",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "SOFTSRC",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "HARDSRC",
+            "bit_offset": 2,
+            "bit_size": 6
+          }
+        ],
+        "fieldset/TRIG4": [
+          {
+            "name": "TYPE",
+            "bit_offset": 0,
+            "bit_size": 1
+          },
+          {
+            "name": "SOFTSRC",
+            "bit_offset": 1,
+            "bit_size": 1
+          },
+          {
+            "name": "HARDSRC",
+            "bit_offset": 2,
+            "bit_size": 6
+          }
+        ]
+      }
+    }
+  },
+  "selected_af_routes": [
+    {
+      "pin": "PA0",
+      "af": 8,
+      "function": "SPI2MISO",
+      "source_macro": "PA00_AFx_SPI2MISO",
+      "source_line": 637,
+      "gpio_register": "AFRL",
+      "gpio_field": "PIN0",
+      "peripheral": "SPI2",
+      "signal": "MISO",
+      "source_signal": "MISO",
+      "source_kind": "sdk-and-datasheet",
+      "datasheet_cell": {
+        "pin": "PA0",
+        "af": 8,
+        "function": "SPI2_MISO",
+        "table": "5-3",
+        "pdf_page": 39,
+        "printed_page": 36
+      }
+    },
+    {
+      "pin": "PA1",
+      "af": 8,
+      "function": "SPI2MOSI",
+      "source_macro": "PA01_AFx_SPI2MOSI",
+      "source_line": 647,
+      "gpio_register": "AFRL",
+      "gpio_field": "PIN1",
+      "peripheral": "SPI2",
+      "signal": "MOSI",
+      "source_signal": "MOSI",
+      "source_kind": "sdk-and-datasheet",
+      "datasheet_cell": {
+        "pin": "PA1",
+        "af": 8,
+        "function": "SPI2_MOSI",
+        "table": "5-3",
+        "pdf_page": 39,
+        "printed_page": 36
+      }
+    },
+    {
+      "pin": "PA10",
+      "af": 8,
+      "function": "SPI3MISO",
+      "source_macro": "PA10_AFx_SPI3MISO",
+      "source_line": 733,
+      "gpio_register": "AFRH",
+      "gpio_field": "PIN10",
+      "peripheral": "SPI3",
+      "signal": "MISO",
+      "source_signal": "MISO",
+      "source_kind": "sdk-and-datasheet",
+      "datasheet_cell": {
+        "pin": "PA10",
+        "af": 8,
+        "function": "SPI3_MISO",
+        "table": "5-3",
+        "pdf_page": 39,
+        "printed_page": 36
+      }
+    },
+    {
+      "pin": "PA11",
+      "af": 8,
+      "function": "SPI3MOSI",
+      "source_macro": "PA11_AFx_SPI3MOSI",
+      "source_line": 743,
+      "gpio_register": "AFRH",
+      "gpio_field": "PIN11",
+      "peripheral": "SPI3",
+      "signal": "MOSI",
+      "source_signal": "MOSI",
+      "source_kind": "sdk-and-datasheet",
+      "datasheet_cell": {
+        "pin": "PA11",
+        "af": 8,
+        "function": "SPI3_MOSI",
+        "table": "5-3",
+        "pdf_page": 39,
+        "printed_page": 36
+      }
+    },
+    {
+      "pin": "PA2",
+      "af": 8,
+      "function": "SPI2SCK",
+      "source_macro": "PA02_AFx_SPI2SCK",
+      "source_line": 656,
+      "gpio_register": "AFRL",
+      "gpio_field": "PIN2",
+      "peripheral": "SPI2",
+      "signal": "SCK",
+      "source_signal": "SCK",
+      "source_kind": "sdk-and-datasheet",
+      "datasheet_cell": {
+        "pin": "PA2",
+        "af": 8,
+        "function": "SPI2_SCK",
+        "table": "5-3",
+        "pdf_page": 39,
+        "printed_page": 36
+      }
+    },
+    {
+      "pin": "PA5",
+      "af": 3,
+      "function": "SPI1SCK",
+      "source_macro": "PA05_AFx_SPI1SCK",
+      "source_line": 680,
+      "gpio_register": "AFRL",
+      "gpio_field": "PIN5",
+      "peripheral": "SPI1",
+      "signal": "SCK",
+      "source_signal": "SCK",
+      "source_kind": "sdk-and-datasheet",
+      "datasheet_cell": {
+        "pin": "PA5",
+        "af": 3,
+        "function": "SPI1_SCK",
+        "table": "5-3",
+        "pdf_page": 39,
+        "printed_page": 36
+      }
+    },
+    {
+      "pin": "PA6",
+      "af": 3,
+      "function": "SPI1MISO",
+      "source_macro": "PA06_AFx_SPI1MISO",
+      "source_line": 690,
+      "gpio_register": "AFRL",
+      "gpio_field": "PIN6",
+      "peripheral": "SPI1",
+      "signal": "MISO",
+      "source_signal": "MISO",
+      "source_kind": "sdk-and-datasheet",
+      "datasheet_cell": {
+        "pin": "PA6",
+        "af": 3,
+        "function": "SPI1_MISO",
+        "table": "5-3",
+        "pdf_page": 39,
+        "printed_page": 36
+      }
+    },
+    {
+      "pin": "PA7",
+      "af": 3,
+      "function": "SPI1MOSI",
+      "source_macro": "PA07_AFx_SPI1MOSI",
+      "source_line": 699,
+      "gpio_register": "AFRL",
+      "gpio_field": "PIN7",
+      "peripheral": "SPI1",
+      "signal": "MOSI",
+      "source_signal": "MOSI",
+      "source_kind": "sdk-and-datasheet",
+      "datasheet_cell": {
+        "pin": "PA7",
+        "af": 3,
+        "function": "SPI1_MOSI",
+        "table": "5-3",
+        "pdf_page": 39,
+        "printed_page": 36
+      }
+    },
+    {
+      "pin": "PA9",
+      "af": 8,
+      "function": "SPI3SCK",
+      "source_macro": "PA09_AFx_SPI3SCK",
+      "source_line": 723,
+      "gpio_register": "AFRH",
+      "gpio_field": "PIN9",
+      "peripheral": "SPI3",
+      "signal": "SCK",
+      "source_signal": "SCK",
+      "source_kind": "sdk-and-datasheet",
+      "datasheet_cell": {
+        "pin": "PA9",
+        "af": 8,
+        "function": "SPI3_SCK",
+        "table": "5-3",
+        "pdf_page": 39,
+        "printed_page": 36
+      }
+    }
+  ],
+  "chip_projections": [
+    {
+      "chip": "CW32L012C8T6",
+      "feature": "cw32l012c8t6",
+      "memory": [
+        [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      ],
+      "package_names": [
+        "LQFP48"
+      ],
+      "package_signal_positions": {
+        "LQFP48": {
+          "PA0": "10",
+          "PA1": "11",
+          "PA2": "12",
+          "PA5": "15",
+          "PA6": "16",
+          "PA7": "17",
+          "PB0": "18",
+          "PB1": "19",
+          "PB2": "20",
+          "PA9": "30",
+          "PA10": "31",
+          "PA11": "32"
+        }
+      },
+      "dma_channels": [
+        {
+          "channel": 0,
+          "dma": "DMA",
+          "name": "DMA_CH1"
+        },
+        {
+          "channel": 1,
+          "dma": "DMA",
+          "name": "DMA_CH2"
+        },
+        {
+          "channel": 2,
+          "dma": "DMA",
+          "name": "DMA_CH3"
+        },
+        {
+          "channel": 3,
+          "dma": "DMA",
+          "name": "DMA_CH4"
+        }
+      ],
+      "peripherals": [
+        {
+          "address": 1073872896,
+          "interrupts": [
+            {
+              "interrupt": "DMACH12",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMA",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMA",
+            "kind": "dma",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073872928,
+          "interrupts": [
+            {
+              "interrupt": "DMACH12",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL1",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073872960,
+          "interrupts": [
+            {
+              "interrupt": "DMACH12",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL2",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073872992,
+          "interrupts": [
+            {
+              "interrupt": "DMACH34",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL3",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073873024,
+          "interrupts": [
+            {
+              "interrupt": "DMACH34",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL4",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073743872,
+          "dma_channels": [
+            {
+              "dma": "DMA",
+              "request": 6,
+              "signal": "RX"
+            },
+            {
+              "dma": "DMA",
+              "request": 7,
+              "signal": "TX"
+            }
+          ],
+          "interrupts": [
+            {
+              "interrupt": "SPI1",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "SPI1",
+          "rcc_control": {
+            "bus_clock": "PCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "SPI1",
+              "register": "APBEN1"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "APBEN1"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "SPI1",
+              "register": "APBRST1"
+            },
+            "reset_asserted_value": false
+          },
+          "registers": {
+            "block": "SPI",
+            "kind": "spi",
+            "version": "cw32l012_v1"
+          },
+          "spi": {
+            "maximum_frequency": 24000000,
+            "minimum_divisor": 2
+          }
+        },
+        {
+          "address": 1073742848,
+          "dma_channels": [
+            {
+              "dma": "DMA",
+              "request": 8,
+              "signal": "RX"
+            },
+            {
+              "dma": "DMA",
+              "request": 9,
+              "signal": "TX"
+            }
+          ],
+          "interrupts": [
+            {
+              "interrupt": "SPI23",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "SPI2",
+          "rcc_control": {
+            "bus_clock": "PCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "SPI2",
+              "register": "APBEN1"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "APBEN1"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "SPI2",
+              "register": "APBRST1"
+            },
+            "reset_asserted_value": false
+          },
+          "registers": {
+            "block": "SPI",
+            "kind": "spi",
+            "version": "cw32l012_v1"
+          },
+          "spi": {
+            "maximum_frequency": 24000000,
+            "minimum_divisor": 2
+          }
+        },
+        {
+          "address": 1073755136,
+          "dma_channels": [
+            {
+              "dma": "DMA",
+              "request": 10,
+              "signal": "RX"
+            },
+            {
+              "dma": "DMA",
+              "request": 11,
+              "signal": "TX"
+            }
+          ],
+          "interrupts": [
+            {
+              "interrupt": "SPI23",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "SPI3",
+          "rcc_control": {
+            "bus_clock": "PCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "SPI3",
+              "register": "APBEN1"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "APBEN1"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "SPI3",
+              "register": "APBRST1"
+            },
+            "reset_asserted_value": false
+          },
+          "registers": {
+            "block": "SPI",
+            "kind": "spi",
+            "version": "cw32l012_v1"
+          },
+          "spi": {
+            "maximum_frequency": 24000000,
+            "minimum_divisor": 2
+          }
+        }
+      ],
+      "interrupts": [
+        {
+          "name": "DMACH12",
+          "number": 9
+        },
+        {
+          "name": "DMACH34",
+          "number": 10
+        },
+        {
+          "name": "CORDIC",
+          "number": 11
+        },
+        {
+          "name": "SPI1",
+          "number": 25
+        },
+        {
+          "name": "SPI23",
+          "number": 26
+        }
+      ]
+    },
+    {
+      "chip": "CW32L012C8U6",
+      "feature": "cw32l012c8u6",
+      "memory": [
+        [
+          {
+            "address": 0,
+            "kind": "flash",
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "kind": "ram",
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      ],
+      "package_names": [
+        "QFN48"
+      ],
+      "package_signal_positions": {
+        "QFN48": {
+          "PA0": "10",
+          "PA1": "11",
+          "PA2": "12",
+          "PA5": "15",
+          "PA6": "16",
+          "PA7": "17",
+          "PB0": "18",
+          "PB1": "19",
+          "PB2": "20",
+          "PA9": "30",
+          "PA10": "31",
+          "PA11": "32"
+        }
+      },
+      "dma_channels": [
+        {
+          "channel": 0,
+          "dma": "DMA",
+          "name": "DMA_CH1"
+        },
+        {
+          "channel": 1,
+          "dma": "DMA",
+          "name": "DMA_CH2"
+        },
+        {
+          "channel": 2,
+          "dma": "DMA",
+          "name": "DMA_CH3"
+        },
+        {
+          "channel": 3,
+          "dma": "DMA",
+          "name": "DMA_CH4"
+        }
+      ],
+      "peripherals": [
+        {
+          "address": 1073872896,
+          "interrupts": [
+            {
+              "interrupt": "DMACH12",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMA",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMA",
+            "kind": "dma",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073872928,
+          "interrupts": [
+            {
+              "interrupt": "DMACH12",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL1",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073872960,
+          "interrupts": [
+            {
+              "interrupt": "DMACH12",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL2",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073872992,
+          "interrupts": [
+            {
+              "interrupt": "DMACH34",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL3",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073873024,
+          "interrupts": [
+            {
+              "interrupt": "DMACH34",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL4",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073743872,
+          "dma_channels": [
+            {
+              "dma": "DMA",
+              "request": 6,
+              "signal": "RX"
+            },
+            {
+              "dma": "DMA",
+              "request": 7,
+              "signal": "TX"
+            }
+          ],
+          "interrupts": [
+            {
+              "interrupt": "SPI1",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "SPI1",
+          "rcc_control": {
+            "bus_clock": "PCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "SPI1",
+              "register": "APBEN1"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "APBEN1"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "SPI1",
+              "register": "APBRST1"
+            },
+            "reset_asserted_value": false
+          },
+          "registers": {
+            "block": "SPI",
+            "kind": "spi",
+            "version": "cw32l012_v1"
+          },
+          "spi": {
+            "maximum_frequency": 24000000,
+            "minimum_divisor": 2
+          }
+        },
+        {
+          "address": 1073742848,
+          "dma_channels": [
+            {
+              "dma": "DMA",
+              "request": 8,
+              "signal": "RX"
+            },
+            {
+              "dma": "DMA",
+              "request": 9,
+              "signal": "TX"
+            }
+          ],
+          "interrupts": [
+            {
+              "interrupt": "SPI23",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "SPI2",
+          "rcc_control": {
+            "bus_clock": "PCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "SPI2",
+              "register": "APBEN1"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "APBEN1"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "SPI2",
+              "register": "APBRST1"
+            },
+            "reset_asserted_value": false
+          },
+          "registers": {
+            "block": "SPI",
+            "kind": "spi",
+            "version": "cw32l012_v1"
+          },
+          "spi": {
+            "maximum_frequency": 24000000,
+            "minimum_divisor": 2
+          }
+        },
+        {
+          "address": 1073755136,
+          "dma_channels": [
+            {
+              "dma": "DMA",
+              "request": 10,
+              "signal": "RX"
+            },
+            {
+              "dma": "DMA",
+              "request": 11,
+              "signal": "TX"
+            }
+          ],
+          "interrupts": [
+            {
+              "interrupt": "SPI23",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "SPI3",
+          "rcc_control": {
+            "bus_clock": "PCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "SPI3",
+              "register": "APBEN1"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "APBEN1"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "SPI3",
+              "register": "APBRST1"
+            },
+            "reset_asserted_value": false
+          },
+          "registers": {
+            "block": "SPI",
+            "kind": "spi",
+            "version": "cw32l012_v1"
+          },
+          "spi": {
+            "maximum_frequency": 24000000,
+            "minimum_divisor": 2
+          }
+        }
+      ],
+      "interrupts": [
+        {
+          "name": "DMACH12",
+          "number": 9
+        },
+        {
+          "name": "DMACH34",
+          "number": 10
+        },
+        {
+          "name": "CORDIC",
+          "number": 11
+        },
+        {
+          "name": "SPI1",
+          "number": 25
+        },
+        {
+          "name": "SPI23",
+          "number": 26
+        }
+      ]
+    },
+    {
+      "chip": "CW32L012",
+      "feature": "cw32l012",
+      "memory": [],
+      "package_names": [],
+      "package_signal_positions": {},
+      "dma_channels": [
+        {
+          "channel": 0,
+          "dma": "DMA",
+          "name": "DMA_CH1"
+        },
+        {
+          "channel": 1,
+          "dma": "DMA",
+          "name": "DMA_CH2"
+        },
+        {
+          "channel": 2,
+          "dma": "DMA",
+          "name": "DMA_CH3"
+        },
+        {
+          "channel": 3,
+          "dma": "DMA",
+          "name": "DMA_CH4"
+        }
+      ],
+      "peripherals": [
+        {
+          "address": 1073872896,
+          "interrupts": [
+            {
+              "interrupt": "DMACH12",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMA",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMA",
+            "kind": "dma",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073872928,
+          "interrupts": [
+            {
+              "interrupt": "DMACH12",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL1",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073872960,
+          "interrupts": [
+            {
+              "interrupt": "DMACH12",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL2",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073872992,
+          "interrupts": [
+            {
+              "interrupt": "DMACH34",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL3",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073873024,
+          "interrupts": [
+            {
+              "interrupt": "DMACH34",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "DMACHANNEL4",
+          "rcc_control": {
+            "bus_clock": "HCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "DMA",
+              "register": "AHBEN"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "AHBEN"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "DMA",
+              "register": "AHBRST"
+            },
+            "reset_asserted_value": false,
+            "shared_enable_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4",
+            "shared_reset_group": "DMA-DMACHANNEL1-DMACHANNEL2-DMACHANNEL3-DMACHANNEL4"
+          },
+          "registers": {
+            "block": "DMACHANNEL",
+            "kind": "dmachannel",
+            "version": "cw32l012_v1"
+          }
+        },
+        {
+          "address": 1073743872,
+          "dma_channels": [
+            {
+              "dma": "DMA",
+              "request": 6,
+              "signal": "RX"
+            },
+            {
+              "dma": "DMA",
+              "request": 7,
+              "signal": "TX"
+            }
+          ],
+          "interrupts": [
+            {
+              "interrupt": "SPI1",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "SPI1",
+          "rcc_control": {
+            "bus_clock": "PCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "SPI1",
+              "register": "APBEN1"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "APBEN1"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "SPI1",
+              "register": "APBRST1"
+            },
+            "reset_asserted_value": false
+          },
+          "registers": {
+            "block": "SPI",
+            "kind": "spi",
+            "version": "cw32l012_v1"
+          },
+          "spi": {
+            "maximum_frequency": 24000000,
+            "minimum_divisor": 2
+          }
+        },
+        {
+          "address": 1073742848,
+          "dma_channels": [
+            {
+              "dma": "DMA",
+              "request": 8,
+              "signal": "RX"
+            },
+            {
+              "dma": "DMA",
+              "request": 9,
+              "signal": "TX"
+            }
+          ],
+          "interrupts": [
+            {
+              "interrupt": "SPI23",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "SPI2",
+          "rcc_control": {
+            "bus_clock": "PCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "SPI2",
+              "register": "APBEN1"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "APBEN1"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "SPI2",
+              "register": "APBRST1"
+            },
+            "reset_asserted_value": false
+          },
+          "registers": {
+            "block": "SPI",
+            "kind": "spi",
+            "version": "cw32l012_v1"
+          },
+          "spi": {
+            "maximum_frequency": 24000000,
+            "minimum_divisor": 2
+          }
+        },
+        {
+          "address": 1073755136,
+          "dma_channels": [
+            {
+              "dma": "DMA",
+              "request": 10,
+              "signal": "RX"
+            },
+            {
+              "dma": "DMA",
+              "request": 11,
+              "signal": "TX"
+            }
+          ],
+          "interrupts": [
+            {
+              "interrupt": "SPI23",
+              "signal": "GLOBAL"
+            }
+          ],
+          "name": "SPI3",
+          "rcc_control": {
+            "bus_clock": "PCLK",
+            "controller": "SYSCTRL",
+            "enable": {
+              "field": "SPI3",
+              "register": "APBEN1"
+            },
+            "enable_active_value": true,
+            "enable_write_key": {
+              "field": {
+                "field": "KEY",
+                "register": "APBEN1"
+              },
+              "value": 23130
+            },
+            "reset": {
+              "field": "SPI3",
+              "register": "APBRST1"
+            },
+            "reset_asserted_value": false
+          },
+          "registers": {
+            "block": "SPI",
+            "kind": "spi",
+            "version": "cw32l012_v1"
+          },
+          "spi": {
+            "maximum_frequency": 24000000,
+            "minimum_divisor": 2
+          }
+        }
+      ],
+      "interrupts": [
+        {
+          "name": "DMACH12",
+          "number": 9
+        },
+        {
+          "name": "DMACH34",
+          "number": 10
+        },
+        {
+          "name": "CORDIC",
+          "number": 11
+        },
+        {
+          "name": "SPI1",
+          "number": 25
+        },
+        {
+          "name": "SPI23",
+          "number": 26
+        }
+      ]
+    }
+  ],
+  "source_index_append_plan": {
+    "new_consumer": "docs/l012-spi-dma-evidence.json",
+    "checker_extension": "tests/verify_dma_owned_evidence.py",
+    "native_exact_pointers": [
+      "/artifacts/6",
+      "/artifacts/24",
+      "/artifacts/24/text",
+      "/artifacts/25",
+      "/artifacts/25/text",
+      "/artifacts/42",
+      "/artifacts/42/text",
+      "/artifacts/6/members/17",
+      "/artifacts/6/members/19",
+      "/artifacts/6/members/25",
+      "/artifacts/6/members/28",
+      "/artifacts/6/members/37",
+      "/artifacts/6/members/47",
+      "/artifacts/6/members/71"
+    ],
+    "append_member_pointer": "/artifacts/6/members/71",
+    "new_ledger_backlinks": 14,
+    "new_checker_backlinks": [
+      "/artifacts/6/members/37",
+      "/artifacts/6/members/71"
+    ],
+    "old_classic_spi_node_count_unchanged": 39,
+    "old_l012_native_node_count_unchanged": 16,
+    "reversibility": "Remove new ledger backlinks, remove only the two newly added checker backlinks, remove appended member71, and compare the complete reconstructed current index structurally against the pre-edit snapshot. No historical digest becomes a future checker gate.",
+    "distribution": "New SPI driver member remains external; approved SDK distribution allowlist unchanged"
+  },
+  "sdk": {
+    "spi_example_directories": [
+      "Examples/SPI/SPI_FLASH",
+      "Examples/SPI/SPI_FullDuplex_ComPolling"
+    ],
+    "has_spi_dma_example": false,
+    "interpretation": "No paired SPI DMA cookbook is present. SPI_DMACmd corroborates native CR2 gates; SPI data helpers corroborate DR transactions. SPI1-only helper prose does not override the three-controller RM/DS/SVD/CMSIS inventory.",
+    "symbols": [
+      {
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012_spi.h",
+        "line": 187,
+        "text": "#define SPI_DMAReq_Tx                            (0x00000004)"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012_spi.h",
+        "line": 188,
+        "text": "#define SPI_DMAReq_Rx                            (0x00000002)"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012_spi.h",
+        "line": 243,
+        "text": "#define IS_SPI_ALL_PERIPH(PERIPH)                (((PERIPH) == CW_SPI1) || ((PERIPH) == CW_SPI2) ||((PERIPH) == CW_SPI3))"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 55,
+        "text": "SPIx->DR = Data;"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 70,
+        "text": "return (uint16_t)(SPIx->DR);"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 90,
+        "text": "SPIx->DR = Data;"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 94,
+        "text": "return (uint16_t)(SPIx->DR);"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 348,
+        "text": "void SPI_DMACmd(SPI_TypeDef* SPIx, uint32_t SPI_DMAReq, FunctionalState NewState)"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 350,
+        "text": "assert_param(IS_SPI_ALL_PERIPH(SPIx));"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 351,
+        "text": "assert_param(IS_SPI_DMAREQ(SPI_DMAReq));"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 352,
+        "text": "assert_param(IS_FUNCTIONAL_STATE(NewState));"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 354,
+        "text": "if (NewState != DISABLE)"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 356,
+        "text": "SPIx->CR2 |= SPI_DMAReq;"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/src/cw32l012_spi.c",
+        "line": 360,
+        "text": "SPIx->CR2 &= ~SPI_DMAReq;"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+        "line": 4703,
+        "text": "#define SPI1_BASE                   0x40000800UL"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+        "line": 4704,
+        "text": "#define SPI2_BASE                   0x40000400UL"
+      },
+      {
+        "source_ref": "member:cw32l012/Libraries/inc/cw32l012.h",
+        "line": 4705,
+        "text": "#define SPI3_BASE                   0x40003400UL"
+      }
+    ]
+  },
+  "facts": {
+    "cpu_mmio_bits": 32,
+    "dma_peripheral_transaction_bits": 32,
+    "sram_element_bits": 8,
+    "dr_payload_bits": 16,
+    "frame_bits": 8,
+    "cr1": {
+      "MODE": 0,
+      "MSTR": 1,
+      "SSM": 1,
+      "WIDTH": 7,
+      "modify_only_when_cr2_en": 0
+    },
+    "native_request_gates": {
+      "DMARX": [
+        1,
+        1
+      ],
+      "DMATX": [
+        2,
+        1
+      ]
+    },
+    "spi_icr_noop": 255,
+    "destructive_icr_field": "FLUSH",
+    "error_fields": [
+      "UD",
+      "OV",
+      "SSERR",
+      "MODF"
+    ],
+    "dma_descriptor": {
+      "TYPE": 1,
+      "TRANS": 1,
+      "SIZE": 0,
+      "REPEAT": 1,
+      "CNT_min": 1,
+      "CNT_max": 65535,
+      "RESTART": 0,
+      "SRCLOAD": 0,
+      "DSTLOAD": 0,
+      "sram_increment": true,
+      "dr_increment": false
+    },
+    "dma_terminal": {
+      "TC": true,
+      "TE": false,
+      "STATUS": 5,
+      "error_statuses": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "software_trigger_retirement_required_for_hardware_request": false,
+      "remaining_register": "CCNT",
+      "remaining_fields": [
+        "CCNT",
+        "CREPEAT"
+      ]
+    },
+    "dma_icr_noop": 4294967295,
+    "dma_base": 1073872896,
+    "channel_count": 4,
+    "dma_irqs": {
+      "DMACH12": 9,
+      "DMACH34": 10
+    },
+    "spi_irqs": {
+      "SPI1": 25,
+      "SPI23": 26
+    },
+    "unrelated_irq": {
+      "CORDIC": 11
+    },
+    "request_selectors": {
+      "SPI1": {
+        "RX": 6,
+        "TX": 7
+      },
+      "SPI2": {
+        "RX": 8,
+        "TX": 9
+      },
+      "SPI3": {
+        "RX": 10,
+        "TX": 11
+      }
+    },
+    "dr_addresses": {
+      "SPI1": 1073743900,
+      "SPI2": 1073742876,
+      "SPI3": 1073755164
+    },
+    "clock_policy": {
+      "maximum_sck_hz": 24000000,
+      "minimum_divisor": 2,
+      "maximum_divisor": 256,
+      "divider_kind": "linear_even"
+    },
+    "selected_routes": {
+      "SPI1": {
+        "SCK": "PA5",
+        "MOSI": "PA7",
+        "MISO": "PA6",
+        "af": 3,
+        "cs": "PB0"
+      },
+      "SPI2": {
+        "SCK": "PA2",
+        "MOSI": "PA1",
+        "MISO": "PA0",
+        "af": 8,
+        "cs": "PB1"
+      },
+      "SPI3": {
+        "SCK": "PA9",
+        "MOSI": "PA11",
+        "MISO": "PA10",
+        "af": 8,
+        "cs": "PB2"
+      }
+    },
+    "selected_pads": {
+      "PA0": "10",
+      "PA1": "11",
+      "PA2": "12",
+      "PA5": "15",
+      "PA6": "16",
+      "PA7": "17",
+      "PB0": "18",
+      "PB1": "19",
+      "PB2": "20",
+      "PA9": "30",
+      "PA10": "31",
+      "PA11": "32"
+    }
+  },
+  "retained_native_dma_proof": {
+    "ledger": "docs/l012-dma-owned-evidence.json",
+    "source_node_count": 16,
+    "ro_current_count_views": 5,
+    "tc_te_setter_removals": 10,
+    "qualification_note": "Reuse existing own-source native channel/PAC/terminal contract and its documented SDK conflicts. Old inventory-only SPI labels describe that ledger historical scope; this independent ledger qualifies only these six paired SPI endpoints. UART RC/ORE RX semantics remain unresolved and no UART RX/combined surface is qualified."
+  },
+  "retained_spi_proofs": [
+    "docs/spi-register-write-evidence.json",
+    "docs/spi-clock-source-policy.json",
+    "docs/spi-async-pio-evidence.json",
+    "docs/final-serial-af-evidence.json"
+  ],
+  "implementation_requirements": [
+    "Normative hardware facts above require independent review of their actual runtime use; this ledger does not establish software acceptance.",
+    "Validate both exclusive static SRAM stages and own both DMA channels. Preserve sequential admission: failure of second admission consumes the first. Generic CW32L012 has no memory/package metadata and must reject safe staging with MissingMemoryMetadata.",
+    "Settle prior paired activity before staging access. Reject dirty admission without reset. Restore WIDTH7 only while disabled and idle. Close requests and enter InFlight before either DMA enable; arm RX before TX, then open DMARX before DMATX. This RX-first sequence is conservative engineering, not a vendor recipe.",
+    "Enable SPI error notification during DMA so a stalled endpoint still fails. Error ISR must not read DR, clear RXNE, flush, disable as a fake drain, or expose RX CPU access.",
+    "Require both clean DMA terminals, then close requests, observe error-free TXE1/BUSY0, and fence/retire both before success, RX CPU access or stage reuse. No single TC, EN0, zero remaining count, closed gate, reset or stop proves all paired memory traffic retired.",
+    "BUSY has no interrupt. Preserve bounded observation/cooperative wake tail without a finite-completion or low-power claim. TXE alone does not permit CS release.",
+    "Any SPI/DMA error or partial launch quarantines the whole pair. Cancellation or forget retains the current chunk and pending settlement. Caller keeps original GPIO CS asserted until successful flush. Unresolved Drop retains SPI, pins, stages, pair and clocks.",
+    "Complete SPI23 handler visits PIO2, DMA2, PIO3 and DMA3. Inactive states return before MMIO. Both DMA constructors require complete associated binding. Preserve PIO2/DMA3, DMA2/PIO3 and DMA2/DMA3 coexistence without sibling DR/flag/reset/gate/shared-vector interference.",
+    "Per-channel DMA handlers preserve sibling flags and shared bank ownership. No channel is recycled after clean Drop; four channels allow at most two permanently admitted pairs.",
+    "Preserve L012 MISO pull-down rejection, GPIO bank handover obligations, existing borrowed PIO and compiler-derived Send/Sync. No UART RX/combined constructor, public raw endpoint, circular/streaming, slave/simplex/half-duplex, wider async frame, early abort/recovery/re-admission, RF/electrical/low-power or hardware claim."
+  ]
+}

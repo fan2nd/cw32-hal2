@@ -1,0 +1,2481 @@
+{
+  "schema_version": 1,
+  "stage": 94,
+  "status": "accepted",
+  "acceptance_scope": "Independent actual runtime/source-lifecycle and main software artifact review for finite static-staging u8 master SPI DMA on exact CW32L012C8T6/C8U6 SPI1/SPI2/SPI3. Generic CW32L012 is compile-surface only.",
+  "reviewed_at_utc": "2026-10-13T09:56:18.058464+00:00",
+  "design_authority": {
+    "external_artifact": "design/design-freeze.json",
+    "sha256": "6045cc7c9f0204fadee26412d3c83f0f4dc7b698147c5d8b8f64cdb29f7431b1"
+  },
+  "profile_amendment": {
+    "external_artifact": "build-preparation/profile-amendment.accepted.json",
+    "sha256": "a805d1b7f33d15d0e077b16bd89d562989612cb6d58fc3a44cbe5c5105555706",
+    "scope": "Only companion release opt-level s to z plus matching README text. Existing LTO/codegen units/memory/features/dependencies/lifecycle unchanged. Original six standalone HAL compiler closures retained; companion dependencies compiled under amended profile."
+  },
+  "source_files": [
+    {
+      "project_path": "embassy-cw32/build.rs",
+      "sha256": "9f4d95d1f5c112e4bc9fa81655bdb419ec92654b2524870625899cbe49f63cc5"
+    },
+    {
+      "project_path": "embassy-cw32/src/spi.rs",
+      "sha256": "7db1f4e3e6dbe936ef66e4722188afe5bf29a929d4a3fb97cc2df200f872e5c6"
+    },
+    {
+      "project_path": "embassy-cw32/src/dma.rs",
+      "sha256": "94c631c54e1cb47a64e4bd3422507ad059e87c746cdaf9913e58e68e55ed6a2e"
+    }
+  ],
+  "example_sources": [
+    {
+      "project_path": "examples/l012-spi-dma/Cargo.lock",
+      "sha256": "b4980be0c0418132bf52a5b8326dd9460d240d254585c5c5fa3d715320e50564"
+    },
+    {
+      "project_path": "examples/l012-spi-dma/Cargo.toml",
+      "sha256": "ab3297790e146e9cba2af5d8a24be92eb883e0b9425f9ad8d336a4ae42e7c526"
+    },
+    {
+      "project_path": "examples/l012-spi-dma/README.md",
+      "sha256": "1cc7ea6af0e844924156c3291560269227be0761b98f0308242d3813f92c4ed8"
+    },
+    {
+      "project_path": "examples/l012-spi-dma/build.rs",
+      "sha256": "8d7c6ea86fcf08ab5f8db14f1f1ebad517f0f8946fa70aeb7560e8d5e5c1a20f"
+    },
+    {
+      "project_path": "examples/l012-spi-dma/src/bin/spi1_dma_pio23.rs",
+      "sha256": "dc80a70d15615c9ca7c26036ad25560e97c1c8c8447a55683248c0e80078b4fd"
+    },
+    {
+      "project_path": "examples/l012-spi-dma/src/bin/spi23_dma_pio1.rs",
+      "sha256": "16d443e0d9078617d74d167a14730db8671d3bf6720069f97915e5b7c3f9568d"
+    },
+    {
+      "project_path": "examples/l012-spi-dma/src/bin/spi2_dma_pio3.rs",
+      "sha256": "789eefd340c18f92081904aaec90af55e7e41a7e58f64f49eb11b9762dc0f641"
+    },
+    {
+      "project_path": "examples/l012-spi-dma/src/bin/spi3_dma_pio2.rs",
+      "sha256": "19d33e6677ee903ce9321cb0d7ffb8a1dd6ebfc04a5bfbd926c1b2c70edc915b"
+    },
+    {
+      "project_path": "examples/l012-spi-dma/src/lib.rs",
+      "sha256": "edb4e81c0e9cc21f378d894c5e12d17aff3e3fb50c83c037321831d4499267d9"
+    },
+    {
+      "project_path": "examples/spi-async/Cargo.toml",
+      "sha256": "d47378be5982d99ceef24b14f874145fc2bedb3f9b6187eb35d002790946d5d8"
+    },
+    {
+      "project_path": "examples/spi-async/README.md",
+      "sha256": "d722240d0c2e2d865c22dcfeb523e6b1bebd4101c60aea17d46dce0b87355dcc"
+    },
+    {
+      "project_path": "examples/spi-async/build.rs",
+      "sha256": "47e5f39eb046f4921872807fdd3da62ca320112b2f89e91d84e5579ffc0e217c"
+    },
+    {
+      "project_path": "examples/spi-async/src/bin/async_master.rs",
+      "sha256": "f044370dbad8e01e100e50a6782ea9f15ecca97137e25f6f1f34c51d2c4b5623"
+    },
+    {
+      "project_path": "examples/spi-async/src/bin/blocking_master.rs",
+      "sha256": "de7e949040e4d059d17f5af73fce4089c063eafb57c6a602fbfc4fff652c356e"
+    },
+    {
+      "project_path": "examples/spi-async/src/lib.rs",
+      "sha256": "b20db0fbf8fc95701941dbae99fdf362e2914f3293dd3991a39d54b17d02a6a8"
+    }
+  ],
+  "main_acceptance": {
+    "external_artifact": "main-profile-continuation/summary.json",
+    "sha256": "fed3103b9cf82bc193e89926eb19d66be7981f1ed98b3bac7f0b18642a61cd6c",
+    "successful_distinct_rows": 21,
+    "standalone_rlib_commands": 6,
+    "elf_links": 15,
+    "dependency_hal_rlibs": 15,
+    "dependency_archives_are_not_additional_standalone_commands": true,
+    "total_actual_Cargo_attempts": 22,
+    "original_failed_M07_preserved": {
+      "external_artifact": "main/M07/receipt.json",
+      "sha256": "e6e21a7a99536c3bad0d3d7866cc5847f461da208b11519d9cb0d26dfa30ffec",
+      "result": "Link failed under the original s profile, final FLASH overflow 2752 bytes; no ELF accepted from this attempt."
+    },
+    "source_files_during_main": 1490,
+    "canonical_generated_files": 910,
+    "source_unchanged_within_each_run": true,
+    "canonical_generated_unchanged": true,
+    "toolchain_unchanged": true,
+    "original_snapshot_sha256": "a391436da7bc32c42c6fc303b738058baf3faf769fdd7f15bcc3b77f34e106fd",
+    "amended_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+    "source_correspondence": {
+      "external_artifact": "main-profile-continuation/source-correspondence.json",
+      "sha256": "5803c15761f213008bef99c8381bb6c099e5a49185f7aeb74038faa2a18e46c0"
+    },
+    "hardware_execution": false
+  },
+  "closed_runtime_findings": [
+    {
+      "id": "R1",
+      "subject": "Exact native qualification",
+      "source": "build.rs:550-805, 2327-2663",
+      "conclusion": "CW32L012 selects the native three-instance profile only after qualify_l012_dma checks its exact/generic memory selection, native controller/channel shapes, four physical channels, DMACH12 IRQ9, DMACH34 IRQ10 and CORDIC IRQ11. The preceding PIO qualifier verifies the complete three-instance native SPI inventory, GLOBAL mappings SPI1 IRQ25 and SPI2/3 SPI23 IRQ26, and exact peer sets. The native DMA branch explicitly requires that inventory. One unrestricted/non-muxed/non-remapped route per direction, two records per instance and exact RX/TX selectors 6/7, 8/9 and 10/11 are required."
+    },
+    {
+      "id": "R2",
+      "subject": "Four gate call sites and sampled preservation",
+      "source": "spi.rs:1522-1554, 1672, 1745-1746, 1923; common.rs:80; native SPI PAC:262-299",
+      "conclusion": "Exactly four existing lifecycle request-write sites are replaced: paired terminal closure, RX opening, TX opening and idle pre-launch closure. Native CR2 modify reads the register and changes only DMARX bit1 and/or DMATX bit2; sampled EN bit0 and every other sampled bit are preserved. Helpers do not invoke set_en, native CR1, ICR, SSI or CR3. This is not atomic protection against autonomous MODF EN clearing. Every classic CR1 closure and lifecycle location remains identical."
+    },
+    {
+      "id": "R3",
+      "subject": "Complete associated binding and generic compatibility",
+      "source": "spi.rs:954-1002, 1808-1858, 2044-2119; build.rs:1235-1260",
+      "conclusion": "Both native shared instances resolve InterruptHandler to SharedInterruptHandler<SPI23>; the DMA constructor requires Binding<T::Interrupt,T::InterruptHandler>. A single dedicated InterruptHandler<SPI2> or SPI3 proof cannot satisfy that shared associated bound. Dedicated classic instances, including DMA-only F030, still resolve to their original concrete InterruptHandler<Self>. A downstream generic wrapper with only Binding<T::Interrupt,InterruptHandler<T>> is not universally source compatible: require the associated bound or an associated-type equality proving equivalence. No generic compile probe was run."
+    },
+    {
+      "id": "R4",
+      "subject": "Four active-before-MMIO dispatches",
+      "source": "spi.rs:869-883, 977-1035, 1490-1520",
+      "conclusion": "SPI23 visits PIO2, DMA2, PIO3, DMA3 in that order under backend cfgs. Both dispatch functions check their own state active inside the critical section before reading ISR/IER or writing MMIO. Each state owns only active, first error and waker. Inactive peers/backends, including never-constructed/gated or blocking peers, are skipped. The DMA path observes enabled errors, latches the first, masks only its bank IER and wakes outside the borrow; no DR, ICR, request-gate, reset, clock or staging access is introduced."
+    },
+    {
+      "id": "R5",
+      "subject": "Sequential admission and static ownership",
+      "source": "spi.rs:1567-1642, 1808-1858; dma.rs:382-407, 1080-1134",
+      "conclusion": "Constructor validates both separate nonempty <=65535-byte static staging allocations against the entire exact SRAM range, then admits TX followed by RX, constructs SPI/pins, installs the pair/staging, activates the state and enables the SPI vector. new_admitted_pair is not substituted. Second admission or later setup failure can consume prior admissions; no rollback or channel return is promised. No constructor starts DMA. Four channels permit at most two permanently admitted full-duplex pairs."
+    },
+    {
+      "id": "R6",
+      "subject": "RX-first finite launch and native profile",
+      "source": "spi.rs:1706-1748, 1863-1925; dma.rs:463-510, 1184-1237",
+      "conclusion": "Each operation settles prior work, including empty calls. Idle preparation proves idle before width restoration and typed stale-RX drain, then closes requests. CPU copies only into private TX staging. InFlight is stored before descriptor enable, RX arms before TX and RX gate opens before TX. Equal bounded counts use fixed DR endpoints, incrementing SRAM, native Hardware1/Block1/Byte0/Repeat1 and no restart/address reload. Native byte pointers transport aligned typed DR addresses without CPU byte MMIO; native DR is a u32 container with u16 payload."
+    },
+    {
+      "id": "R7",
+      "subject": "Paired terminal proof and wire drain",
+      "source": "spi.rs:1433-1475, 1645-1703; dma.rs:514-569, 1252-1309",
+      "conclusion": "Both channel waiters are polled before Pending and SPI sticky/hardware errors are checked. Each channel needs its own TC without TE and STATUS Complete5; TE wins, contradictions become sticky UnconfirmedCompletion and hardware-trigger completion does not use SOFTSRC. Only both clean results close requests and enter Finishing. The final SPI snapshot masks notifications before reading sticky/hardware faults and requires TXE1/BUSY0. Pending drain restores error enables and cooperatively wakes; no faulty-hardware finite-liveness guarantee is introduced."
+    },
+    {
+      "id": "R8",
+      "subject": "Fenced retirement and CPU exposure",
+      "source": "spi.rs:1687-1702, 1751-1758, 1863-1900; dma.rs:537-546, 561-569",
+      "conclusion": "After clean terminals and error-free wire idle, the phase becomes Quarantined as a panic guard, then TX and RX retire with SeqCst fences before phase Idle. The only RX slice is formed by copy_rx after successful settlement; no await separates successful current-chunk settlement and copy. TX staging rewrite, new chunk and resource release remain downstream of prior retirement. Caller read/write/in-place slices are never DMA endpoints."
+    },
+    {
+      "id": "R9",
+      "subject": "Partial launch, faults and cancellation",
+      "source": "spi.rs:1636-1643, 1706-1748, 1863-1925",
+      "conclusion": "First or second arm failure, DMA errors and SPI MODF/OV/SSERR/UD quarantine the complete pair. No ICR clear, DR drain, EN cycle/reset or gate-off is used to claim a live transfer drained. Existing destructive preparation remains after prior idle settlement and its error quarantines before launch. Cancellation/forget retains the outstanding private chunk; later successful flush retires it and discards abandoned RX. Original CS selection remains required until successful flush."
+    },
+    {
+      "id": "R10",
+      "subject": "Blocking guards and unresolved Drop",
+      "source": "spi.rs:389-432, 470-520, 768-805, 1762-1772",
+      "conclusion": "Blocking paths check DMA before empty returns or normal PIO; one nonblocking observation returns DmaBusy when pending. Configuration checks settlement before hardware mutation. Drop deactivates PIO without MMIO if inactive, observes DMA once, masks/deactivates its DMA state and forgets the pair/storage and all pin owners when unsettled, returning before SPI disable/RCC gating. Clean Drop tears down only its own bank. Neither SPI23 nor either shared DMA vector is disabled/unpended, no sibling flags/reset/gate is changed and no admission is restored."
+    },
+    {
+      "id": "R11",
+      "subject": "Storage traits and byte-only async surface",
+      "source": "spi.rs:1319-1406, 1567-1612",
+      "conclusion": "OwnedRxStaging remains the original raw address plus exclusive-static ownership marker with unchanged private Send/Sync proofs. Spi and SpiDma gain no unsafe Send/Sync impl; owner traits remain field-derived and no future Send guarantee is added. The same five async SpiBus<u8> methods dispatch through the constructor-selected backend. Read zero-fill, unequal-length zero-padding/discard, in-place chunk copy and empty-call prior settlement remain intact."
+    },
+    {
+      "id": "R12",
+      "subject": "Generic memory and UART RX exclusion",
+      "source": "build.rs:572-585, 712-730, 799-805, 1101-1130, 1473-1490, 2327-2351; spi.rs:1616-1633, 1832-1837; dma.rs:1084-1088",
+      "conclusion": "Generic CW32L012 retains an empty map and DMA_COPY_SRAM=None. Valid-length staging returns MissingMemoryMetadata before channel construction; startup admission independently records MissingMemoryMetadata. Exact C8T6/C8U6 use SRAM [0x20000000,0x20002000). Native UART stays receive=false: no uart_dma_rx cfg or UART RX RequestRoute is generated. Compiling a generic library will not itself demonstrate executing the rejection."
+    }
+  ],
+  "closed_example_findings": [
+    {
+      "id": "E1",
+      "subject": "Four separate deployments and exact channel budget",
+      "conclusion": "The independent no_std companion has exactly the frozen A/B/C/D bin names and explicit per-bin initialization, bindings, singleton allocation and constructors. A is SPI1 RX1/TX2 plus PIO2/3; B is SPI2 RX1/TX3 plus PIO3; C is SPI3 RX2/TX4 plus PIO2; D is SPI2 RX1/TX2 plus SPI3 RX3/TX4 plus PIO1. The actual constructor order is TX then RX. A/B/C use two physical channels, D uses four, and no third DMA pair or channel recycling is introduced."
+    },
+    {
+      "id": "E2",
+      "subject": "Complete SPI and DMA binding",
+      "conclusion": "Every SPI2/3 deployment binds the complete SharedInterruptHandler<SPI23>. SPI1 uses its dedicated handler when present. A binds both CH1/2 on DMACH12; B binds CH1 on DMACH12 and CH3 on DMACH34; C binds CH2 on DMACH12 and CH4 on DMACH34; D binds CH1/2 on DMACH12 and CH3/4 on DMACH34. No SPI2/3 dedicated-handler substitution or CORDIC-as-DMA vector occurs."
+    },
+    {
+      "id": "E3",
+      "subject": "Static staging and lifetime retention",
+      "conclusion": "Each DMA owner receives distinct singleton TX16 and RX24 static arrays, giving 16-byte capacity and 40 stage bytes per pair, or 80 in D. All buses and separate GPIO CS owners remain in scope through an infinite loop and every retained bus is used on each pass. PIO peers use try_new_async and acquire no DMA channels. No drop/reconstruction, backend conversion, raw pointer endpoint, unsafe borrowing, forced Send/Sync, cancellation or fault probe appears."
+    },
+    {
+      "id": "E4",
+      "subject": "All five real byte trait methods and data cases",
+      "conclusion": "Every DMA and retained PIO owner calls the ordinary generic exchange<B: SpiBus<u8>>. Its actual trait calls cover transfer with RX43/short TX (zero padding), RX7/long immutable TX (discard), in-place35, write with a flash slice longer than16, read19, all four empty transfer forms and final flush. Several cases exceed 16-byte staging capacity. Returned arrays are black_box observations with no external-device data assertion or model/test substitute."
+    },
+    {
+      "id": "E5",
+      "subject": "CS, failure, panic and cancellation contract",
+      "conclusion": "GPIO CS starts high, is asserted before exchange and is raised only after exchange including final flush returns Ok. Every error goes to a diverging halt before set_high. Halt disables interrupts and spins without unwind, owner release, CS write, clock reset or retry; panic uses the same path. DMA may remain unresolved while resources and selection stay retained. Comments correctly require the original CS until later successful flush if cancellation is added; these applications do not execute cancellation."
+    },
+    {
+      "id": "E6",
+      "subject": "Existing C8U6 PIO extension preserves backend",
+      "conclusion": "C8U6 forwards its own exact HAL/PAC feature and widens only the existing native route/binding/owner-loop cfgs. async_master still constructs and retains all three buses through try_new_async and complete SPI23 binding, with all five byte trait methods and final flush before CS release. blocking_master remains try_new_blocking with consistent secondary/tertiary cfgs. No additional blocking build row or acceptance claim is introduced."
+    },
+    {
+      "id": "E7",
+      "subject": "Evidence and matrix limits",
+      "conclusion": "Application comments/readmes distinguish retained coexistence and sequential bus use from concurrent silicon traffic or shared-IRQ execution. Default mode0/MSB/1MHz matches Config::default. Generic missing-memory execution, failures, cancellation, IRQ interleaving, data integrity and throughput are not claimed. The fixed matrix remains main A/B/C/D on both packages plus the existing rows, clean A/B/D on both; this review ran no commands in that matrix."
+    }
+  ],
+  "generic_wrapper_compatibility": "Concrete dedicated classic handler aliases are preserved. A generic wrapper constrained only by Binding<T::Interrupt, InterruptHandler<T>> may need Binding<T::Interrupt, T::InterruptHandler> or an associated-type equality; universal old generic source compatibility is not claimed.",
+  "warning_classification": {
+    "message": "associated function new_admitted_pair is never used",
+    "rows": [
+      "M01",
+      "M02",
+      "M03",
+      "M07",
+      "M08",
+      "M09",
+      "M10",
+      "M11",
+      "M12",
+      "M13",
+      "M14",
+      "M15",
+      "M16",
+      "M17",
+      "M18"
+    ],
+    "newly_exposed_on_native_l012": true,
+    "explanation": "The helper already had cfg any(all(uart_dma_tx, uart_dma_rx), spi_dma). Stage94 newly enables spi_dma on L012; SPI intentionally retains sequential new_admitted calls, while L012 UART RX remains excluded. Full-duplex qualified UART still uses the helper. No HAL refactor or warning suppression was introduced.",
+    "other_warning_messages": {}
+  },
+  "artifact_rows": [
+    {
+      "row": "M01",
+      "selection": "cw32l012c8t6",
+      "package": "embassy-cw32",
+      "bin": "",
+      "kind": "rlib",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M01/receipt.json",
+        "sha256": "b0069e0bd075982e504617d50bcfcad5311887aabf3f6f798665763cdab0f8b6"
+      },
+      "source_snapshot_sha256": "a391436da7bc32c42c6fc303b738058baf3faf769fdd7f15bcc3b77f34e106fd",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": true,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M01/libembassy_cw32.rlib",
+        "sha256": "da4ca5334da559c198f2ae8610ad9f46e11cbb3628b4d753a75886c91a901fcc",
+        "bytes": 6774508,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ar",
+          "arm32_little_endian_elf_members": 14,
+          "llvm_bitcode_members": 0
+        }
+      },
+      "dependency_hal_artifacts": [],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M01/out-dir/e1df11993f34e2916c63/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "compiler_opt_level": "3",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ]
+    },
+    {
+      "row": "M02",
+      "selection": "cw32l012c8u6",
+      "package": "embassy-cw32",
+      "bin": "",
+      "kind": "rlib",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M02/receipt.json",
+        "sha256": "e12448cf6b474b63280426af4cfc21ffedbc6e707b61950cf6a22fb9d5686ff9"
+      },
+      "source_snapshot_sha256": "a391436da7bc32c42c6fc303b738058baf3faf769fdd7f15bcc3b77f34e106fd",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": true,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M02/libembassy_cw32.rlib",
+        "sha256": "bd43f24ffa272808f910b10c561158881847c444e5d7fda29f0de0df696f8d7e",
+        "bytes": 6772774,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ar",
+          "arm32_little_endian_elf_members": 14,
+          "llvm_bitcode_members": 0
+        }
+      },
+      "dependency_hal_artifacts": [],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M02/out-dir/004d3b0fd684050daf0e/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "compiler_opt_level": "3",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ]
+    },
+    {
+      "row": "M03",
+      "selection": "cw32l012",
+      "package": "embassy-cw32",
+      "bin": "",
+      "kind": "rlib",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M03/receipt.json",
+        "sha256": "8377d1355b1e1d97de4813aa9e2fea366be763a67127ed001c81fb5634aa4c62"
+      },
+      "source_snapshot_sha256": "a391436da7bc32c42c6fc303b738058baf3faf769fdd7f15bcc3b77f34e106fd",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": true,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M03/libembassy_cw32.rlib",
+        "sha256": "0f922ce5d402478fd8ed1eb5acd9372c41b648fe3fcd4936d973f7dd0ff99648",
+        "bytes": 6209866,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ar",
+          "arm32_little_endian_elf_members": 12,
+          "llvm_bitcode_members": 0
+        }
+      },
+      "dependency_hal_artifacts": [],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M03/out-dir/988ce5716d92ea965e9e/_generated.rs",
+        "sha256": "f5a11694cadd7b7c848883b55cdbd26911918ef260bcfc9165cd315e599debeb",
+        "compiler_features": [
+          "cw32l012",
+          "rt"
+        ],
+        "compiler_opt_level": "3",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ]
+    },
+    {
+      "row": "M04",
+      "selection": "cw32f030c8t7",
+      "package": "embassy-cw32",
+      "bin": "",
+      "kind": "rlib",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M04/receipt.json",
+        "sha256": "4f7753a3743e9d5cc1edb21d9e4ac48855deb1603165f1d6f497fd5fc41c72b4"
+      },
+      "source_snapshot_sha256": "a391436da7bc32c42c6fc303b738058baf3faf769fdd7f15bcc3b77f34e106fd",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": true,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M04/libembassy_cw32.rlib",
+        "sha256": "7b30ef149618156dc7eaf0401b956a8a99af406c4e6133df9b017cb3125235e0",
+        "bytes": 5739212,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ar",
+          "arm32_little_endian_elf_members": 12,
+          "llvm_bitcode_members": 0
+        }
+      },
+      "dependency_hal_artifacts": [],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M04/out-dir/d3827a0b63d27431613a/_generated.rs",
+        "sha256": "be22f4c0ebebca72c22f154fa8091c20f593774a201ee57638db7565d2d61e3a",
+        "compiler_features": [
+          "cw32f030c8t7",
+          "rt"
+        ],
+        "compiler_opt_level": "3",
+        "spi_dma": true,
+        "spi_async_pio": false,
+        "uart_dma_rx": true
+      },
+      "warnings": []
+    },
+    {
+      "row": "M05",
+      "selection": "cw32f020c6u7",
+      "package": "embassy-cw32",
+      "bin": "",
+      "kind": "rlib",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M05/receipt.json",
+        "sha256": "4e6b4c88d80cac6a2c484b710f6020d3e141a1a2839993682764ac57f9858138"
+      },
+      "source_snapshot_sha256": "a391436da7bc32c42c6fc303b738058baf3faf769fdd7f15bcc3b77f34e106fd",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": true,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M05/libembassy_cw32.rlib",
+        "sha256": "c023e60c05a3588c54546b4a955b599e78972a8455e531bf64a6521846c94c68",
+        "bytes": 5246706,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ar",
+          "arm32_little_endian_elf_members": 12,
+          "llvm_bitcode_members": 0
+        }
+      },
+      "dependency_hal_artifacts": [],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M05/out-dir/0a6aee77551511aa179b/_generated.rs",
+        "sha256": "b8eb8edc388008a958a77d50d82bfd5201b4455cc7fac54f3137416ca8a577b1",
+        "compiler_features": [
+          "cw32f020c6u7",
+          "rt"
+        ],
+        "compiler_opt_level": "3",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": true
+      },
+      "warnings": []
+    },
+    {
+      "row": "M06",
+      "selection": "cw32l052c8t6",
+      "package": "embassy-cw32",
+      "bin": "",
+      "kind": "rlib",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M06/receipt.json",
+        "sha256": "b104165b98e230da944dbde0132e38e050c1de8b14abc0f6949f4db537ce6c64"
+      },
+      "source_snapshot_sha256": "a391436da7bc32c42c6fc303b738058baf3faf769fdd7f15bcc3b77f34e106fd",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": true,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M06/libembassy_cw32.rlib",
+        "sha256": "d321ca62f19213d5a9eb291c3f329bda6ef5df982216da005b18688d1c37c45f",
+        "bytes": 6029728,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "3",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ar",
+          "arm32_little_endian_elf_members": 12,
+          "llvm_bitcode_members": 0
+        }
+      },
+      "dependency_hal_artifacts": [],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M06/out-dir/b44c8a152923da95f6e9/_generated.rs",
+        "sha256": "b5e6b3546cf761e13e6482514658d87528933c7a25319760b1eaf91476a282ba",
+        "compiler_features": [
+          "cw32l052c8t6",
+          "rt"
+        ],
+        "compiler_opt_level": "3",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": true
+      },
+      "warnings": []
+    },
+    {
+      "row": "M07",
+      "selection": "cw32l012c8t6",
+      "package": "cw32-l012-spi-dma-examples",
+      "bin": "spi1_dma_pio23",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M07/receipt.json",
+        "sha256": "e82253ec4b468afeb6930500469aa5521fe212447b55602039368a9c9a36d523"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M07/firmware.elf",
+        "sha256": "b1fbe6f2fba0da1b06ff442df4df972d7cc918bbd3dc669a2423cc14f5c7658b",
+        "bytes": 229684,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 61672,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 956,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 60196,
+          "required_irq_handlers": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 273,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 309,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH12",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 60196
+            },
+            {
+              "name": ".rodata",
+              "address": 60388,
+              "bytes": 1008
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 276
+            },
+            {
+              "name": ".bss",
+              "address": 536871192,
+              "bytes": 676
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M07/dependency-artifacts/libembassy_cw32-7e730e5bba009b64.rlib",
+          "sha256": "6e1c31f385bcd40df2f59dd157a707bd430c7970e4f5bc8934711d9784a07b8b",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M07/out-dir/3cc068bd431385e5cb80/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "compiler_opt_level": "z",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M07/out-dir/ced146acb71c6d945474/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M08",
+      "selection": "cw32l012c8t6",
+      "package": "cw32-l012-spi-dma-examples",
+      "bin": "spi2_dma_pio3",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M08/receipt.json",
+        "sha256": "b0adc9be8d29e35999c30daa25e901b1d8f686cc9b2d8871fee2ffa1be9ee392"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M08/firmware.elf",
+        "sha256": "b71a70745ad249f1bc9bcd90a5beff20b91d75a3d83b0e66ec8982a5a0e4c934",
+        "bytes": 228936,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 60552,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 812,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 59164,
+          "required_irq_handlers": [
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 277,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH12",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH34",
+              "irq_number": 10,
+              "vector_word": 265,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 59164
+            },
+            {
+              "name": ".rodata",
+              "address": 59356,
+              "bytes": 952
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 244
+            },
+            {
+              "name": ".bss",
+              "address": 536871160,
+              "bytes": 564
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M08/dependency-artifacts/libembassy_cw32-7e730e5bba009b64.rlib",
+          "sha256": "6e1c31f385bcd40df2f59dd157a707bd430c7970e4f5bc8934711d9784a07b8b",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M08/out-dir/3cc068bd431385e5cb80/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "compiler_opt_level": "z",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M08/out-dir/ced146acb71c6d945474/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M09",
+      "selection": "cw32l012c8t6",
+      "package": "cw32-l012-spi-dma-examples",
+      "bin": "spi3_dma_pio2",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M09/receipt.json",
+        "sha256": "bd6b01a3c81d94a7cc787915a533cfcb171eaae0412c7439a3d3069defdc4c6f"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M09/firmware.elf",
+        "sha256": "e7296b43059805b5ed2da808b538417b376cdef25c3089322a8c6764b37123eb",
+        "bytes": 228936,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 60568,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 812,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 59180,
+          "required_irq_handlers": [
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 277,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH12",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH34",
+              "irq_number": 10,
+              "vector_word": 265,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 59180
+            },
+            {
+              "name": ".rodata",
+              "address": 59372,
+              "bytes": 952
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 244
+            },
+            {
+              "name": ".bss",
+              "address": 536871160,
+              "bytes": 564
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M09/dependency-artifacts/libembassy_cw32-7e730e5bba009b64.rlib",
+          "sha256": "6e1c31f385bcd40df2f59dd157a707bd430c7970e4f5bc8934711d9784a07b8b",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M09/out-dir/3cc068bd431385e5cb80/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "compiler_opt_level": "z",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M09/out-dir/ced146acb71c6d945474/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M10",
+      "selection": "cw32l012c8t6",
+      "package": "cw32-l012-spi-dma-examples",
+      "bin": "spi23_dma_pio1",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M10/receipt.json",
+        "sha256": "b3d5b662bd943b64e7a29fb214b7c7edbfc3af4f6afed3b604f5083eaaa9739d"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M10/firmware.elf",
+        "sha256": "444363f0a1b132b1249c180bab7f3aa1612d1c3ed92253676f6d110ea86e1d51",
+        "bytes": 230156,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 62068,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 1000,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 60592,
+          "required_irq_handlers": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 289,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 325,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH12",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH34",
+              "irq_number": 10,
+              "vector_word": 271,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 60592
+            },
+            {
+              "name": ".rodata",
+              "address": 60784,
+              "bytes": 1008
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 276
+            },
+            {
+              "name": ".bss",
+              "address": 536871192,
+              "bytes": 720
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M10/dependency-artifacts/libembassy_cw32-7e730e5bba009b64.rlib",
+          "sha256": "6e1c31f385bcd40df2f59dd157a707bd430c7970e4f5bc8934711d9784a07b8b",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M10/out-dir/3cc068bd431385e5cb80/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "compiler_opt_level": "z",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M10/out-dir/ced146acb71c6d945474/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M11",
+      "selection": "cw32l012c8u6",
+      "package": "cw32-l012-spi-dma-examples",
+      "bin": "spi1_dma_pio23",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M11/receipt.json",
+        "sha256": "0c32dcede5c33fe13e5cc4dfd964b98f448018824a752f9dfec84df8c643bd33"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M11/firmware.elf",
+        "sha256": "5f6bd536f5fbb6c5f5d8fa85b127984b357799abfb1aefb7565dba08d795f54b",
+        "bytes": 229684,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 61672,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 956,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 60196,
+          "required_irq_handlers": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 273,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 309,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH12",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 60196
+            },
+            {
+              "name": ".rodata",
+              "address": 60388,
+              "bytes": 1008
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 276
+            },
+            {
+              "name": ".bss",
+              "address": 536871192,
+              "bytes": 676
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M11/dependency-artifacts/libembassy_cw32-4d751ca918858148.rlib",
+          "sha256": "a96929929ac2109873be6e61e4ee78b076b65be86c6d79f8b23c177f11569dbd",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M11/out-dir/b8c58faf84999309182e/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "compiler_opt_level": "z",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M11/out-dir/3e0eb6c418dbe4854482/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M12",
+      "selection": "cw32l012c8u6",
+      "package": "cw32-l012-spi-dma-examples",
+      "bin": "spi2_dma_pio3",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M12/receipt.json",
+        "sha256": "81a69a94e41d7c029c532d9aa584c574a4621f2b51932a8ed8301271c4e40ea9"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M12/firmware.elf",
+        "sha256": "1ca5bdf357281bba41ae707b468d8ebde3123a7aeb697b29a128e394044cd965",
+        "bytes": 228936,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 60552,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 812,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 59164,
+          "required_irq_handlers": [
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 277,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH12",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH34",
+              "irq_number": 10,
+              "vector_word": 265,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 59164
+            },
+            {
+              "name": ".rodata",
+              "address": 59356,
+              "bytes": 952
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 244
+            },
+            {
+              "name": ".bss",
+              "address": 536871160,
+              "bytes": 564
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M12/dependency-artifacts/libembassy_cw32-4d751ca918858148.rlib",
+          "sha256": "a96929929ac2109873be6e61e4ee78b076b65be86c6d79f8b23c177f11569dbd",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M12/out-dir/b8c58faf84999309182e/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "compiler_opt_level": "z",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M12/out-dir/3e0eb6c418dbe4854482/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M13",
+      "selection": "cw32l012c8u6",
+      "package": "cw32-l012-spi-dma-examples",
+      "bin": "spi3_dma_pio2",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M13/receipt.json",
+        "sha256": "f0540c1b3da9270ad49d01577c3653775016df059d233c8a45df5dccbc2cc38e"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M13/firmware.elf",
+        "sha256": "128c90508472ce06cddbd29c654f869aeac071dc91f988d16cf6218c54f76499",
+        "bytes": 228936,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 60568,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 812,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 59180,
+          "required_irq_handlers": [
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 277,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH12",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH34",
+              "irq_number": 10,
+              "vector_word": 265,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 59180
+            },
+            {
+              "name": ".rodata",
+              "address": 59372,
+              "bytes": 952
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 244
+            },
+            {
+              "name": ".bss",
+              "address": 536871160,
+              "bytes": 564
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M13/dependency-artifacts/libembassy_cw32-4d751ca918858148.rlib",
+          "sha256": "a96929929ac2109873be6e61e4ee78b076b65be86c6d79f8b23c177f11569dbd",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M13/out-dir/b8c58faf84999309182e/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "compiler_opt_level": "z",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M13/out-dir/3e0eb6c418dbe4854482/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M14",
+      "selection": "cw32l012c8u6",
+      "package": "cw32-l012-spi-dma-examples",
+      "bin": "spi23_dma_pio1",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M14/receipt.json",
+        "sha256": "b844689511fe0b1e2b0110fa15dfc4b675eb4fe88252fabd87f1bc5f56ec0bcf"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M14/firmware.elf",
+        "sha256": "2178be97473bc54aebeefed15aa4786cbde41972441a4efbdbe3a24078d611fe",
+        "bytes": 230152,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 62068,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 1000,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 60592,
+          "required_irq_handlers": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 289,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 325,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH12",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH34",
+              "irq_number": 10,
+              "vector_word": 271,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 60592
+            },
+            {
+              "name": ".rodata",
+              "address": 60784,
+              "bytes": 1008
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 276
+            },
+            {
+              "name": ".bss",
+              "address": 536871192,
+              "bytes": 720
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M14/dependency-artifacts/libembassy_cw32-4d751ca918858148.rlib",
+          "sha256": "a96929929ac2109873be6e61e4ee78b076b65be86c6d79f8b23c177f11569dbd",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M14/out-dir/b8c58faf84999309182e/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "compiler_opt_level": "z",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M14/out-dir/3e0eb6c418dbe4854482/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M15",
+      "selection": "cw32l012c8t6",
+      "package": "cw32-spi-async-examples",
+      "bin": "async_master",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M15/receipt.json",
+        "sha256": "b00d268fd9f5d34a8e009499f3c0939cff6e0ce34adf29c1f9d16f45a90046f8"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M15/firmware.elf",
+        "sha256": "690e209c417fd5fdee289d75cdab18a06aca8718144486d81224ec3777d05626",
+        "bytes": 228252,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 60372,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 820,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 58960,
+          "required_irq_handlers": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 289,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 58960
+            },
+            {
+              "name": ".rodata",
+              "address": 59152,
+              "bytes": 944
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 276
+            },
+            {
+              "name": ".bss",
+              "address": 536871192,
+              "bytes": 540
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M15/dependency-artifacts/libembassy_cw32-7e730e5bba009b64.rlib",
+          "sha256": "6e1c31f385bcd40df2f59dd157a707bd430c7970e4f5bc8934711d9784a07b8b",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M15/out-dir/3cc068bd431385e5cb80/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "compiler_opt_level": "z",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M15/out-dir/9aecb9cf425eadb40fb6/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M16",
+      "selection": "cw32l012c8u6",
+      "package": "cw32-spi-async-examples",
+      "bin": "async_master",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M16/receipt.json",
+        "sha256": "0aa8318992acfab932c4a59bbab2cb424c188fa3306f227e4fefe40607774626"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M16/firmware.elf",
+        "sha256": "b986573a19214493dd47a1d0c13a86c1f74dd138b80e4549990faa20a5feedb0",
+        "bytes": 228252,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "z",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 60372,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 820,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 58960,
+          "required_irq_handlers": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "SPI23",
+              "irq_number": 26,
+              "vector_word": 289,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 58960
+            },
+            {
+              "name": ".rodata",
+              "address": 59152,
+              "bytes": 944
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 276
+            },
+            {
+              "name": ".bss",
+              "address": 536871192,
+              "bytes": 540
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M16/dependency-artifacts/libembassy_cw32-4d751ca918858148.rlib",
+          "sha256": "a96929929ac2109873be6e61e4ee78b076b65be86c6d79f8b23c177f11569dbd",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M16/out-dir/b8c58faf84999309182e/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "compiler_opt_level": "z",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M16/out-dir/0abe637ecef4001ea399/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M17",
+      "selection": "cw32l012c8t6",
+      "package": "cw32-l012-dma-example",
+      "bin": "owned_copy",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M17/receipt.json",
+        "sha256": "3ee714832ce426efb1e01544c58abf677fd332f280df9f6588bd35f8250cb4f6"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M17/firmware.elf",
+        "sha256": "fce09da70cb8a2d1a911ca666b53ef4fd1a2f47fda0458a1b6861d338a3ab7e1",
+        "bytes": 219344,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 59064,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 1028,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 58084,
+          "required_irq_handlers": [
+            {
+              "name": "DMACH12",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH34",
+              "irq_number": 10,
+              "vector_word": 271,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 58084
+            },
+            {
+              "name": ".rodata",
+              "address": 58276,
+              "bytes": 608
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 180
+            },
+            {
+              "name": ".bss",
+              "address": 536871096,
+              "bytes": 844
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M17/dependency-artifacts/libembassy_cw32-5585888acbe84b09.rlib",
+          "sha256": "46cc1bf7b37f9b7ac910593fb4b4f61753ef9b6f5eabcbfdc82b4428639c16c2",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M17/out-dir/458239ee999282f2a32c/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8t6",
+          "rt"
+        ],
+        "compiler_opt_level": "s",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M17/out-dir/3bfc94edcc40688bb14f/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M18",
+      "selection": "cw32l012c8u6",
+      "package": "cw32-l012-dma-example",
+      "bin": "uart_tx",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M18/receipt.json",
+        "sha256": "fcaf60258d5c048de6174c059174a48bcdffb978b8dca6c359e4ee52fae64917"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M18/firmware.elf",
+        "sha256": "64db5d0347f4013dea09bc22d4a820de88144ddeefef353eb4bf6f615a4b6c3b",
+        "bytes": 221520,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 62048,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 1388,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 60672,
+          "required_irq_handlers": [
+            {
+              "name": "UART1",
+              "irq_number": 27,
+              "vector_word": 285,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "UART2",
+              "irq_number": 28,
+              "vector_word": 309,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "UART3",
+              "irq_number": 29,
+              "vector_word": 333,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH12",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH34",
+              "irq_number": 10,
+              "vector_word": 271,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 60672
+            },
+            {
+              "name": ".rodata",
+              "address": 60864,
+              "bytes": 860
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 324
+            },
+            {
+              "name": ".bss",
+              "address": 536871240,
+              "bytes": 1060
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M18/dependency-artifacts/libembassy_cw32-bef17d6c67595dec.rlib",
+          "sha256": "081accf8d79189b8338ac215e1bf4287cf650ecbee351e5580f15563a65be321",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M18/out-dir/20059cc07f74eebb19c1/_generated.rs",
+        "sha256": "6765bda4b34956eebb842db92cdb829f2a96cfdc93e1a464a62ff981dad8c45f",
+        "compiler_features": [
+          "cw32l012c8u6",
+          "rt"
+        ],
+        "compiler_opt_level": "s",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": false
+      },
+      "warnings": [
+        "associated function `new_admitted_pair` is never used"
+      ],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M18/out-dir/1c105928d74bc8ac9e6c/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M19",
+      "selection": "cw32f030c8t7",
+      "package": "cw32-spi-dma-example",
+      "bin": "cw32-spi-dma-example",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M19/receipt.json",
+        "sha256": "671b483a74e47b6b7d459b876b17d9bb7bbb26929947b62c301a35d7a2f876ec"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M19/firmware.elf",
+        "sha256": "2effe8c94ffc11f6a589dba991403f8ed9800dfe927aac09ace2385d1a31a576",
+        "bytes": 214528,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 29352,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 676,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 28076,
+          "required_irq_handlers": [
+            {
+              "name": "SPI1",
+              "irq_number": 25,
+              "vector_word": 273,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH23",
+              "irq_number": 10,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 28076
+            },
+            {
+              "name": ".rodata",
+              "address": 28268,
+              "bytes": 848
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 236
+            },
+            {
+              "name": ".bss",
+              "address": 536871152,
+              "bytes": 436
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M19/dependency-artifacts/libembassy_cw32-fb1fd31a75d28e77.rlib",
+          "sha256": "795b038a419362fa9c58c79b3e737807d249b2e4b258de9728a2a530a61da642",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M19/out-dir/e134fbc4b46f5ce50382/_generated.rs",
+        "sha256": "be22f4c0ebebca72c22f154fa8091c20f593774a201ee57638db7565d2d61e3a",
+        "compiler_features": [
+          "cw32f030c8t7",
+          "rt"
+        ],
+        "compiler_opt_level": "s",
+        "spi_dma": true,
+        "spi_async_pio": false,
+        "uart_dma_rx": true
+      },
+      "warnings": [],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M19/out-dir/f4fea16d2d11cd3b00e9/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M20",
+      "selection": "cw32f020c6u7",
+      "package": "cw32-spi-dma-example",
+      "bin": "spi2_flash_id",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M20/receipt.json",
+        "sha256": "83c7299255b51ca3af4dba206f460d87b1957e9548526d13e8a9a6335f9df9be"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M20/firmware.elf",
+        "sha256": "189ce19679ca2ad8343766b099b2df10584032d7c9c5ded1352b795f9c560253",
+        "bytes": 215304,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 193,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 30040,
+          "flash_limit_bytes": 32768,
+          "static_ram_extent_bytes": 548,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 28864,
+          "required_irq_handlers": [
+            {
+              "name": "SPI2",
+              "irq_number": 26,
+              "vector_word": 277,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH1",
+              "irq_number": 9,
+              "vector_word": 253,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH2",
+              "irq_number": 10,
+              "vector_word": 265,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 192
+            },
+            {
+              "name": ".text",
+              "address": 192,
+              "bytes": 28864
+            },
+            {
+              "name": ".rodata",
+              "address": 29056,
+              "bytes": 780
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 204
+            },
+            {
+              "name": ".bss",
+              "address": 536871120,
+              "bytes": 340
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M20/dependency-artifacts/libembassy_cw32-8c0a5b617b90da10.rlib",
+          "sha256": "d5a02048bc0df244140aa6c2af2e3464df65760a07d0b2bd69bcce083eaa08ff",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M20/out-dir/4e0be16d01fd899afd48/_generated.rs",
+        "sha256": "b8eb8edc388008a958a77d50d82bfd5201b4455cc7fac54f3137416ca8a577b1",
+        "compiler_features": [
+          "cw32f020c6u7",
+          "rt"
+        ],
+        "compiler_opt_level": "s",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": true
+      },
+      "warnings": [],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M20/out-dir/450d5f4508587878a012/memory.x",
+        "sha256": "9a35b304b2edcdddf40693b3d0176d1ef8ac634451f56850333e5bc9365a3fb5",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 32768
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    },
+    {
+      "row": "M21",
+      "selection": "cw32l052c8t6",
+      "package": "cw32-spi-dma-example",
+      "bin": "spi2_flash_id",
+      "kind": "elf",
+      "exit_code": 0,
+      "receipt": {
+        "external_artifact": "main-profile-continuation/M21/receipt.json",
+        "sha256": "afc33e7f14e9f0e4b7a5bdbfa86f8c29903017a6adce12ced458e432c51a563c"
+      },
+      "source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+      "source_unchanged_during_row": true,
+      "reused_original_compiler_closure": false,
+      "primary_artifact": {
+        "external_artifact": "main-profile-continuation/M21/firmware.elf",
+        "sha256": "9e5c8d2fed5f8876740f34cee7dea6857f892d6efa30ec490df21c198d0a6bbb",
+        "bytes": 224832,
+        "cargo_fresh": false,
+        "actual_compiler_profile": {
+          "debug_assertions": false,
+          "debuginfo": 0,
+          "opt_level": "s",
+          "overflow_checks": false,
+          "test": false
+        },
+        "independent_inspection": {
+          "format": "ELF32-little-endian-ARM",
+          "entry": 189,
+          "initial_sp": 536879104,
+          "flash_load_bytes_from_base": 56552,
+          "flash_limit_bytes": 65536,
+          "static_ram_extent_bytes": 568,
+          "ram_limit_bytes": 8192,
+          "text_bytes": 55336,
+          "required_irq_handlers": [
+            {
+              "name": "SPI2",
+              "irq_number": 26,
+              "vector_word": 273,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH1",
+              "irq_number": 9,
+              "vector_word": 249,
+              "strong_bound_nondefault_symbol": true
+            },
+            {
+              "name": "DMACH4",
+              "irq_number": 11,
+              "vector_word": 261,
+              "strong_bound_nondefault_symbol": true
+            }
+          ],
+          "allocated_sections": [
+            {
+              "name": ".vector_table",
+              "address": 0,
+              "bytes": 188
+            },
+            {
+              "name": ".text",
+              "address": 188,
+              "bytes": 55336
+            },
+            {
+              "name": ".rodata",
+              "address": 55524,
+              "bytes": 816
+            },
+            {
+              "name": ".data",
+              "address": 536870912,
+              "bytes": 212
+            },
+            {
+              "name": ".bss",
+              "address": 536871128,
+              "bytes": 352
+            }
+          ],
+          "limits": "Static section/segment fit and vector linkage only; no stack bound or runtime/silicon execution."
+        }
+      },
+      "dependency_hal_artifacts": [
+        {
+          "external_artifact": "main-profile-continuation/M21/dependency-artifacts/libembassy_cw32-a4726a6a4322a8b0.rlib",
+          "sha256": "dd977e9eacf9fec0bc3e809b37c4aa66fca3ec2a4c0bd8ed745800ccdb3aa02c",
+          "independent_inspection": {
+            "format": "ar",
+            "arm32_little_endian_elf_members": 2,
+            "llvm_bitcode_members": 1
+          },
+          "standalone_command": false
+        }
+      ],
+      "hal_out_dir": {
+        "external_artifact": "main-profile-continuation/M21/out-dir/48b9960e440f6e4cec38/_generated.rs",
+        "sha256": "b5e6b3546cf761e13e6482514658d87528933c7a25319760b1eaf91476a282ba",
+        "compiler_features": [
+          "cw32l052c8t6",
+          "rt"
+        ],
+        "compiler_opt_level": "s",
+        "spi_dma": true,
+        "spi_async_pio": true,
+        "uart_dma_rx": true
+      },
+      "warnings": [],
+      "linker_memory": {
+        "external_artifact": "main-profile-continuation/M21/out-dir/1815a2c168aab675716b/memory.x",
+        "sha256": "2c9d5a035463946af4b8e545859995bd913b1ab2bbaae6ea3bb07ffe608a0406",
+        "regions": [
+          {
+            "address": 0,
+            "name": "FLASH",
+            "size": 65536
+          },
+          {
+            "address": 536870912,
+            "name": "RAM",
+            "size": 8192
+          }
+        ]
+      }
+    }
+  ],
+  "evidence_limits": [
+    "Main compile/link evidence and independent static lifecycle review only. Separate clean-source regeneration/rebuild acceptance is not included in this verdict.",
+    "No cancellation, error, partial launch, generic rejection, IRQ race, inactive/gated peer access, data integrity, wire-drain timing or throughput case was executed on hardware.",
+    "ELF memory fit covers static section/load placement, not maximum runtime stack usage.",
+    "No claim of finite completion on faulty hardware, atomic CR2 RMW against autonomous hardware changes, universal future Send, streaming, recovery, channel re-admission, UART RX, RF or low-power scope.",
+    "Cargo freshness is cache metadata; a successful retained artifact does not imply each dependency was freshly recompiled."
+  ],
+  "unresolved_runtime_blockers": []
+}

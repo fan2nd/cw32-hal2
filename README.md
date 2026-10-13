@@ -754,8 +754,8 @@ No hardware result is claimed.
 F020/F002/F003/L010/L011/L012/L031/R031/W031/L052 additionally provide
 ordinary-borrowed `Spi<'d, Async, Master>::new_async` / `try_new_async` and all
 five async byte `SpiBus` methods on their fourteen SPI instances. The Stage93
-F020/L031/L052/R031/W031 DMA extension preserves these borrowed PIO constructors
-and fixes each owner's backend at construction. This IRQ PIO path keeps at most
+F020/L031/L052/R031/W031 DMA extension and Stage94 native L012 extension
+preserve these borrowed PIO constructors and fix each owner's backend at construction. This IRQ PIO path keeps at most
 one frame outstanding; the task accesses DR and caller buffers, while the ISR only records errors, masks local notification and wakes.
 Each async poll performs at most one DR read and one DR write. BUSY has no
 completion interrupt, so the final wire-idle wait self-wakes and consumes CPU;
@@ -784,8 +784,8 @@ and twenty-four linked ELFs, with all 37 Cargo invocations exiting zero. The
 extension adds F020 SPI1/SPI2, L031 SPI1, L052 SPI1/SPI2, R031 SPI1 and W031 SPI1
 to the existing F030/A030/L083 staged DMA cohort: five new families, seven new
 family/controller pairs, fourteen exact parts and twenty selected
-package/controller routes. The full DMA scope is eight families and thirteen
-family/controller pairs. Five finite source/data gates and the separate source
+package/controller routes. That Stage93 DMA scope covered eight families and
+thirteen family/controller pairs. Five finite source/data gates and the separate source
 navigation refresh passed; no canonical generation ran and all 910 generated
 files stayed unchanged. Independent runtime and metadata/source reviews accepted
 the bounded main result. The original M16 Cargo link passed but artifact
@@ -798,13 +798,36 @@ six-ELF clean replay had not run. See [the main verification and recovery
 boundary](docs/spi-dma.md); historical receipts above do not validate this change,
 and no hardware result is claimed.
 
+Stage94 adds native SPI1/SPI2/SPI3 DMA on exactly CW32L012C8T6/C8U6:
+one family, three controller pairs, two parts and six selected routes. The
+current declaration totals nine DMA families and sixteen controller pairs.
+Native RX/TX selectors are 6/7, 8/9 and 10/11; native requests use CR2 while
+classic profiles retain CR1. The existing 24 MHz/even-divisor L012 clock policy
+and GPIO/package limits remain. Main passed six standalone ARM libraries and
+fifteen ELF links in 21 accepted Cargo rows, all exiting zero, plus five finite
+source/declaration commands. Independent runtime and metadata/source reviews
+accepted the bounded implementation. At main acceptance the final-source
+two-library/six-ELF clean replay had not run; final completion requires its
+separate receipt. Main ran no canonical generation; clean requires one existing
+bootstrap with all 910 generated files matching. The failed M07 Flash link,
+reviewed companion-only s-to-z profile correction and native L012
+new_admitted_pair warning remain recorded in [the acceptance boundary](docs/spi-dma.md).
+No hardware result is claimed.
+
 `Spi<'static, Async, Master>::new_with_dma` consumes static SPI/pin owners,
 two private static staging buffers and two admitted channels. One common
 lifetime-generic async `SpiBus<u8>` surface dispatches to the constructor's
 installed PIO or DMA backend; it adds no borrowed DMA construction or backend
-switching. The five newly dual-capable families gain the existing DMA-gated
+switching. The six dual-capable families, including L012, gain the existing DMA-gated
 variants in the already `#[non_exhaustive]` `ConfigError` and `Error` enums.
-PIO signatures remain; the conditional public variant set expands.
+PIO signatures remain; the conditional public variant set expands. DMA now
+requires `Binding<T::Interrupt, T::InterruptHandler>`; generic wrappers written
+against `InterruptHandler<T>` may need the associated-handler bound or an
+appropriate type equality. Concrete dedicated bindings retain their handler.
+L012 SPI2/SPI3 require the complete shared SPI23 handler, dispatching PIO2,
+DMA2, PIO3 and DMA3 with active-before-MMIO guards. Both PIO and DMA peers
+remain usable together. Sequential one-time admission can consume the first
+channel if admission of the second fails; it promises no rollback.
 
 Both clean DMA terminals and wire idle precede success. Cancellation retains
 the active chunk: keep the original CS selection and await successful `flush`
@@ -812,13 +835,17 @@ before changing devices. DMA/SPI errors permanently retain the pair, while PIO
 keeps its destructive error recovery and Drop. F020's two channels permit one
 permanently admitted pair, so SPI1/SPI2 DMA examples are separate deployments;
 clean Drop does not restore admission. Exact SRAM, package pins and clock
-limits remain required. L012 SPI DMA stays unqualified and its UART RX RC/ORE
-proof stays blocked. R031 GPIOA handover limits remain; W031 external SPI
+limits remain required. L012's four channels permit two reserved DMA pairs,
+with PIO on a third controller. Unresolved Drop retains SPI, pins, both channels,
+both stages and clocks; it cannot justify CS release. Generic `cw32l012`
+retains missing-memory staging/admission rejection despite its compile surface.
+L012 UART stays TX-only and its separate RX RC/ORE proof stays blocked. R031 GPIOA handover limits remain; W031 external SPI
 remains unavailable during internal RF use. No RF coexistence is established.
 Chunk gaps, copies and receive-overrun risk under contention remain; generic
 cancellation-safe `SpiDevice` composition and silicon validation are not claimed.
 See [SPI DMA lifecycle and evidence](docs/spi-dma.md) and the ordinary
-[staged SPI firmware examples](examples/spi-dma/README.md).
+[staged classic SPI firmware examples](examples/spi-dma/README.md) and
+[native L012 deployments](examples/l012-spi-dma/README.md).
 
 ```sh
 cargo check -p embassy-cw32 --no-default-features --features cw32f030c8t7,rt \
@@ -833,7 +860,8 @@ or executed. See `docs/hal-production-layout.md` for the upstream layout mapping
 and the historical verification boundary.
 Unsupported scope includes additional ADC/timer modes, peripheral DMA beyond
 the separately declared staged UART and SPI profiles (including the Stage93
-five-family SPI extension with main software acceptance), external/PLL modes beyond each explicitly
+five-family SPI extension with main software acceptance and the Stage94 native
+L012 extension with separate main software acceptance), external/PLL modes beyond each explicitly
 qualified family/source and low-power policy. Check the coverage ledger before
 selecting a device/API.
 
@@ -942,7 +970,10 @@ Native CW32L010/L011/L012 LSE/calendar qualification and functional handover lim
 
 ## Native L012 owned DMA
 
-Exactly CW32L012C8T6/C8U6 add owned static-SRAM copies and staged byte UART TX.
+Exactly CW32L012C8T6/C8U6 provide owned static-SRAM copies and staged byte
+UART TX, with Stage94 adding the separately scoped SPI1/SPI2/SPI3 paired DMA
+above. Stage94 has separate main software acceptance; at main acceptance
+final-source clean had not run and requires its separate receipt.
 Each has 64 KiB Flash and 8 KiB SRAM; generic `cw32l012` retains safe admission
 and staging rejection for missing memory metadata. Its native descriptor has
 separate programmed CNT and current CCNT, and RESTART/SRCLOAD/DSTLOAD stay
@@ -955,7 +986,8 @@ forget leaks and Drop may wait indefinitely. Flush separately waits for TXBUSY0.
 Native PAC SIZE/STATUS/TRANS/TYPE fields become typed enums; CCNT register
 handles become read-only and CSR TC/TE setters are removed. STATUS stays RW.
 Existing callers of these PAC fields must use the corrected types/access.
-No DMA RX/combined UART, SPI, other hardware request or early-abort API is added.
+No DMA RX/combined UART, other unqualified hardware request or early-abort API
+is added. SPI's native DR-read-clear proof does not resolve UART RX RC/ORE.
 Stage86 main passed four standalone ARM libraries and eleven ELF links,
 all fifteen commands exiting zero with no warnings. The 1,413 authored files,
 910 generated files, toolchain and Cargo configuration stayed unchanged.

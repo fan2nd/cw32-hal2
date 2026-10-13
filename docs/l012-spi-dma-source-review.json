@@ -1,0 +1,388 @@
+{
+  "schema_version": 1,
+  "stage": 94,
+  "status": "accepted_main",
+  "review_kind": "Independent actual-source, metadata, declaration and retained-artifact main review",
+  "reviewed_utc": "2026-10-13T09:58:58.907954+00:00",
+  "scope": {
+    "family": "CW32L012",
+    "exact_parts": [
+      "CW32L012C8T6",
+      "CW32L012C8U6"
+    ],
+    "controllers": [
+      "SPI1",
+      "SPI2",
+      "SPI3"
+    ],
+    "selected_part_controller_routes": 6,
+    "mode": "Finite full-duplex eight-bit master DMA with paired exclusive static SRAM staging",
+    "generic_alias": "CW32L012 compiles but retains empty memory/package metadata and no safe staging/admission",
+    "uart_dma_rx_qualified": false
+  },
+  "decision": {
+    "accepted": "The actual main source facts, metadata/declaration consistency, source closure, unchanged canonical products and bounded compiler/linker artifacts are accepted on the frozen inputs identified here.",
+    "blocking_findings": [],
+    "clean_acceptance": "Not run at main acceptance; a separate final-source clean receipt is required.",
+    "final_administration": "Final accepted wording, report rendering/checking, navigation refresh/strict provenance and source packaging were not yet run at main acceptance.",
+    "hardware_validated": false,
+    "runtime_boundary": "Compiler/linker and source-fact evidence do not establish silicon behavior, fault timing, cancellation, race behavior, wire drain, data integrity or throughput. Independent runtime source review remains a separate acceptance dimension."
+  },
+  "frozen_main_inputs": [
+    {
+      "path": "docs/l012-spi-dma-evidence.json",
+      "bytes": 105561,
+      "sha256": "d8d262219bfbeb159ff962bf900b287bffd1df4c1f2cc51ab0e3aae7f6277c51"
+    },
+    {
+      "path": "tests/verify_dma_owned_evidence.py",
+      "bytes": 152883,
+      "sha256": "dbcbac6fffac4977d181991a207d2ddb2bccd572b2db028330570e36bfb5a0ab"
+    },
+    {
+      "path": "sources/evidence-sources.json",
+      "bytes": 452910,
+      "sha256": "afbd574e910c5404f8d94390650ba9a49691588b1150c86c8a5ab34218cac23b"
+    },
+    {
+      "path": "ci/hal-capabilities.yaml",
+      "bytes": 164106,
+      "sha256": "8c90748ac03567c971cfcb79963025a713d7ef8a79515ac20cf4df9a7338bbe8"
+    },
+    {
+      "path": "docs/functional-coverage.md",
+      "bytes": 69793,
+      "sha256": "2114431ee8582bf018a748f31f055b0f14e1a1bbd5e42faab8afbccd25bbd168"
+    },
+    {
+      "path": "examples/l012-spi-dma/Cargo.toml",
+      "bytes": 1282,
+      "sha256": "ab3297790e146e9cba2af5d8a24be92eb883e0b9425f9ad8d336a4ae42e7c526"
+    },
+    {
+      "path": "examples/l012-spi-dma/README.md",
+      "bytes": 7584,
+      "sha256": "1cc7ea6af0e844924156c3291560269227be0761b98f0308242d3813f92c4ed8"
+    },
+    {
+      "path": "embassy-cw32/build.rs",
+      "bytes": 378930,
+      "sha256": "9f4d95d1f5c112e4bc9fa81655bdb419ec92654b2524870625899cbe49f63cc5"
+    },
+    {
+      "path": "embassy-cw32/src/spi.rs",
+      "bytes": 79514,
+      "sha256": "7db1f4e3e6dbe936ef66e4722188afe5bf29a929d4a3fb97cc2df200f872e5c6"
+    },
+    {
+      "path": "embassy-cw32/src/dma.rs",
+      "bytes": 51033,
+      "sha256": "94c631c54e1cb47a64e4bd3422507ad059e87c746cdaf9913e58e68e55ed6a2e"
+    }
+  ],
+  "input_correspondence": {
+    "original_source_files": 1490,
+    "amended_source_files": 1490,
+    "original_source_snapshot_sha256": "a391436da7bc32c42c6fc303b738058baf3faf769fdd7f15bcc3b77f34e106fd",
+    "amended_source_snapshot_sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1",
+    "only_amendments": [
+      "examples/l012-spi-dma/Cargo.toml: release opt-level s to z",
+      "examples/l012-spi-dma/README.md: corresponding s to z label"
+    ],
+    "unchanged_during_amended_run": true,
+    "six_original_library_compiler_closures_unchanged": true,
+    "toolchain_and_cargo_configuration_unchanged": true
+  },
+  "own_source_acceptance": {
+    "ledger": {
+      "path": "docs/l012-spi-dma-evidence.json",
+      "bytes": 105561,
+      "sha256": "d8d262219bfbeb159ff962bf900b287bffd1df4c1f2cc51ab0e3aae7f6277c51"
+    },
+    "source_index": {
+      "path": "sources/evidence-sources.json",
+      "bytes": 452910,
+      "sha256": "afbd574e910c5404f8d94390650ba9a49691588b1150c86c8a5ab34218cac23b"
+    },
+    "selected_nodes": 14,
+    "literal_archive_member_chains": 7,
+    "page_records": 38,
+    "new_originals": 0,
+    "new_derived_sdk_members": 1,
+    "external_spi_driver_bytes": 14669,
+    "identity_includes_legal_provenance_and_en_pin_history": true,
+    "exact_whole_lock_reverse_equal": true,
+    "reversed_append": {
+      "ledger_backlinks": 14,
+      "checker_backlinks": 2,
+      "appended_member_index": 71
+    },
+    "exact_reverse_closure_counts": {
+      "native_spi": 14,
+      "native_dma": 16,
+      "classic_spi": 39,
+      "classic_uart": 55,
+      "four_channel_dma": 54,
+      "checker_union": 87
+    },
+    "duplicate_or_unrelated_backlinks": 0,
+    "normative_facts": [
+      "CPU and peripheral accesses remain32-bit; DR payload16-bit, SRAM elements8-bit and WIDTH7 frames are distinct. SIZE controls FLASH/RAM width.",
+      "Native CR2 gates are DMARX1/DMATX2; SPI1/2/3 RX/TX selectors are6/7,8/9,10/11. TYPE1/BLOCK/SIZE0/REPEAT1 and CCNT remaining state retain the native terminal contract.",
+      "DR reads clear RXNE; writes clear TXE. BUSY0 drains buffer and shifter. MODF/OV remain sticky, all four error sources are retained, and there is no BUSY interrupt. ICR FLUSH is destructive and no-op seed255 is preserved.",
+      "Four channels use DMACH12 IRQ9 and DMACH34 IRQ10. IRQ11 is CORDIC. SPI1 uses IRQ25 and SPI2/3 share SPI23 IRQ26.",
+      "Exact package routes, twelve selected physical pads, nine AF cells,64KiB Flash/8KiB SRAM and generic empty memory/packages agree with own source and generated metadata.",
+      "Native SPI and DMA register geometry/access match existing authored/generated/PAC products. The native five-view CCNT correction and classic23-view STATUS discrepancy remain separate."
+    ],
+    "source_corrections": "Two inherited design claim labels were corrected to source section8.2 at PDF index132 and8.7 at index142; hashes, coordinates and hardware facts are unchanged.",
+    "sdk_cookbook": "The locked SDK has SPI_FLASH and SPI_FullDuplex_ComPolling; no SPI DMA example. RX-first sequencing is described as engineering choice.",
+    "retained_boundaries": [
+      "L012 UART remains TX-only; no UART RX/combined constructor or new raw endpoint qualification.",
+      "No new source schema, provenance framework, HAL-source checker, probe/model or historical digest gate.",
+      "Existing old-family source facts and historical reviews remain unchanged."
+    ]
+  },
+  "main_commands": {
+    "accepted_standalone_libraries": 6,
+    "accepted_elf_links": 15,
+    "accepted_logical_rows": 21,
+    "actual_cargo_invocations": 22,
+    "original_attempt": {
+      "cargo_invocations": 7,
+      "successful_libraries": 6,
+      "failed_elf_row": "M07",
+      "reason": "spi1_dma_pio23 at release opt-level s exceeded actual65536-byte Flash by2752 bytes; no ELF was produced.",
+      "preserved": true
+    },
+    "continuation": {
+      "new_cargo_invocations": 15,
+      "reused_original_library_rows": [
+        "M01",
+        "M02",
+        "M03",
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "amended_profile_rows": [
+        "M07",
+        "M08",
+        "M09",
+        "M10",
+        "M11",
+        "M12",
+        "M13",
+        "M14"
+      ],
+      "native_companion_release_opt_level": "z",
+      "successful_new_elf_links": 15
+    },
+    "dependent_hal_archives": 15,
+    "dependent_archives_are_not_standalone_commands": true,
+    "main_canonical_generation_runs": 0,
+    "source_command_identities": 5,
+    "actual_source_command_invocations": 6,
+    "source_command_accounting": "The original M-D01..M-D05 all passed; only M-D01 was repeated and passed after the two-file profile/documentation amendment. Original source checks remain historical records. Final administrative provenance is pending.",
+    "no_additional_scope": "No aggregate suite, HAL test/probe/model, firmware execution, additional Cargo row or canonical generation was supplied by this reviewer."
+  },
+  "retained_artifact_review": {
+    "all_21_results_inspected": true,
+    "retained_file_hashes_checked": 1113,
+    "method": "Independent read-only hashing and parsing of retained ar and ELF32 bytes, plus retained Cargo JSON, selected input, OUT_DIR and linker-memory inspection.",
+    "elf_checks": [
+      "ARM32 little-endian ET_EXEC and Thumb entry",
+      "Actual program-segment payload hashes and allocated sections equal retained receipts",
+      "All Flash load ranges and RAM virtual ranges fit exact selected memory",
+      "Initial SP equals selected SRAM end; reset word equals Thumb entry",
+      "Required vector words match strong named symbols and differ from DefaultHandler",
+      "Actual linked memory.x matches exact selected part metadata"
+    ],
+    "native_out_dir_checks": [
+      "spi_dma and spi_async_pio are emitted with uart_dma_tx; uart_dma_rx is absent",
+      "All four DMA channels, two native vectors and six SPI request selectors appear in retained generated HAL output",
+      "All nine selected signal/AF routes appear in retained output",
+      "Generic library retains empty memory; compilation is not evidence of safe admission or exercised rejection"
+    ],
+    "native_companion_flash_load_range_bytes": [
+      60552,
+      62068
+    ],
+    "native_companion_static_ram_extent_range_bytes": [
+      812,
+      1000
+    ],
+    "memory_measurement_limit": "Static RAM extent excludes dynamic stack use and is not a runtime peak-memory guarantee."
+  },
+  "warnings": {
+    "accepted_rows_with_warning": [
+      "M01",
+      "M02",
+      "M03",
+      "M07",
+      "M08",
+      "M09",
+      "M10",
+      "M11",
+      "M12",
+      "M13",
+      "M14",
+      "M15",
+      "M16",
+      "M17",
+      "M18"
+    ],
+    "message": "associated function new_admitted_pair is never used",
+    "classification": "Existing helper cfg now compiles on native L012 through spi_dma. Native SPI intentionally retains sequential admission and native UART RX remains excluded. The helper remains used by qualified full-duplex UART elsewhere; no runtime refactor was needed.",
+    "accepted_native_rows_with_one_warning": 15,
+    "accepted_classic_rows_warning_free": 6,
+    "original_failed_M07_warning_record_preserved": true
+  },
+  "canonical_and_declaration_acceptance": {
+    "generated_files": 910,
+    "data_files": 421,
+    "pac_files": 489,
+    "every_path_size_hash_unchanged": true,
+    "generated_inventory_sha256": "bc1dc93a68946cb9b7a0beb6b7893a79a86f545b0b1880cab3ffb00bb7594249",
+    "current_spi_dma_families": 9,
+    "current_spi_dma_family_controller_pairs": 16,
+    "native_scope_counts": [
+      1,
+      3,
+      2,
+      6
+    ],
+    "renderer_and_check_outputs_identical": true,
+    "strict_provenance_main_result": {
+      "required_originals": 43,
+      "required_source_files": 565,
+      "complete_hardware": true,
+      "complete_manifest": false,
+      "omitted_discovery_documents": [
+        "a030-official-manuals.html",
+        "a030-official-sdk.html"
+      ],
+      "unresolved_references": 0
+    },
+    "companion_lock_nonroot_records_unchanged": 89,
+    "companion_exact_features": [
+      "cw32l012c8t6",
+      "cw32l012c8u6"
+    ],
+    "pio_c8u6_cfg_consistency_reviewed": true
+  },
+  "resolved_findings": [
+    {
+      "id": "S94-META-01",
+      "finding": "Ambiguous byte-RDR proof antecedent after the inserted native sentence.",
+      "resolution": "Authored coverage explicitly says classic UART families; L012 UART RX remains blocked."
+    },
+    {
+      "id": "S94-META-02",
+      "finding": "Original M07 s-profile firmware exceeded actual Flash.",
+      "resolution": "The reviewed companion-only z-profile amendment produced bounded actual ELFs. Original failure and original matrices remain intact; memory maps were not enlarged."
+    },
+    {
+      "id": "S94-META-03",
+      "finding": "Original continuation correspondence boolean inaccurately sounded like final provenance had already run.",
+      "resolution": "A separately hashed provenance-status correction preserves the original receipt and states only M-D01 reran; final administrative provenance remains pending. The inaccurate boolean is not accepted evidence."
+    }
+  ],
+  "external_evidence": [
+    {
+      "external_artifact": "independent-review/metadata-static/review.json",
+      "bytes": 40556,
+      "sha256": "716497915358e809234acfbccf9e0b25c538ee26dbb178e68010e874067a009a"
+    },
+    {
+      "external_artifact": "independent-review/metadata-static/review.md",
+      "bytes": 5215,
+      "sha256": "57f933c626cc2c41ba2afce886f1a0ef4e5d90f49625e7eff78723c8f4980480"
+    },
+    {
+      "external_artifact": "independent-review/metadata-main/artifact-observations.json",
+      "bytes": 34771,
+      "sha256": "a82ab372d5fcc3c073080ea9bc8149e9fa99d55148495fc6d33f298213a36bdd"
+    },
+    {
+      "external_artifact": "independent-review/metadata-main/first-attempt-review.json",
+      "bytes": 9302,
+      "sha256": "3d4a5512471f7d2ed89869feb1c75e4650a3476487a57a3a74dfe2261b669b64"
+    },
+    {
+      "external_artifact": "independent-review/metadata-main/profile-amendment-review.json",
+      "bytes": 1703,
+      "sha256": "10275fd8676b907d16ad86e126ac1787aad0b03969a512b31afba23350dd8621"
+    },
+    {
+      "external_artifact": "main/summary.json",
+      "bytes": 767,
+      "sha256": "87369b3bea0a755f9e83ea2430247fd0f42fe794dabc272b2cfc7c4bbccf7612"
+    },
+    {
+      "external_artifact": "main-gates/summary.json",
+      "bytes": 503,
+      "sha256": "f4d4ebec6418c41881589ec8a99beb28b2f7d68f4f315d02ecbbb8aab651c864"
+    },
+    {
+      "external_artifact": "main-gates/source-before.json",
+      "bytes": 263274,
+      "sha256": "a391436da7bc32c42c6fc303b738058baf3faf769fdd7f15bcc3b77f34e106fd"
+    },
+    {
+      "external_artifact": "main-gates/generated-before.json",
+      "bytes": 136585,
+      "sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3"
+    },
+    {
+      "external_artifact": "main-profile-continuation/summary.json",
+      "bytes": 2094,
+      "sha256": "fed3103b9cf82bc193e89926eb19d66be7981f1ed98b3bac7f0b18642a61cd6c"
+    },
+    {
+      "external_artifact": "main-profile-continuation/source-before.json",
+      "bytes": 263274,
+      "sha256": "dd61794d53794d56ee825ce4b5a1c67d58fbbbe7ad9a9fc4e348e85c09ec18b1"
+    },
+    {
+      "external_artifact": "main-profile-continuation/generated-before.json",
+      "bytes": 136585,
+      "sha256": "5984426dfd223fca1f7e8dd06f6463109d937ee784a9b3da896462c7011963f3"
+    },
+    {
+      "external_artifact": "main-profile-continuation/toolchain-before.json",
+      "bytes": 6352,
+      "sha256": "73024e8a0a986e76a46e6c82f6cd33efbfa31a68da14d1033b5444c0d7fe210b"
+    },
+    {
+      "external_artifact": "main-profile-continuation/source-correspondence.json",
+      "bytes": 1978,
+      "sha256": "5803c15761f213008bef99c8381bb6c099e5a49185f7aeb74038faa2a18e46c0"
+    },
+    {
+      "external_artifact": "main-profile-continuation/provenance-status-correction.json",
+      "bytes": 1365,
+      "sha256": "7857950fce74c48ba3e702d009ef83f9858e4151ca603f95598be17db3171599"
+    },
+    {
+      "external_artifact": "main-profile-continuation/source-checker/receipt.json",
+      "bytes": 3132,
+      "sha256": "569ffd57072c40d10267ec1d634e04190e77da08582a3ef679902d8d7025a4bb"
+    },
+    {
+      "external_artifact": "build-preparation/profile-amendment.accepted.json",
+      "bytes": 9150,
+      "sha256": "a805d1b7f33d15d0e077b16bd89d562989612cb6d58fc3a44cbe5c5105555706"
+    },
+    {
+      "external_artifact": "examples-proposal/profile-fix/profile-and-readme.patch",
+      "bytes": 864,
+      "sha256": "a03a26ccbdf36324c612d28b3ac6aaabe46172438be8bf52d70e736d26d9e9a4"
+    },
+    {
+      "external_artifact": "independent-review/metadata-main/main-review.json",
+      "bytes": 48034,
+      "sha256": "7addd89e13fc85be5a5c4de3b985748efe462d81bbe94ab1d113552188cde0c7"
+    }
+  ],
+  "reviewer_actions": "No production edits, Cargo invocation, generator, project checker/test, vendor materialization or hardware operation. Only external review artifacts were written."
+}

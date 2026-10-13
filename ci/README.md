@@ -554,3 +554,45 @@ commands close their administrative references. Clean performs one bootstrap
 plus five finite commands. All 910 generated files must retain their exact
 baseline bytes. No aggregate suite, hosted CI, HAL model or hardware run is
 part of this acceptance. See [the contract](../docs/classic-i2c-async.md).
+
+
+## Stage94 native L012 SPI DMA main verification
+
+The native extension is exactly CW32L012C8T6/C8U6 SPI1/SPI2/SPI3, with borrowed
+PIO retained. Its external fixed main matrix is six standalone ARM libraries
+and fifteen ELF links (21 accepted matrix rows); dependent HAL archives are not
+additional standalone commands. Main includes both exact native parts, generic
+L012 compilation, classic F030/F020/L052 libraries and DMA regressions, all four
+native deployments per package, pure PIO per package and existing native copy/TX.
+Main ran zero canonical generation. No cumulative script is expanded.
+
+Main passed all 21 accepted Cargo rows: six standalone ARM libraries and fifteen
+ELF links, all exiting zero. Independent runtime and metadata/source reviews
+accepted the bounded implementation. The five finite main commands passed:
+the existing own-DMA source checker, capability renderer, capability consistency
+check, source-navigation refresh and strict external-source provenance
+verification. They are counted separately from the 21 accepted Cargo rows.
+The original M07 link failed with a 2,752-byte Flash overflow after six
+successful library rows. The reviewed native companion-only opt-level s to z
+correction retains the 64 KiB Flash boundary and all five async methods; that
+failure remains recorded separately from accepted rows. Native L012 builds
+have a recorded new dead_code warning for new_admitted_pair; these results
+are not warning-free. Stage86/89/93
+receipts remain historical and do not establish Stage94 acceptance.
+
+The separate five-command administrative phase after main acceptance
+renders/checks capability reports,
+refreshes/verifies source navigation and packages source with its integrated
+module-layout check. It does not repeat or enlarge the main compiler matrix.
+At main acceptance final-source clean had not run; completion requires its
+separate two-library/six-ELF receipt (deployments A, B and D on both packages).
+It requires one existing
+`./d gen-all` bootstrap in a fresh host target, a separate fresh ARM target and
+all 910 generated files matching main by relative path and bytes.
+
+The [native SPI examples](../examples/l012-spi-dma/README.md) preserve every
+constructed owner; four physical channels permit only two reserved full-duplex
+pairs. Compile/link evidence does not execute cancellation, shared-IRQ races,
+generic missing-memory rejection, error drain, wire behavior or throughput.
+No HAL probe/model/test, hardware execution, low-power or RF claim is included.
+See [the native runtime and evidence boundary](../docs/spi-dma.md).

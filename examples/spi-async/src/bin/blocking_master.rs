@@ -43,7 +43,8 @@ fn main() -> ! {
     #[cfg(any(
         feature = "cw32f020c6u7",
         feature = "cw32l052c8t6",
-        feature = "cw32l012c8t6"
+        feature = "cw32l012c8t6",
+        feature = "cw32l012c8u6"
     ))]
     let (mut secondary, mut secondary_cs) = {
         let (peripheral, sck, mosi, miso, cs) = examples::secondary_pins!(p);
@@ -52,7 +53,7 @@ fn main() -> ! {
             .unwrap_or_else(|_| examples::halt());
         (bus, cs)
     };
-    #[cfg(feature = "cw32l012c8t6")]
+    #[cfg(any(feature = "cw32l012c8t6", feature = "cw32l012c8u6"))]
     let (mut tertiary, mut tertiary_cs) = {
         let (peripheral, sck, mosi, miso, cs) = examples::tertiary_pins!(p);
         let cs = Output::new(cs, Level::High, examples::cs_speed());
@@ -69,7 +70,8 @@ fn main() -> ! {
         #[cfg(any(
             feature = "cw32f020c6u7",
             feature = "cw32l052c8t6",
-            feature = "cw32l012c8t6"
+            feature = "cw32l012c8t6",
+            feature = "cw32l012c8u6"
         ))]
         {
             secondary_cs.set_low();
@@ -77,7 +79,7 @@ fn main() -> ! {
             secondary_cs.set_high();
             core::hint::black_box(samples);
         }
-        #[cfg(feature = "cw32l012c8t6")]
+        #[cfg(any(feature = "cw32l012c8t6", feature = "cw32l012c8u6"))]
         {
             tertiary_cs.set_low();
             let samples = exchange(&mut tertiary).unwrap_or_else(|_| examples::halt());

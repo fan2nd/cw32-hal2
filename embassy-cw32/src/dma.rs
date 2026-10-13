@@ -10,7 +10,8 @@
 //! CN §21.7.1.5 (printed 474) / EN §21.7.1.5 (printed 520).
 //! L083 also exposes safe staged UART/SPI requests; unsafe borrowed hardware
 //! constructors remain x030-only. F020/L031/L052/R031/W031 add safe owned copy
-//! and staged UART TX/RX; L012 adds owned copy and staged UART TX only.
+//! and staged UART TX/RX; L012 adds owned copy, staged UART TX and qualified
+//! native SPI DR TX/RX. L012 UART RX remains unqualified.
 //! Unsafe software-copy APIs retain their existing contracts.
 //! L031/L052/R031/W031 share DMACH23 between CH2/3 and use independent DMACH4
 //! for CH4. L012 pairs CH1/2 on DMACH12 and CH3/4 on DMACH34; IRQ11 is CORDIC.
@@ -114,8 +115,8 @@ pub trait ChannelInstance: sealed::Channel + PeripheralType + 'static {
 ///
 /// Qualified x030/L083 requests apply to their five channels; qualified F020
 /// UART TX/RX requests apply to its two physical channels. Qualified
-/// L031/L052/R031/W031 UART TX/RX and L012 UART TX requests apply to their
-/// four physical channels.
+/// L031/L052/R031/W031 UART TX/RX and L012 UART TX plus qualified SPI1/2/3
+/// DR TX/RX requests apply to their four physical channels.
 /// This trait is sealed so downstream code cannot introduce an unverified
 /// request or channel route.
 #[allow(private_bounds)]
@@ -456,8 +457,9 @@ impl Channel<'static> {
     // static source, endpoint, clocks and channel before this call, including
     // on panic/forget, until a clean completion has been retired. A live owner
     // leaves a cancelled operation running; no task-local Transfer is created.
-    // L012's SRAM-byte-to-TDR profile uses SIZE for memory width. The pointer
-    // carries the established endpoint address, not a byte-MMIO access license.
+    // L012's qualified UART TDR TX and SPI DR TX profiles use SIZE for SRAM
+    // byte width. The pointer carries a fixed typed-register endpoint address,
+    // not a byte-MMIO access license; native peripheral accesses remain 32-bit.
     #[cfg(any(uart_dma_tx, spi_dma))]
     pub(crate) unsafe fn start_write(
         &mut self,
@@ -483,6 +485,9 @@ impl Channel<'static> {
     // completion has been retired. `destination` must cover `len` writable
     // bytes in previously validated SRAM; no CPU access or reference to those
     // bytes is allowed while DMA may write. Launch only from an idle lease.
+    // Qualified native L012 SPI DR RX uses SIZE for SRAM byte width and this
+    // pointer only for the fixed typed-register address, not byte MMIO. This
+    // does not qualify the separate native UART RX endpoint.
     #[cfg(any(uart_dma_rx, spi_dma))]
     pub(crate) unsafe fn start_read(
         &mut self,

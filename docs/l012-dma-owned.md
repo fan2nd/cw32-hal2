@@ -1,8 +1,13 @@
 # Native L012 owned DMA
 
-This implementation qualifies only CW32L012C8T6/C8U6 for init-admitted static-SRAM
-software copying and private-staging byte UART TX. Actual main implementation and independent runtime/source reviews are accepted.
-At main acceptance clean had not run; it requires a separate final-source receipt.
+The original Stage86 implementation qualifies only CW32L012C8T6/C8U6 for
+init-admitted static-SRAM software copying and private-staging byte UART TX.
+Its main implementation and independent runtime/source reviews are accepted;
+at main acceptance clean had not run and requires a separate final-source
+receipt. Stage94 additionally declares finite paired SPI1/SPI2/SPI3 DMA on the
+same two exact parts, with separate main software acceptance. At Stage94 main
+acceptance final-source clean had not run; its separate receipt remains required.
+The original copy/UART acceptance does not validate the native SPI extension.
 No hardware execution is claimed.
 
 ## Own hardware and source conflicts
@@ -70,8 +75,51 @@ Cancellation/forget retains the current chunk; a later write or flush settles it
 before reuse. Error or unresolved Drop retains staging, channel, UART/pin/config
 and clocks. Clean Drop need not flush the final frame. Gaps, CPU copy overhead,
 unbounded waiting and no throughput guarantee remain. No RX/combined DMA UART,
-SPI DMA, circular/restart API, early abort, other requests or buffered-plus-DMA
+circular/restart API, early abort, other unqualified requests or buffered-plus-DMA
 owner is added. Existing ordinary/buffered/idle RX paths remain independent.
+The separate UART RX RC/ORE proof remains blocked; SPI DR-read-clear semantics
+do not qualify UART RX.
+
+## Stage94 finite paired SPI
+
+Exactly CW32L012C8T6/C8U6 gain SPI1/SPI2/SPI3 staged full-duplex eight-bit
+master DMA: one family, three controller pairs and six selected part/controller
+routes. RX/TX selectors are 6/7, 8/9 and 10/11. Native CR2 request gates preserve
+sampled EN and unrelated fields. TYPE1/BLOCK/SIZE0 and per-chunk REPEAT1 use
+fixed typed DR addresses and incrementing private byte SRAM; SIZE0 is not a
+CPU byte-MMIO or byte-peripheral-access license. See the
+[SPI lifecycle and native source contract](spi-dma.md#native-l012-scope-and-shared-interrupts).
+
+Whole static SPI/pins, both channels and two exclusive static stages are retained
+before launch. Admission remains sequential: second-channel failure can consume
+the first admission, and later SPI configuration failure does not restore it.
+Generic `cw32l012` has the compile surface but retains `MissingMemoryMetadata`
+for safe staging/admission. Four channels permit two reserved full-duplex pairs,
+with PIO available on a third controller; clean Drop does not permit re-admission.
+
+PIO and DMA constructors both require the complete associated SPI23 handler
+for SPI2/SPI3; all four peer/backend visits guard activity before MMIO and leave
+inactive banks untouched. The DMA constructor's associated-handler bound may
+require a downstream generic wrapper update even though concrete dedicated
+bindings still resolve to the same handler. Old PIO construction stays borrowed.
+
+Both clean DMA terminals, error-free TXE1/BUSY0 and both fenced retirements are
+required before CPU access to received bytes. Cancellation retains the active
+chunk: keep the original GPIO CS asserted through successful flush. Errors
+permanently quarantine the pair. Unresolved Drop retains both stages/channels,
+SPI, pins and clocks without disabling or gating them; it does not establish
+safe CS release. No early abort, recovery, channel release, generic
+cancellation-safe device adapter or finite-liveness guarantee is added.
+
+Stage94 main passed six standalone ARM libraries and fifteen ELF links in
+21 accepted Cargo rows, all exiting zero, plus five finite source/declaration
+commands. Independent runtime and metadata/source reviews accepted the bounded
+implementation. At main acceptance final-source clean had not run; completion
+requires its separate two-library/six-ELF receipt after one existing generation
+bootstrap. Main ran no canonical generation, no cumulative recipe is expanded
+and no hardware result is claimed. The
+[native SPI ledger](l012-spi-dma-evidence.json) is separate from the original
+Stage86 source and review record below.
 
 ## Verification boundary
 

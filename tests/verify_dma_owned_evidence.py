@@ -1386,6 +1386,8 @@ for kind in ('uart', 'dma'):
         assert 'MissingMemoryMetadata' in ' '.join(override['limitations'])
     l012_override = next(o for o in mode['overrides'] if o['families'] == ['CW32L012'])
     assert 'TX only' in l012_override['scope'] and 'No L012 DMA RX/combined UART' in ' '.join(l012_override['limitations'])
+    if kind == 'dma':
+        four_tokens(l012_override['scope'], ['SPI1', 'SPI2', 'SPI3', 'C8T6', 'C8U6'], 'native DMA aggregate scope')
 print('PASS: classic UART RX: 55 exact own-source nodes/member chains, 140 pages, full ISR/typed ICR PAC and native two/four-channel requests, fourteen exact SRAM parts, 459 safe routes/1449 distinct-pin pairs and empty generics; source/declaration facts only')
 
 # Finite classic SPI endpoint qualification. The own SPI chapters and paired
@@ -1464,7 +1466,14 @@ for index, artifact in enumerate(lock['artifacts']):
 assert spi_reverse == spi_pointers
 # Existing index consumers plus this finite extension, derived from current
 # ledgers rather than from an immutable historical source-index digest.
-assert checker_reverse == (classic_pointers | l012_pointers | spi_pointers
+native_spi_path = 'docs/l012-spi-dma-evidence.json'
+native_spi = load(ROOT / native_spi_path)
+native_spi_pointers = {'/artifacts/6'} | {
+    f'/artifacts/6/members/{i}' for i in (17, 19, 25, 28, 37, 47, 71)
+} | {f'/artifacts/{i}{suffix}' for i in (24, 25, 42) for suffix in ('', '/text')}
+assert len(native_spi['sources']) == len(native_spi_pointers) == 14
+assert {s['source_index_pointer'] for s in native_spi['sources']} == native_spi_pointers
+assert checker_reverse == (classic_pointers | l012_pointers | spi_pointers | native_spi_pointers
                            | {s['source_index_pointer'] for s in four['sources']})
 
 facts = spi['shared_facts']
@@ -1756,9 +1765,382 @@ assert (ROOT / 'examples/spi-dma/src/bin/spi2_flash_id.rs').is_file()
 assert manifest['dependencies']['embassy-executor']['rev'] == 'f16efeffe37581092ec184718e6fdb1620393214'
 mode = next(m for m in capabilities['functions']['spi']['modes'] if m['id'] == 'safe_peripheral_dma')
 assert mode['status'] == 'experimental_partial'
-assert set(mode['implemented_families']) == classic_families | {'CW32F030', 'CW32A030', 'CW32L083'}
+assert set(mode['implemented_families']) == classic_families | {'CW32F030', 'CW32A030', 'CW32L083', 'CW32L012'}
 assert mode['pins_all'] == ['SCK', 'MOSI', 'MISO']
 assert 'dma_channels' in mode['facts']
 pio_mode = next(m for m in capabilities['functions']['spi']['modes'] if m['id'] == 'async_pio')
 assert classic_families | {'CW32L012'} <= set(pio_mode['implemented_families'])
 print('PASS: classic SPI: 39 own-source nodes and exact backlinks, 105 semantic pages, seven own instances/byte endpoints, native DMA topology and preserved 23 STATUS access views, fourteen exact SRAM parts/twenty selected AF5 triples, empty generics and example/capability declarations; no HAL execution')
+
+# Finite native L012 SPI endpoint qualification. Bind its own facts separately
+# from classic SPI and the retained native DMA proof. Runtime safety is reviewed
+# independently; this section reads no HAL implementation and executes no HAL.
+assert native_spi['schema_version'] == 1
+assert native_spi['scope'] == {
+    'family': 'CW32L012', 'controllers': ['SPI1', 'SPI2', 'SPI3'],
+    'exact_parts': ['CW32L012C8T6', 'CW32L012C8U6'], 'generic_compile_only': ['CW32L012'],
+    'family_count': 1, 'family_instance_count': 3, 'exact_part_count': 2,
+    'selected_part_instance_route_count': 6,
+    'mode': 'Finite full-duplex u8 master with paired exclusive static SRAM stages',
+    'uart_dma_rx_qualified': False,
+}
+assert native_spi['text_extractor'] == lock['text_extractor']
+contract = native_spi['source_index_append_plan']
+assert contract['new_consumer'] == native_spi_path and contract['checker_extension'] == classic_checker
+assert set(contract['native_exact_pointers']) == native_spi_pointers
+assert len(contract['native_exact_pointers']) == contract['new_ledger_backlinks'] == 14
+assert contract['append_member_pointer'] == '/artifacts/6/members/71'
+assert contract['new_checker_backlinks'] == ['/artifacts/6/members/37', '/artifacts/6/members/71']
+assert contract['old_classic_spi_node_count_unchanged'] == len(spi_reverse) == 39
+assert contract['old_l012_native_node_count_unchanged'] == len(l012_pointers) == 16
+native_spi_bytes = {}
+for source in native_spi['sources']:
+    pointer = source['source_index_pointer']
+    pin = four_index(pointer)
+    artifact = lock['artifacts'][int(pointer.split('/')[2])]
+    identity = json.loads(json.dumps(source['identity']))
+    if pointer == '/artifacts/42':
+        # Retain the entire EN pin history, reversing only its historical labels.
+        assert len(identity['pin_history']) == 2
+        for historical in identity['pin_history']:
+            assert set(historical) == {'historical_path', 'historical_sha256', 'bytes', 'changed_utc', 'reason'}
+            historical['path'] = historical.pop('historical_path')
+            historical['sha256'] = historical.pop('historical_sha256')
+    observed = {k: v for k, v in pin.items() if k != 'evidence'
+                and not (k == 'members' and pointer == '/artifacts/6')}
+    for value in (observed, identity):
+        if 'text' in value:
+            value['text'] = {k: v for k, v in value['text'].items() if k != 'evidence'}
+    assert observed == identity, source['source_ref']
+    assert source['official_url'] == artifact['url']
+    assert pin['evidence'].count(native_spi_path) == pin['evidence'].count(classic_checker) == 1
+    if '/members/' in pointer:
+        assert source['source_ref'] == 'member:' + identity['path']
+        assert source['archive_source_ref'] == artifact['id']
+    elif pointer.endswith('/text'):
+        assert source['source_ref'] == 'text:' + identity['path']
+    else:
+        assert source['source_ref'] == artifact['id']
+    raw = (SOURCES / identity['path']).read_bytes()
+    assert identity['path'] not in native_spi_bytes
+    assert len(raw) == identity['bytes'] and digest(raw) == identity['sha256']
+    native_spi_bytes[identity['path']] = raw
+    if '/members/' in pointer:
+        payload = (SOURCES / artifact['path']).read_bytes()
+        for member in identity['members']:
+            with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+                payload = archive.read(member)
+        assert payload == raw, source['source_ref']
+assert len(native_spi_bytes) == 14
+native_spi_reverse = set()
+for index, artifact in enumerate(lock['artifacts']):
+    nodes = [(f'/artifacts/{index}', artifact)]
+    nodes += [(f'/artifacts/{index}/members/{i}', m) for i, m in enumerate(artifact.get('members', []))]
+    if 'text' in artifact:
+        nodes.append((f'/artifacts/{index}/text', artifact['text']))
+    for pointer, node in nodes:
+        assert node.get('evidence', []).count(native_spi_path) <= 1
+        if native_spi_path in node.get('evidence', []):
+            native_spi_reverse.add(pointer)
+assert native_spi_reverse == native_spi_pointers
+
+# Exact extraction-page locators, including their separately stated printed
+# coordinates. Never replace these with the clock checker's single-page hash.
+native_spi_page_numbers = {
+    'CW32L012_DataSheet_CN_V1.0.txt': [(7, 5), (29, 27), (34, 32), (35, 33), (36, 34), (38, 36), (40, 38), (70, 68)],
+    'CW32L012_UserManual_CN_V1.4.txt': [(38, 13), (81, 56), (82, 57), (85, 60), (86, 61),
+        (95, 70), (96, 71), (132, 107), (138, 113), (139, 114), (140, 115), (141, 116),
+        (142, 117), (143, 118), (144, 119), (145, 120), (146, 121), (147, 122), (148, 123),
+        (531, 506), (532, 507), (533, 508), (541, 516), (542, 517), (543, 518),
+        (544, 519), (545, 520), (546, 521), (547, 522)],
+    'CW32L012_UserManual_EN_V1.0.txt': [(154, 129)],
+}
+assert len(native_spi['page_records']) == 38
+assert {(p['text_path'], p['pdf_page_index'], p['printed_page']) for p in native_spi['page_records']} == {
+    (path, index, printed) for path, values in native_spi_page_numbers.items() for index, printed in values}
+native_spi_pages = {path: native_spi_bytes[path].decode().split('\f') for path in native_spi_page_numbers}
+for page in native_spi['page_records']:
+    assert page['pdf_viewer_page'] == page['pdf_page_index'] + 1
+    assert page['claims']
+    assert digest(native_spi_pages[page['text_path']][page['pdf_page_index']].encode()) == page['extracted_page_utf8_sha256']
+manual = native_spi_pages['CW32L012_UserManual_CN_V1.4.txt']
+datasheet = native_spi_pages['CW32L012_DataSheet_CN_V1.0.txt']
+for index, tokens in {
+    38: ['2.7', '其它外设只支持 32bit 访问方式', '8bit/16bit', 'HardFault', '打开对应外设的配置时钟和工作时钟'],
+    81: ['SYSCTRL_AHBEN', '31:16 KEY WO', 'KEY 为 0x5A5A', '0 DMA RW'],
+    82: ['SYSCTRL_APBEN1', '31:16 KEY WO', 'KEY 为 0x5A5A', '2 SPI1 RW', '13 SPI2 RW', '14 SPI3 RW'],
+    85: ['SYSCTRL_AHBRST', '0 DMA RW', '0：模块处于复位状态', '1：模块正常工作'],
+    86: ['SYSCTRL_APBRST1', '2 SPI1 RW', '13 SPI2 RW', '14 SPI3 RW', '0：模块处于复位状态', '1：模块正常工作'],
+    95: ['25 9 可配置 DMA1/2', '26 10 可配置 DMA3/4', '27 11 可配置 CORDIC'],
+    96: ['41 25 可配置 SPI1', '42 26 可配置 SPI2/3'],
+    132: ['8.2', '4 条独立 DMA 通道', '1~65535'],
+    138: ['8.4.4', 'DMA会传输1个数据块，然后等待下一次硬件触发请求信号', 'DMA_CNTy.REPEAT=1', 'DMA_CNTy.CNT=3'],
+    139: ['8.4.5', '硬件触发 BULK 传输模式没有传输间隙', 'DMA_CNTy.CNT个数据块'],
+    140: ['8.5.1', '位宽应与 DMA 通道的源地址和目的地址的位宽完全一致', 'REPEAT',
+          '在下次 DMA 传输前需要再写入 1', '1~65535', 'RESTART', 'SRCLOAD', 'DSTLOAD'],
+    141: ['传输完成 数据传输全部正确完成', 'DMA_CSRy.TCIE', 'DMA_CSRy.TEIE', 'DMA_ICR.TCy', 'DMA_ICR.TEy'],
+    142: ['8.7', 'DMA_CSRy', 'DMA_CNTy', 'DMA_TRIGy', 'DMA_CCNTy', 'y = 1~4'],
+    143: ['DMA_ISR', 'TC1', 'TE1', 'TC4', 'TE4', 'RO'],
+    144: ['DMA_ICR', 'Reset value: 0xFFFF FFFF', 'R1W0', '15 DSTLOAD RW', '14 SRCLOAD RW'],
+    145: ['13 TE RO', '12 TC RO', '11 RESTART RW', '10:8 STATUS RW', '101：传输完成',
+          '00：位宽为 8 比特，自增量为 1', '位宽配置仅对存储器（FLASH、RAM）有效', '1：块传输（BLOCK）'],
+    146: ['y = 1~4', '7:2 HARDSRC RW', '0 TYPE RW', '1：硬件触发模式', 'W0：无功能', 'R0：传输已完成',
+          '000110：SPI1 接收 Buf 非空事件', '000111：SPI1 发送 Buf 空事件', '001000：SPI2 接收 Buf 非空事件', '001001：SPI2 发送 Buf 空事件', '001010：SPI3 接收 Buf 非空事件', '001011：SPI3 发送 Buf 空事件'],
+    147: ['19:16 REPEAT RW', '15:0 CNT RW', 'REPEAT 只可设置为 1', 'REPEAT 不可设置为 0', '31:0 SRCADDR RW', '31:0 DSTADDR RW'],
+    148: ['Address offset: 0x14 + 32×y', '19:16 CREPEAT RO', '15:0 CCNT RO', '31:0 CSRCADDR RO', '31:0 CDSTADDR RO'],
+    531: ['22.3.8', '当发送数据从 SPI_DR 寄存器转移到移位寄存器后',
+          '在对 SPI_DR 寄存器写入数据的同时，SPI_ISR.TXE 标志位会被自动清零',
+          '读 SPI_DR 寄存器的同时将清除 SPI_ISR.RXNE 标志位',
+          '发送缓冲区无数据且移位寄存器无数据', '用户代码需查询到该标志为 0 时，才可拉高 CS 信号'],
+    532: ['SPI_CR2.EN 被清零', 'MODF 标志位会保持置位状态', '新接收到的数据将覆盖缓冲器中原有的数据',
+          'SPI_ISR.OV 标志位会保持置位状态', 'SPI_ISR.SSERR', 'SPI_ISR.UD'],
+    533: ['支持 8 个中断源', 'ISR.TXE IER.TXE 写 SPI_DR', 'ISR.RXNE IER.RXNE 读 SPI_DR', 'IER.MODF', 'IER.SSERR', 'IER.OV', 'IER.UD'],
+    541: ['Address offset: 0x00', '30:24 BR RW', '127：SCK = PCLK/256', '17:16 MODE RW', '00：双向全双工'],
+    542: ['每帧数据的宽度为 WIDTH+1', '11:8 WIDTH RW', '1 SSM RW', '0 MSTR RW', '1：主机模式',
+          '只有当 SPI_CR2.EN 为 0 时，才可以修改本寄存器'],
+    543: ['Address offset: 0x04', '2 DMATX RW', '1 DMARX RW', '0 EN RW', '保留位，请保持默认值', 'Address offset: 0x08', '0 HDOE RW'],
+    544: ['22.7.4', 'Address offset: 0x0C', '0 SSI RW', 'SPI_CR1.SSM 为 1 时有效'],
+    545: ['Address offset: 0x10', '7 MODF RW', '6 SSERR RW', '5 OV RW', '4 UD RW', '3 SSR RW', '2 SSF RW', '1 RXNE RW', '0 TXE RW'],
+    546: ['Address offset: 0x14', '8 BUSY RO', '1 RXNE RO', '0 TXE RO', '对 DR 寄存器的读操作或对 ICR.RXNE 写 0 均可以清除该标志'],
+    547: ['Address offset: 0x18', 'Reset value: 0x0000 00FF', '0 FLUSH R1W0', '清空发送缓冲区和移位寄存器',
+          'W1：无功能', 'Address offset: 0x1C', '15:0 DR RW'],
+}.items():
+    four_tokens(manual[index], tokens, ('L012 SPI own manual', index))
+assert 'BUSY' not in manual[533] and 'BUSY' not in manual[545]
+four_tokens(native_spi_pages['CW32L012_UserManual_EN_V1.0.txt'][154],
+            ['13 TE RO', '12 TC RO', '10:8 STATUS RW', '101: Transfer completed',
+             'Bit width configuration is only valid for memory'], 'L012 SPI independent EN width')
+for index, tokens in {
+    7: ['表 3-1', 'CW32L012C8T6', 'CW32L012C8U6', 'FLASH 64KB', 'SRAM 8KB', 'SPI 3', 'LQFP48', 'QFN48'],
+    29: ['内部集成 3 个串行外设接口', '主机模式下 SCK 频率高达 24MHz', '支持直接内存访问（DMA）'],
+    34: ['表 5-2', 'PA00', 'PA01', 'PA02'],
+    35: ['PA05', 'PA06', 'PA07', 'PB00', 'PB01', 'PB02'],
+    36: ['PA09', 'PA10', 'PA11'],
+    38: ['表 5-3', 'SPI1_SCK', 'SPI2_SCK', 'SPI3_SCK'],
+    40: ['0x2000 0000 – 0x2000 1FFF', '0x0000 0000 – 0x0000 FFFF', 'SRAM(8KB)', 'FLASH(64KB)', 'SPI1', 'SPI2', 'SPI3'],
+    70: ['表 7-39', 'SPI 时钟周期', '主模式', '24', 'ns'],
+}.items():
+    four_tokens(datasheet[index], tokens, ('L012 SPI own datasheet', index))
+
+# These are distinct widths, not a correction to the manual's general guidance.
+facts = native_spi['facts']
+assert [facts[k] for k in ('cpu_mmio_bits', 'dma_peripheral_transaction_bits', 'sram_element_bits', 'dr_payload_bits', 'frame_bits')] == [32, 32, 8, 16, 8]
+assert facts['cr1'] == {'MODE': 0, 'MSTR': 1, 'SSM': 1, 'WIDTH': 7, 'modify_only_when_cr2_en': 0}
+assert facts['native_request_gates'] == {'DMARX': [1, 1], 'DMATX': [2, 1]}
+assert facts['dma_descriptor'] == {'TYPE': 1, 'TRANS': 1, 'SIZE': 0, 'REPEAT': 1, 'CNT_min': 1, 'CNT_max': 65535,
+    'RESTART': 0, 'SRCLOAD': 0, 'DSTLOAD': 0, 'sram_increment': True, 'dr_increment': False}
+assert facts['dma_terminal'] == {'TC': True, 'TE': False, 'STATUS': 5, 'error_statuses': [1, 2, 3, 4],
+    'software_trigger_retirement_required_for_hardware_request': False,
+    'remaining_register': 'CCNT', 'remaining_fields': ['CCNT', 'CREPEAT']}
+assert facts['spi_icr_noop'] == 255 and facts['destructive_icr_field'] == 'FLUSH'
+assert facts['error_fields'] == ['UD', 'OV', 'SSERR', 'MODF']
+assert facts['dma_icr_noop'] == l012['native_icr_seed']['write_noop'] == 0xffffffff
+assert facts['dma_base'] == 0x40020000 and facts['channel_count'] == 4
+assert facts['dma_irqs'] == {'DMACH12': 9, 'DMACH34': 10}
+assert facts['spi_irqs'] == {'SPI1': 25, 'SPI23': 26} and facts['unrelated_irq'] == {'CORDIC': 11}
+assert facts['request_selectors'] == {f'SPI{i}': {'RX': 4 + 2 * i, 'TX': 5 + 2 * i} for i in range(1, 4)}
+assert facts['dr_addresses'] == {'SPI1': 0x4000081c, 'SPI2': 0x4000041c, 'SPI3': 0x4000341c}
+retained = native_spi['retained_native_dma_proof']
+assert retained['ledger'] == 'docs/l012-dma-owned-evidence.json'
+assert (retained['source_node_count'], retained['ro_current_count_views'], retained['tc_te_setter_removals']) == (16, 5, 10)
+
+sdk = native_spi['sdk']
+with zipfile.ZipFile(io.BytesIO(native_spi_bytes[lock['artifacts'][6]['path']])) as archive:
+    spi_examples = sorted({'/'.join(name.split('/')[:3]) for name in archive.namelist()
+                           if name.startswith('Examples/SPI/') and len(name.split('/')) > 3})
+assert spi_examples == sdk['spi_example_directories'] == ['Examples/SPI/SPI_FLASH', 'Examples/SPI/SPI_FullDuplex_ComPolling']
+assert sdk['has_spi_dma_example'] is False and not any('DMA' in name.upper() for name in spi_examples)
+assert len(sdk['symbols']) == 17
+for symbol in sdk['symbols']:
+    assert symbol['source_ref'].startswith('member:')
+    lines = native_spi_bytes[symbol['source_ref'].removeprefix('member:')].decode().splitlines()
+    assert lines[symbol['line'] - 1].strip() == symbol['text']
+spi_header = native_spi_bytes['cw32l012/Libraries/inc/cw32l012_spi.h'].decode()
+four_tokens(spi_header, ['#define SPI_DMAReq_Tx (0x00000004)', '#define SPI_DMAReq_Rx (0x00000002)',
+    '#define IS_SPI_ALL_PERIPH(PERIPH) (((PERIPH) == CW_SPI1) || ((PERIPH) == CW_SPI2) ||((PERIPH) == CW_SPI3))'], 'L012 SPI SDK gates/instances')
+spi_driver = native_spi_bytes['cw32l012/Libraries/src/cw32l012_spi.c'].decode()
+four_tokens(spi_driver, ['SPIx->CR2 |= SPI_DMAReq;', 'SPIx->CR2 &= ~SPI_DMAReq;',
+    'SPIx->DR = Data;', 'return (uint16_t)(SPIx->DR);'], 'L012 SPI SDK helper semantics')
+
+# All native register geometry is bound to authored/generated IR. Reuse the
+# earlier native DMA corrections rather than recreating an independent variant.
+for version, geometry in native_spi['native_register_geometry'].items():
+    ir = load(ROOT / f'cw32-data/data/registers/{version}.json')
+    assert ir == load(ROOT / f'cw32-data/registers/{version}.yaml')
+    block = {'spi_cw32l012_v1': 'SPI', 'dma_cw32l012_v1': 'DMA', 'dmachannel_cw32l012_v1': 'DMACHANNEL'}[version]
+    assert geometry['registers'] == [{k: v for k, v in r.items() if k != 'description'} for r in ir['block/' + block]['items']]
+    assert geometry['fields'] == {k: [{a: b for a, b in f.items() if a != 'description'} for f in v['fields']]
+                                  for k, v in ir.items() if k.startswith('fieldset/')}
+    if version != 'spi_cw32l012_v1':
+        assert ir == l012_ir[version]
+assert set(native_spi['native_register_geometry']) == {'spi_cw32l012_v1', 'dma_cw32l012_v1', 'dmachannel_cw32l012_v1'}
+native_spi_ir = load(ROOT / 'cw32-data/data/registers/spi_cw32l012_v1.json')
+native_spi_offsets = dict(zip(('CR1', 'CR2', 'CR3', 'SSI', 'IER', 'ISR', 'ICR', 'DR'), range(0, 32, 4)))
+assert {r['name']: r['byte_offset'] for r in native_spi_ir['block/SPI']['items']} == native_spi_offsets
+assert {f['name']: (f['bit_offset'], f['bit_size']) for f in native_spi_ir['fieldset/CR1']['fields']} == {
+    'MSTR': (0, 1), 'SSM': (1, 1), 'CPHA': (2, 1), 'CPOL': (3, 1), 'LSBF': (7, 1),
+    'WIDTH': (8, 4), 'GAP': (12, 4), 'MODE': (16, 2), 'FLTEN': (18, 1), 'MISOHD': (19, 1), 'SMP': (20, 1), 'BR': (24, 7)}
+assert {f['name']: (f['bit_offset'], f['bit_size']) for f in native_spi_ir['fieldset/CR2']['fields']} == {'EN': (0, 1), 'DMARX': (1, 1), 'DMATX': (2, 1)}
+for name in ('SPI1', 'SPI2', 'SPI3'):
+    peripheral = l012_peripherals[name]
+    assert peripheral.get('derivedFrom') == (None if name == 'SPI1' else 'SPI1')
+    assert int(peripheral.findtext('baseAddress'), 0) + 28 == facts['dr_addresses'][name]
+    vector = 'SPI1' if name == 'SPI1' else 'SPI23'
+    assert [(i.findtext('name'), int(i.findtext('value'), 0)) for i in peripheral.findall('interrupt')] == [(vector, facts['spi_irqs'][vector])]
+    if name != 'SPI1':
+        assert peripheral.find('registers') is None
+for original in l012_peripherals['SPI1'].findall('registers/register'):
+    name = original.findtext('name')
+    ir = next(r for r in native_spi_ir['block/SPI']['items'] if r['name'] == name)
+    assert ir['byte_offset'] == int(original.findtext('addressOffset'), 0)
+    assert ir.get('bit_size', 32) == 32 and ir['fieldset'] == name
+    access = 'Read' if name == 'ISR' else 'ReadWrite'
+    assert ir.get('access', 'ReadWrite') == access
+    assert original.findtext('access') == ('read-only' if name == 'ISR' else 'read-write')
+    fields = original.findall('fields/field')
+    assert len(fields) == len(native_spi_ir['fieldset/' + name]['fields'])
+    assert {f.findtext('name'): (int(f.findtext('lsb'), 0), int(f.findtext('msb'), 0) - int(f.findtext('lsb'), 0) + 1) for f in fields} == {
+        f['name']: (f['bit_offset'], f['bit_size']) for f in native_spi_ir['fieldset/' + name]['fields']}
+    assert all(f.findtext('access') == ('read-only' if name == 'ISR' else 'read-write') for f in fields)
+assert [{k: v for k, v in f.items() if k != 'description'} for f in native_spi_ir['fieldset/DR']['fields']] == [{'name': 'DR', 'bit_offset': 0, 'bit_size': 16}]
+assert [{k: v for k, v in f.items() if k != 'description'} for f in native_spi_ir['fieldset/SSI']['fields']] == [{'name': 'SSI', 'bit_offset': 0, 'bit_size': 1}]
+assert {f['name'] for f in native_spi_ir['fieldset/IER']['fields']} == {'TXE', 'RXNE', 'SSF', 'SSR', 'UD', 'OV', 'SSERR', 'MODF'}
+command = load(ROOT / 'cw32-data/register-writes.yaml')['registers']['spi_cw32l012_v1']
+assert len(command) == 1 and command[0]['register'] == command[0]['fieldset'] == 'ICR'
+assert command[0]['write_noop'] == command[0]['reset_value'] == 255
+assert command[0]['zero_to_clear_fields'] == ['FLUSH', 'RXNE', 'SSF', 'SSR', 'UD', 'OV', 'SSERR', 'MODF']
+assert load(ROOT / 'cw32-data/data/register-writes/spi_cw32l012_v1.json') == {
+    'schema_version': 1, 'registers': {'spi_cw32l012_v1': command}}
+pac = (ROOT / 'cw32-metapac/src/peripherals/spi_cw32l012_v1.rs').read_text()
+for name, offset in native_spi_offsets.items():
+    access = 'R' if name == 'ISR' else 'RW'
+    match = re.search(rf'pub const fn {name.lower()}\(self\) -> crate::common::Reg<regs::{name.title()}, crate::common::{access}>\s*\{{(.*?)\n    \}}', pac, re.S)
+    assert match, ('native SPI typed handle', name)
+    pointer = re.search(r'self\.ptr\.wrapping_add\((0x[0-9a-f]+)usize\)', match[1])
+    assert pointer and int(pointer[1], 16) == offset, ('native SPI typed offset', name)
+assert 'pub struct Dr(pub u32)' in pac
+assert 'pub const fn dr(&self) -> u16' in pac and 'pub const fn set_dr(&mut self, val: u16)' in pac
+icr_impl = re.search(r'impl regs::Icr \{(.*?)\n\}', pac, re.S)[1]
+four_tokens(icr_impl, ['pub const fn reset_value() -> Self { Self(255) }',
+    'pub const fn write_noop() -> Self { Self(255) }'], 'native SPI typed ICR seed')
+
+# Three native controllers, six exact-part selections. The generic chip retains
+# topology but no memory/package admission. Compare selected GPIO macros, pad
+# columns and AF column positions against original sources, including native PIN.
+assert facts['selected_routes'] == {
+    'SPI1': {'SCK': 'PA5', 'MOSI': 'PA7', 'MISO': 'PA6', 'af': 3, 'cs': 'PB0'},
+    'SPI2': {'SCK': 'PA2', 'MOSI': 'PA1', 'MISO': 'PA0', 'af': 8, 'cs': 'PB1'},
+    'SPI3': {'SCK': 'PA9', 'MOSI': 'PA11', 'MISO': 'PA10', 'af': 8, 'cs': 'PB2'},
+}
+assert facts['selected_pads'] == {'PA0': '10', 'PA1': '11', 'PA2': '12', 'PA5': '15', 'PA6': '16', 'PA7': '17',
+    'PB0': '18', 'PB1': '19', 'PB2': '20', 'PA9': '30', 'PA10': '31', 'PA11': '32'}
+af = load(ROOT / 'cw32-data/af/cw32l012-serial.yaml')
+selected_keys = {(name, signal, route[signal], route['af']) for name, route in facts['selected_routes'].items() for signal in ('SCK', 'MOSI', 'MISO')}
+assert len(native_spi['selected_af_routes']) == 9
+assert native_spi['selected_af_routes'] == [r for r in af['routes'] if (r['peripheral'], r['signal'], r['pin'], r['af']) in selected_keys]
+gpio_lines = native_spi_bytes['cw32l012/Libraries/inc/cw32l012_gpio.h'].decode().splitlines()
+af_page = datasheet[38]
+header = next(line for line in af_page.splitlines() if '功能 3' in line)
+columns = [(int(m[1]), m.start() + len(m[0]) / 2) for m in re.finditer(r'功能\s+(\d)', header)]
+for route in native_spi['selected_af_routes']:
+    pin = route['pin']; af_number = route['af']; source_pin = pin[:2] + pin[2:].zfill(2)
+    assert route['datasheet_cell'] == {'pin': pin, 'af': af_number, 'function': route['peripheral'] + '_' + route['signal'],
+        'table': '5-3', 'pdf_page': 39, 'printed_page': 36}
+    line = gpio_lines[route['source_line'] - 1]
+    assert re.search(r'#define\s+' + re.escape(route['source_macro']) + r'\b', line)
+    four_tokens(line, [f"CW_GPIO{pin[1]}->{route['gpio_register']}_f.{route['gpio_field']} = {af_number}"], ('native GPIO macro', pin))
+    assert route['gpio_field'] == 'PIN' + pin[2:]
+    row = next(line for line in af_page.splitlines() if re.match(rf'\s*{source_pin}\b', line))
+    match = re.search(route['datasheet_cell']['function'], row)
+    assert match and min(columns, key=lambda c: abs(c[1] - (match.start() + match.end()) / 2))[0] == af_number
+pinout = load(ROOT / 'cw32-data/pinouts/cw32l012.yaml')
+assert len(native_spi['chip_projections']) == 3
+assert {p['chip'] for p in native_spi['chip_projections']} == {'CW32L012C8T6', 'CW32L012C8U6', 'CW32L012'}
+route_count = 0
+for projection in native_spi['chip_projections']:
+    chip = load(ROOT / f"cw32-data/data/chips/{projection['chip']}.json")
+    core = chip['cores'][0]
+    assert projection['feature'] == projection['chip'].lower()
+    assert chip['memory'] == projection['memory']
+    assert [p['package'] for p in chip['packages']] == projection['package_names']
+    assert core['dma_channels'] == projection['dma_channels'] == [
+        {'channel': i - 1, 'dma': 'DMA', 'name': f'DMA_CH{i}'} for i in range(1, 5)]
+    assert projection['interrupts'] == [i for i in core['interrupts'] if i['name'] in {'DMACH12', 'DMACH34', 'CORDIC', 'SPI1', 'SPI23'}]
+    for expected in projection['peripherals']:
+        actual = next(p for p in core['peripherals'] if p['name'] == expected['name'])
+        assert {k: v for k, v in actual.items() if k not in ('pins', 'rcc')} == expected
+    for name in ('SPI1', 'SPI2', 'SPI3'):
+        peripheral = next(p for p in core['peripherals'] if p['name'] == name)
+        assert peripheral['address'] + 28 == facts['dr_addresses'][name]
+        assert peripheral['dma_channels'] == [{'dma': 'DMA', 'request': facts['request_selectors'][name][signal], 'signal': signal} for signal in ('RX', 'TX')]
+        assert peripheral['registers'] == {'block': 'SPI', 'kind': 'spi', 'version': 'cw32l012_v1'}
+        control = peripheral['rcc_control']
+        assert control['enable'] == {'field': name, 'register': 'APBEN1'}
+        assert control['reset'] == {'field': name, 'register': 'APBRST1'} and control['reset_asserted_value'] is False
+        assert control['enable_write_key'] == {'field': {'field': 'KEY', 'register': 'APBEN1'}, 'value': 0x5a5a}
+        assert not any(k.startswith('shared_') for k in control)
+        assert peripheral['spi'] == {'maximum_frequency': 24000000, 'minimum_divisor': 2}
+        assert [p['name'] for p in core['peripherals'] if p['name'].startswith('SPI') and
+                p['interrupts'] == peripheral['interrupts']] == (['SPI1'] if name == 'SPI1' else ['SPI2', 'SPI3'])
+    chip_pac = (ROOT / f"cw32-metapac/src/chips/{projection['feature']}/pac.rs").read_text()
+    device = (ROOT / f"cw32-metapac/src/chips/{projection['feature']}/device.x").read_text()
+    for name, address in facts['dr_addresses'].items():
+        constant = re.search(rf'pub const {name}: spi::Spi = unsafe \{{ spi::Spi::from_ptr\((0x[0-9a-f_]+)usize as _\) \}};', chip_pac)
+        assert constant and int(constant[1].replace('_', ''), 16) + 28 == address
+    for name, number in {**facts['dma_irqs'], **facts['spi_irqs'], **facts['unrelated_irq']}.items():
+        assert re.search(rf'\b{name} = {number},', chip_pac)
+        assert f'PROVIDE({name} = DefaultHandler);' in device
+    if projection['chip'] == 'CW32L012':
+        assert chip['memory'] == chip['packages'] == [] and projection['package_signal_positions'] == {}
+        continue
+    assert chip['memory'] == [[{'address': 0, 'kind': 'flash', 'name': 'FLASH', 'size': 65536},
+                              {'address': 0x20000000, 'kind': 'ram', 'name': 'RAM', 'size': 8192}]]
+    package = chip['packages'][0]
+    own_package = next(p for p in pinout['packages'] if projection['chip'] in p['documented_orderable_parts'])
+    assert own_package['package'] == package['package']
+    assert package['pins'] == own_package['pins']
+    bonded = {s: p['position'] for p in package['pins'] for s in p['signals']}
+    assert projection['package_signal_positions'] == {package['package']: facts['selected_pads']}
+    for name, route in facts['selected_routes'].items():
+        peripheral = next(p for p in core['peripherals'] if p['name'] == name)
+        for signal in ('SCK', 'MOSI', 'MISO'):
+            assert {'pin': route[signal], 'signal': signal, 'af': route['af']} in peripheral['pins']
+        for pin in [route[s] for s in ('SCK', 'MOSI', 'MISO')] + [route['cs']]:
+            assert bonded[pin] == facts['selected_pads'][pin]
+            row = next(r for r in pinout['table_rows'] if pin in r['signals'])
+            assert row['pdf_page_index'] in (34, 35, 36)
+            assert row['positions'][own_package['table_column']] == bonded[pin]
+            source_pin = pin[:2] + pin[2:].zfill(2)
+            source_row = next(line for line in datasheet[row['pdf_page_index']].splitlines() if re.search(rf'\b{source_pin}\b', line))
+            assert source_row.split(source_pin, 1)[0].split()[pinout['table_columns'].index(own_package['table_column'])] == bonded[pin]
+        route_count += 1
+assert route_count == 6
+assert facts['clock_policy'] == {k: clock_policy['CW32L012'][k] for k in ('maximum_sck_hz', 'minimum_divisor', 'maximum_divisor', 'divider_kind')}
+assert facts['clock_policy'] == {'maximum_sck_hz': 24000000, 'minimum_divisor': 2, 'maximum_divisor': 256, 'divider_kind': 'linear_even'}
+assert set(clock_profiles['CW32L012']['peripherals']) == {'SPI1', 'SPI2', 'SPI3'}
+assert all(p == {'maximum_frequency': 24000000, 'minimum_divisor': 2} for p in clock_profiles['CW32L012']['peripherals'].values())
+
+# Declared example surfaces only. Ordinary firmware links and source review own
+# all method bodies, cancellation, complete handler binding and owner retention.
+manifest = tomllib.loads((ROOT / 'examples/l012-spi-dma/Cargo.toml').read_text())
+assert manifest['package']['name'] == 'cw32-l012-spi-dma-examples' and manifest['package']['autobins'] is False
+assert set(manifest['features']) == {'default', 'cw32l012c8t6', 'cw32l012c8u6'}
+assert manifest['features']['default'] == []
+for feature in l012_features:
+    assert set(manifest['features'][feature]) == {f'embassy-cw32/{feature}', f'cw32-metapac/{feature}'}
+assert manifest['bin'] == [{'name': name, 'path': f'src/bin/{name}.rs'} for name in
+    ('spi1_dma_pio23', 'spi2_dma_pio3', 'spi3_dma_pio2', 'spi23_dma_pio1')]
+assert manifest['dependencies']['embassy-executor']['rev'] == 'f16efeffe37581092ec184718e6fdb1620393214'
+assert manifest['build-dependencies']['cw32-metapac']['features'] == ['metadata']
+assert (ROOT / 'examples/l012-spi-dma/build.rs').is_file()
+for binary in manifest['bin']:
+    assert (ROOT / 'examples/l012-spi-dma' / binary['path']).is_file()
+pio_manifest = tomllib.loads((ROOT / 'examples/spi-async/Cargo.toml').read_text())
+for feature in l012_features:
+    assert set(pio_manifest['features'][feature]) == {f'embassy-cw32/{feature}', f'cw32-metapac/{feature}'}
+assert pio_manifest['bin'] == [{'name': name, 'path': f'src/bin/{name}.rs'} for name in ('async_master', 'blocking_master')]
+assert (ROOT / 'examples/spi-async/build.rs').is_file()
+mode = next(m for m in capabilities['functions']['spi']['modes'] if m['id'] == 'safe_peripheral_dma')
+assert len(set(mode['implemented_families'])) == 9
+assert sum(len(clock_profiles[name]['peripherals']) for name in mode['implemented_families']) == 16
+print('PASS: native L012 SPI: 14 complete own-source nodes and exact backlinks, 38 semantic pages, native SPI geometry/typed MMIO and retained DMA corrections, three controllers/six exact-package routes, four channels/shared vectors, empty generic admission and declared examples; UART RX remains excluded; source/declaration facts only, no HAL execution or hardware claim')

@@ -586,6 +586,7 @@ fn main() {
         "CW32F030" | "CW32A030" | "CW32F020" => Some((2, "v1")),
         "CW32L083" | "CW32L052" => Some((2, "cw32l031_v1")),
         "CW32L031" | "CW32R031" | "CW32W031" => Some((1, "cw32l031_v1")),
+        "CW32L012" => Some((3, "cw32l012_v1")),
         _ => None,
     };
     // Own-manual IRQ byte-master qualification is separate from DMA admission.
@@ -745,10 +746,29 @@ fn main() {
         assert_ne!(request("RX"), request("TX"));
     }
     let spi_dma_pairs = if let Some((count, version)) = spi_dma_profile {
+        if metadata.line == "CW32L012" {
+            // Native DMA admission above reached qualify_l012_dma: four
+            // channels, DMACH12/34 and exact memory (or the empty generic map).
+            assert!(l012_dma);
+            assert_eq!((count, version), (3, "cw32l012_v1"));
+            // Reuse the independently qualified PIO inventory and complete
+            // GLOBAL/vector peer checks above for the required SPI error IRQ.
+            let (pio_version, instances) = spi_async_pio_profile
+                .expect("native SPI DMA requires its qualified IRQ inventory");
+            assert_eq!(pio_version, version);
+            assert_eq!(
+                instances,
+                &[
+                    ("SPI1", "SPI1", 25),
+                    ("SPI2", "SPI23", 26),
+                    ("SPI3", "SPI23", 26),
+                ]
+            );
+        }
         let pairs = qualify_requests("SPI", count, version, &["RX", "TX"]);
         if matches!(
             metadata.line,
-            "CW32F020" | "CW32L031" | "CW32L052" | "CW32R031" | "CW32W031"
+            "CW32F020" | "CW32L031" | "CW32L052" | "CW32R031" | "CW32W031" | "CW32L012"
         ) {
             for index in 1..=count {
                 let name = format!("SPI{index}");

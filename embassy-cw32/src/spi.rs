@@ -15,12 +15,19 @@
 //! ICR flags clear on writing zero, and BUSY must clear before returning.
 //!
 //! Blocking full-duplex master is available on all supported backends.
-//! F030/A030/F020/L031/L052/L083/R031/W031 expose staged byte DMA through
-//! `Spi::new_with_dma`. Independently qualified families expose interrupt-driven
-//! byte masters through `Spi::new_async`, including F020/L031/L052/R031/W031.
+//! F030/A030/F020/L031/L052/L083/R031/W031 and native L012 SPI1/SPI2/SPI3
+//! expose staged byte DMA through `Spi::new_with_dma`. L012 qualification uses
+//! its own CN V1.4 chapter 22 and DMA chapter 8; safe staging/admission requires
+//! exact C8T6/C8U6 memory metadata. Independently qualified families expose
+//! interrupt-driven byte masters through `Spi::new_async`, including
+//! F020/L031/L052/R031/W031.
 //! The constructor fixes each owner's backend; both use the same async
 //! `SpiBus<u8>` methods. A static PIO owner still uses PIO, and separate
-//! controllers can use different backends. L012 SPI remains PIO-only.
+//! controllers can use different backends. L012 SPI2/SPI3 require the complete
+//! shared SPI23 handler for either async backend. L012 now includes the existing
+//! DMA variants of the non-exhaustive configuration and transfer errors.
+//! Native DMA SIZE selects SRAM byte width; fixed typed DR addresses retain
+//! 32-bit peripheral transactions with a 16-bit payload and eight-bit frames.
 //!
 //! DMA never accesses caller slices. PIO ISRs never access caller memory or DR.
 //! Cancellation leaves the current private DMA chunk or at most one PIO frame
@@ -958,24 +965,38 @@ impl<T: Instance> Handler<T::Interrupt> for InterruptHandler<T> {
 }
 
 /// Complete L012 SPI2/SPI3 handler. Bind it once to the actual `SPI23` vector;
-/// either instance's constructor accepts that binding. Inactive members are
-/// skipped before MMIO, and one owner's teardown never disables the peer's IRQ.
+/// either instance's PIO or DMA constructor accepts that binding. Each peer's
+/// PIO and DMA state is visited; inactive states are skipped before MMIO, and
+/// one owner's teardown never disables the peer's IRQ. DMA owners additionally
+/// require both of their DMA channel handlers.
 /// An externally owned inactive peer must have its interrupt source quiescent.
-#[cfg(all(spi_async_pio, spi_cw32l012_v1))]
+#[cfg(all(spi_cw32l012_v1, any(spi_async_pio, spi_dma)))]
 pub struct SharedInterruptHandler<I: Interrupt>(PhantomData<I>);
 
-#[cfg(all(spi_async_pio, spi_cw32l012_v1))]
+#[cfg(all(spi_cw32l012_v1, any(spi_async_pio, spi_dma)))]
 impl Handler<crate::interrupt::typelevel::SPI23>
     for SharedInterruptHandler<crate::interrupt::typelevel::SPI23>
 {
     unsafe fn on_interrupt() {
+        #[cfg(spi_async_pio)]
         dispatch_pio_interrupt(
             pac::SPI2,
             <crate::peripherals::SPI2 as sealed::Instance>::pio_state(),
         );
+        #[cfg(spi_dma)]
+        dispatch_dma_interrupt(
+            pac::SPI2,
+            <crate::peripherals::SPI2 as sealed::Instance>::state(),
+        );
+        #[cfg(spi_async_pio)]
         dispatch_pio_interrupt(
             pac::SPI3,
             <crate::peripherals::SPI3 as sealed::Instance>::pio_state(),
+        );
+        #[cfg(spi_dma)]
+        dispatch_dma_interrupt(
+            pac::SPI3,
+            <crate::peripherals::SPI3 as sealed::Instance>::state(),
         );
     }
 }
@@ -1498,6 +1519,40 @@ fn dispatch_dma_interrupt(regs: pac::spi::Spi, state: &State) {
     }
 }
 
+// Native request gates live in CR2. Modify only the requested gate bits,
+// preserving the sampled EN and unrelated bits; closure is not a drain proof.
+// Hardware MODF can independently clear EN, so this RMW is no atomic guarantee
+// against hardware events. Sticky errors still quarantine the paired lease.
+#[cfg(spi_dma)]
+fn close_dma_requests(regs: pac::spi::Spi) {
+    #[cfg(spi_cw32l012_v1)]
+    regs.cr2().modify(|v| {
+        v.set_dmarx(false);
+        v.set_dmatx(false);
+    });
+    #[cfg(not(spi_cw32l012_v1))]
+    regs.cr1().modify(|v| {
+        v.set_dmarx(false);
+        v.set_dmatx(false);
+    });
+}
+
+#[cfg(spi_dma)]
+fn open_dma_rx_request(regs: pac::spi::Spi) {
+    #[cfg(spi_cw32l012_v1)]
+    regs.cr2().modify(|v| v.set_dmarx(true));
+    #[cfg(not(spi_cw32l012_v1))]
+    regs.cr1().modify(|v| v.set_dmarx(true));
+}
+
+#[cfg(spi_dma)]
+fn open_dma_tx_request(regs: pac::spi::Spi) {
+    #[cfg(spi_cw32l012_v1)]
+    regs.cr2().modify(|v| v.set_dmatx(true));
+    #[cfg(not(spi_cw32l012_v1))]
+    regs.cr1().modify(|v| v.set_dmatx(true));
+}
+
 #[cfg(spi_dma)]
 #[derive(Clone, Copy, Eq, PartialEq)]
 enum DmaPhase {
@@ -1614,10 +1669,7 @@ impl SpiDma {
             }
             // Both clean TC+Complete proofs precede request closure. The pair
             // stays reserved through wire completion and any cancellation.
-            regs.cr1().modify(|v| {
-                v.set_dmarx(false);
-                v.set_dmatx(false);
-            });
+            close_dma_requests(regs);
             self.phase = DmaPhase::Finishing;
         }
         let status = match self.state.observe(regs, cx.as_deref_mut(), true) {
@@ -1665,6 +1717,8 @@ impl SpiDma {
         // private allocations are installed on the driver before either EN.
         // The pointer covers the validated RX capacity; no reference is formed
         // until both clean terminals and wire idle have retired this pair.
+        // Native DR pointers carry fixed aligned typed-register addresses, not
+        // byte-MMIO permissions. Native SIZE selects only SRAM element width.
         let result = unsafe {
             self.rx
                 .start_read(
@@ -1688,8 +1742,8 @@ impl SpiDma {
         }
         // Both descriptors are armed with gates closed. RX-ready-first avoids
         // opening a receive window; this ordering is a conservative choice.
-        regs.cr1().modify(|v| v.set_dmarx(true));
-        regs.cr1().modify(|v| v.set_dmatx(true));
+        open_dma_rx_request(regs);
+        open_dma_tx_request(regs);
         Ok(())
     }
 
@@ -1721,8 +1775,17 @@ impl<M: PeriMode> Spi<'_, M, Master> {
 #[cfg(spi_dma)]
 impl Spi<'static, Async, Master> {
     /// Create a qualified full-duplex byte bus with safe staged DMA.
-    /// Available on F030/A030/F020/L031/L052/L083/R031/W031; where PIO is also
-    /// qualified, this constructor selects DMA for this owner permanently.
+    /// Available on F030/A030/F020/L031/L052/L083/R031/W031 and native L012
+    /// SPI1/SPI2/SPI3; where PIO is also qualified, this constructor selects DMA
+    /// for this owner permanently. L012 safe staging and channel admission
+    /// require the exact C8T6/C8U6 memory map; the generic profile rejects them.
+    /// L012 includes the existing DMA variants of [`ConfigError`] and [`Error`].
+    ///
+    /// Bind the complete [`Instance::InterruptHandler`] and both DMA channels.
+    /// L012 SPI2/SPI3 require `SharedInterruptHandler<SPI23>`, even if only one
+    /// peer is used. A dedicated `InterruptHandler<SPI2>` or
+    /// `InterruptHandler<SPI3>` is not the complete shared binding. Generic
+    /// wrappers must use the associated bound.
     ///
     /// Consumes whole static SPI/pin/channel owners and two nonoverlapping
     /// static SRAM slices of 1..=65535 bytes. Inputs remain consumed on error;
@@ -1749,7 +1812,7 @@ impl Spi<'static, Async, Master> {
         miso: Peri<'static, MISO>,
         tx_channel: Peri<'static, TXD>,
         rx_channel: Peri<'static, RXD>,
-        irq: impl Binding<T::Interrupt, InterruptHandler<T>>
+        irq: impl Binding<T::Interrupt, T::InterruptHandler>
         + Binding<TXD::Interrupt, dma::InterruptHandler<TXD>>
         + Binding<RXD::Interrupt, dma::InterruptHandler<RXD>>
         + 'static,
@@ -1857,10 +1920,7 @@ impl<'d> Spi<'d, Async, Master> {
                 .unwrap()
                 .quarantine(self.peripheral.info.regs, error));
         }
-        self.peripheral.info.regs.cr1().modify(|v| {
-            v.set_dmarx(false);
-            v.set_dmatx(false);
-        });
+        close_dma_requests(self.peripheral.info.regs);
         Ok(())
     }
 }
@@ -1985,8 +2045,8 @@ pub trait Instance: sealed::Instance {
     /// Metadata-derived SPI GLOBAL vector for the qualified async path.
     #[cfg(any(spi_dma, spi_async_pio))]
     type Interrupt: Interrupt;
-    /// Complete required PIO handler; L012 SPI2/SPI3 use the shared SPI23 group.
-    #[cfg(spi_async_pio)]
+    /// Complete required async handler; L012 SPI2/SPI3 use the shared SPI23 group.
+    #[cfg(any(spi_async_pio, spi_dma))]
     type InterruptHandler: Handler<Self::Interrupt>;
 }
 /// Verified SCK alternate-function route for an SPI instance.
@@ -2023,7 +2083,7 @@ macro_rules! impl_instance {
         impl $crate::spi::Instance for $crate::peripherals::$name {
             #[cfg(any(spi_dma, spi_async_pio))]
             type Interrupt = $crate::interrupt::typelevel::$irq;
-            #[cfg(spi_async_pio)]
+            #[cfg(any(spi_async_pio, spi_dma))]
             $crate::spi::pio_interrupt_handler!($irq);
         }
         impl From<$crate::peripherals::$name> for $crate::spi::AnySpi {
@@ -2045,7 +2105,7 @@ macro_rules! impl_instance {
 pub(crate) use impl_instance;
 
 // Match the actual metadata vector, not a register version or instance alias.
-#[cfg(spi_async_pio)]
+#[cfg(any(spi_async_pio, spi_dma))]
 macro_rules! pio_interrupt_handler {
     (SPI23) => {
         type InterruptHandler =
@@ -2055,7 +2115,7 @@ macro_rules! pio_interrupt_handler {
         type InterruptHandler = $crate::spi::InterruptHandler<Self>;
     };
 }
-#[cfg(spi_async_pio)]
+#[cfg(any(spi_async_pio, spi_dma))]
 pub(crate) use pio_interrupt_handler;
 
 macro_rules! impl_pin {
