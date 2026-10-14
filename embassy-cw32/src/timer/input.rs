@@ -20,6 +20,7 @@ pub(crate) trait InputRegisters: CounterRegisters {
     fn input_start(self);
     fn input_enabled(self, channel: Channel) -> bool;
     fn capture_pending(self, channel: Channel) -> bool;
+    fn capture_set_interrupt(self, channel: Channel, enabled: bool);
     fn capture_value(self, channel: Channel) -> u16;
     #[cfg(gtim_buffered)]
     fn overcapture_pending(self, channel: Channel) -> bool;
@@ -39,7 +40,7 @@ pub(crate) trait InputRegisters: CounterRegisters {
 // ATIM's additional ICR flags must also be preserved by an R1W0 acknowledgement.
 #[cfg(gtim_buffered)]
 macro_rules! impl_input_registers {
-    ($ty:ty, $($extra_flag:ident),*) => {
+    ($ty:ty, $ier:ident, $($extra_flag:ident),*) => {
         impl InputRegisters for $ty {
             fn input_initialize(self) {
                 self.ccer().write(|_| {});
@@ -99,6 +100,14 @@ macro_rules! impl_input_registers {
                     Channel::Ch3 => v.cc3e(), Channel::Ch4 => v.cc4e(),
                 }
             }
+            fn capture_set_interrupt(self, channel: Channel, enabled: bool) {
+                self.$ier().modify(|v| match channel {
+                    Channel::Ch1 => v.set_cc1ie(enabled),
+                    Channel::Ch2 => v.set_cc2ie(enabled),
+                    Channel::Ch3 => v.set_cc3ie(enabled),
+                    Channel::Ch4 => v.set_cc4ie(enabled),
+                });
+            }
             fn capture_pending(self, channel: Channel) -> bool {
                 let v = self.isr().read();
                 match channel {
@@ -150,10 +159,25 @@ macro_rules! impl_input_registers {
     };
 }
 #[cfg(gtim_buffered)]
-impl_input_registers!(pac::gtim::Gtim,);
-#[cfg(gtim_buffered)]
+impl_input_registers!(pac::gtim::Gtim, ier,);
+#[cfg(atim_cw32l010_v1)]
 impl_input_registers!(
     pac::atim::Atim,
+    ier,
+    set_comif,
+    set_bif,
+    set_b2if,
+    set_sbif,
+    set_cc5if,
+    set_cc6if,
+    set_cc5of,
+    set_cc6of
+);
+
+#[cfg(atim_cw32l012_v1)]
+impl_input_registers!(
+    pac::atim::Atim,
+    dier,
     set_comif,
     set_bif,
     set_b2if,

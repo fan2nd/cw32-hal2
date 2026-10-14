@@ -1,7 +1,7 @@
 # CW32L052 / CW32L083 LCD
 
-This increment provides one blocking segment-LCD driver, generated physical pin
-traits and source-qualified PAC selectors. It implements internal resistor bias,
+This segment-LCD driver provides blocking and asynchronous frame waits,
+generated physical pin traits and source-qualified PAC selectors. It implements internal resistor bias,
 LSI operation, software pixel buffering, direct display writes, frame-boundary
 waiting and contrast changes. It has not been flashed or verified on hardware.
 
@@ -76,7 +76,7 @@ characterization. The constructor does not choose either automatically.
 
 Only internal resistor strengths 4/2/1/7 are accepted; BUMP is always disabled.
 External resistor division, external capacitive division/charge pump, LSE setup,
-DMA, automatic blinking, async waits and low-power resume are not implemented.
+DMA, automatic blinking and low-power resume are not implemented.
 The manuals require INRS=0 and board networks for external division, and require
 BUMP=1 only for external capacitive division (recommended capacitors 100 nF).
 Those modes need an explicit future circuitry/pin-ownership API; unsupported
@@ -116,3 +116,33 @@ wired pads. It requires compatible glass and board voltage assumptions, links
 against generated exact-package memory maps, and is not a HAL test harness.
 Detailed compiler/link outcomes are in `lcd-receipts`; the main integration task
 owns the later full feature matrix and final combined provenance review.
+
+## Asynchronous frame waits
+
+`wait_next_frame_async().await` waits for a fresh LCD frame event without
+busy-polling. `present_async().await` waits in the same way, then writes the
+software pixel buffer. Both require an exclusive mutable borrow of the display,
+so safe code cannot run overlapping waits or drop the owner during a live wait.
+An unpolled future changes nothing.
+
+The same existing LCD IE/INTF protocol is used for blocking and async waits.
+The handler checks the active waiter before reading LCD state, disables only
+LCD IE on completion, and wakes the task outside the critical section. It never
+disables/unpends AUTOTRIM_LCD or acknowledges AUTOTRIM. A coexisting enabled
+AUTOTRIM source still needs its own bound handler. Registering the waker and
+checking readiness are serialized with interrupt handling.
+
+Cancellation disables LCD IE, clears the frame observation and drops the stored
+waker, without changing display RAM, LSI or the shared IRQ. Forgetting a polled
+future can leave a waiter armed; a later blocking/async wait, successful
+reconstruction or owner Drop retires it. No future or caller-memory pointer is
+stored by the interrupt handler.
+
+Async waits have no built-in timeout: the configuration's poll budget still
+applies only to synchronous startup/frame polling. Source-clock loss can leave
+an async wait pending indefinitely; an application can select against its own
+timeout and drop the wait. Completion still proves only observation of a frame,
+not atomic pixel presentation or analogue settling. No hardware validation is
+claimed. `examples/lcd/src/bin/async.rs` demonstrates these APIs on the same
+qualified package routes and explicit board/glass assumptions as the blocking
+example.

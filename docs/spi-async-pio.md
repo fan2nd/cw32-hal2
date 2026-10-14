@@ -1,5 +1,10 @@
 # IRQ PIO SPI byte master
 
+> Current word-width extension: the PIO backend now accepts the existing sealed
+> 4–16-bit `Word` set. See [async word widths](spi-async-word-widths.md) for
+> the current API and validation boundary. The byte-only acceptance history
+> below remains the frozen earlier qualification, not proof of this extension.
+
 F020, F002, F003, L010, L011, L012, L031, R031, W031 and L052 provide
 `Spi<'d, Async, Master>::new_async` with ordinary borrowed
 peripheral/pin owners and caller buffers. This is an explicitly qualified

@@ -1,13 +1,25 @@
 # 尚未完成的工作
 
-基线：Stage94，提交 [`a3e516c2`](https://github.com/fan2nd/cw32-hal2/commit/a3e516c2e27229950c79dedcc5d264bbfc3b1c12)。本文记录当前缺项、证据阻碍及后续验收条件，不是新增功能承诺，不预设阶段数或完成日期。各型号仅按自身硬件、封装及已批准模式开放；没有资格不等于硬件不支持。
+当前实现基线：2026-10-14，提交 [`35dc4d8`](https://github.com/fan2nd/cw32-hal2/commit/35dc4d8131dcc84a61c6a5a431f5a0a7bf2faad8)；DMA 资格边界延续 Stage94。本文记录当前缺项、证据阻碍及后续验收条件，不是新增功能承诺，不预设阶段数或完成日期。各型号仅按自身硬件、封装及已批准模式开放；没有资格不等于硬件不支持。
 
 ## 已完成的边界，不重复列为待办
 
 - 已有按型号限定的 SRAM DMA、UART TX／有限 RX／组合收发和 SPI 全双工字节主机 DMA。Stage92 已补 F020、L031、L052、R031、W031 的 14 个精确型号 UART 有限 RX；L012 UART 仍仅 TX。
 - Stage93 已补上述五族的 SPI DMA；Stage94 已补 **CW32L012C8T6/C8U6 的 SPI1/2/3 DMA**，保留普通 PIO 接口和完整 SPI23 共享处理。两阶段均已完成独立软件验收及发布。
 - 普通 UART 缓冲接收、已限定的异步 SPI/I²C 主机、定时器溢出事件、捕获／编码器及 ADC 异步单次／有限扫描已存在。后续工作不能把这些已实现模式重新当作缺项。
+- 构造器已统一为返回 `Result` 的 `new*`，移除重复公共 `try_new*`；SPI 双 DMA 通道已在同一临界区检查后同时准入，不是整个构造过程的事务回滚。
+- IRQ 缓冲 UART 已支持批量 `read`、`read_exact`、`blocking_read`、`read_ready` 和 `fill_buf`／`consume` 零复制借用。普通非 static 接收缓冲通过显式 unsafe `new_borrowed*` 借用；RX 正常 Drop 停止收集并解除 ISR 指针后，借用结束即可重用，无需另设返还接口。组合 RX/TX 共用生命周期，仍在使用的 TX 半部可能延长借用。遗忘 RX 或其所属 future 不保证 Drop，调用者必须按 unsafe 合同持续保留存储；安全 static 构造器及 DMA 暂存的资源回收是不同问题。详见 [借用缓冲验收](docs/uart-borrowed-buffer-validation.md)。
 - 软件编译、链接、来源核对和干净目录复验均不等于芯片实测。历史审阅中的“主验收时 clean 未运行”是当时状态，不能据此把已完成阶段标回未完成。
+
+## 本轮已实现并通过软件验收，发布状态由提交确认
+
+以下已通过[本轮软件验收](docs/unblocked-hal-extensions-validation.md)：113 项 ARM 库构建、91 次示例构建及聚焦软件检查。此处不提前宣称已合入 main，发布以包含这些变更的提交为准；也不代表硬件验收：
+
+- SPI 既有十族 IRQ PIO 支持 4–16 位 Word；DMA 仍仅 u8，非 u8 请求在触碰硬件前拒绝，不隐式切换后端。见 [接口范围](docs/spi-async-word-widths.md)。
+- 定时器已有 InputInstance 与 OverflowInstance 交集增加合并式捕获 IRQ 等待；不扩原生 classic ATIM 六半通道，不承诺无损事件历史。见 [精确范围](docs/timer-capture-irq.md)。
+- L052/L083 LCD 增加异步帧等待与呈现；不扩时钟／电气模式，不承诺原子帧更新或失钟超时。见 [当前实现](docs/lcd.md#asynchronous-frame-waits)。
+
+- L052/L083 AUTOTRIM 既有 MD3/AUTO0/HSIOSC 周期计数新增合并式 UD 等待；不扩校准／FCAP／外部源，不承诺失钟唤醒或周期计数。见 [范围](docs/autotrim-async.md)。
 
 ## 优先证据阻碍
 
@@ -39,7 +51,7 @@
 
 - [ ] I²C、ADC、DAC、BTIM/GTIM/ATIM、HALLTIM 等安全外设 DMA；逐实例核请求、端点宽度、完成／错误、共享 IRQ 和所有权。元数据中的 `dma_channels` 只表示路由。
 - [ ] 定时器捕获／比较／预装载 DMA、LCD/EAU/CORDIC 等其他 DMA 用法，先核实际硬件存在和有价值的使用场景，不能由寄存器名推定支持。
-- [ ] 循环／连续、scatter、零复制或借用缓冲、UART idle DMA／流控、SPI 更宽异步数据、从机 DMA及通用外部硬件请求接口。当前只在已声明的族／模式提供有限实现；x030 的 unsafe 借用硬件构造器不是通用安全集成。
+- [ ] DMA 循环／连续、scatter、DMA 零复制或借用缓冲、UART idle DMA／流控、SPI 更宽 DMA 数据、从机 DMA及通用外部硬件请求接口。当前只在已声明的族／模式提供有限实现；x030 的 unsafe 借用硬件构造器不是通用安全集成。
 - [ ] 安全提前中止、取消后立即重用和有限完成时限。没有排空依据前，保留现有资源隔离，不能仅凭 EN=0／剩余计数为零归还资源。
 
 ## 非 DMA 的其余功能缺项
@@ -48,17 +60,19 @@
 
 | 模块 | 尚未实现或仍待资格化 |
 | --- | --- |
-| UART | 九位、半双工、LIN、自动波特率、RS485 方向、同步等高级模式；缓冲 idle 标记和存储回收等扩展 |
+| UART | 九位、半双工、LIN、自动波特率、RS485 方向、同步等高级模式；缓冲 idle 标记、运行中替换环缓冲和消耗式 static 存储回收等扩展；普通借用缓冲 Drop 后重用已实现 |
 | SPI / I²C | SPI 从机及其他高级模式；I²C 十位地址／从机、重试、总线修复等接口 |
 | ADC | 连续／周期／通用硬件触发扫描、完整外部参考、L012 同步／耦合双 ADC、其他内部触发路由；不覆盖已存在的有限软件扫描和限定 BTIM1 单次触发 |
-| 定时器／触发互联 | 捕获 IRQ、其他计数／触发事件及跨外设级联、扇出；不覆盖已完成溢出事件、已资格捕获／编码器和明确列出的连接。其他互补输出／死区／刹车重武装、编码器索引／有符号位置和无损事件历史需另审，已有资格模式保留 |
+| 定时器／触发互联 | 本轮限定交集之外的捕获 IRQ、其他计数／触发事件及跨外设级联、扇出；不覆盖已完成溢出事件、已资格捕获／编码器和明确列出的连接。其他互补输出／死区／刹车重武装、编码器索引／有符号位置和无损事件历史需另审，已有资格模式保留 |
 | RTC | Alarm B 编程的手册／SDK 掩码极性冲突；补偿、其他未列时钟及更完整时间能力。classic WINDOW/ACCESS 异步等待未开放；native live-LSI 异步 alarm 被明确拒绝，L010 live-LSI 运行中改日期因写窗口未资格化而拒绝 |
 | RCC / 时钟 | 运行中切换、完整校准、失钟恢复、更多受控输出资格。native 冷启动 LSI／IWDT 自动请求顺序仍须自身证据；L011 RM 调整范围警告与 DS 全温界限必须继续区分，不能把现有 live-only 支持扩大成冷启动保证 |
 | DAC / OPAMP / 比较器 | DAC 触发／波形／独立通道拆分和校准；OPAMP 校准／内部共享；比较器窗口、滤波、消隐、IRQ／异步及其他参考／输出路由 |
-| LCD / LPTIM / AWT | LCD LSE、外部偏置／泵、闪烁及异步；LPTIM 低速源／外部触发输出；AWT 源丢失不会自动唤醒等待者或恢复计时 |
+| LCD / LPTIM / AWT | LCD LSE、外部偏置／泵、闪烁；本轮 async 帧等待已通过软件验收，非硬件验证；LPTIM 低速源／外部触发输出；AWT 源丢失不会自动唤醒等待者或恢复计时 |
 | IR / LVD / HALLTIM | L012 IR MOD 编码的手册／SDK 冲突；R031 唯一已载明 PA13 输出因调试引脚政策未开放。LVD 滤波／IRQ／异步／复位策略，HALLTIM 异步及更完整事件历史尚未提供 |
 | Flash / 看门狗 | Flash async、选项／安全配置及更强存储合同；WWDT IRQ。不可逆看门狗启动不等于待补“停止”接口，Flash 掉电原子性也不能无硬件依据承诺 |
-| AES / TRNG / EAU / CORDIC / AUTOTRIM | AES 字节互操作及其他模式／IRQ；TRNG 熵强度／健康检验；EAU IRQ、CORDIC Q1.15／全象限／迭代等扩展；AUTOTRIM 校准／FCAP／外部参考／IRQ。均须自身资料和相应实测资格 |
+| AES / TRNG / EAU / CORDIC / AUTOTRIM | AES 字节互操作及其他模式（L083 无 AES/TRNG IRQ 或 DMA，不列为待补中断功能）；TRNG 熵强度／健康检验；现有 L012 EAU 无已载明 IRQ，不列为待补中断功能；CORDIC Q1.15／全象限／迭代等扩展；AUTOTRIM 校准／FCAP／外部参考及本轮 UD 之外的 IRQ。数字接口可先按自身资料审查和软件验收；数值正确性、字节互操作、熵及模拟／时序指标仍需相应独立证据或实测，不能一概视为已阻碍或已验证 |
+
+L012 EAU 的排除仅针对当前已资格硬件：自身 CN v1.4 §5 pp70–71 完整中断表无 EAU，CSR 仅 MODE/BUSY/ZERO/OVR，无中断使能字段。不能据此构造 IRQ 异步接口，也不外推其他未来硬件。
 
 ## 当前实验性边界与硬件验收
 

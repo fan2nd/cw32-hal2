@@ -29,6 +29,24 @@ hand-maintained `ci/hal-capabilities.yaml` declarations. Neither output is a new
 source of hardware facts. Old stage reports and old `docs/*coverage*.json` are
 historical snapshots, not current capability authorities.
 
+## Current software-accepted implementation deltas
+
+The current declarations include word-generic 4–16-bit async PIO SPI on the
+already qualified ten-family cohort, while DMA remains u8-only. They also
+include coalesced capture IRQ notification on the existing InputInstance and
+OverflowInstance intersection (classic GTIM and native buffered GTIM/ATIM),
+async LCD frame waits and AUTOTRIM coalesced underflow waits on L052/L083. See
+[PIO word scope](spi-async-word-widths.md), [capture scope](timer-capture-irq.md),
+[LCD scope](lcd.md#asynchronous-frame-waits), and [AUTOTRIM scope](autotrim-async.md).
+
+These implementations passed [current software acceptance](unblocked-hal-extensions-validation.md),
+not new hardware qualification or reinterpretations of historical receipts.
+The acceptance receipt does not itself establish publication to main.
+The native classic six-half ATIM capture path remains polling-only. LCD RAM
+remains live rather than atomically latched; capture indications remain
+coalesced rather than a lossless timestamp history. Existing source disputes,
+DMA retention limits and deferred low-power/RF work are unchanged.
+
 ## What is declared and what is derived
 
 `cw32-data/inputs`, register YAML and hardware sidecars remain canonical. The
@@ -963,7 +981,8 @@ RF and low-power/deep-sleep/wake integration remain explicitly user-deferred.
 Existing unimplemented sleep/wake declarations still mean no API is supplied.
 Advanced SPI slave modes, I2C slave/ten-bit, ADC continuous/general-triggered/DMA/
 coupled modes, full external-reference ownership, and additional timer
-capture-IRQ/DMA/cascade/history/complementary modes remain outside this baseline.
+capture-IRQ modes beyond the separately declared InputInstance/OverflowInstance
+intersection, DMA/cascade/history/complementary modes remain outside this baseline.
 Keep previously qualified narrow trigger and timer modes intact. Peripheral DMA
 remains limited to the declared admitted copy/UART/SPI cohorts; circular/scatter,
 broader requests, lossless receive and safe early-abort/bounded-drop guarantees

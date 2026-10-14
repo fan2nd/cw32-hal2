@@ -60,7 +60,7 @@ async fn main(_spawner: Spawner) {
 
     // Connect a compatible SPI NOR flash: 0x9f reads its three-byte JEDEC ID.
     // Commands and dummy bytes are transferred through paired byte DMA.
-    let mut identification = [0x9f, 0, 0, 0];
+    let mut identification = [0x9fu8, 0, 0, 0];
     cs.set_low();
     bus.transfer_in_place(&mut identification).await.unwrap();
     bus.flush().await.unwrap();
@@ -74,7 +74,7 @@ async fn main(_spawner: Spawner) {
         // still use the TX/RX DMA pair, with CS held across the two calls.
         let mut status = [0u8; 1];
         cs.set_low();
-        bus.write(&[0x05]).await.unwrap();
+        bus.write(&[0x05u8]).await.unwrap();
         bus.read(&mut status).await.unwrap();
         bus.flush().await.unwrap();
         cs.set_high();

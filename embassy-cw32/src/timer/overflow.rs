@@ -9,6 +9,10 @@ pub struct State {
     pub(super) active: Mutex<Cell<bool>>,
     pub(super) elapsed: Mutex<Cell<bool>>,
     pub(super) waker: AtomicWaker,
+    #[cfg(any(gtim_classic, gtim_buffered))]
+    pub(super) capture_armed: Mutex<Cell<u8>>,
+    #[cfg(any(gtim_classic, gtim_buffered))]
+    pub(super) capture_waker: AtomicWaker,
 }
 impl State {
     pub(crate) const fn new() -> Self {
@@ -16,6 +20,10 @@ impl State {
             active: Mutex::new(Cell::new(false)),
             elapsed: Mutex::new(Cell::new(false)),
             waker: AtomicWaker::new(),
+            #[cfg(any(gtim_classic, gtim_buffered))]
+            capture_armed: Mutex::new(Cell::new(0)),
+            #[cfg(any(gtim_classic, gtim_buffered))]
+            capture_waker: AtomicWaker::new(),
         }
     }
 }

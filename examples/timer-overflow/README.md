@@ -40,3 +40,13 @@ unit and no debug information. Dependencies reuse the repository's pinned
 Embassy revision. Compilation and linking demonstrate API/vector integration;
 they do not establish silicon event delivery. See the
 [bounded timer event and input contract](../../docs/timer-event-input.md).
+
+## Capture notification
+
+The additional `capture_event` binary uses the primary timer as an owned direct
+external-input capture instead of an overflow counter. Its generated
+`capture-route.txt` gives the exact package pad and GLOBAL IRQ. It awaits a
+coalesced indication, disables capture briefly for a latest-value read, then
+resumes; it is not an edge counter or lossless stream. No signals are generated.
+See [the capture IRQ contract](../../docs/timer-capture-irq.md). This new binary
+is not covered by historical overflow-only validation claims above.

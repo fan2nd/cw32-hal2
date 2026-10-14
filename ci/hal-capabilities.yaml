@@ -256,21 +256,21 @@ functions:
     modes:
     - id: bounded_api
       status: partial
-      scope: Blocking master with owned, package-qualified routes; byte async master uses separately qualified IRQ PIO or staged DMA.
+      scope: Blocking master with owned, package-qualified routes; async master supports qualified 4-16-bit IRQ PIO or byte-only staged DMA.
       limitations:
       - Clock/electrical bounds apply; slave and advanced protocol modes are absent.
       - The ten IRQ PIO families share a constructor/Drop lifecycle fence with blocking owners; ordinary blocking data/error/divider behavior remains separate.
     - id: slave_async
       status: unimplemented
-      scope: No slave API; master async byte buses are declared separately under async_pio and safe_peripheral_dma.
+      scope: No slave API; master async buses are declared separately under async_pio and byte-only safe_peripheral_dma.
       limitations:
       - Exact slave/advanced hardware mode audit remains per instance; neither master backend admits slave operation.
     - id: async_pio
       status: partial
-      scope: Ordinary-borrowed IRQ PIO full-duplex byte master on fourteen SPI instances across F020/F002/F003/L010/L011/L012/L031/R031/W031/L052.
+      scope: Ordinary-borrowed IRQ PIO full-duplex 4-16-bit word master on fourteen SPI instances across F020/F002/F003/L010/L011/L012/L031/R031/W031/L052.
       limitations:
       - Explicit spi_async_pio and spi_dma qualifications coexist on F020/L031/L052/R031/W031 and L012; neither implies the other. Existing package routes, clock bounds and blocking word widths remain authoritative.
-      - All five async SpiBus byte methods keep at most one frame outstanding and at most one DR read and one DR write per poll; the ISR has no driver/future/caller-buffer pointers and never accesses DR.
+      - All five word-generic async SpiBus methods keep at most one frame outstanding and at most one DR read and one DR write per poll; the ISR has no driver/future/caller-buffer pointers and never accesses DR.
       - Final error-free TXE=1/BUSY=0 is required; the BUSY tail self-wakes and consumes CPU with no built-in deadline, finite-liveness or low-power guarantee.
       - Cancelled/forgotten operations retain pending frame settlement; keep the original CS selected and successfully flush before deselecting or changing devices/configuration.
       - Errors use disabled destructive PIO recovery; driver Drop and forgotten-owner reconstruction can truncate work and are never successful wire completion.
@@ -278,7 +278,8 @@ functions:
       - Blocking and async constructors/Drop on these ten families fence stale static interest before pin/reset/gate changes. An inactive instance is skipped before ISR MMIO.
       - L012 SPI2/SPI3 require the complete SPI23 shared handler for PIO and DMA, dispatching PIO2/DMA2/PIO3/DMA3 with each active guard before MMIO; isolated banks and no shared NVIC disable/unpend remain. An unowned peer must already be quiescent or externally handled.
       - W031 external SPI is unavailable during internal RF use; existing SPI1/GPIOB ownership restrictions remain. No RF coexistence or continuity claim.
-      - PIO owners require no DMA or staging; no wider async words, automatic CS, generic cancellation-safe SpiDevice, early-abort acknowledgment, throughput or hardware-validation guarantee.
+      - PIO owners require no DMA or staging; widths use the existing sealed Word set. No automatic CS, generic cancellation-safe SpiDevice, early-abort acknowledgment, throughput or hardware-validation guarantee.
+      - Wider PIO word support is a current software delta, not covered by historical byte-only receipts. DMA owners reject non-u8 words before MMIO, even for empty slices; no implicit backend fallback. Software acceptance is recorded in docs/unblocked-hal-extensions-validation.md; it does not itself establish publication.
       - Historical Stage89 main validation passed 14 standalone ARM libraries and 19 linked ELFs, all 33 exits zero, plus seven finite source/data commands. Main ran no canonical generation and all 910 generated files stayed unchanged.
       - L010F8P6 library/async/blocking rows and L011K8T6 library/async rows each retain three existing unused RCC LSE-constant warnings; the other 12 libraries and 16 ELFs were warning-free.
       - Independent Stage89 runtime and source/metadata reviews accepted that frozen implementation. At its main acceptance clean had not run; final-package completion requires a separate final-source 2-library/5-ELF replay and seven commands including one generation bootstrap. No hardware behavior is established.
@@ -305,6 +306,7 @@ functions:
       - path: embassy-cw32/src/spi.rs
         anchor: pub fn new_async
       - path: docs/spi-async-pio.md
+      - path: docs/spi-async-word-widths.md
       - path: examples/spi-async/src/bin/async_master.rs
     - id: safe_peripheral_dma
       status: experimental_partial
@@ -730,13 +732,33 @@ functions:
       - CH3A
     - id: capture
       status: partial
-      scope: Owned polling direct external input capture.
+      scope: Owned direct external input capture with polling and a separately declared coalesced capture IRQ wait.
       limitations:
-      - Each capture is one latch; no lossless history, async or DMA. Classic encoder reload is fixed at 65535;
+      - Each capture is one latch; no lossless history or DMA; see capture_irq for coalesced notification. Classic encoder reload is fixed at 65535;
         count/direction/wrap samples are non-atomic.
       evidence:
       - path: embassy-cw32/src/timer/input_capture.rs
       - path: cw32-data/classic-timer-input.yaml
+      pin_signal_sets:
+      - - CAP1
+      - - CAP2
+      - - CAP3
+      - - CAP4
+      - - CH1
+      - - CH2
+      - - CH3
+      - - CH4
+    - id: capture_irq
+      status: partial
+      scope: Coalesced capture notification on the existing InputInstance and OverflowInstance intersection only; no new timer or pin admission.
+      limitations:
+      - One mutable-owner channel wait; handler masks only that capture request and leaves CCR/status for foreground observation. Not timestamp history or lossless delivery.
+      - Cancel masks its request without consuming status; forgetting can retain interest until an event, later wait, owner Drop or reconstruction. Shared NVIC is never disabled or unpended.
+      - Classic GTIM is eligible on its ten qualified families; buffered GTIM/ATIM on L010/L011/L012. Native classic six-half ATIM and BTIM are excluded. Software acceptance is recorded in docs/unblocked-hal-extensions-validation.md; no hardware validation.
+      evidence:
+      - path: embassy-cw32/src/timer/input_capture.rs
+        anchor: pub async fn wait_for_capture
+      - path: docs/timer-capture-irq.md
       pin_signal_sets:
       - - CAP1
       - - CAP2
@@ -842,15 +864,36 @@ functions:
       - CH3A
     - id: capture
       status: partial
-      scope: Owned buffered polling direct external input capture.
+      scope: Owned buffered direct external input capture with polling and a separately declared coalesced capture IRQ wait.
       limitations:
-      - Each capture is one latch; no lossless history, async or DMA. Count/direction/wrap samples are non-atomic.
+      - Each capture is one latch; no lossless history or DMA; see capture_irq for coalesced notification. Count/direction/wrap samples are non-atomic.
       evidence:
       - path: embassy-cw32/src/timer/input_capture.rs
       implemented_families: &id001
       - CW32L010
       - CW32L011
       - CW32L012
+      pin_signal_sets:
+      - - CAP1
+      - - CAP2
+      - - CAP3
+      - - CAP4
+      - - CH1
+      - - CH2
+      - - CH3
+      - - CH4
+    - id: capture_irq
+      status: partial
+      scope: Coalesced capture notification on the existing InputInstance and OverflowInstance intersection only; no new timer or pin admission.
+      limitations:
+      - One mutable-owner channel wait; handler masks only that capture request and leaves CCR/status for foreground observation. Not timestamp history or lossless delivery.
+      - Cancel masks its request without consuming status; forgetting can retain interest until an event, later wait, owner Drop or reconstruction. Shared NVIC is never disabled or unpended.
+      - Classic GTIM is eligible on its ten qualified families; buffered GTIM/ATIM on L010/L011/L012. Native classic six-half ATIM and BTIM are excluded. Software acceptance is recorded in docs/unblocked-hal-extensions-validation.md; no hardware validation.
+      implemented_families: *id001
+      evidence:
+      - path: embassy-cw32/src/timer/input_capture.rs
+        anchor: pub async fn wait_for_capture
+      - path: docs/timer-capture-irq.md
       pin_signal_sets:
       - - CAP1
       - - CAP2
@@ -1362,9 +1405,14 @@ functions:
     modes:
     - id: bounded_api
       status: partial
-      scope: Internal bias, owned COM/SEG pins, live display updates and bound frame observations.
+      scope: Internal bias, owned COM/SEG pins, live display updates and blocking or asynchronous frame observations.
       limitations:
-      - Typical-only LSI timing; updates not frame-atomic; external bias/pump, LSE, blink, DMA and async absent.
+      - Typical-only LSI timing; updates not frame-atomic; external bias/pump, LSE, blink and DMA absent. Async waits have no source-loss timeout.
+      - Async frame waits passed current software acceptance in docs/unblocked-hal-extensions-validation.md, not historical blocking receipts. Cancellation retires only local LCD IE/status/waker; shared AUTOTRIM_LCD NVIC remains enabled.
+      evidence:
+      - path: docs/lcd-async-validation.md
+      - path: embassy-cw32/src/lcd.rs
+        anchor: pub async fn wait_next_frame_async
   halltim:
     register_kinds:
     - halltim
@@ -1412,9 +1460,14 @@ functions:
     modes:
     - id: bounded_api
       status: partial
-      scope: MD3/AUTO0 HSIOSC polling counter with qualified cycle bounds.
+      scope: MD3/AUTO0 HSIOSC counter with qualified cycle bounds, polling and coalesced asynchronous underflow waits.
       limitations:
-      - No calibration, FCAP measurement, external reference, IRQ or low-power API.
+      - No calibration, FCAP measurement, external reference or low-power API. Async underflow wait has no deadline, stopped-clock wake or elapsed-period count.
+      - New async wait software acceptance is recorded in docs/unblocked-hal-extensions-validation.md. Local UD IRQ masking and acknowledgement never change LCD or disable/unpend the shared AUTOTRIM_LCD vector.
+      evidence:
+      - path: docs/autotrim-async.md
+      - path: embassy-cw32/src/autotrim.rs
+        anchor: pub async fn wait
   eau:
     register_kinds:
     - eau
@@ -1426,7 +1479,7 @@ functions:
       status: partial
       scope: Blocking signed/unsigned 32-bit division and unsigned integer square root.
       limitations:
-      - No IRQ/DMA or silicon numeric validation.
+      - Current qualified L012 EAU has no documented IRQ in its complete own vector table or interrupt-enable field in CSR; this is not an unimplemented IRQ wrapper. No DMA or silicon numeric validation.
   cordic:
     register_kinds:
     - cordic

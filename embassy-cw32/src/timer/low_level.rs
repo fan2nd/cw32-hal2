@@ -576,6 +576,8 @@ impl<'d, T: BasicInstance, M: Mode> Timer<'d, T, M> {
 pub(crate) fn retire_overflow_state<T: BasicInstance>(cs: critical_section::CriticalSection<'_>) {
     if let Some(state) = T::overflow_state() {
         state.active.borrow(cs).set(false);
+        #[cfg(any(gtim_classic, gtim_buffered))]
+        state.capture_armed.borrow(cs).set(0);
         state.elapsed.borrow(cs).set(false);
     }
 }

@@ -1,4 +1,4 @@
-//! Polling AUTOTRIM timer on the frozen, factory-trimmed 48 MHz HSIOSC.
+//! Polling and IRQ-backed AUTOTRIM timer on the frozen, factory-trimmed 48 MHz HSIOSC.
 //!
 //! Only MD=3, AUTO=0 and SRC=HSIOSC are supported. The working source is the
 //! undivided oscillator, independent of HSI/HCLK/PCLK divisors. A period is
@@ -7,18 +7,29 @@
 //! and unchanged oscillator state. Debug freeze or sleep can interrupt timing.
 //!
 //! No calibration, FCAP frequency measurement, one-shot mode, external source,
-//! interrupt ownership or deep-sleep timing is provided. AUTOTRIM_LCD is shared:
-//! this driver never changes NVIC state or LCD registers. A pending UD flag
+//! deep-sleep timing is provided. AUTOTRIM_LCD is shared: bind both enabled
+//! clients. This driver never disables/unpends NVIC or accesses LCD registers. A pending UD flag
 //! coalesces any number of wraps; polling cannot recover missed periods.
 //! See docs/autotrim-counter-evidence.md for source conflicts and open questions.
 
 use crate::{
-    Peri, PeripheralType, pac,
+    Peri, PeripheralType,
+    interrupt::typelevel::{Binding, Handler, Interrupt},
+    mode::{Async, Blocking, Mode},
+    pac,
     rcc::{ClockBounds, RccPeripheral},
 };
 
+use core::{
+    cell::{Cell, RefCell},
+    future::poll_fn,
+    marker::PhantomData,
+    task::{Poll, Waker},
+};
+use critical_section::Mutex;
+
 pub use pac::autotrim::vals::Prescaler;
-use pac::autotrim::vals::{Mode, Source};
+use pac::autotrim::vals::{Mode as TimerMode, Source};
 
 /// Periodic down-counter settings. PRS=0 is reserved and rejected.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -53,24 +64,126 @@ pub enum Error {
     /// cleared. There is no documented physical stop acknowledgement.
     Timeout,
 }
+pub(crate) struct State {
+    waiting: Mutex<Cell<bool>>,
+    waker: Mutex<RefCell<Option<Waker>>>,
+}
+impl State {
+    pub(crate) const fn new() -> Self {
+        Self {
+            waiting: Mutex::new(Cell::new(false)),
+            waker: Mutex::new(RefCell::new(None)),
+        }
+    }
+}
+
+/// Services only AUTOTRIM's underflow request. Bind the LCD handler as well
+/// when LCD interrupts are enabled on the same vector. A flag is left pending
+/// until a consumer acknowledges it; the ISR masks only UD and wakes outside CS.
+pub struct InterruptHandler<T: Instance>(PhantomData<T>);
+impl<T: Instance> Handler<T::Interrupt> for InterruptHandler<T> {
+    unsafe fn on_interrupt() {
+        let wake = critical_section::with(|cs| {
+            let state = T::state();
+            if state.waiting.borrow(cs).get()
+                && T::regs().ier().read().ud()
+                && T::regs().isr().read().ud()
+            {
+                T::regs().ier().modify(|w| w.set_ud(false));
+                state.waker.borrow(cs).borrow_mut().take()
+            } else {
+                None
+            }
+        });
+        if let Some(waker) = wake {
+            waker.wake();
+        }
+    }
+}
+
 pub(crate) mod sealed {
     use super::*;
     pub(crate) trait Instance: RccPeripheral {
         fn regs() -> pac::autotrim::Autotrim;
+        fn state() -> &'static State;
     }
 }
 #[allow(private_bounds)]
-pub trait Instance: PeripheralType + sealed::Instance + 'static {}
+pub trait Instance: PeripheralType + sealed::Instance + 'static {
+    type Interrupt: Interrupt;
+}
 
-/// Owns the AUTOTRIM block, with polling-only periodic underflow events.
+/// Owns the AUTOTRIM block, with coalesced periodic underflow events.
 /// Creation leaves the counter disabled. Use `start` to reset and begin a period.
-pub struct AutotrimTimer<'d, T: Instance> {
+pub struct AutotrimTimer<'d, T: Instance, M: Mode = Blocking> {
+    _mode: PhantomData<M>,
     _peri: Peri<'d, T>,
     config: Config,
     source: ClockBounds,
 }
-impl<'d, T: Instance> AutotrimTimer<'d, T> {
+impl<'d, T: Instance> AutotrimTimer<'d, T, Blocking> {
     pub fn new(peri: Peri<'d, T>, config: Config) -> Result<Self, Error> {
+        Self::new_inner(peri, config)
+    }
+}
+impl<'d, T: Instance> AutotrimTimer<'d, T, Async> {
+    pub fn new_async(
+        peri: Peri<'d, T>,
+        _irq: impl Binding<T::Interrupt, InterruptHandler<T>>,
+        config: Config,
+    ) -> Result<Self, Error> {
+        let this = Self::new_inner(peri, config)?;
+        // Shared AUTOTRIM_LCD: never disable or unpend the vector.
+        unsafe {
+            T::Interrupt::enable();
+        }
+        Ok(this)
+    }
+    /// Consume a retained underflow or await the next one. Events coalesce;
+    /// this is not a lossless tick counter or a wall-clock deadline. Cancellation
+    /// masks only UD and preserves the pending event and running counter.
+    /// Forgetting a wait can leave UD armed; no caller-storage pointer is held.
+    pub async fn wait(&mut self) {
+        let _wait = UnderflowWait::<T>(PhantomData);
+        poll_fn(|cx| {
+            let candidate = cx.waker().clone();
+            let (ready, previous) = critical_section::with(|cs| {
+                let state = T::state();
+                if self.try_wait() {
+                    (true, Some(candidate))
+                } else {
+                    state.waiting.borrow(cs).set(true);
+                    let previous = state.waker.borrow(cs).borrow_mut().replace(candidate);
+                    T::regs().ier().modify(|w| w.set_ud(true));
+                    (false, previous)
+                }
+            });
+            drop(previous);
+            if ready {
+                Poll::Ready(())
+            } else {
+                Poll::Pending
+            }
+        })
+        .await;
+    }
+}
+struct UnderflowWait<T: Instance>(PhantomData<T>);
+impl<T: Instance> Drop for UnderflowWait<T> {
+    fn drop(&mut self) {
+        retire_wait::<T>();
+    }
+}
+fn retire_wait<T: Instance>() {
+    let old = critical_section::with(|cs| {
+        T::regs().ier().modify(|w| w.set_ud(false));
+        T::state().waiting.borrow(cs).set(false);
+        T::state().waker.borrow(cs).borrow_mut().take()
+    });
+    drop(old);
+}
+impl<'d, T: Instance, M: Mode> AutotrimTimer<'d, T, M> {
+    fn new_inner(peri: Peri<'d, T>, config: Config) -> Result<Self, Error> {
         validate(config)?;
         let source = crate::rcc::try_clocks()
             .ok_or(Error::ClockNotInitialized)?
@@ -102,6 +215,7 @@ impl<'d, T: Instance> AutotrimTimer<'d, T> {
         })?;
         let mut this = Self {
             _peri: peri,
+            _mode: PhantomData,
             config,
             source,
         };
@@ -109,6 +223,8 @@ impl<'d, T: Instance> AutotrimTimer<'d, T> {
         Ok(this)
     }
     fn reset_and_configure(&mut self) -> Result<(), Error> {
+        // Retire any forgotten wait before reset/reconfiguration.
+        retire_wait::<T>();
         critical_section::with(|cs| {
             // APBRST2.AUTOTRIM is independently owned; LCD reset is untouched.
             T::RCC_INFO
@@ -131,7 +247,7 @@ impl<'d, T: Instance> AutotrimTimer<'d, T> {
             // Configure CR[11:1] while EN=0, then write ARR before enabling.
             r.cr().write(|w| {
                 w.set_en(false);
-                w.set_md(Mode::Timer);
+                w.set_md(TimerMode::Timer);
                 w.set_auto(false);
                 w.set_prs(self.config.prescaler);
                 w.set_src(Source::HsiOsc);
@@ -153,6 +269,8 @@ impl<'d, T: Instance> AutotrimTimer<'d, T> {
     }
     /// Request EN=0 without consuming an underflow. This is a control request,
     /// not a claim of physical drain or a synchronized counter snapshot.
+    /// Pending UD and a forgotten waiter are preserved; start/set_config/Drop
+    /// retire stale waiters. An ordinary live wait holds an exclusive borrow.
     pub fn stop(&mut self) {
         T::regs().cr().modify(|w| w.set_en(false));
     }
@@ -232,8 +350,9 @@ impl<'d, T: Instance> AutotrimTimer<'d, T> {
         )
     }
 }
-impl<T: Instance> Drop for AutotrimTimer<'_, T> {
+impl<T: Instance, M: Mode> Drop for AutotrimTimer<'_, T, M> {
     fn drop(&mut self) {
+        retire_wait::<T>();
         critical_section::with(|cs| {
             self.stop();
             mask_interrupts::<T>();
@@ -273,8 +392,14 @@ macro_rules! impl_instance {
             fn regs() -> $crate::pac::autotrim::Autotrim {
                 $crate::pac::$inst
             }
+            fn state() -> &'static $crate::autotrim::State {
+                static STATE: $crate::autotrim::State = $crate::autotrim::State::new();
+                &STATE
+            }
         }
-        impl $crate::autotrim::Instance for $crate::peripherals::$inst {}
+        impl $crate::autotrim::Instance for $crate::peripherals::$inst {
+            type Interrupt = $crate::interrupt::typelevel::$irq;
+        }
     };
 }
 pub(crate) use impl_instance;

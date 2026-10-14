@@ -71,6 +71,14 @@ impl InputRegisters for pac::gtim::Gtim {
             CcMode::CaptureRising | CcMode::CaptureFalling | CcMode::CaptureBoth
         )
     }
+    fn capture_set_interrupt(self, channel: Channel, enabled: bool) {
+        self.ier().modify(|v| match channel {
+            Channel::Ch1 => v.set_cc1(enabled),
+            Channel::Ch2 => v.set_cc2(enabled),
+            Channel::Ch3 => v.set_cc3(enabled),
+            Channel::Ch4 => v.set_cc4(enabled),
+        });
+    }
     fn capture_pending(self, channel: Channel) -> bool {
         let v = self.isr().read();
         match channel {

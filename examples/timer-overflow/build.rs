@@ -101,5 +101,43 @@ fn main() {
     fs::write(out.join("event-bindings.rs"), bindings).unwrap();
     fs::write(out.join("event-bindings.txt"), receipt).unwrap();
     fs::write(out.join("primary-token.rs"), format!("p.{primary}")).unwrap();
+    // This separate binary owns the primary bank for direct-pin capture.
+    // CAP1 is the separately qualified classic role; buffered input uses CH1.
+    let timer = metadata
+        .peripherals
+        .iter()
+        .find(|p| p.name == primary)
+        .unwrap();
+    let signal = if timer.classic_timer_input.is_some() {
+        "CAP1"
+    } else {
+        "CH1"
+    };
+    let pin = timer
+        .pins
+        .iter()
+        .find(|p| p.signal == signal)
+        .expect("primary capture timer has no qualified channel-one pad");
+    let irq = event_irq(metadata, primary, "gtim", if l012 { 18 } else { 16 });
+    fs::write(out.join("capture-bindings.rs"), format!(
+        "hal::bind_interrupts!(struct CaptureIrqs {{ {irq} => hal::timer::input_capture::CaptureInterruptHandler<hal::peripherals::{primary}>; }});"
+    )).unwrap();
+    fs::write(out.join("capture-constructor.rs"), format!(
+        "InputCapture::new(p.{primary}, Some(CaptureInput::from_pin(p.{}, Pull::None)), None, None, None, Hertz(1_000_000), CountingMode::EdgeAlignedUp).unwrap()", pin.pin
+    )).unwrap();
+    fs::write(
+        out.join("capture-route.txt"),
+        format!(
+            "{}: {primary} {signal}={} AF{}; IRQ={irq}\n",
+            metadata.name,
+            pin.pin,
+            pin.af.unwrap()
+        ),
+    )
+    .unwrap();
+    println!("cargo:rustc-check-cfg=cfg(example_classic_capture)");
+    if timer.classic_timer_input.is_some() {
+        println!("cargo:rustc-cfg=example_classic_capture");
+    }
     println!("cargo:rerun-if-changed=build.rs");
 }

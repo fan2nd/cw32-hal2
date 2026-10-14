@@ -145,6 +145,10 @@ pub enum Error {
     /// The paired resources are permanently retained after an error.
     #[cfg(spi_dma)]
     DmaQuarantined,
+    /// The selected DMA backend only accepts byte frames. No transfer or
+    /// settlement occurs on this rejection, including for empty buffers.
+    #[cfg(spi_dma)]
+    UnsupportedWordSize,
 }
 impl core::fmt::Display for Error {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -161,6 +165,8 @@ impl core::fmt::Display for Error {
             Self::DmaBusy => "SPI DMA transfer is still running",
             #[cfg(spi_dma)]
             Self::DmaQuarantined => "SPI DMA resources are quarantined",
+            #[cfg(spi_dma)]
+            Self::UnsupportedWordSize => "SPI DMA only supports byte frames",
         })
     }
 }
@@ -176,7 +182,9 @@ impl embedded_hal::spi::Error for Error {
             #[cfg(spi_async_pio)]
             Self::PioBusy => ErrorKind::Other,
             #[cfg(spi_dma)]
-            Self::Dma(_) | Self::DmaBusy | Self::DmaQuarantined => ErrorKind::Other,
+            Self::Dma(_) | Self::DmaBusy | Self::DmaQuarantined | Self::UnsupportedWordSize => {
+                ErrorKind::Other
+            }
         }
     }
 }
@@ -1102,40 +1110,40 @@ impl Drop for PioGuard<'_, '_> {
 }
 
 #[cfg(spi_async_pio)]
-enum PioBuffers<'a> {
-    Separate { read: &'a mut [u8], write: &'a [u8] },
-    InPlace(&'a mut [u8]),
+enum PioBuffers<'a, W: Word> {
+    Separate { read: &'a mut [W], write: &'a [W] },
+    InPlace(&'a mut [W]),
 }
 
 #[cfg(spi_async_pio)]
-impl PioBuffers<'_> {
+impl<W: Word> PioBuffers<'_, W> {
     fn len(&self) -> usize {
         match self {
             Self::Separate { read, write } => read.len().max(write.len()),
             Self::InPlace(words) => words.len(),
         }
     }
-    fn transmit(&self, index: usize) -> u8 {
+    fn transmit(&self, index: usize) -> W {
         match self {
-            Self::Separate { write, .. } => write.get(index).copied().unwrap_or(0),
+            Self::Separate { write, .. } => write.get(index).copied().unwrap_or_default(),
             Self::InPlace(words) => words[index],
         }
     }
-    fn receive(&mut self, index: usize, byte: u8) {
+    fn receive(&mut self, index: usize, word: W) {
         match self {
             Self::Separate { read, .. } => {
                 if let Some(destination) = read.get_mut(index) {
-                    *destination = byte;
+                    *destination = word;
                 }
             }
-            Self::InPlace(words) => words[index] = byte,
+            Self::InPlace(words) => words[index] = word,
         }
     }
 }
 
 #[cfg(spi_async_pio)]
 impl<'d> Spi<'d, Async, Master> {
-    /// Create a byte master without DMA or static transfer storage. L012 SPI2
+    /// Create a 4–16-bit master without DMA or static transfer storage. L012 SPI2
     /// and SPI3 require the complete `SharedInterruptHandler<SPI23>` binding.
     /// Tokens are consumed on error; preflight failure leaves hardware intact.
     /// Borrowed owners remain supported on families that also qualify for DMA.
@@ -1176,23 +1184,27 @@ impl<'d> Spi<'d, Async, Master> {
         .await
     }
 
-    fn poll_pio_prepare(
+    fn poll_pio_prepare<W: Word>(
         &mut self,
         cx: &mut Context<'_>,
         read_used: &mut bool,
     ) -> Poll<Result<(), Error>> {
-        // Do not call prepare::<u8>(): its wait_idle loop is unbounded. Width
+        // Do not call prepare::<W>(): its wait_idle loop is unbounded. Width
         // changes and stale RX draining share this poll's one-read budget.
         let status = self.pio_observe(Some(cx), PioWait::Idle)?;
         if !status.txe() || status.busy() {
             cx.waker().wake_by_ref();
             return Poll::Pending;
         }
-        if self.word_bits != 8 {
+        if self.word_bits != W::BITS {
             self.peripheral.info.enable(false);
-            self.peripheral.info.regs.cr1().modify(|v| v.set_width(7));
+            self.peripheral
+                .info
+                .regs
+                .cr1()
+                .modify(|v| v.set_width(W::BITS - 1));
             self.peripheral.info.enable(true);
-            self.word_bits = 8;
+            self.word_bits = W::BITS;
         }
         let status = self.pio_observe(Some(cx), PioWait::Idle)?;
         if !status.txe() || status.busy() {
@@ -1210,7 +1222,7 @@ impl<'d> Spi<'d, Async, Master> {
         Poll::Ready(Ok(()))
     }
 
-    async fn run_pio(&mut self, mut buffers: PioBuffers<'_>) -> Result<(), Error> {
+    async fn run_pio<W: Word>(&mut self, mut buffers: PioBuffers<'_, W>) -> Result<(), Error> {
         let guard = PioGuard { driver: self };
         let count = buffers.len();
         let mut settled = false;
@@ -1231,7 +1243,7 @@ impl<'d> Spi<'d, Async, Master> {
                     return Poll::Ready(Ok(()));
                 }
                 if !prepared {
-                    match guard.driver.poll_pio_prepare(cx, &mut read_used) {
+                    match guard.driver.poll_pio_prepare::<W>(cx, &mut read_used) {
                         Poll::Ready(Ok(())) => prepared = true,
                         other => return other,
                     }
@@ -1245,10 +1257,10 @@ impl<'d> Spi<'d, Async, Master> {
                         cx.waker().wake_by_ref();
                         return Poll::Pending;
                     }
-                    let byte = guard.driver.peripheral.info.regs.dr().read().dr() as u8;
+                    let word = W::from_u16(guard.driver.peripheral.info.regs.dr().read().dr());
                     read_used = true;
                     guard.driver.pio = Some(PioPhase::Finishing);
-                    buffers.receive(index, byte);
+                    buffers.receive(index, word);
                     index += 1;
                 }
                 if index == count {
@@ -1258,7 +1270,7 @@ impl<'d> Spi<'d, Async, Master> {
                 if !status.txe() {
                     return Poll::Pending;
                 }
-                let byte = buffers.transmit(index);
+                let word = buffers.transmit(index);
                 // Retained marker precedes DR. No await exists in this command.
                 guard.driver.pio = Some(PioPhase::AwaitRx);
                 guard
@@ -1267,11 +1279,11 @@ impl<'d> Spi<'d, Async, Master> {
                     .info
                     .regs
                     .dr()
-                    .write(|v| v.set_dr(u16::from(byte)));
+                    .write(|v| v.set_dr(word.into_u16()));
                 let status = guard.driver.pio_observe(Some(cx), PioWait::Rx)?;
                 if status.rxne() {
                     // Already ready, but never consume a second frame/read or
-                    // launch another byte in this poll. The ISR is one-shot.
+                    // launch another frame in this poll. The ISR is one-shot.
                     cx.waker().wake_by_ref();
                 }
                 Poll::Pending
@@ -1287,16 +1299,21 @@ impl<'d> Spi<'d, Async, Master> {
 
 #[cfg(any(spi_async_pio, spi_dma))]
 impl<'d> Spi<'d, Async, Master> {
-    /// Clock `max(read.len(), write.len())` bytes, padding TX with zeroes and
+    /// Clock `max(read.len(), write.len())` frames, padding TX with zeroes and
     /// discarding excess RX. The constructor-selected backend remains fixed.
-    /// PIO exposes received bytes individually; DMA exposes completed chunks.
+    /// PIO supports every [`Word`] and exposes received frames individually;
+    /// DMA supports only `u8` and exposes completed chunks. Other word types
+    /// return `Error::UnsupportedWordSize` before any MMIO or settlement
+    /// on DMA owners, even for empty buffers. No backend fallback occurs.
     /// Earlier results can remain visible on failure or cancellation.
     ///
-    /// Empty calls also settle prior work. After cancellation, preserve the
-    /// original CS selection and successfully flush before changing it.
-    pub async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), Error> {
+    /// Supported-word empty calls also settle prior work. After cancellation,
+    /// preserve the original CS selection and successfully flush before changing it.
+    pub async fn transfer<W: Word>(&mut self, read: &mut [W], write: &[W]) -> Result<(), Error> {
         #[cfg(spi_dma)]
         if self.dma.is_some() {
+            let read = W::as_bytes_mut(read).ok_or(Error::UnsupportedWordSize)?;
+            let write = W::as_bytes(write).ok_or(Error::UnsupportedWordSize)?;
             return self.transfer_dma(read, write).await;
         }
         #[cfg(spi_async_pio)]
@@ -1306,14 +1323,16 @@ impl<'d> Spi<'d, Async, Master> {
         unreachable!("async SPI owner has no installed backend")
     }
 
-    /// Transmit each original byte and replace it with received data. PIO
-    /// replaces one byte at a time; DMA replaces each chunk only after clean
+    /// Transmit each original frame and replace it with received data. PIO
+    /// replaces one frame at a time; DMA replaces each chunk only after clean
     /// paired completion and wire idle. Earlier results may remain visible on
-    /// failure or cancellation. Empty calls also settle prior work.
+    /// failure or cancellation. Supported-word empty calls also settle prior work.
     /// Preserve the original CS selection until a successful flush.
-    pub async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), Error> {
+    /// Word support and DMA rejection follow [`Self::transfer`].
+    pub async fn transfer_in_place<W: Word>(&mut self, words: &mut [W]) -> Result<(), Error> {
         #[cfg(spi_dma)]
         if self.dma.is_some() {
+            let words = W::as_bytes_mut(words).ok_or(Error::UnsupportedWordSize)?;
             return self.transfer_in_place_dma(words).await;
         }
         #[cfg(spi_async_pio)]
@@ -1323,17 +1342,19 @@ impl<'d> Spi<'d, Async, Master> {
         unreachable!("async SPI owner has no installed backend")
     }
 
-    /// Transmit bytes and drain every received frame, settling prior work even
-    /// when empty. After cancellation, keep the original CS selection until a
-    /// successful `flush`.
-    pub async fn write(&mut self, words: &[u8]) -> Result<(), Error> {
+    /// Transmit words and drain every received frame, settling prior work even
+    /// when empty and the word type is supported. After cancellation, keep the
+    /// original CS selection until a successful `flush`.
+    /// Word support and DMA rejection follow [`Self::transfer`].
+    pub async fn write<W: Word>(&mut self, words: &[W]) -> Result<(), Error> {
         self.transfer(&mut [], words).await
     }
 
-    /// Receive bytes while transmitting zeroes, settling prior work even when
-    /// empty. After cancellation, keep the original CS selection until a
-    /// successful `flush`.
-    pub async fn read(&mut self, words: &mut [u8]) -> Result<(), Error> {
+    /// Receive words while transmitting zeroes, settling prior work even when
+    /// empty and the word type is supported. After cancellation, keep the
+    /// original CS selection until a successful `flush`.
+    /// Word support and DMA rejection follow [`Self::transfer`].
+    pub async fn read<W: Word>(&mut self, words: &mut [W]) -> Result<(), Error> {
         self.transfer(words, &[]).await
     }
 
@@ -1356,17 +1377,17 @@ impl<'d> Spi<'d, Async, Master> {
 }
 
 #[cfg(any(spi_async_pio, spi_dma))]
-impl<'d> embedded_hal_async::spi::SpiBus<u8> for Spi<'d, Async, Master> {
-    async fn read(&mut self, words: &mut [u8]) -> Result<(), Error> {
+impl<'d, W: Word> embedded_hal_async::spi::SpiBus<W> for Spi<'d, Async, Master> {
+    async fn read(&mut self, words: &mut [W]) -> Result<(), Error> {
         self.read(words).await
     }
-    async fn write(&mut self, words: &[u8]) -> Result<(), Error> {
+    async fn write(&mut self, words: &[W]) -> Result<(), Error> {
         self.write(words).await
     }
-    async fn transfer(&mut self, read: &mut [u8], write: &[u8]) -> Result<(), Error> {
+    async fn transfer(&mut self, read: &mut [W], write: &[W]) -> Result<(), Error> {
         self.transfer(read, write).await
     }
-    async fn transfer_in_place(&mut self, words: &mut [u8]) -> Result<(), Error> {
+    async fn transfer_in_place(&mut self, words: &mut [W]) -> Result<(), Error> {
         self.transfer_in_place(words).await
     }
     async fn flush(&mut self) -> Result<(), Error> {
@@ -1903,6 +1924,14 @@ pub trait Word: sealed::Word + Copy + Default + 'static {}
 
 impl sealed::Word for u8 {
     const BITS: u8 = 8;
+    #[cfg(spi_dma)]
+    fn as_bytes(words: &[Self]) -> Option<&[u8]> {
+        Some(words)
+    }
+    #[cfg(spi_dma)]
+    fn as_bytes_mut(words: &mut [Self]) -> Option<&mut [u8]> {
+        Some(words)
+    }
     fn into_u16(self) -> u16 {
         u16::from(self)
     }
@@ -2005,6 +2034,21 @@ pub(crate) mod sealed {
         const BITS: u8;
         fn into_u16(self) -> u16;
         fn from_u16(value: u16) -> Self;
+        // Only u8 opts in. No casting of arbitrary word slices or new DMA widths.
+        #[cfg(spi_dma)]
+        fn as_bytes(_words: &[Self]) -> Option<&[u8]>
+        where
+            Self: Sized,
+        {
+            None
+        }
+        #[cfg(spi_dma)]
+        fn as_bytes_mut(_words: &mut [Self]) -> Option<&mut [u8]>
+        where
+            Self: Sized,
+        {
+            None
+        }
     }
 }
 

@@ -10,3 +10,8 @@ budget is iterations, not microseconds. This example has been linked, not flashe
 
 Example build from this directory:
 `cargo build --locked --target thumbv6m-none-eabi --no-default-features --features cw32l052c8t6`
+
+The `async` binary uses `AutotrimTimer::new_async` and awaits coalesced
+underflows. Its shared-vector binding also includes the LCD handler, which
+skips MMIO when no LCD waiter is active. Canceling a wait preserves the
+pending underflow and counter. See [the async contract](../../docs/autotrim-async.md).

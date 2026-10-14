@@ -18,3 +18,12 @@ The polling budget counts polls, not microseconds. A timeout preserves LSI and
 shared gates; the error should be handled according to the application's policy.
 
 No hardware flashing or display verification has been performed.
+
+The `async` binary uses Embassy and `present_async` / `wait_next_frame_async`
+with the same wiring and electrical assumptions. It also owns an AUTOTRIM
+async timer, binding both handlers to AUTOTRIM_LCD to demonstrate shared-vector
+coexistence without shared-source acknowledgement. Add `--bin async` to the build
+command to select it, or `--bin cw32-lcd-example` for the original blocking
+binary. Async waits yield rather than consume the polling budget and have no
+built-in timeout. Dropping a pending wait disables only LCD's interrupt source;
+no atomic display update or hardware-tested timing is implied.

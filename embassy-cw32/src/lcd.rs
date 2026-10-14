@@ -16,7 +16,13 @@ use crate::{
     pac,
     rcc::RccPeripheral,
 };
-use core::{cell::Cell, marker::PhantomData, num::NonZeroU32};
+use core::{
+    cell::{Cell, RefCell},
+    future::poll_fn,
+    marker::PhantomData,
+    num::NonZeroU32,
+    task::{Poll, Waker},
+};
 use critical_section::Mutex;
 
 pub use pac::lcd::vals::{Bias, BiasSource, Duty, ScanFrequency};
@@ -71,12 +77,14 @@ pub enum Error {
 pub(crate) struct State {
     waiting: Mutex<Cell<bool>>,
     frame: Mutex<Cell<bool>>,
+    waker: Mutex<RefCell<Option<Waker>>>,
 }
 impl State {
     const fn new() -> Self {
         Self {
             waiting: Mutex::new(Cell::new(false)),
             frame: Mutex::new(Cell::new(false)),
+            waker: Mutex::new(RefCell::new(None)),
         }
     }
 }
@@ -127,7 +135,7 @@ impl<'d, T: Instance> LcdPin<'d, T> {
 pub struct InterruptHandler<T: Instance>(PhantomData<T>);
 impl<T: Instance> Handler<crate::interrupt::typelevel::AUTOTRIM_LCD> for InterruptHandler<T> {
     unsafe fn on_interrupt() {
-        critical_section::with(|cs| {
+        let wake = critical_section::with(|cs| {
             if STATE.waiting.borrow(cs).get()
                 && pac::LCD.cr1().read().ie()
                 && pac::LCD.cr1().read().intf()
@@ -135,11 +143,17 @@ impl<T: Instance> Handler<crate::interrupt::typelevel::AUTOTRIM_LCD> for Interru
                 clear_frame();
                 pac::LCD.cr1().modify(|w| w.set_ie(false));
                 STATE.frame.borrow(cs).set(true);
+                STATE.waker.borrow(cs).borrow_mut().take()
+            } else {
+                None
             }
         });
+        if let Some(waker) = wake {
+            waker.wake();
+        }
     }
 }
-/// Blocking, buffered display. The hardware RAM itself has no shadow latch.
+/// Buffered display with blocking and asynchronous frame waits. The hardware RAM itself has no shadow latch.
 pub struct Lcd<'d, T: Instance, const N: usize> {
     _peri: Peri<'d, T>,
     _pins: [Flex<'d>; N],
@@ -226,7 +240,7 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
         if !crate::rcc::enable_lsi(config.poll_budget) {
             return Err(Error::ClockTimeout);
         }
-        critical_section::with(|cs| {
+        let stale_waker = critical_section::with(|cs| {
             T::RCC_INFO
                 .enable_with_cs(cs)
                 .map_err(|_| Error::ClockGate)?;
@@ -253,8 +267,9 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
             STATE.waiting.borrow(cs).set(false);
             STATE.frame.borrow(cs).set(false);
             clear_frame();
-            Ok(())
+            Ok(STATE.waker.borrow(cs).borrow_mut().take())
         })?;
+        drop(stale_waker);
         for n in T::RAM_REGISTERS {
             crate::lcd_write_word(*n, 0);
         }
@@ -327,12 +342,7 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
     /// Wait for a fresh frame event, with BLINKCNT=0 and a bounded poll count.
     /// LCD IE is enabled only during this call and serviced through the binding.
     pub fn wait_next_frame(&mut self) -> Result<(), Error> {
-        critical_section::with(|cs| {
-            clear_frame();
-            STATE.frame.borrow(cs).set(false);
-            STATE.waiting.borrow(cs).set(true);
-            pac::LCD.cr1().modify(|w| w.set_ie(true));
-        });
+        let _wait = FrameWait::start();
         let mut complete = false;
         for _ in 0..self.polls.get() {
             if critical_section::with(|cs| {
@@ -343,16 +353,48 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
             }
             core::hint::spin_loop();
         }
-        critical_section::with(|cs| {
-            pac::LCD.cr1().modify(|w| w.set_ie(false));
-            STATE.waiting.borrow(cs).set(false);
-            clear_frame();
-        });
         if complete {
             Ok(())
         } else {
             Err(Error::FrameTimeout)
         }
+    }
+    /// Wait for a fresh frame without busy-polling. No elapsed-time bound is
+    /// promised: loss of the source clock can leave this pending indefinitely.
+    /// Dropping the future disables only LCD IE and discards this wait's event.
+    /// A forgotten future can leave IE armed, but a later wait or owner Drop
+    /// retires it. No pointer to the future or caller storage is retained.
+    pub async fn wait_next_frame_async(&mut self) {
+        let _wait = FrameWait::start();
+        poll_fn(|cx| {
+            // Clone/drop outside the critical section; check and registration
+            // are serialized with the ISR so an event cannot lose its wake.
+            let candidate = cx.waker().clone();
+            let (ready, previous) = critical_section::with(|cs| {
+                if STATE.frame.borrow(cs).get() || pac::LCD.cr1().read().intf() {
+                    (true, Some(candidate))
+                } else {
+                    (
+                        false,
+                        STATE.waker.borrow(cs).borrow_mut().replace(candidate),
+                    )
+                }
+            });
+            drop(previous);
+            if ready {
+                Poll::Ready(())
+            } else {
+                Poll::Pending
+            }
+        })
+        .await;
+    }
+    /// Await a frame, then write the software buffer. As with `present`, this
+    /// is not an atomic display latch or an analogue-settling guarantee.
+    /// Cancellation before completion performs no display RAM write.
+    pub async fn present_async(&mut self) {
+        self.wait_next_frame_async().await;
+        self.write_display();
     }
     /// Adjust internal resistor contrast. 0 is strongest, 15 weakest.
     /// No voltage value or analogue settling time is implied.
@@ -373,14 +415,48 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
 }
 impl<T: Instance, const N: usize> Drop for Lcd<'_, T, N> {
     fn drop(&mut self) {
-        critical_section::with(|cs| {
+        let stale_waker = critical_section::with(|cs| {
             pac::LCD.cr1().modify(|w| w.set_ie(false));
             STATE.waiting.borrow(cs).set(false);
+            STATE.frame.borrow(cs).set(false);
             pac::LCD.cr0().modify(|w| w.set_en(false));
             pac::LCD.pinen1().write(|_| {});
             pac::LCD.pinen2().write(|_| {});
             clear_frame();
+            STATE.waker.borrow(cs).borrow_mut().take()
         });
+        drop(stale_waker);
+    }
+}
+
+// This guard never stores caller memory. A forgotten wait is retired by the
+// next wait, successful constructor, or owner Drop. The shared NVIC is untouched.
+struct FrameWait;
+impl FrameWait {
+    fn start() -> Self {
+        let stale_waker = critical_section::with(|cs| {
+            pac::LCD.cr1().modify(|w| w.set_ie(false));
+            clear_frame();
+            STATE.frame.borrow(cs).set(false);
+            STATE.waiting.borrow(cs).set(true);
+            let stale = STATE.waker.borrow(cs).borrow_mut().take();
+            pac::LCD.cr1().modify(|w| w.set_ie(true));
+            stale
+        });
+        drop(stale_waker);
+        Self
+    }
+}
+impl Drop for FrameWait {
+    fn drop(&mut self) {
+        let stale_waker = critical_section::with(|cs| {
+            pac::LCD.cr1().modify(|w| w.set_ie(false));
+            STATE.waiting.borrow(cs).set(false);
+            STATE.frame.borrow(cs).set(false);
+            clear_frame();
+            STATE.waker.borrow(cs).borrow_mut().take()
+        });
+        drop(stale_waker);
     }
 }
 fn clear_frame() {

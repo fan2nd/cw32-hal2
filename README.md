@@ -31,6 +31,26 @@ result. At main acceptance, final capability reports and the separate
 final-source two-library/three-ELF clean replay had not run.
 Historical copy/TX results below do not verify the RX extension.
 
+## Current software API additions
+
+The current source adds [4–16-bit IRQ PIO SPI words](docs/spi-async-word-widths.md)
+on the existing ten qualified families; staged DMA remains byte-only and rejects
+other words without an implicit PIO fallback. It also adds
+[coalesced capture IRQ waits](docs/timer-capture-irq.md) on the existing
+InputInstance/OverflowInstance intersection, and
+[LCD async frame waits/presentation](docs/lcd.md#asynchronous-frame-waits) on
+L052/L083, together with [AUTOTRIM coalesced underflow waits](docs/autotrim-async.md)
+on its existing HSIOSC counter mode. The LCD async example owns both clients
+on AUTOTRIM_LCD. No new clock, pin, DMA or electrical qualification is implied.
+
+These additions passed the [current software acceptance](docs/unblocked-hal-extensions-validation.md):
+113 ARM library commands and 91 example build commands, plus focused software
+checks. This receipt is not a publication claim; inclusion in main is established
+by the commit containing these changes. Historical stage receipts below describe
+their frozen original scopes, not these new APIs.
+Cancellation does not imply a completed SPI transaction, captured-event history,
+or an atomic LCD frame update. No hardware validation is claimed.
+
 ## Workspace
 
 - `cw32-data/`: curated versioned register YAML, chip/source manifests, verified
@@ -763,7 +783,8 @@ No hardware result is claimed.
 
 F020/F002/F003/L010/L011/L012/L031/R031/W031/L052 additionally provide
 ordinary-borrowed `Spi<'d, Async, Master>::new_async` and all
-five async byte `SpiBus` methods on their fourteen SPI instances. The Stage93
+five async `SpiBus<W>` methods on their fourteen SPI instances, now supporting
+the existing sealed 4–16-bit PIO word set. The Stage93
 F020/L031/L052/R031/W031 DMA extension and Stage94 native L012 extension
 preserve these borrowed PIO constructors and fix each owner's backend at construction. This IRQ PIO path keeps at most
 one frame outstanding; the task accesses DR and caller buffers, while the ISR only records errors, masks local notification and wakes.

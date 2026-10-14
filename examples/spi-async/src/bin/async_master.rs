@@ -49,15 +49,15 @@ async fn exchange(bus: &mut Spi<'_, Async>) -> Result<Samples, spi::Error> {
     };
     // All five calls below use the real byte SpiBus trait. Unequal lengths
     // clock seven bytes, padding the short TX slice with zeroes.
-    SpiBus::transfer(bus, &mut samples.received, b"SPI").await?;
-    SpiBus::transfer_in_place(bus, &mut samples.in_place).await?;
-    SpiBus::write(bus, b"loopback").await?;
-    SpiBus::read(bus, &mut samples.received).await?;
-    SpiBus::write(bus, &[]).await?;
-    SpiBus::read(bus, &mut []).await?;
-    SpiBus::transfer(bus, &mut [], &[]).await?;
-    SpiBus::transfer_in_place(bus, &mut []).await?;
-    SpiBus::flush(bus).await?;
+    SpiBus::<u8>::transfer(bus, &mut samples.received, b"SPI").await?;
+    SpiBus::<u8>::transfer_in_place(bus, &mut samples.in_place).await?;
+    SpiBus::<u8>::write(bus, b"loopback").await?;
+    SpiBus::<u8>::read(bus, &mut samples.received).await?;
+    SpiBus::<u8>::write(bus, &[]).await?;
+    SpiBus::<u8>::read(bus, &mut []).await?;
+    SpiBus::<u8>::transfer(bus, &mut [], &[]).await?;
+    SpiBus::<u8>::transfer_in_place(bus, &mut []).await?;
+    SpiBus::<u8>::flush(bus).await?;
     Ok(samples)
 }
 

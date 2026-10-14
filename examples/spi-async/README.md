@@ -147,3 +147,13 @@ acceptance claim. The existing lockfile and release profile are unchanged.
 The separate [native L012 DMA companion](../l012-spi-dma/README.md) supplies
 the four staged DMA/PIO deployments; its build receipts do not establish
 execution or acceptance of this crate's blocking binary.
+
+## Wider PIO frames
+
+The separate `async_words` example exercises `word::U4`, `word::U9` and `u16` on the
+same PIO owner, with typed trait calls and an unequal-length 9-bit transfer.
+The backend settles each previous frame before changing width. This is a
+loopback example; an attached slave must explicitly support its selected frame
+widths and framing. Existing DMA owners remain byte-only and reject wider word
+types before doing any work, even for empty calls. See
+[the async word-width contract](../../docs/spi-async-word-widths.md).

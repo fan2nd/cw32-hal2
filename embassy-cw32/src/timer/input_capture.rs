@@ -1,8 +1,9 @@
 //! Owned polling input capture for qualified GTIM and buffered ATIM inputs.
 //!
 //! The pin wrappers and channel methods follow the pinned Embassy STM32 shape.
-//! This CW32 subset accepts direct external inputs only and has no IRQ binding,
-//! async waits or DMA. Each CCR is one hardware latch, not an event queue.
+//! This CW32 subset accepts direct external inputs only. Qualified four-channel
+//! owners can wait for a capture indication through an exact IRQ binding.
+//! Each CCR is one hardware latch, not an event queue; DMA is not provided.
 use super::{
     CapturePin, Channel, InputInstance, TimerChannel,
     input::InputRegisters,
@@ -174,8 +175,8 @@ impl<'d, T: InputInstance> InputCapture<'d, T> {
         self.assert_owned(channel);
         T::INPUT_REGS.capture_value(channel)
     }
-    /// Whether the hardware capture flag is pending. Interrupts remain
-    /// disabled: this is the hardware status flag, following Embassy's name.
+    /// Whether the hardware capture flag is pending, independently of request
+    /// enable. Polling alone does not enable IRQs; an async wait may do so.
     pub fn get_input_interrupt(&self, channel: Channel) -> bool {
         self.assert_owned(channel);
         T::INPUT_REGS.capture_pending(channel)
@@ -228,8 +229,117 @@ impl<'d, T: InputInstance> InputCapture<'d, T> {
         self.inner.clear_overflow();
     }
 }
+/// Mask a positively observed capture request and wake its owner without
+/// reading CCR or acknowledging status. Bind every enabled independent source
+/// on a shared vector; this handler never disables or unpends the whole vector.
+pub struct CaptureInterruptHandler<T: InputInstance + super::OverflowInstance>(PhantomData<T>);
+impl<T: InputInstance + super::OverflowInstance> crate::interrupt::typelevel::Handler<T::Interrupt>
+    for CaptureInterruptHandler<T>
+{
+    unsafe fn on_interrupt() {
+        let wake = critical_section::with(|cs| {
+            let armed = T::state().capture_armed.borrow(cs).get();
+            // Return before MMIO if inactive, including after a different owner
+            // reconstructed this timer or after its clock was gated.
+            for channel in Channel::ALL {
+                if armed & (1 << channel.index()) != 0 && T::INPUT_REGS.capture_pending(channel) {
+                    T::INPUT_REGS.capture_set_interrupt(channel, false);
+                    T::state().capture_armed.borrow(cs).set(0);
+                    return true;
+                }
+            }
+            false
+        });
+        if wake {
+            T::state().capture_waker.wake();
+        }
+    }
+}
+
+struct CaptureWaitGuard<T: InputInstance + super::OverflowInstance> {
+    channel: Channel,
+    _marker: PhantomData<T>,
+}
+impl<T: InputInstance + super::OverflowInstance> Drop for CaptureWaitGuard<T> {
+    fn drop(&mut self) {
+        critical_section::with(|cs| {
+            T::state().capture_armed.borrow(cs).set(0);
+            T::INPUT_REGS.capture_set_interrupt(self.channel, false);
+        });
+    }
+}
+
+impl<T: InputInstance + super::OverflowInstance> InputCapture<'_, T> {
+    /// Wait until this channel's capture status is pending, without reading or
+    /// acknowledging it. A preexisting indication returns immediately. Read the
+    /// timestamp afterward; classic GTIM also needs `clear_input_interrupt`.
+    ///
+    /// The IRQ masks this channel's request, leaving capture acceptance active.
+    /// New edges can overwrite the latch before it is read. No event count,
+    /// stable timestamp, bounded latency or lossless stream is promised.
+    /// Cancelling masks the request and preserves status. Forgetting a wait may
+    /// leave it armed until an event, another wait, owner Drop or reconstruction;
+    /// all retained state is static and contains no caller-buffer pointers.
+    /// A registered waker can remain retained after completion/cancellation;
+    /// a later wait replaces it.
+    /// Disabled capture, missing edges or IRQ service can wait indefinitely.
+    pub async fn wait_for_capture(
+        &mut self,
+        channel: Channel,
+        _irq: impl crate::interrupt::typelevel::Binding<T::Interrupt, CaptureInterruptHandler<T>>,
+    ) {
+        use crate::interrupt::typelevel::Interrupt;
+        use core::{future::poll_fn, task::Poll};
+        self.assert_owned(channel);
+        // Retire a forgotten wait on another channel before arming this one.
+        critical_section::with(|cs| {
+            let old_armed = T::state().capture_armed.borrow(cs).replace(0);
+            for old in Channel::ALL {
+                if old_armed & (1 << old.index()) != 0 {
+                    T::INPUT_REGS.capture_set_interrupt(old, false);
+                }
+            }
+        });
+        let _guard = CaptureWaitGuard::<T> {
+            channel,
+            _marker: PhantomData,
+        };
+        unsafe {
+            T::Interrupt::enable();
+        }
+        poll_fn(|cx| {
+            T::state().capture_waker.register(cx.waker());
+            critical_section::with(|cs| {
+                if T::INPUT_REGS.capture_pending(channel) {
+                    T::state().capture_armed.borrow(cs).set(0);
+                    T::INPUT_REGS.capture_set_interrupt(channel, false);
+                    Poll::Ready(())
+                } else {
+                    T::state()
+                        .capture_armed
+                        .borrow(cs)
+                        .set(1 << channel.index());
+                    T::INPUT_REGS.capture_set_interrupt(channel, true);
+                    // A racing edge leaves status pending and requests its IRQ
+                    // after this critical section. The waker is already set.
+                    Poll::Pending
+                }
+            })
+        })
+        .await
+    }
+}
+
 impl<T: InputInstance> Drop for InputCapture<'_, T> {
     fn drop(&mut self) {
+        critical_section::with(|cs| {
+            if let Some(state) = T::overflow_state() {
+                state.capture_armed.borrow(cs).set(0);
+            }
+            for channel in Channel::ALL {
+                T::INPUT_REGS.capture_set_interrupt(channel, false);
+            }
+        });
         for channel in Channel::ALL {
             T::INPUT_REGS.input_enable(channel, false, self.config[channel.index()].mode);
         }
