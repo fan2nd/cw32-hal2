@@ -1,5 +1,7 @@
 # embassy-cw32
 
+See [constructor API migration](docs/constructor-api-migration.md) for fallible `new*` APIs and migrating former `try_new*` callers.
+
 Experimental, source-backed CW32 data/PAC/HAL workspace, modeled on the
 `stm32-data → stm32-metapac → embassy-stm32` architecture.
 
@@ -752,7 +754,7 @@ not run; final-package completion requires a separate final-source
 No hardware result is claimed.
 
 F020/F002/F003/L010/L011/L012/L031/R031/W031/L052 additionally provide
-ordinary-borrowed `Spi<'d, Async, Master>::new_async` / `try_new_async` and all
+ordinary-borrowed `Spi<'d, Async, Master>::new_async` and all
 five async byte `SpiBus` methods on their fourteen SPI instances. The Stage93
 F020/L031/L052/R031/W031 DMA extension and Stage94 native L012 extension
 preserve these borrowed PIO constructors and fix each owner's backend at construction. This IRQ PIO path keeps at most

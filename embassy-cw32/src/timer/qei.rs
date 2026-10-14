@@ -83,20 +83,10 @@ pub struct Qei<'d, T: InputInstance> {
     ch2: Flex<'d>,
 }
 impl<'d, T: InputInstance> Qei<'d, T> {
-    /// Construct and start the decoder. Invalid configuration panics.
-    pub fn new(
-        tim: Peri<'d, T>,
-        ch1: Peri<'d, impl CapturePin<T, Ch1>>,
-        ch2: Peri<'d, impl CapturePin<T, Ch2>>,
-        config: Config,
-    ) -> Self {
-        Self::try_new(tim, ch1, ch2, config)
-            .unwrap_or_else(|e| panic!("invalid encoder configuration: {}", e))
-    }
     /// Checked period/clock configuration. Tokens are consumed on error; use
     /// reborrow() to retain them. Unsupported GPIO pulls still panic before AF
     /// connection, with the same limits as gpio::Flex::set_as_input.
-    pub fn try_new(
+    pub fn new(
         tim: Peri<'d, T>,
         ch1: Peri<'d, impl CapturePin<T, Ch1>>,
         ch2: Peri<'d, impl CapturePin<T, Ch2>>,
@@ -283,23 +273,11 @@ pub struct ClassicAtimQei<'d, T: ClassicAtimInputInstance> {
 }
 #[cfg(atim_classic_input)]
 impl<'d, T: ClassicAtimInputInstance> ClassicAtimQei<'d, T> {
-    /// Construct and start the native decoder. Invalid clock/period configuration
-    /// panics. Each phase must have its own package-qualified pin token.
-    pub fn new(
-        tim: Peri<'d, T>,
-        ch1a: Peri<'d, impl ClassicAtimCapturePin<T, Ch1A>>,
-        ch1b: Peri<'d, impl ClassicAtimCapturePin<T, Ch1B>>,
-        config: ClassicAtimQeiConfig,
-    ) -> Self {
-        Self::try_new(tim, ch1a, ch1b, config)
-            .unwrap_or_else(|e| panic!("invalid classic ATIM encoder configuration: {}", e))
-    }
-
     /// Validate the period and clock before GPIO preparation or timer mutation.
     /// Tokens are consumed on error; use `reborrow()` to retain them. Unsupported
     /// GPIO pulls still panic during preparation, before AF connection or timer
     /// mutation. ARR=0 returns `ConfigError::InvalidPeriod`.
-    pub fn try_new(
+    pub fn new(
         tim: Peri<'d, T>,
         ch1a: Peri<'d, impl ClassicAtimCapturePin<T, Ch1A>>,
         ch1b: Peri<'d, impl ClassicAtimCapturePin<T, Ch1B>>,

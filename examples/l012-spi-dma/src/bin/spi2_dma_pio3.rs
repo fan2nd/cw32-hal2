@@ -36,7 +36,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
         examples::config(),
     )
     .unwrap_or_else(|_| examples::halt());
-    let mut spi3 = spi::Spi::try_new_async(p.SPI3, p.PA9, p.PA11, p.PA10, Irqs, examples::config())
+    let mut spi3 = spi::Spi::new_async(p.SPI3, p.PA9, p.PA11, p.PA10, Irqs, examples::config())
         .unwrap_or_else(|_| examples::halt());
 
     // Both SPI23 peers stay owned. Cancellation requires the same selection

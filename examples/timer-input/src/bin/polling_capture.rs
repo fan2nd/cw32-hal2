@@ -76,7 +76,8 @@ fn main() -> ! {
             None,
             Hertz(1_000_000),
             CountingMode::EdgeAlignedUp,
-        );
+        )
+        .unwrap();
         gtim.set_input_capture_mode(Channel::Ch1, InputCaptureMode::BothEdges);
         gtim.set_input_capture_mode(Channel::Ch2, InputCaptureMode::Falling);
         gtim.set_input_capture_filter(Channel::Ch1, FilterValue::FckIntN4);
@@ -115,7 +116,8 @@ fn main() -> ! {
         a4,
         Hertz(1_000_000),
         CountingMode::EdgeAlignedUp,
-    );
+    )
+    .unwrap();
     if has_a1 {
         atim.enable(Channel::Ch1);
         atim.enable(Channel::Ch2);

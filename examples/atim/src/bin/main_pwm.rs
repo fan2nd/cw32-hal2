@@ -35,7 +35,8 @@ fn main() -> ! {
         None,
         Hertz(1000),
         CountingMode::EdgeAlignedUp,
-    );
+    )
+    .unwrap();
     #[cfg(not(buffered_atim_example))]
     let mut pwm = SimplePwm::new3(
         p.ATIM,
@@ -44,7 +45,8 @@ fn main() -> ! {
         None,
         Hertz(1000),
         CountingMode::EdgeAlignedUp,
-    );
+    )
+    .unwrap();
     pwm.ch1().set_duty_cycle_percent(25);
     pwm.ch1().enable();
     core::hint::black_box(pwm.frequency_bounds());

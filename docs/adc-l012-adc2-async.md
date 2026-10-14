@@ -15,15 +15,15 @@ bind_interrupts!(struct Irqs {
     ADC1 => adc::InterruptHandler<peripherals::ADC1>;
     ADC2_DAC => adc::InterruptHandler<peripherals::ADC2>;
 });
-let common = adc::Common::try_new(p.BGR, 100_000)?;
-let mut adc1 = adc::Adc::try_new_async(p.ADC1, &common, Irqs, config)?;
-let mut adc2 = adc::Adc::try_new_async(p.ADC2, &common, Irqs, config)?;
+let common = adc::Common::new(p.BGR, 100_000)?;
+let mut adc1 = adc::Adc::new_async(p.ADC1, &common, Irqs, config)?;
+let mut adc2 = adc::Adc::new_async(p.ADC2, &common, Irqs, config)?;
 let sample = adc2.read(&mut input, sample_time).await?;
 let timing = adc2.read_sequence(&sequence, &mut output).await?;
 ```
 
-The existing checked constructor performs peer admission itself. `new_async`
-is its panicking convenience wrapper. ADC2 implements the sealed `AsyncInstance`
+The checked `new_async` constructor performs peer admission itself and returns
+`Result<Self, Error>`. ADC2 implements the sealed `AsyncInstance`
 capability; there is no separate unchecked constructor, public quiet-peer lease,
 DAC-token reservation or DAC interrupt handler. `Dac::new`, `new_ch1` and
 `new_ch2`, ordinary direct-loading writes, reads, drop and reconstruction remain

@@ -277,28 +277,12 @@ pub struct Spi<'d, M: PeriMode, CM: CommunicationMode = Master> {
 }
 
 impl<'d> Spi<'d, Blocking, Master> {
-    /// Create a blocking, full-duplex master bus.
-    ///
-    /// # Panics
-    /// Panics if clocks have not been initialized or the requested frequency is
-    /// out of range. Use [`Self::try_new_blocking`] for checked configuration.
-    pub fn new_blocking<T: Instance>(
-        peripheral: Peri<'d, T>,
-        sck: Peri<'d, impl SckPin<T>>,
-        mosi: Peri<'d, impl MosiPin<T>>,
-        miso: Peri<'d, impl MisoPin<T>>,
-        config: Config,
-    ) -> Self {
-        Self::try_new_blocking(peripheral, sck, mosi, miso, config)
-            .unwrap_or_else(|error| panic!("invalid SPI configuration: {}", error))
-    }
-
     /// Create a blocking bus, returning an error before any hardware changes if
     /// the clock or requested frequency is invalid.
     ///
     /// Pins and the peripheral are consumed even on error; pass `reborrow()`
     /// tokens if they must remain available to the caller after failure.
-    pub fn try_new_blocking<T: Instance>(
+    pub fn new_blocking<T: Instance>(
         peripheral: Peri<'d, T>,
         sck: Peri<'d, impl SckPin<T>>,
         mosi: Peri<'d, impl MosiPin<T>>,
@@ -1151,21 +1135,6 @@ impl PioBuffers<'_> {
 
 #[cfg(spi_async_pio)]
 impl<'d> Spi<'d, Async, Master> {
-    /// Create a qualified interrupt-driven byte master, panicking on invalid
-    /// configuration. Use `try_new_async` for the checked constructor.
-    /// The owner uses PIO even when its lifetime is static or DMA is available.
-    pub fn new_async<T: Instance>(
-        peripheral: Peri<'d, T>,
-        sck: Peri<'d, impl SckPin<T>>,
-        mosi: Peri<'d, impl MosiPin<T>>,
-        miso: Peri<'d, impl MisoPin<T>>,
-        irqs: impl Binding<T::Interrupt, T::InterruptHandler> + 'd,
-        config: Config,
-    ) -> Self {
-        Self::try_new_async(peripheral, sck, mosi, miso, irqs, config)
-            .unwrap_or_else(|error| panic!("invalid SPI configuration: {}", error))
-    }
-
     /// Create a byte master without DMA or static transfer storage. L012 SPI2
     /// and SPI3 require the complete `SharedInterruptHandler<SPI23>` binding.
     /// Tokens are consumed on error; preflight failure leaves hardware intact.
@@ -1175,7 +1144,7 @@ impl<'d> Spi<'d, Async, Master> {
     /// original CS selection and successfully await `flush` before changing it.
     /// Dropping the driver is bounded destructive teardown and may truncate a
     /// frame. Neither an error nor Drop is successful wire completion.
-    pub fn try_new_async<T: Instance>(
+    pub fn new_async<T: Instance>(
         peripheral: Peri<'d, T>,
         sck: Peri<'d, impl SckPin<T>>,
         mosi: Peri<'d, impl MosiPin<T>>,

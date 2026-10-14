@@ -14,12 +14,12 @@ fn main() -> ! {
     system.rcc.operating_conditions.max_supply_mv = 3600;
     system.rcc.hsi.div = hal::rcc::HsiDiv::Div8;
     let p = hal::init(system);
-    let common = Common::try_new(p.BGR, 100_000).unwrap();
+    let common = Common::new(p.BGR, 100_000).unwrap();
     let mut config = Config::default();
     config.vdda_mv = 3000;
     config.frequency = Hertz(24_000_000);
-    let mut adc1 = Adc::try_new(p.ADC1, &common, config).unwrap();
-    let mut adc2 = Adc::try_new(p.ADC2, &common, config).unwrap();
+    let mut adc1 = Adc::new(p.ADC1, &common, config).unwrap();
+    let mut adc2 = Adc::new(p.ADC2, &common, config).unwrap();
     let first = p.PA0.degrade_adc();
     let second = p.PA1.degrade_adc();
     let sibling = p.PA8.degrade_adc();

@@ -45,7 +45,8 @@ fn main() -> ! {
         Config {
             dead_time_ns: 1_000,
         },
-    );
+    )
+    .unwrap();
     // Constructor leaves MOE clear. Only interior reference comparisons are accepted.
     assert!(!pwm.get_master_output_enable());
     pwm.set_duty(Channel::Ch1, pwm.get_max_duty() / 4);

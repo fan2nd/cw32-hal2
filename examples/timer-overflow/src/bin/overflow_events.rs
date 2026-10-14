@@ -23,12 +23,13 @@ async fn main(_spawner: embassy_executor::Spawner) {
     let mut primary = Timer::<_, Async>::new_async(
         include!(concat!(env!("OUT_DIR"), "/primary-token.rs")),
         Irqs,
-    );
+    )
+    .unwrap();
     primary.set_period(Prescaler::Div256, 31_250).unwrap();
     primary.start();
     #[cfg(example_atim)]
     let mut advanced = {
-        let mut timer = Timer::<_, Async>::new_async(p.ATIM, Irqs);
+        let mut timer = Timer::<_, Async>::new_async(p.ATIM, Irqs).unwrap();
         timer.set_period(Prescaler::Div256, 62_500).unwrap();
         timer.start();
         timer
@@ -38,7 +39,8 @@ async fn main(_spawner: embassy_executor::Spawner) {
         let mut timer = Timer::<_, Async>::new_async(
             include!(concat!(env!("OUT_DIR"), "/secondary-token.rs")),
             Irqs,
-        );
+        )
+        .unwrap();
         timer.set_period(Prescaler::Div256, 46_875).unwrap();
         timer.start();
         timer

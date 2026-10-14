@@ -22,7 +22,7 @@ outcomes are separate and do not establish silicon or electrical validation.
 
 ## API, ownership and qualified clocks
 
-`I2c<'d, Async>::new_async` and `try_new_async` take the peripheral, typed SCL/SDA
+`I2c<'d, Async>::new_async` takes the peripheral, typed SCL/SDA
 pins, a verified instance interrupt binding, and the existing `Config`. The
 owned driver exposes `read`, `write`, `write_read`, `transaction` and the ordinary
 seven-bit `embedded_hal_async::i2c::I2c` trait. Existing blocking constructors,

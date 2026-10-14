@@ -302,7 +302,7 @@ functions:
       - MISO
       evidence:
       - path: embassy-cw32/src/spi.rs
-        anchor: pub fn try_new_async
+        anchor: pub fn new_async
       - path: docs/spi-async-pio.md
       - path: examples/spi-async/src/bin/async_master.rs
     - id: safe_peripheral_dma
@@ -318,7 +318,7 @@ functions:
       - Clean startup admission consumes whole static SPI/pins, two channels and two exclusive staging slices; caller memory never becomes a DMA endpoint. Sequential admission can consume the first channel when the second fails.
       - F020 has only CH1/DMACH1 and CH2/DMACH2; one permanently admitted pair serves one controller. SPI1/SPI2 DMA examples are separate deployments and clean Drop does not restore admission.
       - L031/L052/R031/W031 use native CH1/DMACH1, CH2+CH3/DMACH23 and CH4/DMACH4. Shared handlers preserve sibling ownership/flags; there is no CH5.
-      - Borrowed new_async/try_new_async PIO remains available on the five Stage93 DMA families and L012. The constructor fixes the backend; common lifetime-generic methods do not relax static DMA resources or provide switching.
+      - Borrowed new_async PIO remains available on the five Stage93 DMA families and L012. The constructor fixes the backend; common lifetime-generic methods do not relax static DMA resources or provide switching.
       - Already non_exhaustive ConfigError and Error gain existing DMA-gated variants on the six dual-capable families. Dedicated interrupt dispatch checks each separate backend active guard before MMIO.
       - The DMA constructor requires Binding<T::Interrupt, T::InterruptHandler>. A generic wrapper constrained only to Binding<T::Interrupt, InterruptHandler<T>> may need the associated bound or an appropriate type equality; preserved concrete classic bindings do not prove universal generic source compatibility.
       - Existing 12 MHz maximum SCK and minimum divisor 2 on F020 or 4 on L031/L052/R031/W031 remain; safe package pins and exact memory bounds govern construction.
@@ -492,11 +492,11 @@ functions:
           final54 report binding had not run; final completion requires their separate receipts. No hardware result is claimed.
       evidence:
       - path: embassy-cw32/src/adc/sequence/mod.rs
-        anchor: pub fn try_new_async
+        anchor: pub fn new_async
       - path: embassy-cw32/src/adc/classic.rs
-        anchor: pub fn try_new_async
+        anchor: pub fn new_async
       - path: embassy-cw32/src/adc/l012.rs
-        anchor: pub fn try_new_async
+        anchor: pub fn new_async
       - path: docs/adc-low-async.md
       - path: docs/adc-remaining-async.md
       - path: docs/adc-remaining-async-evidence.json

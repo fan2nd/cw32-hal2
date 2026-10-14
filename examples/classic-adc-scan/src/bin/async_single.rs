@@ -22,7 +22,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
     let p = hal::init(system);
     let mut config = Config::default();
     config.vdda_mv = 3000;
-    let mut adc = Adc::try_new_async(p.ADC, Irqs, config).unwrap();
+    let mut adc = Adc::new_async(p.ADC, Irqs, config).unwrap();
     let (mut input, _other_input) = include!(concat!(env!("OUT_DIR"), "/channel-pins.rs"));
     let mut supply = adc.enable_vdda();
     loop {

@@ -134,24 +134,10 @@ pub struct ComplementaryPwm<'d, T: ComplementaryInstance> {
     duties: [u32; 3],
 }
 impl<'d, T: ComplementaryInstance> ComplementaryPwm<'d, T> {
-    /// Construct with optional complete pairs, a running counter and MOE zero.
-    /// Panics if no pair is supplied, timing is invalid, or dead time is too long.
-    pub fn new3(
-        tim: Peri<'d, T>,
-        ch1: Option<ComplementaryPwmPair<'d, T, Ch1>>,
-        ch2: Option<ComplementaryPwmPair<'d, T, Ch2>>,
-        ch3: Option<ComplementaryPwmPair<'d, T, Ch3>>,
-        frequency: Hertz,
-        counting_mode: CountingMode,
-        config: Config,
-    ) -> Self {
-        Self::try_new3(tim, ch1, ch2, ch3, frequency, counting_mode, config)
-            .unwrap_or_else(|_| panic!("unsupported classic complementary PWM configuration"))
-    }
     /// Validate before changing ATIM/RCC. Pin wrappers have already disconnected
     /// their pads; use reborrowed tokens to retain ownership on error. Rate-only
     /// clocks are rejected even when zero dead time is requested.
-    pub fn try_new3(
+    pub fn new3(
         tim: Peri<'d, T>,
         ch1: Option<ComplementaryPwmPair<'d, T, Ch1>>,
         ch2: Option<ComplementaryPwmPair<'d, T, Ch2>>,

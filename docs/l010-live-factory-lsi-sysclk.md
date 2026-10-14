@@ -117,7 +117,7 @@ limits/uninitialized checks and before acquisition/rate selection or its first
 gate, ADC/BGR, trigger/watchdog or IRQ mutation. L010's zero minimum ADC rate
 cannot replace this guard. Blocking/async constructors, scans and BTIM1-triggered
 construction share it. Earlier caller-created timers or analog pins are not
-restored; infallible wrappers panic on rejection. Public manually constructed
+restored; constructors return errors on rejection. Public manually constructed
 timing values retain the strict-helper preconditions. Rejected triggered construction
 also drops its supplied BTIM1 owner and runs its existing stop/request-disable/
 gate-release cleanup, as detailed in [ADC sequence timing](adc-scan-sequences.md).

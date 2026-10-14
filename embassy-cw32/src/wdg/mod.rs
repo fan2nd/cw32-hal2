@@ -172,18 +172,13 @@ enum State {
 
 impl<'d, T: Instance> IndependentWatchdog<'d, T> {
     /// Prepare a watchdog with the requested timeout, without starting it.
-    ///
-    /// Panics for zero/out-of-range timeout; see [`Timing::for_timeout`].
-    pub fn new(instance: Peri<'d, T>, timeout_us: u32) -> Self {
-        Self::try_new(instance, timeout_us)
-            .unwrap_or_else(|e| panic!("IWDT configuration failed: {:?}", e))
-    }
-    /// Fallible [`Self::new`]. No MMIO is performed, including on failure.
-    pub fn try_new(instance: Peri<'d, T>, timeout_us: u32) -> Result<Self, Error> {
-        Self::try_new_with_config(instance, Config::new(timeout_us))
+    /// Returns an error for zero/out-of-range timeouts; see [`Timing::for_timeout`].
+    /// No MMIO is performed, including on failure.
+    pub fn new(instance: Peri<'d, T>, timeout_us: u32) -> Result<Self, Error> {
+        Self::new_with_config(instance, Config::new(timeout_us))
     }
     /// Prepare with a custom, nonzero per-wait register-read budget.
-    pub fn try_new_with_config(instance: Peri<'d, T>, config: Config) -> Result<Self, Error> {
+    pub fn new_with_config(instance: Peri<'d, T>, config: Config) -> Result<Self, Error> {
         if config.poll_limit == 0 {
             return Err(Error::InvalidPollLimit);
         }

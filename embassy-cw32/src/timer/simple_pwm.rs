@@ -178,26 +178,10 @@ pub struct SimplePwm<'d, T: Instance> {
     states: [ChannelState; 4],
 }
 impl<'d, T: Instance> SimplePwm<'d, T> {
-    /// Construct PWM. Panics if clocks are unavailable or frequency is unsupported.
-    pub fn new(
-        tim: Peri<'d, T>,
-        ch1: Option<PwmPin<'d, T, Ch1>>,
-        ch2: Option<PwmPin<'d, T, Ch2>>,
-        ch3: Option<PwmPin<'d, T, Ch3>>,
-        ch4: Option<PwmPin<'d, T, Ch4>>,
-        frequency: Hertz,
-        counting_mode: CountingMode,
-    ) -> Self
-    where
-        T: GeneralInstance4Channel,
-    {
-        Self::try_new(tim, ch1, ch2, ch3, ch4, frequency, counting_mode)
-            .unwrap_or_else(|e| panic!("invalid PWM configuration: {}", e))
-    }
     /// Checked construction. Invalid requests do not touch the timer; the supplied
     /// pin wrappers have already disconnected their pads and are dropped on error.
     /// Tokens are consumed even on error; use `reborrow()` to keep ownership.
-    fn try_new_inner(
+    fn new_inner(
         tim: Peri<'d, T>,
         ch1: Option<PwmPin<'d, T, Ch1>>,
         ch2: Option<PwmPin<'d, T, Ch2>>,
@@ -231,8 +215,11 @@ impl<'d, T: Instance> SimplePwm<'d, T> {
             states: [ChannelState::default(); 4],
         })
     }
-    /// Checked four-channel construction. Main outputs only for buffered ATIM.
-    pub fn try_new(
+    /// Construct four main PWM outputs, returning clock/timing errors.
+    /// Main outputs only for buffered ATIM. Invalid requests do not touch the timer.
+    /// Pin wrappers have already disconnected their pads and are dropped on error;
+    /// use `reborrow()` to retain token ownership.
+    pub fn new(
         tim: Peri<'d, T>,
         ch1: Option<PwmPin<'d, T, Ch1>>,
         ch2: Option<PwmPin<'d, T, Ch2>>,
@@ -244,27 +231,14 @@ impl<'d, T: Instance> SimplePwm<'d, T> {
     where
         T: GeneralInstance4Channel,
     {
-        Self::try_new_inner(tim, ch1, ch2, ch3, ch4, frequency, counting_mode)
+        Self::new_inner(tim, ch1, ch2, ch3, ch4, frequency, counting_mode)
     }
     /// Construct classic ATIM's three main A outputs. B outputs are withheld.
+    /// Invalid requests do not touch the timer. Pin wrappers have already
+    /// disconnected their pads and are dropped on error; use `reborrow()`
+    /// to retain token ownership.
     #[cfg(atim_classic)]
     pub fn new3(
-        tim: Peri<'d, T>,
-        ch1: Option<PwmPin<'d, T, Ch1>>,
-        ch2: Option<PwmPin<'d, T, Ch2>>,
-        ch3: Option<PwmPin<'d, T, Ch3>>,
-        frequency: Hertz,
-        counting_mode: CountingMode,
-    ) -> Self
-    where
-        T: super::AdvancedInstance3Channel,
-    {
-        Self::try_new3(tim, ch1, ch2, ch3, frequency, counting_mode)
-            .unwrap_or_else(|e| panic!("invalid PWM configuration: {}", e))
-    }
-    /// Checked three-main-output classic ATIM construction.
-    #[cfg(atim_classic)]
-    pub fn try_new3(
         tim: Peri<'d, T>,
         ch1: Option<PwmPin<'d, T, Ch1>>,
         ch2: Option<PwmPin<'d, T, Ch2>>,
@@ -275,7 +249,7 @@ impl<'d, T: Instance> SimplePwm<'d, T> {
     where
         T: super::AdvancedInstance3Channel,
     {
-        Self::try_new_inner(tim, ch1, ch2, ch3, None, frequency, counting_mode)
+        Self::new_inner(tim, ch1, ch2, ch3, None, frequency, counting_mode)
     }
     /// A borrowed channel. Dropping this handle leaves the channel's state intact.
     /// Dropping the owning PWM controller disables and disconnects it.

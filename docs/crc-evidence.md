@@ -66,9 +66,9 @@ nor writes CR. CRC16 reads are zero-extended to the compatible u32 return type.
   Both gate read-modify-writes are protected by a critical section. On
   L010/L011/L012, every enable/disable replaces AHBEN[31:16] with 0x5a5a while
   preserving unrelated low-half fields. AHBRST is unkeyed and is never written.
-- `try_new` returns `HeldInReset` without writing the clock or CRC registers
+- `new` returns `HeldInReset` without writing the clock or CRC registers
   when the reset bit is low. It returns `ClockNotEnabled` when the clock-enable
-  readback fails; no CRC register is then written. `new` is a panic wrapper.
+  readback fails; no CRC register is then written. Callers handle the returned error.
   There is no unbounded polling. These checks cannot diagnose an external bus
   fault, and safe code must not alter clocks/reset behind an active driver.
 - The `Peri<'d, CRC>` singleton/borrow is held for the full driver lifetime.

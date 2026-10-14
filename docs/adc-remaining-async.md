@@ -18,7 +18,7 @@ Classic families bind their dedicated ADC interrupt:
 bind_interrupts!(struct Irqs {
     ADC => adc::InterruptHandler<peripherals::ADC>;
 });
-let mut adc = adc::Adc::try_new_async(p.ADC, Irqs, config)?;
+let mut adc = adc::Adc::new_async(p.ADC, Irqs, config)?;
 let sample = adc.read(&mut pin, sample_time).await?;
 let timing = adc.read_sequence(&sequence, &mut output).await?;
 ```
@@ -31,12 +31,12 @@ bind_interrupts!(struct Irqs {
     ADC1 => adc::InterruptHandler<peripherals::ADC1>;
     ADC2_DAC => adc::InterruptHandler<peripherals::ADC2>;
 });
-let common = adc::Common::try_new(p.BGR, 100_000)?;
-let mut adc1 = adc::Adc::try_new_async(p.ADC1, &common, Irqs, config)?;
-let mut adc2 = adc::Adc::try_new_async(p.ADC2, &common, Irqs, config)?;
+let common = adc::Common::new(p.BGR, 100_000)?;
+let mut adc1 = adc::Adc::new_async(p.ADC1, &common, Irqs, config)?;
+let mut adc2 = adc::Adc::new_async(p.ADC2, &common, Irqs, config)?;
 ```
 
-`new_async` is the panicking convenience constructor. `read` returns raw 12-bit
+`new_async` returns `Result<Self, Error>`; callers handle construction failures explicitly. `read` returns raw 12-bit
 counts and `read_sequence` returns `SequenceTiming`. The existing sealed channel
 handles, borrowed/owned erasure and package-qualified pins are unchanged. A
 sequence references existing handles, so repeated channels do not duplicate pin

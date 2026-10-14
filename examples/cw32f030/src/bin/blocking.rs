@@ -16,7 +16,8 @@ fn main() -> ! {
     let mut cs = Output::new(p.PA4, Level::High, Speed::Low);
     let mut uart =
         usart::Uart::new_blocking(p.UART1, p.PA8, p.PA9, usart::Config::default()).unwrap();
-    let mut spi = spi::Spi::new_blocking(p.SPI1, p.PA5, p.PA7, p.PA6, spi::Config::default());
+    let mut spi =
+        spi::Spi::new_blocking(p.SPI1, p.PA5, p.PA7, p.PA6, spi::Config::default()).unwrap();
 
     uart.blocking_write(b"CW32F030 blocking GPIO/UART/SPI loopback\r\n")
         .unwrap();

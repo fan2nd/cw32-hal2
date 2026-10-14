@@ -155,7 +155,7 @@ pub struct Config {
     pub vdda_mv: u16,
     /// Requested maximum ADC clock, including HSI tolerance. Only PCLK/1, /2, /4, /8 exist.
     /// L011 additionally requires at least 4 MHz. A request may therefore be
-    /// unattainable; `try_new`/`set_config`/`blocking_read` return an error.
+    /// unattainable; `new`/`set_config`/`blocking_read` return an error.
     pub frequency: Hertz,
     /// Finite synchronous polling budget for setup, stop and finalization, plus
     /// blocking completion. Not an async deadline or duration in microseconds.
@@ -370,20 +370,11 @@ pub struct Adc<'d, T: Instance, M: Mode = Blocking> {
     _mode: PhantomData<M>,
 }
 impl<'d, T: Instance> Adc<'d, T, Blocking> {
-    /// Construct a blocking ADC; panic on invalid configuration or gate failure.
-    pub fn new(peripheral: Peri<'d, T>, config: Config) -> Self {
-        Self::try_new(peripheral, config)
-            .unwrap_or_else(|error| panic!("ADC initialization failed: {}", error))
-    }
-    /// Explicit blocking constructor.
-    pub fn new_blocking(peripheral: Peri<'d, T>, config: Config) -> Self {
-        Self::new(peripheral, config)
-    }
     /// Validate first, acquire the clock without resetting shared BGR, and wait
     /// max(2 us, 15 ADCCLK cycles) for analog startup, conservatively
     /// covering the manual approximate 1 us and datasheet tSTAB=15/fADC.
     /// The default initial acquisition is Cycles390; reads choose their own.
-    pub fn try_new(peripheral: Peri<'d, T>, config: Config) -> Result<Self, Error> {
+    pub fn new(peripheral: Peri<'d, T>, config: Config) -> Result<Self, Error> {
         check_fault::<T>()?;
         let clocks = crate::rcc::try_clocks().ok_or(Error::ClockNotInitialized)?;
         let timing = config.timing(clocks.pclk_bounds(), 0, SampleTime::Cycles390)?;
@@ -404,8 +395,8 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
     }
 
     /// Fallible explicit blocking constructor.
-    pub fn try_new_blocking(peripheral: Peri<'d, T>, config: Config) -> Result<Self, Error> {
-        Self::try_new(peripheral, config)
+    pub fn new_blocking(peripheral: Peri<'d, T>, config: Config) -> Result<Self, Error> {
+        Self::new(peripheral, config)
     }
     /// Read a verified pin or internal source. GPIO preparation can happen
     /// before timing rejection; the ADC itself remains unchanged on rejection.
@@ -563,23 +554,13 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
     }
 }
 impl<'d, T: Instance> Adc<'d, T, Async> {
-    /// Construct an interrupt-driven software ADC; panic on setup failure.
-    /// The IRQ must be bound to `InterruptHandler<T>` with `bind_interrupts!`.
-    pub fn new_async(
-        peripheral: Peri<'d, T>,
-        irqs: impl Binding<T::Interrupt, InterruptHandler<T>> + 'd,
-        config: Config,
-    ) -> Self {
-        Self::try_new_async(peripheral, irqs, config)
-            .unwrap_or_else(|error| panic!("ADC initialization failed: {}", error))
-    }
-
     /// Validate before acquiring the gate, preserving shared BGR and its clock.
     /// Inherited hardware triggers or watchdog enables are rejected without
     /// changing their configuration or flags. Raw PAC code must not concurrently
     /// reconfigure this exclusively owned ADC. A prior cleanup fault is terminal
     /// across both blocking and asynchronous replacement owners until chip reset.
-    pub fn try_new_async(
+    /// The IRQ must be bound to `InterruptHandler<T>` with `bind_interrupts!`.
+    pub fn new_async(
         peripheral: Peri<'d, T>,
         _irqs: impl Binding<T::Interrupt, InterruptHandler<T>> + 'd,
         config: Config,

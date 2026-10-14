@@ -26,9 +26,9 @@ hal::bind_interrupts!(struct Irqs {
 #[embassy_executor::main]
 async fn main(_spawner: embassy_executor::Spawner) {
     let p = hal::init(Default::default());
-    let mut fast = Timer::<_, Async>::new_async(p.BTIM1, Irqs);
-    let mut medium = Timer::<_, Async>::new_async(p.BTIM2, Irqs);
-    let mut slow = Timer::<_, Async>::new_async(p.BTIM3, Irqs);
+    let mut fast = Timer::<_, Async>::new_async(p.BTIM1, Irqs).unwrap();
+    let mut medium = Timer::<_, Async>::new_async(p.BTIM2, Irqs).unwrap();
+    let mut slow = Timer::<_, Async>::new_async(p.BTIM3, Irqs).unwrap();
 
     // Nominal event rates are PCLK / 16_000_000, / 32_000_000 and / 64_000_000.
     // Explicit periods avoid assuming a common PCLK rate across these packages.

@@ -44,11 +44,11 @@ fn main() {
     );
     fs::write(out.join("external-input-routes.txt"), routes).unwrap();
     let capture = format!(
-        "InputCapture::new(p.{}, Some(CaptureInput::from_pin(p.{}, Pull::None)), Some(CaptureInput::from_pin(p.{}, Pull::None)), None, None, Hertz(1_000_000), CountingMode::EdgeAlignedUp)",
+        "InputCapture::new(p.{}, Some(CaptureInput::from_pin(p.{}, Pull::None)), Some(CaptureInput::from_pin(p.{}, Pull::None)), None, None, Hertz(1_000_000), CountingMode::EdgeAlignedUp).unwrap()",
         timer.name, ch1.pin, ch2.pin
     );
     let qei = format!(
-        "Qei::new(p.{}, p.{}, p.{}, Config::default())",
+        "Qei::new(p.{}, p.{}, p.{}, Config::default()).unwrap()",
         timer.name, ch1.pin, ch2.pin
     );
     fs::write(out.join("capture-constructor.rs"), capture).unwrap();

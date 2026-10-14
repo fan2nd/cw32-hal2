@@ -84,20 +84,12 @@ pub struct Crc<'d> {
     config: Config,
 }
 impl<'d> Crc<'d> {
-    /// Enable the peripheral clock and initialize the selected preset.
-    ///
-    /// Panics if the clock is inaccessible or CRC is held in reset. Use
-    /// [`Self::try_new`] for checked startup.
-    pub fn new(peripheral: Peri<'d, CRC>, config: Config) -> Self {
-        Self::try_new(peripheral, config).expect("CRC startup failed")
-    }
-
     /// Check reset/clock state, enable the clock and initialize the preset.
     ///
     /// The typed [`Mode`] exposes only algorithms documented for this chip, so
     /// there is no unchecked numeric algorithm to validate after MMIO starts.
     /// This does not release or pulse peripheral reset and does not use INIT.
-    pub fn try_new(peripheral: Peri<'d, CRC>, config: Config) -> Result<Self, Error> {
+    pub fn new(peripheral: Peri<'d, CRC>, config: Config) -> Result<Self, Error> {
         critical_section::with(|cs| {
             let rcc = CRC::RCC_INFO;
             if rcc.reset_asserted() {

@@ -204,7 +204,7 @@ impl WindowTiming {
         }
         Err(WindowError::IntervalsOutOfRange)
     }
-    /// Validated represented counts, suitable for [`WindowWatchdog::try_new`].
+    /// Validated represented counts, suitable for [`WindowWatchdog::new`].
     pub const fn config(self) -> WindowConfig {
         self.config
     }
@@ -270,13 +270,9 @@ enum State {
     Running,
 }
 impl<'d, T: WindowInstance> WindowWatchdog<'d, T> {
-    /// Prepare from exact counts without MMIO. Panics if RCC is not initialized.
-    pub fn new(instance: Peri<'d, T>, config: WindowConfig) -> Self {
-        Self::try_new(instance, config)
-            .unwrap_or_else(|e| panic!("WWDT configuration failed: {:?}", e))
-    }
-    /// Fallible preparation. Only reads the RAM-backed frozen RCC snapshot.
-    pub fn try_new(instance: Peri<'d, T>, config: WindowConfig) -> Result<Self, WindowError> {
+    /// Prepare from exact counts, returning configuration errors to the caller.
+    /// Only reads the RAM-backed frozen RCC snapshot; no MMIO is performed.
+    pub fn new(instance: Peri<'d, T>, config: WindowConfig) -> Result<Self, WindowError> {
         let pclk = crate::rcc::try_clocks()
             .ok_or(WindowError::ClockNotInitialized)?
             .pclk;

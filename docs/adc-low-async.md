@@ -16,13 +16,12 @@ Bind the metadata-selected ADC interrupt with the normal HAL macro:
 bind_interrupts!(struct Irqs {
     ADC => adc::InterruptHandler<peripherals::ADC>;
 });
-let mut adc = adc::Adc::try_new_async(p.ADC, Irqs, config)?;
+let mut adc = adc::Adc::new_async(p.ADC, Irqs, config)?;
 let sample = adc.read(&mut pin, adc::SampleTime::Cycles102).await?;
 let timing = adc.read_sequence(&sequence, &mut samples).await?;
 ```
 
-`new_async(peripheral, binding, config)` is the infallible convenience constructor;
-`try_new_async` returns `Result<Self, Error>`. The binding implements
+`new_async(peripheral, binding, config)` returns `Result<Self, Error>`. The binding implements
 `Binding<T::Interrupt, InterruptHandler<T>>`. `read(channel, sample_time)` accepts
 the existing `BorrowedChannel` forms and returns `Result<u16, Error>`.
 `read_sequence(&[(&BorrowedAdcChannel<T>, SampleTime)], &mut [u16])` returns

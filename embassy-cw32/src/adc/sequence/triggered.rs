@@ -64,7 +64,7 @@ where
     /// Configure stopped, retaining existing shared BGR/gate policy. The board
     /// must satisfy the ADC supply, pin and source-impedance limits. Tokens are
     /// consumed on error; timing validation precedes any pin/ADC changes.
-    pub fn try_new(
+    pub fn new(
         peripheral: Peri<'static, ADC>,
         source: Btim1Update,
         mut pin: Peri<'static, P>,
@@ -76,7 +76,7 @@ where
         let timing = config.timing(clocks.pclk_bounds(), channel, sample_time)?;
         // Reuse the established shared analog lifecycle privately; callers have
         // no access to this blocking owner or its reconfiguration methods.
-        let mut adc = Adc::try_new(peripheral, config)?;
+        let mut adc = Adc::new(peripheral, config)?;
         SealedAdcChannel::<ADC>::setup(&mut pin);
         adc.shutdown();
         adc.timing = timing;

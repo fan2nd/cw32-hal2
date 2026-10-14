@@ -15,7 +15,7 @@ fn panic(_: &core::panic::PanicInfo) -> ! {
 #[entry]
 fn main() -> ! {
     let p = hal::init(hal::Config::default());
-    let mut timer = Timer::new(p.ATIM);
+    let mut timer = Timer::new(p.ATIM).unwrap();
     timer.set_period(Prescaler::Div64, 65536).unwrap();
     timer.start();
     loop {

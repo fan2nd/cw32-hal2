@@ -55,8 +55,7 @@ private buffers remain owned throughout. L083 retains its existing maximum
 
 The five new families also retain IRQ PIO constructors. Each owner selects its
 backend at construction: `new_with_dma` requires static peripheral, pin and
-channel owners, interrupt proof and exclusive static staging; `new_async` /
-`try_new_async` retain borrowed PIO ownership. Common async methods keep that
+channel owners, interrupt proof and exclusive static staging; `new_async` retains borrowed PIO ownership. Common async methods keep that
 installed backend. PIO on the other F020 controller remains useful while the
 DMA pair is reserved. No mixed-backend hardware workload is exercised here.
 

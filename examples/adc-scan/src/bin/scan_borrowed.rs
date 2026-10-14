@@ -17,7 +17,7 @@ fn main() -> ! {
     let mut config = Config::default();
     config.vdda_mv = 3000;
     config.frequency = Hertz(24_000_000);
-    let mut adc = Adc::try_new(p.ADC, config).unwrap();
+    let mut adc = Adc::new(p.ADC, config).unwrap();
     let mut first = p.PA0;
     let mut second = p.PA1;
     let temperature = adc.enable_temperature().degrade_adc();

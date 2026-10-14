@@ -10,12 +10,12 @@ silicon. Source review and successful builds do not qualify a power stage.
 ## Public scope and ownership
 
 - F030/A030/F003/L031/R031/W031/L052/L083: classic ATIM, CH1A–3A main outputs
-  through `SimplePwm::new3` / `try_new3`; `split3` borrows three channel handles.
+  through `SimplePwm::new3`; `split3` borrows three channel handles.
   CH4 is expressly internal-only in every own manual. Four-channel construction,
   `ch4`, `channel(Channel)` and four-channel `split` require a distinct sealed
   four-channel capability and are unavailable for classic ATIM.
 - L010/L011/L012: buffered ATIM, main CH1–4 through the usual four-channel
-  `SimplePwm::new` / `try_new` / `split`. Hardware channels 5/6 and all N outputs
+  `SimplePwm::new` / `split`. Hardware channels 5/6 and all N outputs
   remain disabled and have no HAL pin routes.
 - `timer::low_level::Timer` owns ATIM for stopped construction, explicit start,
   stop, counter read/write, finite configuration and polling of the update flag.

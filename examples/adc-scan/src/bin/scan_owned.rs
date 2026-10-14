@@ -18,7 +18,7 @@ fn main() -> ! {
     let mut config = Config::default();
     config.vdda_mv = 3000;
     config.frequency = Hertz(24_000_000);
-    let mut adc = Adc::try_new(p.ADC, config).unwrap();
+    let mut adc = Adc::new(p.ADC, config).unwrap();
     let first = p.PA0.degrade_adc();
     let second = p.PA1.degrade_adc();
     let sequence = [

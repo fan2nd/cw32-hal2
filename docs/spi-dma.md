@@ -88,7 +88,7 @@ not restore one-time channel admission. PIO on another controller remains
 useful while the pair is reserved. Four-channel shared-vector handlers preserve
 each sibling's independent flags and waiter; no fifth channel is available.
 
-F020/L031/L052/R031/W031 retain ordinary-borrowed `new_async` / `try_new_async`
+F020/L031/L052/R031/W031 retain ordinary-borrowed `new_async`
 [IRQ PIO construction](spi-async-pio.md) alongside static `new_with_dma`.
 The constructor fixes the backend for that owner. One lifetime-generic async
 method/trait surface dispatches to the installed backend; it does not switch

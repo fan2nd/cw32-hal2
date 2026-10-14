@@ -42,9 +42,9 @@ A030 source evidence. No family is enabled merely by similarity to another.
   tick counts up, requires 2–64 reset ticks and 1–reset_ticks−1 closed ticks,
   and uses u64 arithmetic. The caller supplies the actual frozen RCC PCLK, not
   a guessed oscillator frequency. Count-based configuration is the primary API.
-- `WindowWatchdog::try_new(Peri<WWDT>, config)` retains ownership and reads only
+- `WindowWatchdog::new(Peri<WWDT>, config)` retains ownership and reads only
   the RAM-backed frozen RCC snapshot. It neither gates nor accesses peripheral
-  MMIO and rejects an absent/zero PCLK. The infallible wrapper panics on errors.
+  MMIO and returns an error for an absent/zero PCLK.
 - `try_unleash()` checks software state first, enables/readbacks the clock gate,
   and requires the reset line released plus exact CR0/CR1/SR reset values
   `0x7f/0x7f/0`. Inherited EN, IE or non-reset state is rejected. Bootloader

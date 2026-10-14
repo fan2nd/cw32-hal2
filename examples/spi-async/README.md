@@ -138,9 +138,9 @@ build receipts rather than this example's source.
 
 The finite Stage94 main matrix includes `async_master` for exact C8T6 and
 C8U6, retaining all three PIO buses and the complete SPI23 binding. Both
-continue to use `try_new_async`; adding native DMA support does not change
+continue to use `new_async`; adding native DMA support does not change
 that constructor's backend. C8U6's `blocking_master` route cfgs are widened
-consistently with the new feature, preserving `try_new_blocking` and its
+consistently with the new feature, preserving `new_blocking` and its
 existing behavior. No C8U6 blocking ELF is selected in the Stage94 main or
 clean matrices, so this feature-consistency change makes no new blocking
 acceptance claim. The existing lockfile and release profile are unchanged.

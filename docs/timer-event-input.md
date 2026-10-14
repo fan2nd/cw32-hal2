@@ -27,7 +27,7 @@ external capture, fake GTIM mux, index or break input is added.
 
 ## Counter event ownership
 
-`Timer::new/try_new` remains Blocking. `Timer::<T, Async>::new_async/try_new_async`
+`Timer::new` remains Blocking. `Timer::<T, Async>::new_async`
 requires a binding from the exact `T::Interrupt` to
 `timer::OverflowInterruptHandler<T>`. Async construction returns a stopped
 counter with only its own overflow request enabled. `wait_overflow().await`
@@ -71,7 +71,7 @@ clock-loss recovery follows from this ownership discipline.
 ## Native six-half capture
 
 `input_capture::ClassicAtimCaptureInput::from_pin(pin, pull)` owns a separately
-qualified digital AF input. `ClassicAtimInputCapture::new/try_new` takes the
+qualified digital AF input. `ClassicAtimInputCapture::new` takes the
 timer, six optional wrappers in CH1A/CH1B/CH2A/CH2B/CH3A/CH3B order and a maximum
 counter tick frequency. It chooses among native divisors /1,/2,/4,/8,/16,/32,
 /64,/256 and runs an internal up-counter with ARR=65535. Inputs start disabled.
@@ -101,7 +101,7 @@ capture IRQ binding, DMA, capture prescaler or stream is provided.
 
 ## Native quadrature
 
-`qei::ClassicAtimQei::new/try_new` owns ATIM and two independently qualified
+`qei::ClassicAtimQei::new` owns ATIM and two independently qualified
 CH1A/CH1B pins. `ClassicAtimQeiConfig` supplies both pulls, one shared native
 filter, both phase inversions, mode and `auto_reload`. Modes count CH1A edges,
 CH1B edges or both (native SMS4/5/6); ARR1..65535 is accepted, with default

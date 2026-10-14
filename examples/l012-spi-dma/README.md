@@ -4,7 +4,7 @@ Four ordinary firmware applications use native SPI1/SPI2/SPI3 on the exact
 CW32L012C8T6 (LQFP48) and CW32L012C8U6 (QFN48) packages. Each package has 64 KiB
 Flash and 8 KiB SRAM. Transfers are finite, full-duplex, eight-bit master
 operations with private static SRAM staging. Retained PIO peers use the
-ordinary `Spi::try_new_async` constructor and no DMA channel.
+ordinary `Spi::new_async` constructor and no DMA channel.
 
 ## Separate deployments
 

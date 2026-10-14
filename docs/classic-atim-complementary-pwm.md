@@ -1,7 +1,7 @@
 # Bounded classic ATIM complementary PWM
 
-F030 and A030 now expose `timer::complementary_pwm::ComplementaryPwm::new3` and
-`try_new3`. A constructor accepts up to three optional `ComplementaryPwmPair`
+F030 and A030 now expose `timer::complementary_pwm::ComplementaryPwm::new3`, returning `Result<Self, ConfigError>`.
+The constructor accepts up to three optional `ComplementaryPwmPair`
 values, each retaining one main `PwmPin` and one `ComplementaryPwmPin`. At least
 one complete A+B pair is required. F030 TSSOP20/QFN20 and the family alias have no
 CH2B route, so they can use CH1 and/or CH3 without manufacturing a CH2 pin.

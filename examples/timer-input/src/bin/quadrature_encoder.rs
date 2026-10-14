@@ -56,7 +56,8 @@ fn main() -> ! {
                 filter: FilterValue::FckIntN4,
                 ..Config::default()
             },
-        );
+        )
+        .unwrap();
         gtim.reset();
         gtim
     };
@@ -70,7 +71,8 @@ fn main() -> ! {
             mode: QeiMode::Mode1,
             ..Config::default()
         },
-    );
+    )
+    .unwrap();
     #[cfg(not(l010_input_example))]
     let mut atim = Qei::new(
         p.ATIM,
@@ -80,7 +82,8 @@ fn main() -> ! {
             mode: QeiMode::Mode2,
             ..Config::default()
         },
-    );
+    )
+    .unwrap();
     loop {
         #[cfg(not(feature = "time-driver"))]
         poll(&mut gtim, &GTIM_POSITION);

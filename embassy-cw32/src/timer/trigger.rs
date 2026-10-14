@@ -21,13 +21,13 @@ pub struct Btim1Update {
 }
 impl Btim1Update {
     /// Configure 1..=65536 source ticks. Tokens are consumed even on error.
-    pub fn try_new(
+    pub fn new(
         peripheral: Peri<'static, BTIM1>,
         prescaler: Prescaler,
         ticks: u32,
     ) -> Result<Self, ConfigError> {
         let timing = Timing::new(prescaler, ticks)?;
-        let mut timer = Timer::try_new(peripheral)?;
+        let mut timer = Timer::new(peripheral)?;
         timer.apply_timing(timing);
         Ok(Self { timer })
     }
@@ -82,13 +82,13 @@ pub struct Btim2Cascade {
 }
 impl Btim2Cascade {
     /// Construct stopped; `events` is 1..=65536. Tokens are consumed on error.
-    pub fn try_new(
+    pub fn new(
         source: Btim1Update,
         destination: Peri<'static, BTIM2>,
         events: u32,
     ) -> Result<Self, ConfigError> {
         let timing = Timing::new(Prescaler::Div1, events)?;
-        let mut counter = Timer::try_new(destination)?;
+        let mut counter = Timer::new(destination)?;
         counter.apply_timing(timing);
         Ok(Self { source, counter })
     }

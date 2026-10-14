@@ -26,7 +26,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
     system.rcc.operating_conditions.max_supply_mv = 3600;
     system.rcc.hsi.div = hal::rcc::HsiDiv::Div8;
     let p = hal::init(system);
-    let common = Common::try_new(p.BGR, 100_000).unwrap();
+    let common = Common::new(p.BGR, 100_000).unwrap();
     let mut dac_config = hal::dac::Config::default();
     dac_config.supply_mv = 3300;
     let mut dac = Dac::new(p.DAC, p.PB0, p.PB1, dac_config).unwrap();
@@ -34,10 +34,10 @@ async fn main(_spawner: embassy_executor::Spawner) {
     config.vdda_mv = 3000;
     config.frequency = Hertz(24_000_000);
     // Config.timeout only bounds synchronous register polls, not the await.
-    let mut adc1 = Adc::try_new_async(p.ADC1, &common, Irqs, config).unwrap();
+    let mut adc1 = Adc::new_async(p.ADC1, &common, Irqs, config).unwrap();
     // Admission reads actual DAC interrupt enables. The direct-loading DAC
     // stays owned and active; ADC2 never changes its controls, data or flags.
-    let mut adc2 = Adc::try_new_async(p.ADC2, &common, Irqs, config).unwrap();
+    let mut adc2 = Adc::new_async(p.ADC2, &common, Irqs, config).unwrap();
     let mut input1 = p.PA0;
     let mut input2 = p.PA8;
     let mut code = 0;

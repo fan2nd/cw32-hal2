@@ -31,7 +31,7 @@ hal::bind_interrupts!(struct Irqs {
 #[embassy_executor::main]
 async fn main(_spawner: embassy_executor::Spawner) {
     let p = hal::init(Default::default());
-    let mut btim = Timer::<_, Async>::new_async(p.BTIM2, Irqs);
+    let mut btim = Timer::<_, Async>::new_async(p.BTIM2, Irqs).unwrap();
     let mut lptim = hal::lptim::Lptim::new_async(p.LPTIM, Irqs, Default::default()).unwrap();
     btim.set_period(Prescaler::Div256, 62_500).unwrap();
     btim.start();
@@ -71,7 +71,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
         },
     )
     .unwrap();
-    let mut btim = Timer::<_, Async>::new_async(p.BTIM3, Irqs);
+    let mut btim = Timer::<_, Async>::new_async(p.BTIM3, Irqs).unwrap();
     btim.set_period(Prescaler::Div256, 62_500).unwrap();
     hall.start();
     btim.start();

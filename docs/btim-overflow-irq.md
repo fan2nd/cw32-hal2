@@ -48,13 +48,13 @@ of an APB timer multiplier remain in force.
 ## Public API and ownership
 
 `timer::low_level::Timer<'d, T, M = Blocking>` retains its real `Peri<'d, T>`.
-Existing `Timer::new`, `Timer::try_new` and `Timer<'d, T>` annotations retain
-Blocking behavior. Construction starts stopped, with 65536 ticks and no
+`Timer::new` returns `Result<Self, ConfigError>` in Blocking mode;
+`Timer<'d, T>` annotations retain the default Blocking mode. Construction starts stopped, with 65536 ticks and no
 prescaling. Blocking construction leaves requests disabled.
 
 Only BTIM implements the sealed `timer::OverflowInstance` capability.
-`Timer::<T, Async>::new_async(peripheral, binding)` and `try_new_async` require
-`Binding<T::Interrupt, timer::OverflowInterruptHandler<T>>`. They start stopped
+`Timer::<T, Async>::new_async(peripheral, binding)` requires
+`Binding<T::Interrupt, timer::OverflowInterruptHandler<T>>`. It starts stopped
 with only the selected bank's overflow request enabled. Call `start()` to count.
 There is no mode-switch, peripheral extraction or GTIM/ATIM Async construction
 path through this API.
@@ -96,7 +96,7 @@ Thus safe reborrow reconstruction after a forgotten Async owner cannot leave
 the old ISR ownership active. Pure validation fails before this transaction
 and does not retire that prior state. A failed constructor consumes its token
 unless the caller used `reborrow()`; existing clock-gate failure still panics,
-including through `try_new_async`. No new RCC recovery behavior is promised.
+including through `new_async`. No new RCC recovery behavior is promised.
 
 Drop in either mode retires active state, stops the selected bank, disables
 its requests and clears its software latch in one critical section. Inherited

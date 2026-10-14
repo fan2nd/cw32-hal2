@@ -32,7 +32,8 @@ fn main() -> ! {
         None,
         Hertz(38_000),
         CountingMode::EdgeAlignedUp,
-    );
+    )
+    .unwrap();
     let mut bursts = SimplePwm::new(
         p.GTIM2,
         None,
@@ -41,7 +42,8 @@ fn main() -> ! {
         None,
         Hertz(1_000),
         CountingMode::EdgeAlignedUp,
-    );
+    )
+    .unwrap();
     let carrier_duty = carrier.max_duty_cycle() / 5;
     carrier.ch1().set_duty_cycle(carrier_duty);
     carrier.ch1().enable();

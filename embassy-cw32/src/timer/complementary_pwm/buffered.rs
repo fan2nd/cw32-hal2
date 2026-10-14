@@ -138,47 +138,14 @@ pub struct ComplementaryPwm<'d, T: ComplementaryInstance> {
 }
 impl<'d, T: ComplementaryInstance> ComplementaryPwm<'d, T> {
     /// Construct a running counter with all channel gates and MOE disabled.
-    /// Panics if frequency/dead time is unsupported or cycle timing is unqualified.
     /// Output polarity is active high.
-    #[allow(clippy::too_many_arguments)]
-    pub fn new(
-        tim: Peri<'d, T>,
-        ch1: Option<PwmPin<'d, T, Ch1>>,
-        ch1n: Option<ComplementaryPwmPin<'d, T, Ch1>>,
-        ch2: Option<PwmPin<'d, T, Ch2>>,
-        ch2n: Option<ComplementaryPwmPin<'d, T, Ch2>>,
-        ch3: Option<PwmPin<'d, T, Ch3>>,
-        ch3n: Option<ComplementaryPwmPin<'d, T, Ch3>>,
-        ch4: Option<PwmPin<'d, T, Ch4>>,
-        ch4n: Option<ComplementaryPwmPin<'d, T, Ch4>>,
-        break_input: Option<BreakInput<'d, T>>,
-        frequency: Hertz,
-        counting_mode: CountingMode,
-        config: Config,
-    ) -> Self {
-        Self::try_new(
-            tim,
-            ch1,
-            ch1n,
-            ch2,
-            ch2n,
-            ch3,
-            ch3n,
-            ch4,
-            ch4n,
-            break_input,
-            frequency,
-            counting_mode,
-            config,
-        )
-        .unwrap_or_else(|_| panic!("unsupported complementary PWM configuration"))
-    }
-    /// Checked construction. Pin wrappers disconnect their pads before this call;
+    ///
+    /// Pin wrappers disconnect their pads before this call;
     /// errors consume tokens and leave those pads disconnected. Use reborrows to
     /// retain ownership after errors. No timer registers or output connections
     /// change on invalid timing, including rate-only sources and zero dead time.
     #[allow(clippy::too_many_arguments)]
-    pub fn try_new(
+    pub fn new(
         tim: Peri<'d, T>,
         ch1: Option<PwmPin<'d, T, Ch1>>,
         ch1n: Option<ComplementaryPwmPin<'d, T, Ch1>>,

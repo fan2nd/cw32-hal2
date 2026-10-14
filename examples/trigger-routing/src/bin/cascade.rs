@@ -10,8 +10,8 @@ use embassy_cw32::{
 #[cortex_m_rt::entry]
 fn main() -> ! {
     let p = hal::init(Default::default());
-    let source = Btim1Update::try_new(p.BTIM1, Prescaler::Div64, 1000).unwrap();
-    let mut cascade = Btim2Cascade::try_new(source, p.BTIM2, 100).unwrap();
+    let source = Btim1Update::new(p.BTIM1, Prescaler::Div64, 1000).unwrap();
+    let mut cascade = Btim2Cascade::new(source, p.BTIM2, 100).unwrap();
     let interval = (cascade.clock_divisor(), cascade.kernel_clock_bounds());
     cascade.start();
     loop {

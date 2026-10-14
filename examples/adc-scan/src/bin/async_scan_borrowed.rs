@@ -26,7 +26,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
     let mut config = Config::default();
     config.vdda_mv = 3000;
     config.frequency = Hertz(24_000_000);
-    let mut adc = Adc::try_new_async(p.ADC, Irqs, config).unwrap();
+    let mut adc = Adc::new_async(p.ADC, Irqs, config).unwrap();
     let mut first = p.PA0;
     let mut second = p.PA1;
     let temperature = adc.enable_temperature().degrade_adc();

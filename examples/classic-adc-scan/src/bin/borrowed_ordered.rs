@@ -29,7 +29,7 @@ fn main() -> ! {
     let p = hal::init(hal::Config::default());
     let mut config = Config::default();
     config.vdda_mv = 3300;
-    let mut adc = Adc::try_new_blocking(p.ADC, config).unwrap();
+    let mut adc = Adc::new_blocking(p.ADC, config).unwrap();
     let (mut first_pin, mut second_pin) = include!(concat!(env!("OUT_DIR"), "/channel-pins.rs"));
     let mut supply = adc.enable_vdda();
     loop {

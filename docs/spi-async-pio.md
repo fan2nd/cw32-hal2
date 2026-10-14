@@ -1,7 +1,7 @@
 # IRQ PIO SPI byte master
 
 F020, F002, F003, L010, L011, L012, L031, R031, W031 and L052 provide
-`Spi<'d, Async, Master>::new_async` and `try_new_async` with ordinary borrowed
+`Spi<'d, Async, Master>::new_async` with ordinary borrowed
 peripheral/pin owners and caller buffers. This is an explicitly qualified
 interrupt-assisted PIO implementation. F020/L031/L052/R031/W031 additionally
 have the Stage93 [staged DMA extension](spi-dma.md), whose separate main software
@@ -48,9 +48,8 @@ F030/A030/L083 remain DMA-only; F002/F003/L010/L011 remain PIO-only. Generic
 without exact memory metadata; its existing PIO scope is unchanged.
 
 The constructors take the peripheral, SCK, MOSI, MISO, typed IRQ binding and
-`Config`, in that order. `try_new_async` validates before changing peripheral
-or pins and returns `ConfigError`; `new_async` follows the existing panic-on-
-invalid-configuration convention. The owner retains its `Peri<'d, T>` and all
+`Config`, in that order. `new_async` validates before changing peripheral
+or pins and returns `Result<Self, ConfigError>` for explicit caller handling. The owner retains its `Peri<'d, T>` and all
 three `Flex<'d>` pins. No `'static` tokens, DMA channels or private staging
 buffers are required. The binding must satisfy the instance's required handler,
 including the full L012 shared handler described below.

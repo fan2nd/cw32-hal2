@@ -53,7 +53,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
         examples::config(),
     )
     .unwrap_or_else(|_| examples::halt());
-    let mut spi1 = spi::Spi::try_new_async(p.SPI1, p.PA5, p.PA7, p.PA6, Irqs, examples::config())
+    let mut spi1 = spi::Spi::new_async(p.SPI1, p.PA5, p.PA7, p.PA6, Irqs, examples::config())
         .unwrap_or_else(|_| examples::halt());
 
     // All four channels remain reserved; no owner is dropped and re-admitted.

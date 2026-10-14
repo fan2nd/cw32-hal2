@@ -56,10 +56,10 @@ and uninitialized-clock validation but before acquisition/rate selection or the
 constructor's first gate, ADC/BGR, trigger/watchdog or IRQ change. L010's minimum
 ADC clock is zero; that numeric minimum cannot replace this semantic check.
 Blocking/async fallible constructors, scan timing and the existing BTIM1-triggered
-constructor share this boundary. Infallible wrappers panic on the error.
+constructor share this boundary and return errors to the caller.
 Caller-created timer owners or analog channel pins may already have changed
 hardware, and consumed tokens or earlier preparation are not restored. A rejected
-`Btim1Adc::try_new` also drops the supplied `Btim1Update`, running its existing
+`Btim1Adc::new` also drops the supplied `Btim1Update`, running its existing
 BTIM1 stop, request-disable and gate-release cleanup; the admission guard precedes
 ADC setup. Manually constructed public timing values retain their strict-helper
 preconditions.

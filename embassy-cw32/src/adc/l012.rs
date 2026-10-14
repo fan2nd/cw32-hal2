@@ -159,7 +159,7 @@ pub struct Config {
     pub vdda_mv: u16,
     /// Requested maximum ADC clock, including HSI tolerance. Only PCLK/1, /2, /4, /8 exist.
     /// L012 additionally requires at least 4 MHz. A request may therefore be
-    /// unattainable; `try_new`/`set_config`/`blocking_read` return an error.
+    /// unattainable; `new`/`set_config`/`blocking_read` return an error.
     pub frequency: Hertz,
     /// Finite polling budget for completion; not a duration in microseconds.
     pub timeout: u32,
@@ -380,10 +380,7 @@ pub struct Common<'d> {
 impl<'d> Common<'d> {
     /// Acquire the common clock with a finite poll budget, without reset.
     /// An asserted shared reset is rejected without changing any register.
-    pub fn try_new(
-        peripheral: Peri<'d, crate::peripherals::BGR>,
-        timeout: u32,
-    ) -> Result<Self, Error> {
+    pub fn new(peripheral: Peri<'d, crate::peripherals::BGR>, timeout: u32) -> Result<Self, Error> {
         crate::rcc::try_clocks().ok_or(Error::ClockNotInitialized)?;
         if timeout == 0 {
             return Err(Error::InvalidTimeout);
@@ -392,11 +389,6 @@ impl<'d> Common<'d> {
         Ok(Self {
             _peripheral: peripheral,
         })
-    }
-    /// Acquire the common clock, panicking on invalid state or gate timeout.
-    pub fn new(peripheral: Peri<'d, crate::peripherals::BGR>, timeout: u32) -> Self {
-        Self::try_new(peripheral, timeout)
-            .unwrap_or_else(|error| panic!("ADC common initialization failed: {}", error))
     }
 }
 
@@ -415,15 +407,6 @@ pub struct Adc<'d, T: Instance, M: Mode = Blocking> {
     _mode: PhantomData<M>,
 }
 impl<'d, T: Instance> Adc<'d, T, Blocking> {
-    /// Construct a blocking ADC; panic on invalid timing or sibling slave mode.
-    pub fn new(peripheral: Peri<'d, T>, common: &'d Common<'d>, config: Config) -> Self {
-        Self::try_new(peripheral, common, config)
-            .unwrap_or_else(|error| panic!("ADC initialization failed: {}", error))
-    }
-    /// Explicit blocking constructor.
-    pub fn new_blocking(peripheral: Peri<'d, T>, common: &'d Common<'d>, config: Config) -> Self {
-        Self::new(peripheral, common, config)
-    }
     /// Validate before converter writes, then wait at least 50 us for
     /// analog/BGR startup. Reject inherited slave-mode configuration on the
     /// sibling: starting this ADC must never start an unowned converter.
@@ -431,7 +414,7 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
     /// ADC2 first retires a forgotten async owner with bounded local cleanup.
     /// Cleanup failure remains terminal; blocking construction does not admit
     /// or reserve the shared DAC interrupt.
-    pub fn try_new(
+    pub fn new(
         peripheral: Peri<'d, T>,
         common: &'d Common<'d>,
         config: Config,
@@ -475,12 +458,12 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
     }
 
     /// Fallible explicit blocking constructor.
-    pub fn try_new_blocking(
+    pub fn new_blocking(
         peripheral: Peri<'d, T>,
         common: &'d Common<'d>,
         config: Config,
     ) -> Result<Self, Error> {
-        Self::try_new(peripheral, common, config)
+        Self::new(peripheral, common, config)
     }
     /// Read a verified pin or internal source. GPIO preparation can happen
     /// before timing rejection; the ADC itself remains unchanged on rejection.
@@ -638,18 +621,6 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
     }
 }
 impl<'d, T: AsyncInstance> Adc<'d, T, Async> {
-    /// Construct an interrupt-driven software ADC; panic on setup failure.
-    /// The IRQ must be bound to `InterruptHandler<T>` with `bind_interrupts!`.
-    pub fn new_async(
-        peripheral: Peri<'d, T>,
-        common: &'d Common<'d>,
-        irqs: impl Binding<T::Interrupt, InterruptHandler<T>> + 'd,
-        config: Config,
-    ) -> Self {
-        Self::try_new_async(peripheral, common, irqs, config)
-            .unwrap_or_else(|error| panic!("ADC initialization failed: {}", error))
-    }
-
     /// Validate before converter writes, preserving shared BGR/TS and its clock.
     /// Inherited hardware triggers or watchdog enables are rejected without
     /// changing their configuration or flags. Raw PAC code must not concurrently
@@ -664,7 +635,8 @@ impl<'d, T: AsyncInstance> Adc<'d, T, Async> {
     /// Current safe DAC construction, set/read and drop preserve zero interrupt
     /// enables, so direct outputs may coexist without borrowing the DAC token.
     /// Raw DAC interrupt/control writers require coordination outside this API.
-    pub fn try_new_async(
+    /// The IRQ must be bound to `InterruptHandler<T>` with `bind_interrupts!`.
+    pub fn new_async(
         peripheral: Peri<'d, T>,
         common: &'d Common<'d>,
         _irqs: impl Binding<T::Interrupt, InterruptHandler<T>> + 'd,

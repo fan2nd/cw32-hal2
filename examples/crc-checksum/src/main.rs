@@ -24,7 +24,7 @@ fn panic(_: &core::panic::PanicInfo) -> ! {
 #[entry]
 fn main() -> ! {
     let p = hal::init(hal::Config::default());
-    let mut crc = Crc::new(p.CRC, Config::default());
+    let mut crc = Crc::new(p.CRC, Config::default()).unwrap();
 
     // All selections calculate the checksum of the bytes "CW32 CRC".
     crc.reset();

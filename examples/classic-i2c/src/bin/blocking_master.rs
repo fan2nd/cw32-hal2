@@ -40,7 +40,7 @@ fn main() -> ! {
     #[cfg(feature = "cw32f002f3p7")]
     let p = hal::try_init(Default::default()).unwrap_or_else(|_| examples::halt());
     let (peripheral, scl, sda) = examples::primary_pins!(p);
-    let mut primary = I2c::try_new_blocking(peripheral, scl, sda, examples::config())
+    let mut primary = I2c::new_blocking(peripheral, scl, sda, examples::config())
         .unwrap_or_else(|_| examples::halt());
     #[cfg(any(
         feature = "cw32f030c8t7",
@@ -51,7 +51,7 @@ fn main() -> ! {
     ))]
     let mut secondary = {
         let (peripheral, scl, sda) = examples::secondary_pins!(p);
-        I2c::try_new_blocking(peripheral, scl, sda, examples::config())
+        I2c::new_blocking(peripheral, scl, sda, examples::config())
             .unwrap_or_else(|_| examples::halt())
     };
 

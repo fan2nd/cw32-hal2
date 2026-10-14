@@ -25,7 +25,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
     config.vdda_mv = 3000;
     config.frequency = Hertz(24_000_000);
     // Config.timeout only bounds synchronous register polls, not the await.
-    let mut adc = Adc::try_new_async(p.ADC, Irqs, config).unwrap();
+    let mut adc = Adc::new_async(p.ADC, Irqs, config).unwrap();
     let mut input = p.PA0;
     loop {
         match with_timeout(

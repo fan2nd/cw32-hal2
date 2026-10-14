@@ -38,7 +38,7 @@ fn main() -> ! {
     let p = hal::try_init(Default::default()).unwrap_or_else(|_| examples::halt());
     let (peripheral, sck, mosi, miso, cs) = examples::primary_pins!(p);
     let mut primary_cs = Output::new(cs, Level::High, examples::cs_speed());
-    let mut primary = Spi::try_new_blocking(peripheral, sck, mosi, miso, examples::config())
+    let mut primary = Spi::new_blocking(peripheral, sck, mosi, miso, examples::config())
         .unwrap_or_else(|_| examples::halt());
     #[cfg(any(
         feature = "cw32f020c6u7",
@@ -49,7 +49,7 @@ fn main() -> ! {
     let (mut secondary, mut secondary_cs) = {
         let (peripheral, sck, mosi, miso, cs) = examples::secondary_pins!(p);
         let cs = Output::new(cs, Level::High, examples::cs_speed());
-        let bus = Spi::try_new_blocking(peripheral, sck, mosi, miso, examples::config())
+        let bus = Spi::new_blocking(peripheral, sck, mosi, miso, examples::config())
             .unwrap_or_else(|_| examples::halt());
         (bus, cs)
     };
@@ -57,7 +57,7 @@ fn main() -> ! {
     let (mut tertiary, mut tertiary_cs) = {
         let (peripheral, sck, mosi, miso, cs) = examples::tertiary_pins!(p);
         let cs = Output::new(cs, Level::High, examples::cs_speed());
-        let bus = Spi::try_new_blocking(peripheral, sck, mosi, miso, examples::config())
+        let bus = Spi::new_blocking(peripheral, sck, mosi, miso, examples::config())
             .unwrap_or_else(|_| examples::halt());
         (bus, cs)
     };

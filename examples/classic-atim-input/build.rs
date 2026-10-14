@@ -111,13 +111,13 @@ fn main() {
         .join(", ");
     fs::write(
         out.join("capture-constructor.rs"),
-        format!("ClassicAtimInputCapture::new(p.ATIM, {wrappers}, Hertz(1_000_000))"),
+        format!("ClassicAtimInputCapture::new(p.ATIM, {wrappers}, Hertz(1_000_000)).unwrap()"),
     )
     .unwrap();
     fs::write(
         out.join("qei-constructor.rs"),
         format!(
-            "ClassicAtimQei::new(p.ATIM, p.{}, p.{}, ClassicAtimQeiConfig::default())",
+            "ClassicAtimQei::new(p.ATIM, p.{}, p.{}, ClassicAtimQeiConfig::default()).unwrap()",
             canonical_pins[0], canonical_pins[1]
         ),
     )

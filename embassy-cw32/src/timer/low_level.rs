@@ -340,14 +340,10 @@ pub struct Timer<'d, T: BasicInstance, M: Mode = Blocking> {
     pub(crate) bounds: crate::rcc::ClockBounds,
 }
 impl<'d, T: BasicInstance> Timer<'d, T, Blocking> {
-    /// Construct a stopped timer, panicking if RCC has not been initialized.
-    pub fn new(peripheral: Peri<'d, T>) -> Self {
-        Self::try_new(peripheral).unwrap_or_else(|e| panic!("invalid timer configuration: {}", e))
-    }
     /// Construct a stopped timer. On failure the token is consumed; use
     /// `reborrow()` if it should remain available after the attempt.
-    pub fn try_new(peripheral: Peri<'d, T>) -> Result<Self, ConfigError> {
-        Self::try_new_inner(peripheral)
+    pub fn new(peripheral: Peri<'d, T>) -> Result<Self, ConfigError> {
+        Self::new_inner(peripheral)
     }
     pub(crate) fn new_configured(
         peripheral: Peri<'d, T>,
@@ -355,30 +351,21 @@ impl<'d, T: BasicInstance> Timer<'d, T, Blocking> {
         bounds: crate::rcc::ClockBounds,
         timing: Timing,
     ) -> Self {
-        Self::new_inner(peripheral, clock, bounds, timing)
+        Self::from_validated_config(peripheral, clock, bounds, timing)
     }
 }
 impl<'d, T: OverflowInstance> Timer<'d, T, Async> {
-    /// Construct a stopped counter with continuous overflow interrupts enabled.
-    /// Panics if its configuration or clock gate is unavailable.
+    /// Construct a stopped counter with only its overflow request enabled. Pure
+    /// validation errors make no state/register changes but consume the token;
+    /// use `reborrow()` to retain it. Clock-gate failure still panics.
     ///
     /// On a shared vector, dispatch every independently enabled partner source
     /// through its own handler; an omitted source can repeatedly interrupt.
     pub fn new_async(
         peripheral: Peri<'d, T>,
-        irq: impl Binding<T::Interrupt, OverflowInterruptHandler<T>>,
-    ) -> Self {
-        Self::try_new_async(peripheral, irq)
-            .unwrap_or_else(|e| panic!("invalid timer configuration: {}", e))
-    }
-    /// Construct a stopped counter with only its overflow request enabled. Pure
-    /// validation errors make no state/register changes but consume the token;
-    /// use `reborrow()` to retain it. Clock-gate failure still panics.
-    pub fn try_new_async(
-        peripheral: Peri<'d, T>,
         _irq: impl Binding<T::Interrupt, OverflowInterruptHandler<T>>,
     ) -> Result<Self, ConfigError> {
-        let this = Self::try_new_inner(peripheral)?;
+        let this = Self::new_inner(peripheral)?;
         critical_section::with(|cs| {
             // Common initialization has already retired any forgotten owner.
             // Until this transaction the bank remains stopped and inactive.
@@ -429,16 +416,18 @@ impl<T: OverflowInstance, M: Mode> Timer<'_, T, M> {
     }
 }
 impl<'d, T: BasicInstance, M: Mode> Timer<'d, T, M> {
-    fn try_new_inner(peripheral: Peri<'d, T>) -> Result<Self, ConfigError> {
+    fn new_inner(peripheral: Peri<'d, T>) -> Result<Self, ConfigError> {
         let clock = crate::rcc::bus_frequency::<T>().ok_or(ConfigError::ClockNotInitialized)?;
         let bounds = crate::rcc::bus_clock_bounds::<T>().ok_or(ConfigError::ClockNotInitialized)?;
         if clock.0 == 0 {
             return Err(ConfigError::ClockNotInitialized);
         }
         let timing = Timing::new(Prescaler::Div1, 65536).unwrap();
-        Ok(Self::new_inner(peripheral, clock, bounds, timing))
+        Ok(Self::from_validated_config(
+            peripheral, clock, bounds, timing,
+        ))
     }
-    fn new_inner(
+    fn from_validated_config(
         peripheral: Peri<'d, T>,
         clock: Hertz,
         bounds: crate::rcc::ClockBounds,

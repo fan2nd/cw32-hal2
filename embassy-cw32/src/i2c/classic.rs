@@ -186,28 +186,17 @@ pub struct I2c<'d, M: Mode> {
     _mode: PhantomData<M>,
 }
 impl<'d> I2c<'d, Blocking> {
-    /// Construct a blocking master, panicking on invalid clock/configuration.
+    /// Construct a blocking master; invalid configuration is rejected before MMIO.
+    ///
+    /// Tokens are consumed on error too; pass `reborrow()` when needed afterward.
+    /// This does not enable the NVIC I2C interrupt. Do not independently unmask it.
     pub fn new_blocking<T: Instance>(
         peripheral: Peri<'d, T>,
         scl: Peri<'d, impl SclPin<T>>,
         sda: Peri<'d, impl SdaPin<T>>,
         config: Config,
-    ) -> Self {
-        Self::try_new_blocking(peripheral, scl, sda, config)
-            .unwrap_or_else(|error| panic!("invalid I2C configuration: {}", error))
-    }
-
-    /// Construct a blocking master; invalid configuration is rejected before MMIO.
-    ///
-    /// Tokens are consumed on error too; pass `reborrow()` when needed afterward.
-    /// This does not enable the NVIC I2C interrupt. Do not independently unmask it.
-    pub fn try_new_blocking<T: Instance>(
-        peripheral: Peri<'d, T>,
-        scl: Peri<'d, impl SclPin<T>>,
-        sda: Peri<'d, impl SdaPin<T>>,
-        config: Config,
     ) -> Result<Self, ConfigError> {
-        Self::try_new_inner(peripheral, scl, sda, config, false)
+        Self::new_inner(peripheral, scl, sda, config, false)
     }
 
     /// Read with an unshifted seven-bit address. An empty buffer is rejected.
@@ -247,7 +236,7 @@ impl<'d> I2c<'d, Blocking> {
     }
 }
 impl<'d, M: Mode> I2c<'d, M> {
-    fn try_new_inner<T: Instance>(
+    fn new_inner<T: Instance>(
         peripheral: Peri<'d, T>,
         scl: Peri<'d, impl SclPin<T>>,
         sda: Peri<'d, impl SdaPin<T>>,
@@ -550,28 +539,16 @@ enum Lifecycle {
 }
 
 impl<'d> I2c<'d, Async> {
-    /// Construct an interrupt-driven master, panicking on invalid configuration.
-    pub fn new_async<T: Instance>(
-        peripheral: Peri<'d, T>,
-        scl: Peri<'d, impl SclPin<T>>,
-        sda: Peri<'d, impl SdaPin<T>>,
-        irqs: impl Binding<T::Interrupt, InterruptHandler<T>> + 'd,
-        config: Config,
-    ) -> Self {
-        Self::try_new_async(peripheral, scl, sda, irqs, config)
-            .unwrap_or_else(|error| panic!("invalid I2C configuration: {}", error))
-    }
-
     /// Construct with the instance's dedicated GLOBAL interrupt binding.
     /// Tokens are consumed on error; use `reborrow()` if needed afterward.
-    pub fn try_new_async<T: Instance>(
+    pub fn new_async<T: Instance>(
         peripheral: Peri<'d, T>,
         scl: Peri<'d, impl SclPin<T>>,
         sda: Peri<'d, impl SdaPin<T>>,
         _irqs: impl Binding<T::Interrupt, InterruptHandler<T>> + 'd,
         config: Config,
     ) -> Result<Self, ConfigError> {
-        Self::try_new_inner(peripheral, scl, sda, config, true)
+        Self::new_inner(peripheral, scl, sda, config, true)
     }
 
     /// Read using an unshifted seven-bit address; empty reads are rejected.

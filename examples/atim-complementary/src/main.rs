@@ -54,7 +54,8 @@ fn main() -> ! {
         Hertz(1_000),
         CountingMode::EdgeAlignedUp,
         Config { dead_time_ns: 500 },
-    );
+    )
+    .unwrap();
     pwm.set_duty(Channel::Ch1, pwm.get_max_duty() / 4);
     pwm.enable(Channel::Ch1);
     pwm.set_master_output_enable(true);

@@ -79,24 +79,9 @@ pub struct InputCapture<'d, T: InputInstance> {
     config: [ChannelConfig; 4],
 }
 impl<'d, T: InputInstance> InputCapture<'d, T> {
-    /// Construct polling capture. `freq` is a maximum counter tick rate, not
-    /// the overflow rate. The qualified upper PCLK bound selects a power-of-two
-    /// prescaler (1…32768). Panics for an unrepresentable request.
-    pub fn new(
-        tim: Peri<'d, T>,
-        ch1: Option<CaptureInput<'d, T, Ch1>>,
-        ch2: Option<CaptureInput<'d, T, Ch2>>,
-        ch3: Option<CaptureInput<'d, T, Ch3>>,
-        ch4: Option<CaptureInput<'d, T, Ch4>>,
-        freq: Hertz,
-        counting_mode: CountingMode,
-    ) -> Self {
-        Self::try_new(tim, ch1, ch2, ch3, ch4, freq, counting_mode)
-            .unwrap_or_else(|e| panic!("invalid capture configuration: {}", e))
-    }
     /// Checked construction. Invalid rates do not configure the timer. Pin
     /// wrappers have already selected digital inputs and disconnect on error.
-    pub fn try_new(
+    pub fn new(
         tim: Peri<'d, T>,
         ch1: Option<CaptureInput<'d, T, Ch1>>,
         ch2: Option<CaptureInput<'d, T, Ch2>>,
@@ -336,28 +321,11 @@ pub struct ClassicAtimInputCapture<'d, T: ClassicAtimInputInstance> {
 }
 #[cfg(atim_classic_input)]
 impl<'d, T: ClassicAtimInputInstance> ClassicAtimInputCapture<'d, T> {
-    /// Construct polling capture. `freq` is the maximum counter tick rate, not
-    /// the overflow rate. Panics if the request cannot be represented using the
-    /// native /1, /2, /4, /8, /16, /32, /64 or /256 prescaler.
-    pub fn new(
-        tim: Peri<'d, T>,
-        ch1a: Option<ClassicAtimCaptureInput<'d, T, Ch1A>>,
-        ch1b: Option<ClassicAtimCaptureInput<'d, T, Ch1B>>,
-        ch2a: Option<ClassicAtimCaptureInput<'d, T, Ch2A>>,
-        ch2b: Option<ClassicAtimCaptureInput<'d, T, Ch2B>>,
-        ch3a: Option<ClassicAtimCaptureInput<'d, T, Ch3A>>,
-        ch3b: Option<ClassicAtimCaptureInput<'d, T, Ch3B>>,
-        freq: Hertz,
-    ) -> Self {
-        Self::try_new(tim, ch1a, ch1b, ch2a, ch2b, ch3a, ch3b, freq)
-            .unwrap_or_else(|e| panic!("invalid classic ATIM capture configuration: {}", e))
-    }
-
     /// Validate the clock and tick-rate ceiling before configuring the timer.
     /// Tokens are consumed on error; use `reborrow()` to retain them. Supplied
     /// wrappers have already selected digital inputs and disconnect on error.
     /// Passing no capture inputs is allowed.
-    pub fn try_new(
+    pub fn new(
         tim: Peri<'d, T>,
         ch1a: Option<ClassicAtimCaptureInput<'d, T, Ch1A>>,
         ch1b: Option<ClassicAtimCaptureInput<'d, T, Ch1B>>,
