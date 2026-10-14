@@ -71,6 +71,20 @@ functions:
       - path: docs/uart-l012-nine-bit.md
       - path: embassy-cw32/src/usart.rs
         anchor: pub async fn write_u16
+    - id: single_wire_half_duplex
+      status: partial
+      scope: L012 ordinary HalfDuplexUart blocking and IRQ PIO over one owned TXD pin, open-drain AF with required external pull-up.
+      implemented_families:
+      - CW32L012
+      limitations:
+      - Only existing UART, package, baud, frame and IRQ qualification. No RXD pin, split, DMA, ring, flow-control, mode conversion or embedded-io wrapper API.
+      - Reads first flush output; valid empty reads also flush and may wait indefinitely. Nine-bit byte-read mismatch rejects before flushing. Hardware performs direction return; no software direction toggle.
+      - Peer turn-taking is the application responsibility; no arbitration, collision detection, response-time, electrical or lossless guarantee. Drop may truncate transmission.
+      - Current software acceptance is recorded in docs/uart-dac-extensions-validation.md; publication requires the containing commit; existing DMA, other-family and low-power limitations are unchanged.
+      evidence:
+      - path: docs/uart-l012-half-duplex.md
+      - path: embassy-cw32/src/usart.rs
+        anchor: pub struct HalfDuplexUart
     - id: rts_cts
       status: partial
       scope: Full owned RTS+CTS flow control.
@@ -174,7 +188,7 @@ functions:
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.
       limitations:
-      - Nine-bit beyond the separately declared L012 ordinary PIO subset, half-duplex, LIN, auto-baud, RS485 direction, synchronous and low-power modes require separate
+      - Nine-bit beyond the separately declared L012 ordinary PIO subset, half-duplex beyond the separately declared L012 single-wire subset, LIN, auto-baud, RS485 direction, synchronous and low-power modes require separate
         qualification; per-instance hardware presence is not universally asserted.
     - id: safe_peripheral_dma
       status: experimental_partial
@@ -1403,7 +1417,21 @@ functions:
       status: partial
       scope: Direct unbuffered eight/twelve-bit external output.
       limitations:
-      - No trigger, DMA, waveform, independent channel split, calibration or analog settling/accuracy guarantee.
+      - No hardware-trigger routing, DMA, waveform, independently owned channel split, calibration or analog settling/accuracy guarantee. Borrowed views and software loading are separately declared.
+    - id: borrowed_channels_software_trigger
+      status: partial
+      scope: L012 DAC borrowed disjoint direct-loading channel views and explicit consuming conversion to software-triggered digital loading.
+      implemented_families:
+      - CW32L012
+      limitations:
+      - split returns optional fixed-channel proxies only for enabled outputs. Parent peripheral/pins retain ownership; views cannot outlive the parent borrow and have no hardware Drop action.
+      - SoftwareTriggeredDac stages values and submits one zero-seeded SWTRIG command. Either pending channel rejects new stage/trigger. Observed SWTRIG self-clear proves only DHR-to-DOR digital loading, not analog settling.
+      - Poll budgets count reads, not time. Timeout retains owner/mode; Drop uses existing output-disable requests without a pipeline-drain promise. No simultaneous update, DMA waveform, IRQ or new analog qualification.
+      - Current software acceptance is recorded in docs/uart-dac-extensions-validation.md; publication requires the containing commit; ADC2 shared-vector quiet-peer constraint and original board/pin limits remain.
+      evidence:
+      - path: docs/dac-channel-software-trigger.md
+      - path: embassy-cw32/src/dac.rs
+        anchor: pub struct SoftwareTriggeredDac
     - id: safe_peripheral_dma
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

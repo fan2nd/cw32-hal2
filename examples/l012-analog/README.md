@@ -29,3 +29,8 @@ establish hardware correctness or low-power wakeup. See
 
 Build for either `cw32l012c8t6` or `cw32l012c8u6`, for example:
 `cargo build --release --target thumbv6m-none-eabi --no-default-features --features cw32l012c8t6 --bin comparator_edges`.
+
+DAC additions: `dac_split` demonstrates borrowed fixed-channel set/read handles;
+`dac_software_trigger` stages and explicitly loads each channel. A completed
+software trigger proves only digital loading, not analog settling or simultaneous
+outputs. See [the ownership and loading contract](../../docs/dac-channel-software-trigger.md).

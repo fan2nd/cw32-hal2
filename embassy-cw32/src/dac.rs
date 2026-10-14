@@ -1,4 +1,4 @@
-//! L012 direct-loading DAC, with exclusive peripheral and external pin ownership.
+//! L012 direct/software-triggered DAC, with exclusive peripheral and pin ownership.
 //!
 //! VDDA is the reference and must equal VDD. The supported supply is 1.7..5.5 V.
 //! The DAC is unbuffered: the datasheet gives a 5 kΩ minimum resistive load and
@@ -26,6 +26,7 @@
 use crate::gpio::{Flex, Pin};
 use crate::rcc::{RccPeripheral, SealedRccPeripheral};
 use crate::{Peri, PeripheralType, pac, peripherals};
+use core::marker::PhantomData;
 
 /// Board-declared VDDA; this is not a measurement.
 #[derive(Clone, Copy, Debug)]
@@ -82,6 +83,13 @@ pub enum Error {
     ChannelDisabled,
     /// A twelve-bit sample exceeded [`MAX_CODE`].
     ValueOutOfRange,
+    /// A software trigger is still pending; no new sample/trigger was written.
+    TriggerPending,
+    InvalidPollBudget,
+    /// Digital loading was not observed within the status-read budget.
+    TriggerTimeout,
+    /// Software-trigger configuration did not match the owned mode.
+    ModeMismatch,
 }
 
 /// Whole-DAC owner with one or two owned output pins.
@@ -90,6 +98,119 @@ pub struct Dac<'d, T: Instance> {
     _ch1: Option<Flex<'d>>,
     _ch2: Option<Flex<'d>>,
 }
+/// Fixed-channel view borrowing the whole DAC owner exclusively. Neither Copy
+/// nor Clone. Dropping this view does not disable an output or release its pin.
+/// Only `Dac::split` constructs views; no two views address the same channel.
+pub struct DacChannel<'a, 'd, T: Instance, const C: u8> {
+    _owner: PhantomData<&'a mut Dac<'d, T>>,
+}
+impl<T: Instance, const C: u8> DacChannel<'_, '_, T, C> {
+    pub fn set(&mut self, value: Value) -> Result<(), Error> {
+        Dac::<T>::set_channel(if C == 1 { Channel::Ch1 } else { Channel::Ch2 }, value)
+    }
+    pub fn read(&self) -> u16 {
+        Dac::<T>::read_channel(if C == 1 { Channel::Ch1 } else { Channel::Ch2 })
+    }
+}
+
+/// Explicit software-trigger mode. Staging does not load the output until a
+/// trigger. Completion observes digital DHR-to-DOR loading, never analog settling.
+/// Owns the original DAC and pins; no source/DMA/interrupt ownership is added.
+/// Drop requests both outputs/channels disabled, even after a trigger timeout.
+/// It does not prove command abort, pipeline drain or analog settling, and
+/// cannot undo an output already loaded. No caller-memory pointer is retained.
+pub struct SoftwareTriggeredDac<'d, T: Instance> {
+    inner: Dac<'d, T>,
+}
+impl<T: Instance> SoftwareTriggeredDac<'_, T> {
+    fn check_mode(&self) -> Result<(), Error> {
+        let r = T::regs().cr0().read();
+        let ch1 = self.inner._ch1.is_some();
+        let ch2 = self.inner._ch2.is_some();
+        if r.en1() != ch1
+            || r.en2() != ch2
+            || r.ten1() != ch1
+            || r.ten2() != ch2
+            || r.tsel1() != pac::dac::vals::Trigger::Software
+            || r.tsel2() != pac::dac::vals::Trigger::Software
+            || r.dmaen1()
+            || r.dmaen2()
+            || r.dmaudrie1()
+            || r.dmaudrie2()
+            || r.wave1() != pac::dac::vals::Wave::Disabled
+            || r.wave2() != pac::dac::vals::Wave::Disabled
+        {
+            return Err(Error::ModeMismatch);
+        }
+        Ok(())
+    }
+    /// Stage one value. A pending trigger on either channel rejects without writing.
+    pub fn stage(&mut self, channel: Channel, value: Value) -> Result<(), Error> {
+        if matches!(value, Value::Bit12(v) if v > MAX_CODE) {
+            return Err(Error::ValueOutOfRange);
+        }
+        self.check_channel(channel)?;
+        self.check_mode()?;
+        if self.is_pending() {
+            return Err(Error::TriggerPending);
+        }
+        Dac::<T>::set_channel(channel, value)
+    }
+    fn check_channel(&self, channel: Channel) -> Result<(), Error> {
+        if match channel {
+            Channel::Ch1 => self.inner._ch1.is_some(),
+            Channel::Ch2 => self.inner._ch2.is_some(),
+        } {
+            Ok(())
+        } else {
+            Err(Error::ChannelDisabled)
+        }
+    }
+    /// Current software-trigger command state, not analog readiness.
+    pub fn is_pending(&self) -> bool {
+        let r = T::regs().swtrgr().read();
+        r.swtrig1() || r.swtrig2()
+    }
+    /// Issue one selected-channel command, then observe digital loading. Zero
+    /// budget, disabled channel or a pending command submits nothing. A timeout
+    /// does not abort: use `wait_loaded` before restaging or triggering again.
+    pub fn trigger(&mut self, channel: Channel, polls: u32) -> Result<(), Error> {
+        if polls == 0 {
+            return Err(Error::InvalidPollBudget);
+        }
+        self.check_channel(channel)?;
+        self.check_mode()?;
+        if self.is_pending() {
+            return Err(Error::TriggerPending);
+        }
+        // Zero-seeded command, not RMW: never reissue another pending channel.
+        T::regs().swtrgr().write(|w| match channel {
+            Channel::Ch1 => w.set_swtrig1(true),
+            Channel::Ch2 => w.set_swtrig2(true),
+        });
+        self.wait_loaded(polls)
+    }
+    /// Observe both command bits clear without resubmitting any trigger.
+    /// The budget counts register reads, not time; no completion deadline exists.
+    pub fn wait_loaded(&mut self, polls: u32) -> Result<(), Error> {
+        if polls == 0 {
+            return Err(Error::InvalidPollBudget);
+        }
+        self.check_mode()?;
+        for _ in 0..polls {
+            if !self.is_pending() {
+                return Ok(());
+            }
+            core::hint::spin_loop();
+        }
+        Err(Error::TriggerTimeout)
+    }
+    /// Digital output register snapshot, not a voltage/settling measurement.
+    pub fn read(&self, channel: Channel) -> u16 {
+        self.inner.read(channel)
+    }
+}
+
 impl<'d, T: Instance> Dac<'d, T> {
     /// Enable both outputs at zero code. Return does not imply analog settling.
     pub fn new<P1: OutputPin<T, 1>, P2: OutputPin<T, 2>>(
@@ -142,6 +263,42 @@ impl<'d, T: Instance> Dac<'d, T> {
             _ch2: Some(pin),
         })
     }
+    /// Borrow disjoint fixed-channel views. Disabled constructor channels yield
+    /// None. The parent cannot be used or dropped while a view remains in use.
+    pub fn split(
+        &mut self,
+    ) -> (
+        Option<DacChannel<'_, 'd, T, 1>>,
+        Option<DacChannel<'_, 'd, T, 2>>,
+    ) {
+        (
+            self._ch1.as_ref().map(|_| DacChannel {
+                _owner: PhantomData,
+            }),
+            self._ch2.as_ref().map(|_| DacChannel {
+                _owner: PhantomData,
+            }),
+        )
+    }
+    /// Consume this direct-loading owner and select software-triggered loading.
+    /// No implicit trigger is sent. A preceding direct-mode write may still
+    /// finish loading; conversion does not drain that earlier update.
+    /// On failure the consumed owner performs its ordinary output-disable Drop.
+    pub fn into_software_triggered(self) -> Result<SoftwareTriggeredDac<'d, T>, Error> {
+        let pending = T::regs().swtrgr().read();
+        if pending.swtrig1() || pending.swtrig2() {
+            return Err(Error::TriggerPending);
+        }
+        T::regs().cr0().modify(|w| {
+            w.set_ten1(self._ch1.is_some());
+            w.set_ten2(self._ch2.is_some());
+            w.set_tsel1(pac::dac::vals::Trigger::Software);
+            w.set_tsel2(pac::dac::vals::Trigger::Software);
+        });
+        let owner = SoftwareTriggeredDac { inner: self };
+        owner.check_mode()?;
+        Ok(owner)
+    }
     fn prepare(config: Config, ch1: bool, ch2: bool) -> Result<(), Error> {
         let (min, max) = supply_voltage_range_mv();
         if !(min..=max).contains(&config.supply_mv) {
@@ -188,6 +345,9 @@ impl<'d, T: Instance> Dac<'d, T> {
     /// Load a sample directly; hardware transfers DHR to DOR after one dac_pclk.
     /// This is not an analog-settling wait and performs no trigger/DMA operation.
     pub fn set(&mut self, channel: Channel, value: Value) -> Result<(), Error> {
+        Self::set_channel(channel, value)
+    }
+    fn set_channel(channel: Channel, value: Value) -> Result<(), Error> {
         if matches!(value,Value::Bit12(v) if v>MAX_CODE) {
             return Err(Error::ValueOutOfRange);
         }
@@ -210,6 +370,9 @@ impl<'d, T: Instance> Dac<'d, T> {
     /// Read the 12-bit digital output register. It may lag a just-written sample;
     /// it does not qualify analog voltage, calibration, startup or settling.
     pub fn read(&self, channel: Channel) -> u16 {
+        Self::read_channel(channel)
+    }
+    fn read_channel(channel: Channel) -> u16 {
         match channel {
             Channel::Ch1 => T::regs().dor1().read().data(),
             Channel::Ch2 => T::regs().dor2().read().data(),

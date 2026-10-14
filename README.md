@@ -68,6 +68,18 @@ publication to main; the first batch's receipt is not reused as validation. Exis
 other-family exclusions and numerical/electrical limits remain in force.
 No hardware execution or low-power/RF capability is claimed.
 
+## Third software API batch
+
+The current source implements [L012 single-wire UART half-duplex](docs/uart-l012-half-duplex.md)
+with one owned open-drain TXD pin and an external pull-up, and
+[borrowed DAC channel views plus explicit software-triggered loading](docs/dac-channel-software-trigger.md)
+on the existing L012 DAC scope. These additions passed [separate software
+acceptance](docs/uart-dac-extensions-validation.md): 113 library and 54 example build
+commands, 33 API expectations and focused host checks. Publication is confirmed
+by the containing commit, not this receipt. Read-before-receive UART flushing is not bus
+arbitration; DAC digital load completion is not analog settling. No new DMA,
+clock, pin, electrical, low-power or RF qualification is claimed.
+
 ## Workspace
 
 - `cw32-data/`: curated versioned register YAML, chip/source manifests, verified
