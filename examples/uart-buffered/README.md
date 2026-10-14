@@ -121,3 +121,11 @@ hardware generation, and all 905 generated hardware files stayed unchanged.
 At main acceptance clean had not run; final-package completion requires a
 separate final-source three-library/three-ELF clean receipt and the five focused
 gates, as detailed in the [buffered receive contract](../../docs/uart-buffered-rx.md).
+
+## Borrowed receive prefixes
+
+The `split` example uses `embedded_io_async::BufRead::fill_buf` and `consume`.
+It holds an RX prefix while awaiting a write through the independent TX half,
+then releases exactly that prefix. IRQs can append into free slots meanwhile,
+but holding the prefix too long can overflow the ring. The storage remains
+consumed static memory; this does not introduce nonstatic buffer reclamation.

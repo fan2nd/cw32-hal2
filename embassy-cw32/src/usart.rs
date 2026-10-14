@@ -479,38 +479,141 @@ impl State {
     }
 }
 
-// The static slice is moved here once, never copied or lifetime-erased. Every
-// field and byte access is protected by the lifecycle critical section.
+// Owns the consumed static allocation without retaining an allocation-wide
+// reference. In particular, ISR writes must not reborrow a full mutable slice
+// while fill_buf's shared prefix is live. Never expose this owner publicly.
+struct RxStorage {
+    ptr: *mut u8,
+    capacity: usize,
+    _owned: PhantomData<&'static mut [u8]>,
+}
+impl RxStorage {
+    fn new(buffer: &'static mut [u8]) -> Self {
+        assert!(!buffer.is_empty());
+        Self {
+            ptr: buffer.as_mut_ptr(),
+            capacity: buffer.len(),
+            _owned: PhantomData,
+        }
+    }
+}
+// SAFETY: this privately owned allocation is valid forever and has no external
+// accessor. Moving its ownership between threads is safe. All ring metadata and
+// byte writes are serialized by State's critical-section mutex; live shared
+// prefixes cover only occupied slots, which writers never modify. No Sync impl.
+unsafe impl Send for RxStorage {}
+
 struct RxRing {
-    buffer: &'static mut [u8],
+    storage: RxStorage,
     read: usize,
     write: usize,
     len: usize,
+    exposed: usize,
     error: Option<Error>,
     waiting: bool,
 }
 
 impl RxRing {
+    fn new(buffer: &'static mut [u8]) -> Self {
+        Self {
+            storage: RxStorage::new(buffer),
+            read: 0,
+            write: 0,
+            len: 0,
+            exposed: 0,
+            error: None,
+            waiting: false,
+        }
+    }
+
+    // Called only under the per-instance critical section. Hardware events are
+    // still drained/acknowledged before this helper applies the error barrier.
+    fn observe(&mut self, observation: Result<Option<u8>, Error>) {
+        if self.error.is_some() {
+            return;
+        }
+        match observation {
+            Ok(Some(byte)) if self.len < self.storage.capacity => {
+                // SAFETY: write is in bounds and names a free slot, disjoint
+                // from every occupied prefix returned by fill_buf. Only this
+                // helper writes storage, and all its calls are serialized.
+                unsafe { self.storage.ptr.add(self.write).write(byte) };
+                self.write = if self.write == self.storage.capacity - 1 {
+                    0
+                } else {
+                    self.write + 1
+                };
+                self.len += 1;
+            }
+            Ok(Some(_)) => self.error = Some(Error::BufferOverflow),
+            Ok(None) => {}
+            Err(error) => self.error = Some(error),
+        }
+    }
+
+    // Release occupied bytes only after the owner's mutable borrow guarantees
+    // no returned prefix remains in use. count is bounded by len by callers.
+    fn advance(&mut self, count: usize) {
+        assert!(count <= self.len);
+        self.read = if count < self.storage.capacity - self.read {
+            self.read + count
+        } else {
+            count - (self.storage.capacity - self.read)
+        };
+        self.len -= count;
+    }
+
+    // Snapshot only an occupied contiguous segment, not the whole allocation.
+    // The caller must tie a resulting reference to the RX owner's mutable borrow.
+    fn readable(&mut self) -> Result<(*const u8, usize), Error> {
+        self.exposed = self.len.min(self.storage.capacity - self.read);
+        if self.exposed != 0 {
+            self.waiting = false;
+        } else if let Some(error) = self.error.take() {
+            self.waiting = false;
+            return Err(error);
+        }
+        // SAFETY: read is always in bounds of the consumed static allocation.
+        Ok((unsafe { self.storage.ptr.add(self.read) }, self.exposed))
+    }
+
+    fn consume(&mut self, count: usize) {
+        assert!(
+            count <= self.exposed,
+            "consume exceeds the last fill_buf prefix"
+        );
+        self.advance(count);
+        self.exposed -= count;
+    }
+
     // Called only while the per-instance critical section is held. The ISR
     // cannot append or change the error barrier while this batch is copied.
     fn read(&mut self, buffer: &mut [u8]) -> Result<usize, Error> {
         if buffer.is_empty() {
             return Ok(0);
         }
+        self.exposed = 0;
         // Bound global interrupt masking independently of application ring size.
         // Partial reads may return less than the available data.
         let count = buffer.len().min(self.len).min(64);
         if count != 0 {
-            let first = count.min(self.buffer.len() - self.read);
-            buffer[..first].copy_from_slice(&self.buffer[self.read..self.read + first]);
-            buffer[first..count].copy_from_slice(&self.buffer[..count - first]);
-            // Avoid adding two potentially large indices before wrapping.
-            self.read = if count < self.buffer.len() - self.read {
-                self.read + count
-            } else {
-                count - (self.buffer.len() - self.read)
-            };
-            self.len -= count;
+            let first = count.min(self.storage.capacity - self.read);
+            // SAFETY: both source ranges contain initialized occupied bytes;
+            // the destination cannot alias the consumed static allocation in
+            // safe code. No owner-returned slice is live during a mutable read.
+            unsafe {
+                core::ptr::copy_nonoverlapping(
+                    self.storage.ptr.add(self.read),
+                    buffer.as_mut_ptr(),
+                    first,
+                );
+                core::ptr::copy_nonoverlapping(
+                    self.storage.ptr,
+                    buffer.as_mut_ptr().add(first),
+                    count - first,
+                );
+            }
+            self.advance(count);
             self.waiting = false;
             return Ok(count);
         }
@@ -711,14 +814,7 @@ impl<'d> BufferedUartRx<'d> {
     }
 
     fn install_ring(&self, cs: critical_section::CriticalSection<'_>, buffer: &'static mut [u8]) {
-        *self.state.rx_ring.borrow(cs).borrow_mut() = Some(RxRing {
-            buffer,
-            read: 0,
-            write: 0,
-            len: 0,
-            error: None,
-            waiting: false,
-        });
+        *self.state.rx_ring.borrow(cs).borrow_mut() = Some(RxRing::new(buffer));
         let mut owners = self.state.lifecycle.borrow(cs).get();
         owners.rx_live = true;
         self.state.lifecycle.borrow(cs).set(owners);
@@ -779,6 +875,53 @@ impl<'d> BufferedUartRx<'d> {
             return Ok(0);
         }
         poll_fn(|cx| self.poll_read(cx, buffer)).await
+    }
+
+    /// Wait for a nonempty contiguous clean prefix without copying or consuming it.
+    ///
+    /// Call [`Self::consume`] to release bytes. The returned slice holds a mutable
+    /// borrow of this owner, while IRQ collection may append only into free slots.
+    /// At a wrap, another call after consumption exposes the next segment. A full
+    /// ring preserves this prefix and records overflow, not backpressure. Errors
+    /// are reported only after all earlier clean bytes have been consumed.
+    /// Cancelling a pending call consumes neither bytes nor errors.
+    pub async fn fill_buf(&mut self) -> Result<&[u8], Error> {
+        let (ptr, len) = poll_fn(|cx| {
+            self.state.rx_waker.register(cx.waker());
+            critical_section::with(|cs| {
+                let mut ring = self.state.rx_ring.borrow(cs).borrow_mut();
+                let ring = ring.as_mut().expect("buffered UART receiver has no ring");
+                match ring.readable() {
+                    Ok((_, 0)) => {
+                        ring.waiting = true;
+                        Poll::Pending
+                    }
+                    result => Poll::Ready(result),
+                }
+            })
+        })
+        .await?;
+        // SAFETY: readable snapshots initialized occupied bytes in static owned
+        // storage. They remain occupied until a mutable owner operation, which
+        // this returned borrow prevents. The ISR only writes disjoint free slots;
+        // drop/reconstruction likewise cannot occur while this borrow is used.
+        Ok(unsafe { core::slice::from_raw_parts(ptr, len) })
+    }
+
+    /// Release bytes from the last [`Self::fill_buf`] prefix.
+    ///
+    /// Panics if `amount` exceeds that prefix's unconsumed length. Copying reads
+    /// invalidate that allowance (except empty reads). Zero is always a no-op.
+    pub fn consume(&mut self, amount: usize) {
+        critical_section::with(|cs| {
+            self.state
+                .rx_ring
+                .borrow(cs)
+                .borrow_mut()
+                .as_mut()
+                .expect("buffered UART receiver has no ring")
+                .consume(amount);
+        });
     }
 
     /// Fill the requested slice, waiting across partial reads as necessary.
@@ -932,6 +1075,14 @@ impl<'d> BufferedUart<'d> {
     /// Whether a nonempty read can complete immediately with data or an error.
     pub fn read_ready(&mut self) -> Result<bool, Error> {
         self.rx.read_ready()
+    }
+    /// Borrow a contiguous clean prefix. See [`BufferedUartRx::fill_buf`].
+    pub async fn fill_buf(&mut self) -> Result<&[u8], Error> {
+        self.rx.fill_buf().await
+    }
+    /// Release bytes from the last prefix. See [`BufferedUartRx::consume`].
+    pub fn consume(&mut self, amount: usize) {
+        self.rx.consume(amount)
     }
     /// Queue bytes through ordinary async TX; cancellation may leave a sent prefix.
     pub async fn write(&mut self, buffer: &[u8]) -> Result<(), Error> {
@@ -2359,22 +2510,7 @@ fn on_interrupt(
             // Exactly one receive observation per dispatch, even when full or
             // an error is pending. Drain/acknowledge before applying the barrier.
             let observation = receive_observed(regs, status, false);
-            if ring.error.is_none() {
-                match observation {
-                    Ok(Some(byte)) if ring.len < ring.buffer.len() => {
-                        ring.buffer[ring.write] = byte;
-                        ring.write = if ring.write == ring.buffer.len() - 1 {
-                            0
-                        } else {
-                            ring.write + 1
-                        };
-                        ring.len += 1;
-                    }
-                    Ok(Some(_)) => ring.error = Some(Error::BufferOverflow),
-                    Ok(None) => {}
-                    Err(error) => ring.error = Some(error),
-                }
-            }
+            ring.observe(observation);
         }
         if owners.rx_live && ring.waiting && (ring.len != 0 || ring.error.is_some()) {
             ring.waiting = false;
@@ -2504,6 +2640,22 @@ impl embedded_io_async::Read for BufferedUartRx<'_> {
 impl embedded_io_async::Read for BufferedUart<'_> {
     async fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error> {
         self.rx.read(buf).await
+    }
+}
+impl embedded_io_async::BufRead for BufferedUartRx<'_> {
+    async fn fill_buf(&mut self) -> Result<&[u8], Self::Error> {
+        BufferedUartRx::fill_buf(self).await
+    }
+    fn consume(&mut self, amount: usize) {
+        BufferedUartRx::consume(self, amount)
+    }
+}
+impl embedded_io_async::BufRead for BufferedUart<'_> {
+    async fn fill_buf(&mut self) -> Result<&[u8], Self::Error> {
+        BufferedUart::fill_buf(self).await
+    }
+    fn consume(&mut self, amount: usize) {
+        BufferedUart::consume(self, amount)
     }
 }
 impl embedded_io::ReadReady for BufferedUartRx<'_> {

@@ -138,6 +138,7 @@ functions:
       limitations:
       - Existing 54 selections retain their package routes and exclusions; source/API scope is not a build-total claim.
       - Inherent and async trait reads return an available clean prefix; read_exact fills the slice. Nonwaiting blocking_read and read_ready are available. Empty reads preserve queued bytes and pending errors.
+      - Async BufRead fill_buf lends a contiguous occupied prefix without copying; consume releases only exposed bytes. IRQ writes remain disjoint from the held prefix, but prolonged borrowing can cause overflow.
       - The nonempty static ring is consumed even on constructor error and is not returned on Drop or reconstruction.
       - Retained clean prefix precedes the first pending error; software BufferOverflow and line errors discard later
         ISR observations until the error is consumed.
@@ -145,7 +146,7 @@ functions:
         count lost frames, and NE requires 16x/8x sampling.
       - Collection depends on IRQ progress; finite capacity does not guarantee lossless reception, bounded waits or throughput.
       - Hardware RTS reflects RC rather than software queue occupancy; no ring-watermark backpressure is provided.
-      - No buffered idle markers, DMA ring, numeric timeout, zero-copy borrow or storage-reclamation API.
+      - No buffered idle markers, DMA ring, numeric timeout or storage-reclamation API.
       - Stage83 main verification passed 13 actual ARM libraries, 11 ELF links and five focused source/data gates;
         independent main runtime and metadata/source reviews accepted the frozen implementation.
       - Three existing native L010/L011 RCC LSE-constant warnings remain in each applicable main row.

@@ -55,8 +55,10 @@ error, Drop or reconstruction.
 Capacity one and any larger valid slice are accepted. All slots are usable;
 there is no power-of-two, DMA-region, alignment or transfer-count restriction.
 The HAL does not zero the storage. Private indices distinguish valid data from
-unused bytes. The ring reference is moved into per-instance protected state;
-no allocation, duplicated mutable reference, pointer to a movable owner or
+unused bytes. The static slice is consumed into a private raw storage owner in per-instance
+protected state. No allocation-wide mutable reference is retained or recreated;
+ISR writes target only free bytes, disjoint from a borrowed occupied prefix.
+No allocation, duplicated mutable reference, pointer to a movable owner or
 caller-memory lifetime promise is required. Peripheral and pin borrows can
 still use `'d`; only the ISR destination must be static. Applications can use
 the existing safe `cortex_m::singleton!` pattern with its result checked.
@@ -77,7 +79,17 @@ Both owners expose `actual_baudrate()` and these receive methods:
 - `read_ready(&mut self) -> Result<bool, Error>` reports whether a nonempty
   read can immediately return data or a pending error, without consuming either.
 
-Both implement `embedded_io::ErrorType`, `embedded_io_async::Read` and
+- `fill_buf(&mut self) -> Result<&[u8], Error>` asynchronously waits for an
+  occupied contiguous prefix and borrows it without copying or consuming it.
+  A wrap may require a second call after consuming the first segment. Queued
+  clean bytes precede pending errors, as with copying reads.
+- `consume(&mut self, amount: usize)` releases bytes from that last exposed
+  prefix. It panics if the amount exceeds the remaining exposed length, rather
+  than consuming newly arrived data. Nonempty copying reads invalidate that
+  allowance; empty reads and `consume(0)` have no effect.
+
+Both implement `embedded_io::ErrorType`, `embedded_io_async::Read`,
+`embedded_io_async::BufRead` and
 `embedded_io::ReadReady` with the same semantics as their inherent methods.
 No synchronous `embedded_io::Read` is exposed: the nonwaiting inherent method's
 zero-for-empty result must not be mistaken for the trait's EOF contract.
@@ -94,10 +106,14 @@ lose an already-copied prefix, as documented above.
 `split_ref()` returns simultaneous disjoint mutable borrows of those halves.
 There is no buffered TX owner.
 
-`BufRead` is intentionally not exposed: the present critical-section-protected
-mutable slice cannot provide a stable borrowed segment outside that critical
-section without a separately reviewed storage/aliasing design. This API change
-does not weaken the static ISR-storage requirement or claim hardware validation.
+The slice returned by `fill_buf` is tied to an exclusive borrow of the RX owner.
+Safe code cannot consume, read, drop or reconstruct that owner while using the
+slice. IRQ reception may write only free slots; occupied slots remain reserved
+until consumed, including at overflow or an error barrier. Holding a prefix for
+too long can therefore cause overflow, not mutation of that prefix. Use split
+TX/RX owners to transmit while holding an RX slice. Cancelling a pending
+`fill_buf` consumes nothing. The static ISR-storage requirement is unchanged;
+this software API does not claim hardware validation.
 
 Two variants extend currently exhaustive public enums on every UART backend:
 

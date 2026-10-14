@@ -110,8 +110,11 @@ still apply.
   continuously through IRQs into consumed static bounded storage on all thirteen
   families and 54 existing selections. Batched inherent and async
   trait reads drain the retained clean prefix before returning the first error;
-  later ISR observations are discarded until the error is consumed. Empty reads
-  preserve bytes/errors. Ten families can silently overwrite RDR before ISR
+  later ISR observations are discarded until the error is consumed. Async
+  `BufRead::fill_buf` borrows a stable contiguous occupied prefix; `consume`
+  releases only its exposed bytes. IRQ appends cannot overwrite a held prefix,
+  but holding it can cause overflow. Empty reads preserve bytes/errors.
+  Ten families can silently overwrite RDR before ISR
   service; native ORE and software overflow do not count every lost frame.
   Hardware RTS follows RC, not software occupancy. No buffered idle or DMA ring,
   lossless guarantee or hardware timing qualification. Stage83 main verification

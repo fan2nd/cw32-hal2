@@ -30,16 +30,20 @@ async fn main(_spawner: embassy_executor::Spawner) {
 
 async fn exchange(tx: &mut UartTx<'_, Async>, rx: &mut BufferedUartRx<'_>) -> ! {
     loop {
-        let mut chunk = [0u8; examples::CHUNK_SIZE];
-        // The trait read returns an available prefix; always use its count.
-        let (received, sent) = join(embedded_io_async::Read::read(rx, &mut chunk), async {
+        // RX lends only an occupied segment; IRQs may fill other free slots.
+        let (received, sent) = join(embedded_io_async::BufRead::fill_buf(rx), async {
             tx.write(b"send data\r\n").await?;
             tx.flush().await
         })
         .await;
         sent.unwrap();
         match received {
-            Ok(count) => tx.write(&chunk[..count]).await.unwrap(),
+            Ok(prefix) => {
+                let count = prefix.len();
+                // The borrowed RX prefix stays valid across the separate TX wait.
+                tx.write(prefix).await.unwrap();
+                embedded_io_async::BufRead::consume(rx, count);
+            }
             Err(error) => {
                 core::hint::black_box(error);
                 tx.write(b"receive error\r\n").await.unwrap();

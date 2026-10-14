@@ -593,7 +593,10 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   and `BufferedUart` owners collect RX through IRQs into consumed static bounded
   storage, including between reads. Inherent and async trait reads batch an
   available prefix; `read_exact` fills a slice, while nonwaiting `blocking_read`
-  and `read_ready` support polling. Reads preserve the prefix before the first error; later observed
+  and `read_ready` support polling. Async `BufRead::fill_buf` lends a contiguous
+  occupied prefix without copying; `consume` releases only the exposed bytes.
+  ISR writes stay disjoint from a held prefix, but prolonged borrowing can cause
+  overflow. Reads preserve the prefix before the first error; later observed
   input is discarded until that error is consumed. Empty reads preserve errors.
   Ten families can silently overwrite RDR before ISR service; native ORE on
   L010/L011/L012 and software overflow do not provide an exact loss count.
