@@ -44,7 +44,7 @@ functions:
     register_kinds:
     - uart
     evidence:
-    - path: embassy-cw32/src/usart.rs
+    - path: embassy-cw32/src/usart/mod.rs
       anchor: pub struct Uart
     modes:
     - id: blocking
@@ -69,7 +69,7 @@ functions:
       - Current software acceptance is recorded in docs/l012-extensions-validation.md; publication is established separately by its containing commit; no hardware validation or new L012 RX DMA handshake claim.
       evidence:
       - path: docs/uart-l012-nine-bit.md
-      - path: embassy-cw32/src/usart.rs
+      - path: embassy-cw32/src/usart/nine_bit.rs
         anchor: pub async fn write_u16
     - id: single_wire_half_duplex
       status: partial
@@ -83,7 +83,7 @@ functions:
       - Current software acceptance is recorded in docs/uart-dac-extensions-validation.md; publication requires the containing commit; existing DMA, other-family and low-power limitations are unchanged.
       evidence:
       - path: docs/uart-l012-half-duplex.md
-      - path: embassy-cw32/src/usart.rs
+      - path: embassy-cw32/src/usart/half_duplex.rs
         anchor: pub struct HalfDuplexUart
     - id: rts_cts
       status: partial
@@ -97,7 +97,7 @@ functions:
       - RTS
       - CTS
       evidence:
-      - path: embassy-cw32/src/usart.rs
+      - path: embassy-cw32/src/usart/uart.rs
         anchor: pub fn new_with_rtscts
     - id: tx_cts
       status: partial
@@ -109,7 +109,7 @@ functions:
       - TX
       - CTS
       evidence:
-      - path: embassy-cw32/src/usart.rs
+      - path: embassy-cw32/src/usart/tx.rs
         anchor: pub fn new_with_cts
     - id: rx_rts
       status: partial
@@ -121,7 +121,7 @@ functions:
       - RX
       - RTS
       evidence:
-      - path: embassy-cw32/src/usart.rs
+      - path: embassy-cw32/src/usart/rx.rs
         anchor: pub fn new_with_rts
     - id: finite_idle_receive
       status: partial
@@ -140,7 +140,7 @@ functions:
       - Three existing RCC LSE-constant warnings remain in applicable L010/L011 main rows; no hardware validation is claimed.
       - At main acceptance clean had not run; completion requires a separate final-source two-library/two-ELF clean receipt.
       evidence:
-      - path: embassy-cw32/src/usart.rs
+      - path: embassy-cw32/src/usart/rx.rs
         anchor: pub async fn read_until_idle
       - path: docs/uart-idle.md
     - id: buffered_ring_receive
@@ -181,7 +181,7 @@ functions:
       - At main acceptance clean had not run; final-package completion requires a separate final-source
         three-library/three-ELF clean receipt and five focused gates. No hardware timing qualification is claimed.
       evidence:
-      - path: embassy-cw32/src/usart.rs
+      - path: embassy-cw32/src/usart/mod.rs
         anchor: pub struct BufferedUartRx
       - path: docs/uart-buffered-rx.md
     - id: advanced_serial
@@ -263,7 +263,7 @@ functions:
       - TX
       - RX
       evidence:
-      - path: embassy-cw32/src/usart.rs
+      - path: embassy-cw32/src/usart/dma_tx.rs
         anchor: pub fn new_with_dma
       - path: docs/uart-dma-tx.md
       - path: docs/uart-dma-rx.md
@@ -278,7 +278,7 @@ functions:
     register_kinds:
     - spi
     evidence:
-    - path: embassy-cw32/src/spi.rs
+    - path: embassy-cw32/src/spi/mod.rs
       anchor: pub struct Spi
     modes:
     - id: bounded_api
@@ -330,7 +330,7 @@ functions:
       - MOSI
       - MISO
       evidence:
-      - path: embassy-cw32/src/spi.rs
+      - path: embassy-cw32/src/spi/pio.rs
         anchor: pub fn new_async
       - path: docs/spi-async-pio.md
       - path: docs/spi-async-word-widths.md
@@ -379,7 +379,7 @@ functions:
       - MOSI
       - MISO
       evidence:
-      - path: embassy-cw32/src/spi.rs
+      - path: embassy-cw32/src/spi/dma_backend.rs
         anchor: pub fn new_with_dma
       - path: docs/spi-dma.md
       - path: docs/classic-spi-dma-evidence.json
@@ -1776,7 +1776,7 @@ functions:
         - Independent Stage92 runtime and metadata/source reviews accepted the bounded main result. Main ran no canonical data generation and all 910 generated files stayed unchanged; UART/DMA runtime algorithms remain unchanged.
         - At Stage92 main acceptance final capability reports and the separate final-source 2-library/3-ELF clean replay had not run. No hardware result is claimed.
       evidence:
-      - path: embassy-cw32/src/usart.rs
+      - path: embassy-cw32/src/usart/dma_tx.rs
         anchor: pub fn new_with_dma
       - path: docs/uart-dma-tx.md
       - path: docs/uart-dma-rx.md

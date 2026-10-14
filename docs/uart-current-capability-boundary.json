@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "scope": "Exact source-path relocation of reviewed current capability declarations; not hardware or runtime qualification.",
+  "baseline_commit": "e75f62e7f792dede2b2d3c89bbaba5f9aee25531",
+  "baseline_capabilities_sha256": "a51e20fd804f7c158ca5e9d590f77bc2730c117a1a5ede13fff3e62cff20ee79",
+  "historical_evidence_path": "docs/uart-buffered-rx-evidence.json",
+  "historical_evidence_sha256": "aa30aa6334cb990377ac58968d908f538262a3d95f108ae8e5c08815c7b5db6a",
+  "historical_dma_canonical_sha256": "de5c2edc0a6693e9e08d6536f164b693c0776468bbea73eb599f5ab6c9c857d7",
+  "relocations": [
+    {
+      "from": "embassy-cw32/src/usart.rs",
+      "anchor": "pub struct BufferedUartRx",
+      "to": "embassy-cw32/src/usart/mod.rs"
+    },
+    {
+      "from": "embassy-cw32/src/usart.rs",
+      "anchor": "pub async fn read_until_idle",
+      "to": "embassy-cw32/src/usart/rx.rs"
+    },
+    {
+      "from": "embassy-cw32/src/usart.rs",
+      "anchor": "pub fn new_with_dma",
+      "to": "embassy-cw32/src/usart/dma_tx.rs"
+    }
+  ],
+  "baseline_modes": {
+    "buffered_ring_receive": {
+      "id": "buffered_ring_receive",
+      "status": "partial",
+      "scope": "Direct BufferedUartRx/BufferedUart owners provide continuous IRQ receive collection into bounded RX rings; safe constructors consume static storage, while unsafe new_borrowed variants tie ordinary buffer borrows to owner Drop (combined split halves share a lifetime).",
+      "implemented_families": [
+        "CW32A030",
+        "CW32F002",
+        "CW32F003",
+        "CW32F020",
+        "CW32F030",
+        "CW32L010",
+        "CW32L011",
+        "CW32L012",
+        "CW32L031",
+        "CW32L052",
+        "CW32L083",
+        "CW32R031",
+        "CW32W031"
+      ],
+      "pins_all": [
+        "RX"
+      ],
+      "limitations": [
+        "Existing 54 selections retain their package routes and exclusions; source/API scope is not a build-total claim.",
+        "Inherent and async trait reads return an available clean prefix; read_exact fills the slice. Nonwaiting blocking_read and read_ready are available. Empty reads preserve queued bytes and pending errors.",
+        "Async BufRead fill_buf lends a contiguous occupied prefix without copying; consume releases only exposed bytes. IRQ writes remain disjoint from the held prefix, but prolonged borrowing can cause overflow.",
+        "Safe constructors consume the nonempty static ring even on constructor error and do not return it; unsafe borrowed constructors release the borrow after normal RX Drop and the shared TX/RX lifetime ends, and require storage to remain valid and exclusive if the owner is leaked.",
+        "Retained clean prefix precedes the first pending error; software BufferOverflow and line errors discard later ISR observations until the error is consumed.",
+        "Ten non-L010/L011/L012 families permit silent pre-ISR RDR overwrite even with ring space; native ORE does not count lost frames, and NE requires 16x/8x sampling.",
+        "Collection depends on IRQ progress; finite capacity does not guarantee lossless reception, bounded waits or throughput.",
+        "Hardware RTS reflects RC rather than software queue occupancy; no ring-watermark backpressure is provided.",
+        "No buffered idle markers, DMA ring, numeric timeout or storage-reclamation API.",
+        "Stage83 main verification passed 13 actual ARM libraries, 11 ELF links and five focused source/data gates; independent main runtime and metadata/source reviews accepted the frozen implementation.",
+        "Three existing native L010/L011 RCC LSE-constant warnings remain in each applicable main row. Main ran no hardware generation, and all 905 generated hardware files stayed unchanged.",
+        "At main acceptance clean had not run; final-package completion requires a separate final-source three-library/three-ELF clean receipt and five focused gates. No hardware timing qualification is claimed."
+      ],
+      "evidence": [
+        {
+          "path": "embassy-cw32/src/usart.rs",
+          "anchor": "pub struct BufferedUartRx"
+        },
+        {
+          "path": "docs/uart-buffered-rx.md"
+        }
+      ]
+    },
+    "finite_idle_receive": {
+      "id": "finite_idle_receive",
+      "status": "partial",
+      "scope": "Native finite async ordinary Uart/UartRx caller-buffer reception to full capacity or observed RXIDLE.",
+      "implemented_families": [
+        "CW32L010",
+        "CW32L011",
+        "CW32L012"
+      ],
+      "pins_all": [
+        "RX"
+      ],
+      "limitations": [
+        "First nonempty poll clears stale idle only; unread RC/data and errors remain available.",
+        "Co-latched RC is consumed before idle with best-effort boundary attribution; errors retain existing priority.",
+        "Per-byte task service remains necessary; no software FIFO, numeric timeout, lossless framing or bounded completion.",
+        "Main verification passed six actual ARM libraries, five ELF links and four finite source/data gates.",
+        "Three existing RCC LSE-constant warnings remain in applicable L010/L011 main rows; no hardware validation is claimed.",
+        "At main acceptance clean had not run; completion requires a separate final-source two-library/two-ELF clean receipt."
+      ],
+      "evidence": [
+        {
+          "path": "embassy-cw32/src/usart.rs",
+          "anchor": "pub async fn read_until_idle"
+        },
+        {
+          "path": "docs/uart-idle.md"
+        }
+      ]
+    },
+    "safe_peripheral_dma": {
+      "id": "safe_peripheral_dma",
+      "status": "experimental_partial",
+      "scope": "Safe staged TX, finite RX and combined/split UART DMA on F030/A030/L083 and fourteen exact F020/L031/L052/R031/W031 parts; exact L012 C8T6/C8U6 remain UART TX-only.",
+      "limitations": [
+        "Every admitted profile requires qualified SRAM and normal reset/clean-runtime startup; static UART/channel/staging owners are consumed. Generic classic aliases retain MissingMemoryMetadata rejection.",
+        "CPU copy per byte and possible chunk gaps; write completes memory-to-TDR transfer and flush separately waits for the wire.",
+        "Cancellation retains each direction's current chunk; clean RX tails remain available, and TE or ambiguous completion permanently quarantines resources.",
+        "RX gaps may lose frames with no overrun indication; FE/PE reports promptly but recovery waits for the old DMA count.",
+        "TX requires TX, RX requires RX, combined construction requires both signals and independent static staging/channels.",
+        "No DMA RTS/CTS, continuous RX, borrowed zero-copy, early abort, throughput or finite-liveness guarantee."
+      ],
+      "implemented_families": [
+        "CW32A030",
+        "CW32F020",
+        "CW32F030",
+        "CW32L083",
+        "CW32L031",
+        "CW32L052",
+        "CW32R031",
+        "CW32W031",
+        "CW32L012"
+      ],
+      "overrides": [
+        {
+          "families": [
+            "CW32L012"
+          ],
+          "scope": "Safe staged byte UART TX only on exact L012 C8T6/C8U6.",
+          "limitations": [
+            "Only CW32L012C8T6/C8U6 have qualified 64 KiB Flash and 8 KiB SRAM; generic cw32l012 rejects safe copy/staging without memory metadata.",
+            "Native CH1/2 share DMACH12 IRQ9 and CH3/4 share DMACH34 IRQ10; IRQ11 remains CORDIC. No channel five or sibling flag clearing.",
+            "Startup observes all eight channel registers; RESTART/SRCLOAD/DSTLOAD remain zero and remaining count reads CCNT.",
+            "Normal clean-runtime admission, permanent raw revocation, error quarantine, forget leaks and potentially unbounded Drop remain.",
+            "Native PAC typed enums, five read-only CCNT handles and ten removed TC/TE setters change source compatibility; STATUS remains RW.",
+            "Stage86 main passed 4 standalone ARM libraries and 11 ELF links, all 15 exiting zero without warnings; 1413 source files and 910 generated files stayed unchanged.",
+            "Generation and five finite gates plus one renderer passed in segments; two source-record/checker preparation failures remain preserved. No hardware result is claimed.",
+            "At main acceptance clean had not run; final-package completion requires its separate final-source 2-library/4-ELF clean receipt.",
+            "UART1/2/3 TX use PA9/PA7/PA8 AF1 and request selectors 1/3/5; private staging isolates caller slices. Flush separately waits for TXBUSY0.",
+            "No L012 DMA RX/combined UART; its separate RC/ORE proof remains blocked. SPI has its separately declared native scope; no other requests, borrowed hardware constructor, buffered-plus-DMA owner, early abort or finite-liveness guarantee."
+          ]
+        },
+        {
+          "families": [
+            "CW32F020"
+          ],
+          "scope": "Safe staged byte UART TX, finite RX and combined/split DMA on exactly CW32F020C6U7/K6U7/F6U7, through native CH1/CH2.",
+          "limitations": [
+            "Exact 8 KiB SRAM at 0x20000000..0x20002000 and normal reset/clean-runtime admission are required; generic cw32f020 rejects safe DMA/staging with MissingMemoryMetadata.",
+            "Native CH1/CH2 use independent DMACH1/DMACH2 IRQs. UART1/2/3 RX selectors 0/2/4 and TX selectors 1/3/5 may use either channel, subject to safe package pins.",
+            "F6 UART1 has no safe RX or TX; PA13/PA14/PF3 remain excluded. Combined UART requires distinct safe TX/RX pins, distinct admitted channels and independent exclusive static stages.",
+            "Own CN1.4 p288 qualifies byte RDR-to-SRAM DMA; own SDK requires software RC clear. FE/PE/RC have no ORE/NE indication; typed ICR no-op preserves unrelated fields.",
+            "Static UART/channel/staging owners survive cancellation and forget. Clean retirement requires recorded TC without TE plus STATUS5, request closure and fencing before staged-byte access; DMA faults permanently quarantine affected resources.",
+            "FE/PE returns promptly while an invalid pending chunk remains running; later inherent recovery awaits its old count. Clean RX tails remain available. CPU copies and chunk/rearm gaps can lose frames without a loss count.",
+            "TX completion retires memory-to-TDR work; flush separately waits for the wire. SPI DMA has its separate declared scope; no other peripheral DMA consumers, new raw hardware requests, buffered-plus-DMA owner, RTS/CTS or idle/circular DMA, early abort, zero-copy or finite-liveness guarantee.",
+            "Historical Stage84 copy/TX main passed 15 ARM libraries and 16 ELF links, all 31 exiting zero; generation and five finite source gates passed in documented segments. These results do not verify Stage92 RX.",
+            "Independent Stage84 runtime and metadata/source reviews accepted that copy/TX main. Only L010F8P6/L011K8T6 library rows emitted three existing RCC warnings each; all F020 rows and ELF links were warning-free.",
+            "At Stage84 main acceptance its separate final-source 2-library/4-ELF clean receipt had not run. No hardware result is claimed.",
+            "Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without warnings. Both finite source checks passed after the preserved initial D01 PIN/AFR comparison failure and checker-only correction.",
+            "Independent Stage92 runtime and metadata/source reviews accepted the bounded main result. Main ran no canonical data generation and all 910 generated files stayed unchanged; UART/DMA runtime algorithms remain unchanged.",
+            "At Stage92 main acceptance final capability reports and the separate final-source 2-library/3-ELF clean replay had not run. No hardware result is claimed."
+          ]
+        },
+        {
+          "families": [
+            "CW32L031",
+            "CW32L052",
+            "CW32R031",
+            "CW32W031"
+          ],
+          "scope": "Safe staged byte UART TX, finite RX and combined/split DMA on eleven exact native four-channel selections.",
+          "limitations": [
+            "Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6; each has 64 KiB Flash and 8 KiB SRAM at 0x20000000..0x20002000.",
+            "Generic cw32l031/cw32l052/cw32r031/cw32w031 compile the controller/UART DMA surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.",
+            "CH1 uses DMACH1 IRQ9, CH2/3 share DMACH23 IRQ10 and CH4 uses DMACH4 IRQ11; no CH5. Both shared handlers service only their own channel; typed native R1W0 commands preserve siblings and reserved bits.",
+            "Normal reset/clean-runtime entry and conservative one-time admission apply. Dirty state is rejected without reset/recovery; raw acquisition permanently revokes safe admission.",
+            "UART1/2/3 RX selectors 0/2/4 and TX selectors 1/3/5 may use any CH1..4, subject to safe package pins. Combined UART requires distinct TX/RX pins, distinct channels and independent exclusive static stages.",
+            "L031F8P6 UART1 has no safe RX/TX; L031F8U6 UART1 permits RX-only on PA9/AF2 or PC15/AF6 with no safe TX. PA13/PA14/PF3 remain excluded.",
+            "Each own manual supplies byte RDR-to-SRAM DMA and FE/PE/RC without ORE/NE; each own SDK requires software RC clear. The current classic RX contract binds the complete package routes and typed ICR no-op seeds.",
+            "Static UART/channel/staging owners survive cancellation and forget; clean RX tails remain available. Clean retirement requires recorded TC without TE plus STATUS5, request closure and fencing before staging reuse; DMA faults permanently quarantine resources.",
+            "FE/PE returns promptly but recovery may wait indefinitely for the old DMA count. CPU copies and chunk/rearm gaps can lose frames without a loss count; TX flush separately waits for the wire.",
+            "SPI DMA has its separate declared scope; no other peripheral DMA consumers, new raw hardware requests, buffered-plus-DMA owner, RTS/CTS or idle/circular DMA, early abort, zero-copy or finite-liveness guarantee.",
+            "R031 whole-GPIOA effects and W031 internal RF boundaries preserve existing functional handover obligations; no RF-safe handover/coexistence claim.",
+            "Historical Stage85 copy/TX main passed six ARM libraries and 21 ELF links, all 27 exiting zero without warnings; generation, five finite source gates and the renderer passed in documented segments. These results do not verify Stage92 RX.",
+            "Three Stage85 source-checker preparation failures remain recorded; corrections changed no HAL/example bytes. At that main acceptance its separate final-source 2-library/4-ELF clean receipt had not run. No hardware result is claimed.",
+            "Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without warnings. Both finite source checks passed after the preserved initial D01 PIN/AFR comparison failure and checker-only correction.",
+            "Independent Stage92 runtime and metadata/source reviews accepted the bounded main result. Main ran no canonical data generation and all 910 generated files stayed unchanged; UART/DMA runtime algorithms remain unchanged.",
+            "At Stage92 main acceptance final capability reports and the separate final-source 2-library/3-ELF clean replay had not run. No hardware result is claimed."
+          ]
+        }
+      ],
+      "pins_any": [
+        "TX",
+        "RX"
+      ],
+      "evidence": [
+        {
+          "path": "embassy-cw32/src/usart.rs",
+          "anchor": "pub fn new_with_dma"
+        },
+        {
+          "path": "docs/uart-dma-tx.md"
+        },
+        {
+          "path": "docs/uart-dma-rx.md"
+        },
+        {
+          "path": "docs/classic-uart-dma-rx.md"
+        },
+        {
+          "path": "docs/classic-uart-dma-rx-evidence.json"
+        },
+        {
+          "path": "docs/f020-dma-owned.md"
+        },
+        {
+          "path": "docs/four-channel-dma-owned.md"
+        },
+        {
+          "path": "docs/l012-dma-owned.md"
+        }
+      ],
+      "facts": [
+        "dma_channels"
+      ]
+    }
+  },
+  "baseline_example_manifest": {
+    "path": "examples/uart-buffered/Cargo.toml",
+    "sha256": "b34dad85188b7b98523965bd0016bdab116c1be76bafde19ebd0ba1dc61b7dec"
+  }
+}

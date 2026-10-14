@@ -2,7 +2,9 @@
 """Check present own-source/data/capability facts for buffered UART reception.
 
 This finite checker does not read HAL implementation text, model IRQ timing,
-mutate fixtures, invoke other checkers, or compare historical project hashes.
+mutate fixtures, invoke other checkers, or compare historical HAL implementation
+hashes. Immutable evidence and the current declaration baseline are hash-pinned;
+those fingerprints are not runtime or implementation equivalence proof.
 Runtime lifecycle and hardware behavior require separate review/evidence.
 """
 import argparse
@@ -442,10 +444,11 @@ def example_manifest():
     for selection in selections:
         assert features[selection] == [f'embassy-cw32/{selection}', f'cw32-metapac/{selection}']
     bins = named(manifest['bin'])
-    assert set(bins) == {'receive', 'split', 'rx_only', 'flow_control', 'shared_vector'}
+    assert set(bins) == {'receive', 'split', 'rx_only', 'flow_control', 'shared_vector', 'borrowed'}
     for name, entry in bins.items():
         assert entry['path'] == f'src/bin/{name}.rs' and (ROOT / directory / entry['path']).is_file()
-        required = {'flow_control': ['cw32l010f8p6'], 'shared_vector': ['cw32l083rct6']}.get(name, [])
+        required = {'flow_control': ['cw32l010f8p6'], 'shared_vector': ['cw32l083rct6'],
+                    'borrowed': ['cw32f002f3p7']}.get(name, [])
         assert entry.get('required-features', []) == required
     dependencies = manifest['dependencies']
     assert set(dependencies) == {'embassy-cw32', 'embassy-executor', 'embassy-futures', 'cortex-m', 'cortex-m-rt', 'embedded-io-async'}
@@ -474,15 +477,57 @@ def example_manifest():
             assert packages[0]['source'] == f'git+https://github.com/embassy-rs/embassy?rev={EMBASSY_REV}#{EMBASSY_REV}'
 
 
+def current_capability_boundary(evidence, modes):
+    # Historical source receipts stay immutable; current policy is a separate,
+    # hash-pinned baseline with only explicitly listed source relocations.
+    path = ROOT / 'docs/uart-current-capability-boundary.json'
+    raw = path.read_bytes()
+    assert hashlib.sha256(raw).hexdigest() == '74e63841f17eb0ab28469b1e58d1c6d189826d17949ead2305f61cae9ff8df34'
+    boundary = json.loads(raw)
+    assert boundary['schema_version'] == 1
+    assert boundary['baseline_commit'] == 'e75f62e7f792dede2b2d3c89bbaba5f9aee25531'
+    assert boundary['baseline_capabilities_sha256'] == 'a51e20fd804f7c158ca5e9d590f77bc2730c117a1a5ede13fff3e62cff20ee79'
+    example = boundary['baseline_example_manifest']
+    assert example['path'] == 'examples/uart-buffered/Cargo.toml'
+    assert hashlib.sha256((ROOT / example['path']).read_bytes()).hexdigest() == example['sha256']
+    assert boundary['historical_evidence_path'] == EVIDENCE
+    assert hashlib.sha256((ROOT / EVIDENCE).read_bytes()).hexdigest() == boundary['historical_evidence_sha256']
+    historical_dma = evidence['capability_boundaries']['dma']
+    canonical = json.dumps(historical_dma, sort_keys=True, separators=(',', ':')).encode()
+    assert hashlib.sha256(canonical).hexdigest() == boundary['historical_dma_canonical_sha256']
+    assert historical_dma['status'] == 'experimental_partial'
+    assert set(historical_dma['implemented_families']) == {'CW32A030', 'CW32F030', 'CW32L083'}
+    assert historical_dma['pins_any'] == ['TX', 'RX'] and historical_dma['facts'] == ['dma_channels']
+    assert set(boundary['baseline_modes']) == {'buffered_ring_receive', 'finite_idle_receive', 'safe_peripheral_dma'}
+    relocations = {(r['from'], r['anchor']): r['to'] for r in boundary['relocations']}
+    assert len(relocations) == len(boundary['relocations']) == 3
+    used = set()
+    for mode_id, baseline in boundary['baseline_modes'].items():
+        expected = json.loads(json.dumps(baseline))
+        for item in expected['evidence']:
+            identity = (item['path'], item.get('anchor'))
+            if identity in relocations:
+                item['path'] = relocations[identity]
+                used.add(identity)
+        assert modes[mode_id] == expected, ('current capability boundary drift', mode_id)
+    assert used == set(relocations)
+
+
 def capability_contract(evidence, capabilities):
     modes = named(capabilities['functions']['uart']['modes'], 'id')
+    current_capability_boundary(evidence, modes)
     buffered = modes['buffered_ring_receive']
     assert buffered['status'] == 'partial' and set(buffered['implemented_families']) == FAMILIES
     assert len(buffered['implemented_families']) == 13 and buffered['pins_all'] == ['RX']
-    assert {item['path'] for item in buffered['evidence']} == {'embassy-cw32/src/usart.rs', 'docs/uart-buffered-rx.md'}
+    assert {item['path'] for item in buffered['evidence']} == {'embassy-cw32/src/usart/mod.rs', 'docs/uart-buffered-rx.md'}
     assert all((ROOT / item['path']).is_file() for item in buffered['evidence'])
     declaration = (buffered['scope'] + ' ' + ' '.join(buffered['limitations'])).lower()
-    assert re.search(r'one[- ]byte', declaration), 'buffered short-read limit'
+    for term in ['inherent and async trait reads return an available clean prefix; read_exact fills the slice.',
+                 'empty reads preserve queued bytes and pending errors',
+                 'fill_buf lends a contiguous occupied prefix without copying',
+                 'consume releases only exposed bytes', 'irq writes remain disjoint',
+                 'unsafe borrowed constructors', 'valid and exclusive if the owner is leaked']:
+        assert term in declaration, ('buffered current declaration missing', term)
     for term in ['continuous', 'irq', 'static', 'bounded', 'exact', 'trait',
                  'silent', 'overwrite', 'ore', 'ne', '16', '8', 'overflow', 'discard',
                  'pending', 'error', 'progress', 'rts', 'occupancy', 'idle', 'dma', 'hardware']:
@@ -492,12 +537,16 @@ def capability_contract(evidence, capabilities):
     assert set(evidence['capability_boundaries']['native_idle_families']) == NATIVE
     assert idle['status'] == 'partial' and set(idle['implemented_families']) == NATIVE
     assert len(idle['implemented_families']) == 3 and idle['pins_all'] == ['RX']
-    assert {e['path'] for e in idle['evidence']} == {'embassy-cw32/src/usart.rs', 'docs/uart-idle.md'}
+    assert {e['path'] for e in idle['evidence']} == {'embassy-cw32/src/usart/rx.rs', 'docs/uart-idle.md'}
     # Named current capability invariant, maintained only with separate DMA qualification.
     dma = modes['safe_peripheral_dma']
-    assert dma == evidence['capability_boundaries']['dma']
-    assert dma['status'] == 'experimental_partial' and set(dma['implemented_families']) == {'CW32A030', 'CW32F030', 'CW32L083'}
+    # Complete current equality is enforced above; historical DMA is pinned separately.
+    assert dma['status'] == 'experimental_partial' and set(dma['implemented_families']) == {
+        'CW32A030', 'CW32F020', 'CW32F030', 'CW32L012', 'CW32L031',
+        'CW32L052', 'CW32L083', 'CW32R031', 'CW32W031'}
     assert dma['pins_any'] == ['TX', 'RX'] and dma['facts'] == ['dma_channels']
+    assert [item['families'] for item in dma['overrides']] == [
+        ['CW32L012'], ['CW32F020'], ['CW32L031', 'CW32L052', 'CW32R031', 'CW32W031']]
     ordinary = ' '.join(modes['async']['limitations'])
     assert 'Uart' in ordinary and 'UartRx' in ordinary
 
@@ -535,7 +584,7 @@ def main():
     capability_contract(evidence, capabilities)
     print('PASS buffered UART: 111 own locked identities; 13 families, 54 selections, 39 instances, 7 register profiles')
     print(f'PASS own RC/RDR/overwrite, native ORE/NE, R1W0/no-op, independent shared gates and {route_count} package-filtered routes')
-    print('PASS 9 qualified example tuples, 19 selected signal routes, 8 exact features, 5 bins and current locked dependencies')
+    print('PASS 9 qualified example tuples, 19 selected signal routes, 8 exact features, 6 declared bins and current locked dependencies')
     print('PASS partial buffered capability; separate 3-family native idle and current staged DMA boundaries')
     print('Source/data/manifest verification only; runtime lifecycle and hardware timing require separate review/evidence.')
 

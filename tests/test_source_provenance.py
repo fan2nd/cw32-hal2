@@ -56,6 +56,68 @@ class ProvenanceTests(unittest.TestCase):
         with self.assertRaisesRegex(p.ProvenanceError, 'Missing evidence reference'):
             p.validate_lock(ROOT, lock)
 
+    def assert_uart_split_evidence_coverage(self, lock):
+        expected = {f'embassy-cw32/src/usart/{name}.rs' for name in (
+            'buffered', 'config', 'dma_rx', 'dma_tx', 'half_duplex', 'interrupt',
+            'mod', 'nine_bit', 'rx', 'traits', 'tx', 'uart')}
+        self.assertEqual({str(path.relative_to(ROOT)) for path in
+                          (ROOT / 'embassy-cw32/src/usart').glob('*.rs')}, expected)
+        consumers = []
+        for artifact in lock['artifacts']:
+            nodes = [artifact, *artifact.get('members', [])]
+            if 'text' in artifact:
+                nodes.append(artifact['text'])
+            for node in nodes:
+                refs = node.get('evidence', [])
+                self.assertNotIn('embassy-cw32/src/usart.rs', refs)
+                if expected.intersection(refs):
+                    self.assertEqual({ref for ref in refs if ref.startswith(
+                        'embassy-cw32/src/usart/')}, expected)
+                    self.assertEqual(len([ref for ref in refs if ref in expected]), 12)
+                    consumers.append(node['path'])
+        self.assertEqual(len(consumers), 11)
+        self.assertEqual(set(consumers), {
+            'cw32l012/Libraries/inc/cw32l012.h',
+            'cw32l012/Libraries/inc/cw32l012_gpio.h',
+            'cw32l012/Libraries/inc/cw32l012_sysctrl.h',
+            'cw32l012/Libraries/inc/cw32l012_uart.h',
+            'cw32l012/Libraries/src/cw32l012_uart.c',
+            'CW32L012_DataSheet_CN_V1.0.pdf', 'CW32L012_DataSheet_CN_V1.0.txt',
+            'CW32L012_UserManual_CN_V1.4.pdf', 'CW32L012_UserManual_CN_V1.4.txt',
+            'CW32L012_UserManual_EN_V1.0.pdf', 'CW32L012_UserManual_EN_V1.0.txt'})
+
+    def test_uart_split_evidence_coverage(self):
+        self.assert_uart_split_evidence_coverage(self.lock)
+
+    def test_uart_split_evidence_coverage_rejects_missing_or_extra(self):
+        for omitted in (True, False):
+            with self.subTest(omitted=omitted):
+                lock = copy.deepcopy(self.lock)
+                refs = lock['artifacts'][6]['members'][19]['evidence']
+                if omitted:
+                    refs.remove('embassy-cw32/src/usart/dma_tx.rs')
+                else:
+                    refs.append('embassy-cw32/src/usart/unexpected.rs')
+                with self.assertRaises(AssertionError):
+                    self.assert_uart_split_evidence_coverage(lock)
+
+    def test_uart_split_evidence_rejects_replacement_consumer(self):
+        lock = copy.deepcopy(self.lock)
+        original = lock['artifacts'][6]['members'][19]['evidence']
+        moved = [ref for ref in original if ref.startswith('embassy-cw32/src/usart/')]
+        original[:] = [ref for ref in original if ref not in moved]
+        lock['artifacts'][0]['evidence'].extend(moved)
+        with self.assertRaises(AssertionError):
+            self.assert_uart_split_evidence_coverage(lock)
+
+    def test_missing_relocated_uart_evidence_fails(self):
+        lock = copy.deepcopy(self.lock)
+        refs = lock['artifacts'][6]['members'][19]['evidence']
+        index = refs.index('embassy-cw32/src/usart/dma_tx.rs')
+        refs[index] = 'embassy-cw32/src/usart/missing_dma_tx.rs'
+        with self.assertRaisesRegex(p.ProvenanceError, 'Missing evidence reference'):
+            p.validate_lock(ROOT, lock)
+
     def test_duplicate_output_fails(self):
         lock = copy.deepcopy(self.lock)
         lock['artifacts'].append(copy.deepcopy(lock['artifacts'][0]))
