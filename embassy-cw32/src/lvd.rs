@@ -1,15 +1,16 @@
 //! Polling low-voltage monitor with exclusive peripheral and analog-pin ownership.
 //!
-//! Only an idle, unfiltered LVD with reset, interrupt and event triggers disabled
-//! can be configured. Those policy bits, NVIC, BOR, reference/trim, filter clocks,
-//! and shared analog owners are never changed. Low-family timer-break routing is
-//! also rejected while active. The hardware has no independent RCC gate; no gate
-//! or reset operation is synthesized. Drop disables only this monitor's EN bit.
+//! Constructors accept only an idle, unfiltered LVD with reset, interrupt and
+//! event triggers disabled. BOR, reference/trim, filter clocks and shared analog
+//! owners are never changed. Low-family timer-break routing is rejected while
+//! active. The hardware has no independent RCC gate; no gate or reset operation
+//! is synthesized. Drop retires an owned L012 edge wait, then disables EN.
 //!
 //! Thresholds are nominal, not calibrated voltmeter readings. L012's documented
 //! table assumes Vcore=1.6 V. Allow board-qualified analog startup/settling time
 //! before interpreting samples; this driver does not claim a ready indication.
-//! No IRQ, wakeup, reset-policy, filter or async API is provided.
+//! On L012 only, edge waits report a fresh interrupt event, not analog readiness.
+//! No wakeup, reset-policy or filter API is provided.
 use crate::{
     Peri,
     gpio::{Flex, Pin},
@@ -59,7 +60,7 @@ pub enum Error {
     Timeout,
 }
 
-/// Owned, unfiltered, polling-only LVD monitor.
+/// Owned, unfiltered LVD monitor; L012 additionally supports edge notifications.
 pub struct LowVoltageMonitor<'d> {
     _peripheral: Peri<'d, LVD>,
     _input: Option<Flex<'d>>,
@@ -132,7 +133,11 @@ impl<'d> LowVoltageMonitor<'d> {
 }
 impl Drop for LowVoltageMonitor<'_> {
     fn drop(&mut self) {
-        critical_section::with(|_| pac::LVD.cr0().modify(|w| w.set_en(false)));
+        #[cfg(cw32l012)]
+        drop(critical_section::with(edge_wait::retire));
+        critical_section::with(|_| {
+            pac::LVD.cr0().modify(|w| w.set_en(false));
+        });
     }
 }
 
@@ -190,3 +195,135 @@ macro_rules! impl_input_pin {
 }
 #[allow(unused_imports)]
 pub(crate) use impl_input_pin;
+
+/// L012 supply/input crossing direction, as defined by LVD RISE/FALL.
+#[cfg(cw32l012)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Edge {
+    /// Monitored voltage rises above its threshold (not the FLTV polarity).
+    Rising,
+    /// Monitored voltage falls below its threshold.
+    Falling,
+    Either,
+}
+#[cfg(cw32l012)]
+pub use edge_wait::InterruptHandler;
+#[cfg(cw32l012)]
+impl LowVoltageMonitor<'_> {
+    /// Start a fresh edge window on first poll, discarding any previous event.
+    ///
+    /// Completion means a sticky edge event was observed, not a settled voltage
+    /// or a count of crossings. Cancellation masks this monitor's request and
+    /// clears its event, without disabling monitoring. No wakeup guarantee.
+    /// Forgetting the future retains no buffer pointers; Drop of the monitor or
+    /// the next wait retires the abandoned request. An unpolled wait does nothing.
+    pub async fn wait_for_edge(
+        &mut self,
+        edge: Edge,
+        _irq: impl crate::interrupt::typelevel::Binding<
+            crate::interrupt::typelevel::LVD,
+            InterruptHandler,
+        >,
+    ) {
+        edge_wait::wait(edge).await;
+    }
+}
+#[cfg(cw32l012)]
+mod edge_wait {
+    use super::*;
+    use crate::interrupt::typelevel::{Handler, Interrupt, LVD as Irq};
+    use core::{
+        cell::RefCell,
+        future::poll_fn,
+        task::{Poll, Waker},
+    };
+    struct State {
+        active: bool,
+        waker: Option<Waker>,
+    }
+    static STATE: critical_section::Mutex<RefCell<State>> =
+        critical_section::Mutex::new(RefCell::new(State {
+            active: false,
+            waker: None,
+        }));
+
+    /// Handler for the source-qualified L012 LVD vector.
+    pub struct InterruptHandler;
+    impl Handler<Irq> for InterruptHandler {
+        unsafe fn on_interrupt() {
+            let wake = critical_section::with(|cs| {
+                let mut state = STATE.borrow(cs).borrow_mut();
+                // Inactive dispatch must not even read peripheral registers.
+                if !state.active {
+                    return None;
+                }
+                if pac::LVD.cr1().read().ie() && pac::LVD.sr().read().intf() {
+                    pac::LVD.cr1().modify(|w| w.set_ie(false));
+                    state.waker.take()
+                } else {
+                    None
+                }
+            });
+            if let Some(waker) = wake {
+                waker.wake();
+            }
+        }
+    }
+    fn clear_event() {
+        // L012 UM 1.4 §28.7: INTF is the sole RW0 bit; FLTV is RO,
+        // reserved bits require zero. Typed command, never status RMW.
+        pac::LVD.sr().write_value(pac::lvd::regs::Sr(0));
+    }
+    pub(super) fn retire(cs: critical_section::CriticalSection<'_>) -> Option<Waker> {
+        let mut state = STATE.borrow(cs).borrow_mut();
+        if state.active {
+            pac::LVD.cr1().modify(|w| {
+                w.set_ie(false);
+                w.set_rise(false);
+                w.set_fall(false);
+            });
+            clear_event();
+        }
+        state.active = false;
+        state.waker.take()
+    }
+    struct Guard;
+    impl Drop for Guard {
+        fn drop(&mut self) {
+            drop(critical_section::with(retire));
+        }
+    }
+    pub(super) async fn wait(edge: Edge) {
+        drop(critical_section::with(retire));
+        critical_section::with(|cs| {
+            pac::LVD.cr1().modify(|w| {
+                w.set_ie(false);
+                w.set_level(false);
+                w.set_rise(edge != Edge::Falling);
+                w.set_fall(edge != Edge::Rising);
+            });
+            clear_event();
+            STATE.borrow(cs).borrow_mut().active = true;
+        });
+        let _guard = Guard;
+        poll_fn(|cx| {
+            // RawWaker callbacks may be arbitrary code: clone/drop outside CS.
+            let mut next_waker = Some(cx.waker().clone());
+            let (poll, previous) = critical_section::with(|cs| {
+                let mut state = STATE.borrow(cs).borrow_mut();
+                if pac::LVD.sr().read().intf() {
+                    return (Poll::Ready(()), None);
+                }
+                let previous = core::mem::replace(&mut state.waker, next_waker.take());
+                pac::LVD.cr1().modify(|w| w.set_ie(true));
+                unsafe {
+                    Irq::enable();
+                }
+                (Poll::Pending, previous)
+            });
+            drop(previous);
+            poll
+        })
+        .await;
+    }
+}

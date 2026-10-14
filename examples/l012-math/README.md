@@ -23,3 +23,6 @@ cargo build --manifest-path examples/l012-math/Cargo.toml --locked \
 
 No device execution was performed. See `docs/l012-math-evidence.md` for formats,
 source conflicts, domain restrictions and verification results.
+
+`cordic_async` instantiates all eight IRQ-backed `*_async` methods. Cancellation
+masks IE but does not abort hardware; see [the async contract](../../docs/cordic-async.md).

@@ -20,8 +20,9 @@
 //! Hardware RTS/CTS is available through owned, package-checked flow-control pins.
 //! Buffered collection depends on interrupt progress; hardware RTS does not
 //! reflect software occupancy. Buffered idle markers, DMA rings, RX DMA on
-//! L010/L011/L012, synchronous mode, LSI/deep-sleep UART, and custom nine-bit
-//! data are not exposed.
+//! L010/L011/L012, synchronous mode and LSI/deep-sleep UART are not exposed.
+//! L012 ordinary PIO supports nine data bits without parity through the u16
+//! APIs. Buffered/DMA owners remain byte-only; other families reject nine bits.
 //!
 //! Register semantics follow each family's official manual and SDK. See
 //! `docs/remaining-uart-implementation.md`, `docs/f020-serial-compatibility.md`
@@ -98,13 +99,42 @@ pub enum Oversampling {
     Oversampling4,
 }
 
+/// Payload size, excluding an optional parity bit.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub enum DataBits {
+    /// Eight data bits, with optional parity.
+    DataBits8,
+    /// Nine data bits without parity. Qualified only for L012 ordinary PIO.
+    DataBits9,
+}
+
+impl DataBits {
+    fn check_byte(self) -> Result<(), Error> {
+        if self == Self::DataBits8 {
+            Ok(())
+        } else {
+            Err(Error::WordSizeMismatch)
+        }
+    }
+    #[cfg(uart_cw32l012_v1)]
+    fn mask(self) -> u16 {
+        match self {
+            Self::DataBits8 => 0xff,
+            Self::DataBits9 => 0x1ff,
+        }
+    }
+}
+
 /// UART configuration. The clock source is the PCLK frozen by HAL initialization.
 #[derive(Clone, Copy, Debug)]
 #[non_exhaustive]
 pub struct Config {
     /// Requested baud rate in bits per second.
     pub baudrate: u32,
-    /// Parity bit configuration.
+    /// Data bits. Nine-bit payloads require the L012 ordinary PIO u16 APIs.
+    pub data_bits: DataBits,
+    /// Parity bit configuration. Nine data bits plus parity are unsupported.
     pub parity: Parity,
     /// Stop-bit length.
     pub stop_bits: StopBits,
@@ -124,6 +154,7 @@ impl Default for Config {
     fn default() -> Self {
         Self {
             baudrate: 115_200,
+            data_bits: DataBits::DataBits8,
             parity: Parity::ParityNone,
             stop_bits: StopBits::STOP1,
             oversampling: Oversampling::Oversampling16,
@@ -138,6 +169,10 @@ impl Default for Config {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum ConfigError {
+    /// The selected family or buffered/DMA backend only qualifies eight data bits.
+    UnsupportedDataBits,
+    /// Nine data bits cannot be combined with a parity bit.
+    InvalidParity,
     /// Successful HAL clock initialization is required first.
     ClockNotConfigured,
     /// A zero baud rate is invalid.
@@ -169,6 +204,11 @@ pub enum ConfigError {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
+    /// A byte API cannot represent the configured nine-bit payload.
+    WordSizeMismatch,
+    /// u16-container operations are not provided by the selected DMA backend.
+    #[cfg(uart_cw32l012_v1)]
+    UnsupportedWordTransfer,
     /// Received parity did not match.
     Parity,
     /// Invalid stop bit / frame structure.
@@ -195,6 +235,9 @@ pub enum Error {
 impl core::fmt::Display for Error {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.write_str(match self {
+            Self::WordSizeMismatch => "UART byte API cannot represent nine-bit data",
+            #[cfg(uart_cw32l012_v1)]
+            Self::UnsupportedWordTransfer => "UART u16 API requires ordinary PIO",
             Self::Parity => "UART parity error",
             Self::Framing => "UART frame error",
             Self::BufferOverflow => "UART software receive buffer overflow",
@@ -216,6 +259,10 @@ impl core::error::Error for Error {}
 impl core::fmt::Display for ConfigError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.write_str(match self {
+            Self::UnsupportedDataBits => {
+                "UART data bits are not qualified for this family or backend"
+            }
+            Self::InvalidParity => "UART nine data bits cannot include parity",
             Self::ClockNotConfigured => "HAL clocks are not initialized",
             Self::BaudrateZero => "UART baud rate must be nonzero",
             Self::BaudrateTooHigh => "UART baud rate exceeds the sampling limit",
@@ -238,7 +285,9 @@ impl core::error::Error for ConfigError {}
 impl embedded_io::Error for Error {
     fn kind(&self) -> embedded_io::ErrorKind {
         match self {
-            Self::BufferOverflow => embedded_io::ErrorKind::Other,
+            Self::BufferOverflow | Self::WordSizeMismatch => embedded_io::ErrorKind::Other,
+            #[cfg(uart_cw32l012_v1)]
+            Self::UnsupportedWordTransfer => embedded_io::ErrorKind::Other,
             #[cfg(any(uart_dma_tx, uart_dma_rx))]
             Self::DmaBusy | Self::DmaQuarantined | Self::Dma(_) => embedded_io::ErrorKind::Other,
             _ => embedded_io::ErrorKind::InvalidData,
@@ -699,6 +748,7 @@ pub struct UartTx<'d, M: Mode> {
     #[cfg(uart_dma_tx)]
     dma: Option<TxDma>,
     actual_baudrate: u32,
+    data_bits: DataBits,
     _mode: PhantomData<M>,
 }
 /// Owned UART receiver, optionally using private finite-chunk DMA staging.
@@ -710,6 +760,7 @@ pub struct UartRx<'d, M: Mode> {
     #[cfg(uart_dma_rx)]
     dma: Option<RxDma>,
     actual_baudrate: u32,
+    data_bits: DataBits,
     _mode: PhantomData<M>,
 }
 
@@ -899,6 +950,7 @@ impl<'d> BufferedUartRx<'d> {
         // Entry points either consume static storage or require the caller to
         // keep borrowed storage valid and exclusive until RX shutdown.
         let baud = configured_baud::<T>(config)?;
+        require_byte_config(config)?;
         if buffer.is_empty() {
             return Err(ConfigError::RxBufferEmpty);
         }
@@ -1177,6 +1229,7 @@ impl<'d> BufferedUart<'d> {
         // Entry points either consume static storage or require the caller to
         // keep borrowed storage valid and exclusive until RX shutdown.
         let baud = configured_baud::<T>(config)?;
+        require_byte_config(config)?;
         if buffer.is_empty() {
             return Err(ConfigError::RxBufferEmpty);
         }
@@ -1184,7 +1237,7 @@ impl<'d> BufferedUart<'d> {
         let info = T::info();
         info.prepare::<T>(config, baud);
         let rx = BufferedUartRx::from_pin::<T, RX>(rx, rts, info, baud.actual, config.rx_pull);
-        let mut tx = UartTx::from_pin::<T, TX>(tx, info, baud.actual);
+        let mut tx = UartTx::from_pin::<T, TX>(tx, info, baud.actual, config.data_bits);
         tx._cts = cts.map(|(pin, af)| {
             let mut pin = Flex::new(pin);
             pin.set_as_af(af, false, config.cts_pull);
@@ -1338,7 +1391,8 @@ impl<'d> Uart<'d, Async> {
         Ok(uart)
     }
 
-    /// Queue all bytes. Cancellation can leave an already-transmitted prefix.
+    /// Queue all bytes. Nine-bit owners reject byte APIs, even empty calls.
+    /// Cancellation can leave an already-transmitted prefix.
     /// Use `flush` to wait for the final stop bit to leave the wire.
     pub async fn write(&mut self, buffer: &[u8]) -> Result<(), Error> {
         self.tx.write(buffer).await
@@ -1352,7 +1406,8 @@ impl<'d> Uart<'d, Async> {
         self.rx.read(buffer).await
     }
     /// Receive a finite prefix until the buffer fills or native RXIDLE is observed.
-    /// Available on L010/L011/L012. An empty slice returns `Ok(0)` without MMIO;
+    /// Available on L010/L011/L012. Nine-bit owners reject this byte API.
+    /// On an eight-bit owner, an empty slice returns `Ok(0)` without MMIO;
     /// a nonempty call discards stale idle once on its first poll and can return
     /// zero on a later idle event. This is an inherent API, not the embedded-io
     /// short-read contract. See [`UartRx::read_until_idle`] for the observation
@@ -1380,8 +1435,9 @@ impl<'d, M: Mode> Uart<'d, M> {
         validate_cts_pull(cts.as_ref().map(|(pin, _)| &**pin), config.cts_pull)?;
         let info = T::info();
         info.prepare::<T>(config, baud);
-        let mut tx = UartTx::from_pin::<T, TX>(tx, info, baud.actual);
-        let mut rx = UartRx::from_pin::<T, RX>(rx, info, baud.actual, config.rx_pull);
+        let mut tx = UartTx::from_pin::<T, TX>(tx, info, baud.actual, config.data_bits);
+        let mut rx =
+            UartRx::from_pin::<T, RX>(rx, info, baud.actual, config.rx_pull, config.data_bits);
         tx._cts = cts.map(|(pin, af)| {
             let mut pin = Flex::new(pin);
             pin.set_as_af(af, false, config.cts_pull);
@@ -1586,12 +1642,13 @@ impl UartTx<'static, Async> {
         D: crate::dma::RequestRoute<T, crate::dma::signal::TX>,
     {
         let baud = configured_baud::<T>(config)?;
+        require_byte_config(config)?;
         TxDma::validate_staging(staging).map_err(ConfigError::DmaBuffer)?;
         let channel = crate::dma::Channel::new_admitted(channel, irq)
             .map_err(|error| ConfigError::DmaChannel(error.error))?;
         let info = T::info();
         info.prepare::<T>(config, baud);
-        let mut tx = Self::from_pin::<T, TX>(tx, info, baud.actual);
+        let mut tx = Self::from_pin::<T, TX>(tx, info, baud.actual, config.data_bits);
         tx.dma = Some(TxDma {
             channel,
             staging,
@@ -1662,6 +1719,7 @@ impl<'d> UartTx<'d, Async> {
     /// Cancellation can leave a transmitted prefix and a running staged chunk.
     /// A later write/flush first waits for that chunk's clean completion.
     pub async fn write(&mut self, buffer: &[u8]) -> Result<(), Error> {
+        self.data_bits.check_byte()?;
         #[cfg(uart_dma_tx)]
         if let Some(dma) = self.dma.as_mut() {
             return dma.write(self.info.regs, buffer).await;
@@ -1683,7 +1741,12 @@ impl<'d> UartTx<'d, Async> {
     }
 }
 impl<'d, M: Mode> UartTx<'d, M> {
-    fn from_pin<T: Instance, TX: TxPin<T>>(pin: Peri<'d, TX>, info: Info, actual: u32) -> Self {
+    fn from_pin<T: Instance, TX: TxPin<T>>(
+        pin: Peri<'d, TX>,
+        info: Info,
+        actual: u32,
+        data_bits: DataBits,
+    ) -> Self {
         let mut pin = Flex::new(pin);
         pin.set_as_af(<TX as sealed::Pin<T, sealed::Tx>>::AF, true, Pull::None);
         T::state().activate(Direction::Tx);
@@ -1695,6 +1758,7 @@ impl<'d, M: Mode> UartTx<'d, M> {
             #[cfg(uart_dma_tx)]
             dma: None,
             actual_baudrate: actual,
+            data_bits,
             _mode: PhantomData,
         }
     }
@@ -1708,7 +1772,7 @@ impl<'d, M: Mode> UartTx<'d, M> {
         validate_cts_pull(cts.as_ref().map(|(pin, _)| &**pin), config.cts_pull)?;
         let info = T::info();
         info.prepare::<T>(config, baud);
-        let mut tx = Self::from_pin::<T, TX>(tx, info, baud.actual);
+        let mut tx = Self::from_pin::<T, TX>(tx, info, baud.actual, config.data_bits);
         tx._cts = cts.map(|(pin, af)| {
             let mut pin = Flex::new(pin);
             pin.set_as_af(af, false, config.cts_pull);
@@ -1725,6 +1789,7 @@ impl<'d, M: Mode> UartTx<'d, M> {
     /// Queue bytes with CPU writes and blocking status checks.
     /// A DMA owner first reaps clean completion, or returns DmaBusy/quarantine.
     pub fn blocking_write(&mut self, buffer: &[u8]) -> Result<(), Error> {
+        self.data_bits.check_byte()?;
         #[cfg(uart_dma_tx)]
         if let Some(dma) = self.dma.as_mut() {
             dma.check_complete(self.info.regs)?;
@@ -2037,12 +2102,14 @@ impl UartRx<'static, Async> {
         D: crate::dma::RequestRoute<T, crate::dma::signal::RX>,
     {
         let baud = configured_baud::<T>(config)?;
+        require_byte_config(config)?;
         TxDma::validate_staging(staging).map_err(ConfigError::DmaBuffer)?;
         let channel = crate::dma::Channel::new_admitted(channel, irq)
             .map_err(|error| ConfigError::DmaChannel(error.error))?;
         let info = T::info();
         info.prepare::<T>(config, baud);
-        let mut rx = Self::from_pin::<T, RX>(rx, info, baud.actual, config.rx_pull);
+        let mut rx =
+            Self::from_pin::<T, RX>(rx, info, baud.actual, config.rx_pull, config.data_bits);
         rx.dma = Some(RxDma::new(channel, staging, D::REQUEST));
         critical_section::with(|_| info.regs.cr1().modify(|w| w.set_rxen(true)));
         unsafe { T::Interrupt::enable() };
@@ -2083,6 +2150,7 @@ impl Uart<'static, Async> {
         DR: crate::dma::RequestRoute<T, crate::dma::signal::RX>,
     {
         let baud = configured_baud::<T>(config)?;
+        require_byte_config(config)?;
         TxDma::validate_staging(tx_staging).map_err(ConfigError::DmaBuffer)?;
         TxDma::validate_staging(rx_staging).map_err(ConfigError::DmaBuffer)?;
         let (tx_channel, rx_channel) =
@@ -2090,8 +2158,9 @@ impl Uart<'static, Async> {
                 .map_err(ConfigError::DmaChannel)?;
         let info = T::info();
         info.prepare::<T>(config, baud);
-        let mut tx = UartTx::from_pin::<T, TX>(tx, info, baud.actual);
-        let mut rx = UartRx::from_pin::<T, RX>(rx, info, baud.actual, config.rx_pull);
+        let mut tx = UartTx::from_pin::<T, TX>(tx, info, baud.actual, config.data_bits);
+        let mut rx =
+            UartRx::from_pin::<T, RX>(rx, info, baud.actual, config.rx_pull, config.data_bits);
         tx.dma = Some(TxDma {
             channel: tx_channel,
             staging: tx_staging,
@@ -2170,9 +2239,10 @@ impl<'d> UartRx<'d, Async> {
     /// An empty inherent read may await an old chunk without consuming it.
     /// FE/PE returns promptly but recovery may wait forever for that chunk.
     /// Finite chunks and rearm/copy gaps do not provide lossless reception.
-    /// On L010/L011/L012, even an empty read masks an abandoned RX/idle wait's
+    /// On L010/L011/L012, even an empty supported byte read masks an abandoned RX/idle wait's
     /// interrupt enables; it does not clear receive flags or consume data.
     pub async fn read(&mut self, buffer: &mut [u8]) -> Result<(), Error> {
+        self.data_bits.check_byte()?;
         #[cfg(uart_dma_rx)]
         if let Some(dma) = self.dma.as_mut() {
             return dma.read(self.info.regs, self.state, buffer).await;
@@ -2192,8 +2262,9 @@ impl<'d> UartRx<'d, Async> {
     }
 
     /// Receive a finite prefix until the buffer fills or native RXIDLE is observed.
+    /// Nine-bit owners reject this byte API before any action, including empty calls.
     ///
-    /// Available on L010/L011/L012. An empty slice returns `Ok(0)` on its first
+    /// Available on L010/L011/L012. On an eight-bit owner, an empty slice returns `Ok(0)` on its first
     /// poll without MMIO, waker registration, interrupt changes or stale-idle
     /// acknowledgment. Constructing or dropping an unpolled future has no effect.
     /// An empty call does not retire an abandoned earlier wait.
@@ -2232,6 +2303,7 @@ impl<'d> UartRx<'d, Async> {
     /// or forget. Neither action guarantees data or boundary recovery.
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
     pub async fn read_until_idle(&mut self, buffer: &mut [u8]) -> Result<usize, Error> {
+        self.data_bits.check_byte()?;
         if buffer.is_empty() {
             return Ok(0);
         }
@@ -2267,6 +2339,7 @@ impl<'d, M: Mode> UartRx<'d, M> {
         info: Info,
         actual: u32,
         pull: Pull,
+        data_bits: DataBits,
     ) -> Self {
         let mut pin = Flex::new(pin);
         pin.set_as_af(<RX as sealed::Pin<T, sealed::Rx>>::AF, false, pull);
@@ -2279,6 +2352,7 @@ impl<'d, M: Mode> UartRx<'d, M> {
             #[cfg(uart_dma_rx)]
             dma: None,
             actual_baudrate: actual,
+            data_bits,
             _mode: PhantomData,
         }
     }
@@ -2291,7 +2365,8 @@ impl<'d, M: Mode> UartRx<'d, M> {
         let baud = configured_baud::<T>(config)?;
         let info = T::info();
         info.prepare::<T>(config, baud);
-        let mut rx = Self::from_pin::<T, RX>(rx, info, baud.actual, config.rx_pull);
+        let mut rx =
+            Self::from_pin::<T, RX>(rx, info, baud.actual, config.rx_pull, config.data_bits);
         rx._rts = rts.map(|(pin, af)| {
             let mut pin = Flex::new(pin);
             pin.set_as_af(af, true, Pull::None);
@@ -2310,6 +2385,7 @@ impl<'d, M: Mode> UartRx<'d, M> {
     // Native ordinary reads also retire old RX/idle enables without clearing
     // receive flags, including blocking and empty trait entry points.
     fn check_read(&mut self) -> Result<(), Error> {
+        self.data_bits.check_byte()?;
         #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
         retire_receive_wait(self.info.regs);
         #[cfg(uart_dma_rx)]
@@ -2339,6 +2415,127 @@ impl<'d, M: Mode> UartRx<'d, M> {
             }
         }
         Ok(())
+    }
+}
+
+// Word-container APIs deliberately keep the IRQ PIO and staged DMA boundaries
+// separate. No caller pointer is retained outside the operation future.
+#[cfg(uart_cw32l012_v1)]
+impl UartTx<'_, Async> {
+    /// Queue u16 containers using ordinary PIO. L012 only; low 8 or 9 bits
+    /// are sent according to Config::data_bits, and higher bits are ignored.
+    /// DMA owners reject even an empty call before MMIO or lease observation.
+    /// Cancellation can leave a transmitted prefix. Flush for wire completion.
+    pub async fn write_u16(&mut self, buffer: &[u16]) -> Result<(), Error> {
+        self.check_word_transfer()?;
+        let mask = self.data_bits.mask();
+        for &word in buffer {
+            Wait::new(self.info.regs, &self.state.tx_waker, WaitEvent::TxReady).await;
+            transmit_word(self.info.regs, word & mask);
+        }
+        Ok(())
+    }
+}
+
+#[cfg(uart_cw32l012_v1)]
+impl<M: Mode> UartTx<'_, M> {
+    fn check_word_transfer(&self) -> Result<(), Error> {
+        #[cfg(uart_dma_tx)]
+        if self.dma.is_some() {
+            return Err(Error::UnsupportedWordTransfer);
+        }
+        Ok(())
+    }
+    /// Blocking counterpart of [`UartTx::write_u16`], with the same payload
+    /// masking and DMA refusal. Call blocking_flush for wire completion.
+    pub fn blocking_write_u16(&mut self, buffer: &[u16]) -> Result<(), Error> {
+        self.check_word_transfer()?;
+        let mask = self.data_bits.mask();
+        for &word in buffer {
+            while !self.info.regs.isr().read().txe() {
+                core::hint::spin_loop();
+            }
+            transmit_word(self.info.regs, word & mask);
+        }
+        Ok(())
+    }
+}
+
+#[cfg(uart_cw32l012_v1)]
+impl UartRx<'_, Async> {
+    /// Receive exactly buffer.len() u16 containers using ordinary PIO.
+    /// L012 only; each result contains the low configured 8 or 9 payload bits.
+    /// Error/acknowledgment order and cancellation follow the ordinary byte
+    /// read. An empty supported call retires an old receive wait but reads no
+    /// data. DMA owners reject before that retirement, even for empty buffers.
+    pub async fn read_u16(&mut self, buffer: &mut [u16]) -> Result<(), Error> {
+        self.check_word_transfer()?;
+        retire_receive_wait(self.info.regs);
+        let mask = self.data_bits.mask();
+        for word in buffer {
+            loop {
+                Wait::new(self.info.regs, &self.state.rx_waker, WaitEvent::Receive).await;
+                let status = self.info.regs.isr().read();
+                if let Some(received) = receive_observed_word(self.info.regs, status, false)? {
+                    *word = received & mask;
+                    break;
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
+#[cfg(uart_cw32l012_v1)]
+impl<M: Mode> UartRx<'_, M> {
+    fn check_word_transfer(&self) -> Result<(), Error> {
+        #[cfg(uart_dma_rx)]
+        if self.dma.is_some() {
+            return Err(Error::UnsupportedWordTransfer);
+        }
+        Ok(())
+    }
+    /// Blocking counterpart of [`UartRx::read_u16`], preserving the ordinary
+    /// frame-error priority and observed-event acknowledgments.
+    pub fn blocking_read_u16(&mut self, buffer: &mut [u16]) -> Result<(), Error> {
+        self.check_word_transfer()?;
+        retire_receive_wait(self.info.regs);
+        let mask = self.data_bits.mask();
+        for word in buffer {
+            loop {
+                let status = self.info.regs.isr().read();
+                if let Some(received) = receive_observed_word(self.info.regs, status, false)? {
+                    *word = received & mask;
+                    break;
+                }
+                core::hint::spin_loop();
+            }
+        }
+        Ok(())
+    }
+}
+
+#[cfg(uart_cw32l012_v1)]
+impl Uart<'_, Async> {
+    /// L012 PIO word-container write; see [`UartTx::write_u16`].
+    pub async fn write_u16(&mut self, buffer: &[u16]) -> Result<(), Error> {
+        self.tx.write_u16(buffer).await
+    }
+    /// L012 PIO word-container exact read; see [`UartRx::read_u16`].
+    pub async fn read_u16(&mut self, buffer: &mut [u16]) -> Result<(), Error> {
+        self.rx.read_u16(buffer).await
+    }
+}
+
+#[cfg(uart_cw32l012_v1)]
+impl<M: Mode> Uart<'_, M> {
+    /// L012 PIO blocking word-container write; see [`UartTx::blocking_write_u16`].
+    pub fn blocking_write_u16(&mut self, buffer: &[u16]) -> Result<(), Error> {
+        self.tx.blocking_write_u16(buffer)
+    }
+    /// L012 PIO blocking exact word-container read; see [`UartRx::blocking_read_u16`].
+    pub fn blocking_read_u16(&mut self, buffer: &mut [u16]) -> Result<(), Error> {
+        self.rx.blocking_read_u16(buffer)
     }
 }
 
@@ -2400,6 +2597,15 @@ fn configured_baud<T: Instance>(config: Config) -> Result<Baud, ConfigError> {
     calculate_baud(clock.0, config)
 }
 fn validate_config(config: Config) -> Result<(), ConfigError> {
+    if config.data_bits == DataBits::DataBits9 {
+        #[cfg(not(uart_cw32l012_v1))]
+        return Err(ConfigError::UnsupportedDataBits);
+        #[cfg(uart_cw32l012_v1)]
+        if config.parity != Parity::ParityNone {
+            return Err(ConfigError::InvalidParity);
+        }
+    }
+
     #[cfg(cw32l012)]
     if config.rx_pull == Pull::Down {
         return Err(ConfigError::UnsupportedRxPull);
@@ -2407,6 +2613,14 @@ fn validate_config(config: Config) -> Result<(), ConfigError> {
     let _ = config;
     Ok(())
 }
+fn require_byte_config(config: Config) -> Result<(), ConfigError> {
+    if config.data_bits == DataBits::DataBits8 {
+        Ok(())
+    } else {
+        Err(ConfigError::UnsupportedDataBits)
+    }
+}
+
 fn validate_cts_pull(pin: Option<&AnyPin>, pull: Pull) -> Result<(), ConfigError> {
     #[cfg(not(any(gpio_cw32l010_v1, gpio_cw32l011_v1)))]
     if let Some(pin) = pin {
@@ -2566,10 +2780,14 @@ fn receive_event(status: regs::Isr) -> bool {
 }
 
 fn transmit(regs: pac::uart::Uart, byte: u8) {
+    transmit_word(regs, u16::from(byte));
+}
+
+fn transmit_word(regs: pac::uart::Uart, word: u16) {
     let mut command = regs::Icr::write_noop();
     command.set_tc(false);
     regs.icr().write_value(command);
-    regs.tdr().write(|w| w.set_tdr(u16::from(byte)));
+    regs.tdr().write(|w| w.set_tdr(word));
 }
 
 fn receive(regs: pac::uart::Uart) -> Result<Option<u8>, Error> {
@@ -2582,6 +2800,14 @@ fn receive_observed(
     status: regs::Isr,
     acknowledge_idle: bool,
 ) -> Result<Option<u8>, Error> {
+    receive_observed_word(regs, status, acknowledge_idle).map(|word| word.map(|value| value as u8))
+}
+
+fn receive_observed_word(
+    regs: pac::uart::Uart,
+    status: regs::Isr,
+    acknowledge_idle: bool,
+) -> Result<Option<u16>, Error> {
     let pending = receive_event(status);
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
     let pending = pending || (acknowledge_idle && status.rxidle());
@@ -2591,7 +2817,7 @@ fn receive_observed(
         return Ok(None);
     }
     let data = if status.rc() {
-        Some(regs.rdr().read().rdr() as u8)
+        Some(regs.rdr().read().rdr())
     } else {
         None
     };
@@ -2908,7 +3134,9 @@ fn configure(regs: pac::uart::Uart, config: Config, baud: Baud) {
         {
             // CHLEN counts the parity bit. Eight data bits with parity need
             // nine total bits; CHLEN=0 automatically clears PARITYEN.
-            w.set_chlen(config.parity != Parity::ParityNone);
+            w.set_chlen(
+                config.data_bits == DataBits::DataBits9 || config.parity != Parity::ParityNone,
+            );
             w.set_parityen(config.parity != Parity::ParityNone);
             w.set_parity(if config.parity == Parity::ParityOdd {
                 vals::Parity::Odd

@@ -1,8 +1,8 @@
-//! Blocking and interrupt-driven seven-bit CW32L012 command/FIFO I2C masters.
+//! Blocking and interrupt-driven seven/ten-bit CW32L012 command/FIFO I2C masters.
 //!
 //! This is a separate engine from the classic SI/STAT peripheral. Sources:
 //! L012 UM CN V1.4 §§23.4, 23.8; SDK V1.0.5; DS CN V1.0 §7.3.20.
-//! See `docs/l012-command-i2c.md` for the evidence and explicit limitations.
+//! See `docs/l012-i2c-async.md` and `docs/l012-i2c-ten-bit.md` for current contracts.
 //!
 //! Adjacent reads are combined into one receive command. A contiguous read run
 //! may contain at most 256 bytes; all runs are checked before any bus activity.
@@ -21,7 +21,7 @@
 //! return cached settings. Unconfirmed retirement permanently faults the
 //! instance until system reset, across blocking and async reconstruction.
 //!
-//! Only frozen PCLK is used. DMA, ten-bit addressing, slave mode and
+//! Only frozen PCLK is used. DMA, slave mode and
 //! disputed receive FIFO count fields are not exposed. External pull-ups and
 //! board timing validation are required.
 use core::future::poll_fn;
@@ -43,6 +43,52 @@ mod timing;
 use timing::{Timing, select_timing};
 
 use pac::i2c::vals::Command;
+
+/// Explicit address mode. Ten-bit addresses below 128 remain ten-bit addresses.
+/// Values are checked before starting new bus activity, including empty lists.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub enum Address {
+    /// Unshifted seven-bit target address (0..=127).
+    SevenBit(u8),
+    /// Unshifted ten-bit target address (0..=1023).
+    TenBit(u16),
+}
+impl Address {
+    fn valid(self) -> bool {
+        match self {
+            Self::SevenBit(value) => value <= 0x7f,
+            Self::TenBit(value) => value <= 0x3ff,
+        }
+    }
+    // Only called after preflight. A ten-bit target selected by an earlier write
+    // remains selected for the repeated high-address read header (UM10204).
+    fn commands(self, read: bool, selected: bool) -> [Option<(Command, u8)>; 3] {
+        match self {
+            Self::SevenBit(value) => [
+                Some((Command::StartExpectAck, (value << 1) | u8::from(read))),
+                None,
+                None,
+            ],
+            Self::TenBit(value) => {
+                let high = 0xf0 | (((value >> 8) as u8 & 3) << 1);
+                if read && selected {
+                    [Some((Command::StartExpectAck, high | 1)), None, None]
+                } else {
+                    [
+                        Some((Command::StartExpectAck, high)),
+                        Some((Command::Transmit, value as u8)),
+                        if read {
+                            Some((Command::StartExpectAck, high | 1))
+                        } else {
+                            None
+                        },
+                    ]
+                }
+            }
+        }
+    }
+}
 
 /// Configuration failures. Timing validation is completed before MMIO.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -108,7 +154,7 @@ pub enum Error {
     Timeout,
     /// Bus lines or the controller remained busy before START.
     BusBusy,
-    /// Address is not an unshifted seven-bit address.
+    /// Address exceeds the selected seven-bit or ten-bit range.
     InvalidAddress,
     /// An empty read was rejected before bus activity.
     ZeroLengthTransfer,
@@ -128,7 +174,7 @@ impl core::fmt::Display for Error {
             Self::PinLow => "I2C line-low timeout",
             Self::Timeout => "I2C transfer timed out",
             Self::BusBusy => "I2C bus remained busy",
-            Self::InvalidAddress => "I2C address exceeds seven bits",
+            Self::InvalidAddress => "I2C address exceeds selected mode range",
             Self::ZeroLengthTransfer => "I2C empty read is unsupported",
             Self::ReadTooLong => "I2C contiguous read exceeds 256 bytes",
             Self::RecoveryFailed => "I2C local recovery could not be confirmed",
@@ -247,6 +293,18 @@ impl<'d> I2c<'d, Blocking> {
         address: u8,
         operations: &mut [Operation<'_>],
     ) -> Result<(), Error> {
+        self.blocking_transaction_with_address(Address::SevenBit(address), operations)
+    }
+
+    /// Execute a seven-bit or ten-bit transaction with explicit address mode.
+    /// Same operation merging, read limits and retirement as `blocking_transaction`.
+    /// Ten-bit reads first select the full address in write direction, then issue
+    /// a repeated START with the read header. NACK source remains unknown.
+    pub fn blocking_transaction_with_address(
+        &mut self,
+        address: Address,
+        operations: &mut [Operation<'_>],
+    ) -> Result<(), Error> {
         self.engine.transaction(address, operations, || {
             self.scl.is_high() && self.sda.is_high()
         })
@@ -307,6 +365,20 @@ impl<'d> I2c<'d, Async> {
     pub async fn transaction(
         &mut self,
         address: u8,
+        operations: &mut [Operation<'_>],
+    ) -> Result<(), Error> {
+        self.transaction_with_address(Address::SevenBit(address), operations)
+            .await
+    }
+
+    /// Execute a transaction with explicit seven-bit or ten-bit addressing.
+    /// The cancellation, partial-progress and forgotten-transfer contract of
+    /// `transaction` applies to address commands as well as payload commands.
+    /// In particular cancellation may finish queued address bytes; it is not
+    /// transaction rollback. FIFO enqueue position cannot identify a NACK source.
+    pub async fn transaction_with_address(
+        &mut self,
+        address: Address,
         operations: &mut [Operation<'_>],
     ) -> Result<(), Error> {
         self.engine.prepare(address, operations, || {
@@ -453,6 +525,21 @@ impl<M: Mode> embedded_hal::i2c::ErrorType for I2c<'_, M> {
 impl embedded_hal::i2c::I2c for I2c<'_, Blocking> {
     fn transaction(&mut self, address: u8, operations: &mut [Operation<'_>]) -> Result<(), Error> {
         self.blocking_transaction(address, operations)
+    }
+}
+impl embedded_hal::i2c::I2c<embedded_hal::i2c::TenBitAddress> for I2c<'_, Blocking> {
+    fn transaction(&mut self, address: u16, operations: &mut [Operation<'_>]) -> Result<(), Error> {
+        self.blocking_transaction_with_address(Address::TenBit(address), operations)
+    }
+}
+impl embedded_hal_async::i2c::I2c<embedded_hal::i2c::TenBitAddress> for I2c<'_, Async> {
+    async fn transaction(
+        &mut self,
+        address: u16,
+        operations: &mut [Operation<'_>],
+    ) -> Result<(), Error> {
+        self.transaction_with_address(Address::TenBit(address), operations)
+            .await
     }
 }
 fn pull(enabled: bool) -> Pull {
@@ -845,7 +932,7 @@ impl Engine {
 
     fn prepare(
         &mut self,
-        address: u8,
+        address: Address,
         operations: &[Operation<'_>],
         mut lines_high: impl FnMut() -> bool,
     ) -> Result<(), Error> {
@@ -886,7 +973,7 @@ impl Engine {
 
     fn transaction(
         &mut self,
-        address: u8,
+        address: Address,
         operations: &mut [Operation<'_>],
         lines_high: impl FnMut() -> bool,
     ) -> Result<(), Error> {
@@ -901,7 +988,7 @@ impl Engine {
         }
     }
 
-    fn run(&mut self, address: u8, operations: &mut [Operation<'_>]) -> Result<(), Error> {
+    fn run(&mut self, address: Address, operations: &mut [Operation<'_>]) -> Result<(), Error> {
         let mut index = 0;
         while index < operations.len() {
             let read = matches!(operations[index], Operation::Read(_));
@@ -909,7 +996,9 @@ impl Engine {
             while end < operations.len() && matches!(operations[end], Operation::Read(_)) == read {
                 end += 1;
             }
-            self.enqueue(Command::StartExpectAck, (address << 1) | u8::from(read))?;
+            for (command, data) in address.commands(read, index != 0).into_iter().flatten() {
+                self.enqueue(command, data)?;
+            }
             if read {
                 // Preflight established 1..=256, even across adjacent buffers.
                 let count: usize = operations[index..end]
@@ -1157,7 +1246,11 @@ struct AsyncGuard<'a> {
     armed: bool,
 }
 impl AsyncGuard<'_> {
-    async fn run(&mut self, address: u8, operations: &mut [Operation<'_>]) -> Result<(), Error> {
+    async fn run(
+        &mut self,
+        address: Address,
+        operations: &mut [Operation<'_>],
+    ) -> Result<(), Error> {
         let mut index = 0;
         while index < operations.len() {
             let read = matches!(operations[index], Operation::Read(_));
@@ -1165,9 +1258,9 @@ impl AsyncGuard<'_> {
             while end < operations.len() && matches!(operations[end], Operation::Read(_)) == read {
                 end += 1;
             }
-            self.engine
-                .enqueue_async(Command::StartExpectAck, (address << 1) | u8::from(read))
-                .await?;
+            for (command, data) in address.commands(read, index != 0).into_iter().flatten() {
+                self.engine.enqueue_async(command, data).await?;
+            }
             if read {
                 let count: usize = operations[index..end]
                     .iter()
@@ -1297,8 +1390,8 @@ fn configuration_matches(regs: pac::i2c::I2c, timing: Timing, enabled: bool) -> 
         && !status.rxne()
         && !status.mstbusy()
 }
-fn preflight(address: u8, operations: &[Operation<'_>]) -> Result<(), Error> {
-    if address > 0x7f {
+fn preflight(address: Address, operations: &[Operation<'_>]) -> Result<(), Error> {
+    if !address.valid() {
         return Err(Error::InvalidAddress);
     }
     let mut run = 0usize;

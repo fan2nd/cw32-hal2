@@ -15,3 +15,7 @@ Build with `cargo build --offline --locked --target thumbv6m-none-eabi
 --no-default-features --features cw32l012c8t6 --bin capture` from this directory.
 Replace the feature with `cw32l012c8u6` for QFN48. Do not flash without checking
 board wiring. Compiling/linking does not establish silicon validation.
+
+`async_capture` awaits `wait_capture_async` using the shared BTIM3/HALLTIM
+handler pairing. It retains the same non-atomic latest-sample semantics;
+see [the async contract](../../docs/halltim-async.md).

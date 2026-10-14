@@ -25,7 +25,8 @@
 //! This polling subset disables filtering, window mode, interrupts and timer
 //! blanking/routing. On L010/L011/L012, `new_with_vref` accepts a generated,
 //! bank-qualified immutable reference borrow. Fixed BGR references, DAC input,
-//! output-pin routing and asynchronous operation remain outside this subset.
+//! output-pin routing remain outside this subset. L012 additionally supports
+//! fresh edge waits, without claiming analog settling or low-power wakeup.
 
 use crate::gpio::{Flex, Level, Pin};
 use crate::pac::vc::vals;
@@ -157,7 +158,7 @@ pub struct Output {
     pub readiness: Readiness,
 }
 
-/// Polling comparator retaining exclusive ownership of the instance and inputs.
+/// Comparator retaining exclusive ownership of the instance and inputs.
 pub struct Comparator<'d, T: Instance> {
     _peri: Peri<'d, T>,
     _positive: Flex<'d>,
@@ -182,9 +183,8 @@ impl<'d, T: Instance> Comparator<'d, T> {
         config: Config,
     ) -> Result<Self, Error> {
         enable_clock::<T>(&config)?;
-        let r = T::regs();
         // Quiesce only this instance before changing its input selection.
-        r.cr0().write(|_| {});
+        quiesce::<T>();
         let mut positive = Flex::new(positive);
         let mut negative = Flex::new(negative);
         positive.set_as_analog();
@@ -217,7 +217,7 @@ impl<'d, T: Instance> Comparator<'d, T> {
             return Err(Error::ReferenceSupplyMismatch);
         }
         enable_clock::<T>(&config)?;
-        T::regs().cr0().write(|_| {});
+        quiesce::<T>();
         let mut positive = Flex::new(positive);
         positive.set_as_analog();
         configure::<T>(P::INP_MUX, R::MUX, &config);
@@ -252,8 +252,20 @@ impl<'d, T: Instance> Comparator<'d, T> {
 impl<T: Instance> Drop for Comparator<'_, T> {
     fn drop(&mut self) {
         // Never reset or gate the shared block, nor disable any shared bandgap.
-        T::regs().cr0().modify(|w| w.set_en(false));
+        #[cfg(cw32l012)]
+        drop(critical_section::with(edge_wait::retire::<T>));
+        critical_section::with(|_| {
+            T::regs().cr0().modify(|w| w.set_en(false));
+        });
     }
+}
+
+fn quiesce<T: Instance>() {
+    #[cfg(cw32l012)]
+    drop(critical_section::with(edge_wait::retire::<T>));
+    critical_section::with(|_| {
+        T::regs().cr0().write(|_| {});
+    });
 }
 
 fn enable_clock<T: Instance>(config: &Config) -> Result<(), Error> {
@@ -313,6 +325,8 @@ fn configure<T: Instance>(positive_mux: u8, negative_mux: u8, config: &Config) {
 
 pub(crate) trait SealedInstance {
     fn regs() -> pac::vc::Vc;
+    #[cfg(cw32l012)]
+    fn edge_state() -> &'static edge_wait::State;
 }
 /// Comparator instance generated from the selected chip's verified metadata.
 #[allow(private_bounds)]
@@ -335,6 +349,12 @@ macro_rules! impl_instance {
         impl $crate::comparator::SealedInstance for $crate::peripherals::$instance {
             fn regs() -> $crate::pac::vc::Vc {
                 $crate::pac::$instance
+            }
+            #[cfg(cw32l012)]
+            fn edge_state() -> &'static $crate::comparator::edge_wait::State {
+                static STATE: $crate::comparator::edge_wait::State =
+                    $crate::comparator::edge_wait::State::new();
+                &STATE
             }
         }
         impl $crate::comparator::Instance for $crate::peripherals::$instance {}
@@ -366,3 +386,152 @@ macro_rules! impl_pin {
     };
 }
 pub(crate) use impl_pin;
+
+/// L012 post-polarity comparator output edge, not an analog-ready indication.
+#[cfg(cw32l012)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Edge {
+    Rising,
+    Falling,
+    Either,
+}
+#[cfg(cw32l012)]
+pub use edge_wait::{EdgeInstance, InterruptHandler};
+#[cfg(cw32l012)]
+impl<T: EdgeInstance> Comparator<'_, T> {
+    /// Start a fresh edge window on first poll and discard any previous event.
+    ///
+    /// Completion reports one coalesced sticky event, not an edge count, current
+    /// level or settled analog input. Cancellation clears only this comparator's
+    /// request/event. Its sibling, reference owner and shared clock are untouched.
+    /// Bind both active channel handlers on each shared vector. An unpolled wait
+    /// does nothing; a forgotten wait is retired by the next wait or owner Drop.
+    pub async fn wait_for_edge(
+        &mut self,
+        edge: Edge,
+        _irq: impl crate::interrupt::typelevel::Binding<T::Interrupt, InterruptHandler<T>>,
+    ) {
+        edge_wait::wait::<T>(edge).await;
+    }
+}
+#[cfg(cw32l012)]
+pub(crate) mod edge_wait {
+    use super::*;
+    use crate::interrupt::typelevel::{Handler, Interrupt};
+    use core::{
+        cell::RefCell,
+        future::poll_fn,
+        marker::PhantomData,
+        task::{Poll, Waker},
+    };
+    struct Inner {
+        active: bool,
+        waker: Option<Waker>,
+    }
+    pub(crate) struct State(critical_section::Mutex<RefCell<Inner>>);
+    impl State {
+        pub(crate) const fn new() -> Self {
+            Self(critical_section::Mutex::new(RefCell::new(Inner {
+                active: false,
+                waker: None,
+            })))
+        }
+    }
+    /// L012 comparator with its source-qualified shared interrupt vector.
+    pub trait EdgeInstance: Instance {
+        type Interrupt: Interrupt;
+    }
+    macro_rules! instance {
+        ($instance:ident, $irq:ident) => {
+            impl EdgeInstance for crate::peripherals::$instance {
+                type Interrupt = crate::interrupt::typelevel::$irq;
+            }
+        };
+    }
+    instance!(VC1, VC13);
+    instance!(VC3, VC13);
+    instance!(VC2, VC24);
+    instance!(VC4, VC24);
+    /// Per-channel handler. Pair VC1/VC3 and VC2/VC4 handlers when both are used.
+    /// Never disables or unpends a shared NVIC vector.
+    pub struct InterruptHandler<T: EdgeInstance>(PhantomData<T>);
+    impl<T: EdgeInstance> Handler<T::Interrupt> for InterruptHandler<T> {
+        unsafe fn on_interrupt() {
+            let wake = critical_section::with(|cs| {
+                let mut state = T::edge_state().0.borrow(cs).borrow_mut();
+                if !state.active {
+                    return None;
+                }
+                let r = T::regs();
+                if r.cr0().read().ie() && r.sr().read().intf() {
+                    r.cr0().modify(|w| w.set_ie(false));
+                    state.waker.take()
+                } else {
+                    None
+                }
+            });
+            if let Some(waker) = wake {
+                waker.wake();
+            }
+        }
+    }
+    fn clear_event<T: Instance>() {
+        let mut command = pac::vc::regs::Sr::write_noop();
+        command.set_intf(false);
+        T::regs().sr().write_value(command);
+    }
+    pub(super) fn retire<T: Instance>(cs: critical_section::CriticalSection<'_>) -> Option<Waker> {
+        let mut state = T::edge_state().0.borrow(cs).borrow_mut();
+        if state.active {
+            let r = T::regs();
+            r.cr0().modify(|w| w.set_ie(false));
+            r.cr1().modify(|w| {
+                w.set_riseie(false);
+                w.set_fallie(false);
+            });
+            clear_event::<T>();
+        }
+        state.active = false;
+        state.waker.take()
+    }
+    struct Guard<T: Instance>(PhantomData<T>);
+    impl<T: Instance> Drop for Guard<T> {
+        fn drop(&mut self) {
+            drop(critical_section::with(retire::<T>));
+        }
+    }
+    pub(super) async fn wait<T: EdgeInstance>(edge: Edge) {
+        drop(critical_section::with(retire::<T>));
+        critical_section::with(|cs| {
+            let r = T::regs();
+            r.cr0().modify(|w| w.set_ie(false));
+            r.cr1().modify(|w| {
+                w.set_highie(false);
+                w.set_riseie(edge != Edge::Falling);
+                w.set_fallie(edge != Edge::Rising);
+            });
+            clear_event::<T>();
+            T::edge_state().0.borrow(cs).borrow_mut().active = true;
+        });
+        let _guard = Guard::<T>(PhantomData);
+        poll_fn(|cx| {
+            // RawWaker callbacks may be arbitrary code: clone/drop outside CS.
+            let mut next_waker = Some(cx.waker().clone());
+            let (poll, previous) = critical_section::with(|cs| {
+                let mut state = T::edge_state().0.borrow(cs).borrow_mut();
+                if T::regs().sr().read().intf() {
+                    return (Poll::Ready(()), None);
+                }
+                let previous = core::mem::replace(&mut state.waker, next_waker.take());
+                T::regs().cr0().modify(|w| w.set_ie(true));
+                unsafe {
+                    T::Interrupt::enable();
+                }
+                (Poll::Pending, previous)
+            });
+            drop(previous);
+            poll
+        })
+        .await;
+    }
+}

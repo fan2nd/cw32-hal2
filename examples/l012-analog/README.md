@@ -11,3 +11,21 @@ These assume a declared 3.3V board with VDDA=VDD, sufficient loads, and safe ext
 `cargo build --locked --target thumbv6m-none-eabi --no-default-features --features cw32l012c8t6 --bins`
 
 Use `cw32l012c8u6` for QFN48. See `../../docs/dac-opa.md` for electrical limits, ownership and exact deferred functionality.
+
+## L012 interrupt edge examples
+
+- `lvd_edges`: observe either physical supply-threshold crossing; no reset or
+  protection action is configured.
+- `comparator_edges`: external pairs VC1 PA0/PA2, VC2 PA1/PA3, VC3 PA6/PA7,
+  VC4 PA9/PA10, with both handlers bound on each shared VC13/VC24 vector.
+- `comparator_divider_edges`: positive inputs PA0/PA1/PA6/PA9, borrowing VC12REF
+  for VC1/2 and VC34REF for VC3/4. Default reference is half the declared supply.
+
+The comparator examples declare 3300 mV; adjust both comparator and reference
+configuration to the actual board. Respect legal analog input levels and qualify
+settling separately. Early events can be startup transients. These builds do not
+establish hardware correctness or low-power wakeup. See
+[edge semantics and source evidence](../../docs/l012-analog-edge-waits.md).
+
+Build for either `cw32l012c8t6` or `cw32l012c8u6`, for example:
+`cargo build --release --target thumbv6m-none-eabi --no-default-features --features cw32l012c8t6 --bin comparator_edges`.

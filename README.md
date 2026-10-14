@@ -51,6 +51,23 @@ their frozen original scopes, not these new APIs.
 Cancellation does not imply a completed SPI transaction, captured-event history,
 or an atomic LCD frame update. No hardware validation is claimed.
 
+## Second software API batch
+
+The current source additionally implements L012-only
+[ordinary nine-bit UART PIO](docs/uart-l012-nine-bit.md),
+[explicit ten-bit I2C master](docs/l012-i2c-ten-bit.md),
+[coalesced HALLTIM capture waits](docs/halltim-async.md), and
+[IRQ-assisted completion of existing CORDIC Q1.31 operations](docs/cordic-async.md).
+[L012 LVD/comparator fresh-window edge waits](docs/l012-analog-edge-waits.md)
+cover only existing qualified analog owner configurations, without filters,
+new references or analog-readiness guarantees. These additions passed their
+[separate software acceptance](docs/l012-extensions-validation.md): 113 ARM library commands,
+68 example build commands, 26 cohort API expectations, 12 IRQ ownership
+expectations and focused host suites. The receipt does not itself establish
+publication to main; the first batch's receipt is not reused as validation. Existing DMA restrictions,
+other-family exclusions and numerical/electrical limits remain in force.
+No hardware execution or low-power/RF capability is claimed.
+
 ## Workspace
 
 - `cw32-data/`: curated versioned register YAML, chip/source manifests, verified

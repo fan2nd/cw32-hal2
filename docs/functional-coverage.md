@@ -47,6 +47,23 @@ remains live rather than atomically latched; capture indications remain
 coalesced rather than a lossless timestamp history. Existing source disputes,
 DMA retention limits and deferred low-power/RF work are unchanged.
 
+## Second software API batch
+
+The current source additionally implements L012-only
+[ordinary nine-bit UART PIO](uart-l012-nine-bit.md),
+[explicit ten-bit I2C master](l012-i2c-ten-bit.md),
+[coalesced HALLTIM capture waits](halltim-async.md), and
+[IRQ-assisted completion of existing CORDIC Q1.31 operations](cordic-async.md).
+[L012 LVD/comparator fresh-window edge waits](l012-analog-edge-waits.md)
+cover only existing qualified analog owner configurations, without filters,
+new references or analog-readiness guarantees. These additions passed their
+[separate software acceptance](l012-extensions-validation.md): 113 ARM library commands,
+68 example build commands, 26 cohort API expectations, 12 IRQ ownership
+expectations and focused host suites. The receipt does not itself establish
+publication to main; the first batch's receipt is not reused as validation. Existing DMA restrictions,
+other-family exclusions and numerical/electrical limits remain in force.
+No hardware execution or low-power/RF capability is claimed.
+
 ## What is declared and what is derived
 
 `cw32-data/inputs`, register YAML and hardware sidecars remain canonical. The
@@ -979,7 +996,7 @@ separate final-source clean and final54 binding receipts are required.
 
 RF and low-power/deep-sleep/wake integration remain explicitly user-deferred.
 Existing unimplemented sleep/wake declarations still mean no API is supplied.
-Advanced SPI slave modes, I2C slave/ten-bit, ADC continuous/general-triggered/DMA/
+Advanced SPI slave modes, I2C slave and non-L012 ten-bit, ADC continuous/general-triggered/DMA/
 coupled modes, full external-reference ownership, and additional timer
 capture-IRQ modes beyond the separately declared InputInstance/OverflowInstance
 intersection, DMA/cascade/history/complementary modes remain outside this baseline.

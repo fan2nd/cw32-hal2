@@ -9,18 +9,25 @@
 //! direction or validate a complete six-step Hall sequence.
 //!
 //! Only the frozen, qualified PCLK clock is used. Tick bounds inherit RCC's
-//! supply/temperature/factory-trim contract. No DMA, async/IRQ, PWM output,
+//! supply/temperature/factory-trim contract. No DMA, PWM output,
 //! software-capture command or downstream TRGO routing is exposed. The local
 //! TRGO source is overflow (reset selection); this module does not enable a
-//! consumer. BTIM3 shares the NVIC vector; this driver never touches NVIC.
+//! consumer. BTIM3 shares the NVIC vector; this driver never disables or unpends that vector.
 
 use crate::{
     Peri, PeripheralType,
     gpio::{Flex, Pin, Pull},
+    interrupt::typelevel::{BTIM3_HALLTIM, Binding, Handler, Interrupt},
     pac,
     rcc::{ClockBounds, RccPeripheral},
 };
-use core::marker::PhantomData;
+use core::{
+    cell::{Cell, RefCell},
+    future::poll_fn,
+    marker::PhantomData,
+    task::{Poll, Waker},
+};
+use critical_section::Mutex;
 pub use pac::halltim::vals::Prescaler;
 
 /// The largest documented ARR/CNT/WIDTH value.
@@ -60,13 +67,62 @@ pub enum Error {
     Stopped,
 }
 
+pub(crate) struct State {
+    waiting: Mutex<Cell<bool>>,
+    waker: Mutex<RefCell<Option<Waker>>>,
+}
+impl State {
+    pub(crate) const fn new() -> Self {
+        Self {
+            waiting: Mutex::new(Cell::new(false)),
+            waker: Mutex::new(RefCell::new(None)),
+        }
+    }
+}
+/// Services HALLTIM capture only. Bind BTIM3's handler too when its IRQ is enabled.
+pub struct InterruptHandler<T: Instance>(PhantomData<T>);
+impl<T: Instance> Handler<BTIM3_HALLTIM> for InterruptHandler<T> {
+    unsafe fn on_interrupt() {
+        let wake = critical_section::with(|cs| {
+            let state = T::state();
+            if state.waiting.borrow(cs).get()
+                && T::regs().dier().read().capie()
+                && T::regs().isr().read().capf()
+            {
+                T::regs().dier().modify(|w| w.set_capie(false));
+                state.waker.borrow(cs).borrow_mut().take()
+            } else {
+                None
+            }
+        });
+        if let Some(waker) = wake {
+            waker.wake();
+        }
+    }
+}
+fn retire_wait<T: Instance>() {
+    let stale = critical_section::with(|cs| {
+        T::regs().dier().modify(|w| w.set_capie(false));
+        T::state().waiting.borrow(cs).set(false);
+        T::state().waker.borrow(cs).borrow_mut().take()
+    });
+    drop(stale);
+}
+struct CaptureWait<T: Instance>(PhantomData<T>);
+impl<T: Instance> Drop for CaptureWait<T> {
+    fn drop(&mut self) {
+        retire_wait::<T>();
+    }
+}
+
 pub(crate) mod sealed {
     use super::*;
-    pub trait Instance: RccPeripheral {
+    pub(crate) trait Instance: RccPeripheral {
         fn regs() -> pac::halltim::Halltim;
+        fn state() -> &'static State;
     }
     pub trait Channel {}
-    pub trait InputPin<T: Instance, C: Channel> {
+    pub(crate) trait InputPin<T: Instance, C: Channel> {
         fn af(&self) -> u8;
     }
 }
@@ -186,7 +242,7 @@ impl<'d, T: Instance> HallTim<'d, T> {
             Prescaler::Div4 => 4,
             Prescaler::Div8 => 8,
         };
-        critical_section::with(|cs| {
+        let stale = critical_section::with(|cs| {
             if T::RCC_INFO.reset_asserted() {
                 return Err(Error::HeldInReset);
             }
@@ -196,6 +252,8 @@ impl<'d, T: Instance> HallTim<'d, T> {
             if !T::RCC_INFO.is_enabled() {
                 return Err(Error::ClockNotEnabled);
             }
+            T::state().waiting.borrow(cs).set(false);
+            let stale = T::state().waker.borrow(cs).borrow_mut().take();
             let r = T::regs();
             r.cr().modify(|w| w.set_en(false));
             // Explicitly disable inherited interrupt/DMA requests, including MATCHIE.
@@ -210,8 +268,9 @@ impl<'d, T: Instance> HallTim<'d, T> {
             r.ccr().write(|w| w.set_data(0));
             r.cnt().write(|w| w.set_data(0));
             clear(true, true, true, r);
-            Ok(())
+            Ok(stale)
         })?;
+        drop(stale);
         Ok(Self {
             _peri: peri,
             pins: [ch1.connect(), ch2.connect(), ch3.connect()],
@@ -239,6 +298,7 @@ impl<'d, T: Instance> HallTim<'d, T> {
     /// Restarts the counter and software observation state; no software capture is issued.
     /// Cycling EN does not establish that hardware filter history is reset.
     pub fn restart(&mut self) {
+        retire_wait::<T>();
         self.stop();
         T::regs().cnt().write(|w| w.set_data(0));
         clear(true, true, true, T::regs());
@@ -309,6 +369,41 @@ impl<'d, T: Instance> HallTim<'d, T> {
             additional_capture_pending: after.capf(),
         })
     }
+    /// Await one coalesced latest capture. The same non-atomic sampling and
+    /// overflow semantics as `try_capture` apply. Cancellation masks CAPIE only,
+    /// retaining flags/counter; no edge history, time bound or wake-from-sleep.
+    /// Forgetting may leave a request armed, but stores no caller-memory pointer.
+    pub async fn wait_capture_async(
+        &mut self,
+        _irq: impl Binding<BTIM3_HALLTIM, InterruptHandler<T>>,
+    ) -> Result<Capture, Error> {
+        let _wait = CaptureWait::<T>(PhantomData);
+        if !self.is_running() {
+            return Err(Error::Stopped);
+        }
+        unsafe {
+            BTIM3_HALLTIM::enable();
+        }
+        poll_fn(|cx| {
+            let candidate = cx.waker().clone();
+            let (capture, previous) = critical_section::with(|cs| {
+                if let Some(capture) = self.try_capture() {
+                    (Some(capture), Some(candidate))
+                } else {
+                    T::state().waiting.borrow(cs).set(true);
+                    let previous = T::state().waker.borrow(cs).borrow_mut().replace(candidate);
+                    T::regs().dier().modify(|w| w.set_capie(true));
+                    (None, previous)
+                }
+            });
+            drop(previous);
+            match capture {
+                Some(capture) => Poll::Ready(Ok(capture)),
+                None => Poll::Pending,
+            }
+        })
+        .await
+    }
     /// Bounded polling. The budget counts attempts, not time; zero never polls.
     /// Timeout preserves counting and any pending event. Does not enter sleep.
     pub fn wait_capture(&mut self, poll_budget: u32) -> Result<Capture, Error> {
@@ -340,6 +435,7 @@ fn clear(capture: bool, overflow: bool, matched: bool, r: pac::halltim::Halltim)
 }
 impl<T: Instance> Drop for HallTim<'_, T> {
     fn drop(&mut self) {
+        retire_wait::<T>();
         self.stop();
         T::regs().dier().write_value(Default::default());
         for pin in &mut self.pins {
@@ -356,6 +452,10 @@ macro_rules! impl_instance {
         impl $crate::halltim::sealed::Instance for $crate::peripherals::$instance {
             fn regs() -> $crate::pac::halltim::Halltim {
                 $crate::pac::$instance
+            }
+            fn state() -> &'static $crate::halltim::State {
+                static STATE: $crate::halltim::State = $crate::halltim::State::new();
+                &STATE
             }
         }
         impl $crate::halltim::Instance for $crate::peripherals::$instance {}

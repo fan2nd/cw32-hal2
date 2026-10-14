@@ -102,3 +102,13 @@ validated dependency versions. Release settings match the classic I2C examples:
 size optimization `z`, LTO and one codegen unit. There is no time-driver feature
 or enlarged memory fallback. Local Cargo configuration sets only the target
 default. These commands are usage instructions, not successful-build receipts.
+
+## Ten-bit master example
+
+`ten_bit_master` demonstrates explicit Address::TenBit and both blocking/async
+TenBitAddress traits, using example target 0x2a5 on the existing two separate
+buses. It performs pure reads and address probes, not an assumed sensor register
+protocol. Configure matching targets before execution; it has not been run on
+hardware. The original two seven-bit binaries are unchanged. See the
+[ten-bit contract](../../docs/l012-i2c-ten-bit.md) for initial-read sequencing,
+SDK differences, validation scope and cancellation limits.
