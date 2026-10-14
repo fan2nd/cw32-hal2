@@ -13,7 +13,8 @@ focused gates. No hardware validation is claimed.
 ## Owners and scope
 
 `BufferedUartRx<'d>` and `BufferedUart<'d>` are direct, interrupt-driven owners
-using a consumed `&'static mut [u8]` receive ring. The RX owner directly owns
+using either a consumed `&'static mut [u8]` receive ring (safe constructors)
+or an ordinary `&'d mut [u8]` borrow (explicitly unsafe constructors). The RX owner directly owns
 its RX pin and optional RTS pin; it does not wrap an ordinary `UartRx`.
 The combined owner contains an ordinary `UartTx<'d, Async>` and a
 `BufferedUartRx<'d>`. TX remains unbuffered and non-DMA.
@@ -33,7 +34,7 @@ if UART interrupts can run. It uses CPU reads of the one hardware receive data
 register (RDR), not DMA. Reset/configuration discards prior UART state; no
 pre-construction traffic is recovered.
 
-## API and static storage
+## API and buffer lifetime
 
 The constructors use the existing sealed pin roles and typed dedicated/shared
 interrupt binding. Their argument order is:
@@ -45,22 +46,54 @@ BufferedUart::new(peri, tx, rx, irq, buffer, config)
 BufferedUart::new_with_rtscts(peri, tx, rx, rts, cts, irq, buffer, config)
 ```
 
-All return `Result<Self, ConfigError>`. Existing baud/RX-pull validation, the
-nonempty-ring check and optional CTS-pull validation complete before IRQ, RCC,
+The existing safe constructor signatures remain unchanged. Four additional
+unsafe entrypoints accept `&'d mut [u8]`, tying the buffer borrow to the RX
+owner: `BufferedUartRx::new_borrowed`, `new_borrowed_with_rts`,
+`BufferedUart::new_borrowed`, and `new_borrowed_with_rtscts`. They use the same
+arguments and validation as their corresponding safe constructors.
+
+Normal RX Drop stops its collector and detaches its pointer before the borrow
+ends. A standalone receiver's caller can then reuse the original buffer.
+No explicit buffer-return method is necessary. Constructor errors do not retain the supplied
+borrowed buffer. After `split`, the RX half owns the ISR storage obligation;
+dropping TX alone never releases it. The combined owner gives both halves the same `'d`, so a TX
+half that remains in later use can conservatively keep the buffer borrow alive
+even after RX Drop. Drop both halves before reuse in that case. `split_ref` and
+`fill_buf` keep their ordinary exclusive borrow restrictions.
+
+This follows Embassy's borrowed-storage/Drop usage but deliberately does not
+copy its safe nonstatic constructor signature. The reference implementation is
+[embassy-stm32 buffered UART at the pinned revision](https://github.com/embassy-rs/embassy/blob/ad0d0dbd2dd4339ec17867e01d380323f52d6591/embassy-stm32/src/usart/buffered.rs).
+Safe `mem::forget` can bypass Drop, including by forgetting a future containing
+the receiver, while this driver continues receiving through a raw ISR pointer.
+A lifetime marker alone cannot keep the caller's bytes alive or exclusive in
+that case. Therefore borrowed construction is unsafe: the caller must ensure
+that backing storage remains allocated, stationary, and exclusively reserved
+until reception is stopped and its ISR ring is detached (normally by RX Drop).
+Leaking RX does not stop it: keep the storage valid and reserved until shutdown,
+or forever if shutdown never occurs. Normal cancellation is permitted when it
+actually drops the RX owner; cancellation of a read alone does not stop collection.
+Panic handling that resumes other execution must preserve the same storage
+obligation. Keep the safe static API when these guarantees cannot be established.
+
+All return `Result<Self, ConfigError>`. For both API forms, baud/RX-pull
+validation, the nonempty-ring check and optional CTS-pull validation complete before IRQ, RCC,
 GPIO, ring or lifecycle changes. A failed preflight leaves a previously
-forgotten collector unchanged, but the new constructor's supplied tokens and
-static buffer are still consumed. The API does not return that storage on
-error, Drop or reconstruction.
+forgotten collector unchanged. Safe static constructors still consume their
+supplied tokens and static buffer, without returning that storage on error,
+Drop or reconstruction. Borrowed constructor errors do not retain the supplied
+buffer borrow once the returned error/result is released.
 
 Capacity one and any larger valid slice are accepted. All slots are usable;
 there is no power-of-two, DMA-region, alignment or transfer-count restriction.
 The HAL does not zero the storage. Private indices distinguish valid data from
-unused bytes. The static slice is consumed into a private raw storage owner in per-instance
-protected state. No allocation-wide mutable reference is retained or recreated;
+unused bytes. The slice becomes a private raw storage descriptor in per-instance
+protected state. The RX owner carries the borrowed-buffer lifetime marker. No allocation-wide mutable reference is retained or recreated;
 ISR writes target only free bytes, disjoint from a borrowed occupied prefix.
-No allocation, duplicated mutable reference, pointer to a movable owner or
-caller-memory lifetime promise is required. Peripheral and pin borrows can
-still use `'d`; only the ISR destination must be static. Applications can use
+No allocation, duplicated mutable reference or pointer to a movable owner is
+required. Safe constructors need no caller-memory lifetime promise; borrowed
+constructors require the safety contract above. Peripheral and pin borrows use
+`'d` too. Applications can use
 the existing safe `cortex_m::singleton!` pattern with its result checked.
 
 Both owners expose `actual_baudrate()` and these receive methods:
@@ -112,7 +145,7 @@ slice. IRQ reception may write only free slots; occupied slots remain reserved
 until consumed, including at overflow or an error barrier. Holding a prefix for
 too long can therefore cause overflow, not mutation of that prefix. Use split
 TX/RX owners to transmit while holding an RX slice. Cancelling a pending
-`fill_buf` consumes nothing. The static ISR-storage requirement is unchanged;
+`fill_buf` consumes nothing. Both storage modes keep this aliasing contract;
 this software API does not claim hardware validation.
 
 Two variants extend currently exhaustive public enums on every UART backend:
@@ -207,8 +240,8 @@ peer behavior and in-flight frames remain relevant.
 An exact read may copy a prefix before returning Pending. Canceling or
 forgetting it preserves that written caller prefix and does not restore popped
 bytes. A Pending partial read (inherent or trait) has consumed no byte or error. Background
-collection continues independently in either case. No read future, caller
-slice or stack-buffer pointer is stored in the ISR state.
+collection continues independently in either case. No read future or read-output slice is stored in the ISR state. A borrowed
+constructor does store the receive-ring pointer under its unsafe contract.
 
 Canceling or forgetting a pending read does not mask the collector. It can
 leave waiter interest and a cloned task waker; the next ready observation may
@@ -217,13 +250,14 @@ state. This does not promise an unchanged physical stream during cancellation.
 
 Dropping buffered RX masks its receive group, disables RX/RTS and detaches the
 ring under the lifecycle critical section before releasing RX/RTS pins. It
-discards queued bytes, any error and the stored static reference without
-returning the storage. A live TX half keeps its pins, CTS, enables, clock and
+discards queued bytes, any error and the stored raw descriptor. A borrowed
+ring becomes reusable when the RX borrow ends; consumed static storage is not
+returned. A live TX half keeps its pins, CTS, enables, clock and
 interrupt support. Dropping TX likewise preserves live buffered RX. The last
 owner follows the existing clock/interrupt policy; either split-half drop
 order is supported.
 
-Forgetting an owner can leave pins, clock, interrupts and the static ring live
+Forgetting a safely constructed owner can leave pins, clock, interrupts and its static ring live
 indefinitely. The storage stays valid; an unconsumed full prefix and first error
 can persist while subsequent observations are discarded. Forgetting is not
 resource recovery or graceful shutdown.

@@ -118,7 +118,7 @@ functions:
       - path: docs/uart-idle.md
     - id: buffered_ring_receive
       status: partial
-      scope: Direct BufferedUartRx/BufferedUart owners provide continuous IRQ receive collection into a consumed static bounded RX ring.
+      scope: Direct BufferedUartRx/BufferedUart owners provide continuous IRQ receive collection into bounded RX rings; safe constructors consume static storage, while unsafe new_borrowed variants tie ordinary buffer borrows to owner Drop (combined split halves share a lifetime).
       implemented_families:
       - CW32A030
       - CW32F002
@@ -139,7 +139,7 @@ functions:
       - Existing 54 selections retain their package routes and exclusions; source/API scope is not a build-total claim.
       - Inherent and async trait reads return an available clean prefix; read_exact fills the slice. Nonwaiting blocking_read and read_ready are available. Empty reads preserve queued bytes and pending errors.
       - Async BufRead fill_buf lends a contiguous occupied prefix without copying; consume releases only exposed bytes. IRQ writes remain disjoint from the held prefix, but prolonged borrowing can cause overflow.
-      - The nonempty static ring is consumed even on constructor error and is not returned on Drop or reconstruction.
+      - Safe constructors consume the nonempty static ring even on constructor error and do not return it; unsafe borrowed constructors release the borrow after normal RX Drop and the shared TX/RX lifetime ends, and require storage to remain valid and exclusive if the owner is leaked.
       - Retained clean prefix precedes the first pending error; software BufferOverflow and line errors discard later
         ISR observations until the error is consumed.
       - Ten non-L010/L011/L012 families permit silent pre-ISR RDR overwrite even with ring space; native ORE does not

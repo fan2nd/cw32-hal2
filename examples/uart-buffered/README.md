@@ -129,3 +129,20 @@ It holds an RX prefix while awaiting a write through the independent TX half,
 then releases exactly that prefix. IRQs can append into free slots meanwhile,
 but holding the prefix too long can overflow the ring. The storage remains
 consumed static memory; this does not introduce nonstatic buffer reclamation.
+
+
+## Borrowed ring example
+
+The `borrowed` binary (CW32F002F3P7) uses the explicit unsafe
+`BufferedUartRx::new_borrowed` constructor with a local array, waits synchronously
+for data or an error, drops RX, and reuses the same array. The synchronous scope
+never leaks or suspends an owner-containing future; its panic handler disables
+interrupts and never resumes execution. These facts establish this example's
+unsafe lifetime contract, not a guarantee for arbitrary async applications.
+
+The existing examples retain the safe static constructors. Ordinary borrowed
+construction follows Embassy's normal Drop/reuse model, but is explicitly unsafe
+here: forgetting an RX owner or its containing task/future can leave its ISR
+pointer live. Keep the storage allocated, stationary and exclusively reserved
+until collection is stopped and the ISR registration detached. Dropping a TX
+half alone is not enough. See the [buffer lifetime contract](../../docs/uart-buffered-rx.md#api-and-buffer-lifetime).

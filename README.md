@@ -590,8 +590,12 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   RX+RTS constructors. These ordinary owners have no software receive FIFO or
   lossless-flow guarantee.
 - All 13 families and 54 existing selections: direct `BufferedUartRx`
-  and `BufferedUart` owners collect RX through IRQs into consumed static bounded
-  storage, including between reads. Inherent and async trait reads batch an
+  and `BufferedUart` owners collect RX through IRQs into bounded storage,
+  including between reads. Safe constructors consume static storage; explicit
+  unsafe `new_borrowed*` variants accept an ordinary mutable borrow released
+  after owner Drop, subject to the documented no-leak/lifetime safety contract.
+  Standalone RX Drop permits reuse; combined split halves share a lifetime and
+  may both need dropping first. Inherent and async trait reads batch an
   available prefix; `read_exact` fills a slice, while nonwaiting `blocking_read`
   and `read_ready` support polling. Async `BufRead::fill_buf` lends a contiguous
   occupied prefix without copying; `consume` releases only the exposed bytes.

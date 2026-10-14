@@ -107,8 +107,11 @@ still apply.
   availability differs by instance and exact selection; these ordinary owners
   have no software FIFO or throughput guarantee.
   Direct `BufferedUartRx`/`BufferedUart` owners separately collect
-  continuously through IRQs into consumed static bounded storage on all thirteen
-  families and 54 existing selections. Batched inherent and async
+  continuously through IRQs into bounded storage on all thirteen families and
+  54 existing selections. Safe constructors consume static storage; explicit
+  unsafe `new_borrowed*` constructors release an ordinary buffer borrow on
+  normal RX Drop (after any shared TX lifetime ends), and require lifetime/
+  exclusivity guarantees if RX is leaked. Batched inherent and async
   trait reads drain the retained clean prefix before returning the first error;
   later ISR observations are discarded until the error is consumed. Async
   `BufRead::fill_buf` borrows a stable contiguous occupied prefix; `consume`

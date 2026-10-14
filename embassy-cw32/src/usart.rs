@@ -366,7 +366,7 @@ impl Info {
         let state = T::state();
         critical_section::with(|cs| {
             // Safe token reborrows can outlive a forgotten buffered owner.
-            // Retire its static storage before resetting any hardware state.
+            // Retire its ring storage before resetting any hardware state.
             *state.rx_ring.borrow(cs).borrow_mut() = None;
             state.lifecycle.borrow(cs).set(Lifecycle::new());
             self.rcc
@@ -479,27 +479,27 @@ impl State {
     }
 }
 
-// Owns the consumed static allocation without retaining an allocation-wide
-// reference. In particular, ISR writes must not reborrow a full mutable slice
-// while fill_buf's shared prefix is live. Never expose this owner publicly.
+// Describes storage owned or borrowed by the RX owner, without retaining an
+// allocation-wide reference. ISR writes must not reborrow a full mutable
+// slice while fill_buf's shared prefix is live. Never expose this descriptor.
 struct RxStorage {
     ptr: *mut u8,
     capacity: usize,
-    _owned: PhantomData<&'static mut [u8]>,
 }
 impl RxStorage {
-    fn new(buffer: &'static mut [u8]) -> Self {
+    fn new(buffer: &mut [u8]) -> Self {
         assert!(!buffer.is_empty());
         Self {
             ptr: buffer.as_mut_ptr(),
             capacity: buffer.len(),
-            _owned: PhantomData,
         }
     }
 }
-// SAFETY: this privately owned allocation is valid forever and has no external
-// accessor. Moving its ownership between threads is safe. All ring metadata and
-// byte writes are serialized by State's critical-section mutex; live shared
+// SAFETY: constructors guarantee exclusive, valid storage until shutdown
+// detaches this descriptor (forever if a safe static owner is forgotten).
+// Borrowed constructors require the caller to uphold this even if Drop is bypassed.
+// Moving the descriptor between threads does not change that obligation.
+// All ring metadata and byte writes are serialized by State's critical-section mutex; live shared
 // prefixes cover only occupied slots, which writers never modify. No Sync impl.
 unsafe impl Send for RxStorage {}
 
@@ -514,7 +514,7 @@ struct RxRing {
 }
 
 impl RxRing {
-    fn new(buffer: &'static mut [u8]) -> Self {
+    fn new(buffer: &mut [u8]) -> Self {
         Self {
             storage: RxStorage::new(buffer),
             read: 0,
@@ -715,11 +715,16 @@ pub struct UartRx<'d, M: Mode> {
 
 /// Owned UART receiver with continuous interrupt-driven software buffering.
 ///
-/// Consumes a nonempty static mutable slice, including on configuration error.
-/// Its bytes are not initialized by the HAL, and its storage is never returned,
-/// including on Drop or successful reconstruction after a forgotten owner.
+/// Safe constructors consume a nonempty static mutable slice, including on
+/// configuration error. Unsafe `new_borrowed*` variants accept an ordinary
+/// mutable borrow tied to this owner and release it on normal Drop.
+/// The HAL does not initialize its bytes. Static storage is never returned;
+/// borrowed storage becomes reusable once the owner borrow ends, without a
+/// release method. Combined UART halves share a lifetime, so a still-used TX
+/// half may conservatively keep that borrow alive even after RX Drop.
 /// Any nonzero capacity is accepted, including one byte. Peripheral and pin
-/// borrows need not be static; the ISR retains only the static ring storage.
+/// borrows need not be static. The ISR retains a raw ring pointer; borrowed
+/// constructors require an additional lifetime/no-leak safety obligation.
 ///
 /// Collection starts during construction and continues between reads while
 /// interrupts can run. Software overflow and line errors preserve the queued
@@ -735,18 +740,21 @@ pub struct UartRx<'d, M: Mode> {
 /// Buffering is not lossless: ten families have no hardware overrun flag, and
 /// even native L010/L011/L012 flags can coalesce. There is no packet boundary,
 /// idle method, timeout, DMA ring, loss count or throughput guarantee. Forgetting
-/// the owner can leave collection running forever with valid static storage.
+/// a safely constructed owner can leave collection running forever with valid
+/// static storage; borrowed constructors have a stricter safety contract.
 pub struct BufferedUartRx<'d> {
     info: Info,
     state: &'static State,
     _pin: Flex<'d>,
     _rts: Option<Flex<'d>>,
     actual_baudrate: u32,
+    _buffer: PhantomData<&'d mut [u8]>,
 }
 
 /// Owned UART with ordinary async TX and continuous IRQ-buffered RX.
 ///
-/// The consumed static receive storage and error/recovery limits are those of
+/// The safe static and unsafe borrowed receive-storage contracts, and the
+/// error/recovery limits, are those of
 /// [`BufferedUartRx`]. Split the real TX and RX owners to use them concurrently.
 pub struct BufferedUart<'d> {
     tx: UartTx<'d, Async>,
@@ -768,6 +776,33 @@ impl<'d> BufferedUartRx<'d> {
         Ok(rx)
     }
 
+    /// Start continuous IRQ reception using a borrowed, nonempty receive ring.
+    /// Normal RX Drop stops collection and releases the buffer borrow. On a
+    /// constructor error no pointer to the supplied buffer is retained.
+    ///
+    /// # Safety
+    /// Until reception is stopped and the ISR ring is detached (normally by
+    /// RX Drop), its buffer must remain allocated at the same address and
+    /// exclusively accessible through the driver. Leaking or forgetting the
+    /// RX owner, a split RX half, or a future/container holding it does not
+    /// stop reception. Keep storage valid and reserved until shutdown, even
+    /// after a leak or panic; without shutdown that reservation lasts forever.
+    /// Cancelling an operation is fine if the owner is still dropped normally.
+    /// A borrowed buffer in an async task must outlive collection even if that
+    /// task/future is leaked; an ordinary borrow alone cannot guarantee this.
+    /// Prefer the safe static constructor when that obligation cannot be met.
+    pub unsafe fn new_borrowed<T: Instance, RX: RxPin<T>>(
+        _peri: Peri<'d, T>,
+        rx: Peri<'d, RX>,
+        _irq: impl Binding<T::Interrupt, T::InterruptHandler>,
+        buffer: &'d mut [u8],
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let rx = Self::new_inner::<T, RX>(rx, None, buffer, config)?;
+        unsafe { T::Interrupt::enable() };
+        Ok(rx)
+    }
+
     /// Start continuous IRQ reception with active-low hardware RTS.
     /// RTS follows hardware RDR occupancy, not software ring fullness. Rejected
     /// inputs, including the static ring, are consumed. See [`BufferedUartRx`].
@@ -777,6 +812,40 @@ impl<'d> BufferedUartRx<'d> {
         rts: Peri<'d, RTS>,
         _irq: impl Binding<T::Interrupt, T::InterruptHandler>,
         buffer: &'static mut [u8],
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let rx = Self::new_inner::<T, RX>(
+            rx,
+            Some((rts.into(), <RTS as sealed::Pin<T, sealed::Rts>>::AF)),
+            buffer,
+            config,
+        )?;
+        unsafe { T::Interrupt::enable() };
+        Ok(rx)
+    }
+
+    /// Start borrowed IRQ-buffered RX with active-low hardware RTS.
+    /// RTS follows RDR occupancy, not software ring fullness.
+    /// Normal RX Drop stops collection and releases the buffer borrow. On a
+    /// constructor error no pointer to the supplied buffer is retained.
+    ///
+    /// # Safety
+    /// Until reception is stopped and the ISR ring is detached (normally by
+    /// RX Drop), its buffer must remain allocated at the same address and
+    /// exclusively accessible through the driver. Leaking or forgetting the
+    /// RX owner, a split RX half, or a future/container holding it does not
+    /// stop reception. Keep storage valid and reserved until shutdown, even
+    /// after a leak or panic; without shutdown that reservation lasts forever.
+    /// Cancelling an operation is fine if the owner is still dropped normally.
+    /// A borrowed buffer in an async task must outlive collection even if that
+    /// task/future is leaked; an ordinary borrow alone cannot guarantee this.
+    /// Prefer the safe static constructor when that obligation cannot be met.
+    pub unsafe fn new_borrowed_with_rts<T: Instance, RX: RxPin<T>, RTS: RtsPin<T>>(
+        _peri: Peri<'d, T>,
+        rx: Peri<'d, RX>,
+        rts: Peri<'d, RTS>,
+        _irq: impl Binding<T::Interrupt, T::InterruptHandler>,
+        buffer: &'d mut [u8],
         config: Config,
     ) -> Result<Self, ConfigError> {
         let rx = Self::new_inner::<T, RX>(
@@ -810,10 +879,11 @@ impl<'d> BufferedUartRx<'d> {
             _pin: pin,
             _rts: rts,
             actual_baudrate: actual,
+            _buffer: PhantomData,
         }
     }
 
-    fn install_ring(&self, cs: critical_section::CriticalSection<'_>, buffer: &'static mut [u8]) {
+    fn install_ring(&self, cs: critical_section::CriticalSection<'_>, buffer: &'d mut [u8]) {
         *self.state.rx_ring.borrow(cs).borrow_mut() = Some(RxRing::new(buffer));
         let mut owners = self.state.lifecycle.borrow(cs).get();
         owners.rx_live = true;
@@ -823,9 +893,11 @@ impl<'d> BufferedUartRx<'d> {
     fn new_inner<T: Instance, RX: RxPin<T>>(
         rx: Peri<'d, RX>,
         rts: Option<(Peri<'d, AnyPin>, u8)>,
-        buffer: &'static mut [u8],
+        buffer: &'d mut [u8],
         config: Config,
     ) -> Result<Self, ConfigError> {
+        // Entry points either consume static storage or require the caller to
+        // keep borrowed storage valid and exclusive until RX shutdown.
         let baud = configured_baud::<T>(config)?;
         if buffer.is_empty() {
             return Err(ConfigError::RxBufferEmpty);
@@ -988,6 +1060,34 @@ impl<'d> BufferedUart<'d> {
         Ok(uart)
     }
 
+    /// Create ordinary async TX and borrowed continuous IRQ-buffered RX.
+    /// RX Drop stops collection; reuse also requires the shared TX/RX lifetime
+    /// to end. Constructor errors retain no pointer to the supplied buffer.
+    ///
+    /// # Safety
+    /// Until reception is stopped and the ISR ring is detached (normally by
+    /// RX Drop), its buffer must remain allocated at the same address and
+    /// exclusively accessible through the driver. Leaking or forgetting the
+    /// RX owner, a split RX half, or a future/container holding it does not
+    /// stop reception. Keep storage valid and reserved until shutdown, even
+    /// after a leak or panic; without shutdown that reservation lasts forever.
+    /// Cancelling an operation is fine if the owner is still dropped normally.
+    /// A borrowed buffer in an async task must outlive collection even if that
+    /// task/future is leaked; an ordinary borrow alone cannot guarantee this.
+    /// Prefer the safe static constructor when that obligation cannot be met.
+    pub unsafe fn new_borrowed<T: Instance, TX: TxPin<T>, RX: RxPin<T>>(
+        peri: Peri<'d, T>,
+        tx: Peri<'d, TX>,
+        rx: Peri<'d, RX>,
+        _irq: impl Binding<T::Interrupt, T::InterruptHandler>,
+        buffer: &'d mut [u8],
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let uart = Self::new_inner(peri, tx, rx, None, None, buffer, config)?;
+        unsafe { T::Interrupt::enable() };
+        Ok(uart)
+    }
+
     /// Create buffered RX and ordinary async TX with active-low RTS and CTS.
     /// RTS does not reflect software ring fullness. CTS can stall TX forever.
     /// Rejected inputs, including the static ring, are consumed. See [`BufferedUartRx`].
@@ -1020,15 +1120,62 @@ impl<'d> BufferedUart<'d> {
         Ok(uart)
     }
 
+    /// Create ordinary async TX and borrowed IRQ-buffered RX with RTS/CTS.
+    /// RTS follows RDR occupancy, not ring fullness; CTS can stall TX forever.
+    /// RX Drop stops collection; reuse also requires the shared TX/RX lifetime
+    /// to end. Constructor errors retain no pointer to the supplied buffer.
+    ///
+    /// # Safety
+    /// Until reception is stopped and the ISR ring is detached (normally by
+    /// RX Drop), its buffer must remain allocated at the same address and
+    /// exclusively accessible through the driver. Leaking or forgetting the
+    /// RX owner, a split RX half, or a future/container holding it does not
+    /// stop reception. Keep storage valid and reserved until shutdown, even
+    /// after a leak or panic; without shutdown that reservation lasts forever.
+    /// Cancelling an operation is fine if the owner is still dropped normally.
+    /// A borrowed buffer in an async task must outlive collection even if that
+    /// task/future is leaked; an ordinary borrow alone cannot guarantee this.
+    /// Prefer the safe static constructor when that obligation cannot be met.
+    pub unsafe fn new_borrowed_with_rtscts<
+        T: Instance,
+        TX: TxPin<T>,
+        RX: RxPin<T>,
+        RTS: RtsPin<T>,
+        CTS: CtsPin<T>,
+    >(
+        peri: Peri<'d, T>,
+        tx: Peri<'d, TX>,
+        rx: Peri<'d, RX>,
+        rts: Peri<'d, RTS>,
+        cts: Peri<'d, CTS>,
+        _irq: impl Binding<T::Interrupt, T::InterruptHandler>,
+        buffer: &'d mut [u8],
+        config: Config,
+    ) -> Result<Self, ConfigError> {
+        let uart = Self::new_inner(
+            peri,
+            tx,
+            rx,
+            Some((rts.into(), <RTS as sealed::Pin<T, sealed::Rts>>::AF)),
+            Some((cts.into(), <CTS as sealed::Pin<T, sealed::Cts>>::AF)),
+            buffer,
+            config,
+        )?;
+        unsafe { T::Interrupt::enable() };
+        Ok(uart)
+    }
+
     fn new_inner<T: Instance, TX: TxPin<T>, RX: RxPin<T>>(
         _peri: Peri<'d, T>,
         tx: Peri<'d, TX>,
         rx: Peri<'d, RX>,
         rts: Option<(Peri<'d, AnyPin>, u8)>,
         cts: Option<(Peri<'d, AnyPin>, u8)>,
-        buffer: &'static mut [u8],
+        buffer: &'d mut [u8],
         config: Config,
     ) -> Result<Self, ConfigError> {
+        // Entry points either consume static storage or require the caller to
+        // keep borrowed storage valid and exclusive until RX shutdown.
         let baud = configured_baud::<T>(config)?;
         if buffer.is_empty() {
             return Err(ConfigError::RxBufferEmpty);
