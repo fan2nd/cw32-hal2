@@ -380,3 +380,7 @@ impl<'d, T: Instance> IndependentWatchdog<'d, T> {
         self.poll(|| !regs.sr().read().reload(), Error::ReloadTimeout)
     }
 }
+
+/// Permanent L012 window-watchdog early-warning handler for the shared WDT vector.
+#[cfg(cw32l012)]
+pub use windowed::InterruptHandler as WindowInterruptHandler;

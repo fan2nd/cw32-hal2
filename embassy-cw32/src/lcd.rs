@@ -1,9 +1,10 @@
-//! Segment LCD on CW32L052/L083, with internal resistor bias and LSI clock.
+//! Segment LCD on CW32L052/L083, with internal resistor bias and LSI or held LSE clock.
 //!
 //! Every wired COM/SEG pad must be passed to the constructor. The declared
 //! supply and panel limits are board assumptions, not measured voltages.
-//! External bias networks, charge pumps, LSE setup, blink and DMA are not
-//! supported. No ADC/BGR/reference settings are changed.
+//! External bias networks, charge pumps and DMA are not supported.
+//! LSE setup belongs to RCC; this driver can retain an already acquired LSE lease.
+//! No ADC/BGR/reference settings are changed.
 //!
 //! Display RAM is live: `present` waits for a frame event then writes the
 //! owned pixels. CW32 has no atomic update/latch handshake; a multiword update
@@ -46,7 +47,8 @@ pub struct Config {
     /// Only InternalLowest/Low/Medium/Highest are supported.
     pub drive: BiasSource,
     /// Source-described 128/256/512/64 Hz scan choices at nominal LSI.
-    /// LSI tolerance is not bounded by this API.
+    /// LSI tolerance is not bounded by this API. With LSE these remain nominal
+    /// divisor labels, not exact scan frequencies.
     pub scan: ScanFrequency,
     /// 0 is maximum contrast; 15 is minimum. This is not a voltage value.
     pub contrast: u8,
@@ -62,6 +64,8 @@ pub enum Error {
     HeldInReset,
     ClockTimeout,
     FrameTimeout,
+    InvalidEventInterval,
+    EventIntervalNotOne,
     InvalidDuty,
     InvalidBias,
     UnsupportedBiasSource,
@@ -160,6 +164,12 @@ pub struct Lcd<'d, T: Instance, const N: usize> {
     pixels: [u32; 14],
     masks: [u32; 14],
     polls: NonZeroU32,
+    source: Source<'d>,
+}
+enum Source<'d> {
+    Lsi(PhantomData<&'d ()>),
+    #[cfg(rcc_lse)]
+    Lse(crate::rcc::LseClock<'d>),
 }
 impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
     /// Configure and enable a blank display. Does not promise analogue settling.
@@ -170,6 +180,28 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
         pins: [LcdPin<'d, T>; N],
         _irq: impl Binding<crate::interrupt::typelevel::AUTOTRIM_LCD, InterruptHandler<T>>,
         config: Config,
+    ) -> Result<Self, Error> {
+        Self::new_inner(peri, pins, config, Source::Lsi(PhantomData))
+    }
+    /// Use an already configured, healthy LSE source and retain its ownership.
+    /// This does not start or retune LSE, enable LSI, or release oscillator pads
+    /// on failure or Drop. LCD is disabled before its retained lease is dropped.
+    #[cfg(rcc_lse)]
+    pub fn new_with_lse(
+        peri: Peri<'d, T>,
+        pins: [LcdPin<'d, T>; N],
+        _irq: impl Binding<crate::interrupt::typelevel::AUTOTRIM_LCD, InterruptHandler<T>>,
+        config: Config,
+        clock: crate::rcc::LseClock<'d>,
+    ) -> Result<Self, Error> {
+        Self::new_inner(peri, pins, config, Source::Lse(clock))
+    }
+    #[inline(always)]
+    fn new_inner(
+        peri: Peri<'d, T>,
+        pins: [LcdPin<'d, T>; N],
+        config: Config,
+        source: Source<'d>,
     ) -> Result<Self, Error> {
         if crate::rcc::try_clocks().is_none() {
             return Err(Error::ClockNotInitialized);
@@ -237,9 +269,21 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
         if masks.iter().all(|m| *m == 0) {
             return Err(Error::NoSegments);
         }
-        if !crate::rcc::enable_lsi(config.poll_budget) {
-            return Err(Error::ClockTimeout);
-        }
+        let clock_select = match &source {
+            Source::Lsi(_) => {
+                if !crate::rcc::enable_lsi(config.poll_budget) {
+                    return Err(Error::ClockTimeout);
+                }
+                pac::lcd::vals::ClockSource::Lsi
+            }
+            #[cfg(rcc_lse)]
+            Source::Lse(clock) => {
+                if !clock.is_ready() {
+                    return Err(Error::ClockTimeout);
+                }
+                pac::lcd::vals::ClockSource::Lse
+            }
+        };
         let stale_waker = critical_section::with(|cs| {
             T::RCC_INFO
                 .enable_with_cs(cs)
@@ -249,7 +293,7 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
             }
             pac::LCD.cr0().modify(|w| w.set_en(false));
             pac::LCD.cr1().write(|w| {
-                w.set_clkcs(pac::lcd::vals::ClockSource::Lsi);
+                w.set_clkcs(clock_select);
                 w.set_lcdfs(config.scan);
             });
             pac::LCD.pinen1().write(|_| {});
@@ -291,6 +335,7 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
             pixels: [0; 14],
             masks,
             polls: config.poll_budget,
+            source,
         })
     }
     /// Change one owned COM/SEG crosspoint in the software buffer.
@@ -341,7 +386,14 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
     }
     /// Wait for a fresh frame event, with BLINKCNT=0 and a bounded poll count.
     /// LCD IE is enabled only during this call and serviced through the binding.
+    /// Rejects an interval other than one before changing state.
     pub fn wait_next_frame(&mut self) -> Result<(), Error> {
+        self.require_frame_interval()?;
+        self.wait_next_event()
+    }
+    /// Wait for a fresh refresh-interval event. The configured interval applies
+    /// even when blinking is disabled. Poll budget is not an elapsed-time bound.
+    pub fn wait_next_event(&mut self) -> Result<(), Error> {
         let _wait = FrameWait::start();
         let mut complete = false;
         for _ in 0..self.polls.get() {
@@ -361,10 +413,18 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
     }
     /// Wait for a fresh frame without busy-polling. No elapsed-time bound is
     /// promised: loss of the source clock can leave this pending indefinitely.
+    /// An interval other than one returns EventIntervalNotOne without changes.
     /// Dropping the future disables only LCD IE and discards this wait's event.
     /// A forgotten future can leave IE armed, but a later wait or owner Drop
     /// retires it. No pointer to the future or caller storage is retained.
-    pub async fn wait_next_frame_async(&mut self) {
+    pub async fn wait_next_frame_async(&mut self) -> Result<(), Error> {
+        self.require_frame_interval()?;
+        self.wait_next_event_async().await;
+        Ok(())
+    }
+    /// Await a fresh refresh-interval event, not necessarily the next frame.
+    /// Cancellation/forget semantics are identical to the frame wait.
+    pub async fn wait_next_event_async(&mut self) {
         let _wait = FrameWait::start();
         poll_fn(|cx| {
             // Clone/drop outside the critical section; check and registration
@@ -392,9 +452,56 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
     /// Await a frame, then write the software buffer. As with `present`, this
     /// is not an atomic display latch or an analogue-settling guarantee.
     /// Cancellation before completion performs no display RAM write.
-    pub async fn present_async(&mut self) {
-        self.wait_next_frame_async().await;
+    pub async fn present_async(&mut self) -> Result<(), Error> {
+        self.wait_next_frame_async().await?;
         self.write_display();
+        Ok(())
+    }
+    /// Write live RAM after an interval event, without an atomic-latch guarantee.
+    pub fn present_on_event(&mut self) -> Result<(), Error> {
+        self.wait_next_event()?;
+        self.write_display();
+        Ok(())
+    }
+    /// Asynchronous interval-event presentation. Cancellation writes no RAM.
+    pub async fn present_on_event_async(&mut self) {
+        self.wait_next_event_async().await;
+        self.write_display();
+    }
+    fn require_frame_interval(&self) -> Result<(), Error> {
+        if self.event_interval_frames() == 1 {
+            Ok(())
+        } else {
+            Err(Error::EventIntervalNotOne)
+        }
+    }
+    /// Set hardware blinking and the shared refresh-event interval (1..=64).
+    /// BLINKCNT is interval minus one, independent of blink enable. The manual
+    /// calls frame_rate / interval the blink frequency; this API makes no
+    /// visible/blank cycle, duty, phase, or transition-timing guarantee.
+    /// Retires any forgotten wait, masks LCD IE and discards the old event.
+    /// Invalid input changes nothing. Source, bias, pins and RAM are preserved.
+    pub fn set_blink(&mut self, enabled: bool, event_interval_frames: u8) -> Result<(), Error> {
+        let count = encode_event_interval(event_interval_frames)?;
+        let stale = critical_section::with(|cs| {
+            pac::LCD.cr1().modify(|w| {
+                w.set_ie(false);
+                w.set_blinken(enabled);
+                w.set_blinkcnt(count);
+            });
+            STATE.waiting.borrow(cs).set(false);
+            STATE.frame.borrow(cs).set(false);
+            clear_frame();
+            STATE.waker.borrow(cs).borrow_mut().take()
+        });
+        drop(stale);
+        Ok(())
+    }
+    pub fn event_interval_frames(&self) -> u8 {
+        pac::LCD.cr1().read().blinkcnt() + 1
+    }
+    pub fn blink_enabled(&self) -> bool {
+        pac::LCD.cr1().read().blinken()
     }
     /// Adjust internal resistor contrast. 0 is strongest, 15 weakest.
     /// No voltage value or analogue settling time is implied.
@@ -408,9 +515,22 @@ impl<'d, T: Instance, const N: usize> Lcd<'d, T, N> {
     pub fn contrast(&self) -> u8 {
         pac::LCD.cr0().read().contrast()
     }
-    /// Datasheet typical LSI frequency only; trim/tolerance may change actual rate.
+    /// Selected source nominal frequency: typical LSI, or the held LSE board
+    /// declaration. This is not a measurement or a guarantee of actual rate.
     pub fn typical_source_frequency(&self) -> crate::time::Hertz {
-        crate::time::Hertz(T::LSI_TYPICAL_HZ)
+        match &self.source {
+            Source::Lsi(_) => crate::time::Hertz(T::LSI_TYPICAL_HZ),
+            #[cfg(rcc_lse)]
+            Source::Lse(clock) => clock.frequency(),
+        }
+    }
+    /// Healthy-source bounds declared for retained LSE; LSI has no bound here.
+    pub fn source_bounds(&self) -> Option<crate::rcc::ClockBounds> {
+        match &self.source {
+            Source::Lsi(_) => None,
+            #[cfg(rcc_lse)]
+            Source::Lse(clock) => Some(clock.bounds()),
+        }
     }
 }
 impl<T: Instance, const N: usize> Drop for Lcd<'_, T, N> {
@@ -461,4 +581,12 @@ impl Drop for FrameWait {
 }
 fn clear_frame() {
     crate::lcd_clear_frame();
+}
+
+fn encode_event_interval(frames: u8) -> Result<u8, Error> {
+    if (1..=64).contains(&frames) {
+        Ok(frames - 1)
+    } else {
+        Err(Error::InvalidEventInterval)
+    }
 }

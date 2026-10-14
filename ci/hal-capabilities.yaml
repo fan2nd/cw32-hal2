@@ -1134,7 +1134,21 @@ functions:
       status: partial
       scope: Polling window-watchdog start/feed with frozen PCLK timing.
       limitations:
-      - Irreversible start; IRQ and stop API absent.
+      - Irreversible start; stop API absent. L012-only early-warning notification is separately declared.
+    - id: early_warning_async
+      status: partial
+      scope: L012 running WindowWatchdog irreversible early-warning enable and coalesced asynchronous notification through the typed WDT binding.
+      implemented_families:
+      - CW32L012
+      limitations:
+      - IE cannot clear until reset. Static ISR service is installed before IE write and survives readback failure, cancellation, forgetting and owner Drop, acknowledging only WWDT POV; no caller pointers are stored.
+      - Dropping a waiter removes its waker, not servicing or the pending latch. No automatic feed, counter stop/gate/reset or shared NVIC disable/unpend. Other enabled WDT clients require their own handler.
+      - Only one counter tick separates POV from reset; interrupt/task delivery before reset is not guaranteed. Not last-gasp persistence, late-feed safety or low-power wake.
+      - Current software acceptance is recorded in docs/lcd-wwdt-extensions-validation.md; publication requires the containing commit; other-family IRQ modes remain unimplemented.
+      evidence:
+      - path: docs/l012-wwdt-warning.md
+      - path: embassy-cw32/src/wdg/windowed.rs
+        anchor: pub async fn wait_early_warning
   rtc:
     register_kinds:
     - rtc
@@ -1485,12 +1499,16 @@ functions:
     modes:
     - id: bounded_api
       status: partial
-      scope: Internal bias, owned COM/SEG pins, live display updates and blocking or asynchronous frame observations.
+      scope: Internal bias, owned COM/SEG pins and live display updates with LSI or a retained qualified LSE lease, configurable blink/event intervals and checked frame or explicit interval-event waits.
       limitations:
-      - Typical-only LSI timing; updates not frame-atomic; external bias/pump, LSE, blink and DMA absent. Async waits have no source-loss timeout.
-      - Async frame waits passed current software acceptance in docs/unblocked-hal-extensions-validation.md, not historical blocking receipts. Cancellation retires only local LCD IE/status/waker; shared AUTOTRIM_LCD NVIC remains enabled.
+      - Typical-only LSI timing or board-declared held-LSE bounds; updates not frame-atomic; external bias/pump and DMA absent. Async waits have no source-loss timeout.
+      - Held LSE/blink/event software acceptance is recorded separately in docs/lcd-wwdt-extensions-validation.md; publication requires the containing commit. No new package, oscillator, pin or electrical qualification.
+      - BLINKCNT defines the 1-64-frame interrupt interval even with blinking disabled. Event-named methods observe coalesced intervals; frame-named methods require interval 1 or reject before side effects.
+      - Async frame wait/present now return Result and require caller handling. First fresh event may be shorter than a full interval; no phase, visible-cycle, atomic-latch or analog-settling guarantee.
+      - Cancellation retires only LCD IE/status/waker; shared AUTOTRIM_LCD NVIC remains enabled. Drop disables LCD/pins before releasing the held lease under its existing retention contract.
       evidence:
       - path: docs/lcd-async-validation.md
+      - path: docs/lcd-clock-blink.md
       - path: embassy-cw32/src/lcd.rs
         anchor: pub async fn wait_next_frame_async
   halltim:

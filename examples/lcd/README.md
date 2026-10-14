@@ -27,3 +27,12 @@ command to select it, or `--bin cw32-lcd-example` for the original blocking
 binary. Async waits yield rather than consume the polling budget and have no
 built-in timeout. Dropping a pending wait disables only LCD's interrupt source;
 no atomic display update or hardware-tested timing is implied.
+
+The `lse_blink` binary additionally requires a board-qualified crystal on PC14/PC15.
+Its example frequency envelope and supply/temperature assumptions must be replaced
+with the actual board data. It consumes the unique LSE lease, configures a shared
+32-frame blink/refresh interval, and uses `present_on_event` / `wait_next_event`.
+Frame-named methods reject intervals other than one; their async variants now
+return Result. Neither interval phase nor a full visible/blank cycle is promised.
+Build all binaries with `--release --bins` and the actual exact package feature.
+See `docs/lcd-clock-blink.md` for the contract and limits.

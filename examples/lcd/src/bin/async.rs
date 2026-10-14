@@ -54,10 +54,10 @@ async fn main(_spawner: embassy_executor::Spawner) {
             for common in 0..4 {
                 lcd.set_pixel(common, segment, true).unwrap();
             }
-            lcd.present_async().await;
+            lcd.present_async().await.unwrap();
             timer.wait().await;
             for _ in 0..32 {
-                lcd.wait_next_frame_async().await;
+                lcd.wait_next_frame_async().await.unwrap();
             }
         }
     }

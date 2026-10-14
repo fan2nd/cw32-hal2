@@ -76,6 +76,22 @@ by the containing commit, not this receipt. Read-before-receive UART flushing is
 arbitration; DAC digital load completion is not analog settling. No new DMA,
 clock, pin, electrical, low-power or RF qualification is claimed.
 
+## Fourth software API batch
+
+[LCD held LSE and blink/event APIs](lcd-clock-blink.md) retain an already
+qualified LSE lease and distinguish configurable 1–64-frame interval events
+from checked one-frame waits. Async frame wait/present now return Result;
+callers must handle interval rejection. No new source/pin/electrical scope or
+atomic display behavior is implied.
+
+[L012 WWDT early-warning waits](l012-wwdt-warning.md) install permanent
+local flag servicing before irreversible IE enable. Servicing survives owner
+Drop, but never feeds the watchdog or promises task delivery before reset.
+Software acceptance passed 113 library builds, 18 example build commands,
+37 API outcomes and 23 host tests/scenarios; see [validation](lcd-wwdt-extensions-validation.md).
+Publication is established separately by the containing commit.
+Existing evidence blockers and deferred low-power/RF work remain unchanged.
+
 ## What is declared and what is derived
 
 `cw32-data/inputs`, register YAML and hardware sidecars remain canonical. The

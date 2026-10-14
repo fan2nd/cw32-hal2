@@ -19,5 +19,24 @@ fn main() {
     fs::write(out.join("memory.x"), memory).unwrap();
     println!("cargo:rustc-link-search={}", out.display());
     println!("cargo:rustc-link-arg=-Tlink.x");
+    println!("cargo:rustc-check-cfg=cfg(lse_startup_analog)");
+    let lse = metadata
+        .peripherals
+        .iter()
+        .find(|p| p.name == "SYSCTRL")
+        .unwrap()
+        .clock_limits
+        .as_ref()
+        .unwrap()
+        .lse_configuration
+        .as_ref()
+        .unwrap();
+    if lse
+        .startup_consumers
+        .as_ref()
+        .is_some_and(|n| n.startup_analog)
+    {
+        println!("cargo:rustc-cfg=lse_startup_analog");
+    }
     println!("cargo:rerun-if-changed=build.rs");
 }

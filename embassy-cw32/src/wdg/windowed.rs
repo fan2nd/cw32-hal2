@@ -1,17 +1,17 @@
-//! Polling, reset-mode CW32 window watchdog (WWDT).
+//! Reset-mode CW32 window watchdog (WWDT), with optional L012 IRQ notification.
 //!
 //! This is separate from the independent watchdog. A valid configuration has
 //! `0x40 <= window < reload <= 0x7f`; refresh is permitted only while the live
 //! counter is `0x40..=window`. EN and IE cannot be cleared until reset. This
-//! driver never enables IE, touches the shared WDT interrupt, stops the counter,
-//! pulses peripheral reset, or changes debugger, sleep or clock-tree settings.
+//! driver never stops the counter, pulses peripheral reset, or changes debugger, sleep or clock-tree settings.
 //!
 //! Timing is nominal PCLK-running time. DeepSleep stops WWDT; debugger freeze
 //! can stop it too. Normal Sleep retains counting. Direct changes to global
 //! clocks (including wake clock selection), reset or gates invalidate the
 //! driver's frozen-clock assumptions. The application must keep PCLK and the
 //! gate running and leave WWDT exclusively owned after start, including after
-//! dropping this object. Drop has no hardware side effects.
+//! dropping this object. Drop has no hardware side effects. L012 optionally enables
+//! permanent early-warning IRQ service; dropping its owner only removes the waiter.
 //!
 //! A checked refresh is not a guarantee against reset: the counter can reach
 //! 0x3f between its read and the write. Critical sections exclude ordinary
@@ -89,6 +89,10 @@ pub enum WindowError {
     StartupFailed,
     /// This instance was not successfully started, or hardware EN is clear.
     NotRunning,
+    /// Early-warning notification was not enabled on this running watchdog.
+    WarningNotEnabled,
+    /// IE did not read back set; permanent IRQ servicing remains installed.
+    WarningEnableFailed,
     /// The counter is still above WINR. No refresh write was issued.
     TooEarly,
     /// The counter is below 0x40. Reset may already be in progress; no write issued.
@@ -249,11 +253,12 @@ pub struct WindowStatus {
     /// It can become stale before the next instruction; use [`WindowWatchdog::try_pet`].
     pub window_open: bool,
     /// Sticky POV: the counter reached 0x40 at least once since reset/clear.
-    /// This driver does not clear it, so it need not describe this counting period.
+    /// Without IRQ service this is sticky. L012 early-warning IRQ service clears
+    /// it; the separate coalesced software notification is not reflected here.
     pub preoverflow: bool,
 }
 
-/// Exclusively owned, polling-only reset-mode window watchdog.
+/// Exclusively owned reset-mode window watchdog, with optional L012 notification.
 ///
 /// Embassy's `new` / `unleash` / `pet` vocabulary is retained, but preparation
 /// never starts hardware. Unlike IWDT, repeated `unleash` returns AlreadyRunning
@@ -462,5 +467,163 @@ impl<'d, T: WindowInstance> WindowWatchdog<'d, T> {
             window_open: running && (0x40..=self.timing.config.window).contains(&counter),
             preoverflow: regs.sr().read().pov(),
         }
+    }
+}
+
+/// Permanent L012 WWDT source handler on the shared WDT vector.
+/// Bind any independently enabled IWDT source separately on the same vector.
+#[cfg(cw32l012)]
+pub use warning::InterruptHandler;
+
+#[cfg(cw32l012)]
+impl<T: WindowInstance> WindowWatchdog<'_, T> {
+    /// Enable irreversible early-warning IRQ service on an already running WWDT.
+    ///
+    /// The static handler remains active until reset, including after an error,
+    /// cancelled/forgotten wait or owner Drop. Repeated enable is idempotent and
+    /// does not discard notifications. This never feeds the watchdog. One tick
+    /// remains after POV; neither IRQ latency nor task delivery before reset is
+    /// guaranteed. Keep the running clock/gate and this static binding intact.
+    pub fn enable_early_warning(
+        &mut self,
+        _irq: impl crate::interrupt::typelevel::Binding<
+            crate::interrupt::typelevel::WDT,
+            InterruptHandler,
+        >,
+    ) -> Result<(), WindowError> {
+        if self.state != State::Running {
+            return Err(WindowError::NotRunning);
+        }
+        warning::enable()
+    }
+
+    /// Consume one coalesced warning, or wait for one after enabling the service.
+    ///
+    /// Notifications are latched even without a waiter, not counted. Cancelling
+    /// a pending wait preserves the latch and only removes its waker. A completed
+    /// wait consumes it. Forgetting a future cannot leave borrowed memory in the
+    /// ISR; the next wait or owner Drop retires the old owned waker. No automatic
+    /// refresh occurs and this cannot guarantee time to react before reset.
+    pub async fn wait_early_warning(&mut self) -> Result<(), WindowError> {
+        if self.state != State::Running {
+            return Err(WindowError::NotRunning);
+        }
+        warning::wait().await
+    }
+}
+impl<T: WindowInstance> Drop for WindowWatchdog<'_, T> {
+    fn drop(&mut self) {
+        #[cfg(cw32l012)]
+        if self.state == State::Running {
+            drop(critical_section::with(warning::retire_waiter));
+        }
+    }
+}
+
+#[cfg(cw32l012)]
+mod warning {
+    use super::*;
+    use crate::interrupt::typelevel::{Handler, Interrupt, WDT as Irq};
+    use core::{
+        cell::RefCell,
+        future::poll_fn,
+        task::{Poll, Waker},
+    };
+    struct WarningState {
+        servicing: bool,
+        pending: bool,
+        waker: Option<Waker>,
+    }
+    static WARNING: critical_section::Mutex<RefCell<WarningState>> =
+        critical_section::Mutex::new(RefCell::new(WarningState {
+            servicing: false,
+            pending: false,
+            waker: None,
+        }));
+
+    pub struct InterruptHandler;
+    impl Handler<Irq> for InterruptHandler {
+        unsafe fn on_interrupt() {
+            let wake = critical_section::with(|cs| {
+                let mut state = WARNING.borrow(cs).borrow_mut();
+                if !state.servicing {
+                    return None;
+                }
+                if !pac::WWDT.sr().read().pov() {
+                    return None;
+                }
+                // L012 UM §20.6.3: sole W0C POV, reserved bits zero.
+                pac::WWDT.sr().write_value(pac::wwdt::regs::Sr(0));
+                state.pending = true;
+                state.waker.take()
+            });
+            if let Some(waker) = wake {
+                waker.wake();
+            }
+        }
+    }
+    pub(super) fn enable() -> Result<(), WindowError> {
+        use crate::rcc::SealedRccPeripheral;
+        critical_section::with(|cs| {
+            let rcc = crate::peripherals::WWDT::RCC_INFO;
+            if rcc.reset_asserted() {
+                return Err(WindowError::HeldInReset);
+            }
+            if !rcc.is_enabled() {
+                return Err(WindowError::NotRunning);
+            }
+            if !pac::WWDT.cr0().read().en() {
+                return Err(WindowError::NotRunning);
+            }
+            // Publish permanent ownership BEFORE the irreversible write. Do not
+            // undo this marker on readback failure: IE may have reached hardware.
+            WARNING.borrow(cs).borrow_mut().servicing = true;
+            unsafe {
+                Irq::enable();
+            }
+            if !pac::WWDT.cr1().read().ie() {
+                pac::WWDT.cr1().modify(|w| w.set_ie(true));
+            }
+            if pac::WWDT.cr1().read().ie() {
+                Ok(())
+            } else {
+                Err(WindowError::WarningEnableFailed)
+            }
+        })
+    }
+    pub(super) fn retire_waiter(cs: critical_section::CriticalSection<'_>) -> Option<Waker> {
+        WARNING.borrow(cs).borrow_mut().waker.take()
+    }
+    struct Guard;
+    impl Drop for Guard {
+        fn drop(&mut self) {
+            drop(critical_section::with(retire_waiter));
+        }
+    }
+    pub(super) async fn wait() -> Result<(), WindowError> {
+        drop(critical_section::with(retire_waiter));
+        if !critical_section::with(|cs| WARNING.borrow(cs).borrow().servicing) {
+            return Err(WindowError::WarningNotEnabled);
+        }
+        let _guard = Guard;
+        poll_fn(|cx| {
+            let mut next = Some(cx.waker().clone());
+            let (ready, old) = critical_section::with(|cs| {
+                let mut state = WARNING.borrow(cs).borrow_mut();
+                if state.pending {
+                    state.pending = false;
+                    (true, state.waker.take())
+                } else {
+                    (false, core::mem::replace(&mut state.waker, next.take()))
+                }
+            });
+            drop(old);
+            if ready {
+                Poll::Ready(Ok(()))
+            } else {
+                Poll::Pending
+            }
+        })
+        .await
     }
 }

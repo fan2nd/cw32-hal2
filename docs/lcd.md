@@ -2,8 +2,9 @@
 
 This segment-LCD driver provides blocking and asynchronous frame waits,
 generated physical pin traits and source-qualified PAC selectors. It implements internal resistor bias,
-LSI operation, software pixel buffering, direct display writes, frame-boundary
-waiting and contrast changes. It has not been flashed or verified on hardware.
+LSI or held LSE operation, software pixel buffering, direct display writes, checked
+frame waits, refresh-interval waits, hardware blinking and contrast changes.
+See `lcd-clock-blink.md` for the held-source and event-interval extension contract. It has not been flashed or verified on hardware.
 
 ## Public API and wiring
 
@@ -76,7 +77,9 @@ characterization. The constructor does not choose either automatically.
 
 Only internal resistor strengths 4/2/1/7 are accepted; BUMP is always disabled.
 External resistor division, external capacitive division/charge pump, LSE setup,
-DMA, automatic blinking and low-power resume are not implemented.
+DMA and low-power resume are not implemented. RCC performs LSE setup; LCD can
+retain an existing LSE lease. Hardware blinking is supported as described in
+`lcd-clock-blink.md`.
 The manuals require INRS=0 and board networks for external division, and require
 BUMP=1 only for external capacitive division (recommended capacitors 100 nF).
 Those modes need an explicit future circuitry/pin-ownership API; unsupported
@@ -123,7 +126,9 @@ owns the later full feature matrix and final combined provenance review.
 busy-polling. `present_async().await` waits in the same way, then writes the
 software pixel buffer. Both require an exclusive mutable borrow of the display,
 so safe code cannot run overlapping waits or drop the owner during a live wait.
-An unpolled future changes nothing.
+An unpolled future changes nothing. Both async frame methods now return Result,
+and reject a blink/event interval other than one with EventIntervalNotOne.
+Use event-named waits/presentation for longer intervals.
 
 The same existing LCD IE/INTF protocol is used for blocking and async waits.
 The handler checks the active waiter before reading LCD state, disables only
