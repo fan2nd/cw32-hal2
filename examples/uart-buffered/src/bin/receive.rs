@@ -12,11 +12,11 @@ async fn main(_spawner: embassy_executor::Spawner) {
     let mut uart = examples::uart(p, ring);
     loop {
         let mut chunk = [0u8; examples::CHUNK_SIZE];
-        // IRQ collection continues while this exact read or the echo is pending.
+        // IRQ collection continues while this partial read or the echo is pending.
         match uart.read(&mut chunk).await {
-            Ok(()) => uart.write(&chunk).await.unwrap(),
+            Ok(count) => uart.write(&chunk[..count]).await.unwrap(),
             Err(error) => {
-                // Exact-read errors carry no count; discard the partial chunk.
+                // Clean queued prefixes are returned before a pending error.
                 core::hint::black_box(error);
                 uart.write(b"receive error\r\n").await.unwrap();
             }

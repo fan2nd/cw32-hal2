@@ -591,8 +591,9 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   lossless-flow guarantee.
 - All 13 families and 54 existing selections: direct `BufferedUartRx`
   and `BufferedUart` owners collect RX through IRQs into consumed static bounded
-  storage, including between reads. Exact inherent reads and one-byte async
-  trait reads preserve the queued prefix before the first error; later observed
+  storage, including between reads. Inherent and async trait reads batch an
+  available prefix; `read_exact` fills a slice, while nonwaiting `blocking_read`
+  and `read_ready` support polling. Reads preserve the prefix before the first error; later observed
   input is discarded until that error is consumed. Empty reads preserve errors.
   Ten families can silently overwrite RDR before ISR service; native ORE on
   L010/L011/L012 and software overflow do not provide an exact loss count.
@@ -828,8 +829,10 @@ against `InterruptHandler<T>` may need the associated-handler bound or an
 appropriate type equality. Concrete dedicated bindings retain their handler.
 L012 SPI2/SPI3 require the complete shared SPI23 handler, dispatching PIO2,
 DMA2, PIO3 and DMA3 with active-before-MMIO guards. Both PIO and DMA peers
-remain usable together. Sequential one-time admission can consume the first
-channel if admission of the second fails; it promises no rollback.
+remain usable together. Both channel admissions are checked atomically before
+either is claimed. A channel rejection leaves both admission states unchanged;
+inputs remain consumed, and later SPI configuration failure does not roll back
+successful pair admission.
 
 Both clean DMA terminals and wire idle precede success. Cancellation retains
 the active chunk: keep the original CS selection and await successful `flush`

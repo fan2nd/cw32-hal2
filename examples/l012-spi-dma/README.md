@@ -26,6 +26,9 @@ ordinary borrowed slices. A/B/C consume two of the four native channels; D
 consumes all four. Three simultaneous full-duplex DMA buses would require six
 channels and are outside this hardware's capacity. RX has higher priority than
 its paired TX in every row, without a lossless-throughput guarantee.
+Both channel admissions are checked before either is claimed. Channel rejection
+leaves both admission states unchanged, but constructor inputs remain consumed
+and later SPI configuration failure does not roll back successful admission.
 
 SPI1 binds its dedicated handler on IRQ25. Every selected SPI2/SPI3 deployment
 binds the complete `SharedInterruptHandler<interrupt::typelevel::SPI23>` on

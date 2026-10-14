@@ -37,7 +37,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
 async fn echo(uart: &mut usart::BufferedUart<'_>) -> ! {
     loop {
         let mut chunk = [0u8; examples::CHUNK_SIZE];
-        match uart.read(&mut chunk).await {
+        match uart.read_exact(&mut chunk).await {
             Ok(()) => uart.write(&chunk).await.unwrap(),
             Err(error) => {
                 core::hint::black_box(error);

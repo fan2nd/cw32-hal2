@@ -40,6 +40,9 @@ All signal and CS pins are bonded on the selected exact packages. F020 has
 only two DMA channels, so its SPI1 and SPI2 DMA examples are separate firmware
 deployments. DMA admission is permanent even after clean Drop; these examples
 do not demonstrate simultaneous paired DMA owners on both F020 controllers.
+Both channel admissions are checked before either is claimed. Channel rejection
+leaves both admission states unchanged, but constructor inputs remain consumed
+and later SPI configuration failure does not roll back successful admission.
 
 Connect a voltage-compatible SPI NOR flash supporting the mode-0 JEDEC ID
 command `0x9f` and status-register-1 command `0x05`, with common ground and any

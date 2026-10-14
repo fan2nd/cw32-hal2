@@ -490,6 +490,38 @@ struct RxRing {
     waiting: bool,
 }
 
+impl RxRing {
+    // Called only while the per-instance critical section is held. The ISR
+    // cannot append or change the error barrier while this batch is copied.
+    fn read(&mut self, buffer: &mut [u8]) -> Result<usize, Error> {
+        if buffer.is_empty() {
+            return Ok(0);
+        }
+        // Bound global interrupt masking independently of application ring size.
+        // Partial reads may return less than the available data.
+        let count = buffer.len().min(self.len).min(64);
+        if count != 0 {
+            let first = count.min(self.buffer.len() - self.read);
+            buffer[..first].copy_from_slice(&self.buffer[self.read..self.read + first]);
+            buffer[first..count].copy_from_slice(&self.buffer[..count - first]);
+            // Avoid adding two potentially large indices before wrapping.
+            self.read = if count < self.buffer.len() - self.read {
+                self.read + count
+            } else {
+                count - (self.buffer.len() - self.read)
+            };
+            self.len -= count;
+            self.waiting = false;
+            return Ok(count);
+        }
+        if let Some(error) = self.error.take() {
+            self.waiting = false;
+            return Err(error);
+        }
+        Ok(0)
+    }
+}
+
 /// Handler for a UART with its own vector. Bind it with `bind_interrupts!`.
 /// L083 constructors instead require `SharedInterruptHandler`, which dispatches
 /// both instances on the shared vector. A partial binding cannot construct one.
@@ -593,8 +625,9 @@ pub struct UartRx<'d, M: Mode> {
 /// observations: a frame already in RDR can be collected after error recovery.
 /// Hardware RTS reflects RDR occupancy, not the software ring's free capacity.
 ///
-/// Inherent reads fill the requested slice; async trait reads return one byte
-/// for a nonempty slice. Empty reads consume neither queued bytes nor errors.
+/// Inherent and async trait reads return the available clean prefix, waiting
+/// for at least one byte for nonempty slices. Use `read_exact` to fill a slice.
+/// Empty reads consume neither queued bytes nor errors.
 ///
 /// Buffering is not lossless: ten families have no hardware overrun flag, and
 /// even native L010/L011/L012 flags can coalesce. There is no packet boundary,
@@ -715,49 +748,79 @@ impl<'d> BufferedUartRx<'d> {
         Ok(rx)
     }
 
-    fn poll_read_byte(&mut self, cx: &mut Context<'_>) -> Poll<Result<u8, Error>> {
+    fn poll_read(&mut self, cx: &mut Context<'_>, buffer: &mut [u8]) -> Poll<Result<usize, Error>> {
         // Register before checking: arrivals before this point are retained;
         // arrivals after the empty check see waiting=true and this task's waker.
         self.state.rx_waker.register(cx.waker());
         critical_section::with(|cs| {
             let mut ring = self.state.rx_ring.borrow(cs).borrow_mut();
             let ring = ring.as_mut().expect("buffered UART receiver has no ring");
-            if ring.len != 0 {
-                let byte = ring.buffer[ring.read];
-                ring.read = if ring.read == ring.buffer.len() - 1 {
-                    0
-                } else {
-                    ring.read + 1
-                };
-                ring.len -= 1;
-                ring.waiting = false;
-                Poll::Ready(Ok(byte))
-            } else if let Some(error) = ring.error.take() {
-                ring.waiting = false;
-                Poll::Ready(Err(error))
-            } else {
-                ring.waiting = true;
-                Poll::Pending
+            match ring.read(buffer) {
+                Ok(0) => {
+                    ring.waiting = true;
+                    Poll::Pending
+                }
+                result => Poll::Ready(result),
             }
         })
     }
 
-    /// Receive exactly `buffer.len()` bytes from the continuously collected ring.
+    /// Receive the currently queued clean prefix, waiting for at least one byte.
     ///
-    /// Empty reads return without consuming bytes/errors, registering a waker
-    /// or touching hardware. Cancellation or error can leave a filled prefix;
-    /// those bytes are not put back, and errors carry no partial count. The
-    /// queued clean prefix is returned before its pending discontinuity error.
-    /// Later ISR observations are discarded until a nonempty read consumes that
-    /// error; recovery does not establish a wire-time or packet boundary.
+    /// Returns the number copied, up to 64 bytes per call to bound each
+    /// interrupt-masked copy. It may be less than `buffer.len()`. A
+    /// pending discontinuity error is reported only after its clean prefix has
+    /// been returned; bytes and an error are never consumed by the same call.
+    /// Empty reads return zero without consuming data/errors or registering a
+    /// waker. An unpolled or cancelled pending read consumes nothing. Collection
+    /// continues and one stale task wake may remain after cancellation.
+    pub async fn read(&mut self, buffer: &mut [u8]) -> Result<usize, Error> {
+        if buffer.is_empty() {
+            return Ok(0);
+        }
+        poll_fn(|cx| self.poll_read(cx, buffer)).await
+    }
+
+    /// Fill the requested slice, waiting across partial reads as necessary.
     ///
-    /// Canceling or forgetting a pending read leaves collection active and no
-    /// pointer to caller memory in the ISR. One stale task wake may remain.
-    pub async fn read(&mut self, buffer: &mut [u8]) -> Result<(), Error> {
-        for byte in buffer {
-            *byte = poll_fn(|cx| self.poll_read_byte(cx)).await?;
+    /// Cancellation or error may leave a filled prefix. Those bytes are not
+    /// returned to the ring, and errors carry no partial count. Use `read` when
+    /// the application must know how many clean bytes precede an error.
+    pub async fn read_exact(&mut self, mut buffer: &mut [u8]) -> Result<(), Error> {
+        while !buffer.is_empty() {
+            let count = self.read(buffer).await?;
+            buffer = &mut buffer[count..];
         }
         Ok(())
+    }
+
+    /// Copy queued bytes without waiting, matching Embassy's buffered API.
+    ///
+    /// Returns zero when no bytes/error are queued, not end-of-stream. Clean
+    /// data is returned before a pending error. Empty slices have no effect.
+    pub fn blocking_read(&mut self, buffer: &mut [u8]) -> Result<usize, Error> {
+        if buffer.is_empty() {
+            return Ok(0);
+        }
+        critical_section::with(|cs| {
+            self.state
+                .rx_ring
+                .borrow(cs)
+                .borrow_mut()
+                .as_mut()
+                .expect("buffered UART receiver has no ring")
+                .read(buffer)
+        })
+    }
+
+    /// Whether a nonempty read can complete immediately with data or an error.
+    /// This does not consume the pending error or queued bytes.
+    pub fn read_ready(&mut self) -> Result<bool, Error> {
+        critical_section::with(|cs| {
+            let ring = self.state.rx_ring.borrow(cs).borrow();
+            let ring = ring.as_ref().expect("buffered UART receiver has no ring");
+            Ok(ring.len != 0 || ring.error.is_some())
+        })
     }
 
     /// Baud rate after divider rounding, excluding oscillator tolerance.
@@ -854,10 +917,21 @@ impl<'d> BufferedUart<'d> {
         Ok(Self { tx, rx })
     }
 
-    /// Receive exactly the requested bytes. See [`BufferedUartRx::read`] for
-    /// empty reads, partial cancellation and prefix-before-error recovery.
-    pub async fn read(&mut self, buffer: &mut [u8]) -> Result<(), Error> {
+    /// Receive an available prefix. See [`BufferedUartRx::read`].
+    pub async fn read(&mut self, buffer: &mut [u8]) -> Result<usize, Error> {
         self.rx.read(buffer).await
+    }
+    /// Fill the slice. Cancellation or error may leave a filled prefix.
+    pub async fn read_exact(&mut self, buffer: &mut [u8]) -> Result<(), Error> {
+        self.rx.read_exact(buffer).await
+    }
+    /// Copy queued data without waiting. Zero means no data, not end-of-stream.
+    pub fn blocking_read(&mut self, buffer: &mut [u8]) -> Result<usize, Error> {
+        self.rx.blocking_read(buffer)
+    }
+    /// Whether a nonempty read can complete immediately with data or an error.
+    pub fn read_ready(&mut self) -> Result<bool, Error> {
+        self.rx.read_ready()
     }
     /// Queue bytes through ordinary async TX; cancellation may leave a sent prefix.
     pub async fn write(&mut self, buffer: &[u8]) -> Result<(), Error> {
@@ -1865,7 +1939,8 @@ impl<'d> UartRx<'d, Async> {
         }
         let regs = self.info.regs;
         critical_section::with(|_| {
-            regs.ier().modify(|w| WaitEvent::Receive.set_enabled(w, false));
+            regs.ier()
+                .modify(|w| WaitEvent::Receive.set_enabled(w, false));
             // This clear completes the new observation-window boundary. Keep
             // unread RC/RDR and all line errors for the consumption snapshot.
             let mut command = regs::Icr::write_noop();
@@ -2180,7 +2255,8 @@ impl WaitEvent {
 #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 fn retire_receive_wait(regs: pac::uart::Uart) {
     critical_section::with(|_| {
-        regs.ier().modify(|w| WaitEvent::Receive.set_enabled(w, false));
+        regs.ier()
+            .modify(|w| WaitEvent::Receive.set_enabled(w, false));
     });
 }
 
@@ -2268,9 +2344,8 @@ fn on_interrupt(
         || (status.fe() && enabled.fe())
         || (status.pe() && enabled.pe());
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
-    let rx_data_pending = rx_data_pending
-        || (status.ne() && enabled.ne())
-        || (status.ore() && enabled.ore());
+    let rx_data_pending =
+        rx_data_pending || (status.ne() && enabled.ne()) || (status.ore() && enabled.ore());
     let rx_pending = rx_data_pending;
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
     let rx_pending = rx_pending || (status.rxidle() && enabled.rxidle());
@@ -2423,20 +2498,22 @@ impl embedded_io::ErrorType for BufferedUart<'_> {
 }
 impl embedded_io_async::Read for BufferedUartRx<'_> {
     async fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error> {
-        if buf.is_empty() {
-            return Ok(0);
-        }
-        self.read(&mut buf[..1]).await?;
-        Ok(1)
+        self.read(buf).await
     }
 }
 impl embedded_io_async::Read for BufferedUart<'_> {
     async fn read(&mut self, buf: &mut [u8]) -> Result<usize, Error> {
-        if buf.is_empty() {
-            return Ok(0);
-        }
-        self.rx.read(&mut buf[..1]).await?;
-        Ok(1)
+        self.rx.read(buf).await
+    }
+}
+impl embedded_io::ReadReady for BufferedUartRx<'_> {
+    fn read_ready(&mut self) -> Result<bool, Error> {
+        self.read_ready()
+    }
+}
+impl embedded_io::ReadReady for BufferedUart<'_> {
+    fn read_ready(&mut self) -> Result<bool, Error> {
+        self.rx.read_ready()
     }
 }
 impl embedded_io::Write for BufferedUart<'_> {

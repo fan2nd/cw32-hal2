@@ -108,7 +108,7 @@ still apply.
   have no software FIFO or throughput guarantee.
   Direct `BufferedUartRx`/`BufferedUart` owners separately collect
   continuously through IRQs into consumed static bounded storage on all thirteen
-  families and 54 existing selections. Exact inherent reads and one-byte async
+  families and 54 existing selections. Batched inherent and async
   trait reads drain the retained clean prefix before returning the first error;
   later ISR observations are discarded until the error is consumed. Empty reads
   preserve bytes/errors. Ten families can silently overwrite RDR before ISR

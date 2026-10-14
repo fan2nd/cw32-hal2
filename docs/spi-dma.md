@@ -204,10 +204,13 @@ any destination reference while DMA may write. Only successful paired
 retirement permits a temporary CPU read slice and caller-buffer copy. The
 private unsafe `Channel::start_read` accepts a pointer/count for the same reason.
 
-Channels use existing sequential one-time `Channel::new_admitted` calls;
-there is no atomic pair-admission promise, raw-channel upgrade, new request
-table, RCC layer or register adapter. Constructor errors consume inputs, and failure admitting the second channel can consume
-the first admission without starting either transfer. The existing generated
+Channels use the existing one-time `Channel::new_admitted_pair` helper. Both
+channel admission states are checked in one critical section before either is
+claimed; rejection of either channel leaves both admission states unchanged.
+This is pair-admission atomicity, not whole-constructor rollback: errors still
+consume inputs, and a later SPI configuration failure does not undo successful
+pair admission. No raw-channel upgrade, new request table, RCC layer or register
+adapter is added. The existing generated
 request routes and SPI GLOBAL interrupt facts supply selectors and bindings.
 Normal reset/clean-runtime HAL initialization is required; dirty startup is
 rejected, and arbitrary active bootloader handovers are unsupported.

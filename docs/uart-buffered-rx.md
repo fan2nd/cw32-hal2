@@ -61,22 +61,43 @@ caller-memory lifetime promise is required. Peripheral and pin borrows can
 still use `'d`; only the ISR destination must be static. Applications can use
 the existing safe `cortex_m::singleton!` pattern with its result checked.
 
-Both owners expose `actual_baudrate()` and an inherent async
-`read(&mut self, buffer: &mut [u8]) -> Result<(), Error>` that fills the entire
-caller slice unless an error occurs. Both implement `embedded_io::ErrorType`
-and `embedded_io_async::Read`. A nonempty async trait read consumes exactly one
-byte and returns `Ok(1)`, even when given a larger slice; use its returned count.
-It does not wait to fill that slice.
+Both owners expose `actual_baudrate()` and these receive methods:
 
-On first poll, an empty inherent read returns `Ok(())`, and an empty trait read
-returns `Ok(0)`. Neither consumes queued bytes or a pending error, registers a
-waker or touches MMIO. An unpolled read future has no effect.
+- `read(&mut self, buffer: &mut [u8]) -> Result<usize, Error>` asynchronously
+  waits for at least one byte for a nonempty slice and copies the available
+  clean prefix, up to the slice length and a fixed 64-byte batch limit. It can
+  copy across the ring wrap in one
+  critical section. Use the returned count, not the caller buffer length.
+- `read_exact(&mut self, buffer: &mut [u8]) -> Result<(), Error>` loops over
+  partial reads to fill the caller slice. Cancellation/errors may leave a
+  consumed prefix and do not return its length.
+- `blocking_read(&mut self, buffer: &mut [u8]) -> Result<usize, Error>` copies
+  queued data without waiting, following the pinned Embassy buffered API's
+  naming. Zero means temporarily empty, not end-of-stream.
+- `read_ready(&mut self) -> Result<bool, Error>` reports whether a nonempty
+  read can immediately return data or a pending error, without consuming either.
+
+Both implement `embedded_io::ErrorType`, `embedded_io_async::Read` and
+`embedded_io::ReadReady` with the same semantics as their inherent methods.
+No synchronous `embedded_io::Read` is exposed: the nonwaiting inherent method's
+zero-for-empty result must not be mistaken for the trait's EOF contract.
+
+Empty reads return zero (`read_exact`: unit), consuming neither bytes nor
+errors, registering no waker and touching no MMIO. An unpolled future has no
+effect. A partial async read never consumes data before returning `Ready`, so
+cancelling a pending read loses no queued bytes. Cancelling `read_exact` can
+lose an already-copied prefix, as documented above.
 
 `BufferedUart` forwards async `write`/`flush`, `blocking_write`/`blocking_flush`,
 `embedded_io_async::Write` and `embedded_io::Write` to its ordinary TX half.
 `split()` returns owned `(UartTx<'d, Async>, BufferedUartRx<'d>)` halves;
 `split_ref()` returns simultaneous disjoint mutable borrows of those halves.
-There is no buffered TX owner or blocking buffered RX API.
+There is no buffered TX owner.
+
+`BufRead` is intentionally not exposed: the present critical-section-protected
+mutable slice cannot provide a stable borrowed segment outside that critical
+section without a separately reviewed storage/aliasing design. This API change
+does not weaken the static ISR-storage requirement or claim hardware validation.
 
 Two variants extend currently exhaustive public enums on every UART backend:
 
@@ -109,7 +130,8 @@ the prefix and error. No explicit restart or clear-error API is needed.
 
 For example, a two-byte ring containing A,B receives clean C: A,B remain, and
 overflow is pending. D and E observed before the error is consumed are
-discarded. Reads return A then B, then `BufferOverflow`; later observations may
+discarded. A read with room for both returns A,B, then the next read returns
+`BufferOverflow`; later observations may
 be retained. If an exact four-byte read copies A,B and then encounters that
 error, it returns `Err` with the first two caller bytes already written and no
 partial count. It does not put them back.
@@ -142,7 +164,10 @@ Buffered receive data/error interrupts remain armed between reads, at full
 capacity and while an error is pending. Ordinary receivers without a ring keep
 their one-shot interrupt path: their ISR leaves RDR and receive flags for task
 context. RX and TX wakes occur outside the lifecycle critical section and ring
-borrow. Each reader critical section copies at most one byte; waiter
+borrow. Each reader critical section copies at most 64 bytes (also bounded by the
+queued length and caller slice length), across at most two contiguous ring
+segments. This caps copy work independently of ring capacity, not elapsed
+interrupt latency or losslessness. Waiter
 registration precedes the empty-state check, and the first ready transition
 wakes a waiting task. Further queued bytes do not require redundant RX wakes.
 
@@ -165,7 +190,7 @@ peer behavior and in-flight frames remain relevant.
 
 An exact read may copy a prefix before returning Pending. Canceling or
 forgetting it preserves that written caller prefix and does not restore popped
-bytes. A Pending one-byte trait read has consumed no byte or error. Background
+bytes. A Pending partial read (inherent or trait) has consumed no byte or error. Background
 collection continues independently in either case. No read future, caller
 slice or stack-buffer pointer is stored in the ISR state.
 
@@ -198,7 +223,7 @@ is not returned, and buffered bytes do not survive successful reconstruction.
 
 There is no buffered `read_until_idle`, idle marker queue, numeric timeout,
 packet framing, ring replacement/reclamation, zero-copy borrow, mode conversion,
-DMA API, `embedded_io::Read`, `BufRead`, `ReadReady` or try-read API.
+DMA API, synchronous `embedded_io::Read`, `BufRead` or duplicate try-read API.
 The existing [native finite idle API](uart-idle.md) remains on ordinary
 `UartRx<Async>`/`Uart<Async>` for L010/L011/L012 with its Stage82 window, error
 and cancellation semantics. Existing [staged DMA](uart-dma-rx.md) ownership,

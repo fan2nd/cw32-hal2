@@ -1758,7 +1758,9 @@ impl Spi<'static, Async, Master> {
     ///
     /// Consumes whole static SPI/pin/channel owners and two nonoverlapping
     /// static SRAM slices of 1..=65535 bytes. Inputs remain consumed on error;
-    /// a rejected second channel may leave the first admission consumed. Normal
+    /// both DMA channels are checked before either admission is consumed. A
+    /// channel rejection leaves both admission states unchanged, but a later SPI
+    /// configuration error does not roll back successful pair admission. Normal
     /// reset/clean-runtime HAL initialization is required. Raw channels cannot
     /// regain safe admission. There is no buffer/channel recovery or split API.
     ///
@@ -1799,10 +1801,8 @@ impl Spi<'static, Async, Master> {
     {
         SpiDma::validate_staging(tx_staging).map_err(ConfigError::DmaBuffer)?;
         SpiDma::validate_staging(rx_staging).map_err(ConfigError::DmaBuffer)?;
-        let tx = dma::Channel::new_admitted(tx_channel, irq)
-            .map_err(|error| ConfigError::DmaChannel(error.error))?;
-        let rx = dma::Channel::new_admitted(rx_channel, irq)
-            .map_err(|error| ConfigError::DmaChannel(error.error))?;
+        let (tx, rx) = dma::Channel::new_admitted_pair(tx_channel, rx_channel, irq)
+            .map_err(ConfigError::DmaChannel)?;
         let mut spi = Self::new_inner(peripheral, sck, mosi, miso, config)?;
         let capacity = tx_staging.len().min(rx_staging.len());
         spi.dma = Some(SpiDma {

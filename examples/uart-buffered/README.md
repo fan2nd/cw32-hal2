@@ -23,25 +23,25 @@ the existing source lock, including Embassy revision
 
 ## Applications
 
-- `receive`: construct a combined buffered UART and echo every successful exact
-  16-byte read. It waits for all 16 bytes; it does not identify packets or idle
-  gaps. On L083 it binds the complete UART1/UART4 handler but owns only UART1.
+- `receive`: construct a combined buffered UART and echo each available prefix of
+  up to 16 bytes. It waits for at least one byte, not a full chunk; it does not
+  identify packets or idle gaps. On L083 it binds the complete UART1/UART4 handler but owns only UART1.
   Leave UART4 and any previously configured external partner traffic quiescent.
 - `split`: use owned `split` on L031 and the other selections, and borrowed
   `split_ref` on L012. A joined RX/TX exchange sends `send data` while an
-  `embedded_io_async::Read::read` on the RX half awaits data. The trait currently
-  returns one byte for a nonempty buffer. Only the returned prefix is echoed.
+  `embedded_io_async::Read::read` on the RX half awaits data. The trait returns available queued bytes
+  after waiting for at least one. Only the returned prefix is echoed.
 - `rx_only`: construct `BufferedUartRx` directly, using `new_with_rts` on L052
   and `new` without RTS on the other selections. Successful trait-read prefixes
   and receive errors pass through `core::hint::black_box` for inspection with a
   debugger. This application has no TX owner or serial error-report channel.
 - `flow_control`: L010 only. Construct `BufferedUart::new_with_rtscts` and echo
-  successful exact 16-byte chunks. CTS has a pull-up; connect the peer's RTS to
+  successful exact 16-byte chunks using `read_exact`. CTS has a pull-up; connect the peer's RTS to
   local CTS and its CTS to local RTS. A peer that does not assert CTS can leave
   writes or flushes waiting indefinitely.
 - `shared_vector`: L083 only. Own both UART1 and UART4, each with its own consumed
   64-byte ring. One shared binding dispatches both. Two joined echo loops keep
-  both owners live and echo independent exact 16-byte chunks on their own ports.
+  both owners live and use `read_exact` to echo independent 16-byte chunks.
 
 `flow_control` requires `cw32l010f8p6`; `shared_vector` requires `cw32l083rct6`.
 `receive`, `split` and `rx_only` use the selected feature's routes below. The

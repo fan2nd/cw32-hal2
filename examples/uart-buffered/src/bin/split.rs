@@ -31,7 +31,7 @@ async fn main(_spawner: embassy_executor::Spawner) {
 async fn exchange(tx: &mut UartTx<'_, Async>, rx: &mut BufferedUartRx<'_>) -> ! {
     loop {
         let mut chunk = [0u8; examples::CHUNK_SIZE];
-        // The trait read completes with one byte; always use its returned count.
+        // The trait read returns an available prefix; always use its count.
         let (received, sent) = join(embedded_io_async::Read::read(rx, &mut chunk), async {
             tx.write(b"send data\r\n").await?;
             tx.flush().await

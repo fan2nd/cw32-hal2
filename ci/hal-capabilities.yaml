@@ -137,7 +137,7 @@ functions:
       - RX
       limitations:
       - Existing 54 selections retain their package routes and exclusions; source/API scope is not a build-total claim.
-      - Inherent reads are exact; nonempty async trait reads return one byte. Empty reads preserve queued bytes and pending errors.
+      - Inherent and async trait reads return an available clean prefix; read_exact fills the slice. Nonwaiting blocking_read and read_ready are available. Empty reads preserve queued bytes and pending errors.
       - The nonempty static ring is consumed even on constructor error and is not returned on Drop or reconstruction.
       - Retained clean prefix precedes the first pending error; software BufferOverflow and line errors discard later
         ISR observations until the error is consumed.
@@ -330,6 +330,7 @@ functions:
       - L012 retains its 24 MHz maximum, even dividers 2..256, MISO pull-down rejection and whole-bank GPIO handover. Its UART remains TX-only; the separate UART RX RC/ORE proof remains blocked.
       - Stage94 main passed 6 standalone ARM libraries and 15 ELF links in 21 accepted Cargo rows, all exiting zero, plus five finite source/declaration commands, with independent runtime/source acceptance. Main ran zero canonical generation. At main acceptance final-source clean had not run; completion requires its separate 2-library/6-ELF receipt after one existing generation bootstrap with all 910 generated files matching main; no hardware result is claimed.
       - The original M07 link failed with a 2752-byte Flash overflow after six successful library rows; reviewed companion-only opt-level s to z preserves 64 KiB Flash and all five async methods. The failed attempt remains recorded separately from the 21 accepted rows. Native L012 builds have a recorded new dead_code warning for new_admitted_pair; no warning-free claim.
+      - Both channel admissions are checked in one critical section before either is claimed; rejection leaves both admission states unchanged. Inputs remain consumed; later SPI configuration failure does not roll back successful admission.
       - Both clean DMA terminals, wire idle and both fenced retirements precede received-byte access and success; DMA/SPI errors permanently quarantine the whole pair. Unresolved Drop retains both channels/stages, SPI, pins and clocks. PIO retains its separate destructive recovery and Drop without DMA retention.
       - Cancellation retains the current chunk; preserve the original CS selection and successfully flush before changing devices.
       - No generic cancellation-safe SpiDevice, borrowed DMA, slave/circular mode, zero-copy, safe early abort, uninterrupted clocks, finite-liveness, throughput or hardware-validation guarantee.
@@ -1570,7 +1571,7 @@ functions:
         - Generation and five finite gates plus one renderer passed in segments; two source-record/checker preparation failures remain preserved. No hardware result is claimed.
         - At main acceptance clean had not run; final-package completion requires its separate final-source 2-library/4-ELF clean receipt.
         - UART1/2/3 TX use PA9/PA7/PA8 AF1 and request selectors 1/3/5; private staging isolates caller slices. Flush separately waits for TXBUSY0.
-        - Stage94 SPI1/SPI2/SPI3 RX/TX use 6/7, 8/9 and 10/11 with native CR2 gates, fixed typed DR and byte SRAM staging. SPI requires two exclusive static stages and sequential one-time channel admissions; second-channel failure may consume the first admission.
+        - Stage94 SPI1/SPI2/SPI3 RX/TX use 6/7, 8/9 and 10/11 with native CR2 gates, fixed typed DR and byte SRAM staging. SPI requires two exclusive static stages and atomic one-time pair admission; rejection of either channel leaves both admission states unchanged. Inputs remain consumed, and later SPI configuration failure does not roll back successful admission.
         - Four channels permit at most two reserved SPI DMA pairs. The complete SPI23 associated handler dispatches both PIO/DMA peer states with active-before-MMIO guards; borrowed PIO remains available and UART RX stays unqualified.
         - SPI cancellation retains the active chunk; original GPIO CS must remain asserted through successful flush. Both clean terminals, wire idle and fenced retirements precede receive-byte access; errors quarantine and unresolved Drop retains the entire pair, SPI, pins and clocks without a hidden wait.
         - Native SPI main passed 6 standalone ARM libraries and 15 ELF links in 21 accepted Cargo rows, all exiting zero, plus five finite main commands, with independent runtime/source acceptance. At main acceptance final-source clean had not run; completion requires its separate 2-library/6-ELF receipt after one generation bootstrap; no hardware result is claimed.
