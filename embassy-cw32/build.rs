@@ -6853,6 +6853,12 @@ fn generate_lvd_ir(out: &mut String) {
     let version = lvd.registers.as_ref().unwrap().version;
     assert!(matches!(version, "v1" | "cw32l031_v1" | "cw32l010_v1"));
     if version == "cw32l010_v1" {
+        let vector = METADATA
+            .interrupts
+            .iter()
+            .find(|irq| irq.name == "LVD")
+            .expect("native LVD requires its dedicated vector");
+        assert_eq!(vector.number, 1, "unexpected native LVD vector number");
         println!("cargo:rustc-cfg=lvd_low");
     }
     out.push_str(&format!(

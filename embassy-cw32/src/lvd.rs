@@ -1,16 +1,17 @@
 //! Polling low-voltage monitor with exclusive peripheral and analog-pin ownership.
 //!
 //! Constructors accept only an idle, unfiltered LVD with reset, interrupt and
-//! event triggers disabled. BOR, reference/trim, filter clocks and shared analog
-//! owners are never changed. Low-family timer-break routing is rejected while
+//! event triggers disabled. BOR, reference/trim and shared analog owners are never
+//! changed; only explicit filtered constructors select SYSCLK filtering. Low-family timer-break routing is rejected while
 //! active. The hardware has no independent RCC gate; no gate or reset operation
-//! is synthesized. Drop retires an owned L012 edge wait, then disables EN.
+//! is synthesized. Drop retires an owned native edge wait, then disables EN.
 //!
 //! Thresholds are nominal, not calibrated voltmeter readings. L012's documented
 //! table assumes Vcore=1.6 V. Allow board-qualified analog startup/settling time
 //! before interpreting samples; this driver does not claim a ready indication.
-//! On L012 only, edge waits report a fresh interrupt event, not analog readiness.
-//! No wakeup, reset-policy or filter API is provided.
+//! On L010/L011/L012, edge waits report a fresh interrupt event, not analog readiness.
+//! L010/L011/L012 optionally select a SYSCLK digital filter at construction.
+//! No wakeup or reset-policy API is provided.
 use crate::{
     Peri,
     gpio::{Flex, Pin},
@@ -50,6 +51,9 @@ pub enum VoltageState {
 #[non_exhaustive]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Error {
+    /// Filtered monitoring requires initialized, continuously running SYSCLK.
+    #[cfg(any(cw32l010, cw32l011, cw32l012))]
+    ClockNotInitialized,
     /// An existing monitor, reset/IRQ/event/filter policy or timer break is active.
     AlreadyConfigured,
     /// A requested source, threshold or enable bit did not read back correctly.
@@ -60,11 +64,13 @@ pub enum Error {
     Timeout,
 }
 
-/// Owned, unfiltered LVD monitor; L012 additionally supports edge notifications.
+/// Owned LVD monitor; native families support SYSCLK filtering and edge waits.
 pub struct LowVoltageMonitor<'d> {
     _peripheral: Peri<'d, LVD>,
     _input: Option<Flex<'d>>,
     threshold: Threshold,
+    #[cfg(any(cw32l010, cw32l011, cw32l012))]
+    filter_clock_restore: Option<bool>,
 }
 impl<'d> LowVoltageMonitor<'d> {
     /// Monitor the on-chip supply (VDD or VDDA, according to this chip).
@@ -78,6 +84,8 @@ impl<'d> LowVoltageMonitor<'d> {
             _peripheral: peripheral,
             _input: None,
             threshold,
+            #[cfg(any(cw32l010, cw32l011, cw32l012))]
+            filter_clock_restore: None,
         })
     }
     /// Monitor one verified external input, holding its analog GPIO ownership.
@@ -97,6 +105,8 @@ impl<'d> LowVoltageMonitor<'d> {
                 _peripheral: peripheral,
                 _input: Some(input),
                 threshold,
+                #[cfg(any(cw32l010, cw32l011, cw32l012))]
+                filter_clock_restore: None,
             })
         })
     }
@@ -117,7 +127,7 @@ impl<'d> LowVoltageMonitor<'d> {
         }
     }
     /// Wait at most `polls` SR reads for a comparator state; this is not a duration.
-    /// This does not debounce, acknowledge events, or ensure analog settling.
+    /// This adds no software debounce, event acknowledgment or analog-settling proof.
     pub fn wait_for(&self, state: VoltageState, polls: u32) -> Result<(), Error> {
         if polls == 0 {
             return Err(Error::InvalidPollBudget);
@@ -133,12 +143,110 @@ impl<'d> LowVoltageMonitor<'d> {
 }
 impl Drop for LowVoltageMonitor<'_> {
     fn drop(&mut self) {
-        #[cfg(cw32l012)]
+        #[cfg(any(cw32l010, cw32l011, cw32l012))]
         drop(critical_section::with(edge_wait::retire));
         critical_section::with(|_| {
             pac::LVD.cr0().modify(|w| w.set_en(false));
+            #[cfg(any(cw32l010, cw32l011, cw32l012))]
+            if let Some(previous) = self.filter_clock_restore {
+                pac::LVD.cr1().modify(|w| w.set_flttime(0));
+                pac::LVD.cr0().modify(|w| w.set_fltclk(previous));
+            }
         });
     }
+}
+
+/// L010/L011/L012 consecutive-equal-sample filter, clocked from continuously running SYSCLK.
+/// DivN is the sampling divider; SamplesN is the required stable sample count.
+/// Encodings follow each own manual; see `docs/native-lvd-filter.md`. They do not guarantee analog settling,
+/// glitch rejection in seconds, startup output, or operation during clock loss.
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u8)]
+pub enum DigitalFilter {
+    Div1Samples2 = 1,
+    Div1Samples4 = 2,
+    Div1Samples8 = 3,
+    Div2Samples6 = 4,
+    Div2Samples8 = 5,
+    Div4Samples6 = 6,
+    Div4Samples8 = 7,
+    Div8Samples6 = 8,
+    Div8Samples8 = 9,
+    Div16Samples5 = 10,
+    Div16Samples6 = 11,
+    Div16Samples8 = 12,
+    Div32Samples5 = 13,
+    Div32Samples6 = 14,
+    Div32Samples8 = 15,
+}
+
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
+impl<'d> LowVoltageMonitor<'d> {
+    /// Configure SYSCLK filtering before enabling supply monitoring. Does not
+    /// select reset, level/edge actions, IRQ or timer break. SYSCLK must remain
+    /// running; no low-power/source-loss or elapsed-time guarantee is provided.
+    pub fn new_supply_filtered(
+        peripheral: Peri<'d, LVD>,
+        threshold: Threshold,
+        filter: DigitalFilter,
+    ) -> Result<Self, Error> {
+        if crate::rcc::try_clocks().is_none() {
+            return Err(Error::ClockNotInitialized);
+        }
+        let previous = critical_section::with(|_| {
+            check_idle()?;
+            configure_filtered(0, threshold, filter)
+        })?;
+        Ok(Self {
+            _peripheral: peripheral,
+            _input: None,
+            threshold,
+            filter_clock_restore: Some(previous),
+        })
+    }
+
+    /// External-input counterpart of new_supply_filtered, retaining analog pin
+    /// ownership and the same clock/filter limits. Drop disables the monitor,
+    /// removes its filter and restores the inherited filter-clock selector.
+    pub fn new_pin_filtered<P: InputPin>(
+        peripheral: Peri<'d, LVD>,
+        pin: Peri<'d, P>,
+        threshold: Threshold,
+        filter: DigitalFilter,
+    ) -> Result<Self, Error> {
+        if crate::rcc::try_clocks().is_none() {
+            return Err(Error::ClockNotInitialized);
+        }
+        critical_section::with(|_| {
+            check_idle()?;
+            let mut input = Flex::new(pin);
+            input.set_as_analog();
+            let previous = configure_filtered(P::SELECTOR, threshold, filter)?;
+            Ok(Self {
+                _peripheral: peripheral,
+                _input: Some(input),
+                threshold,
+                filter_clock_restore: Some(previous),
+            })
+        })
+    }
+}
+
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
+fn configure_filtered(source: u8, threshold: Threshold, filter: DigitalFilter) -> Result<bool, Error> {
+    let previous = pac::LVD.cr0().read().fltclk();
+    pac::LVD.cr1().modify(|w| w.set_flttime(filter as u8));
+    pac::LVD.cr0().modify(|w| w.set_fltclk(true));
+    let filter_matches = pac::LVD.cr0().read().fltclk()
+        && pac::LVD.cr1().read().flttime() == filter as u8;
+    if !filter_matches || configure(source, threshold).is_err() {
+        pac::LVD.cr0().modify(|w| w.set_en(false));
+        pac::LVD.cr1().modify(|w| w.set_flttime(0));
+        pac::LVD.cr0().modify(|w| w.set_fltclk(previous));
+        return Err(Error::WriteFailure);
+    }
+    Ok(previous)
 }
 
 fn check_idle() -> Result<(), Error> {
@@ -196,8 +304,8 @@ macro_rules! impl_input_pin {
 #[allow(unused_imports)]
 pub(crate) use impl_input_pin;
 
-/// L012 supply/input crossing direction, as defined by LVD RISE/FALL.
-#[cfg(cw32l012)]
+/// Native supply/input crossing direction, as defined by LVD RISE/FALL.
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Edge {
     /// Monitored voltage rises above its threshold (not the FLTV polarity).
@@ -206,9 +314,9 @@ pub enum Edge {
     Falling,
     Either,
 }
-#[cfg(cw32l012)]
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
 pub use edge_wait::InterruptHandler;
-#[cfg(cw32l012)]
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
 impl LowVoltageMonitor<'_> {
     /// Start a fresh edge window on first poll, discarding any previous event.
     ///
@@ -228,7 +336,7 @@ impl LowVoltageMonitor<'_> {
         edge_wait::wait(edge).await;
     }
 }
-#[cfg(cw32l012)]
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
 mod edge_wait {
     use super::*;
     use crate::interrupt::typelevel::{Handler, Interrupt, LVD as Irq};
@@ -247,7 +355,7 @@ mod edge_wait {
             waker: None,
         }));
 
-    /// Handler for the source-qualified L012 LVD vector.
+    /// Handler for the source-qualified native LVD vector.
     pub struct InterruptHandler;
     impl Handler<Irq> for InterruptHandler {
         unsafe fn on_interrupt() {
@@ -270,7 +378,7 @@ mod edge_wait {
         }
     }
     fn clear_event() {
-        // L012 UM 1.4 §28.7: INTF is the sole RW0 bit; FLTV is RO,
+        // Own native manuals: INTF is the sole RW0 bit; FLTV is RO,
         // reserved bits require zero. Typed command, never status RMW.
         pac::LVD.sr().write_value(pac::lvd::regs::Sr(0));
     }

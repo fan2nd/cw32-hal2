@@ -38,3 +38,8 @@ outputs. See [the ownership and loading contract](../../docs/dac-channel-softwar
 `dac_owned` consumes the direct DAC into independently owned outputs, drops
 channel 1, and continues writing channel 2. This new ownership path is
 uncompiled and untested; see [owned-channel contract](../../docs/dac-owned-channels.md).
+
+`lvd_filtered` selects SYSCLK/32 with eight equal samples before reporting an
+LVD edge. SYSCLK must remain running; analog startup, Vcore and voltage limits
+still require board qualification. The new filtered path is uncompiled and
+untested; see [filter contract](../../docs/native-lvd-filter.md).

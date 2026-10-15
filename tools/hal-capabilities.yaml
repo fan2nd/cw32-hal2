@@ -1359,17 +1359,33 @@ functions:
       status: partial
       scope: Unfiltered supply/external-input polling.
       limitations:
-      - No filter, reset policy or wakeup management. L012-only async edge waits are declared separately.
+      - No reset policy or wakeup management. Native SYSCLK filtering and async edge waits are declared separately.
+    - id: sysclk_filter
+      status: partial
+      scope: L010/L011/L012 constructor-only SYSCLK digital filtering on supply or owned external input.
+      implemented_families: [CW32L010, CW32L011, CW32L012]
+      limitations:
+      - Fifteen own-manual divider/sample encodings, readback checked before EN. No LSI source, live reconfiguration, reset or wake policy.
+      - SYSCLK must remain running; no analog readiness, filter-output startup or pulse rejection duration guarantee.
+      - Drop disables EN, removes the filter and restores the inherited clock selector. Existing edge waits preserve filter fields.
+      - Source-reviewed only; compilation and readback/cleanup/board acceptance remain pending.
+      evidence:
+      - path: docs/native-lvd-filter.md
+      - path: embassy-cw32/src/lvd.rs
+        anchor: pub enum DigitalFilter
     - id: edge_async
       status: partial
-      scope: L012-only fresh-window rising, falling or either-edge waits on existing source-qualified owner configurations.
+      scope: L010/L011/L012 fresh-window rising, falling or either-edge waits on existing source-qualified owner configurations.
       implemented_families:
+      - CW32L010
+      - CW32L011
       - CW32L012
       limitations:
-      - One coalesced sticky observation, not a current level, edge count, analog readiness or settling proof. No new filtering, blanking, references, routing or protection policy.
+      - One coalesced sticky observation, not a current level, edge count, analog readiness or settling proof. No new blanking, references, routing or protection policy; explicit SYSCLK filtering is separate.
       - Cancellation clears only the owned event, selectors and IE; shared vector, clock, reset and sibling state are preserved. No stopped-source timeout or low-power wake guarantee.
-      - Current software acceptance is recorded in docs/l012-extensions-validation.md; publication is established separately by its containing commit; other families retain polling-only behavior.
+      - L010/L011 extension is source-reviewed but uncompiled and untested; non-native families retain polling-only behavior.
       evidence:
+      - path: docs/native-lvd-filter.md
       - path: docs/l012-analog-edge-waits.md
       - path: embassy-cw32/src/lvd.rs
         anchor: pub async fn wait_for_edge
