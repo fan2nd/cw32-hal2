@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Verify exact four-part x030 MCO sources and all 54 data projections; never execute HAL code."""
+"""Verify exact four-part x030 MCO sources and all 52 active data projections; never execute HAL code."""
 import argparse
+import sys
 import hashlib
 import json
 from pathlib import Path
@@ -9,6 +10,8 @@ import zipfile
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tests"))
+from current_targets import retired_targets
 PARTS = {
     'CW32F030C8T7': ('CW32F030', 'LQFP48', '29', 'docs/f030-mco-qualification.json', 364, 55),
     'CW32F030K8T7': ('CW32F030', 'LQFP32', '18', 'docs/f030k8t7-mco-qualification.json', 357, 56),
@@ -365,7 +368,9 @@ def selection_universe(proofs):
         exact_keys(scope, 'selection_count parts', part + ' projection scope')
         assert scope['selection_count'] == 54 and len(scope['parts']) == len(set(scope['parts'])) == 54
         assert scope['parts'] == sorted(by_part), (part, 'current complete 54-selection universe')
-    return by_part
+    # Historical evidence keeps all 54 identities; only current outputs retire these exact two.
+    assert retired_targets() <= set(by_part)
+    return {name: manifest for name, manifest in by_part.items() if name not in retired_targets()}
 
 
 def check_package(part, chip, core, owner):
@@ -425,7 +430,7 @@ def check_projection(proofs, data):
     by_part = selection_universe(proofs)
     entries = list((data / 'chips').iterdir())
     assert all(p.is_file() for p in entries), 'unexpected generated chip directory entry'
-    assert sorted(p.name for p in entries) == sorted(name + '.json' for name in by_part), 'complete exact 54 selections required'
+    assert sorted(p.name for p in entries) == sorted(name + '.json' for name in by_part), 'complete exact 52 active selections required'
     projected = []
     for name, manifest in sorted(by_part.items()):
         path = data / 'chips' / (name + '.json')
@@ -452,7 +457,7 @@ def check_projection(proofs, data):
         else:
             assert facts == routes == [], (name, 'unqualified fact/route must be omitted')
         projected.append({'part': name, 'sha256': sha(path), 'mco': name in PARTS})
-    assert sum(p['mco'] for p in projected) == 4 and sum(not p['mco'] for p in projected) == 50
+    assert sum(p['mco'] for p in projected) == 4 and sum(not p['mco'] for p in projected) == 48
     for suffix in ['yaml', 'json']:
         check_ir(load(data / ('registers/sysctrl_v1.' + suffix)), 'SYSCTRL', 'MCO', 112, [('SOURCE', 0, 4), ('DIV', 4, 3)])
         gpio = load(data / ('registers/gpio_v1.' + suffix))
@@ -514,7 +519,7 @@ def main():
         'acceptance_boundary': 'Source/data validation does not constitute final schema/runtime review, link validation or hardware acceptance.'}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(receipt, indent=2) + '\n')
-    print('x030 MCO own sources and all 54 capability projections passed; 50 excluded, four exact capabilities.')
+    print('x030 MCO own sources and all 52 active capability projections passed; 48 excluded, four exact capabilities.')
 
 
 if __name__ == '__main__':

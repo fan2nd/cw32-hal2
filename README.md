@@ -1,5 +1,7 @@
 # embassy-cw32
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](docs/w031-target-retirement.md).
+
 See [constructor API migration](docs/constructor-api-migration.md) for fallible `new*` APIs and migrating former `try_new*` callers.
 
 Experimental, source-backed CW32 data/PAC/HAL workspace, modeled on the
@@ -23,7 +25,7 @@ binding had not run; final completion requires their separate receipts.
 These software results are not hardware validation.
 
 Stage92 extends [finite staged UART RX and combined/split DMA](docs/classic-uart-dma-rx.md)
-to fourteen exact F020/L031/L052/R031/W031 parts using their own byte-RDR
+to thirteen exact F020/L031/L052/R031 parts using their own byte-RDR
 evidence and the existing receive algorithm. L012 remains TX-only for UART DMA.
 Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29
 commands exiting zero without warnings. Independent runtime and metadata/source reviews accepted the bounded main
@@ -34,7 +36,7 @@ Historical copy/TX results below do not verify the RX extension.
 ## Current software API additions
 
 The current source adds [4–16-bit IRQ PIO SPI words](docs/spi-async-word-widths.md)
-on the existing ten qualified families; staged DMA remains byte-only and rejects
+on the existing nine qualified families; staged DMA remains byte-only and rejects
 other words without an implicit PIO fallback. It also adds
 [coalesced capture IRQ waits](docs/timer-capture-irq.md) on the existing
 InputInstance/OverflowInstance intersection, and
@@ -209,16 +211,16 @@ through initialization. Final HCLK/PCLK must satisfy the device's supply-voltage
 limits; many families allow only 24 MHz below 1.8 V. Initialization is not a
 fault-tolerant recovery controller for arbitrary external-clock loss.
 
-- All eleven LSE-bearing families: read-only inherited LSE pad reservation before
+- All ten LSE-bearing families: read-only inherited LSE pad reservation before
   token return, with source-specific pad locks and exact package routes. GPIO and
   peripheral pin construction reject reserved pads before GPIO writes.
-  Twenty-three exact packages support explicitly requested, board-qualified nominal
-  32768 Hz crystal/bypass setup and an owned RTC source. The previous sixteen
-  x030/F020/L031/R031/W031/L052/L083 packages retain their own monitoring,
+  Twenty-two exact packages support explicitly requested, board-qualified nominal
+  32768 Hz crystal/bypass setup and an owned RTC source. The retained fifteen
+  x030/F020/L031/R031/L052/L083 packages retain their own monitoring,
   electrical and consumer limits. The five L083 parts
   additionally require `256 * LSE_min_hz > 129 * 33784` before peripheral acquisition
   or RCC writes; this sufficient detector margin does not establish board accuracy.
-  Those sixteen use their own conservative RTC admission and bounded polling.
+  Those fifteen use their own conservative RTC admission and bounded polling.
   The three native L010 packages use a separate source-zero observer/handover
   contract. `StartupOnly` leaves CCS clear and can retain STABLE after clock loss;
   `MonitoredExistingRoutes` requires legal stable unchanged LSI and retains
@@ -232,11 +234,11 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   protection. See [the ownership contract](docs/inherited-lse-pads.md) and
   [active LSE contract](docs/qualified-lse.md) and
   [qualified LSE examples](examples/lse-clock/README.md).
-- All 13 families: GPIO and typed async GPIO interrupts, HSI clocks, independent
+- All 12 families: GPIO and typed async GPIO interrupts, HSI clocks, independent
   watchdog, documented CRC16 presets, blocking/interrupt-driven UART, blocking
   master SPI, blocking seven-bit master I2C and polling BTIM1–3 counters.
   BTIM1/2/3 additionally provide typed Async coalesced ARR-overflow waits across
-  all 54 existing selections; `Timer<'d, T>` still defaults to Blocking.
+  all 52 existing selections; `Timer<'d, T>` still defaults to Blocking.
   Successful reconstruction through either mode retires forgotten static IRQ
   state. Shared L052/L083/L012 vectors dispatch each enabled owner's handler
   without touching partner registers or changing shared gate/reset policy.
@@ -254,7 +256,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - GTIM/ATIM counters add the same typed Async coalesced overflow API across
   34 GTIM and eleven ATIM own-family/instance associations. L012 GTIM3/GTIM4
   share GTIM34 with separate owners/handlers; GTIM1 can remain reserved for
-  Embassy time. Classic ATIM on F030/A030/F003/L031/R031/W031/L052/L083 adds
+  Embassy time. Classic ATIM on F030/A030/F003/L031/R031/L052/L083 adds
   native polling capture for six A/B halves and CH1A/CH1B QEI, using independently
   qualified bonded input routes. QEI count/direction/wrap observations are
   non-atomic; capture is a latest latch with separate sticky overwrite status.
@@ -302,20 +304,6 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   [runtime/source review](docs/r031-factory-lsi-runtime-review.json) and
   [metadata review](docs/r031-factory-lsi-metadata-review.json).
   Final-package clean replay is required and tracked separately.
-- CW32W031R8U6 (QFN64, 64 KiB Flash / 8 KiB SRAM): separate init-only
-  factory LSI SYSCLK qualification at 31,816–33,784 Hz, 2.0–3.6 V and −40–85°C.
-  The shared native runtime is unchanged; RTC LSI aliases become rate-only
-  under every SYSCLK. Generic W031 remains excluded. Dedicated 32 MHz RFCLK
-  is separate, while PCLK/SPI1 and GPIOB inspection can affect internal
-  PB03/04/05/13 host and PB06 IRQ activity. Functional whole-bank handover
-  applies without a hidden Rust memory-safety precondition or RF operation.
-  Fixed 1 MHz time-driver refusal precedes singleton acquisition and RCC MMIO.
-  Main verification passed five actual library builds, six ELF links, generation
-  and six focused source/data commands. Independent runtime/source and metadata
-  reviews accept the frozen main implementation. At main acceptance, clean
-  replay had not run; final-package completion requires a separate clean receipt.
-  See the
-  [own W031 contract and evidence status](docs/qualified-w031-lsi-sysclk.md).
 - CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6: separate init-only
   factory LSI SYSCLK with own 31,816–33,784 Hz rate bounds at 1.65–5.5 V,
   VDDA=VDD and −40–85°C; all three have 64 KiB Flash / 8 KiB SRAM.
@@ -411,11 +399,11 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   alone requires the modeled 129/256 detector margin; the fixed 1 MHz time driver
   rejects it before ownership. See [the contract and exhaustive-match compatibility
   change](docs/classic-lse-sysclk.md).
-- CW32L031C8T6/C8U6/F8U6, CW32R031C8U6 and CW32W031R8U6: init-only
+- CW32L031C8T6/C8U6/F8U6, CW32R031C8U6: init-only
   LSE SYSCLK through the same `Config.lse` tuple and its own factory-LSI monitor.
   Incoming CLKCCS/HSECCS stay unchanged; matching cold LSI can resume parked
   consumers without TRIM/WAIT writes. Final HSI/buses/Flash precede one LSE mux
-  write. See [the separate five-package contract](docs/l031-r031-w031-lse-sysclk.md).
+  write. See [the historical five-package contract](docs/l031-r031-w031-lse-sysclk.md).
 - CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6: init-only board-qualified
   LSE SYSCLK from the same `Config.lse` tuple, with separate startup/run analog
   settings and the own factory-LSI monitor. Configured HSI is checked at final
@@ -426,7 +414,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   init-only LSE SYSCLK through the same `Config.lse` declaration and own
   factory-LSI monitor. The historical Stage60 addition brought LSE system targets
   from eleven to sixteen exact packages; all twenty-three auxiliary-LSE
-  qualifications stay unchanged.
+  qualifications were unchanged by that addition.
   The new target requires declared minimum VDD at least 1.8 V, conservative raw
   factory-HSI fallback coverage at 48.96 MHz with no HSI/AHB/APB divider credit,
   and retained Flash WAIT2. Inherited enabled PLL first escapes through legal
@@ -445,8 +433,8 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   Requested HSI is checked at final dividers; fixed fallback coverage uses
   undivided 4.08 MHz without assuming divider retention or promising fallback.
   Final divisors precede LSE selection and no CR0 write follows it. The previous
-  sixteen system paths and all twenty-three auxiliary qualifications remain
-  unchanged. Generic L010 aliases remain excluded. See the
+  sixteen system paths and all twenty-three auxiliary qualifications were
+  unchanged by that addition. Generic L010 aliases remain excluded. See the
   [L010 system contract](docs/l010-lse-sysclk.md) and
   [crystal/bypass examples](examples/lse-sysclk/README.md).
 - CW32L011K8T6 and CW32L011K8U6: their init-only native LSE SYSCLK addition
@@ -472,8 +460,8 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   retry. See the [L011 system contract](docs/l011-lse-sysclk.md) and
   [crystal/bypass examples](examples/lse-sysclk/README.md).
 - CW32L012C8T6 (LQFP48) and CW32L012C8U6 (QFN48): init-only native LSE SYSCLK
-  brings the current exact system and auxiliary rosters to twenty-three each.
-  The prior twenty-one system paths and all auxiliary qualifications remain
+  brings the current exact system and auxiliary rosters to twenty-two each.
+  The twenty retained pre-L012 system paths and all retained auxiliary qualifications remain
   unchanged; generic aliases and other packages stay excluded. Crystal owns
   PC14/PC15 pins 3/4; bypass owns PC14 only. Native examples reuse StartupOnly,
   independent Level2/Level10 drives and 16384 cycles, with explicit board
@@ -497,10 +485,9 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   retained-source protection and oscillator-pad reservation. See
   [clock contracts and evidence](docs/qualified-hse.md) and
   [crystal/bypass UART firmware](examples/hse-clock/README.md).
-- L031/R031/W031: direct qualified HSE crystal/bypass with the existing CCS
+- L031/R031: direct qualified HSE crystal/bypass with the existing CCS
   policy preserved, conditional LSI retention, and source/pad ownership checks.
-  L031 QFN20 and its package-less alias lack a qualified HSE route. W031 HSE
-  requires at least 2.0 V; HSI-only qualification is unchanged. See
+  L031 QFN20 and its package-less alias lack a qualified HSE route. See
   [own-source limits and initialization contract](docs/qualified-l031-hse.md).
 - L010/L011: direct qualified HSE crystal/bypass on all five modeled exact
   packages, with native eight-level drive fields and no frequency-range selector.
@@ -558,15 +545,15 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   extension](docs/spi-dma.md) passed its separate main software verification;
   its final-source clean replay had not run at main acceptance.
 - L012 additionally: [native four-channel owned SRAM copies and staged UART TX](docs/l012-dma-owned.md) on C8T6/C8U6; generic safe admission remains rejected.
-- L031/L052/R031/W031 additionally: [native four-channel safe owned SRAM
+- L031/L052/R031 additionally: [native four-channel safe owned SRAM
   copies and staged byte UART TX DMA](docs/four-channel-dma-owned.md) on the
-  eleven exact selections listed below. Their four generic aliases compile
+  ten exact selections listed below. Their three generic aliases compile
   the controller/UART DMA surface but reject safe DMA/staging without memory metadata.
   [Finite RX and combined/split UART DMA](docs/classic-uart-dma-rx.md) extend those
-  eleven exact parts. The Stage93 [SPI1 and L052 SPI2 DMA extension](docs/spi-dma.md)
+  ten exact parts. The Stage93 [SPI1 and L052 SPI2 DMA extension](docs/spi-dma.md)
   passed its separate main software verification; its final-source clean replay
   had not run at main acceptance. Borrowed hardware requests remain excluded.
-- F002/F003/L031/R031/W031/L052/L083 additionally: blocking 12-bit ADC,
+- F002/F003/L031/R031/L052/L083 additionally: blocking 12-bit ADC,
   with package-qualified analog pins and family-specific reference/supply limits.
   F002 exposes VDD reference and VDD/3 only; no TS or internal reference.
   L010/L011 sequence ADCs provide blocking single conversions and [ordered 1–8 slot scans](docs/adc-scan-sequences.md); L012 dual ADCs provide blocking single conversions and ordered 1–8 slot scans;
@@ -580,18 +567,18 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
 - L010/L011: typed BTIM1 UPDATE cascade into BTIM2 and one-shot external ADC trigger,
   with destination-local mappings and exclusive static resource ownership.
   See `docs/trigger-routing-l010.md`, `docs/trigger-routing-l011.md` and `examples/trigger-routing`.
-- F002/F003/L031/R031/W031/L052/L083: GTIM polling counter and simple PWM,
+- F002/F003/L031/R031/L052/L083: GTIM polling counter and simple PWM,
   with own-version prescaler handling and 215 qualified family routing entries.
   L010/L011/L012 buffered GTIM also provides counter/simple PWM, with 62 qualified
   family routes and an explicit two-tick minimum period. Mode changes restart the timer.
 - AWT families retain HSIOSC polling/IRQ events; LPTIM families retain PCLK
   run-mode events. Exactly F020C6U7, F030C8T7, A030C8T7, L031C8T6/C8U6/F8U6,
-  R031C8U6 and W031R8U6 additionally support AWT events with an owned,
+  R031C8U6 additionally support AWT events with an owned,
   board-qualified `LseClock`. `new_lse` and `new_async_lse` retain SYSCTRL and
   the source pads; `set_config` retains that source. Readiness is a snapshot,
   independent of retained events; source loss supplies no wake and can leave
   `wait()` pending indefinitely. Acquiring/reacquiring `LseClock` may advance
-  whole-GPIOC filters/edges, and native L031/R031/W031 FILTER7 recipients can
+  whole-GPIOC filters/edges, and native L031/R031 FILTER7 recipients can
   change or stall when AWT changes or stops. Drop retains LSE/pad reservations;
   forgetting may leave AWT active, and an independently owned live RTC cannot
   share the same source owner. No low-power wake, deadline or silicon claim.
@@ -616,7 +603,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   checked 24-bit periods, filters, clock bounds and explicit coalescing/overflow
   limits. See [Hall capture evidence](docs/halltim-evidence.md) and the
   [firmware example](examples/halltim/README.md).
-- All eleven RTC-bearing families: bounded whole-second calendar with preserving
+- All ten RTC-bearing families: bounded whole-second calendar with preserving
   attachment and explicit initialization. L010 retains frozen HSIOSC and adds
   held LSE on its three qualified exact packages; L011/L012 retain frozen HSIOSC
   and add native LSE on their four exact qualified packages. These same seven
@@ -637,8 +624,8 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   [native live-LSI contract](docs/native-live-factory-lsi-rtc.md) and
   [ordinary firmware example](examples/rtc-calendar/README.md).
   Classic families normally retain preconfigured factory-trim LSI and its exact
-  32800/32768 rate and tolerance. Twenty-three qualified LSE packages can hold an
-  explicitly initialized LSE source. The previous sixteen retain their monitor
+  32800/32768 rate and tolerance. Twenty-two qualified LSE packages can hold an
+  explicitly initialized LSE source. The retained fifteen retain their monitor
   checks; native L010/L011/L012 check their selected fault-detection contract around
   calendar operations, with no progression guarantee under `StartupOnly`. Typed weekly Alarm A programming and A/B
   event status/acknowledgement are supported; existing L010/L011/L012 HSIOSC/LSE
@@ -646,15 +633,15 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   own manuals/SDKs. No low-power wake or precision wall-clock promise.
   See [RTC source and lifecycle evidence](docs/rtc-remaining-calendar.md) and
   [alarm/event scope](docs/rtc-alarms.md).
-- All 13 families: ReadNorFlash and inherent blocking program/erase on 37 exact
+- All 12 families: ReadNorFlash and inherent blocking program/erase on 36 exact
   parts, requiring an unsafe exclusive reserved-region/electrical contract.
   Generic unknown-capacity selections remain rejected. Post-trigger waiting is
   unbounded; NorFlash/Multiwrite power-loss guarantees are not implemented.
 
-- All 13 families: package-qualified blocking/async UART RTS+CTS, TX+CTS and
+- All 12 families: package-qualified blocking/async UART RTS+CTS, TX+CTS and
   RX+RTS constructors. These ordinary owners have no software receive FIFO or
   lossless-flow guarantee.
-- All 13 families and 54 existing selections: direct `BufferedUartRx`
+- All 12 families and 52 existing selections: direct `BufferedUartRx`
   and `BufferedUart` owners collect RX through IRQs into bounded storage,
   including between reads. Safe constructors consume static storage; explicit
   unsafe `new_borrowed*` variants accept an ordinary mutable borrow released
@@ -667,7 +654,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   ISR writes stay disjoint from a held prefix, but prolonged borrowing can cause
   overflow. Reads preserve the prefix before the first error; later observed
   input is discarded until that error is consumed. Empty reads preserve errors.
-  Ten families can silently overwrite RDR before ISR service; native ORE on
+  Nine families can silently overwrite RDR before ISR service; native ORE on
   L010/L011/L012 and software overflow do not provide an exact loss count.
   Hardware RTS reflects RC, not ring fullness. No buffered idle or DMA ring.
   Stage83 main verification passed thirteen actual ARM libraries, eleven ELF
@@ -692,7 +679,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   [the native idle receive contract](docs/uart-idle.md).
 - L010/L011/L012: owned buffered GTIM/ATIM input capture and quadrature encoders,
   with modulo counts and coalesced/non-atomic capture observations
-- All 13 families: external-input comparator and LVD polling, IR controller
+- All 12 families: external-input comparator and LVD polling, IR controller
   configuration and passive RAM parity diagnostics. L012 IR selector programming
   remains withheld due to conflicting sources; R031 exposes controller-only IR.
 - L010/L011/L012: immutable shared comparator reference banks and typed bank-qualified
@@ -703,7 +690,7 @@ fault-tolerant recovery controller for arbitrary external-clock loss.
   Every half-boundary must be serviced within 32768 actual ticks; Flash stalls,
   debugger halts and deep sleep cannot preserve elapsed-time accuracy.
 
-Classic F030/A030/F020/F002/F003/L010/L011/L031/R031/W031/L052/L083 I2C
+Classic F030/A030/F020/F002/F003/L010/L011/L031/R031/L052/L083 I2C
 adds owned seven-bit async master transactions alongside blocking operation.
 SI phases use IRQ wakeups; bus-idle, STOP and cleanup have synchronous finite
 sample budgets, and SI waits have no built-in deadline. Cancelled operations
@@ -740,8 +727,8 @@ family-specific debug/reset/input-only pads and reserve radio-connected pads.
 Pull/speed capabilities vary by family. Pin routing is generated from reviewed
 metadata, not inferred from similarly named peripherals.
 
-On x030/L083, exactly CW32F020C6U7/K6U7/F6U7 and the eleven exact
-L031/L052/R031/W031 selections below, plus CW32L012C8T6/C8U6,
+On x030/L083, exactly CW32F020C6U7/K6U7/F6U7 and the ten exact
+L031/L052/R031 selections below, plus CW32L012C8T6/C8U6,
 `dma::CopyChannel::new`
 consumes a physical DMA singleton admitted by normal HAL initialization.
 Its safe `copy` method moves the capability and two
@@ -755,13 +742,13 @@ access remains a technically unsafe ownership escape, as in pinned chiptool.
 The existing unsafe `OwnedCopy::new` and borrowed `Transfer` API remain available
 for low-level integration. Raw acquisition/downgrade cannot regain safe-copy
 admission. On F030/A030/L083, exactly CW32F020C6U7/K6U7/F6U7 and the
-eleven exact L031/L052/R031/W031 selections below and CW32L012C8T6/C8U6,
+ten exact L031/L052/R031 selections below and CW32L012C8T6/C8U6,
 `UartTx::new_with_dma` consumes static staging, UART and channel owners, then
 accepts ordinary safe slice writes. It copies each chunk
 into private SRAM; cancellation retains the current chunk for a later write or
 flush to reap cleanly, while errors permanently quarantine resources. Chunk
 gaps and retained-resource costs apply. `flush` separately waits for the wire.
-On F030/A030/L083 and the fourteen exact F020/L031/L052/R031/W031 parts,
+On F030/A030/L083 and the thirteen exact F020/L031/L052/R031 parts,
 `UartRx::new_with_dma` receives finite chunks into its own
 static SRAM; cancellation retains the chunk and later reads preserve clean
 surplus bytes. `Uart::new_with_dma`
@@ -799,10 +786,10 @@ for the preserved source-gate failures and generated delta. No hardware
 result is claimed.
 
 The native four-channel cohort is exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6,
-CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6, each with
+CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and each with
 64 KiB flash and 8 KiB SRAM. CH1 uses DMACH1, CH2/3 share DMACH23 and
 CH4 uses DMACH4; there is no CH5. Generic `cw32l031`, `cw32l052`,
-`cw32r031` and `cw32w031` retain `MissingMemoryMetadata` rejection.
+`cw32r031` retain `MissingMemoryMetadata` rejection.
 UART1/2/3 TX uses selectors 1/3/5 and RX uses 0/2/4 on any of the four
 channels, subject to existing safe package pins. The two L031 F8 packages have
 no safe UART1 TX pad; [all eleven TX example routes](docs/uart-dma-tx.md#native-four-channel-cohort)
@@ -813,7 +800,7 @@ main software acceptance as scoped below; its final-source clean replay had not
 run at main acceptance. No other peripheral request,
 buffered-plus-DMA UART owner or borrowed hardware constructor is added.
 Existing raw software-copy APIs keep their unsafe contracts. R031 GPIOA
-whole-bank effects and W031 internal RF boundaries remain functional handover
+whole-bank effects remain functional handover
 limits; these MCU paths establish no RF-safe handover or coexistence.
 See [the four own-source contracts](docs/four-channel-dma-owned.md) and
 [ordinary four-channel firmware](examples/four-channel-dma/README.md).
@@ -826,11 +813,11 @@ not run; final-package completion requires a separate final-source
 2-library/4-ELF clean receipt. See [the verification boundary](docs/four-channel-dma-owned.md#verification-boundary).
 No hardware result is claimed.
 
-F020/F002/F003/L010/L011/L012/L031/R031/W031/L052 additionally provide
+F020/F002/F003/L010/L011/L012/L031/R031/L052 additionally provide
 ordinary-borrowed `Spi<'d, Async, Master>::new_async` and all
-five async `SpiBus<W>` methods on their fourteen SPI instances, now supporting
+five async `SpiBus<W>` methods on their thirteen SPI instances, now supporting
 the existing sealed 4–16-bit PIO word set. The Stage93
-F020/L031/L052/R031/W031 DMA extension and Stage94 native L012 extension
+F020/L031/L052/R031 DMA extension and Stage94 native L012 extension
 preserve these borrowed PIO constructors and fix each owner's backend at construction. This IRQ PIO path keeps at most
 one frame outstanding; the task accesses DR and caller buffers, while the ISR only records errors, masks local notification and wakes.
 Each async poll performs at most one DR read and one DR write. BUSY has no
@@ -838,10 +825,10 @@ completion interrupt, so the final wire-idle wait self-wakes and consumes CPU;
 there is no built-in deadline or low-power guarantee. Preserve the original CS
 selection after cancellation and successfully flush before changing devices.
 Driver Drop and forgotten-owner reconstruction are destructive, not successful
-wire completion. The ten-family common blocking constructor/Drop path also gains
+wire completion. The nine-family common blocking constructor/Drop path also gains
 the lifecycle fence needed to retire a forgotten async owner; ordinary blocking
 data/error/divider behavior remains separate. L012 requires the full SPI23
-handler for SPI2/SPI3; W031 external SPI cannot coexist with internal RF use.
+handler for SPI2/SPI3.
 See [the IRQ PIO contract](docs/spi-async-pio.md) and
 [ordinary firmware examples](examples/spi-async/README.md). Historical Stage89
 main validation passed 14 standalone ARM libraries and 19 linked ELFs,
@@ -857,7 +844,7 @@ generation bootstrap. These results establish no hardware behavior.
 
 Stage93 main software verification passed thirteen standalone ARM libraries
 and twenty-four linked ELFs, with all 37 Cargo invocations exiting zero. The
-extension adds F020 SPI1/SPI2, L031 SPI1, L052 SPI1/SPI2, R031 SPI1 and W031 SPI1
+extension adds F020 SPI1/SPI2, L031 SPI1, L052 SPI1/SPI2, R031 SPI1
 to the existing F030/A030/L083 staged DMA cohort: five new families, seven new
 family/controller pairs, fourteen exact parts and twenty selected
 package/controller routes. That Stage93 DMA scope covered eight families and
@@ -876,7 +863,7 @@ and no hardware result is claimed.
 
 Stage94 adds native SPI1/SPI2/SPI3 DMA on exactly CW32L012C8T6/C8U6:
 one family, three controller pairs, two parts and six selected routes. The
-current declaration totals nine DMA families and sixteen controller pairs.
+current declaration totals eight DMA families and fifteen controller pairs.
 Native RX/TX selectors are 6/7, 8/9 and 10/11; native requests use CR2 while
 classic profiles retain CR1. The existing 24 MHz/even-divisor L012 clock policy
 and GPIO/package limits remain. Main passed six standalone ARM libraries and
@@ -894,7 +881,7 @@ No hardware result is claimed.
 two private static staging buffers and two admitted channels. One common
 lifetime-generic async `SpiBus<u8>` surface dispatches to the constructor's
 installed PIO or DMA backend; it adds no borrowed DMA construction or backend
-switching. The six dual-capable families, including L012, gain the existing DMA-gated
+switching. The five dual-capable families, including L012, gain the existing DMA-gated
 variants in the already `#[non_exhaustive]` `ConfigError` and `Error` enums.
 PIO signatures remain; the conditional public variant set expands. DMA now
 requires `Binding<T::Interrupt, T::InterruptHandler>`; generic wrappers written
@@ -917,8 +904,7 @@ limits remain required. L012's four channels permit two reserved DMA pairs,
 with PIO on a third controller. Unresolved Drop retains SPI, pins, both channels,
 both stages and clocks; it cannot justify CS release. Generic `cw32l012`
 retains missing-memory staging/admission rejection despite its compile surface.
-L012 UART stays TX-only and its separate RX RC/ORE proof stays blocked. R031 GPIOA handover limits remain; W031 external SPI
-remains unavailable during internal RF use. No RF coexistence is established.
+L012 UART stays TX-only and its separate RX RC/ORE proof stays blocked. R031 GPIOA handover limits remain. No RF coexistence is established.
 Chunk gaps, copies and receive-overrun risk under contention remain; generic
 cancellation-safe `SpiDevice` composition and silicon validation are not claimed.
 See [SPI DMA lifecycle and evidence](docs/spi-dma.md) and the ordinary

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Verify own-L012 historical LSE and exact live-LSI sources/metadata; no HAL execution."""
 import argparse
+import sys
 import copy
 import hashlib
 import io
@@ -13,6 +14,8 @@ import zipfile
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tests"))
+from current_targets import retired_targets
 PARTS = {"CW32L012C8T6", "CW32L012C8U6"}
 PROOF = "docs/l012-lse-sysclk-qualification.json"
 DETECTOR = {"lse_edges": 128, "lsi_cycles": 256, "margin_lse_edges": 1}
@@ -92,6 +95,10 @@ def complete_selection_roster():
     assert included_parts == set(exact)
     assert len(selections) == 54, "reviewed complete generated roster must contain 54 selections"
     assert {name for name, line in selections.items() if line == "CW32L012"} == PARTS | {"CW32L012"}
+    # Historical evidence keeps all 54 identities; only current outputs retire these exact two.
+    assert retired_targets() <= set(selections)
+    selections = {name: line for name, line in selections.items() if name not in retired_targets()}
+    assert len(selections) == 52
     return selections, exact
 
 
@@ -594,7 +601,7 @@ def main():
     generated, generated_parts, generic, lsi_owners = 0, set(), False, 0
     if args.data:
         paths = sorted((args.data / "chips").glob("*.json"))
-        assert len(paths) == len(selections) == 54, "--data must contain all 54 generated selections"
+        assert len(paths) == len(selections) == 52, "--data must contain all 52 active generated selections"
         assert {path.stem for path in paths} == set(selections), "missing or unexpected generated filename"
         seen = set()
         for path in paths:

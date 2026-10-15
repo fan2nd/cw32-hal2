@@ -7,6 +7,7 @@ import json
 import os
 import re
 import yaml
+from current_targets import active_names
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = Path(os.environ.get('CW32_SOURCES', '/workspace/shared/cw32-sources'))
@@ -85,7 +86,12 @@ def main():
                 assert 'rcc' not in p and 'rcc_control' not in p
             else: assert 'ram_parity' not in p
         count += 1
-    assert count == 54
+    historical = load('docs/btim-overflow-irq-evidence.json')['families']
+    selections = [name for facts in historical.values() for name in facts['normalized_selections']]
+    assert len(selections) == len(set(selections)) == 54
+    expected = active_names(selections)
+    assert {path.stem for path in (ROOT/'cw32-data/data/chips').glob('*.json')} == expected
+    assert count == len(expected) == 52
     print(f'PASS: {count} chip selections; GPIO physical/pull domains, nine exact own-table Q1.31 domains, AES/TRNG geometry and RAM diagnostic qualification; no HAL execution')
 
 if __name__ == '__main__': main()

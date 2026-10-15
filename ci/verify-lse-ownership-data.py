@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Audit own-source LSE facts and package projections; no HAL simulation or execution."""
 import argparse
+import sys
 import hashlib
 import json
 import os
@@ -9,6 +10,8 @@ import re
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tests"))
+from current_targets import active_names, retired_targets
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -183,12 +186,26 @@ def main():
                 assert expected == expected_family_pin
             routes[signal] = expected
         projections.append({'chip': chip['name'], 'lse': sysctrl['clock_limits'].get('lse'), 'pins': routes})
-    assert len(projections) == 54
+    historical = set()
+    parts = yaml.safe_load((ROOT / 'cw32-data/parts.yaml').read_text())['parts']
+    for path in sorted((ROOT / 'cw32-data/inputs').glob('*.yaml')):
+        manifest = yaml.safe_load(path.read_text())
+        names = [chip['name'] for chip in manifest['chips']]
+        if manifest.get('parts_catalog'):
+            assert manifest['parts_catalog'] == 'cw32-data/parts.yaml'
+            names += [part['name'] for part in parts if part['family'] == manifest['line']]
+        assert len(names) == len(set(names)) and historical.isdisjoint(names)
+        historical.update(names)
+    assert len(historical) == 54 and retired_targets() <= historical
+    expected = active_names(historical)
+    assert len(projections) == len(expected) == 52
+    assert {row['chip'] for row in projections} == expected
+    assert {path.stem for path in (ROOT / 'cw32-data/data/chips').glob('*.json')} == expected
     report = {'scope': 'Own-source identity, current native LSE field/access semantics and source/data package projection only; no HAL tests or hardware execution. Historical whole-SYSCTRL review hashes are retained, not replayed.', 'originals': originals, 'sdk_archives': archives, 'families': 13, 'lse_families': 11, 'current_lse_fields': current_fields, 'generated_selections': projections}
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(report, indent=2) + '\n')
-    print(f'PASS: 13 own family sources, 11 current LSE field/access contracts, {len(originals)} originals, {len(archives)} SDK archives and 54 package/alias projections')
+    print(f'PASS: 13 own family sources, 11 current LSE field/access contracts, {len(originals)} originals, {len(archives)} SDK archives and 52 active package/alias projections')
 
 if __name__ == '__main__':
     main()

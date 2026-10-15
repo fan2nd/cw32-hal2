@@ -56,7 +56,7 @@ fn main() {
     let primary = match metadata.line {
         "CW32F002" | "CW32F003" => "GTIM",
         "CW32L012" => "GTIM3",
-        "CW32F030" | "CW32A030" | "CW32F020" | "CW32L031" | "CW32R031" | "CW32W031"
+        "CW32F030" | "CW32A030" | "CW32F020" | "CW32L031" | "CW32R031"
         | "CW32L052" | "CW32L083" | "CW32L010" | "CW32L011" => "GTIM1",
         _ => panic!("unqualified example family"),
     };

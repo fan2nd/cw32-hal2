@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Check current exact-eight LSE AWT source/data facts; never execute HAL code."""
 import argparse
+import sys
 import hashlib
 import json
 from pathlib import Path
@@ -10,6 +11,8 @@ import tomllib
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tests"))
+from current_targets import active_names, retired_targets
 EVIDENCE = "docs/lse-awt-evidence.json"
 PARTS = {
     "CW32F020C6U7": ("CW32F020", "QFN48", "3", "4", (1650, 5500), (-40, 105)),
@@ -258,7 +261,7 @@ def check_data(proof, data):
                 assert a["rcc_control"] == CONTROL
                 assert a["interrupts"] == [{"signal": "GLOBAL", "interrupt": "AWT"}]
                 assert one((i for i in core["interrupts"] if i["name"] == "AWT"), chip["name"])["number"] == 30
-        assert actual == set(PARTS)
+        assert actual == active_names(PARTS)
         generated_count = len(chips)
     return generated_count
 
@@ -274,12 +277,13 @@ def check_declarations(proof):
     binary = one((b for b in manifest["bin"] if b["name"] == "lse_events"), "LSE example bin")
     assert binary["path"] == "src/bin/lse_events.rs" and binary["required-features"] == ["lse-awt"]
     assert set(example["features"]) == {"cw32f020c6u7", "cw32f030c8t7", "cw32a030c8t7", "cw32l031c8t6", "cw32r031c8u6", "cw32w031r8u6"}
-    for feature in example["features"]:
+    for feature in active_names(example["features"]):
         assert set(manifest["features"][feature]) == {"embassy-cw32/" + feature, "cw32-metapac/" + feature}
+    assert not {name.lower() for name in retired_targets()} & set(manifest["features"])
     capability = load(ROOT / "ci/hal-capabilities.yaml")["functions"]["awt"]
     mode = one((m for m in capability["modes"] if m["id"] == "bounded_api"), "AWT bounded mode")
     assert mode["status"] == "partial" and "LSE" in mode["scope"] and "HSIOSC" in mode["scope"]
-    assert set(re.findall(r"\bCW32[A-Z0-9]+\b", mode["scope"])) == set(PARTS)
+    assert set(re.findall(r"\bCW32[A-Z0-9]+\b", mode["scope"])) == active_names(PARTS)
 
 
 def main():

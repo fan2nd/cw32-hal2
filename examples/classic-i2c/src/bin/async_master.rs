@@ -26,7 +26,6 @@ hal::bind_interrupts!(struct Irqs {
     feature = "cw32l010f8p6",
     feature = "cw32l031c8t6",
     feature = "cw32r031c8u6",
-    feature = "cw32w031r8u6"
 ))]
 hal::bind_interrupts!(struct Irqs {
     I2C1 => InterruptHandler<hal::peripherals::I2C1>;

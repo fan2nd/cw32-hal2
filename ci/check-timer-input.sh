@@ -15,7 +15,7 @@ for chip in "${chips[@]}"; do
   done
 done
 # One exact part from each pre-existing classic timer family catches cfg leakage.
-for chip in cw32f030c8t7 cw32a030c8t7 cw32f020c6u7 cw32f002f3p7 cw32f003e4p7 cw32l031c8t6 cw32r031c8u6 cw32w031r8u6 cw32l052c8t6 cw32l083mct6; do
+for chip in cw32f030c8t7 cw32a030c8t7 cw32f020c6u7 cw32f002f3p7 cw32f003e4p7 cw32l031c8t6 cw32r031c8u6 cw32l052c8t6 cw32l083mct6; do
   cargo build --manifest-path firmware/Cargo.toml --offline --locked --release -p embassy-cw32 --target thumbv6m-none-eabi --no-default-features --features "$chip,rt,defmt"
 done
 mapfile -t parts < <(python3 - <<'PYPARTS'

@@ -1,6 +1,6 @@
 //! Verified classic CW32 12-bit ADC protocol.
 //!
-//! Supported families: F030/A030/F020, F002/F003, L031/R031/W031, L052/L083.
+//! Supported families: F030/A030/F020, F002/F003, L031/R031, L052/L083.
 //! This driver uses Embassy peripheral ownership, sealed channels and borrowed
 //! channel erasure. `blocking_read` performs one software-triggered conversion;
 //! `blocking_read_sequence` performs one ordered software-triggered scan.
@@ -47,7 +47,7 @@ use core::task::Poll;
 use embassy_sync::waitqueue::AtomicWaker;
 
 /// Maximum number of ordered slots supported by the selected ADC.
-/// Four on F002/F003/F020/F030/A030; eight on L031/R031/W031/L052/L083.
+/// Four on F002/F003/F020/F030/A030; eight on L031/R031/L052/L083.
 pub const MAX_SEQUENCE_LEN: usize = crate::ADC_SEQUENCE_MAX_LEN;
 
 /// Fixed hardware conversion resolution. No unsupported resolutions are exposed.
@@ -149,8 +149,7 @@ pub struct Config {
     pub reference: Reference,
     /// Lowest guaranteed board VDDA in millivolts, including supply tolerance.
     ///
-    /// Must be 1650..=5500, except R031: 2200..=3600, W031: 1800..=3600.
-    /// W031 RF DCDC operation separately requires at least 2000 mV.
+    /// Must be 1650..=5500, except R031: 2200..=3600.
     /// Clock limits are selected conservatively from the selected family
     /// manual. This is a board declaration, not a measured voltage. The board
     /// must independently remain below the maximum supply and pin ratings.

@@ -1,5 +1,7 @@
 # Production build checks
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../docs/w031-target-retirement.md).
+
 Run `./ci/check-hal.sh` from the repository root. Python 3.11+, Rust and the
 `thumbv6m-none-eabi` target are required. Repository-local Cargo/Rustup are used
 when available; otherwise the normal environment is used.

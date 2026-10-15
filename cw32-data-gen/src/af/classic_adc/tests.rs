@@ -27,7 +27,7 @@ fn valid(profile: &str, input: &Value) -> bool {
     validate(input, &spec, &load(spec.source("pinouts").0)).is_ok()
 }
 fn core(part: &str) -> chip::Core {
-    let mut value = load(&format!("cw32-data/data/chips/{part}.json"));
+    let mut value: Value = serde_json::from_slice(&fs::read(crate::historical_test_data::chip_path(&root(), part)).unwrap()).unwrap();
     let mut core: chip::Core = serde_json::from_value(value["cores"][0].take()).unwrap();
     core.peripherals
         .iter_mut()

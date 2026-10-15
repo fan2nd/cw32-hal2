@@ -8,6 +8,7 @@ import re
 import subprocess
 import yaml
 from verify_timer_commands import restore_classic_gtim_modes
+from current_targets import historical_chip_path
 ROOT=Path(__file__).resolve().parents[1]
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def main():
@@ -34,7 +35,7 @@ def main():
         for register in ['ARR','CNT','CCR1','CCR2','CCR3','CCR4']:
             assert ir[f'fieldset/{register}']['fields'][0]['bit_size']==16
         flags=ir['fieldset/ICR']['fields'];assert sum(((1<<f['bit_size'])-1)<<f['bit_offset'] for f in flags)==0x27f
-        chip=json.loads((ROOT/f'cw32-data/data/chips/{name}.json').read_text())
+        chip=json.loads(historical_chip_path((ROOT/f'cw32-data/data/chips/{name}.json')).read_text())
         actual={p['name']:p for p in chip['cores'][0]['peripherals'] if p['name'].startswith('GTIM')}
         assert {n:p['address'] for n,p in actual.items()}==family['instances']
         assert all(p['registers']['version']==family['register_version'] for p in actual.values())

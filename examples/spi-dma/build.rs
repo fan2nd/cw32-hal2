@@ -28,7 +28,7 @@ fn main() {
         "CW32L031C8T6" => "CW32L031",
         "CW32L052C8T6" => "CW32L052",
         "CW32R031C8U6" => "CW32R031",
-        "CW32W031R8U6" => "CW32W031",
+
         "CW32L083RBT6" | "CW32L083RCS6" | "CW32L083RCT6" | "CW32L083MCT6"
         | "CW32L083VCT6" => "CW32L083",
         _ => panic!("select a qualified exact SPI DMA example package"),

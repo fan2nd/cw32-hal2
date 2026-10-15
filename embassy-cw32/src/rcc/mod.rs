@@ -1,16 +1,13 @@
 //! Reset and clock control for the selected, verified device backend.
 //!
 //! All backends expose the same Embassy-style Config/init/frozen-clocks boundary.
-//! Factory HSI is supported on all backends. F020/F030/A030 and L031/R031/W031
+//! Factory HSI is supported on all backends. F020/F030/A030 and L031/R031
 //! L010/L011, L052 and L083 admit direct source-qualified HSE crystal and bypass
 //! clocks. F002/F003
 //! admit direct digital HEX inputs on PB0/PB1. F020/F030/A030 and L083 admit a separately
 //! qualified factory-HSI-fed PLL with rate-only bounds. See each family
 //! Config
 //! types and the selected package's bonded external-clock pads.
-//! Factory-LSI SYSCLK separately admits exact W031R8U6 at 2.0..3.6 V and
-//! -40..85 C; its LSI/RTC aliases are rate-only under every SYSCLK.
-//! See docs/qualified-w031-lsi-sysclk.md for the whole-GPIOB RF-host handover.
 //!
 //! Initialization requires a valid incoming clock/voltage state and an entry
 //! clock source that remains available during the transition. The HAL does not

@@ -58,8 +58,8 @@ if [[ "$mode" != --matrix-only ]]; then
     cargo build --locked --release --bins --target thumbv6m-none-eabi \
       --manifest-path examples/hex-clock/Cargo.toml --no-default-features --features "$chip"
   done
-  echo '=== Link qualified crystal/bypass HSE firmware for twenty-one exact packages ==='
-  for chip in cw32f020c6u7 cw32f030c8t7 cw32a030c8t7 cw32l031c8t6 cw32r031c8u6 cw32w031r8u6 cw32l010f8p6 cw32l010f8u6 cw32l010y8m6 cw32l011k8t6 cw32l011k8u6 cw32l052c8t6 cw32l052r8t6 cw32l052r8s6 cw32l083rbt6 cw32l083rcs6 cw32l083rct6 cw32l083mct6 cw32l083vct6 cw32l012c8t6 cw32l012c8u6; do
+  echo '=== Link qualified crystal/bypass HSE firmware for twenty exact packages ==='
+  for chip in cw32f020c6u7 cw32f030c8t7 cw32a030c8t7 cw32l031c8t6 cw32r031c8u6 cw32l010f8p6 cw32l010f8u6 cw32l010y8m6 cw32l011k8t6 cw32l011k8u6 cw32l052c8t6 cw32l052r8t6 cw32l052r8s6 cw32l083rbt6 cw32l083rcs6 cw32l083rct6 cw32l083mct6 cw32l083vct6 cw32l012c8t6 cw32l012c8u6; do
     (cd examples/hse-clock && cargo build --locked --release --bins --target thumbv6m-none-eabi \
       --no-default-features --features "$chip")
   done
@@ -81,7 +81,7 @@ if [[ "$mode" != --matrix-only ]]; then
       --manifest-path examples/spi-dma/Cargo.toml --no-default-features --features "$chip"
   done
   echo '=== Link ATIM counter/main-PWM firmware for 11 exact packages ==='
-  for chip in cw32f030c8t7 cw32a030c8t7 cw32f003e4p7 cw32l031c8t6 cw32r031c8u6 cw32w031r8u6 cw32l052c8t6 cw32l083mct6 cw32l010f8p6 cw32l011k8t6 cw32l012c8t6; do
+  for chip in cw32f030c8t7 cw32a030c8t7 cw32f003e4p7 cw32l031c8t6 cw32r031c8u6 cw32l052c8t6 cw32l083mct6 cw32l010f8p6 cw32l011k8t6 cw32l012c8t6; do
     echo "=== Link ATIM counter/main-PWM for $chip ==="
     cargo build --locked --release --bins --target thumbv6m-none-eabi \
       --manifest-path examples/atim/Cargo.toml --no-default-features --features "$chip"
@@ -99,12 +99,12 @@ PYPARTS
       --manifest-path examples/flash-storage/Cargo.toml --no-default-features --features "$chip"
   done
   echo '=== Link external comparator polling firmware for 13 exact packages ==='
-  for chip in cw32f030c8t7 cw32a030c8t7 cw32f020c6u7 cw32f002f3p7 cw32f003e4p7 cw32l031c8t6 cw32r031c8u6 cw32w031r8u6 cw32l052c8t6 cw32l083mct6 cw32l010f8p6 cw32l011k8t6 cw32l012c8t6; do
+  for chip in cw32f030c8t7 cw32a030c8t7 cw32f020c6u7 cw32f002f3p7 cw32f003e4p7 cw32l031c8t6 cw32r031c8u6 cw32l052c8t6 cw32l083mct6 cw32l010f8p6 cw32l011k8t6 cw32l012c8t6; do
     cargo build --locked --release --target thumbv6m-none-eabi \
       --manifest-path examples/comparator/Cargo.toml --no-default-features --features "$chip"
   done
   echo '=== Link AWT/LPTIM polling and IRQ firmware for 13 exact packages ==='
-  for chip in cw32f030c8t7 cw32a030c8t7 cw32f020c6u7 cw32f002f3p7 cw32f003e4p7 cw32l031c8t6 cw32r031c8u6 cw32w031r8u6 cw32l052c8t6 cw32l083mct6 cw32l010f8p6 cw32l011k8t6 cw32l012c8t6; do
+  for chip in cw32f030c8t7 cw32a030c8t7 cw32f020c6u7 cw32f002f3p7 cw32f003e4p7 cw32l031c8t6 cw32r031c8u6 cw32l052c8t6 cw32l083mct6 cw32l010f8p6 cw32l011k8t6 cw32l012c8t6; do
     cargo build --locked --release --bins --target thumbv6m-none-eabi \
       --manifest-path examples/low-power-timers/Cargo.toml --no-default-features --features "$chip"
   done

@@ -7,6 +7,8 @@ from pathlib import Path
 import re
 import subprocess
 import yaml
+from current_targets import historical_chip_path
+from current_targets import is_retired
 ROOT=Path(__file__).resolve().parents[1]
 SOURCES=Path(os.environ.get('CW32_SOURCES',str(ROOT.parent/'cw32-sources')))
 policy=json.loads((ROOT/'docs/adc-clock-source-bounds.json').read_text())
@@ -58,7 +60,7 @@ for family,f in policy['families'].items():
  assert values['hsi_error_percent']==h['factory_error_bound_ppm']//10_000
  assert values['hsi_temperature_c']==[h['ambient_temperature_min_c'],h['ambient_temperature_max_c']]
  assert values['hsi_supply_mv']==[h['supply_min_mv'],h['supply_max_mv']]
- chip=json.loads((ROOT/f'cw32-data/data/chips/{family}.json').read_text())
+ chip=json.loads(historical_chip_path((ROOT/f'cw32-data/data/chips/{family}.json')).read_text())
  peripherals=chip['cores'][0]['peripherals']
  assert next(p for p in peripherals if p['name']=='SYSCTRL')['clock_limits']==values
  adc=dict(catalog['profiles'][family]['adc_limits'])

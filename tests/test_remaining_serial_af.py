@@ -68,7 +68,7 @@ class SerialRoutes(unittest.TestCase):
                         self.assertNotIn(route['pin'], RF_PINS.get(chip['line'], set()))
                         self.assertNotEqual(route['pin'], 'PF3')
             count += 1
-        self.assertGreaterEqual(count, 21)
+        self.assertEqual(count, 19)  # Historical 21 minus exactly two retired W031 selections.
 
     def test_review_rejects_wrong_selector_signal_macro_or_missing_route(self):
         cases = [('af', 8), ('signal', 'TX'), ('source_macro', 'invented'), ('source_line', 1)]

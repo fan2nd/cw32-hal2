@@ -16,6 +16,7 @@ import tomllib
 from urllib.parse import urlparse
 
 import yaml
+from current_targets import historical_chip_path
 
 ROOT = Path(__file__).resolve().parents[1]
 EVIDENCE = 'docs/uart-buffered-rx-evidence.json'
@@ -35,7 +36,7 @@ EMBASSY_REV = 'f16efeffe37581092ec184718e6fdb1620393214'
 
 
 def read_json(path):
-    return json.loads((ROOT / path).read_text())
+    return json.loads(historical_chip_path(ROOT / path).read_text())
 
 
 def read_yaml(path):
@@ -296,9 +297,18 @@ def family_metadata(family, facts, evidence, nodes, text, capabilities, features
     aliases = named(inputs['chips'])
     selections = set(facts['selections'])
     assert selections == {s.lower() for s in set(packages) | set(aliases)}
-    assert {p.stem.lower() for p in (ROOT / 'cw32-data/data/chips').glob(family + '*.json')} == selections
-    assert {f for f in features if f.startswith(family.lower())} == selections
-    assert facts['hal_excluded_pads'] == capabilities['pin_policy']['excluded_by_family'][family]
+    # Source qualification keeps all 54 historical selections; current support
+    # excludes exactly the two retired W031 names, never arbitrary missing files.
+    active_selections = selections
+    if family == 'CW32W031':
+        assert selections == {'cw32w031', 'cw32w031r8u6'}
+        active_selections = set()
+        assert family not in capabilities['pin_policy']['excluded_by_family']
+        assert facts['hal_excluded_pads'] == ['PA13', 'PA14', 'PF3']
+    else:
+        assert facts['hal_excluded_pads'] == capabilities['pin_policy']['excluded_by_family'][family]
+    assert {p.stem.lower() for p in (ROOT / 'cw32-data/data/chips').glob(family + '*.json')} == active_selections
+    assert {f for f in features if f.startswith(family.lower())} == active_selections
     exclusions = set(facts['hal_excluded_pads'])
     clock = named(read_yaml(inputs['clock_metadata'])['peripherals'])
     sys_version = inputs['register_versions']['sysctrl']
@@ -477,6 +487,95 @@ def example_manifest():
             assert packages[0]['source'] == f'git+https://github.com/embassy-rs/embassy?rev={EMBASSY_REV}#{EMBASSY_REV}'
 
 
+def retire_w031_capability(mode_id, expected):
+    # Exact leaf replacements against the immutable baseline. No subset compare,
+    # absent-file exemption, or rewriting of historical receipts is permitted.
+    changes = {'buffered_ring_receive': [(('implemented_families',),
+                                ['CW32A030',
+                                 'CW32F002',
+                                 'CW32F003',
+                                 'CW32F020',
+                                 'CW32F030',
+                                 'CW32L010',
+                                 'CW32L011',
+                                 'CW32L012',
+                                 'CW32L031',
+                                 'CW32L052',
+                                 'CW32L083',
+                                 'CW32R031',
+                                 'CW32W031'],
+                                ['CW32A030',
+                                 'CW32F002',
+                                 'CW32F003',
+                                 'CW32F020',
+                                 'CW32F030',
+                                 'CW32L010',
+                                 'CW32L011',
+                                 'CW32L012',
+                                 'CW32L031',
+                                 'CW32L052',
+                                 'CW32L083',
+                                 'CW32R031'])],
+     'finite_idle_receive': [],
+     'safe_peripheral_dma': [(('scope',),
+                              'Safe staged TX, finite RX and combined/split UART DMA on F030/A030/L083 and '
+                              'fourteen exact F020/L031/L052/R031/W031 parts; exact L012 C8T6/C8U6 remain UART '
+                              'TX-only.',
+                              'Safe staged TX, finite RX and combined/split UART DMA on F030/A030/L083 and '
+                              'thirteen exact F020/L031/L052/R031 parts; exact L012 C8T6/C8U6 remain UART '
+                              'TX-only.'),
+                             (('implemented_families',),
+                              ['CW32A030',
+                               'CW32F020',
+                               'CW32F030',
+                               'CW32L083',
+                               'CW32L031',
+                               'CW32L052',
+                               'CW32R031',
+                               'CW32W031',
+                               'CW32L012'],
+                              ['CW32A030',
+                               'CW32F020',
+                               'CW32F030',
+                               'CW32L083',
+                               'CW32L031',
+                               'CW32L052',
+                               'CW32R031',
+                               'CW32L012']),
+                             (('overrides', 2, 'families'),
+                              ['CW32L031', 'CW32L052', 'CW32R031', 'CW32W031'],
+                              ['CW32L031', 'CW32L052', 'CW32R031']),
+                             (('overrides', 2, 'scope'),
+                              'Safe staged byte UART TX, finite RX and combined/split DMA on eleven exact native '
+                              'four-channel selections.',
+                              'Safe staged byte UART TX, finite RX and combined/split DMA on ten exact native '
+                              'four-channel selections.'),
+                             (('overrides', 2, 'limitations', 0),
+                              'Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, '
+                              'CW32R031C8U6 and CW32W031R8U6; each has 64 KiB Flash and 8 KiB SRAM at '
+                              '0x20000000..0x20002000.',
+                              'Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, '
+                              'CW32R031C8U6; each has 64 KiB Flash and 8 KiB SRAM at 0x20000000..0x20002000.'),
+                             (('overrides', 2, 'limitations', 1),
+                              'Generic cw32l031/cw32l052/cw32r031/cw32w031 compile the controller/UART DMA '
+                              'surface but reject safe admission and staging with MissingMemoryMetadata; no '
+                              'memory fallback.',
+                              'Generic cw32l031/cw32l052/cw32r031 compile the controller/UART DMA surface but '
+                              'reject safe admission and staging with MissingMemoryMetadata; no memory '
+                              'fallback.'),
+                             (('overrides', 2, 'limitations', 10),
+                              'R031 whole-GPIOA effects and W031 internal RF boundaries preserve existing '
+                              'functional handover obligations; no RF-safe handover/coexistence claim.',
+                              'R031 whole-GPIOA effects preserve existing functional handover obligations; no '
+                              'RF-safe handover/coexistence claim.')]}
+    for path, old, new in changes[mode_id]:
+        owner = expected
+        for key in path[:-1]:
+            owner = owner[key]
+        assert owner[path[-1]] == old, ('retirement baseline drift', mode_id, path)
+        owner[path[-1]] = new
+
+
 def current_capability_boundary(evidence, modes):
     # Historical source receipts stay immutable; current policy is a separate,
     # hash-pinned baseline with only explicitly listed source relocations.
@@ -509,6 +608,7 @@ def current_capability_boundary(evidence, modes):
             if identity in relocations:
                 item['path'] = relocations[identity]
                 used.add(identity)
+        retire_w031_capability(mode_id, expected)
         assert modes[mode_id] == expected, ('current capability boundary drift', mode_id)
     assert used == set(relocations)
 
@@ -517,8 +617,8 @@ def capability_contract(evidence, capabilities):
     modes = named(capabilities['functions']['uart']['modes'], 'id')
     current_capability_boundary(evidence, modes)
     buffered = modes['buffered_ring_receive']
-    assert buffered['status'] == 'partial' and set(buffered['implemented_families']) == FAMILIES
-    assert len(buffered['implemented_families']) == 13 and buffered['pins_all'] == ['RX']
+    assert buffered['status'] == 'partial' and set(buffered['implemented_families']) == FAMILIES - {'CW32W031'}
+    assert len(buffered['implemented_families']) == 12 and buffered['pins_all'] == ['RX']
     assert {item['path'] for item in buffered['evidence']} == {'embassy-cw32/src/usart/mod.rs', 'docs/uart-buffered-rx.md'}
     assert all((ROOT / item['path']).is_file() for item in buffered['evidence'])
     declaration = (buffered['scope'] + ' ' + ' '.join(buffered['limitations'])).lower()
@@ -543,10 +643,10 @@ def capability_contract(evidence, capabilities):
     # Complete current equality is enforced above; historical DMA is pinned separately.
     assert dma['status'] == 'experimental_partial' and set(dma['implemented_families']) == {
         'CW32A030', 'CW32F020', 'CW32F030', 'CW32L012', 'CW32L031',
-        'CW32L052', 'CW32L083', 'CW32R031', 'CW32W031'}
+        'CW32L052', 'CW32L083', 'CW32R031'}
     assert dma['pins_any'] == ['TX', 'RX'] and dma['facts'] == ['dma_channels']
     assert [item['families'] for item in dma['overrides']] == [
-        ['CW32L012'], ['CW32F020'], ['CW32L031', 'CW32L052', 'CW32R031', 'CW32W031']]
+        ['CW32L012'], ['CW32F020'], ['CW32L031', 'CW32L052', 'CW32R031']]
     ordinary = ' '.join(modes['async']['limitations'])
     assert 'Uart' in ordinary and 'UartRx' in ordinary
 
@@ -582,9 +682,11 @@ def main():
     example_routes(evidence, family_data)
     example_manifest()
     capability_contract(evidence, capabilities)
-    print('PASS buffered UART: 111 own locked identities; 13 families, 54 selections, 39 instances, 7 register profiles')
+    print('PASS buffered UART historical source cohort: 111 own locked identities; 13 families, 54 selections, 39 instances, 7 register profiles')
     print(f'PASS own RC/RDR/overwrite, native ORE/NE, R1W0/no-op, independent shared gates and {route_count} package-filtered routes')
     print('PASS 9 qualified example tuples, 19 selected signal routes, 8 exact features, 6 declared bins and current locked dependencies')
+    assert len(list((ROOT / 'cw32-data/data/chips').glob('*.json'))) == 52
+    print('PASS current targets: 52 generated selections; W031 family and exact part absent; two byte-pinned historical snapshots only')
     print('PASS partial buffered capability; separate 3-family native idle and current staged DMA boundaries')
     print('Source/data/manifest verification only; runtime lifecycle and hardware timing require separate review/evidence.')
 

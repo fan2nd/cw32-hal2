@@ -5,12 +5,13 @@ import tomllib
 from pathlib import Path
 import yaml
 
+from current_targets import is_retired, retired_targets
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / 'cw32-data/data'
 expected = {}
 for file in sorted((ROOT / 'cw32-data/inputs').glob('*.yaml')):
     source = yaml.safe_load(file.read_text())
-    if source.get('quarantine'):
+    if source.get('quarantine') or is_retired(source['line']):
         continue
     chips = source['chips']
     if source.get('parts_catalog'):

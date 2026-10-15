@@ -1,5 +1,7 @@
 # Classic I2C master examples
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
+
 `async_master` uses the controller's interrupt-driven seven-bit master API.
 `blocking_master` performs the same ordinary transfers with the blocking API.
 Each binary owns and uses every classic I2C controller on the selected package.
@@ -34,7 +36,6 @@ Do not connect the two buses together.
 | `cw32l011k8t6` | I2C | PB6 / PB7 | 3 | 29 / 30 |
 | `cw32l031c8t6` | I2C1 | PA9 / PA10 | 3 | 30 / 31 |
 | `cw32r031c8u6` | I2C1 | PA9 / PA10 | 3 | 33 / 34 |
-| `cw32w031r8u6` | I2C1 | PA9 / PA10 | 3 | 23 / 24 |
 | `cw32l052c8t6` | I2C1; I2C2 | PA9 / PA10; PA1 / PA2 | 3 | 30 / 31; 11 / 12 |
 | `cw32l083rct6` | I2C1; I2C2 | PA9 / PA10; PA1 / PA2 | 3 | 42 / 43; 15 / 16 |
 

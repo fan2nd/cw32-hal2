@@ -1,5 +1,7 @@
 # Classic ordered ADC scans
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
+
 The blocking Cortex-M0+ firmware binaries demonstrate borrowed and owned pin
 handles. Select one exact package feature. The build script obtains two bonded
 analog pins and their actual mux encodings from reviewed metadata; see
@@ -55,7 +57,7 @@ cargo build --offline --locked --release --bins --target thumbv6m-none-eabi \
 
 Representative selections for the ten lines are `cw32f030c8t7`, `cw32a030c8t7`,
 `cw32f020c6u7`, `cw32f002f3p7`, `cw32f003e4p7`, `cw32l031c8t6`, `cw32r031c8u6`,
-`cw32w031r8u6`, `cw32l052c8t6` and `cw32l083rct6`. All other exact-part features
+`cw32l052c8t6` and `cw32l083rct6`. All other exact-part features
 in this package use the same examples and package-derived input routes.
 
 The async binaries declare a 3.0–3.6 V board supply with VDDA=VDD and qualified

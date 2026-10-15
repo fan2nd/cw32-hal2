@@ -52,11 +52,11 @@ for chip in cw32l031 cw32l031f8p6; do
   cargo build --release --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 \
     --target thumbv6m-none-eabi --no-default-features --features "$chip,defmt"
 done
-for chip in cw32r031c8u6 cw32w031r8u6; do
+for chip in cw32r031c8u6; do
   cargo build --release --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 \
     --target thumbv6m-none-eabi --no-default-features --features "$chip,defmt,time-driver-gtim1"
 done
-for chip in cw32l031c8t6 cw32r031c8u6 cw32w031r8u6; do
+for chip in cw32l031c8t6 cw32r031c8u6; do
   cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml \
     --target thumbv6m-none-eabi --no-default-features --features "$chip" --bin crystal
 done
@@ -84,18 +84,6 @@ cargo build --release --locked --manifest-path examples/lse-clock/Cargo.toml \
 cargo build --release --locked --manifest-path examples/hse-clock/Cargo.toml \
   --target thumbv6m-none-eabi --no-default-features --features cw32r031c8u6 --bin crystal
 
-# W031 exact1 additions to the future recipe. The W031 release library and
-# selected-LSE crystal ELF already appear above. These rows are not receipts.
-cargo build --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 \
-  --target thumbv6m-none-eabi --no-default-features --features cw32w031r8u6,defmt,time-driver-gtim1
-cargo build --release --locked --manifest-path firmware/Cargo.toml -p embassy-cw32 \
-  --target thumbv6m-none-eabi --no-default-features --features cw32w031,defmt
-cargo build --release --locked --manifest-path examples/lsi-clock/Cargo.toml \
-  --target thumbv6m-none-eabi --no-default-features --features cw32w031r8u6,defmt --bin cw32-lsi-clock-example
-cargo build --release --locked --manifest-path examples/rtc-calendar/Cargo.toml \
-  --target thumbv6m-none-eabi --no-default-features --features cw32w031r8u6 --bin preserve_calendar
-cargo build --release --locked --manifest-path examples/hse-clock/Cargo.toml \
-  --target thumbv6m-none-eabi --no-default-features --features cw32w031r8u6 --bin crystal
 
 # Exact L052 additions to the future recipe, not finite acceptance receipts.
 # The historical recipe above has 24 library commands and 32 linked ELFs.

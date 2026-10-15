@@ -18,6 +18,8 @@ import xml.etree.ElementTree as ET
 from reviewed_metadata import projection_errors, pin_projection
 import yaml
 
+from current_targets import historical_chip_path
+from current_targets import is_retired
 ROOT = Path(__file__).resolve().parents[1]
 ACCESS = {
     "read-only": "Read", "write-only": "Write", "writeOnce": "Write",
@@ -244,7 +246,11 @@ def audit(manifest_path, data):
             assert part["name"] not in chips or chips[part["name"]]["memory"] == expected["memory"]
             chips[part["name"]] = expected
     for chip in chips.values():
-        generated_chip = json.loads((data / "chips" / f'{chip["name"]}.json').read_text())
+        current = data / "chips" / f'{chip["name"]}.json'
+        if is_retired(chip["name"]):
+            assert not current.exists(), "retired target in selected generated directory"
+            current = ROOT / "cw32-data/data/chips" / current.name
+        generated_chip = json.loads(historical_chip_path(current).read_text())
         assert generated_chip["name"] == chip["name"]
         assert generated_chip["memory"] == chip.get("memory", [])
         if "package" in chip:

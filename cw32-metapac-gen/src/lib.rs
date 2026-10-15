@@ -236,6 +236,17 @@ impl Gen {
     }
 
     pub fn run_gen(&mut self) {
+        // Validate every requested and embedded identity before creating output.
+        // In particular, stale chip JSON must not restore a retired Cargo feature.
+        for name in &self.opts.chips.clone() {
+            assert!(!cw32_data_serde::support::is_retired(name), "retired target: {name}");
+            let chip = self.load_chip(name);
+            assert!(
+                !cw32_data_serde::support::is_retired(&chip.name)
+                    && !cw32_data_serde::support::is_retired(&chip.line),
+                "retired target in chip metadata: {} ({})", chip.name, chip.line
+            );
+        }
         fs::create_dir_all(self.opts.out_dir.join("src/peripherals")).unwrap();
         fs::create_dir_all(self.opts.out_dir.join("src/registers")).unwrap();
         fs::create_dir_all(self.opts.out_dir.join("src/chips")).unwrap();

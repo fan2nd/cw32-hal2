@@ -9,7 +9,6 @@
     feature = "cw32l031c8u6",
     feature = "cw32l031f8u6",
     feature = "cw32r031c8u6",
-    feature = "cw32w031r8u6",
     feature = "cw32l052c8t6",
     feature = "cw32l052r8s6",
     feature = "cw32l052r8t6",
@@ -26,7 +25,7 @@ use embassy_cw32::{self as hal, rcc};
 fn main() -> ! {
     // Exact L010 declares 1.62..5.5 V and -40..85 C for live factory-LSI reuse.
     // Exact L011/L012 declare their own 1.7..5.5 V and -40..85 C live-only envelope.
-    // W031 requires 2.0..3.6 V; R031 retains 2.2..3.6 V, both at -40..85 C.
+    // R031 requires 2.2..3.6 V at -40..85 C.
     // L031 and exact L052/L083 declare 1.65..5.5 V and -40..85 C.
     // Other prior example parts retain 1.65..5.5 V and -40..105 C.
     // These board declarations are not measurements. Qualify the actual board
@@ -48,12 +47,10 @@ fn main() -> ! {
             1_700
         } else if cfg!(feature = "cw32r031c8u6") {
             2_200
-        } else if cfg!(feature = "cw32w031r8u6") {
-            2_000
         } else {
             1_650
         },
-        max_supply_mv: if cfg!(any(feature = "cw32r031c8u6", feature = "cw32w031r8u6")) {
+        max_supply_mv: if cfg!(feature = "cw32r031c8u6") {
             3_600
         } else {
             5_500
@@ -71,7 +68,6 @@ fn main() -> ! {
             feature = "cw32l031c8u6",
             feature = "cw32l031f8u6",
             feature = "cw32r031c8u6",
-            feature = "cw32w031r8u6",
             feature = "cw32l052c8t6",
             feature = "cw32l052r8s6",
             feature = "cw32l052r8t6",
@@ -141,7 +137,6 @@ fn run(_p: hal::Peripherals) -> ! {
     feature = "cw32l031c8u6",
     feature = "cw32l031f8u6",
     feature = "cw32r031c8u6",
-    feature = "cw32w031r8u6",
     feature = "cw32l052c8t6",
     feature = "cw32l052r8s6",
     feature = "cw32l052r8t6",

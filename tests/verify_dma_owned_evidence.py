@@ -6,10 +6,15 @@ import json
 import os
 import re
 import yaml
+from current_targets import historical_chip_path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = Path(os.environ.get('CW32_SOURCES', '/workspace/shared/cw32-sources'))
-def load(path): return yaml.safe_load(path.read_text()) if path.suffix == '.yaml' else json.loads(path.read_text())
+def load(path):
+    # Exactly two retired chip inputs use byte-pinned historical snapshots.
+    # Every other path is current; missing current metadata remains an error.
+    path = historical_chip_path(path)
+    return yaml.safe_load(path.read_text()) if path.suffix == '.yaml' else json.loads(path.read_text())
 def digest(data): return hashlib.sha256(data).hexdigest()
 e = load(ROOT / 'docs/dma-owned-copy-evidence.json')
 lock = load(ROOT / 'sources/evidence-sources.json')
@@ -1366,8 +1371,8 @@ for name in classic_families:
 manifest = tomllib.loads((ROOT / 'examples/uart-dma/Cargo.toml').read_text())
 assert manifest['package']['name'] == 'cw32-uart-dma-example'
 old_features = {'cw32f030c8t7', 'cw32a030c8t7', 'cw32l083rbt6', 'cw32l083rcs6', 'cw32l083rct6', 'cw32l083mct6', 'cw32l083vct6'}
-assert {f for f in manifest['features'] if f.startswith('cw32')} == classic_features | old_features
-for feature in classic_features | old_features:
+assert {f for f in manifest['features'] if f.startswith('cw32')} == (classic_features - {'cw32w031r8u6'}) | old_features
+for feature in (classic_features - {'cw32w031r8u6'}) | old_features:
     assert {f'embassy-cw32/{feature}', f'cw32-metapac/{feature}'} <= set(manifest['features'][feature])
 assert (ROOT / 'examples/uart-dma/src/main.rs').is_file()
 assert (ROOT / 'examples/uart-dma/src/bin/receive_only.rs').is_file()
@@ -1379,8 +1384,8 @@ capabilities = load(ROOT / 'ci/hal-capabilities.yaml')
 for kind in ('uart', 'dma'):
     mode = next(m for m in capabilities['functions'][kind]['modes'] if m['id'] == 'safe_peripheral_dma')
     assert mode['status'] == 'experimental_partial'
-    assert set(mode['implemented_families']) == classic_families | {'CW32F030', 'CW32A030', 'CW32L083', 'CW32L012'}
-    for name in classic_families:
+    assert set(mode['implemented_families']) == (classic_families - {'CW32W031'}) | {'CW32F030', 'CW32A030', 'CW32L083', 'CW32L012'}
+    for name in classic_families - {'CW32W031'}:
         override = next(o for o in mode['overrides'] if name in o['families'])
         assert 'RX' in override['scope'] and 'combined' in override['scope']
         assert 'MissingMemoryMetadata' in ' '.join(override['limitations'])
@@ -1752,7 +1757,7 @@ four_tokens(spi_pages['CW32W031', 'datasheet'][13], ['4.4.4', 'RF',
 # behavior require independent acceptance and are never inferred from HAL text.
 manifest = tomllib.loads((ROOT / 'examples/spi-dma/Cargo.toml').read_text())
 assert manifest['package']['name'] == 'cw32-spi-dma-example' and manifest['package'].get('autobins', True)
-representatives = {'cw32f020c6u7', 'cw32l031c8t6', 'cw32l052c8t6', 'cw32r031c8u6', 'cw32w031r8u6'}
+representatives = {'cw32f020c6u7', 'cw32l031c8t6', 'cw32l052c8t6', 'cw32r031c8u6'}
 assert {f for f in manifest['features'] if f.startswith('cw32')} == old_features | representatives
 for feature in old_features | representatives:
     assert {f'embassy-cw32/{feature}', f'cw32-metapac/{feature}'} <= set(manifest['features'][feature])
@@ -1765,11 +1770,12 @@ assert (ROOT / 'examples/spi-dma/src/bin/spi2_flash_id.rs').is_file()
 assert manifest['dependencies']['embassy-executor']['rev'] == 'f16efeffe37581092ec184718e6fdb1620393214'
 mode = next(m for m in capabilities['functions']['spi']['modes'] if m['id'] == 'safe_peripheral_dma')
 assert mode['status'] == 'experimental_partial'
-assert set(mode['implemented_families']) == classic_families | {'CW32F030', 'CW32A030', 'CW32L083', 'CW32L012'}
+assert set(mode['implemented_families']) == (classic_families - {'CW32W031'}) | {'CW32F030', 'CW32A030', 'CW32L083', 'CW32L012'}
 assert mode['pins_all'] == ['SCK', 'MOSI', 'MISO']
 assert 'dma_channels' in mode['facts']
 pio_mode = next(m for m in capabilities['functions']['spi']['modes'] if m['id'] == 'async_pio')
-assert classic_families | {'CW32L012'} <= set(pio_mode['implemented_families'])
+assert (classic_families - {'CW32W031'}) | {'CW32L012'} <= set(pio_mode['implemented_families'])
+assert 'CW32W031' not in pio_mode['implemented_families']
 print('PASS: classic SPI: 39 own-source nodes and exact backlinks, 105 semantic pages, seven own instances/byte endpoints, native DMA topology and preserved 23 STATUS access views, fourteen exact SRAM parts/twenty selected AF5 triples, empty generics and example/capability declarations; no HAL execution')
 
 # Finite native L012 SPI endpoint qualification. Bind its own facts separately
@@ -2138,9 +2144,18 @@ for binary in manifest['bin']:
 pio_manifest = tomllib.loads((ROOT / 'examples/spi-async/Cargo.toml').read_text())
 for feature in l012_features:
     assert set(pio_manifest['features'][feature]) == {f'embassy-cw32/{feature}', f'cw32-metapac/{feature}'}
-assert pio_manifest['bin'] == [{'name': name, 'path': f'src/bin/{name}.rs'} for name in ('async_master', 'blocking_master')]
+assert pio_manifest['bin'] == [{'name': name, 'path': f'src/bin/{name}.rs'} for name in ('async_master', 'async_words', 'blocking_master')]
+assert (ROOT / 'examples/spi-async/src/bin/async_words.rs').is_file()
 assert (ROOT / 'examples/spi-async/build.rs').is_file()
 mode = next(m for m in capabilities['functions']['spi']['modes'] if m['id'] == 'safe_peripheral_dma')
-assert len(set(mode['implemented_families'])) == 9
-assert sum(len(clock_profiles[name]['peripherals']) for name in mode['implemented_families']) == 16
+assert len(set(mode['implemented_families'])) == 8
+assert sum(len(clock_profiles[name]['peripherals']) for name in mode['implemented_families']) == 15
 print('PASS: native L012 SPI: 14 complete own-source nodes and exact backlinks, 38 semantic pages, native SPI geometry/typed MMIO and retained DMA corrections, three controllers/six exact-package routes, four channels/shared vectors, empty generic admission and declared examples; UART RX remains excluded; source/declaration facts only, no HAL execution or hardware claim')
+
+print('Retired W031 source qualification uses two hash-pinned historical chip snapshots only; neither is a current generated target or runtime/hardware result.')
+
+assert len(list((ROOT / 'cw32-data/data/chips').glob('*.json'))) == 52
+for manifest_path in ['embassy-cw32/Cargo.toml', 'cw32-metapac/Cargo.toml']:
+    active_features = tomllib.loads((ROOT / manifest_path).read_text())['features']
+    assert not {'cw32w031', 'cw32w031r8u6'} & active_features.keys()
+print('PASS current DMA target projection: 52 generated selections; both retired W031 Cargo features absent')

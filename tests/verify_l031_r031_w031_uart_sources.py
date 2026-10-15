@@ -110,10 +110,11 @@ def main():
         source = re.sub(r'\s+', '', source)
         assert sha(source.encode()) == audit['normalized_uart_c_sha256']
         print(f'PASS {family}: official manual/SDK hashes, R1W0 flags, active-low unkeyed reset, baud equations, IRQs and gate bits; normalized UART operations agree')
-    assert checked == 11
+    assert checked == 9  # Historical eleven selections minus exactly two retired W031 targets.
+    assert not list((ROOT / 'cw32-data/data/chips').glob('CW32W031*.json'))
     assert audit['semantics']['icr_clearable'] == sum(1 << f[0] for f in audit['fields']['ICR'].values())
     assert audit['semantics']['icr_reserved_reset'] == audit['semantics']['icr_reset'] & ~audit['semantics']['icr_clearable']
-    print('PASS 031 UART source audit: 11 chip features, three instances each, verified register fields/offsets, gates and interrupts')
+    print('PASS 031 UART source audit: 9 active chip features; three historical source families, three instances each, verified register fields/offsets, gates and interrupts')
 
 
 if __name__ == '__main__':

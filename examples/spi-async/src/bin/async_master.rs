@@ -20,7 +20,6 @@ hal::bind_interrupts!(struct Irqs {
 #[cfg(any(
     feature = "cw32l031c8t6",
     feature = "cw32r031c8u6",
-    feature = "cw32w031r8u6"
 ))]
 hal::bind_interrupts!(struct Irqs {
     SPI1 => spi::InterruptHandler<hal::peripherals::SPI1>;

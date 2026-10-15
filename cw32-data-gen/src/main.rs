@@ -37,6 +37,7 @@ fn main() -> anyhow::Result<()> {
     );
     // Derive the default only after parsing so argument order cannot select a stale root.
     let output = output.unwrap_or_else(|| root.join("cw32-data/data"));
+    let explicit_manifest = requested_manifest.is_some();
     let mut manifests = if let Some(path) = requested_manifest {
         vec![path]
     } else {
@@ -51,6 +52,10 @@ fn main() -> anyhow::Result<()> {
     let mut import_failures = Vec::new();
     for manifest in manifests {
         let input: cw32_data_gen::Input = cw32_data_gen::load_input(&manifest)?;
+        if !import_candidates && !explicit_manifest && cw32_data_serde::support::is_retired(&input.line) {
+            eprintln!("RETIRED {}: source evidence retained; no supported target emitted", input.line);
+            continue;
+        }
         if let Some(reason) = input.quarantine {
             eprintln!("QUARANTINED {}: {reason}", input.line);
             continue;

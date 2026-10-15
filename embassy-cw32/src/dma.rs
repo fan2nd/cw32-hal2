@@ -1,5 +1,5 @@
 //! One-shot, interrupt-driven DMA for CW32F030/CW32A030, CW32L083, CW32F020,
-//! CW32L031, CW32L052, CW32R031, CW32W031 and CW32L012.
+//! CW32L031, CW32L052, CW32R031 and CW32L012.
 //!
 //! The implementation follows CW32x030 User Manual EN V1.0 §§8.4–8.8
 //! (also checked against CN V2.5), CW32L083 CN V2.0 §§8.4–8.8,
@@ -9,11 +9,11 @@
 //! follows CN V1.4 §§8.1–8.8 / EN V1.0 §§8.1–8.8 and the UART TX example in
 //! CN §21.7.1.5 (printed 474) / EN §21.7.1.5 (printed 520).
 //! L083 also exposes safe staged UART/SPI requests; unsafe borrowed hardware
-//! constructors remain x030-only. F020/L031/L052/R031/W031 add safe owned copy
+//! constructors remain x030-only. F020/L031/L052/R031 add safe owned copy
 //! and staged UART TX/RX; L012 adds owned copy, staged UART TX and qualified
 //! native SPI DR TX/RX. L012 UART RX remains unqualified.
 //! Unsafe software-copy APIs retain their existing contracts.
-//! L031/L052/R031/W031 share DMACH23 between CH2/3 and use independent DMACH4
+//! L031/L052/R031 share DMACH23 between CH2/3 and use independent DMACH4
 //! for CH4. L012 pairs CH1/2 on DMACH12 and CH3/4 on DMACH34; IRQ11 is CORDIC.
 //! Only the selected channel's terminal flags are cleared.
 //! It uses BLOCK transfers with REPEAT=1,
@@ -115,7 +115,7 @@ pub trait ChannelInstance: sealed::Channel + PeripheralType + 'static {
 ///
 /// Qualified x030/L083 requests apply to their five channels; qualified F020
 /// UART TX/RX requests apply to its two physical channels. Qualified
-/// L031/L052/R031/W031 UART TX/RX and L012 UART TX plus qualified SPI1/2/3
+/// L031/L052/R031 UART TX/RX and L012 UART TX plus qualified SPI1/2/3
 /// DR TX/RX requests apply to their four physical channels.
 /// This trait is sealed so downstream code cannot introduce an unverified
 /// request or channel route.

@@ -1,7 +1,9 @@
 # Native classic ATIM polling inputs
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
+
 These ordinary firmware examples use independently qualified ATIM digital
-inputs on F030, A030, F003, L031, R031, W031, L052 and L083. They do not generate
+inputs on F030, A030, F003, L031, R031, L052 and L083. They do not generate
 signals, loop back outputs or enable capture IRQs/DMA. Connect voltage-compatible
 external signals and observe the named debugger variables.
 
@@ -38,7 +40,6 @@ non-atomic, coalesced and do not form an unbounded signed position.
 | F030C8T7 / A030C8T7 / L031C8T6 / L052C8T6 | PA5 / PA7 | 15 / 17 | 7 |
 | F003E4P7 | PB6 / PB5 | 13 / 14 | 4 |
 | R031C8U6 | PA5 / PA7 | 18 / 20 | 7 |
-| W031R8U6 | PA5 / PA7 | 9 / 11 | 7 |
 | L083MCT6 | PA5 / PA7 | 25 / 27 | 7 |
 
 The own manual requires phase separation strictly greater than one native TCLK

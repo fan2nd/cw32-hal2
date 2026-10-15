@@ -252,20 +252,6 @@ pub struct Config {
 /// selected LSI before singleton acquisition and any RCC MMIO. Reset before
 /// retrying a hardware failure. See docs/qualified-r031-lsi-sysclk.md.
 ///
-/// On CW32W031R8U6 only (QFN64, 64 KiB Flash / 8 KiB SRAM), the same native
-/// sequence uses own 31,816..33,784 Hz bounds at 2.0..3.6 V and -40..85 C.
-/// Dedicated 32 MHz RFCLK does not remove the PCLK/SPI1 host dependency.
-/// Whole GPIOB inspection may advance internal PB03/04/05/13 host and PB06
-/// RF IRQ sampling/events, including before failure. Finish/quiet host transfers
-/// and permit this whole-bank interval; restoring gates cannot undo progress
-/// or guarantee RF signal/packet continuity. This is a functional handover
-/// limit of safe init, not a hidden Rust memory-safety precondition. No RF
-/// register, page, power, reset, command or interrupt-state operation is added.
-/// Exact W031 RTC LSI aliases become rate-only under every SYSCLK; generic
-/// W031 remains excluded. Fixed 1 MHz time-driver refusal precedes singleton
-/// acquisition and RCC MMIO. Reset before retrying hardware failure.
-/// See docs/qualified-w031-lsi-sysclk.md for source and verification status.
-///
 /// On CW32L052C8T6/R8S6/R8T6 only, factory LSI SYSCLK uses own 31,816..33,784 Hz
 /// rate bounds at 1.65..5.5 V, VDDA=VDD and -40..85 C. Admission may temporarily
 /// run each whole GPIOA/B/C/D/F bank, including unrelated pins. Sampling,
@@ -332,7 +318,7 @@ pub struct Config {
 /// configuration and flags are preserved; gate restoration cannot undo events.
 /// This is an explicit functional handover under the entry model above.
 ///
-/// On the five qualified CW32L031/R031/W031 packages, LSE SYSCLK may also
+/// On the four qualified CW32L031/R031 packages, LSE SYSCLK may also
 /// open GPIO banks for source/pad inspection. Sampling, filters and armed
 /// events can advance, including before an error. A previously disabled LSI
 /// whose factory TRIM already matches is requested without a parameter write
@@ -586,7 +572,7 @@ pub struct Config {
 /// replace the existing pre-Rust bus-master/memory-ownership boundary or give
 /// safe Rust callers a hidden memory-safety obligation.
 ///
-/// On x030/L083/F020/L031/L052/R031/W031, safe static-copy admission is recorded
+/// On x030/L083/F020/L031/L052/R031, safe static-copy admission is recorded
 /// once after clock init.
 /// An already enabled/reset-held or non-default DMA controller is rejected for
 /// safe copies without resetting it, clearing flags or treating EN=0 as a drain

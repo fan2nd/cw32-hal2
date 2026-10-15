@@ -357,7 +357,7 @@ impl<M: PeriMode> Spi<'_, M, Master> {
 #[cfg(spi_dma)]
 impl Spi<'static, Async, Master> {
     /// Create a qualified full-duplex byte bus with safe staged DMA.
-    /// Available on F030/A030/F020/L031/L052/L083/R031/W031 and native L012
+    /// Available on F030/A030/F020/L031/L052/L083/R031 and native L012
     /// SPI1/SPI2/SPI3; where PIO is also qualified, this constructor selects DMA
     /// for this owner permanently. L012 safe staging and channel admission
     /// require the exact C8T6/C8U6 memory map; the generic profile rejects them.

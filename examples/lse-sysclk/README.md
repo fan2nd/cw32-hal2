@@ -1,11 +1,13 @@
 # LSE SYSCLK and the same oscillator for RTC
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
+
 Two ordinary bare-metal firmware examples for CW32F020C6U7, CW32F030C8T7,
 CW32A030C8T7, CW32L031C8T6, CW32L031C8U6, CW32L031F8U6, CW32R031C8U6,
-CW32W031R8U6, CW32L052C8T6, CW32L052R8S6, CW32L052R8T6, CW32L083RBT6,
+CW32L052C8T6, CW32L052R8S6, CW32L052R8T6, CW32L083RBT6,
 CW32L083RCT6, CW32L083RCS6, CW32L083MCT6, CW32L083VCT6, CW32L010F8P6,
 CW32L010F8U6, CW32L010Y8M6, CW32L011K8T6, CW32L011K8U6, CW32L012C8T6 and
-CW32L012C8U6: twenty-three exact packages in total. Family aliases and other
+CW32L012C8U6: twenty-two exact packages in total. Family aliases and other
 packages are excluded. Build with one exact feature, for example:
 
 ```
@@ -25,18 +27,18 @@ cargo build --release --locked --manifest-path examples/lse-sysclk/Cargo.toml --
 These are board declarations, not measured qualification. Both examples assert
 VDD 3.0–3.6 V, ambient −20…70 °C and nominal 32768 Hz with every-cycle frequency
 between 32766 and 32770 Hz over supply, load, temperature, aging and short-term
-variation. Replace these with the actual qualified board data. On the previous
-sixteen packages, HSI /6 and AHB/APB /1 retain the existing defaults; HSI and
+variation. Replace these with the actual qualified board data. On the retained
+fifteen packages, HSI /6 and AHB/APB /1 retain the existing defaults; HSI and
 factory detector LSI remain enabled. Their original configuration is unchanged.
 The three native L010 packages use HSI /12 and the distinct policy below.
 The two native L011 packages use HSI /24 and their own monitoring and handover
 contract below. The two native L012 packages retain their own configured HSI /12
-and handover contract. All previous twenty-one configurations and pin selections
+and handover contract. All twenty retained pre-L012 configurations and pin selections
 are unchanged.
 
-On the previous sixteen packages, `crystal` requires the board's 32768 Hz crystal, load capacitors and layout on
+On the fifteen retained packages, `crystal` requires the board's 32768 Hz crystal, load capacitors and layout on
 PC14/PC15. Their physical positions are 3/4 on the classic and L031 48-pin
-packages, 1/2 on L031 QFN20, 2/3 on R031 QFN48 and 61/62 on W031 QFN64. On
+packages, 1/2 on L031 QFN20, 2/3 on R031 QFN48. On
 all three L052 packages, including both 64-pin R8 packages, PC14/PC15 are
 physical pins 3/4. The own L083 package metadata places PC14/PC15 at pins 3/4
 on RBT6/RCT6/RCS6/MCT6 and 8/9 on VCT6. The actual crystal and board must
@@ -51,12 +53,12 @@ Bypass keeps the same explicit fields for exact-source reuse. L083 has one
 analog bank: the shared configuration supplies only run drive/amplitude and
 WAITCYCLE there, with no L052 startup-drive/startup-amplitude fields.
 
-On the previous sixteen packages, `bypass` requires an external digital clock on PC14. On the classic
+On the fifteen retained packages, `bypass` requires an external digital clock on PC14. On the classic
 three parts the reviewed input limits are: high level
 0.7×VDDIO…VDDIO, low level VSS…0.3×VDDIO, high and low pulse widths at least
 450 ns and rise/fall times at most 50 ns, plus the device's full I/O requirements.
 The classic source must retain 45–55% duty and satisfy those limits every cycle.
-For the five L031/R031/W031 parts, qualify the corresponding own-datasheet
+For the four L031/R031 parts, qualify the corresponding own-datasheet
 waveform and operating-condition rows bound by their source contract.
 For L052, qualify VDD 1.65–5.5 V with VDDA=VDD and ambient −40…85 °C; the
 example asserts the narrower interval above. Its own bypass limits are high
@@ -80,7 +82,7 @@ No fixed 1 MHz time driver is selected. Poll budgets are iterations, not elapsed
 startup deadlines. After LSE loss/fallback, published LSE bounds and downstream
 timing assumptions are invalid. Errors can leave partial state and require reset;
 ordinary reset may retain LSE and POR may be needed. Whole-bank GPIO inspection
-can advance sampling/filter/events. Matching cold LSI on L031/R031/W031 can
+can advance sampling/filter/events. Matching cold LSI on L031/R031 can
 also resume parked direct consumers without a TRIM/WAIT write. See the
 [classic contract](../../docs/classic-lse-sysclk.md) and the separate
 [five-package contract](../../docs/l031-r031-w031-lse-sysclk.md).
@@ -367,8 +369,8 @@ singleton acquisition. See the [L012 system contract](../../docs/l012-lse-sysclk
 The Stage61 local script scope was twenty ordinary libraries and nineteen
 crystal/bypass package pairs (38 system-clock binaries). Stage62 expanded that
 historical scope to twenty-two libraries and twenty-one pairs (42 binaries).
-The current local scope of `ci/check-lse-sysclk.sh` is twenty-four ordinary
-libraries and twenty-three crystal/bypass pairs (46 system-clock binaries),
+The current local scope of `ci/check-lse-sysclk.sh` is twenty-three ordinary
+libraries and twenty-two crystal/bypass pairs (44 system-clock binaries),
 plus the existing four auxiliary/other-source regression commands. These are planned local command
 counts, not executed results. Preserve older actual validation receipts and
 record each new executed subset separately. No hosted CI, HAL test, hardware

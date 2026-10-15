@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Verify current F020 LSE source/data contracts; no HAL execution or mocks."""
 import argparse
+import sys
 import hashlib
 import json
 from pathlib import Path
@@ -9,6 +10,8 @@ import zipfile
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tests"))
+from current_targets import active_names
 
 
 def load(path):
@@ -113,7 +116,7 @@ def main():
                 assert chip["packages"][0]["package"] == "QFN48"
                 for pin, position, signal in [("PC14", "3", "OSC32_IN"), ("PC15", "4", "OSC32_OUT")]:
                     assert any(p["position"] == position and pin in p["signals"] and signal in p["signals"] for p in chip["packages"][0]["pins"])
-        assert qualified == expected
+        assert qualified == active_names(expected)
         generated_count = len(chips)
     result = {"status": "passed", "source_originals": checked, "sdk_member_verified": sdk["member"],
               "native_enum_canonical_sha256": group["canonical_ir_sha256"], "qualified": sorted(expected),

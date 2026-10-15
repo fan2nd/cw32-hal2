@@ -28,13 +28,11 @@ fn every_curated_chip_round_trips_without_changing_any_json_value() {
     {
         let input: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
         let model: Chip = serde_json::from_value(input.clone()).unwrap();
+        assert!(!cw32_data_serde::support::is_retired(&model.name));
         assert_eq!(encoded(model), input, "{}", path.display());
         count += 1;
     }
-    assert!(
-        count >= 54,
-        "expected the full curated chip catalog, got {count}"
-    );
+    assert_eq!(count, 52, "expected exactly the current supported chip catalog");
 }
 
 #[test]

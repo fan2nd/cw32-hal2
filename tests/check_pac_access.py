@@ -11,6 +11,8 @@ from pathlib import Path
 import subprocess
 import tempfile
 
+from current_targets import is_retired
+
 ROOT = Path(__file__).resolve().parents[1]
 
 CASES = [
@@ -76,6 +78,9 @@ def main():
         base_manifest = manifest.read_text()
         extra = 0
         for chip in ["cw32l031", "cw32r031", "cw32w031"]:
+            if is_retired(chip):
+                assert not (ROOT / 'cw32-metapac/src/chips' / chip).exists()
+                continue
             manifest.write_text(base_manifest.replace('"cw32f030"', json.dumps(chip)))
             positive = compile_case("\n".join(f"let _ = pac::UART{i}.timcnt().read();" for i in [1, 2, 3]))
             assert positive.returncode == 0, positive.stdout + positive.stderr
@@ -91,6 +96,9 @@ def main():
         # Source identities/pages: docs/oscillator-status-access-evidence.json.
         for chip in ["cw32f020", "cw32f030", "cw32a030", "cw32l010", "cw32l011",
                      "cw32l012", "cw32l031", "cw32l052", "cw32l083", "cw32r031", "cw32w031"]:
+            if is_retired(chip):
+                assert not (ROOT / 'cw32-metapac/src/chips' / chip).exists()
+                continue
             manifest.write_text(base_manifest.replace('"cw32f030"', json.dumps(chip)))
             registers = ["lse"]
             positive_code = (

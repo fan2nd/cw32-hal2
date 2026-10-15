@@ -15,7 +15,7 @@ for chip in "${affected[@]}"; do
     cargo build --manifest-path firmware/Cargo.toml --offline --locked --release --target thumbv6m-none-eabi -p embassy-cw32 --no-default-features --features "$chip,$modes"
   done
 done
-for chip in cw32a030 cw32f002 cw32f003 cw32f020 cw32f030 cw32l010 cw32l011 cw32l031 cw32l052 cw32r031 cw32w031; do
+for chip in cw32a030 cw32f002 cw32f003 cw32f020 cw32f030 cw32l010 cw32l011 cw32l031 cw32l052 cw32r031; do
   echo "=== Unaffected representative $chip rt,defmt ==="
   cargo check --manifest-path firmware/Cargo.toml --offline --locked --release --target thumbv6m-none-eabi -p embassy-cw32 --no-default-features --features "$chip,rt,defmt"
 done

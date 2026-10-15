@@ -17,7 +17,7 @@
 //! temperature and offset limits. Inputs must stay between analog ground and the
 //! analog supply (VDD on F002/F003/L010, VDDA on the other families). The analog
 //! supply range is 1.65..5.5 V for classic non-radio families, 2.2..3.6 V on R031,
-//! 1.8..3.6 V on W031 (at least 2.0 V in RF DCDC mode), 1.62..5.5 V on L010 and
+//! 1.62..5.5 V on L010 and
 //! 1.7..5.5 V on L011/L012. These are board requirements, not measurements.
 //! Hysteresis values are typical, and electrical response limits are characterized
 //! rather than production-tested. Consult `docs/comparator.md` and its evidence.
@@ -87,7 +87,6 @@ pub struct Config {
     ///
     /// Must remain within [`supply_voltage_range_mv`]. Inputs must independently
     /// stay between analog ground and that rail; VDDA must equal VDD where used.
-    /// W031 RF DCDC operation separately requires at least 2000 mV.
     pub supply_mv: u16,
     /// Analog speed/power trade-off.
     pub response_speed: ResponseSpeed,

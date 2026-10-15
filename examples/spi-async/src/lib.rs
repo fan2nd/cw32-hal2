@@ -38,7 +38,6 @@ macro_rules! primary_pins {
             feature = "cw32l012c8u6",
             feature = "cw32l031c8t6",
             feature = "cw32r031c8u6",
-            feature = "cw32w031r8u6",
             feature = "cw32l052c8t6"
         ))]
         let pins = ($p.SPI1, $p.PA5, $p.PA7, $p.PA6, $p.PB0);

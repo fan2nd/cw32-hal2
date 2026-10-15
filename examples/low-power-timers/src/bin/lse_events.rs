@@ -57,14 +57,6 @@ const BOARD: OperatingConditions = OperatingConditions {
     min_temperature_c: -20,
     max_temperature_c: 70,
 };
-// W031 own LSE limits: 2000..=3600 mV, -40..=85 C (LDO/DCDC intersection).
-#[cfg(feature = "cw32w031r8u6")]
-const BOARD: OperatingConditions = OperatingConditions {
-    min_supply_mv: 3000,
-    max_supply_mv: 3600,
-    min_temperature_c: -20,
-    max_temperature_c: 70,
-};
 
 fn board_config() -> hal::Config {
     let mut config = hal::Config::default();

@@ -97,7 +97,13 @@ def current_roster(root):
         assert {name for name, line in roster.items() if line == family} == set(exact) | {family}
         for name, package in exact.items():
             assert parts[name]["family"] == family and parts[name]["package"] == package
-    return roster
+    # The historical catalog remains complete; only active generated support changes.
+    from importlib.util import spec_from_file_location, module_from_spec
+    spec = spec_from_file_location("current_targets", root / "tests/current_targets.py")
+    support = module_from_spec(spec)
+    spec.loader.exec_module(support)
+    assert support.retired_targets(root) <= set(roster)
+    return {name: line for name, line in roster.items() if not support.is_retired(name, root)}
 
 
 def locked_bytes(sources, record):
@@ -209,7 +215,7 @@ def field(ir, block, register, offset, name, bit, width):
 def verify_data(root, data, policy, proof):
     roster = current_roster(root)
     paths = {p.stem: p for p in (data / "chips").glob("*.json")}
-    assert set(paths) == set(roster), "all54 current chip membership mismatch"
+    assert set(paths) == set(roster), "all52 current chip membership mismatch"
     shared = load(root / LSI_POLICY)
     old_calendar = load(root / "cw32-data/rtc-calendar.yaml")["profiles"]
     alarms = load(root / "cw32-data/rtc-alarms.yaml")["profiles"]
@@ -325,7 +331,7 @@ def main():
                    "implementation_acceptance": "not_established_by_this_gate"})
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n")
-    print(f"native live-LSI RTC source/data: 7 qualified, 3 generic and 44 other chips excluded; {args.out}")
+    print(f"native live-LSI RTC source/data: 7 qualified, 3 generic and 42 other chips excluded; {args.out}")
 
 
 if __name__ == "__main__":

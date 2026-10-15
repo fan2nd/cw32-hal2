@@ -558,6 +558,19 @@ fn generate_inner(
     mode: RegisterMode,
 ) -> Result<Report> {
     let input = load_input(manifest)?;
+    if mode == RegisterMode::Curated {
+        ensure!(
+            !cw32_data_serde::support::is_retired(&input.line)
+                && !cw32_data_serde::support::is_retired(&input.die)
+                && !input.chips.iter().any(|chip| cw32_data_serde::support::is_retired(&chip.name)),
+            "retired target: {} is not supported; no L031 package alias is provided",
+            input.line
+        );
+        ensure!(
+            !expand_chip_inputs(root, &input)?.iter().any(|chip| cw32_data_serde::support::is_retired(&chip.name)),
+            "retired target in expanded part catalog"
+        );
+    }
     ensure!(
         input.schema_version == 1,
         "unsupported input manifest version"
@@ -1261,6 +1274,10 @@ mod tests {
             if manifest.extension().and_then(|v| v.to_str()) != Some("yaml") {
                 continue;
             }
+            if cw32_data_serde::support::is_retired(&load_input(&manifest).unwrap().line) {
+                assert!(generate(root, &manifest, &output).unwrap_err().to_string().contains("retired target"));
+                continue;
+            }
             let report = generate(root, &manifest, &output).unwrap();
             let pins = report.pinouts.unwrap();
             let dma = report.dma.unwrap();
@@ -1272,7 +1289,7 @@ mod tests {
             totals.4 += clocks.supported_records;
             totals.5 += clocks.partial_records;
         }
-        assert_eq!(totals, (37, 1482, 37, 371, 273, 161));
+        assert_eq!(totals, (36, 1418, 33, 341, 252, 150));
         for (path, bytes) in source_snapshot {
             assert_eq!(fs::read(path).unwrap(), bytes);
         }
@@ -1591,3 +1608,6 @@ mod tests {
         assert!(validate_register_ir(&collision, &[]).is_err());
     }
 }
+
+#[cfg(test)]
+mod historical_test_data;

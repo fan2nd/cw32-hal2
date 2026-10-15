@@ -24,7 +24,6 @@ fn main() {
             | "CW32L031C8U6"
             | "CW32L031F8U6"
             | "CW32R031C8U6"
-            | "CW32W031R8U6"
             | "CW32L052C8T6"
             | "CW32L052R8S6"
             | "CW32L052R8T6"
@@ -84,8 +83,7 @@ fn main() {
         "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" => Some((64 * 1024, 8 * 1024, true)),
         // Own R031 DS CN V1.2 PDF pages 11 and 35, and own PDSC.
         "CW32R031C8U6" => Some((64 * 1024, 8 * 1024, true)),
-        // Own W031 DS CN V1.3 PDF pages 9, 33-34 and 71, and own PDSC: QFN64.
-        "CW32W031R8U6" => Some((64 * 1024, 8 * 1024, true)),
+
         // Own L052 DS CN V1.3: exact LQFP48 and both LQFP64 packages.
         "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6" => Some((64 * 1024, 8 * 1024, true)),
         // Own L083 DS CN V1.9 tables 3-1/9-1: RBT6 differs from the C-density parts.

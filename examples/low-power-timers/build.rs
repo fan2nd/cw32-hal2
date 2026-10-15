@@ -86,7 +86,6 @@ fn main() {
             | "CW32L031C8U6"
             | "CW32L031F8U6"
             | "CW32R031C8U6"
-            | "CW32W031R8U6"
     );
     assert!(
         env::var_os("CARGO_FEATURE_LSE_AWT").is_none() || lse_awt,

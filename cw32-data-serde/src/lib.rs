@@ -890,3 +890,6 @@ record! {
 }
 
 pub mod register_write;
+
+/// Explicit target retirement, independent of historical hardware evidence.
+pub mod support;

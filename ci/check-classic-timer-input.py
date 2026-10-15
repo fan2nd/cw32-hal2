@@ -53,7 +53,7 @@ def clean_finished():
 features = tomllib.loads((root / 'embassy-cw32/Cargo.toml').read_text())['features']
 classic = sorted(f for f in features if f.startswith('cw32') and not f.startswith(('cw32l010','cw32l011','cw32l012')))
 representatives = ['cw32a030c8t7','cw32f002f3p7','cw32f003e4p7','cw32f020c6u7','cw32f030c8t7',
-                   'cw32l031c8t6','cw32l052c8t6','cw32l083mct6','cw32r031c8u6','cw32w031r8u6']
+                   'cw32l031c8t6','cw32l052c8t6','cw32l083mct6','cw32r031c8u6']
 base = ['cargo','build','--manifest-path', str(Path(__file__).resolve().parents[1] / 'firmware/Cargo.toml'),'--offline','--locked','--release','-p','embassy-cw32','--target','thumbv6m-none-eabi','--no-default-features','--features']
 for chip in ([] if buffered_only else classic + ['cw32l010f8p6','cw32l011k8t6','cw32l012c8t6']):
     run(f'lib-{chip}', base + [f'{chip},rt'])

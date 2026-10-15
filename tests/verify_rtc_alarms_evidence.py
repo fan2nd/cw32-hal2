@@ -10,6 +10,8 @@ from pathlib import Path
 
 import yaml
 
+from current_targets import active_names
+
 ROOT = Path(__file__).resolve().parents[1]
 p = argparse.ArgumentParser()
 p.add_argument('--sources', type=Path, default=Path('/workspace/shared/cw32-sources'))
@@ -101,5 +103,5 @@ for path in (ROOT / 'cw32-data/data/chips').glob('*.json'):
             assert not any(p['name'] != 'RTC' and any(i['interrupt'] == 'RTC' for i in p.get('interrupts', [])) for p in core['peripherals'])
             assert rtc['rtc_calendar']['source'] == 'HSIOSC'
         chips += 1
-assert families == data['profiles'].keys()
+assert families == active_names(data['profiles'].keys())
 print(f'RTC alarm evidence verified: {len(families)} families, {chips} chip selections, {len(sources)} source hashes, {page_count} manual page hashes; no HAL code executed.')

@@ -5,6 +5,8 @@ import json
 import os
 from pathlib import Path
 import yaml
+from current_targets import historical_chip_path
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = Path(os.environ.get('CW32_SOURCES', str(ROOT.parent / 'cw32-sources')))
 UPSTREAM = Path(os.environ.get('CW32_EMBASSY_UPSTREAM', str(ROOT.parent / 'cw32-upstream/embassy')))
@@ -99,11 +101,11 @@ for family in audit['families']:
     assert f['supply_mv'][1] <= round(volts[1] * 1000)
     assert f['maximum_wait_states'] == c['initial_flash_wait']
     assert [(i + 1) * f['wait_step_hz'] // 1000000 for i in range(f['maximum_wait_states'] + 1)] == family['clock']['read_wait_thresholds_mhz']
-    assert load(ROOT / 'cw32-data/data/chips' / f'{name}.json')['memory'] == []
+    assert load(historical_chip_path(ROOT / 'cw32-data/data/chips' / f'{name}.json'))['memory'] == []
 exact = audit['exact_ordering_codes']
 assert len(exact) == 37
 for part in exact:
-    chip = load(ROOT / 'cw32-data/data/chips' / f'{part["part"]}.json')
+    chip = load(historical_chip_path(ROOT / 'cw32-data/data/chips' / f'{part["part"]}.json'))
     flash = next(m for m in chip['memory'][0] if m['name'] == 'FLASH')
     assert (flash['address'], flash['size']) == (0, part['flash_bytes'])
     instance = next(p for p in chip['cores'][0]['peripherals'] if p['name'] == 'FLASH')

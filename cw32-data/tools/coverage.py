@@ -4,6 +4,9 @@ import argparse
 import json
 from pathlib import Path
 import yaml
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tests"))
+from current_targets import is_retired
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -29,7 +32,8 @@ def generate(root: Path = ROOT, data_dir: Path | None = None, pac_dir: Path | No
         source = families.get(family)
         features = []
         normalized_peripherals = 0
-        if source:
+        retired = is_retired(name, root) or is_retired(family, root)
+        if source and not retired:
             for chip in source['chips']:
                 if name.startswith(chip['name']):
                     chip_path = data_dir / 'chips' / (chip['name'] + '.json')
@@ -56,7 +60,7 @@ def generate(root: Path = ROOT, data_dir: Path | None = None, pac_dir: Path | No
             'matching_features': features,
             'normalized_peripheral_instances': normalized_peripherals,
             'hardware_validated': False,
-            'hal_status': 'active development; driver verification tracked separately',
+            'hal_status': 'retired independent target; historical source evidence retained' if retired else 'active development; driver verification tracked separately',
         })
     return {
         'schema_version': 1,
@@ -71,8 +75,9 @@ def generate(root: Path = ROOT, data_dir: Path | None = None, pac_dir: Path | No
             'catalog_entries': len(parts),
             'catalog_families': len(set(p['family'] for p in parts)),
             'source_manifests': len(inputs),
-            'eligible_inputs': sum(not i.get('quarantine') for i in inputs),
+            'eligible_inputs': sum(not i.get('quarantine') and not is_retired(i['line'], root) for i in inputs),
             'quarantined_inputs': sum(bool(i.get('quarantine')) for i in inputs),
+            'retired_inputs': sum(is_retired(i['line'], root) for i in inputs),
             'catalog_entries_with_generated_family_pac': sum(any(f['pac_present'] for f in p['matching_features']) for p in parts),
             'catalog_entries_with_exact_part_pac': sum(any(f['pac_present'] and f['exact_orderable_part'] for f in p['matching_features']) for p in parts),
             'hardware_validated_parts': 0,

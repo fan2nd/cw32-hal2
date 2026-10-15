@@ -15,12 +15,12 @@
 //! ICR flags clear on writing zero, and BUSY must clear before returning.
 //!
 //! Blocking full-duplex master is available on all supported backends.
-//! F030/A030/F020/L031/L052/L083/R031/W031 and native L012 SPI1/SPI2/SPI3
+//! F030/A030/F020/L031/L052/L083/R031 and native L012 SPI1/SPI2/SPI3
 //! expose staged byte DMA through `Spi::new_with_dma`. L012 qualification uses
 //! its own CN V1.4 chapter 22 and DMA chapter 8; safe staging/admission requires
 //! exact C8T6/C8U6 memory metadata. Independently qualified families expose
 //! interrupt-driven byte masters through `Spi::new_async`, including
-//! F020/L031/L052/R031/W031.
+//! F020/L031/L052/R031.
 //! The constructor fixes each owner's backend; both use the same async
 //! `SpiBus<u8>` methods. A static PIO owner still uses PIO, and separate
 //! controllers can use different backends. L012 SPI2/SPI3 require the complete

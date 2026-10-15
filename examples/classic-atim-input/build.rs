@@ -85,7 +85,7 @@ fn main() {
         "CW32L052C8T6" => ("cw32l052_v1", ["PA5", "PA7", "PA4", "PB0", "PA3", "PB1"], 7),
         // R031 PA3 is radio-reserved and lacks its own corroborated CH3A route.
         "CW32R031C8U6" => ("v1", ["PA5", "PA7", "PA4", "PB0", "PA10", "PB1"], 7),
-        "CW32F030C8T7" | "CW32A030C8T7" | "CW32L031C8T6" | "CW32W031R8U6" | "CW32L083MCT6" => {
+        "CW32F030C8T7" | "CW32A030C8T7" | "CW32L031C8T6" | "CW32L083MCT6" => {
             ("v1", ["PA5", "PA7", "PA4", "PB0", "PA3", "PB1"], 7)
         }
         _ => panic!("unqualified native input example selection"),

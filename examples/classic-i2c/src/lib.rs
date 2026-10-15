@@ -38,7 +38,6 @@ macro_rules! primary_pins {
             feature = "cw32f020c6u7",
             feature = "cw32l031c8t6",
             feature = "cw32r031c8u6",
-            feature = "cw32w031r8u6",
             feature = "cw32l052c8t6",
             feature = "cw32l083rct6"
         ))]

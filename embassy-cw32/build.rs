@@ -10,7 +10,7 @@ fn main() {
     let l012_dma = metadata.line == "CW32L012";
     let four_channel_dma = matches!(
         metadata.line,
-        "CW32L031" | "CW32L052" | "CW32R031" | "CW32W031"
+        "CW32L031" | "CW32L052" | "CW32R031"
     );
     let dma = x030 || metadata.line == "CW32L083" || f020 || four_channel_dma || l012_dma;
     let classic_adc = matches!(
@@ -22,7 +22,6 @@ fn main() {
             | "CW32F003"
             | "CW32L031"
             | "CW32R031"
-            | "CW32W031"
             | "CW32L052"
             | "CW32L083"
     );
@@ -192,7 +191,6 @@ fn main() {
         "cw32l012",
         "cw32l031",
         "cw32r031",
-        "cw32w031",
     ];
     for cfg in cfgs {
         println!("cargo:rustc-check-cfg=cfg({cfg})");
@@ -423,7 +421,7 @@ fn main() {
     let btim_version = match metadata.line {
         "CW32F030" | "CW32A030" | "CW32F020" => "v1",
         "CW32F002" | "CW32F003" => "cw32f002_v1",
-        "CW32L031" | "CW32R031" | "CW32W031" | "CW32L083" => "cw32l031_v1",
+        "CW32L031" | "CW32R031" | "CW32L083" => "cw32l031_v1",
         "CW32L052" => "cw32l052_v1",
         "CW32L010" | "CW32L011" => "cw32l010_v1",
         "CW32L012" => "cw32l012_v1",
@@ -435,7 +433,7 @@ fn main() {
     println!("cargo:rustc-cfg=btim");
     println!("cargo:rustc-cfg=btim_{btim_version}");
     let atim_version = match metadata.line {
-        "CW32F030" | "CW32A030" | "CW32L031" | "CW32R031" | "CW32W031" | "CW32L083" => Some("v1"),
+        "CW32F030" | "CW32A030" | "CW32L031" | "CW32R031" | "CW32L083" => Some("v1"),
         "CW32F003" => Some("cw32f003_v1"),
         "CW32L052" => Some("cw32l052_v1"),
         "CW32L010" | "CW32L011" => Some("cw32l010_v1"),
@@ -484,7 +482,7 @@ fn main() {
     let gtim_version = match metadata.line {
         "CW32F030" | "CW32A030" | "CW32F020" => Some("v1"),
         "CW32F002" | "CW32F003" => Some("cw32f002_v1"),
-        "CW32L031" | "CW32R031" | "CW32W031" | "CW32L083" => Some("cw32l031_v1"),
+        "CW32L031" | "CW32R031" | "CW32L083" => Some("cw32l031_v1"),
         "CW32L052" => Some("cw32l052_v1"),
         "CW32L010" | "CW32L011" => Some("cw32l010_v1"),
         "CW32L012" => Some("cw32l012_v1"),
@@ -510,7 +508,7 @@ fn main() {
         "CW32F002" => Some("cw32f002_v1"),
         "CW32F003" => Some("cw32f003_v1"),
         "CW32F020" => Some("cw32f020_v1"),
-        "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052" => Some("cw32l031_v1"),
+        "CW32L031" | "CW32R031" | "CW32L052" => Some("cw32l031_v1"),
         "CW32L010" => Some("cw32l010_v1"),
         "CW32L011" => Some("cw32l011_v1"),
         "CW32L012" => Some("cw32l012_v1"),
@@ -533,7 +531,7 @@ fn main() {
             "CW32A030C8T7" | "CW32F030C8T7" | "CW32F030F8V7" | "CW32F030K8T7" | "CW32F030K8U7"
             | "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8P6" | "CW32L031F8U6"
             | "CW32L031K8U6" | "CW32L031K8V6" | "CW32L052C8T6" | "CW32L052R8S6"
-            | "CW32L052R8T6" | "CW32R031C8U6" | "CW32W031R8U6" | "CW32L010F8P6"
+            | "CW32L052R8T6" | "CW32R031C8U6" | "CW32L010F8P6"
             | "CW32L010F8U6" | "CW32L010Y8M6" | "CW32L011K8T6" | "CW32L011K8U6"
             | "CW32L012C8T6" | "CW32L012C8U6" => Some(65536),
             "CW32L083RBT6" => Some(131072),
@@ -577,7 +575,7 @@ fn main() {
         "CW32F030" | "CW32A030" => Some((3, "v1", true)),
         "CW32L083" => Some((6, "cw32l083_v1", true)),
         "CW32F020" => Some((3, "v1", true)),
-        "CW32L031" | "CW32R031" | "CW32W031" => Some((3, "cw32l031_v1", true)),
+        "CW32L031" | "CW32R031" => Some((3, "cw32l031_v1", true)),
         "CW32L052" => Some((3, "cw32l052_v1", true)),
         "CW32L012" => Some((3, "cw32l012_v1", false)),
         _ => None,
@@ -585,7 +583,7 @@ fn main() {
     let spi_dma_profile = match metadata.line {
         "CW32F030" | "CW32A030" | "CW32F020" => Some((2, "v1")),
         "CW32L083" | "CW32L052" => Some((2, "cw32l031_v1")),
-        "CW32L031" | "CW32R031" | "CW32W031" => Some((1, "cw32l031_v1")),
+        "CW32L031" | "CW32R031" => Some((1, "cw32l031_v1")),
         "CW32L012" => Some((3, "cw32l012_v1")),
         _ => None,
     };
@@ -594,7 +592,7 @@ fn main() {
     let spi_async_pio_profile: Option<(&str, &[(&str, &str, u32)])> = match metadata.line {
         "CW32F002" | "CW32F003" => Some(("cw32f002_v1", &[("SPI", "SPI", 25)])),
         "CW32F020" => Some(("v1", &[("SPI1", "SPI1", 25), ("SPI2", "SPI2", 26)])),
-        "CW32L031" | "CW32R031" | "CW32W031" => Some(("cw32l031_v1", &[("SPI1", "SPI1", 25)])),
+        "CW32L031" | "CW32R031" => Some(("cw32l031_v1", &[("SPI1", "SPI1", 25)])),
         "CW32L052" => Some(("cw32l031_v1", &[("SPI1", "SPI1", 25), ("SPI2", "SPI2", 26)])),
         "CW32L010" | "CW32L011" => Some(("cw32l010_v1", &[("SPI", "SPI", 25)])),
         "CW32L012" => Some((
@@ -768,7 +766,7 @@ fn main() {
         let pairs = qualify_requests("SPI", count, version, &["RX", "TX"]);
         if matches!(
             metadata.line,
-            "CW32F020" | "CW32L031" | "CW32L052" | "CW32R031" | "CW32W031" | "CW32L012"
+            "CW32F020" | "CW32L031" | "CW32L052" | "CW32R031" | "CW32L012"
         ) {
             for index in 1..=count {
                 let name = format!("SPI{index}");
@@ -906,7 +904,7 @@ fn main() {
                 "adc_cw32l012_v1",
             ]
         }
-        "CW32L031" | "CW32R031" | "CW32W031" => {
+        "CW32L031" | "CW32R031" => {
             for name in ["GPIOA", "SYSCTRL", "FLASH"] {
                 assert_version(name, "cw32l031_v1");
             }
@@ -924,12 +922,7 @@ fn main() {
                     "cw32r031",
                     "adc_cw32l031_v1",
                 ],
-                _ => &[
-                    "gpio_cw32l031_v1",
-                    "rcc_cw32l031_v1",
-                    "cw32w031",
-                    "adc_cw32l031_v1",
-                ],
+                _ => unreachable!(),
             }
         }
         "CW32L052" => {
@@ -984,7 +977,7 @@ fn main() {
             "CW32F002" | "CW32F003" => "cw32f002_v1",
             "CW32F020" => "cw32f020_v1",
             "CW32L010" | "CW32L011" | "CW32L012" => "cw32l010_v1",
-            "CW32L031" | "CW32R031" | "CW32W031" | "CW32L083" => "cw32l031_v1",
+            "CW32L031" | "CW32R031" | "CW32L083" => "cw32l031_v1",
             "CW32L052" => "cw32l052_v1",
             _ => "v1",
         },
@@ -1002,7 +995,7 @@ fn main() {
             "WWDT",
             match metadata.line {
                 "CW32L012" => "cw32l012_v1",
-                "CW32L031" | "CW32L052" | "CW32L083" | "CW32R031" | "CW32W031" => "cw32l031_v1",
+                "CW32L031" | "CW32L052" | "CW32L083" | "CW32R031" => "cw32l031_v1",
                 _ => "v1",
             },
         );
@@ -1019,7 +1012,7 @@ fn main() {
                 "CW32L012" => "cw32l012_v1",
                 "CW32L052" => "cw32l052_v1",
                 "CW32L083" => "cw32l083_v1",
-                "CW32L031" | "CW32R031" | "CW32W031" => "cw32l031_v1",
+                "CW32L031" | "CW32R031" => "cw32l031_v1",
                 _ => "v1",
             },
         ),
@@ -1031,7 +1024,7 @@ fn main() {
                 "CW32F002" | "CW32F003" => "cw32f002_v1",
                 "CW32L010" | "CW32L011" => "cw32l010_v1",
                 "CW32L012" => "cw32l012_v1",
-                "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052" | "CW32L083" => "cw32l031_v1",
+                "CW32L031" | "CW32R031" | "CW32L052" | "CW32L083" => "cw32l031_v1",
                 _ => "v1",
             },
         ),
@@ -1044,7 +1037,7 @@ fn main() {
                 "CW32L010" => "cw32l010_v1",
                 "CW32L011" => "cw32l011_v1",
                 "CW32L012" => "cw32l012_v1",
-                "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052" | "CW32L083" => "cw32l031_v1",
+                "CW32L031" | "CW32R031" | "CW32L052" | "CW32L083" => "cw32l031_v1",
                 _ => "v1",
             },
         ),
@@ -1068,7 +1061,7 @@ fn main() {
         "IWDT",
         if matches!(
             metadata.line,
-            "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052" | "CW32L083"
+            "CW32L031" | "CW32R031" | "CW32L052" | "CW32L083"
         ) {
             "cw32l031_v1"
         } else {
@@ -1953,16 +1946,14 @@ fn qualify_four_channel_dma() {
     match (METADATA.line, METADATA.name) {
         ("CW32L031", "CW32L031")
         | ("CW32L052", "CW32L052")
-        | ("CW32R031", "CW32R031")
-        | ("CW32W031", "CW32W031") => assert!(METADATA.memory.is_empty()),
+        | ("CW32R031", "CW32R031") => assert!(METADATA.memory.is_empty()),
         (
             "CW32L031",
             "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8P6" | "CW32L031F8U6" | "CW32L031K8U6"
             | "CW32L031K8V6",
         )
         | ("CW32L052", "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6")
-        | ("CW32R031", "CW32R031C8U6")
-        | ("CW32W031", "CW32W031R8U6") => {
+        | ("CW32R031", "CW32R031C8U6") => {
             assert_eq!(METADATA.memory.len(), 1);
             assert_eq!(METADATA.memory[0].len(), 2);
             for (name, kind, address, size) in [
@@ -3448,7 +3439,7 @@ fn classic_i2c_irq(peripheral: &cw32_metapac::metadata::Peripheral) -> &'static 
         "CW32F002" | "CW32F003" => ("cw32f002_v1", &["I2C"]),
         "CW32L010" => ("cw32l010_v1", &["I2C1"]),
         "CW32L011" => ("cw32l011_v1", &["I2C"]),
-        "CW32L031" | "CW32R031" | "CW32W031" => ("cw32l031_v1", &["I2C1"]),
+        "CW32L031" | "CW32R031" => ("cw32l031_v1", &["I2C1"]),
         "CW32L052" | "CW32L083" => ("cw32l031_v1", &["I2C1", "I2C2"]),
         _ => panic!("unreviewed classic I2C family"),
     };
@@ -3809,7 +3800,7 @@ fn qualify_awt_lse() {
         "CW32A030C8T7" => Some(("CW32A030", "cw32f030_v1")),
         "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" => Some(("CW32L031", "cw32l031_v1")),
         "CW32R031C8U6" => Some(("CW32R031", "cw32l031_v1")),
-        "CW32W031R8U6" => Some(("CW32W031", "cw32l031_v1")),
+
         _ => None,
     };
     let sysctrl = METADATA
@@ -5562,7 +5553,6 @@ fn generate_factory_lsi(out: &mut String, c: &cw32_metapac::metadata::Peripheral
             (METADATA.line, METADATA.name),
             ("CW32L031", "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6")
                 | ("CW32R031", "CW32R031C8U6")
-                | ("CW32W031", "CW32W031R8U6")
         ));
     }
     let parameter_sources: &[(&str, u32, u32)] = match sysctrl.version {
@@ -7984,7 +7974,6 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             | "CW32L031C8U6"
             | "CW32L031F8U6"
             | "CW32R031C8U6"
-            | "CW32W031R8U6"
             | "CW32L052C8T6"
             | "CW32L052R8S6"
             | "CW32L052R8T6"
@@ -8022,7 +8011,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
     );
     let l031_sysclk_qualified = matches!(
         METADATA.name,
-        "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" | "CW32R031C8U6" | "CW32W031R8U6"
+        "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6" | "CW32R031C8U6"
     );
     let l052_sysclk_qualified = matches!(
         METADATA.name,
@@ -8204,14 +8193,13 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
                 (METADATA.line, METADATA.name),
                 ("CW32L031", "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031F8U6")
                     | ("CW32R031", "CW32R031C8U6")
-                    | ("CW32W031", "CW32W031R8U6")
                     | ("CW32L052", "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6")
                     | ("CW32L083", "CW32L083RBT6" | "CW32L083RCT6" | "CW32L083RCS6" | "CW32L083MCT6" | "CW32L083VCT6")
             );
             assert_eq!(
                 c.lsi_sysclk.is_some(),
                 native_lsi_qualified,
-                "Only the independent L031 exact3, R031 exact1, W031 exact1, L052 exact3 and L083 exact5 policies qualify native LSI SYSCLK"
+                "Only the independent L031 exact3, R031 exact1, L052 exact3 and L083 exact5 policies qualify native LSI SYSCLK"
             );
             let rtc = METADATA
                 .peripherals
@@ -8222,7 +8210,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
             let supply_mv = match METADATA.line {
                 "CW32L031" | "CW32L052" | "CW32L083" => (1650, 5500),
                 "CW32R031" => (2200, 3600),
-                "CW32W031" => (2000, 3600),
+
                 _ => panic!("unqualified LSE SYSCLK factory monitor family"),
             };
             assert_eq!((rtc.source, rtc.source_encoding), ("LSI", 2));
@@ -8371,7 +8359,7 @@ fn generate_lse_configuration(out: &mut String, c: &cw32_metapac::metadata::Peri
         lse.configurable_ccs,
         matches!(
             METADATA.line,
-            "CW32L031" | "CW32R031" | "CW32W031" | "CW32L052" | "CW32L083"
+            "CW32L031" | "CW32R031" | "CW32L052" | "CW32L083"
         )
     );
     writeln!(

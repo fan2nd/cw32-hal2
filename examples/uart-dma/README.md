@@ -1,15 +1,17 @@
 # Safe finite-chunk UART DMA firmware
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
+
 These real Cortex-M0+ applications use the production HAL, generated PAC,
 pinned Embassy executor and real UART/DMA interrupts. The UART2 applications
-support F030/A030, all five qualified exact L083 packages, and the fourteen
-exact F020/L031/L052/R031/W031 selections below. Standalone receive selects
+support F030/A030, all five qualified exact L083 packages, and the thirteen
+exact F020/L031/L052/R031 selections below. Standalone receive selects
 the package-qualified UART shown in the route table.
 
 - `cw32-uart-dma-example`: UART2 PA2 TX / PA3 RX on x030, or PA6 TX / PA7 RX
-  on L083 and the fourteen new exact selections; independent static 32-byte
+  on L083 and the thirteen retained exact selections; independent static 32-byte
   staging for each direction. x030/L083 use TX CH2 and RX CH3 on DMACH23.
-  F020 uses TX CH2/DMACH2 and RX CH1/DMACH1. L031/L052/R031/W031 use TX CH3
+  F020 uses TX CH2/DMACH2 and RX CH1/DMACH1. L031/L052/R031 use TX CH3
   and RX CH2, with both handlers bound to their shared DMACH23 vector.
   It first uses `split_ref`, then owned `split` halves to repeatedly exchange
   16-byte packets concurrently.
@@ -31,7 +33,7 @@ unconstructed UART5 partner inactive. The two-port example binds exactly one
 application binds the x030 single-instance UART handler on L083. All selected
 pins are bonded on each of the five exact L083 packages.
 
-All fourteen new selections use UART2 PA6 AF2 TX / PA7 AF2 RX in the combined
+All thirteen retained selections use UART2 PA6 AF2 TX / PA7 AF2 RX in the combined
 application. Their standalone `receive_only` routes are:
 
 | Exact feature selections | Standalone RX route | UART interrupt |
@@ -42,7 +44,6 @@ application. Their standalone `receive_only` routes are:
 | `cw32l031f8p6` | UART2 PA7 AF2 | UART2 |
 | `cw32l052c8t6`, `cw32l052r8s6`, `cw32l052r8t6` | UART3 PA10 AF1 | UART3 |
 | `cw32r031c8u6` | UART1 PA9 AF2 | UART1 |
-| `cw32w031r8u6` | UART3 PA10 AF1 | UART3 |
 
 The L031F8U6 standalone route is valid even though that package has no safe
 UART1 TX route. F020F6U7 and L031F8P6 have no safe UART1 RX or TX, so their
@@ -89,8 +90,8 @@ aliases are likewise absent; their HAL metadata retains no qualified SRAM map.
 
 The build script checks each new selected signal/AF route and package bond,
 then writes a package-qualified `memory.x` from generated metadata and supplies
-`-Tlink.x`. The exact F020 parts have 32 KiB Flash; the other eleven new parts
-have 64 KiB Flash. All fourteen have 8 KiB SRAM at 0x20000000. No generic
+`-Tlink.x`. The exact F020 parts have 32 KiB Flash; the other ten retained parts
+have 64 KiB Flash. All thirteen have 8 KiB SRAM at 0x20000000. No generic
 memory fallback is provided.
 
 Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29
@@ -109,5 +110,5 @@ throughput, losslessness or liveness. These applications
 are not HAL tests, register models, cancellation harnesses or early-abort APIs.
 The new classic UARTs have no overrun report. Finite rearm/copy gaps and silent
 RDR overwrite remain possible; DMA completion is not a lossless-stream claim.
-R031 GPIOA whole-bank effects and W031 RF/host handover limits still apply.
+R031 GPIOA whole-bank handover limits still apply.
 See [the RX and shared ownership contract](../../docs/uart-dma-rx.md).

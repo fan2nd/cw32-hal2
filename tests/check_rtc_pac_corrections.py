@@ -20,6 +20,8 @@ import yaml
 from check_gpio_isr_access import cargo_environment
 from audit_generated_parity import field_span
 
+from current_targets import is_retired
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'cw32-data/tools'))
 from source_provenance import enrich_source_refs
@@ -166,6 +168,9 @@ def pac_contracts():
     with tempfile.TemporaryDirectory(prefix='cw32-rtc-contracts-') as temp:
         p = Path(temp); (p / 'src').mkdir()
         for family in sorted(FREQ_FAMILIES | WIDTH_FAMILIES | {'CW32F030', 'CW32A030'}):
+            if is_retired(family):
+                assert not (ROOT / 'cw32-metapac/src/chips' / family.lower()).exists()
+                continue
             (p / 'Cargo.toml').write_text('[package]\nname="cw32-rtc-contracts"\nversion="0.0.0"\nedition="2024"\n[workspace]\n[dependencies]\ncw32-metapac={path=' + json.dumps(str(ROOT / 'cw32-metapac')) + ',default-features=false,features=["pac","' + family.lower() + '"]}\n')
             def run(code, command='check'):
                 (p / 'src/lib.rs').write_text('use cw32_metapac as pac;\n' + code)
@@ -196,8 +201,12 @@ def pac_contracts():
                 assert result.returncode == 0, result.stdout + result.stderr
                 masks += 1
             print(f'PASS {family}: allowed PAC control; {len(bad_cases)} exact compile-negative cases; no MMIO executed', flush=True)
-    assert (positive, negative, masks) == (10, 20, 2)
-    print('PASS 10 positive builds; 20 precise E0599 failures; 2 pure host mask tests')
+    historical_families = FREQ_FAMILIES | WIDTH_FAMILIES | {'CW32F030', 'CW32A030'}
+    retired = {family for family in historical_families if is_retired(family)}
+    assert len(historical_families) == 10 and retired == {'CW32W031'}
+    assert retired.isdisjoint(WIDTH_FAMILIES | {'CW32F020'})
+    assert (positive, negative, masks) == (10 - len(retired), 20 - 2 * len(retired), 2)
+    print(f'PASS {positive} positive builds; {negative} precise E0599 failures; {masks} pure host mask tests')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)

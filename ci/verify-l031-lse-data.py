@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Verify exact-package own LSE source facts and optional generated data; no HAL tests."""
 import argparse
+import sys
 import hashlib
 import json
 from pathlib import Path
@@ -8,6 +9,8 @@ import zipfile
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tests"))
+from current_targets import active_names
 PARTS = {"CW32L031C8T6", "CW32L031C8U6", "CW32L031F8U6", "CW32R031C8U6", "CW32W031R8U6"}
 FAMILIES = {"CW32L031", "CW32R031", "CW32W031"}
 DETECTOR = {"lse_edges": 128, "lsi_cycles": 256, "margin_lse_edges": 1}
@@ -130,9 +133,9 @@ def main():
                 assert chip["packages"][0]["package"] == catalog["parts"][chip["name"]]["package"]
                 for pin, position, signal in [("PC14", pins["input_position"], "OSC32_IN"), ("PC15", pins["output_position"], "OSC32_OUT")]:
                     assert any(p["position"] == position and pin in p["signals"] and signal in p["signals"] for p in chip["packages"][0]["pins"])
-        assert actual == set(catalog["parts"])
+        assert actual == active_names(catalog["parts"])
         generated_count = len(chips)
-    result = {"status": "passed", "source_originals": source_count, "page_hashes": page_count, "sdk_members": member_count, "qualified_parts": sorted(PARTS), "sysclk_originals": len(checked_sysclk_sources), "generated_catalog_parts": len(catalog["parts"]), "generated_selections_checked": generated_count, "native_enum_canonical_sha256": group["canonical_ir_sha256"], "hardware_execution": False}
+    result = {"status": "passed", "source_originals": source_count, "page_hashes": page_count, "sdk_members": member_count, "qualified_parts": sorted(PARTS), "sysclk_originals": len(checked_sysclk_sources), "generated_catalog_parts": len(active_names(catalog["parts"])), "generated_selections_checked": generated_count, "native_enum_canonical_sha256": group["canonical_ir_sha256"], "hardware_execution": False}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, indent=2))

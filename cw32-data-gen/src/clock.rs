@@ -701,8 +701,7 @@ mod tests {
             let file: ClockFile = serde_yaml::from_slice(&fs::read(&path).unwrap()).unwrap();
             let chip: cw32_data_serde::Chip = serde_json::from_slice(
                 &fs::read(
-                    root.join("cw32-data/data/chips")
-                        .join(format!("{}.json", file.profile)),
+                    crate::historical_test_data::chip_path(root, &file.profile),
                 )
                 .unwrap(),
             )

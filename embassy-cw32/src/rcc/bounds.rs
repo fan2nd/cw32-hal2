@@ -7,7 +7,7 @@
 //! HSE envelopes instead use the explicitly declared board-qualified source
 //! endpoints and conditions. Neither source accuracy is inferred from the other.
 //! F020/F030/A030, CW32F002F3P7/F3U7, CW32F003F4P7/F4U7/E4P7 and exactly
-//! CW32L031C8T6/C8U6/F8U6, CW32R031C8U6, CW32W031R8U6 and
+//! CW32L031C8T6/C8U6/F8U6, CW32R031C8U6 and
 //! CW32L052C8T6/R8S6/R8T6, CW32L083RBT6/RCT6/RCS6/MCT6/VCT6 and
 //! CW32L010F8P6/F8U6/Y8M6, CW32L011K8T6/K8U6 and CW32L012C8T6/C8U6 have
 //! factory-LSI rate envelopes under their own source conditions, without strict
@@ -15,7 +15,7 @@
 //! rate-only under every SYSCLK. The exact-seven native live-LSI RTC capability
 //! reuses that own envelope independently of SYSCLK and divides it by 32800;
 //! its nominal one-second transitions do not qualify individual periods.
-//! Generic F002/F003/L010/L011/L012/L031/R031/W031/L052/L083 aliases and other
+//! Generic F002/F003/L010/L011/L012/L031/R031/L052/L083 aliases and other
 //! unlisted packages gain no factory-LSI SYSCLK qualification. Exact native
 //! L010/L011/L012 LSI acquisition requires an already live factory-matching
 //! source; the separate raw-HSI RTC source remains cycle-qualified.

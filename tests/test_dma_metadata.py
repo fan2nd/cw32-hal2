@@ -15,6 +15,8 @@ import sys
 import unittest
 import yaml
 
+from current_targets import historical_chip_path
+from current_targets import is_retired
 ROOT = Path(__file__).resolve().parents[1]
 PROFILES = ROOT / 'cw32-data/dma'
 GENERATED = ROOT / 'cw32-data/data'
@@ -137,7 +139,7 @@ class DmaMetadataTests(unittest.TestCase):
         return load(PROFILES / (family.lower() + '.yaml'))
 
     def core(self, family):
-        return load(GENERATED / 'chips' / (family + '.json'))['cores'][0]
+        return load(historical_chip_path(GENERATED / 'chips' / (family + '.json')))['cores'][0]
 
     def test_exact_profile_coverage(self):
         self.assertEqual({p.stem.upper() for p in PROFILES.glob('cw32*.yaml')}, set(COUNTS))

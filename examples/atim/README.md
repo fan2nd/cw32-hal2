@@ -1,5 +1,7 @@
 # ATIM main PWM and polling counter examples
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
+
 These are complete Cortex-M0+ firmware examples; they have only been compiled
 and linked, never flashed or executed on hardware. Select exactly one feature.
 The build uses the exact-package metadata's qualified FLASH/RAM map.
@@ -15,7 +17,7 @@ than the requested ceiling. The output is PB6/AF4 on CW32F003E4P7, PB4/AF7 on
 CW32L010F8P6, and PA5/AF7 on the other supported packages below:
 
 - CW32F030C8T7, CW32A030C8T7, CW32F003E4P7
-- CW32L031C8T6, CW32R031C8U6, CW32W031R8U6
+- CW32L031C8T6, CW32R031C8U6
 - CW32L052C8T6, CW32L083MCT6
 - CW32L010F8P6, CW32L011K8T6, CW32L012C8T6
 

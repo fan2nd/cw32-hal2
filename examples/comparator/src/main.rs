@@ -34,7 +34,6 @@ fn main() -> ! {
         feature = "cw32a030c8t7",
         feature = "cw32f020c6u7",
         feature = "cw32l031c8t6",
-        feature = "cw32w031r8u6",
         feature = "cw32l052c8t6",
         feature = "cw32l083mct6"
     ))]

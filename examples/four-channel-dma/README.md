@@ -1,7 +1,9 @@
 # Native four-channel owned DMA examples
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
+
 Two ordinary applications use the native four-channel DMA controller on the
-source-qualified CW32L031, CW32L052, CW32R031, and CW32W031 selections:
+source-qualified CW32L031, CW32L052, CW32R031 selections:
 
 - `owned_copy` starts finite copies on all four channels before awaiting any,
   compares the cleanly returned buffers, and reuses those same owners.
@@ -9,7 +11,7 @@ source-qualified CW32L031, CW32L052, CW32R031, and CW32W031 selections:
   repeatedly writes an ordinary flash slice and a local slice larger than its
   private 32-byte SRAM stage, then flushes the UART.
 
-Select exactly one of the eleven exact features below. There is no default
+Select exactly one of the ten exact features below. There is no default
 chip or generic-family feature. Each exact part has 64 KiB flash at
 `0x00000000` and 8 KiB SRAM at `0x20000000`. The build script checks the exact
 metadata identity, memory kinds and intervals, channel/vector topology, and
@@ -31,7 +33,7 @@ cargo build --offline --locked --release --target thumbv6m-none-eabi --no-defaul
 Both binaries are available for each exact feature in the route table. Replace
 the feature with the one matching your part. These commands describe how to
 build; the actual main acceptance includes `uart_tx` on all eleven exact parts
-and `owned_copy` on L031F8P6, L052C8T6, R031C8U6 and W031R8U6. These 15 linked
+and `owned_copy` on L031F8P6, L052C8T6, R031C8U6 and W031R8U6. These historical 15 linked
 ELFs passed independent code, memory and active-vector inspection without
 warnings. They are part of the recorded 27-command main matrix, not additional
 commands. See the [actual verification boundary](../../docs/four-channel-dma-owned.md#verification-boundary)
@@ -82,20 +84,18 @@ DMACH4. The individual native UART1/2/3 interrupt handlers are also bound.
 | `cw32l052r8s6` | PA8 AF2 | PA6 AF2 | PA9 AF1 |
 | `cw32l052r8t6` | PA8 AF2 | PA6 AF2 | PA9 AF1 |
 | `cw32r031c8u6` | PA8 AF2 | PA6 AF2 | PA10 AF6 |
-| `cw32w031r8u6` | PA8 AF2 | PA6 AF2 | PA10 AF6 |
 
 F8P6/F8U6 have no safe UART1 TX route; the excluded PA14 route is not exposed
-as an escape. PA13, PA14, and PF3 remain excluded. There are 31 active routes
-across the eleven exact selections. L052 retains its own native UART version
-and PA9 AF1 UART3 route; the other three families use PA10 AF6.
+as an escape. PA13, PA14, and PF3 remain excluded. There are 28 active routes
+across the ten exact selections. L052 retains its own native UART version
+and PA9 AF1 UART3 route; the other two families use PA10 AF6.
 
 Connect each used TX pin to a suitable serial receiver and share ground,
 following the selected part's electrical limits and package pinout. Default
 UART settings are 115200 baud, eight data bits, no parity, and one stop bit.
 Check board wiring before flashing; the examples do not configure a board LED
 or an RF device. R031's existing GPIOA-bank RCC effects still apply, even
-though these routes avoid its internal RF pins PA0..3. W031's routes avoid
-its internal RF SPI1/GPIOB pins. No RF handover or coexistence is established.
+though these routes avoid its internal RF pins PA0..3.
 
 F8 uses a two-task pool and 64 bytes of static staging; the other selections
 use a three-task pool and 96 bytes of static staging. Each task identifies its

@@ -17,6 +17,8 @@ import sys
 import yaml
 from route_metadata import hardware_facts, with_source_refs
 
+from current_targets import historical_chip_path
+from current_targets import is_retired
 ROOT = Path(__file__).resolve().parents[1]
 FAMILIES = ('F002', 'F003', 'L031', 'R031', 'W031', 'L052', 'L083')
 PWM = re.compile(r'(GTIM[1-4]?)_(CH[1-4])')
@@ -242,7 +244,11 @@ def verify_generated(directory, profile):
     proof = read(ROOT / PROOF)['families'][profile]
     results = []
     for part, count in proof['package_counts'].items():
-        core = read(directory / 'chips' / (part+'.json'))['cores'][0]
+        current = directory / 'chips' / (part + '.json')
+        if is_retired(part):
+            assert not current.exists(), 'retired target in selected generated directory'
+            current = ROOT / 'cw32-data/data/chips' / current.name
+        core = read(historical_chip_path(current))['cores'][0]
         bonded = {p['name'] for p in core['pins']}
         actual = set()
         capture = set()

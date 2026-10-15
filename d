@@ -138,6 +138,7 @@ case "${1:-help}" in
     python3 cw32-data/tools/validate.py
     python3 tests/test_pac_module_selection.py
     python3 tests/validate_pac_inventory.py
+    python3 tests/test_retired_targets.py
     python3 tests/check_pac_access.py
     python3 tests/check_f020_fault_owner.py
     python3 tests/test_metadata_contracts.py

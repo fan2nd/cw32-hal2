@@ -12,6 +12,8 @@ from pathlib import Path
 import re
 from urllib.parse import unquote, urlparse
 
+from current_targets import historical_chip_path
+
 ROOT = Path(__file__).resolve().parents[1]
 FAMILIES = ["CW32L031", "CW32R031", "CW32W031", "CW32L052", "CW32L083"]
 
@@ -61,7 +63,7 @@ def main():
     evidence = json.loads((ROOT / "docs/l031-shared-serial-evidence.json").read_text())
     assert [family["family"] for family in evidence["families"]] == FAMILIES
     for family in evidence["families"]:
-        data = json.loads((ROOT / "cw32-data/data/chips" / (family["family"] + ".json")).read_text())["cores"][0]
+        data = json.loads(historical_chip_path(ROOT / "cw32-data/data/chips" / (family["family"] + ".json")).read_text())["cores"][0]
         peripherals = {p["name"]: p for p in data["peripherals"] if p["name"].startswith(("SPI", "I2C"))}
         assert set(peripherals) == set(family["instances"])
         for name, peripheral in peripherals.items():

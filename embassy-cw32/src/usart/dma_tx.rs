@@ -125,7 +125,7 @@ impl TxDma {
 #[cfg(uart_dma_tx)]
 impl UartTx<'static, Async> {
     /// Create a safe staged DMA transmitter on the qualified
-    /// F030/A030/L083/F020/L031/L052/R031/W031/L012 families without CTS.
+    /// F030/A030/L083/F020/L031/L052/R031/L012 families without CTS.
     ///
     /// Consumes static UART, TX pin, compatible DMA channel and SRAM staging.
     /// Short-lived peripheral reborrows are deliberately excluded. Like other

@@ -23,7 +23,7 @@ fn main() {
             println!("cargo:rustc-cfg=example_f020");
             &["PA6", "PA7"]
         }
-        "CW32L031" | "CW32L052" | "CW32R031" | "CW32W031" => {
+        "CW32L031" | "CW32L052" | "CW32R031" => {
             println!("cargo:rustc-cfg=example_four_channel");
             &["PA6", "PA7"]
         }
@@ -56,11 +56,8 @@ fn main() {
         ("CW32R031", "CW32R031C8U6") => {
             Some(("UART1", "PA9", 2, "example_rx_uart1", 64 * 1024))
         }
-        ("CW32W031", "CW32W031R8U6") => {
-            Some(("UART3", "PA10", 1, "example_rx_uart3", 64 * 1024))
-        }
         ("CW32F030" | "CW32A030" | "CW32L083", _) => None,
-        _ => panic!("select one of the fourteen qualified exact classic packages"),
+        _ => panic!("select one of the thirteen qualified exact classic packages"),
     };
     if let Some((rx_uart, rx_pin, rx_af, rx_cfg, flash_size)) = classic_rx {
         println!("cargo:rustc-cfg={rx_cfg}");

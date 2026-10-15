@@ -84,7 +84,7 @@ impl<'d> HsiOscClock<'d> {
 /// Shared LSI with verified, unchanged factory trim.
 ///
 /// This capability requires factory trim already loaded. On F020/F030/A030
-/// and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6, CW32W031R8U6 or
+/// and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6 or
 /// CW32L052C8T6/R8S6/R8T6 and CW32L083RBT6/RCT6/RCS6/MCT6/VCT6,
 /// selecting `Sysclk::LSI` during RCC initialization
 /// can establish it. Separately qualified monitored `Sysclk::LSE`
@@ -99,10 +99,10 @@ impl<'d> HsiOscClock<'d> {
 /// published supply/ambient interval and unchanged factory trim; readiness is
 /// startup status, not a measurement or continuous loss-of-clock monitor.
 /// On F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6,
-/// CW32W031R8U6, CW32L052C8T6/R8S6/R8T6 or CW32L083RBT6/RCT6/RCS6/MCT6/VCT6
+/// CW32L052C8T6/R8S6/R8T6 or CW32L083RBT6/RCT6/RCS6/MCT6/VCT6
 /// these are rate-only
 /// bounds under every SYSCLK, including HSI, HSE and LSE; they do not qualify
-/// strict cycle durations. Excluded L031, generic R031/W031/L052/L083
+/// strict cycle durations. Excluded L031, generic R031/L052/L083
 /// and board LSE retain their prior qualification; nominal calendar ticks
 /// remain 32800/32768.
 ///
@@ -149,7 +149,7 @@ impl<'d> LsiClock<'d> {
         Hertz(RTC::SOURCE_NOMINAL_HZ)
     }
     /// Factory-source envelope. F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6
-    /// or CW32R031C8U6/CW32W031R8U6/CW32L052C8T6/R8S6/R8T6 and
+    /// or CW32R031C8U6/CW32L052C8T6/R8S6/R8T6 and
     /// CW32L083RBT6/RCT6/RCS6/MCT6/VCT6 qualify rate only
     /// under every SYSCLK;
     /// check `has_cycle_timing_bounds()` before requesting strict durations.

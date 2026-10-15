@@ -28,7 +28,6 @@ fn main() {
             | "CW32L031C8U6"
             | "CW32L031F8U6"
             | "CW32R031C8U6"
-            | "CW32W031R8U6"
             | "CW32L052C8T6"
             | "CW32L052R8S6"
             | "CW32L052R8T6"

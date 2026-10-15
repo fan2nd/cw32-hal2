@@ -38,7 +38,7 @@ class RccControlMetadata(unittest.TestCase):
         cls.chips = [load(path) for path in (ROOT / 'cw32-data/data/chips').glob('*.json')]
 
     def test_every_control_is_exact_verified_projection(self):
-        self.assertEqual(len(self.chips), 54)
+        self.assertEqual(len(self.chips), 52)
         self.assertEqual(len(self.profiles), 13)
         for chip in self.chips:
             profile = self.profiles[chip['line']]

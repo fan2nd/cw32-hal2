@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Verify own-L010 historical LSE and exact live-LSI metadata; no HAL execution."""
 import argparse
+import sys
 import copy
 import hashlib
 import io
@@ -13,6 +14,8 @@ import zipfile
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tests"))
+from current_targets import retired_targets
 PARTS = {"CW32L010F8P6", "CW32L010F8U6", "CW32L010Y8M6"}
 PROOF = "docs/l010-lse-sysclk-qualification.json"
 DETECTOR = {"lse_edges": 128, "lsi_cycles": 256, "margin_lse_edges": 1}
@@ -113,6 +116,10 @@ def complete_selection_roster():
     assert included_parts == set(exact)
     assert len(selections) == 54, "reviewed complete generated roster must contain 54 selections"
     assert {name for name, line in selections.items() if line == "CW32L010"} == PARTS | {"CW32L010"}
+    # Historical evidence keeps all 54 identities; only current outputs retire these exact two.
+    assert retired_targets() <= set(selections)
+    selections = {name: line for name, line in selections.items() if name not in retired_targets()}
+    assert len(selections) == 52
     return selections, exact
 
 
@@ -660,7 +667,7 @@ def main():
     lsi_owners, generic_l010_seen = 0, False
     if args.data:
         paths = sorted((args.data / "chips").glob("*.json"))
-        assert len(paths) == len(selections) == 54, "--data must contain all 54 generated selections"
+        assert len(paths) == len(selections) == 52, "--data must contain all 52 active generated selections"
         for path in paths:
             chip = load(path)
             name = chip["name"]

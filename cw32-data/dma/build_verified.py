@@ -15,6 +15,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "tests"))
+from current_targets import historical_chip_path
 OUT = Path(__file__).resolve().parent
 sys.path.insert(0, str(ROOT / 'cw32-data/tools'))
 from source_provenance import enrich_source_refs
@@ -129,7 +131,7 @@ def cmsis_source(root, sdk_family, sdk_url):
 
 
 def build_profile(family, root, sdk_urls, datasheets):
-    generated = load(ROOT / 'cw32-data/data/chips' / (family + '.json'))['cores'][0]
+    generated = load(historical_chip_path(ROOT / 'cw32-data/data/chips' / (family + '.json')))['cores'][0]
     peripherals = {p['name']: p for p in generated['peripherals']}
     sdk_family = 'CW32F030' if family == 'CW32A030' else family
     cmsis, cmsis_ref = cmsis_source(root, sdk_family, sdk_urls[sdk_family])

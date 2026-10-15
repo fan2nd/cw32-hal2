@@ -197,15 +197,6 @@ const SELECTIONS: &[Selection] = &[
         routes: &[OLD_SPI1],
     },
     Selection {
-        feature: "CARGO_FEATURE_CW32W031R8U6",
-        name: "CW32W031R8U6",
-        line: "CW32W031",
-        version: "cw32l031_v1",
-        flash: 65536,
-        ram: 8192,
-        routes: &[OLD_SPI1],
-    },
-    Selection {
         feature: "CARGO_FEATURE_CW32L052C8T6",
         name: "CW32L052C8T6",
         line: "CW32L052",

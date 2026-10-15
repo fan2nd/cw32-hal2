@@ -2,7 +2,7 @@
 //!
 //! Both blocking and interrupt-driven async transfers are implemented. Async
 //! transfers normally use one interrupt/wakeup per byte. On F030/A030/L083
-//! and F020/L031/L052/R031/W031, `UartTx::new_with_dma`,
+//! and F020/L031/L052/R031, `UartTx::new_with_dma`,
 //! `UartRx::new_with_dma` and `Uart::new_with_dma` own static staging for
 //! ordinary borrowed writes and reads. RX DMA receives finite explicitly armed
 //! chunks; reception/copy/rearm gaps can lose frames. L012 supports only staged

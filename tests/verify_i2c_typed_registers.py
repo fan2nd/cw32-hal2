@@ -15,6 +15,8 @@ from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 import yaml
 
+from current_targets import active_names, is_retired, historical_chip_path
+
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = Path(os.environ.get('CW32_SOURCES', str(ROOT.parent / 'cw32-sources')))
 EVIDENCE = json.loads((ROOT / 'docs/i2c-typed-register-evidence.json').read_text())
@@ -45,7 +47,8 @@ def flat(text):
 
 
 # This extension checks current selected vendor sources and authored/generated
-# metadata. Review receipts and historical production snapshots are not inputs.
+# metadata. Only the two retired W031 chip projections use hash-pinned historical
+# snapshots; vendor evidence and all surviving generated inputs remain current.
 CLASSIC_FAMILIES = {'CW32F030', 'CW32A030', 'CW32F002', 'CW32F003', 'CW32F020',
                     'CW32L031', 'CW32R031', 'CW32W031', 'CW32L052', 'CW32L083',
                     'CW32L010', 'CW32L011'}
@@ -378,7 +381,7 @@ def classic_instances(family, fact, block, material, raw, chips):
 
 def classic_routes(family, block, material):
     package = block['representative_package']
-    chip = current_json(package['chip_metadata'])
+    chip = json.loads(historical_chip_path(ROOT / package['chip_metadata']).read_text())
     part_path, pointer = package['part_identity'].split('#', 1)
     part = at_pointer(current_yaml(part_path), pointer)
     assert (part['name'], part['feature'], part['family'], part['package']) == (
@@ -453,8 +456,14 @@ def classic_async_sources():
         catalog = current_yaml(profile['parts_catalog'])['parts']
         expected = {p['name'] for p in profile['chips']} | {
             p['name'] for p in catalog if p['family'] == family}
-        assert {chip['name'] for _, chip in entries} == expected, family
+        assert {chip['name'] for _, chip in entries} == active_names(expected), family
         assert all(Path(path).stem == chip['name'] for path, chip in entries), family
+        if is_retired(family):
+            # Historical own-source checks still run against exact pinned snapshots.
+            for name in sorted(expected):
+                path = ROOT / 'cw32-data/data/chips' / (name + '.json')
+                snapshot = historical_chip_path(path)
+                entries.append((str(snapshot.relative_to(ROOT)), json.loads(snapshot.read_text())))
     slots, routes, versions = 0, 0, set()
     for family, fact in families.items():
         block = fact['async_master']

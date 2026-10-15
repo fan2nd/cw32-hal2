@@ -1,7 +1,9 @@
 # Direct HSE firmware
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
+
 Real `thumbv6m-none-eabi` firmware for CW32F030C8T7, CW32A030C8T7 and
-CW32F020C6U7, CW32L031C8T6, CW32R031C8U6 and CW32W031R8U6.
+CW32F020C6U7, CW32L031C8T6, CW32R031C8U6.
 Both binaries also cover every modeled exact L083 part: CW32L083RBT6,
 CW32L083RCS6, CW32L083RCT6, CW32L083MCT6 and CW32L083VCT6.
 Both also cover CW32L052C8T6, CW32L052R8T6 and CW32L052R8S6.
@@ -41,7 +43,7 @@ rating alone does not establish every ClockBounds duration guarantee. The
 independent HSI is retained with its own factory qualification. The inherited
 LSI configuration must satisfy its own documented safe operating range; the
 L011 discrepancy is called out below. RCC retains its trim. F020/x030 require
-mandatory CCS; L031/R031/W031 preserve configurable CCS and retain LSI when an enabled
+mandatory CCS; L031/R031 preserve configurable CCS and retain LSI when an enabled
 external detector needs it. See `../../docs/qualified-l031-hse.md`.
 L083 also preserves configurable CCS; retained RTC or AUTOTRIM TIMER users
 require exact ready HSE/pad reuse. Active AUTOTRIM calibration or automatic

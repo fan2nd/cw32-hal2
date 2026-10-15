@@ -393,7 +393,7 @@ impl<'d> Rtc<'d> {
     /// Declared healthy-source envelope before the calendar divider.
     /// This getter does not guarantee continuity after a source fault.
     /// F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6,
-    /// CW32W031R8U6, CW32L052C8T6/R8S6/R8T6 or CW32L083RBT6/RCT6/RCS6/MCT6/VCT6
+    /// CW32L052C8T6/R8S6/R8T6 or CW32L083RBT6/RCT6/RCS6/MCT6/VCT6
     /// factory-LSI bounds qualify rate only under every SYSCLK.
     /// The exact native live-LSI packages have the same rate-only limitation.
     pub const fn source_clock_bounds(&self) -> ClockBounds {
@@ -402,7 +402,7 @@ impl<'d> Rtc<'d> {
     /// Healthy-source envelope of calendar second transitions. Whole-Hz getters round;
     /// the exact 32800/32768 factory-LSI fraction is retained internally.
     /// F020/F030/A030 and exactly CW32L031C8T6/C8U6/F8U6, CW32R031C8U6,
-    /// CW32W031R8U6, CW32L052C8T6/R8S6/R8T6 or CW32L083RBT6/RCT6/RCS6/MCT6/VCT6
+    /// CW32L052C8T6/R8S6/R8T6 or CW32L083RBT6/RCT6/RCS6/MCT6/VCT6
     /// factory-LSI bounds remain rate-only after division under every SYSCLK;
     /// check `has_cycle_timing_bounds()` before using strict duration methods.
     /// Native live-LSI uses /32800 for nominal 1 Hz, retaining its own fractional

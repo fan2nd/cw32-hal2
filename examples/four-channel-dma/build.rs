@@ -72,7 +72,7 @@ fn main() {
         ("CARGO_FEATURE_CW32L052R8S6", "CW32L052R8S6", "CW32L052"),
         ("CARGO_FEATURE_CW32L052R8T6", "CW32L052R8T6", "CW32L052"),
         ("CARGO_FEATURE_CW32R031C8U6", "CW32R031C8U6", "CW32R031"),
-        ("CARGO_FEATURE_CW32W031R8U6", "CW32W031R8U6", "CW32W031"),
+
     ];
     let selected: Vec<_> = chip_features
         .iter()
@@ -84,8 +84,7 @@ fn main() {
     assert_eq!(metadata.line, selected[0].2);
 
     let (has_uart1, uart3_pin, uart3_af, uart_version) = match metadata.name {
-        "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031K8U6" | "CW32L031K8V6" | "CW32R031C8U6"
-        | "CW32W031R8U6" => (true, "PA10", 6, "cw32l031_v1"),
+        "CW32L031C8T6" | "CW32L031C8U6" | "CW32L031K8U6" | "CW32L031K8V6" | "CW32R031C8U6" => (true, "PA10", 6, "cw32l031_v1"),
         "CW32L031F8P6" | "CW32L031F8U6" => (false, "PA10", 6, "cw32l031_v1"),
         "CW32L052C8T6" | "CW32L052R8S6" | "CW32L052R8T6" => (true, "PA9", 1, "cw32l052_v1"),
         _ => unreachable!(),

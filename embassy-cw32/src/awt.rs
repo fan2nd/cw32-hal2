@@ -6,7 +6,7 @@
 //! an Embassy monotonic time driver. See `docs/low-power-timers.md`.
 //!
 //! LSE is available only on CW32F020C6U7, CW32F030C8T7, CW32A030C8T7,
-//! CW32L031C8T6/C8U6/F8U6, CW32R031C8U6 and CW32W031R8U6. Its existing
+//! CW32L031C8T6/C8U6/F8U6, CW32R031C8U6. Its existing
 //! source capability owns SYSCTRL and the oscillator pads. Source acquisition
 //! or reacquisition may temporarily open the whole GPIOC gate to inspect pads;
 //! retained filters and armed edges can advance even before an error. AWT's
@@ -19,7 +19,7 @@
 //! waking source. Counting-source loss alone does not disable PCLK register
 //! access, but no CPU progress or system-clock fault recovery is promised.
 //!
-//! On L031/R031/W031, retained GPIOA/B/C/F filters can select AWT underflow.
+//! On L031/R031, retained GPIOA/B/C/F filters can select AWT underflow.
 //! Reconfiguring, starting, stopping or dropping this producer, or losing its
 //! source, can change or stall those filters and their interrupt delivery.
 //! The driver neither inspects nor owns those recipients.

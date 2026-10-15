@@ -10,6 +10,8 @@ from pathlib import Path
 import unittest
 import yaml
 
+from current_targets import historical_chip_path
+from current_targets import is_retired
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -58,7 +60,9 @@ class ClockContracts(unittest.TestCase):
         for profile, sidecar in self.files.items():
             names = [record['name'] for record in sidecar['peripherals']]
             self.assertEqual(len(names), len(set(names)))
-            self.assertEqual(set(names), {p['name'] for p in self.chips[profile]['cores'][0]['peripherals']})
+            chip = (load(historical_chip_path(ROOT / 'cw32-data/data/chips' / (profile + '.json')))
+                    if is_retired(profile) else self.chips[profile])
+            self.assertEqual(set(names), {p['name'] for p in chip['cores'][0]['peripherals']})
 
     def test_generated_records_are_exact_supported_projection(self):
         for chip in self.chips.values():

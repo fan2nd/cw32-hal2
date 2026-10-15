@@ -252,6 +252,9 @@ class ReportPathTests(unittest.TestCase):
         coverage = load_module('coverage_paths', ROOT / 'cw32-data/tools/coverage.py')
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
+            authority = root / 'cw32-data-serde/src/retired-targets.txt'
+            authority.parent.mkdir(parents=True)
+            shutil.copy2(ROOT / 'cw32-data-serde/src/retired-targets.txt', authority)
             (root / 'sources').mkdir()
             (root / 'cw32-data/inputs').mkdir(parents=True)
             (root / 'sources/catalog.json').write_text(json.dumps({'parts': [

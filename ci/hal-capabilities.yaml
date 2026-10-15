@@ -15,7 +15,7 @@ families:
 - CW32L052
 - CW32L083
 - CW32R031
-- CW32W031
+
 functions:
   gpio:
     register_kinds:
@@ -159,7 +159,7 @@ functions:
       - CW32L052
       - CW32L083
       - CW32R031
-      - CW32W031
+
       pins_all:
       - RX
       limitations:
@@ -192,7 +192,7 @@ functions:
         qualification; per-instance hardware presence is not universally asserted.
     - id: safe_peripheral_dma
       status: experimental_partial
-      scope: Safe staged TX, finite RX and combined/split UART DMA on F030/A030/L083 and fourteen exact F020/L031/L052/R031/W031 parts; exact L012 C8T6/C8U6 remain UART TX-only.
+      scope: Safe staged TX, finite RX and combined/split UART DMA on F030/A030/L083 and thirteen exact F020/L031/L052/R031 parts; exact L012 C8T6/C8U6 remain UART TX-only.
       limitations:
       - Every admitted profile requires qualified SRAM and normal reset/clean-runtime startup; static UART/channel/staging owners are consumed. Generic classic aliases retain MissingMemoryMetadata rejection.
       - CPU copy per byte and possible chunk gaps; write completes memory-to-TDR transfer and flush separately waits for the wire.
@@ -208,7 +208,7 @@ functions:
       - CW32L031
       - CW32L052
       - CW32R031
-      - CW32W031
+
       - CW32L012
       overrides:
       - families: [CW32L012]
@@ -240,11 +240,11 @@ functions:
         - Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without warnings. Both finite source checks passed after the preserved initial D01 PIN/AFR comparison failure and checker-only correction.
         - Independent Stage92 runtime and metadata/source reviews accepted the bounded main result. Main ran no canonical data generation and all 910 generated files stayed unchanged; UART/DMA runtime algorithms remain unchanged.
         - At Stage92 main acceptance final capability reports and the separate final-source 2-library/3-ELF clean replay had not run. No hardware result is claimed.
-      - families: [CW32L031, CW32L052, CW32R031, CW32W031]
-        scope: Safe staged byte UART TX, finite RX and combined/split DMA on eleven exact native four-channel selections.
+      - families: [CW32L031, CW32L052, CW32R031]
+        scope: Safe staged byte UART TX, finite RX and combined/split DMA on ten exact native four-channel selections.
         limitations:
-        - Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6; each has 64 KiB Flash and 8 KiB SRAM at 0x20000000..0x20002000.
-        - Generic cw32l031/cw32l052/cw32r031/cw32w031 compile the controller/UART DMA surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.
+        - Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6; each has 64 KiB Flash and 8 KiB SRAM at 0x20000000..0x20002000.
+        - Generic cw32l031/cw32l052/cw32r031 compile the controller/UART DMA surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.
         - CH1 uses DMACH1 IRQ9, CH2/3 share DMACH23 IRQ10 and CH4 uses DMACH4 IRQ11; no CH5. Both shared handlers service only their own channel; typed native R1W0 commands preserve siblings and reserved bits.
         - Normal reset/clean-runtime entry and conservative one-time admission apply. Dirty state is rejected without reset/recovery; raw acquisition permanently revokes safe admission.
         - UART1/2/3 RX selectors 0/2/4 and TX selectors 1/3/5 may use any CH1..4, subject to safe package pins. Combined UART requires distinct TX/RX pins, distinct channels and independent exclusive static stages.
@@ -253,7 +253,7 @@ functions:
         - Static UART/channel/staging owners survive cancellation and forget; clean RX tails remain available. Clean retirement requires recorded TC without TE plus STATUS5, request closure and fencing before staging reuse; DMA faults permanently quarantine resources.
         - FE/PE returns promptly but recovery may wait indefinitely for the old DMA count. CPU copies and chunk/rearm gaps can lose frames without a loss count; TX flush separately waits for the wire.
         - SPI DMA has its separate declared scope; no other peripheral DMA consumers, new raw hardware requests, buffered-plus-DMA owner, RTS/CTS or idle/circular DMA, early abort, zero-copy or finite-liveness guarantee.
-        - R031 whole-GPIOA effects and W031 internal RF boundaries preserve existing functional handover obligations; no RF-safe handover/coexistence claim.
+        - R031 whole-GPIOA effects preserve existing functional handover obligations; no RF-safe handover/coexistence claim.
         - Historical Stage85 copy/TX main passed six ARM libraries and 21 ELF links, all 27 exiting zero without warnings; generation, five finite source gates and the renderer passed in documented segments. These results do not verify Stage92 RX.
         - Three Stage85 source-checker preparation failures remain recorded; corrections changed no HAL/example bytes. At that main acceptance its separate final-source 2-library/4-ELF clean receipt had not run. No hardware result is claimed.
         - Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without warnings. Both finite source checks passed after the preserved initial D01 PIN/AFR comparison failure and checker-only correction.
@@ -294,24 +294,23 @@ functions:
       - Exact slave/advanced hardware mode audit remains per instance; neither master backend admits slave operation.
     - id: async_pio
       status: partial
-      scope: Ordinary-borrowed IRQ PIO full-duplex 4-16-bit word master on fourteen SPI instances across F020/F002/F003/L010/L011/L012/L031/R031/W031/L052.
+      scope: Ordinary-borrowed IRQ PIO full-duplex 4-16-bit word master on thirteen SPI instances across F020/F002/F003/L010/L011/L012/L031/R031/L052.
       limitations:
-      - Explicit spi_async_pio and spi_dma qualifications coexist on F020/L031/L052/R031/W031 and L012; neither implies the other. Existing package routes, clock bounds and blocking word widths remain authoritative.
+      - Explicit spi_async_pio and spi_dma qualifications coexist on F020/L031/L052/R031 and L012; neither implies the other. Existing package routes, clock bounds and blocking word widths remain authoritative.
       - All five word-generic async SpiBus methods keep at most one frame outstanding and at most one DR read and one DR write per poll; the ISR has no driver/future/caller-buffer pointers and never accesses DR.
       - Final error-free TXE=1/BUSY=0 is required; the BUSY tail self-wakes and consumes CPU with no built-in deadline, finite-liveness or low-power guarantee.
       - Cancelled/forgotten operations retain pending frame settlement; keep the original CS selected and successfully flush before deselecting or changing devices/configuration.
       - Errors use disabled destructive PIO recovery; driver Drop and forgotten-owner reconstruction can truncate work and are never successful wire completion.
       - Synchronous calls first attempt bounded settlement and may report PioBusy; set_config reports Busy without consuming a pending hardware error.
-      - Blocking and async constructors/Drop on these ten families fence stale static interest before pin/reset/gate changes. An inactive instance is skipped before ISR MMIO.
+      - Blocking and async constructors/Drop on these nine families fence stale static interest before pin/reset/gate changes. An inactive instance is skipped before ISR MMIO.
       - L012 SPI2/SPI3 require the complete SPI23 shared handler for PIO and DMA, dispatching PIO2/DMA2/PIO3/DMA3 with each active guard before MMIO; isolated banks and no shared NVIC disable/unpend remain. An unowned peer must already be quiescent or externally handled.
-      - W031 external SPI is unavailable during internal RF use; existing SPI1/GPIOB ownership restrictions remain. No RF coexistence or continuity claim.
       - PIO owners require no DMA or staging; widths use the existing sealed Word set. No automatic CS, generic cancellation-safe SpiDevice, early-abort acknowledgment, throughput or hardware-validation guarantee.
       - Wider PIO word support is a current software delta, not covered by historical byte-only receipts. DMA owners reject non-u8 words before MMIO, even for empty slices; no implicit backend fallback. Software acceptance is recorded in docs/unblocked-hal-extensions-validation.md; it does not itself establish publication.
       - Historical Stage89 main validation passed 14 standalone ARM libraries and 19 linked ELFs, all 33 exits zero, plus seven finite source/data commands. Main ran no canonical generation and all 910 generated files stayed unchanged.
       - L010F8P6 library/async/blocking rows and L011K8T6 library/async rows each retain three existing unused RCC LSE-constant warnings; the other 12 libraries and 16 ELFs were warning-free.
       - Independent Stage89 runtime and source/metadata reviews accepted that frozen implementation. At its main acceptance clean had not run; final-package completion requires a separate final-source 2-library/5-ELF replay and seven commands including one generation bootstrap. No hardware behavior is established.
       - Stage93 coexistence has separate main software acceptance and independent runtime and metadata/source reviews; its final-source 2-library/6-ELF clean replay had not run at main acceptance. Historical Stage89 receipts do not accept this change. Borrowed PIO constructors and destructive PIO recovery/Drop remain separate from static DMA ownership and permanent quarantine.
-      - The constructor fixes the backend behind one lifetime-generic async method/trait surface. The six dual-capable families, including L012, gain DMA-gated variants in the already non_exhaustive ConfigError and Error enums; preserved PIO signatures do not mean an unchanged variant set.
+      - The constructor fixes the backend behind one lifetime-generic async method/trait surface. The five dual-capable families, including L012, gain DMA-gated variants in the already non_exhaustive ConfigError and Error enums; preserved PIO signatures do not mean an unchanged variant set.
       - Stage94 adds native DMA on exactly L012 C8T6/C8U6 SPI1/SPI2/SPI3 while retaining borrowed PIO. Main 6-library/15-ELF verification and five finite main commands passed, with independent runtime/source acceptance. At main acceptance final-source clean had not run; completion requires its separate 2-library/6-ELF receipt. No hardware result is claimed.
       - DMA now uses the associated InterruptHandler bound; a generic wrapper constrained only to InterruptHandler<T> may require the associated-handler bound or a type equality even though concrete dedicated handlers retain their types.
       implemented_families:
@@ -323,7 +322,7 @@ functions:
       - CW32L012
       - CW32L031
       - CW32R031
-      - CW32W031
+
       - CW32L052
       pins_all:
       - SCK
@@ -337,22 +336,22 @@ functions:
       - path: examples/spi-async/src/bin/async_master.rs
     - id: safe_peripheral_dma
       status: experimental_partial
-      scope: Safe paired full-duplex master byte DMA and async SpiBus with private static TX/RX SRAM staging on F030/A030/L083, fourteen exact F020/L031/L052/R031/W031 parts and native SPI1/SPI2/SPI3 on exactly CW32L012C8T6/C8U6; Stage94 native main has separate software acceptance; at main acceptance final-source clean had not run and requires its own receipt, separate from historical Stage93 acceptance.
+      scope: Safe paired full-duplex master byte DMA and async SpiBus with private static TX/RX SRAM staging on F030/A030/L083, thirteen exact F020/L031/L052/R031 parts and native SPI1/SPI2/SPI3 on exactly CW32L012C8T6/C8U6; Stage94 native main has separate software acceptance; at main acceptance final-source clean had not run and requires its own receipt, separate from historical Stage93 acceptance.
       limitations:
-      - Nine families and sixteen family/controller pairs are declared. Historical Stage93 added five families, seven pairs and twenty selected exact-part/controller routes, bringing its scope to eight families/thirteen pairs. Its main passed 13 standalone ARM libraries and 24 linked ELFs in 37 actual Cargo invocations, all exiting zero; 24 dependent HAL archives are not additional standalone commands. Five finite source/data gates and the separate source-navigation refresh passed.
+      - Eight families and fifteen family/controller pairs are declared. Historical Stage93 added five families, seven pairs and twenty selected exact-part/controller routes, bringing its scope to eight families/thirteen pairs. Its main passed 13 standalone ARM libraries and 24 linked ELFs in 37 actual Cargo invocations, all exiting zero; 24 dependent HAL archives are not additional standalone commands. Five finite source/data gates and the separate source-navigation refresh passed.
       - Independent Stage93 runtime and metadata/source reviews accepted the bounded main result. Original M16 Cargo linking succeeded but retention failed with ENOSPC; reviewed recovery preserved that failed attempt, reused M01-M15 and retained original M16 outputs without another Cargo invocation, then built only M17-M37.
       - Stage93 L010F8P6/L011K8T6 library and async-PIO ELF rows each retained three existing unused RCC LSE-constant warnings; the other 11 libraries and 22 ELFs were warning-free. All 1478 frozen source files, 910 generated files and the recorded Rust/Cargo 1.99.0 toolchain remained unchanged; main ran no canonical generation.
       - At Stage93 main acceptance final capability reports and the separate final-source 2-library/6-ELF clean replay had not run. Final-package completion requires their separate receipts; main receipts remain bound to their frozen main inputs. No hardware result is claimed.
-      - F020 SPI1/SPI2, L031/R031/W031 SPI1 and L052 SPI1/SPI2 use own-qualified byte DR endpoints and RX/TX selectors 6/7 or 8/9. No alternative-AF or raw-request expansion follows.
-      - Exactly F020C6U7/K6U7/F6U7, L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, L052C8T6/R8S6/R8T6, R031C8U6 and W031R8U6 have the new exact SRAM admission; generic aliases retain MissingMemoryMetadata rejection.
+      - F020 SPI1/SPI2, L031/R031 SPI1 and L052 SPI1/SPI2 use own-qualified byte DR endpoints and RX/TX selectors 6/7 or 8/9. No alternative-AF or raw-request expansion follows.
+      - Exactly F020C6U7/K6U7/F6U7, L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, L052C8T6/R8S6/R8T6, R031C8U6 have the new exact SRAM admission; generic aliases retain MissingMemoryMetadata rejection.
       - Clean startup admission consumes whole static SPI/pins, two channels and two exclusive staging slices; caller memory never becomes a DMA endpoint. Sequential admission can consume the first channel when the second fails.
       - F020 has only CH1/DMACH1 and CH2/DMACH2; one permanently admitted pair serves one controller. SPI1/SPI2 DMA examples are separate deployments and clean Drop does not restore admission.
-      - L031/L052/R031/W031 use native CH1/DMACH1, CH2+CH3/DMACH23 and CH4/DMACH4. Shared handlers preserve sibling ownership/flags; there is no CH5.
+      - L031/L052/R031 use native CH1/DMACH1, CH2+CH3/DMACH23 and CH4/DMACH4. Shared handlers preserve sibling ownership/flags; there is no CH5.
       - Borrowed new_async PIO remains available on the five Stage93 DMA families and L012. The constructor fixes the backend; common lifetime-generic methods do not relax static DMA resources or provide switching.
-      - Already non_exhaustive ConfigError and Error gain existing DMA-gated variants on the six dual-capable families. Dedicated interrupt dispatch checks each separate backend active guard before MMIO.
+      - Already non_exhaustive ConfigError and Error gain existing DMA-gated variants on the five dual-capable families. Dedicated interrupt dispatch checks each separate backend active guard before MMIO.
       - The DMA constructor requires Binding<T::Interrupt, T::InterruptHandler>. A generic wrapper constrained only to Binding<T::Interrupt, InterruptHandler<T>> may need the associated bound or an appropriate type equality; preserved concrete classic bindings do not prove universal generic source compatibility.
-      - Existing 12 MHz maximum SCK and minimum divisor 2 on F020 or 4 on L031/L052/R031/W031 remain; safe package pins and exact memory bounds govern construction.
-      - R031 whole-GPIOA handover and W031 GPIOB/SPI1 restrictions remain; W031 external SPI is unavailable during internal RF use. No RF arbitration, coexistence or continuity is claimed.
+      - Existing 12 MHz maximum SCK and minimum divisor 2 on F020 or 4 on L031/L052/R031 remain; safe package pins and exact memory bounds govern construction.
+      - R031 whole-GPIOA handover restrictions remain. No RF arbitration, coexistence or continuity is claimed.
       - Stage94 adds only CW32L012C8T6/C8U6 SPI1/SPI2/SPI3, one family/three controller pairs/two parts/six selected routes. RX/TX selectors are 6/7, 8/9 and 10/11, with fixed native DR addresses and CR2 request RMW preserving sampled EN/unrelated bits; classic CR1 gates remain unchanged.
       - Native TYPE1/BLOCK/SIZE0/REPEAT1 descriptors reload REPEAT each chunk; SIZE0 selects SRAM bytes, not CPU byte MMIO or a peripheral-access width. Typed DR read clears RXNE. No native SDK SPI DMA cookbook is identified; RX-first arm/request order is a conservative engineering choice.
       - Native CH1/2 use DMACH12 IRQ9 and CH3/4 use DMACH34 IRQ10; IRQ11 remains CORDIC. Four physical channels permit at most two reserved full-duplex DMA pairs; clean Drop does not restore admission. Generic cw32l012 compiles the surface but retains MissingMemoryMetadata safe staging/admission rejection.
@@ -372,7 +371,7 @@ functions:
       - CW32L031
       - CW32L052
       - CW32R031
-      - CW32W031
+
       - CW32L012
       pins_all:
       - SCK
@@ -413,7 +412,7 @@ functions:
       - CW32L011
       - CW32L031
       - CW32R031
-      - CW32W031
+
       - CW32L052
       - CW32L083
       - CW32L012
@@ -965,7 +964,7 @@ functions:
       - CW32F003
       - CW32L031
       - CW32R031
-      - CW32W031
+
       - CW32L052
       - CW32L083
       limitations:
@@ -1003,7 +1002,7 @@ functions:
       - CW32F003
       - CW32L031
       - CW32R031
-      - CW32W031
+
       - CW32L052
       - CW32L083
       limitations:
@@ -1163,8 +1162,8 @@ functions:
       scope: Blocking calendar with preserved-state attach and explicit stopped-unset initialization.
       limitations:
       - Native L010/L011/L012 retain qualified HSIOSC and support held LSE on seven exact packages.
-        Classic RTCs use pretrimmed LSI, with held LSE on the previous sixteen exact x030/F020/L031/R031/W031/L052/L083 packages.
-        All twenty-three are listed in lse-qualified.yaml. Native StartupOnly can retain STABLE after loss;
+        Classic RTCs use pretrimmed LSI, with held LSE on fifteen retained exact x030/F020/L031/R031/L052/L083 packages.
+        These twenty-two supported packages are projected from the unchanged historical lse-qualified.yaml inventory. Native StartupOnly can retain STABLE after loss;
         MonitoredExistingRoutes retains configured fault routes and stable unchanged LSI. L010 uses inherited_legal;
         L011/L012 additionally require own factory_trim matching at 0x001007C2 with 41000/36080 Hz bounds.
         Native LSE uses SOURCE0 and PSC1=0/PSC2=0x3fff; later RTC activation retains the explicit downstream handover.
@@ -1391,15 +1390,15 @@ functions:
     modes:
     - id: bounded_api
       status: partial
-      scope: HSIOSC polling and IRQ-backed async coalesced events in run mode; owned board-qualified LSE additionally on exactly CW32F020C6U7, CW32F030C8T7, CW32A030C8T7, CW32L031C8T6, CW32L031C8U6, CW32L031F8U6, CW32R031C8U6 and CW32W031R8U6.
+      scope: HSIOSC polling and IRQ-backed async coalesced events in run mode; owned board-qualified LSE additionally on exactly CW32F020C6U7, CW32F030C8T7, CW32A030C8T7, CW32L031C8T6, CW32L031C8U6, CW32L031F8U6, CW32R031C8U6.
       limitations:
       - LSE construction consumes a genuine LseClock retaining SYSCTRL and PC14, plus PC15 in crystal mode. Generic aliases, other packages, F002/F003, LPTIM and RTC-internal AWT gain no LSE AWT API. Existing HSIOSC constructors and F002/F003 HEX selectors are unchanged.
-      - Private awt_lse admission checks the exact eight against existing qualification and typed LSE=3 in cw32f030_v1 or cw32l031_v1. No hardware schema, source-sharing owner or source mutation API is added. set_config stops and retains the selected source and its rational root bounds.
+      - Private awt_lse admission checks the exact seven against existing qualification and typed LSE=3 in cw32f030_v1 or cw32l031_v1. No hardware schema, source-sharing owner or source mutation API is added. set_config stops and retains the selected source and its rational root bounds.
       - ClockNotReady is a pre-AWT-write constructor admission observation. is_clock_ready is a snapshot of the existing selected-source predicate, not continuous monitoring, frequency measurement or a guarantee of a later edge. Qualified monitor policies remain source-specific.
       - Retained software or hardware UD is consumed independently of health. A pre-fault event can be returned after loss; without an event wait may remain pending indefinitely. Source loss supplies no driver wake or automatic AWT fallback; a deadline needs an independently waking valid source.
       - AWT configuration access depends on operational CPU/PCLK, gate and reset domains, independently of the selected counting source. EN and CNT observations do not establish source health, count progress or wall-clock passage.
       - Existing LseClock acquisition/reacquisition may temporarily open whole GPIOC for pad inspection, advancing retained filters and armed edges even before an error. Restoring its gate does not undo progress. AWT admission/readiness does not inspect pads or open GPIO banks.
-      - On L031/R031/W031, retained GPIOA/B/C/F FILTER7 uses AWT underflow; takeover, source/period changes, start/stop, Drop, forgetting and source loss can alter or stall filtering and external reactions. Classic FILTER7 is unqualified. No new recipient-bank scan or all-recipient-quiescence precondition is imposed.
+      - On L031/R031, retained GPIOA/B/C/F FILTER7 uses AWT underflow; takeover, source/period changes, start/stop, Drop, forgetting and source loss can alter or stall filtering and external reactions. Classic FILTER7 is unqualified. No new recipient-bank scan or all-recipient-quiescence precondition is imposed.
       - Drop stops AWT, masks its local event and clears active without gating/resetting, stopping LSE/LSI, releasing pads, clearing source faults or disabling/unpending NVIC. Forgetting may leave counting/IRQs active. Successful reconstruction clears old events; a pre-write failure preserves them.
       - A live Rtc already consumes its CalendarClock and cannot share the same LseClock owner. Dropped/forgotten RTC hardware and other retained LSE consumers remain untouched. No source extraction, fault recovery, low-power wake, Embassy time driver or hardware-validation claim.
       - Stage80 main produced 11 actual ARM libraries and 8 linked ELFs with zero warnings, from a successful library prefix and resumed ELF tail on identical source/toolchain. Generation, four finite source/data gates and the whole54/905 zero-delta comparison passed separately; independent runtime and metadata/source reviews accepted the frozen main implementation.
@@ -1614,7 +1613,7 @@ functions:
       status: experimental_partial
       scope: Unsafe borrowed-buffer software copy, blocking or IRQ-driven future; x030 also supports hardware requests.
       limitations:
-      - F030/A030/L083, F020, L031/L052/R031/W031 and L012 expose software copy; hardware-request constructors remain x030-only. Caller must retain forgotten borrows and enforce hardware exclusivity.
+      - F030/A030/L083, F020, L031/L052/R031 and L012 expose software copy; hardware-request constructors remain x030-only. Caller must retain forgotten borrows and enforce hardware exclusivity.
       - Drop waits for completion/error and can block forever; error or EN-clear does not prove bus drain or permit buffer reuse. No safe early abort.
       implemented_families: &id002
       - CW32A030
@@ -1624,13 +1623,13 @@ functions:
       - CW32L031
       - CW32L052
       - CW32R031
-      - CW32W031
+
       - CW32L012
     - id: unsafe_owned_copy
       status: experimental_partial
       scope: Owned static-buffer software copy with unsafe entry.
       limitations:
-      - F030/A030/L083, F020, L031/L052/R031/W031 and L012; verified SRAM metadata required. Clean completion returns buffers; errors reserve resources; forget leaks. Ownership
+      - F030/A030/L083, F020, L031/L052/R031 and L012; verified SRAM metadata required. Clean completion returns buffers; errors reserve resources; forget leaks. Ownership
         does not make the constructor safe or permit abort.
       implemented_families: *id002
     - id: safe_owned_copy
@@ -1648,7 +1647,7 @@ functions:
       - CW32L031
       - CW32L052
       - CW32R031
-      - CW32W031
+
       - CW32L012
       overrides:
       - families: [CW32L012]
@@ -1673,16 +1672,16 @@ functions:
         - Stage84 main passed 15 actual ARM library builds and 16 ELF links, all 31 commands exiting zero; generation and five finite source gates passed in documented segments.
         - Independent runtime and metadata/source reviews accepted the main work. Only L010F8P6/L011K8T6 library rows emitted three existing RCC warnings each; all F020 rows and ELF links were warning-free.
         - At main acceptance clean had not run; final-package completion requires a separate final-source 2-library/4-ELF clean receipt. No hardware result is claimed.
-      - families: [CW32L031, CW32L052, CW32R031, CW32W031]
-        scope: Safe init-admitted native four-channel CopyChannel SRAM copies on eleven exact selections.
+      - families: [CW32L031, CW32L052, CW32R031]
+        scope: Safe init-admitted native four-channel CopyChannel SRAM copies on ten exact selections.
         limitations:
-        - Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6; each has 64 KiB flash and 8 KiB SRAM at 0x20000000..0x20002000.
-        - Generic cw32l031/cw32l052/cw32r031/cw32w031 compile the controller/TX surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.
+        - Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6; each has 64 KiB flash and 8 KiB SRAM at 0x20000000..0x20002000.
+        - Generic cw32l031/cw32l052/cw32r031 compile the controller/TX surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.
         - CH1 uses DMACH1 IRQ9, CH2/3 share DMACH23 IRQ10 and CH4 uses DMACH4 IRQ11; no CH5. Typed native eight-field R1W0 commands preserve siblings and reserved bits.
         - Normal reset/clean-runtime entry and conservative one-time admission apply. Dirty state is rejected without reset/recovery; raw acquisition permanently revokes safe admission.
         - Only recorded TC without TE plus STATUS5 and SOFTSRC0 returns the same capability and exclusive static u8/u16/u32 buffers.
         - Errors or inconsistent completion permanently retain owners; forget leaks and Drop may block forever. No early abort, timeout recovery or new borrowed hardware API.
-        - R031 whole-GPIOA effects and W031 internal RF boundaries preserve existing functional handover obligations; no RF-safe handover/coexistence claim.
+        - R031 whole-GPIOA effects preserve existing functional handover obligations; no RF-safe handover/coexistence claim.
         - Stage85 main passed six standalone ARM library builds and 21 ELF links, all 27 commands exiting zero without warnings; generation, five finite source gates and the capability renderer passed in documented segments.
         - Three source checker preparation failures remain recorded; their corrections changed no HAL or example bytes. At main acceptance clean had not run; final-package completion requires a separate final-source 2-library/4-ELF clean receipt. No hardware result is claimed.
       evidence:
@@ -1694,7 +1693,7 @@ functions:
       status: unimplemented
       scope: Unsafe hardware-request transfer API; no peripheral lifecycle wrapper.
       limitations:
-      - Only x030 exposes unsafe borrowed hardware constructors. L083 UART/SPI RX/TX, F020/L031/L052/R031/W031 UART RX/TX and separately main-accepted Stage93 SPI RX/TX, and L012 UART TX plus Stage94 SPI RX/TX routes serve only their separately declared safe staged integration; Stage94 has separate main software acceptance; final-source clean had not run at main acceptance and requires its own receipt.
+      - Only x030 exposes unsafe borrowed hardware constructors. L083 UART/SPI RX/TX, F020/L031/L052/R031 UART RX/TX and separately main-accepted Stage93 SPI RX/TX, and L012 UART TX plus Stage94 SPI RX/TX routes serve only their separately declared safe staged integration; Stage94 has separate main software acceptance; final-source clean had not run at main acceptance and requires its own receipt.
       overrides:
       - families: [CW32A030, CW32F030]
         status: experimental_partial
@@ -1703,7 +1702,7 @@ functions:
         - Caller owns peripheral lifecycle, outstanding accesses and forgotten borrows; no safe cancellation.
     - id: safe_peripheral_dma
       status: experimental_partial
-      scope: Safe staged UART TX/RX and paired SPI master on F030/A030/L083 and fourteen exact F020/L031/L052/R031/W031 parts; exact L012 C8T6/C8U6 adds paired SPI1/SPI2/SPI3 while UART stays TX only. Stage94 native main has separate software acceptance; at main acceptance final-source clean had not run and requires its own receipt, separate from historical Stage93 acceptance.
+      scope: Safe staged UART TX/RX and paired SPI master on F030/A030/L083 and thirteen exact F020/L031/L052/R031 parts; exact L012 C8T6/C8U6 adds paired SPI1/SPI2/SPI3 while UART stays TX only. Stage94 native main has separate software acceptance; at main acceptance final-source clean had not run and requires its own receipt, separate from historical Stage93 acceptance.
       limitations:
       - Qualified SRAM, private static staging and normal reset/clean-runtime entry are required for every admitted profile; L083 ADC/LCD/timer and other unqualified peripheral requests remain outside this HAL scope.
       - Ordinary caller slices use private chunks; each split half retains its own lease, and clean completion permits reuse or RX tail delivery.
@@ -1718,7 +1717,7 @@ functions:
       - CW32L031
       - CW32L052
       - CW32R031
-      - CW32W031
+
       - CW32L012
       overrides:
       - families: [CW32L012]
@@ -1755,11 +1754,11 @@ functions:
         - Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without warnings. Both finite source checks passed after the preserved initial D01 PIN/AFR comparison failure and checker-only correction.
         - Independent Stage92 runtime and metadata/source reviews accepted the bounded main result. Main ran no canonical data generation and all 910 generated files stayed unchanged; UART/DMA runtime algorithms remain unchanged.
         - At Stage92 main acceptance final capability reports and the separate final-source 2-library/3-ELF clean replay had not run. No hardware result is claimed.
-      - families: [CW32L031, CW32L052, CW32R031, CW32W031]
-        scope: Safe staged byte UART TX, finite RX and combined/split DMA on eleven exact native four-channel selections; separate Stage93 SPI1 and L052 SPI2 paired byte DMA has main software acceptance, with final-source clean replay unrun at that point.
+      - families: [CW32L031, CW32L052, CW32R031]
+        scope: Safe staged byte UART TX, finite RX and combined/split DMA on ten exact native four-channel selections; separate Stage93 SPI1 and L052 SPI2 paired byte DMA has main software acceptance, with final-source clean replay unrun at that point.
         limitations:
-        - Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6 and CW32W031R8U6; each has 64 KiB Flash and 8 KiB SRAM at 0x20000000..0x20002000.
-        - Generic cw32l031/cw32l052/cw32r031/cw32w031 compile the controller/UART DMA surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.
+        - Exactly CW32L031C8T6/C8U6/F8P6/F8U6/K8U6/K8V6, CW32L052C8T6/R8S6/R8T6, CW32R031C8U6; each has 64 KiB Flash and 8 KiB SRAM at 0x20000000..0x20002000.
+        - Generic cw32l031/cw32l052/cw32r031 compile the controller/UART DMA surface but reject safe admission and staging with MissingMemoryMetadata; no memory fallback.
         - CH1 uses DMACH1 IRQ9, CH2/3 share DMACH23 IRQ10 and CH4 uses DMACH4 IRQ11; no CH5. Both shared handlers service only their own channel; typed native R1W0 commands preserve siblings and reserved bits.
         - Normal reset/clean-runtime entry and conservative one-time admission apply. Dirty state is rejected without reset/recovery; raw acquisition permanently revokes safe admission.
         - UART1/2/3 RX selectors 0/2/4 and TX selectors 1/3/5 may use any CH1..4, subject to safe package pins. Combined UART requires distinct TX/RX pins, distinct channels and independent exclusive static stages.
@@ -1769,7 +1768,7 @@ functions:
         - Static UART/channel/staging owners survive cancellation and forget; clean RX tails remain available. Clean retirement requires recorded TC without TE plus STATUS5, request closure and fencing before staging reuse; DMA faults permanently quarantine resources.
         - FE/PE returns promptly but recovery may wait indefinitely for the old DMA count. CPU copies and chunk/rearm gaps can lose frames without a loss count; TX flush separately waits for the wire.
         - SPI DMA has its separate declared scope; no other peripheral DMA consumers, new raw hardware requests, buffered-plus-DMA owner, RTS/CTS or idle/circular DMA, early abort, zero-copy or finite-liveness guarantee.
-        - R031 whole-GPIOA effects and W031 internal RF boundaries preserve existing functional handover obligations; no RF-safe handover/coexistence claim.
+        - R031 whole-GPIOA effects preserve existing functional handover obligations; no RF-safe handover/coexistence claim.
         - Historical Stage85 copy/TX main passed six ARM libraries and 21 ELF links, all 27 exiting zero without warnings; generation, five finite source gates and the renderer passed in documented segments. These results do not verify Stage92 RX.
         - Three Stage85 source-checker preparation failures remain recorded; corrections changed no HAL/example bytes. At that main acceptance its separate final-source 2-library/4-ELF clean receipt had not run. No hardware result is claimed.
         - Stage92 main passed eight standalone ARM libraries and 21 ELF links, all 29 exiting zero without warnings. Both finite source checks passed after the preserved initial D01 PIN/AFR comparison failure and checker-only correction.
@@ -1884,8 +1883,8 @@ functions:
         measurement or complete oscillator calibration.
     - id: factory_lsi_sysclk
       status: partial
-      scope: Init-only factory-qualified nominal 32800 Hz LSI SYSCLK on F020/F030/A030, exactly CW32F002F3P7/F3U7, CW32F003F4P7/F4U7/E4P7, CW32L031C8T6/C8U6/F8U6, CW32R031C8U6, CW32W031R8U6, CW32L052C8T6/R8S6/R8T6, CW32L083RBT6/RCT6/RCS6/MCT6/VCT6 and live-only CW32L010F8P6/F8U6/Y8M6, CW32L011K8T6/K8U6 and CW32L012C8T6/C8U6.
-      implemented_families: [CW32F002, CW32F003, CW32F020, CW32F030, CW32A030, CW32L031, CW32R031, CW32W031, CW32L052, CW32L083, CW32L010, CW32L011, CW32L012]
+      scope: Init-only factory-qualified nominal 32800 Hz LSI SYSCLK on F020/F030/A030, exactly CW32F002F3P7/F3U7, CW32F003F4P7/F4U7/E4P7, CW32L031C8T6/C8U6/F8U6, CW32R031C8U6R8U6, CW32L052C8T6/R8S6/R8T6, CW32L083RBT6/RCT6/RCS6/MCT6/VCT6 and live-only CW32L010F8P6/F8U6/Y8M6, CW32L011K8T6/K8U6 and CW32L012C8T6/C8U6.
+      implemented_families: [CW32F002, CW32F003, CW32F020, CW32F030, CW32A030, CW32L031, CW32R031, CW32L052, CW32L083, CW32L010, CW32L011, CW32L012]
       limitations:
       - L010 means CW32L010F8P6/F8U6/Y8M6 only, with 64 KiB Flash / 4 KiB SRAM and
         own 31816..33784 Hz at 1.62..5.5 V and -40..85 C. Original software LSIEN,
@@ -1967,17 +1966,6 @@ functions:
         an indirect RF-host effect. Existing functional handover permits whole-bank progress
         and keeps inherited RF XTAL_OCLK-fed HSE available. No RF access or hidden safe-Rust
         memory-safety precondition is added; restored gates do not prove RF continuity.
-      - W031 means CW32W031R8U6 only, QFN64, 64 KiB Flash / 8 KiB SRAM, with own
-        31816..33784 Hz at 2.0..3.6 V and -40..85 C. Generic W031 stays excluded.
-        The shared native executable sequence is unchanged. Main verification passed five
-        actual library builds, six ELF links, generation and six focused source/data commands.
-        Independent runtime/source and metadata/projection reviews accept the frozen main
-        implementation. At main acceptance, clean replay had not run; final-package completion
-        requires a separate clean one-library/one-ELF receipt. These results do not establish hardware behavior.
-      - W031 dedicated 32 MHz RFCLK is separate from its PCLK/SPI1 host path. Whole GPIOB
-        inspection can advance internal PB03/04/05/13 host and PB06 IRQ sampling/events,
-        including before failure. Functional handover permits this interval without a hidden
-        Rust memory-safety precondition or RF-state operation; restored gates cannot undo work.
       - L052 means CW32L052C8T6/R8S6/R8T6 only, with own 31816..33784 Hz at 1.65..5.5 V,
         VDDA=VDD and -40..85 C, 64 KiB Flash / 8 KiB SRAM. Generic L052 stays
         excluded; the independent exact-five L083 capability is declared below. The separate native
@@ -2018,7 +2006,7 @@ functions:
         two-library/three-ELF clean receipt. Future recipe
         totals are not receipts. The all-54 comparison permits five LSI capability additions and exact
         bonded PLL_OUT projections while preserving old electrical/RTC facts. No hardware result follows.
-      - Exact L031/R031/W031 cold admission checks RTC, AWT, UART1/2/3, GPIOA/B/C/F, MCO, PB11 AF and ready/NVIC
+      - Exact L031/R031 cold admission checks RTC, AWT, UART1/2/3, GPIOA/B/C/F, MCO, PB11 AF and ready/NVIC
         observers even for matching TRIM. PB11 is conservatively inspected on unbonded F8U6;
         FILTER7 means documented AWT overflow and is conservatively rejected. Native configurable
         CCS/LSELOCK and external ownership are retained, with no classic mandatory-CCS rule.
@@ -2026,7 +2014,7 @@ functions:
         checks retain their existing roster. F002/F003 check AWT, UART1/2, GPIOA/B/C, MCO and ready
         observers in two passes plus a post-trim use-edge pass, even if cold TRIM already matches.
         Running factory-matching LSI is reused without retrim or WAIT writes.
-      - Whole GPIOA/B/C on F002/F003, or GPIOA/B/C/F on classic and exact L031/R031/W031, inspection windows may advance sampling,
+      - Whole GPIOA/B/C on F002/F003, or GPIOA/B/C/F on classic and exact L031/R031, inspection windows may advance sampling,
         filters and armed events, even before failure. Software does not clear flags; they may change
         naturally. Restoring gates cannot undo progress; failed restore may leave a gate active.
       - F002/F003 cold preparation uses each family's own 0x001007BA factory halfword and typed ten-bit TRIM-only
@@ -2037,9 +2025,9 @@ functions:
         bits including ATIM bit7 are preserved. Existing API qualifications are unchanged.
       - Target LSIEN remains requested after enable attempts. HSI calibration can fail with HSI stopped
         while executing on LSI. No automatic rollback, runtime switching, source-loss or low-power recovery.
-      - Selected LSI SYSCLK/bus bounds are rate-only. Classic and exact L031/R031/W031/L052/L083 LsiClock/CalendarClock/RTC
+      - Selected LSI SYSCLK/bus bounds are rate-only. Classic and exact L031/R031/L052/L083 LsiClock/CalendarClock/RTC
         aliases remain rate-only under every SYSCLK, with nominal 32800/32768 calendar ticks unchanged;
-        excluded L031, generic R031/W031/L052/L083 and board LSE retain qualification.
+        excluded L031, generic R031/L052/L083 and board LSE retain qualification.
         F002/F003 gain none of those RTC APIs. Strict duration helpers
         and ADC reject this qualification; classic complementary PWM does too. Native ADC and buffered
         complementary PWM return UnqualifiedCycleTiming before their own device changes, including
@@ -2064,7 +2052,17 @@ functions:
       - path: embassy-cw32/src/rcc/l012/lsi_sysclk.rs
       - path: docs/l010-live-factory-lsi-sysclk.md
       - path: docs/l010-live-factory-lsi-qualification.json
-      - path: embassy-cw32/src/rcc/l010_l011.rs
+      - path: embassy-cw32/src/rcc/l010_l011/mod.rs
+      - path: embassy-cw32/src/rcc/l010_l011/io.rs
+      - path: embassy-cw32/src/rcc/l010_l011/inspection.rs
+      - path: embassy-cw32/src/rcc/l010_l011/lsi_sysclk.rs
+      - path: embassy-cw32/src/rcc/l010_l011/lse_sysclk.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/mod.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/admission.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/flash_bridge.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/calibrate_hsi.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/establish_hse.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/finish.rs
       - path: docs/f002-factory-lsi-sysclk.md
       - path: docs/f003-factory-lsi-sysclk.md
       - path: docs/l083-factory-lsi-sysclk.md
@@ -2098,16 +2096,16 @@ functions:
         anchor: config.rcc.sys = rcc::Sysclk::LSI
     - id: external_low_speed_sysclk
       status: partial
-      scope: Init-only nominal 32768 Hz LSE SYSCLK on twenty-three exact packages; classic3, exact5 L031/R031/W031, exact3 L052, exact5 L083, exact3 L010, exact2 L011 and exact2 L012.
-      implemented_families: [CW32F020, CW32F030, CW32A030, CW32L031, CW32R031, CW32W031, CW32L052, CW32L083, CW32L010, CW32L011, CW32L012]
+      scope: Init-only nominal 32768 Hz LSE SYSCLK on twenty-two exact packages; classic3, exact4 L031/R031, exact3 L052, exact5 L083, exact3 L010, exact2 L011 and exact2 L012.
+      implemented_families: [CW32F020, CW32F030, CW32A030, CW32L031, CW32R031, CW32L052, CW32L083, CW32L010, CW32L011, CW32L012]
       limitations:
       - Family aliases and every other exact package are excluded. Config.lse is the single source declaration;
         the same board every-cycle tuple supplies SYSCLK, buses and RTC.
-      - Classic3 retains mandatory CCS and its own stopped-source proof. Exact5 L031/R031/W031 preserves
+      - Classic3 retains mandatory CCS and its own stopped-source proof. Exact4 L031/R031 preserves
         CLKCCS/HSECCS, classifies dual-status factory LSI, and enables only fresh LSECCS. Matching cold LSI
         keeps TRIM/WAIT unchanged but can resume parked consumers; mismatched trim retains its own two-pass proof.
-      - On the previous sixteen packages, factory detector LSI stays requested. The target-only 129/256 software margin uses own rate maxima;
-        it proves no absolute jitter/window deadline and grants no new LSI SYSCLK capability to L031/R031/W031/L052/L083.
+      - On the fifteen retained prior packages, factory detector LSI stays requested. The target-only 129/256 software margin uses own rate maxima;
+        it proves no absolute jitter/window deadline and grants no new LSI SYSCLK capability to L031/R031/L052/L083.
       - Exact3 L052 means CW32L052C8T6, CW32L052R8S6 and CW32L052R8T6 only. Independent startup/run analog
         banks, unconditional native AUTOTRIM admission and preserved CLKCCS/HSECCS/LSELOCK apply.
       - L052 checks configured HSI at final dividers even without HSE or enabled CLKCCS, and separately covers
@@ -2203,7 +2201,17 @@ functions:
       - path: embassy-cw32/src/rcc/l012/inspection.rs
       - path: embassy-cw32/src/rcc/l012/lse_sysclk.rs
       - path: embassy-cw32/src/rcc/l012/lsi_sysclk.rs
-      - path: embassy-cw32/src/rcc/l010_l011.rs
+      - path: embassy-cw32/src/rcc/l010_l011/mod.rs
+      - path: embassy-cw32/src/rcc/l010_l011/io.rs
+      - path: embassy-cw32/src/rcc/l010_l011/inspection.rs
+      - path: embassy-cw32/src/rcc/l010_l011/lsi_sysclk.rs
+      - path: embassy-cw32/src/rcc/l010_l011/lse_sysclk.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/mod.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/admission.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/flash_bridge.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/calibrate_hsi.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/establish_hse.rs
+      - path: embassy-cw32/src/rcc/l010_l011/configure/finish.rs
       - path: embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs
       - path: embassy-cw32/src/rcc/l052_l083/lse_sysclk.rs
         anchor: static SUCCESS
@@ -2215,7 +2223,7 @@ functions:
         anchor: config.rcc.sys = rcc::Sysclk::LSE
     - id: external_high_speed
       status: partial
-      scope: Direct HSE oscillator/crystal or bypass on F020/F030/A030/L010/L011/L012/L031/R031/W031/L052/L083 and digital HEX on F002/F003.
+      scope: Direct HSE oscillator/crystal or bypass on F020/F030/A030/L010/L011/L012/L031/R031/L052/L083 and digital HEX on F002/F003.
       limitations:
       - Board declares independent minimum/nominal/maximum frequency and electrical conditions. Actual HSE
         interval 4..32 MHz; oscillator pads reserved; no runtime switching or clock-fault recovery guarantee.
@@ -2230,7 +2238,7 @@ functions:
       - CW32L012
       - CW32L031
       - CW32R031
-      - CW32W031
+
       - CW32L052
       - CW32L083
       pins_any: [HSE_IN, HEX_PB00, HEX_PB01]
@@ -2251,16 +2259,16 @@ functions:
           and active AWT ETR rejects new HEX requests.
         - Digital input only; no crystal drive, PLL, runtime switching, sleep/resume or clock-loss recovery.
           STABLE is a startup latch; loss can stop the CPU. No automatic fallback or wall-clock timeout guarantee.
-      - families: [CW32L031, CW32R031, CW32W031]
+      - families: [CW32L031, CW32R031]
         status: partial
         scope: Direct HSE crystal or bypass on exact bonded packages; one-time initialization only.
         limitations:
         - Explicit actual 4..32 MHz endpoints and board waveform/startup qualification. Retained factory HSI
-          restricts ambient to -40..85 C. Supply limits are L031 1.65..5.5 V, R031 2.2..3.6 V and W031 2.0..3.6 V.
+          restricts ambient to -40..85 C. Supply limits are L031 1.65..5.5 V, R031 2.2..3.6 V.
         - L031 QFN20 has no oscillator pads; broad aliases spanning it have no universal HSE route. Crystal
           reserves both pads and bypass only the input; inherited enabled HSE is reserved for the whole boot.
         - Preserve configurable CCS; unchanged legal LSI is retained for enabled HSE/LSE detectors. Frozen
-          rates are invalid after source loss or HSI fallback. HSI-only W031 qualification is unchanged.
+          rates are invalid after source loss or HSI fallback.
         - Retained RTC/AWT HSE requires exact ready parameter/pad reuse. Active AWT ETR rejects HSE;
           raw-HSI AWT/LVD owners reject required retrim. Relevant sticky fault flags are rejected, not cleared.
         - No PLL, RF configuration, runtime switching, sleep/resume, failed-entry recovery or clock-loss service.
@@ -2338,7 +2346,7 @@ functions:
         anchor: pub enum HseMode
       - path: embassy-cw32/src/rcc/l031_r031_w031/mod.rs
         anchor: pub enum HseMode
-      - path: embassy-cw32/src/rcc/l010_l011.rs
+      - path: embassy-cw32/src/rcc/l010_l011/mod.rs
         anchor: pub enum HseMode
       - path: docs/qualified-l010-l011-hse.md
       - path: embassy-cw32/src/rcc/l012/mod.rs
@@ -2409,13 +2417,13 @@ functions:
       - path: cw32-data/lse-ownership.yaml
     - id: external_low_speed
       status: partial
-      scope: Init-only nominal 32768 Hz crystal/bypass LSE and held RTC source on twenty-three exact source-qualified packages; previous nineteen plus two native L011 and two native L012 packages with own monitoring and handover contracts.
-      implemented_families: [CW32F030, CW32A030, CW32F020, CW32L031, CW32R031, CW32W031, CW32L052, CW32L083, CW32L010, CW32L011, CW32L012]
+      scope: Init-only nominal 32768 Hz crystal/bypass LSE and held RTC source on twenty-two exact source-qualified packages; eighteen retained prior packages plus two native L011 and two native L012 packages with own monitoring and handover contracts.
+      implemented_families: [CW32F030, CW32A030, CW32F020, CW32L031, CW32R031, CW32L052, CW32L083, CW32L010, CW32L011, CW32L012]
       limitations:
       - Other packages retain inherited-pad protection only. Every-cycle board bounds, waveform, drive and load qualification are required.
-      - None preserves LSE parameters and pads. The previous sixteen retain their existing CCS/monitor policies.
+      - None preserves LSE parameters and pads. The fifteen retained prior packages retain their existing CCS/monitor policies.
         Exact enabled reuse never restarts or changes the selected monitoring policy.
-      - L031/R031/W031/L052/L083 preserve calibrated LSI; only a repeatedly verified stopped unused source can load factory trim for a requested monitored LSE start. No live trim, source reset or IRQ acknowledgement.
+      - L031/R031/L052/L083 preserve calibrated LSI; only a repeatedly verified stopped unused source can load factory trim for a requested monitored LSE start. No live trim, source reset or IRQ acknowledgement.
       - L052 independently configures pre-start and run analog banks while disabled, rejects active/automatic AUTOTRIM calibration, preserves off LPTIM/LCD work gates, and checks its own RTC reset roster.
       - L083 has one analog bank, six native UART consumers, GPIO LCKR and exact-package LSI routes. It preserves off LPTIM/LCD work gates and rejects active/automatic AUTOTRIM calibration.
       - L083 requires 256 * LSE_min_hz > 129 * 33784 before peripheral acquisition or RCC writes. Its own 1.65..5.5 V and -40..85 C envelope, nominal 32768 Hz, per-cycle bounds and full board electrical qualification all apply. The previous sixteen qualifications and HSI/HSE/PLL successful paths are unchanged.
@@ -2436,7 +2444,7 @@ functions:
         No raw PINLOCK reuse is admitted for these two families. Native RTC LSE uses SOURCE0,PSC1=0,PSC2=0x3fff,
         and bounded source transitions stage division before switching; attach never repairs or retunes inherited state.
       - Failure retains source enables, pad reservations and diagnostics. Ordinary reset may not clear retained LSE controls; POR may be required.
-      - LSE system clock is separately qualified for twenty-three exact packages; classic3, exact5 L031/R031/W031,
+      - LSE system clock is separately qualified for twenty-two exact packages; classic3, exact4 L031/R031,
         exact3 L052, exact5 L083, exact3 L010, exact2 L011 and exact2 L012 above. The twenty-three auxiliary source qualifications remain unchanged.
         No runtime switching, automatic RTC fallback, clock-loss recovery, low-power or silicon qualification.
       registers_any:
@@ -2533,21 +2541,6 @@ functions:
     virtual_instances:
       CW32R031:
       - RADIO_BLE_LITE
-  radio_chirpiot:
-    register_kinds: []
-    evidence:
-    - path: sources/evidence-sources.json
-      anchor: vendor:CW32W031_DataSheet_CN_V1.3.pdf
-    modes:
-    - id: radio_stack
-      status: deferred_by_user
-      scope: RF implementation explicitly deferred by the user.
-      limitations:
-      - Radio subsystem exists outside the top-level SVD inventory; no HAL radio implementation or runtime
-        qualification is claimed.
-    virtual_instances:
-      CW32W031:
-      - RADIO_CHIRPIOT
 pin_policy:
   evidence:
   - path: embassy-cw32/build.rs
@@ -2599,10 +2592,6 @@ pin_policy:
     - PA14
     - PF3
     CW32R031:
-    - PA13
-    - PA14
-    - PF3
-    CW32W031:
     - PA13
     - PA14
     - PF3

@@ -5,6 +5,8 @@ import json
 import re
 import yaml
 
+from current_targets import retired_targets, historical_chip_path
+
 ROOT = Path(__file__).resolve().parents[1]
 profiles = yaml.safe_load((ROOT / 'cw32-data/rtc-alarms.yaml').read_text())['profiles']
 policy = yaml.safe_load((ROOT / 'cw32-data/register-writes.yaml').read_text())
@@ -44,7 +46,14 @@ for path in (ROOT / 'cw32-data/data/chips').glob('*.json'):
         if chip['line'] in ('CW32F002', 'CW32F003'):
             assert not any(p['name'] == 'RTC' for p in core['peripherals'])
             absent += 1
-assert count == 47 and absent > 0
+historical_retired_rtc = sum(
+    p['name'] == 'RTC'
+    for name in retired_targets()
+    for core in json.loads(historical_chip_path(ROOT / 'cw32-data/data/chips' / (name + '.json')).read_text())['cores']
+    for p in core['peripherals']
+)
+assert historical_retired_rtc == 2
+assert count == 47 - historical_retired_rtc and absent == 7
 hal = (ROOT / 'embassy-cw32/src/rtc/alarm.rs').read_text()
 assert 'Icr::write_noop()' in hal and not re.search(r'\bIcr\s*\(', hal)
 build = (ROOT / 'embassy-cw32/build.rs').read_text()

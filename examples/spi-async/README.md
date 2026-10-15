@@ -1,6 +1,8 @@
 # SPI byte master with interrupts
 
-Two ordinary loopback applications use the ten remaining SPI families' existing
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
+
+Two ordinary loopback applications use the nine remaining SPI families' existing
 full-duplex master configuration and exact package pin routes. `async_master`
 uses interrupt-assisted PIO and `embedded_hal_async::spi::SpiBus<u8>`; it needs
 no DMA channel or private staging buffer. `blocking_master` uses the existing
@@ -42,7 +44,6 @@ All pins are separate within a row. The CS column is GPIO, not hardware NSS.
 | same | same | SPI3 | PA9 | PA11 | PA10 | 8 | PB2 |
 | cw32l031c8t6 | LQFP48; 64/8 KiB | SPI1 | PA5 | PA7 | PA6 | 5 | PB0 |
 | cw32r031c8u6 | QFN48; 64/8 KiB | SPI1 | PA5 | PA7 | PA6 | 5 | PB0 |
-| cw32w031r8u6 | QFN64; 64/8 KiB | SPI1 | PA5 | PA7 | PA6 | 5 | PB0 |
 | cw32l052c8t6 | LQFP48; 64/8 KiB | SPI1 | PA5 | PA7 | PA6 | 5 | PB0 |
 | same | same | SPI2 | PA2 | PA1 | PA0 | 5 | PB1 |
 
@@ -66,12 +67,7 @@ packages: SPI1 SCK/MOSI/MISO pads15/17/16 and CS pad18; SPI2 pads12/11/10 and
 CS pad19; SPI3 pads30/32/31 and CS pad20. GPIO CS does not qualify hardware
 NSS. The generated pin metadata does not itself contain physical pad numbers.
 
-W031's internal RF host uses the same SPI1 controller. This external SPI
-application requires RF not in use; safe external pad names do not create
-independent RF ownership. Preserve the existing SPI/RF and whole-GPIOB
-initialization/clock-inspection boundary described in
-[the W031 ownership documentation](../../docs/qualified-w031-lsi-sysclk.md).
-There is no RF command, reset, arbitration or continuity guarantee here.
+
 
 ## Application behavior
 
@@ -105,7 +101,7 @@ completion indefinitely; this example adds no timeout or throughput promise.
 
 ## Build
 
-Select exactly one of the eleven exact features above. A family alias, a
+Select exactly one of the ten exact features above. A family alias, a
 package-less memory-size alias, or multiple selections cannot substitute for
 one of these packages. `build.rs` checks the selected chip name, family, SPI IP,
 all controller addresses and IRQ owners, selected signal/AF pins, distinct CS

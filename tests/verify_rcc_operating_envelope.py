@@ -3,6 +3,8 @@
 import hashlib,json,os,re,subprocess
 from pathlib import Path
 import yaml
+from current_targets import historical_chip_path
+from current_targets import is_retired
 ROOT=Path(__file__).resolve().parents[1]
 SOURCES=Path(os.environ.get('CW32_SOURCES',str(ROOT.parent/'cw32-sources')))
 P=json.loads((ROOT/'docs/rcc-operating-envelope.json').read_text())
@@ -49,6 +51,6 @@ for f in P['families']:
  assert values['high_voltage_bus_max_hz']==f['absolute_rated_bus_max_hz']
  assert values['low_voltage_threshold_mv']==1800 and values['low_voltage_bus_max_hz']==24_000_000
  assert values['initial_flash_wait']==f['flash']['candidate_initial_wait']
- chip=json.loads((ROOT/f"cw32-data/data/chips/{f['family']}.json").read_text())
+ chip=json.loads(historical_chip_path((ROOT/f"cw32-data/data/chips/{f['family']}.json")).read_text())
  assert next(p for p in chip['cores'][0]['peripherals'] if p['name']=='SYSCTRL')['clock_limits']==values
 print(f'PASS {len(seen)} own source hashes; all 13 voltage/Flash tables and authored/generated metadata; no HAL runtime claim')

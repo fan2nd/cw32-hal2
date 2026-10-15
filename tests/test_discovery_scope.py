@@ -33,6 +33,40 @@ class DiscoveryScopeTests(unittest.TestCase):
     def setUpClass(cls):
         cls.lock = a.load_manifest(a.MANIFEST)
         cls.pages = [row for row in cls.lock['artifacts'] if discovery_only(row)]
+        # Independent expected inventory: exclude only the two named HTML paths,
+        # not the production scope predicate being tested.
+        cls.hardware_paths = cls.output_paths([
+            row for row in cls.lock['artifacts'] if row['path'] not in DISCOVERY_URLS
+        ], cls.lock['generated_metadata'])
+
+    @staticmethod
+    def output_paths(rows, metadata):
+        paths = [spec['path'] for row in rows
+                 for spec in [row, *row.get('members', []),
+                              *([row['text']] if 'text' in row else [])]]
+        paths.extend(metadata)
+        if len(paths) != len(set(paths)):
+            raise AssertionError('duplicate evidence output path')
+        return set(paths)
+
+    def assert_hardware_outputs(self, rows):
+        self.assertEqual(self.output_paths(rows, self.lock['generated_metadata']), self.hardware_paths)
+
+    def test_output_inventory_rejects_duplicate_omitted_and_reclassified_members(self):
+        rows = copy.deepcopy(scope_artifacts(self.lock))
+        parent = next(row for row in rows if row.get('members'))
+        parent['members'].append(copy.deepcopy(parent['members'][0]))
+        with self.assertRaisesRegex(AssertionError, 'duplicate'):
+            self.assert_hardware_outputs(rows)
+        for replacement in (None, 'unknown/substituted-member.h'):
+            rows = copy.deepcopy(scope_artifacts(self.lock))
+            parent = next(row for row in rows if row.get('members'))
+            if replacement is None:
+                parent['members'].pop()
+            else:
+                parent['members'][0]['path'] = replacement
+            with self.subTest(replacement=replacement), self.assertRaises(AssertionError):
+                self.assert_hardware_outputs(rows)
 
     def fixture(self, directory):
         lock = copy.deepcopy(self.lock)
@@ -52,8 +86,7 @@ class DiscoveryScopeTests(unittest.TestCase):
         self.assertEqual({row['path'] for row in self.pages}, set(DISCOVERY_URLS))
         self.assertEqual(len(scope_artifacts(self.lock)), 43)
         self.assertEqual(len(scope_artifacts(self.lock, True)), 45)
-        self.assertEqual(sum(1 + len(row.get('members', [])) + ('text' in row)
-                             for row in scope_artifacts(self.lock)) + len(self.lock['generated_metadata']), 553)
+        self.assert_hardware_outputs(scope_artifacts(self.lock))
         self.assertFalse(any(discovery_only(row) for row in scope_artifacts(self.lock)))
 
     def test_other_artifacts_members_text_and_scope_identity_cannot_be_reclassified(self):
@@ -124,7 +157,7 @@ class DiscoveryScopeTests(unittest.TestCase):
                     a.main(['--source-root', d, '--verify'])
                 report = json.loads(output.getvalue().splitlines()[-1])
                 self.assertEqual(report['existing'], 43)
-                self.assertEqual(report['outputs'], 553)
+                self.assertEqual(report['outputs'], len(self.hardware_paths))
                 self.assertEqual(report['required_originals'], 43)
                 self.assertEqual(report['catalogued_originals'], 45)
                 self.assertEqual(len(report['omitted_discovery']), 2)
@@ -142,7 +175,7 @@ class DiscoveryScopeTests(unittest.TestCase):
                     a.main(['--source-root', d, '--verify', '--include-discovery'])
                 report = json.loads(output.getvalue().splitlines()[-1])
                 self.assertEqual(report['existing'], 45)
-                self.assertEqual(report['outputs'], 555)
+                self.assertEqual(report['outputs'], len(self.hardware_paths | set(DISCOVERY_URLS)))
                 self.assertEqual(report['omitted_discovery'], [])
                 self.assertTrue(report['complete_manifest'])
 

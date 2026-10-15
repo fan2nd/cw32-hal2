@@ -187,8 +187,7 @@ impl OperatingConditions {
     /// L010 permits 1.62–5.5 V, L011/L012 1.7–5.5 V, and other non-radio
     /// families 1.65–5.5 V. All permit at most 24 MHz below 1.8 V.
     /// At >=1.8 V, L011/L012 permit 96 MHz, F030/A030/L083 64 MHz,
-    /// and others 48 MHz. R031 requires 2.2–3.6 V. W031 conservatively requires
-    /// 2.0–3.6 V, valid for either RF supply mode.
+    /// and others 48 MHz. R031 requires 2.2–3.6 V.
     ///
     /// # Safety
     /// The board must actually sustain these bounds, including supply transients

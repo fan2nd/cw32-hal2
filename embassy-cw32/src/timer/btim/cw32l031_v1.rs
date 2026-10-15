@@ -1,4 +1,4 @@
-//! L031/R031/W031/L083 linear-PSC adapter and L052's CR/ETR naming variant.
+//! L031/R031/L083 linear-PSC adapter and L052's CR/ETR naming variant.
 use super::{Registers, Timing, pac};
 impl Registers for pac::btim::Btim {
     const FLAGS: u32 = 0x7;

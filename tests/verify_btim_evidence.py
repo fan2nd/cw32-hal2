@@ -4,6 +4,8 @@ import hashlib
 import json
 import os
 from pathlib import Path
+from current_targets import active_names, historical_chip_path
+
 ROOT=Path(__file__).resolve().parents[1]
 e=json.loads((ROOT/'docs/btim-counter-evidence.json').read_text())
 assert len(e['families'])==13
@@ -31,7 +33,7 @@ for family,item in e['families'].items():
  key=next((f for f in sys['fieldset/APBEN2']['fields'] if f['name']=='KEY'),None)
  assert bool(key)==modern
  for feature in item['declared_features']:
-  chip=json.loads((ROOT/'cw32-data/data/chips'/(feature.upper()+'.json')).read_text())
+  chip=json.loads(historical_chip_path(ROOT/'cw32-data/data/chips'/(feature.upper()+'.json')).read_text())
   timers={p['name']:p for p in chip['cores'][0]['peripherals'] if p['name'].startswith('BTIM')}
   assert set(timers)=={'BTIM1','BTIM2','BTIM3'}
   assert {name:p['address'] for name,p in timers.items()}==item['instances']
@@ -130,9 +132,9 @@ assert set(families) == {
 }
 selections = [selection for facts in families.values() for selection in facts['normalized_selections']]
 assert len(selections) == len(set(selections)) == 54
-assert {path.stem for path in (ROOT / 'cw32-data/data/chips').glob('*.json')} == set(selections)
+assert {path.stem for path in (ROOT / 'cw32-data/data/chips').glob('*.json')} == active_names(selections)
 features = tomllib.loads((ROOT / 'embassy-cw32/Cargo.toml').read_text())['features']
-assert {name.upper() for name in features if name.startswith('cw32')} == set(selections)
+assert {name.upper() for name in features if name.startswith('cw32')} == active_names(selections)
 assert {facts['ip_version'] for facts in families.values()} == versions
 assert families['CW32A030']['manual'] == families['CW32F030']['manual'] == 'CW32x030_UserManual_CN_V2.5.pdf'
 assert families['CW32A030']['sdk'] == 'CW32F030'
@@ -179,7 +181,7 @@ for family, facts in families.items():
     assert set(expected_instances) == {'BTIM1', 'BTIM2', 'BTIM3'}
     assert cmsis_irqs[facts['sdk']] == {instance['irq']: instance['number'] for instance in facts['instances']}, family
     for selection in facts['normalized_selections']:
-        chip = json.loads((ROOT / f'cw32-data/data/chips/{selection}.json').read_text())
+        chip = json.loads(historical_chip_path(ROOT / f'cw32-data/data/chips/{selection}.json').read_text())
         assert chip['line'] == family and chip['name'] == selection
         assert len(chip['cores']) == 1
         core = chip['cores'][0]

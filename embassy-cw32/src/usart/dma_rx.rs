@@ -262,7 +262,7 @@ impl RxDma {
 impl UartRx<'static, Async> {
     /// Create a safe finite-chunk DMA receiver without RTS.
     ///
-    /// Qualified families are F030/A030/L083 and F020/L031/L052/R031/W031;
+    /// Qualified families are F030/A030/L083 and F020/L031/L052/R031;
     /// each selected package still requires safe RX pins and SRAM metadata.
     ///
     /// Consumes static UART, RX pin, an admitted compatible channel and private

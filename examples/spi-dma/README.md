@@ -1,15 +1,17 @@
 # Staged SPI DMA firmware
 
+Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
+
 The primary Cortex-M0+ application, `cw32-spi-dma-example`, supports
 CW32F030C8T7, CW32A030C8T7, the five exact L083 packages RBT6, RCS6, RCT6,
-MCT6 and VCT6, and these five Stage93 representatives: CW32F020C6U7,
-CW32L031C8T6, CW32L052C8T6, CW32R031C8U6 and CW32W031R8U6. It owns SPI1
+MCT6 and VCT6, and these four retained Stage93 representatives: CW32F020C6U7,
+CW32L031C8T6, CW32L052C8T6, CW32R031C8U6. It owns SPI1
 (PA5 SCK, PA7 MOSI, PA6 MISO, all AF5) and PB0 active-low chip select.
 
 | SPI1 selection | TX / RX channels | DMA handlers | CS speed |
 | --- | --- | --- | --- |
 | F020C6U7 | CH2 / CH1 | DMACH2 / DMACH1 | `Speed::High` |
-| L031C8T6, L052C8T6, R031C8U6, W031R8U6 | CH3 / CH2 | Both on DMACH23 | `Speed::Default` |
+| L031C8T6, L052C8T6, R031C8U6 | CH3 / CH2 | Both on DMACH23 | `Speed::Default` |
 | F030C8T7, A030C8T7 | CH3 / CH2 | Both on DMACH23 | `Speed::High` |
 | Existing L083 exact packages | CH3 / CH2 | Both on DMACH23 | `Speed::Default` |
 
@@ -56,7 +58,7 @@ DMA, including receive discard and zero dummy transmission. The 16/24-byte
 private buffers remain owned throughout. L083 retains its existing maximum
 12 MHz SCK policy and supported divisors 4 through 128.
 
-The five new families also retain IRQ PIO constructors. Each owner selects its
+The four retained extension families also retain IRQ PIO constructors. Each owner selects its
 backend at construction: `new_with_dma` requires static peripheral, pin and
 channel owners, interrupt proof and exclusive static staging; `new_async` retains borrowed PIO ownership. Common async methods keep that
 installed backend. PIO on the other F020 controller remains useful while the
@@ -70,12 +72,10 @@ halts while retaining the selection and poisoned bus. Completed chunks may
 already be visible before later cancellation/error. Chunk boundaries can pause
 arbitrarily; DMA arbitration can still cause receive overrun.
 
-These representative firmware selections do not cover all fourteen newly
+These representative firmware selections do not cover all thirteen retained
 source-qualified exact parts. F020F6U7 and L031F8P6/F8U6 lack PB0 and need a
 separately chosen bonded software CS, such as PB1, in a future application.
-R031 retains its whole-GPIOA handover implications. W031 external SPI1 must not
-be used during internal RF use; GPIO routing and DMA provide no RF arbitration
-or coexistence. L012 SPI DMA remains excluded.
+R031 retains its whole-GPIOA handover implications.
 
 Build from the repository root with the project's Rust/Cargo toolchain:
 
@@ -84,7 +84,7 @@ cargo build --offline --locked --release --bins --target thumbv6m-none-eabi \
   --manifest-path examples/spi-dma/Cargo.toml --no-default-features --features cw32f030c8t7
 cargo build --offline --locked --release --bins --target thumbv6m-none-eabi \
   --manifest-path examples/spi-dma/Cargo.toml --no-default-features --features cw32a030c8t7
-for chip in cw32f020c6u7 cw32l031c8t6 cw32l052c8t6 cw32r031c8u6 cw32w031r8u6; do
+for chip in cw32f020c6u7 cw32l031c8t6 cw32l052c8t6 cw32r031c8u6; do
   cargo build --offline --locked --release --bins --target thumbv6m-none-eabi \
     --manifest-path examples/spi-dma/Cargo.toml --no-default-features --features "$chip"
 done

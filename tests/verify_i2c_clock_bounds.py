@@ -12,6 +12,7 @@ import re
 import subprocess
 import yaml
 
+from current_targets import historical_chip_path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = Path(os.environ.get('CW32_SOURCES', str(ROOT.parent / 'cw32-sources')))
 POLICY = json.loads((ROOT / 'docs/i2c-clock-bounds-sources.json').read_text())
@@ -85,7 +86,7 @@ def main():
         assert waveform[key] == values, (key, waveform[key], values)
         assert 'crate::I2C_TIMING_' + key.upper() + '[index]' in l012
     for family, profile in catalog['profiles'].items():
-        chip = json.loads((ROOT / f'cw32-data/data/chips/{family}.json').read_text())
+        chip = json.loads(historical_chip_path((ROOT / f'cw32-data/data/chips/{family}.json')).read_text())
         values = profile['i2c_limits']
         assert values['maximum_frequency_hz'] == POLICY['families'][family]['maximum_scl_hz']
         for peripheral in chip['cores'][0]['peripherals']:

@@ -17,6 +17,8 @@ import sys
 import yaml
 from route_metadata import hardware_facts
 
+from current_targets import historical_chip_path
+from current_targets import is_retired
 ROOT = Path(__file__).resolve().parents[1]
 FAMILIES = ('F002', 'F003', 'L031', 'R031', 'W031', 'L052', 'L083')
 PINS_SMALL = ['PB2', 'PA1', 'PA4', 'PA6', 'PA7', 'PC0', 'PC1', 'PC2', 'PB0', 'PB1', 'PB6', 'PB5', 'PB3']
@@ -152,7 +154,11 @@ def verify_generated(data_dir, profile):
     sets = []
     counts = []
     for part in [p['name'] for p in pinouts['packages']] + [profile]:
-        core = read(data_dir / 'chips' / (part+'.json'))['cores'][0]
+        current = data_dir / 'chips' / (part + '.json')
+        if is_retired(part):
+            assert not current.exists(), 'retired target in selected generated directory'
+            current = ROOT / 'cw32-data/data/chips' / current.name
+        core = read(historical_chip_path(current))['cores'][0]
         pins = {p['name'] for p in core['pins']}
         adc = next(p for p in core['peripherals'] if p['name'] == 'ADC')
         assert adc['registers']['version'] == SPECS[profile[4:]][4]

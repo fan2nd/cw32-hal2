@@ -15,6 +15,8 @@ import xml.etree.ElementTree as ET
 from reviewed_metadata import projection_errors, pin_projection, gpio_names
 import yaml
 
+from current_targets import is_retired, historical_chip_path
+
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "cw32-data/data"
 
@@ -199,7 +201,8 @@ class MetadataContracts(unittest.TestCase):
     def test_exact_package_labels_and_memory_match_catalog(self):
         for part in self.parts:
             with self.subTest(part=part["name"]):
-                chip = self.chips[part["name"]]
+                chip = (json.loads(historical_chip_path(ROOT / 'cw32-data/data/chips' / (part['name'] + '.json')).read_text())
+                        if is_retired(part['name']) else self.chips[part['name']])
                 self.assertEqual(chip["packages"], pin_projection(chip, self.manifests[chip["line"]])[0])
                 self.assertEqual(chip["memory"], [part["memory"]])
 
