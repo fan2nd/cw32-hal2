@@ -1,5 +1,9 @@
 # L012 ordinary UART nine-bit payloads
 
+This document records the L012 qualification. Current L010/L011 support and
+its pending acceptance are described in [native UART scope](uart-native-word-half-duplex.md).
+
+
 This delta qualifies L012 UART1/2/3 ordinary blocking and IRQ-assisted PIO for
 nine data bits without parity. Existing pin, package, clock and interrupt
 qualification remains unchanged. `Config::data_bits` defaults to

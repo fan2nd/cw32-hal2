@@ -92,8 +92,12 @@ follows the manual and selects COMP=0, rather than copying that example.
 Q1.31 cannot encode +1. The manuals do not specify rounding/saturation at exact
 sin/cos unit endpoints, so the API returns hardware bits without correcting or
 promising endpoint handling. Convergence qualification does not establish an
-accuracy bound. Full-quadrant phase, Q1.15, IRQ, DMA and automatic range extension
-are not exposed. These missing modes are not marked complete.
+accuracy bound. Full-quadrant phase, Q1.15, DMA and automatic range extension are not exposed.
+IRQ operation has its separate [async contract](cordic-async.md). Q1.15 requires
+operand/result alignment in the 32-bit X/Y/Z registers and K-factor behavior
+to be established: §12.3 defines signed 16-bit values, but §12.6.2–4 only lists
+32-bit fields, while §12.6.1 limits COMP to Q1.31 hypot/sqrt. Selecting FORMAT=0
+alone does not establish these contracts.
 
 ## Ownership, gates, reset and bounded behavior
 

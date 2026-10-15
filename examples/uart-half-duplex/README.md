@@ -1,23 +1,18 @@
-# L012 UART single-wire request/response initiators
+# Native single-wire UART examples
 
-Build either exact package using the release profile:
+Select exactly one feature:
 
-    cargo build --release --target thumbv6m-none-eabi --features cw32l012c8t6 --bins
-    cargo build --release --target thumbv6m-none-eabi --features cw32l012c8u6 --bins
+| Feature | UART | TXD | RXD |
+| --- | --- | --- | --- |
+| `cw32l010f8p6` | UART2 | PA3 | PA4 |
+| `cw32l011k8t6` | UART3 | PA4 | PA5 |
+| `cw32l012c8t6` / `cw32l012c8u6` | UART1 | PA2 | PA3 |
 
-The `blocking` and `async_turns` binaries use UART1 PA2 as a bidirectional
-open-drain line, 115200 baud, eight data bits, no parity, one stop bit.
-Connect PA2 to a compatible single-wire peer with common ground and an external
-pull-up appropriate to the voltage, line capacitance and desired baud. RXD PA3
-is unused. Do not connect the board's TXD to its RXD as a loopback test.
+Only TXD is consumed; RXD remains free. Add an external pull-up and common
+ground. Both examples send `0x55` and wait for one response byte, using eight
+data bits and no parity. The peer must wait for the request to finish and
+release the line after responding. Reads flush TX before receiving. No peer,
+arbitration, timeout or turnaround guarantee is supplied.
 
-Each initiator sends 0x55, then reads exactly one response byte. The peer must
-wait until the request's final stop bit, send one byte, and release the bus.
-The read implicitly flushes local queued TX first. The peer is not supplied,
-no timeout/recovery is implemented, and the code may wait indefinitely.
-Applications must establish turn-taking; this driver does not arbitrate or
-provide collision detection. No board, pull-up, peer-timing or signal-integrity
-test is implied by a successful build.
-
-See ../../docs/uart-l012-half-duplex.md for lifetime, cancellation, destructive
-Drop, nine-bit and supported-empty-read contracts.
+L010/L011 changes have not been compiled or run. Board acceptance remains
+pending. See [source and API scope](../../docs/uart-native-word-half-duplex.md).

@@ -30,8 +30,9 @@ and generators; `firmware/Cargo.toml` contains HAL/PAC. `cw32-metapac/` is gener
 See [capability declarations](tools/hal-capabilities.yaml),
 [inventory format](docs/functional-coverage.md) and [pending work](todo.md).
 
-- UART: blocking/IRQ, buffered receive and qualified finite DMA. L012 UART DMA
-  remains TX-only. Nine-bit and half-duplex support are limited to L012 PIO.
+- UART: blocking/IRQ, buffered receive and qualified finite DMA.
+  L010/L011/L012 support nine-bit PIO and single-wire half duplex. L012 UART DMA
+  remains TX-only. The L010/L011 word/half-duplex extension awaits acceptance.
 - Buffered UART on L010/L011/L012 returns an unread-queue position and error
   snapshot on idle, with optional four-marker continuous capture and explicit
   overflow. This is untested and does not identify wire packet boundaries.

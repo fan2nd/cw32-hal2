@@ -42,7 +42,7 @@ pub enum Oversampling {
 pub enum DataBits {
     /// Eight data bits, with optional parity.
     DataBits8,
-    /// Nine data bits without parity. Qualified only for L012 ordinary PIO.
+    /// Nine data bits without parity. Qualified only for L010/L011/L012 ordinary PIO.
     DataBits9,
 }
 
@@ -54,7 +54,7 @@ impl DataBits {
             Err(Error::WordSizeMismatch)
         }
     }
-    #[cfg(uart_cw32l012_v1)]
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
     pub(super) fn mask(self) -> u16 {
         match self {
             Self::DataBits8 => 0xff,
@@ -69,7 +69,7 @@ impl DataBits {
 pub struct Config {
     /// Requested baud rate in bits per second.
     pub baudrate: u32,
-    /// Data bits. Nine-bit payloads require the L012 ordinary PIO u16 APIs.
+    /// Data bits. Nine-bit payloads require the L010/L011/L012 ordinary PIO u16 APIs.
     pub data_bits: DataBits,
     /// Parity bit configuration. Nine data bits plus parity are unsupported.
     pub parity: Parity,
@@ -144,7 +144,7 @@ pub enum Error {
     /// A byte API cannot represent the configured nine-bit payload.
     WordSizeMismatch,
     /// u16-container operations are not provided by the selected DMA backend.
-    #[cfg(uart_cw32l012_v1)]
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
     UnsupportedWordTransfer,
     /// Received parity did not match.
     Parity,
@@ -173,7 +173,7 @@ impl core::fmt::Display for Error {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.write_str(match self {
             Self::WordSizeMismatch => "UART byte API cannot represent nine-bit data",
-            #[cfg(uart_cw32l012_v1)]
+            #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
             Self::UnsupportedWordTransfer => "UART u16 API requires ordinary PIO",
             Self::Parity => "UART parity error",
             Self::Framing => "UART frame error",
@@ -223,7 +223,7 @@ impl embedded_io::Error for Error {
     fn kind(&self) -> embedded_io::ErrorKind {
         match self {
             Self::BufferOverflow | Self::WordSizeMismatch => embedded_io::ErrorKind::Other,
-            #[cfg(uart_cw32l012_v1)]
+            #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
             Self::UnsupportedWordTransfer => embedded_io::ErrorKind::Other,
             #[cfg(any(uart_dma_tx, uart_dma_rx))]
             Self::DmaBusy | Self::DmaQuarantined | Self::Dma(_) => embedded_io::ErrorKind::Other,
@@ -248,9 +248,9 @@ pub(super) fn configured_baud<T: Instance>(config: Config) -> Result<Baud, Confi
 }
 fn validate_config(config: Config) -> Result<(), ConfigError> {
     if config.data_bits == DataBits::DataBits9 {
-        #[cfg(not(uart_cw32l012_v1))]
+        #[cfg(not(any(uart_cw32l010_v1, uart_cw32l012_v1)))]
         return Err(ConfigError::UnsupportedDataBits);
-        #[cfg(uart_cw32l012_v1)]
+        #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
         if config.parity != Parity::ParityNone {
             return Err(ConfigError::InvalidParity);
         }

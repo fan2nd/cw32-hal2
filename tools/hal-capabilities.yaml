@@ -60,28 +60,34 @@ functions:
         service; non-L010/L011/L012 UARTs can overwrite without an overrun flag.
     - id: nine_bit_pio
       status: partial
-      scope: L012 ordinary UART1/2/3 blocking and IRQ PIO nine-data-bit payloads without parity, through u16-container methods.
+      scope: L010/L011/L012 ordinary UART blocking and IRQ PIO nine-data-bit payloads without parity, through u16-container methods.
       implemented_families:
+      - CW32L010
+      - CW32L011
       - CW32L012
       limitations:
-      - Existing package pins, clock and IRQ qualification only. Other families reject nine-bit configuration; byte methods on nine-bit owners reject before activity even for empty transfers.
-      - Buffered and staged DMA constructors remain byte-only; u16 transfers on a DMA owner reject without implicit PIO fallback. No nine-bit idle API, address filtering, LIN or half-duplex expansion.
-      - Current software acceptance is recorded in docs/l012-extensions-validation.md; publication is established separately by its containing commit; no hardware validation or new L012 RX DMA handshake claim.
+      - Existing package pins, clock and IRQ qualification only. Non-native families reject nine-bit configuration; byte methods on nine-bit owners reject before activity even for empty transfers.
+      - Buffered and staged DMA constructors remain byte-only; u16 transfers on a DMA owner reject without implicit PIO fallback. No nine-bit idle API, address filtering or LIN.
+      - L010/L011 extension is source-reviewed but uncompiled and untested; no hardware validation or L012 RX DMA handshake claim.
       evidence:
+      - path: docs/uart-native-word-half-duplex.md
       - path: docs/uart-l012-nine-bit.md
       - path: embassy-cw32/src/usart/nine_bit.rs
         anchor: pub async fn write_u16
     - id: single_wire_half_duplex
       status: partial
-      scope: L012 ordinary HalfDuplexUart blocking and IRQ PIO over one owned TXD pin, open-drain AF with required external pull-up.
+      scope: L010/L011/L012 ordinary HalfDuplexUart blocking and IRQ PIO over one owned TXD pin, open-drain AF with required external pull-up.
       implemented_families:
+      - CW32L010
+      - CW32L011
       - CW32L012
       limitations:
       - Only existing UART, package, baud, frame and IRQ qualification. No RXD pin, split, DMA, ring, flow-control, mode conversion or embedded-io wrapper API.
       - Reads first flush output; valid empty reads also flush and may wait indefinitely. Nine-bit byte-read mismatch rejects before flushing. Hardware performs direction return; no software direction toggle.
       - Peer turn-taking is the application responsibility; no arbitration, collision detection, response-time, electrical or lossless guarantee. Drop may truncate transmission.
-      - Current software acceptance is recorded in docs/uart-dac-extensions-validation.md; publication requires the containing commit; existing DMA, other-family and low-power limitations are unchanged.
+      - L010/L011 extension is source-reviewed but uncompiled and untested; DMA and low-power limitations remain.
       evidence:
+      - path: docs/uart-native-word-half-duplex.md
       - path: docs/uart-l012-half-duplex.md
       - path: embassy-cw32/src/usart/half_duplex.rs
         anchor: pub struct HalfDuplexUart

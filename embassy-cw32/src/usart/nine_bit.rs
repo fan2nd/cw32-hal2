@@ -2,9 +2,9 @@ use super::*;
 
 // Word-container APIs deliberately keep the IRQ PIO and staged DMA boundaries
 // separate. No caller pointer is retained outside the operation future.
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 impl UartTx<'_, Async> {
-    /// Queue u16 containers using ordinary PIO. L012 only; low 8 or 9 bits
+    /// Queue u16 containers using ordinary PIO. L010/L011/L012 only; low 8 or 9 bits
     /// are sent according to Config::data_bits, and higher bits are ignored.
     /// DMA owners reject even an empty call before MMIO or lease observation.
     /// Cancellation can leave a transmitted prefix. Flush for wire completion.
@@ -19,7 +19,7 @@ impl UartTx<'_, Async> {
     }
 }
 
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 impl<M: Mode> UartTx<'_, M> {
     fn check_word_transfer(&self) -> Result<(), Error> {
         #[cfg(uart_dma_tx)]
@@ -43,10 +43,10 @@ impl<M: Mode> UartTx<'_, M> {
     }
 }
 
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 impl UartRx<'_, Async> {
     /// Receive exactly buffer.len() u16 containers using ordinary PIO.
-    /// L012 only; each result contains the low configured 8 or 9 payload bits.
+    /// L010/L011/L012 only; each result contains the low configured 8 or 9 payload bits.
     /// Error/acknowledgment order and cancellation follow the ordinary byte
     /// read. An empty supported call retires an old receive wait but reads no
     /// data. DMA owners reject before that retirement, even for empty buffers.
@@ -68,7 +68,7 @@ impl UartRx<'_, Async> {
     }
 }
 
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 impl<M: Mode> UartRx<'_, M> {
     fn check_word_transfer(&self) -> Result<(), Error> {
         #[cfg(uart_dma_rx)]
@@ -97,25 +97,25 @@ impl<M: Mode> UartRx<'_, M> {
     }
 }
 
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 impl Uart<'_, Async> {
-    /// L012 PIO word-container write; see [`UartTx::write_u16`].
+    /// L010/L011/L012 PIO word-container write; see [`UartTx::write_u16`].
     pub async fn write_u16(&mut self, buffer: &[u16]) -> Result<(), Error> {
         self.tx.write_u16(buffer).await
     }
-    /// L012 PIO word-container exact read; see [`UartRx::read_u16`].
+    /// L010/L011/L012 PIO word-container exact read; see [`UartRx::read_u16`].
     pub async fn read_u16(&mut self, buffer: &mut [u16]) -> Result<(), Error> {
         self.rx.read_u16(buffer).await
     }
 }
 
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 impl<M: Mode> Uart<'_, M> {
-    /// L012 PIO blocking word-container write; see [`UartTx::blocking_write_u16`].
+    /// L010/L011/L012 PIO blocking word-container write; see [`UartTx::blocking_write_u16`].
     pub fn blocking_write_u16(&mut self, buffer: &[u16]) -> Result<(), Error> {
         self.tx.blocking_write_u16(buffer)
     }
-    /// L012 PIO blocking exact word-container read; see [`UartRx::blocking_read_u16`].
+    /// L010/L011/L012 PIO blocking exact word-container read; see [`UartRx::blocking_read_u16`].
     pub fn blocking_read_u16(&mut self, buffer: &mut [u16]) -> Result<(), Error> {
         self.rx.blocking_read_u16(buffer)
     }

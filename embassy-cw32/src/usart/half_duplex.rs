@@ -1,6 +1,6 @@
 use super::*;
 
-/// L012 single-wire UART on its TXD pin, configured directly as open-drain AF.
+/// L010/L011/L012 single-wire UART on its TXD pin, configured directly as open-drain AF.
 ///
 /// Requires an external pull-up and application-controlled turn-taking. Hardware
 /// returns to reception after transmission. Every read first flushes queued TX;
@@ -11,12 +11,12 @@ use super::*;
 /// This owner cannot be split: its receiver depends on the transmitter's pin.
 /// Drop is destructive and can truncate output; flush explicitly when needed.
 /// No DMA, ring buffering, flow control or live full-duplex conversion is exposed.
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 pub struct HalfDuplexUart<'d, M: Mode> {
     uart: Uart<'d, M>,
 }
 
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 impl<'d> HalfDuplexUart<'d, Blocking> {
     /// Create a blocking single-wire owner. RXD remains available to the caller.
     pub fn new_blocking<T: Instance>(
@@ -28,7 +28,7 @@ impl<'d> HalfDuplexUart<'d, Blocking> {
     }
 }
 
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 impl<'d> HalfDuplexUart<'d, Async> {
     /// Create an interrupt-driven single-wire owner with a typed IRQ binding.
     pub fn new<T: Instance>(
@@ -71,7 +71,7 @@ impl<'d> HalfDuplexUart<'d, Async> {
     }
 }
 
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 impl<'d, M: Mode> HalfDuplexUart<'d, M> {
     fn new_inner<T: Instance, TX: TxPin<T>>(
         _peri: Peri<'d, T>,

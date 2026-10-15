@@ -1,5 +1,9 @@
 # L012 single-wire UART
 
+This document records the L012 qualification. Current L010/L011 support and
+its pending acceptance are described in [native UART scope](uart-native-word-half-duplex.md).
+
+
 ## Qualified source and electrical scope
 
 CW32L012 CN user manual V1.4, SHA-256

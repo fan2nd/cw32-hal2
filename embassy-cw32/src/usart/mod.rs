@@ -19,9 +19,10 @@
 //! frame. No throughput guarantee follows.
 //! Hardware RTS/CTS is available through owned, package-checked flow-control pins.
 //! Buffered collection depends on interrupt progress; hardware RTS does not
-//! reflect software occupancy. Buffered idle markers, DMA rings, RX DMA on
-//! L010/L011/L012, synchronous mode and LSI/deep-sleep UART are not exposed.
-//! L012 ordinary PIO supports nine data bits without parity through the u16
+//! reflect software occupancy. Native buffered idle capture uses a bounded marker
+//! queue. DMA rings, RX DMA on L010/L011/L012, synchronous mode and LSI/deep-sleep
+//! UART are not exposed.
+//! L010/L011/L012 ordinary PIO supports nine data bits without parity through the u16
 //! APIs. Buffered/DMA owners remain byte-only; other families reject nine bits.
 //!
 //! Register semantics follow each family's official manual and SDK. See
@@ -73,10 +74,10 @@ mod config;
 mod dma_rx;
 #[cfg(uart_dma_tx)]
 mod dma_tx;
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 mod half_duplex;
 mod interrupt;
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 mod nine_bit;
 mod rx;
 mod traits;
@@ -84,7 +85,7 @@ mod tx;
 mod uart;
 
 pub use config::{Config, ConfigError, DataBits, Error, Oversampling, Parity, StopBits};
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 pub use half_duplex::HalfDuplexUart;
 pub use interrupt::InterruptHandler;
 #[cfg(uart_cw32l083_v1)]
@@ -102,7 +103,7 @@ pub(crate) use interrupt::disable_interrupt;
 use interrupt::{Wait, WaitEvent, receive, transmit};
 #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 use interrupt::{receive_observed, retire_receive_wait};
-#[cfg(uart_cw32l012_v1)]
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 use interrupt::{receive_observed_word, transmit_word};
 
 pub(crate) mod sealed {
