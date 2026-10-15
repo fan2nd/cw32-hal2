@@ -15,6 +15,8 @@ use crate::{
     Peri,
     gpio::{Flex, Pull},
 };
+mod position;
+pub use position::{PositionError, PositionSource, TrackedQei};
 
 /// Quadrature decoder configuration. Input signals must meet the own-device
 /// datasheet timing and voltage limits; filtering cannot correct illegal phase
@@ -83,6 +85,16 @@ pub struct Qei<'d, T: InputInstance> {
     ch2: Flex<'d>,
 }
 impl<'d, T: InputInstance> Qei<'d, T> {
+    /// Consume this decoder into a sampled signed-position owner.
+    /// The application must bound displacement between samples to maximum_step,
+    /// strictly below half the counter period. See [`TrackedQei`].
+    pub fn track_position(
+        self,
+        origin: i64,
+        maximum_step: u32,
+    ) -> Result<TrackedQei<Self>, (PositionError, Self)> {
+        TrackedQei::new(self, origin, maximum_step)
+    }
     /// Checked period/clock configuration. Tokens are consumed on error; use
     /// reborrow() to retain them. Unsupported GPIO pulls still panic before AF
     /// connection, with the same limits as gpio::Flex::set_as_input.
@@ -273,6 +285,15 @@ pub struct ClassicAtimQei<'d, T: ClassicAtimInputInstance> {
 }
 #[cfg(atim_classic_input)]
 impl<'d, T: ClassicAtimInputInstance> ClassicAtimQei<'d, T> {
+    /// Consume this decoder into sampled signed-position tracking.
+    /// Requires a strict per-sample movement bound; see [`TrackedQei`].
+    pub fn track_position(
+        self,
+        origin: i64,
+        maximum_step: u32,
+    ) -> Result<TrackedQei<Self>, (PositionError, Self)> {
+        TrackedQei::new(self, origin, maximum_step)
+    }
     /// Validate the period and clock before GPIO preparation or timer mutation.
     /// Tokens are consumed on error; use `reborrow()` to retain them. Unsupported
     /// GPIO pulls still panic during preparation, before AF connection or timer

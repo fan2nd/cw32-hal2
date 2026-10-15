@@ -824,11 +824,12 @@ functions:
       - - CH4
     - id: encoder
       status: partial
-      scope: Owned polling quadrature encoder.
+      scope: Owned polling quadrature encoder. Sampled signed tracking is available through a consuming wrapper with a declared movement bound.
       limitations:
       - Each capture is one latch; no lossless history, async or DMA. Classic encoder reload is fixed at 65535;
         count/direction/wrap samples are non-atomic.
       evidence:
+      - path: docs/qei-signed-position.md
       - path: embassy-cw32/src/timer/qei.rs
       - path: cw32-data/classic-timer-input.yaml
       pin_signal_sets:
@@ -959,10 +960,11 @@ functions:
       - - CH4
     - id: encoder
       status: partial
-      scope: Owned buffered polling quadrature encoder.
+      scope: Owned buffered polling quadrature encoder. Sampled signed tracking is available through a consuming wrapper with a declared movement bound.
       limitations:
       - Each capture is one latch; no lossless history, async or DMA. Count/direction/wrap samples are non-atomic.
       evidence:
+      - path: docs/qei-signed-position.md
       - path: embassy-cw32/src/timer/qei.rs
       implemented_families: *id001
       pin_signal_sets:
@@ -1010,7 +1012,7 @@ functions:
       - path: docs/timer-event-input-source-evidence.json
     - id: classic_encoder
       status: partial
-      scope: Native classic ATIM polling quadrature on independently qualified CH1A/CH1B pins.
+      scope: Native classic ATIM polling quadrature on independently qualified CH1A/CH1B pins, with optional bounded-step sampled signed tracking.
       implemented_families:
       - CW32F030
       - CW32A030
@@ -1024,7 +1026,7 @@ functions:
       - Three native edge modes, ARR1..65535, fixed PRS=/1 and constructor-only filter/polarity configuration.
         Count is modulo ARR+1; count, direction and native OVF/UNDF observations are non-atomic and coalesced.
       - Native OVF/UNDF are independent of the internal counter's UIF; neither flag counts wraps. Reset races
-        external edges. No signed unbounded position, index, direction-change service or stop/resume API.
+        external edges. No lossless wrap accumulation, index, direction-change service or stop/resume API.
       - Own functional phase separation is strictly greater than one TCLK pulse width and each phase pulse
         width is strictly greater than two TCLK pulse widths; rate bounds are not per-cycle timing guarantees.
       - Capture BKS fields stay disabled; Drop stops and disconnects native decoding, then disconnects pads.
@@ -1037,6 +1039,7 @@ functions:
       - - CAP1A
         - CAP1B
       evidence:
+      - path: docs/qei-signed-position.md
       - path: embassy-cw32/src/timer/qei.rs
         anchor: pub struct ClassicAtimQei
       - path: cw32-data/classic-atim-input.yaml

@@ -23,3 +23,10 @@ cargo build --offline --locked --release --bins --target thumbv6m-none-eabi --no
 The build script derives the linker memory map from the selected exact-package metadata. `ci/check-timer-input.sh` builds all supported package examples, plus the library feature/regression matrix.
 
 With the optional local `time-driver` feature, GTIM1 belongs to Embassy time and these programs use only ATIM inputs. Encoder coexistence is unavailable on CW32L010Y8M6 because no qualified ATIM channel1/channel2 pair is bonded; its standalone capture program can still use ATIM channel3. Other six exact packages can link both programs with the reserved time driver.
+
+`signed_position` consumes the same encoder owners into sampled signed-position
+tracking. The example declares at most 1024 net counts between samples; the
+board/application must actually guarantee that bound including interrupt delays.
+Excess motion can alias undetected. Detected ambiguity/overflow panics instead
+of silently resynchronizing. The new path is uncompiled and untested; see
+[signed-position contract](../../docs/qei-signed-position.md).
