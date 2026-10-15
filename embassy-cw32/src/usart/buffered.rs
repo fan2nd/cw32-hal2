@@ -27,6 +27,8 @@ impl RxRing {
             exposed: 0,
             error: None,
             waiting: false,
+            #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+            idle_seen: false,
         }
     }
 
@@ -130,6 +132,51 @@ impl RxRing {
 }
 
 impl<'d> BufferedUartRx<'d> {
+    /// Wait for a new coalesced native idle observation while RX keeps collecting.
+    ///
+    /// First poll clears only stale RXIDLE and opens a new observation window.
+    /// Queued bytes and errors remain available through reads. Idle completion
+    /// does not imply error-free data or give a byte position/packet boundary;
+    /// delayed service and repeated events can coalesce. The ring may overflow
+    /// while waiting. Hardware needs a received character before detecting idle,
+    /// so a silent line need not complete this wait.
+    ///
+    /// Cancellation masks only idle notification, leaving collection and TX live.
+    /// Forgetting can leave one idle notification armed; the next idle retires
+    /// it, or a later idle wait/RX Drop cleans it up. The wait retains no additional
+    /// buffer beyond the receiver's existing ring.
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    pub async fn wait_for_idle(&mut self) {
+        let guard = BufferedIdleWait {
+            info: self.info,
+            state: self.state,
+        };
+        let mut started = false;
+        poll_fn(|cx| {
+            self.state.rx_waker.register(cx.waker());
+            critical_section::with(|cs| {
+                let mut ring = self.state.rx_ring.borrow(cs).borrow_mut();
+                let ring = ring.as_mut().expect("buffered UART receiver has no ring");
+                if !started {
+                    self.info.regs.ier().modify(|w| w.set_rxidle(false));
+                    let mut command = regs::Icr::write_noop();
+                    command.set_rxidle(false);
+                    self.info.regs.icr().write_value(command);
+                    ring.idle_seen = false;
+                    self.info.regs.ier().modify(|w| w.set_rxidle(true));
+                    started = true;
+                }
+                if ring.idle_seen {
+                    Poll::Ready(())
+                } else {
+                    Poll::Pending
+                }
+            })
+        })
+        .await;
+        drop(guard);
+    }
+
     /// Replace an empty IRQ ring without stopping reception, returning its storage.
     ///
     /// A queued byte or pending error rejects replacement. On failure, the
@@ -637,6 +684,12 @@ impl<'d> BufferedUart<'d> {
         Ok(Self { tx, rx })
     }
 
+    /// Wait for native idle while buffering. See [`BufferedUartRx::wait_for_idle`].
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    pub async fn wait_for_idle(&mut self) {
+        self.rx.wait_for_idle().await;
+    }
+
     /// Replace an empty RX ring. See [`BufferedUartRx::try_replace_buffer`].
     pub fn try_replace_buffer(
         &mut self,
@@ -702,5 +755,23 @@ impl<'d> BufferedUart<'d> {
 impl Drop for BufferedUartRx<'_> {
     fn drop(&mut self) {
         self.info.shutdown(self.state, Direction::Rx, false);
+    }
+}
+
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+struct BufferedIdleWait {
+    info: Info,
+    state: &'static State,
+}
+
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+impl Drop for BufferedIdleWait {
+    fn drop(&mut self) {
+        critical_section::with(|cs| {
+            self.info.regs.ier().modify(|w| w.set_rxidle(false));
+            if let Some(ring) = self.state.rx_ring.borrow(cs).borrow_mut().as_mut() {
+                ring.idle_seen = false;
+            }
+        });
     }
 }

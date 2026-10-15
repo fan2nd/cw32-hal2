@@ -173,6 +173,7 @@ functions:
         count lost frames, and NE requires 16x/8x sampling.
       - Collection depends on IRQ progress; finite capacity does not guarantee lossless reception, bounded waits or throughput.
       - Hardware RTS reflects RC rather than software queue occupancy; no ring-watermark backpressure is provided.
+      - L010/L011/L012 wait_for_idle observes a new coalesced native idle event while IRQ buffering continues. Cancellation masks only idle; data/errors stay queued. No byte boundary, lossless history or bounded wait; implementation and example await software acceptance.
       - No buffered idle markers, DMA ring or numeric timeout. into_buffer discards unread data/errors and returns neither pins nor the peripheral; only a static RX owner returns a static slice.
       - try_replace_buffer accepts a nonempty static replacement only when no queued bytes or error remain; failures return the new buffer unchanged. Success returns old storage with the owner lifetime without stopping RX or changing TX/shared IRQ ownership. Pending hardware bytes may enter the new ring; no packet boundary or guaranteed progress. Implementation and example await software acceptance.
       evidence:

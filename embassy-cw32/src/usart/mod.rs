@@ -349,6 +349,8 @@ struct RxRing {
     exposed: usize,
     error: Option<Error>,
     waiting: bool,
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    idle_seen: bool,
 }
 
 /// Why an IRQ receive ring could not be replaced. The supplied buffer is returned.
@@ -424,7 +426,8 @@ pub struct UartRx<'d, M: Mode> {
 ///
 /// Buffering is not lossless: ten families have no hardware overrun flag, and
 /// even native L010/L011/L012 flags can coalesce. There is no packet boundary,
-/// idle method, timeout, DMA ring, loss count or throughput guarantee. Forgetting
+/// numeric timeout, DMA ring, loss count or throughput guarantee. Native
+/// L010/L011/L012 owners offer a coalesced idle wait without a byte boundary. Forgetting
 /// a safely constructed owner can leave collection running forever with valid
 /// static storage; borrowed constructors have a stricter safety contract.
 pub struct BufferedUartRx<'d> {

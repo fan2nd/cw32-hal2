@@ -249,17 +249,26 @@ fn on_interrupt(
     let mut next = enabled;
     let mut ring = state.rx_ring.borrow(cs).borrow_mut();
     let wake_rx = if let Some(ring) = ring.as_mut() {
-        if owners.rx_live && rx_data_pending {
+        #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+        let idle_observed = owners.rx_live && status.rxidle() && enabled.rxidle();
+        #[cfg(not(any(uart_cw32l010_v1, uart_cw32l012_v1)))]
+        let idle_observed = false;
+        if owners.rx_live && (rx_data_pending || idle_observed) {
             // Exactly one receive observation per dispatch, even when full or
             // an error is pending. Drain/acknowledge before applying the barrier.
-            let observation = receive_observed(regs, status, false);
+            let observation = receive_observed(regs, status, idle_observed);
             ring.observe(observation);
+        }
+        #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+        if idle_observed {
+            ring.idle_seen = true;
+            next.set_rxidle(false);
         }
         if owners.rx_live && ring.waiting && (ring.len != 0 || ring.error.is_some()) {
             ring.waiting = false;
             true
         } else {
-            false
+            idle_observed
         }
     } else {
         if rx_pending {

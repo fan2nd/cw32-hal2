@@ -225,6 +225,28 @@ Finite capacity does not guarantee throughput, interrupt latency, bounded
 completion or lossless reception. Interrupt masking, saturation, clock policy,
 peer behavior and in-flight frames remain relevant.
 
+## Native idle notification
+
+L010/L011/L012 `BufferedUartRx` and `BufferedUart` expose `wait_for_idle()`.
+The first poll clears stale RXIDLE without consuming buffered data/errors or
+clearing RC. ISR collection continues; a newly observed idle latches completion
+and masks only the idle interrupt. RX data/errors observed in the same snapshot
+are processed first. Idle completion is independent of any retained error.
+
+The wait provides a coalesced notification, not a byte offset, packet boundary
+or lossless history. Read queued data/errors separately. A long wait may overflow
+the ring; hardware needs a received character before idle detection, so a silent
+line can wait indefinitely. Clearing an old idle does not guarantee another for
+a previously received character.
+
+Dropping the wait masks only RXIDLE and discards its latch. RX collection, TX,
+register flags and pins remain live. Forgetting can leave a one-shot notification
+armed; a later idle, new wait or RX shutdown retires it. Another read may receive
+a harmless stale wake. No pointer to a task's output storage enters ISR state.
+
+The native flag and R1W0 basis is recorded in [idle source evidence](uart-idle-evidence.json).
+This buffered interface and `idle_notify` example are uncompiled and untested.
+
 ## Cancellation, Drop and forgotten owners
 
 An exact read may copy a prefix before returning Pending. Canceling or
@@ -275,9 +297,9 @@ and cancellation semantics. Existing [staged DMA](uart-dma-rx.md) ownership,
 retention and quarantine remain separate. No combined buffered RX/DMA TX
 constructor is added. RF and low-power UART remain deferred.
 
-The [buffered application crate](../examples/uart-buffered/README.md) has seven
+The [buffered application crate](../examples/uart-buffered/README.md) has eight
 firmware binaries: `receive`, `split`, `rx_only`, `flow_control`,
-`shared_vector`, `replace_buffer` and the synchronous `borrowed` lifetime example. Its selected
+`shared_vector`, `replace_buffer`, `idle_notify` and the synchronous `borrowed` lifetime example. Its selected
 routes use current exact-package authority. The
 existing [flow-control examples](../examples/uart-flow-control/README.md) remain
 ordinary unbuffered applications; their earlier results are not buffered results.

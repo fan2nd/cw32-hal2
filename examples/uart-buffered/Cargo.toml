@@ -10,6 +10,7 @@ autobins = false
 
 [features]
 default = []
+idle-notify = []
 cw32f030c8t7 = ["embassy-cw32/cw32f030c8t7", "cw32-metapac/cw32f030c8t7"]
 cw32f002f3p7 = ["embassy-cw32/cw32f002f3p7", "cw32-metapac/cw32f002f3p7"]
 cw32l031c8t6 = ["embassy-cw32/cw32l031c8t6", "cw32-metapac/cw32l031c8t6"]
@@ -30,6 +31,11 @@ path = "src/bin/split.rs"
 [[bin]]
 name = "rx_only"
 path = "src/bin/rx_only.rs"
+
+[[bin]]
+name = "idle_notify"
+path = "src/bin/idle_notify.rs"
+required-features = ["idle-notify"]
 
 [[bin]]
 name = "replace_buffer"
