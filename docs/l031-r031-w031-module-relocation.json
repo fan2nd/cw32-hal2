@@ -1,0 +1,490 @@
+{
+  "scope": "Mechanical L031/R031/W031 RCC relocation only. No algorithm or hardware qualification change.",
+  "author_inverse": {
+    "baseline_commit": "cd0a91e9a0070dc30f86a960c5c758c27e906efa",
+    "source_sha256": "ed5cf400b830a470ee163dd96d983e26f9d1b308c427c9e35cfca860d9b5cec6",
+    "modules": {
+      "mod.rs": {
+        "spans": [
+          [
+            1,
+            20
+          ],
+          [
+            21,
+            591
+          ],
+          [
+            2086,
+            2094
+          ]
+        ],
+        "prefix": "",
+        "wiring": "mod configure;\nmod io;\n#[cfg(rcc_lse)]\nmod lse_sysclk;\n#[cfg(rcc_lsi_sysclk)]\nmod lsi_sysclk;\n\nuse configure::configure;\nuse io::{barrier, check_external_faults, hse_parameters_match, set_flash_latency, wait_until};\n#[cfg(rcc_lse)]\nuse lse_sysclk::{prepare_lse_monitor, LseSysclkState, LSE_SYSCLK_MONITOR};\n#[cfg(rcc_lsi_sysclk)]\nuse lsi_sysclk::LsiSysclkState;\n#[cfg(rcc_lsi_sysclk)]\npub(crate) use lsi_sysclk::lsi_inspection_error;\n\n",
+        "transforms": [],
+        "sha256": "bdc1be7ae388b36de5565435100be9755ee246da908e763ff7afbb6c4e4f2739"
+      },
+      "io.rs": {
+        "spans": [
+          [
+            592,
+            622
+          ],
+          [
+            1844,
+            1866
+          ]
+        ],
+        "prefix": "use super::*;\n\n",
+        "wiring": "",
+        "transforms": [
+          [
+            "fn barrier(",
+            "pub(super) fn barrier(",
+            1
+          ],
+          [
+            "fn wait_until(",
+            "pub(super) fn wait_until(",
+            1
+          ],
+          [
+            "fn set_flash_latency(",
+            "pub(super) fn set_flash_latency(",
+            1
+          ],
+          [
+            "fn check_external_faults(",
+            "pub(super) fn check_external_faults(",
+            1
+          ],
+          [
+            "fn hse_parameters_match(",
+            "pub(super) fn hse_parameters_match(",
+            1
+          ]
+        ],
+        "sha256": "a1c0fc703db124ec5e3ad37e3bf92aefddb33d36c25c51e1ae22813cace919f7"
+      },
+      "lsi_sysclk.rs": {
+        "spans": [
+          [
+            623,
+            990
+          ]
+        ],
+        "prefix": "use super::*;\n\n",
+        "wiring": "",
+        "transforms": [
+          [
+            "super::peripheral::",
+            "crate::rcc::peripheral::",
+            4
+          ],
+          [
+            "super::lse::",
+            "crate::rcc::lse::",
+            1
+          ],
+          [
+            "fn capture(",
+            "pub(super) fn capture(",
+            1
+          ],
+          [
+            "fn check_identity(",
+            "pub(super) fn check_identity(",
+            1
+          ],
+          [
+            "fn check_target(",
+            "pub(super) fn check_target(",
+            1
+          ],
+          [
+            "fn prepare(",
+            "pub(super) fn prepare(",
+            1
+          ],
+          [
+            "fn wait_ready(",
+            "pub(super) fn wait_ready(",
+            1
+          ],
+          [
+            "fn inspect_awt(",
+            "pub(super) fn inspect_awt(",
+            1
+          ],
+          [
+            "fn check_hsi_owners(",
+            "pub(super) fn check_hsi_owners(",
+            1
+          ],
+          [
+            "fn verify_tree(",
+            "pub(super) fn verify_tree(",
+            1
+          ],
+          [
+            "struct LsiSysclkState",
+            "pub(super) struct LsiSysclkState",
+            1
+          ],
+          [
+            "\n    entry_clock:",
+            "\n    pub(super) entry_clock:",
+            1
+          ],
+          [
+            "\n    entry_sources:",
+            "\n    pub(super) entry_sources:",
+            1
+          ],
+          [
+            "\n    entry_hsi:",
+            "\n    pub(super) entry_hsi:",
+            1
+          ],
+          [
+            "\n    clock:",
+            "\n    pub(super) clock:",
+            1
+          ],
+          [
+            "\n    sources:",
+            "\n    pub(super) sources:",
+            1
+          ],
+          [
+            "\n    hsi:",
+            "\n    pub(super) hsi:",
+            1
+          ],
+          [
+            "\n    hse:",
+            "\n    pub(super) hse:",
+            1
+          ],
+          [
+            "\n    lse:",
+            "\n    pub(super) lse:",
+            1
+          ],
+          [
+            "\n    hsi_trim:",
+            "\n    pub(super) hsi_trim:",
+            1
+          ],
+          [
+            "\n    requested:",
+            "\n    pub(super) requested:",
+            1
+          ],
+          [
+            "\n    consumers:",
+            "\n    pub(super) consumers:",
+            1
+          ],
+          [
+            "\n    awt:",
+            "\n    pub(super) awt:",
+            1
+          ]
+        ],
+        "sha256": "1073a70d486d838b60970d19569941aaa81614b40ec41889921940bc283a5854"
+      },
+      "configure.rs": {
+        "spans": [
+          [
+            991,
+            1843
+          ]
+        ],
+        "prefix": "use super::*;\n\n",
+        "wiring": "",
+        "transforms": [
+          [
+            "super::lse::",
+            "crate::rcc::lse::",
+            5
+          ],
+          [
+            "super::LseMode",
+            "crate::rcc::LseMode",
+            1
+          ],
+          [
+            "fn configure(",
+            "pub(super) fn configure(",
+            1
+          ]
+        ],
+        "sha256": "52074fb858a557a45a33eb1d156cbefd5c01883c8a354dac1fc93222c403b820"
+      },
+      "lse_sysclk.rs": {
+        "spans": [
+          [
+            1867,
+            2085
+          ]
+        ],
+        "prefix": "use super::*;\n\n",
+        "wiring": "",
+        "transforms": [
+          [
+            "super::lse::",
+            "crate::rcc::lse::",
+            2
+          ],
+          [
+            "super::Lse",
+            "crate::rcc::Lse",
+            1
+          ],
+          [
+            "fn prepare_lse_monitor(",
+            "pub(super) fn prepare_lse_monitor(",
+            1
+          ],
+          [
+            "fn admit(",
+            "pub(super) fn admit(",
+            1
+          ],
+          [
+            "fn admit_request(",
+            "pub(super) fn admit_request(",
+            1
+          ],
+          [
+            "fn monitor_ready(",
+            "pub(super) fn monitor_ready(",
+            1
+          ],
+          [
+            "fn verify_tree(",
+            "pub(super) fn verify_tree(",
+            1
+          ],
+          [
+            "struct LseSysclkState",
+            "pub(super) struct LseSysclkState",
+            1
+          ],
+          [
+            "\n    sources:",
+            "\n    pub(super) sources:",
+            1
+          ],
+          [
+            "\n    hse:",
+            "\n    pub(super) hse:",
+            1
+          ],
+          [
+            "static LSE_SYSCLK_MONITOR:",
+            "pub(super) static LSE_SYSCLK_MONITOR:",
+            1
+          ]
+        ],
+        "sha256": "133a2ee8cc9fe153b9539727856eceb4ead28aa24423dbea43986791dbc78791"
+      }
+    }
+  },
+  "independent_review": {
+    "status": "pass",
+    "baseline": "cd0a91e9a0070dc30f86a960c5c758c27e906efa",
+    "original_sha256": "ed5cf400b830a470ee163dd96d983e26f9d1b308c427c9e35cfca860d9b5cec6",
+    "byte_inverse_lines": 2094,
+    "modules": 5,
+    "restricted_visibility_additions": 36,
+    "parent_path_rewrites": 14,
+    "function_declarations": 37,
+    "data_type_declarations": 12,
+    "mutation_rejections": 8,
+    "module_hashes": {
+      "configure.rs": "52074fb858a557a45a33eb1d156cbefd5c01883c8a354dac1fc93222c403b820",
+      "io.rs": "a1c0fc703db124ec5e3ad37e3bf92aefddb33d36c25c51e1ae22813cace919f7",
+      "lse_sysclk.rs": "133a2ee8cc9fe153b9539727856eceb4ead28aa24423dbea43986791dbc78791",
+      "lsi_sysclk.rs": "1073a70d486d838b60970d19569941aaa81614b40ec41889921940bc283a5854",
+      "mod.rs": "bdc1be7ae388b36de5565435100be9755ee246da908e763ff7afbb6c4e4f2739"
+    },
+    "scope": "Structural semantic equivalence only; no hardware execution."
+  },
+  "capability_reference_migration": {
+    "scope": "Capability reference migration only; not runtime, build or hardware validation.",
+    "baseline_commit": "cd0a91e9a0070dc30f86a960c5c758c27e906efa",
+    "baseline_capabilities_sha256": "222dc6fe9a15a76534b3c86debc62e60165b19d943c437b22312641bc9a51b0d",
+    "baseline_capabilities_canonical_sha256": "9166a046ab6ff05e36be613484c6b85180ea45e7b806e2d61b86b1a7bf13cf7c",
+    "current_capabilities_sha256": "7deae686027627aaa71de792560d14e56a96f95fc868cf0881be0099a1c415e7",
+    "exact_raw_yaml_baseline_reconstruction": true,
+    "complete_parsed_baseline_collapse_equality": true,
+    "original_reference_rows": 3,
+    "replacement_reference_rows": 7,
+    "positive_cases_passed": 1,
+    "negative_cases_rejected": [
+      "rule-1-omit",
+      "rule-1-extra",
+      "rule-1-replace",
+      "rule-1-duplicate",
+      "rule-1-reorder",
+      "rule-2-omit",
+      "rule-2-extra",
+      "rule-2-replace",
+      "rule-2-duplicate",
+      "rule-2-anchor",
+      "rule-3-omit",
+      "rule-3-extra",
+      "rule-3-replace",
+      "rule-3-duplicate",
+      "rule-3-anchor",
+      "family-add",
+      "family-remove",
+      "status",
+      "limitation",
+      "untouched-l010-reference",
+      "unrelated-uart-scope"
+    ],
+    "historical_and_gate_preservation": [
+      {
+        "path": "ci/package-source.py",
+        "sha256": "379d233329e314bc84e361dcd59ede12be8bfcbc0f09c436db078d85fffafd0e",
+        "bytes": 10280
+      },
+      {
+        "path": "cw32-data/tools/source_provenance.py",
+        "sha256": "fbeb2fbabcca131babcc66de410dd2f0f5cc127a60e03e90c2b1e82ed170f066",
+        "bytes": 46044
+      },
+      {
+        "path": "docs/electrical-metadata-equivalence.json",
+        "sha256": "e947bce9c7bbd00930a75d7a4c59109d6cc2e4cd40a124140ab3288a4c02494b",
+        "bytes": 12393
+      },
+      {
+        "path": "docs/l011-lse-sysclk-runtime-review.json",
+        "sha256": "ad517f52c81062901c9e86d320ccc49a59795f5b7bf63a602fbca916bbce6571",
+        "bytes": 16802
+      },
+      {
+        "path": "docs/l031-factory-lsi-runtime-review.json",
+        "sha256": "600510fa5eb0dd4f4735b236f0de0704a401b77c87f7b57de40ac99d4d975864",
+        "bytes": 22488
+      },
+      {
+        "path": "docs/l031-r031-w031-lse-sysclk-runtime-acceptance.json",
+        "sha256": "971a129c2ffb69c37bf667c4f3784f68d111bef4bdada4294fce38cfc55738ed",
+        "bytes": 6871
+      },
+      {
+        "path": "docs/l031-r031-w031-lse-sysclk-runtime-acceptance.md",
+        "sha256": "fdb29f84f2013fff47af9848d83a2714a088e53bfde70267e934703b89119dae",
+        "bytes": 13871
+      },
+      {
+        "path": "docs/lse-awt-runtime-review.json",
+        "sha256": "a47e840cf5ca13a4a1d57b7788627bf89301f9ad10086c64b66ae6d1c419f1a3",
+        "bytes": 34071
+      },
+      {
+        "path": "docs/lse-pad-source-evidence.json",
+        "sha256": "8cc179be8b5a552892c1ab2c1e61d4cc162742dcecbf37f184040119ae36e720",
+        "bytes": 84857
+      },
+      {
+        "path": "docs/r031-factory-lsi-runtime-review.json",
+        "sha256": "6bc035da39e69944bcb09fed4df8d6ecc3f683166bbd1dccc71421b2f728fe78",
+        "bytes": 87660
+      },
+      {
+        "path": "docs/rcc-module-relocation.json",
+        "sha256": "9090a21ded51c2dacee5e1d6db394c7a84ce693aba4333fadb198ed06b9dea88",
+        "bytes": 154823
+      },
+      {
+        "path": "docs/w031-factory-lsi-runtime-review.json",
+        "sha256": "abbeea13f082e8f0fb1a028182dabdb9a7badf7401914724a0f8fbddef63c0d2",
+        "bytes": 43581
+      },
+      {
+        "path": "embassy-cw32/src/rcc/l010_l011.rs",
+        "sha256": "1f40106a0ab9f60fddcb90b3e2b8a8ced96e824a3b2fa95bf6ef1d639f8bf99d",
+        "bytes": 157749
+      },
+      {
+        "path": "sources/catalog.json",
+        "sha256": "54f896735eded26338d6f551541ee1504d752772b5cd7462db7340cebfe9eaf5",
+        "bytes": 33681
+      },
+      {
+        "path": "sources/evidence-sources.json",
+        "sha256": "23eae25223195a23c4249a34bc914f4e07948b5ea9a57831f6766f11d6da3369",
+        "bytes": 458586
+      },
+      {
+        "path": "tests/test_source_provenance.py",
+        "sha256": "2d9b15335b8e6275c6d3b43d15de06ed4008e665f8309dcad3734d3c4665422c",
+        "bytes": 34293
+      }
+    ],
+    "reference_relocations": [
+      {
+        "function": "sysctrl",
+        "mode_id": "factory_lsi_sysclk",
+        "before": {
+          "path": "embassy-cw32/src/rcc/l031_r031_w031.rs"
+        },
+        "after": [
+          {
+            "path": "embassy-cw32/src/rcc/l031_r031_w031/mod.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l031_r031_w031/configure.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l031_r031_w031/io.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l031_r031_w031/lsi_sysclk.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l031_r031_w031/lse_sysclk.rs"
+          }
+        ],
+        "meaning": "complete old monolith source"
+      },
+      {
+        "function": "sysctrl",
+        "mode_id": "external_low_speed_sysclk",
+        "before": {
+          "path": "embassy-cw32/src/rcc/l031_r031_w031.rs",
+          "anchor": "LSE_SYSCLK_MONITOR"
+        },
+        "after": [
+          {
+            "path": "embassy-cw32/src/rcc/l031_r031_w031/lse_sysclk.rs",
+            "anchor": "LSE_SYSCLK_MONITOR"
+          }
+        ],
+        "meaning": "anchored item"
+      },
+      {
+        "function": "sysctrl",
+        "mode_id": "external_high_speed",
+        "before": {
+          "path": "embassy-cw32/src/rcc/l031_r031_w031.rs",
+          "anchor": "pub enum HseMode"
+        },
+        "after": [
+          {
+            "path": "embassy-cw32/src/rcc/l031_r031_w031/mod.rs",
+            "anchor": "pub enum HseMode"
+          }
+        ],
+        "meaning": "anchored item"
+      }
+    ],
+    "all_destinations_and_literal_anchors_verified": true
+  }
+}

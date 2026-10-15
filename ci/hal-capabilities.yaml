@@ -2086,7 +2086,11 @@ functions:
       - path: docs/l031-factory-lsi-sysclk.md
       - path: docs/l031-factory-lsi-runtime-review.json
       - path: docs/l031-factory-lsi-metadata-review.json
-      - path: embassy-cw32/src/rcc/l031_r031_w031.rs
+      - path: embassy-cw32/src/rcc/l031_r031_w031/mod.rs
+      - path: embassy-cw32/src/rcc/l031_r031_w031/configure.rs
+      - path: embassy-cw32/src/rcc/l031_r031_w031/io.rs
+      - path: embassy-cw32/src/rcc/l031_r031_w031/lsi_sysclk.rs
+      - path: embassy-cw32/src/rcc/l031_r031_w031/lse_sysclk.rs
       - path: embassy-cw32/src/rcc/f002_f003.rs
       - path: embassy-cw32/src/rcc/hsi_48mhz.rs
         anchor: fn prepare_factory_lsi
@@ -2203,7 +2207,7 @@ functions:
       - path: embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs
       - path: embassy-cw32/src/rcc/l052_l083/lse_sysclk.rs
         anchor: static SUCCESS
-      - path: embassy-cw32/src/rcc/l031_r031_w031.rs
+      - path: embassy-cw32/src/rcc/l031_r031_w031/lse_sysclk.rs
         anchor: LSE_SYSCLK_MONITOR
       - path: embassy-cw32/src/rcc/hsi_48mhz.rs
         anchor: LSE_SYSCLK_LSI
@@ -2332,7 +2336,7 @@ functions:
       evidence:
       - path: embassy-cw32/src/rcc/hsi_48mhz.rs
         anchor: pub enum HseMode
-      - path: embassy-cw32/src/rcc/l031_r031_w031.rs
+      - path: embassy-cw32/src/rcc/l031_r031_w031/mod.rs
         anchor: pub enum HseMode
       - path: embassy-cw32/src/rcc/l010_l011.rs
         anchor: pub enum HseMode
