@@ -414,6 +414,17 @@ functions:
       scope: Blocking seven-bit master with owned pins.
       limitations:
       - Bounded timing/electrical contracts; slave APIs remain absent. Ten-bit master is separately qualified only on L012.
+    - id: explicit_transaction_retry
+      status: partial
+      scope: Classic seven-bit blocking/async opt-in whole-transaction replay on selected address NACK/arbitration failures.
+      limitations:
+      - At most 256 transaction calls; ordinary APIs remain single-attempt. Target protocol must permit replay of partial side effects.
+      - No backoff, bus repair, wall-clock deadline or new cleanup sequence; terminal/bus/data NACK errors are not retried.
+      - Reports attempt count and final error. L012 is excluded; new wrapper/example are uncompiled and untested.
+      evidence:
+      - path: docs/i2c-explicit-retry.md
+      - path: embassy-cw32/src/i2c/retry.rs
+        anchor: pub struct RetryPolicy
     - id: async_master
       status: partial
       scope: Owned seven-bit master with classic SI or L012 command/FIFO interrupts and embedded-hal-async transactions.

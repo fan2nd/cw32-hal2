@@ -86,3 +86,8 @@ For F002 this retains its actual 16 KiB FLASH and 2 KiB RAM limits. There is no
 time-driver feature, substitute chip or enlarged memory map. The local Cargo
 configuration supplies only the target default when run from this directory.
 The commands above are usage instructions, not records of successful builds.
+
+`retry_probe` permits two additional address-only probe attempts on AddressNack,
+then reports the result and stays idle. The target must permit repeated probes.
+It adds no backoff or bus recovery; the new path is uncompiled and untested.
+See [explicit retry contract](../../docs/i2c-explicit-retry.md).

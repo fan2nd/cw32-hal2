@@ -5,6 +5,10 @@ mod classic;
 pub use classic::*;
 #[cfg(not(i2c_cw32l012_v1))]
 pub(crate) use classic::{impl_instance, impl_pin, sealed};
+#[cfg(not(i2c_cw32l012_v1))]
+mod retry;
+#[cfg(not(i2c_cw32l012_v1))]
+pub use retry::{RetryFailure, RetryOn, RetryPolicy};
 
 #[cfg(i2c_cw32l012_v1)]
 mod lpi2c;
