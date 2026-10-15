@@ -3,8 +3,8 @@
 ## Qualified contract
 
 This is a notification extension of the existing reset-mode `WindowWatchdog`,
-not automatic recovery or a watchdog-feeding policy. It is available only on
-CW32L012. After successful `try_unleash`, call
+not automatic recovery or a watchdog-feeding policy. This document covers
+CW32L012; see [all supported families](wwdt-warning.md) for the complete interface scope. After successful `try_unleash`, call
 `enable_early_warning(binding)` with a static `WDT => wdg::WindowInterruptHandler`
 binding. `wait_early_warning(&mut self)` consumes one coalesced notification or
 waits for one. The wait reports `WarningNotEnabled` until enable was attempted;

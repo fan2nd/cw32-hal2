@@ -381,6 +381,6 @@ impl<'d, T: Instance> IndependentWatchdog<'d, T> {
     }
 }
 
-/// Permanent L012 window-watchdog early-warning handler for the shared WDT vector.
-#[cfg(cw32l012)]
+/// Permanent window-watchdog early-warning handler for the shared WDT vector.
+#[cfg(wwdt)]
 pub use windowed::InterruptHandler as WindowInterruptHandler;

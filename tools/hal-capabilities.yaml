@@ -1129,19 +1129,28 @@ functions:
       status: partial
       scope: Polling window-watchdog start/feed with frozen PCLK timing.
       limitations:
-      - Irreversible start; stop API absent. L012-only early-warning notification is separately declared.
+      - Irreversible start; stop API absent. Early-warning notification is separately declared.
     - id: early_warning_async
       status: partial
-      scope: L012 running WindowWatchdog irreversible early-warning enable and coalesced asynchronous notification through the typed WDT binding.
+      scope: Running WindowWatchdog irreversible early-warning enable and coalesced asynchronous notification through the typed WDT binding.
       implemented_families:
+      - CW32A030
+      - CW32F002
+      - CW32F003
+      - CW32F020
+      - CW32F030
       - CW32L012
+      - CW32L031
+      - CW32L052
+      - CW32L083
+      - CW32R031
       limitations:
       - IE cannot clear until reset. Static ISR service is installed before IE write and survives readback failure, cancellation, forgetting and owner Drop, acknowledging only WWDT POV; no caller pointers are stored.
       - Dropping a waiter removes its waker, not servicing or the pending latch. No automatic feed, counter stop/gate/reset or shared NVIC disable/unpend. Other enabled WDT clients require their own handler.
       - Only one counter tick separates POV from reset; interrupt/task delivery before reset is not guaranteed. Not last-gasp persistence, late-feed safety or low-power wake.
-      - Current software acceptance is recorded in docs/lcd-wwdt-extensions-validation.md; publication requires the containing commit; other-family IRQ modes remain unimplemented.
+      - Non-L012 extension is uncompiled and untested. L010/L011 have no WWDT; retired W031 is not supported.
       evidence:
-      - path: docs/l012-wwdt-warning.md
+      - path: docs/wwdt-warning.md
       - path: embassy-cw32/src/wdg/windowed.rs
         anchor: pub async fn wait_early_warning
   rtc:

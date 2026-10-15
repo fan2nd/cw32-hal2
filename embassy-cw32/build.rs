@@ -999,6 +999,12 @@ fn main() {
                 _ => "v1",
             },
         );
+        let vector = metadata
+            .interrupts
+            .iter()
+            .find(|irq| irq.name == "WDT")
+            .expect("qualified WWDT requires the shared WDT vector");
+        assert_eq!(vector.number, 0, "unexpected WWDT vector number");
         println!("cargo:rustc-cfg=wwdt");
     }
     for (enabled, kind, prefix, version) in [

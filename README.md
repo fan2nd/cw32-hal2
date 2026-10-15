@@ -37,6 +37,8 @@ See [capability declarations](tools/hal-capabilities.yaml),
   overflow. This is untested and does not identify wire packet boundaries.
 - SPI/I²C: qualified blocking/async master modes; SPI DMA is byte-only.
 - ADC/timers: finite ADC scans, qualified capture, overflow, PWM and trigger routes.
+- Window-watchdog warning notification is implemented for all ten supported
+  WWDT families; the non-L012 extension is untested.
 - RCC/RTC and analog/math peripherals: only documented sources, modes and limits.
 - `BufferedUartRx::into_buffer` returns storage after RX shutdown;
   `try_replace_buffer` swaps an empty running ring. Both are
