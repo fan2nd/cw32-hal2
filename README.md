@@ -33,7 +33,8 @@ See [capability declarations](tools/hal-capabilities.yaml),
 - UART: blocking/IRQ, buffered receive and qualified finite DMA. L012 UART DMA
   remains TX-only. Nine-bit and half-duplex support are limited to L012 PIO.
 - Buffered UART on L010/L011/L012 returns an unread-queue position and error
-  snapshot on idle; this is untested and does not identify wire packet boundaries.
+  snapshot on idle, with optional four-marker continuous capture and explicit
+  overflow. This is untested and does not identify wire packet boundaries.
 - SPI/I²C: qualified blocking/async master modes; SPI DMA is byte-only.
 - ADC/timers: finite ADC scans, qualified capture, overflow, PWM and trigger routes.
 - RCC/RTC and analog/math peripherals: only documented sources, modes and limits.

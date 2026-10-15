@@ -29,6 +29,8 @@ impl RxRing {
             waiting: false,
             #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
             idle_snapshot: None,
+            #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+            idle_capture: IdleCapture::new(),
         }
     }
 
@@ -67,6 +69,8 @@ impl RxRing {
             count - (self.storage.capacity - self.read)
         };
         self.len -= count;
+        #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+        self.idle_capture.advance(count);
     }
 
     // Snapshot only an occupied contiguous segment, not the whole allocation.
@@ -132,58 +136,10 @@ impl RxRing {
 }
 
 impl<'d> BufferedUartRx<'d> {
-    /// Wait for a new coalesced native idle observation while RX keeps collecting.
-    ///
-    /// First poll clears only stale RXIDLE and opens a new observation window.
-    /// Returns the queued byte count and retained error at ISR observation time,
-    /// including any bytes queued before the wait began. Read exactly this prefix
-    /// before using its error snapshot; later bytes may already have been appended.
-    /// The position is relative to the unread queue and becomes stale after reads,
-    /// consume or replacement. It does not imply error-free data or a wire packet
-    /// boundary; delayed service and repeated events can coalesce. The ring may overflow
-    /// while waiting. Hardware needs a received character before detecting idle,
-    /// so a silent line need not complete this wait.
-    ///
-    /// Cancellation masks only idle notification, leaving collection and TX live.
-    /// Forgetting can leave one idle notification armed; the next idle retires
-    /// it, or a later idle wait/RX Drop cleans it up. The wait retains no additional
-    /// buffer beyond the receiver's existing ring.
-    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
-    pub async fn wait_for_idle(&mut self) -> BufferedIdle {
-        let guard = BufferedIdleWait {
-            info: self.info,
-            state: self.state,
-        };
-        let mut started = false;
-        let snapshot = poll_fn(|cx| {
-            self.state.rx_waker.register(cx.waker());
-            critical_section::with(|cs| {
-                let mut ring = self.state.rx_ring.borrow(cs).borrow_mut();
-                let ring = ring.as_mut().expect("buffered UART receiver has no ring");
-                if !started {
-                    self.info.regs.ier().modify(|w| w.set_rxidle(false));
-                    let mut command = regs::Icr::write_noop();
-                    command.set_rxidle(false);
-                    self.info.regs.icr().write_value(command);
-                    ring.idle_snapshot = None;
-                    self.info.regs.ier().modify(|w| w.set_rxidle(true));
-                    started = true;
-                }
-                if let Some(snapshot) = ring.idle_snapshot {
-                    Poll::Ready(snapshot)
-                } else {
-                    Poll::Pending
-                }
-            })
-        })
-        .await;
-        drop(guard);
-        snapshot
-    }
-
     /// Replace an empty IRQ ring without stopping reception, returning its storage.
     ///
-    /// A queued byte or pending error rejects replacement. On failure, the
+    /// A queued byte, pending error or active idle capture rejects replacement.
+    /// On failure, the
     /// original ring is unchanged and the supplied static buffer is returned.
     /// On success, storage is switched under the ISR's critical section without
     /// copying or clearing bytes, changing registers, or touching the TX half.
@@ -202,6 +158,10 @@ impl<'d> BufferedUartRx<'d> {
         let storage = critical_section::with(|cs| {
             let mut ring = self.state.rx_ring.borrow(cs).borrow_mut();
             let ring = ring.as_mut().expect("buffered UART receiver has no ring");
+            #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+            if ring.idle_capture.active {
+                return Err((BufferReplaceError::IdleCaptureActive, buffer));
+            }
             if ring.len != 0 || ring.error.is_some() {
                 return Err((BufferReplaceError::PendingReceive, buffer));
             }
@@ -759,23 +719,5 @@ impl<'d> BufferedUart<'d> {
 impl Drop for BufferedUartRx<'_> {
     fn drop(&mut self) {
         self.info.shutdown(self.state, Direction::Rx, false);
-    }
-}
-
-#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
-struct BufferedIdleWait {
-    info: Info,
-    state: &'static State,
-}
-
-#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
-impl Drop for BufferedIdleWait {
-    fn drop(&mut self) {
-        critical_section::with(|cs| {
-            self.info.regs.ier().modify(|w| w.set_rxidle(false));
-            if let Some(ring) = self.state.rx_ring.borrow(cs).borrow_mut().as_mut() {
-                ring.idle_snapshot = None;
-            }
-        });
     }
 }

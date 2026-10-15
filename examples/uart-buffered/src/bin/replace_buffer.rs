@@ -37,7 +37,8 @@ async fn main(_spawner: embassy_executor::Spawner) {
                 Err((BufferReplaceError::PendingReceive, next)) => {
                     replacement = Some(next);
                 }
-                Err((BufferReplaceError::Empty, _)) => unreachable!(),
+                // This example never enables idle capture and supplies nonempty storage.
+                Err(_) => unreachable!(),
             }
         }
     }

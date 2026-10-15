@@ -255,6 +255,31 @@ a harmless stale wake. No pointer to a task's output storage enters ISR state.
 The native flag and R1W0 basis is recorded in [idle source evidence](uart-idle-evidence.json).
 This buffered interface and `idle_notify` example are uncompiled and untested.
 
+## Continuous idle markers
+
+On L010/L011/L012, `start_idle_capture()` arms continuous capture into four
+fixed slots (`BUFFERED_IDLE_CAPACITY`). `try_take_idle()` retrieves without
+waiting; `next_idle_marker().await` waits. Both return `NotCapturing` when
+capture is off. No allocation or unbounded ISR work is introduced.
+
+Queued positions track the unread prefix: reads and `consume` subtract consumed
+bytes, saturating at zero. A returned marker is no longer adjusted. Its error
+field is observation history and can repeat an already-consumed error; process
+current data/errors through ordinary reads, not by assuming each marker owns an
+error. Delayed hardware flags can still coalesce.
+
+The fifth retained observation sets `Overflow`. Existing markers are delivered
+first, then one loss notification; later observations are dropped until that
+notification is consumed. Receive-data overflow remains a separate error.
+
+`stop_idle_capture()` masks only idle and discards markers. Canceling a pending
+`next_idle_marker` leaves capture running and consumes nothing. A new
+`start_idle_capture` or the one-shot `wait_for_idle` discards old markers and
+starts a new window. RX Drop stops capture. Buffer replacement rejects active
+capture; stop it explicitly first. Both owners expose the same methods.
+
+The queue and `idle_queue` example are implemented but uncompiled and untested.
+
 ## Cancellation, Drop and forgotten owners
 
 An exact read may copy a prefix before returning Pending. Canceling or
@@ -291,7 +316,7 @@ is not returned, and buffered bytes do not survive successful reconstruction.
 
 ## Separate modes and verification boundary
 
-There is no buffered `read_until_idle`, multi-marker queue, numeric timeout,
+There is no buffered `read_until_idle`, unbounded marker history, numeric timeout,
 packet framing, mode conversion, DMA API, synchronous `embedded_io::Read` or synchronous
 `embedded_io::BufRead` API. Async `embedded_io_async::BufRead` and zero-copy
 `fill_buf`/`consume` are supported. Ordinary borrowed-buffer reuse after RX Drop
@@ -305,9 +330,9 @@ and cancellation semantics. Existing [staged DMA](uart-dma-rx.md) ownership,
 retention and quarantine remain separate. No combined buffered RX/DMA TX
 constructor is added. RF and low-power UART remain deferred.
 
-The [buffered application crate](../examples/uart-buffered/README.md) has eight
+The [buffered application crate](../examples/uart-buffered/README.md) has nine
 firmware binaries: `receive`, `split`, `rx_only`, `flow_control`,
-`shared_vector`, `replace_buffer`, `idle_notify` and the synchronous `borrowed` lifetime example. Its selected
+`shared_vector`, `replace_buffer`, `idle_notify`, `idle_queue` and the synchronous `borrowed` lifetime example. Its selected
 routes use current exact-package authority. The
 existing [flow-control examples](../examples/uart-flow-control/README.md) remain
 ordinary unbuffered applications; their earlier results are not buffered results.

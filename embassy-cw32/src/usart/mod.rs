@@ -64,6 +64,10 @@ use crate::{Peri, PeripheralType, pac};
 use pac::uart::{regs, vals};
 
 mod buffered;
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+mod buffered_idle;
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+use buffered_idle::IdleCapture;
 mod config;
 #[cfg(uart_dma_rx)]
 mod dma_rx;
@@ -351,6 +355,24 @@ struct RxRing {
     waiting: bool,
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
     idle_snapshot: Option<BufferedIdle>,
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    idle_capture: IdleCapture,
+}
+
+/// Maximum retained native buffered idle markers per receiver.
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+pub const BUFFERED_IDLE_CAPACITY: usize = 4;
+
+/// Continuous idle capture state or lost-marker notification.
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub enum IdleCaptureError {
+    /// Start capture before retrieving markers.
+    NotCapturing,
+    /// One or more observations were dropped after the retained queue filled.
+    /// Reported after the retained markers; capture resumes after this report.
+    Overflow,
 }
 
 /// Software receive-queue position at one native ISR idle observation.
@@ -364,9 +386,11 @@ struct RxRing {
 pub struct BufferedIdle {
     /// Queued unread bytes after processing data/errors in the idle snapshot.
     /// Includes bytes queued before the wait began; may be zero.
+    /// For queued capture, already-consumed bytes are subtracted before retrieval.
     pub buffered_bytes: usize,
     /// First retained receive error at observation time, after the clean prefix.
-    /// Inspecting this field does not consume the error; read it separately.
+    /// Inspecting this field does not consume the error. Queued markers may
+    /// repeat an error already consumed; read current receive errors separately.
     /// None does not exclude errors arriving after the observation.
     pub error: Option<Error>,
 }
@@ -379,6 +403,9 @@ pub enum BufferReplaceError {
     Empty,
     /// Read the queued bytes and pending error before retrying.
     PendingReceive,
+    /// Stop continuous idle capture before changing storage.
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    IdleCaptureActive,
 }
 
 /// Owned bidirectional UART. Split it to transmit and receive concurrently.

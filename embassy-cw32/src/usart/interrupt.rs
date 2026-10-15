@@ -263,11 +263,16 @@ fn on_interrupt(
         if idle_observed {
             // Latch after receive observation so simultaneous data/errors are
             // represented. Later appends cannot extend this unread prefix.
-            ring.idle_snapshot = Some(BufferedIdle {
+            let snapshot = BufferedIdle {
                 buffered_bytes: ring.len,
                 error: ring.error,
-            });
-            next.set_rxidle(false);
+            };
+            if ring.idle_capture.active {
+                ring.idle_capture.push(snapshot);
+            } else {
+                ring.idle_snapshot = Some(snapshot);
+                next.set_rxidle(false);
+            }
         }
         if owners.rx_live && ring.waiting && (ring.len != 0 || ring.error.is_some()) {
             ring.waiting = false;

@@ -23,6 +23,10 @@ the existing source lock, including Embassy revision
 
 ## Applications
 
+- `idle_queue`: uses the same native features and wiring as `idle_notify`.
+  Starts four-slot continuous capture, reports marker overflow and drains data
+  independently. Queued positions adjust as data is read; marker errors are
+  historical and may repeat. Not compiled or hardware-tested.
 - `idle_notify`: requires `idle-notify` and one of `cw32l010f8p6`, `cw32l011k8t6`
   or `cw32l012c8t6`; uses the `rx_only` routes. Arm before sending a short burst,
   await a new native idle marker, then consume exactly its unread byte prefix

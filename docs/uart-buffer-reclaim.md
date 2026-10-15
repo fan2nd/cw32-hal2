@@ -18,7 +18,8 @@ to a new ring and returns the old storage with the owner's lifetime. Combined
 `BufferedUart` also exposes this method. The interface is uncompiled and untested.
 
 - Empty input returns `BufferReplaceError::Empty`. Queued bytes or a pending
-  error return `PendingReceive`. Both errors return the supplied static slice
+  error return `PendingReceive`; native active idle capture returns
+  `IdleCaptureActive` (stop capture first). All errors return the supplied static slice
   and leave the old ring unchanged; drain data/errors before retrying.
 - The swap uses the ISR's critical section without copying bytes or changing
   UART registers, pins, TX or shared-vector ownership. Live read/fill_buf borrows
