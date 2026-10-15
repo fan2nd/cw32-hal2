@@ -1,25 +1,5 @@
 # Continuous IRQ-buffered UART receive
 
-Current implementation adds [`into_buffer`](uart-buffer-reclaim.md) for explicit
-RX storage reclamation. It is pending software acceptance; the historical
-results below do not validate it.
-
-The Stage83 acceptance record below is historical. Subsequent API changes and
-executed checks are recorded in [UART/SPI alignment](uart-spi-api-validation.md),
-[BufRead validation](uart-bufread-validation.md), and
-[borrowed-buffer validation](uart-borrowed-buffer-validation.md). These later
-receipts do not replace the original hardware qualification boundary.
-
-Stage83 main verification passed thirteen actual ARM HAL libraries, eleven ELF
-links and five focused source/data gates. Independent main runtime and
-metadata/source reviews accepted the frozen implementation. Three existing
-native L010/L011 RCC LSE-constant warnings remain in each applicable row; all
-other main rows had no warnings. Main ran no hardware generation; all 1,380
-source files and 905 generated hardware files stayed unchanged during the matrix.
-At main acceptance clean had not run; final-package completion requires a separate
-final-source clean receipt for three libraries, three buffered ELFs and the five
-focused gates. No hardware validation is claimed.
-
 ## Owners and scope
 
 `BufferedUartRx<'d>` and `BufferedUart<'d>` are direct, interrupt-driven owners
@@ -282,12 +262,13 @@ is not returned, and buffered bytes do not survive successful reconstruction.
 ## Separate modes and verification boundary
 
 There is no buffered `read_until_idle`, idle marker queue, numeric timeout,
-packet framing, live ring replacement, consumed-static-storage reclamation,
+packet framing, live ring replacement,
 mode conversion, DMA API, synchronous `embedded_io::Read` or synchronous
 `embedded_io::BufRead` API. Async `embedded_io_async::BufRead` and zero-copy
 `fill_buf`/`consume` are supported. Ordinary borrowed-buffer reuse after RX Drop
-is supported under the unsafe constructor contract above; it is not DMA
-reclamation or return of a consumed static buffer.
+is supported under the unsafe constructor contract above.
+[`into_buffer`](uart-buffer-reclaim.md) explicitly returns RX storage after shutdown;
+this interface is implemented but untested. DMA reclamation is separate.
 The existing [native finite idle API](uart-idle.md) remains on ordinary
 `UartRx<Async>`/`Uart<Async>` for L010/L011/L012 with its Stage82 window, error
 and cancellation semantics. Existing [staged DMA](uart-dma-rx.md) ownership,
@@ -303,29 +284,3 @@ ordinary unbuffered applications; their earlier results are not buffered results
 
 Current source evidence is recorded in
 [`uart-buffered-rx-evidence.json`](uart-buffered-rx-evidence.json).
-Independent main runtime and metadata/source reviews accepted the frozen
-implementation and its retained actual-artifact receipts. The finite acceptance
-scope is:
-
-- Main passed: thirteen release ARM HAL libraries, one exact selection per family;
-  eleven ELF links comprising nine selected buffered applications, the existing
-  L012 native-idle `receive` and L083 staged-DMA `shared_vector` regressions.
-  All 24 commands exited successfully. Three existing RCC LSE-constant warnings
-  appear in each L010/L011 library and buffered-ELF row; the other 20 rows have none.
-- Final-package clean requires one fresh final-source package and separate target
-  directory, with F002F3P7, L012C8T6 and L083RCT6 libraries and buffered F002
-  `receive`, L012 `split` and L083 `shared_vector` ELFs. L012 library rows include
-  `defmt`. At main acceptance clean had not run; final-package completion requires
-  a separate final-source clean receipt.
-- Main passed all five separately named focused gates: buffered source
-  verification, native-idle source verification, source provenance,
-  functional-coverage consistency and module layout. Clean requires these same
-  five focused gates.
-
-Main ran no hardware generation; its 1,380 source files and all 905 generated
-hardware files stayed unchanged. Clean allows one necessary bootstrap only if
-its source package omits generated files; all 905 generated hardware files must
-then match the accepted main projection. No cumulative script,
-extra matrix, synthetic HAL test, temporal model, probe or hardware execution
-is part of this acceptance. Builds and source/data checks cannot establish
-silicon loss rate, interrupt saturation, RTS timing or throughput.
