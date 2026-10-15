@@ -2271,8 +2271,7 @@ functions:
         status: partial
         scope: Direct HSE crystal/bypass on all five modeled exact packages; one-time initialization only.
         limitations:
-        - Explicit actual 4..32 MHz endpoints. L010 bypass below 4 MHz is deferred software coverage;
-          L011 uses the RM/DS intersection. Factory HSI retention limits ambient to -40..85 C.
+        - Crystal and L011 bypass retain actual 4..32 MHz endpoints. L010 bypass authored range is 3908159..32000000 Hz, pending generation/software acceptance; lower inputs exceed the unchanged 11-bit detector policy. L011 uses the RM/DS intersection. Factory HSI retention limits ambient to -40..85 C.
         - Own VDD floors are 1.62 V and 1.7 V; actual buses are <=24 MHz below 1.8 V,
           otherwise <=48 MHz and <=96 MHz respectively. Waveform, drive and startup are board obligations.
         - Eight documented pre-start/run drive codes, no frequency-range selector and no GPIO PDR.

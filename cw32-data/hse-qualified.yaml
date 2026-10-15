@@ -898,7 +898,7 @@ families:
         - -40
         - 85
       bypass:
-        minimum_hz: 4000000
+        minimum_hz: 3908159
         maximum_hz: 32000000
         supply_mv:
         - 1620
@@ -1052,9 +1052,9 @@ families:
         and<=48MHz otherwise. Retained factory HSIOSC48MHz+/-2% means47.04..48.96MHz; own Table7-18 printed42/PDF43
         keeps the combined ambient range-40..85C. Flash WAIT0/1 covers actual HCLK<=24/48MHz (own RM printed113/PDF114).
       bypass_coverage: Own RM printed49/PDF50 and DS Table7-14 printed38/PDF39 both support1..32MHz bypass.
-        This initial implementation deliberately admits only actual4..32MHz for the bounded detector/startup
-        policy. The excluded1..<4MHz band is deferred software coverage, not a hardware limitation or source
-        conflict.
+        Software admits actual3908159..32000000Hz, keeping ceil(8000000000/minimum_hz)<=2047.
+        The lower bound is ceil(8000000000/2047); crystal remains4..32MHz. The lower bypass band
+        needs a separately qualified detector/startup policy. The extension awaits software acceptance.
       lsi_bound: Own RM printed55/PDF56 permits legal LSI32.8kHz+/-10%, yielding36080Hz maximum. Own DS Table7-19
         printed42/PDF43 factory+/-3% is narrower and must not be assigned to arbitrary inherited trim. Retained
         LSI must already be legally operating and unchanged.
@@ -1081,8 +1081,8 @@ families:
         request LSI without setting softwareLSIEN; preserve unchanged legal LSI, its trim/wait and software-request
         state.
       detector: DETCNT is1..2047. HSE detection counts131072 cycles during DETCNT/LSI. Use ceil(8000000000/actual_minimum_hz),
-        and prove actual_minimum_hz*DETCNT > 131072*ccs_lsi_maximum_hz. At4MHz the count2000 fits11 bits;
-        the chosen full4..32MHz range preserves positive margin. WAITCYCLE3 means262144 cycles, not a wall-clock
+        and prove actual_minimum_hz*DETCNT > 131072*ccs_lsi_maximum_hz. At3908159Hz the count2047
+        fits11 bits and the product8000001473 exceeds131072*36080. At3908158Hz the count2048 does not fit. WAITCYCLE3 means262144 cycles, not a wall-clock
         timeout.
       retained_consumers: 'RTC.CR1.SOURCE1 owns HSE even if calendarSTART=0, because AWT can useRTCCLKD. Reuse
         only exact enabled/stable HSE parameters and pads; do not stop/rewrite a retained HSE. SOURCE3 owns

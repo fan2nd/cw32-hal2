@@ -1,6 +1,6 @@
 # Direct HSE on CW32L010 and CW32L011
 
-The existing `rcc/l010_l011.rs` backend supports one-time direct crystal or
+The existing `rcc/l010_l011/` backend supports one-time direct crystal or
 bypass HSE initialization on CW32L010F8P6, CW32L010F8U6, CW32L010Y8M6,
 CW32L011K8T6 and CW32L011K8U6. `Hse` requires nominal, minimum and maximum
 frequency, board operating conditions, mode and drive. `Config.sys` selects
@@ -40,7 +40,8 @@ measurements of a particular board.
 
 ## Board and electrical contract
 
-Both modes initially admit **actual 4–32 MHz**, including all declared
+Crystal mode and L011 bypass admit **actual 4–32 MHz**. L010 bypass admits
+**3,908,159–32,000,000 Hz**, pending software acceptance. Ranges include all declared
 endpoints, with `0 < minimum <= nominal <= maximum`. The entire board
 operating envelope must be covered by the source envelope. Include tolerance,
 supply, temperature, loading, aging and short-term cycle variation. A nominal
@@ -48,7 +49,7 @@ supply, temperature, loading, aging and short-term cycle variation. A nominal
 admitted; long-term average accuracy alone does not prove cycle bounds.
 
 L010's own RM and DS agree that bypass hardware can operate at 1–32 MHz;
-1–<4 MHz is deliberately deferred software coverage. L011's RM says 4–32 MHz
+The band below 3,908,159 Hz needs a different detector/startup policy. L011's RM says 4–32 MHz
 while its DS permits bypass from 1 MHz; the initial interval is their safe
 intersection and does not resolve that discrepancy. Both crystal intervals
 are 4–32 MHz. Sources: L010 RM printed 48–49/PDF 49–50 and DS Tables 7-14,
@@ -156,11 +157,14 @@ The L011 conflict is visible in RM [PDF 54](https://www.whxy.com/uploads/files/2
 and DS [PDF 51](https://www.whxy.com/uploads/files/20250724/CW32L011_DataSheet_CN_V1.1.pdf#page=51).
 
 DETCNT is `ceil(8_000_000_000 / actual_minimum_HSE_Hz)`, must fit 1–2047,
-and must prove `HSE_min * DETCNT > 131072 * LSI_max`. The 4 MHz lower bound
-keeps this policy within the 11-bit field. Extending L010 bypass to 1 MHz
-needs a separately qualified detector/startup policy; blindly reusing this
-expression would overflow the count. This is a software admission proof,
-not a measurement of either oscillator.
+and must prove `HSE_min * DETCNT > 131072 * LSI_max`. L010's lower bound is
+`ceil(8_000_000_000 / 2047) = 3_908_159 Hz`: the product is 8,000,001,473,
+above `131072 * 36080`, and the count is 2047. One Hz lower requires 2048,
+which cannot fit. L011 retains its 4 MHz source-policy lower bound.
+The 3.95 MHz example declares 3,949,881–3,950,119 Hz and uses count 2026.
+This extension has not been generated, compiled, tested or hardware-validated;
+stale generated metadata still enforces the previous bound. Extending to 1 MHz
+requires a separately qualified detector/startup policy.
 
 ## Retained consumers and entry conditions
 

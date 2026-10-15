@@ -79,15 +79,31 @@ an inherited LSE. Neither family's chosen UART/LED conflicts with its HSE pads.
 L011 requires VDDA=VDD. Match receiver logic levels and LED current limits to
 the actual supply and own I/O ratings; use a common ground.
 
-Both low-family modes initially admit actual 4–32 MHz. L010 bypass 1–<4 MHz is
-deferred software coverage; L011 has conflicting RM 4 MHz and DS 1 MHz lower
-bounds. Factory HSIOSC remains 48 MHz ±2% on L010 or 96 MHz ±2% on L011, with
+Crystal mode and L011 bypass admit actual 4–32 MHz. L010 bypass admits
+3,908,159–32,000,000 Hz in authored metadata; the extension is pending acceptance.
+L011 has conflicting RM 4 MHz and DS 1 MHz lower bounds. Factory HSIOSC remains 48 MHz ±2% on L010 or 96 MHz ±2% on L011, with
 its independent bound. Inherited configurable CCS can force nominal 4 MHz
 (actual 3.92–4.08 MHz) regardless of the requested HSI divider. The L011 RM
 32.8 kHz ±10% safe LSI range conflicts with DS factory −10/+25%; detector
 arithmetic uses 41 kHz conservatively without resolving that discrepancy.
 See [the full L010/L011 qualification](../../docs/qualified-l010-l011-hse.md)
 for entry conditions, retained RTC/AWT and analog ownership, and failure limits.
+
+## L010 low-frequency bypass
+
+`bypass-low` requires `l010-low-hse` and exactly one of `cw32l010f8p6`,
+`cw32l010f8u6` or `cw32l010y8m6`, with default features disabled. It uses the
+L010 wiring above: external 3.95 MHz on PA0, UART1 PA6 at **9600 8N1**, LED PA3.
+The source must remain within 3,949,881–3,950,119 Hz and the stated waveform and
+3.0–3.6 V / −20–70°C conditions. `retained-hse` keeps HSI as SYSCLK.
+
+The detector count is 2026. At the supported lower bound 3,908,159 Hz it is
+2047; lower input bounds overflow the existing policy. No detector, startup,
+CCS, retained-consumer or pin-ownership behavior is changed.
+
+This example and range extension have not been generated, compiled or tested.
+Fresh metadata/PAC generation is required before later authorized builds;
+existing generated files retain the old limit. Local builds/tests remain prohibited.
 
 ## CW32L083 exact package wiring
 
