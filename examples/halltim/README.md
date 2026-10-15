@@ -19,3 +19,8 @@ board wiring. Compiling/linking does not establish silicon validation.
 `async_capture` awaits `wait_capture_async` using the shared BTIM3/HALLTIM
 handler pairing. It retains the same non-atomic latest-sample semantics;
 see [the async contract](../../docs/halltim-async.md).
+
+`history` uses the eight-entry IRQ observation queue. It drains oldest records,
+handles software overflow explicitly, and restarts collection after counter
+overflow. It is not a complete physical edge log; the new path is uncompiled
+and untested. See [history contract](../../docs/halltim-history.md).

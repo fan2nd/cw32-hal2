@@ -1,4 +1,4 @@
-//! CW32L012 Hall input capture, polling the latest hardware sample.
+//! CW32L012 Hall input capture, with optional bounded IRQ observation history.
 //!
 //! All three filtered inputs capture on both edges. Any input change stores CNT
 //! in WIDTH and clears CNT. There is one WIDTH register and one coalescing CAPF
@@ -29,6 +29,9 @@ use core::{
 };
 use critical_section::Mutex;
 pub use pac::halltim::vals::Prescaler;
+mod history;
+use history::History;
+pub use history::HISTORY_CAPACITY;
 
 /// The largest documented ARR/CNT/WIDTH value.
 pub const MAX_COUNT: u32 = 0x00ff_ffff;
@@ -65,15 +68,21 @@ pub enum Error {
     /// No capture was observed within the supplied polling-attempt budget.
     Timeout,
     Stopped,
+    /// Start history collection before reading its queue.
+    HistoryNotStarted,
+    /// Software queue lost observations. Hardware losses remain uncounted.
+    HistoryOverflow,
 }
 
 pub(crate) struct State {
+    history: Mutex<RefCell<History>>,
     waiting: Mutex<Cell<bool>>,
     waker: Mutex<RefCell<Option<Waker>>>,
 }
 impl State {
     pub(crate) const fn new() -> Self {
         Self {
+            history: Mutex::new(RefCell::new(History::new())),
             waiting: Mutex::new(Cell::new(false)),
             waker: Mutex::new(RefCell::new(None)),
         }
@@ -85,6 +94,17 @@ impl<T: Instance> Handler<BTIM3_HALLTIM> for InterruptHandler<T> {
     unsafe fn on_interrupt() {
         let wake = critical_section::with(|cs| {
             let state = T::state();
+            let mut history = state.history.borrow(cs).borrow_mut();
+            if history.active {
+                let r = T::regs();
+                if r.dier().read().capie() && r.isr().read().capf() {
+                    if let Some(capture) = observe(r, &mut history.observation) {
+                        history.push(capture);
+                    }
+                    return state.waker.borrow(cs).borrow_mut().take();
+                }
+                return None;
+            }
             if state.waiting.borrow(cs).get()
                 && T::regs().dier().read().capie()
                 && T::regs().isr().read().capf()
@@ -219,8 +239,7 @@ pub struct HallTim<'d, T: Instance> {
     _peri: Peri<'d, T>,
     pins: [Flex<'d>; 3],
     tick: ClockBounds,
-    previous: Option<Levels>,
-    overflow: bool,
+    observation: Observation,
 }
 impl<'d, T: Instance> HallTim<'d, T> {
     /// Configure a stopped timer. All three inputs are required because the
@@ -252,6 +271,7 @@ impl<'d, T: Instance> HallTim<'d, T> {
             if !T::RCC_INFO.is_enabled() {
                 return Err(Error::ClockNotEnabled);
             }
+            *T::state().history.borrow(cs).borrow_mut() = History::new();
             T::state().waiting.borrow(cs).set(false);
             let stale = T::state().waker.borrow(cs).borrow_mut().take();
             let r = T::regs();
@@ -275,8 +295,7 @@ impl<'d, T: Instance> HallTim<'d, T> {
             _peri: peri,
             pins: [ch1.connect(), ch2.connect(), ch3.connect()],
             tick: source.divided_by(divisor),
-            previous: None,
-            overflow: false,
+            observation: Observation::new(),
         })
     }
     /// Counter-clock envelope, with the same operating limits as RCC.
@@ -287,8 +306,9 @@ impl<'d, T: Instance> HallTim<'d, T> {
     pub fn start(&mut self) {
         T::regs().cr().modify(|w| w.set_en(true));
     }
-    /// Stop counting/capture; retain pending flags and the latest sample.
+    /// Stop counting/capture and discard software history; retain hardware flags/sample.
     pub fn stop(&mut self) {
+        self.stop_history();
         T::regs().cr().modify(|w| w.set_en(false));
     }
     pub fn is_running(&self) -> bool {
@@ -302,8 +322,7 @@ impl<'d, T: Instance> HallTim<'d, T> {
         self.stop();
         T::regs().cnt().write(|w| w.set_data(0));
         clear(true, true, true, T::regs());
-        self.previous = None;
-        self.overflow = false;
+        self.observation = Observation::new();
         self.start();
     }
     /// Live counter; wraps at ARR and resets on every filtered input transition.
@@ -326,48 +345,10 @@ impl<'d, T: Instance> HallTim<'d, T> {
     /// Clear CAPF before reading WIDTH so a later edge leaves a pending event.
     /// Hardware may update WIDTH/STATE at any point; this is deliberately a
     /// latest-observation API, not an atomic or lossless capture queue.
+    /// Calling this stops history collection and discards queued history.
     pub fn try_capture(&mut self) -> Option<Capture> {
-        let r = T::regs();
-        let before = r.isr().read();
-        self.overflow |= before.ovf();
-        if before.ovf() {
-            clear(false, true, false, r);
-        }
-        if !before.capf() {
-            return None;
-        }
-        clear(true, false, false, r);
-        let width_ticks = r.width().read().data();
-        let levels = filtered(r.state().read());
-        let after = r.isr().read();
-        self.overflow |= after.ovf();
-        let transition = match self.previous {
-            None => ObservedTransition::FirstSample,
-            Some(p) => match p.bits() ^ levels.bits() {
-                0 => ObservedTransition::Unchanged,
-                1 => ObservedTransition::OneChanged {
-                    channel: InputChannel::Ch1,
-                    high: levels.ch1,
-                },
-                2 => ObservedTransition::OneChanged {
-                    channel: InputChannel::Ch2,
-                    high: levels.ch2,
-                },
-                4 => ObservedTransition::OneChanged {
-                    channel: InputChannel::Ch3,
-                    high: levels.ch3,
-                },
-                _ => ObservedTransition::MultipleChanged,
-            },
-        };
-        self.previous = Some(levels);
-        Some(Capture {
-            width_ticks,
-            levels,
-            transition,
-            overflow_since_restart: self.overflow,
-            additional_capture_pending: after.capf(),
-        })
+        self.stop_history();
+        observe(T::regs(), &mut self.observation)
     }
     /// Await one coalesced latest capture. The same non-atomic sampling and
     /// overflow semantics as `try_capture` apply. Cancellation masks CAPIE only,
@@ -377,6 +358,7 @@ impl<'d, T: Instance> HallTim<'d, T> {
         &mut self,
         _irq: impl Binding<BTIM3_HALLTIM, InterruptHandler<T>>,
     ) -> Result<Capture, Error> {
+        self.stop_history();
         let _wait = CaptureWait::<T>(PhantomData);
         if !self.is_running() {
             return Err(Error::Stopped);
@@ -418,6 +400,61 @@ impl<'d, T: Instance> HallTim<'d, T> {
         }
         Err(Error::Timeout)
     }
+}
+#[derive(Clone, Copy)]
+struct Observation {
+    previous: Option<Levels>,
+    overflow: bool,
+}
+impl Observation {
+    const fn new() -> Self {
+        Self {
+            previous: None,
+            overflow: false,
+        }
+    }
+}
+fn observe(r: pac::halltim::Halltim, observation: &mut Observation) -> Option<Capture> {
+    let before = r.isr().read();
+    observation.overflow |= before.ovf();
+    if before.ovf() {
+        clear(false, true, false, r);
+    }
+    if !before.capf() {
+        return None;
+    }
+    clear(true, false, false, r);
+    let width_ticks = r.width().read().data();
+    let levels = filtered(r.state().read());
+    let after = r.isr().read();
+    observation.overflow |= after.ovf();
+    let transition = match observation.previous {
+        None => ObservedTransition::FirstSample,
+        Some(p) => match p.bits() ^ levels.bits() {
+            0 => ObservedTransition::Unchanged,
+            1 => ObservedTransition::OneChanged {
+                channel: InputChannel::Ch1,
+                high: levels.ch1,
+            },
+            2 => ObservedTransition::OneChanged {
+                channel: InputChannel::Ch2,
+                high: levels.ch2,
+            },
+            4 => ObservedTransition::OneChanged {
+                channel: InputChannel::Ch3,
+                high: levels.ch3,
+            },
+            _ => ObservedTransition::MultipleChanged,
+        },
+    };
+    observation.previous = Some(levels);
+    Some(Capture {
+        width_ticks,
+        levels,
+        transition,
+        overflow_since_restart: observation.overflow,
+        additional_capture_pending: after.capf(),
+    })
 }
 fn filtered(s: pac::halltim::regs::State) -> Levels {
     Levels {

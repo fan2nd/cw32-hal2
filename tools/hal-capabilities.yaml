@@ -1551,6 +1551,19 @@ functions:
       - path: docs/halltim-async.md
       - path: embassy-cw32/src/halltim.rs
         anchor: pub async fn wait_capture_async
+    - id: irq_observation_history
+      status: partial
+      scope: Eight-entry singleton queue of L012 IRQ-observed captures, with explicit software overflow reporting.
+      implemented_families: [CW32L012]
+      limitations:
+      - Preserves oldest records then reports HistoryOverflow; collection drops observations until the loss barrier is consumed.
+      - Hardware CAPF coalescing and non-atomic WIDTH/STATE remain. No lossless edge log, count, direction or latency guarantee.
+      - Cancelled consumers leave collection active. Stop, restart, ordinary capture and Drop discard history; shared BTIM3 NVIC remains untouched.
+      - Source-reviewed only; queue, cancellation, memory footprint and board acceptance remain pending.
+      evidence:
+      - path: docs/halltim-history.md
+      - path: embassy-cw32/src/halltim/history.rs
+        anchor: pub fn start_history
     - id: safe_peripheral_dma
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.
