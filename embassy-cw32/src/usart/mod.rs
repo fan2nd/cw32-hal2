@@ -79,6 +79,8 @@ mod half_duplex;
 mod interrupt;
 #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 mod nine_bit;
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+mod rs485;
 mod rx;
 mod traits;
 mod tx;
@@ -87,6 +89,8 @@ mod uart;
 pub use config::{Config, ConfigError, DataBits, Error, Oversampling, Parity, StopBits};
 #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 pub use half_duplex::HalfDuplexUart;
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+pub use rs485::{DriverEnable, DriverEnablePolarity, Rs485Uart};
 pub use interrupt::InterruptHandler;
 #[cfg(uart_cw32l083_v1)]
 pub use interrupt::SharedInterruptHandler;

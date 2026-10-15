@@ -16,3 +16,8 @@ arbitration, timeout or turnaround guarantee is supplied.
 
 L010/L011 changes have not been compiled or run. Board acceptance remains
 pending. See [source and API scope](../../docs/uart-native-word-half-duplex.md).
+
+The separate `rs485` binary owns TX/RX plus DE (L010 PB1, L011 PB4, L012 PA1)
+and sends once through an external transceiver. Its active-high DE delay is 16
+sample periods; adjust for the board. It does not use single-wire wiring.
+See [RS485 contract](../../docs/uart-rs485.md). Do not reserve L010 PB1 for LSE.

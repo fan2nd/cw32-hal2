@@ -91,6 +91,19 @@ functions:
       - path: docs/uart-l012-half-duplex.md
       - path: embassy-cw32/src/usart/half_duplex.rs
         anchor: pub struct HalfDuplexUart
+    - id: automatic_rs485_de
+      status: partial
+      scope: L010/L011/L012 blocking and IRQ PIO Rs485Uart with owned TX, RX and RTS-as-DE.
+      implemented_families: [CW32L010, CW32L011, CW32L012]
+      limitations:
+      - Polarity and symmetric delay of 0..31 sample periods; no dedicated oversampling, DMA, split or RTS/CTS mode.
+      - Flush observes UART TX completion, not DE delay expiration or external bus release. No echo suppression or arbitration.
+      - Drop can truncate output and disconnects DE; external inactive bias and transceiver timing are application obligations.
+      - Source-reviewed only; compilation, cancellation and board acceptance remain pending.
+      evidence:
+      - path: docs/uart-rs485.md
+      - path: embassy-cw32/src/usart/rs485.rs
+        anchor: pub struct Rs485Uart
     - id: rts_cts
       status: partial
       scope: Full owned RTS+CTS flow control.

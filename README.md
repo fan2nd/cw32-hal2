@@ -31,7 +31,7 @@ See [capability declarations](tools/hal-capabilities.yaml),
 [inventory format](docs/functional-coverage.md) and [pending work](todo.md).
 
 - UART: blocking/IRQ, buffered receive and qualified finite DMA.
-  L010/L011/L012 support nine-bit PIO and single-wire half duplex. L012 UART DMA
+  L010/L011/L012 support nine-bit PIO, single-wire half duplex and automatic RS485 DE. L012 UART DMA
   remains TX-only. The L010/L011 word/half-duplex extension awaits acceptance.
 - Buffered UART on L010/L011/L012 returns an unread-queue position and error
   snapshot on idle, with optional four-marker continuous capture and explicit

@@ -106,6 +106,9 @@ impl Default for Config {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum ConfigError {
+    /// Native RS485 DE assertion/deassertion delay must fit the five-bit field.
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    InvalidDriverEnableDelay,
     /// The selected family or buffered/DMA backend only qualifies eight data bits.
     UnsupportedDataBits,
     /// Nine data bits cannot be combined with a parity bit.
@@ -196,6 +199,8 @@ impl core::error::Error for Error {}
 impl core::fmt::Display for ConfigError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.write_str(match self {
+            #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+            Self::InvalidDriverEnableDelay => "UART DE delay exceeds 31 sample periods",
             Self::UnsupportedDataBits => {
                 "UART data bits are not qualified for this family or backend"
             }

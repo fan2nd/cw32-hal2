@@ -103,7 +103,7 @@ impl<'d> Uart<'d, Async> {
 }
 
 impl<'d, M: Mode> Uart<'d, M> {
-    fn new_inner<T: Instance, TX: TxPin<T>, RX: RxPin<T>>(
+    pub(super) fn new_inner<T: Instance, TX: TxPin<T>, RX: RxPin<T>>(
         _peri: Peri<'d, T>,
         tx: Peri<'d, TX>,
         rx: Peri<'d, RX>,
