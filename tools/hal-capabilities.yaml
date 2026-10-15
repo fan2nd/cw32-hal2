@@ -166,14 +166,14 @@ functions:
       - Existing 54 selections retain their package routes and exclusions; source/API scope is not a build-total claim.
       - Inherent and async trait reads return an available clean prefix; read_exact fills the slice. Nonwaiting blocking_read and read_ready are available. Empty reads preserve queued bytes and pending errors.
       - Async BufRead fill_buf lends a contiguous occupied prefix without copying; consume releases only exposed bytes. IRQ writes remain disjoint from the held prefix, but prolonged borrowing can cause overflow.
-      - Safe constructors consume the nonempty static ring even on constructor error and do not return it; unsafe borrowed constructors release the borrow after normal RX Drop and the shared TX/RX lifetime ends, and require storage to remain valid and exclusive if the owner is leaked.
+      - Safe constructors consume the nonempty static ring even on constructor error; successful RX owners can return storage with the owner lifetime via into_buffer after normal shutdown (implementation pending software acceptance); unsafe borrowed constructors release the borrow after normal RX Drop and the shared TX/RX lifetime ends, and require storage to remain valid and exclusive if the owner is leaked.
       - Retained clean prefix precedes the first pending error; software BufferOverflow and line errors discard later
         ISR observations until the error is consumed.
       - Ten non-L010/L011/L012 families permit silent pre-ISR RDR overwrite even with ring space; native ORE does not
         count lost frames, and NE requires 16x/8x sampling.
       - Collection depends on IRQ progress; finite capacity does not guarantee lossless reception, bounded waits or throughput.
       - Hardware RTS reflects RC rather than software queue occupancy; no ring-watermark backpressure is provided.
-      - No buffered idle markers, DMA ring, numeric timeout or storage-reclamation API.
+      - No buffered idle markers, DMA ring or numeric timeout. into_buffer discards unread data/errors and returns neither pins nor the peripheral; only a static RX owner returns a static slice.
       - Stage83 main verification passed 13 actual ARM libraries, 11 ELF links and five focused source/data gates;
         independent main runtime and metadata/source reviews accepted the frozen implementation.
       - Three existing native L010/L011 RCC LSE-constant warnings remain in each applicable main row.

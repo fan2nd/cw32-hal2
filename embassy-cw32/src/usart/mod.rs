@@ -391,9 +391,10 @@ pub struct UartRx<'d, M: Mode> {
 /// Safe constructors consume a nonempty static mutable slice, including on
 /// configuration error. Unsafe `new_borrowed*` variants accept an ordinary
 /// mutable borrow tied to this owner and release it on normal Drop.
-/// The HAL does not initialize its bytes. Static storage is never returned;
-/// borrowed storage becomes reusable once the owner borrow ends, without a
-/// release method. Combined UART halves share a lifetime, so a still-used TX
+/// The HAL does not initialize its bytes. [`Self::into_buffer`] consumes RX and
+/// returns the original storage with this owner's lifetime after shutdown.
+/// Normal Drop also releases borrowed storage without an explicit return.
+/// Combined UART halves share a lifetime, so a still-used TX
 /// half may conservatively keep that borrow alive even after RX Drop.
 /// Any nonzero capacity is accepted, including one byte. Peripheral and pin
 /// borrows need not be static. The ISR retains a raw ring pointer; borrowed

@@ -155,7 +155,7 @@ case "${1:-help}" in
     python3 cw32-data/tools/audit_sources.py
     python3 tests/test_source_provenance.py
     python3 tests/test_generation_transaction.py
-    python3 ci/package-source.py build/audit/current-source.zip
+    python3 tools/package-source.py build/audit/current-source.zip
     python3 tests/check_gpio_isr_access.py --manual-dir "$CW32_SOURCES"
     python3 tests/check_timer_adc_isr_access.py --manual-dir "$CW32_SOURCES"
     python3 tests/check_flash_lock_fields.py --sources "$CW32_SOURCES"
@@ -167,24 +167,24 @@ case "${1:-help}" in
     python3 tests/verify_classic_gtim_modes.py
     python3 tests/verify_timer_commands.py --compile
     python3 tests/check_reviewed_status_access.py --sources "$CW32_SOURCES" --generated
-    python3 ci/verify-timer-input-data.py --sources "$CW32_SOURCES"
+    python3 tools/verify-timer-input-data.py --sources "$CW32_SOURCES"
     python3 tests/verify_uart_flow_control_sources.py
     python3 tests/verify_adc_scan_sources.py --sources "$CW32_SOURCES"
     python3 tests/verify_classic_adc_scan_sources.py --sources "$CW32_SOURCES"
-    python3 ci/verify-l012-adc-scan-data.py --sources "$CW32_SOURCES" --out docs/verification-logs/source-audits/l012-scans.json
+    python3 tools/verify-l012-adc-scan-data.py --sources "$CW32_SOURCES" --out docs/verification-logs/source-audits/l012-scans.json
     python3 tests/verify_adc_clock_bounds.py
     python3 tests/verify_i2c_clock_bounds.py
     python3 tests/verify_i2c_typed_registers.py
     python3 tests/verify_rcc_operating_envelope.py
-    python3 ci/verify-f020-lse-data.py --sources "$CW32_SOURCES" --out build/audit/f020-lse.json
-    python3 ci/verify-l031-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l031-lse.json
-    python3 ci/verify-lse-awt-data.py --sources "$CW32_SOURCES" --data cw32-data/data --out build/audit/lse-awt.json
-    python3 ci/verify-l052-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l052-lse.json
-    python3 ci/verify-l083-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l083-lse.json
-    python3 ci/verify-l010-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l010-lse.json
-    python3 ci/verify-l011-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l011-lse.json
-    python3 ci/verify-l012-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l012-lse.json
-    python3 ci/verify-f030-mco-data.py --sources "$CW32_SOURCES" --data cw32-data/data --out build/audit/f030-mco.json
+    python3 tools/verify-f020-lse-data.py --sources "$CW32_SOURCES" --out build/audit/f020-lse.json
+    python3 tools/verify-l031-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l031-lse.json
+    python3 tools/verify-lse-awt-data.py --sources "$CW32_SOURCES" --data cw32-data/data --out build/audit/lse-awt.json
+    python3 tools/verify-l052-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l052-lse.json
+    python3 tools/verify-l083-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l083-lse.json
+    python3 tools/verify-l010-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l010-lse.json
+    python3 tools/verify-l011-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l011-lse.json
+    python3 tools/verify-l012-lse-data.py --sources "$CW32_SOURCES" --out build/audit/l012-lse.json
+    python3 tools/verify-f030-mco-data.py --sources "$CW32_SOURCES" --data cw32-data/data --out build/audit/f030-mco.json
     python3 tests/audit_generated_parity.py
     python3 tests/verify_dma_owned_evidence.py
     python3 tests/verify_remaining_serial_af.py --sources "$CW32_SOURCES"
@@ -221,13 +221,10 @@ case "${1:-help}" in
     python3 tests/verify_autotrim_evidence.py
     python3 tests/verify_atim_evidence.py --sources "$CW32_SOURCES"
     python3 tests/verify_atim_pwm_routes.py --sources "$CW32_SOURCES"
-    python3 ci/verify-classic-atim-complementary-data.py --sources "$CW32_SOURCES"
+    python3 tools/verify-classic-atim-complementary-data.py --sources "$CW32_SOURCES"
     python3 tests/verify_halltim_evidence.py --sources "$CW32_SOURCES"
     python3 tests/verify_trigger_routes.py --sources "$CW32_SOURCES"
     ;;
-  check-lsi-clock) bash ci/check-lsi-clock.sh ;;
-  check-lse-sysclk) bash ci/check-lse-sysclk.sh ;;
-  check-mco) bash ci/check-mco.sh ;;
   lint)
     python3 tests/test_module_layout.py
     ;;
@@ -256,5 +253,5 @@ case "${1:-help}" in
       cargo test --locked --manifest-path firmware/Cargo.toml -p cw32-metapac --no-default-features --features "$chip,metadata" --test metadata
     done < <(sed -n 's/^\(cw32[a-z0-9-]*\) = \[\]/\1/p' cw32-metapac/Cargo.toml)
     ;;
-  *) echo 'Usage: ./d {fetch-sources|fetch-evidence|refresh-discovery|provenance|audit-sources|import-registers|gen|gen-all|test|audit-current|check|check-lsi-clock|check-lse-sysclk|check-mco|lint}' ;;
+  *) echo 'Usage: ./d {fetch-sources|fetch-evidence|refresh-discovery|provenance|audit-sources|import-registers|gen|gen-all|test|audit-current|check|lint}' ;;
 esac

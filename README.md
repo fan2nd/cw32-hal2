@@ -911,17 +911,10 @@ See [SPI DMA lifecycle and evidence](docs/spi-dma.md) and the ordinary
 [staged classic SPI firmware examples](examples/spi-dma/README.md) and
 [native L012 deployments](examples/l012-spi-dma/README.md).
 
-```sh
-cargo check -p embassy-cw32 --no-default-features --features cw32f030c8t7,rt \
-  --target thumbv6m-none-eabi
-./ci/check-hal.sh
-```
-
-The HAL check builds all 54 chip selections for ARM with `rt` and `rt,defmt`,
-then links the source-qualified firmware groups listed in that script. HAL unit/integration tests,
-models and compile-contract harnesses have been removed. No firmware is flashed
-or executed. See `docs/hal-production-layout.md` for the upstream layout mapping
-and the historical verification boundary.
+CI build matrices and their runners have been removed. Source declarations and
+manual source/packaging tools live in [tools/](tools/README.md). Local tests,
+builds and automated validation are not run under the current work policy.
+Historical acceptance records describe their original snapshots only.
 Unsupported scope includes additional ADC/timer modes, peripheral DMA beyond
 the separately declared staged UART and SPI profiles (including the Stage93
 five-family SPI extension with main software acceptance and the Stage94 native
@@ -956,11 +949,17 @@ exited zero with no warnings. Eight finite source/data gates and independent
 main runtime and metadata reviews passed; the build-input snapshot of 1,330
 authored and 905 generated files stayed unchanged during the matrix. At main
 acceptance final-source clean had not run; completion requires a separate
-two-library/two-ELF and finite-gates receipt. `./d check-mco` remains the current
-7/5 local recipe, not an aggregate execution receipt. No hardware output or
+two-library/two-ELF and finite-gates receipt. The historical `./d check-mco` recipe has been removed with CI. No hardware output or
 loaded waveform is qualified by these software checks.
 
+The new `BufferedUartRx::into_buffer` consumes RX and returns its storage after
+shutdown; see [lifetime and acceptance limits](docs/uart-buffer-reclaim.md).
+This addition has not been compiled or tested.
+
 ## Data and PAC verification
+
+These retained manual commands are reference material. Do not run local tests,
+builds or validation suites unless the user explicitly lifts the current restriction.
 
 - `./d check`: reproducible regeneration plus per-chip target checks
 - `./d test`: generator/schema and current data/PAC tests

@@ -664,7 +664,7 @@ def main():
     assert len(evidence['selection_projection']) == 54
     nodes, material = source_material(evidence, args.sources)
     register_contracts(evidence)
-    capabilities = read_yaml('ci/hal-capabilities.yaml')
+    capabilities = read_yaml('tools/hal-capabilities.yaml')
     features = read_toml('embassy-cw32/Cargo.toml')['features']
     parts = named(read_yaml('cw32-data/parts.yaml')['parts'])
     selections, consumed, instance_count, route_count, family_data = set(), set(), 0, 0, {}

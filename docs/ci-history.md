@@ -1,3 +1,9 @@
+# Historical CI documentation (retired 2026-10-15)
+
+The following text preserves the former CI guide. Its commands and paths are
+historical and must not be executed as current instructions. See
+[manual source tools](../tools/README.md) for the migration.
+
 # Production build checks
 
 Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../docs/w031-target-retirement.md).

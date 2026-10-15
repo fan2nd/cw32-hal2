@@ -1,5 +1,9 @@
 # Current validation scope
 
+Current policy (2026-10-15): CI build runners are removed; local tests and builds
+are prohibited for this work. Commands and results below document prior scopes,
+not instructions to execute them. Retained source tools now live in `tools/`.
+
 ## Commands
 
 - `./d test`: generator/schema tests and current data/PAC contracts. Existing
@@ -13,7 +17,7 @@
   against the current generated baseline, verifies authored register YAML remains
   unchanged, and verifies chip-feature selection/builds. Generated outputs need
   not be tracked or distributed.
-- `./ci/check-hal.sh`: builds production ARM libraries and links real firmware.
+- `./tools/check-hal.sh`: builds production ARM libraries and links real firmware.
   This does not execute firmware or establish hardware/runtime correctness.
 - `./d lint`: optional Rust module-layout/style checks.
 

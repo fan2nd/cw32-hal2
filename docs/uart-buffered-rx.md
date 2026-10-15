@@ -1,5 +1,9 @@
 # Continuous IRQ-buffered UART receive
 
+Current implementation adds [`into_buffer`](uart-buffer-reclaim.md) for explicit
+RX storage reclamation. It is pending software acceptance; the historical
+results below do not validate it.
+
 The Stage83 acceptance record below is historical. Subsequent API changes and
 executed checks are recorded in [UART/SPI alignment](uart-spi-api-validation.md),
 [BufRead validation](uart-bufread-validation.md), and

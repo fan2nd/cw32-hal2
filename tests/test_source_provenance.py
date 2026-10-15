@@ -185,7 +185,7 @@ class ProvenanceTests(unittest.TestCase):
         f020 = receipt['profiles']['CW32F020']
         self.assertEqual(f020['datasheet_source'], 'vendor:current-datasheets/CW32F020_DataSheet_CN_V1.3.pdf')
         self.assertEqual(f020['pll_datasheet_output_hz'], [8000000, 48000000])
-        package_spec = importlib.util.spec_from_file_location('package_source', ROOT / 'ci/package-source.py')
+        package_spec = importlib.util.spec_from_file_location('package_source', ROOT / 'tools/package-source.py')
         package = importlib.util.module_from_spec(package_spec)
         package_spec.loader.exec_module(package)
         required = package.required_evidence(ROOT)

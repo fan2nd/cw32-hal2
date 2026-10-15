@@ -110,7 +110,7 @@ def main():
         for method in ['reset_value', 'write_noop']:
             value = re.search(r'fn ' + method + r'\(\) -> Self\s*\{\s*Self\((\d+)\)', icr_impl[1])
             assert value and int(value[1]) == command[method], (version, method)
-    capabilities = read_yaml('ci/hal-capabilities.yaml')
+    capabilities = read_yaml('tools/hal-capabilities.yaml')
     features = tomllib.loads((ROOT / 'embassy-cw32/Cargo.toml').read_text())['features']
     selections, instance_count, route_count = set(), 0, 0
     for family, facts in families.items():

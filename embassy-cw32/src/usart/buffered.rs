@@ -130,6 +130,32 @@ impl RxRing {
 }
 
 impl<'d> BufferedUartRx<'d> {
+    /// Stop reception, consume this owner and return the entire original ring.
+    ///
+    /// Unread bytes and pending errors are discarded; the returned storage is
+    /// not in receive order and is not cleared. Shutdown follows normal Drop,
+    /// including RX/RTS disable and ISR pointer detachment. A live TX half keeps
+    /// its existing ownership. This does not return pins or the peripheral.
+    ///
+    /// The slice has the owner's lifetime, even for a static constructor:
+    /// a `BufferedUartRx<'static>` returns `&'static mut [u8]`. Borrowed
+    /// constructors retain their unsafe no-leak contract until shutdown.
+    pub fn into_buffer(self) -> &'d mut [u8] {
+        let (ptr, capacity) = critical_section::with(|cs| {
+            let ring = self.state.rx_ring.borrow(cs).borrow();
+            let ring = ring.as_ref().expect("buffered UART receiver has no ring");
+            (ring.storage.ptr, ring.storage.capacity)
+        });
+        // Do not form a reference while the ISR can still write. Run the full
+        // owner/pin teardown exactly once, before reconstructing the slice.
+        drop(self);
+        // SAFETY: construction reserved this initialized slice exclusively for
+        // 'd. Consuming the owner excludes live read/fill_buf borrows. Drop has
+        // disabled collection and detached the only ISR storage descriptor;
+        // the TX half never accesses it. No reference escapes if Drop panics.
+        unsafe { core::slice::from_raw_parts_mut(ptr, capacity) }
+    }
+
     /// Start continuous IRQ reception using a consumed nonempty static ring.
     /// Rejected inputs, including the ring, are consumed. See [`BufferedUartRx`].
     pub fn new<T: Instance, RX: RxPin<T>>(

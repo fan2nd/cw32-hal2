@@ -19,7 +19,7 @@ from source_provenance import APPROVED_SDK_DOCS, APPROVED_SDK_ROOT, approved_sdk
 
 SOURCE_LOCK = "sources/evidence-sources.json"
 # Authored scope survives packaging; generated coverage under build/ does not.
-SOURCE_DECLARATIONS = {"ci/hal-capabilities.yaml"}
+SOURCE_DECLARATIONS = {"tools/hal-capabilities.yaml"}
 SOURCE_MANIFESTS = {SOURCE_LOCK, "sources/catalog.json", "sources/layout-history.json", "sources/README.md",
                     "sources/SOURCES.md", "sources/REFERENCE-PACKAGE.md",
                     "sources/x030-f020-hsi-pll-source-receipt.json"} | APPROVED_SDK_DOCS

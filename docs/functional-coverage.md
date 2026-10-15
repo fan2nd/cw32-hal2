@@ -6,14 +6,14 @@ host toolchain:
 ```
 ./d fetch-sources       # verifies cached official SVDs, or acquires pinned inputs
 ./d gen                # regenerate normalized hardware from the authored inputs
-python3 ci/update-functional-coverage.py
-python3 ci/update-functional-coverage.py --check
+python3 tools/update-functional-coverage.py
+python3 tools/update-functional-coverage.py --check
 ```
 
 `./d gen` builds only the host data generator. Generating this inventory does not
 require a HAL build matrix, generated PAC, old compiler receipts, test counts,
 `docs/hal-verification-current.json`, or either historical coverage report.
-`ci/update-hal-coverage.py` is a compatibility entry point for the same operation.
+`tools/update-hal-coverage.py` is a compatibility entry point for the same operation.
 `--validate-only` checks declarations and consumed source data without writing.
 
 The two deterministic outputs are local build products:
@@ -25,7 +25,7 @@ The two deterministic outputs are local build products:
   to the detailed inventory
 
 `build/` is ignored and excluded from source packages. The package retains the
-hand-maintained `ci/hal-capabilities.yaml` declarations. Neither output is a new
+hand-maintained `tools/hal-capabilities.yaml` declarations. Neither output is a new
 source of hardware facts. Old stage reports and old `docs/*coverage*.json` are
 historical snapshots, not current capability authorities.
 
@@ -104,7 +104,7 @@ the complete electrical facts from `cw32-data/hex-qualified.yaml`, including
 absence on unqualified families. Regenerate all hardware
 after changing any input: these focused checks are not full regeneration proof.
 
-`ci/hal-capabilities.yaml` explicitly declares the reviewed implementation
+`tools/hal-capabilities.yaml` explicitly declares the reviewed implementation
 scope. It is authored source, not a generated report. Each function has:
 
 - `register_kinds`, or an explicit virtual-function inventory for IR, the

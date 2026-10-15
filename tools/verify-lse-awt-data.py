@@ -280,7 +280,7 @@ def check_declarations(proof):
     for feature in active_names(example["features"]):
         assert set(manifest["features"][feature]) == {"embassy-cw32/" + feature, "cw32-metapac/" + feature}
     assert not {name.lower() for name in retired_targets()} & set(manifest["features"])
-    capability = load(ROOT / "ci/hal-capabilities.yaml")["functions"]["awt"]
+    capability = load(ROOT / "tools/hal-capabilities.yaml")["functions"]["awt"]
     mode = one((m for m in capability["modes"] if m["id"] == "bounded_api"), "AWT bounded mode")
     assert mode["status"] == "partial" and "LSE" in mode["scope"] and "HSIOSC" in mode["scope"]
     assert set(re.findall(r"\bCW32[A-Z0-9]+\b", mode["scope"])) == active_names(PARTS)

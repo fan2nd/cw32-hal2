@@ -1380,7 +1380,7 @@ assert manifest['package'].get('autobins', True)
 assert manifest['bin'] == [{'name': 'shared_vector', 'path': 'src/bin/shared_vector.rs', 'required-features': ['l083']}]
 for dependency in ('embassy-executor', 'embassy-futures'):
     assert manifest['dependencies'][dependency]['rev'] == 'f16efeffe37581092ec184718e6fdb1620393214'
-capabilities = load(ROOT / 'ci/hal-capabilities.yaml')
+capabilities = load(ROOT / 'tools/hal-capabilities.yaml')
 for kind in ('uart', 'dma'):
     mode = next(m for m in capabilities['functions'][kind]['modes'] if m['id'] == 'safe_peripheral_dma')
     assert mode['status'] == 'experimental_partial'

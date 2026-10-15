@@ -14,7 +14,7 @@ import tomllib
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-DECLARATIONS = "ci/hal-capabilities.yaml"
+DECLARATIONS = "tools/hal-capabilities.yaml"
 STATUSES = {
     "hardware_absent": "No such block or explicitly checked register-controlled mode in the reviewed hardware inventory.",
     "pac_only": "Register definitions exist, but no maintained HAL implementation scope is declared for this peripheral.",
@@ -174,7 +174,7 @@ class Inventory:
                 if "data" not in path.relative_to(self.root / folder).parts:
                     self.inputs.add(path.relative_to(self.root).as_posix())
         self.read("sources/evidence-sources.json")
-        self.read("ci/update-functional-coverage.py")
+        self.read("tools/update-functional-coverage.py")
         self.read("embassy-cw32/build.rs")
         self.read("Cargo.lock")
         self.read("Cargo.toml")

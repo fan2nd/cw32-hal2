@@ -511,7 +511,7 @@ def main():
     receipt = {'schema_version': 1, 'status': 'passed_source_and_data_audit', 'scope': 'Exact four-part x030 MCO',
         'catalog': {'path': 'cw32-data/mco-qualified.yaml', 'sha256': sha(path)},
         'qualifications': qualifications,
-        'validator': {'path': 'ci/verify-f030-mco-data.py', 'sha256': sha(Path(__file__))},
+        'validator': {'path': 'tools/verify-f030-mco-data.py', 'sha256': sha(Path(__file__))},
         'selections': projected, 'selection_count': len(projected),
         'qualified_count': sum(p['mco'] for p in projected), 'unqualified_count': sum(not p['mco'] for p in projected),
         'source_codes': [0, 1, 2], 'divisors': DIVISORS, 'conditional_unmeasured_policy_preserved': True,
