@@ -261,7 +261,12 @@ fn on_interrupt(
         }
         #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
         if idle_observed {
-            ring.idle_seen = true;
+            // Latch after receive observation so simultaneous data/errors are
+            // represented. Later appends cannot extend this unread prefix.
+            ring.idle_snapshot = Some(BufferedIdle {
+                buffered_bytes: ring.len,
+                error: ring.error,
+            });
             next.set_rxidle(false);
         }
         if owners.rx_live && ring.waiting && (ring.len != 0 || ring.error.is_some()) {

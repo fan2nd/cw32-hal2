@@ -227,14 +227,22 @@ peer behavior and in-flight frames remain relevant.
 
 ## Native idle notification
 
-L010/L011/L012 `BufferedUartRx` and `BufferedUart` expose `wait_for_idle()`.
+L010/L011/L012 `BufferedUartRx` and `BufferedUart` expose
+`wait_for_idle() -> BufferedIdle`. The result records `buffered_bytes` (the
+unread queue length) and `error` (the first retained error) at ISR observation.
 The first poll clears stale RXIDLE without consuming buffered data/errors or
 clearing RC. ISR collection continues; a newly observed idle latches completion
 and masks only the idle interrupt. RX data/errors observed in the same snapshot
 are processed first. Idle completion is independent of any retained error.
 
-The wait provides a coalesced notification, not a byte offset, packet boundary
-or lossless history. Read queued data/errors separately. A long wait may overflow
+The marker covers the unread prefix, including bytes queued before the wait.
+Consume exactly `buffered_bytes` before reading a recorded error; that error
+blocks later appends until consumed. A marker with no error says nothing about
+later errors. Further reads/consumption or ring replacement make its offset stale.
+Later appended bytes do not extend the snapshot, and inspecting it consumes nothing.
+
+This is a coalesced software position, not a wire packet boundary, timestamp or
+lossless marker history. Read queued data/errors separately. A long wait may overflow
 the ring; hardware needs a received character before idle detection, so a silent
 line can wait indefinitely. Clearing an old idle does not guarantee another for
 a previously received character.
@@ -283,7 +291,7 @@ is not returned, and buffered bytes do not survive successful reconstruction.
 
 ## Separate modes and verification boundary
 
-There is no buffered `read_until_idle`, idle marker queue, numeric timeout,
+There is no buffered `read_until_idle`, multi-marker queue, numeric timeout,
 packet framing, mode conversion, DMA API, synchronous `embedded_io::Read` or synchronous
 `embedded_io::BufRead` API. Async `embedded_io_async::BufRead` and zero-copy
 `fill_buf`/`consume` are supported. Ordinary borrowed-buffer reuse after RX Drop

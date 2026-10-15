@@ -350,7 +350,25 @@ struct RxRing {
     error: Option<Error>,
     waiting: bool,
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
-    idle_seen: bool,
+    idle_snapshot: Option<BufferedIdle>,
+}
+
+/// Software receive-queue position at one native ISR idle observation.
+///
+/// This is a snapshot, not an exclusive reservation, timestamp or wire-packet
+/// boundary. Subsequent reads, consumption or ring replacement make its offset
+/// stale. Reception can append bytes after this prefix without extending it.
+#[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub struct BufferedIdle {
+    /// Queued unread bytes after processing data/errors in the idle snapshot.
+    /// Includes bytes queued before the wait began; may be zero.
+    pub buffered_bytes: usize,
+    /// First retained receive error at observation time, after the clean prefix.
+    /// Inspecting this field does not consume the error; read it separately.
+    /// None does not exclude errors arriving after the observation.
+    pub error: Option<Error>,
 }
 
 /// Why an IRQ receive ring could not be replaced. The supplied buffer is returned.
@@ -427,7 +445,8 @@ pub struct UartRx<'d, M: Mode> {
 /// Buffering is not lossless: ten families have no hardware overrun flag, and
 /// even native L010/L011/L012 flags can coalesce. There is no packet boundary,
 /// numeric timeout, DMA ring, loss count or throughput guarantee. Native
-/// L010/L011/L012 owners offer a coalesced idle wait without a byte boundary. Forgetting
+/// L010/L011/L012 owners offer a coalesced idle wait with an unread-queue
+/// position, without a wire packet boundary. Forgetting
 /// a safely constructed owner can leave collection running forever with valid
 /// static storage; borrowed constructors have a stricter safety contract.
 pub struct BufferedUartRx<'d> {

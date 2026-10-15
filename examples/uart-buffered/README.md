@@ -25,8 +25,9 @@ the existing source lock, including Embassy revision
 
 - `idle_notify`: requires `idle-notify` and one of `cw32l010f8p6`, `cw32l011k8t6`
   or `cw32l012c8t6`; uses the `rx_only` routes. Arm before sending a short burst,
-  await a new native idle notification, then inspect a bounded batch of queued
-  data/errors. This is not packet framing. A silent line may not wake, and long
+  await a new native idle marker, then consume exactly its unread byte prefix
+  and recorded error. Later appended bytes remain for subsequent reads. The marker
+  is a software observation position, not wire packet framing. A silent line may not wake, and long
   bursts can overflow the ring. Not compiled or hardware-tested.
 - `replace_buffer`: after reading data/errors, attempt to replace the RX ring
   with a static ring of twice the capacity. On pending data/error, retain the

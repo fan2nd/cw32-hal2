@@ -14,19 +14,21 @@ async fn main(_spawner: embassy_executor::Spawner) {
     loop {
         // Arm before sending a short burst from the peer. A silent line need
         // not notify, and later traffic may overflow the ring during this wait.
-        rx.wait_for_idle().await;
-        // Inspect a bounded batch, including any retained error after data.
-        // Bytes may span multiple bursts: idle supplies no buffer boundary.
-        for _ in 0..=examples::RING_SIZE / examples::CHUNK_SIZE {
-            match rx.blocking_read(&mut chunk) {
-                Ok(0) => break,
-                Ok(count) => {
-                    core::hint::black_box(&chunk[..count]);
-                }
-                Err(error) => {
-                    core::hint::black_box(error);
-                }
-            }
+        let idle = rx.wait_for_idle().await;
+        let mut remaining = idle.buffered_bytes;
+        // Consume only the prefix seen by the ISR, excluding later appends.
+        // This is a software observation position, not a wire packet boundary.
+        while remaining != 0 {
+            let count = remaining.min(chunk.len());
+            rx.read_exact(&mut chunk[..count]).await.unwrap();
+            core::hint::black_box(&chunk[..count]);
+            remaining -= count;
+        }
+        if idle.error.is_some() {
+            // The retained error follows that prefix and blocks later appends
+            // until consumed. Reading it does not consume a subsequent byte.
+            let result = rx.blocking_read(&mut chunk[..1]);
+            core::hint::black_box(&result);
         }
     }
 }
