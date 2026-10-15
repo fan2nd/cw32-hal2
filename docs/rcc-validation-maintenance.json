@@ -1,0 +1,511 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "a0df1333fb9aed61049f550cc17026b6a0d300a6",
+  "scope": "Separately reviewed validation maintenance discovered during RCC module relocation acceptance. This receipt is not a hardware qualification or a replacement of historical source-hash receipts.",
+  "relationship_to_relocation": {
+    "manifest": "docs/rcc-module-relocation.json",
+    "manifest_sha256": "9090a21ded51c2dacee5e1d6db394c7a84ce693aba4333fadb198ed06b9dea88",
+    "manifest_unchanged": true,
+    "explanation": "The relocation itself changes only module placement, restricted wiring, and six live capability references. The four maintenance files below are additional, independently baseline-proved test/gate repairs; they are not justified by source relocation."
+  },
+  "maintained_files": [
+    {
+      "path": "tests/verify_l012_hse_sources.py",
+      "baseline_sha256": "c5764c4097f23a6b45a13074b9cc2e410d00b2012a02801d0b983965936a1760",
+      "current_sha256": "546102ee28fd9c19c5f3cd393d528cd2ad1f3560e7a4402f0c5ca963f7f9949d"
+    },
+    {
+      "path": "tests/verify_l052_hse_sources.py",
+      "baseline_sha256": "5d23d2c8c62ade9e2b0177314718f44a53904ad03bc977560fb16b6a04f65977",
+      "current_sha256": "0cbd352722bb64b93a969582e3d1155cfe925a7afc5d741c6930ba2bef0acd56"
+    },
+    {
+      "path": "cw32-data-gen/src/lib.rs",
+      "baseline_sha256": "5911d8343475b28c8970ea157140867a405507953fa743781ca26c5cd36a14ff",
+      "current_sha256": "5e20fccece402056238b6a5d4d11af60e3d0820a2746ff6aac24d2377ec2d5ff"
+    },
+    {
+      "path": "cw32-data-gen/tests/generation_boundaries.rs",
+      "baseline_sha256": "122776bd66e864f7b05a1dcbbb0f9138ea74bcafd3e62ec4945091c1edcda657",
+      "current_sha256": "1e4227761b9f66906c324f3ac6f0f2cb8c4197b58817ddf70a6d7f9818488a77"
+    }
+  ],
+  "hse_projection_maintenance": {
+    "baseline_reproduction": {
+      "method": "Executed exact git-show baseline checker text with its normal repository __file__ against byte-identical baseline production authored inputs and the current generated projection. Independent ./d check had freshly regenerated data/PAC and passed complete byte comparison. This is not an isolated clean checkout.",
+      "baseline_equal_input_count": 958,
+      "snapshot_sha256": "90e4692c647ead5bb36e16a8c39d1cad363437157deea17ad23825c9bfd0b652",
+      "timing": "Input equality snapshot preceded the later integration-fixture repair. The lib.rs synthetic test setup was already separately assigned; the production generator implementation remained baseline-identical.",
+      "failures": [
+        {
+          "script": "tests/verify_l012_hse_sources.py",
+          "baseline_script_sha256": "c5764c4097f23a6b45a13074b9cc2e410d00b2012a02801d0b983965936a1760",
+          "exit_code": 1,
+          "log_file": "verify_l012_hse_sources-baseline.log",
+          "log_sha256": "05f5a2afd0bd50367dc637bc93f7aabefa9f1988aa06f3bf4d04928f9adc1bbf",
+          "failure": "Original base clock_limits equality rejects later exact-part LSE/LSI projection fields."
+        },
+        {
+          "script": "tests/verify_l052_hse_sources.py",
+          "baseline_script_sha256": "5d23d2c8c62ade9e2b0177314718f44a53904ad03bc977560fb16b6a04f65977",
+          "exit_code": 1,
+          "log_file": "verify_l052_hse_sources-baseline.log",
+          "log_sha256": "0fabe3f485c56553b950da30e1c82b97f3da7843b8362f1fe0494fd251fac6cb",
+          "failure": "Original base clock_limits equality rejects later exact-part LSE/LSI projection fields."
+        }
+      ]
+    },
+    "observed_existing_contract": [
+      {
+        "chip": "CW32L012",
+        "original_base_fields_equal": true,
+        "additional_keys": []
+      },
+      {
+        "chip": "CW32L012C8T6",
+        "original_base_fields_equal": true,
+        "additional_keys": [
+          "lse_configuration",
+          "lsi_sysclk"
+        ]
+      },
+      {
+        "chip": "CW32L012C8U6",
+        "original_base_fields_equal": true,
+        "additional_keys": [
+          "lse_configuration",
+          "lsi_sysclk"
+        ]
+      },
+      {
+        "chip": "CW32L052",
+        "original_base_fields_equal": true,
+        "additional_keys": []
+      },
+      {
+        "chip": "CW32L052C8T6",
+        "original_base_fields_equal": true,
+        "additional_keys": [
+          "lse_configuration",
+          "lsi_sysclk"
+        ]
+      },
+      {
+        "chip": "CW32L052R8S6",
+        "original_base_fields_equal": true,
+        "additional_keys": [
+          "lse_configuration",
+          "lsi_sysclk"
+        ]
+      },
+      {
+        "chip": "CW32L052R8T6",
+        "original_base_fields_equal": true,
+        "additional_keys": [
+          "lse_configuration",
+          "lsi_sysclk"
+        ]
+      }
+    ],
+    "strict_repair": "Require exact family/package roster, chip identities and complete equality with the unchanged electrical base plus exactly the already-qualified LSE configuration and LSI SYSCLK objects for exact packages only. Generic aliases retain base-only equality. No unknown keys, subset projection, ignored values, broadened qualification or new hardware claims.",
+    "pins": {
+      "meaning": "Full LSE objects and the complete LSE policy map are baseline-derived current-contract pins, not new source acceptance. LSI family pins are the existing source-qualified generator pins. All vendor, canonical lock, authored policy, and historical receipt files remain unchanged.",
+      "L012_LSE": "c75035caf84b46bd2a5bc257dcb41a19f7f898085f0b09ceefc82c947ba4394b",
+      "L052_LSE": "1fee1dc571c8a47f8433bcef3fba8a5bc95af13dd082f14dccf1425ad434a4cc",
+      "L012_LSI": "6561702cdfc98a675a761b072e83da1aa9a11427eb1e8e6305775a08185c65ea",
+      "L052_LSI": "2897edc50461764711bdd5672119049f07d21cae20a24f01e75176b265ef8263",
+      "LSE_complete_policy_map": "a6e2e5f3176ab8b8783d6016dbd1fb68b70326cc0dd3f02c87e78a0d80825744",
+      "canonical_encoding": "UTF-8 JSON, sort_keys=True, separators=(comma, colon), ensure_ascii=False"
+    },
+    "original_checks_retained": "All original own-source identities, source text/tables, HSE values, canonical register hashes/enums, PAC surfaces, and HSE pin/package assertions remain. The policy-file loop checks every current map entry and the full map pin rejects omissions, additions and replacements.",
+    "full_source_checker_and_mutation_results": [
+      {
+        "family": "CW32L012",
+        "script": "tests/verify_l012_hse_sources.py",
+        "script_sha256": "546102ee28fd9c19c5f3cd393d528cd2ad1f3560e7a4402f0c5ca963f7f9949d",
+        "complete_source_checker_passed": true,
+        "positive_package_and_generic_cases": [
+          "CW32L012",
+          "CW32L012C8T6",
+          "CW32L012C8U6"
+        ],
+        "negative_cases_rejected": [
+          "missing-lse_configuration",
+          "missing-lsi_sysclk",
+          "missing-hse",
+          "missing-hsi_frequency_hz",
+          "extra-clock-key",
+          "changed-HSE-base",
+          "changed-HSI-base",
+          "changed-LSE-detector",
+          "removed-LSE-reset-row",
+          "extra-LSE-key",
+          "changed-LSI-factory-address",
+          "extra-LSI-key",
+          "removed-LSI-bank",
+          "generic-LSE-admission",
+          "generic-LSI-admission",
+          "unlisted-package",
+          "changed-pinned-LSE-qualification",
+          "changed-pinned-LSI-qualification",
+          "missing-policy-entry",
+          "replaced-policy-entry",
+          "extra-policy-entry"
+        ],
+        "positive_log": "l012-repaired-positive.log",
+        "positive_log_sha256": "98770250cee207b22d51adb2a0ee9555e13ac454584a6839c61ab77649fa9dec"
+      },
+      {
+        "family": "CW32L052",
+        "script": "tests/verify_l052_hse_sources.py",
+        "script_sha256": "0cbd352722bb64b93a969582e3d1155cfe925a7afc5d741c6930ba2bef0acd56",
+        "complete_source_checker_passed": true,
+        "positive_package_and_generic_cases": [
+          "CW32L052",
+          "CW32L052C8T6",
+          "CW32L052R8S6",
+          "CW32L052R8T6"
+        ],
+        "negative_cases_rejected": [
+          "missing-lse_configuration",
+          "missing-lsi_sysclk",
+          "missing-hse",
+          "missing-hsi_frequency_hz",
+          "extra-clock-key",
+          "changed-HSE-base",
+          "changed-HSI-base",
+          "changed-LSE-detector",
+          "removed-LSE-reset-row",
+          "extra-LSE-key",
+          "changed-LSI-factory-address",
+          "extra-LSI-key",
+          "removed-LSI-bank",
+          "generic-LSE-admission",
+          "generic-LSI-admission",
+          "unlisted-package",
+          "R8S6-loses-bonded-LSI-route",
+          "C8T6-gains-unbonded-LSI-route",
+          "changed-pinned-LSE-qualification",
+          "changed-pinned-LSI-qualification",
+          "missing-policy-entry",
+          "replaced-policy-entry",
+          "extra-policy-entry"
+        ],
+        "positive_log": "l052-repaired-positive.log",
+        "positive_log_sha256": "29ef352b7a34ac6ce4fbead1d676b57adce1e42bc8134922752aaf7129097a84"
+      }
+    ],
+    "independent_review": {
+      "accepted": true,
+      "positive_projections": 7,
+      "mutation_rejections": 160,
+      "scope": "Independent isolated final assertion-function evaluation and exact pin/code/log audit; separate from the 44 author mutation cases and full source checker runs."
+    },
+    "commands": [
+      "CW32_SOURCES=sources/vendor python3 tests/verify_l012_hse_sources.py",
+      "CW32_SOURCES=sources/vendor python3 tests/verify_l052_hse_sources.py"
+    ]
+  },
+  "generator_fixture_maintenance": {
+    "baseline": "a0df1333fb9aed61049f550cc17026b6a0d300a6",
+    "scope": "Two existing test fixture setups only; production generator and original test assertions unchanged. No publication.",
+    "baseline_proof": "Relevant generator/data/workspace paths byte-equal before changes; 40 copied policy/source inputs separately confirmed baseline-equal; integration fixture unchanged when failures observed.",
+    "hashes": {
+      "baseline": "a0df1333fb9aed61049f550cc17026b6a0d300a6",
+      "files": {
+        "cw32-data-gen/src/lib.rs": {
+          "before_sha256": "5911d8343475b28c8970ea157140867a405507953fa743781ca26c5cd36a14ff",
+          "after_sha256": "5e20fccece402056238b6a5d4d11af60e3d0820a2746ff6aac24d2377ec2d5ff"
+        },
+        "cw32-data-gen/tests/generation_boundaries.rs": {
+          "before_sha256": "122776bd66e864f7b05a1dcbbb0f9138ea74bcafd3e62ec4945091c1edcda657",
+          "after_sha256": "1e4227761b9f66906c324f3ac6f0f2cb8c4197b58817ddf70a6d7f9818488a77"
+        }
+      },
+      "production_prefix_sha256": "5adf551cbda6eba8f68c6d99f8f7ee0b0f7124077dd38df45dca8497f8373519",
+      "production_prefix_unchanged": true,
+      "existing_test_logic_and_assertions_unchanged": true,
+      "policy_files": 40,
+      "policy_files_unchanged": true,
+      "workspace_input_files": 393,
+      "workspace_changed_files": [
+        "cw32-data-gen/src/lib.rs",
+        "cw32-data-gen/tests/generation_boundaries.rs"
+      ]
+    },
+    "patch": "fixture-repair-complete.patch",
+    "patch_sha256": "d895fa80683d0b6839dcc78a3e12e36d4b6c4b033aee69840c752c55d85da42d",
+    "runs": [
+      {
+        "label": "Initial unqualified exact filter did not execute target; not baseline evidence",
+        "command": "cargo test --locked --offline -p cw32-data-gen normal_generation_preserves_and_uses_authored_yaml -- --exact --nocapture",
+        "exit_code": 0,
+        "tests_executed": 0,
+        "log": "baseline-focused-unqualified.log"
+      },
+      {
+        "label": "Baseline-equal focused unit reproduces missing RTC catalog",
+        "command": "cargo test --locked --offline -p cw32-data-gen tests::normal_generation_preserves_and_uses_authored_yaml -- --exact --nocapture",
+        "exit_code": 101,
+        "passed": 0,
+        "failed": 1,
+        "log": "baseline-focused.log"
+      },
+      {
+        "label": "RTC-only interim fixture exposes missing MCO catalog",
+        "exit_code": 101,
+        "passed": 0,
+        "failed": 1,
+        "log": "repaired-focused.log",
+        "backtrace_log": "repaired-focused-backtrace.log"
+      },
+      {
+        "label": "RTC-only interim host aggregate",
+        "command": "cargo test --locked --offline -p cw32-data-gen -p cw32-metapac-gen -p cw32-data-macros -p cw32-data-serde",
+        "exit_code": 101,
+        "data_gen_unit_passed": 105,
+        "data_gen_unit_failed": 1,
+        "log": "host-workspace.log"
+      },
+      {
+        "label": "Final lib.rs fixture focused unit",
+        "command": "cargo test --locked --offline -p cw32-data-gen tests::normal_generation_preserves_and_uses_authored_yaml -- --exact --nocapture",
+        "exit_code": 0,
+        "passed": 1,
+        "failed": 0,
+        "log": "repaired-focused-final.log"
+      },
+      {
+        "label": "Final lib.rs fixture exposes baseline-equal integration fixture gaps",
+        "command": "cargo test --locked --offline -p cw32-data-gen -p cw32-metapac-gen -p cw32-data-macros -p cw32-data-serde",
+        "exit_code": 101,
+        "data_gen_unit_passed": 106,
+        "data_gen_integration_passed": 13,
+        "data_gen_integration_failed": 2,
+        "log": "host-workspace-final.log"
+      },
+      {
+        "label": "Final integration fixture focused suite",
+        "command": "cargo test --locked --offline -p cw32-data-gen --test generation_boundaries",
+        "exit_code": 0,
+        "passed": 15,
+        "failed": 0,
+        "log": "repaired-integration.log"
+      },
+      {
+        "label": "Final complete host workspace suite",
+        "command": "cargo test --locked --offline -p cw32-data-gen -p cw32-metapac-gen -p cw32-data-macros -p cw32-data-serde",
+        "exit_code": 0,
+        "passed": 152,
+        "failed": 0,
+        "details": {
+          "data_gen_unit": 106,
+          "data_gen_integration": 15,
+          "macros_unit": 2,
+          "macros_integration": 3,
+          "macros_compile_fail_docs": 4,
+          "serde_schema": 19,
+          "metapac_gen_unit": 3
+        },
+        "log": "host-workspace-complete.log"
+      }
+    ],
+    "log_sha256": {
+      "baseline-focused-unqualified.log": "9695ff5c5639ee7c85ddab11d411c72b8f808edb3ff853b847ddda47aed6dcb5",
+      "baseline-focused.log": "70a512507180b091d5761866a89dad9a70295fedaf780dd8c466d585b5f65d56",
+      "host-workspace-complete.log": "419d127dc4201a1b4364cd0d4e6c785071000d82e9ef8b54ab9ff79c4ff655ab",
+      "host-workspace-final.log": "e42f55ddc7c769417fb361e3b90a6f6fc733f7b87ec7fb4e89304afea60d161c",
+      "host-workspace.log": "553e16a706bfbf651e4a8d904d4f8b854c1c89829528e16dcf9464a721fbdbf4",
+      "repaired-focused-backtrace.log": "9a47097724ce4e788a94d19746c1df27954e7312877f9980e2cf724e2a273699",
+      "repaired-focused-final.log": "c7d1b91c219c1c086b6589fd8ad0bb77e1a4e2bebbac657e133280289f2beda4",
+      "repaired-focused.log": "394b0a150f58f1b6221a71096a9f71cbe0663e04939e65b080e6ff49ca3e1568",
+      "repaired-integration.log": "c8f59ff2b975859bf40591f8b0e191132e7c6fbb4f94225e61589e43b994194b"
+    },
+    "checks": {
+      "diff_check": "passed",
+      "post_test_source_and_policy_hashes": "unchanged from pre-final-run snapshots"
+    },
+    "not_run_here": [
+      "Remaining ./d test firmware/PAC/Python stages",
+      "Full-tree formatting, lint, audit-current, or regeneration gates",
+      "Hardware validation"
+    ],
+    "review": {
+      "status": "accepted",
+      "reviewer": "/root/review_rcc_module_split",
+      "reviewed_patch": "fixture-repair-complete.patch",
+      "final_host_log_sha256": "419d127dc4201a1b4364cd0d4e6c785071000d82e9ef8b54ab9ff79c4ff655ab",
+      "finding": "Exact two-file fixture changes only; production prefix and all original tests unchanged; copied authored inputs exact; 152 tests/doctests pass; no unresolved fixture blocker."
+    },
+    "toolchain": {
+      "rustc": "1.99.0 (b940084d7 2026-09-28)",
+      "cargo": "1.99.0 (5f94df478 2026-08-27)"
+    }
+  },
+  "supplementary_source_mapping_mutations": {
+    "scope": "Finite in-memory source mutations against the frozen embedded mapping. No repository source was modified. Final file hash checks were deliberately bypassed for negative cases so exact inverse-map/whole-source/inventory checks themselves had to reject each mutation.",
+    "manifest_path": "docs/rcc-module-relocation.json",
+    "manifest_sha256": "9090a21ded51c2dacee5e1d6db394c7a84ce693aba4333fadb198ed06b9dea88",
+    "positive_final_hash_and_inverse_checks": true,
+    "positive_inverse_without_final_hash_checks": true,
+    "negative_cases_rejected": [
+      "l012:mmio-constant",
+      "l012:removed-guard",
+      "l012:statement-order",
+      "l012:cfg",
+      "l012:visibility",
+      "l012:missing-module",
+      "l012:duplicate-module",
+      "l012:unlisted-module",
+      "l052_l083:mmio-constant",
+      "l052_l083:removed-guard",
+      "l052_l083:statement-order",
+      "l052_l083:cfg",
+      "l052_l083:visibility",
+      "l052_l083:missing-module",
+      "l052_l083:duplicate-module",
+      "l052_l083:unlisted-module"
+    ]
+  },
+  "local_artifact_inventory": [
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/hse/baseline-evidence.json",
+      "sha256": "90e4692c647ead5bb36e16a8c39d1cad363437157deea17ad23825c9bfd0b652"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/hse/composite-results.json",
+      "sha256": "48a36dc3d43f95105647d276c21d4dcc7fa2032bc7b6bc1f46c7ec8b7bffdf88"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/hse/l012-repaired-positive.log",
+      "sha256": "98770250cee207b22d51adb2a0ee9555e13ac454584a6839c61ab77649fa9dec"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/hse/l052-repaired-positive.log",
+      "sha256": "29ef352b7a34ac6ce4fbead1d676b57adce1e42bc8134922752aaf7129097a84"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/hse/patch.py",
+      "sha256": "2bbad35d13b6d6c5c42cf9c984ff6333bcce6ae87ebfc9bd30c2d43cc1e314fc"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/hse/source-mutation-results.json",
+      "sha256": "8357d7206f4c816b2186ab49d2dc3a9219d50fc0422ca991a99a5c369e8cff78"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/hse/source_mutations.py",
+      "sha256": "570d0b9ba6411ad94d1ac63c5e41755ababac368761e6841a3bc65a81b49da3c"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/hse/test_composite.py",
+      "sha256": "ca70ef5be20da4f9da8b2c17d52d5321e58312999ee1780a7467ca4d4c495eb2"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/hse/verify_l012_hse_sources-baseline.log",
+      "sha256": "05f5a2afd0bd50367dc637bc93f7aabefa9f1988aa06f3bf4d04928f9adc1bbf"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/hse/verify_l052_hse_sources-baseline.log",
+      "sha256": "0fabe3f485c56553b950da30e1c82b97f3da7843b8362f1fe0494fd251fac6cb"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/baseline-focused-unqualified.log",
+      "sha256": "9695ff5c5639ee7c85ddab11d411c72b8f808edb3ff853b847ddda47aed6dcb5"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/baseline-focused.log",
+      "sha256": "70a512507180b091d5761866a89dad9a70295fedaf780dd8c466d585b5f65d56"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/baseline-integration-equality.json",
+      "sha256": "cc81ed48f23d9edf2565f6c32d44ff141157c0da74b038a9cc2ded8ea18a59ef"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/baseline-policy-equality.json",
+      "sha256": "1e482c7204734859fdfecb062f63d8c21c90dba03862999b9b371ed8c32c4f9e"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/baseline-relevant.diff",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/final-hash-results.json",
+      "sha256": "f8e5d1af5753c2bedfd4a4899144fc794da3dae100b5fb72e1b6911d3f2a9795"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/finished-log-hashes.json",
+      "sha256": "5dda0974a3b45c27ffba0d7c82ec761b1fc4cda7e4949ff391c8734215f14b8f"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/fixture-repair-complete.patch",
+      "sha256": "d895fa80683d0b6839dcc78a3e12e36d4b6c4b033aee69840c752c55d85da42d"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/fixture-repair.patch",
+      "sha256": "72aff7ece7aa5388b69491bdf8d0590ffbf77a1ca1e1fd27e5d731fba108d754"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/generator-doctests.log",
+      "sha256": "6f4de152736d77aac18652dc5073054da00ddd22dd2efb75dd505fb145638bd7"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/hash-results.json",
+      "sha256": "11c514177ed6f88cea219d94b3be5537eeef6499aa39ce51b3171f7d163c1bf9"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/host-workspace-complete.log",
+      "sha256": "419d127dc4201a1b4364cd0d4e6c785071000d82e9ef8b54ab9ff79c4ff655ab"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/host-workspace-final.log",
+      "sha256": "e42f55ddc7c769417fb361e3b90a6f6fc733f7b87ec7fb4e89304afea60d161c"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/host-workspace.log",
+      "sha256": "553e16a706bfbf651e4a8d904d4f8b854c1c89829528e16dcf9464a721fbdbf4"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/inputs-before.sha256",
+      "sha256": "27c91c7115a4e0ac9592dc1014d334656c0cfdf8f6d128a2024d6e3b46e47cb7"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/integration-proposed.patch",
+      "sha256": "7c8a9d3103ae0ea1743f24b194d1a84f756f33aa0e6c5ca30d3bdf7d87e88d23"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/other-host-packages.log",
+      "sha256": "94f3520c73f6e52cc3a4e32f27ec07b04d89f28624cee22cb3f80cee258c56fc"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/policy-inputs-before.json",
+      "sha256": "ab53b395d31a77adb9c51e2e4b26f7a1dcb70cb8dd01eed83b1bac0703aef718"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/receipt.json",
+      "sha256": "6b6c21a2e7c447487b7f4f2b1491e8899a830b2f3350d45d8e26d03d678abdc1"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/repaired-focused-backtrace.log",
+      "sha256": "9a47097724ce4e788a94d19746c1df27954e7312877f9980e2cf724e2a273699"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/repaired-focused-final.log",
+      "sha256": "c7d1b91c219c1c086b6589fd8ad0bb77e1a4e2bebbac657e133280289f2beda4"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/repaired-focused.log",
+      "sha256": "394b0a150f58f1b6221a71096a9f71cbe0663e04939e65b080e6ff49ca3e1568"
+    },
+    {
+      "path": "docs/verification-logs/rcc-module-split/maintenance/fixtures/repaired-integration.log",
+      "sha256": "c8f59ff2b975859bf40591f8b0e191132e7c6fbb4f94225e61589e43b994194b"
+    }
+  ],
+  "artifact_availability": "Raw logs and development replay scripts are local ignored verification artifacts, not installed gates. Their paths and hashes identify this acceptance run. The tracked relocation manifest contains the self-contained inverse maps; this receipt records finite mutation results, not a claim of permanent CI integration.",
+  "limitations": [
+    "No hardware execution or timing/analogue proof.",
+    "Neither HSE baseline reproduction nor the generator fixture proof used a separate clean checkout; both establish exact baseline code/input identities and execute those contracts against current byte-identical generated data.",
+    "Source mapping mutation suite is finite, in-memory, and run with destination-file hashes bypassed; it is supplementary to exact inverse reconstruction and independent review.",
+    "Independent final combined-snapshot validation, including ./d test and source gates, is recorded by the separate acceptance owner."
+  ]
+}

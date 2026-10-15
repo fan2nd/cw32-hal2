@@ -1,0 +1,4987 @@
+{
+  "schema_version": 1,
+  "scope": "Mechanical RCC module relocation and complete live-capability reference preservation only. This receipt does not re-certify historical runtime acceptance or claim hardware validation.",
+  "baseline_commit": "a0df1333fb9aed61049f550cc17026b6a0d300a6",
+  "created_utc": "2026-10-14T19:07:11.264660+00:00",
+  "scope_boundaries": [
+    "Only embassy-cw32/src/rcc/l052_l083.rs and l012.rs are decomposed. L010/L011 and L031/R031/W031 source remains unchanged.",
+    "The public RCC module paths, declaration cfgs, constants, function/method bodies and unsafe contracts retain their baseline meaning. New private modules and restricted imports/visibility bridge only the changed file organization.",
+    "L012 configure is moved whole. No clock phase is extracted into a new helper, no register observation or write is reordered, and no rollback or recovery is introduced.",
+    "L052/L083 existing lse_sysclk.rs and l083_lse_sysclk.rs are unchanged pre-existing leaf modules, not replacements for content from the removed monolith.",
+    "L052/L083 helper hse module is cfg(any(rcc_hse, rcc_lse)); each contained function keeps its original cfg. This avoids strengthening prepare_lse_monitor from rcc_lse to rcc_hse and rcc_lse.",
+    "Source hashes in old evidence and acceptance receipts remain historical identities. Their old .rs paths are intentionally not relabeled to current module paths."
+  ],
+  "final_relocated_files": [
+    {
+      "path": "embassy-cw32/src/rcc/l012/mod.rs",
+      "sha256": "927b85dc14171fb19f6899166f7a3e03a05359ea249cffc4c1e3c8b07288995a",
+      "bytes": 22633,
+      "lines": 630
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l012/io.rs",
+      "sha256": "1546079b0a0ed85ea68c443c3f19c94f41a94d8741592fa3b250877365d41172",
+      "bytes": 2271,
+      "lines": 87
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l012/configure.rs",
+      "sha256": "c63c4cb5b7efb3a1fd0c45e33ad1b9dc65123ef45dbcb5aa424e0720fbe778e3",
+      "bytes": 43426,
+      "lines": 1185
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l012/inspection.rs",
+      "sha256": "445d1eaa5a61ea3f0cc4bbc93f4da7cbfb6212927f545f68a51434643008e962",
+      "bytes": 3578,
+      "lines": 103
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+      "sha256": "e1f75eb08a415b0e2cb674711413b72067b373b3e9c80aeb4347fa87b8a1ac5b",
+      "bytes": 20376,
+      "lines": 538
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+      "sha256": "52b80a9f888d4369de7b8b047c3e6a37daf55abb4054c9b811d9f0d2e9a05bf0",
+      "bytes": 14294,
+      "lines": 403
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/mod.rs",
+      "sha256": "0c954a4581d49f7f15c91d28972a1d10b8858d416c8472fc7e2400f645a6fa4c",
+      "bytes": 38307,
+      "lines": 964
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/io.rs",
+      "sha256": "b3643c6a30ebe8f2955a73305d859dedacbb8e8d4cbb2e7761f149af86e9ca50",
+      "bytes": 4065,
+      "lines": 138
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/hsi.rs",
+      "sha256": "3c1f7363962e47bfeb80957e0412394269fd3b289a0909e73222e52b5471d4d3",
+      "bytes": 7077,
+      "lines": 209
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/hse.rs",
+      "sha256": "6ee46faad71febad17ffae75f77ffea894a66c150fd89e5499c36bac4a9ed5ac",
+      "bytes": 24177,
+      "lines": 616
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/lsi/mod.rs",
+      "sha256": "c63f19168e47f750bd4f326e60319ff114ac45c11ba1f4cb614e040dea268ec8",
+      "bytes": 8260,
+      "lines": 233
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/lsi/state.rs",
+      "sha256": "34cc17463d78c007f9722d72b94983ed859754fa652a5a3b83a0a4bd71caf136",
+      "bytes": 31325,
+      "lines": 791
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/lsi/observe.rs",
+      "sha256": "507bf721fd456506661652eb9c9fb1df9e250d2bf0397cc5b0a1e7f495c25800",
+      "bytes": 15379,
+      "lines": 390
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/lsi/transition.rs",
+      "sha256": "1f8dadb600f883b59f67f0a93c4ef9709c21c44ea094a1b548f902160e16f5f2",
+      "bytes": 19830,
+      "lines": 553
+    }
+  ],
+  "unchanged_existing_leaves": [
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/lse_sysclk.rs",
+      "sha256": "2ceefaa6eb7f597a8fc01ad3285d16de948bf0e8f45614ed78367c1c9a925ed9",
+      "bytes": 26114
+    },
+    {
+      "path": "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs",
+      "sha256": "893572515d23954a85dadc26816ae4e09dbe53588f6bb125b8cf6d6b4db42f53",
+      "bytes": 35309
+    }
+  ],
+  "unchanged_generated_hook_inputs": [
+    {
+      "path": "embassy-cw32/build.rs",
+      "sha256": "9f4d95d1f5c112e4bc9fa81655bdb419ec92654b2524870625899cbe49f63cc5",
+      "bytes": 378930
+    },
+    {
+      "path": "embassy-cw32/src/rcc/mod.rs",
+      "sha256": "7070ef0e576384b50e56f9f3845330548ccc70d2252e41609c63bf8e6f3f7dab",
+      "bytes": 6762
+    },
+    {
+      "path": "embassy-cw32/src/lib.rs",
+      "sha256": "d9dfefe723889ca3be35f44ae5664dd26036c31d18230a528c38238fc470e8b7",
+      "bytes": 40697
+    }
+  ],
+  "generated_hook_boundary": [
+    {
+      "symbol": "crate::rcc::L012HseTarget",
+      "destination": "embassy-cw32/src/rcc/l012/mod.rs",
+      "literal_anchor": "pub(crate) enum L012HseTarget",
+      "preservation": "Original crate-visible enum stays at the backend root; existing root reexport remains unchanged."
+    },
+    {
+      "symbol": "crate::rcc::lse_target_inspection_error",
+      "destination": "embassy-cw32/src/rcc/l012/inspection.rs",
+      "literal_anchor": "pub(crate) fn lse_target_inspection_error",
+      "reexport": "embassy-cw32/src/rcc/l012/mod.rs",
+      "preservation": "Explicit crate-visible backend reexport retains the original rcc_lse gate and generated-hook path."
+    },
+    {
+      "symbol": "crate::rcc::lsi_inspection_error",
+      "destination": "embassy-cw32/src/rcc/l052_l083/lsi/mod.rs",
+      "literal_anchor": "pub(crate) fn lsi_inspection_error",
+      "reexport": "embassy-cw32/src/rcc/l052_l083/mod.rs",
+      "preservation": "Explicit crate-visible backend reexport feeds the unchanged root reexport under rcc_lsi_sysclk."
+    },
+    {
+      "symbol": "crate::rcc::l052_l083::lse_sysclk_monitor_ready",
+      "destination": "embassy-cw32/src/rcc/l052_l083/mod.rs",
+      "literal_anchor": "pub(super) fn lse_sysclk_monitor_ready",
+      "preservation": "Both original family-gated forwarding functions remain at their old Rust module path."
+    }
+  ],
+  "source_relocations": [
+    {
+      "backend": "l012",
+      "exact_inverse_mapping": {
+        "baseline_commit": "a0df1333fb9aed61049f550cc17026b6a0d300a6",
+        "source": "embassy-cw32/src/rcc/l012.rs",
+        "source_sha256": "62e35c82b27b5898ee34dd58a2ee0b5e79f86ff022046d280768339ab79b9fd9",
+        "destinations": [
+          {
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "old_line_spans": [
+              [
+                1,
+                618
+              ]
+            ],
+            "prefix": "",
+            "insertions": [
+              {
+                "old_after_line": 17,
+                "text": "\nmod configure;\nmod inspection;\nmod io;\n#[cfg(rcc_lse)]\nmod lse_sysclk;\n#[cfg(rcc_lsi_sysclk)]\nmod lsi_sysclk;\n\nuse configure::configure;\n#[cfg(rcc_lse)]\npub(crate) use inspection::lse_target_inspection_error;\n"
+              }
+            ],
+            "line_rewrites": [],
+            "sha256": "927b85dc14171fb19f6899166f7a3e03a05359ea249cffc4c1e3c8b07288995a",
+            "lines": 630
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/io.rs",
+            "old_line_spans": [
+              [
+                619,
+                668
+              ],
+              [
+                2871,
+                2905
+              ]
+            ],
+            "prefix": "use super::{pac, Error, Hse, HseMode};\n\n",
+            "insertions": [],
+            "line_rewrites": [
+              {
+                "old_line": 621,
+                "before": "fn poll(\n",
+                "after": "pub(super) fn poll(\n"
+              },
+              {
+                "old_line": 638,
+                "before": "fn barrier() {\n",
+                "after": "pub(super) fn barrier() {\n"
+              },
+              {
+                "old_line": 646,
+                "before": "fn set_flash_latency(\n",
+                "after": "pub(super) fn set_flash_latency(\n"
+              },
+              {
+                "old_line": 2871,
+                "before": "fn check_external_faults(hse: bool, lse: bool) -> Result<(), Error> {\n",
+                "after": "pub(super) fn check_external_faults(hse: bool, lse: bool) -> Result<(), Error> {\n"
+              },
+              {
+                "old_line": 2880,
+                "before": "fn poll_clock(\n",
+                "after": "pub(super) fn poll_clock(\n"
+              },
+              {
+                "old_line": 2897,
+                "before": "fn hse_parameters_match(hse: Hse) -> Result<bool, Error> {\n",
+                "after": "pub(super) fn hse_parameters_match(hse: Hse) -> Result<bool, Error> {\n"
+              }
+            ],
+            "sha256": "1546079b0a0ed85ea68c443c3f19c94f41a94d8741592fa3b250877365d41172",
+            "lines": 87
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/configure.rs",
+            "old_line_spans": [
+              [
+                669,
+                1842
+              ]
+            ],
+            "prefix": "use super::inspection::inspect_retained;\nuse super::io::{barrier, check_external_faults, hse_parameters_match, poll, poll_clock, set_flash_latency};\n#[cfg(rcc_lse)]\nuse super::lse_sysclk::{finish_lse_sysclk, LseSysclkSnapshot};\n#[cfg(rcc_lsi_sysclk)]\nuse super::lsi_sysclk::{finish_lsi_sysclk, lsi_ack_field, LsiSysclkPhase, LsiSysclkSnapshot};\nuse super::{\n    pac, AHBPrescaler, APBPrescaler, ClockSource, Clocks, Config, Error, HseDrive, HseMode,\n    L012HseTarget, Sysclk, MAX_FLASH_WAIT,\n};\n\n",
+            "insertions": [],
+            "line_rewrites": [
+              {
+                "old_line": 669,
+                "before": "fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Result<Clocks, Error> {\n",
+                "after": "pub(super) fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Result<Clocks, Error> {\n"
+              },
+              {
+                "old_line": 829,
+                "before": "        .map(|c| super::lse::preflight(c, cs, l012_sysclk))\n",
+                "after": "        .map(|c| crate::rcc::lse::preflight(c, cs, l012_sysclk))\n"
+              },
+              {
+                "old_line": 1690,
+                "before": "        let result = super::lse::start(lse, admission, cs, l012_sysclk);\n",
+                "after": "        let result = crate::rcc::lse::start(lse, admission, cs, l012_sysclk);\n"
+              },
+              {
+                "old_line": 1785,
+                "before": "        super::lse::preserved_register(old_lse.0)\n",
+                "after": "        crate::rcc::lse::preserved_register(old_lse.0)\n"
+              },
+              {
+                "old_line": 1833,
+                "before": "        super::lse::verify(lse, cs, false)?;\n",
+                "after": "        crate::rcc::lse::verify(lse, cs, false)?;\n"
+              }
+            ],
+            "sha256": "c63c4cb5b7efb3a1fd0c45e33ad1b9dc65123ef45dbcb5aa424e0720fbe778e3",
+            "lines": 1185
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/inspection.rs",
+            "old_line_spans": [
+              [
+                1843,
+                1939
+              ]
+            ],
+            "prefix": "#[cfg(rcc_lse)]\nuse super::io::check_external_faults;\nuse super::{Config, Error};\n#[cfg(any(rcc_lse, rcc_lsi_sysclk))]\nuse super::Sysclk;\n\n",
+            "insertions": [],
+            "line_rewrites": [
+              {
+                "old_line": 1844,
+                "before": "fn inspect_retained<R>(\n",
+                "after": "pub(super) fn inspect_retained<R>(\n"
+              },
+              {
+                "old_line": 1848,
+                "before": "    info: super::peripheral::RccInfo,\n",
+                "after": "    info: crate::rcc::peripheral::RccInfo,\n"
+              },
+              {
+                "old_line": 1865,
+                "before": "                super::peripheral::ClockInspectionError::EnableFailed { restore_failed } => {\n",
+                "after": "                crate::rcc::peripheral::ClockInspectionError::EnableFailed { restore_failed } => {\n"
+              },
+              {
+                "old_line": 1871,
+                "before": "                super::peripheral::ClockInspectionError::RestoreFailed => {\n",
+                "after": "                crate::rcc::peripheral::ClockInspectionError::RestoreFailed => {\n"
+              },
+              {
+                "old_line": 1893,
+                "before": "pub(crate) fn lse_target_inspection_error(error: super::peripheral::ClockInspectionError) -> Error {\n",
+                "after": "pub(crate) fn lse_target_inspection_error(error: crate::rcc::peripheral::ClockInspectionError) -> Error {\n"
+              },
+              {
+                "old_line": 1895,
+                "before": "        super::peripheral::ClockInspectionError::EnableFailed { restore_failed } => {\n",
+                "after": "        crate::rcc::peripheral::ClockInspectionError::EnableFailed { restore_failed } => {\n"
+              },
+              {
+                "old_line": 1901,
+                "before": "        super::peripheral::ClockInspectionError::RestoreFailed => {\n",
+                "after": "        crate::rcc::peripheral::ClockInspectionError::RestoreFailed => {\n"
+              },
+              {
+                "old_line": 1911,
+                "before": "fn lse_target_inspect<R>(\n",
+                "after": "pub(super) fn lse_target_inspect<R>(\n"
+              },
+              {
+                "old_line": 1914,
+                "before": "    info: super::peripheral::RccInfo,\n",
+                "after": "    info: crate::rcc::peripheral::RccInfo,\n"
+              }
+            ],
+            "sha256": "445d1eaa5a61ea3f0cc4bbc93f4da7cbfb6212927f545f68a51434643008e962",
+            "lines": 103
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "old_line_spans": [
+              [
+                1940,
+                2470
+              ]
+            ],
+            "prefix": "use super::inspection::lse_target_inspect;\nuse super::io::{barrier, check_external_faults, hse_parameters_match};\nuse super::{\n    pac, AHBPrescaler, APBPrescaler, ClockSource, Clocks, Config, Error, HseMode, L012HseTarget,\n    MAX_FLASH_WAIT,\n};\n\n",
+            "insertions": [],
+            "line_rewrites": [
+              {
+                "old_line": 1944,
+                "before": "struct LseSysclkSnapshot {\n",
+                "after": "pub(super) struct LseSysclkSnapshot {\n"
+              },
+              {
+                "old_line": 1945,
+                "before": "    clock: pac::sysctrl::regs::Cr0,\n",
+                "after": "    pub(super) clock: pac::sysctrl::regs::Cr0,\n"
+              },
+              {
+                "old_line": 1946,
+                "before": "    sources: pac::sysctrl::regs::Cr1,\n",
+                "after": "    pub(super) sources: pac::sysctrl::regs::Cr1,\n"
+              },
+              {
+                "old_line": 1947,
+                "before": "    hsi: pac::sysctrl::regs::Hsi,\n",
+                "after": "    pub(super) hsi: pac::sysctrl::regs::Hsi,\n"
+              },
+              {
+                "old_line": 1948,
+                "before": "    hse: pac::sysctrl::regs::Hse,\n",
+                "after": "    pub(super) hse: pac::sysctrl::regs::Hse,\n"
+              },
+              {
+                "old_line": 1949,
+                "before": "    lsi: pac::sysctrl::regs::Lsi,\n",
+                "after": "    pub(super) lsi: pac::sysctrl::regs::Lsi,\n"
+              },
+              {
+                "old_line": 1950,
+                "before": "    lse: pac::sysctrl::regs::Lse,\n",
+                "after": "    pub(super) lse: pac::sysctrl::regs::Lse,\n"
+              },
+              {
+                "old_line": 1951,
+                "before": "    routes: pac::sysctrl::regs::Cr2,\n",
+                "after": "    pub(super) routes: pac::sysctrl::regs::Cr2,\n"
+              },
+              {
+                "old_line": 1952,
+                "before": "    interrupts: pac::sysctrl::regs::Ier,\n",
+                "after": "    pub(super) interrupts: pac::sysctrl::regs::Ier,\n"
+              },
+              {
+                "old_line": 1953,
+                "before": "    mco: pac::sysctrl::regs::Mco,\n",
+                "after": "    pub(super) mco: pac::sysctrl::regs::Mco,\n"
+              },
+              {
+                "old_line": 1962,
+                "before": "    fn faults(self, config: Config) -> Result<(), Error> {\n",
+                "after": "    pub(super) fn faults(self, config: Config) -> Result<(), Error> {\n"
+              },
+              {
+                "old_line": 1966,
+                "before": "    fn policy(self, config: Config) -> Result<(), Error> {\n",
+                "after": "    pub(super) fn policy(self, config: Config) -> Result<(), Error> {\n"
+              },
+              {
+                "old_line": 2009,
+                "before": "    fn clock_matches(self, source: ClockSource, ahb: u8, apb: u8) -> Result<(), Error> {\n",
+                "after": "    pub(super) fn clock_matches(self, source: ClockSource, ahb: u8, apb: u8) -> Result<(), Error> {\n"
+              },
+              {
+                "old_line": 2025,
+                "before": "    fn unchanged_sources(\n",
+                "after": "    pub(super) fn unchanged_sources(\n"
+              },
+              {
+                "old_line": 2054,
+                "before": "    fn hsi_ownership(\n",
+                "after": "    pub(super) fn hsi_ownership(\n"
+              },
+              {
+                "old_line": 2094,
+                "before": "    fn admit_first_lsi_request(\n",
+                "after": "    pub(super) fn admit_first_lsi_request(\n"
+              },
+              {
+                "old_line": 2187,
+                "before": "    fn prepared_sources(\n",
+                "after": "    pub(super) fn prepared_sources(\n"
+              },
+              {
+                "old_line": 2245,
+                "before": "            if !super::lse::preserved_register(self.lse.0)\n",
+                "after": "            if !crate::rcc::lse::preserved_register(self.lse.0)\n"
+              },
+              {
+                "old_line": 2246,
+                "before": "                || lse.mode() != (requested_lse.mode == super::LseMode::Bypass)\n",
+                "after": "                || lse.mode() != (requested_lse.mode == crate::rcc::LseMode::Bypass)\n"
+              },
+              {
+                "old_line": 2251,
+                "before": "                || !super::lse::healthy(requested_lse)\n",
+                "after": "                || !crate::rcc::lse::healthy(requested_lse)\n"
+              },
+              {
+                "old_line": 2261,
+                "before": "    fn flash_access(self, config: Config) -> Result<(), Error> {\n",
+                "after": "    pub(super) fn flash_access(self, config: Config) -> Result<(), Error> {\n"
+              },
+              {
+                "old_line": 2295,
+                "before": "    fn require_wait(\n",
+                "after": "    pub(super) fn require_wait(\n"
+              },
+              {
+                "old_line": 2307,
+                "before": "    fn write_wait(\n",
+                "after": "    pub(super) fn write_wait(\n"
+              },
+              {
+                "old_line": 2347,
+                "before": "fn finish_lse_sysclk(\n",
+                "after": "pub(super) fn finish_lse_sysclk(\n"
+              },
+              {
+                "old_line": 2452,
+                "before": "    let result = super::lse::verify(lse, cs, true);\n",
+                "after": "    let result = crate::rcc::lse::verify(lse, cs, true);\n"
+              }
+            ],
+            "sha256": "e1f75eb08a415b0e2cb674711413b72067b373b3e9c80aeb4347fa87b8a1ac5b",
+            "lines": 538
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "old_line_spans": [
+              [
+                2471,
+                2870
+              ]
+            ],
+            "prefix": "use super::io::{barrier, check_external_faults};\nuse super::{pac, ClockSource, Clocks, Config, Error, HseMode, L012HseTarget, MAX_FLASH_WAIT};\n\n",
+            "insertions": [],
+            "line_rewrites": [
+              {
+                "old_line": 2475,
+                "before": "struct LsiSysclkPhase {\n",
+                "after": "pub(super) struct LsiSysclkPhase {\n"
+              },
+              {
+                "old_line": 2476,
+                "before": "    clock: pac::sysctrl::regs::Cr0,\n",
+                "after": "    pub(super) clock: pac::sysctrl::regs::Cr0,\n"
+              },
+              {
+                "old_line": 2477,
+                "before": "    sources: pac::sysctrl::regs::Cr1,\n",
+                "after": "    pub(super) sources: pac::sysctrl::regs::Cr1,\n"
+              },
+              {
+                "old_line": 2478,
+                "before": "    hsi: pac::sysctrl::regs::Hsi,\n",
+                "after": "    pub(super) hsi: pac::sysctrl::regs::Hsi,\n"
+              },
+              {
+                "old_line": 2479,
+                "before": "    hse: pac::sysctrl::regs::Hse,\n",
+                "after": "    pub(super) hse: pac::sysctrl::regs::Hse,\n"
+              },
+              {
+                "old_line": 2480,
+                "before": "    hsi_ready: bool,\n",
+                "after": "    pub(super) hsi_ready: bool,\n"
+              },
+              {
+                "old_line": 2481,
+                "before": "    hse_ready: bool,\n",
+                "after": "    pub(super) hse_ready: bool,\n"
+              },
+              {
+                "old_line": 2508,
+                "before": "fn lsi_ack_field<T: Copy + Eq>(observed: T, expected: T, target: T) -> Result<T, Error> {\n",
+                "after": "pub(super) fn lsi_ack_field<T: Copy + Eq>(observed: T, expected: T, target: T) -> Result<T, Error> {\n"
+              },
+              {
+                "old_line": 2518,
+                "before": "struct LsiSysclkSnapshot {\n",
+                "after": "pub(super) struct LsiSysclkSnapshot {\n"
+              },
+              {
+                "old_line": 2519,
+                "before": "    clock: pac::sysctrl::regs::Cr0,\n",
+                "after": "    pub(super) clock: pac::sysctrl::regs::Cr0,\n"
+              },
+              {
+                "old_line": 2520,
+                "before": "    sources: pac::sysctrl::regs::Cr1,\n",
+                "after": "    pub(super) sources: pac::sysctrl::regs::Cr1,\n"
+              },
+              {
+                "old_line": 2521,
+                "before": "    hsi: pac::sysctrl::regs::Hsi,\n",
+                "after": "    pub(super) hsi: pac::sysctrl::regs::Hsi,\n"
+              },
+              {
+                "old_line": 2522,
+                "before": "    hse: pac::sysctrl::regs::Hse,\n",
+                "after": "    pub(super) hse: pac::sysctrl::regs::Hse,\n"
+              },
+              {
+                "old_line": 2523,
+                "before": "    lsi: pac::sysctrl::regs::Lsi,\n",
+                "after": "    pub(super) lsi: pac::sysctrl::regs::Lsi,\n"
+              },
+              {
+                "old_line": 2524,
+                "before": "    lse: pac::sysctrl::regs::Lse,\n",
+                "after": "    pub(super) lse: pac::sysctrl::regs::Lse,\n"
+              },
+              {
+                "old_line": 2525,
+                "before": "    routes: pac::sysctrl::regs::Cr2,\n",
+                "after": "    pub(super) routes: pac::sysctrl::regs::Cr2,\n"
+              },
+              {
+                "old_line": 2526,
+                "before": "    interrupts: pac::sysctrl::regs::Ier,\n",
+                "after": "    pub(super) interrupts: pac::sysctrl::regs::Ier,\n"
+              },
+              {
+                "old_line": 2527,
+                "before": "    mco: pac::sysctrl::regs::Mco,\n",
+                "after": "    pub(super) mco: pac::sysctrl::regs::Mco,\n"
+              },
+              {
+                "old_line": 2528,
+                "before": "    factory_raw: u16,\n",
+                "after": "    pub(super) factory_raw: u16,\n"
+              },
+              {
+                "old_line": 2529,
+                "before": "    factory_trim: Option<u16>,\n",
+                "after": "    pub(super) factory_trim: Option<u16>,\n"
+              },
+              {
+                "old_line": 2534,
+                "before": "    fn phase(self) -> LsiSysclkPhase {\n",
+                "after": "    pub(super) fn phase(self) -> LsiSysclkPhase {\n"
+              },
+              {
+                "old_line": 2552,
+                "before": "    fn admit(self, config: Config) -> Result<(), Error> {\n",
+                "after": "    pub(super) fn admit(self, config: Config) -> Result<(), Error> {\n"
+              },
+              {
+                "old_line": 2648,
+                "before": "    fn settled(\n",
+                "after": "    pub(super) fn settled(\n"
+              },
+              {
+                "old_line": 2663,
+                "before": "    fn acknowledge(\n",
+                "after": "    pub(super) fn acknowledge(\n"
+              },
+              {
+                "old_line": 2705,
+                "before": "    fn write_wait(\n",
+                "after": "    pub(super) fn write_wait(\n"
+              },
+              {
+                "old_line": 2742,
+                "before": "fn finish_lsi_sysclk(\n",
+                "after": "pub(super) fn finish_lsi_sysclk(\n"
+              }
+            ],
+            "sha256": "52b80a9f888d4369de7b8b047c3e6a37daf55abb4054c9b811d9f0d2e9a05bf0",
+            "lines": 403
+          }
+        ]
+      },
+      "verification": {
+        "original_lines_assigned_once": 2905,
+        "reconstructed_sha256": "62e35c82b27b5898ee34dd58a2ee0b5e79f86ff022046d280768339ab79b9fd9",
+        "exact_byte_reconstruction": true,
+        "formatting_rewrites": false,
+        "declaration_anchors": [
+          {
+            "kind": "const",
+            "declaration": "pub const HSI_FREQ: Hertz = Hertz(crate::RCC_HSI_FREQUENCY_HZ);",
+            "old_line": 20,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 32
+          },
+          {
+            "kind": "enum",
+            "declaration": "pub enum HsiDiv {",
+            "old_line": 26,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 38
+          },
+          {
+            "kind": "impl",
+            "declaration": "impl HsiDiv {",
+            "old_line": 60,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 72
+          },
+          {
+            "kind": "fn",
+            "declaration": "pub const fn divisor(self) -> u32 {",
+            "old_line": 62,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 74
+          },
+          {
+            "kind": "const",
+            "declaration": "const DEFAULT_DIV: HsiDiv = crate::RCC_DEFAULT_HSI_DIV;",
+            "old_line": 84,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 96
+          },
+          {
+            "kind": "const",
+            "declaration": "const MAX_FLASH_WAIT: u32 = crate::RCC_INITIAL_FLASH_WAIT;",
+            "old_line": 85,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 97
+          },
+          {
+            "kind": "struct",
+            "declaration": "pub struct Hsi {",
+            "old_line": 90,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 102
+          },
+          {
+            "kind": "impl",
+            "declaration": "impl Default for Hsi {",
+            "old_line": 94,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 106
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn default() -> Self {",
+            "old_line": 95,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 107
+          },
+          {
+            "kind": "enum",
+            "declaration": "pub enum AHBPrescaler {",
+            "old_line": 104,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 116
+          },
+          {
+            "kind": "impl",
+            "declaration": "impl AHBPrescaler {",
+            "old_line": 122,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 134
+          },
+          {
+            "kind": "fn",
+            "declaration": "pub const fn divisor(self) -> u32 {",
+            "old_line": 124,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 136
+          },
+          {
+            "kind": "enum",
+            "declaration": "pub enum APBPrescaler {",
+            "old_line": 133,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 145
+          },
+          {
+            "kind": "impl",
+            "declaration": "impl APBPrescaler {",
+            "old_line": 143,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 155
+          },
+          {
+            "kind": "fn",
+            "declaration": "pub const fn divisor(self) -> u32 {",
+            "old_line": 145,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 157
+          },
+          {
+            "kind": "enum",
+            "declaration": "pub enum Sysclk {",
+            "old_line": 153,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 165
+          },
+          {
+            "kind": "enum",
+            "declaration": "pub enum HseMode {",
+            "old_line": 170,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 182
+          },
+          {
+            "kind": "struct",
+            "declaration": "pub struct Hse {",
+            "old_line": 189,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 201
+          },
+          {
+            "kind": "impl",
+            "declaration": "impl Hse {",
+            "old_line": 203,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 215
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn bounds(self) -> Result<crate::rcc::ClockBounds, Error> {",
+            "old_line": 204,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 216
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn detector_count(self) -> Result<u16, Error> {",
+            "old_line": 233,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 245
+          },
+          {
+            "kind": "struct",
+            "declaration": "pub struct Config {",
+            "old_line": 252,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 264
+          },
+          {
+            "kind": "impl",
+            "declaration": "impl Config {",
+            "old_line": 279,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 291
+          },
+          {
+            "kind": "fn",
+            "declaration": "pub const fn new() -> Self {",
+            "old_line": 281,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 293
+          },
+          {
+            "kind": "fn",
+            "declaration": "pub fn frequencies(&self) -> Result<Clocks, Error> {",
+            "old_line": 304,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 316
+          },
+          {
+            "kind": "impl",
+            "declaration": "impl Default for Config {",
+            "old_line": 416,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 428
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn default() -> Self {",
+            "old_line": 417,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 429
+          },
+          {
+            "kind": "struct",
+            "declaration": "pub struct Clocks {",
+            "old_line": 425,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 437
+          },
+          {
+            "kind": "enum",
+            "declaration": "pub enum Error {",
+            "old_line": 453,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 465
+          },
+          {
+            "kind": "enum",
+            "declaration": "pub(crate) enum L012HseTarget {",
+            "old_line": 570,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 582
+          },
+          {
+            "kind": "static",
+            "declaration": "static CLOCKS: Mutex<Cell<Option<Clocks>>> = Mutex::new(Cell::new(None));",
+            "old_line": 578,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 590
+          },
+          {
+            "kind": "fn",
+            "declaration": "pub fn try_clocks() -> Option<Clocks> {",
+            "old_line": 581,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 593
+          },
+          {
+            "kind": "fn",
+            "declaration": "pub fn clocks() -> Clocks {",
+            "old_line": 589,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 601
+          },
+          {
+            "kind": "fn",
+            "declaration": "pub(crate) unsafe fn init(config: Config) -> Result<(), Error> {",
+            "old_line": 598,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 610
+          },
+          {
+            "kind": "fn",
+            "declaration": "pub(crate) fn hse_pin_reserved(pin: u8) -> bool {",
+            "old_line": 609,
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "new_line": 621
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn poll(",
+            "old_line": 621,
+            "path": "embassy-cw32/src/rcc/l012/io.rs",
+            "new_line": 5
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn barrier() {",
+            "old_line": 638,
+            "path": "embassy-cw32/src/rcc/l012/io.rs",
+            "new_line": 22
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn set_flash_latency(",
+            "old_line": 646,
+            "path": "embassy-cw32/src/rcc/l012/io.rs",
+            "new_line": 30
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn check_external_faults(hse: bool, lse: bool) -> Result<(), Error> {",
+            "old_line": 2871,
+            "path": "embassy-cw32/src/rcc/l012/io.rs",
+            "new_line": 53
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn poll_clock(",
+            "old_line": 2880,
+            "path": "embassy-cw32/src/rcc/l012/io.rs",
+            "new_line": 62
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn hse_parameters_match(hse: Hse) -> Result<bool, Error> {",
+            "old_line": 2897,
+            "path": "embassy-cw32/src/rcc/l012/io.rs",
+            "new_line": 79
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn configure(config: Config, cs: critical_section::CriticalSection<'_>) -> Result<Clocks, Error> {",
+            "old_line": 669,
+            "path": "embassy-cw32/src/rcc/l012/configure.rs",
+            "new_line": 12
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn inspect_retained<R>(",
+            "old_line": 1844,
+            "path": "embassy-cw32/src/rcc/l012/inspection.rs",
+            "new_line": 8
+          },
+          {
+            "kind": "fn",
+            "declaration": "pub(crate) fn lse_target_inspection_error(error: super::peripheral::ClockInspectionError) -> Error {",
+            "old_line": 1893,
+            "path": "embassy-cw32/src/rcc/l012/inspection.rs",
+            "new_line": 57
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn lse_target_inspect<R>(",
+            "old_line": 1911,
+            "path": "embassy-cw32/src/rcc/l012/inspection.rs",
+            "new_line": 75
+          },
+          {
+            "kind": "struct",
+            "declaration": "struct LseSysclkSnapshot {",
+            "old_line": 1944,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 12
+          },
+          {
+            "kind": "impl",
+            "declaration": "impl LseSysclkSnapshot {",
+            "old_line": 1957,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 25
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn monitors_hse(self, config: Config) -> bool {",
+            "old_line": 1958,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 26
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn faults(self, config: Config) -> Result<(), Error> {",
+            "old_line": 1962,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 30
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn policy(self, config: Config) -> Result<(), Error> {",
+            "old_line": 1966,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 34
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn clock_matches(self, source: ClockSource, ahb: u8, apb: u8) -> Result<(), Error> {",
+            "old_line": 2009,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 77
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn unchanged_sources(",
+            "old_line": 2025,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 93
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn hsi_ownership(",
+            "old_line": 2054,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 122
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn i2c_internal_ownership(",
+            "old_line": 2070,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 138
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn admit_first_lsi_request(",
+            "old_line": 2094,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 162
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn prepared_sources(",
+            "old_line": 2187,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 255
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn flash_access(self, config: Config) -> Result<(), Error> {",
+            "old_line": 2261,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 329
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn wait_pair(self, config: Config, flash: pac::flash::regs::Cr2) -> Result<(u8, u8), Error> {",
+            "old_line": 2273,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 341
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn require_wait(",
+            "old_line": 2295,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 363
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn write_wait(",
+            "old_line": 2307,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 375
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn finish_lse_sysclk(",
+            "old_line": 2347,
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs",
+            "new_line": 415
+          },
+          {
+            "kind": "struct",
+            "declaration": "struct LsiSysclkPhase {",
+            "old_line": 2475,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 8
+          },
+          {
+            "kind": "impl",
+            "declaration": "impl LsiSysclkPhase {",
+            "old_line": 2485,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 18
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn matches(self, mut observed: Self) -> Result<(), Error> {",
+            "old_line": 2486,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 19
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn lsi_ack_field<T: Copy + Eq>(observed: T, expected: T, target: T) -> Result<T, Error> {",
+            "old_line": 2508,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 41
+          },
+          {
+            "kind": "struct",
+            "declaration": "struct LsiSysclkSnapshot {",
+            "old_line": 2518,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 51
+          },
+          {
+            "kind": "impl",
+            "declaration": "impl LsiSysclkSnapshot {",
+            "old_line": 2533,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 66
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn phase(self) -> LsiSysclkPhase {",
+            "old_line": 2534,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 67
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn faults(self, config: Config) -> Result<(), Error> {",
+            "old_line": 2545,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 78
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn admit(self, config: Config) -> Result<(), Error> {",
+            "old_line": 2552,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 85
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn check<R>(",
+            "old_line": 2566,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 99
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn settled(",
+            "old_line": 2648,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 181
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn acknowledge(",
+            "old_line": 2663,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 196
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn final_source(",
+            "old_line": 2689,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 222
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn write_wait(",
+            "old_line": 2705,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 238
+          },
+          {
+            "kind": "fn",
+            "declaration": "fn finish_lsi_sysclk(",
+            "old_line": 2742,
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs",
+            "new_line": 275
+          }
+        ],
+        "restricted_visibility_changes": 56,
+        "resolved_ancestry_rewrites": 15,
+        "method": "Remove exact recorded prefixes and module-wiring insertion; reverse each exact indexed line rewrite; assign every original line once; concatenate in original line order and require the pinned original SHA-256."
+      }
+    },
+    {
+      "backend": "l052_l083",
+      "exact_inverse_mapping": {
+        "baseline_commit": "a0df1333fb9aed61049f550cc17026b6a0d300a6",
+        "source_path": "embassy-cw32/src/rcc/l052_l083.rs",
+        "source_sha256": "b9d7b3ce0149986f16bd828d3def6089b74aed0b52bbc3f11ceb01188aaa7e57",
+        "source_lines": 3839,
+        "destination_root": "embassy-cw32/src/rcc/l052_l083",
+        "fragments": [
+          {
+            "file": "mod.rs",
+            "old_lines": [
+              1,
+              39
+            ],
+            "destination_byte_start": 0,
+            "destination_byte_end": 2647,
+            "replacements": [],
+            "original_sha256": "061eaa22feacbace953e0860a6a71248460cab1869f4dda9ecfb409870ffa8e3",
+            "relocated_sha256": "061eaa22feacbace953e0860a6a71248460cab1869f4dda9ecfb409870ffa8e3"
+          },
+          {
+            "file": "mod.rs",
+            "old_lines": [
+              40,
+              929
+            ],
+            "destination_byte_start": 3242,
+            "destination_byte_end": 38055,
+            "replacements": [],
+            "original_sha256": "da50b90fe17d4098b97135b3b07dbaf0543b128c0588dc47d9df7a3ba74831e1",
+            "relocated_sha256": "da50b90fe17d4098b97135b3b07dbaf0543b128c0588dc47d9df7a3ba74831e1"
+          },
+          {
+            "file": "mod.rs",
+            "old_lines": [
+              3831,
+              3839
+            ],
+            "destination_byte_start": 38055,
+            "destination_byte_end": 38307,
+            "replacements": [],
+            "original_sha256": "0fffbc6d0014216e1aa9580552f40fe028aad55f95f3d5dd866326197e4c3236",
+            "relocated_sha256": "0fffbc6d0014216e1aa9580552f40fe028aad55f95f3d5dd866326197e4c3236"
+          },
+          {
+            "file": "io.rs",
+            "old_lines": [
+              930,
+              965
+            ],
+            "destination_byte_start": 15,
+            "destination_byte_end": 1004,
+            "replacements": [
+              {
+                "old": "fn poll(",
+                "new": "pub(super) fn poll(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 119,
+                    "after_byte": 119
+                  }
+                ]
+              },
+              {
+                "old": "fn barrier(",
+                "new": "pub(super) fn barrier(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 363,
+                    "after_byte": 363
+                  }
+                ]
+              },
+              {
+                "old": "fn set_flash_latency(",
+                "new": "pub(super) fn set_flash_latency(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 496,
+                    "after_byte": 496
+                  }
+                ]
+              },
+              {
+                "old": "pub(super) fn poll(mut ready: impl FnMut() -> bool, timeout: u32, error: Error)",
+                "new": "pub(super) fn poll(mut ready: impl FnMut() -> bool, timeout: u32, error: Error,)",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 119,
+                    "after_byte": 119
+                  }
+                ]
+              }
+            ],
+            "original_sha256": "5b053e983e9fac3253028e836d82a6eb80e49da4d9cb3093ddebb78937764fef",
+            "relocated_sha256": "3c7c78c557d1b41c58f232712cfc8817f13db0c6df6958dfbdce9fa778909407"
+          },
+          {
+            "file": "io.rs",
+            "old_lines": [
+              1174,
+              1178
+            ],
+            "destination_byte_start": 1004,
+            "destination_byte_end": 1161,
+            "replacements": [
+              {
+                "old": "fn wait_until(",
+                "new": "pub(super) fn wait_until(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 16,
+                    "after_byte": 16
+                  }
+                ]
+              },
+              {
+                "old": "pub(super) fn wait_until(timeout: u32, error: Error, ready: impl FnMut() -> bool)",
+                "new": "pub(super) fn wait_until(timeout: u32, error: Error, ready: impl FnMut() -> bool,)",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 16,
+                    "after_byte": 16
+                  }
+                ]
+              }
+            ],
+            "original_sha256": "755376453472ba9da6e7688f89e6a117d51107e90ca7c55a339f7222c1106579",
+            "relocated_sha256": "346c7ae06b6104925fb115735f639edb61b42f63d64cb1182f554af2adaad5a1"
+          },
+          {
+            "file": "io.rs",
+            "old_lines": [
+              3684,
+              3770
+            ],
+            "destination_byte_start": 1161,
+            "destination_byte_end": 4037,
+            "replacements": [
+              {
+                "old": "fn check_external_faults(",
+                "new": "pub(super) fn check_external_faults(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 166,
+                    "after_byte": 166
+                  }
+                ]
+              },
+              {
+                "old": "fn hse_parameters_match(",
+                "new": "pub(super) fn hse_parameters_match(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 468,
+                    "after_byte": 468
+                  }
+                ]
+              },
+              {
+                "old": "fn verify_hse_source(",
+                "new": "pub(super) fn verify_hse_source(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 1008,
+                    "after_byte": 1008
+                  }
+                ]
+              },
+              {
+                "old": "fn verify_pll_reference(",
+                "new": "pub(super) fn verify_pll_reference(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 1568,
+                    "after_byte": 1568
+                  }
+                ]
+              },
+              {
+                "old": "fn pll_parameters_match(",
+                "new": "pub(super) fn pll_parameters_match(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 2356,
+                    "after_byte": 2356
+                  }
+                ]
+              }
+            ],
+            "original_sha256": "f174050ba4293a4c699d72fbfdfa124d1a0b636f9c8dc0737c261c7ea44d2182",
+            "relocated_sha256": "3a1a42a991c2b918bf2ee806acb778a555aa38d2ec66f08fd615d20babfec1b4"
+          },
+          {
+            "file": "hsi.rs",
+            "old_lines": [
+              966,
+              1173
+            ],
+            "destination_byte_start": 15,
+            "destination_byte_end": 7078,
+            "replacements": [
+              {
+                "old": "fn configure(",
+                "new": "pub(super) fn configure(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 358,
+                    "after_byte": 358
+                  }
+                ]
+              }
+            ],
+            "original_sha256": "8cc35a7335b1a24643c8f0df226759061ae0770b7a8f774e12d2aa004b6a8e58",
+            "relocated_sha256": "c837a920e9f5aee141633e59210986db47ac1d3a5760ee936e912821313f980d"
+          },
+          {
+            "file": "hse.rs",
+            "old_lines": [
+              1179,
+              1733
+            ],
+            "destination_byte_start": 15,
+            "destination_byte_end": 21709,
+            "replacements": [
+              {
+                "old": "fn configure_hse(",
+                "new": "pub(super) fn configure_hse(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 16,
+                    "after_byte": 16
+                  }
+                ]
+              },
+              {
+                "old": "super::lse::",
+                "new": "crate::rcc::lse::",
+                "count": 3,
+                "occurrences": [
+                  {
+                    "before_byte": 669,
+                    "after_byte": 669
+                  },
+                  {
+                    "before_byte": 20308,
+                    "after_byte": 20313
+                  },
+                  {
+                    "before_byte": 20670,
+                    "after_byte": 20680
+                  }
+                ]
+              }
+            ],
+            "original_sha256": "c9f9445580b6efdd7412513fd87e92d570feb2b608bfd8d3d486babfc0d7e8da",
+            "relocated_sha256": "df930633ab77aaf63de86dcaf66eec400b4336b12c4bbbba3b1880505d71b90e"
+          },
+          {
+            "file": "hse.rs",
+            "old_lines": [
+              3771,
+              3830
+            ],
+            "destination_byte_start": 21709,
+            "destination_byte_end": 24178,
+            "replacements": [
+              {
+                "old": "fn prepare_lse_monitor(",
+                "new": "pub(super) fn prepare_lse_monitor(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 91,
+                    "after_byte": 91
+                  }
+                ]
+              }
+            ],
+            "original_sha256": "17ca01f07c9af32927b9a222f0d472bc553f03e8115d12ea8f1e6e6706910283",
+            "relocated_sha256": "5b06ee7db2328cc3d3146f4f583dbbf6a105b9574210b2e283ef0ba9632949ad"
+          },
+          {
+            "file": "lsi/mod.rs",
+            "old_lines": [
+              1734,
+              1959
+            ],
+            "destination_byte_start": 127,
+            "destination_byte_end": 8262,
+            "replacements": [
+              {
+                "old": "super::Lse",
+                "new": "crate::rcc::Lse",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 6934,
+                    "after_byte": 6934
+                  }
+                ]
+              },
+              {
+                "old": "super::peripheral::",
+                "new": "peripheral::",
+                "count": 4,
+                "occurrences": [
+                  {
+                    "before_byte": 7737,
+                    "after_byte": 7737
+                  },
+                  {
+                    "before_byte": 7815,
+                    "after_byte": 7808
+                  },
+                  {
+                    "before_byte": 7956,
+                    "after_byte": 7942
+                  },
+                  {
+                    "before_byte": 8066,
+                    "after_byte": 8045
+                  }
+                ]
+              }
+            ],
+            "original_sha256": "8ae707b90a38f0e6494dcaebdb485d0bd07ba59902f054b1fc6c3e2076032a53",
+            "relocated_sha256": "fd02f7ce56f0f98b1b04183229ab13e35a1e807172334bd3c577a4e599b31797"
+          },
+          {
+            "file": "lsi/state.rs",
+            "old_lines": [
+              1960,
+              2748
+            ],
+            "destination_byte_start": 15,
+            "destination_byte_end": 31324,
+            "replacements": [
+              {
+                "old": "fn capture(",
+                "new": "pub(super) fn capture(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 49,
+                    "after_byte": 49
+                  }
+                ]
+              },
+              {
+                "old": "fn check_identity(",
+                "new": "pub(super) fn check_identity(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 5979,
+                    "after_byte": 5979
+                  }
+                ]
+              },
+              {
+                "old": "fn validate_edge(",
+                "new": "pub(super) fn validate_edge(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 19992,
+                    "after_byte": 19992
+                  }
+                ]
+              },
+              {
+                "old": "fn admit_l083(",
+                "new": "pub(super) fn admit_l083(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 21203,
+                    "after_byte": 21203
+                  }
+                ]
+              },
+              {
+                "old": "fn stop_l083_pll(",
+                "new": "pub(super) fn stop_l083_pll(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 28966,
+                    "after_byte": 28966
+                  }
+                ]
+              }
+            ],
+            "original_sha256": "28923b2490efbb9d61a9b8ed14c629fbabb1cddfb1dcb6dd0676225f881929a9",
+            "relocated_sha256": "fc3a060172ed2fc69a1836b6f1bba03b40168d8a32223b3d169753b7ff388cf3"
+          },
+          {
+            "file": "lsi/observe.rs",
+            "old_lines": [
+              2749,
+              3132
+            ],
+            "destination_byte_start": 60,
+            "destination_byte_end": 15358,
+            "replacements": [
+              {
+                "old": "fn collect(",
+                "new": "pub(super) fn collect(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 4,
+                    "after_byte": 4
+                  }
+                ]
+              },
+              {
+                "old": "fn check_all(",
+                "new": "pub(super) fn check_all(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 2876,
+                    "after_byte": 2876
+                  }
+                ]
+              },
+              {
+                "old": "fn wait(",
+                "new": "pub(super) fn wait(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 3085,
+                    "after_byte": 3085
+                  }
+                ]
+              },
+              {
+                "old": "fn hsi_owners(",
+                "new": "pub(super) fn hsi_owners(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 6295,
+                    "after_byte": 6295
+                  }
+                ]
+              },
+              {
+                "old": "fn external_owners(",
+                "new": "pub(super) fn external_owners(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 6943,
+                    "after_byte": 6943
+                  }
+                ]
+              },
+              {
+                "old": "fn hse_parameters(",
+                "new": "pub(super) fn hse_parameters(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 8929,
+                    "after_byte": 8929
+                  }
+                ]
+              },
+              {
+                "old": "fn lse_parameters(",
+                "new": "pub(super) fn lse_parameters(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 9541,
+                    "after_byte": 9541
+                  }
+                ]
+              },
+              {
+                "old": "fn cold_lse_preflight(",
+                "new": "pub(super) fn cold_lse_preflight(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 10038,
+                    "after_byte": 10038
+                  }
+                ]
+              },
+              {
+                "old": "fn verify_sources(",
+                "new": "pub(super) fn verify_sources(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 11609,
+                    "after_byte": 11609
+                  }
+                ]
+              },
+              {
+                "old": "fn flash_latency(",
+                "new": "pub(super) fn flash_latency(",
+                "count": 2,
+                "occurrences": [
+                  {
+                    "before_byte": 13810,
+                    "after_byte": 13810
+                  },
+                  {
+                    "before_byte": 14500,
+                    "after_byte": 14511
+                  }
+                ]
+              },
+              {
+                "old": "    pub(super) fn hsi_owners(&mut self, cs: critical_section::CriticalSection<'_>)",
+                "new": "    pub(super) fn hsi_owners(&mut self, cs: critical_section::CriticalSection<'_>,)",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 6291,
+                    "after_byte": 6291
+                  }
+                ]
+              },
+              {
+                "old": "super::LseMode",
+                "new": "crate::rcc::LseMode",
+                "count": 4,
+                "occurrences": [
+                  {
+                    "before_byte": 791,
+                    "after_byte": 791
+                  },
+                  {
+                    "before_byte": 9701,
+                    "after_byte": 9706
+                  },
+                  {
+                    "before_byte": 11024,
+                    "after_byte": 11034
+                  },
+                  {
+                    "before_byte": 13340,
+                    "after_byte": 13355
+                  }
+                ]
+              },
+              {
+                "old": "super::Lse",
+                "new": "crate::rcc::Lse",
+                "count": 2,
+                "occurrences": [
+                  {
+                    "before_byte": 9591,
+                    "after_byte": 9591
+                  },
+                  {
+                    "before_byte": 10118,
+                    "after_byte": 10123
+                  }
+                ]
+              },
+              {
+                "old": "super::lse::",
+                "new": "crate::rcc::lse::",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 13421,
+                    "after_byte": 13421
+                  }
+                ]
+              }
+            ],
+            "original_sha256": "9dae68411c0f0352395c2bb86000c408b58982e9a9a93e4cb9aa6e179217f417",
+            "relocated_sha256": "3df9d8bf8b65893f30c9d06cdec71aba18d42db864e29f1e8c38f52281152ad9"
+          },
+          {
+            "file": "lsi/transition.rs",
+            "old_lines": [
+              3133,
+              3683
+            ],
+            "destination_byte_start": 15,
+            "destination_byte_end": 19830,
+            "replacements": [
+              {
+                "old": "fn configure_lsi(",
+                "new": "pub(in crate::rcc::l052_l083) fn configure_lsi(",
+                "count": 1,
+                "occurrences": [
+                  {
+                    "before_byte": 23,
+                    "after_byte": 23
+                  }
+                ]
+              },
+              {
+                "old": "super::LseMode",
+                "new": "crate::rcc::LseMode",
+                "count": 2,
+                "occurrences": [
+                  {
+                    "before_byte": 1154,
+                    "after_byte": 1154
+                  },
+                  {
+                    "before_byte": 14216,
+                    "after_byte": 14221
+                  }
+                ]
+              },
+              {
+                "old": "super::lse::",
+                "new": "crate::rcc::lse::",
+                "count": 2,
+                "occurrences": [
+                  {
+                    "before_byte": 14016,
+                    "after_byte": 14016
+                  },
+                  {
+                    "before_byte": 15787,
+                    "after_byte": 15792
+                  }
+                ]
+              }
+            ],
+            "original_sha256": "504ca503e3d4a93e0dcaf171e5e508ebb1de5970dbf8fd27002b8fd7ea6e85b8",
+            "relocated_sha256": "5736a3a47240133819421cca38d21b875d42f7c9a32e66313fad5f8a90ffc9da"
+          }
+        ],
+        "additions": [
+          {
+            "file": "mod.rs",
+            "destination_byte_start": 2647,
+            "destination_byte_end": 3242,
+            "text": "#[cfg(any(rcc_hse, rcc_lse))]\nmod hse;\n#[cfg(not(rcc_hse))]\nmod hsi;\nmod io;\n#[cfg(rcc_lsi_sysclk)]\nmod lsi;\n\n#[cfg(rcc_hse)]\nuse hse::configure_hse;\n#[cfg(rcc_lse)]\nuse hse::prepare_lse_monitor;\n#[cfg(not(rcc_hse))]\nuse hsi::configure;\n#[cfg(not(rcc_hse))]\nuse io::poll;\nuse io::{barrier, set_flash_latency};\n#[cfg(rcc_hse)]\nuse io::{check_external_faults, hse_parameters_match, verify_hse_source, wait_until};\n#[cfg(rcc_pll)]\nuse io::{pll_parameters_match, verify_pll_reference};\n#[cfg(rcc_lsi_sysclk)]\nuse lsi::configure_lsi;\n#[cfg(rcc_lsi_sysclk)]\npub(crate) use lsi::lsi_inspection_error;\n\n"
+          },
+          {
+            "file": "io.rs",
+            "destination_byte_start": 0,
+            "destination_byte_end": 15,
+            "text": "use super::*;\n\n"
+          },
+          {
+            "file": "hsi.rs",
+            "destination_byte_start": 0,
+            "destination_byte_end": 15,
+            "text": "use super::*;\n\n"
+          },
+          {
+            "file": "hse.rs",
+            "destination_byte_start": 0,
+            "destination_byte_end": 15,
+            "text": "use super::*;\n\n"
+          },
+          {
+            "file": "lsi/mod.rs",
+            "destination_byte_start": 0,
+            "destination_byte_end": 127,
+            "text": "use super::*;\nuse crate::rcc::peripheral;\n\nmod observe;\nmod state;\nmod transition;\n\npub(super) use transition::configure_lsi;\n\n"
+          },
+          {
+            "file": "lsi/state.rs",
+            "destination_byte_start": 0,
+            "destination_byte_end": 15,
+            "text": "use super::*;\n\n"
+          },
+          {
+            "file": "lsi/state.rs",
+            "destination_byte_start": 31324,
+            "destination_byte_end": 31326,
+            "text": "}\n"
+          },
+          {
+            "file": "lsi/observe.rs",
+            "destination_byte_start": 0,
+            "destination_byte_end": 60,
+            "text": "use super::*;\n\n#[cfg(rcc_lsi_sysclk)]\nimpl LsiSysclkState {\n"
+          },
+          {
+            "file": "lsi/transition.rs",
+            "destination_byte_start": 0,
+            "destination_byte_end": 15,
+            "text": "use super::*;\n\n"
+          }
+        ],
+        "unchanged_leaves": {
+          "embassy-cw32/src/rcc/l052_l083/lse_sysclk.rs": "2ceefaa6eb7f597a8fc01ad3285d16de948bf0e8f45614ed78367c1c9a925ed9",
+          "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs": "893572515d23954a85dadc26816ae4e09dbe53588f6bb125b8cf6d6b4db42f53"
+        },
+        "new_files": {
+          "mod.rs": "0c954a4581d49f7f15c91d28972a1d10b8858d416c8472fc7e2400f645a6fa4c",
+          "io.rs": "51886a8ffb71b64baf24ba516cfe70c5ff771724a4ce26dc45152f8ea9de1c00",
+          "hsi.rs": "a6ad92060b1d8527df0136009b7c5fd2ee7b83245db33d972d316a9211d330df",
+          "hse.rs": "12e981a41b15946293b15d57aeff0fa411677dcff464aaaf9bdf31ec5970ff49",
+          "lsi/mod.rs": "905a5c333c8919773cc1eb1ef5f2cf91f71e38c81cec7144f2c95f28ecfbb4e2",
+          "lsi/state.rs": "0f72d62c6f067c26df93f852161d258b510c92c78edde95397fa29f50356f951",
+          "lsi/observe.rs": "7443516570e9d66cc8e6ea3f934c061bd422768a7b44d3155a1d861439cffb66",
+          "lsi/transition.rs": "1f8dadb600f883b59f67f0a93c4ef9709c21c44ea094a1b548f902160e16f5f2"
+        }
+      },
+      "verification": {
+        "baseline_commit": "a0df1333fb9aed61049f550cc17026b6a0d300a6",
+        "source_sha256": "b9d7b3ce0149986f16bd828d3def6089b74aed0b52bbc3f11ceb01188aaa7e57",
+        "source_lines_assigned_once": 3839,
+        "exact_byte_reconstruction": true,
+        "whitespace_only_rustfmt_deltas": {
+          "mod.rs": [],
+          "io.rs": [
+            {
+              "expected_bytes": [
+                153,
+                153
+              ],
+              "actual_bytes": [
+                153,
+                158
+              ],
+              "expected": "",
+              "actual": "\n    "
+            },
+            {
+              "expected_bytes": [
+                185,
+                185
+              ],
+              "actual_bytes": [
+                190,
+                194
+              ],
+              "expected": "",
+              "actual": "\n   "
+            },
+            {
+              "expected_bytes": [
+                199,
+                199
+              ],
+              "actual_bytes": [
+                208,
+                212
+              ],
+              "expected": "",
+              "actual": "\n   "
+            },
+            {
+              "expected_bytes": [
+                213,
+                213
+              ],
+              "actual_bytes": [
+                226,
+                227
+              ],
+              "expected": "",
+              "actual": "\n"
+            },
+            {
+              "expected_bytes": [
+                1045,
+                1045
+              ],
+              "actual_bytes": [
+                1059,
+                1064
+              ],
+              "expected": "",
+              "actual": "\n    "
+            },
+            {
+              "expected_bytes": [
+                1058,
+                1058
+              ],
+              "actual_bytes": [
+                1077,
+                1081
+              ],
+              "expected": "",
+              "actual": "\n   "
+            },
+            {
+              "expected_bytes": [
+                1072,
+                1072
+              ],
+              "actual_bytes": [
+                1095,
+                1099
+              ],
+              "expected": "",
+              "actual": "\n   "
+            },
+            {
+              "expected_bytes": [
+                1101,
+                1101
+              ],
+              "actual_bytes": [
+                1128,
+                1129
+              ],
+              "expected": "",
+              "actual": "\n"
+            }
+          ],
+          "hsi.rs": [
+            {
+              "expected_bytes": [
+                7077,
+                7078
+              ],
+              "actual_bytes": [
+                7077,
+                7077
+              ],
+              "expected": "\n",
+              "actual": ""
+            }
+          ],
+          "hse.rs": [
+            {
+              "expected_bytes": [
+                24177,
+                24178
+              ],
+              "actual_bytes": [
+                24177,
+                24177
+              ],
+              "expected": "\n",
+              "actual": ""
+            }
+          ],
+          "lsi/mod.rs": [
+            {
+              "expected_bytes": [
+                126,
+                127
+              ],
+              "actual_bytes": [
+                126,
+                126
+              ],
+              "expected": "\n",
+              "actual": ""
+            },
+            {
+              "expected_bytes": [
+                8261,
+                8262
+              ],
+              "actual_bytes": [
+                8260,
+                8260
+              ],
+              "expected": "\n",
+              "actual": ""
+            }
+          ],
+          "lsi/state.rs": [
+            {
+              "expected_bytes": [
+                31323,
+                31324
+              ],
+              "actual_bytes": [
+                31323,
+                31323
+              ],
+              "expected": "\n",
+              "actual": ""
+            }
+          ],
+          "lsi/observe.rs": [
+            {
+              "expected_bytes": [
+                6385,
+                6385
+              ],
+              "actual_bytes": [
+                6385,
+                6394
+              ],
+              "expected": "",
+              "actual": "\n        "
+            },
+            {
+              "expected_bytes": [
+                6395,
+                6395
+              ],
+              "actual_bytes": [
+                6404,
+                6412
+              ],
+              "expected": "",
+              "actual": "\n       "
+            },
+            {
+              "expected_bytes": [
+                6438,
+                6438
+              ],
+              "actual_bytes": [
+                6455,
+                6460
+              ],
+              "expected": "",
+              "actual": "\n    "
+            },
+            {
+              "expected_bytes": [
+                15357,
+                15358
+              ],
+              "actual_bytes": [
+                15379,
+                15379
+              ],
+              "expected": "\n",
+              "actual": ""
+            }
+          ],
+          "lsi/transition.rs": []
+        },
+        "normalized_token_equality": true,
+        "comment_lines_preserved": 374,
+        "item_method_anchors": [
+          {
+            "original_line": 48,
+            "kind": "const",
+            "identity": "HSI_FREQ: Hertz",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub const HSI_FREQ: Hertz = Hertz(crate::RCC_HSI_FREQUENCY_HZ);"
+          },
+          {
+            "original_line": 54,
+            "kind": "enum",
+            "identity": "HsiDiv",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub enum HsiDiv {"
+          },
+          {
+            "original_line": 74,
+            "kind": "impl",
+            "identity": "HsiDiv",
+            "destination": "mod.rs",
+            "original_declaration_line": "impl HsiDiv {"
+          },
+          {
+            "original_line": 76,
+            "kind": "const",
+            "identity": "fn divisor",
+            "destination": "mod.rs",
+            "original_declaration_line": "    pub const fn divisor(self) -> u32 {"
+          },
+          {
+            "original_line": 94,
+            "kind": "struct",
+            "identity": "Hsi",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub struct Hsi {"
+          },
+          {
+            "original_line": 98,
+            "kind": "impl",
+            "identity": "Default for Hsi",
+            "destination": "mod.rs",
+            "original_declaration_line": "impl Default for Hsi {"
+          },
+          {
+            "original_line": 99,
+            "kind": "fn",
+            "identity": "default",
+            "destination": "mod.rs",
+            "original_declaration_line": "    fn default() -> Self {"
+          },
+          {
+            "original_line": 110,
+            "kind": "enum",
+            "identity": "AHBPrescaler",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub enum AHBPrescaler {"
+          },
+          {
+            "original_line": 128,
+            "kind": "impl",
+            "identity": "AHBPrescaler",
+            "destination": "mod.rs",
+            "original_declaration_line": "impl AHBPrescaler {"
+          },
+          {
+            "original_line": 130,
+            "kind": "const",
+            "identity": "fn divisor",
+            "destination": "mod.rs",
+            "original_declaration_line": "    pub const fn divisor(self) -> u32 {"
+          },
+          {
+            "original_line": 139,
+            "kind": "enum",
+            "identity": "APBPrescaler",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub enum APBPrescaler {"
+          },
+          {
+            "original_line": 149,
+            "kind": "impl",
+            "identity": "APBPrescaler",
+            "destination": "mod.rs",
+            "original_declaration_line": "impl APBPrescaler {"
+          },
+          {
+            "original_line": 151,
+            "kind": "const",
+            "identity": "fn divisor",
+            "destination": "mod.rs",
+            "original_declaration_line": "    pub const fn divisor(self) -> u32 {"
+          },
+          {
+            "original_line": 164,
+            "kind": "enum",
+            "identity": "PllSource",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub enum PllSource {"
+          },
+          {
+            "original_line": 189,
+            "kind": "struct",
+            "identity": "Pll",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub struct Pll {"
+          },
+          {
+            "original_line": 194,
+            "kind": "struct",
+            "identity": "PllParameters",
+            "destination": "mod.rs",
+            "original_declaration_line": "struct PllParameters {"
+          },
+          {
+            "original_line": 201,
+            "kind": "impl",
+            "identity": "Pll",
+            "destination": "mod.rs",
+            "original_declaration_line": "impl Pll {"
+          },
+          {
+            "original_line": 202,
+            "kind": "fn",
+            "identity": "parameters",
+            "destination": "mod.rs",
+            "original_declaration_line": "    fn parameters(self, config: &Config) -> Result<PllParameters, Error> {"
+          },
+          {
+            "original_line": 269,
+            "kind": "enum",
+            "identity": "Sysclk",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub enum Sysclk {"
+          },
+          {
+            "original_line": 300,
+            "kind": "enum",
+            "identity": "HseMode",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub enum HseMode {"
+          },
+          {
+            "original_line": 321,
+            "kind": "struct",
+            "identity": "Hse",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub struct Hse {"
+          },
+          {
+            "original_line": 336,
+            "kind": "impl",
+            "identity": "Hse",
+            "destination": "mod.rs",
+            "original_declaration_line": "impl Hse {"
+          },
+          {
+            "original_line": 337,
+            "kind": "fn",
+            "identity": "bounds",
+            "destination": "mod.rs",
+            "original_declaration_line": "    fn bounds(self) -> Result<crate::rcc::ClockBounds, Error> {"
+          },
+          {
+            "original_line": 363,
+            "kind": "fn",
+            "identity": "range",
+            "destination": "mod.rs",
+            "original_declaration_line": "    fn range(self) -> pac::sysctrl::vals::HseRange {"
+          },
+          {
+            "original_line": 373,
+            "kind": "fn",
+            "identity": "detector_count",
+            "destination": "mod.rs",
+            "original_declaration_line": "    fn detector_count(self) -> Result<u16, Error> {"
+          },
+          {
+            "original_line": 392,
+            "kind": "struct",
+            "identity": "Config",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub struct Config {"
+          },
+          {
+            "original_line": 421,
+            "kind": "impl",
+            "identity": "Config",
+            "destination": "mod.rs",
+            "original_declaration_line": "impl Config {"
+          },
+          {
+            "original_line": 423,
+            "kind": "const",
+            "identity": "fn new",
+            "destination": "mod.rs",
+            "original_declaration_line": "    pub const fn new() -> Self {"
+          },
+          {
+            "original_line": 452,
+            "kind": "fn",
+            "identity": "frequencies",
+            "destination": "mod.rs",
+            "original_declaration_line": "    pub fn frequencies(&self) -> Result<Clocks, Error> {"
+          },
+          {
+            "original_line": 680,
+            "kind": "impl",
+            "identity": "Default for Config",
+            "destination": "mod.rs",
+            "original_declaration_line": "impl Default for Config {"
+          },
+          {
+            "original_line": 681,
+            "kind": "fn",
+            "identity": "default",
+            "destination": "mod.rs",
+            "original_declaration_line": "    fn default() -> Self {"
+          },
+          {
+            "original_line": 689,
+            "kind": "struct",
+            "identity": "Clocks",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub struct Clocks {"
+          },
+          {
+            "original_line": 710,
+            "kind": "impl",
+            "identity": "Clocks",
+            "destination": "mod.rs",
+            "original_declaration_line": "impl Clocks {"
+          },
+          {
+            "original_line": 713,
+            "kind": "fn",
+            "identity": "pll_bounds",
+            "destination": "mod.rs",
+            "original_declaration_line": "    pub fn pll_bounds(self) -> Option<crate::rcc::ClockBounds> {"
+          },
+          {
+            "original_line": 717,
+            "kind": "fn",
+            "identity": "pll_frequency",
+            "destination": "mod.rs",
+            "original_declaration_line": "    pub fn pll_frequency(self) -> Option<Hertz> {"
+          },
+          {
+            "original_line": 731,
+            "kind": "enum",
+            "identity": "Error",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub enum Error {"
+          },
+          {
+            "original_line": 885,
+            "kind": "static",
+            "identity": "CLOCKS: Mutex<Cell<Option<Clocks>>>",
+            "destination": "mod.rs",
+            "original_declaration_line": "static CLOCKS: Mutex<Cell<Option<Clocks>>> = Mutex::new(Cell::new(None));"
+          },
+          {
+            "original_line": 888,
+            "kind": "fn",
+            "identity": "try_clocks",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub fn try_clocks() -> Option<Clocks> {"
+          },
+          {
+            "original_line": 896,
+            "kind": "fn",
+            "identity": "clocks",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub fn clocks() -> Clocks {"
+          },
+          {
+            "original_line": 905,
+            "kind": "fn",
+            "identity": "init",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub(crate) unsafe fn init(config: Config) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 920,
+            "kind": "fn",
+            "identity": "hse_pin_reserved",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub(crate) fn hse_pin_reserved(pin: u8) -> bool {"
+          },
+          {
+            "original_line": 932,
+            "kind": "fn",
+            "identity": "poll",
+            "destination": "io.rs",
+            "original_declaration_line": "fn poll(mut ready: impl FnMut() -> bool, timeout: u32, error: Error) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 942,
+            "kind": "fn",
+            "identity": "barrier",
+            "destination": "io.rs",
+            "original_declaration_line": "fn barrier() {"
+          },
+          {
+            "original_line": 950,
+            "kind": "fn",
+            "identity": "set_flash_latency",
+            "destination": "io.rs",
+            "original_declaration_line": "fn set_flash_latency(wait: u32, timeout: u32) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 967,
+            "kind": "fn",
+            "identity": "switch",
+            "destination": "hsi.rs",
+            "original_declaration_line": "fn switch(source: u8, timeout: u32) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 982,
+            "kind": "fn",
+            "identity": "configure",
+            "destination": "hsi.rs",
+            "original_declaration_line": "fn configure(config: Config) -> Result<Clocks, Error> {"
+          },
+          {
+            "original_line": 1175,
+            "kind": "fn",
+            "identity": "wait_until",
+            "destination": "io.rs",
+            "original_declaration_line": "fn wait_until(timeout: u32, error: Error, ready: impl FnMut() -> bool) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 1180,
+            "kind": "fn",
+            "identity": "configure_hse",
+            "destination": "hse.rs",
+            "original_declaration_line": "fn configure_hse("
+          },
+          {
+            "original_line": 1763,
+            "kind": "enum",
+            "identity": "LsiEntryClass",
+            "destination": "lsi/mod.rs",
+            "original_declaration_line": "enum LsiEntryClass {"
+          },
+          {
+            "original_line": 1771,
+            "kind": "struct",
+            "identity": "LsiIdentity",
+            "destination": "lsi/mod.rs",
+            "original_declaration_line": "struct LsiIdentity {"
+          },
+          {
+            "original_line": 1798,
+            "kind": "impl",
+            "identity": "LsiIdentity",
+            "destination": "lsi/mod.rs",
+            "original_declaration_line": "impl LsiIdentity {"
+          },
+          {
+            "original_line": 1799,
+            "kind": "fn",
+            "identity": "read",
+            "destination": "lsi/mod.rs",
+            "original_declaration_line": "    fn read() -> Self {"
+          },
+          {
+            "original_line": 1842,
+            "kind": "fn",
+            "identity": "external_faults",
+            "destination": "lsi/mod.rs",
+            "original_declaration_line": "    fn external_faults(self, hse: bool, lse: bool) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 1856,
+            "kind": "fn",
+            "identity": "selected_ready",
+            "destination": "lsi/mod.rs",
+            "original_declaration_line": "    fn selected_ready(self) -> bool {"
+          },
+          {
+            "original_line": 1874,
+            "kind": "enum",
+            "identity": "LsiTransition",
+            "destination": "lsi/mod.rs",
+            "original_declaration_line": "enum LsiTransition {"
+          },
+          {
+            "original_line": 1901,
+            "kind": "struct",
+            "identity": "LsiSysclkState",
+            "destination": "lsi/mod.rs",
+            "original_declaration_line": "struct LsiSysclkState {"
+          },
+          {
+            "original_line": 1948,
+            "kind": "fn",
+            "identity": "lsi_inspection_error",
+            "destination": "lsi/mod.rs",
+            "original_declaration_line": "pub(crate) fn lsi_inspection_error(error: super::peripheral::ClockInspectionError) -> Error {"
+          },
+          {
+            "original_line": 1961,
+            "kind": "impl",
+            "identity": "LsiSysclkState",
+            "destination": "lsi/state.rs",
+            "original_declaration_line": "impl LsiSysclkState {"
+          },
+          {
+            "original_line": 1962,
+            "kind": "fn",
+            "identity": "capture",
+            "destination": "lsi/state.rs",
+            "original_declaration_line": "    fn capture(config: Config) -> Result<Self, Error> {"
+          },
+          {
+            "original_line": 2120,
+            "kind": "fn",
+            "identity": "check_identity",
+            "destination": "lsi/state.rs",
+            "original_declaration_line": "    fn check_identity(&mut self, phase: LsiTransition) -> Result<LsiIdentity, Error> {"
+          },
+          {
+            "original_line": 2284,
+            "kind": "fn",
+            "identity": "check_l083_identity",
+            "destination": "lsi/state.rs",
+            "original_declaration_line": "    fn check_l083_identity("
+          },
+          {
+            "original_line": 2461,
+            "kind": "fn",
+            "identity": "hsi_divisor",
+            "destination": "lsi/state.rs",
+            "original_declaration_line": "    fn hsi_divisor(&self) -> Result<u32, Error> {"
+          },
+          {
+            "original_line": 2477,
+            "kind": "fn",
+            "identity": "validate_edge",
+            "destination": "lsi/state.rs",
+            "original_declaration_line": "    fn validate_edge("
+          },
+          {
+            "original_line": 2505,
+            "kind": "fn",
+            "identity": "fallback_bound",
+            "destination": "lsi/state.rs",
+            "original_declaration_line": "    fn fallback_bound(config: Config, clocks: Clocks) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 2517,
+            "kind": "fn",
+            "identity": "admit_l083",
+            "destination": "lsi/state.rs",
+            "original_declaration_line": "    fn admit_l083(&mut self, config: Config, clocks: Clocks) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 2682,
+            "kind": "fn",
+            "identity": "stop_l083_pll",
+            "destination": "lsi/state.rs",
+            "original_declaration_line": "    fn stop_l083_pll("
+          },
+          {
+            "original_line": 2749,
+            "kind": "fn",
+            "identity": "collect",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn collect("
+          },
+          {
+            "original_line": 2820,
+            "kind": "fn",
+            "identity": "check_all",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn check_all("
+          },
+          {
+            "original_line": 2828,
+            "kind": "fn",
+            "identity": "wait",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn wait("
+          },
+          {
+            "original_line": 2899,
+            "kind": "fn",
+            "identity": "hsi_owners",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn hsi_owners(&mut self, cs: critical_section::CriticalSection<'_>) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 2913,
+            "kind": "fn",
+            "identity": "external_owners",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn external_owners(&self, config: Config) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 2957,
+            "kind": "fn",
+            "identity": "hse_parameters",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn hse_parameters(&self, config: Hse) -> Result<pac::sysctrl::regs::Hse, Error> {"
+          },
+          {
+            "original_line": 2972,
+            "kind": "fn",
+            "identity": "lse_parameters",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn lse_parameters(&self, config: super::Lse) -> pac::sysctrl::regs::Lse {"
+          },
+          {
+            "original_line": 2986,
+            "kind": "fn",
+            "identity": "cold_lse_preflight",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn cold_lse_preflight("
+          },
+          {
+            "original_line": 3035,
+            "kind": "fn",
+            "identity": "verify_sources",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn verify_sources("
+          },
+          {
+            "original_line": 3087,
+            "kind": "fn",
+            "identity": "flash_latency",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn flash_latency("
+          },
+          {
+            "original_line": 3108,
+            "kind": "fn",
+            "identity": "flash_latency",
+            "destination": "lsi/observe.rs",
+            "original_declaration_line": "    fn flash_latency("
+          },
+          {
+            "original_line": 3134,
+            "kind": "fn",
+            "identity": "configure_lsi",
+            "destination": "lsi/transition.rs",
+            "original_declaration_line": "fn configure_lsi("
+          },
+          {
+            "original_line": 3687,
+            "kind": "fn",
+            "identity": "check_external_faults",
+            "destination": "io.rs",
+            "original_declaration_line": "fn check_external_faults(hse: bool, lse: bool) -> Result<(), Error> {"
+          },
+          {
+            "original_line": 3697,
+            "kind": "fn",
+            "identity": "hse_parameters_match",
+            "destination": "io.rs",
+            "original_declaration_line": "fn hse_parameters_match(hse: Hse) -> Result<bool, Error> {"
+          },
+          {
+            "original_line": 3713,
+            "kind": "fn",
+            "identity": "verify_hse_source",
+            "destination": "io.rs",
+            "original_declaration_line": "fn verify_hse_source("
+          },
+          {
+            "original_line": 3731,
+            "kind": "fn",
+            "identity": "verify_pll_reference",
+            "destination": "io.rs",
+            "original_declaration_line": "fn verify_pll_reference("
+          },
+          {
+            "original_line": 3760,
+            "kind": "fn",
+            "identity": "pll_parameters_match",
+            "destination": "io.rs",
+            "original_declaration_line": "fn pll_parameters_match(pll: Pll, parameters: &PllParameters) -> bool {"
+          },
+          {
+            "original_line": 3773,
+            "kind": "fn",
+            "identity": "prepare_lse_monitor",
+            "destination": "hse.rs",
+            "original_declaration_line": "fn prepare_lse_monitor("
+          },
+          {
+            "original_line": 3832,
+            "kind": "fn",
+            "identity": "lse_sysclk_monitor_ready",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub(super) fn lse_sysclk_monitor_ready() -> bool {"
+          },
+          {
+            "original_line": 3837,
+            "kind": "fn",
+            "identity": "lse_sysclk_monitor_ready",
+            "destination": "mod.rs",
+            "original_declaration_line": "pub(super) fn lse_sysclk_monitor_ready() -> bool {"
+          }
+        ],
+        "final_source_sha256": {
+          "mod.rs": "0c954a4581d49f7f15c91d28972a1d10b8858d416c8472fc7e2400f645a6fa4c",
+          "io.rs": "b3643c6a30ebe8f2955a73305d859dedacbb8e8d4cbb2e7761f149af86e9ca50",
+          "hsi.rs": "3c1f7363962e47bfeb80957e0412394269fd3b289a0909e73222e52b5471d4d3",
+          "hse.rs": "6ee46faad71febad17ffae75f77ffea894a66c150fd89e5499c36bac4a9ed5ac",
+          "lsi/mod.rs": "c63f19168e47f750bd4f326e60319ff114ac45c11ba1f4cb614e040dea268ec8",
+          "lsi/state.rs": "34cc17463d78c007f9722d72b94983ed859754fa652a5a3b83a0a4bd71caf136",
+          "lsi/observe.rs": "507bf721fd456506661652eb9c9fb1df9e250d2bf0397cc5b0a1e7f495c25800",
+          "lsi/transition.rs": "1f8dadb600f883b59f67f0a93c4ef9709c21c44ea094a1b548f902160e16f5f2"
+        },
+        "unchanged_leaf_sha256": {
+          "embassy-cw32/src/rcc/l052_l083/lse_sysclk.rs": "2ceefaa6eb7f597a8fc01ad3285d16de948bf0e8f45614ed78367c1c9a925ed9",
+          "embassy-cw32/src/rcc/l052_l083/l083_lse_sysclk.rs": "893572515d23954a85dadc26816ae4e09dbe53588f6bb125b8cf6d6b4db42f53"
+        }
+      },
+      "method": "Reverse the recorded byte-positioned whitespace-only formatting edits; validate mapped-file hashes and contiguous UTF-8 byte spans; remove exact added wiring; reverse each replacement at its recorded occurrence byte offset in reverse transformation order; concatenate every original line once and require the pinned original SHA-256.",
+      "permitted_nonwiring_transformations": "Only explicitly listed restricted visibility changes, ancestor path qualification, three optional trailing commas in signatures, and separately recorded whitespace-only formatter differences. No global text stripping or semantic normalization substitutes for byte reconstruction.",
+      "syn_item_map": [
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "use",
+          "lines": [
+            36,
+            36
+          ],
+          "name": "crate :: { pac , time :: Hertz }",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                36,
+                36
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "use",
+          "lines": [
+            37,
+            37
+          ],
+          "name": "core :: cell :: Cell",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                37,
+                37
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "use",
+          "lines": [
+            38,
+            38
+          ],
+          "name": "critical_section :: Mutex",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                38,
+                38
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (all (rcc_lse , rcc_cw32l083_v1))]"
+          ],
+          "children": [],
+          "kind": "mod",
+          "lines": [
+            40,
+            41
+          ],
+          "name": "l083_lse_sysclk",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                40,
+                41
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (all (rcc_lse , rcc_cw32l052_v1))]"
+          ],
+          "children": [],
+          "kind": "mod",
+          "lines": [
+            42,
+            43
+          ],
+          "name": "lse_sysclk",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                42,
+                43
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "use",
+          "lines": [
+            44,
+            45
+          ],
+          "name": "pac :: sysctrl :: vals :: Sysclk as ClockSource",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                44,
+                45
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "const",
+          "lines": [
+            47,
+            48
+          ],
+          "name": "HSI_FREQ",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                47,
+                48
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]"
+          ],
+          "children": [],
+          "kind": "enum",
+          "lines": [
+            50,
+            73
+          ],
+          "name": "HsiDiv",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                50,
+                73
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                75,
+                88
+              ],
+              "name": "divisor",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    75,
+                    88
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            74,
+            89
+          ],
+          "name": "HsiDiv",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                74,
+                89
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]"
+          ],
+          "children": [],
+          "kind": "struct",
+          "lines": [
+            91,
+            97
+          ],
+          "name": "Hsi",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                91,
+                97
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                99,
+                103
+              ],
+              "name": "default",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    99,
+                    103
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            98,
+            104
+          ],
+          "name": "Hsi",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                98,
+                104
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]"
+          ],
+          "children": [],
+          "kind": "enum",
+          "lines": [
+            106,
+            127
+          ],
+          "name": "AHBPrescaler",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                106,
+                127
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                129,
+                132
+              ],
+              "name": "divisor",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    129,
+                    132
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            128,
+            133
+          ],
+          "name": "AHBPrescaler",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                128,
+                133
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]"
+          ],
+          "children": [],
+          "kind": "enum",
+          "lines": [
+            135,
+            148
+          ],
+          "name": "APBPrescaler",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                135,
+                148
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                150,
+                153
+              ],
+              "name": "divisor",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    150,
+                    153
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            149,
+            154
+          ],
+          "name": "APBPrescaler",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                149,
+                154
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_pll)]"
+          ],
+          "children": [],
+          "kind": "use",
+          "lines": [
+            156,
+            158
+          ],
+          "name": "pac :: sysctrl :: vals :: PllMul",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                156,
+                158
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]",
+            "# [cfg (rcc_pll)]"
+          ],
+          "children": [],
+          "kind": "enum",
+          "lines": [
+            160,
+            175
+          ],
+          "name": "PllSource",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                160,
+                175
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]",
+            "# [cfg (rcc_pll)]"
+          ],
+          "children": [],
+          "kind": "struct",
+          "lines": [
+            177,
+            192
+          ],
+          "name": "Pll",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                177,
+                192
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_pll)]"
+          ],
+          "children": [],
+          "kind": "struct",
+          "lines": [
+            193,
+            199
+          ],
+          "name": "PllParameters",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                193,
+                199
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_pll)]"
+          ],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                202,
+                262
+              ],
+              "name": "parameters",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    202,
+                    262
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            200,
+            263
+          ],
+          "name": "Pll",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                200,
+                263
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]",
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "enum",
+          "lines": [
+            265,
+            294
+          ],
+          "name": "Sysclk",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                265,
+                294
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]",
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "enum",
+          "lines": [
+            296,
+            305
+          ],
+          "name": "HseMode",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                296,
+                305
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "use",
+          "lines": [
+            307,
+            308
+          ],
+          "name": "pac :: sysctrl :: vals :: HseDrive",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                307,
+                308
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]",
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "struct",
+          "lines": [
+            310,
+            334
+          ],
+          "name": "Hse",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                310,
+                334
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                337,
+                361
+              ],
+              "name": "bounds",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    337,
+                    361
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                363,
+                371
+              ],
+              "name": "range",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    363,
+                    371
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                373,
+                386
+              ],
+              "name": "detector_count",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    373,
+                    386
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            335,
+            387
+          ],
+          "name": "Hse",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                335,
+                387
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "struct",
+          "lines": [
+            389,
+            420
+          ],
+          "name": "Config",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                389,
+                420
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                422,
+                441
+              ],
+              "name": "new",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    422,
+                    441
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                443,
+                678
+              ],
+              "name": "frequencies",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    443,
+                    678
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            421,
+            679
+          ],
+          "name": "Config",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                421,
+                679
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                681,
+                683
+              ],
+              "name": "default",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    681,
+                    683
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            680,
+            684
+          ],
+          "name": "Config",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                680,
+                684
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]"
+          ],
+          "children": [],
+          "kind": "struct",
+          "lines": [
+            686,
+            708
+          ],
+          "name": "Clocks",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                686,
+                708
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_pll)]"
+          ],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                711,
+                715
+              ],
+              "name": "pll_bounds",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    711,
+                    715
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                716,
+                719
+              ],
+              "name": "pll_frequency",
+              "destinations": [
+                {
+                  "path": "mod.rs",
+                  "original_overlap": [
+                    716,
+                    719
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            709,
+            720
+          ],
+          "name": "Clocks",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                709,
+                720
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg_attr (feature = \"defmt\" , derive (defmt :: Format))]"
+          ],
+          "children": [],
+          "kind": "enum",
+          "lines": [
+            722,
+            883
+          ],
+          "name": "Error",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                722,
+                883
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "static",
+          "lines": [
+            885,
+            885
+          ],
+          "name": "CLOCKS",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                885,
+                885
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            887,
+            890
+          ],
+          "name": "try_clocks",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                887,
+                890
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            892,
+            898
+          ],
+          "name": "clocks",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                892,
+                898
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            900,
+            917
+          ],
+          "name": "init",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                900,
+                917
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            919,
+            928
+          ],
+          "name": "hse_pin_reserved",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                919,
+                928
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            932,
+            940
+          ],
+          "name": "poll",
+          "destinations": [
+            {
+              "path": "io.rs",
+              "original_overlap": [
+                932,
+                940
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            942,
+            948
+          ],
+          "name": "barrier",
+          "destinations": [
+            {
+              "path": "io.rs",
+              "original_overlap": [
+                942,
+                948
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            950,
+            964
+          ],
+          "name": "set_flash_latency",
+          "destinations": [
+            {
+              "path": "io.rs",
+              "original_overlap": [
+                950,
+                964
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (not (rcc_hse))]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            966,
+            979
+          ],
+          "name": "switch",
+          "destinations": [
+            {
+              "path": "hsi.rs",
+              "original_overlap": [
+                966,
+                979
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (not (rcc_hse))]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            981,
+            1172
+          ],
+          "name": "configure",
+          "destinations": [
+            {
+              "path": "hsi.rs",
+              "original_overlap": [
+                981,
+                1172
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            1174,
+            1177
+          ],
+          "name": "wait_until",
+          "destinations": [
+            {
+              "path": "io.rs",
+              "original_overlap": [
+                1174,
+                1177
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            1179,
+            1733
+          ],
+          "name": "configure_hse",
+          "destinations": [
+            {
+              "path": "hse.rs",
+              "original_overlap": [
+                1179,
+                1733
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (all (rcc_lsi_sysclk , rcc_cw32l052_v1))]"
+          ],
+          "children": [],
+          "kind": "use",
+          "lines": [
+            1737,
+            1747
+          ],
+          "name": "crate :: { rcc_l052_lsi_configure_hse_pins as rcc_lsi_configure_hse_pins , rcc_l052_lsi_configure_lse_pins as rcc_lsi_configure_lse_pins , rcc_l052_lsi_consumers as rcc_lsi_consumers , rcc_l052_lsi_enable_hse_pins as rcc_lsi_enable_hse_pins , rcc_l052_lsi_lse_preflight as rcc_lsi_lse_preflight , rcc_l052_lsi_pads as rcc_lsi_pads , RccL052LsiConsumers as RccLsiConsumers , RccL052LsiLseSnapshot as RccLsiLseSnapshot , RccL052LsiPads as RccLsiPads , RCC_L052_LSI_CR0_KEY_MASK as LSI_CR0_KEY_MASK , RCC_L052_LSI_CR1_KEY_MASK as LSI_CR1_KEY_MASK , RCC_L052_LSI_IER_KEY_MASK as LSI_IER_KEY_MASK , }",
+          "destinations": [
+            {
+              "path": "lsi/mod.rs",
+              "original_overlap": [
+                1737,
+                1747
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (all (rcc_lsi_sysclk , rcc_cw32l083_v1))]"
+          ],
+          "children": [],
+          "kind": "use",
+          "lines": [
+            1748,
+            1757
+          ],
+          "name": "crate :: { rcc_l083_lsi_configure_lse_pins as rcc_lsi_configure_lse_pins , rcc_l083_lsi_consumers as rcc_lsi_consumers , rcc_l083_lsi_enable_hse_pins as rcc_lsi_enable_hse_pins , rcc_l083_lsi_lse_preflight as rcc_lsi_lse_preflight , rcc_l083_lsi_pads as rcc_lsi_pads , RccL083LsiConsumers as RccLsiConsumers , RccL083LsiLseSnapshot as RccLsiLseSnapshot , RccL083LsiPads as RccLsiPads , RCC_L083_LSI_CR0_KEY_MASK as LSI_CR0_KEY_MASK , RCC_L083_LSI_CR1_KEY_MASK as LSI_CR1_KEY_MASK , RCC_L083_LSI_IER_KEY_MASK as LSI_IER_KEY_MASK , }",
+          "destinations": [
+            {
+              "path": "lsi/mod.rs",
+              "original_overlap": [
+                1748,
+                1757
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_lsi_sysclk)]"
+          ],
+          "children": [],
+          "kind": "enum",
+          "lines": [
+            1761,
+            1767
+          ],
+          "name": "LsiEntryClass",
+          "destinations": [
+            {
+              "path": "lsi/mod.rs",
+              "original_overlap": [
+                1761,
+                1767
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_lsi_sysclk)]"
+          ],
+          "children": [],
+          "kind": "struct",
+          "lines": [
+            1769,
+            1795
+          ],
+          "name": "LsiIdentity",
+          "destinations": [
+            {
+              "path": "lsi/mod.rs",
+              "original_overlap": [
+                1769,
+                1795
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_lsi_sysclk)]"
+          ],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                1799,
+                1840
+              ],
+              "name": "read",
+              "destinations": [
+                {
+                  "path": "lsi/mod.rs",
+                  "original_overlap": [
+                    1799,
+                    1840
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                1842,
+                1854
+              ],
+              "name": "external_faults",
+              "destinations": [
+                {
+                  "path": "lsi/mod.rs",
+                  "original_overlap": [
+                    1842,
+                    1854
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                1856,
+                1866
+              ],
+              "name": "selected_ready",
+              "destinations": [
+                {
+                  "path": "lsi/mod.rs",
+                  "original_overlap": [
+                    1856,
+                    1866
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            1797,
+            1867
+          ],
+          "name": "LsiIdentity",
+          "destinations": [
+            {
+              "path": "lsi/mod.rs",
+              "original_overlap": [
+                1797,
+                1867
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_lsi_sysclk)]"
+          ],
+          "children": [],
+          "kind": "enum",
+          "lines": [
+            1872,
+            1898
+          ],
+          "name": "LsiTransition",
+          "destinations": [
+            {
+              "path": "lsi/mod.rs",
+              "original_overlap": [
+                1872,
+                1898
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_lsi_sysclk)]"
+          ],
+          "children": [],
+          "kind": "struct",
+          "lines": [
+            1900,
+            1945
+          ],
+          "name": "LsiSysclkState",
+          "destinations": [
+            {
+              "path": "lsi/mod.rs",
+              "original_overlap": [
+                1900,
+                1945
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_lsi_sysclk)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            1947,
+            1958
+          ],
+          "name": "lsi_inspection_error",
+          "destinations": [
+            {
+              "path": "lsi/mod.rs",
+              "original_overlap": [
+                1947,
+                1958
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_lsi_sysclk)]"
+          ],
+          "children": [
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                1962,
+                2118
+              ],
+              "name": "capture",
+              "destinations": [
+                {
+                  "path": "lsi/state.rs",
+                  "original_overlap": [
+                    1962,
+                    2118
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                2120,
+                2281
+              ],
+              "name": "check_identity",
+              "destinations": [
+                {
+                  "path": "lsi/state.rs",
+                  "original_overlap": [
+                    2120,
+                    2281
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [
+                "# [cfg (rcc_cw32l083_v1)]"
+              ],
+              "kind": "method",
+              "lines": [
+                2283,
+                2458
+              ],
+              "name": "check_l083_identity",
+              "destinations": [
+                {
+                  "path": "lsi/state.rs",
+                  "original_overlap": [
+                    2283,
+                    2458
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [
+                "# [cfg (rcc_cw32l083_v1)]"
+              ],
+              "kind": "method",
+              "lines": [
+                2460,
+                2474
+              ],
+              "name": "hsi_divisor",
+              "destinations": [
+                {
+                  "path": "lsi/state.rs",
+                  "original_overlap": [
+                    2460,
+                    2474
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [
+                "# [cfg (rcc_cw32l083_v1)]"
+              ],
+              "kind": "method",
+              "lines": [
+                2476,
+                2502
+              ],
+              "name": "validate_edge",
+              "destinations": [
+                {
+                  "path": "lsi/state.rs",
+                  "original_overlap": [
+                    2476,
+                    2502
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [
+                "# [cfg (rcc_cw32l083_v1)]"
+              ],
+              "kind": "method",
+              "lines": [
+                2504,
+                2514
+              ],
+              "name": "fallback_bound",
+              "destinations": [
+                {
+                  "path": "lsi/state.rs",
+                  "original_overlap": [
+                    2504,
+                    2514
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [
+                "# [cfg (rcc_cw32l083_v1)]"
+              ],
+              "kind": "method",
+              "lines": [
+                2516,
+                2679
+              ],
+              "name": "admit_l083",
+              "destinations": [
+                {
+                  "path": "lsi/state.rs",
+                  "original_overlap": [
+                    2516,
+                    2679
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [
+                "# [cfg (rcc_cw32l083_v1)]"
+              ],
+              "kind": "method",
+              "lines": [
+                2681,
+                2747
+              ],
+              "name": "stop_l083_pll",
+              "destinations": [
+                {
+                  "path": "lsi/state.rs",
+                  "original_overlap": [
+                    2681,
+                    2747
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                2749,
+                2818
+              ],
+              "name": "collect",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    2749,
+                    2818
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                2820,
+                2826
+              ],
+              "name": "check_all",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    2820,
+                    2826
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                2828,
+                2897
+              ],
+              "name": "wait",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    2828,
+                    2897
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                2899,
+                2911
+              ],
+              "name": "hsi_owners",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    2899,
+                    2911
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                2913,
+                2955
+              ],
+              "name": "external_owners",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    2913,
+                    2955
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                2957,
+                2970
+              ],
+              "name": "hse_parameters",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    2957,
+                    2970
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                2972,
+                2984
+              ],
+              "name": "lse_parameters",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    2972,
+                    2984
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                2986,
+                3033
+              ],
+              "name": "cold_lse_preflight",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    2986,
+                    3033
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [],
+              "kind": "method",
+              "lines": [
+                3035,
+                3084
+              ],
+              "name": "verify_sources",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    3035,
+                    3084
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [
+                "# [cfg (rcc_cw32l052_v1)]"
+              ],
+              "kind": "method",
+              "lines": [
+                3086,
+                3106
+              ],
+              "name": "flash_latency",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    3086,
+                    3106
+                  ]
+                }
+              ]
+            },
+            {
+              "cfg": [
+                "# [cfg (rcc_cw32l083_v1)]"
+              ],
+              "kind": "method",
+              "lines": [
+                3107,
+                3130
+              ],
+              "name": "flash_latency",
+              "destinations": [
+                {
+                  "path": "lsi/observe.rs",
+                  "original_overlap": [
+                    3107,
+                    3130
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "impl",
+          "lines": [
+            1960,
+            3131
+          ],
+          "name": "LsiSysclkState",
+          "destinations": [
+            {
+              "path": "lsi/state.rs",
+              "original_overlap": [
+                1960,
+                2748
+              ]
+            },
+            {
+              "path": "lsi/observe.rs",
+              "original_overlap": [
+                2749,
+                3131
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_lsi_sysclk)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            3133,
+            3681
+          ],
+          "name": "configure_lsi",
+          "destinations": [
+            {
+              "path": "lsi/transition.rs",
+              "original_overlap": [
+                3133,
+                3681
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            3686,
+            3694
+          ],
+          "name": "check_external_faults",
+          "destinations": [
+            {
+              "path": "io.rs",
+              "original_overlap": [
+                3686,
+                3694
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            3696,
+            3710
+          ],
+          "name": "hse_parameters_match",
+          "destinations": [
+            {
+              "path": "io.rs",
+              "original_overlap": [
+                3696,
+                3710
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_hse)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            3712,
+            3728
+          ],
+          "name": "verify_hse_source",
+          "destinations": [
+            {
+              "path": "io.rs",
+              "original_overlap": [
+                3712,
+                3728
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_pll)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            3730,
+            3757
+          ],
+          "name": "verify_pll_reference",
+          "destinations": [
+            {
+              "path": "io.rs",
+              "original_overlap": [
+                3730,
+                3757
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_pll)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            3759,
+            3768
+          ],
+          "name": "pll_parameters_match",
+          "destinations": [
+            {
+              "path": "io.rs",
+              "original_overlap": [
+                3759,
+                3768
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (rcc_lse)]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            3772,
+            3829
+          ],
+          "name": "prepare_lse_monitor",
+          "destinations": [
+            {
+              "path": "hse.rs",
+              "original_overlap": [
+                3772,
+                3829
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (all (rcc_lse , rcc_cw32l052_v1))]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            3831,
+            3834
+          ],
+          "name": "lse_sysclk_monitor_ready",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                3831,
+                3834
+              ]
+            }
+          ]
+        },
+        {
+          "cfg": [
+            "# [cfg (all (rcc_lse , rcc_cw32l083_v1))]"
+          ],
+          "children": [],
+          "kind": "fn",
+          "lines": [
+            3836,
+            3839
+          ],
+          "name": "lse_sysclk_monitor_ready",
+          "destinations": [
+            {
+              "path": "mod.rs",
+              "original_overlap": [
+                3836,
+                3839
+              ]
+            }
+          ]
+        }
+      ],
+      "syn_item_map_scope": "All 61 original top-level Rust items with original cfg/span and all 35 associated methods, including the split original impl; supplements the declaration-line navigation anchors."
+    }
+  ],
+  "capability_reference_migration": {
+    "scope": "Capability reference migration only; not runtime, build or hardware validation.",
+    "baseline_commit": "a0df1333fb9aed61049f550cc17026b6a0d300a6",
+    "baseline_capabilities_sha256": "a6242a3dc3b134d2f5e5ec673ada59fbb780fef950c201f24a9960f05fc388c7",
+    "baseline_capabilities_canonical_sha256": "dae175ea207435acb4c386d6332c8f0a66b329f967602a4d7d6493e704a8182b",
+    "current_capabilities_sha256": "222dc6fe9a15a76534b3c86debc62e60165b19d943c437b22312641bc9a51b0d",
+    "exact_raw_yaml_baseline_reconstruction": true,
+    "complete_parsed_baseline_collapse_equality": true,
+    "original_reference_rows": 6,
+    "replacement_reference_rows": 23,
+    "positive_cases_passed": 1,
+    "negative_cases_rejected": [
+      "rule-1-omit",
+      "rule-1-extra",
+      "rule-1-replace",
+      "rule-1-duplicate",
+      "rule-1-reorder",
+      "rule-2-omit",
+      "rule-2-extra",
+      "rule-2-replace",
+      "rule-2-duplicate",
+      "rule-2-reorder",
+      "rule-3-omit",
+      "rule-3-extra",
+      "rule-3-replace",
+      "rule-3-duplicate",
+      "rule-3-reorder",
+      "rule-4-omit",
+      "rule-4-extra",
+      "rule-4-replace",
+      "rule-4-duplicate",
+      "rule-4-anchor",
+      "rule-5-omit",
+      "rule-5-extra",
+      "rule-5-replace",
+      "rule-5-duplicate",
+      "rule-5-anchor",
+      "rule-6-omit",
+      "rule-6-extra",
+      "rule-6-replace",
+      "rule-6-duplicate",
+      "rule-6-anchor",
+      "family-add",
+      "family-remove",
+      "status",
+      "limitation",
+      "untouched-l010-reference",
+      "unrelated-uart-scope"
+    ],
+    "historical_and_gate_preservation": [
+      {
+        "path": "ci/package-source.py",
+        "sha256": "379d233329e314bc84e361dcd59ede12be8bfcbc0f09c436db078d85fffafd0e",
+        "bytes": 10280
+      },
+      {
+        "path": "cw32-data/tools/source_provenance.py",
+        "sha256": "fbeb2fbabcca131babcc66de410dd2f0f5cc127a60e03e90c2b1e82ed170f066",
+        "bytes": 46044
+      },
+      {
+        "path": "docs/electrical-metadata-equivalence.json",
+        "sha256": "e947bce9c7bbd00930a75d7a4c59109d6cc2e4cd40a124140ab3288a4c02494b",
+        "bytes": 12393
+      },
+      {
+        "path": "docs/l011-lse-sysclk-runtime-review.json",
+        "sha256": "ad517f52c81062901c9e86d320ccc49a59795f5b7bf63a602fbca916bbce6571",
+        "bytes": 16802
+      },
+      {
+        "path": "docs/l012-live-factory-lsi-runtime-review.json",
+        "sha256": "259db534e3f88b9b2ad580350d76d9dbad51a99bb20380d6835acc035a9a39dd",
+        "bytes": 14296
+      },
+      {
+        "path": "docs/l012-lse-sysclk-runtime-review.json",
+        "sha256": "1be76c91f5a63e1fddc5f786bab326901c0a77aae868c15f591c14cd17606b60",
+        "bytes": 16065
+      },
+      {
+        "path": "docs/l031-r031-w031-lse-sysclk-runtime-preservation.json",
+        "sha256": "7dc00660d9d06e681ef221e252f4a3c2fca573410f8fc3634a987aa89004f871",
+        "bytes": 2540
+      },
+      {
+        "path": "docs/l052-factory-lsi-metadata-review.json",
+        "sha256": "4b2c3b689289ba8aa758536fa28603fe38c179b7fb49a79fb9ac3f1de895537a",
+        "bytes": 194189
+      },
+      {
+        "path": "docs/l052-factory-lsi-runtime-review.json",
+        "sha256": "432f0e9724a9c8950dba0d4890cc7d6d95046674801aa43103f5030d6e8b7c74",
+        "bytes": 81279
+      },
+      {
+        "path": "docs/l052-lse-sysclk-runtime-acceptance.json",
+        "sha256": "5111de6734bd63ac80d79c4f2b7e6a4f8f9f9b53f508369db2ff50c01b1c6121",
+        "bytes": 4522
+      },
+      {
+        "path": "docs/l083-factory-lsi-runtime-review.json",
+        "sha256": "ada10fd50b1677ad62b90738d195163a45e8f3e514b34f92177ccc9bd0d57b5b",
+        "bytes": 79679
+      },
+      {
+        "path": "docs/l083-hsi-pll-source-receipt.json",
+        "sha256": "641f5b2e4e266aa98b696132d1ad32012f8a84e5ef294077260d1cc4c6672557",
+        "bytes": 15012
+      },
+      {
+        "path": "docs/l083-lse-sysclk-runtime-review.json",
+        "sha256": "f1235c60643699df08f40488d358bd666fe6dee3b344afc734773986391f363d",
+        "bytes": 8056
+      },
+      {
+        "path": "docs/l083-pll-stage42-source-receipt.json",
+        "sha256": "18d6b06acf84116b07bdd83acfcb027bd9a905aa4515809251a6025ef031b4d8",
+        "bytes": 47846
+      },
+      {
+        "path": "docs/lse-native-low-power-independent-runtime-review.json",
+        "sha256": "8781c5b37984f5f2414b6a1953410f1209a6ae83f2e5a2fe765265ff004ebcd9",
+        "bytes": 4993
+      },
+      {
+        "path": "docs/lse-pad-source-evidence.json",
+        "sha256": "8cc179be8b5a552892c1ab2c1e61d4cc162742dcecbf37f184040119ae36e720",
+        "bytes": 84857
+      },
+      {
+        "path": "docs/lse-stage50-l052-independent-review.json",
+        "sha256": "f754a812774c348251c5d70652e661f0d482c72ee11077da091f65cd2cbc6ca7",
+        "bytes": 17045
+      },
+      {
+        "path": "docs/lse-stage51-l083-independent-safety.json",
+        "sha256": "b70ee6749695fc26537449568f27c05a4d6fc243c0c0a9b3e03067b7aebd4ca7",
+        "bytes": 50180
+      },
+      {
+        "path": "docs/native-lse-flash-wait-review.json",
+        "sha256": "c2360c3c633a223560ab06e951ba143194f9531d30beb7e04fbeb4b59986a423",
+        "bytes": 18569
+      },
+      {
+        "path": "docs/pll-stage42-serial-addendum.json",
+        "sha256": "cb6095e58f6fd3c8a78cc8cac3bdbc3a78fa9fb63589fdd8b7822fde3c29f92f",
+        "bytes": 8202
+      },
+      {
+        "path": "embassy-cw32/src/rcc/l010_l011.rs",
+        "sha256": "1f40106a0ab9f60fddcb90b3e2b8a8ced96e824a3b2fa95bf6ef1d639f8bf99d",
+        "bytes": 157749
+      },
+      {
+        "path": "embassy-cw32/src/rcc/l031_r031_w031.rs",
+        "sha256": "ed5cf400b830a470ee163dd96d983e26f9d1b308c427c9e35cfca860d9b5cec6",
+        "bytes": 80991
+      },
+      {
+        "path": "sources/catalog.json",
+        "sha256": "54f896735eded26338d6f551541ee1504d752772b5cd7462db7340cebfe9eaf5",
+        "bytes": 33681
+      },
+      {
+        "path": "sources/evidence-sources.json",
+        "sha256": "23eae25223195a23c4249a34bc914f4e07948b5ea9a57831f6766f11d6da3369",
+        "bytes": 458586
+      },
+      {
+        "path": "tests/test_source_provenance.py",
+        "sha256": "2d9b15335b8e6275c6d3b43d15de06ed4008e665f8309dcad3734d3c4665422c",
+        "bytes": 34293
+      }
+    ],
+    "reference_relocations": [
+      {
+        "function": "sysctrl",
+        "mode_id": "factory_lsi_sysclk",
+        "before": {
+          "path": "embassy-cw32/src/rcc/l012.rs"
+        },
+        "after": [
+          {
+            "path": "embassy-cw32/src/rcc/l012/mod.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/io.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/configure.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/inspection.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs"
+          }
+        ],
+        "meaning": "complete old monolith source"
+      },
+      {
+        "function": "sysctrl",
+        "mode_id": "factory_lsi_sysclk",
+        "before": {
+          "path": "embassy-cw32/src/rcc/l052_l083.rs"
+        },
+        "after": [
+          {
+            "path": "embassy-cw32/src/rcc/l052_l083/mod.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l052_l083/io.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l052_l083/hsi.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l052_l083/hse.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l052_l083/lsi/mod.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l052_l083/lsi/state.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l052_l083/lsi/observe.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l052_l083/lsi/transition.rs"
+          }
+        ],
+        "meaning": "complete old monolith source"
+      },
+      {
+        "function": "sysctrl",
+        "mode_id": "external_low_speed_sysclk",
+        "before": {
+          "path": "embassy-cw32/src/rcc/l012.rs"
+        },
+        "after": [
+          {
+            "path": "embassy-cw32/src/rcc/l012/mod.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/io.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/configure.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/inspection.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/lse_sysclk.rs"
+          },
+          {
+            "path": "embassy-cw32/src/rcc/l012/lsi_sysclk.rs"
+          }
+        ],
+        "meaning": "complete old monolith source"
+      },
+      {
+        "function": "sysctrl",
+        "mode_id": "external_high_speed",
+        "before": {
+          "path": "embassy-cw32/src/rcc/l012.rs",
+          "anchor": "pub enum HseMode"
+        },
+        "after": [
+          {
+            "path": "embassy-cw32/src/rcc/l012/mod.rs",
+            "anchor": "pub enum HseMode"
+          }
+        ],
+        "meaning": "anchored item"
+      },
+      {
+        "function": "sysctrl",
+        "mode_id": "external_high_speed",
+        "before": {
+          "path": "embassy-cw32/src/rcc/l052_l083.rs",
+          "anchor": "pub enum HseMode"
+        },
+        "after": [
+          {
+            "path": "embassy-cw32/src/rcc/l052_l083/mod.rs",
+            "anchor": "pub enum HseMode"
+          }
+        ],
+        "meaning": "anchored item"
+      },
+      {
+        "function": "sysctrl",
+        "mode_id": "pll",
+        "before": {
+          "path": "embassy-cw32/src/rcc/l052_l083.rs",
+          "anchor": "pub struct Pll"
+        },
+        "after": [
+          {
+            "path": "embassy-cw32/src/rcc/l052_l083/mod.rs",
+            "anchor": "pub struct Pll"
+          }
+        ],
+        "meaning": "anchored item"
+      }
+    ],
+    "all_destinations_and_literal_anchors_verified": true
+  },
+  "canonical_provenance_treatment": {
+    "source_lock_and_catalog": "Byte-identical to baseline. Exhaustive nested searches found no direct old RCC root paths in source evidence consumers, backlinks or project_audit_inputs.",
+    "indirect_project_audit_inputs": "The source lock pins docs/electrical-metadata-equivalence.json as immutable historical acceptance, explicitly not reproducible from current source. It contains historical RCC paths and hashes and remains byte-identical. The pinned flash-breadth-source-review.json is also unchanged.",
+    "gate_implementation": "No source-provenance, source-qualification, packaging or capability checker logic is modified by this migration.",
+    "historical_receipts": "All pre-existing source/hash receipts and their old file/line locators retain their original content. The protected-input list in capability_reference_migration binds relevant historical references explicitly."
+  },
+  "verification_limits": [
+    "The reference proof reconstructs the entire baseline YAML byte-for-byte and compares complete parsed objects, not selected fields or subsets. Six original references expand to exactly 23 ordered rows, with 36 negative mutation cases rejected.",
+    "Every declared destination file and literal anchor exists at the recorded final file hashes. Both original source files reconstruct byte-for-byte from the relocated source using only the explicit inverse maps.",
+    "Separate independent static review and final ordinary compilation/link/source-check results are required for overall acceptance. This mapping receipt is not itself an ARM build log, simulation, silicon test or hardware qualification.",
+    "No historical receipt is regenerated, relabeled or treated as a current-source build result, and no source gate is relaxed to accommodate relocation."
+  ],
+  "reproduction": [
+    "Read ci/hal-capabilities.yaml and reverse the six exact ordered reference runs recorded in capability_reference_migration.reference_relocations, preserving the existing YAML indentation and anchor lines. Require the baseline_capabilities_sha256 and complete parsed-object canonical hash recorded there. Each original row and replacement run must occur exactly once in its named SYSCTRL mode.",
+    "For each source_relocations entry, read the final source files at their recorded hashes and apply the documented exact inverse mapping. Reject missing, duplicated, extra or overlapping line/byte spans and unlisted textual changes. Compare the reconstructed SHA-256 with the baseline source hash.",
+    "Verify every historical_and_gate_preservation record and unchanged generated-hook/leaf record against its stored hash. The baseline Git object is available as a0df1333fb9aed61049f550cc17026b6a0d300a6:path for independent comparison, but inverse reconstruction does not require rewriting any historical file."
+  ]
+}

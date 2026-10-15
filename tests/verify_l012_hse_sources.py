@@ -118,6 +118,41 @@ sha = digest(json.dumps(registers, sort_keys=True, separators=(',', ':')).encode
 assert group['canonical_ir_sha256'] == group['canonical_ir_history'][-1]['after_sha256'] == sha
 assert group['source_versions'] == ['sysctrl_cw32l012_v1.yaml']
 
+# Current exact-part composition is separate from the historical HSE base.
+# These complete LSE objects are pinned to baseline a0df1333; the LSI family
+# pins are the existing source-qualified generator pins. No vendor or historical
+# receipt is repinned, and unexpected fields still fail full equality.
+CURRENT_PARTS = {'CW32L012C8T6', 'CW32L012C8U6'}
+CURRENT_LSE_SHA256 = 'c75035caf84b46bd2a5bc257dcb41a19f7f898085f0b09ceefc82c947ba4394b'
+CURRENT_LSI_SHA256 = '6561702cdfc98a675a761b072e83da1aa9a11427eb1e8e6305775a08185c65ea'
+CURRENT_LSE_POLICIES_SHA256 = 'a6e2e5f3176ab8b8783d6016dbd1fb68b70326cc0dd3f02c87e78a0d80825744'
+current_lse_catalog = load('cw32-data/lse-qualified.yaml')
+current_lsi_catalog = load('cw32-data/lsi-sysclk-qualified.yaml')
+assert current_lse_catalog['schema_version'] == current_lsi_catalog['schema_version'] == 1
+assert current_lse_catalog['source_authority'] == current_lsi_catalog['source_authority'] == 'sources/evidence-sources.json'
+for policy_path, policy_sha256 in current_lse_catalog['policies'].items():
+    assert digest((ROOT / policy_path).read_bytes()) == policy_sha256, policy_path
+current_lse_parts = {name: part for name, part in current_lse_catalog['parts'].items()
+                     if part['family'] == 'CW32L012'}
+current_lsi_family = current_lsi_catalog['families']['CW32L012']
+
+
+def assert_current_clock_projection(name, actual):
+    canonical = lambda value: json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode()
+    assert digest(canonical(current_lse_catalog['policies'])) == CURRENT_LSE_POLICIES_SHA256
+    assert set(current_lse_parts) == CURRENT_PARTS
+    assert digest(canonical(current_lse_parts)) == CURRENT_LSE_SHA256
+    assert digest(canonical(current_lsi_family)) == CURRENT_LSI_SHA256
+    assert {part['name'] for part in current_lsi_family['exact_parts']} == CURRENT_PARTS
+    assert name in CURRENT_PARTS | {'CW32L012'}, name
+    expected = dict(profile['clock_limits'])
+    assert 'lse_configuration' not in expected and 'lsi_sysclk' not in expected
+    if name in CURRENT_PARTS:
+        expected['lse_configuration'] = current_lse_parts[name]['configuration']
+        expected['lsi_sysclk'] = current_lsi_family['lsi_sysclk']
+    assert actual == expected, (name, 'complete current clock projection')
+
+
 if not SOURCE_ONLY:
     ir = load('cw32-data/data/registers/sysctrl_cw32l012_v1.json')
     assert ir == registers
@@ -125,12 +160,13 @@ if not SOURCE_ONLY:
     assert 'fn set_stable(' not in pac
     assert all('fn '+setter+'(' in pac for setter in ['set_mode', 'set_driver', 'set_pdriver', 'set_waitcycle', 'set_detcnt', 'set_digflt'])
     chips = sorted((ROOT / 'cw32-data/data/chips').glob('CW32L012*.json'))
-    assert len(chips) == 3
+    assert {path.stem for path in chips} == CURRENT_PARTS | {'CW32L012'}
     for path in chips:
         chip = json.loads(path.read_text())
+        assert chip['name'] == path.stem and chip['line'] == 'CW32L012'
         peripherals = {p['name']: p for p in chip['cores'][0]['peripherals']}
         sysctrl = peripherals['SYSCTRL']
-        assert sysctrl['clock_limits'] == profile['clock_limits']
+        assert_current_clock_projection(chip['name'], sysctrl['clock_limits'])
         assert {p['signal']: p['pin'] for p in sysctrl['pins'] if p['signal'] in ['HSE_IN', 'HSE_OUT']} == {'HSE_IN': 'PF0', 'HSE_OUT': 'PF1'}
         assert all(name in peripherals for name in ['ADC1','ADC2','VC1','VC2','VC3','VC4','OPA1','OPA2','DAC','LVD'])
         assert 'rcc_control' not in peripherals['LVD']

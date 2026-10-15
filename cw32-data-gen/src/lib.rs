@@ -1289,18 +1289,39 @@ mod tests {
             root.join("cw32-data/reference-dividers.yaml"),
         )
         .unwrap();
-        // Normal generation validates the authored LSE catalog even for an
-        // unrelated synthetic chip. Keep its declared policy inputs available.
+        // Normal generation validates the authored LSE and MCO catalogs even for
+        // an unrelated synthetic chip. Keep their declared policy inputs available.
         let authored_root = Path::new(env!("CARGO_MANIFEST_DIR")).parent().unwrap();
-        let lse_catalog = fs::read(authored_root.join("cw32-data/lse-qualified.yaml")).unwrap();
-        fs::write(root.join("cw32-data/lse-qualified.yaml"), &lse_catalog).unwrap();
-        let lse_catalog: serde_yaml::Value = serde_yaml::from_slice(&lse_catalog).unwrap();
-        for policy in lse_catalog["policies"].as_mapping().unwrap().keys() {
-            let policy = policy.as_str().unwrap();
-            let destination = root.join(policy);
-            fs::create_dir_all(destination.parent().unwrap()).unwrap();
-            fs::copy(authored_root.join(policy), destination).unwrap();
+        for catalog_path in ["cw32-data/lse-qualified.yaml", "cw32-data/mco-qualified.yaml"] {
+            let catalog = fs::read(authored_root.join(catalog_path)).unwrap();
+            fs::write(root.join(catalog_path), &catalog).unwrap();
+            let catalog: serde_yaml::Value = serde_yaml::from_slice(&catalog).unwrap();
+            for policy in catalog["policies"].as_mapping().unwrap().keys() {
+                let policy = policy.as_str().unwrap();
+                let destination = root.join(policy);
+                fs::create_dir_all(destination.parent().unwrap()).unwrap();
+                fs::copy(authored_root.join(policy), destination).unwrap();
+            }
         }
+        // The native live-LSI RTC catalog is also validated for unrelated
+        // synthetic chips. Preserve its authored policy and referenced inputs.
+        let rtc_catalog_path = "cw32-data/rtc-live-lsi-qualified.yaml";
+        let rtc_catalog = fs::read(authored_root.join(rtc_catalog_path)).unwrap();
+        fs::write(root.join(rtc_catalog_path), &rtc_catalog).unwrap();
+        let rtc_catalog: serde_yaml::Value = serde_yaml::from_slice(&rtc_catalog).unwrap();
+        for key in ["source_authority", "evidence", "envelope_policy"] {
+            let path = rtc_catalog[key].as_str().unwrap();
+            let destination = root.join(path);
+            fs::create_dir_all(destination.parent().unwrap()).unwrap();
+            fs::copy(authored_root.join(path), destination).unwrap();
+        }
+        // ATIM input validation reads its catalog before excluding this chip.
+        let atim_catalog_path = "cw32-data/classic-atim-input.yaml";
+        let atim_catalog = fs::read(authored_root.join(atim_catalog_path)).unwrap();
+        fs::write(root.join(atim_catalog_path), &atim_catalog).unwrap();
+        let atim_catalog: serde_yaml::Value = serde_yaml::from_slice(&atim_catalog).unwrap();
+        let evidence = atim_catalog["evidence"].as_str().unwrap();
+        fs::copy(authored_root.join(evidence), root.join(evidence)).unwrap();
         fs::write(
             root.join("cw32-data/field-access.yaml"),
             "schema_version: 1\nregisters: {}\n",
