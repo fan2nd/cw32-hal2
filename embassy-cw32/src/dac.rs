@@ -11,6 +11,7 @@
 //! See `docs/dac-opa.md` for exact limits and deferred functionality.
 //!
 //! This driver owns the whole DAC, disabling both channels before configuring it.
+//! A direct-loading owner can then be consumed into independently owned channels.
 //! It never resets/gates the analog block, changes ADC/VC, or disables BGR. The
 //! OPA gate is retained to safely inspect competing output drivers before use.
 //!
@@ -103,6 +104,50 @@ pub struct Dac<'d, T: Instance> {
 /// Only `Dac::split` constructs views; no two views address the same channel.
 pub struct DacChannel<'a, 'd, T: Instance, const C: u8> {
     _owner: PhantomData<&'a mut Dac<'d, T>>,
+}
+
+/// An independently owned direct-loading channel and its output pin.
+///
+/// Created only by `Dac::into_owned_channels`; cannot enable or reconfigure the
+/// sibling, trigger both channels, or reconstruct a whole-DAC owner. The original
+/// peripheral lifetime is retained. Drop disables only this output/channel,
+/// preserving the sibling, IRQ controls, analog gates and BGR. Forgetting leaves
+/// this channel enabled but retains no caller-memory pointer.
+pub struct OwnedDacChannel<'d, T: Instance, const C: u8> {
+    _pin: Flex<'d>,
+    _peri: PhantomData<Peri<'d, T>>,
+}
+impl<T: Instance, const C: u8> OwnedDacChannel<'_, T, C> {
+    /// Direct digital load; no analog settling guarantee.
+    pub fn set(&mut self, value: Value) -> Result<(), Error> {
+        Dac::<T>::set_channel(if C == 1 { Channel::Ch1 } else { Channel::Ch2 }, value)
+    }
+    /// Current digital output, not a voltage measurement.
+    pub fn read(&self) -> u16 {
+        Dac::<T>::read_channel(if C == 1 { Channel::Ch1 } else { Channel::Ch2 })
+    }
+}
+impl<T: Instance, const C: u8> Drop for OwnedDacChannel<'_, T, C> {
+    fn drop(&mut self) {
+        // Both independent owners can access the shared control words. Serialize
+        // RMWs so dropping one cannot restore a stale enable of the other.
+        critical_section::with(|_| {
+            T::regs().cr1().modify(|w| {
+                if C == 1 {
+                    w.set_c1out(false);
+                } else {
+                    w.set_c2out(false);
+                }
+            });
+            T::regs().cr0().modify(|w| {
+                if C == 1 {
+                    w.set_en1(false);
+                } else {
+                    w.set_en2(false);
+                }
+            });
+        });
+    }
 }
 impl<T: Instance, const C: u8> DacChannel<'_, '_, T, C> {
     pub fn set(&mut self, value: Value) -> Result<(), Error> {
@@ -279,6 +324,30 @@ impl<'d, T: Instance> Dac<'d, T> {
                 _owner: PhantomData,
             }),
         )
+    }
+    /// Consume a direct-loading owner into separately movable channels.
+    /// Disabled channels yield None. No register write, reset or gate change
+    /// occurs; current output values remain. Unlike borrowed `split`, dropping
+    /// either result disables only its own output. Shared mode configuration
+    /// and dual-channel operations are intentionally no longer available.
+    pub fn into_owned_channels(
+        mut self,
+    ) -> (
+        Option<OwnedDacChannel<'d, T, 1>>,
+        Option<OwnedDacChannel<'d, T, 2>>,
+    ) {
+        let ch1 = self._ch1.take().map(|pin| OwnedDacChannel {
+            _pin: pin,
+            _peri: PhantomData,
+        });
+        let ch2 = self._ch2.take().map(|pin| OwnedDacChannel {
+            _pin: pin,
+            _peri: PhantomData,
+        });
+        // Transfer both pin owners and the original peripheral lifetime without
+        // running whole-DAC Drop. Peri carries ownership, not allocated storage.
+        core::mem::forget(self);
+        (ch1, ch2)
     }
     /// Consume this direct-loading owner and select software-triggered loading.
     /// No implicit trigger is sent. A preceding direct-mode write may still

@@ -1454,7 +1454,7 @@ functions:
       status: partial
       scope: Direct unbuffered eight/twelve-bit external output.
       limitations:
-      - No hardware-trigger routing, DMA, waveform, independently owned channel split, calibration or analog settling/accuracy guarantee. Borrowed views and software loading are separately declared.
+      - No hardware-trigger routing, DMA, waveform, calibration or analog settling/accuracy guarantee. Borrowed views and software loading are separately declared.
     - id: borrowed_channels_software_trigger
       status: partial
       scope: L012 DAC borrowed disjoint direct-loading channel views and explicit consuming conversion to software-triggered digital loading.
@@ -1469,6 +1469,18 @@ functions:
       - path: docs/dac-channel-software-trigger.md
       - path: embassy-cw32/src/dac.rs
         anchor: pub struct SoftwareTriggeredDac
+    - id: owned_direct_channels
+      status: partial
+      scope: Consuming L012 direct-loading DAC into independently movable, optional per-channel owners.
+      implemented_families: [CW32L012]
+      limitations:
+      - Each owner retains its pin and original peripheral lifetime; no reconstruction, shared mode changes or dual-channel operation.
+      - Drop serializes shared-control updates and disables only its output/channel; retains gates, BGR and IRQ controls.
+      - Source-reviewed only; borrowing, interleaved Drop and ADC2 coexistence acceptance remain pending. No analog settling guarantee.
+      evidence:
+      - path: docs/dac-owned-channels.md
+      - path: embassy-cw32/src/dac.rs
+        anchor: pub struct OwnedDacChannel
     - id: safe_peripheral_dma
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

@@ -34,3 +34,7 @@ DAC additions: `dac_split` demonstrates borrowed fixed-channel set/read handles;
 `dac_software_trigger` stages and explicitly loads each channel. A completed
 software trigger proves only digital loading, not analog settling or simultaneous
 outputs. See [the ownership and loading contract](../../docs/dac-channel-software-trigger.md).
+
+`dac_owned` consumes the direct DAC into independently owned outputs, drops
+channel 1, and continues writing channel 2. This new ownership path is
+uncompiled and untested; see [owned-channel contract](../../docs/dac-owned-channels.md).
