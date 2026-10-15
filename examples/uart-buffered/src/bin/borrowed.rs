@@ -27,7 +27,7 @@ fn main() -> ! {
         while matches!(rx.blocking_read(&mut byte), Ok(0)) {}
         drop(rx);
     }
-    // No buffer-return API: normal RX Drop has ended the original borrow.
+    // Normal RX Drop has ended the original borrow; no explicit return is needed.
     ring.fill(0);
     core::hint::black_box(&mut ring);
     loop {

@@ -130,7 +130,41 @@ impl RxRing {
 }
 
 impl<'d> BufferedUartRx<'d> {
-    /// Stop reception, consume this owner and return the entire original ring.
+    /// Replace an empty IRQ ring without stopping reception, returning its storage.
+    ///
+    /// A queued byte or pending error rejects replacement. On failure, the
+    /// original ring is unchanged and the supplied static buffer is returned.
+    /// On success, storage is switched under the ISR's critical section without
+    /// copying or clearing bytes, changing registers, or touching the TX half.
+    ///
+    /// The returned old buffer has the owner's lifetime. The new buffer must
+    /// be static so forgetting this owner cannot leave the ISR with freed storage.
+    /// A byte still in hardware can enter the new ring; this is not an idle or
+    /// packet boundary, and continuous traffic may prevent replacement.
+    pub fn try_replace_buffer(
+        &mut self,
+        buffer: &'static mut [u8],
+    ) -> Result<&'d mut [u8], (BufferReplaceError, &'static mut [u8])> {
+        if buffer.is_empty() {
+            return Err((BufferReplaceError::Empty, buffer));
+        }
+        let storage = critical_section::with(|cs| {
+            let mut ring = self.state.rx_ring.borrow(cs).borrow_mut();
+            let ring = ring.as_mut().expect("buffered UART receiver has no ring");
+            if ring.len != 0 || ring.error.is_some() {
+                return Err((BufferReplaceError::PendingReceive, buffer));
+            }
+            Ok(core::mem::replace(ring, RxRing::new(buffer)).storage)
+        })?;
+        // SAFETY: the exclusive owner borrow excludes active read/fill_buf
+        // borrows. The ISR uses the same critical section and can now access
+        // only the new static allocation. Construction reserved the detached
+        // initialized allocation for 'd (replacement requires static storage);
+        // its descriptor is never used again.
+        Ok(unsafe { core::slice::from_raw_parts_mut(storage.ptr, storage.capacity) })
+    }
+
+    /// Stop reception, consume this owner and return the entire current ring.
     ///
     /// Unread bytes and pending errors are discarded; the returned storage is
     /// not in receive order and is not cleared. Shutdown follows normal Drop,
@@ -149,9 +183,9 @@ impl<'d> BufferedUartRx<'d> {
         // Do not form a reference while the ISR can still write. Run the full
         // owner/pin teardown exactly once, before reconstructing the slice.
         drop(self);
-        // SAFETY: construction reserved this initialized slice exclusively for
-        // 'd. Consuming the owner excludes live read/fill_buf borrows. Drop has
-        // disabled collection and detached the only ISR storage descriptor;
+        // SAFETY: construction or replacement reserved this initialized slice
+        // exclusively for 'd. Consuming the owner excludes live read/fill_buf
+        // borrows. Drop has disabled collection and detached the only ISR storage descriptor;
         // the TX half never accesses it. No reference escapes if Drop panics.
         unsafe { core::slice::from_raw_parts_mut(ptr, capacity) }
     }
@@ -601,6 +635,14 @@ impl<'d> BufferedUart<'d> {
                 .modify(|w| WaitEvent::Receive.set_enabled(w, true));
         });
         Ok(Self { tx, rx })
+    }
+
+    /// Replace an empty RX ring. See [`BufferedUartRx::try_replace_buffer`].
+    pub fn try_replace_buffer(
+        &mut self,
+        buffer: &'static mut [u8],
+    ) -> Result<&'d mut [u8], (BufferReplaceError, &'static mut [u8])> {
+        self.rx.try_replace_buffer(buffer)
     }
 
     /// Receive an available prefix. See [`BufferedUartRx::read`].

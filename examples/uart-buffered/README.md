@@ -23,6 +23,11 @@ the existing source lock, including Embassy revision
 
 ## Applications
 
+- `replace_buffer`: after reading data/errors, attempt to replace the RX ring
+  with a static ring of twice the capacity. On pending data/error, retain the
+  rejected buffer and retry after another read; on success, reuse the old
+  storage while RX continues. Uses the same routes as `rx_only`. Not compiled
+  or hardware-tested; continuous traffic can prevent replacement.
 - `receive`: construct a combined buffered UART and echo each available prefix of
   up to 16 bytes. It waits for at least one byte, not a full chunk; it does not
   identify packets or idle gaps. On L083 it binds the complete UART1/UART4 handler but owns only UART1.

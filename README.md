@@ -35,7 +35,8 @@ See [capability declarations](tools/hal-capabilities.yaml),
 - SPI/I²C: qualified blocking/async master modes; SPI DMA is byte-only.
 - ADC/timers: finite ADC scans, qualified capture, overflow, PWM and trigger routes.
 - RCC/RTC and analog/math peripherals: only documented sources, modes and limits.
-- `BufferedUartRx::into_buffer` returns storage after RX shutdown; it is
+- `BufferedUartRx::into_buffer` returns storage after RX shutdown;
+  `try_replace_buffer` swaps an empty running ring. Both are
   [implemented but untested](docs/uart-buffer-reclaim.md).
 
 DMA cancellation may retain resources. Generic chip aliases may lack exact

@@ -262,22 +262,22 @@ is not returned, and buffered bytes do not survive successful reconstruction.
 ## Separate modes and verification boundary
 
 There is no buffered `read_until_idle`, idle marker queue, numeric timeout,
-packet framing, live ring replacement,
-mode conversion, DMA API, synchronous `embedded_io::Read` or synchronous
+packet framing, mode conversion, DMA API, synchronous `embedded_io::Read` or synchronous
 `embedded_io::BufRead` API. Async `embedded_io_async::BufRead` and zero-copy
 `fill_buf`/`consume` are supported. Ordinary borrowed-buffer reuse after RX Drop
 is supported under the unsafe constructor contract above.
-[`into_buffer`](uart-buffer-reclaim.md) explicitly returns RX storage after shutdown;
-this interface is implemented but untested. DMA reclamation is separate.
+[`into_buffer` and `try_replace_buffer`](uart-buffer-reclaim.md) return storage
+after RX shutdown or replace an empty running ring. Both are implemented but untested.
+DMA reclamation is separate.
 The existing [native finite idle API](uart-idle.md) remains on ordinary
 `UartRx<Async>`/`Uart<Async>` for L010/L011/L012 with its Stage82 window, error
 and cancellation semantics. Existing [staged DMA](uart-dma-rx.md) ownership,
 retention and quarantine remain separate. No combined buffered RX/DMA TX
 constructor is added. RF and low-power UART remain deferred.
 
-The [buffered application crate](../examples/uart-buffered/README.md) has six
+The [buffered application crate](../examples/uart-buffered/README.md) has seven
 firmware binaries: `receive`, `split`, `rx_only`, `flow_control`,
-`shared_vector` and the synchronous `borrowed` lifetime example. Its selected
+`shared_vector`, `replace_buffer` and the synchronous `borrowed` lifetime example. Its selected
 routes use current exact-package authority. The
 existing [flow-control examples](../examples/uart-flow-control/README.md) remain
 ordinary unbuffered applications; their earlier results are not buffered results.

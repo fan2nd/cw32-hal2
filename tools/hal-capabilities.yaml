@@ -174,12 +174,7 @@ functions:
       - Collection depends on IRQ progress; finite capacity does not guarantee lossless reception, bounded waits or throughput.
       - Hardware RTS reflects RC rather than software queue occupancy; no ring-watermark backpressure is provided.
       - No buffered idle markers, DMA ring or numeric timeout. into_buffer discards unread data/errors and returns neither pins nor the peripheral; only a static RX owner returns a static slice.
-      - Stage83 main verification passed 13 actual ARM libraries, 11 ELF links and five focused source/data gates;
-        independent main runtime and metadata/source reviews accepted the frozen implementation.
-      - Three existing native L010/L011 RCC LSE-constant warnings remain in each applicable main row.
-        Main ran no hardware generation, and all 905 generated hardware files stayed unchanged.
-      - At main acceptance clean had not run; final-package completion requires a separate final-source
-        three-library/three-ELF clean receipt and five focused gates. No hardware timing qualification is claimed.
+      - try_replace_buffer accepts a nonempty static replacement only when no queued bytes or error remain; failures return the new buffer unchanged. Success returns old storage with the owner lifetime without stopping RX or changing TX/shared IRQ ownership. Pending hardware bytes may enter the new ring; no packet boundary or guaranteed progress. Implementation and example await software acceptance.
       evidence:
       - path: embassy-cw32/src/usart/mod.rs
         anchor: pub struct BufferedUartRx

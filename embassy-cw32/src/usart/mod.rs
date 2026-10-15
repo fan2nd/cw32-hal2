@@ -351,6 +351,16 @@ struct RxRing {
     waiting: bool,
 }
 
+/// Why an IRQ receive ring could not be replaced. The supplied buffer is returned.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub enum BufferReplaceError {
+    /// The new ring must have nonzero capacity.
+    Empty,
+    /// Read the queued bytes and pending error before retrying.
+    PendingReceive,
+}
+
 /// Owned bidirectional UART. Split it to transmit and receive concurrently.
 ///
 /// Like Embassy STM32, `new_blocking` needs no interrupt binding; `new` creates
@@ -392,7 +402,8 @@ pub struct UartRx<'d, M: Mode> {
 /// configuration error. Unsafe `new_borrowed*` variants accept an ordinary
 /// mutable borrow tied to this owner and release it on normal Drop.
 /// The HAL does not initialize its bytes. [`Self::into_buffer`] consumes RX and
-/// returns the original storage with this owner's lifetime after shutdown.
+/// returns the current storage with this owner's lifetime after shutdown.
+/// [`Self::try_replace_buffer`] can swap an empty ring for new static storage.
 /// Normal Drop also releases borrowed storage without an explicit return.
 /// Combined UART halves share a lifetime, so a still-used TX
 /// half may conservatively keep that borrow alive even after RX Drop.
