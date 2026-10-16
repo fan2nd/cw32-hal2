@@ -700,6 +700,20 @@ functions:
         anchor: pub fn blocking_read_continuous
       - path: docs/adc-classic-continuous.md
       - path: docs/adc-x030-continuous.md
+    - id: async_continuous_single
+      status: partial
+      scope: Classic MODE2 acquisition into a finite nonempty buffer, with EOC/OVW waits and scoped cancellation cleanup.
+      implemented_families: [CW32F002, CW32F003, CW32F020, CW32F030, CW32A030, CW32L031, CW32L052, CW32L083, CW32R031]
+      limitations:
+      - Unbuffered external inputs only; errors and cancellation invalidate all output, which may contain a prefix.
+      - Hardware continues while the task sleeps; IRQ/executor latency may cause overrun. Caller supplies elapsed-time deadlines.
+      - No ISR buffer pointer, DMA, sequence coherence, hardware triggers or native L010/L011/L012 support.
+      - Source-reviewed only; generation, builds, cancellation checks and hardware acceptance remain pending.
+      evidence:
+      - path: embassy-cw32/src/adc/classic.rs
+        anchor: pub async fn read_continuous
+      - path: docs/adc-classic-continuous.md
+      - path: examples/classic-adc-scan/src/bin/async_continuous.rs
     - id: continuous_irq_triggered_scan
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

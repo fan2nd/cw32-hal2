@@ -4,7 +4,9 @@
 //! This driver uses Embassy peripheral ownership, sealed channels and borrowed
 //! channel erasure. `blocking_read` performs one software-triggered conversion;
 //! `blocking_read_sequence` performs one ordered software-triggered scan.
-//! Async reads/scans use the dedicated ADC IRQ; DMA and hardware triggers are excluded.
+//! Blocking/async continuous reads collect a finite buffer from one external
+//! unbuffered input. Async reads use the dedicated ADC IRQ; DMA and hardware
+//! triggers are excluded.
 //!
 //! Sources: each family's own user manual, datasheet and SDK, pinned in
 //! `docs/adc-classic-family-electrical-audit.md` and the qualified analog-route
@@ -577,20 +579,7 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
                 // erase the next conversion's notification. A conversion in
                 // this clear/read window encounters unread data and sets OVW;
                 // never clear OVW while collecting, even after reading it.
-                regs.icr().write(|v| {
-                    v.set_eoc(false);
-                    v.set_eos(true);
-                    v.set_eoa(true);
-                    v.set_wdtl(true);
-                    v.set_wdth(true);
-                    v.set_wdtr(true);
-                    v.set_ovw(true);
-                });
-                let sample = regs.result(0).read().result() & 0x0fff;
-                if regs.isr().read().ovw() {
-                    return Err(Error::Overrun);
-                }
-                *result = sample;
+                *result = self.read_continuous_result()?;
             }
             Ok(timing)
         })();
@@ -1154,6 +1143,100 @@ impl<'d, T: Instance> Adc<'d, T, Async> {
         Ok(timing)
     }
 
+    /// Collect a finite nonempty buffer using continuous MODE2 and EOC/OVW IRQs.
+    ///
+    /// Only unbuffered external inputs are supported. Hardware runs continuously
+    /// while the task sleeps; executor/interrupt latency may cause `Overrun`.
+    /// `Config::timeout` bounds control polls, not the asynchronous wait. Compose
+    /// with a caller deadline if required. No DMA or ISR buffer pointer is used.
+    ///
+    /// Error or cancellation invalidates the entire potentially written buffer.
+    /// Drop stops and disables the converter; forgetting skips cleanup, but the
+    /// next valid operation resets the local conversion state before reuse.
+    /// Cleanup readback failure latches `Faulted` until chip reset. Success also
+    /// stops and disables the ADC, preserving shared BGR and inherited clocks.
+    pub async fn read_continuous<'a>(
+        &mut self,
+        channel: impl BorrowedChannel<'a, T>,
+        sample_time: SampleTime,
+        results: &mut [u16],
+    ) -> Result<Timing, Error> {
+        check_fault::<T>()?;
+        let channel = channel.reborrow_adc();
+        if results.is_empty() {
+            return Err(Error::InvalidResultLength);
+        }
+        if self.config.input_buffer || channel.channel >= crate::ADC_FIRST_INTERNAL_CHANNEL {
+            return Err(Error::UnsupportedContinuousChannel);
+        }
+        let timing = self.config.timing(self.pclk, channel.channel, sample_time)?;
+        self.async_cleanup()?;
+        self.timing = timing;
+        self.initialize_async()?;
+        let regs = T::regs();
+        let mut guard = AsyncGuard { adc: self, armed: true };
+        let outcome = async {
+            regs.cr1().write(|v| v.set_chmux(channel.channel));
+            regs.cr0().modify(|v| v.set_mode(pac::adc::vals::Mode::Continuous));
+            if !guard.adc.async_poll_control(|| {
+                let cr0 = regs.cr0().read();
+                let cr1 = regs.cr1().read();
+                cr0.en() && cr0.mode() == pac::adc::vals::Mode::Continuous
+                    && !cr0.buf() && cr0.clk() == timing.prescaler as u8
+                    && cr0.sam() == sample_time as u8
+                    && cr1.chmux() == channel.channel && !cr1.align() && !cr1.discard()
+            }) {
+                return Err(guard.adc.async_fault());
+            }
+            guard.adc.async_clear_completion()?;
+            let mut started = false;
+            for result in results.iter_mut() {
+                poll_fn(|cx| {
+                    T::state().waker.register(cx.waker());
+                    compiler_fence(Ordering::SeqCst);
+                    // Keep enable/readback/status atomic against the handler,
+                    // which masks enabled requests while retaining their flags.
+                    critical_section::with(|_| {
+                        if let Err(error) = check_fault::<T>() {
+                            return Poll::Ready(Err(error));
+                        }
+                        regs.ier().modify(|v| {
+                            v.set_eoc(true);
+                            v.set_eos(false);
+                            v.set_ovw(true);
+                        });
+                        if !guard.adc.async_poll_control(|| {
+                            let ier = regs.ier().read();
+                            ier.eoc() && !ier.eos() && ier.ovw()
+                        }) {
+                            return Poll::Ready(Err(guard.adc.async_fault()));
+                        }
+                        if !started {
+                            compiler_fence(Ordering::SeqCst);
+                            regs.start().write(|v| v.set_start(true));
+                            started = true;
+                        }
+                        let status = regs.isr().read();
+                        if status.ovw() {
+                            Poll::Ready(Err(Error::Overrun))
+                        } else if status.eoc() {
+                            Poll::Ready(Ok(()))
+                        } else {
+                            Poll::Pending
+                        }
+                    })
+                }).await?;
+                guard.adc.async_mask_completion()?;
+                *result = guard.adc.read_continuous_result()?;
+            }
+            Ok(timing)
+        }.await;
+        let cleanup = guard.adc.async_cleanup();
+        guard.armed = false;
+        cleanup?;
+        outcome
+    }
+
     /// Internal raw temperature channel, with the normal startup/acquisition bounds.
     #[cfg(not(adc_cw32f002_v1))]
     pub fn enable_temperature(&mut self) -> Temperature<T> {
@@ -1204,6 +1287,27 @@ impl<T: Instance> Drop for AsyncGuard<'_, '_, T> {
 }
 
 impl<T: Instance, M: Mode> Adc<'_, T, M> {
+    // Called only after EOC is observed. Preserve OVW throughout collection so
+    // an intervening completion cannot hide overwrite or produce a duplicate.
+    fn read_continuous_result(&self) -> Result<u16, Error> {
+        let regs = T::regs();
+        regs.icr().write(|v| {
+            v.set_eoc(false);
+            v.set_eos(true);
+            v.set_eoa(true);
+            v.set_wdtl(true);
+            v.set_wdth(true);
+            v.set_wdtr(true);
+            v.set_ovw(true);
+        });
+        let sample = regs.result(0).read().result() & 0x0fff;
+        if regs.isr().read().ovw() {
+            return Err(Error::Overrun);
+        }
+        check_fault::<T>()?;
+        Ok(sample)
+    }
+
     fn async_poll_control(&self, mut ready: impl FnMut() -> bool) -> bool {
         for _ in 0..self.config.timeout {
             if ready() {

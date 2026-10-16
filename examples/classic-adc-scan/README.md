@@ -4,6 +4,9 @@
 attempts a single internal supply conversion. It uses the same exact-package
 features below. Discard the output on error; interrupt latency can cause
 overrun. See the [continuous contract](../../docs/adc-classic-continuous.md).
+`async_continuous` uses EOC/OVW interrupts, a caller deadline and the same
+generated input. Select the `async-gtim` / `async-gtim1` feature described below.
+Only success permits consuming the buffer; timeout and ADC errors discard it.
 
 Current support: CW32W031 / CW32W031R8U6 have been retired. Historical W031 qualification and verification records below do not describe supported targets. No L031 feature alias or pin/electrical replacement is provided; see [target retirement](../../docs/w031-target-retirement.md).
 

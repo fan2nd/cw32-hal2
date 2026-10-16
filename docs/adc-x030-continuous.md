@@ -43,8 +43,8 @@ the requested prefix has been collected are discarded during retirement.
 `examples/classic-adc-scan/src/bin/continuous.rs` collects 32 samples from the
 first package-qualified generated input and consumes them only on success.
 It then attempts a single internal supply read after continuous retirement.
-Continuous scans, async collection,
-hardware triggers and native L010/L011/L012 are outside this implementation.
+The family audit also describes `read_continuous`, the IRQ-driven equivalent.
+Continuous scans, hardware triggers and native L010/L011/L012 remain excluded.
 
 Only source review and diff whitespace checks were performed. PAC regeneration,
 compilation, tests and board acceptance remain pending under the local execution

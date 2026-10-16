@@ -40,9 +40,34 @@ L052 MODE7 and its extra common result register are unused. Existing family
 supply, reference and clock bounds remain mandatory. Buffered/internal
 single-shot restrictions are sourced in the classic family electrical audit.
 
+`Adc<Async>::read_continuous` uses the same result acknowledgment helper and
+input restrictions. Its ISR does not read RESULT0 or store caller pointers;
+the task copies each sample after waking. It registers the waker before arming
+EOC/OVW, starts MODE2 only once, and rearms each subsequent wait. IER write,
+bounded readback and status observation share a critical section so the ISR
+cannot mask the requests between write and verification. A completion after
+the status observation remains sticky and wakes the registered task. On wake,
+the task masks completion requests before clearing EOC and reading RESULT0.
+OVW remains uncleared throughout collection and takes priority over success.
+
+The async guard exists before configuring continuous mode or starting hardware.
+Normal success and errors perform bounded cleanup explicitly; cleanup failure
+takes priority. Dropping a pending future uses the same cleanup, with failure
+latched for subsequent operations. Forgetting skips Drop: the ADC can keep
+running, but no caller memory is reachable from hardware or the ISR, and a
+subsequent valid operation first retires the previous state. Invalid requests
+leave existing ADC state unchanged. Any error or cancellation invalidates the
+entire buffer, including a prefix already written. `timeout` bounds synchronous
+control polls only; elapsed-time deadlines require a caller timer. No latency
+bound or lossless executor service is promised.
+
+The `async_continuous` example wraps 32 samples in a caller deadline, consumes
+only successful output and then attempts a single internal-source read. Its
+timer selection follows the existing async classic examples.
+
 Native L010/L011/L012 do not share this OVW protocol and remain excluded.
-Continuous sequence coherence, asynchronous collection and triggered operation
-remain separate pending work. This extension has source review only: PAC
+Continuous sequence coherence and triggered operation remain separate pending
+work. This extension has source review only: PAC
 regeneration, builds, tests and hardware acceptance were not run. In particular,
 simultaneous completion/acknowledgment, service latency, terminal cleanup and
 successive single/scan/continuous reuse still need acceptance.
