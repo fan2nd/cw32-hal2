@@ -110,12 +110,23 @@ functions:
       implemented_families: [CW32L010, CW32L011, CW32L012]
       limitations:
       - Requires 8N1; 10/11-bit detection is not proof of a valid 13-bit sender break. Snapshot and data reads are not atomic.
-      - No combined TX/RX owner, frame assembly, auto-baud, DMA, lossless ordering or scheduling guarantee.
+      - This receive direction does not assemble frames or provide auto-baud, DMA, lossless ordering or scheduling. Paired ownership and software assembly are declared separately.
       - Source-reviewed only; compilation, cancellation and board acceptance remain pending.
       evidence:
       - path: docs/uart-native-lin-rx.md
       - path: embassy-cw32/src/usart/lin/receiver.rs
         anchor: pub struct LinReceiver
+    - id: lin_paired_ownership
+      status: partial
+      scope: L010/L011 UART1 and L012 UART1/2 paired LIN TX/RX with borrowed or owned splitting.
+      limitations:
+      - Configures LIN before enabling either direction; each half retires its own requests and last-owner teardown releases the clock.
+      - No automatic responder, echo suppression, collision detection, scheduling, DMA or timing guarantee.
+      - Fixed-ID responder example is source-reviewed only; compilation, lifecycle and board acceptance remain pending.
+      evidence:
+      - path: docs/uart-native-lin-duplex.md
+      - path: embassy-cw32/src/usart/lin/duplex.rs
+        anchor: pub struct LinUart
     - id: lin_response_encoding
       status: partial
       scope: Native transmitter PID parity, classic/enhanced checksum and immutable owned response encoding.

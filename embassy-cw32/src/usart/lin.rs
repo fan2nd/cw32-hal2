@@ -1,10 +1,12 @@
 use super::*;
 mod assembler;
+mod duplex;
 mod frame;
 mod receiver;
 pub use assembler::{
     LinAssemblyError, LinDuplicateIdentifier, LinFrameAssembler, LinFrameDefinition, LinFrameDispatcher,
 };
+pub use duplex::LinUart;
 pub use frame::{LinChecksum, LinFrameError, LinIdentifier, LinResponse};
 pub use receiver::{LinBreakThreshold, LinReceiver, LinRxEvent};
 mod supported {
@@ -51,8 +53,8 @@ impl Default for LinBreakBits {
 /// scheduling, baud/oscillator limits, delimiter timing, response selection and
 /// bus ownership belong to the application. Encoding helpers validate bytes only. Byte writes
 /// queue data; flush waits for UART TXBUSY to clear, not external bus release.
-/// No receiver, DMA, flow control, split, or conversion into an ordinary UART is
-/// exposed. Cancellation can leave a transmitted prefix or pending command;
+/// A standalone constructor enables TX only; LinUart can supply a paired receiver.
+/// No DMA, flow control or conversion into an ordinary UART is exposed. Cancellation can leave a transmitted prefix or pending command;
 /// later operations preserve UART ordering and do not replay that command.
 /// Drop can truncate transmission and disconnects TX; qualify external bias.
 pub struct LinTransmitter<'d, M: Mode> {

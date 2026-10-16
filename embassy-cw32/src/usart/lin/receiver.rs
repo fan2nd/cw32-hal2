@@ -17,15 +17,16 @@ pub enum LinRxEvent {
     Data(u8),
 }
 
-/// Exclusive native LIN receiver at an application-specified baud rate.
+/// Owned native LIN receive direction at an application-specified baud rate.
 ///
-/// Uses the same qualified instances as LinTransmitter. No TX, split, ring, DMA,
+/// Uses the same qualified instances as LinTransmitter. LinUart may supply its
+/// paired TX direction. No ring, DMA,
 /// automatic baud detection or protocol parser is exposed. Service gaps can lose
 /// bytes or merge events. A Break is not a recovered frame or a length measurement.
 /// Polling/IRQ latency can overwrite RDR; the status/data snapshot is not atomic.
 /// On any error the caller must discard its partial frame and resynchronize.
 pub struct LinReceiver<'d, M: Mode> {
-    rx: UartRx<'d, M>,
+    pub(super) rx: UartRx<'d, M>,
 }
 impl<'d> LinReceiver<'d, Blocking> {
     pub fn new_blocking<T: LinInstance>(

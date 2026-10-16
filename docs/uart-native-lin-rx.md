@@ -22,7 +22,8 @@ The ISR masks one-shot receive/error/break requests and wakes the reader without
 reading RDR or clearing events. Cancellation masks requests without draining data.
 A forgotten wait holds no caller-buffer pointer; a later read or owner Drop masks
 it. Drop uses the ordinary RX lifecycle and disconnects the pin. Reads have no
-timeout. No TX sharing, split, ring, DMA, automatic baud detection, frame parser,
+timeout. The standalone constructor has no TX. [LinUart](uart-native-lin-duplex.md)
+provides paired LIN owners and splitting. No ring, DMA, automatic baud detection, frame parser,
 response scheduling or external transceiver control is exposed.
 
 Own-manual evidence, hashes pinned in `sources/evidence-sources.json`:

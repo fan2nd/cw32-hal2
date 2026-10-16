@@ -98,7 +98,7 @@ pub use rs485::{DriverEnable, DriverEnablePolarity, Rs485Uart};
 pub use lin::{
     LinAssemblyError, LinBreakBits, LinBreakThreshold, LinChecksum, LinDuplicateIdentifier,
     LinFrameAssembler, LinFrameDefinition, LinFrameDispatcher, LinFrameError, LinIdentifier, LinInstance,
-    LinReceiver, LinResponse, LinRxEvent, LinTransmitter,
+    LinReceiver, LinResponse, LinRxEvent, LinTransmitter, LinUart,
 };
 pub use interrupt::InterruptHandler;
 #[cfg(uart_cw32l083_v1)]
