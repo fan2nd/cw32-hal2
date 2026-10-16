@@ -29,8 +29,9 @@
 //! `docs/remaining-uart-implementation.md`, `docs/f020-serial-compatibility.md`
 //! and `docs/l031-r031-w031-uart.md`. ICR is R1W0 with version-specific reset
 //! and clearable bits. Flush always waits for TXBUSY (buffer plus shifter) to
-//! become zero, using TC only to wake. Optional LIN, automatic baud detection,
-//! RS485 direction, loopback and UART timers remain disabled.
+//! become zero, using TC only to wake. LIN transmit primitives on L010/L011
+//! UART1 and native RS485 DE have separate owners. Automatic baud detection,
+//! loopback and general UART timers remain disabled.
 //! Four-channel staged TX follows each own byte SRAM-to-TDR example: L031
 //! CN V1.6 p344, L052 CN V1.5 p381, R031 CN V1.3 p347 and W031 CN V1.4 p347;
 //! see `docs/four-channel-dma-owned.md` for their own UART1/2/3 qualification.
@@ -77,6 +78,8 @@ mod dma_tx;
 #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 mod half_duplex;
 mod interrupt;
+#[cfg(any(cw32l010, cw32l011))]
+mod lin;
 #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 mod nine_bit;
 #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
@@ -91,6 +94,8 @@ pub use config::{Config, ConfigError, DataBits, Error, Oversampling, Parity, Sto
 pub use half_duplex::HalfDuplexUart;
 #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 pub use rs485::{DriverEnable, DriverEnablePolarity, Rs485Uart};
+#[cfg(any(cw32l010, cw32l011))]
+pub use lin::{LinBreakBits, LinTransmitter};
 pub use interrupt::InterruptHandler;
 #[cfg(uart_cw32l083_v1)]
 pub use interrupt::SharedInterruptHandler;

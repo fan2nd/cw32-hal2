@@ -91,6 +91,18 @@ functions:
       - path: docs/uart-l012-half-duplex.md
       - path: embassy-cw32/src/usart/half_duplex.rs
         anchor: pub struct HalfDuplexUart
+    - id: lin_transmit_primitives
+      status: partial
+      scope: L010/L011 UART1-only blocking/async owned PIO break, idle-frame and 8N1 byte transmission.
+      implemented_families: [CW32L010, CW32L011]
+      limitations:
+      - Break count is 13..511; commands wait for TXE and completion uses TXBUSY. Cancellation may leave a command running.
+      - No receiver, auto-baud, PID/checksum, schedule, transceiver control, DMA or full LIN conformance claim.
+      - Example emits only primitive waveforms. Source-reviewed, uncompiled and untested.
+      evidence:
+      - path: docs/uart-native-lin-tx.md
+      - path: embassy-cw32/src/usart/lin.rs
+        anchor: pub struct LinTransmitter
     - id: automatic_rs485_de
       status: partial
       scope: L010/L011/L012 blocking and IRQ PIO Rs485Uart with owned TX, RX and RTS-as-DE.

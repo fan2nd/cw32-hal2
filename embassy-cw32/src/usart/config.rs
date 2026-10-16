@@ -106,6 +106,9 @@ impl Default for Config {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum ConfigError {
+    /// LIN transmit primitives require eight data bits, no parity and one stop bit.
+    #[cfg(any(cw32l010, cw32l011))]
+    InvalidLinFrame,
     /// Native RS485 DE assertion/deassertion delay must fit the five-bit field.
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
     InvalidDriverEnableDelay,
@@ -201,6 +204,8 @@ impl core::fmt::Display for ConfigError {
         f.write_str(match self {
             #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
             Self::InvalidDriverEnableDelay => "UART DE delay exceeds 31 sample periods",
+            #[cfg(any(cw32l010, cw32l011))]
+            Self::InvalidLinFrame => "LIN requires eight data bits, no parity and one stop bit",
             Self::UnsupportedDataBits => {
                 "UART data bits are not qualified for this family or backend"
             }

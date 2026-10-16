@@ -102,7 +102,7 @@ impl<'d, M: Mode> UartTx<'d, M> {
         }
     }
 
-    fn new_inner<T: Instance, TX: TxPin<T>>(
+    pub(super) fn new_inner<T: Instance, TX: TxPin<T>>(
         tx: Peri<'d, TX>,
         cts: Option<(Peri<'d, AnyPin>, u8)>,
         config: Config,
