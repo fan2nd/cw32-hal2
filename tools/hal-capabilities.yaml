@@ -416,11 +416,11 @@ functions:
       - Bounded timing/electrical contracts; slave APIs remain absent. Ten-bit master is separately qualified only on L012.
     - id: explicit_transaction_retry
       status: partial
-      scope: Classic seven-bit blocking/async opt-in whole-transaction replay on selected address NACK/arbitration failures.
+      scope: Classic seven-bit and L012 seven/ten-bit blocking/async opt-in whole-transaction replay.
       limitations:
       - At most 256 transaction calls; ordinary APIs remain single-attempt. Target protocol must permit replay of partial side effects.
-      - No backoff, bus repair, wall-clock deadline or new cleanup sequence; terminal/bus/data NACK errors are not retried.
-      - Reports attempt count and final error. L012 is excluded; new wrapper/example are uncompiled and untested.
+      - No backoff, bus repair, wall-clock deadline or new cleanup sequence; terminal/bus errors are not retried. Classic permits address NACK only; L012 explicitly permits unclassified NACK, including payload rejection.
+      - Reports attempt count and final error. New wrappers/examples are uncompiled and untested.
       evidence:
       - path: docs/i2c-explicit-retry.md
       - path: embassy-cw32/src/i2c/retry.rs
