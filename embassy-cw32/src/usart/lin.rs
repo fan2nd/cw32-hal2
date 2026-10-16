@@ -12,7 +12,10 @@ pub use duplex::LinUart;
 pub use frame::{LinChecksum, LinFrameError, LinIdentifier, LinResponse};
 pub use receiver::{LinBreakThreshold, LinReceiver, LinRxEvent};
 pub use responder::{LinRespondError, LinResponder};
-pub use schedule::{LinScheduleEntry, LinScheduleError, LinSchedulePlan, LinScheduleTiming};
+pub use schedule::{
+    LinScheduleCursor, LinScheduleEntry, LinScheduleError, LinSchedulePlan,
+    LinScheduleRunError, LinScheduleTiming, LinScheduledSlot,
+};
 mod supported {
     pub trait Sealed {}
     impl Sealed for crate::peripherals::UART1 {}

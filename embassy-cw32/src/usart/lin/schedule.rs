@@ -92,10 +92,145 @@ impl<'a> LinSchedulePlan<'a> {
 
     pub const fn cycle_us(&self) -> u64 { self.cycle_us }
 
+    /// Start a cyclic execution cursor at an application-selected time-base tick.
+    /// The cursor makes decisions only; the caller owns the clock and UART.
+    pub fn cursor(&self, start_us: u64) -> LinScheduleCursor<'_> {
+        LinScheduleCursor {
+            timing: self.timing,
+            entries: self.entries,
+            index: 0,
+            next_us: start_us,
+            active_end_us: None,
+            last_observed_us: None,
+            fault: None,
+        }
+    }
+
     /// Validated entries in order, paired with each allocated slot duration.
     pub fn slots(&self) -> impl Iterator<Item = (LinFrameDefinition, u64)> + '_ {
         self.entries.iter().map(move |entry| {
             (entry.frame, u64::from(self.timing.time_base_us) * u64::from(entry.time_base_ticks))
         })
+    }
+}
+
+/// Schedule execution/admission failure. Timing faults latch until restart.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum LinScheduleRunError {
+    SlotActive,
+    NoActiveSlot,
+    ClockWentBackwards,
+    StartTooLate { index: usize },
+    FinishTooLate { index: usize },
+    TimeOverflow,
+    Aborted,
+}
+impl core::fmt::Display for LinScheduleRunError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::SlotActive => f.write_str("LIN schedule slot is still active"),
+            Self::NoActiveSlot => f.write_str("LIN schedule has no active slot"),
+            Self::ClockWentBackwards => f.write_str("LIN schedule clock went backwards"),
+            Self::StartTooLate { index } => write!(f, "LIN slot {index} missed its start budget"),
+            Self::FinishTooLate { index } => write!(f, "LIN slot {index} exceeded its duration"),
+            Self::TimeOverflow => f.write_str("LIN schedule timestamp overflow"),
+            Self::Aborted => f.write_str("LIN schedule was aborted"),
+        }
+    }
+}
+impl core::error::Error for LinScheduleRunError {}
+
+/// An admitted slot. These timestamps are application-clock observations, not
+/// measured wire edges. Admission does not transmit or authorize a network role.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct LinScheduledSlot {
+    pub index: usize,
+    pub frame: LinFrameDefinition,
+    pub scheduled_start_us: u64,
+    pub end_us: u64,
+}
+
+/// Cyclic absolute-time schedule state with explicit in-flight completion.
+///
+/// The caller supplies nondecreasing microsecond timestamps from one clock.
+/// Start admission uses the declared jitter as an upper bound on software
+/// lateness; any subsequent delay to the physical Break must also fit the
+/// application's real timing budget. There is no internal timer, UART access,
+/// automatic retry, skipped slot or catch-up burst.
+pub struct LinScheduleCursor<'a> {
+    timing: LinScheduleTiming,
+    entries: &'a [LinScheduleEntry],
+    index: usize,
+    next_us: u64,
+    active_end_us: Option<u64>,
+    last_observed_us: Option<u64>,
+    fault: Option<LinScheduleRunError>,
+}
+impl LinScheduleCursor<'_> {
+    /// Current slot's nominal start, including while that slot is active.
+    pub const fn next_slot_us(&self) -> u64 { self.next_us }
+
+    /// Return None before the nominal start. A returned slot remains active
+    /// until finish_slot or abort; another start cannot overlap it.
+    pub fn start_slot(&mut self, now_us: u64) -> Result<Option<LinScheduledSlot>, LinScheduleRunError> {
+        self.observe_time(now_us)?;
+        if self.active_end_us.is_some() { return Err(LinScheduleRunError::SlotActive); }
+        if now_us < self.next_us { return Ok(None); }
+        if now_us - self.next_us > u64::from(self.timing.jitter_us) {
+            return Err(self.fail(LinScheduleRunError::StartTooLate { index: self.index }));
+        }
+        let entry = self.entries[self.index];
+        let duration = u64::from(self.timing.time_base_us) * u64::from(entry.time_base_ticks);
+        let Some(end_us) = self.next_us.checked_add(duration) else {
+            return Err(self.fail(LinScheduleRunError::TimeOverflow));
+        };
+        self.active_end_us = Some(end_us);
+        Ok(Some(LinScheduledSlot {
+            index: self.index, frame: entry.frame, scheduled_start_us: self.next_us, end_us,
+        }))
+    }
+
+    /// Confirm complete frame/bus handling, not merely queued header bytes.
+    /// Early finish preserves the original next deadline; finishing at the slot
+    /// boundary is allowed, but a later finish latches failure. On transmission
+    /// error/cancellation call abort rather than reporting successful completion.
+    pub fn finish_slot(&mut self, now_us: u64) -> Result<(), LinScheduleRunError> {
+        self.observe_time(now_us)?;
+        let end_us = self.active_end_us.ok_or(LinScheduleRunError::NoActiveSlot)?;
+        if now_us > end_us {
+            return Err(self.fail(LinScheduleRunError::FinishTooLate { index: self.index }));
+        }
+        self.active_end_us = None;
+        self.next_us = end_us;
+        self.index = if self.index + 1 == self.entries.len() { 0 } else { self.index + 1 };
+        Ok(())
+    }
+
+    /// Stop decisions after a transfer error, cancellation or network fault.
+    /// Does not stop hardware or discard/retire a transmitted prefix.
+    pub fn abort(&mut self) { self.fail(LinScheduleRunError::Aborted); }
+
+    /// Explicitly abandon old state and begin at entry zero. Call only after
+    /// application-controlled bus retirement/recovery; this performs no I/O.
+    pub fn restart(&mut self, start_us: u64) {
+        self.index = 0;
+        self.next_us = start_us;
+        self.active_end_us = None;
+        self.last_observed_us = None;
+        self.fault = None;
+    }
+
+    fn observe_time(&mut self, now_us: u64) -> Result<(), LinScheduleRunError> {
+        if let Some(error) = self.fault { return Err(error); }
+        if self.last_observed_us.is_some_and(|last| now_us < last) {
+            return Err(self.fail(LinScheduleRunError::ClockWentBackwards));
+        }
+        self.last_observed_us = Some(now_us);
+        Ok(())
+    }
+
+    fn fail(&mut self, error: LinScheduleRunError) -> LinScheduleRunError {
+        let retained = *self.fault.get_or_insert(error);
+        retained
     }
 }

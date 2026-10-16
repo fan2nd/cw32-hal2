@@ -65,3 +65,54 @@ CW32 `send_idle` emits a full idle frame, so it cannot be assumed to implement
 the nominal one-bit delimiter without checking the complete header budget.
 
 No compilation, tests, dependency resolution or board execution was performed.
+
+## Absolute-time execution cursor
+
+`plan.cursor(start_us)` creates a `LinScheduleCursor` over the same immutable
+entries. It consumes application-provided microsecond timestamps, with no timer
+or UART dependency. `start_us` is a caller-selected time-base tick. Call
+`start_slot(now_us)` at wakeup: it returns None before the scheduled start,
+admits one slot within the declared jitter window, and rejects a later start.
+Admission returns the frame definition, table index and absolute start/end.
+It marks that slot active before returning; a second start is rejected.
+
+The application executes its qualified header/response operation and then calls
+`finish_slot(now_us)` only after the complete frame and required bus handling.
+Completion by the slot boundary advances to the next entry, wrapping at table
+end. The next deadline is the old slot end, not completion time; early completion
+does not compress the table and late completion cannot shift it forward.
+Unknown or delayed response handling must not silently be reported as success.
+
+Start lateness, completion beyond slot end, nonmonotonic observations, timestamp
+overflow and explicit `abort` latch the first fault. Further operations return
+that fault. Calling start while active, or finish without an active slot, is an
+operation error that preserves state. Transmission error/cancellation requires
+`abort`; it does not retire hardware. There is no automatic skip, retry or burst
+of missed slots. After application-controlled bus recovery, `restart(start_us)`
+explicitly discards old cursor state and starts at entry zero. It may also
+establish a new application clock epoch; it performs no physical recovery.
+
+Hand-reviewed transition examples for the preceding 5 ms / 10 ms plan:
+
+| Operation | Expected state |
+| --- | --- |
+| Cursor at 1,000; start at 999 | None, entry zero remains due at 1,000 |
+| Start at 1,050 with 100 us jitter | Entry zero active, end 6,000 |
+| Another start before finish | SlotActive, original slot remains active |
+| Finish at 5,500 | Entry one due at 6,000, not 5,500 |
+| Start entry one at 6,000; finish at 16,000 | Entry zero due at 16,000 |
+| Start at deadline plus 101 | StartTooLate latched |
+| Finish beyond admitted end | FinishTooLate latched |
+| Observe a timestamp older than the preceding observation | ClockWentBackwards latched |
+
+The first poll can precede the initial epoch; subsequent observations must be
+nondecreasing. Zero jitter allows admission only at the exact scheduled start.
+End-time addition is checked before activation, preventing wrapped deadlines.
+These are source-review cases, not executed tests.
+
+This cursor guards software ordering; it cannot prove physical Break timing.
+Delay between admission and the actual falling edge must fit the application's
+remaining timing budget, and finishing a UART header is not finishing a frame.
+Integrating the cursor with actual UART transactions, table switching and
+qualified wake/clock behavior remains pending. A dropped cursor does not stop
+external hardware; retain or explicitly abort it when cancelling a transfer.
