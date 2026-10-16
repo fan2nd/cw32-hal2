@@ -116,6 +116,12 @@ impl RxDma {
                     // x030 p350 and each qualified own RX example: EN before DMARX; close only
                     // after clean DMA TC. A UART error alone is never a drain.
                     regs.cr2().modify(|w| w.set_dmarx(false));
+                    if regs.cr2().read().dmarx() {
+                        regs.ier()
+                            .modify(|w| WaitEvent::Receive.set_enabled(w, false));
+                        self.phase = RxDmaPhase::Quarantined;
+                        return Poll::Ready(Err(Error::DmaQuarantined));
+                    }
                     let status = regs.isr().read();
                     line_error = Self::merge_error(line_error, Self::line_error(status));
                     regs.ier()

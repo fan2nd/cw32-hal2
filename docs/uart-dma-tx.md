@@ -100,8 +100,11 @@ hardware BLOCK request. It enables the channel before UART DMATX, following the
 own manual's sequence. The selected-channel ISR records its result using the
 existing critical-section/waker protocol and R1W0 flag-clear seed. TE takes
 precedence over TC. Successful reuse requires recorded TC without TE and
-STATUS=Complete; the driver closes DMATX and orders memory before copying the
-next chunk. SOFTSRC=0 is not positive completion evidence for a hardware request.
+STATUS=Complete with EN/TCIE/TEIE read back clear; the driver closes DMATX,
+reads it back clear, and orders memory before copying the next chunk. Failed
+channel readback reports unconfirmed completion; failed DMATX closure permanently
+quarantines the lease. Neither path releases staging, pins or clocks.
+SOFTSRC=0 is not positive completion evidence for a hardware request.
 
 `write` completes after clean memory-to-TDR transfer. `flush` first settles any
 retained DMA chunk, then waits for UART wire completion. UART TXBUSY=0 is the

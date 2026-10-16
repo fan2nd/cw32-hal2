@@ -61,7 +61,14 @@ impl TxDma {
                 // Complete STATUS and no TE; F020 §8.6/§8.8.3, pp133/136.
                 // Four-channel terminal meaning: own L031/L052/R031/W031
                 // manuals pp128/133/130/129, respectively.
-                critical_section::with(|_| regs.cr2().modify(|v| v.set_dmatx(false)));
+                let closed = critical_section::with(|_| {
+                    regs.cr2().modify(|v| v.set_dmatx(false));
+                    !regs.cr2().read().dmatx()
+                });
+                if !closed {
+                    self.phase = TxDmaPhase::Quarantined;
+                    return Poll::Ready(Err(Error::DmaQuarantined));
+                }
                 // SAFETY: this same lease retained all resources continuously;
                 // clean completion and request closure precede the fence and
                 // retirement. No error path can reach Idle.

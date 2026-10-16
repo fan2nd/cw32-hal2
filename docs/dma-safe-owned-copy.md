@@ -182,12 +182,21 @@ all other channels and reserved bits. It disables this channel and interrupts
 after terminal indication, fences, and publishes Finished. Disabling EN supplies
 no release evidence of its own.
 
-Only recorded TC without TE, CSR.STATUS=Complete (5) and SOFTSRC=0 permit
-handback. The manuals define TC as all data correctly transferred. This supplies
+Only recorded TC without TE, CSR.STATUS=Complete (5), readback of
+EN/TCIE/TEIE all clear, and SOFTSRC=0 permit handback. A failed disable or
+interrupt-mask readback quarantines the resources as unconfirmed completion.
+The manuals define TC as all data correctly transferred. This supplies
 the architectural successful-completion evidence; the extra readbacks reject
 inconsistency conservatively. Acquire before async Ready, final SeqCst before
 resource return, and Transfer Drop's fence preserve CPU/compiler ordering.
 Fences do not prove another bus master drained; the documented completion does.
+
+The same channel readback is required by staged UART TX/RX and paired SPI.
+Those owners additionally read back their peripheral request gates closed
+before retirement; SPI also requires wire idle. A failed observation retains
+the entire lease. Cancellation or forgetting never turns an outstanding lease
+into reusable memory. These checks were reviewed against the source and authored
+register layouts; local builds/tests and hardware fault injection remain unrun.
 
 On TE, TC+TE or inconsistent success readback, the future forgets its internal
 Transfer and resources. It never invokes the raw Transfer Drop that would reset

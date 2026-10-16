@@ -106,7 +106,7 @@ pub(super) fn dispatch_dma_interrupt(regs: pac::spi::Spi, state: &State) {
 // Hardware MODF can independently clear EN, so this RMW is no atomic guarantee
 // against hardware events. Sticky errors still quarantine the paired lease.
 #[cfg(spi_dma)]
-fn close_dma_requests(regs: pac::spi::Spi) {
+fn close_dma_requests(regs: pac::spi::Spi) -> bool {
     #[cfg(spi_cw32l012_v1)]
     regs.cr2().modify(|v| {
         v.set_dmarx(false);
@@ -117,6 +117,11 @@ fn close_dma_requests(regs: pac::spi::Spi) {
         v.set_dmarx(false);
         v.set_dmatx(false);
     });
+    #[cfg(spi_cw32l012_v1)]
+    let control = regs.cr2().read();
+    #[cfg(not(spi_cw32l012_v1))]
+    let control = regs.cr1().read();
+    !control.dmarx() && !control.dmatx()
 }
 
 #[cfg(spi_dma)]
@@ -251,7 +256,9 @@ impl SpiDma {
             }
             // Both clean TC+Complete proofs precede request closure. The pair
             // stays reserved through wire completion and any cancellation.
-            close_dma_requests(regs);
+            if !close_dma_requests(regs) {
+                return Poll::Ready(Err(self.quarantine(regs, Error::DmaQuarantined)));
+            }
             self.phase = DmaPhase::Finishing;
         }
         let status = match self.state.observe(regs, cx.as_deref_mut(), true) {
@@ -506,7 +513,13 @@ impl<'d> Spi<'d, Async, Master> {
                 .unwrap()
                 .quarantine(self.peripheral.info.regs, error));
         }
-        close_dma_requests(self.peripheral.info.regs);
+        if !close_dma_requests(self.peripheral.info.regs) {
+            return Err(self
+                .dma
+                .as_mut()
+                .unwrap()
+                .quarantine(self.peripheral.info.regs, Error::DmaQuarantined));
+        }
         Ok(())
     }
 }

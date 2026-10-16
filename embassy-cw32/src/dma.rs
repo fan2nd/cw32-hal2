@@ -523,9 +523,7 @@ impl Channel<'static> {
             match inner.phase {
                 Phase::Finished(result) => {
                     let result = result.and_then(|()| {
-                        if channel_regs(self.index).csr().read().status()
-                            == pac::dmachannel::vals::Status::Complete
-                        {
+                        if clean_terminal_readback(self.index) {
                             Ok(())
                         } else {
                             Err(Error::UnconfirmedCompletion)
@@ -930,9 +928,7 @@ impl<W: Word, C> OwnedCopy<W, C> {
         let resources = self.resources.take().unwrap();
         let regs = channel_regs(transfer.index);
         let result = result.and_then(|()| {
-            if regs.csr().read().status() == pac::dmachannel::vals::Status::Complete
-                && !regs.trig().read().softsrc()
-            {
+            if clean_terminal_readback(transfer.index) && !regs.trig().read().softsrc() {
                 Ok(())
             } else {
                 Err(Error::UnconfirmedCompletion)
@@ -1234,6 +1230,16 @@ fn start_transfer(index: u8, plan: Plan) -> Result<(), ConfigError> {
         }
         Ok(())
     })
+}
+
+// Only corroborates an already recorded TC without TE. Disabled EN alone is
+// never evidence that outstanding accesses have drained.
+fn clean_terminal_readback(index: u8) -> bool {
+    let status = channel_regs(index).csr().read();
+    status.status() == pac::dmachannel::vals::Status::Complete
+        && !status.en()
+        && !status.tcie()
+        && !status.teie()
 }
 
 fn decode_error(status: pac::dmachannel::vals::Status) -> Error {

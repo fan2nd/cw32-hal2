@@ -27,7 +27,9 @@ copied into the caller. There is no borrowed zero-copy receive API.
 - InFlight: stores programmed length, highest observed line error and whether
   that error was reported. DMA owns staging and RDR; the CPU reads neither.
 - Ready: recorded TC without TE and current Complete status were accepted,
-  DMARX closed, RX flags sampled and acknowledged, then DMA fenced and retired.
+  EN/TCIE/TEIE read back clear, DMARX closed and read back clear, RX flags
+  sampled and acknowledged, then DMA fenced and retired. Failed channel or
+  request-gate readback permanently quarantines the lease before CPU copying.
   Only this state permits staging copies. Partial consumption keeps the tail.
 - Quarantined: DMA TE or ambiguous completion permanently retains resources.
   Later TC never restores staging, channel, pin or clock availability.

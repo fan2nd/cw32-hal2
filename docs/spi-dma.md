@@ -220,8 +220,9 @@ The persistent state belongs to the driver, not an operation future:
 - Idle permits staging access, guarded PIO and configuration.
 - InFlight reserves both channels, both buffers, SPI configuration, pins and
   clocks before either DMA channel is enabled.
-- Finishing means both channels reported clean TC plus Complete STATUS, with
-  DMARX/DMATX closed, but TXE=1/BUSY=0 still has to be observed.
+- Finishing means both channels reported clean TC plus Complete STATUS and
+  EN/TCIE/TEIE read back clear, with DMARX/DMATX read back closed, but
+  TXE=1/BUSY=0 still has to be observed.
 - Quarantined never returns to Idle. SPI/DMA errors or unexpected launch failure
   retain the whole pair; one successful channel cannot be independently reused.
 
@@ -244,7 +245,9 @@ in the same critical section. If wire idle is still pending, prior error
 enables are restored; sticky flags raised in that interval can still wake it.
 
 After both clean DMA results, requests close and Finishing persists through
-wire completion. BUSY has no interrupt: this tail cooperatively self-wakes
+wire completion. Failed channel or request-gate readback permanently quarantines
+both channels and buffers. Request closure is also checked before launch, so a
+failed preparation cannot arm either channel. BUSY has no interrupt: this tail cooperatively self-wakes
 while BUSY is set or TXE is clear. Once no errors and wire idle are observed,
 notification is masked, both DMA retirements fence the hardware results, and
 Idle becomes visible. A transient Quarantined state protects sequential
