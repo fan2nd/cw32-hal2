@@ -121,12 +121,26 @@ functions:
       scope: L010/L011 UART1 and L012 UART1/2 paired LIN TX/RX with borrowed or owned splitting.
       limitations:
       - Configures LIN before enabling either direction; each half retires its own requests and last-owner teardown releases the clock.
-      - No automatic responder, echo suppression, collision detection, scheduling, DMA or timing guarantee.
-      - Fixed-ID responder example is source-reviewed only; compilation, lifecycle and board acceptance remain pending.
+      - No echo suppression, collision detection, scheduling, DMA or timing guarantee; table-driven response is declared separately.
+      - Multi-ID responder example is source-reviewed only; compilation, lifecycle and board acceptance remain pending.
       evidence:
       - path: docs/uart-native-lin-duplex.md
       - path: embassy-cw32/src/usart/lin/duplex.rs
         anchor: pub struct LinUart
+    - id: lin_automatic_response
+      status: partial
+      scope: Immutable multi-ID response selection and async LinUart respond_once on existing native LIN instances.
+      limitations:
+      - Requires exclusive network publishing rights for every table entry. Duplicate IDs fail before UART access; unknown IDs are skipped.
+      - Header/UART errors retire the attempt; cancellation can leave a transmitted prefix. No retry, echo comparison, collision detection or response deadline guarantee.
+      - Empty tables select nothing; caller deadlines require a working timer. Success means UART idle, not bus acknowledgment.
+      - Source-reviewed only; compilation, state-transition/cancellation checks and board acceptance remain pending.
+      evidence:
+      - path: embassy-cw32/src/usart/lin/responder.rs
+        anchor: pub struct LinResponder
+      - path: embassy-cw32/src/usart/lin/duplex.rs
+        anchor: pub async fn respond_once
+      - path: docs/uart-native-lin-duplex.md
     - id: lin_response_encoding
       status: partial
       scope: Native transmitter PID parity, classic/enhanced checksum and immutable owned response encoding.

@@ -3,8 +3,9 @@ use super::*;
 /// One native LIN UART with both pins, configured once before either direction starts.
 ///
 /// TX and RX retain the existing primitive contracts. External transceiver echo,
-/// arbitration, response selection and deadlines belong to the application. No
-/// automatic responder, DMA, buffering or conversion to ordinary UART is exposed.
+/// arbitration and deadlines belong to the application. `respond_once` selects
+/// from a caller-defined response table. No DMA, buffering or conversion to
+/// ordinary UART is exposed.
 /// Reads do not discard echoed bytes and writes do not pause the receiver.
 pub struct LinUart<'d, M: Mode> {
     tx: LinTransmitter<'d, M>,
@@ -22,6 +23,36 @@ impl<'d> LinUart<'d, Blocking> {
     }
 }
 impl<'d> LinUart<'d, Async> {
+    /// Wait for one matching header, transmit its response, then await TX idle.
+    ///
+    /// The table must contain only frames this node exclusively publishes.
+    /// Duplicate IDs fail before UART access; unknown IDs are skipped. Invalid
+    /// headers and UART errors return immediately without retry. An empty table
+    /// waits without transmitting. Use a caller deadline to bound this wait.
+    ///
+    /// Cancellation discards the local parser; a later call requires a new
+    /// Break. A queued TX prefix may still leave the UART after cancellation.
+    /// The next call first flushes any earlier TX before accepting headers.
+    /// RX remains enabled: echo is not compared, and delayed service can overrun.
+    /// Success confirms UART idle, not bus acknowledgment or collision freedom.
+    /// No response-space deadline or LIN schedule compliance is guaranteed.
+    pub async fn respond_once(
+        &mut self,
+        responses: &[LinResponse],
+    ) -> Result<LinIdentifier, LinRespondError> {
+        let mut responder = LinResponder::new(responses)
+            .map_err(LinRespondError::DuplicateIdentifier)?;
+        self.tx.flush().await.map_err(LinRespondError::Uart)?;
+        loop {
+            let event = self.rx.read_event().await.map_err(LinRespondError::Uart)?;
+            if let Some(response) = responder.push(event).map_err(LinRespondError::Header)? {
+                self.tx.write_response(&response).await.map_err(LinRespondError::Uart)?;
+                self.tx.flush().await.map_err(LinRespondError::Uart)?;
+                return Ok(response.identifier());
+            }
+        }
+    }
+
     pub fn new<T: LinInstance>(
         peri: Peri<'d, T>,
         tx: Peri<'d, impl TxPin<T>>,

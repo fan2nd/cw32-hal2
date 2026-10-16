@@ -3,12 +3,14 @@ mod assembler;
 mod duplex;
 mod frame;
 mod receiver;
+mod responder;
 pub use assembler::{
     LinAssemblyError, LinDuplicateIdentifier, LinFrameAssembler, LinFrameDefinition, LinFrameDispatcher,
 };
 pub use duplex::LinUart;
 pub use frame::{LinChecksum, LinFrameError, LinIdentifier, LinResponse};
 pub use receiver::{LinBreakThreshold, LinReceiver, LinRxEvent};
+pub use responder::{LinRespondError, LinResponder};
 mod supported {
     pub trait Sealed {}
     impl Sealed for crate::peripherals::UART1 {}

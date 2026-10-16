@@ -18,17 +18,42 @@ A queued TX may be truncated on Drop. There is no combined atomic transaction.
 RX remains enabled during transmission. Echo may cause bytes, break events or
 overrun; writes do not drain it and reads do not suppress it. Concurrent polling
 can reduce service gaps but cannot guarantee ordering or lossless reception.
-External transceiver controls, arbitration, collision handling, response selection,
+External transceiver controls, arbitration, collision handling, response contents,
 oscillator tolerance and deadlines belong to the application. UART flush proves
 neither external bus release nor LIN response timing.
 
 `examples/uart-lin/src/bin/respond.rs` uses UART1 PA1/PA0 on L010F8P6 and PA2/PA3
 on L011K8T6/L012C8T6/L012C8U6. A deliberately configured test network must assign
-ID 0x12, two payload bytes and enhanced checksum exclusively to this publisher.
-The example waits for Break/sync/validated PID, writes its response, then waits
+IDs 0x12 (two bytes) and 0x13 (three bytes), both with enhanced checksum,
+exclusively to this publisher. The example calls `respond_once`, which waits
+for Break/sync/validated PID, writes the selected response, then waits
 for another Break. It does not compare echoed bytes, detect collisions or enforce
 header/response deadlines; delayed header bytes may therefore still cause a reply.
 It is not a production scheduled responder. UART errors abandon header state.
+
+`LinResponder` borrows an immutable response table and rejects duplicate IDs
+before retaining it. The table may be empty. A new Break replaces any partial
+header, Sync must be 0x55, and PID validation uses the existing identifier
+decoder. Unknown IDs and trailing bytes are ignored until the next Break.
+Selection returns an owned response copy, so later parsing cannot alter bytes
+already chosen for transmission. Errors reset the header. Direct selector users
+must call `reset` on timeout, UART errors or known event loss.
+
+`LinUart<Async>::respond_once` combines this selector with RX, response TX and
+flush. Duplicate tables fail before UART access. It first flushes earlier queued
+TX, then waits for one matching header, sends the selected payload/checksum and
+waits for UART idle. The parser is local to that call: cancellation or forgetting
+cannot cause the next call to reuse a partial header. Transmission cancellation
+can still leave a queued prefix; no automatic resend is performed. Header or
+UART failure is returned explicitly. An empty table never selects a response
+and can wait indefinitely. A caller deadline must cover header reception and
+transmission if the application needs a bound.
+
+RX is not drained or compared during this operation's TX waits. Echo may cause
+overrun and an error on the next attempt. Success denotes UART completion only,
+not peer receipt, collision freedom, LIN timing compliance or diagnostic session
+validity. Table entries must be exclusively assigned to this publishing node;
+validated PID/checksum bytes do not authorize the node's network role.
 
 Hardware evidence is the same own-manual LIN format, receive and send chapters
 listed in [TX](uart-native-lin-tx.md) and [RX](uart-native-lin-rx.md); no new register
