@@ -155,6 +155,17 @@ functions:
       - path: examples/uart-lin/src/bin/respond_with_echo.rs
       - path: examples/uart-lin/src/bin/timed_respond_with_echo.rs
       - path: docs/uart-native-lin-duplex.md
+    - id: lin_schedule_budget
+      status: partial
+      scope: Borrowed immutable schedule-table admission using nominal LIN 2.2A frame duration, integer time-base multiples and declared jitter.
+      limitations:
+      - Exact rational arithmetic enforces strict slot inequality; cycle summation is checked. Duplicate identifiers in separate slots are allowed.
+      - No transmitting scheduler, table switching, retry, clock, protocol-specific diagnostic/event-triggered policy or physical timing guarantee.
+      - Source-reviewed only; builds, boundary/overflow checks and hardware timing acceptance remain pending.
+      evidence:
+      - path: embassy-cw32/src/usart/lin/schedule.rs
+        anchor: pub struct LinSchedulePlan
+      - path: docs/uart-lin-schedule.md
     - id: lin_response_encoding
       status: partial
       scope: Native transmitter PID parity, classic/enhanced checksum and immutable owned response encoding.

@@ -99,6 +99,7 @@ pub use lin::{
     LinAssemblyError, LinBreakBits, LinBreakThreshold, LinChecksum, LinDuplicateIdentifier,
     LinFrameAssembler, LinFrameDefinition, LinFrameDispatcher, LinFrameError, LinIdentifier, LinInstance,
     LinReceiver, LinRespondError, LinResponder, LinResponse, LinRxEvent, LinTransmitter, LinUart,
+    LinScheduleEntry, LinScheduleError, LinSchedulePlan, LinScheduleTiming,
 };
 pub use interrupt::InterruptHandler;
 #[cfg(uart_cw32l083_v1)]
