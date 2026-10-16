@@ -76,6 +76,28 @@ parks on errors so it cannot automatically retry a potentially transmitted
 prefix. It intentionally has no built-in timer and can wait forever if echo
 is missing. Deployment requires an application deadline and schedule policy.
 
+`timed_respond_with_echo` demonstrates deadline composition with the optional
+`timed` example feature. It enables the existing GTIM1 time driver and uses the
+same pinned Embassy revision as the executor. Select `timed` together with one
+supported exact chip feature. GTIM1/its IRQ are reserved by the time driver;
+default HSI/PCLK and the documented operating conditions must be retained.
+
+One 100 ms application deadline covers the whole attempt: initial TX retirement,
+header selection, payload/checksum echoes and final flush. Unknown IDs or byte
+progress do not restart it. Missing headers and missing echoes therefore have
+a caller cancellation path when the timer and executor make progress. After
+completion, error or timeout, the example separately bounds a TX flush to 10 ms
+and parks without retrying a possibly transmitted prefix. The UART owner is
+retained while parked; a failed/timed-out flush is not claimed as retirement.
+
+These values demonstrate API use, not a LIN response-space, inter-byte or network
+schedule specification. A timeout future is cooperative: it cannot preempt a
+running poll or recover a failed clock/IRQ/executor. Deadline observation races
+must not be interpreted as wire-level timestamps. Source review covered the
+existing receive-wait cancellation (request masking without draining RDR) and
+TX semantics (queued prefix can continue; flush waits for UART completion).
+No local build, dependency resolution, cancellation test or board run was done.
+
 Hardware evidence is the same own-manual LIN format, receive and send chapters
 listed in [TX](uart-native-lin-tx.md) and [RX](uart-native-lin-rx.md); no new register
 encoding is introduced. Ownership/interrupt behavior was inspected against
