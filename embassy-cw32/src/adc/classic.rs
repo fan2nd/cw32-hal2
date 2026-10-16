@@ -216,7 +216,6 @@ pub enum Error {
     /// Buffered or internal-source multi-slot scans are not source-qualified.
     UnsupportedScanChannel,
     /// Continuous acquisition requires an unbuffered external input.
-    #[cfg(adc_v1)]
     UnsupportedContinuousChannel,
     /// Declared VDDA is outside the selected family operating range.
     InvalidSupplyVoltage,
@@ -252,12 +251,11 @@ impl core::fmt::Display for Error {
             Self::ResetAsserted => "ADC reset is asserted",
             Self::ClockEnableTimeout => "ADC clock enable timed out",
             Self::InvalidSequenceLength => "ADC sequence length is outside the hardware range",
-            Self::InvalidResultLength => "ADC result length does not match sequence length",
+            Self::InvalidResultLength => "ADC result length is invalid for this operation",
             Self::InconsistentSampleTime => "ADC scan slots require the same sample time",
             Self::UnsupportedScanChannel => {
                 "ADC multi-slot scans require unbuffered external channels"
             }
-            #[cfg(adc_v1)]
             Self::UnsupportedContinuousChannel => {
                 "ADC continuous acquisition requires an unbuffered external channel"
             }
@@ -524,7 +522,7 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
         self.blocking_read_sequence(&[(&channel, sample_time)], &mut result)?;
         Ok(result[0])
     }
-    /// Collect a nonempty buffer from x030 single-channel continuous mode.
+    /// Collect a nonempty buffer from classic single-channel continuous mode.
     ///
     /// Only unbuffered external inputs are supported. Hardware starts once and
     /// repeats conversions until collection ends; this is not repeated single
@@ -536,7 +534,6 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
     /// must be discarded. Success and acquisition failure both power down the
     /// ADC while preserving shared BGR and the inherited gate. No DMA, external
     /// trigger, scan coherence or real-time service guarantee is provided.
-    #[cfg(adc_v1)]
     pub fn blocking_read_continuous<'a>(
         &mut self,
         channel: impl BorrowedChannel<'a, T>,

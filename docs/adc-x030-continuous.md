@@ -1,8 +1,9 @@
 # x030 finite continuous acquisition
 
 `Adc<Blocking>::blocking_read_continuous` starts MODE2 once and collects a
-nonempty buffer from one unbuffered external channel. F030/A030 alone are
-enabled. Existing voltage, reference, clock and sealed-pin constraints apply.
+nonempty buffer from one unbuffered external channel. F030/A030 are
+covered by this source audit; the [family audit](adc-classic-continuous.md)
+extends the API to the other classic families. Existing voltage, reference, clock and sealed-pin constraints apply.
 Internal and buffered inputs are rejected before ADC writes; GPIO preparation
 can precede rejection. The timeout budget is per sample. An error invalidates
 the caller buffer, which may already contain a prefix.
@@ -39,9 +40,11 @@ abort-latency proof. Shared BGR and inherited clock ownership are retained.
 Later single/scan/continuous reads initialize afresh. Results arriving after
 the requested prefix has been collected are discarded during retirement.
 
-`examples/classic-adc-scan/src/bin/continuous.rs` collects 32 PA0 samples on
-F030C8T7 and consumes them only on success. Continuous scans, async collection,
-hardware triggers and other families are outside this implementation.
+`examples/classic-adc-scan/src/bin/continuous.rs` collects 32 samples from the
+first package-qualified generated input and consumes them only on success.
+It then attempts a single internal supply read after continuous retirement.
+Continuous scans, async collection,
+hardware triggers and native L010/L011/L012 are outside this implementation.
 
 Only source review and diff whitespace checks were performed. PAC regeneration,
 compilation, tests and board acceptance remain pending under the local execution
