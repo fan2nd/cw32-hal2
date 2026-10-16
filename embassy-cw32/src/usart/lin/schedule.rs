@@ -98,6 +98,7 @@ impl<'a> LinSchedulePlan<'a> {
         LinScheduleCursor {
             timing: self.timing,
             entries: self.entries,
+            pending_entries: None,
             index: 0,
             next_us: start_us,
             active_end_us: None,
@@ -119,6 +120,7 @@ impl<'a> LinSchedulePlan<'a> {
 pub enum LinScheduleRunError {
     SlotActive,
     NoActiveSlot,
+    IncompatibleTiming,
     ClockWentBackwards,
     StartTooLate { index: usize },
     FinishTooLate { index: usize },
@@ -130,6 +132,7 @@ impl core::fmt::Display for LinScheduleRunError {
         match self {
             Self::SlotActive => f.write_str("LIN schedule slot is still active"),
             Self::NoActiveSlot => f.write_str("LIN schedule has no active slot"),
+            Self::IncompatibleTiming => f.write_str("LIN schedule timing differs from the active network"),
             Self::ClockWentBackwards => f.write_str("LIN schedule clock went backwards"),
             Self::StartTooLate { index } => write!(f, "LIN slot {index} missed its start budget"),
             Self::FinishTooLate { index } => write!(f, "LIN slot {index} exceeded its duration"),
@@ -160,15 +163,30 @@ pub struct LinScheduledSlot {
 pub struct LinScheduleCursor<'a> {
     timing: LinScheduleTiming,
     entries: &'a [LinScheduleEntry],
+    pending_entries: Option<&'a [LinScheduleEntry]>,
     index: usize,
     next_us: u64,
     active_end_us: Option<u64>,
     last_observed_us: Option<u64>,
     fault: Option<LinScheduleRunError>,
 }
-impl LinScheduleCursor<'_> {
+impl<'a> LinScheduleCursor<'a> {
     /// Current slot's nominal start, including while that slot is active.
     pub const fn next_slot_us(&self) -> u64 { self.next_us }
+
+    /// Request a validated table for the next admitted slot. Never interrupts
+    /// an active slot or changes its end time. The latest accepted request wins.
+    /// Baud, time base and jitter must match; no hardware reconfiguration occurs.
+    /// The new table begins at entry zero at the existing next slot boundary.
+    pub fn request_plan(&mut self, plan: &LinSchedulePlan<'a>) -> Result<(), LinScheduleRunError> {
+        if let Some(error) = self.fault { return Err(error); }
+        if plan.timing != self.timing { return Err(LinScheduleRunError::IncompatibleTiming); }
+        self.pending_entries = Some(plan.entries);
+        Ok(())
+    }
+
+    /// Withdraw a queued switch without changing the active table or any fault.
+    pub fn cancel_plan_change(&mut self) { self.pending_entries = None; }
 
     /// Return None before the nominal start. A returned slot remains active
     /// until finish_slot or abort; another start cannot overlap it.
@@ -176,14 +194,23 @@ impl LinScheduleCursor<'_> {
         self.observe_time(now_us)?;
         if self.active_end_us.is_some() { return Err(LinScheduleRunError::SlotActive); }
         if now_us < self.next_us { return Ok(None); }
+        let (entries, index) = match self.pending_entries {
+            Some(entries) => (entries, 0),
+            None => (self.entries, self.index),
+        };
         if now_us - self.next_us > u64::from(self.timing.jitter_us) {
-            return Err(self.fail(LinScheduleRunError::StartTooLate { index: self.index }));
+            return Err(self.fail(LinScheduleRunError::StartTooLate { index }));
         }
-        let entry = self.entries[self.index];
+        let entry = entries[index];
         let duration = u64::from(self.timing.time_base_us) * u64::from(entry.time_base_ticks);
         let Some(end_us) = self.next_us.checked_add(duration) else {
             return Err(self.fail(LinScheduleRunError::TimeOverflow));
         };
+        // Commit only after successful timing admission. Early polls, an active
+        // slot, incompatible requests and overflow cannot partially switch.
+        self.entries = entries;
+        self.index = index;
+        self.pending_entries = None;
         self.active_end_us = Some(end_us);
         Ok(Some(LinScheduledSlot {
             index: self.index, frame: entry.frame, scheduled_start_us: self.next_us, end_us,
@@ -212,10 +239,12 @@ impl LinScheduleCursor<'_> {
 
     /// Explicitly abandon old state and begin at entry zero. Call only after
     /// application-controlled bus retirement/recovery; this performs no I/O.
+    /// A queued table change is discarded; the last admitted table is retained.
     pub fn restart(&mut self, start_us: u64) {
         self.index = 0;
         self.next_us = start_us;
         self.active_end_us = None;
+        self.pending_entries = None;
         self.last_observed_us = None;
         self.fault = None;
     }

@@ -168,11 +168,12 @@ functions:
       - path: docs/uart-lin-schedule.md
     - id: lin_schedule_cursor
       status: partial
-      scope: Absolute-time cyclic schedule decisions with explicit active-slot completion and latched timing failures.
+      scope: Absolute-time cyclic schedule decisions with active-slot completion, latched timing failures and queued table switching at slot admission.
       limitations:
       - Caller supplies monotonic microsecond observations, executes frames and confirms full completion. No UART or internal timer access.
       - No overlap, drift from early completion, catch-up burst or automatic retry; abort/restart requires application-controlled bus recovery.
-      - Physical Break timing, transaction integration, table switching and wake/clock qualification remain pending.
+      - Compatible table requests share nominal baud, time base and jitter; latest request wins without interrupting an active slot. Restart discards pending changes.
+      - Physical Break timing, transaction integration and wake/clock qualification remain pending.
       - Source-reviewed only; builds and transition/overflow acceptance remain pending.
       evidence:
       - path: embassy-cw32/src/usart/lin/schedule.rs

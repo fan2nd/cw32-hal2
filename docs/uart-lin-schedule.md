@@ -113,6 +113,37 @@ These are source-review cases, not executed tests.
 This cursor guards software ordering; it cannot prove physical Break timing.
 Delay between admission and the actual falling edge must fit the application's
 remaining timing budget, and finishing a UART header is not finishing a frame.
-Integrating the cursor with actual UART transactions, table switching and
+Integrating the cursor with actual UART transactions and
 qualified wake/clock behavior remains pending. A dropped cursor does not stop
 external hardware; retain or explicitly abort it when cancelling a transfer.
+
+## Table changes at slot boundaries
+
+`request_plan(&new_plan)` queues an already validated table. Network nominal
+baud, time base and jitter must match the active cursor exactly; otherwise it
+returns `IncompatibleTiming` without changing the active or pending table.
+The latest compatible request replaces an earlier queued request. Requests
+made during a fault return the retained error. `cancel_plan_change()` withdraws
+only the pending request and cannot clear a fault.
+
+The current slot, its returned frame and its end time remain unchanged. After
+the application finishes that slot, the next successful `start_slot` commits
+the new table at entry zero using the existing next boundary. Early polls leave
+the request pending; an active slot prevents admission. Lateness and timestamp
+overflow fail before committing the change. The same rule applies before the
+cursor's first slot: the request can select the table at the original epoch.
+
+For example, a slot ending at 6,000 us can queue a new table while active and
+finish at 5,500 us. The new table still starts at 6,000 us, not 5,500 us; its
+entry-zero duration determines the following boundary. A second compatible
+request before that boundary wins. An incompatible request leaves the first
+pending request intact. `restart` discards pending requests and restarts the
+last admitted table after application-controlled recovery.
+
+The cursor retains borrowed entries, so the selected tables cannot be mutated
+or freed while referenced. A plan wrapper itself need not be retained merely
+because its entry slice is queued. All referenced definitions must belong to
+the same network contract; matching timing does not validate publisher roles,
+diagnostic policy or consistency of frame layouts across application modes.
+No UART settings change, no active transfer is interrupted, and no physical
+bus recovery is inferred. Table-switch cases were source-reviewed only.
