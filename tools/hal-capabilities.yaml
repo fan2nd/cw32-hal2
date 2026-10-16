@@ -692,11 +692,18 @@ functions:
       - No continuous or hardware-triggered scan API. Software one-shot async single/scans are declared separately
         for all classic lines, L010/L011 and both L012 ADCs; the L010/L011 BTIM1-triggered single owner remains separate.
     - id: external_reference
-      status: unimplemented
-      scope: No maintained HAL API declaration for this mode.
+      status: partial
+      scope: F030/A030 blocking/async ADC external reference with owned package-qualified PB0.
+      implemented_families: [CW32F030, CW32A030]
       limitations:
-      - No complete owned external-reference API. VDDA/internal references differ by family; L012 exposes VDDA
-        only, F002 VDD only.
+      - Dedicated constructors select ExRef and retain the analog pin; ordinary construction/reconfiguration rejects ExRef without ownership.
+      - VDDA supply bands apply; reference voltage stability, electrical limits and analog accuracy remain board obligations.
+      - Other classic families await own-route qualification; L010/L011/L012 retain their existing supply-only reference policy.
+      - Source-reviewed only; generation, compilation, lifetime/failure checks and hardware acceptance remain pending.
+      evidence:
+      - path: docs/adc-x030-external-reference.md
+      - path: embassy-cw32/src/adc/classic.rs
+        anchor: pub fn new_with_external_reference
     - id: coupled_dual_adc
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

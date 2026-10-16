@@ -19,7 +19,8 @@
 //! The reference is VDDA or an internal 1.5/2.5 V source, except F002, which
 //! supports VDDA only and has no temperature or bandgap measurement channel.
 //! F002 supply/channel names are VDD/VDD3 in its own manual. External reference
-//! operation is not exposed because that requires separate pin ownership.
+//! operation on F030/A030 uses constructors retaining its package-qualified PB0
+//! pin; other classic families remain excluded pending route qualification.
 //! Input voltages must satisfy the board's electrical limits and must not exceed
 //! the selected reference. L/R/W operating tables also require VDDA=VDD.
 //! Shared BGREN, where documented, is retained across configuration, failure
@@ -34,6 +35,7 @@
 //! separately qualified hardware-mux metadata rather than parsing signal names.
 
 use core::marker::PhantomData;
+use crate::gpio::{AnyPin, Flex};
 
 use crate::interrupt::typelevel::{Binding, Handler, Interrupt};
 use crate::mode::{Async, Blocking, Mode};
@@ -137,8 +139,22 @@ pub enum Reference {
     /// Internal 2.5 V reference; VDDA must be at least 2.8 V.
     #[cfg(not(adc_cw32f002_v1))]
     Internal2V5 = 1,
+    /// Owned PB0 ExRef on F030/A030. Requires an external-reference constructor.
+    /// The board must keep the reference stable and every input within 0..Vref.
+    #[cfg(any(cw32f030, cw32a030))]
+    External = 2,
     /// Analog supply voltage.
     Vdda = 3,
+}
+
+impl Reference {
+    fn needs_bandgap(self) -> bool {
+        match self {
+            #[cfg(not(adc_cw32f002_v1))]
+            Self::Internal1V5 | Self::Internal2V5 => true,
+            _ => false,
+        }
+    }
 }
 
 /// ADC configuration, separate from per-read acquisition time.
@@ -204,6 +220,9 @@ pub enum Error {
     InvalidSupplyVoltage,
     /// The selected internal reference needs a higher minimum VDDA.
     ReferenceSupplyTooLow,
+    /// External reference was requested without retaining a qualified pin.
+    #[cfg(any(cw32f030, cw32a030))]
+    ReferencePinRequired,
     /// Requested ADCCLK must be nonzero.
     FrequencyZero,
     /// Even PCLK/128 exceeds a requested or channel-specific clock limit.
@@ -239,6 +258,8 @@ impl core::fmt::Display for Error {
             }
             Self::InvalidSupplyVoltage => "ADC VDDA is outside the selected family operating range",
             Self::ReferenceSupplyTooLow => "ADC internal reference requires a higher VDDA",
+            #[cfg(any(cw32f030, cw32a030))]
+            Self::ReferencePinRequired => "ADC external reference requires an owned ExRef pin",
             Self::FrequencyZero => "ADC clock limit must be nonzero",
             Self::FrequencyTooLow => "ADC clock limit is below PCLK/128",
             Self::InvalidTimeout => "ADC polling budget must be nonzero",
@@ -324,6 +345,8 @@ impl Config {
             #[cfg(not(adc_cw32f002_v1))]
             Reference::Internal2V5 => crate::ADC_INTERNAL_2V5_BANDS,
             Reference::Vdda => crate::ADC_SUPPLY_BANDS,
+            #[cfg(any(cw32f030, cw32a030))]
+            Reference::External => crate::ADC_SUPPLY_BANDS,
         };
         let maximum = bands
             .iter()
@@ -402,6 +425,7 @@ impl Config {
 /// overruns stop and disable conversion; subsequent reads retry initialization.
 pub struct Adc<'d, T: Instance, M: Mode = Blocking> {
     _peripheral: Peri<'d, T>,
+    reference_pin: Option<Flex<'d>>,
     config: Config,
     pclk: ClockBounds,
     hclk: ClockBounds,
@@ -415,9 +439,34 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
     /// Validate configuration, acquire the gate without reset, then await READY.
     /// Tokens are consumed on failure; reborrow them when reuse is required.
     pub fn new(peripheral: Peri<'d, T>, config: Config) -> Result<Self, Error> {
+        Self::new_inner(peripheral, config, None)
+    }
+    /// Own the package-qualified ExRef pin in analog mode for the ADC lifetime.
+    /// Uses External regardless of config.reference; supply/frequency limits stay
+    /// in force. The caller supplies a settled reference within board ratings.
+    #[cfg(any(cw32f030, cw32a030))]
+    pub fn new_with_external_reference(
+        peripheral: Peri<'d, T>,
+        pin: Peri<'d, impl ExternalReferencePin<T>>,
+        mut config: Config,
+    ) -> Result<Self, Error> {
+        config.reference = Reference::External;
+        Self::new_inner(peripheral, config, Some(pin.into()))
+    }
+    fn new_inner(
+        peripheral: Peri<'d, T>,
+        config: Config,
+        pin: Option<Peri<'d, AnyPin>>,
+    ) -> Result<Self, Error> {
         check_fault::<T>()?;
+        check_reference_pin(config.reference, pin.is_some())?;
         let clocks = crate::rcc::try_clocks().ok_or(Error::ClockNotInitialized)?;
         let timing = config.timing(clocks.pclk_bounds(), 0, SampleTime::Cycles10)?;
+        let reference_pin = pin.map(|pin| {
+            let mut pin = Flex::new(pin);
+            pin.set_as_analog();
+            pin
+        });
         let clock_was_enabled = critical_section::with(|cs| {
             let rcc = crate::peripherals::ADC::RCC_INFO;
             if rcc.reset_asserted() {
@@ -443,6 +492,7 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
         })?;
         let mut adc = Self {
             _peripheral: peripheral,
+            reference_pin,
             config,
             pclk: clocks.pclk_bounds(),
             hclk: clocks.hclk_bounds(),
@@ -595,7 +645,7 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
                     before.bgren()
                         || temperature
                         || bandgap
-                        || self.config.reference != Reference::Vdda,
+                        || self.config.reference.needs_bandgap(),
                 );
             });
             temperature && {
@@ -660,6 +710,7 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
     /// Validation errors preserve the current ADC state.
     pub fn set_config(&mut self, config: &Config) -> Result<(), Error> {
         check_fault::<T>()?;
+        check_reference_pin(config.reference, self.reference_pin.is_some())?;
         let timing = config.timing(self.pclk, 0, SampleTime::Cycles10)?;
         self.shutdown();
         self.config = *config;
@@ -687,9 +738,35 @@ impl<'d, T: Instance> Adc<'d, T, Async> {
         _irqs: impl Binding<T::Interrupt, InterruptHandler<T>> + 'd,
         config: Config,
     ) -> Result<Self, Error> {
+        Self::new_async_inner(peripheral, _irqs, config, None)
+    }
+    /// Async ExRef owner; validates timing before pin/ADC mutation and retains
+    /// the reference pin across cancellation, reconfiguration and failure cleanup.
+    #[cfg(any(cw32f030, cw32a030))]
+    pub fn new_async_with_external_reference(
+        peripheral: Peri<'d, T>,
+        pin: Peri<'d, impl ExternalReferencePin<T>>,
+        irqs: impl Binding<T::Interrupt, InterruptHandler<T>> + 'd,
+        mut config: Config,
+    ) -> Result<Self, Error> {
+        config.reference = Reference::External;
+        Self::new_async_inner(peripheral, irqs, config, Some(pin.into()))
+    }
+    fn new_async_inner(
+        peripheral: Peri<'d, T>,
+        _irqs: impl Binding<T::Interrupt, InterruptHandler<T>> + 'd,
+        config: Config,
+        pin: Option<Peri<'d, AnyPin>>,
+    ) -> Result<Self, Error> {
+        check_reference_pin(config.reference, pin.is_some())?;
         check_fault::<T>()?;
         let clocks = crate::rcc::try_clocks().ok_or(Error::ClockNotInitialized)?;
         let timing = config.timing(clocks.pclk_bounds(), 0, SampleTime::Cycles10)?;
+        let reference_pin = pin.map(|pin| {
+            let mut pin = Flex::new(pin);
+            pin.set_as_analog();
+            pin
+        });
         // Keep gate acquisition, inherited-source rejection and initial masking
         // atomic with respect to a previously enabled/pending ADC vector.
         let mut adc = critical_section::with(|cs| {
@@ -700,6 +777,7 @@ impl<'d, T: Instance> Adc<'d, T, Async> {
             }
             let mut adc = Self {
                 _peripheral: peripheral,
+                reference_pin,
                 config,
                 pclk: clocks.pclk_bounds(),
                 hclk: clocks.hclk_bounds(),
@@ -854,7 +932,7 @@ impl<'d, T: Instance> Adc<'d, T, Async> {
                 v.set_tsen(temperature);
                 #[cfg(any(adc_v1, adc_cw32f020_v1, adc_cw32f003_v1))]
                 v.set_bgren(
-                    v.bgren() || temperature || bandgap || self.config.reference != Reference::Vdda,
+                    v.bgren() || temperature || bandgap || self.config.reference.needs_bandgap(),
                 );
             });
         });
@@ -879,7 +957,7 @@ impl<'d, T: Instance> Adc<'d, T, Async> {
             let controls = controls && cr.tsen() == temperature;
             #[cfg(any(adc_v1, adc_cw32f020_v1, adc_cw32f003_v1))]
             let controls = controls
-                && (!(temperature || bandgap || self.config.reference != Reference::Vdda)
+                && (!(temperature || bandgap || self.config.reference.needs_bandgap())
                     || cr.bgren());
             #[cfg(any(adc_v1, adc_cw32f020_v1, adc_cw32f002_v1, adc_cw32f003_v1))]
             let slots = {
@@ -1018,6 +1096,7 @@ impl<'d, T: Instance> Adc<'d, T, Async> {
     /// cannot be cleared by configuration changes or replacement owners.
     pub fn set_config(&mut self, config: &Config) -> Result<(), Error> {
         check_fault::<T>()?;
+        check_reference_pin(config.reference, self.reference_pin.is_some())?;
         let timing = config.timing(self.pclk, 0, SampleTime::Cycles10)?;
         self.async_cleanup()?;
         self.config = *config;
@@ -1169,7 +1248,7 @@ impl<T: Instance, M: Mode> Adc<'_, T, M> {
                 #[cfg(not(adc_cw32f002_v1))]
                 v.set_tsen(false);
                 #[cfg(any(adc_v1, adc_cw32f020_v1, adc_cw32f003_v1))]
-                v.set_bgren(v.bgren() || self.config.reference != Reference::Vdda);
+                v.set_bgren(v.bgren() || self.config.reference.needs_bandgap());
                 v.set_en(true);
             });
         });
@@ -1185,7 +1264,7 @@ impl<T: Instance, M: Mode> Adc<'_, T, M> {
             #[cfg(not(adc_cw32f002_v1))]
             let ready = ready && !cr.tsen();
             #[cfg(any(adc_v1, adc_cw32f020_v1, adc_cw32f003_v1))]
-            let ready = ready && (self.config.reference == Reference::Vdda || cr.bgren());
+            let ready = ready && (!self.config.reference.needs_bandgap() || cr.bgren());
             ready
         }) {
             let _ = self.async_cleanup();
@@ -1436,7 +1515,7 @@ impl<T: Instance, M: Mode> Adc<'_, T, M> {
                 v.set_clk(self.timing.prescaler as u8);
                 v.set_sam(self.timing.sample_time as u8);
                 #[cfg(any(adc_v1, adc_cw32f020_v1, adc_cw32f003_v1))]
-                v.set_bgren(inherited_bandgap || self.config.reference != Reference::Vdda);
+                v.set_bgren(inherited_bandgap || self.config.reference.needs_bandgap());
             });
         });
         self.wait_ready()?;
@@ -1701,3 +1780,19 @@ fn clock_release(was_enabled: bool, cs: critical_section::CriticalSection<'_>) {
         let _ = crate::peripherals::ADC::RCC_INFO.disable_with_cs(cs);
     }
 }
+
+fn check_reference_pin(reference: Reference, owned: bool) -> Result<(), Error> {
+    #[cfg(any(cw32f030, cw32a030))]
+    if reference == Reference::External && !owned {
+        return Err(Error::ReferencePinRequired);
+    }
+    let _ = (reference, owned);
+    Ok(())
+}
+
+#[cfg(any(cw32f030, cw32a030))]
+pub(crate) trait SealedExternalReferencePin<T: Instance> {}
+/// Package-qualified external reference pad. No unchecked user implementation.
+#[cfg(any(cw32f030, cw32a030))]
+#[allow(private_bounds)]
+pub trait ExternalReferencePin<T: Instance>: crate::gpio::Pin + SealedExternalReferencePin<T> {}

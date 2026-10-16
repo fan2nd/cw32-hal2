@@ -1523,6 +1523,14 @@ fn main() {
                             "external ADC mux is not a verified pin route"
                         );
                         assert!(pin.af.is_none(), "analog route cannot use a digital AF");
+                        // x030 UM CN2.5 §22.2 and each own datasheet identify
+                        // PB0 as ExRef. This loop already filters package bonding.
+                        if matches!(METADATA.line, "CW32F030" | "CW32A030") && pin.pin == "PB0" {
+                            assert_eq!(peripheral.name, "ADC");
+                            assert_eq!(channel, 8);
+                            out.push_str("impl crate::adc::SealedExternalReferencePin<crate::peripherals::ADC> for crate::peripherals::PB0 {}\n");
+                            out.push_str("impl crate::adc::ExternalReferencePin<crate::peripherals::ADC> for crate::peripherals::PB0 {}\n");
+                        }
                         out.push_str(&format!(
                             "crate::adc::impl_pin!({}, {}, {});\n",
                             peripheral.name, pin.pin, channel
