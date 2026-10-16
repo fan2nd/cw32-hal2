@@ -2,7 +2,9 @@ use super::*;
 mod assembler;
 mod frame;
 mod receiver;
-pub use assembler::{LinAssemblyError, LinFrameAssembler};
+pub use assembler::{
+    LinAssemblyError, LinDuplicateIdentifier, LinFrameAssembler, LinFrameDefinition, LinFrameDispatcher,
+};
 pub use frame::{LinChecksum, LinFrameError, LinIdentifier, LinResponse};
 pub use receiver::{LinBreakThreshold, LinReceiver, LinRxEvent};
 mod supported {

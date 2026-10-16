@@ -128,9 +128,9 @@ functions:
         anchor: pub struct LinResponse
     - id: lin_frame_assembly
       status: partial
-      scope: Owned single-ID frame assembly from ordered break/data events using an explicit network length and checksum model.
+      scope: Owned single-ID or table-dispatched frame assembly from ordered break/data events using explicit network lengths and checksum models.
       limitations:
-      - Requires explicit reset on UART error, known loss or timeout. No clock, multi-ID dispatch or diagnostic transport layer.
+      - Requires explicit reset on UART error, known loss or timeout. No clock, response transmission or diagnostic transport layer. Duplicate table IDs are rejected.
       - Validates sync, PID and complete response checksum; ignores unselected frames and trailing bytes until a new break.
       - Source-reviewed only; compilation and state-transition acceptance remain pending.
       evidence:

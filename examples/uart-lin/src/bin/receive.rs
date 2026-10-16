@@ -3,7 +3,10 @@
 #![no_main]
 use embassy_cw32::{
     self as hal,
-    usart::{self, LinBreakThreshold, LinChecksum, LinFrameAssembler, LinIdentifier, LinReceiver},
+    usart::{
+        self, LinBreakThreshold, LinChecksum, LinFrameDefinition, LinFrameDispatcher,
+        LinIdentifier, LinReceiver,
+    },
 };
 
 hal::bind_interrupts!(struct Irqs {
@@ -24,10 +27,15 @@ async fn main(_spawner: embassy_executor::Spawner) {
     config.baudrate = 19_200;
     let mut rx = LinReceiver::new(p.UART1, pin, Irqs, config, LinBreakThreshold::Bits11)
         .unwrap();
-    // Match the transmit example's explicit network definition.
-    let mut frames = LinFrameAssembler::new(
-        LinIdentifier::new(0x12).unwrap(), 2, LinChecksum::Enhanced,
-    ).unwrap();
+    // ID 0x12 matches the transmit example. This monitor also accepts ID 0x13
+    // only on a network that defines it with this eight-byte enhanced layout.
+    let definitions = [
+        LinFrameDefinition::new(LinIdentifier::new(0x12).unwrap(), 2, LinChecksum::Enhanced)
+            .unwrap(),
+        LinFrameDefinition::new(LinIdentifier::new(0x13).unwrap(), 8, LinChecksum::Enhanced)
+            .unwrap(),
+    ];
+    let mut frames = LinFrameDispatcher::new(&definitions).unwrap();
     loop {
         match rx.read_event().await {
             Ok(event) => {
