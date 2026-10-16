@@ -94,6 +94,8 @@ These values demonstrate API use, not a LIN response-space, inter-byte or networ
 schedule specification. A timeout future is cooperative: it cannot preempt a
 running poll or recover a failed clock/IRQ/executor. Deadline observation races
 must not be interpreted as wire-level timestamps. Source review covered the
+fixed Embassy version's operation-first timeout polling; an already-ready UART
+operation may win a simultaneous timeout. Source review also covered the
 existing receive-wait cancellation (request masking without draining RDR) and
 TX semantics (queued prefix can continue; flush waits for UART completion).
 No local build, dependency resolution, cancellation test or board run was done.

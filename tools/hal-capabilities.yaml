@@ -173,12 +173,13 @@ functions:
       - Caller supplies monotonic microsecond observations, executes frames and confirms full completion. No UART or internal timer access.
       - No overlap, drift from early completion, catch-up burst or automatic retry; abort/restart requires application-controlled bus recovery.
       - Compatible table requests share nominal baud, time base and jitter; latest request wins without interrupting an active slot. Restart discards pending changes.
-      - Physical Break timing, transaction integration and wake/clock qualification remain pending.
+      - A timed UART master/publisher example integrates full-frame TX; physical Break timing, slave-response collection and wake/clock qualification remain pending.
       - Source-reviewed only; builds and transition/overflow acceptance remain pending.
       evidence:
       - path: embassy-cw32/src/usart/lin/schedule.rs
         anchor: pub struct LinScheduleCursor
       - path: docs/uart-lin-schedule.md
+      - path: examples/uart-lin/src/bin/scheduled_publish.rs
     - id: lin_response_encoding
       status: partial
       scope: Native transmitter PID parity, classic/enhanced checksum and immutable owned response encoding.

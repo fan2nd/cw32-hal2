@@ -113,8 +113,8 @@ These are source-review cases, not executed tests.
 This cursor guards software ordering; it cannot prove physical Break timing.
 Delay between admission and the actual falling edge must fit the application's
 remaining timing budget, and finishing a UART header is not finishing a frame.
-Integrating the cursor with actual UART transactions and
-qualified wake/clock behavior remains pending. A dropped cursor does not stop
+Production UART transaction timing and qualified wake/clock behavior remain
+pending; the example below demonstrates software integration only. A dropped cursor does not stop
 external hardware; retain or explicitly abort it when cancelling a transfer.
 
 ## Table changes at slot boundaries
@@ -147,3 +147,38 @@ the same network contract; matching timing does not validate publisher roles,
 diagnostic policy or consistency of frame layouts across application modes.
 No UART settings change, no active transfer is interrupted, and no physical
 bus recovery is inferred. Table-switch cases were source-reviewed only.
+
+## UART and timer integration example
+
+`examples/uart-lin/src/bin/scheduled_publish.rs` combines the cursor, UART1
+`LinTransmitter` and GTIM1-backed Embassy time under the existing `timed` feature.
+It selects the same package-qualified TX pins as the other LIN examples and
+retains default HSI/PCLK with declared 3.0–3.6 V board supply conditions.
+The application must be the test network's master and exclusive publisher of
+IDs 0x12 and 0x13. No RX pin is acquired and no echo is checked.
+
+The table allocates 10 ms to a two-byte response and 15 ms to an eight-byte
+response, with a 5 ms time base and declared 1 ms software admission budget.
+The cycle is 25 ms. Each absolute start is awaited through `Timer::at`, then
+admitted by the cursor. One bounded operation emits Break, a hardware idle
+frame, Sync/PID, response bytes and final flush. Only successful UART completion
+is reported to the cursor; a late finish still stops the schedule. There are
+no catch-up frames. Failure stops scheduling, attempts a separately bounded
+10 ms TX flush, then retains the owner while parked without replaying a prefix.
+
+The example's `within_slot` checks the clock and timer before polling its UART
+operation. This deliberately differs from the project's pinned Embassy
+[`TimeoutFuture::poll`](https://github.com/embassy-rs/embassy/blob/f16efeffe37581092ec184718e6fdb1620393214/embassy-time/src/timer.rs),
+which polls its operation before its timer. Source was inspected directly;
+neither implementation can preempt work already running inside a poll or recall
+a queued byte. Completion is checked again against the cursor's absolute end.
+The current HAL time driver uses one-microsecond ticks, matching the example's
+Instant conversions; alternate tick configurations need separate review.
+
+This demonstrates publishing complete frames, not receiving a separately owned
+slave's response. The full-frame `send_idle` and software gaps must fit the
+qualified physical header budget. An admitted software start is not a measured
+Break edge, and UART flush is not proof of external transceiver/bus retirement.
+Before deployment, qualify those intervals, oscillator tolerance, line behavior
+and clock/IRQ/executor progress. The longer slot allocations do not waive header
+or response limits. No firmware build, tests or board run were performed.
