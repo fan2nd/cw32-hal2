@@ -94,6 +94,26 @@ Important evidence limits:
 3. L052 INIT +0x10 exists in the header/SVD/PAC, but manual V1.5's CRC chapter
    neither lists nor describes it. The SDK does not use it. HAL never touches it
    or exposes arbitrary seeds; the register's existence is not disputed.
+   The [official manual catalog](https://www.whxy.com/yonghushouce.html) still lists
+   L052 V1.5, and the [firmware catalog](https://www.whxy.com/gujianku.html) lists
+   V1.4, matching the pinned inputs. Header `cw32l052.h` lines1014–1021 establishes
+   only an IOM 16-bit field at +0x10. It does not establish an initialization
+   protocol. Manual §10.5 p162 and §10.6 p163 omit this register.
+
+   A manufacturer register specification or erratum must establish all of:
+   - Whether INIT changes the live accumulator immediately or is latched by CR,
+     and the required CR/INIT write order, including repeated reset.
+   - Valid modes, reset value, access width, upper-bit policy and readable state.
+   - Whether the seed is specified before/after reflection and result XOR, and
+     how it interacts with MODE's fixed initial value.
+   - Whether writes are accepted during data processing and what completion or
+     ordering condition makes the next DR write valid.
+
+   An SDK field declaration, a readback value or one board vector cannot resolve
+   these semantics. No arbitrary-seed API or software substitute is added. After
+   the specification is available, source implementation can proceed without
+   board access; independent algorithm vectors and repeated-reset acceptance
+   remain separate checks subject to the local execution restriction.
 4. CRC has no completion/fault interrupt API. F020 FAULT belongs to SYSCTRL.
 
 ## Fixed algorithms and validation vectors
