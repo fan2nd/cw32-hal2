@@ -104,10 +104,10 @@ impl I2c<'_, Async> {
     }
 }
 
-#[cfg(i2c_cw32l012_v1)]
 impl I2c<'_, Blocking> {
     /// Explicit replay with seven-bit or ten-bit addressing.
     /// L012 NACK source is unknown; selecting it permits replay after payload NACK.
+    /// Classic low-address-byte NACK is classified as AddressNack.
     /// The side-effect and retirement contract of `RetryPolicy` applies.
     pub fn blocking_transaction_with_address_and_retries(
         &mut self,
@@ -127,10 +127,9 @@ impl I2c<'_, Blocking> {
     }
 }
 
-#[cfg(i2c_cw32l012_v1)]
 impl I2c<'_, Async> {
     /// Async replay with explicit address mode; see `RetryPolicy`.
-    /// NACK source is unknown. RecoveryFailed is terminal, and cancellation
+    /// L012 NACK source is unknown. RecoveryFailed/Faulted is terminal, and cancellation
     /// retires only the current attempt without starting another one.
     pub async fn transaction_with_address_and_retries(
         &mut self,

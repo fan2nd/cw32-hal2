@@ -10,14 +10,14 @@
 //! `docs/remaining-spi-classic-i2c.md`. Typed status encodings, including the
 //! subsequently obtained L011 manual, are audited in `docs/i2c-typed-registers.md`.
 //!
-//! Seven-bit addressing, repeated START, adjacent operation merging, clock
+//! Seven/ten-bit addressing, repeated START, adjacent operation merging, clock
 //! stretching and arbitration-loss reporting are supported. Blocking waits and
 //! async idle/STOP/cleanup use finite sample budgets, not wall-clock deadlines.
 //! Async SI waits have no internal deadline; an independent timeout can cancel
 //! them, but cannot preempt synchronous work or destructors. Cancellation can
 //! truncate a byte and leave a target holding a line or retaining earlier effects.
 //! Transactions are never automatically retried or rolled back. No DMA, slave,
-//! ten-bit addressing, bus-recovery pulses or electrical-validation claim is made.
+//! bus-recovery pulses or electrical-validation claim is made.
 use core::future::poll_fn;
 use core::marker::PhantomData;
 use core::sync::atomic::{AtomicBool, Ordering};
@@ -38,6 +38,49 @@ use crate::{Peri, PeripheralType, pac};
 use pac::i2c::vals::Status;
 
 const MAX_FREQUENCY: u32 = crate::I2C_MAXIMUM_FREQUENCY_HZ;
+
+/// Explicit target address width, including ten-bit values below 128.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+pub enum Address {
+    SevenBit(u8),
+    TenBit(u16),
+}
+impl Address {
+    fn valid(self) -> bool {
+        match self {
+            Self::SevenBit(value) => value <= 0x7f,
+            Self::TenBit(value) => value <= 0x3ff,
+        }
+    }
+    // Tuple: generate START, byte, expected ACK state. A low address byte is
+    // transmitted as controller data, but its NACK is an address failure.
+    fn phases(self, read: bool, selected: bool) -> [Option<(bool, u8, Status)>; 3] {
+        let ack = if read { Status::ReadAddressAck } else { Status::WriteAddressAck };
+        match self {
+            Self::SevenBit(value) => [Some((true, (value << 1) | u8::from(read), ack)), None, None],
+            Self::TenBit(value) => {
+                let high = 0xf0 | (((value >> 8) as u8 & 3) << 1);
+                if read && selected {
+                    [Some((true, high | 1, Status::ReadAddressAck)), None, None]
+                } else {
+                    [
+                        Some((true, high, Status::WriteAddressAck)),
+                        Some((false, value as u8, Status::WriteDataAck)),
+                        if read { Some((true, high | 1, Status::ReadAddressAck)) } else { None },
+                    ]
+                }
+            }
+        }
+    }
+}
+fn address_error(error: Error) -> Error {
+    match error {
+        Error::DataNack => Error::AddressNack,
+        other => other,
+    }
+}
+
 
 /// Checked I2C configuration failure. Invalid construction does not touch MMIO.
 /// Async reconfiguration first retires a forgotten transfer, even for an invalid
@@ -94,7 +137,7 @@ pub enum Error {
     Timeout,
     /// Lines did not become high before beginning a transaction.
     BusBusy,
-    /// Address is not an unshifted seven-bit value (0..=127).
+    /// Address exceeds its explicit seven-bit or ten-bit range.
     InvalidAddress,
     /// Empty reads are rejected before START; an old forgotten transfer may
     /// first require retirement on an async owner.
@@ -112,7 +155,7 @@ impl core::fmt::Display for Error {
             Self::DataNack => "I2C data not acknowledged",
             Self::Timeout => "I2C transfer timed out",
             Self::BusBusy => "I2C bus remained busy",
-            Self::InvalidAddress => "I2C address exceeds seven bits",
+            Self::InvalidAddress => "I2C address exceeds its selected width",
             Self::ZeroLengthTransfer => "I2C empty read is unsupported",
             Self::Faulted => "I2C local shutdown or initialization was not confirmed",
         })
@@ -228,6 +271,15 @@ impl<'d> I2c<'d, Blocking> {
     pub fn blocking_transaction(
         &mut self,
         address: u8,
+        operations: &mut [Operation<'_>],
+    ) -> Result<(), Error> {
+        self.blocking_transaction_with_address(Address::SevenBit(address), operations)
+    }
+    /// Explicit width; low ten-bit values remain ten-bit targets. The complete
+    /// address is validated before START. Low-address NACK is AddressNack.
+    pub fn blocking_transaction_with_address(
+        &mut self,
+        address: Address,
         operations: &mut [Operation<'_>],
     ) -> Result<(), Error> {
         self.engine.transaction(address, operations, || {
@@ -589,11 +641,20 @@ impl<'d> I2c<'d, Async> {
         address: u8,
         operations: &mut [Operation<'_>],
     ) -> Result<(), Error> {
+        self.transaction_with_address(Address::SevenBit(address), operations).await
+    }
+    /// Explicit seven/ten-bit transfer; retires forgotten work before preflight.
+    /// Cancellation and STOP/fault handling match the seven-bit transaction.
+    pub async fn transaction_with_address(
+        &mut self,
+        address: Address,
+        operations: &mut [Operation<'_>],
+    ) -> Result<(), Error> {
         self.check_fault()?;
         if matches!(self.lifecycle, Lifecycle::Active { .. }) {
             self.retire()?;
         }
-        if address > 0x7f {
+        if !address.valid() {
             return Err(Error::InvalidAddress);
         }
         if operations
@@ -726,33 +787,38 @@ struct AsyncGuard<'a, 'd> {
     armed: bool,
 }
 impl AsyncGuard<'_, '_> {
-    async fn run(&mut self, address: u8, operations: &mut [Operation<'_>]) -> Result<(), Error> {
+    async fn run(&mut self, address: Address, operations: &mut [Operation<'_>]) -> Result<(), Error> {
         let mut previous = None;
         let count = operations.len();
         for index in 0..count {
             let read = matches!(operations[index], Operation::Read(_));
             if previous != Some(read) {
-                let mut control = self.driver.engine.base;
-                control.set_sta(true);
-                self.driver.command(control, None);
-                self.driver
-                    .expect(if previous.is_none() {
-                        Status::Start
+                for (phase_index, phase) in address
+                    .phases(read, previous == Some(false))
+                    .into_iter()
+                    .enumerate()
+                {
+                    let Some((start, byte, expected)) = phase else {
+                        continue;
+                    };
+                    if start {
+                        let mut control = self.driver.engine.base;
+                        control.set_sta(true);
+                        self.driver.command(control, None);
+                        self.driver.expect(if previous.is_none() && phase_index == 0 {
+                            Status::Start
+                        } else {
+                            Status::RepeatedStart
+                        }).await?;
+                    }
+                    self.driver.command(self.driver.engine.base, Some(byte));
+                    let result = self.driver.expect(expected).await;
+                    if start {
+                        result?;
                     } else {
-                        Status::RepeatedStart
-                    })
-                    .await?;
-                self.driver.command(
-                    self.driver.engine.base,
-                    Some((address << 1) | u8::from(read)),
-                );
-                self.driver
-                    .expect(if read {
-                        Status::ReadAddressAck
-                    } else {
-                        Status::WriteAddressAck
-                    })
-                    .await?;
+                        result.map_err(address_error)?;
+                    }
+                }
             }
             let read_continues =
                 index + 1 < count && matches!(operations[index + 1], Operation::Read(_));
@@ -913,12 +979,12 @@ struct Engine {
 impl Engine {
     fn transaction(
         &mut self,
-        address: u8,
+        address: Address,
         operations: &mut [Operation<'_>],
         mut lines_high: impl FnMut() -> bool,
     ) -> Result<(), Error> {
         // Preflight every operation: invalid input must not partially write a device.
-        if address > 0x7f {
+        if !address.valid() {
             return Err(Error::InvalidAddress);
         }
         if operations
@@ -967,30 +1033,40 @@ impl Engine {
         result
     }
 
-    fn run(&mut self, address: u8, operations: &mut [Operation<'_>]) -> Result<(), Error> {
+    fn run(&mut self, address: Address, operations: &mut [Operation<'_>]) -> Result<(), Error> {
         let mut previous = None;
         let count = operations.len();
         for index in 0..count {
             let read = matches!(operations[index], Operation::Read(_));
             if previous != Some(read) {
-                let mut control = self.base;
-                control.set_sta(true);
-                self.regs.cr().write_value(control); // SI=0 advances START/reSTART.
-                self.expect(if previous.is_none() {
-                    Status::Start
-                } else {
-                    Status::RepeatedStart
-                })?;
-                self.master = true;
-                self.regs
-                    .dr()
-                    .write(|v| v.set_dr((address << 1) | u8::from(read)));
-                self.regs.cr().write_value(self.base); // Clear STA and SI after DR write.
-                self.expect(if read {
-                    Status::ReadAddressAck
-                } else {
-                    Status::WriteAddressAck
-                })?;
+                for (phase_index, phase) in address
+                    .phases(read, previous == Some(false))
+                    .into_iter()
+                    .enumerate()
+                {
+                    let Some((start, byte, expected)) = phase else {
+                        continue;
+                    };
+                    if start {
+                        let mut control = self.base;
+                        control.set_sta(true);
+                        self.regs.cr().write_value(control);
+                        self.expect(if previous.is_none() && phase_index == 0 {
+                            Status::Start
+                        } else {
+                            Status::RepeatedStart
+                        })?;
+                        self.master = true;
+                    }
+                    self.regs.dr().write(|v| v.set_dr(byte));
+                    self.regs.cr().write_value(self.base);
+                    let result = self.expect(expected);
+                    if start {
+                        result?;
+                    } else {
+                        result.map_err(address_error)?;
+                    }
+                }
             }
             let read_continues =
                 index + 1 < count && matches!(operations[index + 1], Operation::Read(_));
@@ -1389,3 +1465,14 @@ macro_rules! impl_pin {
     };
 }
 pub(crate) use impl_pin;
+
+impl embedded_hal::i2c::I2c<embedded_hal::i2c::TenBitAddress> for I2c<'_, Blocking> {
+    fn transaction(&mut self, address: u16, operations: &mut [Operation<'_>]) -> Result<(), Error> {
+        self.blocking_transaction_with_address(Address::TenBit(address), operations)
+    }
+}
+impl embedded_hal_async::i2c::I2c<embedded_hal::i2c::TenBitAddress> for I2c<'_, Async> {
+    async fn transaction(&mut self, address: u16, operations: &mut [Operation<'_>]) -> Result<(), Error> {
+        self.transaction_with_address(Address::TenBit(address), operations).await
+    }
+}

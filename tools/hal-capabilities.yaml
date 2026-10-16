@@ -473,7 +473,7 @@ functions:
       - Bounded timing/electrical contracts; slave APIs remain absent. Ten-bit master is separately qualified only on L012.
     - id: explicit_transaction_retry
       status: partial
-      scope: Classic seven-bit and L012 seven/ten-bit blocking/async opt-in whole-transaction replay.
+      scope: Classic and L012 seven/ten-bit blocking/async opt-in whole-transaction replay.
       limitations:
       - At most 256 transaction calls; ordinary APIs remain single-attempt. Target protocol must permit replay of partial side effects.
       - No backoff, bus repair, wall-clock deadline or new cleanup sequence; terminal/bus errors are not retried. Classic permits address NACK only; L012 explicitly permits unclassified NACK, including payload rejection.
@@ -506,7 +506,7 @@ functions:
       - Initial idle, STOP and cleanup use finite synchronous sample budgets; SI awaits have no built-in deadline.
       - Cancellation can truncate bytes and preserve target effects; no physical bus-repair or multi-master noninterference guarantee.
       - Reuse requires confirmed local shutdown and checked exclusive reset; failed readback faults the instance until chip reset.
-      - L012 has a distinct command/FIFO lifecycle described by its family override. No slave, retry or peripheral DMA support is implied; ten-bit master is separately qualified only on L012.
+      - L012 has a distinct command/FIFO lifecycle described by its family override. No slave, retry or peripheral DMA support is implied; ten-bit master is declared separately for each backend.
       - Classic Stage87 main accepted thirteen standalone ARM libraries, seventeen final z-profile ELFs and six finite source/data commands; all 910 generated files unchanged. Main acceptance precedes the separate final-source six-library/six-ELF clean receipt; no hardware claim.
       overrides:
       - families:
@@ -526,6 +526,17 @@ functions:
       - path: docs/classic-i2c-async.md
       - path: embassy-cw32/src/i2c/lpi2c/mod.rs
       - path: docs/l012-i2c-async.md
+    - id: classic_ten_bit_master
+      status: partial
+      scope: Classic SI/STAT explicit seven/ten-bit blocking/async transactions, ten-bit traits and opt-in retries.
+      limitations:
+      - Software sends the high/low address bytes through DR; no new address-mode register or slave matching is exposed.
+      - Low-address byte NACK is AddressNack; payload NACK remains DataNack. Retry can repeat earlier target effects.
+      - Source-reviewed only; per-family compilation, all-address encoding, cancellation and board acceptance remain pending.
+      evidence:
+      - path: docs/classic-i2c-ten-bit.md
+      - path: embassy-cw32/src/i2c/classic.rs
+        anchor: pub enum Address
     - id: ten_bit_master
       status: partial
       scope: Explicit Address::TenBit and TenBitAddress traits on existing L012 I2C1/I2C2 blocking and asynchronous master owners.
@@ -543,7 +554,7 @@ functions:
       status: unimplemented
       scope: No maintained slave API on any backend.
       limitations:
-      - Slave ownership, buffering and hardware behavior require separate qualification. Classic ten-bit master remains unimplemented.
+      - Slave ownership, buffering and hardware behavior require separate qualification. Ten-bit master does not establish ten-bit slave support.
     - id: safe_peripheral_dma
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.

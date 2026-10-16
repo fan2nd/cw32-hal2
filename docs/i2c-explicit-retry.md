@@ -30,3 +30,7 @@ engine. Its FIFO and clock-source restrictions still apply. The wrappers add
 no MMIO protocol beyond the existing engines. Local compilation and tests
 remain prohibited; attempt boundaries, partial effects and cleanup acceptance
 are pending. The example only repeats address probes on a consenting target.
+
+Classic explicit-address retry uses the same policy. Ten-bit low-address-byte
+NACK is AddressNack; payload NACK remains DataNack. These new address phases
+are source-reviewed only; prior seven-bit acceptance does not cover them.

@@ -1,3 +1,5 @@
+Current extension: [explicit classic ten-bit addressing](classic-i2c-ten-bit.md) adds software-generated address phases. Earlier seven-bit acceptance below does not validate this extension.
+
 # Owned classic I2C asynchronous master
 
 The frozen implementation has independent [runtime acceptance](classic-i2c-async-runtime-review.json)
