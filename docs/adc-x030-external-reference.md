@@ -3,8 +3,9 @@
 `Adc::new_with_external_reference` and `new_async_with_external_reference` consume
 an ExRef pin and select `Reference::External` (CR0.REF=2). The sealed pin bound is
 generated only for bonded PB0 on F030/A030, from the selected package's existing
-analog route. The generator checks ADC/mux8 correspondence; other classic families
-are not admitted merely because their register encoding matches.
+analog route. The generator uses the selected family and bonded safe GPIO inventory.
+[Other classic families](adc-classic-external-reference.md) have separate
+own-source qualification, including F002/F003's different PB4 route.
 
 The pin is configured as analog after software configuration/timing validation,
 before ADC initialization. The owner retains it through reads, scans, cancellation,

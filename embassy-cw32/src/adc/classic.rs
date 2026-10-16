@@ -17,10 +17,9 @@
 //! registers are neither read nor written.
 //!
 //! The reference is VDDA or an internal 1.5/2.5 V source, except F002, which
-//! supports VDDA only and has no temperature or bandgap measurement channel.
+//! supports supply/ExRef only and has no temperature or bandgap measurement channel.
 //! F002 supply/channel names are VDD/VDD3 in its own manual. External reference
-//! operation on F030/A030 uses constructors retaining its package-qualified PB0
-//! pin; other classic families remain excluded pending route qualification.
+//! operation retains a package-qualified reference pin on every classic family.
 //! Input voltages must satisfy the board's electrical limits and must not exceed
 //! the selected reference. L/R/W operating tables also require VDDA=VDD.
 //! Shared BGREN, where documented, is retained across configuration, failure
@@ -139,9 +138,9 @@ pub enum Reference {
     /// Internal 2.5 V reference; VDDA must be at least 2.8 V.
     #[cfg(not(adc_cw32f002_v1))]
     Internal2V5 = 1,
-    /// Owned PB0 ExRef on F030/A030. Requires an external-reference constructor.
+    /// Owned ExRef: PB4 on F002/F003, PB0 on other classic families.
+    /// Requires an external-reference constructor.
     /// The board must keep the reference stable and every input within 0..Vref.
-    #[cfg(any(cw32f030, cw32a030))]
     External = 2,
     /// Analog supply voltage.
     Vdda = 3,
@@ -221,7 +220,6 @@ pub enum Error {
     /// The selected internal reference needs a higher minimum VDDA.
     ReferenceSupplyTooLow,
     /// External reference was requested without retaining a qualified pin.
-    #[cfg(any(cw32f030, cw32a030))]
     ReferencePinRequired,
     /// Requested ADCCLK must be nonzero.
     FrequencyZero,
@@ -258,7 +256,6 @@ impl core::fmt::Display for Error {
             }
             Self::InvalidSupplyVoltage => "ADC VDDA is outside the selected family operating range",
             Self::ReferenceSupplyTooLow => "ADC internal reference requires a higher VDDA",
-            #[cfg(any(cw32f030, cw32a030))]
             Self::ReferencePinRequired => "ADC external reference requires an owned ExRef pin",
             Self::FrequencyZero => "ADC clock limit must be nonzero",
             Self::FrequencyTooLow => "ADC clock limit is below PCLK/128",
@@ -345,7 +342,6 @@ impl Config {
             #[cfg(not(adc_cw32f002_v1))]
             Reference::Internal2V5 => crate::ADC_INTERNAL_2V5_BANDS,
             Reference::Vdda => crate::ADC_SUPPLY_BANDS,
-            #[cfg(any(cw32f030, cw32a030))]
             Reference::External => crate::ADC_SUPPLY_BANDS,
         };
         let maximum = bands
@@ -444,7 +440,6 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
     /// Own the package-qualified ExRef pin in analog mode for the ADC lifetime.
     /// Uses External regardless of config.reference; supply/frequency limits stay
     /// in force. The caller supplies a settled reference within board ratings.
-    #[cfg(any(cw32f030, cw32a030))]
     pub fn new_with_external_reference(
         peripheral: Peri<'d, T>,
         pin: Peri<'d, impl ExternalReferencePin<T>>,
@@ -742,7 +737,6 @@ impl<'d, T: Instance> Adc<'d, T, Async> {
     }
     /// Async ExRef owner; validates timing before pin/ADC mutation and retains
     /// the reference pin across cancellation, reconfiguration and failure cleanup.
-    #[cfg(any(cw32f030, cw32a030))]
     pub fn new_async_with_external_reference(
         peripheral: Peri<'d, T>,
         pin: Peri<'d, impl ExternalReferencePin<T>>,
@@ -1782,17 +1776,13 @@ fn clock_release(was_enabled: bool, cs: critical_section::CriticalSection<'_>) {
 }
 
 fn check_reference_pin(reference: Reference, owned: bool) -> Result<(), Error> {
-    #[cfg(any(cw32f030, cw32a030))]
     if reference == Reference::External && !owned {
         return Err(Error::ReferencePinRequired);
     }
-    let _ = (reference, owned);
     Ok(())
 }
 
-#[cfg(any(cw32f030, cw32a030))]
 pub(crate) trait SealedExternalReferencePin<T: Instance> {}
 /// Package-qualified external reference pad. No unchecked user implementation.
-#[cfg(any(cw32f030, cw32a030))]
 #[allow(private_bounds)]
 pub trait ExternalReferencePin<T: Instance>: crate::gpio::Pin + SealedExternalReferencePin<T> {}

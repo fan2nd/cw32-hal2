@@ -693,14 +693,16 @@ functions:
         for all classic lines, L010/L011 and both L012 ADCs; the L010/L011 BTIM1-triggered single owner remains separate.
     - id: external_reference
       status: partial
-      scope: F030/A030 blocking/async ADC external reference with owned package-qualified PB0.
-      implemented_families: [CW32F030, CW32A030]
+      scope: All classic ADC families support blocking/async external reference with an owned package-qualified pad.
+      implemented_families: [CW32F002, CW32F003, CW32F020, CW32F030, CW32A030, CW32L031, CW32L052, CW32L083, CW32R031, CW32W031]
       limitations:
+      - ExRef uses PB4 on F002/F003 and PB0 on other classic families; F002 internal reference and BGR controls remain absent.
       - Dedicated constructors select ExRef and retain the analog pin; ordinary construction/reconfiguration rejects ExRef without ownership.
       - VDDA supply bands apply; reference voltage stability, electrical limits and analog accuracy remain board obligations.
-      - Other classic families await own-route qualification; L010/L011/L012 retain their existing supply-only reference policy.
+      - Own-family voltage limits remain in force; L010/L011/L012 retain their existing supply-only reference policy.
       - Source-reviewed only; generation, compilation, lifetime/failure checks and hardware acceptance remain pending.
       evidence:
+      - path: docs/adc-classic-external-reference.md
       - path: docs/adc-x030-external-reference.md
       - path: embassy-cw32/src/adc/classic.rs
         anchor: pub fn new_with_external_reference

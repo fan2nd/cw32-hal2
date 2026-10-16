@@ -1189,6 +1189,22 @@ fn main() {
     generate_native_live_lsi_rtc(&mut out);
     for pin in metadata.pins {
         if safe_pin(pin.name) {
+            // Own manuals identify PB4 on F002/F003 and PB0 on other classic lines.
+            // ExRef is not a conversion channel on F002/F003; qualify from the
+            // bonded GPIO inventory instead of inventing an ADC input mux.
+            let reference_pin = match metadata.line {
+                "CW32F002" | "CW32F003" => Some("PB4"),
+                "CW32F020" | "CW32F030" | "CW32A030" | "CW32L031" | "CW32L052"
+                | "CW32L083" | "CW32R031" | "CW32W031" => Some("PB0"),
+                _ => None,
+            };
+            if reference_pin == Some(pin.name) {
+                assert!(metadata.peripherals.iter().any(|p| p.name == "ADC"));
+                out.push_str(&format!(
+                    "impl crate::adc::SealedExternalReferencePin<crate::peripherals::ADC> for crate::peripherals::{} {{}}\nimpl crate::adc::ExternalReferencePin<crate::peripherals::ADC> for crate::peripherals::{} {{}}\n",
+                    pin.name, pin.name
+                ));
+            }
             let port = pin.name.as_bytes()[1] - b'A';
             let number: u8 = pin.name[2..].parse().expect("invalid pin metadata");
             out.push_str(&format!(
@@ -1523,14 +1539,6 @@ fn main() {
                             "external ADC mux is not a verified pin route"
                         );
                         assert!(pin.af.is_none(), "analog route cannot use a digital AF");
-                        // x030 UM CN2.5 §22.2 and each own datasheet identify
-                        // PB0 as ExRef. This loop already filters package bonding.
-                        if matches!(METADATA.line, "CW32F030" | "CW32A030") && pin.pin == "PB0" {
-                            assert_eq!(peripheral.name, "ADC");
-                            assert_eq!(channel, 8);
-                            out.push_str("impl crate::adc::SealedExternalReferencePin<crate::peripherals::ADC> for crate::peripherals::PB0 {}\n");
-                            out.push_str("impl crate::adc::ExternalReferencePin<crate::peripherals::ADC> for crate::peripherals::PB0 {}\n");
-                        }
                         out.push_str(&format!(
                             "crate::adc::impl_pin!({}, {}, {});\n",
                             peripheral.name, pin.pin, channel
