@@ -93,10 +93,11 @@ functions:
         anchor: pub struct HalfDuplexUart
     - id: lin_transmit_primitives
       status: partial
-      scope: L010/L011 UART1-only blocking/async owned PIO break, idle-frame and 8N1 byte transmission.
-      implemented_families: [CW32L010, CW32L011]
+      scope: L010/L011 UART1 and L012 UART1/2 blocking/async owned PIO break, idle-frame and 8N1 byte transmission.
+      implemented_families: [CW32L010, CW32L011, CW32L012]
       limitations:
       - Break count is 13..511; commands wait for TXE and completion uses TXBUSY. Cancellation may leave a command running.
+      - Sealed instance bound excludes L012 UART3 pending its clock-gate qualification.
       - No receiver, auto-baud, PID/checksum, schedule, transceiver control, DMA or full LIN conformance claim.
       - Example emits only primitive waveforms. Source-reviewed, uncompiled and untested.
       evidence:

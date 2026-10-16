@@ -1,5 +1,18 @@
 use super::*;
-use crate::peripherals::UART1;
+mod supported {
+    pub trait Sealed {}
+    impl Sealed for crate::peripherals::UART1 {}
+    #[cfg(cw32l012)]
+    impl Sealed for crate::peripherals::UART2 {}
+}
+
+/// Source-qualified LIN transmitter instance: L010/L011 UART1, L012 UART1/2.
+/// L012 UART3 remains excluded pending its separate clock-gate qualification.
+#[allow(private_bounds)]
+pub trait LinInstance: Instance + supported::Sealed {}
+impl LinInstance for crate::peripherals::UART1 {}
+#[cfg(cw32l012)]
+impl LinInstance for crate::peripherals::UART2 {}
 
 /// LIN dominant break length in bit periods, bounded by the nine-bit TDR field.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -24,7 +37,7 @@ impl Default for LinBreakBits {
     }
 }
 
-/// L010/L011 UART1 LIN transmit primitives with an exclusively owned TX pin.
+/// Native LIN transmit primitives with an exclusively owned TX pin.
 ///
 /// Requires an external LIN transceiver. This is not a LIN protocol stack:
 /// scheduling, baud/oscillator limits, delimiter timing, protected identifiers,
@@ -38,23 +51,23 @@ pub struct LinTransmitter<'d, M: Mode> {
     tx: UartTx<'d, M>,
 }
 impl<'d> LinTransmitter<'d, Blocking> {
-    pub fn new_blocking(
-        peri: Peri<'d, UART1>,
-        tx: Peri<'d, impl TxPin<UART1>>,
+    pub fn new_blocking<T: LinInstance>(
+        peri: Peri<'d, T>,
+        tx: Peri<'d, impl TxPin<T>>,
         config: Config,
     ) -> Result<Self, ConfigError> {
         Self::new_inner(peri, tx, config)
     }
 }
 impl<'d> LinTransmitter<'d, Async> {
-    pub fn new(
-        peri: Peri<'d, UART1>,
-        tx: Peri<'d, impl TxPin<UART1>>,
-        _irq: impl Binding<<UART1 as Instance>::Interrupt, <UART1 as Instance>::InterruptHandler>,
+    pub fn new<T: LinInstance>(
+        peri: Peri<'d, T>,
+        tx: Peri<'d, impl TxPin<T>>,
+        _irq: impl Binding<T::Interrupt, T::InterruptHandler>,
         config: Config,
     ) -> Result<Self, ConfigError> {
         let owner = Self::new_inner(peri, tx, config)?;
-        unsafe { <UART1 as Instance>::Interrupt::enable() };
+        unsafe { T::Interrupt::enable() };
         Ok(owner)
     }
     /// Queue bytes in 8N1 format. Call flush for wire completion.
@@ -79,8 +92,8 @@ impl<'d> LinTransmitter<'d, Async> {
     }
 }
 impl<'d, M: Mode> LinTransmitter<'d, M> {
-    fn new_inner<TX: TxPin<UART1>>(
-        _peri: Peri<'d, UART1>,
+    fn new_inner<T: LinInstance, TX: TxPin<T>>(
+        _peri: Peri<'d, T>,
         pin: Peri<'d, TX>,
         config: Config,
     ) -> Result<Self, ConfigError> {
@@ -92,7 +105,7 @@ impl<'d, M: Mode> LinTransmitter<'d, M> {
         }
         // Existing validation precedes MMIO. Reset configuration supplies LSB,
         // SIGNAL=SYNC=0; no TDR write or RX enable occurs during construction.
-        let tx = UartTx::new_inner::<UART1, TX>(pin, None, config)?;
+        let tx = UartTx::new_inner::<T, TX>(pin, None, config)?;
         critical_section::with(|_| {
             tx.info.regs.cr1().modify(|w| w.set_txen(false));
             tx.info.regs.cr3().modify(|w| w.set_lin(true));
