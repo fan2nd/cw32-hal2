@@ -55,6 +55,27 @@ not peer receipt, collision freedom, LIN timing compliance or diagnostic session
 validity. Table entries must be exclusively assigned to this publishing node;
 validated PID/checksum bytes do not authorize the node's network role.
 
+`respond_once_with_echo` is an opt-in variant for transceivers that return each
+transmitted byte on RX. It shares header/table admission with `respond_once`,
+queues one response byte, then waits for its matching receive event before
+queuing the next byte. The checksum is included. A differing byte reports
+`EchoMismatch` with zero-based offset, expected byte and received byte; a Break
+reports `EchoBreak`. UART errors remain UART errors. Each failure returns before
+another response byte is queued. The already queued byte or prefix can still
+finish transmitting. A Break consumed by echo checking is not silently reused
+as another request; a subsequent attempt requires a fresh parsed header.
+
+No RX events are drained as presumed echo, and an empty/missing echo does not
+become success. A caller deadline is needed for finite waiting. Matching data
+cannot prove its sender, detect two publishers sending identical bits, or
+establish that no electrical collision occurred. This is byte comparison,
+not full collision arbitration or recovery. The per-byte await adds scheduling
+gaps; the existing baud setting does not bound response space or inter-byte
+latency. The `respond_with_echo` example requires an echoing transceiver and
+parks on errors so it cannot automatically retry a potentially transmitted
+prefix. It intentionally has no built-in timer and can wait forever if echo
+is missing. Deployment requires an application deadline and schedule policy.
+
 Hardware evidence is the same own-manual LIN format, receive and send chapters
 listed in [TX](uart-native-lin-tx.md) and [RX](uart-native-lin-rx.md); no new register
 encoding is introduced. Ownership/interrupt behavior was inspected against

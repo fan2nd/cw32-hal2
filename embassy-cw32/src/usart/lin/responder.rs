@@ -62,12 +62,16 @@ impl<'a> LinResponder<'a> {
     }
 }
 
-/// Automatic response admission, header decoding or UART failure.
+/// Automatic response admission, header decoding, UART or echo failure.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LinRespondError {
     DuplicateIdentifier(LinDuplicateIdentifier),
     Header(LinAssemblyError),
     Uart(Error),
+    /// Zero-based response-byte offset, including the checksum position.
+    EchoMismatch { index: usize, expected: u8, received: u8 },
+    /// A new Break interrupted response echo collection at this byte offset.
+    EchoBreak { index: usize },
 }
 impl core::fmt::Display for LinRespondError {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
@@ -75,6 +79,10 @@ impl core::fmt::Display for LinRespondError {
             Self::DuplicateIdentifier(error) => core::fmt::Display::fmt(error, f),
             Self::Header(error) => core::fmt::Display::fmt(error, f),
             Self::Uart(error) => core::fmt::Display::fmt(error, f),
+            Self::EchoMismatch { index, expected, received } => {
+                write!(f, "LIN echo mismatch at byte {index}: expected {expected:#04x}, received {received:#04x}")
+            }
+            Self::EchoBreak { index } => write!(f, "LIN break while awaiting echo byte {index}"),
         }
     }
 }

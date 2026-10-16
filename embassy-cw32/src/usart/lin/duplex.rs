@@ -40,15 +40,56 @@ impl<'d> LinUart<'d, Async> {
         &mut self,
         responses: &[LinResponse],
     ) -> Result<LinIdentifier, LinRespondError> {
+        let response = self.select_response(responses).await?;
+        self.tx.write_response(&response).await.map_err(LinRespondError::Uart)?;
+        self.tx.flush().await.map_err(LinRespondError::Uart)?;
+        Ok(response.identifier())
+    }
+
+    /// Respond with per-byte echo comparison, including the checksum byte.
+    ///
+    /// Requires a transceiver that returns each transmitted byte on RX in order
+    /// and a network that assigns this response exclusively to this node. Each
+    /// byte is queued only after the preceding echo matches. A mismatch, Break
+    /// or UART error ends the attempt without queuing further bytes or retrying.
+    /// The already queued byte/prefix cannot be recalled. A Break consumed during
+    /// echo checking is reported as an error, not reused as a new request header.
+    ///
+    /// Missing echo waits indefinitely unless a caller deadline cancels this
+    /// future. Per-byte task scheduling adds gaps and is not a LIN timing bound.
+    /// Matching bytes do not prove collision freedom or identify their sender.
+    /// Stale/unrelated RX and overrun are not silently drained. Cancellation and
+    /// header admission otherwise follow `respond_once`.
+    pub async fn respond_once_with_echo(
+        &mut self,
+        responses: &[LinResponse],
+    ) -> Result<LinIdentifier, LinRespondError> {
+        let response = self.select_response(responses).await?;
+        for (index, &expected) in response.as_bytes().iter().enumerate() {
+            self.tx.write(&[expected]).await.map_err(LinRespondError::Uart)?;
+            match self.rx.read_event().await.map_err(LinRespondError::Uart)? {
+                LinRxEvent::Data(received) if received == expected => {}
+                LinRxEvent::Data(received) => {
+                    return Err(LinRespondError::EchoMismatch { index, expected, received });
+                }
+                LinRxEvent::Break => return Err(LinRespondError::EchoBreak { index }),
+            }
+        }
+        self.tx.flush().await.map_err(LinRespondError::Uart)?;
+        Ok(response.identifier())
+    }
+
+    async fn select_response(
+        &mut self,
+        responses: &[LinResponse],
+    ) -> Result<LinResponse, LinRespondError> {
         let mut responder = LinResponder::new(responses)
             .map_err(LinRespondError::DuplicateIdentifier)?;
         self.tx.flush().await.map_err(LinRespondError::Uart)?;
         loop {
             let event = self.rx.read_event().await.map_err(LinRespondError::Uart)?;
             if let Some(response) = responder.push(event).map_err(LinRespondError::Header)? {
-                self.tx.write_response(&response).await.map_err(LinRespondError::Uart)?;
-                self.tx.flush().await.map_err(LinRespondError::Uart)?;
-                return Ok(response.identifier());
+                return Ok(response);
             }
         }
     }

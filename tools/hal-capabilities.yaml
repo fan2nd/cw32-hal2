@@ -132,7 +132,7 @@ functions:
       scope: Immutable multi-ID response selection and async LinUart respond_once on existing native LIN instances.
       limitations:
       - Requires exclusive network publishing rights for every table entry. Duplicate IDs fail before UART access; unknown IDs are skipped.
-      - Header/UART errors retire the attempt; cancellation can leave a transmitted prefix. No retry, echo comparison, collision detection or response deadline guarantee.
+      - Header/UART errors retire the attempt; cancellation can leave a transmitted prefix. No retry, collision recovery or response deadline guarantee.
       - Empty tables select nothing; caller deadlines require a working timer. Success means UART idle, not bus acknowledgment.
       - Source-reviewed only; compilation, state-transition/cancellation checks and board acceptance remain pending.
       evidence:
@@ -140,6 +140,19 @@ functions:
         anchor: pub struct LinResponder
       - path: embassy-cw32/src/usart/lin/duplex.rs
         anchor: pub async fn respond_once
+      - path: docs/uart-native-lin-duplex.md
+    - id: lin_response_echo
+      status: partial
+      scope: Opt-in async response transmission with ordered per-byte echo comparison, including checksum.
+      limitations:
+      - Requires an echoing transceiver and exclusive publishing rights; matching bytes do not identify their sender or prove collision freedom.
+      - Mismatch, Break or UART error stops queuing later bytes; an already queued prefix may still transmit. No retry or schedule recovery.
+      - Missing echo needs a caller deadline. Per-byte task scheduling has no response-space or inter-byte timing guarantee.
+      - Source-reviewed only; compilation, cancellation and physical echo acceptance remain pending.
+      evidence:
+      - path: embassy-cw32/src/usart/lin/duplex.rs
+        anchor: pub async fn respond_once_with_echo
+      - path: examples/uart-lin/src/bin/respond_with_echo.rs
       - path: docs/uart-native-lin-duplex.md
     - id: lin_response_encoding
       status: partial
