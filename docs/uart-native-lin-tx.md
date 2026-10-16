@@ -29,8 +29,8 @@ supplies the network's baud/tolerance, timing schedule, delimiter policy,
 frame definition, transceiver control and bus ownership. Optional
 [encoding helpers](uart-lin-encoding.md) prepare PID and payload/checksum bytes.
 An explicit full idle frame is not a programmable one-bit delimiter. UART flush
-does not prove external transceiver bus release. LIN reception, response handling
-and automatic baud detection are still absent.
+does not prove external transceiver bus release. A separate [receive-only owner](uart-native-lin-rx.md) exposes break/data events.
+Combined response handling and automatic baud detection remain absent.
 
 Own-manual evidence, hashes pinned in `sources/evidence-sources.json`:
 

@@ -106,7 +106,7 @@ impl Default for Config {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum ConfigError {
-    /// LIN transmit primitives require eight data bits, no parity and one stop bit.
+    /// LIN owners require eight data bits, no parity and one stop bit.
     #[cfg(any(cw32l010, cw32l011, cw32l012))]
     InvalidLinFrame,
     /// Native RS485 DE assertion/deassertion delay must fit the five-bit field.

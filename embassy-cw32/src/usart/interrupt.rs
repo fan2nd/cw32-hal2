@@ -87,6 +87,8 @@ pub(super) enum WaitEvent {
     Receive,
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
     ReceiveUntilIdle,
+    #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+    ReceiveLin,
     #[cfg(uart_dma_rx)]
     ReceiveErrors,
 }
@@ -111,12 +113,18 @@ impl WaitEvent {
                     ier.set_ne(enabled);
                     ier.set_ore(enabled);
                     ier.set_rxidle(false);
+                    ier.set_rxbrk(false);
                 }
             }
             #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
             Self::ReceiveUntilIdle => {
                 Self::Receive.set_enabled(ier, enabled);
                 ier.set_rxidle(enabled);
+            }
+            #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+            Self::ReceiveLin => {
+                Self::Receive.set_enabled(ier, enabled);
+                ier.set_rxbrk(enabled);
             }
         }
     }
@@ -128,6 +136,8 @@ impl WaitEvent {
             Self::Receive => receive_event(status),
             #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
             Self::ReceiveUntilIdle => receive_event(status) || status.rxidle(),
+            #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
+            Self::ReceiveLin => receive_event(status) || status.rxbrk(),
             #[cfg(uart_dma_rx)]
             Self::ReceiveErrors => status.pe() || status.fe(),
         }
@@ -242,7 +252,9 @@ fn on_interrupt(
         rx_data_pending || (status.ne() && enabled.ne()) || (status.ore() && enabled.ore());
     let rx_pending = rx_data_pending;
     #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
-    let rx_pending = rx_pending || (status.rxidle() && enabled.rxidle());
+    let rx_pending = rx_pending
+        || (status.rxidle() && enabled.rxidle())
+        || (status.rxbrk() && enabled.rxbrk());
     let tx_pending = (status.txe() && enabled.txe()) || (status.tc() && enabled.tc());
     // Reuse the sampled IER. Buffered RX stays armed, while ordinary/DMA RX
     // keeps its one-shot masking and leaves RDR/status intact for its waiter.

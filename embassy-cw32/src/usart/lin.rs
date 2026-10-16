@@ -1,6 +1,8 @@
 use super::*;
 mod frame;
+mod receiver;
 pub use frame::{LinChecksum, LinFrameError, LinIdentifier, LinResponse};
+pub use receiver::{LinBreakThreshold, LinReceiver, LinRxEvent};
 mod supported {
     pub trait Sealed {}
     impl Sealed for crate::peripherals::UART1 {}
@@ -8,7 +10,7 @@ mod supported {
     impl Sealed for crate::peripherals::UART2 {}
 }
 
-/// Source-qualified LIN transmitter instance: L010/L011 UART1, L012 UART1/2.
+/// Source-qualified LIN instance: L010/L011 UART1, L012 UART1/2.
 /// L012 UART3 remains excluded pending its separate clock-gate qualification.
 #[allow(private_bounds)]
 pub trait LinInstance: Instance + supported::Sealed {}
@@ -109,12 +111,7 @@ impl<'d, M: Mode> LinTransmitter<'d, M> {
         pin: Peri<'d, TX>,
         config: Config,
     ) -> Result<Self, ConfigError> {
-        if config.data_bits != DataBits::DataBits8
-            || config.parity != Parity::ParityNone
-            || config.stop_bits != StopBits::STOP1
-        {
-            return Err(ConfigError::InvalidLinFrame);
-        }
+        validate_frame(config)?;
         // Existing validation precedes MMIO. Reset configuration supplies LSB,
         // SIGNAL=SYNC=0; no TDR write or RX enable occurs during construction.
         let tx = UartTx::new_inner::<T, TX>(pin, None, config)?;
@@ -167,5 +164,16 @@ impl<'d, M: Mode> LinTransmitter<'d, M> {
             w.set_break(send_break);
             w.set_idle(idle);
         });
+    }
+}
+
+fn validate_frame(config: Config) -> Result<(), ConfigError> {
+    if config.data_bits != DataBits::DataBits8
+        || config.parity != Parity::ParityNone
+        || config.stop_bits != StopBits::STOP1
+    {
+        Err(ConfigError::InvalidLinFrame)
+    } else {
+        Ok(())
     }
 }

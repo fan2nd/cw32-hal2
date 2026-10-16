@@ -104,6 +104,18 @@ functions:
       - path: docs/uart-native-lin-tx.md
       - path: embassy-cw32/src/usart/lin.rs
         anchor: pub struct LinTransmitter
+    - id: lin_receive_events
+      status: partial
+      scope: L010/L011 UART1 and L012 UART1/2 fixed-baud blocking/async receive-only break and byte observations.
+      implemented_families: [CW32L010, CW32L011, CW32L012]
+      limitations:
+      - Requires 8N1; 10/11-bit detection is not proof of a valid 13-bit sender break. Snapshot and data reads are not atomic.
+      - No combined TX/RX owner, frame assembly, auto-baud, DMA, lossless ordering or scheduling guarantee.
+      - Source-reviewed only; compilation, cancellation and board acceptance remain pending.
+      evidence:
+      - path: docs/uart-native-lin-rx.md
+      - path: embassy-cw32/src/usart/lin/receiver.rs
+        anchor: pub struct LinReceiver
     - id: lin_response_encoding
       status: partial
       scope: Native transmitter PID parity, classic/enhanced checksum and immutable owned response encoding.
