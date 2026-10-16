@@ -1,4 +1,6 @@
 use super::*;
+mod frame;
+pub use frame::{LinChecksum, LinFrameError, LinIdentifier, LinResponse};
 mod supported {
     pub trait Sealed {}
     impl Sealed for crate::peripherals::UART1 {}
@@ -40,8 +42,8 @@ impl Default for LinBreakBits {
 /// Native LIN transmit primitives with an exclusively owned TX pin.
 ///
 /// Requires an external LIN transceiver. This is not a LIN protocol stack:
-/// scheduling, baud/oscillator limits, delimiter timing, protected identifiers,
-/// checksums, responses and bus ownership belong to the application. Byte writes
+/// scheduling, baud/oscillator limits, delimiter timing, response selection and
+/// bus ownership belong to the application. Encoding helpers validate bytes only. Byte writes
 /// queue data; flush waits for UART TXBUSY to clear, not external bus release.
 /// No receiver, DMA, flow control, split, or conversion into an ordinary UART is
 /// exposed. Cancellation can leave a transmitted prefix or pending command;
@@ -73,6 +75,16 @@ impl<'d> LinTransmitter<'d, Async> {
     /// Queue bytes in 8N1 format. Call flush for wire completion.
     pub async fn write(&mut self, bytes: &[u8]) -> Result<(), Error> {
         self.tx.write(bytes).await
+    }
+    /// Queue sync and protected identifier after a caller-established break/delimiter.
+    /// Does not generate a full header or guarantee inter-byte timing.
+    pub async fn write_sync_identifier(&mut self, id: LinIdentifier) -> Result<(), Error> {
+        self.tx.write(&[0x55, id.protected()]).await
+    }
+    /// Queue the owned payload and checksum after the matching header.
+    /// Cancellation may transmit a prefix. Use flush for UART completion.
+    pub async fn write_response(&mut self, response: &LinResponse) -> Result<(), Error> {
+        self.tx.write(response.as_bytes()).await
     }
     pub async fn flush(&mut self) -> Result<(), Error> {
         self.tx.flush().await
@@ -118,6 +130,14 @@ impl<'d, M: Mode> LinTransmitter<'d, M> {
     }
     pub fn blocking_write(&mut self, bytes: &[u8]) -> Result<(), Error> {
         self.tx.blocking_write(bytes)
+    }
+    /// Queue sync/PID after a caller-established break/delimiter.
+    pub fn blocking_write_sync_identifier(&mut self, id: LinIdentifier) -> Result<(), Error> {
+        self.tx.blocking_write(&[0x55, id.protected()])
+    }
+    /// Queue payload/checksum; the caller supplies the matching header and schedule.
+    pub fn blocking_write_response(&mut self, response: &LinResponse) -> Result<(), Error> {
+        self.tx.blocking_write(response.as_bytes())
     }
     pub fn blocking_flush(&mut self) -> Result<(), Error> {
         self.tx.blocking_flush()

@@ -26,7 +26,8 @@ TX through the existing UART owner. External transceiver bias must be qualified.
 
 These are waveform primitives, not a complete LIN implementation. The caller
 supplies the network's baud/tolerance, timing schedule, delimiter policy,
-protected identifier, payload/checksum, transceiver control and bus ownership.
+frame definition, transceiver control and bus ownership. Optional
+[encoding helpers](uart-lin-encoding.md) prepare PID and payload/checksum bytes.
 An explicit full idle frame is not a programmable one-bit delimiter. UART flush
 does not prove external transceiver bus release. LIN reception, response handling
 and automatic baud detection are still absent.
@@ -50,6 +51,7 @@ canonical serial AF routes. L012C8T6/C8U6 use UART1 PA2 and UART2 PA7;
 UART2 runs the blocking path on a second independently connected transceiver.
 The L012 own manual uses UARTx=1,2,3 without the L010/L011 UART1-only note;
 this extension still admits only UART1/2, whose existing gate path is reused.
-No RX or DMA path is enabled by the transmitter. It emits one break, one full idle frame and a 0x55
-byte, then parks. It is not a complete valid LIN message. Local compilation,
+No RX or DMA path is enabled by the transmitter. It emits one break, one full
+idle frame, sync/PID and an encoded response, then parks. The test network must assign that publisher and payload layout; this
+does not establish the frame timing limits. Local compilation,
 tests and board waveform acceptance have not been performed.

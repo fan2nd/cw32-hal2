@@ -95,7 +95,9 @@ pub use half_duplex::HalfDuplexUart;
 #[cfg(any(uart_cw32l010_v1, uart_cw32l012_v1))]
 pub use rs485::{DriverEnable, DriverEnablePolarity, Rs485Uart};
 #[cfg(any(cw32l010, cw32l011, cw32l012))]
-pub use lin::{LinBreakBits, LinInstance, LinTransmitter};
+pub use lin::{
+    LinBreakBits, LinChecksum, LinFrameError, LinIdentifier, LinInstance, LinResponse, LinTransmitter,
+};
 pub use interrupt::InterruptHandler;
 #[cfg(uart_cw32l083_v1)]
 pub use interrupt::SharedInterruptHandler;

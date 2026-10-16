@@ -98,12 +98,22 @@ functions:
       limitations:
       - Break count is 13..511; commands wait for TXE and completion uses TXBUSY. Cancellation may leave a command running.
       - Sealed instance bound excludes L012 UART3 pending its clock-gate qualification.
-      - No receiver, auto-baud, PID/checksum, schedule, transceiver control, DMA or full LIN conformance claim.
-      - Example emits only primitive waveforms. Source-reviewed, uncompiled and untested.
+      - No receiver, auto-baud, schedule, transceiver control, DMA or full LIN conformance claim. PID/checksum helpers are declared separately.
+      - Example emits one encoded response on a configured test network. Source-reviewed, uncompiled and untested.
       evidence:
       - path: docs/uart-native-lin-tx.md
       - path: embassy-cw32/src/usart/lin.rs
         anchor: pub struct LinTransmitter
+    - id: lin_response_encoding
+      status: partial
+      scope: Native transmitter PID parity, classic/enhanced checksum and immutable owned response encoding.
+      limitations:
+      - IDs 0..61 only; diagnostic IDs require eight payload bytes and classic checksum. Received-slice verification is software only.
+      - No UART reception, header tracking, network definition, scheduling or timing guarantee. New helpers/example are uncompiled and untested.
+      evidence:
+      - path: docs/uart-lin-encoding.md
+      - path: embassy-cw32/src/usart/lin/frame.rs
+        anchor: pub struct LinResponse
     - id: automatic_rs485_de
       status: partial
       scope: L010/L011/L012 blocking and IRQ PIO Rs485Uart with owned TX, RX and RTS-as-DE.
