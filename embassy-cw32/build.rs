@@ -1301,6 +1301,16 @@ fn main() {
                 facts.input_uses_vdda
             ));
         }
+        if matches!(metadata.line, "CW32L010" | "CW32L011") {
+            for (name, number) in [("VC1", 14), ("VC2", 15)] {
+                let vector = metadata
+                    .interrupts
+                    .iter()
+                    .find(|irq| irq.name == name)
+                    .expect("native comparator requires its dedicated vector");
+                assert_eq!(vector.number, number, "unexpected comparator vector number");
+            }
+        }
         for peripheral in &comparators {
             out.push_str(&format!(
                 "crate::comparator::impl_instance!({});\n",

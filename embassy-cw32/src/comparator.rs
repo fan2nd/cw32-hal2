@@ -22,10 +22,10 @@
 //! Hysteresis values are typical, and electrical response limits are characterized
 //! rather than production-tested. Consult `docs/comparator.md` and its evidence.
 //!
-//! This polling subset disables filtering, window mode, interrupts and timer
-//! blanking/routing. On L010/L011/L012, `new_with_vref` accepts a generated,
+//! PCLK filtering is optional on L010/L011/L012. Window mode and timer
+//! blanking/routing remain disabled. On L010/L011/L012, `new_with_vref` accepts a generated,
 //! bank-qualified immutable reference borrow. Fixed BGR references, DAC input,
-//! output-pin routing remain outside this subset. L012 additionally supports
+//! output-pin routing remain outside this subset. L010/L011/L012 additionally support
 //! fresh edge waits, without claiming analog settling or low-power wakeup.
 
 use crate::gpio::{Flex, Level, Pin};
@@ -79,7 +79,32 @@ pub enum OutputPolarity {
     Inverted,
 }
 
-/// Comparator configuration for external inputs and unfiltered polling.
+/// Native comparator digital filter, sampled from PCLK.
+/// A result changes after this many consecutive equal samples. This is not
+/// analog readiness, a guaranteed noise rejection interval, or a wakeup clock.
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[cfg_attr(feature = "defmt", derive(defmt::Format))]
+#[repr(u8)]
+pub enum DigitalFilter {
+    Div1Samples2 = 1,
+    Div1Samples4 = 2,
+    Div1Samples8 = 3,
+    Div2Samples6 = 4,
+    Div2Samples8 = 5,
+    Div4Samples6 = 6,
+    Div4Samples8 = 7,
+    Div8Samples6 = 8,
+    Div8Samples8 = 9,
+    Div16Samples5 = 10,
+    Div16Samples6 = 11,
+    Div16Samples8 = 12,
+    Div32Samples5 = 13,
+    Div32Samples6 = 14,
+    Div32Samples8 = 15,
+}
+
+/// Comparator configuration for owned inputs and polling.
 #[derive(Clone, Copy, Debug)]
 #[non_exhaustive]
 pub struct Config {
@@ -94,6 +119,11 @@ pub struct Config {
     pub hysteresis: Hysteresis,
     /// Comparison output polarity.
     pub output_polarity: OutputPolarity,
+    /// Optional PCLK filter, configured while disabled. None bypasses filtering.
+    /// PCLK must remain running; filter history and analog settling on startup
+    /// are not qualified by this setting. No runtime reconfiguration is exposed.
+    #[cfg(any(cw32l010, cw32l011, cw32l012))]
+    pub filter: Option<DigitalFilter>,
 }
 impl Default for Config {
     fn default() -> Self {
@@ -102,6 +132,8 @@ impl Default for Config {
             response_speed: ResponseSpeed::High,
             hysteresis: Hysteresis::None,
             output_polarity: OutputPolarity::NotInverted,
+            #[cfg(any(cw32l010, cw32l011, cw32l012))]
+            filter: None,
         }
     }
 }
@@ -124,6 +156,12 @@ pub const fn input_uses_vdda() -> bool {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "defmt", derive(defmt::Format))]
 pub enum Error {
+    /// A requested PCLK filter requires initialized RCC clocks.
+    #[cfg(any(cw32l010, cw32l011, cw32l012))]
+    ClockNotInitialized,
+    /// The filter selection did not read back while the comparator was disabled.
+    #[cfg(any(cw32l010, cw32l011, cw32l012))]
+    FilterWriteFailure,
     /// Declared supply is outside the own-family operating range.
     InvalidSupplyVoltage,
     /// Clock gate did not acknowledge enabling.
@@ -188,7 +226,7 @@ impl<'d, T: Instance> Comparator<'d, T> {
         let mut negative = Flex::new(negative);
         positive.set_as_analog();
         negative.set_as_analog();
-        configure::<T>(P::INP_MUX, N::INN_MUX, &config);
+        configure::<T>(P::INP_MUX, N::INN_MUX, &config)?;
         Ok(Self {
             _peri: peri,
             _positive: positive,
@@ -219,7 +257,7 @@ impl<'d, T: Instance> Comparator<'d, T> {
         quiesce::<T>();
         let mut positive = Flex::new(positive);
         positive.set_as_analog();
-        configure::<T>(P::INP_MUX, R::MUX, &config);
+        configure::<T>(P::INP_MUX, R::MUX, &config)?;
         Ok(Self {
             _peri: peri,
             _positive: positive,
@@ -228,7 +266,7 @@ impl<'d, T: Instance> Comparator<'d, T> {
         })
     }
 
-    /// Read the unfiltered, post-polarity output and hardware startup status.
+    /// Read the post-polarity output, optionally filtered, and hardware startup status.
     ///
     /// This operation never waits. It is a single SR read and has no side effects.
     /// Readiness does not indicate that a recently changed input has settled.
@@ -251,7 +289,7 @@ impl<'d, T: Instance> Comparator<'d, T> {
 impl<T: Instance> Drop for Comparator<'_, T> {
     fn drop(&mut self) {
         // Never reset or gate the shared block, nor disable any shared bandgap.
-        #[cfg(cw32l012)]
+        #[cfg(any(cw32l010, cw32l011, cw32l012))]
         drop(critical_section::with(edge_wait::retire::<T>));
         critical_section::with(|_| {
             T::regs().cr0().modify(|w| w.set_en(false));
@@ -260,7 +298,7 @@ impl<T: Instance> Drop for Comparator<'_, T> {
 }
 
 fn quiesce<T: Instance>() {
-    #[cfg(cw32l012)]
+    #[cfg(any(cw32l010, cw32l011, cw32l012))]
     drop(critical_section::with(edge_wait::retire::<T>));
     critical_section::with(|_| {
         T::regs().cr0().write(|_| {});
@@ -268,6 +306,10 @@ fn quiesce<T: Instance>() {
 }
 
 fn enable_clock<T: Instance>(config: &Config) -> Result<(), Error> {
+    #[cfg(any(cw32l010, cw32l011, cw32l012))]
+    if config.filter.is_some() && crate::rcc::try_clocks().is_none() {
+        return Err(Error::ClockNotInitialized);
+    }
     let (min, max) = supply_voltage_range_mv();
     if !(min..=max).contains(&config.supply_mv) {
         return Err(Error::InvalidSupplyVoltage);
@@ -285,11 +327,27 @@ fn enable_clock<T: Instance>(config: &Config) -> Result<(), Error> {
     Ok(())
 }
 
-fn configure<T: Instance>(positive_mux: u8, negative_mux: u8, config: &Config) {
+fn configure<T: Instance>(positive_mux: u8, negative_mux: u8, config: &Config) -> Result<(), Error> {
     let r = T::regs();
     // PCLK selects the running peripheral bus, avoiding an implicit LSI
     // request on low-family IP even when filtering is bypassed.
-    r.cr1().write(|w| w.set_fltclk(vals::FilterClock::Pclk));
+    r.cr1().write(|w| {
+        w.set_fltclk(vals::FilterClock::Pclk);
+        #[cfg(any(cw32l010, cw32l011, cw32l012))]
+        w.set_flttime(config.filter.map_or(0, |filter| filter as u8));
+    });
+    #[cfg(any(cw32l010, cw32l011, cw32l012))]
+    if config.filter.is_some() {
+        let control = r.cr1().read();
+        if control.fltclk() != vals::FilterClock::Pclk
+            || control.flttime() != config.filter.map_or(0, |filter| filter as u8)
+        {
+            // CR0 remains disabled from quiesce; release pins via constructor
+            // locals and restore bypass without changing any shared resource.
+            r.cr1().write(|w| w.set_fltclk(vals::FilterClock::Pclk));
+            return Err(Error::FilterWriteFailure);
+        }
+    }
     #[cfg(vc_cr2)]
     r.cr2().write(|_| {});
     r.cr0().write(|w| {
@@ -320,11 +378,12 @@ fn configure<T: Instance>(positive_mux: u8, negative_mux: u8, config: &Config) {
         });
         w.set_en(true);
     });
+    Ok(())
 }
 
 pub(crate) trait SealedInstance {
     fn regs() -> pac::vc::Vc;
-    #[cfg(cw32l012)]
+    #[cfg(any(cw32l010, cw32l011, cw32l012))]
     fn edge_state() -> &'static edge_wait::State;
 }
 /// Comparator instance generated from the selected chip's verified metadata.
@@ -349,7 +408,7 @@ macro_rules! impl_instance {
             fn regs() -> $crate::pac::vc::Vc {
                 $crate::pac::$instance
             }
-            #[cfg(cw32l012)]
+            #[cfg(any(cw32l010, cw32l011, cw32l012))]
             fn edge_state() -> &'static $crate::comparator::edge_wait::State {
                 static STATE: $crate::comparator::edge_wait::State =
                     $crate::comparator::edge_wait::State::new();
@@ -386,17 +445,17 @@ macro_rules! impl_pin {
 }
 pub(crate) use impl_pin;
 
-/// L012 post-polarity comparator output edge, not an analog-ready indication.
-#[cfg(cw32l012)]
+/// Native post-polarity comparator output edge, not an analog-ready indication.
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Edge {
     Rising,
     Falling,
     Either,
 }
-#[cfg(cw32l012)]
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
 pub use edge_wait::{EdgeInstance, InterruptHandler};
-#[cfg(cw32l012)]
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
 impl<T: EdgeInstance> Comparator<'_, T> {
     /// Start a fresh edge window on first poll and discard any previous event.
     ///
@@ -413,7 +472,7 @@ impl<T: EdgeInstance> Comparator<'_, T> {
         edge_wait::wait::<T>(edge).await;
     }
 }
-#[cfg(cw32l012)]
+#[cfg(any(cw32l010, cw32l011, cw32l012))]
 pub(crate) mod edge_wait {
     use super::*;
     use crate::interrupt::typelevel::{Handler, Interrupt};
@@ -436,7 +495,7 @@ pub(crate) mod edge_wait {
             })))
         }
     }
-    /// L012 comparator with its source-qualified shared interrupt vector.
+    /// Native comparator with its source-qualified interrupt vector.
     pub trait EdgeInstance: Instance {
         type Interrupt: Interrupt;
     }
@@ -447,11 +506,20 @@ pub(crate) mod edge_wait {
             }
         };
     }
+    #[cfg(cw32l012)]
     instance!(VC1, VC13);
+    #[cfg(cw32l012)]
     instance!(VC3, VC13);
+    #[cfg(cw32l012)]
     instance!(VC2, VC24);
+    #[cfg(cw32l012)]
     instance!(VC4, VC24);
-    /// Per-channel handler. Pair VC1/VC3 and VC2/VC4 handlers when both are used.
+    #[cfg(any(cw32l010, cw32l011))]
+    instance!(VC1, VC1);
+    #[cfg(any(cw32l010, cw32l011))]
+    instance!(VC2, VC2);
+    /// Per-channel handler. On L012 pair VC1/VC3 and VC2/VC4 when both are used.
+    /// L010/L011 use separate VC1 and VC2 vectors.
     /// Never disables or unpends a shared NVIC vector.
     pub struct InterruptHandler<T: EdgeInstance>(PhantomData<T>);
     impl<T: EdgeInstance> Handler<T::Interrupt> for InterruptHandler<T> {

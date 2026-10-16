@@ -1301,7 +1301,7 @@ functions:
       scope: Owned external-input polling with polarity, speed/hysteresis and READY where present.
       limitations:
       - Shared analog resources retained; internal-divider input is separately declared for L010/L011/L012.
-        No fixed BGR/DAC input, window, filter, blanking, output-route or trigger integration. L012-only async edge waits are declared separately.
+        No fixed BGR/DAC input, window, blanking, output-route or trigger integration. Native PCLK filtering is declared separately. Native async edge waits are declared separately.
     - id: internal_divider_input
       status: partial
       scope: Owned external-positive/internal-divider-negative polling with a bank-qualified immutable Vref borrow.
@@ -1320,7 +1320,7 @@ functions:
       - Generated Reference traits admit only the bank's consumer pair; the comparator and bank must declare
         the same analog supply. Both consumers may borrow the unchanged reference.
       - Comparator Drop disables its own comparator and retires local IRQ interest where supported; the reference and shared gate remain enabled. No reference
-        reconfiguration, disable, fixed BGR/DAC input, output route or trigger integration. L012-only async edge waits are declared separately.
+        reconfiguration, disable, fixed BGR/DAC input, output route or trigger integration. Native async edge waits are declared separately.
       - Readiness remains Unknown; divider settling, threshold precision and electrical behavior are unqualified.
         Board input, supply and common-mode limits still apply.
       evidence:
@@ -1329,22 +1329,36 @@ functions:
       - path: embassy-cw32/src/vref.rs
         anchor: pub trait Reference
       - path: cw32-data/reference-dividers.yaml
+    - id: pclk_filter
+      status: partial
+      scope: L010/L011/L012 fifteen explicit PCLK digital-filter settings in both owned constructors.
+      limitations:
+      - Configured while disabled, read back before enable. Default remains bypassed; no runtime changes or LSI source.
+      - Startup/readiness and initial filter history remain unqualified. Native edge waits observe filtered transitions.
+      - New API/example are source-reviewed but uncompiled and untested.
+      evidence:
+      - path: docs/native-comparator-filter.md
+      - path: embassy-cw32/src/comparator.rs
+        anchor: pub enum DigitalFilter
     - id: advanced_routes
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.
       limitations:
-      - Fixed BGR/DAC input, other internal-reference modes, window/filter/blanking, output and trigger routes
+      - Fixed BGR/DAC input, other internal-reference modes, window/blanking, non-native/LSI filters, output and trigger routes
         need per-family/per-instance qualification. The bounded L010/L011/L012 divider input is declared separately.
     - id: edge_async
       status: partial
-      scope: L012-only fresh-window rising, falling or either-edge waits on existing source-qualified owner configurations.
+      scope: L010/L011/L012 fresh-window rising, falling or either-edge waits on existing source-qualified owner configurations.
       implemented_families:
+      - CW32L010
+      - CW32L011
       - CW32L012
       limitations:
-      - One coalesced sticky observation, not a current level, edge count, analog readiness or settling proof. No new filtering, blanking, references, routing or protection policy.
+      - One coalesced sticky observation, not a current level, edge count, analog readiness or settling proof. Native PCLK filtering is separately declared; no new blanking, references, routing or protection policy.
       - Cancellation clears only the owned event, selectors and IE; shared vector, clock, reset and sibling state are preserved. No stopped-source timeout or low-power wake guarantee.
-      - Current software acceptance is recorded in docs/l012-extensions-validation.md; publication is established separately by its containing commit; other families retain polling-only behavior.
+      - L010/L011 extension is source-reviewed but uncompiled and untested; non-native families retain polling-only behavior.
       evidence:
+      - path: docs/native-comparator-edges.md
       - path: docs/l012-analog-edge-waits.md
       - path: embassy-cw32/src/comparator.rs
         anchor: pub async fn wait_for_edge
