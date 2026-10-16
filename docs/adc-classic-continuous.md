@@ -66,6 +66,8 @@ only successful output and then attempts a single internal-source read. Its
 timer selection follows the existing async classic examples.
 
 Native L010/L011/L012 do not share this OVW protocol and remain excluded.
+Their [continuous acquisition audit](adc-native-continuous-audit.md) records
+the acknowledgment race and the evidence needed before implementation.
 Continuous sequence coherence and triggered operation remain separate pending
 work. This extension has source review only: PAC
 regeneration, builds, tests and hardware acceptance were not run. In particular,
