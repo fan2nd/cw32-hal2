@@ -209,12 +209,15 @@ pub enum Error {
     ClockEnableTimeout,
     /// A sequence must contain one through MAX_SEQUENCE_LEN slots.
     InvalidSequenceLength,
-    /// The result slice must contain exactly one element per slot.
+    /// The result slice must match the scan length, or be nonempty for continuous collection.
     InvalidResultLength,
     /// Classic ADCs have one common acquisition setting for the entire scan.
     InconsistentSampleTime,
     /// Buffered or internal-source multi-slot scans are not source-qualified.
     UnsupportedScanChannel,
+    /// Continuous acquisition requires an unbuffered external input.
+    #[cfg(adc_v1)]
+    UnsupportedContinuousChannel,
     /// Declared VDDA is outside the selected family operating range.
     InvalidSupplyVoltage,
     /// The selected internal reference needs a higher minimum VDDA.
@@ -253,6 +256,10 @@ impl core::fmt::Display for Error {
             Self::InconsistentSampleTime => "ADC scan slots require the same sample time",
             Self::UnsupportedScanChannel => {
                 "ADC multi-slot scans require unbuffered external channels"
+            }
+            #[cfg(adc_v1)]
+            Self::UnsupportedContinuousChannel => {
+                "ADC continuous acquisition requires an unbuffered external channel"
             }
             Self::InvalidSupplyVoltage => "ADC VDDA is outside the selected family operating range",
             Self::ReferenceSupplyTooLow => "ADC internal reference requires a higher VDDA",
@@ -516,6 +523,84 @@ impl<'d, T: Instance> Adc<'d, T, Blocking> {
         let mut result = [0];
         self.blocking_read_sequence(&[(&channel, sample_time)], &mut result)?;
         Ok(result[0])
+    }
+    /// Collect a nonempty buffer from x030 single-channel continuous mode.
+    ///
+    /// Only unbuffered external inputs are supported. Hardware starts once and
+    /// repeats conversions until collection ends; this is not repeated single
+    /// reads. `timeout` limits polls per sample, not the entire buffer duration.
+    /// IRQ latency may cause overrun even at a low requested ADC frequency.
+    ///
+    /// Validation precedes ADC writes (channel GPIO preparation may occur).
+    /// On an acquisition error, the buffer may contain a partial prefix and
+    /// must be discarded. Success and acquisition failure both power down the
+    /// ADC while preserving shared BGR and the inherited gate. No DMA, external
+    /// trigger, scan coherence or real-time service guarantee is provided.
+    #[cfg(adc_v1)]
+    pub fn blocking_read_continuous<'a>(
+        &mut self,
+        channel: impl BorrowedChannel<'a, T>,
+        sample_time: SampleTime,
+        results: &mut [u16],
+    ) -> Result<Timing, Error> {
+        check_fault::<T>()?;
+        let channel = channel.reborrow_adc();
+        if results.is_empty() {
+            return Err(Error::InvalidResultLength);
+        }
+        if self.config.input_buffer || channel.channel >= crate::ADC_FIRST_INTERNAL_CHANNEL {
+            return Err(Error::UnsupportedContinuousChannel);
+        }
+        let timing = self.config.timing(self.pclk, channel.channel, sample_time)?;
+        self.timing = timing;
+        // Fresh startup retires any prior one-shot configuration and flags.
+        self.initialize()?;
+        let regs = T::regs();
+        regs.cr1().write(|v| v.set_chmux(channel.channel));
+        regs.cr0().modify(|v| v.set_mode(pac::adc::vals::Mode::Continuous));
+        self.clear_all_flags();
+        regs.start().write(|v| v.set_start(true));
+        let outcome = (|| {
+            for result in results.iter_mut() {
+                let mut ready = false;
+                for _ in 0..self.config.timeout {
+                    let status = regs.isr().read();
+                    if status.ovw() {
+                        return Err(Error::Overrun);
+                    }
+                    if status.eoc() {
+                        ready = true;
+                        break;
+                    }
+                }
+                if !ready {
+                    return Err(Error::ConversionTimeout);
+                }
+                // Acknowledge BEFORE reading RESULT0. Clearing afterward can
+                // erase the next conversion's notification. A conversion in
+                // this clear/read window encounters unread data and sets OVW;
+                // never clear OVW while collecting, even after reading it.
+                regs.icr().write(|v| {
+                    v.set_eoc(false);
+                    v.set_eos(true);
+                    v.set_eoa(true);
+                    v.set_wdtl(true);
+                    v.set_wdth(true);
+                    v.set_wdtr(true);
+                    v.set_ovw(true);
+                });
+                let sample = regs.result(0).read().result() & 0x0fff;
+                if regs.isr().read().ovw() {
+                    return Err(Error::Overrun);
+                }
+                *result = sample;
+            }
+            Ok(timing)
+        })();
+        // The same bounded stop/readback protocol is usable without async IRQs.
+        // A failed retirement takes priority over the acquisition outcome.
+        self.async_cleanup()?;
+        outcome
     }
     /// Perform one scan in the supplied slot order, including repeated muxes.
     ///

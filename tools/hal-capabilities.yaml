@@ -685,6 +685,19 @@ functions:
       - path: docs/adc-remaining-async-evidence.json
       - path: docs/adc-l012-adc2-async.md
       - path: docs/adc-l012-adc2-async-evidence.json
+    - id: blocking_continuous_single
+      status: partial
+      scope: F030/A030 software-started MODE2 acquisition into a finite nonempty caller buffer.
+      implemented_families: [CW32F030, CW32A030]
+      limitations:
+      - Unbuffered external inputs only; timeout is per sample and errors invalidate the potentially written prefix.
+      - EOC is cleared before RESULT0 reads; OVW remains sticky until bounded stop and cleanup.
+      - No IRQ collection, DMA, scan, external trigger or real-time service guarantee; other families remain excluded.
+      - Source-reviewed only; PAC generation, compilation, tests and hardware acceptance remain pending.
+      evidence:
+      - path: embassy-cw32/src/adc/classic.rs
+        anchor: pub fn blocking_read_continuous
+      - path: docs/adc-x030-continuous.md
     - id: continuous_irq_triggered_scan
       status: unimplemented
       scope: No maintained HAL API declaration for this mode.
