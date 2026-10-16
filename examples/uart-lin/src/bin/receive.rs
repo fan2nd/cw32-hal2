@@ -3,7 +3,7 @@
 #![no_main]
 use embassy_cw32::{
     self as hal,
-    usart::{self, LinBreakThreshold, LinReceiver},
+    usart::{self, LinBreakThreshold, LinChecksum, LinFrameAssembler, LinIdentifier, LinReceiver},
 };
 
 hal::bind_interrupts!(struct Irqs {
@@ -24,10 +24,17 @@ async fn main(_spawner: embassy_executor::Spawner) {
     config.baudrate = 19_200;
     let mut rx = LinReceiver::new(p.UART1, pin, Irqs, config, LinBreakThreshold::Bits11)
         .unwrap();
+    // Match the transmit example's explicit network definition.
+    let mut frames = LinFrameAssembler::new(
+        LinIdentifier::new(0x12).unwrap(), 2, LinChecksum::Enhanced,
+    ).unwrap();
     loop {
-        // Observe with a debugger. This example neither assembles frames nor
-        // responds; an application must discard partial frames on any error.
-        let _ = core::hint::black_box(rx.read_event().await);
+        match rx.read_event().await {
+            Ok(event) => {
+                let _ = core::hint::black_box(frames.push(event));
+            }
+            Err(_) => frames.reset(),
+        }
     }
 }
 #[panic_handler]

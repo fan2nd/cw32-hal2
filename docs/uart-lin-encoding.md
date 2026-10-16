@@ -26,3 +26,19 @@ Local compilation/tests remain prohibited. PID parity, carry boundaries,
 diagnostic restrictions, bad received checksums and copied-storage independence
 remain pending acceptance. The example selects ID 0x12 with two data bytes on
 a deliberately configured test network; it does not qualify transmission timing.
+
+`LinFrameAssembler` consumes receive events for one explicitly configured ID,
+payload length and checksum model. It requires Break, 0x55, validated PID, then
+exactly the configured payload and checksum. Any Break abandons partial state
+and starts a new header. A valid other ID skips the rest until another Break;
+invalid sync/PID/checksum returns an error and waits for another Break. Completion
+returns an owned `LinResponse`, then ignores trailing bytes until another Break.
+Construction enforces payload/diagnostic constraints before any event is accepted.
+
+The caller must reset on UART errors, known loss and expired deadlines. The
+assembler has no clock and cannot validate physical break duration, event ordering,
+frame timing, missing bytes or diagnostic transport segmentation. The receive
+example monitors ID 0x12 with two enhanced-checksum payload bytes and resets on
+UART errors. It supplies no timeout or bidirectional response. State transitions,
+resynchronization, checksum failures and output independence are source-reviewed
+but remain uncompiled and untested under the local execution restriction.

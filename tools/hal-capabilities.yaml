@@ -126,6 +126,17 @@ functions:
       - path: docs/uart-lin-encoding.md
       - path: embassy-cw32/src/usart/lin/frame.rs
         anchor: pub struct LinResponse
+    - id: lin_frame_assembly
+      status: partial
+      scope: Owned single-ID frame assembly from ordered break/data events using an explicit network length and checksum model.
+      limitations:
+      - Requires explicit reset on UART error, known loss or timeout. No clock, multi-ID dispatch or diagnostic transport layer.
+      - Validates sync, PID and complete response checksum; ignores unselected frames and trailing bytes until a new break.
+      - Source-reviewed only; compilation and state-transition acceptance remain pending.
+      evidence:
+      - path: docs/uart-lin-encoding.md
+      - path: embassy-cw32/src/usart/lin/assembler.rs
+        anchor: pub struct LinFrameAssembler
     - id: automatic_rs485_de
       status: partial
       scope: L010/L011/L012 blocking and IRQ PIO Rs485Uart with owned TX, RX and RTS-as-DE.

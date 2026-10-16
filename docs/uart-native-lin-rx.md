@@ -36,5 +36,7 @@ Own-manual evidence, hashes pinned in `sources/evidence-sources.json`:
 `examples/uart-lin/src/bin/receive.rs` uses UART1 PA0 on L010F8P6 and PA3 on
 L011K8T6/L012C8T6/L012C8U6, following canonical AF routes. It observes events at
 19,200 baud through a board-configured external transceiver and never responds.
+It feeds the single-ID assembler described in [LIN encoding](uart-lin-encoding.md),
+resetting on every UART error. The example has no response deadline timer.
 Source review only: compilation, tests, cancellation and board waveforms remain
 unverified under the local execution restriction.
