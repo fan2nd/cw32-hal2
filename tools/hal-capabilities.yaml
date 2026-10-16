@@ -721,8 +721,10 @@ functions:
       - No continuous or hardware-triggered scan API. Software one-shot async single/scans are declared separately
         for all classic lines, L010/L011 and both L012 ADCs; the L010/L011 BTIM1-triggered single owner remains separate.
       - Native L010/L011/L012 EOC/EOS provide no documented result generation or overwrite signal; a service bound or acquisition handshake is required for ordered continuous buffers.
+      - Classic MODE3 multi-slot coherence still requires explicit per-slot unread and OVW acknowledgment semantics; MODE2 single-channel support does not establish this invariant.
       evidence:
       - path: docs/adc-native-continuous-audit.md
+      - path: docs/adc-classic-continuous-scan-audit.md
     - id: external_reference
       status: partial
       scope: All classic ADC families support blocking/async external reference with an owned package-qualified pad.
