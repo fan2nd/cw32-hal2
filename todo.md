@@ -1,26 +1,14 @@
 # 待办
 
-- [ ] L012 DMA：确认 UART RC／ORE／RDR、ADC 请求／RESULT、DAC 首末样本与停用协议，再实现有限传输。
-- [ ] DMA：核实各外设请求与端点、捕获／预装载及 LCD／EAU／CORDIC 能力；审查循环、scatter、零复制、UART idle／流控、SPI 宽字／从机及外部请求。
-- [ ] DMA 取消：证明请求关闭、在途访问结束及内存可见性后，再支持提前取消和立即重用。
-- [ ] RTC：解决 Alarm B 掩码冲突、classic WINDOW／ACCESS 异步清理、L010 live-LSI 日期写入及 native live-LSI alarm；审查补偿与其他时钟源。
-- [ ] RCC：补齐 L052/L083 AUTOTRIM、native LSI 启动／重调／IWDT、PLL／factory-LSI 周期界；审查运行中切换、校准和失钟恢复。
-- [ ] 外部时钟：解决各族 HSE 低于 4 MHz、L011/L012 LSE 上限冲突；为 L010 bypass 低于 3,908,159 Hz 确定新启动策略。
-- [ ] UART／LIN：解决 L012 UART3 门控；审查非原生九位／半双工／RS485、自动波特率、同步模式及剩余 LIN 实例、冲突恢复和硬件时序保障。
-- [ ] I²C／SPI：解决 L012 I²C 时钟／FIFO 与各族 SPI 速率／分频冲突；审查从机、高级模式和 I²C 总线修复。
-- [ ] ADC：解决 L012 时钟／吞吐冲突，确认 native 连续采集及 classic MODE3 结果一致性；审查周期／硬件触发和 L012 双 ADC 同步。
-- [ ] 定时器：解决 L012 BTIM／ATIM、L011 BTIM／GTIM／ADC 触发及 L052 ATIM MSM 冲突；审查捕获 IRQ、级联、互补输出、死区、刹车重武装和编码器索引。
-- [ ] IR：解决 L012 MOD 编码冲突，确认 R031 输出路由及调试引脚交接。
-- [ ] Flash：解决 L012 WAIT4／频率冲突，补齐掉电／复位／abort／完成上界；审查 NorFlash 恢复及 RAM 执行下的异步、调度和取消方案。
-- [ ] 模拟外设：审查 DAC 触发／校准、OPAMP 校准／共享、比较器窗口／消隐／非原生 IRQ／路由及非原生／LSI 滤波。
-- [ ] LCD／LPTIM／AWT：审查外部偏置／泵、低速源／外部触发及失钟处理。
-- [ ] LVD：审查非原生／LSI 滤波、复位、非原生 IRQ 和 Flash 选项。
-- [ ] CRC：取得 L052 INIT 加载顺序、反转／异或、位宽及完成条件的厂商依据，再支持任意初值。
-- [ ] CORDIC：确认 L012 迭代编码、象限／端点／误差、Q1.15 布局及 K 补偿。
-- [ ] AES／TRNG：确认 L083 AES 字节顺序及模式，评估 TRNG 熵与健康检验；补齐 AES／TRNG／CORDIC 停止、清除和安全重用证据。
-- [ ] 禁令解除后统一验收 UART：缓冲回收／替换、idle、九位／半双工／RS485，以及 LIN 编解码、收发／分派、应答／回显／超时、调度／切表／定时发布；按现有 docs 核查边界、所有权、错误及取消。
-- [ ] 禁令解除后统一验收其他已实现功能：WWDT 预警、I²C 重试／十位地址、ADC 连续／异步采集及外部参考、DAC 独立通道、编码器位置、HALLTIM 队列、LVD／比较器滤波及边沿等待；核查逐族／封装构建和共享 IRQ。
-- [ ] 禁令解除后验收 L010 bypass 3,908,159–4 MHz：重新生成数据／PAC，核查三个封装、3.95 MHz 示例及 retained-HSE。
-- [ ] 硬件验收：按板卡验证引脚、电气／时钟、共享 IRQ、收发器与调度时序、传输／错误／取消／复位、模拟精度及数学结果。
-- [ ] 后置：低功耗、睡眠／唤醒、RTC 保持及 Embassy 时间恢复；先确认 L012 OPA LPMODE 定义。
-- [ ] 后置：BLE Lite、ChirpIOT 无线子系统。
+- [ ] 时钟：确认 native LSI 启动／重调／IWDT 顺序、PLL／factory-LSI 周期界及 HSE／LSE 边界；证据不足的配置保持禁用。
+- [ ] Flash：解决 L012 WAIT4／频率冲突，确认掉电、复位、abort、完成上界及 NorFlash 写入恢复约束。
+- [ ] DMA：确认已支持传输的请求关闭、在途访问结束和内存可见性；未证明安全前禁止提前取消后立即重用。
+- [ ] UART：解决 L012 UART3 门控冲突；未确认前保持实例限制。
+- [ ] I²C／SPI：解决 L012 I²C 时钟／FIFO 与各族 SPI 速率／分频冲突，确保现有主机模式参数可靠。
+- [ ] ADC：确认 L012 时钟／吞吐边界及连续采集结果一致性；无可靠覆盖检测的模式保持禁用。
+- [ ] 定时器：核实 L012 BTIM／ATIM、L011 BTIM／GTIM／ADC 触发及 L052 ATIM MSM 冲突，避免开放未确认路由。
+- [ ] RTC：确认 Alarm B 掩码、classic WINDOW／ACCESS 清理及 L010 live-LSI 日期写入约束；未确认模式保持禁用。
+- [ ] 数学／加密：核实已开放 CORDIC 的数值边界、AES 字节顺序及 AES／TRNG／CORDIC 安全重用；TRNG 未经评估不得宣称密码学安全。
+- [ ] 禁令解除后验收已实现功能：按现有 docs 检查 UART／LIN、I²C、ADC、DAC、WWDT、定时器、LVD／比较器的边界、所有权、错误、取消及共享 IRQ，并完成逐族／封装构建。
+- [ ] 禁令解除后重新生成并验收 L010 bypass 3,908,159–4 MHz 数据／PAC，核查三个封装、3.95 MHz 示例及 retained-HSE。
+- [ ] 硬件验收：验证已支持模式的引脚、电气／时钟、传输与 LIN 时序、错误／取消／复位、模拟精度及数学／AES 已知答案。
