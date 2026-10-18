@@ -32,5 +32,6 @@ loss error; new frames can overwrite unread RDR. No lossless guarantee follows.
 L012 retains its [word](uart-l012-nine-bit.md) and
 [single-wire](uart-l012-half-duplex.md) source contracts. Non-native families
 remain excluded. The expanded examples use existing qualified package routes.
-L010/L011 have not been compiled, tested or run on hardware; bit8, rejection,
-error, cancellation and electrical acceptance remain pending.
+L010/L011 release examples pass; see [software acceptance](validation-scope.md).
+Bit8 signaling, error injection, cancellation timing and electrical behavior
+still require hardware acceptance.

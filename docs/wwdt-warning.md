@@ -3,7 +3,9 @@
 `WindowWatchdog::enable_early_warning` and `wait_early_warning` are available
 on the ten supported families with WWDT: A030, F002, F003, F020, F030, L012,
 L031, L052, L083 and R031. L010/L011 lack WWDT; W031 is unsupported.
-The non-L012 extension is uncompiled and untested.
+The non-L012 extension is release-built; count/timing tests and wait ownership
+checks are recorded in [software acceptance](validation-scope.md). Hardware warning
+delivery remains unverified.
 
 The typed `WDT => wdg::WindowInterruptHandler` binding installs permanent
 service before setting irreversible IE. The handler clears only WWDT's W0C

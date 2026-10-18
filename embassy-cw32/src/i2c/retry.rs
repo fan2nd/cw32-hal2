@@ -148,3 +148,25 @@ impl I2c<'_, Async> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn replay_budget_is_finite_and_errors_are_not_broadly_retried() {
+        for retries in [0, 1, 254, 255] {
+            let policy = RetryPolicy {
+                retries,
+                on: RetryOn::ArbitrationLoss,
+            };
+            for attempts in 1..=256 {
+                assert_eq!(
+                    policy.permits(Error::Arbitration, attempts),
+                    attempts <= u16::from(retries)
+                );
+                assert!(!policy.permits(Error::Bus, attempts));
+                assert!(!policy.permits(Error::Timeout, attempts));
+            }
+        }
+    }
+}

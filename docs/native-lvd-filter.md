@@ -27,12 +27,13 @@ SYSCLK must run continuously. No LSI source, low-power wake, fail-safe reset,
 startup-output state, analog readiness or rejection duration in seconds is
 qualified. Existing board-voltage requirements and L012 Vcore=1.6 V threshold assumptions
 remain. All three families support the existing typed edge wait.
-The enum, constructors and example are source-reviewed but uncompiled/untested;
-readback failure, cleanup, edge coexistence and hardware acceptance are pending.
+Current source review, ARM builds, threshold tests and edge-wait ownership checks
+are recorded in [validation scope](validation-scope.md). Physical readback failures,
+interrupt timing and analog behavior remain hardware acceptance work.
 
 L010/L011 edge-wait qualification: each own §22.4 (printed p543/p545) defines
 ACTION=0, IE and voltage RISE/FALL polarity; §22.7.3 (p548/p550) defines sole
 W0C INTF, read-only FLTV and reserved zeros. Own §5.4 (p88/p86) and approved
 CMSIS headers both assign LVD IRQ1. The L012 wait/retirement algorithm is reused
 unchanged. This is event coalescing, not a crossing count or analog readiness.
-L010/L011 IRQ acceptance remains pending.
+L010/L011 IRQ routing is source-audited; silicon IRQ timing remains unverified.

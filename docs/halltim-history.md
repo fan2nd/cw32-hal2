@@ -27,5 +27,5 @@ The [existing source review](halltim-evidence.md) still bounds every record:
 CAPF coalesces, WIDTH can be overwritten, STATE is live and not latched with
 WIDTH, and there is no edge counter/channel tag/overcapture indication. This is
 a software observation log, not lossless motor feedback or a physical history.
-No timing, throughput or hardware validation follows. The new queue and example
-have not been compiled or tested.
+No timing, throughput or hardware validation follows. Queue prefix/wrap/loss-barrier tests and release example links are recorded in
+[software acceptance](validation-scope.md).

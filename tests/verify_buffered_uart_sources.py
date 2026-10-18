@@ -450,15 +450,17 @@ def example_manifest():
     assert manifest['workspace'] == {}
     features = manifest['features']
     selections = {selection for selection, _ in EXAMPLES}
-    assert set(features) == {'default'} | selections and features['default'] == []
+    assert set(features) == {'default', 'idle-notify'} | selections and features['default'] == []
+    assert features['idle-notify'] == []
     for selection in selections:
         assert features[selection] == [f'embassy-cw32/{selection}', f'cw32-metapac/{selection}']
     bins = named(manifest['bin'])
-    assert set(bins) == {'receive', 'split', 'rx_only', 'flow_control', 'shared_vector', 'borrowed'}
+    assert set(bins) == {'receive', 'split', 'rx_only', 'flow_control', 'shared_vector', 'borrowed', 'idle_queue', 'idle_notify', 'replace_buffer'}
     for name, entry in bins.items():
         assert entry['path'] == f'src/bin/{name}.rs' and (ROOT / directory / entry['path']).is_file()
         required = {'flow_control': ['cw32l010f8p6'], 'shared_vector': ['cw32l083rct6'],
-                    'borrowed': ['cw32f002f3p7']}.get(name, [])
+                    'borrowed': ['cw32f002f3p7'], 'idle_queue': ['idle-notify'],
+                    'idle_notify': ['idle-notify']}.get(name, [])
         assert entry.get('required-features', []) == required
     dependencies = manifest['dependencies']
     assert set(dependencies) == {'embassy-cw32', 'embassy-executor', 'embassy-futures', 'cortex-m', 'cortex-m-rt', 'embedded-io-async'}
@@ -588,7 +590,18 @@ def current_capability_boundary(evidence, modes):
     assert boundary['baseline_capabilities_sha256'] == 'a51e20fd804f7c158ca5e9d590f77bc2730c117a1a5ede13fff3e62cff20ee79'
     example = boundary['baseline_example_manifest']
     assert example['path'] == 'examples/uart-buffered/Cargo.toml'
-    assert hashlib.sha256((ROOT / example['path']).read_bytes()).hexdigest() == example['sha256']
+    # Reverse only the reviewed additive examples; keep the historical receipt immutable.
+    manifest = (ROOT / example['path']).read_text()
+    additions = ['idle-notify = []\n']
+    for name in ('idle_queue', 'idle_notify', 'replace_buffer'):
+        entry = f'[[bin]]\nname = "{name}"\npath = "src/bin/{name}.rs"\n'
+        if name != 'replace_buffer':
+            entry += 'required-features = ["idle-notify"]\n'
+        additions.append(entry + '\n')
+    for addition in additions:
+        assert manifest.count(addition) == 1
+        manifest = manifest.replace(addition, '')
+    assert hashlib.sha256(manifest.encode()).hexdigest() == example['sha256']
     assert boundary['historical_evidence_path'] == EVIDENCE
     assert hashlib.sha256((ROOT / EVIDENCE).read_bytes()).hexdigest() == boundary['historical_evidence_sha256']
     historical_dma = evidence['capability_boundaries']['dma']
@@ -609,6 +622,10 @@ def current_capability_boundary(evidence, modes):
                 item['path'] = relocations[identity]
                 used.add(identity)
         retire_w031_capability(mode_id, expected)
+        if mode_id == 'buffered_ring_receive':
+            # Reviewed owner-lifetime storage return/replacement and native idle additions.
+            expected['limitations'][3] = 'Safe constructors consume the nonempty static ring even on constructor error; successful RX owners can return storage with the owner lifetime via into_buffer after normal shutdown (software check scope in docs/validation-scope.md); unsafe borrowed constructors release the borrow after normal RX Drop and the shared TX/RX lifetime ends, and require storage to remain valid and exclusive if the owner is leaked.'
+            expected['limitations'][8:] = ['L010/L011/L012 wait_for_idle observes a new coalesced native idle event while IRQ buffering continues. Cancellation masks only idle; data/errors stay queued. BufferedIdle records unread byte count and first retained error after the ISR observation; later appends do not extend it. No wire packet boundary, lossless history or bounded wait; software check scope is recorded in docs/validation-scope.md.', 'Native idle capture retains four adjusted unread-prefix markers; overflow is reported after retained markers and blocks new markers until consumed. Queued error fields are historical; no lossless history, DMA ring or numeric timeout. into_buffer discards unread data/errors and returns neither pins nor the peripheral; only a static RX owner returns a static slice.', 'try_replace_buffer accepts a nonempty static replacement only when no queued bytes or error remain; failures return the new buffer unchanged. Active idle capture rejects replacement until explicitly stopped. Success returns old storage with the owner lifetime without stopping RX or changing TX/shared IRQ ownership. Pending hardware bytes may enter the new ring; no packet boundary or guaranteed progress. Software check scope is recorded in docs/validation-scope.md.']
         assert modes[mode_id] == expected, ('current capability boundary drift', mode_id)
     assert used == set(relocations)
 
@@ -684,7 +701,7 @@ def main():
     capability_contract(evidence, capabilities)
     print('PASS buffered UART historical source cohort: 111 own locked identities; 13 families, 54 selections, 39 instances, 7 register profiles')
     print(f'PASS own RC/RDR/overwrite, native ORE/NE, R1W0/no-op, independent shared gates and {route_count} package-filtered routes')
-    print('PASS 9 qualified example tuples, 19 selected signal routes, 8 exact features, 6 declared bins and current locked dependencies')
+    print('PASS 9 qualified example tuples, 19 selected signal routes, 8 exact features, 9 declared bins and current locked dependencies')
     assert len(list((ROOT / 'cw32-data/data/chips').glob('*.json'))) == 52
     print('PASS current targets: 52 generated selections; W031 family and exact part absent; two byte-pinned historical snapshots only')
     print('PASS partial buffered capability; separate 3-family native idle and current staged DMA boundaries')

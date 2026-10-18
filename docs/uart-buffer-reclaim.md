@@ -2,7 +2,8 @@
 
 `BufferedUartRx::into_buffer(self) -> &'d mut [u8]` consumes RX, runs normal
 shutdown to detach ISR storage, then returns the current buffer. The interface
-is implemented but has not been compiled or tested.
+has compile-time lifetime checks and release example builds; see
+[software acceptance](validation-scope.md). Hardware shutdown remains unverified.
 
 - Returned storage has the owner's lifetime; only a static owner returns a
   static slice. Unsafe borrowed constructors retain their no-leak obligations.
@@ -15,7 +16,7 @@ is implemented but has not been compiled or tested.
 
 `try_replace_buffer(&mut self, &'static mut [u8])` switches a running RX owner
 to a new ring and returns the old storage with the owner's lifetime. Combined
-`BufferedUart` also exposes this method. The interface is uncompiled and untested.
+`BufferedUart` also exposes this method. The same software acceptance scope applies.
 
 - Empty input returns `BufferReplaceError::Empty`. Queued bytes or a pending
   error return `PendingReceive`; native active idle capture returns

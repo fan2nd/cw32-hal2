@@ -41,7 +41,8 @@ frame timing, missing bytes or diagnostic transport segmentation. The receive
 example monitors IDs 0x12 and 0x13 with explicitly configured enhanced-checksum
 layouts and resets on UART errors. It supplies no timeout or bidirectional response. State transitions,
 resynchronization, checksum failures and output independence are source-reviewed
-but remain uncompiled and untested under the local execution restriction.
+and covered by host protocol tests and release links in
+[software acceptance](validation-scope.md).
 
 `LinFrameDefinition` validates a network ID, payload length and checksum model.
 `LinFrameDispatcher` borrows an immutable slice of these definitions, rejects any
@@ -55,5 +56,5 @@ The receive example declares ID 0x12 with two bytes and ID 0x13 with eight bytes
 both enhanced checksum. These layouts are an explicit test-network contract,
 not inferred from observed traffic. There is no callback, allocation, simultaneous
 frame assembly, transport segmentation or automatic response. Reset after errors,
-loss and deadlines remains mandatory. Dispatch and mixed-length state reuse have
-not been compiled or tested locally.
+loss and deadlines remains mandatory. Dispatch and mixed-length state reuse have local host tests; see
+[software acceptance](validation-scope.md).

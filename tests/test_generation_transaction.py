@@ -32,10 +32,10 @@ class GenerationTransactionTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='cw32-output-transaction-')
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name) / 'workspace with spaces'
+        self.root = Path(self.temp.name).resolve() / 'workspace with spaces'
         self.root.mkdir()
         shutil.copy2(ROOT / 'd', self.root / 'd')
-        self.bin = Path(self.temp.name) / 'bin'
+        self.bin = Path(self.temp.name).resolve() / 'bin'
         self.bin.mkdir()
         self.write('cw32-data/registers/authored.yaml', 'new reviewed definition\n')
         self.write('build/reports/unrelated.json', 'unrelated report\n')
@@ -220,7 +220,7 @@ if sys.argv[0] == '-':
 
     def test_symlinked_and_unexpected_destinations_are_preserved(self):
         self.old_outputs()
-        external = Path(self.temp.name) / 'authored'
+        external = Path(self.temp.name).resolve() / 'authored'
         external.mkdir()
         (external / 'source.txt').write_text('do not delete\n')
         for rel in ('cw32-data/data', 'cw32-metapac', 'build/provenance', 'build/reports'):
@@ -251,7 +251,7 @@ class ReportPathTests(unittest.TestCase):
     def test_coverage_uses_staged_outputs_with_original_authored_root(self):
         coverage = load_module('coverage_paths', ROOT / 'cw32-data/tools/coverage.py')
         with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
+            root = Path(temp).resolve()
             authority = root / 'cw32-data-serde/src/retired-targets.txt'
             authority.parent.mkdir(parents=True)
             shutil.copy2(ROOT / 'cw32-data-serde/src/retired-targets.txt', authority)

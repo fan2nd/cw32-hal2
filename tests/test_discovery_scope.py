@@ -115,7 +115,7 @@ class DiscoveryScopeTests(unittest.TestCase):
             with self.assertRaises(p.ProvenanceError):
                 p.validate_lock(ROOT, lock)
             with tempfile.TemporaryDirectory() as d:
-                manifest = Path(d) / 'manifest.json'
+                manifest = Path(d).resolve() / 'manifest.json'
                 manifest.write_text(json.dumps(lock))
                 with self.assertRaises(ValueError):
                     a.load_manifest(manifest)
@@ -131,7 +131,7 @@ class DiscoveryScopeTests(unittest.TestCase):
         row = self.pages[0]
         data = b'observed candidate'
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             canonical = root / row['path']
             canonical.write_bytes(b'reviewed canonical bytes')
             candidate = root / (Path(row['path']).stem + '.' + hashlib.sha256(data).hexdigest() + '.html')
@@ -149,12 +149,12 @@ class DiscoveryScopeTests(unittest.TestCase):
 
     def test_hardware_acquisition_receipt_excludes_missing_discovery_explicitly(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             lock = self.fixture(root)
             with patch.object(a, 'load_manifest', return_value=lock):
                 output = io.StringIO()
                 with contextlib.redirect_stdout(output):
-                    a.main(['--source-root', d, '--verify'])
+                    a.main(['--source-root', str(Path(d).resolve()), '--verify'])
                 report = json.loads(output.getvalue().splitlines()[-1])
                 self.assertEqual(report['existing'], 43)
                 self.assertEqual(report['outputs'], len(self.hardware_paths))
@@ -164,15 +164,15 @@ class DiscoveryScopeTests(unittest.TestCase):
                 self.assertTrue(report['complete_hardware'])
                 self.assertFalse(report['complete_manifest'])
                 with self.assertRaises(a.EvidenceError), contextlib.redirect_stdout(io.StringIO()):
-                    a.main(['--source-root', d, '--verify', '--include-discovery'])
+                    a.main(['--source-root', str(Path(d).resolve()), '--verify', '--include-discovery'])
                 with self.assertRaisesRegex(a.EvidenceError, 'Discovery snapshots require'):
-                    a.main(['--source-root', d, '--only', self.pages[0]['path']])
+                    a.main(['--source-root', str(Path(d).resolve()), '--only', self.pages[0]['path']])
                 for row in lock['artifacts']:
                     if discovery_only(row):
                         (root / row['path']).write_bytes(('fixture:' + row['path']).encode())
                 output = io.StringIO()
                 with contextlib.redirect_stdout(output):
-                    a.main(['--source-root', d, '--verify', '--include-discovery'])
+                    a.main(['--source-root', str(Path(d).resolve()), '--verify', '--include-discovery'])
                 report = json.loads(output.getvalue().splitlines()[-1])
                 self.assertEqual(report['existing'], 45)
                 self.assertEqual(report['outputs'], len(self.hardware_paths | set(DISCOVERY_URLS)))
@@ -181,7 +181,7 @@ class DiscoveryScopeTests(unittest.TestCase):
 
     def test_provenance_scope_accepts_missing_or_changed_html_but_strict_replay_rejects(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             lock = self.fixture(root)
             p.validate_lock(ROOT, lock, root)
             with self.assertRaisesRegex(p.ProvenanceError, 'Missing acquired source'):
@@ -195,7 +195,7 @@ class DiscoveryScopeTests(unittest.TestCase):
 
     def test_missing_and_changed_immutable_inputs_still_fail_in_both_consumers(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             lock = self.fixture(root)
             sdk = next(row for row in lock['artifacts'] if row['kind'] == 'sdk')
             pdf = next(row for row in lock['artifacts'] if row['kind'] == 'pdf' and 'text' in row)
@@ -210,7 +210,7 @@ class DiscoveryScopeTests(unittest.TestCase):
                     with self.subTest(path=spec['path'], corruption=corruption), self.assertRaises(p.ProvenanceError):
                         p.validate_lock(ROOT, lock, root)
                     with patch.object(a, 'load_manifest', return_value=lock), contextlib.redirect_stdout(io.StringIO()), self.assertRaises(a.EvidenceError):
-                        a.main(['--source-root', d, '--verify'])
+                        a.main(['--source-root', str(Path(d).resolve()), '--verify'])
                     path.write_bytes(data)
 
     def test_local_observation_reports_missing_changed_and_unchanged_without_writes(self):
@@ -218,7 +218,7 @@ class DiscoveryScopeTests(unittest.TestCase):
         data = b'reviewed'
         row.update(sha256=hashlib.sha256(data).hexdigest(), bytes=len(data))
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             self.assertEqual(r.observe(row, local_root=root)['status'], 'missing')
             path = root / row['path']
             for content, expected in [(data, 'unchanged'), (b'changed!', 'changed')]:
@@ -233,13 +233,13 @@ class DiscoveryScopeTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as d:
                 opener = Mock()
                 opener.open.return_value = Response(data, row['url'])
-                result = r.observe(row, opener=opener, output=Path(d))
+                result = r.observe(row, opener=opener, output=Path(d).resolve())
                 self.assertEqual(result['status'], expected)
                 opener.open.assert_called_once_with(row['url'], timeout=30)
                 if expected == 'changed':
                     self.assertEqual(Path(result['candidate']).read_bytes(), data)
                 else:
-                    self.assertEqual(list(Path(d).iterdir()), [])
+                    self.assertEqual(list(Path(d).resolve().iterdir()), [])
         opener = Mock()
         opener.open.side_effect = OSError('offline')
         self.assertEqual(r.observe(row, opener=opener)['status'], 'unavailable')
@@ -248,13 +248,13 @@ class DiscoveryScopeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             output = io.StringIO()
             with contextlib.redirect_stdout(output):
-                code = r.main(['--check-local', d])
+                code = r.main(['--check-local', str(Path(d).resolve())])
             report = json.loads(output.getvalue())
             self.assertEqual(code, 2)
             self.assertEqual({x['status'] for x in report['observations']}, {'missing'})
             self.assertFalse(report['source_acceptance'])
             self.assertFalse(report['hardware_verification'])
-            self.assertEqual(list(Path(d).iterdir()), [])
+            self.assertEqual(list(Path(d).resolve().iterdir()), [])
 
     def test_current_and_historical_html_remain_distribution_denied(self):
         # The guard's deny catalog is independent of hardware materialization scope.
@@ -269,7 +269,7 @@ class DiscoveryScopeTests(unittest.TestCase):
                 else:
                     row.update(sha256=digest, bytes=len(data))
                 with tempfile.TemporaryDirectory() as d:
-                    root = Path(d)
+                    root = Path(d).resolve()
                     (root / 'docs').mkdir()
                     (root / 'docs/upstream-file-provenance.json').write_text('{"files": []}')
                     path = root / 'renamed.bin'

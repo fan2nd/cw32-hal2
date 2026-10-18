@@ -32,18 +32,18 @@ See [capability declarations](tools/hal-capabilities.yaml),
 
 - UART: blocking/IRQ, buffered receive and qualified finite DMA.
   L010/L011/L012 support nine-bit PIO, single-wire half duplex and automatic RS485 DE. L012 UART DMA
-  remains TX-only. The L010/L011 word/half-duplex extension awaits acceptance.
+  remains TX-only. Software checks are recorded in [validation scope](docs/validation-scope.md).
 - Buffered UART on L010/L011/L012 returns an unread-queue position and error
   snapshot on idle, with optional four-marker continuous capture and explicit
-  overflow. This is untested and does not identify wire packet boundaries.
+  overflow. This does not identify wire packet boundaries.
 - SPI/I²C: qualified blocking/async master modes; SPI DMA is byte-only.
 - ADC/timers: finite ADC scans, qualified capture, overflow, PWM and trigger routes.
 - Window-watchdog warning notification is implemented for all ten supported
-  WWDT families; the non-L012 extension is untested.
+  WWDT families; hardware warning delivery remains unverified.
 - RCC/RTC and analog/math peripherals: only documented sources, modes and limits.
 - `BufferedUartRx::into_buffer` returns storage after RX shutdown;
   `try_replace_buffer` swaps an empty running ring. Both are
-  [implemented but untested](docs/uart-buffer-reclaim.md).
+  [covered by software acceptance](docs/uart-buffer-reclaim.md).
 
 DMA cancellation may retain resources. Generic chip aliases may lack exact
 memory or package qualification. Hardware results, timing, analog accuracy and
@@ -52,13 +52,13 @@ deferred.
 
 ## Development
 
-No CI is configured. Do not run local tests or builds under the current work
-policy. See [validation scope](docs/validation-scope.md).
+No CI is configured. Local tests, builds and data/PAC generation are authorized.
+See [validation scope](docs/validation-scope.md).
 
 Source tooling requires Python 3.11+, Bash and a Rust toolchain; firmware targets
 `thumbv6m-none-eabi`. Dependencies are pinned. `./d fetch-sources` acquires pinned
-inputs; `./d gen-all` generates data and PAC. Generation invokes Cargo and must
-not run under the current restriction. Direct data-generator calls should pass
+inputs; `./d gen-all` generates data and PAC. Generation invokes Cargo.
+Direct data-generator calls should pass
 `--root /path/to/workspace` explicitly.
 
 Use exact part features for package routes and memory limits. Fallible HAL

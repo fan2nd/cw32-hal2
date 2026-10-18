@@ -86,7 +86,7 @@ for family, profile in catalog['profiles'].items():
         else:
             assert set(fields) == {'SQR'}
     mode = ir['enum/Mode']
-    assert {v['name']: v['value'] for v in mode['variants']} == {'SINGLE': evidence['single_mode'], 'SCAN': evidence['scan_mode']}
+    assert {v['name']: v['value'] for v in mode['variants']} == {'SINGLE': evidence['single_mode'], 'CONTINUOUS': 2, 'SCAN': evidence['scan_mode']}
     controls = {f['name']: f for f in ir['fieldset/CR0']['fields']}
     for name, key in [('TSEN', 'temperature_enable_bit'), ('BGREN', 'bgr_enable_bit')]:
         assert (name in controls) == (evidence['common_controls'][key] is not None)

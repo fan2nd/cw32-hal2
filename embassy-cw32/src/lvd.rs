@@ -435,3 +435,21 @@ mod edge_wait {
         .await;
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn thresholds_accept_only_exact_source_values() {
+        for value in 0..=u16::MAX {
+            let threshold = Threshold::from_millivolts(value);
+            assert_eq!(
+                threshold.is_some(),
+                Threshold::available_millivolts().contains(&value)
+            );
+            if let Some(threshold) = threshold {
+                assert_eq!(threshold.millivolts(), value);
+            }
+        }
+    }
+}

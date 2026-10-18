@@ -24,5 +24,6 @@ Direction and wrap flags are not consumed, because their independent/coalescing
 observations cannot reconstruct signed wrap counts. With period 65536, samples
 65535 then 0 yield +1; samples 0 then 65535 yield -1, subject to the bound.
 This is a software arithmetic contract over the [existing encoder](timer-input.md).
-The new code/example has not been compiled or tested. Counter-boundary, loss,
-overflow, lifetime and board scheduling acceptance remain pending.
+Counter-boundary, loss and overflow host tests plus release example links are
+recorded in [software acceptance](validation-scope.md). Physical counter behavior
+and board scheduling remain hardware acceptance work.

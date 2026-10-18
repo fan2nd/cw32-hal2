@@ -150,6 +150,12 @@ case "${1:-help}" in
     python3 tests/test_final_serial_af.py
     python3 tests/test_l031_shared_serial_sources.py
     ;;
+  test-hal)
+    python3 tests/run_hal_acceptance.py host
+    python3 tests/check_hal_ownership.py
+    python3 tests/run_hal_acceptance.py hal
+    python3 tests/run_hal_acceptance.py examples
+    ;;
   audit-current)
     python3 cw32-data/tools/source_provenance.py --sources "$CW32_SOURCES"
     python3 cw32-data/tools/audit_sources.py
@@ -162,13 +168,15 @@ case "${1:-help}" in
     python3 tests/check_rtc_pac_corrections.py --sources "$CW32_SOURCES"
     python3 tests/verify_rtc_calendar_evidence.py
     python3 tests/verify_rtc_remaining_evidence.py
-    python3 tests/verify_rtc_alarms_evidence.py
+    python3 tests/verify_rtc_alarms_evidence.py --sources "$CW32_SOURCES"
     python3 tests/verify_rtc_alarm_projection.py
     python3 tests/verify_classic_gtim_modes.py
     python3 tests/verify_timer_commands.py --compile
     python3 tests/check_reviewed_status_access.py --sources "$CW32_SOURCES" --generated
     python3 tools/verify-timer-input-data.py --sources "$CW32_SOURCES"
     python3 tests/verify_uart_flow_control_sources.py
+    python3 tests/verify_buffered_uart_sources.py --sources "$CW32_SOURCES"
+    python3 tests/verify_native_uart_idle_sources.py --sources "$CW32_SOURCES"
     python3 tests/verify_adc_scan_sources.py --sources "$CW32_SOURCES"
     python3 tests/verify_classic_adc_scan_sources.py --sources "$CW32_SOURCES"
     python3 tools/verify-l012-adc-scan-data.py --sources "$CW32_SOURCES" --out docs/verification-logs/source-audits/l012-scans.json
@@ -253,5 +261,5 @@ case "${1:-help}" in
       cargo test --locked --manifest-path firmware/Cargo.toml -p cw32-metapac --no-default-features --features "$chip,metadata" --test metadata
     done < <(sed -n 's/^\(cw32[a-z0-9-]*\) = \[\]/\1/p' cw32-metapac/Cargo.toml)
     ;;
-  *) echo 'Usage: ./d {fetch-sources|fetch-evidence|refresh-discovery|provenance|audit-sources|import-registers|gen|gen-all|test|audit-current|check|lint}' ;;
+  *) echo 'Usage: ./d {fetch-sources|fetch-evidence|refresh-discovery|provenance|audit-sources|import-registers|gen|gen-all|test|test-hal|audit-current|check|lint}' ;;
 esac

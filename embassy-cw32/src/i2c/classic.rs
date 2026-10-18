@@ -1476,3 +1476,100 @@ impl embedded_hal_async::i2c::I2c<embedded_hal::i2c::TenBitAddress> for I2c<'_, 
         self.transaction_with_address(Address::TenBit(address), operations).await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn addressing_boundaries_and_ten_bit_restart() {
+        assert!(Address::SevenBit(127).valid());
+        assert!(!Address::SevenBit(128).valid());
+        assert!(Address::TenBit(1023).valid());
+        assert!(!Address::TenBit(1024).valid());
+        for address in 0..=1023 {
+            let high = 0xf0 | (((address >> 8) as u8) << 1);
+            let phases = Address::TenBit(address).phases(true, false);
+            assert_eq!(
+                phases,
+                [
+                    Some((true, high, Status::WriteAddressAck)),
+                    Some((false, address as u8, Status::WriteDataAck)),
+                    Some((true, high | 1, Status::ReadAddressAck))
+                ]
+            );
+            assert_eq!(
+                Address::TenBit(address).phases(true, true),
+                [Some((true, high | 1, Status::ReadAddressAck)), None, None]
+            );
+        }
+        assert_eq!(address_error(Error::DataNack), Error::AddressNack);
+        assert_eq!(address_error(Error::Arbitration), Error::Arbitration);
+    }
+
+    #[test]
+    fn timing_never_exceeds_ceiling_and_rejects_invalid_inputs() {
+        let clock = ClockBounds::hsi(1);
+        for frequency in [1, 1000, 10_000, 100_000, 400_000, MAX_FREQUENCY] {
+            let config = Config {
+                frequency: Hertz(frequency),
+                ..Default::default()
+            };
+            if let Ok(timing) = select_timing(clock, &config) {
+                assert!(timing.brr >= 1);
+                assert!(
+                    u64::from(clock.maximum().0)
+                        <= u64::from(frequency) * 8 * (u64::from(timing.brr) + 1)
+                );
+                assert_eq!(timing.control().flt(), timing.brr <= 9);
+            } else {
+                assert_eq!(
+                    select_timing(clock, &config).err(),
+                    Some(ConfigError::FrequencyTooLow)
+                );
+            }
+        }
+        let mut config = Config::default();
+        config.frequency = Hertz(0);
+        assert_eq!(
+            select_timing(clock, &config).err(),
+            Some(ConfigError::FrequencyZero)
+        );
+        config.frequency = Hertz(MAX_FREQUENCY + 1);
+        assert_eq!(
+            select_timing(clock, &config).err(),
+            Some(ConfigError::FrequencyTooHigh)
+        );
+        config.frequency = Hertz(100_000);
+        config.poll_limit = 0;
+        assert_eq!(
+            select_timing(clock, &config).err(),
+            Some(ConfigError::ZeroPollLimit)
+        );
+    }
+
+    #[test]
+    fn rejected_transaction_does_not_touch_registers() {
+        // Dangling MMIO is deliberate: all these paths must return before access.
+        let mut engine = Engine {
+            regs: unsafe { pac::i2c::I2c::from_ptr(core::ptr::null_mut()) },
+            base: Default::default(),
+            poll_limit: 1,
+            master: false,
+        };
+        let mut empty = [];
+        let mut operations = [Operation::Write(&[1]), Operation::Read(&mut empty)];
+        assert_eq!(
+            engine.transaction(Address::SevenBit(1), &mut operations, || panic!()),
+            Err(Error::ZeroLengthTransfer)
+        );
+        assert_eq!(
+            engine.transaction(Address::TenBit(1024), &mut [], || panic!()),
+            Err(Error::InvalidAddress)
+        );
+        assert_eq!(
+            engine.transaction(Address::SevenBit(1), &mut [], || panic!()),
+            Ok(())
+        );
+    }
+}

@@ -54,12 +54,54 @@ impl History {
 }
 
 struct HistoryWait<T: Instance>(PhantomData<T>);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn capture(width_ticks: u32) -> Capture {
+        Capture {
+            width_ticks,
+            levels: Levels {
+                ch1: false,
+                ch2: true,
+                ch3: false,
+            },
+            transition: ObservedTransition::FirstSample,
+            overflow_since_restart: false,
+            additional_capture_pending: false,
+        }
+    }
+    #[test]
+    fn wraps_preserves_prefix_and_reports_loss_before_resuming() {
+        let mut history = History::new();
+        assert_eq!(history.pop(), Err(Error::HistoryNotStarted));
+        history.active = true;
+        for width in 0..8 {
+            history.push(capture(width));
+        }
+        for width in 0..4 {
+            assert_eq!(history.pop(), Ok(Some(capture(width))));
+        }
+        for width in 8..12 {
+            history.push(capture(width));
+        }
+        history.push(capture(12));
+        for width in 4..12 {
+            assert_eq!(history.pop(), Ok(Some(capture(width))));
+        }
+        history.push(capture(13)); // Still behind the loss barrier.
+        history.observation.previous = Some(capture(0).levels);
+        assert_eq!(history.pop(), Err(Error::HistoryOverflow));
+        assert!(history.observation.previous.is_none());
+        assert_eq!(history.pop(), Ok(None));
+        history.push(capture(14));
+        assert_eq!(history.pop(), Ok(Some(capture(14))));
+    }
+}
 impl<T: Instance> Drop for HistoryWait<T> {
     fn drop(&mut self) {
         // Cancelling a consumer does not stop the independent IRQ collector.
-        let stale = critical_section::with(|cs| {
-            T::state().waker.borrow(cs).borrow_mut().take()
-        });
+        let stale = critical_section::with(|cs| T::state().waker.borrow(cs).borrow_mut().take());
         drop(stale);
     }
 }
@@ -136,6 +178,7 @@ impl<T: Instance> HallTim<'_, T> {
             });
             drop(stale);
             result
-        }).await
+        })
+        .await
     }
 }

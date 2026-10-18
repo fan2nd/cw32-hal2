@@ -9,6 +9,63 @@ impl RxStorage {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn ring_wrap_and_error_barrier_preserve_clean_prefix() {
+        let mut storage = [0; 3];
+        let mut ring = RxRing::new(&mut storage);
+        for byte in [1, 2, 3, 4] {
+            ring.observe(Ok(Some(byte)));
+        }
+        let mut output = [0; 2];
+        assert_eq!(ring.read(&mut output), Ok(2));
+        assert_eq!(output, [1, 2]);
+        ring.observe(Ok(Some(5)));
+        assert_eq!(ring.read(&mut output), Ok(1));
+        assert_eq!(output[0], 3);
+        assert_eq!(ring.read(&mut output), Err(Error::BufferOverflow));
+        for byte in [6, 7] {
+            ring.observe(Ok(Some(byte)));
+        }
+        assert_eq!(ring.read(&mut output), Ok(2));
+        assert_eq!(output, [6, 7]);
+        ring.observe(Err(Error::Framing));
+        ring.observe(Err(Error::Parity));
+        assert_eq!(ring.read(&mut []), Ok(0));
+        assert_eq!(ring.read(&mut output), Err(Error::Framing));
+    }
+
+    #[test]
+    fn occupied_prefix_is_not_modified_by_append() {
+        let mut storage = [0; 4];
+        let mut ring = RxRing::new(&mut storage);
+        ring.observe(Ok(Some(1)));
+        ring.observe(Ok(Some(2)));
+        let (pointer, len) = ring.readable().unwrap();
+        // Models the ISR appending only to free slots while fill_buf is live.
+        let prefix = unsafe { core::slice::from_raw_parts(pointer, len) };
+        ring.observe(Ok(Some(3)));
+        assert_eq!(prefix, &[1, 2]);
+        ring.consume(2);
+        let mut output = [0; 4];
+        assert_eq!(ring.read(&mut output), Ok(1));
+        assert_eq!(output[0], 3);
+    }
+
+    #[test]
+    #[should_panic(expected = "consume exceeds")]
+    fn consume_cannot_release_unexposed_bytes() {
+        let mut storage = [0; 4];
+        let mut ring = RxRing::new(&mut storage);
+        ring.observe(Ok(Some(1)));
+        ring.readable().unwrap();
+        ring.consume(2);
+    }
+}
 // SAFETY: constructors guarantee exclusive, valid storage until shutdown
 // detaches this descriptor (forever if a safe static owner is forgotten).
 // Borrowed constructors require the caller to uphold this even if Drop is bypassed.

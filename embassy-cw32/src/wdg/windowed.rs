@@ -624,3 +624,54 @@ mod warning {
         .await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn count_boundaries_preserve_nonempty_windows() {
+        for reload in 0..=u8::MAX {
+            for window in 0..=u8::MAX {
+                let config = WindowConfig::from_counts(PRESCALERS[0], reload, window);
+                assert_eq!(
+                    config.is_ok(),
+                    window >= 0x40 && window < reload && reload <= 0x7f
+                );
+                if let Ok(config) = config {
+                    assert_eq!(
+                        config.with_poll_limit(0),
+                        Err(WindowError::InvalidPollLimit)
+                    );
+                    let timing = WindowTiming::from_config(config, Hertz(24_000_000)).unwrap();
+                    assert!(timing.open_pclk_cycles() > 0 && timing.closed_pclk_cycles() > 0);
+                    assert_eq!(
+                        timing.open_pclk_cycles() + timing.closed_pclk_cycles(),
+                        timing.timeout_pclk_cycles()
+                    );
+                }
+            }
+        }
+    }
+    #[test]
+    fn interval_rounding_and_overflow_are_checked() {
+        assert_eq!(
+            WindowTiming::for_intervals(2, 1, Hertz(0)),
+            Err(WindowError::ClockNotInitialized)
+        );
+        for (timeout, closed) in [
+            (0, 0),
+            (100, 0),
+            (100, 100),
+            (100, 101),
+            (u32::MAX, u32::MAX - 1),
+        ] {
+            assert_eq!(
+                WindowTiming::for_intervals(timeout, closed, Hertz(u32::MAX)),
+                Err(WindowError::IntervalsOutOfRange)
+            );
+        }
+        let timing = WindowTiming::for_intervals(10_000, 4_000, Hertz(24_000_000)).unwrap();
+        assert!(timing.nominal_timeout_us() >= 10_000);
+        assert!(timing.nominal_closed_us() >= 4_000);
+    }
+}

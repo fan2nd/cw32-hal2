@@ -166,3 +166,56 @@ pub(super) fn select_timing(bounds: ClockBounds, config: &Config) -> Result<Timi
     best.map(|(_, timing)| timing)
         .ok_or(ConfigError::TimingNotRepresentable)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn waveform_ceiling_filters_and_rise_time_bounds() {
+        let clock = ClockBounds::hsi(1);
+        let mut successful = 0;
+        for frequency in [10_000, 100_000, 400_000, 1_000_000] {
+            let config = Config {
+                frequency: Hertz(frequency),
+                ..Default::default()
+            };
+            if let Ok(timing) = select_timing(clock, &config) {
+                successful += 1;
+                assert!(timing.frequency_bounds.1.0 <= frequency);
+                assert!(timing.frequency_bounds.0.0 <= timing.actual_frequency.0);
+                assert!(timing.actual_frequency.0 <= timing.frequency_bounds.1.0);
+                assert!(timing.clklo >= 3 && timing.clkhi >= 1);
+                assert!(timing.busidle > u16::from(timing.clkhi) + 1);
+            }
+        }
+        assert!(successful > 0);
+        let mut config = Config::default();
+        config.scl_filter_cycles = 16;
+        assert_eq!(
+            select_timing(clock, &config),
+            Err(ConfigError::InvalidFilter)
+        );
+        config.scl_filter_cycles = 1;
+        config.sda_filter_cycles = 0;
+        assert_eq!(
+            select_timing(clock, &config),
+            Err(ConfigError::InvalidFilter)
+        );
+        config.scl_filter_cycles = 0;
+        config.scl_rise_time_ns = 1001;
+        assert_eq!(
+            select_timing(clock, &config),
+            Err(ConfigError::InvalidRiseTime)
+        );
+        config.frequency = Hertz(0);
+        assert_eq!(
+            select_timing(clock, &config),
+            Err(ConfigError::FrequencyZero)
+        );
+        config.frequency = Hertz(crate::I2C_MAXIMUM_FREQUENCY_HZ + 1);
+        assert_eq!(
+            select_timing(clock, &config),
+            Err(ConfigError::FrequencyTooHigh)
+        );
+    }
+}

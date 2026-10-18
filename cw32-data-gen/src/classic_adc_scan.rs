@@ -291,7 +291,11 @@ pub(crate) fn apply(
     let mode = &ir.enums["Mode"];
     ensure!(
         mode.bit_size == 3
-            && mode.variants.len() == 2
+            && mode.variants.len() == 3
+            // Each classic family's MODE2 protocol is qualified separately in
+            // docs/adc-classic-continuous.md. Do not admit other modes merely
+            // because they appear in a vendor enum.
+            && mode.variants.iter().any(|v| v.name == "CONTINUOUS" && v.value == 2)
             && mode
                 .variants
                 .iter()

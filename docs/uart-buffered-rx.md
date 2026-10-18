@@ -253,7 +253,8 @@ armed; a later idle, new wait or RX shutdown retires it. Another read may receiv
 a harmless stale wake. No pointer to a task's output storage enters ISR state.
 
 The native flag and R1W0 basis is recorded in [idle source evidence](uart-idle-evidence.json).
-This buffered interface and `idle_notify` example are uncompiled and untested.
+This interface and `idle_notify` example are covered by the bounded
+[software acceptance](validation-scope.md).
 
 ## Continuous idle markers
 
@@ -278,7 +279,8 @@ notification is consumed. Receive-data overflow remains a separate error.
 starts a new window. RX Drop stops capture. Buffer replacement rejects active
 capture; stop it explicitly first. Both owners expose the same methods.
 
-The queue and `idle_queue` example are implemented but uncompiled and untested.
+Queue tests and `idle_queue` release links are recorded in
+[software acceptance](validation-scope.md).
 
 ## Cancellation, Drop and forgotten owners
 
@@ -322,7 +324,7 @@ packet framing, mode conversion, DMA API, synchronous `embedded_io::Read` or syn
 `fill_buf`/`consume` are supported. Ordinary borrowed-buffer reuse after RX Drop
 is supported under the unsafe constructor contract above.
 [`into_buffer` and `try_replace_buffer`](uart-buffer-reclaim.md) return storage
-after RX shutdown or replace an empty running ring. Both are implemented but untested.
+after RX shutdown or replace an empty running ring. Both have [software acceptance](validation-scope.md).
 DMA reclamation is separate.
 The existing [native finite idle API](uart-idle.md) remains on ordinary
 `UartRx<Async>`/`Uart<Async>` for L010/L011/L012 with its Stage82 window, error

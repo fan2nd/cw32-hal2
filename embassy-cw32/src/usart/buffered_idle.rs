@@ -58,6 +58,50 @@ impl IdleCapture {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn marker(count: usize) -> BufferedIdle {
+        BufferedIdle {
+            buffered_bytes: count,
+            error: Some(Error::Framing),
+        }
+    }
+    #[test]
+    fn idle_positions_wrap_and_saturate_without_changing_returned_snapshots() {
+        let mut queue = IdleCapture::new();
+        assert_eq!(queue.pop(), Err(IdleCaptureError::NotCapturing));
+        queue.active = true;
+        for count in 1..=4 {
+            queue.push(marker(count));
+        }
+        let saved = queue.pop().unwrap().unwrap();
+        queue.push(marker(5));
+        queue.advance(3);
+        assert_eq!(saved, marker(1));
+        for count in [0, 0, 1, 2] {
+            assert_eq!(queue.pop(), Ok(Some(marker(count))));
+        }
+        assert_eq!(queue.pop(), Ok(None));
+    }
+    #[test]
+    fn idle_overflow_is_a_barrier_until_observed() {
+        let mut queue = IdleCapture::new();
+        queue.active = true;
+        for count in 0..5 {
+            queue.push(marker(count));
+        }
+        for count in 0..4 {
+            assert_eq!(queue.pop(), Ok(Some(marker(count))));
+        }
+        queue.push(marker(99));
+        assert_eq!(queue.pop(), Err(IdleCaptureError::Overflow));
+        assert_eq!(queue.pop(), Ok(None));
+        queue.push(marker(6));
+        assert_eq!(queue.pop(), Ok(Some(marker(6))));
+    }
+}
+
 impl BufferedUartRx<'_> {
     /// Start continuous capture of up to four native idle markers.
     ///
@@ -173,7 +217,6 @@ impl BufferedUartRx<'_> {
         drop(guard);
         snapshot
     }
-
 }
 
 impl BufferedUart<'_> {

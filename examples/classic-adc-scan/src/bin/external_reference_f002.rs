@@ -1,5 +1,5 @@
 //! F002F3P7: supply a settled 2.5 V reference to PB4 and a low-impedance
-//! 0..2.5 V input to PA0. Board VDD must remain at least the declared 3.3 V.
+//! 0..2.5 V input to PA1. Board VDD must remain at least the declared 3.3 V.
 #![no_std]
 #![no_main]
 use cortex_m_rt::entry;
@@ -8,7 +8,7 @@ use embassy_cw32::{self as hal, adc::{Adc, Config, Reference, SampleTime}};
 #[entry]
 fn main() -> ! {
     let p = hal::try_init(Default::default()).unwrap();
-    let mut input = p.PA0;
+    let mut input = p.PA1;
     let mut config = Config::default();
     config.vdda_mv = 3300;
     let mut adc = Adc::new_with_external_reference(p.ADC, p.PB4, config).unwrap();

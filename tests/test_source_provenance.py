@@ -59,9 +59,11 @@ class ProvenanceTests(unittest.TestCase):
     def assert_uart_split_evidence_coverage(self, lock):
         expected = {f'embassy-cw32/src/usart/{name}.rs' for name in (
             'buffered', 'config', 'dma_rx', 'dma_tx', 'half_duplex', 'interrupt',
-            'mod', 'nine_bit', 'rx', 'traits', 'tx', 'uart')}
+            'mod', 'nine_bit', 'rx', 'traits', 'tx', 'uart',
+            'buffered_idle', 'rs485', 'lin', 'lin/frame', 'lin/duplex',
+            'lin/schedule', 'lin/responder', 'lin/assembler', 'lin/receiver')}
         self.assertEqual({str(path.relative_to(ROOT)) for path in
-                          (ROOT / 'embassy-cw32/src/usart').glob('*.rs')}, expected)
+                          (ROOT / 'embassy-cw32/src/usart').rglob('*.rs')}, expected)
         consumers = []
         for artifact in lock['artifacts']:
             nodes = [artifact, *artifact.get('members', [])]
@@ -73,7 +75,7 @@ class ProvenanceTests(unittest.TestCase):
                 if expected.intersection(refs):
                     self.assertEqual({ref for ref in refs if ref.startswith(
                         'embassy-cw32/src/usart/')}, expected)
-                    self.assertEqual(len([ref for ref in refs if ref in expected]), 12)
+                    self.assertEqual(len([ref for ref in refs if ref in expected]), len(expected))
                     consumers.append(node['path'])
         self.assertEqual(len(consumers), 11)
         self.assertEqual(set(consumers), {
@@ -202,7 +204,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_wrong_external_reference_fails(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             (root / 'docs').mkdir()
             (root / 'docs/broken.json').write_text(json.dumps({'file': 'manual.pdf', 'sha256': '0' * 64}))
             with self.assertRaisesRegex(p.ProvenanceError, 'Referenced external file hash absent'):
@@ -210,7 +212,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_explicit_unresolved_reference_fails(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             (root / 'docs').mkdir()
             (root / 'docs/broken.json').write_text(json.dumps({'source_ref': 'vendor:missing.pdf'}))
             with self.assertRaisesRegex(p.ProvenanceError, 'Unknown explicit source_ref'):
@@ -218,7 +220,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def yaml_reference_index(self, source):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             for relative in [p.LOCK, 'Cargo.lock', 'firmware/Cargo.lock', 'requirements-dev.txt',
                              'docs/toolchain.json', 'docs/upstream-file-provenance.json']:
                 target = root / relative
@@ -268,7 +270,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_renamed_vendor_file_cannot_be_packaged(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             (root / 'docs').mkdir()
             (root / 'docs/upstream-file-provenance.json').write_text('{"files": []}')
             path = root / 'innocent.bin'
@@ -292,12 +294,12 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_exact_licensed_sdk_subset_is_allowed(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             p.validate_distribution(root, self.approved_sdk_fixture(root), self.lock)
 
     def test_incomplete_or_extra_licensed_subset_is_rejected(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             files = self.approved_sdk_fixture(root)
             for name, _ in files:
                 with self.subTest(missing=name), self.assertRaisesRegex(p.ProvenanceError, 'exactly 11 headers'):
@@ -309,7 +311,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_approved_header_tampering_rejected_after_checksum_refresh(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             files = self.approved_sdk_fixture(root)
             name = next(iter(p.approved_sdk_members(self.lock)))
             path = root / name
@@ -320,7 +322,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_customized_apache_license_is_rejected(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             files = self.approved_sdk_fixture(root)
             (root / p.APPROVED_SDK_ROOT / 'LICENSE-APACHE-2.0.txt').write_text('custom license')
             self.refresh_sdk_checksums(root, files)
@@ -329,7 +331,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_missing_apache_notice_is_rejected_even_with_repin(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             files = self.approved_sdk_fixture(root)
             lock = copy.deepcopy(self.lock)
             name, member = next(iter(p.approved_sdk_members(lock).items()))
@@ -349,14 +351,14 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_duplicate_approved_delivery_path_is_rejected(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             files = self.approved_sdk_fixture(root)
             with self.assertRaisesRegex(p.ProvenanceError, 'Duplicate distribution delivery path'):
                 p.validate_distribution(root, files + [files[-1]], self.lock)
 
     def test_unresolved_upstream_file_blocks_packaging(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             (root / 'docs').mkdir()
             (root / 'docs/upstream-file-provenance.json').write_text(json.dumps({'files': [
                 {'project_path': 'unknown.rs', 'distribution_state': 'unresolved',
@@ -366,7 +368,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_renamed_historical_upstream_body_blocks_packaging(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             (root / 'docs').mkdir()
             path = root / 'renamed.rs'
             path.write_bytes(b'historical upstream fixture')
@@ -378,7 +380,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_replacement_requires_review_and_exact_hash(self):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             (root / 'docs').mkdir()
             path = root / 'replacement.rs'
             path.write_bytes(b'independently authored fixture')
@@ -401,7 +403,7 @@ class ProvenanceTests(unittest.TestCase):
 
     def validate_archive_fixtures(self, payloads, prohibited=b'known predecessor fixture', review=None):
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             (root / 'docs').mkdir()
             if review is None:
                 review = {'files': [{'project_path': 'excluded.rs',
@@ -456,7 +458,7 @@ class ProvenanceTests(unittest.TestCase):
                 with self.assertRaisesRegex(p.ProvenanceError, 'Unlicensed external input'):
                     self.validate_archive_fixtures([compress(body)])
         with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
+            root = Path(d).resolve()
             (root / 'docs').mkdir()
             (root / 'docs/upstream-file-provenance.json').write_text('{"files": []}')
             path = root / 'renamed.data'
@@ -615,7 +617,7 @@ class ProvenanceTests(unittest.TestCase):
     def test_missing_acquired_source_is_not_success(self):
         with tempfile.TemporaryDirectory() as d:
             with self.assertRaisesRegex(p.ProvenanceError, 'Missing acquired source'):
-                p.validate_lock(ROOT, self.lock, Path(d))
+                p.validate_lock(ROOT, self.lock, Path(d).resolve())
 
     def test_write_views_cannot_change_source_pins(self):
         before = hashlib.sha256((ROOT / p.LOCK).read_bytes()).hexdigest()

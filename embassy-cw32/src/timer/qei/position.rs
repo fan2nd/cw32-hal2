@@ -128,3 +128,62 @@ impl<E: PositionSource> TrackedQei<E> {
     /// Return the original decoder without a register write or pin change.
     pub fn into_inner(self) -> E { self.inner }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use core::cell::Cell;
+
+    struct Counter<'a>(&'a Cell<u32>, u32);
+    impl sealed::Source for Counter<'_> {
+        fn count(&self) -> u32 {
+            self.0.get()
+        }
+        fn period(&self) -> u32 {
+            self.1
+        }
+    }
+    impl PositionSource for Counter<'_> {}
+
+    #[test]
+    fn wraps_both_directions_and_latches_loss() {
+        let count = Cell::new(98);
+        let mut tracker = TrackedQei::new(Counter(&count, 100), 0, 49).ok().unwrap();
+        count.set(2);
+        assert_eq!(tracker.sample(), Ok(4));
+        count.set(97);
+        assert_eq!(tracker.sample(), Ok(-1));
+        count.set(47);
+        assert_eq!(tracker.sample(), Err(PositionError::AmbiguousStep));
+        count.set(48);
+        assert_eq!(tracker.sample(), Err(PositionError::PositionLost));
+        tracker.rebase(10).unwrap();
+        count.set(49);
+        assert_eq!(tracker.sample(), Ok(11));
+    }
+
+    #[test]
+    fn rejects_invalid_bounds_samples_and_position_overflow() {
+        let count = Cell::new(0);
+        for (period, step) in [(1, 0), (65537, 1), (100, 50), (100, u32::MAX)] {
+            assert!(matches!(
+                TrackedQei::new(Counter(&count, period), 0, step),
+                Err((PositionError::InvalidStepBound, _))
+            ));
+        }
+        let mut tracker = TrackedQei::new(Counter(&count, 100), i64::MAX, 2)
+            .ok()
+            .unwrap();
+        count.set(1);
+        assert_eq!(tracker.sample(), Err(PositionError::PositionOverflow));
+        tracker.rebase(i64::MIN).unwrap();
+        count.set(0);
+        assert_eq!(tracker.sample(), Err(PositionError::PositionOverflow));
+        tracker.rebase(0).unwrap();
+        count.set(3);
+        assert_eq!(tracker.sample(), Err(PositionError::StepOutOfRange));
+        count.set(100);
+        assert_eq!(tracker.rebase(0), Err(PositionError::InvalidCounter));
+        assert_eq!(tracker.position(), Err(PositionError::PositionLost));
+    }
+}

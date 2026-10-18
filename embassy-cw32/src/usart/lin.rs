@@ -174,7 +174,7 @@ impl<'d, M: Mode> LinTransmitter<'d, M> {
         self.tx.info.regs.icr().write_value(clear);
         self.tx.info.regs.tdr().write(|w| {
             w.set_tdr(payload);
-            w.set_break(send_break);
+            w.set_break_(send_break);
             w.set_idle(idle);
         });
     }
