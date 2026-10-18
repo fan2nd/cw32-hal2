@@ -37,3 +37,12 @@ channel Drop serializes shared control updates; WWDT Drop retains irreversible
 watchdog service. Host tests do not execute these physical IRQ/MMIO paths.
 Hardware acceptance remains a separate TODO, including error injection,
 cancellation/reset timing, analog settling and real LIN waveforms.
+
+L010 low bypass: after `./d gen-all`, run
+`python3 tests/check_l010_bypass.py`. All three exact packages pass generated
+JSON/PAC metadata checks, exhaustive integer-Hz admission from 3,908,159 through
+4,000,000 Hz with both HSE and retained-HSE/HSI selection, rejected lower/tolerance
+bounds, and unchanged crystal restrictions. The 3.95 MHz ±30 ppm example links
+for each package in both configurations (six ELF builds). Re-generation preserves
+all 899 data/PAC files byte-for-byte. Retained hardware startup/reuse and oscillator
+waveforms still require board verification.

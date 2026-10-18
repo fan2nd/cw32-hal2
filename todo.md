@@ -8,5 +8,4 @@
 - [ ] 定时器：核实 L012 BTIM／ATIM、L011 BTIM／GTIM／ADC 触发及 L052 ATIM MSM 冲突，避免开放未确认路由。
 - [ ] RTC：确认 Alarm B 掩码、classic WINDOW／ACCESS 清理及 L010 live-LSI 日期写入约束；未确认模式保持禁用。
 - [ ] 数学／加密：核实已开放 CORDIC 的数值边界、AES 字节顺序及 AES／TRNG／CORDIC 安全重用；TRNG 未经评估不得宣称密码学安全。
-- [ ] 禁令解除后重新生成并验收 L010 bypass 3,908,159–4 MHz 数据／PAC，核查三个封装、3.95 MHz 示例及 retained-HSE。
 - [ ] 硬件验收：验证已支持模式的引脚、电气／时钟、传输与 LIN 时序、错误／取消／复位、模拟精度及数学／AES 已知答案。
